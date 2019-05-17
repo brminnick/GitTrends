@@ -1,33 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <ProduceAssemblyReference>true</ProduceAssemblyReference>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>pdbonly</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="3.6.0.264807" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.0.1" />
-    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="2.1.1" />
-    <PackageReference Include="Polly" Version="7.1.0" />
-    <PackageReference Include="Refit" Version="4.6.107" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Remove="MainPage.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Pages\" />
-    <Folder Include="ViewModels\" />
-    <Folder Include="Services\" />
-    <Folder Include="ViewModels\Base\" />
-    <Folder Include="Pages\Base\" />
-    <Folder Include="Constants\" />
-    <Folder Include="Models\" />
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <ProduceAssemblyReference>true</ProduceAssemblyReference>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DebugType>pdbonly</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Xamarin.Forms" Version="3.6.0.344457" />
+        <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+        <PackageReference Include="Refit" Version="4.6.107" />
+        <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="2.1.1" />
+        <PackageReference Include="Xamarin.Auth.XamarinForms" Version="1.6.0.4" />
+        <PackageReference Include="Xamarin.Auth" Version="1.6.0.4" />
+    </ItemGroup>
 </Project>
