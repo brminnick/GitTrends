@@ -51,7 +51,9 @@
         <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
         <PackageReference Include="Refit" Version="4.6.107" />
         <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="2.1.1" />
-        <PackageReference Include="Xamarin.Auth" Version="1.6.0.4" />
+        <PackageReference Include="Octokit">
+          <Version>0.32.0</Version>
+        </PackageReference>
     </ItemGroup>
     <ItemGroup>
         <Compile Include="MainActivity.cs" />
@@ -80,6 +82,7 @@
         <AndroidResource Include="Resources\mipmap-xxhdpi\launcher_foreground.png" />
         <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png" />
         <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
+        <AndroidResource Include="Resources\xml\auto_backup_rules.xml" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Resources\drawable\" />
@@ -87,6 +90,7 @@
         <Folder Include="Resources\drawable-xhdpi\" />
         <Folder Include="Resources\drawable-xxhdpi\" />
         <Folder Include="Resources\drawable-xxxhdpi\" />
+        <Folder Include="Resources\xml\" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\GitTrends\GitTrends.csproj">

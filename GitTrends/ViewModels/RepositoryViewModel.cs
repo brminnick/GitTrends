@@ -7,7 +7,7 @@ namespace GitTrends
     {
         public RepositoryViewModel()
         {
-            LoginButtonCommand = new AsyncCommand(AuthenticationService.LaunchWebAuthentication, continueOnCapturedContext: false);
+            LoginButtonCommand = new AsyncCommand(GitHubAuthenticationService.LaunchWebAuthenticationPage, continueOnCapturedContext: false);
         }
 
         public ICommand LoginButtonCommand { get; }
