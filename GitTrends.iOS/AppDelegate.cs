@@ -1,10 +1,7 @@
 ﻿using System;
+using AsyncAwaitBestPractices;
 using Foundation;
 using UIKit;
-using System.Threading.Tasks;
-using Octokit;
-using SafariServices;
-using AsyncAwaitBestPractices;
 
 namespace GitTrends.iOS
 {
@@ -23,18 +20,10 @@ namespace GitTrends.iOS
         {
             var callbackUri = new Uri(url.AbsoluteString);
 
-            CloseSFSafariViewController().SafeFireAndForget();
+            HelperMethods.CloseSFSafariViewController().SafeFireAndForget();
             GitHubAuthenticationService.AuthorizeSession(callbackUri).SafeFireAndForget();
 
             return true;
-        }
-
-        async Task CloseSFSafariViewController()
-        {
-            var currentViewController = await HelperMethods.GetVisibleViewController().ConfigureAwait(false);
-
-            if (currentViewController is SFSafariViewController safariViewController)
-                await XamarinFormsServices.BeginInvokeOnMainThreadAsync(() => safariViewController.DismissViewControllerAsync(true));
         }
     }
 }

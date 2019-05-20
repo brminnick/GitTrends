@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-
+using SafariServices;
 using UIKit;
 
 namespace GitTrends.iOS
@@ -27,6 +27,12 @@ namespace GitTrends.iOS
                         return rootController.PresentedViewController;
                 }
             });
+        }
+
+        public static async Task CloseSFSafariViewController()
+        {
+            while (await GetVisibleViewController().ConfigureAwait(false) is SFSafariViewController sfSafariViewController)
+                await XamarinFormsServices.BeginInvokeOnMainThreadAsync(() => sfSafariViewController.DismissViewControllerAsync(true));
         }
     }
 }
