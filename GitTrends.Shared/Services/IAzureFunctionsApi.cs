@@ -1,15 +1,15 @@
 ﻿using System.Threading.Tasks;
-using Octokit;
 using Refit;
 
-namespace GitTrends
+namespace GitTrends.Shared
 {
+    [Headers("Accept-Encoding: gzip", "Accept: application/json")]
     interface IAzureFunctionsApi
     {
         [Get(@"/GetGitHubClientId")]
         Task<string> GetGitTrendsClientId([AliasAs("code")] string functionKey);
 
         [Post(@"/GenerateGitHubOAuthToken")]
-        Task<string> GenerateGitTrendsOAuthToken([Body]string loginCode, [AliasAs("code")] string functionKey);
+        Task<GitHubToken> GenerateGitTrendsOAuthToken([Body] GenerateTokenDTO generateTokenDTO, [AliasAs("code")] string functionKey);
     }
 }

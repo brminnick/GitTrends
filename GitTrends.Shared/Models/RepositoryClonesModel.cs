@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace GitTrends
+namespace GitTrends.Shared
 {
     class RepositoryClonesModel : BaseRepositoryModel
     {

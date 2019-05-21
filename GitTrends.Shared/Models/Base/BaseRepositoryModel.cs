@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace GitTrends
+namespace GitTrends.Shared
 {
     abstract class BaseRepositoryModel
     {

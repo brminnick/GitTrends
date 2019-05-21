@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace GitTrends
+namespace GitTrends.Shared
 {
     class DailyViewsModel : BaseDailyModel
     {

@@ -15,8 +15,6 @@
         <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
         <PackageReference Include="Refit" Version="4.6.107" />
         <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="2.1.1" />
-        <PackageReference Include="Octokit" Version="0.32.0" />
-        <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.0" />
         <PackageReference Include="Polly" Version="7.1.0" />
     </ItemGroup>
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
