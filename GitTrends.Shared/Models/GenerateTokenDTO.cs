@@ -4,16 +4,12 @@ namespace GitTrends.Shared
 {
     public class GenerateTokenDTO
     {
-        [Obsolete("Use Overloaded Constructor")]
-        public GenerateTokenDTO(){}
-
-        [JsonConstructor]
         public GenerateTokenDTO(string loginCode, string state) => (LoginCode, State) = (loginCode, state);
 
         [JsonProperty("loginCode")]
-        public string LoginCode { get; set; }
+        public string LoginCode { get; }
 
         [JsonProperty("state")]
-        public string State { get; set; }
+        public string State { get; }
     }
 }
