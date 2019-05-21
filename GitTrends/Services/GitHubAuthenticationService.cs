@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web;
 using Octokit;
+using GitTrends.Shared;
 
 namespace GitTrends
 {
