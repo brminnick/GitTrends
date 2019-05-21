@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Content;
 using AsyncAwaitBestPractices;
+using System.Threading.Tasks;
 
 namespace GitTrends.Droid
 {
@@ -25,13 +26,20 @@ namespace GitTrends.Droid
 
             base.OnCreate(savedInstanceState);
 
-            if (Intent?.Data is Android.Net.Uri callbackUri)
-                GitHubAuthenticationService.AuthorizeSession(new System.Uri(callbackUri.ToString())).SafeFireAndForget();
+            executeCallbackUri().SafeFireAndForget(false);
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
             LoadApplication(new App());
+
+            Task executeCallbackUri()
+            {
+                if (Intent?.Data is Android.Net.Uri callbackUri)
+                    return GitHubAuthenticationService.AuthorizeSession(new System.Uri(callbackUri.ToString()));
+
+                return Task.CompletedTask;
+            }
         }
     }
 }

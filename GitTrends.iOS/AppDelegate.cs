@@ -20,8 +20,8 @@ namespace GitTrends.iOS
         {
             var callbackUri = new Uri(url.AbsoluteString);
 
-            HelperMethods.CloseSFSafariViewController().SafeFireAndForget();
-            GitHubAuthenticationService.AuthorizeSession(callbackUri).SafeFireAndForget();
+            HelperMethods.CloseSFSafariViewController().SafeFireAndForget(false);
+            GitHubAuthenticationService.AuthorizeSession(callbackUri).SafeFireAndForget(false);
 
             return true;
         }

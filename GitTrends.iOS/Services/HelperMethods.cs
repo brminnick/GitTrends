@@ -32,7 +32,9 @@ namespace GitTrends.iOS
         public static async Task CloseSFSafariViewController()
         {
             while (await GetVisibleViewController().ConfigureAwait(false) is SFSafariViewController sfSafariViewController)
-                await XamarinFormsServices.BeginInvokeOnMainThreadAsync(() => sfSafariViewController.DismissViewControllerAsync(true));
+            {
+                await XamarinFormsServices.BeginInvokeOnMainThreadAsync(() => sfSafariViewController.DismissViewControllerAsync(true)).ConfigureAwait(false);
+            }
         }
     }
 }

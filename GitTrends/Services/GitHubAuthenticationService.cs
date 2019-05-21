@@ -8,21 +8,23 @@ namespace GitTrends
     public abstract class GitHubAuthenticationService : BaseGitHubService
     {
         static string _sessionId;
-        const string _clientId = "cd7d3240c298193b55de";
 
-        public static Task LaunchWebAuthenticationPage()
+        public static async Task LaunchWebAuthenticationPage()
         {
             _sessionId = Guid.NewGuid().ToString();
 
-            var request = new OauthLoginRequest(_clientId)
+            var clientId = await AzureFunctionsApiService.GetGitHubClientId().ConfigureAwait(false);
+
+            var request = new OauthLoginRequest(clientId)
             {
                 Scopes = { "repo" },
                 State = _sessionId
             };
 
-            var oauthLoginUrl = GitHubClient.Oauth.GetGitHubLoginUrl(request);
+            var githubClient = await GetGitHubClient().ConfigureAwait(false);
+            var oauthLoginUrl = githubClient.Oauth.GetGitHubLoginUrl(request);
 
-            return XamarinFormsServices.BeginInvokeOnMainThreadAsync(() => Xamarin.Essentials.Browser.OpenAsync(oauthLoginUrl));
+            await XamarinFormsServices.BeginInvokeOnMainThreadAsync(() => Xamarin.Essentials.Browser.OpenAsync(oauthLoginUrl)).ConfigureAwait(false);
         }
 
         public static async Task AuthorizeSession(Uri callbackUri)
@@ -38,9 +40,10 @@ namespace GitTrends
 
             _sessionId = string.Empty;
 
-            var request = new OauthTokenRequest(_clientId, _clientSecret, code);
+            var githubClient = await GetGitHubClient().ConfigureAwait(false);
+            var oauthModel = new GitHubOAuthModel(githubClient, code);
 
-            var token = await GitHubClient.Oauth.CreateAccessToken(request);
+            var token = await AzureFunctionsApiService.GenerateGitTrendsOAuthToken(oauthModel).ConfigureAwait(false);
 
             await SetOAuthToken(token).ConfigureAwait(false);
         }
