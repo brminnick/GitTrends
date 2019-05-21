@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GitTrends.Shared;
 using Octokit;
 using Refit;
 
@@ -18,7 +17,7 @@ namespace GitTrends
 
         #region Methods
         public static Task<string> GetGitHubClientId() => ExecutePollyFunction(() => AzureFunctionsApiClient.GetGitTrendsClientId(AzureConstants.GetGitHubClientIdApiKey));
-        public static Task<OauthToken> GenerateGitTrendsOAuthToken(GitHubOAuthModel githubOAuthModel) => ExecutePollyFunction(() => AzureFunctionsApiClient.GenerateGitTrendsOAuthToken(githubOAuthModel, AzureConstants.GenerateOAuthTokenApiKey));
+        public static Task<string> GenerateGitTrendsOAuthToken(string loginCode) => ExecutePollyFunction(() => AzureFunctionsApiClient.GenerateGitTrendsOAuthToken(loginCode, AzureConstants.GenerateOAuthTokenApiKey));
         #endregion
     }
 }

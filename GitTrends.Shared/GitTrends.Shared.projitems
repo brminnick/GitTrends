@@ -9,9 +9,6 @@
     <Import_RootNamespace>GitTrends.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Models\GitHubOAuthModel.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />
   </ItemGroup>
 </Project>

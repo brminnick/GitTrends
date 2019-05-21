@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GitTrends.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -15,15 +14,17 @@ namespace GitTrends.Functions
         readonly static string _clientId = Environment.GetEnvironmentVariable("GitTrendsClientId");
 
         [FunctionName(nameof(GenerateGitHubOAuthToken))]
-        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] [FromBody] GitHubOAuthModel gitHubOAuthModel, ILogger log)
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] [FromBody] string loginCode, ILogger log)
         {
             log.LogInformation("Received request for OAuth Token");
 
-            var request = new OauthTokenRequest(_clientId, _clientSecret, gitHubOAuthModel.LoginCode);
+            var request = new OauthTokenRequest(_clientId, _clientSecret, loginCode);
 
-            var token = await gitHubOAuthModel.GitHubClient.Oauth.CreateAccessToken(request).ConfigureAwait(false);
+            var githubClient = new GitHubClient(new ProductHeaderValue(nameof(GitTrends)));
 
-            return new OkObjectResult(token);
+            var token = await githubClient.Oauth.CreateAccessToken(request).ConfigureAwait(false);
+
+            return new OkObjectResult(token.AccessToken);
         }
     }
 }

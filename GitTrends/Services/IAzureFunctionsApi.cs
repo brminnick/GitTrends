@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using GitTrends.Shared;
 using Octokit;
 using Refit;
 
@@ -10,7 +9,7 @@ namespace GitTrends
         [Get(@"/GetGitHubClientId")]
         Task<string> GetGitTrendsClientId([AliasAs("code")] string functionKey);
 
-        [Get(@"/GenerateGitHubOAuthToken")]
-        Task<OauthToken> GenerateGitTrendsOAuthToken([Body]GitHubOAuthModel gitHubOAuthModel, [AliasAs("code")] string functionKey);
+        [Post(@"/GenerateGitHubOAuthToken")]
+        Task<string> GenerateGitTrendsOAuthToken([Body]string loginCode, [AliasAs("code")] string functionKey);
     }
 }

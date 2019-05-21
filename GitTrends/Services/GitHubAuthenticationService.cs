@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Web;
 using Octokit;
-using GitTrends.Shared;
 
 namespace GitTrends
 {
@@ -41,12 +40,9 @@ namespace GitTrends
 
             _sessionId = string.Empty;
 
-            var githubClient = await GetGitHubClient().ConfigureAwait(false);
-            var oauthModel = new GitHubOAuthModel(githubClient, code);
+            var token = await AzureFunctionsApiService.GenerateGitTrendsOAuthToken(code).ConfigureAwait(false);
 
-            var token = await AzureFunctionsApiService.GenerateGitTrendsOAuthToken(oauthModel).ConfigureAwait(false);
-
-            await SetOAuthToken(token).ConfigureAwait(false);
+            await SetAccessToken(token).ConfigureAwait(false);
         }
     }
 }
