@@ -17,10 +17,9 @@ namespace GitTrends
         {
             _sessionId = Guid.NewGuid().ToString();
 
-            var clientId = await AzureFunctionsApiService.GetGitHubClientId().ConfigureAwait(false);
-            clientId = clientId.Replace("\"", "");
+            var clientIdDTO = await AzureFunctionsApiService.GetGitHubClientId().ConfigureAwait(false);
 
-            var githubUrl = $"https://github.com/login/oauth/authorize?client_id={clientId}&scope=repo&state={_sessionId}";
+            var githubUrl = $"https://github.com/login/oauth/authorize?client_id={clientIdDTO.ClientId}&scope=repo&state={_sessionId}";
 
             await XamarinFormsServices.BeginInvokeOnMainThreadAsync(() => Browser.OpenAsync(githubUrl)).ConfigureAwait(false);
         }
@@ -41,22 +40,22 @@ namespace GitTrends
             var generateTokenDTO = new GenerateTokenDTO(code, state);
             var token = await AzureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO).ConfigureAwait(false);
 
-            await SetAccessToken(token).ConfigureAwait(false);
+            await SaveGitHubToken(token).ConfigureAwait(false);
         }
 
-        public static async Task<GitHubToken> GetAccessToken()
+        public static async Task<GitHubToken> GetGitHubToken()
         {
             var serializedToken = await SecureStorage.GetAsync(_oauthTokenKey).ConfigureAwait(false);
 
             return await Task.Run(() => JsonConvert.DeserializeObject<GitHubToken>(serializedToken)).ConfigureAwait(false);
         }
 
-        static async Task SetAccessToken(GitHubToken token)
+        static async Task SaveGitHubToken(GitHubToken token)
         {
             if (token is null)
                 throw new ArgumentNullException(nameof(token));
 
-            if (token?.AccessToken is null)
+            if (token.AccessToken is null)
                 throw new ArgumentNullException(nameof(token.AccessToken));
 
             var serializedToken = await Task.Run(() => JsonConvert.SerializeObject(token)).ConfigureAwait(false);
