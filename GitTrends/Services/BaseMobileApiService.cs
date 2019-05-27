@@ -12,6 +12,8 @@ namespace GitTrends
         #endregion
 
         #region Methods
+        protected static string GetGitHubBearerTokenHeader(GitHubToken token) => $"{token.TokenType} {token.AccessToken}";
+
         protected static async Task<T> ExecuteMobilePollyFunction<T>(Func<Task<T>> action, int numRetries = 3)
         {
             UpdateActivityIndicatorStatus(true);

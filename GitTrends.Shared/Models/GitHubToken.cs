@@ -4,8 +4,8 @@ namespace GitTrends.Shared
 {
     public class GitHubToken
     {
-        public GitHubToken(string accessToken, string scope, string tokenType) =>
-            (AccessToken, Scope, TokenType) = (accessToken, scope, tokenType);
+        public GitHubToken(string access_Token, string scope, string token_Type) =>
+            (AccessToken, Scope, TokenType) = (access_Token, scope, token_Type);
 
         [JsonProperty("access_token")]
         public string AccessToken { get; }

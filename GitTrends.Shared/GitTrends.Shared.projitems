@@ -13,6 +13,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)Services\" />
     <Folder Include="$(MSBuildThisFileDirectory)Constants\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\Base\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Models\Base\GraphQLModels\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Models\GitHubToken.cs" />
@@ -29,5 +30,18 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\GenerateTokenDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GetGitHubClientIdDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubAuthApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubGraphQLAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\GitHubUserResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\User.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Base\GraphQLModels\GraphQLError.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Base\GraphQLModels\GraphQLRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Base\GraphQLModels\GraphQLResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Base\GraphQLModels\PageInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryConnection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Repository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\IssueConnection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryConnectionResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Issue.cs" />
   </ItemGroup>
 </Project>
