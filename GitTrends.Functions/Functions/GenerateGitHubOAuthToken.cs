@@ -26,7 +26,7 @@ namespace GitTrends.Functions
                 var body = await reader.ReadToEndAsync().ConfigureAwait(false);
                 var generateTokenDTO = JsonConvert.DeserializeObject<GenerateTokenDTO>(body);
 
-                var token = await GitHubApiV3Service.GetGitHubToken(_clientId, _clientSecret, generateTokenDTO.LoginCode, generateTokenDTO.State).ConfigureAwait(false);
+                var token = await GitHubAuthService.GetGitHubToken(_clientId, _clientSecret, generateTokenDTO.LoginCode, generateTokenDTO.State).ConfigureAwait(false);
 
                 log.LogInformation("Token Retrived");
 

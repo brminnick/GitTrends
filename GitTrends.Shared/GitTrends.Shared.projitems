@@ -28,5 +28,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Base\BaseRepositoryModel.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GenerateTokenDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GetGitHubClientIdDTO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubAuthApi.cs" />
   </ItemGroup>
 </Project>

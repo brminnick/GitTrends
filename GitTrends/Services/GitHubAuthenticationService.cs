@@ -19,7 +19,7 @@ namespace GitTrends
 
             var clientIdDTO = await AzureFunctionsApiService.GetGitHubClientId().ConfigureAwait(false);
 
-            var githubUrl = $"https://github.com/login/oauth/authorize?client_id={clientIdDTO.ClientId}&scope=repo&state={_sessionId}";
+            var githubUrl = $"{GitHubConstants.GitHubAuthBaseUrl}/login/oauth/authorize?client_id={clientIdDTO.ClientId}&scope=repo&state={_sessionId}";
 
             await XamarinFormsServices.BeginInvokeOnMainThreadAsync(() => Browser.OpenAsync(githubUrl)).ConfigureAwait(false);
         }
