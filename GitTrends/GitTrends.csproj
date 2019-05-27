@@ -16,6 +16,12 @@
         <PackageReference Include="Refit" Version="4.6.107" />
         <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="2.1.1" />
         <PackageReference Include="Polly" Version="7.1.0" />
+        <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.0.0.5" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="EventArgs\" />
+      <Folder Include="Views\" />
+      <Folder Include="Views\Repository\" />
     </ItemGroup>
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
 </Project>

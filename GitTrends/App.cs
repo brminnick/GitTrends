@@ -4,6 +4,6 @@ namespace GitTrends
 {
     public class App : Application
     {
-        public App() => MainPage = new NavigationPage(new RepositoryPage());
+        public App() => MainPage = new BaseNavigationPage(new RepositoryPage());
     }
 }
