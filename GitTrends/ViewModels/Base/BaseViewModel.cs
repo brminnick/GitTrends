@@ -5,7 +5,7 @@ using AsyncAwaitBestPractices;
 
 namespace GitTrends
 {
-    abstract class BaseViewModel : INotifyPropertyChanged
+    public abstract class BaseViewModel : INotifyPropertyChanged
     {
         #region Constant Fields
         readonly WeakEventManager _propertyChangedEventManager = new WeakEventManager();

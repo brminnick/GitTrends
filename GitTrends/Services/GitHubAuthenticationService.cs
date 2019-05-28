@@ -33,6 +33,18 @@ namespace GitTrends
             get => Preferences.Get(nameof(Alias), string.Empty);
             set => Preferences.Set(nameof(Alias), value);
         }
+
+        public static string Name
+        {
+            get => Preferences.Get(nameof(Name), string.Empty);
+            set => Preferences.Set(nameof(Name), value);
+        }
+
+        public static string AvatarUrl
+        {
+            get => Preferences.Get(nameof(AvatarUrl), string.Empty);
+            set => Preferences.Set(nameof(AvatarUrl), value);
+        }
         #endregion
 
         #region Methods
@@ -65,7 +77,11 @@ namespace GitTrends
 
                 await SaveGitHubToken(token).ConfigureAwait(false);
 
-                Alias = await GitHubGraphQLApiService.GetCurrentUserLogin().ConfigureAwait(false);
+                var (login, name, avatarUri) = await GitHubGraphQLApiService.GetCurrentUserInfo().ConfigureAwait(false);
+
+                Alias = login;
+                Name = name;
+                AvatarUrl = avatarUri.ToString();
 
                 OnAuthorizeSessionCompleted(true);
             }
@@ -85,6 +101,10 @@ namespace GitTrends
                 return await Task.Run(() => JsonConvert.DeserializeObject<GitHubToken>(serializedToken)).ConfigureAwait(false);
             }
             catch (ArgumentNullException)
+            {
+                return null;
+            }
+            catch (JsonReaderException)
             {
                 return null;
             }

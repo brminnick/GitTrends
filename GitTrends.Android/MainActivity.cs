@@ -5,6 +5,8 @@ using Android.Runtime;
 using Android.Content;
 using AsyncAwaitBestPractices;
 using System.Threading.Tasks;
+using Plugin.CurrentActivity;
+using System.Linq;
 
 namespace GitTrends.Droid
 {
@@ -28,17 +30,25 @@ namespace GitTrends.Droid
 
             executeCallbackUri().SafeFireAndForget(false);
 
+            CrossCurrentActivity.Current.Init(this, savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
             LoadApplication(new App());
 
-            Task executeCallbackUri()
+            async Task executeCallbackUri()
             {
                 if (Intent?.Data is Android.Net.Uri callbackUri)
-                    return GitHubAuthenticationService.AuthorizeSession(new System.Uri(callbackUri.ToString()));
+                {
+                    await GitHubAuthenticationService.AuthorizeSession(new System.Uri(callbackUri.ToString())).ConfigureAwait(false);
 
-                return Task.CompletedTask;
+                    if (Xamarin.Forms.Application.Current.MainPage is BaseNavigationPage navigationPage
+                        && navigationPage.Navigation.ModalStack.Count == 0
+                        && navigationPage.Navigation.NavigationStack.Count <= 1)
+                    {
+                        await XamarinFormsServices.BeginInvokeOnMainThreadAsync(() => navigationPage.Navigation.PushAsync(new ProfilePage())).ConfigureAwait(false);
+                    }
+                }
             }
         }
     }

@@ -5,9 +5,14 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    abstract class BaseContentPage<T> : ContentPage where T : BaseViewModel, new()
+    public abstract class BaseContentPage<T> : ContentPage where T : BaseViewModel, new()
     {
-        protected BaseContentPage() => BindingContext = ViewModel;
+        protected BaseContentPage(string title)
+        {
+            BindingContext = ViewModel;
+            BackgroundColor = ColorConstants.LightBlue;
+            Title = title;
+        }
 
         protected T ViewModel { get; } = new T();
 

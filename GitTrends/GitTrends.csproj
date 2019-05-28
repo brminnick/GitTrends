@@ -22,6 +22,7 @@
       <Folder Include="EventArgs\" />
       <Folder Include="Views\" />
       <Folder Include="Views\Repository\" />
+      <Folder Include="Views\Base\" />
     </ItemGroup>
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
 </Project>

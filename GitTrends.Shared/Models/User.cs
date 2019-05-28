@@ -8,14 +8,14 @@ namespace GitTrends.Shared
     public class User
     {
         [JsonConstructor, Obsolete]
-        public User(RepositoryConnection repositories, string name, string company, DateTimeOffset createdAt, string login, GitHubFollowers followers, [CallerMemberName]string unused = null)
-            : this(repositories, name, company, createdAt, login, followers)
+        public User(RepositoryConnection repositories, string name, string company, DateTimeOffset createdAt, string login, Uri avatarUrl, GitHubFollowers followers, [CallerMemberName]string unused = null)
+            : this(repositories, name, company, createdAt, login, avatarUrl, followers)
         {
 
         }
 
-        public User(RepositoryConnection repositoryConnection, string name, string company, DateTimeOffset accountCreationDate, string alias, GitHubFollowers followers) =>
-            (RepositoryConnection, Name, Company, AccountCreationDate, Alias, Followers) = (repositoryConnection, name, company, accountCreationDate, alias, followers);
+        public User(RepositoryConnection repositoryConnection, string name, string company, DateTimeOffset accountCreationDate, string alias, Uri avatarUri, GitHubFollowers followers) =>
+            (RepositoryConnection, Name, Company, AccountCreationDate, Alias, AvatarUri, Followers) = (repositoryConnection, name, company, accountCreationDate, alias, avatarUri, followers);
 
         [JsonProperty("repositories")]
         public RepositoryConnection RepositoryConnection { get; }
@@ -31,6 +31,9 @@ namespace GitTrends.Shared
 
         [JsonProperty("login")]
         public string Alias { get; }
+
+        [JsonProperty("avatarUrl")]
+        public Uri AvatarUri { get; }
 
         [JsonIgnore]
         public int FollowerCount => Followers?.Count ?? -1;

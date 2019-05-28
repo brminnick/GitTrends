@@ -148,4 +148,10 @@
     <ItemGroup>
       <Folder Include="Services\" />
     </ItemGroup>
+    <ItemGroup>
+      <BundleResource Include="Resources\DefaultProfileImage.png" />
+      <BundleResource Include="Resources\DefaultProfileImage%402x.png" />
+      <BundleResource Include="Resources\DefaultProfileImage%403x.png" />
+      <BundleResource Include="Resources\FontAwesomeBrands.ttf" />
+    </ItemGroup>
 </Project>

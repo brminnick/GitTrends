@@ -22,7 +22,7 @@ namespace GitTrends.Shared
 
     class ViewerLoginQueryContent : GraphQLRequest
     {
-        public ViewerLoginQueryContent() : base("query { viewer{ login }}")
+        public ViewerLoginQueryContent() : base("query { viewer{ login, name, avatarUrl }}")
         {
 
         }

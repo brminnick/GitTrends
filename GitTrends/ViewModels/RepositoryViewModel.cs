@@ -11,22 +11,19 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    class RepositoryViewModel : BaseViewModel
+    public class RepositoryViewModel : BaseViewModel
     {
         #region Constant Fields
         readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
         #endregion
 
         #region Fields
-        bool _isRefreshing, _isListViewVisible, _isGitHubLoginButtonVisible = true;
+        bool _isRefreshing;
         ObservableCollection<Repository> _repositoryCollection = new ObservableCollection<Repository>();
         #endregion
 
         public RepositoryViewModel()
         {
-            GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
-
-            LoginButtonCommand = new Command(() => IsGitHubLoginButtonVisible = false);
             PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(GitHubAuthenticationService.Alias), continueOnCapturedContext: false);
         }
 
@@ -39,7 +36,6 @@ namespace GitTrends
         #endregion
 
         #region Properties
-        public ICommand LoginButtonCommand { get; }
         public ICommand PullToRefreshCommand { get; }
 
         public ObservableCollection<Repository> RepositoryCollection
@@ -53,25 +49,11 @@ namespace GitTrends
             get => _isRefreshing;
             set => SetProperty(ref _isRefreshing, value);
         }
-
-        public bool IsGitHubLoginButtonVisible
-        {
-            get => _isGitHubLoginButtonVisible;
-            set => SetProperty(ref _isGitHubLoginButtonVisible, value);
-        }
-
-        public bool IsListViewVisible
-        {
-            get => _isListViewVisible;
-            set => SetProperty(ref _isListViewVisible, value);
-        }
         #endregion
 
         #region Methods
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
-            UpdateVisibility(true);
-
             try
             {
                 var repositoryList = await GitHubGraphQLApiService.GetRepositories(repositoryOwner).ConfigureAwait(false);
@@ -84,31 +66,15 @@ namespace GitTrends
             catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.Unauthorized)
             {
                 OnPullToRefreshFailed("Invalid Api Token", "Login again");
-                UpdateVisibility(false);
             }
             catch (Exception e)
             {
                 OnPullToRefreshFailed("Error", e.Message);
-                UpdateVisibility(false);
             }
             finally
             {
                 IsRefreshing = false;
             }
-        }
-
-        void UpdateVisibility(bool isUserLoggedIn)
-        {
-            IsListViewVisible = isUserLoggedIn;
-            IsGitHubLoginButtonVisible = !isUserLoggedIn;
-        }
-
-        void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
-        {
-            UpdateVisibility(e.IsSessionAuthorized);
-
-            if (e.IsSessionAuthorized)
-                PullToRefreshCommand.Execute(null);
         }
 
         void OnPullToRefreshFailed(string title, string message) =>
