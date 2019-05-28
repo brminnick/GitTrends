@@ -18,6 +18,14 @@ namespace GitTrends
         #endregion
 
         #region Methods
+        public static async Task<string> GetCurrentUserLogin()
+        {
+            var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
+            var data = await ExecuteGraphQLRequest(() => GitHubApiClient.ViewerLoginQuery(new ViewerLoginQueryContent(), GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
+
+            return data.Viewer.Alias;
+        }
+
         public static async Task<User> GetUser(string username)
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);

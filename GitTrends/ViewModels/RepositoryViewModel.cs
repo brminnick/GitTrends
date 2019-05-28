@@ -7,10 +7,11 @@ using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Shared;
 using Refit;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class RepositoryViewModel : BaseViewModel
+    class RepositoryViewModel : BaseViewModel
     {
         #region Constant Fields
         readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
@@ -25,8 +26,8 @@ namespace GitTrends
         {
             GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
-            LoginButtonCommand = new AsyncCommand(ExecuteLoginButtonCommand, continueOnCapturedContext: false);
-            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand("brminnick"), continueOnCapturedContext: false);
+            LoginButtonCommand = new Command(() => IsGitHubLoginButtonVisible = false);
+            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(GitHubAuthenticationService.Alias), continueOnCapturedContext: false);
         }
 
         #region Events
@@ -69,8 +70,7 @@ namespace GitTrends
         #region Methods
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
-            IsGitHubLoginButtonVisible = false;
-            IsListViewVisible = true;
+            UpdateVisibility(true);
 
             try
             {
@@ -78,20 +78,18 @@ namespace GitTrends
 
                 foreach (var repository in repositoryList.OrderByDescending(x => x.StarCount))
                 {
-                    _repositoryCollection.Add(repository);
+                    RepositoryCollection.Add(repository);
                 }
             }
             catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.Unauthorized)
             {
                 OnPullToRefreshFailed("Invalid Api Token", "Login again");
-                IsGitHubLoginButtonVisible = true;
-                IsListViewVisible = false;
+                UpdateVisibility(false);
             }
             catch (Exception e)
             {
                 OnPullToRefreshFailed("Error", e.Message);
-                IsGitHubLoginButtonVisible = true;
-                IsListViewVisible = false;
+                UpdateVisibility(false);
             }
             finally
             {
@@ -99,16 +97,15 @@ namespace GitTrends
             }
         }
 
-        Task ExecuteLoginButtonCommand()
+        void UpdateVisibility(bool isUserLoggedIn)
         {
-            IsGitHubLoginButtonVisible = false;
-            return GitHubAuthenticationService.LaunchWebAuthenticationPage();
+            IsListViewVisible = isUserLoggedIn;
+            IsGitHubLoginButtonVisible = !isUserLoggedIn;
         }
 
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
         {
-            IsListViewVisible = e.IsSessionAuthorized;
-            IsGitHubLoginButtonVisible = !e.IsSessionAuthorized;
+            UpdateVisibility(e.IsSessionAuthorized);
 
             if (e.IsSessionAuthorized)
                 PullToRefreshCommand.Execute(null);

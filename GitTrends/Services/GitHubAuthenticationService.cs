@@ -27,16 +27,22 @@ namespace GitTrends
         }
         #endregion
 
+        #region Properties
+        public static string Alias
+        {
+            get => Preferences.Get(nameof(Alias), string.Empty);
+            set => Preferences.Set(nameof(Alias), value);
+        }
+        #endregion
+
         #region Methods
-        public static async Task LaunchWebAuthenticationPage()
+        public static async Task<string> GetGitHubLoginUrl()
         {
             _sessionId = Guid.NewGuid().ToString();
 
             var clientIdDTO = await AzureFunctionsApiService.GetGitHubClientId().ConfigureAwait(false);
 
-            var githubUrl = $"{GitHubConstants.GitHubAuthBaseUrl}/login/oauth/authorize?client_id={clientIdDTO.ClientId}&scope=repo&state={_sessionId}";
-
-            await XamarinFormsServices.BeginInvokeOnMainThreadAsync(() => Browser.OpenAsync(githubUrl)).ConfigureAwait(false);
+            return $"{GitHubConstants.GitHubAuthBaseUrl}/login/oauth/authorize?client_id={clientIdDTO.ClientId}&scope=repo%20read:user&state={_sessionId}";
         }
 
         public static async Task AuthorizeSession(Uri callbackUri)
@@ -58,6 +64,8 @@ namespace GitTrends
                 var token = await AzureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO).ConfigureAwait(false);
 
                 await SaveGitHubToken(token).ConfigureAwait(false);
+
+                Alias = await GitHubGraphQLApiService.GetCurrentUserLogin().ConfigureAwait(false);
 
                 OnAuthorizeSessionCompleted(true);
             }

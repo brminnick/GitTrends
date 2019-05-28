@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Linq;
 using GitTrends.Shared;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class RepositoryPage : BaseContentPage<RepositoryViewModel>
+    class RepositoryPage : BaseContentPage<RepositoryViewModel>
     {
         #region Constant Fields
         readonly ListView _listView;
@@ -18,6 +17,7 @@ namespace GitTrends
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 
             var gitHubLoginButton = new Button { Text = "Login with GitHub" };
+            gitHubLoginButton.Clicked += HandleGitHubLoginButtonClicked;
             gitHubLoginButton.SetBinding(Button.CommandProperty, nameof(ViewModel.LoginButtonCommand));
             gitHubLoginButton.SetBinding(IsVisibleProperty, nameof(ViewModel.IsGitHubLoginButtonVisible));
 
@@ -58,7 +58,7 @@ namespace GitTrends
             base.OnAppearing();
 
             var token = await GitHubAuthenticationService.GetGitHubToken();
-            if (token?.AccessToken != null)
+            if (token?.AccessToken != null && !string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias))
             {
                 _listView.BeginRefresh();
             }
@@ -73,13 +73,8 @@ namespace GitTrends
                 && repository.Uri.IsAbsoluteUri
                 && repository.Uri.Scheme.Equals(Uri.UriSchemeHttps))
             {
-                var browserOptions = new BrowserLaunchOptions
-                {
-                    PreferredToolbarColor = ColorConstants.LightBlue,
-                    PreferredControlColor = Color.DarkBlue
-                };
 
-                await Browser.OpenAsync(repository.Uri, browserOptions);
+                await OpenBrowser(repository.Uri);
             }
         }
 
@@ -95,6 +90,12 @@ namespace GitTrends
                     await DisplayAlert(e.ErrorTitle, e.ErrorMessage, "OK");
                 }
             });
+        }
+
+        async void HandleGitHubLoginButtonClicked(object sender, EventArgs e)
+        {
+            var loginUrl = await GitHubAuthenticationService.GetGitHubLoginUrl().ConfigureAwait(false);
+            Device.BeginInvokeOnMainThread(async () => await OpenBrowser(loginUrl).ConfigureAwait(false));
         }
         #endregion
     }

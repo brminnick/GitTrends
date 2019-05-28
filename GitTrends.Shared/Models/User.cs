@@ -1,21 +1,21 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Newtonsoft.Json;
-using System.Runtime.CompilerServices;
 
 namespace GitTrends.Shared
 {
     public class User
     {
         [JsonConstructor, Obsolete]
-        public User(RepositoryConnection repositories, string name, string company, DateTimeOffset createdAt, GitHubFollowers followers, [CallerMemberName]string unused = null)
-            : this(repositories, name, company, createdAt, followers)
+        public User(RepositoryConnection repositories, string name, string company, DateTimeOffset createdAt, string login, GitHubFollowers followers, [CallerMemberName]string unused = null)
+            : this(repositories, name, company, createdAt, login, followers)
         {
 
         }
 
-        public User(RepositoryConnection repositoryConnection, string name, string company, DateTimeOffset accountCreationDate, GitHubFollowers followers) =>
-            (RepositoryConnection, Name, Company, AccountCreationDate, Followers) = (repositoryConnection, name, company, accountCreationDate, followers);
+        public User(RepositoryConnection repositoryConnection, string name, string company, DateTimeOffset accountCreationDate, string alias, GitHubFollowers followers) =>
+            (RepositoryConnection, Name, Company, AccountCreationDate, Alias, Followers) = (repositoryConnection, name, company, accountCreationDate, alias, followers);
 
         [JsonProperty("repositories")]
         public RepositoryConnection RepositoryConnection { get; }
@@ -28,6 +28,9 @@ namespace GitTrends.Shared
 
         [JsonProperty("createdAt")]
         public DateTimeOffset AccountCreationDate { get; }
+
+        [JsonProperty("login")]
+        public string Alias { get; }
 
         [JsonIgnore]
         public int FollowerCount => Followers?.Count ?? -1;
