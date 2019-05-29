@@ -7,9 +7,9 @@ namespace GitTrends.Shared
     interface IAzureFunctionsApi
     {
         [Get(@"/GetGitHubClientId")]
-        Task<GetGitHubClientIdDTO> GetGitTrendsClientId([AliasAs("code")] string functionKey);
+        Task<GetGitHubClientIdDTO> GetGitTrendsClientId([AliasAs("code")] string functionKey = AzureConstants.GetGitHubClientIdApiKey);
 
         [Post(@"/GenerateGitHubOAuthToken")]
-        Task<GitHubToken> GenerateGitTrendsOAuthToken([Body] GenerateTokenDTO generateTokenDTO, [AliasAs("code")] string functionKey);
+        Task<GitHubToken> GenerateGitTrendsOAuthToken([Body] GenerateTokenDTO generateTokenDTO, [AliasAs("code")] string functionKey = AzureConstants.GenerateOAuthTokenApiKey);
     }
 }
