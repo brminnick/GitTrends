@@ -33,8 +33,12 @@
 
         void SetGitHubValues()
         {
-            GitHubAvatarImageSource = string.IsNullOrWhiteSpace(GitHubAuthenticationService.AvatarUrl) ? "DefaultProfileImage" : GitHubAuthenticationService.AvatarUrl;
             GitHubAliasLabelText = string.IsNullOrWhiteSpace(GitHubAuthenticationService.Name) ? "" : GitHubAuthenticationService.Name;
+
+            if (Xamarin.Essentials.Connectivity.NetworkAccess is Xamarin.Essentials.NetworkAccess.Internet && !string.IsNullOrWhiteSpace(GitHubAuthenticationService.AvatarUrl))
+                GitHubAvatarImageSource = GitHubAuthenticationService.AvatarUrl;
+            else
+                GitHubAvatarImageSource = "DefaultProfileImage";
         }
         #endregion
     }
