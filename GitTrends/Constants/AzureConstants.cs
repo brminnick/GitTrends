@@ -3,7 +3,7 @@
     public static class AzureConstants
     {
         public const string AzureFunctionsApiUrl = "";
-        public const string GenerateOAuthTokenApiKey = "";
-        public const string GetGitHubClientIdApiKey = "";
+        public const string GenerateGitTrendsOAuthTokenApiKey = "";
+        public const string GetGitTrendsClientIdApiKey = "";
     }
 }
