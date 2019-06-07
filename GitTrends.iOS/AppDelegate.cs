@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using AsyncAwaitBestPractices;
 using Foundation;
+using GitTrends.Mobile.Shared;
 using UIKit;
 
 namespace GitTrends.iOS
@@ -14,6 +15,9 @@ namespace GitTrends.iOS
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             global::Xamarin.Forms.Forms.Init();
+
+            SyncFusionService.Initialize();
+
             LoadApplication(new App());
 
             PrintFontNamesToConsole();
@@ -35,34 +39,34 @@ namespace GitTrends.iOS
         {
             base.OnActivated(uiApplication);
 
-            RemoveBlurOverlay();
+            removeBlurOverlay();
+
+            void removeBlurOverlay()
+            {
+                _blurWindow?.RemoveFromSuperview();
+                _blurWindow?.Dispose();
+                _blurWindow = null;
+            }
         }
 
         public override void OnResignActivation(UIApplication uiApplication)
         {
             base.OnResignActivation(uiApplication);
 
-            AddBlurOverlay();
-        }
+            addBlurOverlay();
 
-        void AddBlurOverlay()
-        {
-            using (var blurEffect = UIBlurEffect.FromStyle(UIBlurEffectStyle.Light))
+            void addBlurOverlay()
             {
-                _blurWindow = new UIVisualEffectView(blurEffect)
+                using (var blurEffect = UIBlurEffect.FromStyle(UIBlurEffectStyle.Light))
                 {
-                    Frame = UIApplication.SharedApplication.KeyWindow.RootViewController.View.Bounds
-                };
+                    _blurWindow = new UIVisualEffectView(blurEffect)
+                    {
+                        Frame = UIApplication.SharedApplication.KeyWindow.RootViewController.View.Bounds
+                    };
+                }
+
+                UIApplication.SharedApplication.KeyWindow.RootViewController.View.AddSubview(_blurWindow);
             }
-
-            UIApplication.SharedApplication.KeyWindow.RootViewController.View.AddSubview(_blurWindow);
-        }
-
-        void RemoveBlurOverlay()
-        {
-            _blurWindow?.RemoveFromSuperview();
-            _blurWindow?.Dispose();
-            _blurWindow = null;
         }
 
         [Conditional("DEBUG")]

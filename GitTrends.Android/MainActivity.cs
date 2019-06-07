@@ -1,12 +1,12 @@
-﻿using Android.App;
+﻿using System.Threading.Tasks;
+using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
-using Android.Content;
 using AsyncAwaitBestPractices;
-using System.Threading.Tasks;
+using GitTrends.Mobile.Shared;
 using Plugin.CurrentActivity;
-using System.Linq;
 
 namespace GitTrends.Droid
 {
@@ -28,13 +28,15 @@ namespace GitTrends.Droid
 
             base.OnCreate(savedInstanceState);
 
-            executeCallbackUri().SafeFireAndForget(false);
-
             CrossCurrentActivity.Current.Init(this, savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
+            SyncFusionService.Initialize();
+
             LoadApplication(new App());
+
+            executeCallbackUri().SafeFireAndForget(false);
 
             async Task executeCallbackUri()
             {

@@ -46,10 +46,10 @@
         <Reference Include="System" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Xamarin.Forms" Version="4.0.0.425677" />
+        <PackageReference Include="Xamarin.Forms" Version="4.0.0.482894" />
         <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-        <PackageReference Include="Refit" Version="4.6.107" />
+        <PackageReference Include="Refit" Version="4.7.9" />
         <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="2.1.1" />
         <PackageReference Include="Polly">
           <Version>7.1.0</Version>
@@ -59,6 +59,9 @@
         </PackageReference>
         <PackageReference Include="Plugin.CurrentActivity">
           <Version>2.1.0.4</Version>
+        </PackageReference>
+        <PackageReference Include="Syncfusion.Xamarin.SfChart">
+          <Version>17.1.0.50</Version>
         </PackageReference>
     </ItemGroup>
     <ItemGroup>
@@ -109,5 +112,6 @@
     <ItemGroup>
       <AndroidAsset Include="Assets\FontAwesomeBrands.ttf" />
     </ItemGroup>
+    <Import Project="..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems')" />
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
