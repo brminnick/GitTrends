@@ -1,4 +1,4 @@
-﻿namespace GitTrends
+﻿namespace GitTrends.Shared
 {
     public static class AzureConstants
     {
