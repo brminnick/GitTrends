@@ -11,7 +11,7 @@ namespace GitTrends
     class TrendsViewModel : BaseViewModel
     {
         #region Fields
-        bool _isFetchingData;
+        bool _isFetchingData = true;
         List<DailyViewsModel> _dailyViewsList;
         List<DailyClonesModel> _dailyClonesList;
         #endregion

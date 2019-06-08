@@ -6,38 +6,38 @@ namespace GitTrends
 {
     class TrendsPage : BaseContentPage<TrendsViewModel>
     {
+        readonly string _owner, _repository;
+
         public TrendsPage(string owner, string repository) : base("Trends")
         {
+            _owner = owner;
+            _repository = repository;
+
             var activityIndicator = new ActivityIndicator { Color = ColorConstants.ActivityIndicatorColor };
             activityIndicator.SetBinding(IsVisibleProperty, nameof(ViewModel.IsFetchingData));
             activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(ViewModel.IsFetchingData));
 
-            var totalViewsSeries = new AreaSeries
-            {
-                Label = "Total Views",
-                XBindingPath = nameof(DailyViewsModel.LocalDay),
-                YBindingPath = nameof(DailyViewsModel.TotalViews),
-                LegendIcon = ChartLegendIcon.SeriesType
-            };
-            totalViewsSeries.SetBinding(AreaSeries.ItemsSourceProperty, nameof(ViewModel.DailyViewsList));
+            var totalViewsSeries = new TrendsAreaSeries("Views", nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalViews));
+            totalViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(ViewModel.DailyViewsList));
 
-            var totalUniqueViewsSeries = new AreaSeries
-            {
-                Label = "Total Unique Views",
-                XBindingPath = nameof(DailyViewsModel.LocalDay),
-                YBindingPath = nameof(DailyViewsModel.TotalUniqueViews),
-                LegendIcon = ChartLegendIcon.SeriesType
-            };
-            totalUniqueViewsSeries.SetBinding(AreaSeries.ItemsSourceProperty, nameof(ViewModel.DailyViewsList));
+            var totalUniqueViewsSeries = new TrendsAreaSeries("Unique Views", nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalUniqueViews));
+            totalUniqueViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(ViewModel.DailyViewsList));
+
+            var totalClonesSeries = new TrendsAreaSeries("Clones", nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalClones));
+            totalClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(ViewModel.DailyClonesList));
+
+            var totalUniqueClonesSeries = new TrendsAreaSeries("Unique Clones", nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalUniqueClones));
+            totalUniqueClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(ViewModel.DailyClonesList));
 
             var clonesChart = new SfChart
             {
+                ChartBehaviors = { new ChartZoomPanBehavior() },
                 Margin = new Thickness(10),
-                Series = { totalViewsSeries, totalUniqueViewsSeries },
+                Series = { totalViewsSeries, totalUniqueViewsSeries, totalClonesSeries, totalUniqueClonesSeries },
                 Title = new ChartTitle { Text = repository },
                 PrimaryAxis = new DateTimeAxis(),
                 SecondaryAxis = new NumericalAxis(),
-                Legend = new ChartLegend { DockPosition = LegendPlacement.Bottom, ToggleSeriesVisibility = true, IconWidth = 14, IconHeight = 14 }
+                Legend = new ChartLegend { DockPosition = LegendPlacement.Bottom, ToggleSeriesVisibility = true, IconWidth = 8, IconHeight = 8 }
             };
             clonesChart.SetBinding(IsVisibleProperty, nameof(ViewModel.IsChartVisible));
             clonesChart.PrimaryAxis.SetBinding(DateTimeAxis.MinimumProperty, nameof(ViewModel.MinDateValue));
@@ -50,8 +50,25 @@ namespace GitTrends
             absoluteLayout.Children.Add(clonesChart, new Rectangle(0, 0, 1, 1), AbsoluteLayoutFlags.All);
 
             Content = absoluteLayout;
+        }
 
-            ViewModel.FetchDataCommand?.Execute((owner, repository));
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            ViewModel.FetchDataCommand?.Execute((_owner, _repository));
+        }
+
+        class TrendsAreaSeries : AreaSeries
+        {
+            public TrendsAreaSeries(string title, string xDataTitle, string yDataTitle)
+            {
+                Opacity = 0.5;
+                Label = title;
+                XBindingPath = xDataTitle;
+                YBindingPath = yDataTitle;
+                LegendIcon = ChartLegendIcon.SeriesType;
+            }
         }
     }
 }
