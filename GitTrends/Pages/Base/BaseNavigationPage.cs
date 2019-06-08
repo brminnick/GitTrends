@@ -8,6 +8,7 @@ namespace GitTrends
     {
         public BaseNavigationPage(Xamarin.Forms.Page root) : base(root)
         {
+            BackgroundColor = ColorConstants.LightBlue;
             BarBackgroundColor = ColorConstants.MediumBlue;
             BarTextColor = Color.White;
 

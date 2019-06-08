@@ -28,7 +28,7 @@ namespace GitTrends
             };
             _listView.ItemTapped += HandleListViewItemTapped;
             _listView.SetBinding(ListView.IsRefreshingProperty, nameof(ViewModel.IsRefreshing));
-            _listView.SetBinding(ListView.ItemsSourceProperty, nameof(ViewModel.RepositoryCollection));
+            _listView.SetBinding(ListView.ItemsSourceProperty, nameof(ViewModel.RepositoryList));
             _listView.SetBinding(ListView.RefreshCommandProperty, nameof(ViewModel.PullToRefreshCommand));
 
             var settingsToolbarItem = new ToolbarItem { Text = "Settings" };
@@ -46,13 +46,17 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            if (!ViewModel.RepositoryCollection.Any())
+            if (ViewModel.RepositoryList?.Any() != true)
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken();
 
                 if (token?.AccessToken != null && !string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias))
                 {
                     _listView.BeginRefresh();
+                }
+                else
+                {
+                    NavigateToSettingsPage();
                 }
             }
         }
@@ -70,8 +74,10 @@ namespace GitTrends
             }
         }
 
-        void HandleSettingsToolbarItem(object sender, EventArgs e) =>
-            Device.BeginInvokeOnMainThread(async () => await Navigation.PushAsync(new ProfilePage()));
+        void NavigateToSettingsPage() => Device.BeginInvokeOnMainThread(async () => await Navigation.PushAsync(new ProfilePage()));
+
+        void HandleSettingsToolbarItem(object sender, EventArgs e) => NavigateToSettingsPage();
+
 
         void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)
         {

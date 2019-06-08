@@ -42,7 +42,6 @@ namespace GitTrends
 
             _repositoryDescriptionLabel = new DarkBlueLabel
             {
-                Margin = new Thickness(2, 0, 0, 0),
                 FontSize = _smallFontSize,
                 LineBreakMode = LineBreakMode.WordWrap,
                 HorizontalTextAlignment = TextAlignment.Start,
@@ -121,10 +120,10 @@ namespace GitTrends
                 _starsLabel.Text = $"{_starEmoji}️ {repository.StarCount}";
                 _forksLabel.Text = $"{_tuningForkEmoji}️ {repository.ForkCount}";
 
-                if (repository?.Issues?.IssuesCount >= 0)
+                if (repository.Issues?.IssuesCount >= 0)
                     _issuesLabel.Text = $"{_antEmoji} {repository.Issues.IssuesCount}";
-                else if (repository?.Issues?.IssueList?.Count >= 0)
-                    _issuesLabel.Text = $"{_antEmoji} {repository.Issues?.IssueList?.Count}";
+                else if (repository.Issues?.IssueList?.Count >= 0)
+                    _issuesLabel.Text = $"{_antEmoji} {repository.Issues.IssueList.Count}";
                 else
                     _issuesLabel.Text = null;
             }

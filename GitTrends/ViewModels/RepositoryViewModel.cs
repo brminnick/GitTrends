@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -7,7 +7,6 @@ using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Shared;
 using Refit;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -19,7 +18,7 @@ namespace GitTrends
 
         #region Fields
         bool _isRefreshing;
-        ObservableCollection<Repository> _repositoryCollection = new ObservableCollection<Repository>();
+        List<Repository> _repositoryList;
         #endregion
 
         public RepositoryViewModel()
@@ -38,10 +37,10 @@ namespace GitTrends
         #region Properties
         public ICommand PullToRefreshCommand { get; }
 
-        public ObservableCollection<Repository> RepositoryCollection
+        public List<Repository> RepositoryList
         {
-            get => _repositoryCollection;
-            set => SetProperty(ref _repositoryCollection, value);
+            get => _repositoryList;
+            set => SetProperty(ref _repositoryList, value);
         }
 
         public bool IsRefreshing
@@ -58,11 +57,10 @@ namespace GitTrends
             {
                 var repositoryList = await GitHubGraphQLApiService.GetRepositories(repositoryOwner).ConfigureAwait(false);
 
-                foreach (var repository in repositoryList.OrderByDescending(x => x.StarCount))
-                {
-                    RepositoryCollection.Add(repository);
+                var sortedRepositoryList = repositoryList.Where(x => x.Owner.Login.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(x => x.StarCount);
+
+                RepositoryList = new List<Repository>(sortedRepositoryList);
                 }
-            }
             catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.Unauthorized)
             {
                 OnPullToRefreshFailed("Invalid Api Token", "Login again");
