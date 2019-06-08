@@ -45,10 +45,9 @@ namespace GitTrends.Droid
                     await GitHubAuthenticationService.AuthorizeSession(new System.Uri(callbackUri.ToString())).ConfigureAwait(false);
 
                     if (Xamarin.Forms.Application.Current.MainPage is BaseNavigationPage navigationPage
-                        && navigationPage.Navigation.ModalStack.Count == 0
-                        && navigationPage.Navigation.NavigationStack.Count <= 1)
+                        && navigationPage.CurrentPage is RepositoryPage)
                     {
-                        await XamarinFormsServices.BeginInvokeOnMainThreadAsync(() => navigationPage.Navigation.PushAsync(new ProfilePage())).ConfigureAwait(false);
+                        await Xamarin.Forms.Device.InvokeOnMainThreadAsync(() => navigationPage.Navigation.PushAsync(new ProfilePage())).ConfigureAwait(false);
                     }
                 }
             }

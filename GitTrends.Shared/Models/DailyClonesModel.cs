@@ -18,9 +18,9 @@ namespace GitTrends.Shared
         }
 
         [JsonIgnore]
-        public long TotalViews => TotalCount;
+        public long TotalClones => TotalCount;
 
         [JsonIgnore]
-        public long TotalUniqueViews => TotalUniqueCount;
+        public long TotalUniqueClones => TotalUniqueCount;
     }
 }

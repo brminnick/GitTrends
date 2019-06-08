@@ -8,5 +8,7 @@ namespace GitTrends
         public readonly static Color MediumBlue = Color.FromHex("1FAECE");
         public readonly static Color LightBlue = Color.FromHex("96E2F5");
         public readonly static Color GitHubColor = Color.FromHex("333333");
+
+        public static Color ActivityIndicatorColor { get; } = Device.RuntimePlatform is Device.iOS ? Color.White : DarkBlue;
     }
 }

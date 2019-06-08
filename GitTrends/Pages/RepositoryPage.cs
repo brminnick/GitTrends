@@ -22,7 +22,7 @@ namespace GitTrends
                 ItemTemplate = new DataTemplate(typeof(RepositoryViewCell)),
                 SeparatorVisibility = SeparatorVisibility.None,
                 RowHeight = RepositoryViewCell.ImageHeight,
-                RefreshControlColor = Device.RuntimePlatform is Device.iOS ? Color.White : ColorConstants.DarkBlue,
+                RefreshControlColor = ColorConstants.ActivityIndicatorColor,
                 BackgroundColor = Color.Transparent,
                 SelectionMode = ListViewSelectionMode.None
             };
@@ -66,18 +66,15 @@ namespace GitTrends
             if (sender is ListView listView)
                 listView.SelectedItem = null;
 
-            if (e.Item is Repository repository
-                && repository.Uri.IsAbsoluteUri
-                && repository.Uri.Scheme.Equals(Uri.UriSchemeHttps))
+            if (e.Item is Repository repository)
             {
-                await OpenBrowser($"{repository.Uri}/graphs/traffic");
+                await Navigation.PushAsync(new TrendsPage(repository.Owner.Login, repository.Name));
             }
         }
 
         void NavigateToSettingsPage() => Device.BeginInvokeOnMainThread(async () => await Navigation.PushAsync(new ProfilePage()));
 
         void HandleSettingsToolbarItem(object sender, EventArgs e) => NavigateToSettingsPage();
-
 
         void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)
         {

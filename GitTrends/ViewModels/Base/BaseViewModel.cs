@@ -1,5 +1,5 @@
-﻿using System.ComponentModel;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using AsyncAwaitBestPractices;
 
@@ -32,8 +32,8 @@ namespace GitTrends
             OnPropertyChanged(propertyname);
         }
 
-        void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
-            _propertyChangedEventManager?.HandleEvent(this, new PropertyChangedEventArgs(propertyName), nameof(INotifyPropertyChanged.PropertyChanged));
+        protected void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
+            _propertyChangedEventManager.HandleEvent(this, new PropertyChangedEventArgs(propertyName), nameof(INotifyPropertyChanged.PropertyChanged));
         #endregion
     }
 }

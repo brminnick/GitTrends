@@ -5,8 +5,11 @@ namespace GitTrends.Shared
 {
     abstract class BaseDailyModel
     {
-        protected BaseDailyModel(DateTimeOffset day, long totalViews, long totalUniqueViews) => 
+        protected BaseDailyModel(DateTimeOffset day, long totalViews, long totalUniqueViews) =>
             (Day, TotalCount, TotalUniqueCount) = (day, totalViews, totalUniqueViews);
+
+        [JsonIgnore]
+        public DateTime LocalDay => Day.LocalDateTime;
 
         [JsonProperty("timestamp")]
         public DateTimeOffset Day { get; }

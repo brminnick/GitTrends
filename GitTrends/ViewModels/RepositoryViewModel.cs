@@ -60,7 +60,7 @@ namespace GitTrends
                 var sortedRepositoryList = repositoryList.Where(x => x.Owner.Login.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(x => x.StarCount);
 
                 RepositoryList = new List<Repository>(sortedRepositoryList);
-                }
+            }
             catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.Unauthorized)
             {
                 OnPullToRefreshFailed("Invalid Api Token", "Login again");
