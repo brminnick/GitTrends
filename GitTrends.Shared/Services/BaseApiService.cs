@@ -6,7 +6,7 @@ using Xamarin.Essentials;
 
 namespace GitTrends.Shared
 {
-    abstract class BaseApiService
+    public abstract class BaseApiService
     {
         #region Methods
         protected static Task<T> ExecutePollyFunction<T>(Func<Task<T>> action, int numRetries = 3)

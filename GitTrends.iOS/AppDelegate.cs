@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Foundation;
 using GitTrends.Mobile.Shared;
@@ -15,8 +16,10 @@ namespace GitTrends.iOS
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             global::Xamarin.Forms.Forms.Init();
+            FFImageLoading.Forms.Platform.CachedImageRenderer.Init();
+            FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageSourceHandler();
 
-            SyncFusionService.Initialize();
+            SyncFusionService.Initialize().SafeFireAndForget(onException: ex => Debug.WriteLine(ex));
 
             LoadApplication(new App());
 
@@ -29,10 +32,15 @@ namespace GitTrends.iOS
         {
             var callbackUri = new Uri(url.AbsoluteString);
 
-            HelperMethods.CloseSFSafariViewController().SafeFireAndForget(false);
-            GitHubAuthenticationService.AuthorizeSession(callbackUri).SafeFireAndForget(false);
+            HandleCallbackUri().SafeFireAndForget();
 
             return true;
+
+            async Task HandleCallbackUri()
+            {
+                await HelperMethods.CloseSFSafariViewController().ConfigureAwait(false);
+                await GitHubAuthenticationService.AuthorizeSession(callbackUri).ConfigureAwait(false);
+            }
         }
 
         public override void OnActivated(UIApplication uiApplication)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using GitTrends.Shared;
 using Xamarin.Forms;
 
@@ -56,7 +57,7 @@ namespace GitTrends
                 }
                 else
                 {
-                    NavigateToSettingsPage();
+                    await NavigateToSettingsPage();
                 }
             }
         }
@@ -72,9 +73,9 @@ namespace GitTrends
             }
         }
 
-        void NavigateToSettingsPage() => Device.BeginInvokeOnMainThread(async () => await Navigation.PushAsync(new ProfilePage()));
+        Task NavigateToSettingsPage() => XamarinFormsService.BeginInvokeOnMainThreadAsync(() => Navigation.PushAsync(new ProfilePage()));
 
-        void HandleSettingsToolbarItem(object sender, EventArgs e) => NavigateToSettingsPage();
+        async void HandleSettingsToolbarItem(object sender, EventArgs e) => await NavigateToSettingsPage();
 
         void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)
         {

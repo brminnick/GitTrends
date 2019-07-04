@@ -1,5 +1,4 @@
-﻿using System;
-using ImageCircle.Forms.Plugin.Abstractions;
+﻿using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -8,10 +7,14 @@ namespace GitTrends
     {
         #region Constant Fields
         readonly FontAwesomeButton _gitHubLoginButton;
+        readonly ActivityIndicator _activityIndicator;
         #endregion
 
+        #region Constructors
         public ProfilePage() : base("Settings")
         {
+            ViewModel.GitHubLoginUrlRetrieved += HandleGitHubLoginUrlRetrieved;
+
             var gitHubAvatarImage = new CircleImage
             {
                 HeightRequest = 250,
@@ -26,7 +29,6 @@ namespace GitTrends
 
             _gitHubLoginButton = new FontAwesomeButton
             {
-                Text = FontAwesomeButton.GitHubOctocat.ToString() + " Connect with GitHub",
                 TextColor = Color.White,
                 FontSize = 24,
                 BackgroundColor = ColorConstants.GitHubColor,
@@ -35,7 +37,13 @@ namespace GitTrends
                 Padding = new Thickness(10),
                 Margin = new Thickness(25)
             };
-            _gitHubLoginButton.Clicked += HandleGitHubLoginButtonClicked;
+            _gitHubLoginButton.SetBinding(IsEnabledProperty, nameof(ViewModel.IsNotAuthenticating));
+            _gitHubLoginButton.SetBinding(Button.TextProperty, nameof(ViewModel.LoginButtonText));
+            _gitHubLoginButton.SetBinding(Button.CommandProperty, nameof(ViewModel.LoginButtonCommand));
+
+            _activityIndicator = new ActivityIndicator { Color = Color.White };
+            _activityIndicator.SetBinding(IsVisibleProperty, nameof(ViewModel.IsAuthenticating));
+            _activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(ViewModel.IsAuthenticating));
 
             Content = new StackLayout
             {
@@ -46,25 +54,22 @@ namespace GitTrends
                 {
                     gitHubAvatarImage,
                     gitHubAliasLabel,
-                    _gitHubLoginButton
+                    _gitHubLoginButton,
+                    _activityIndicator
                 }
             };
         }
+        #endregion
 
+        #region Methods
         protected override void OnAppearing()
         {
+            ViewModel.IsAuthenticating = false;
+
             base.OnAppearing();
-
-            _gitHubLoginButton.IsEnabled = true;
         }
 
-        async void HandleGitHubLoginButtonClicked(object sender, EventArgs e)
-        {
-            if (sender is Button loginButton)
-                loginButton.IsEnabled = false;
-
-            var loginUrl = await GitHubAuthenticationService.GetGitHubLoginUrl().ConfigureAwait(false);
-            Device.BeginInvokeOnMainThread(async () => await OpenBrowser(loginUrl).ConfigureAwait(false));
-        }
+        async void HandleGitHubLoginUrlRetrieved(object sender, string loginUrl) => await OpenBrowser(loginUrl);
+        #endregion
     }
 }

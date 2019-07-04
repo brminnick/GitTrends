@@ -8,7 +8,7 @@ namespace GitTrends.iOS
     {
         public static Task<UIViewController> GetVisibleViewController()
         {
-            return XamarinFormsServices.BeginInvokeOnMainThreadAsync(() =>
+            return XamarinFormsService.BeginInvokeOnMainThreadAsync(() =>
             {
                 var rootController = UIApplication.SharedApplication.KeyWindow.RootViewController;
 
@@ -33,7 +33,7 @@ namespace GitTrends.iOS
         {
             while (await GetVisibleViewController().ConfigureAwait(false) is SFSafariViewController sfSafariViewController)
             {
-                await XamarinFormsServices.BeginInvokeOnMainThreadAsync(() => sfSafariViewController.DismissViewControllerAsync(true)).ConfigureAwait(false);
+                await XamarinFormsService.BeginInvokeOnMainThreadAsync(() => sfSafariViewController.DismissViewControllerAsync(true)).ConfigureAwait(false);
             }
         }
     }

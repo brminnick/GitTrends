@@ -13,6 +13,7 @@ namespace GitTrends
         #region Constant Fields
         const string _oauthTokenKey = "OAuthToken";
         readonly static WeakEventManager<AuthorizeSessionCompletedEventArgs> _authorizeSessionCompletedEventManager = new WeakEventManager<AuthorizeSessionCompletedEventArgs>();
+        readonly static WeakEventManager _authorizeSessionStartedEventManager = new WeakEventManager();
         #endregion
 
         #region Fields
@@ -20,6 +21,12 @@ namespace GitTrends
         #endregion
 
         #region Events
+        public static event EventHandler AuthorizeSessionStarted
+        {
+            add => _authorizeSessionStartedEventManager.AddEventHandler(value);
+            remove => _authorizeSessionStartedEventManager.RemoveEventHandler(value);
+        }
+
         public static event EventHandler<AuthorizeSessionCompletedEventArgs> AuthorizeSessionCompleted
         {
             add => _authorizeSessionCompletedEventManager.AddEventHandler(value);
@@ -28,6 +35,8 @@ namespace GitTrends
         #endregion
 
         #region Properties
+        public static bool IsAuthenticated => !string.IsNullOrWhiteSpace(Name);
+
         public static string Alias
         {
             get => Preferences.Get(nameof(Alias), string.Empty);
@@ -59,6 +68,8 @@ namespace GitTrends
 
         public static async Task AuthorizeSession(Uri callbackUri)
         {
+            OnAuthorizeSessionStarted();
+
             var code = HttpUtility.ParseQueryString(callbackUri.Query).Get("code");
             var state = HttpUtility.ParseQueryString(callbackUri.Query).Get("state");
 
@@ -110,6 +121,17 @@ namespace GitTrends
             }
         }
 
+        public static Task LogOut()
+        {
+            Alias = string.Empty;
+            Name = string.Empty;
+            AvatarUrl = string.Empty;
+
+            return InvalidateToken();
+        }
+
+        static Task InvalidateToken() => SecureStorage.SetAsync(_oauthTokenKey, string.Empty);
+
         static async Task SaveGitHubToken(GitHubToken token)
         {
             if (token is null)
@@ -124,6 +146,9 @@ namespace GitTrends
 
         static void OnAuthorizeSessionCompleted(bool isSessionAuthorized) =>
             _authorizeSessionCompletedEventManager.HandleEvent(null, new AuthorizeSessionCompletedEventArgs(isSessionAuthorized), nameof(AuthorizeSessionCompleted));
+
+        static void OnAuthorizeSessionStarted() =>
+            _authorizeSessionStartedEventManager.HandleEvent(null, EventArgs.Empty, nameof(AuthorizeSessionStarted));
         #endregion
     }
 }

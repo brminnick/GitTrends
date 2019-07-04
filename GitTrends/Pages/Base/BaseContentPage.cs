@@ -20,13 +20,16 @@ namespace GitTrends
 
         protected Task OpenBrowser(string url)
         {
-            var browserOptions = new BrowserLaunchOptions
+            return XamarinFormsService.BeginInvokeOnMainThreadAsync(() =>
             {
-                PreferredToolbarColor = ColorConstants.LightBlue,
-                PreferredControlColor = ColorConstants.DarkBlue
-            };
+                var browserOptions = new BrowserLaunchOptions
+                {
+                    PreferredToolbarColor = ColorConstants.LightBlue,
+                    PreferredControlColor = ColorConstants.DarkBlue
+                };
 
-            return Browser.OpenAsync(url, browserOptions);
+                return Browser.OpenAsync(url, browserOptions);
+            });
         }
     }
 }

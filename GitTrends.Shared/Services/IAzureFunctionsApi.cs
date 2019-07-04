@@ -11,5 +11,8 @@ namespace GitTrends.Shared
 
         [Post(@"/GenerateGitHubOAuthToken")]
         Task<GitHubToken> GenerateGitTrendsOAuthToken([Body] GenerateTokenDTO generateTokenDTO, [AliasAs("code")] string functionKey = AzureConstants.GenerateGitTrendsOAuthTokenApiKey);
+
+        [Get(@"/GetSyncFusionInformation")]
+        Task<SyncFusionDTO> GetSyncFusionInformation([AliasAs("code")] string functionKey = AzureConstants.GetSyncFusionInformationApiKey);
     }
 }

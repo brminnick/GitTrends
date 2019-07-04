@@ -1,4 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -31,23 +35,25 @@ namespace GitTrends.Droid
             CrossCurrentActivity.Current.Init(this, savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
+            FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageViewHandler();
 
-            SyncFusionService.Initialize();
+            SyncFusionService.Initialize().SafeFireAndForget(onException: ex => System.Diagnostics.Debug.WriteLine(ex));
 
             LoadApplication(new App());
 
-            executeCallbackUri().SafeFireAndForget(false);
+            executeCallbackUri().SafeFireAndForget();
 
             async Task executeCallbackUri()
             {
                 if (Intent?.Data is Android.Net.Uri callbackUri)
                 {
-                    await GitHubAuthenticationService.AuthorizeSession(new System.Uri(callbackUri.ToString())).ConfigureAwait(false);
-
-                    if (Xamarin.Forms.Application.Current.MainPage is BaseNavigationPage navigationPage
-                        && navigationPage.CurrentPage is RepositoryPage)
+                    if (Xamarin.Forms.Application.Current.MainPage is BaseNavigationPage baseNavigationPage)
                     {
-                        await Xamarin.Forms.Device.InvokeOnMainThreadAsync(() => navigationPage.Navigation.PushAsync(new ProfilePage())).ConfigureAwait(false);
+                        while (baseNavigationPage.CurrentPage.GetType() != typeof(ProfilePage))
+                             await Task.Delay(100);
+
+                        await GitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
                     }
                 }
             }

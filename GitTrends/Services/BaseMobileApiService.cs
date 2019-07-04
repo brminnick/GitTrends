@@ -5,7 +5,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    abstract class BaseMobileApiService : BaseApiService
+    public abstract class BaseMobileApiService : BaseApiService
     {
         #region Fields
         static int _networkIndicatorCount = 0;
