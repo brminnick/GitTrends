@@ -6,14 +6,14 @@ namespace GitTrends
 {
     class RepositoryViewCell : ViewCell
     {
-        public const int ImageHeight = 100;
+        public const int ImageHeight = 105;
 
         const int _smallFontSize = 12;
         const int _repositoryDetailColumnSize = 50;
 
-        const string _starEmoji = "\U00002B50";
-        const string _tuningForkEmoji = "\U00002442";
-        const string _antEmoji = "\U0001F41C";
+        const string _starEmoji = "⭐️";
+        const string _tuningForkEmoji = "⑂";
+        const string _antEmoji = "🐜";
 
         readonly CircleImage _image;
         readonly Label _repositoryNameLabel;
@@ -80,7 +80,7 @@ namespace GitTrends
 
                 RowDefinitions = {
                     new RowDefinition { Height = new GridLength(20, GridUnitType.Absolute) },
-                    new RowDefinition { Height = new GridLength(40, GridUnitType.Absolute) },
+                    new RowDefinition { Height = new GridLength(45, GridUnitType.Absolute) },
                     new RowDefinition { Height = new GridLength(1, GridUnitType.Star) },
                 },
                 ColumnDefinitions = {
@@ -117,8 +117,8 @@ namespace GitTrends
                 _image.Source = repository.Owner.AvatarUrl;
                 _repositoryNameLabel.Text = repository.Name;
                 _repositoryDescriptionLabel.Text = repository.Description;
-                _starsLabel.Text = $"{_starEmoji}️ {repository.StarCount}";
-                _forksLabel.Text = $"{_tuningForkEmoji}️ {repository.ForkCount}";
+                _starsLabel.Text = $"{_starEmoji} {repository.StarCount}";
+                _forksLabel.Text = $"{_tuningForkEmoji} {repository.ForkCount}";
 
                 if (repository.Issues?.IssuesCount >= 0)
                     _issuesLabel.Text = $"{_antEmoji} {repository.Issues.IssuesCount}";

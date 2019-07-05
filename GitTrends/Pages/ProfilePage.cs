@@ -41,7 +41,7 @@ namespace GitTrends
             _gitHubLoginButton.SetBinding(Button.TextProperty, nameof(ViewModel.LoginButtonText));
             _gitHubLoginButton.SetBinding(Button.CommandProperty, nameof(ViewModel.LoginButtonCommand));
 
-            _activityIndicator = new ActivityIndicator { Color = Color.White };
+            _activityIndicator = new ActivityIndicator { Color = ColorConstants.ActivityIndicatorColor };
             _activityIndicator.SetBinding(IsVisibleProperty, nameof(ViewModel.IsAuthenticating));
             _activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(ViewModel.IsAuthenticating));
 
