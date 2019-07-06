@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -7,16 +6,8 @@ namespace GitTrends.Shared
 {
     public class Repository
     {
-        [JsonConstructor, Obsolete]
-        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection issues, Uri url, StarGazers stargazers, [CallerMemberName]string unused = null)
-            : this(name, description, forkCount, owner, issues, url, stargazers)
-        {
-
-        }
-
-        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection issuesConnection, Uri url, StarGazers stargazers) =>
-            (Name, Description, ForkCount, Owner, Issues, Uri, StarGazers) = (name, description, forkCount, owner, issuesConnection, url, stargazers);
-
+        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection issues, Uri url, StarGazers stargazers) =>
+            (Name, Description, ForkCount, Owner, Issues, Uri, StarGazers) = (name, description, forkCount, owner, issues, url, stargazers);
 
         [JsonProperty("name")]
         public string Name { get; }
@@ -55,7 +46,6 @@ namespace GitTrends.Shared
 
             return stringBuilder.ToString();
         }
-
     }
 
     public class RepositoryOwner

@@ -29,7 +29,7 @@ namespace GitTrends
             };
             _listView.ItemTapped += HandleListViewItemTapped;
             _listView.SetBinding(ListView.IsRefreshingProperty, nameof(ViewModel.IsRefreshing));
-            _listView.SetBinding(ListView.ItemsSourceProperty, nameof(ViewModel.RepositoryList));
+            _listView.SetBinding(ListView.ItemsSourceProperty, nameof(ViewModel.RepositoryCollection));
             _listView.SetBinding(ListView.RefreshCommandProperty, nameof(ViewModel.PullToRefreshCommand));
 
             var settingsToolbarItem = new ToolbarItem { Text = "Settings" };
@@ -47,7 +47,7 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            if (ViewModel.RepositoryList?.Any() != true)
+            if (ViewModel.RepositoryCollection?.Any() != true)
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken();
 

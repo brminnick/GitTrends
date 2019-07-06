@@ -20,7 +20,7 @@ namespace GitTrends
         #endregion
 
         #region Methods
-        protected void SetProperty<T>(ref T backingStore, T value, System.Action onChanged = null, [CallerMemberName] string propertyname = "")
+        protected void SetProperty<T>(ref T backingStore, in T value, in System.Action? onChanged = null, [CallerMemberName] in string propertyname = "")
         {
             if (EqualityComparer<T>.Default.Equals(backingStore, value))
                 return;
@@ -32,7 +32,7 @@ namespace GitTrends
             OnPropertyChanged(propertyname);
         }
 
-        protected void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
+        protected void OnPropertyChanged([CallerMemberName] in string propertyName = "") =>
             _propertyChangedEventManager.HandleEvent(this, new PropertyChangedEventArgs(propertyName), nameof(INotifyPropertyChanged.PropertyChanged));
         #endregion
     }

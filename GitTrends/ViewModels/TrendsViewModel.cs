@@ -85,7 +85,7 @@ namespace GitTrends
                 IsFetchingData = false;
             }
 
-            DateTimeOffset removeHourMinuteSecond(DateTimeOffset date) => new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
+            DateTimeOffset removeHourMinuteSecond(in DateTimeOffset date) => new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
 
             void addMissingDates(in List<DailyViewsModel> dailyViewsList, in List<DailyClonesModel> dailyClonesList)
             {

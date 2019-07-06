@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -18,12 +18,11 @@ namespace GitTrends
 
         #region Fields
         bool _isRefreshing;
-        List<Repository> _repositoryList;
         #endregion
 
         public RepositoryViewModel()
         {
-            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(GitHubAuthenticationService.Alias), continueOnCapturedContext: false);
+            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(GitHubAuthenticationService.Alias));
         }
 
         #region Events
@@ -37,11 +36,7 @@ namespace GitTrends
         #region Properties
         public ICommand PullToRefreshCommand { get; }
 
-        public List<Repository> RepositoryList
-        {
-            get => _repositoryList;
-            set => SetProperty(ref _repositoryList, value);
-        }
+        public ObservableCollection<Repository> RepositoryCollection { get; } = new ObservableCollection<Repository>();
 
         public bool IsRefreshing
         {
@@ -55,15 +50,20 @@ namespace GitTrends
         {
             try
             {
-                var repositoryList = await GitHubGraphQLApiService.GetRepositories(repositoryOwner).ConfigureAwait(false);
+                var gitHubRepositoryList = await GitHubGraphQLApiService.GetRepositories(repositoryOwner).ConfigureAwait(false);
+                var currentRepositoryCollectionUriList = RepositoryCollection.Select(x => x.Uri);
 
-                var sortedRepositoryList = repositoryList.Where(x => x.Owner.Login.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(x => x.StarCount);
+                var repositoriesToAdd = gitHubRepositoryList.Where(x => !currentRepositoryCollectionUriList.Contains(x.Uri));
 
-                RepositoryList = new List<Repository>(sortedRepositoryList);
+                var sortedRepositoryToAddList = repositoriesToAdd.Where(x => x.Owner.Login.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(x => x.StarCount);
+
+                foreach (var repository in sortedRepositoryToAddList)
+                    RepositoryCollection.Add(repository);
             }
             catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.Unauthorized)
             {
-                OnPullToRefreshFailed("Invalid Api Token", "Login again");
+                OnPullToRefreshFailed("Login Expired", "Login again");
+                await GitHubAuthenticationService.LogOut().ConfigureAwait(false);
             }
             catch (Exception e)
             {
