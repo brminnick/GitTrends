@@ -69,7 +69,7 @@ namespace GitTrends
 
             if (e.Item is Repository repository)
             {
-                await Navigation.PushAsync(new TrendsPage(repository.Owner.Login, repository.Name));
+                await Navigation.PushAsync(new TrendsPage(repository.OwnerLogin, repository.Name));
             }
         }
 

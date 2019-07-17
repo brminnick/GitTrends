@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace GitTrends.Shared
 {
-    public class Repository
+    public class Repository : IRepository
     {
         public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection issues, Uri url, StarGazers stargazers) =>
-            (Name, Description, ForkCount, Owner, Issues, Uri, StarGazers) = (name, description, forkCount, owner, issues, url, stargazers);
+            (Name, Description, ForkCount, OwnerLogin, OwnerAvatarUrl, IssuesCount, Uri, StarCount) = (name, description, forkCount, owner.Login, owner.AvatarUrl, issues?.IssuesCount ?? 0, url, stargazers.TotalCount);
+
+        public string OwnerLogin { get; }
+        public Uri OwnerAvatarUrl { get; }
+        public int StarCount { get; }
+        public int IssuesCount { get; }
 
         [JsonProperty("name")]
         public string Name { get; }
@@ -18,31 +24,19 @@ namespace GitTrends.Shared
         [JsonProperty("forkCount")]
         public long ForkCount { get; }
 
-        [JsonProperty("owner")]
-        public RepositoryOwner Owner { get; }
-
-        [JsonProperty("issues")]
-        public IssuesConnection Issues { get; }
-
         [JsonProperty("url")]
         public Uri Uri { get; }
-
-        [JsonIgnore]
-        public int StarCount => StarGazers?.TotalCount ?? 0;
-
-        [JsonProperty("stargazers")]
-        StarGazers StarGazers { get; }
 
         public override string ToString()
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"{nameof(Name)}: {Name}");
-            stringBuilder.AppendLine($"{nameof(Owner)} {nameof(Owner.Login)}: {Owner?.Login}");
-            stringBuilder.AppendLine($"{nameof(Owner)} {nameof(Owner.AvatarUrl)}: {Owner?.AvatarUrl}");
+            stringBuilder.AppendLine($"{nameof(OwnerLogin)}: {OwnerLogin}");
+            stringBuilder.AppendLine($"{nameof(OwnerAvatarUrl)}: {OwnerAvatarUrl}");
             stringBuilder.AppendLine($"{nameof(StarCount)}: {StarCount}");
             stringBuilder.AppendLine($"{nameof(Description)}: {Description}");
             stringBuilder.AppendLine($"{nameof(ForkCount)}: {ForkCount}");
-            stringBuilder.AppendLine($"{nameof(Issues)}Count: {Issues?.IssueList.Count}");
+            stringBuilder.AppendLine($"{nameof(IssuesCount)}: {IssuesCount}");
 
             return stringBuilder.ToString();
         }

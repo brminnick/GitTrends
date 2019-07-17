@@ -58,7 +58,7 @@ namespace GitTrends
             return gitHubRepositoryList;
         }
 
-        static async Task<RepositoryConnection> GetRepositoryConnection(string repositoryOwner, string endCursor, int numberOfRepositoriesPerRequest = 100)
+        static async Task<RepositoryConnection> GetRepositoryConnection(string repositoryOwner, string? endCursor, int numberOfRepositoriesPerRequest = 100)
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
             var data = await ExecuteGraphQLRequest(() => GitHubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
@@ -76,7 +76,7 @@ namespace GitTrends
             return response.Data;
         }
 
-        static string GetEndCursorString(string endCursor) => string.IsNullOrWhiteSpace(endCursor) ? string.Empty : "after: \"" + endCursor + "\"";
+        static string GetEndCursorString(string? endCursor) => string.IsNullOrWhiteSpace(endCursor) ? string.Empty : "after: \"" + endCursor + "\"";
         #endregion
     }
 }

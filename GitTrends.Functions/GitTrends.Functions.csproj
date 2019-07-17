@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
@@ -11,7 +11,7 @@
         <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
         <PackageReference Include="Polly" Version="7.1.0" />
         <PackageReference Include="Refit" Version="4.7.9" />
-        <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
+        <PackageReference Include="Xamarin.Essentials" Version="1.2.0" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="obj\*" />

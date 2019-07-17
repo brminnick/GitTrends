@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices;
@@ -36,7 +40,7 @@ namespace GitTrends
         #region Properties
         public ICommand PullToRefreshCommand { get; }
 
-        public ObservableCollection<Repository> RepositoryCollection { get; } = new ObservableCollection<Repository>();
+        public ObservableCollection<Repository> RepositoryCollection { get; private set; } = new ObservableCollection<Repository>();
 
         public bool IsRefreshing
         {
@@ -50,17 +54,10 @@ namespace GitTrends
         {
             try
             {
-                var gitHubRepositoryList = await GitHubGraphQLApiService.GetRepositories(repositoryOwner).ConfigureAwait(false);
-                var currentRepositoryCollectionUriList = RepositoryCollection.Select(x => x.Uri);
-
-                var repositoriesToAdd = gitHubRepositoryList.Where(x => !currentRepositoryCollectionUriList.Contains(x.Uri));
-
-                var sortedRepositoryToAddList = repositoriesToAdd.Where(x => x.Owner.Login.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(x => x.StarCount);
-
-                foreach (var repository in sortedRepositoryToAddList)
-                    RepositoryCollection.Add(repository);
+                await AddRepositoriesToCollectionFromDatabase(repositoryOwner).ConfigureAwait(false);
+                await AddRepositoriesToCollectionFromGitHub(repositoryOwner).ConfigureAwait(false);
             }
-            catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.Unauthorized)
+            catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
             {
                 OnPullToRefreshFailed("Login Expired", "Login again");
                 await GitHubAuthenticationService.LogOut().ConfigureAwait(false);
@@ -72,6 +69,61 @@ namespace GitTrends
             finally
             {
                 IsRefreshing = false;
+            }
+        }
+
+        async Task AddRepositoriesToCollectionFromDatabase(string repositoryOwner)
+        {
+            var respositoryList = await RepositoryDatabase.GetRepositories().ConfigureAwait(false);
+
+            AddRepositoriesToCollection(GetRepositoriesNotInCollection(respositoryList), repositoryOwner);
+        }
+
+        async Task AddRepositoriesToCollectionFromGitHub(string repositoryOwner)
+        {
+            var gitHubRepositoryList = await GitHubGraphQLApiService.GetRepositories(repositoryOwner).ConfigureAwait(false);
+
+            var repositoriesToAdd = GetRepositoriesNotInCollection(gitHubRepositoryList);
+
+            AddRepositoriesToCollection(repositoriesToAdd, repositoryOwner);
+
+            await RepositoryDatabase.SaveRepositories(repositoriesToAdd).ConfigureAwait(false);
+        }
+
+        IEnumerable<Repository> GetRepositoriesNotInCollection(in IEnumerable<Repository> repositoryList)
+        {
+            var currentRepositoryCollectionUriList = RepositoryCollection.Select(x => x.Uri).ToList();
+
+            return repositoryList.Where(x => !currentRepositoryCollectionUriList.Contains(x.Uri));
+        }
+
+        void AddRepositoriesToCollection(IEnumerable<Repository> repositoriesToAdd, string repositoryOwner)
+        {
+            var sortedNewRepositoryList = repositoriesToAdd.Where(x => x.OwnerLogin.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(x => x.StarCount).ToList();
+
+            if (!RepositoryCollection.Any())
+            {
+                foreach (var repository in sortedNewRepositoryList)
+                {
+                    RepositoryCollection.Add(repository);
+                }
+            }
+            else
+            {
+                var repositoryList = RepositoryCollection.ToList();
+                repositoryList.AddRange(sortedNewRepositoryList);
+
+                var sortedTotalRepositoryList = repositoryList.Where(x => x.OwnerLogin.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(x => x.StarCount).ToList();
+
+                foreach (var repository in sortedNewRepositoryList)
+                {
+                    var index = sortedTotalRepositoryList.IndexOf(repository);
+
+                    if (index >= RepositoryCollection.Count)
+                        RepositoryCollection.Add(repository);
+                    else
+                        RepositoryCollection.Insert(index, repository);
+                }
             }
         }
 

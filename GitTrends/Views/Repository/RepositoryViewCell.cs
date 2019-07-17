@@ -112,29 +112,21 @@ namespace GitTrends
         {
             base.OnBindingContextChanged();
 
+            _image.Source = null;
+            _repositoryNameLabel.Text = null;
+            _repositoryDescriptionLabel.Text = null;
+            _starsLabel.Text = null;
+            _forksLabel.Text = null;
+            _issuesLabel.Text = null;
+
             if (BindingContext is Repository repository)
             {
-                _image.Source = repository.Owner.AvatarUrl;
+                _image.Source = repository.OwnerAvatarUrl;
                 _repositoryNameLabel.Text = repository.Name;
                 _repositoryDescriptionLabel.Text = repository.Description;
                 _starsLabel.Text = $"{_starEmoji} {repository.StarCount}";
                 _forksLabel.Text = $"{_tuningForkEmoji} {repository.ForkCount}";
-
-                if (repository.Issues?.IssuesCount >= 0)
-                    _issuesLabel.Text = $"{_antEmoji} {repository.Issues.IssuesCount}";
-                else if (repository.Issues?.IssueList?.Count >= 0)
-                    _issuesLabel.Text = $"{_antEmoji} {repository.Issues.IssueList.Count}";
-                else
-                    _issuesLabel.Text = null;
-            }
-            else
-            {
-                _image.Source = null;
-                _repositoryNameLabel.Text = null;
-                _repositoryDescriptionLabel.Text = null;
-                _starsLabel.Text = null;
-                _forksLabel.Text = null;
-                _issuesLabel.Text = null;
+                _issuesLabel.Text = $"{_antEmoji} {repository.IssuesCount}";
             }
         }
 
