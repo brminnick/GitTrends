@@ -1,4 +1,5 @@
-﻿using GitTrends.Shared;
+﻿using FFImageLoading.Svg.Forms;
+using GitTrends.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
 
@@ -9,18 +10,12 @@ namespace GitTrends
         public const int ImageHeight = 105;
 
         const int _smallFontSize = 12;
-        const int _repositoryDetailColumnSize = 50;
+        const int _emojiColumnSize = 15;
+        const int _countColumnSize = 35;
 
-        const string _starEmoji = "⭐️";
-        const string _tuningForkEmoji = "⑂";
-        const string _antEmoji = "🐜";
-
+        readonly SmallNavyBlueSVGImage _forksSVGImage, _starsSVGImage, _issuesSVGImage;
         readonly CircleImage _image;
-        readonly Label _repositoryNameLabel;
-        readonly Label _repositoryDescriptionLabel;
-        readonly Label _starsLabel;
-        readonly Label _forksLabel;
-        readonly Label _issuesLabel;
+        readonly DarkBlueLabel _repositoryNameLabel, _repositoryDescriptionLabel, _starsCountLabel, _forksCountLabel, _issuesCountLabel;
 
         public RepositoryViewCell()
         {
@@ -44,29 +39,18 @@ namespace GitTrends
             {
                 FontSize = _smallFontSize,
                 LineBreakMode = LineBreakMode.WordWrap,
-                HorizontalTextAlignment = TextAlignment.Start,
                 VerticalTextAlignment = TextAlignment.Start,
                 FontAttributes = FontAttributes.Italic
             };
 
-            _starsLabel = new DarkBlueLabel
-            {
-                HorizontalTextAlignment = TextAlignment.Start,
-                FontSize = _smallFontSize,
-            };
+            _starsSVGImage = new SmallNavyBlueSVGImage("star.svg");
+            _starsCountLabel = new DarkBlueLabel(_smallFontSize);
 
-            _forksLabel = new DarkBlueLabel
-            {
-                HorizontalTextAlignment = TextAlignment.Start,
-                FontSize = _smallFontSize,
-            };
+            _forksSVGImage = new SmallNavyBlueSVGImage("repo_forked.svg");
+            _forksCountLabel = new DarkBlueLabel(_smallFontSize);
 
-            _issuesLabel = new DarkBlueLabel
-            {
-                HorizontalTextAlignment = TextAlignment.Start,
-                FontSize = _smallFontSize,
-            };
-
+            _issuesSVGImage = new SmallNavyBlueSVGImage("issue_opened.svg");
+            _issuesCountLabel = new DarkBlueLabel(_smallFontSize);
 
             var grid = new Grid
             {
@@ -85,9 +69,12 @@ namespace GitTrends
                 },
                 ColumnDefinitions = {
                     new ColumnDefinition { Width = new GridLength(ImageHeight * 4/5, GridUnitType.Absolute) },
-                    new ColumnDefinition { Width = new GridLength(_repositoryDetailColumnSize, GridUnitType.Absolute) },
-                    new ColumnDefinition { Width = new GridLength(_repositoryDetailColumnSize, GridUnitType.Absolute) },
-                    new ColumnDefinition { Width = new GridLength(_repositoryDetailColumnSize, GridUnitType.Absolute) },
+                    new ColumnDefinition { Width = new GridLength(_emojiColumnSize, GridUnitType.Absolute) },
+                    new ColumnDefinition { Width = new GridLength(_countColumnSize, GridUnitType.Absolute) },
+                    new ColumnDefinition { Width = new GridLength(_emojiColumnSize, GridUnitType.Absolute) },
+                    new ColumnDefinition { Width = new GridLength(_countColumnSize, GridUnitType.Absolute) },
+                    new ColumnDefinition { Width = new GridLength(_emojiColumnSize, GridUnitType.Absolute) },
+                    new ColumnDefinition { Width = new GridLength(_countColumnSize, GridUnitType.Absolute) },
                     new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
                 }
             };
@@ -96,14 +83,19 @@ namespace GitTrends
             Grid.SetRowSpan(_image, 3);
 
             grid.Children.Add(_repositoryNameLabel, 1, 0);
-            Grid.SetColumnSpan(_repositoryNameLabel, 4);
+            Grid.SetColumnSpan(_repositoryNameLabel, 7);
 
             grid.Children.Add(_repositoryDescriptionLabel, 1, 1);
-            Grid.SetColumnSpan(_repositoryDescriptionLabel, 4);
+            Grid.SetColumnSpan(_repositoryDescriptionLabel, 7);
 
-            grid.Children.Add(_starsLabel, 1, 2);
-            grid.Children.Add(_forksLabel, 2, 2);
-            grid.Children.Add(_issuesLabel, 3, 2);
+            grid.Children.Add(_starsSVGImage, 1, 2);
+            grid.Children.Add(_starsCountLabel, 2, 2);
+
+            grid.Children.Add(_forksSVGImage, 3, 2);
+            grid.Children.Add(_forksCountLabel, 4, 2);
+
+            grid.Children.Add(_issuesSVGImage, 5, 2);
+            grid.Children.Add(_issuesCountLabel, 6, 2);
 
             View = grid;
         }
@@ -115,24 +107,40 @@ namespace GitTrends
             _image.Source = null;
             _repositoryNameLabel.Text = null;
             _repositoryDescriptionLabel.Text = null;
-            _starsLabel.Text = null;
-            _forksLabel.Text = null;
-            _issuesLabel.Text = null;
+            _starsCountLabel.Text = null;
+            _forksCountLabel.Text = null;
+            _issuesCountLabel.Text = null;
 
             if (BindingContext is Repository repository)
             {
                 _image.Source = repository.OwnerAvatarUrl;
                 _repositoryNameLabel.Text = repository.Name;
                 _repositoryDescriptionLabel.Text = repository.Description;
-                _starsLabel.Text = $"{_starEmoji} {repository.StarCount}";
-                _forksLabel.Text = $"{_tuningForkEmoji} {repository.ForkCount}";
-                _issuesLabel.Text = $"{_antEmoji} {repository.IssuesCount}";
+                _starsCountLabel.Text = repository.StarCount.ToString();
+                _forksCountLabel.Text = repository.ForkCount.ToString();
+                _issuesCountLabel.Text = repository.IssuesCount.ToString();
+            }
+        }
+
+        class SmallNavyBlueSVGImage : SvgCachedImage
+        {
+            public SmallNavyBlueSVGImage(string svgFileName)
+            {
+                ReplaceStringMap = SVGService.GetColorStringMap(ColorConstants.LightNavyBlueHex);
+                Source = SVGService.GetSVGResourcePath(svgFileName);
+                HeightRequest = _smallFontSize;
             }
         }
 
         class DarkBlueLabel : Label
         {
-            public DarkBlueLabel() => TextColor = ColorConstants.DarkBlue;
+            public DarkBlueLabel(double fontSize) : this() => FontSize = fontSize;
+
+            public DarkBlueLabel()
+            {
+                TextColor = ColorConstants.DarkBlue;
+                HorizontalTextAlignment = TextAlignment.Start;
+            }
         }
     }
 }

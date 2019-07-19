@@ -31,6 +31,7 @@
         <WarningLevel>4</WarningLevel>
         <AndroidLinkMode>None</AndroidLinkMode>
         <AndroidDexTool>d8</AndroidDexTool>
+        <AndroidUseAapt2>true</AndroidUseAapt2>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
         <DebugSymbols>true</DebugSymbols>
@@ -47,6 +48,9 @@
         <AndroidDexTool>d8</AndroidDexTool>
         <AndroidLinkTool>r8</AndroidLinkTool>
         <AndroidSupportedAbis>armeabi-v7a</AndroidSupportedAbis>
+        <AndroidLinkMode>Full</AndroidLinkMode>
+        <EnableLLVM>true</EnableLLVM>
+        <AndroidUseAapt2>true</AndroidUseAapt2>
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="Mono.Android" />
@@ -62,9 +66,9 @@
         <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.0.0.5" />
         <PackageReference Include="Plugin.CurrentActivity" Version="2.1.0.4" />
         <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="17.1.0.50" />
-        <PackageReference Include="Xamarin.FFImageLoading.Forms" Version="2.4.11.982" />
         <PackageReference Include="sqlite-net-pcl" Version="1.6.258-beta" />
         <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.3" />
+        <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
     </ItemGroup>
     <ItemGroup>
         <Compile Include="MainActivity.cs" />
