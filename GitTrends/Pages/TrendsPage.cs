@@ -13,21 +13,21 @@ namespace GitTrends
             _owner = owner;
             _repository = repository;
 
-            var activityIndicator = new ActivityIndicator { Color = ColorConstants.ActivityIndicatorColor };
-            activityIndicator.SetBinding(IsVisibleProperty, nameof(ViewModel.IsFetchingData));
-            activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(ViewModel.IsFetchingData));
+            var activityIndicator = new ActivityIndicator { Color = ColorConstants.DarkNavyBlue };
+            activityIndicator.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData));
+            activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
 
             var totalViewsSeries = new TrendsAreaSeries("Views", nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalViews), ColorConstants.DarkestBlue);
-            totalViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(ViewModel.DailyViewsList));
+            totalViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList));
 
             var totalUniqueViewsSeries = new TrendsAreaSeries("Unique Views", nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalUniqueViews), ColorConstants.MediumBlue);
-            totalUniqueViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(ViewModel.DailyViewsList));
+            totalUniqueViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList));
 
             var totalClonesSeries = new TrendsAreaSeries("Clones", nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalClones), ColorConstants.DarkNavyBlue);
-            totalClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(ViewModel.DailyClonesList));
+            totalClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyClonesList));
 
             var totalUniqueClonesSeries = new TrendsAreaSeries("Unique Clones", nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalUniqueClones), ColorConstants.LightNavyBlue);
-            totalUniqueClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(ViewModel.DailyClonesList));
+            totalUniqueClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyClonesList));
 
             var clonesChart = new SfChart
             {
@@ -39,11 +39,11 @@ namespace GitTrends
                 Legend = new ChartLegend { DockPosition = LegendPlacement.Bottom, ToggleSeriesVisibility = true, IconWidth = 8, IconHeight = 8 },
                 BackgroundColor = Color.Transparent
             };
-            clonesChart.SetBinding(IsVisibleProperty, nameof(ViewModel.IsChartVisible));
-            clonesChart.PrimaryAxis.SetBinding(DateTimeAxis.MinimumProperty, nameof(ViewModel.MinDateValue));
-            clonesChart.PrimaryAxis.SetBinding(DateTimeAxis.MaximumProperty, nameof(ViewModel.MaxDateValue));
-            clonesChart.SecondaryAxis.SetBinding(NumericalAxis.MinimumProperty, nameof(ViewModel.DailyViewsMinValue));
-            clonesChart.SecondaryAxis.SetBinding(NumericalAxis.MaximumProperty, nameof(ViewModel.DailyViewsMaxValue));
+            clonesChart.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsChartVisible));
+            clonesChart.PrimaryAxis.SetBinding(DateTimeAxis.MinimumProperty, nameof(TrendsViewModel.MinDateValue));
+            clonesChart.PrimaryAxis.SetBinding(DateTimeAxis.MaximumProperty, nameof(TrendsViewModel.MaxDateValue));
+            clonesChart.SecondaryAxis.SetBinding(NumericalAxis.MinimumProperty, nameof(TrendsViewModel.DailyViewsMinValue));
+            clonesChart.SecondaryAxis.SetBinding(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.DailyViewsMaxValue));
 
             var absoluteLayout = new AbsoluteLayout();
             absoluteLayout.Children.Add(activityIndicator, new Rectangle(.5, .5, -1, -1), AbsoluteLayoutFlags.PositionProportional);

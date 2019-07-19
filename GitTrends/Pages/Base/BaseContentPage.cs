@@ -20,7 +20,7 @@ namespace GitTrends
 
         protected Task OpenBrowser(string url)
         {
-            return XamarinFormsService.BeginInvokeOnMainThreadAsync(() =>
+            return Device.InvokeOnMainThreadAsync(() =>
             {
                 var browserOptions = new BrowserLaunchOptions
                 {

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using SafariServices;
 using UIKit;
+using Xamarin.Forms;
 
 namespace GitTrends.iOS
 {
@@ -8,7 +9,7 @@ namespace GitTrends.iOS
     {
         public static Task<UIViewController> GetVisibleViewController()
         {
-            return XamarinFormsService.BeginInvokeOnMainThreadAsync(() =>
+            return Device.InvokeOnMainThreadAsync(() =>
             {
                 var rootController = UIApplication.SharedApplication.KeyWindow.RootViewController;
 
@@ -33,7 +34,7 @@ namespace GitTrends.iOS
         {
             while (await GetVisibleViewController().ConfigureAwait(false) is SFSafariViewController sfSafariViewController)
             {
-                await XamarinFormsService.BeginInvokeOnMainThreadAsync(() => sfSafariViewController.DismissViewControllerAsync(true)).ConfigureAwait(false);
+                await Device.InvokeOnMainThreadAsync(() => sfSafariViewController.DismissViewControllerAsync(true)).ConfigureAwait(false);
             }
         }
     }

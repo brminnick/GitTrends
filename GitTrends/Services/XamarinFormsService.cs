@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Collections.Generic;
 
 using Xamarin.Forms;
@@ -9,105 +7,6 @@ namespace GitTrends
 {
     public static class XamarinFormsService
     {
-        #region Methods
-        public static Task<T> BeginInvokeOnMainThreadAsync<T>(Func<Task<T>> method, Action? onComplete = null)
-        {
-            var tcs = new TaskCompletionSource<T>();
-
-            Device.BeginInvokeOnMainThread(async () =>
-            {
-                try
-                {
-                    var task = method.Invoke();
-                    tcs.SetResult(await task.ConfigureAwait(false));
-                }
-                catch (Exception e)
-                {
-                    tcs.SetException(e);
-                }
-                finally
-                {
-                    onComplete?.Invoke();
-                }
-            });
-
-            return tcs.Task;
-        }
-
-        public static Task<T> BeginInvokeOnMainThreadAsync<T>(Func<T> method, Action? onComplete = null)
-        {
-            var tcs = new TaskCompletionSource<T>();
-
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                try
-                {
-                    var result = method.Invoke();
-                    tcs.SetResult(result);
-                }
-                catch (Exception e)
-                {
-                    tcs.SetException(e);
-                }
-                finally
-                {
-                    onComplete?.Invoke();
-                }
-            });
-
-            return tcs.Task;
-        }
-
-        public static Task BeginInvokeOnMainThreadAsync(Action method, Action? onComplete = null)
-        {
-            var tcs = new TaskCompletionSource<object?>();
-
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                try
-                {
-                    method.Invoke();
-                    tcs.SetResult(null);
-                }
-                catch (Exception e)
-                {
-                    tcs.SetException(e);
-                }
-                finally
-                {
-                    onComplete?.Invoke();
-                }
-            });
-
-            return tcs.Task;
-        }
-
-        public static Task BeginInvokeOnMainThreadAsync(Func<Task> method, Action? onComplete = null)
-        {
-            var tcs = new TaskCompletionSource<object?>();
-
-            Device.BeginInvokeOnMainThread(async () =>
-            {
-                try
-                {
-                    var task = method.Invoke();
-                    await task.ConfigureAwait(false);
-
-                    tcs.SetResult(null);
-                }
-                catch (Exception e)
-                {
-                    tcs.SetException(e);
-                }
-                finally
-                {
-                    onComplete?.Invoke();
-                }
-            });
-
-            return tcs.Task;
-        }
-
         public static void CompressAllLayouts(this Layout<View> layout)
         {
             var childLayouts = GetChildLayouts(layout);
@@ -152,7 +51,6 @@ namespace GitTrends
 
             return childLayouts?.Concat(childContentViewLayouts)?.ToList() ?? new List<Layout<View>>();
         }
-        #endregion
     }
 }
 

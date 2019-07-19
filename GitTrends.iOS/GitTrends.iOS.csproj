@@ -70,6 +70,7 @@
         <ConsolePause>false</ConsolePause>
         <CodesignKey>iPhone Developer</CodesignKey>
         <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+        <MtouchUseLlvm>true</MtouchUseLlvm>
     </PropertyGroup>
     <ItemGroup>
         <Compile Include="Main.cs" />

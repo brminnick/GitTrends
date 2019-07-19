@@ -7,21 +7,21 @@ namespace GitTrends
 {
     class RepositoryViewCell : ViewCell
     {
-        public const int ImageHeight = 105;
+        public const int RowHeight = 105;
 
         const int _smallFontSize = 12;
         const int _emojiColumnSize = 15;
-        const int _countColumnSize = 35;
+        const int _countColumnSize = 30;
 
-        readonly SmallNavyBlueSVGImage _forksSVGImage, _starsSVGImage, _issuesSVGImage;
         readonly CircleImage _image;
+        readonly SmallNavyBlueSVGImage _forksSVGImage, _starsSVGImage, _issuesSVGImage;
         readonly DarkBlueLabel _repositoryNameLabel, _repositoryDescriptionLabel, _starsCountLabel, _forksCountLabel, _issuesCountLabel;
 
         public RepositoryViewCell()
         {
             _image = new CircleImage
             {
-                HeightRequest = ImageHeight,
+                HeightRequest = RowHeight,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
             };
@@ -58,6 +58,7 @@ namespace GitTrends
 
                 Margin = new Thickness(5, 5, 5, 0),
                 RowSpacing = 2,
+                ColumnSpacing = 3,
 
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.StartAndExpand,
@@ -68,34 +69,35 @@ namespace GitTrends
                     new RowDefinition { Height = new GridLength(1, GridUnitType.Star) },
                 },
                 ColumnDefinitions = {
-                    new ColumnDefinition { Width = new GridLength(ImageHeight * 4/5, GridUnitType.Absolute) },
+                    new ColumnDefinition { Width = new GridLength(RowHeight * 4/5, GridUnitType.Absolute) },
+                    new ColumnDefinition { Width = new GridLength(2, GridUnitType.Absolute) },
                     new ColumnDefinition { Width = new GridLength(_emojiColumnSize, GridUnitType.Absolute) },
                     new ColumnDefinition { Width = new GridLength(_countColumnSize, GridUnitType.Absolute) },
                     new ColumnDefinition { Width = new GridLength(_emojiColumnSize, GridUnitType.Absolute) },
                     new ColumnDefinition { Width = new GridLength(_countColumnSize, GridUnitType.Absolute) },
                     new ColumnDefinition { Width = new GridLength(_emojiColumnSize, GridUnitType.Absolute) },
                     new ColumnDefinition { Width = new GridLength(_countColumnSize, GridUnitType.Absolute) },
-                    new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
+                    new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }                    
                 }
             };
 
             grid.Children.Add(_image, 0, 0);
             Grid.SetRowSpan(_image, 3);
 
-            grid.Children.Add(_repositoryNameLabel, 1, 0);
+            grid.Children.Add(_repositoryNameLabel, 2, 0);
             Grid.SetColumnSpan(_repositoryNameLabel, 7);
 
-            grid.Children.Add(_repositoryDescriptionLabel, 1, 1);
+            grid.Children.Add(_repositoryDescriptionLabel, 2, 1);
             Grid.SetColumnSpan(_repositoryDescriptionLabel, 7);
 
-            grid.Children.Add(_starsSVGImage, 1, 2);
-            grid.Children.Add(_starsCountLabel, 2, 2);
+            grid.Children.Add(_starsSVGImage, 2, 2);
+            grid.Children.Add(_starsCountLabel, 3, 2);
 
-            grid.Children.Add(_forksSVGImage, 3, 2);
-            grid.Children.Add(_forksCountLabel, 4, 2);
+            grid.Children.Add(_forksSVGImage, 4, 2);
+            grid.Children.Add(_forksCountLabel, 5, 2);
 
-            grid.Children.Add(_issuesSVGImage, 5, 2);
-            grid.Children.Add(_issuesCountLabel, 6, 2);
+            grid.Children.Add(_issuesSVGImage, 6, 2);
+            grid.Children.Add(_issuesCountLabel, 7, 2);
 
             View = grid;
         }

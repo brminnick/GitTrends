@@ -22,15 +22,15 @@ namespace GitTrends
                 IsPullToRefreshEnabled = true,
                 ItemTemplate = new DataTemplate(typeof(RepositoryViewCell)),
                 SeparatorVisibility = SeparatorVisibility.None,
-                RowHeight = RepositoryViewCell.ImageHeight,
+                RowHeight = RepositoryViewCell.RowHeight,
                 RefreshControlColor = ColorConstants.ActivityIndicatorColor,
                 BackgroundColor = Color.Transparent,
                 SelectionMode = ListViewSelectionMode.None
             };
             _listView.ItemTapped += HandleListViewItemTapped;
-            _listView.SetBinding(ListView.IsRefreshingProperty, nameof(ViewModel.IsRefreshing));
-            _listView.SetBinding(ListView.ItemsSourceProperty, nameof(ViewModel.RepositoryCollection));
-            _listView.SetBinding(ListView.RefreshCommandProperty, nameof(ViewModel.PullToRefreshCommand));
+            _listView.SetBinding(ListView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
+            _listView.SetBinding(ListView.ItemsSourceProperty, nameof(RepositoryViewModel.RepositoryCollection));
+            _listView.SetBinding(ListView.RefreshCommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
 
             var settingsToolbarItem = new ToolbarItem { Text = "Settings" };
             settingsToolbarItem.Clicked += HandleSettingsToolbarItem;
@@ -73,7 +73,7 @@ namespace GitTrends
             }
         }
 
-        Task NavigateToSettingsPage() => XamarinFormsService.BeginInvokeOnMainThreadAsync(() => Navigation.PushAsync(new ProfilePage()));
+        Task NavigateToSettingsPage() => Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(new ProfilePage()));
 
         async void HandleSettingsToolbarItem(object sender, EventArgs e) => await NavigateToSettingsPage();
 
