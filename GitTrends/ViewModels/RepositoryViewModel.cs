@@ -97,7 +97,7 @@ namespace GitTrends
             return repositoryList.Where(x => !currentRepositoryCollectionUriList.Contains(x.Uri));
         }
 
-        void AddRepositoriesToCollection(IEnumerable<Repository> repositoriesToAdd, string repositoryOwner)
+        void AddRepositoriesToCollection(in IEnumerable<Repository> repositoriesToAdd, string repositoryOwner)
         {
             var sortedNewRepositoryList = repositoriesToAdd.Where(x => x.OwnerLogin.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(x => x.StarCount).ToList();
 

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
@@ -38,7 +35,6 @@ namespace GitTrends.Droid
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageViewHandler();
 
-
             SyncFusionService.Initialize().SafeFireAndForget(onException: ex => System.Diagnostics.Debug.WriteLine(ex));
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
 
@@ -53,7 +49,7 @@ namespace GitTrends.Droid
                     if (Xamarin.Forms.Application.Current.MainPage is BaseNavigationPage baseNavigationPage)
                     {
                         while (baseNavigationPage.CurrentPage.GetType() != typeof(ProfilePage))
-                             await Task.Delay(100);
+                             await Task.Delay(100).ConfigureAwait(false);
 
                         await GitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
                     }

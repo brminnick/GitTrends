@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Shared;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -62,6 +59,8 @@ namespace GitTrends
         {
             IsFetchingData = true;
 
+            await Task.Yield();
+
             try
             {
                 var getRepositoryViewStatisticsTask = GitHubApiV3Service.GetRepositoryViewStatistics(owner, repository);
@@ -85,8 +84,6 @@ namespace GitTrends
                 IsFetchingData = false;
             }
 
-            DateTimeOffset removeHourMinuteSecond(in DateTimeOffset date) => new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
-
             void addMissingDates(in List<DailyViewsModel> dailyViewsList, in List<DailyClonesModel> dailyClonesList)
             {
                 var day = GetMinimumDateTimeOffset(dailyViewsList, dailyClonesList);
@@ -108,6 +105,8 @@ namespace GitTrends
                     day = day.AddDays(1);
                 }
             }
+
+            DateTimeOffset removeHourMinuteSecond(in DateTimeOffset date) => new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
         }
 
         void UpdateDailyClonesListPropertiesChanged()
@@ -164,6 +163,7 @@ namespace GitTrends
             return new DateTime(Math.Max(maxViewsDateTime.Ticks, maxClonesDateTime.Ticks));
         }
 
+        [Conditional("DEBUG")]
         void PrintDays()
         {
             Debug.WriteLine("Clones");

@@ -56,7 +56,7 @@ namespace GitTrends
             {
                 BackgroundColor = Color.Transparent,
 
-                Margin = new Thickness(5, 5, 5, 0),
+                Margin = new Thickness(10, 10, 10, 0),
                 RowSpacing = 2,
                 ColumnSpacing = 3,
 
@@ -128,8 +128,8 @@ namespace GitTrends
         {
             public SmallNavyBlueSVGImage(string svgFileName)
             {
-                ReplaceStringMap = SVGService.GetColorStringMap(ColorConstants.LightNavyBlueHex);
-                Source = SVGService.GetSVGResourcePath(svgFileName);
+                ReplaceStringMap = SvgService.GetColorStringMap(ColorConstants.LightNavyBlueHex);
+                Source = SvgService.GetSVGResourcePath(svgFileName);
                 HeightRequest = _smallFontSize;
             }
         }

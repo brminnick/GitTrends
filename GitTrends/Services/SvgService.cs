@@ -2,7 +2,7 @@
 
 namespace GitTrends
 {
-    public static class SVGService
+    public static class SvgService
     {
         public static string GetSVGResourcePath(string fileName) => $"resource://{nameof(GitTrends)}.Resources.{fileName}";
 

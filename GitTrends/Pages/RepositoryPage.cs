@@ -65,11 +65,13 @@ namespace GitTrends
         async void HandleListViewItemTapped(object sender, ItemTappedEventArgs e)
         {
             if (sender is ListView listView)
+            {
                 listView.SelectedItem = null;
 
-            if (e.Item is Repository repository)
-            {
-                await Navigation.PushAsync(new TrendsPage(repository.OwnerLogin, repository.Name));
+                if (!listView.IsRefreshing && e.Item is Repository repository)
+                {
+                    await Navigation.PushAsync(new TrendsPage(repository.OwnerLogin, repository.Name));
+                }
             }
         }
 
