@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -12,6 +11,13 @@ namespace GitTrends
     abstract class RepositoryDatabase : BaseDatabase
     {
         #region Methods
+        public static async Task<int> DeleteAllData()
+        {
+            var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
+
+            return await databaseConnection.DropTableAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
+        }
+
         public static async Task<int> SaveRepository(Repository repository)
         {
             var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);

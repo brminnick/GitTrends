@@ -127,7 +127,7 @@ namespace GitTrends
             Name = string.Empty;
             AvatarUrl = string.Empty;
 
-            return InvalidateToken();
+            return Task.WhenAll(InvalidateToken(), RepositoryDatabase.DeleteAllData());
         }
 
         static Task InvalidateToken() => SecureStorage.SetAsync(_oauthTokenKey, string.Empty);
