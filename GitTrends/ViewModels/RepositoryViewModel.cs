@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices;
@@ -40,7 +38,7 @@ namespace GitTrends
         #region Properties
         public ICommand PullToRefreshCommand { get; }
 
-        public ObservableCollection<Repository> RepositoryCollection { get; private set; } = new ObservableCollection<Repository>();
+        public ObservableCollection<Repository> RepositoryCollection { get; } = new ObservableCollection<Repository>();
 
         public bool IsRefreshing
         {
@@ -52,6 +50,8 @@ namespace GitTrends
         #region Methods
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
+            await Task.Yield();
+
             try
             {
                 await AddRepositoriesToCollectionFromDatabase(repositoryOwner).ConfigureAwait(false);
@@ -108,7 +108,7 @@ namespace GitTrends
                     RepositoryCollection.Add(repository);
                 }
             }
-            else
+            else if(sortedNewRepositoryList.Any())
             {
                 var repositoryList = RepositoryCollection.ToList();
                 repositoryList.AddRange(sortedNewRepositoryList);

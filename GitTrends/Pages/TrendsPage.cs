@@ -104,8 +104,8 @@ namespace GitTrends
                     MajorTickStyle = new ChartAxisTickStyle { StrokeColor = ColorConstants.LightNavyBlue },
                     ShowMajorGridLines = false
                 };
-                SecondaryAxis.SetBinding(NumericalAxis.MinimumProperty, nameof(TrendsViewModel.DailyViewsMinValue));
-                SecondaryAxis.SetBinding(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.DailyViewsMaxValue));
+                SecondaryAxis.SetBinding(NumericalAxis.MinimumProperty, nameof(TrendsViewModel.DailyViewsClonesMinValue));
+                SecondaryAxis.SetBinding(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.DailyViewsClonesMaxValue));
 
                 BackgroundColor = Color.Transparent;
 
