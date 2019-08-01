@@ -80,7 +80,6 @@
         <None Include="Info.plist" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Services\HelperMethods.cs" />
-        <Compile Include="CustomRenderers\HiddenHomeIndicatorViewController.cs" />
     </ItemGroup>
     <ItemGroup>
         <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -153,7 +152,6 @@
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Services\" />
-        <Folder Include="CustomRenderers\" />
     </ItemGroup>
     <ItemGroup>
         <BundleResource Include="Resources\FontAwesomeBrands.ttf" />
