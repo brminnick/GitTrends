@@ -2,8 +2,6 @@
 using GitTrends.Shared;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Forms;
-using Xamarin.Forms.PlatformConfiguration;
-using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends
 {
@@ -17,8 +15,6 @@ namespace GitTrends
         #region Constructors
         public TrendsPage(string owner, string repository) : base(repository)
         {
-            On<iOS>().SetPrefersHomeIndicatorAutoHidden(true);
-
             _owner = owner;
             _repository = repository;
 
@@ -113,7 +109,7 @@ namespace GitTrends
 
                 BackgroundColor = Color.Transparent;
 
-                Margin = Device.RuntimePlatform is Device.iOS ? new Thickness(0, 5) : new Thickness(0, 5, 0, 0);
+                Margin = Device.RuntimePlatform is Device.iOS ? new Thickness(0, 5, 0, 15) : new Thickness(0, 5, 0, 0);
             }
 
             class TrendsAreaSeries : AreaSeries
