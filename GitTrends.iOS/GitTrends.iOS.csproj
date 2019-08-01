@@ -80,6 +80,7 @@
         <None Include="Info.plist" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Services\HelperMethods.cs" />
+        <Compile Include="CustomRenderers\HiddenHomeIndicatorViewController.cs" />
     </ItemGroup>
     <ItemGroup>
         <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -143,7 +144,6 @@
         <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.3" />
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
     </ItemGroup>
-    <Import Project="..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems')" />
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
     <ItemGroup>
         <ProjectReference Include="..\GitTrends\GitTrends.csproj">
@@ -153,6 +153,7 @@
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Services\" />
+        <Folder Include="CustomRenderers\" />
     </ItemGroup>
     <ItemGroup>
         <BundleResource Include="Resources\FontAwesomeBrands.ttf" />

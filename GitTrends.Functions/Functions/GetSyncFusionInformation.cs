@@ -20,7 +20,7 @@ namespace GitTrends.Functions
             if (string.IsNullOrWhiteSpace(licenseKey))
                 return new BadRequestObjectResult($"Key for {nameof(licenseVersion)} {licenseVersion} not found");
 
-            return new OkObjectResult(new SyncFusionDTO(licenseKey, licenseVersion));
+            return new OkObjectResult(new SyncfusionDTO(licenseKey, licenseVersion));
         }
     }
 }

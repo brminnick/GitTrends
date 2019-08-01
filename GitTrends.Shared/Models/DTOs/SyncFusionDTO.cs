@@ -2,7 +2,7 @@
 {
     public class SyncfusionDTO
     {
-        public SyncFusionDTO(string licenseKey, long licenseVersion) =>
+        public SyncfusionDTO(string licenseKey, long licenseVersion) =>
             (LicenseKey, LicenseVersion) = (licenseKey, licenseVersion);
 
         public string LicenseKey { get; }

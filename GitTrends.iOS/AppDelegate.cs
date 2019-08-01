@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Foundation;
-using GitTrends.Mobile.Shared;
 using UIKit;
 
 namespace GitTrends.iOS
@@ -16,11 +15,12 @@ namespace GitTrends.iOS
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             global::Xamarin.Forms.Forms.Init();
+            Syncfusion.SfChart.XForms.iOS.Renderers.SfChartRenderer.Init();
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init();
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageSourceHandler();
+            var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
 
             SyncfusionService.Initialize().SafeFireAndForget(onException: ex => Debug.WriteLine(ex));
-            var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
 
             LoadApplication(new App());
 
