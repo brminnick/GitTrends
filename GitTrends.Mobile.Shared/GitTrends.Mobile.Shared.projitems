@@ -9,9 +9,9 @@
     <Import_RootNamespace>GitTrends.Mobile.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Service\SyncFusionService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\SyncFusionService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Service\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Services\" />
   </ItemGroup>
 </Project>

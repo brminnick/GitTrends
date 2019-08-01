@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
-using Refit;
 using GitTrends.Shared;
+using Refit;
 
 namespace GitTrends
 {
@@ -18,7 +19,11 @@ namespace GitTrends
         #region Methods
         public static Task<GetGitHubClientIdDTO> GetGitHubClientId() => ExecuteMobilePollyFunction(() => AzureFunctionsApiClient.GetGitTrendsClientId());
         public static Task<GitHubToken> GenerateGitTrendsOAuthToken(GenerateTokenDTO generateTokenDTO) => ExecuteMobilePollyFunction(() => AzureFunctionsApiClient.GenerateGitTrendsOAuthToken(generateTokenDTO));
-        public static Task<SyncFusionDTO> GetSyncFusionInformation() => ExecuteMobilePollyFunction(() => AzureFunctionsApiClient.GetSyncFusionInformation());
+        public static Task<SyncFusionDTO> GetSyncFusionInformation()
+        {
+            var syncfusionVersionNumber = Assembly.GetAssembly(typeof(Syncfusion.CoreAssembly)).GetName().Version.ToString();
+            return ExecuteMobilePollyFunction(() => AzureFunctionsApiClient.GetSyncFusionInformation(syncfusionVersionNumber));
+        }
         #endregion
     }
 }

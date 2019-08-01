@@ -18,11 +18,11 @@ namespace GitTrends.Mobile.Shared
             {
                 var syncFusionDto = await AzureFunctionsApiService.GetSyncFusionInformation().ConfigureAwait(false);
 
-                syncFusionLicense = syncFusionDto.License;
+                syncFusionLicense = syncFusionDto.LicenseKey;
 
                 await SaveSyncFusionLicense(syncFusionLicense).ConfigureAwait(false);
             }
-            catch
+            catch(System.Exception e)
             {
                 syncFusionLicense = await GetSyncFusionLicense().ConfigureAwait(false);
             }
@@ -31,8 +31,8 @@ namespace GitTrends.Mobile.Shared
                 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicense);
         }
 
-        public static Task<string> GetSyncFusionLicense() => SecureStorage.GetAsync(nameof(SyncFusionDTO.License));
+        public static Task<string> GetSyncFusionLicense() => SecureStorage.GetAsync(nameof(SyncFusionDTO.LicenseKey));
 
-        static Task SaveSyncFusionLicense(string license) => SecureStorage.SetAsync(nameof(SyncFusionDTO.License), license);
+        static Task SaveSyncFusionLicense(string license) => SecureStorage.SetAsync(nameof(SyncFusionDTO.LicenseKey), license);
     }
 }

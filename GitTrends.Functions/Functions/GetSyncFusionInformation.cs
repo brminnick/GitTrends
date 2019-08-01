@@ -10,9 +10,17 @@ namespace GitTrends.Functions
 {
     public static class GetSyncFusionInformation
     {
-        readonly static string _license = Environment.GetEnvironmentVariable("SyncFusionLicense");
-
         [FunctionName(nameof(GetSyncFusionInformation))]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request, ILogger log) => new OkObjectResult(new SyncFusionDTO(_license));
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "api/{licenseVersion:alpha}")] HttpRequest request, string licenseVersion, ILogger log)
+        {
+            log.LogInformation("Received request for SyncFusion Information");
+
+            var licenseKey = Environment.GetEnvironmentVariable($"SyncFusionLicense_{licenseVersion}");
+
+            if (string.IsNullOrWhiteSpace(licenseKey))
+                return new BadRequestObjectResult($"Key for {nameof(licenseVersion)} {licenseVersion} not found");
+
+            return new OkObjectResult(new SyncFusionDTO(licenseVersion, licenseKey));
+        }
     }
 }

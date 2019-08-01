@@ -18,7 +18,7 @@ namespace GitTrends
                 CompressedLayout.SetIsHeadless(layout, true);
         }
 
-        public static void CancelAllAnimations(VisualElement element)
+        public static void CancelAllAnimations(in VisualElement element)
         {
             switch (element)
             {
@@ -42,12 +42,15 @@ namespace GitTrends
             }
         }
 
-        static IList<Layout<View>> GetChildLayouts(Layout<View> layout)
+        static IList<Layout<View>> GetChildLayouts(in Layout<View> layout)
         {
-            var childLayouts = layout?.Children?.OfType<Layout<View>>()?.ToList() ?? new List<Layout<View>>();
+            if (layout?.Children is null || !layout.Children.Any())
+                return new List<Layout<View>>();
 
-            var childContentViews = layout?.Children?.OfType<ContentView>()?.ToList() ?? new List<ContentView>();
-            var childContentViewLayouts = childContentViews?.Where(x => x?.Content is Layout<View>)?.Select(x => x?.Content as Layout<View>)?.ToList() ?? new List<Layout<View>>();
+            var childLayouts = layout.Children.OfType<Layout<View>>()?.ToList() ?? new List<Layout<View>>();
+
+            var childContentViews = layout.Children.OfType<ContentView>()?.ToList() ?? new List<ContentView>();
+            var childContentViewLayouts = childContentViews.Where(x => x?.Content is Layout<View>)?.Select(x => x?.Content as Layout<View>)?.ToList() ?? new List<Layout<View>>();
 
             return childLayouts?.Concat(childContentViewLayouts)?.ToList() ?? new List<Layout<View>>();
         }

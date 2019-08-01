@@ -15,14 +15,14 @@ namespace GitTrends
         {
             var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
 
-            return await databaseConnection.DropTableAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
+            return await ExecutePollyFunction(() => databaseConnection.DropTableAsync<RepositoryDatabaseModel>()).ConfigureAwait(false);
         }
 
         public static async Task<int> SaveRepository(Repository repository)
         {
             var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
 
-            return await databaseConnection.InsertOrReplaceAsync((RepositoryDatabaseModel)repository).ConfigureAwait(false);
+            return await ExecutePollyFunction(() => databaseConnection.InsertOrReplaceAsync((RepositoryDatabaseModel)repository)).ConfigureAwait(false);
         }
 
         public static async Task<int> SaveRepositories(IEnumerable<Repository> repositories)
@@ -33,9 +33,9 @@ namespace GitTrends
 
                 var repositoryDatabaseModels = repositories.Select(x => (RepositoryDatabaseModel)x);
 
-                return await databaseConnection.InsertAllAsync(repositoryDatabaseModels).ConfigureAwait(false);
+                return await ExecutePollyFunction(() => databaseConnection.InsertAllAsync(repositoryDatabaseModels)).ConfigureAwait(false);
             }
-            catch(SQLiteException e) when (e.Result is SQLite3.Result.Constraint)
+            catch (SQLiteException e) when (e.Result is SQLite3.Result.Constraint)
             {
                 return -1;
             }
@@ -45,7 +45,7 @@ namespace GitTrends
         {
             var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
 
-            var repositoryDatabaseModel = await databaseConnection.GetAsync<RepositoryDatabaseModel>(repositoryUri).ConfigureAwait(false);
+            var repositoryDatabaseModel = await ExecutePollyFunction(() => databaseConnection.GetAsync<RepositoryDatabaseModel>(repositoryUri)).ConfigureAwait(false);
 
             return (Repository)repositoryDatabaseModel;
         }
@@ -54,7 +54,7 @@ namespace GitTrends
         {
             var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
 
-            var repositoryDatabaseModels = await databaseConnection.Table<RepositoryDatabaseModel>().ToListAsync().ConfigureAwait(false);
+            var repositoryDatabaseModels = await ExecutePollyFunction(() => databaseConnection.Table<RepositoryDatabaseModel>().ToListAsync()).ConfigureAwait(false);
 
             return repositoryDatabaseModels.Select(x => (Repository)x);
         }

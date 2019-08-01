@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,7 +43,7 @@ namespace GitTrends
             return data.Repository;
         }
 
-        public static async Task<List<Repository>> GetRepositories(string repositoryOwner, int numberOfRepositoriesPerRequest = 100)
+        public static async Task<IEnumerable<Repository>> GetRepositories(string repositoryOwner, int numberOfRepositoriesPerRequest = 100)
         {
             RepositoryConnection repositoryConnection = null;
 
@@ -68,7 +69,7 @@ namespace GitTrends
 
         static async Task<T> ExecuteGraphQLRequest<T>(Func<Task<GraphQLResponse<T>>> action, int numRetries = 2)
         {
-            var response = await ExecutePollyFunction(action, numRetries).ConfigureAwait(false);
+            var response = await ExecuteMobilePollyFunction(action, numRetries).ConfigureAwait(false);
 
             if (response.Errors != null)
                 throw new AggregateException(response.Errors.Select(x => new Exception(x.Message)));
