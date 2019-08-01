@@ -37,7 +37,15 @@ namespace GitTrends
             }
             catch (SQLiteException e) when (e.Result is SQLite3.Result.Constraint)
             {
-                return -1;
+                int count = 0;
+
+                foreach (var repository in repositories)
+                {
+                    await SaveRepository(repository).ConfigureAwait(false);
+                    count++;
+                }
+
+                return count;
             }
         }
 
