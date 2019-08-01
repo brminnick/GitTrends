@@ -1,6 +1,4 @@
-﻿using System;
-using Newtonsoft.Json;
-namespace GitTrends.Shared
+﻿namespace GitTrends.Shared
 {
     public class GenerateTokenDTO
     {

@@ -19,7 +19,7 @@ namespace GitTrends.iOS
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init();
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageSourceHandler();
 
-            SyncFusionService.Initialize().SafeFireAndForget(onException: ex => Debug.WriteLine(ex));
+            SyncfusionService.Initialize().SafeFireAndForget(onException: ex => Debug.WriteLine(ex));
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
 
             LoadApplication(new App());

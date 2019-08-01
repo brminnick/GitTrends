@@ -19,10 +19,11 @@ namespace GitTrends
         #region Methods
         public static Task<GetGitHubClientIdDTO> GetGitHubClientId() => ExecuteMobilePollyFunction(() => AzureFunctionsApiClient.GetGitTrendsClientId());
         public static Task<GitHubToken> GenerateGitTrendsOAuthToken(GenerateTokenDTO generateTokenDTO) => ExecuteMobilePollyFunction(() => AzureFunctionsApiClient.GenerateGitTrendsOAuthToken(generateTokenDTO));
-        public static Task<SyncFusionDTO> GetSyncFusionInformation()
+        public static Task<SyncfusionDTO> GetSyncfusionInformation()
         {
             var syncfusionVersionNumber = Assembly.GetAssembly(typeof(Syncfusion.CoreAssembly)).GetName().Version.ToString();
-            return ExecuteMobilePollyFunction(() => AzureFunctionsApiClient.GetSyncFusionInformation(syncfusionVersionNumber));
+            syncfusionVersionNumber = syncfusionVersionNumber.Replace(".", "");
+            return ExecuteMobilePollyFunction(() => AzureFunctionsApiClient.GetSyncfusionInformation(syncfusionVersionNumber));
         }
         #endregion
     }

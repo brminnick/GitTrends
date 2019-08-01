@@ -35,7 +35,7 @@ namespace GitTrends.Droid
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageViewHandler();
 
-            SyncFusionService.Initialize().SafeFireAndForget(onException: ex => System.Diagnostics.Debug.WriteLine(ex));
+            SyncfusionService.Initialize().SafeFireAndForget(onException: ex => System.Diagnostics.Debug.WriteLine(ex));
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
 
             LoadApplication(new App());

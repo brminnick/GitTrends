@@ -1,11 +1,12 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using Xamarin.Essentials;
 
 namespace GitTrends.Mobile.Shared
 {
-    public static class SyncFusionService
+    public static class SyncfusionService
     {
         public static async Task Initialize()
         {
@@ -16,7 +17,7 @@ namespace GitTrends.Mobile.Shared
 
             try
             {
-                var syncFusionDto = await AzureFunctionsApiService.GetSyncFusionInformation().ConfigureAwait(false);
+                var syncFusionDto = await AzureFunctionsApiService.GetSyncfusionInformation().ConfigureAwait(false);
 
                 syncFusionLicense = syncFusionDto.LicenseKey;
 
@@ -25,14 +26,17 @@ namespace GitTrends.Mobile.Shared
             catch(System.Exception e)
             {
                 syncFusionLicense = await GetSyncFusionLicense().ConfigureAwait(false);
+                // https://gittrendsfunctions.azurewebsites.net/api/GetSyncfusionInformation/{licenseVersion:alpha}?code=4CGtOo2YByzUOCZ5TiZenJiXSIo3/KU8tKWHLRBlIlxYvrcg7clr5g==
+
+                // HttpRequest Uri {https://gittrendsfunctions.azurewebsites.net/api/GetSyncfusionInformation/17_1_0_50?code=4CGtOo2YByzUOCZ5TiZenJiXSIo3%2FKU8tKWHLRBlIlxYvrcg7clr5g%3D%3D}
             }
 
             if (!string.IsNullOrWhiteSpace(syncFusionLicense))
                 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicense);
         }
 
-        public static Task<string> GetSyncFusionLicense() => SecureStorage.GetAsync(nameof(SyncFusionDTO.LicenseKey));
+        public static Task<string> GetSyncFusionLicense() => SecureStorage.GetAsync(nameof(SyncfusionDTO.LicenseKey));
 
-        static Task SaveSyncFusionLicense(string license) => SecureStorage.SetAsync(nameof(SyncFusionDTO.LicenseKey), license);
+        static Task SaveSyncFusionLicense(string license) => SecureStorage.SetAsync(nameof(SyncfusionDTO.LicenseKey), license);
     }
 }

@@ -8,9 +8,9 @@ using Microsoft.Extensions.Logging;
 
 namespace GitTrends.Functions
 {
-    public static class GetSyncFusionInformation
+    public static class GetSyncfusionInformation
     {
-        [FunctionName(nameof(GetSyncFusionInformation))]
+        [FunctionName(nameof(GetSyncfusionInformation))]
         public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "api/{licenseVersion:alpha}")] HttpRequest request, string licenseVersion, ILogger log)
         {
             log.LogInformation("Received request for SyncFusion Information");
@@ -20,7 +20,7 @@ namespace GitTrends.Functions
             if (string.IsNullOrWhiteSpace(licenseKey))
                 return new BadRequestObjectResult($"Key for {nameof(licenseVersion)} {licenseVersion} not found");
 
-            return new OkObjectResult(new SyncFusionDTO(licenseVersion, licenseKey));
+            return new OkObjectResult(new SyncfusionDTO(licenseVersion, licenseKey));
         }
     }
 }
