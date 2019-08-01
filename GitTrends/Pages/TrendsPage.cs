@@ -2,6 +2,8 @@
 using GitTrends.Shared;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Forms;
+using Xamarin.Forms.PlatformConfiguration;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends
 {
@@ -15,6 +17,8 @@ namespace GitTrends
         #region Constructors
         public TrendsPage(string owner, string repository) : base(repository)
         {
+            On<iOS>().SetPrefersHomeIndicatorAutoHidden(true);
+
             _owner = owner;
             _repository = repository;
 
