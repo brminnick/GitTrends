@@ -13,14 +13,14 @@ namespace GitTrends
     {
         #region Fields
         bool _isFetchingData = true;
-        List<DailyViewsModel> _dailyViewsList;
-        List<DailyClonesModel> _dailyClonesList;
+        List<DailyViewsModel> _dailyViewsList = new List<DailyViewsModel>();
+        List<DailyClonesModel> _dailyClonesList = new List<DailyClonesModel>();
         #endregion
 
         #region Constructors
         public TrendsViewModel()
         {
-            FetchDataCommand = new AsyncCommand<(string Owner, string Repository)>(repoTuple => ExecuteFetchDataCommand(repoTuple.Owner, repoTuple.Repository));
+            FetchDataCommand = new AsyncCommand<(string Owner, string Repository)>(repo => ExecuteFetchDataCommand(repo.Owner, repo.Repository));
         }
         #endregion
 
@@ -86,6 +86,7 @@ namespace GitTrends
             {
                 var day = GetMinimumDateTimeOffset(dailyViewsList, dailyClonesList);
                 var maximumDay = GetMaximumDateTimeOffset(dailyViewsList, dailyClonesList);
+
                 while (day.Day != maximumDay.Day + 1)
                 {
                     var viewsDays = dailyViewsList.Select(x => x.Day.Day).ToList();

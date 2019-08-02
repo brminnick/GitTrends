@@ -15,7 +15,7 @@ namespace GitTrends
         {
             var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
 
-            return await ExecutePollyFunction(() => databaseConnection.DropTableAsync<RepositoryDatabaseModel>()).ConfigureAwait(false);
+            return await ExecutePollyFunction(() => databaseConnection.DeleteAllAsync<RepositoryDatabaseModel>()).ConfigureAwait(false);
         }
 
         public static async Task<int> SaveRepository(Repository repository)
@@ -72,27 +72,27 @@ namespace GitTrends
         [EditorBrowsable(EditorBrowsableState.Never)]
         class RepositoryDatabaseModel : IRepository
         {
-            public string Name { get; set; }
+            public string Name { get; set; } = string.Empty;
 
-            public string Description { get; set; }
+            public string Description { get; set; } = string.Empty;
 
             public long ForkCount { get; set; }
 
             [PrimaryKey]
-            public Uri Uri { get; set; }
+            public Uri Uri { get; set; } = new Uri(string.Empty);
 
             public int StarCount { get; set; }
 
-            public string OwnerLogin { get; set; }
+            public string OwnerLogin { get; set; } = string.Empty;
 
-            public Uri OwnerAvatarUrl { get; set; }
+            public Uri OwnerAvatarUrl { get; set; } = new Uri(string.Empty);
 
             public int IssuesCount { get; set; }
 
             public static explicit operator Repository(RepositoryDatabaseModel repositoryDatabaseModel)
             {
                 return new Repository(repositoryDatabaseModel.Name, repositoryDatabaseModel.Description,
-                    repositoryDatabaseModel.ForkCount, new RepositoryOwner(repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl), new IssuesConnection(repositoryDatabaseModel.IssuesCount, null),
+                    repositoryDatabaseModel.ForkCount, new RepositoryOwner(repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl), new IssuesConnection(repositoryDatabaseModel.IssuesCount, new List<Issue>()),
                     repositoryDatabaseModel.Uri, new StarGazers(repositoryDatabaseModel.StarCount));
             }
 

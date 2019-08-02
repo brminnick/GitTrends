@@ -15,7 +15,7 @@ namespace GitTrends.Shared
         public GraphQLLocation[] Locations { get; }
 
         [JsonExtensionData]
-        public IDictionary<string, JToken> AdditonalEntries { get; set; }
+        public IDictionary<string, JToken>? AdditonalEntries { get; set; }
     }
 
     class GraphQLLocation

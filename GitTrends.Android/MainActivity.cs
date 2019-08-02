@@ -6,7 +6,6 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using AsyncAwaitBestPractices;
-using GitTrends.Mobile.Shared;
 using Plugin.CurrentActivity;
 
 namespace GitTrends.Droid

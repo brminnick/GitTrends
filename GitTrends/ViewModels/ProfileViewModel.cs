@@ -14,7 +14,9 @@ namespace GitTrends
         #endregion
 
         #region Fields
-        string _gitHubUserImageSource, _gitHubUserNameLabelText, _gitHubButtonText;
+        string _gitHubUserImageSource = string.Empty;
+        string _gitHubUserNameLabelText = string.Empty;
+        string _gitHubButtonText = string.Empty;
         bool _isAuthenticating;
         #endregion
 

@@ -39,7 +39,7 @@ namespace GitTrends.iOS
 
             async Task HandleCallbackUri()
             {
-                await HelperMethods.CloseSFSafariViewController().ConfigureAwait(false);
+                await ViewControllerServices.CloseSFSafariViewController().ConfigureAwait(false);
                 await GitHubAuthenticationService.AuthorizeSession(callbackUri).ConfigureAwait(false);
             }
         }

@@ -64,7 +64,10 @@ namespace GitTrends
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
             {
                 OnPullToRefreshFailed("Login Expired", "Login again");
+
                 await GitHubAuthenticationService.LogOut().ConfigureAwait(false);
+
+                RepositoryCollection.Clear();
             }
             catch (ApiException)
             {

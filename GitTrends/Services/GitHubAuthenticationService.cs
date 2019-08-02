@@ -113,11 +113,11 @@ namespace GitTrends
             }
             catch (ArgumentNullException)
             {
-                return null;
+                return new GitHubToken(string.Empty, string.Empty, string.Empty);
             }
             catch (JsonReaderException)
             {
-                return null;
+                return new GitHubToken(string.Empty, string.Empty, string.Empty);
             }
         }
 

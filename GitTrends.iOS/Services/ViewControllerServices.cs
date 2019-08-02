@@ -5,7 +5,7 @@ using Xamarin.Forms;
 
 namespace GitTrends.iOS
 {
-    public static class HelperMethods
+    public static class ViewControllerServices
     {
         public static Task<UIViewController> GetVisibleViewController()
         {
@@ -34,7 +34,12 @@ namespace GitTrends.iOS
         {
             while (await GetVisibleViewController().ConfigureAwait(false) is SFSafariViewController sfSafariViewController)
             {
-                await Device.InvokeOnMainThreadAsync(() => sfSafariViewController.DismissViewControllerAsync(true)).ConfigureAwait(false);
+                await Device.InvokeOnMainThreadAsync(() =>
+                {
+                    sfSafariViewController.DismissViewControllerAsync(true);
+                    sfSafariViewController.Dispose();
+                    sfSafariViewController = null;
+                }).ConfigureAwait(false);
             }
         }
     }

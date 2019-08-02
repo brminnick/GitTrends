@@ -45,7 +45,7 @@ namespace GitTrends
 
         public static async Task<IEnumerable<Repository>> GetRepositories(string repositoryOwner, int numberOfRepositoriesPerRequest = 100)
         {
-            RepositoryConnection repositoryConnection = null;
+            RepositoryConnection? repositoryConnection = null;
 
             List<Repository> gitHubRepositoryList = new List<Repository>();
 

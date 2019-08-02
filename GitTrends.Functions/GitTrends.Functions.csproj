@@ -5,6 +5,7 @@
         <AzureFunctionsVersion>v2</AzureFunctionsVersion>
         <LangVersion>8.0</LangVersion>
         <Nullable>enable</Nullable>
+        <NullableContextOptions>enable</NullableContextOptions>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />
