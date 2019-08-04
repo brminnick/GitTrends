@@ -7,6 +7,11 @@ namespace GitTrends
     {
         public App()
         {
+            FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration
+            {
+                HttpHeadersTimeout = 60
+            });
+
             MainPage = new BaseNavigationPage(new RepositoryPage());
 
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
