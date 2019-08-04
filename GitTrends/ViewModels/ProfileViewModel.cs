@@ -15,7 +15,7 @@ namespace GitTrends
         string _gitHubUserNameLabelText = string.Empty;
         string _gitHubButtonText = string.Empty;
         bool _isAuthenticating;
-\
+
         public ProfileViewModel()
         {
             LoginButtonCommand = new AsyncCommand(ExecuteLoginButtonCommand);

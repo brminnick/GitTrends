@@ -24,9 +24,19 @@ namespace GitTrends
 
         public bool IsChartVisible => !IsFetchingData;
         public double DailyViewsClonesMinValue => 0;
-        public double DailyViewsClonesMaxValue => Math.Max(DailyViewsList?.Max(x => x.TotalViews) ?? 0, DailyClonesList?.Max(x => x.TotalClones) ?? 0);
         public DateTime MinDateValue => GetMinimumLocalDateTime();
         public DateTime MaxDateValue => GetMaximumLocalDateTime();
+
+        public double DailyViewsClonesMaxValue
+        {
+            get
+            {
+                var dailyViewMaxValue = DailyViewsList.Any() ? DailyViewsList.Max(x => x.TotalViews) : 0;
+                var dailyClonesMaxValue = DailyClonesList.Any() ? DailyClonesList.Max(x => x.TotalClones) : 0;
+
+                return Math.Max(dailyViewMaxValue, dailyClonesMaxValue);
+            }
+        }
 
         public bool IsFetchingData
         {

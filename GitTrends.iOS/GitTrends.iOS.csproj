@@ -14,6 +14,10 @@
         <AssemblyName>GitTrends.iOS</AssemblyName>
         <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
         <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
+        <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+        <LangVersion>8.0</LangVersion>
+        <Nullable>enable</Nullable>
+        <NullableContextOptions>enable</NullableContextOptions>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
         <DebugSymbols>true</DebugSymbols>
@@ -80,6 +84,7 @@
         <None Include="Info.plist" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Services\ViewControllerServices.cs" />
+        <Compile Include="CustomRenderers\SearchPageRenderer.cs" />
     </ItemGroup>
     <ItemGroup>
         <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -152,6 +157,7 @@
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Services\" />
+        <Folder Include="CustomRenderers\" />
     </ItemGroup>
     <ItemGroup>
         <BundleResource Include="Resources\FontAwesomeBrands.ttf" />

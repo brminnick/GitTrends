@@ -38,7 +38,10 @@ namespace GitTrends.iOS
                 {
                     sfSafariViewController.DismissViewControllerAsync(true);
                     sfSafariViewController.Dispose();
+
+#pragma warning disable CS8600 //Converting null literal or possible null value to non-nullable type
                     sfSafariViewController = null;
+#pragma warning enable CS8600
                 }).ConfigureAwait(false);
             }
         }

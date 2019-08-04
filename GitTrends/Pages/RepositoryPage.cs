@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AsyncAwaitBestPractices;
 using GitTrends.Shared;
 using Xamarin.Forms;
 
@@ -8,11 +9,14 @@ namespace GitTrends
 {
     public class RepositoryPage : BaseContentPage<RepositoryViewModel>
     {
+        readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
+
         readonly ListView _listView;
 
         public RepositoryPage() : base("Repositories")
         {
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
+            SearchBarTextChanged += HandleSearchBarTextChanged;
 
             _listView = new ListView(ListViewCachingStrategy.RecycleElement)
             {
@@ -26,7 +30,7 @@ namespace GitTrends
             };
             _listView.ItemTapped += HandleListViewItemTapped;
             _listView.SetBinding(ListView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
-            _listView.SetBinding(ListView.ItemsSourceProperty, nameof(RepositoryViewModel.RepositoryCollection));
+            _listView.SetBinding(ListView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryCollection));
             _listView.SetBinding(ListView.RefreshCommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
 
             var settingsToolbarItem = new ToolbarItem { Text = "Settings" };
@@ -38,15 +42,23 @@ namespace GitTrends
             Content = _listView;
         }
 
+        public event EventHandler<string> SearchBarTextChanged
+        {
+            add => _searchTextChangedEventManager.AddEventHandler(value);
+            remove => _searchTextChangedEventManager.RemoveEventHandler(value);
+        }
+
+        public void OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.HandleEvent(this, text, nameof(SearchBarTextChanged));
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            if (ViewModel.RepositoryCollection?.Any() != true)
+            if (ViewModel.VisibleRepositoryCollection?.Any() != true)
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken();
 
-                if (token?.AccessToken != null && !string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias))
+                if (token.AccessToken != null && !string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias))
                 {
                     _listView.BeginRefresh();
                 }
@@ -85,5 +97,7 @@ namespace GitTrends
                 }
             });
         }
+
+        void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand?.Execute(searchBarText);
     }
 }

@@ -76,13 +76,13 @@ namespace GitTrends
             public long ForkCount { get; set; }
 
             [PrimaryKey]
-            public Uri Uri { get; set; } = new Uri(string.Empty);
+            public Uri? Uri { get; set; }
 
             public int StarCount { get; set; }
 
             public string OwnerLogin { get; set; } = string.Empty;
 
-            public Uri OwnerAvatarUrl { get; set; } = new Uri(string.Empty);
+            public Uri? OwnerAvatarUrl { get; set; }
 
             public int IssuesCount { get; set; }
 
