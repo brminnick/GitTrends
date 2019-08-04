@@ -8,7 +8,6 @@ namespace GitTrends.Shared
 {
     public abstract class BaseApiService
     {
-        #region Methods
         protected static Task<T> ExecutePollyFunction<T>(Func<Task<T>> action, int numRetries = 3)
         {
             return Policy.Handle<Exception>().WaitAndRetryAsync(numRetries, pollyRetryAttempt).ExecuteAsync(action);
@@ -33,7 +32,5 @@ namespace GitTrends.Shared
 
             return client;
         }
-
-        #endregion
     }
 }

@@ -9,18 +9,13 @@ namespace GitTrends
 {
     public class ProfileViewModel : BaseViewModel
     {
-        #region Constant Fields
         readonly WeakEventManager<string> _gitHubLoginUrlRetrievedEventManager = new WeakEventManager<string>();
-        #endregion
 
-        #region Fields
         string _gitHubUserImageSource = string.Empty;
         string _gitHubUserNameLabelText = string.Empty;
         string _gitHubButtonText = string.Empty;
         bool _isAuthenticating;
-        #endregion
-
-        #region Constructors
+\
         public ProfileViewModel()
         {
             LoginButtonCommand = new AsyncCommand(ExecuteLoginButtonCommand);
@@ -30,17 +25,13 @@ namespace GitTrends
 
             SetGitHubValues();
         }
-        #endregion
 
-        #region Events
         public event EventHandler<string> GitHubLoginUrlRetrieved
         {
             add => _gitHubLoginUrlRetrievedEventManager.AddEventHandler(value);
             remove => _gitHubLoginUrlRetrievedEventManager.RemoveEventHandler(value);
         }
-        #endregion
 
-        #region Properties
         public bool IsNotAuthenticating => !IsAuthenticating;
 
         public ICommand LoginButtonCommand { get; }
@@ -68,9 +59,7 @@ namespace GitTrends
             get => _isAuthenticating;
             set => SetProperty(ref _isAuthenticating, value, () => OnPropertyChanged(nameof(IsNotAuthenticating)));
         }
-        #endregion
 
-        #region Methods
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
         {
             SetGitHubValues();
@@ -110,6 +99,5 @@ namespace GitTrends
         }
 
         void OnGitHubLoginUrlRetrieved(string loginUrl) => _gitHubLoginUrlRetrievedEventManager.HandleEvent(this, loginUrl, nameof(GitHubLoginUrlRetrieved));
-        #endregion
     }
 }

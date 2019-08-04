@@ -10,17 +10,12 @@ namespace GitTrends
 {
     public static class GitHubAuthenticationService
     {
-        #region Constant Fields
         const string _oauthTokenKey = "OAuthToken";
         readonly static WeakEventManager<AuthorizeSessionCompletedEventArgs> _authorizeSessionCompletedEventManager = new WeakEventManager<AuthorizeSessionCompletedEventArgs>();
         readonly static WeakEventManager _authorizeSessionStartedEventManager = new WeakEventManager();
-        #endregion
 
-        #region Fields
         static string _sessionId;
-        #endregion
 
-        #region Events
         public static event EventHandler AuthorizeSessionStarted
         {
             add => _authorizeSessionStartedEventManager.AddEventHandler(value);
@@ -32,9 +27,7 @@ namespace GitTrends
             add => _authorizeSessionCompletedEventManager.AddEventHandler(value);
             remove => _authorizeSessionCompletedEventManager.RemoveEventHandler(value);
         }
-        #endregion
 
-        #region Properties
         public static bool IsAuthenticated => !string.IsNullOrWhiteSpace(Name);
 
         public static string Alias
@@ -54,9 +47,7 @@ namespace GitTrends
             get => Preferences.Get(nameof(AvatarUrl), string.Empty);
             set => Preferences.Set(nameof(AvatarUrl), value);
         }
-        #endregion
 
-        #region Methods
         public static async Task<string> GetGitHubLoginUrl()
         {
             _sessionId = Guid.NewGuid().ToString();
@@ -149,6 +140,5 @@ namespace GitTrends
 
         static void OnAuthorizeSessionStarted() =>
             _authorizeSessionStartedEventManager.HandleEvent(null, EventArgs.Empty, nameof(AuthorizeSessionStarted));
-        #endregion
     }
 }

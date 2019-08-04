@@ -7,11 +7,8 @@ namespace GitTrends
 {
     public abstract class BaseMobileApiService : BaseApiService
     {
-        #region Fields
         static int _networkIndicatorCount = 0;
-        #endregion
 
-        #region Methods
         protected static string GetGitHubBearerTokenHeader(GitHubToken token) => $"{token.TokenType} {token.AccessToken}";
 
         protected static async Task<T> ExecuteMobilePollyFunction<T>(Func<Task<T>> action, int numRetries = 3)
@@ -41,6 +38,5 @@ namespace GitTrends
                 _networkIndicatorCount = 0;
             }
         }
-        #endregion
     }
 }

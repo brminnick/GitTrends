@@ -10,7 +10,6 @@ namespace GitTrends
 {
     abstract class RepositoryDatabase : BaseDatabase
     {
-        #region Methods
         public static async Task<int> DeleteAllData()
         {
             var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
@@ -66,9 +65,7 @@ namespace GitTrends
 
             return repositoryDatabaseModels.Select(x => (Repository)x);
         }
-        #endregion
 
-        #region Classes
         [EditorBrowsable(EditorBrowsableState.Never)]
         class RepositoryDatabaseModel : IRepository
         {
@@ -111,6 +108,5 @@ namespace GitTrends
                 };
             }
         }
-        #endregion
     }
 }

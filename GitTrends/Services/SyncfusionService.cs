@@ -7,16 +7,11 @@ namespace GitTrends
 {
     public static class SyncfusionService
     {
-        #region Constant Fields
         readonly static Lazy<long> _assemblyVersionNumberHolder = new Lazy<long>(() => long.Parse(System.Reflection.Assembly.GetAssembly(typeof(Syncfusion.CoreAssembly)).GetName().Version.ToString().Replace(".", "")));
         readonly static Lazy<string> _syncfusionLicenseKeyHolder = new Lazy<string>(() => $"{nameof(SyncfusionDTO.LicenseKey)}_{AssemblyVersionNumber}");
-        #endregion
 
-        #region Properties
         public static long AssemblyVersionNumber => _assemblyVersionNumberHolder.Value;
-        #endregion
 
-        #region Methods
         public static async Task Initialize()
         {
             string syncFusionLicense;
@@ -41,6 +36,5 @@ namespace GitTrends
         public static Task<string> GetLicense() => SecureStorage.GetAsync(_syncfusionLicenseKeyHolder.Value);
 
         static Task SaveLicense(string license) => SecureStorage.SetAsync(_syncfusionLicenseKeyHolder.Value, license);
-        #endregion
     }
 }

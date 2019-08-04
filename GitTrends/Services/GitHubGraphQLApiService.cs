@@ -10,15 +10,10 @@ namespace GitTrends
 {
     abstract class GitHubGraphQLApiService : BaseMobileApiService
     {
-        #region Constant Fields
         readonly static Lazy<IGitHubGraphQLApi> _githubApiClientHolder = new Lazy<IGitHubGraphQLApi>(() => RestService.For<IGitHubGraphQLApi>(CreateHttpClient(GitHubConstants.GitHubGraphQLApi)));
-        #endregion
 
-        #region Properties
         static IGitHubGraphQLApi GitHubApiClient => _githubApiClientHolder.Value;
-        #endregion
 
-        #region Methods
         public static async Task<(string login, string name, Uri avatarUri)> GetCurrentUserInfo()
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
@@ -78,6 +73,5 @@ namespace GitTrends
         }
 
         static string GetEndCursorString(string? endCursor) => string.IsNullOrWhiteSpace(endCursor) ? string.Empty : "after: \"" + endCursor + "\"";
-        #endregion
     }
 }

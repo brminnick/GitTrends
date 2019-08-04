@@ -7,12 +7,9 @@ namespace GitTrends
 {
     class TrendsPage : BaseContentPage<TrendsViewModel>
     {
-        #region Constant Fields
         readonly string _owner, _repository;
         static readonly Lazy<GitHubTrendsChart> _gitHubTrendsChartHolder = new Lazy<GitHubTrendsChart>();
-        #endregion
 
-        #region Constructors
         public TrendsPage(string owner, string repository) : base(repository)
         {
             _owner = owner;
@@ -28,18 +25,14 @@ namespace GitTrends
 
             Content = absoluteLayout;
         }
-        #endregion
 
-        #region Methods
         protected override void OnAppearing()
         {
             base.OnAppearing();
 
             ViewModel.FetchDataCommand?.Execute((_owner, _repository));
         }
-        #endregion
 
-        #region Classes
         class GitHubTrendsChart : SfChart
         {
             public GitHubTrendsChart()
@@ -125,6 +118,5 @@ namespace GitTrends
                 }
             }
         }
-        #endregion
     }
 }

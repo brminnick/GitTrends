@@ -126,7 +126,7 @@ namespace GitTrends
 
         class SmallNavyBlueSVGImage : SvgCachedImage
         {
-            public SmallNavyBlueSVGImage(string svgFileName)
+            public SmallNavyBlueSVGImage(in string svgFileName)
             {
                 ReplaceStringMap = SvgService.GetColorStringMap(ColorConstants.LightNavyBlueHex);
                 Source = SvgService.GetSVGResourcePath(svgFileName);

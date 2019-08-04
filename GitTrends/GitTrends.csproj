@@ -30,7 +30,6 @@
       <Folder Include="Views\Repository\" />
       <Folder Include="Views\Base\" />
       <Folder Include="Database\" />
-      <Folder Include="Database\DatabaseModels\" />
       <Folder Include="Resources\" />
     </ItemGroup>
     <ItemGroup>

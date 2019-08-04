@@ -11,20 +11,15 @@ namespace GitTrends
 {
     class TrendsViewModel : BaseViewModel
     {
-        #region Fields
         bool _isFetchingData = true;
         List<DailyViewsModel> _dailyViewsList = new List<DailyViewsModel>();
         List<DailyClonesModel> _dailyClonesList = new List<DailyClonesModel>();
-        #endregion
 
-        #region Constructors
         public TrendsViewModel()
         {
             FetchDataCommand = new AsyncCommand<(string Owner, string Repository)>(repo => ExecuteFetchDataCommand(repo.Owner, repo.Repository));
         }
-        #endregion
 
-        #region Properties
         public ICommand FetchDataCommand { get; }
 
         public bool IsChartVisible => !IsFetchingData;
@@ -50,9 +45,7 @@ namespace GitTrends
             get => _dailyClonesList;
             set => SetProperty(ref _dailyClonesList, value, UpdateDailyClonesListPropertiesChanged);
         }
-        #endregion
 
-        #region Methods
         async Task ExecuteFetchDataCommand(string owner, string repository)
         {
             IsFetchingData = true;
@@ -175,6 +168,5 @@ namespace GitTrends
             foreach (var viewDay in DailyViewsList.Select(x => x.Day))
                 Debug.WriteLine(viewDay);
         }
-        #endregion
     }
 }

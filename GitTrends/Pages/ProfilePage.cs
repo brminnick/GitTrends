@@ -5,12 +5,9 @@ namespace GitTrends
 {
     public class ProfilePage : BaseContentPage<ProfileViewModel>
     {
-        #region Constant Fields
         readonly FontAwesomeButton _gitHubLoginButton;
         readonly ActivityIndicator _activityIndicator;
-        #endregion
 
-        #region Constructors
         public ProfilePage() : base("Settings")
         {
             ViewModel.GitHubLoginUrlRetrieved += HandleGitHubLoginUrlRetrieved;
@@ -59,9 +56,7 @@ namespace GitTrends
                 }
             };
         }
-        #endregion
 
-        #region Methods
         protected override void OnAppearing()
         {
             ViewModel.IsAuthenticating = false;
@@ -70,6 +65,5 @@ namespace GitTrends
         }
 
         async void HandleGitHubLoginUrlRetrieved(object sender, string loginUrl) => await OpenBrowser(loginUrl);
-        #endregion
     }
 }

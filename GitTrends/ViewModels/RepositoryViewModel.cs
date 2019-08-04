@@ -15,28 +15,21 @@ namespace GitTrends
 {
     public class RepositoryViewModel : BaseViewModel
     {
-        #region Constant Fields
         readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
-        #endregion
 
-        #region Fields
         bool _isRefreshing;
-        #endregion
 
         public RepositoryViewModel()
         {
             PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(GitHubAuthenticationService.Alias));
         }
 
-        #region Events
         public event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
         {
             add => _pullToRefreshFailedEventManager.AddEventHandler(value);
             remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
         }
-        #endregion
 
-        #region Properties
         public ICommand PullToRefreshCommand { get; }
 
         public ObservableCollection<Repository> RepositoryCollection { get; } = new ObservableCollection<Repository>();
@@ -46,9 +39,7 @@ namespace GitTrends
             get => _isRefreshing;
             set => SetProperty(ref _isRefreshing, value);
         }
-        #endregion
 
-        #region Methods
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
             await Task.Yield();
@@ -97,6 +88,5 @@ namespace GitTrends
 
         void OnPullToRefreshFailed(string title, string message) =>
             _pullToRefreshFailedEventManager.HandleEvent(this, new PullToRefreshFailedEventArgs(message, title), nameof(PullToRefreshFailed));
-        #endregion
     }
 }

@@ -8,11 +8,8 @@ namespace GitTrends
 {
     public class RepositoryPage : BaseContentPage<RepositoryViewModel>
     {
-        #region Constant Fields
         readonly ListView _listView;
-        #endregion
 
-        #region Constructors
         public RepositoryPage() : base("Repositories")
         {
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
@@ -40,9 +37,7 @@ namespace GitTrends
 
             Content = _listView;
         }
-        #endregion
 
-        #region Methods
         protected override async void OnAppearing()
         {
             base.OnAppearing();
@@ -90,6 +85,5 @@ namespace GitTrends
                 }
             });
         }
-        #endregion
     }
 }
