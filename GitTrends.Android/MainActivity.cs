@@ -5,6 +5,8 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.V7.Widget;
+using Android.Views;
 using AsyncAwaitBestPractices;
 using Plugin.CurrentActivity;
 
@@ -48,7 +50,7 @@ namespace GitTrends.Droid
                     if (Xamarin.Forms.Application.Current.MainPage is BaseNavigationPage baseNavigationPage)
                     {
                         while (baseNavigationPage.CurrentPage.GetType() != typeof(ProfilePage))
-                             await Task.Delay(100).ConfigureAwait(false);
+                            await Task.Delay(100).ConfigureAwait(false);
 
                         await GitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
                     }

@@ -78,6 +78,7 @@
         <Compile Include="Resources\Resource.designer.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="CustomRenderers\FontAwesomeIconRenderer.cs" />
+        <Compile Include="CustomRenderers\SearchPageRenderer.cs" />
     </ItemGroup>
     <ItemGroup>
         <None Include="Resources\AboutResources.txt" />
@@ -132,6 +133,10 @@
             <Generator>
             </Generator>
         </AndroidResource>
+        <AndroidResource Include="Resources\menu\MainMenu.xml">
+          <SubType></SubType>
+          <Generator></Generator>
+        </AndroidResource>
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Resources\drawable\" />
@@ -141,6 +146,7 @@
         <Folder Include="Resources\drawable-xxxhdpi\" />
         <Folder Include="Resources\xml\" />
         <Folder Include="CustomRenderers\" />
+        <Folder Include="Resources\menu\" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\GitTrends\GitTrends.csproj">

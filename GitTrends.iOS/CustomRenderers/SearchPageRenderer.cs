@@ -40,7 +40,6 @@ namespace GitTrends.iOS
             base.ViewDidAppear(animated);
 
             ////Work-around to ensure the filter appears when the page opens https://stackoverflow.com/a/46313164/5953643
-
             ParentViewController.NavigationItem.SearchController.Active = true;
         }
 

@@ -33,11 +33,13 @@ namespace GitTrends
             _listView.SetBinding(ListView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryCollection));
             _listView.SetBinding(ListView.RefreshCommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
 
-            var settingsToolbarItem = new ToolbarItem { Text = "Settings" };
+            var settingsToolbarItem = new ToolbarItem
+            {
+                Text = "Settings",
+                Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default
+            };
             settingsToolbarItem.Clicked += HandleSettingsToolbarItem;
             ToolbarItems.Add(settingsToolbarItem);
-
-            BackgroundColor = ColorConstants.LightBlue;
 
             Content = _listView;
         }
@@ -58,13 +60,13 @@ namespace GitTrends
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken();
 
-                if (token.AccessToken != null && !string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias))
+                if (string.IsNullOrWhiteSpace(token.AccessToken) || string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias))
                 {
-                    _listView.BeginRefresh();
+                    await NavigateToSettingsPage();
                 }
                 else
                 {
-                    await NavigateToSettingsPage();
+                    _listView.BeginRefresh();
                 }
             }
         }
