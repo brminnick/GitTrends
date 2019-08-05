@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Android.Content;
+﻿using Android.Content;
 using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Text;
@@ -16,8 +14,6 @@ namespace GitTrends.Droid
 {
     public class SearchPageRenderer : PageRenderer
     {
-        RepositoryPage? _repositoryPage;
-
         public SearchPageRenderer(Context context) : base(context)
         {
 
@@ -30,20 +26,8 @@ namespace GitTrends.Droid
             if (Application.Current.MainPage is NavigationPage navigationPage)
                 navigationPage.Popped += HandleNavigationPagePopped;
 
-            if (Element is RepositoryPage repositoryPage)
-            {
-                _repositoryPage = repositoryPage;
-                AddSearchToToolbar(repositoryPage);
-            }
-        }
-
-        void HandleNavigationPagePopped(object sender, NavigationEventArgs e)
-        {
-            if (sender is NavigationPage navigationPage
-                && navigationPage.CurrentPage is RepositoryPage)
-            {
-                AddSearchToToolbar(_repositoryPage);
-            }
+            if (Element is ISearchPage && Element is Page page)
+                AddSearchToToolbar(page);
         }
 
         protected override void Dispose(bool disposing)
@@ -54,12 +38,12 @@ namespace GitTrends.Droid
             base.Dispose(disposing);
         }
 
-        void AddSearchToToolbar(in RepositoryPage repositoryPage)
+        void AddSearchToToolbar(in Page page)
         {
             if (GetToolbar() is Toolbar toolBar
                 && toolBar.Menu?.FindItem(Resource.Id.ActionSearch)?.ActionView?.JavaCast<SearchView>().GetType() != typeof(SearchView))
             {
-                toolBar.Title = repositoryPage.Title;
+                toolBar.Title = page.Title;
                 toolBar.InflateMenu(Resource.Menu.MainMenu);
 
                 if (toolBar.Menu?.FindItem(Resource.Id.ActionSearch)?.ActionView?.JavaCast<SearchView>() is SearchView searchView)
@@ -72,7 +56,21 @@ namespace GitTrends.Droid
             }
         }
 
-        void HandleQueryTextChange(object sender, SearchView.QueryTextChangeEventArgs e) => _repositoryPage?.OnSearchBarTextChanged(e.NewText);
+        void HandleQueryTextChange(object sender, SearchView.QueryTextChangeEventArgs e)
+        {
+            if (Element is ISearchPage searchPage)
+                searchPage.OnSearchBarTextChanged(e.NewText);
+
+        }
+
+        void HandleNavigationPagePopped(object sender, NavigationEventArgs e)
+        {
+            if (sender is NavigationPage navigationPage
+                && navigationPage.CurrentPage is ISearchPage)
+            {
+                AddSearchToToolbar(navigationPage.CurrentPage);
+            }
+        }
 
         Toolbar GetToolbar() => CrossCurrentActivity.Current.Activity.FindViewById<Toolbar>(Resource.Id.toolbar);
     }

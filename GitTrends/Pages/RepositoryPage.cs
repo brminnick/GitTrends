@@ -7,7 +7,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class RepositoryPage : BaseContentPage<RepositoryViewModel>
+    public class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISearchPage
     {
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
 

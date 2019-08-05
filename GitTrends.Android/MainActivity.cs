@@ -9,7 +9,7 @@ using Plugin.CurrentActivity;
 
 namespace GitTrends.Droid
 {
-    [Activity(Label = "GitTrends", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "GitTrends", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait)]
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataSchemes = new[] { "gittrends" })]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
@@ -38,24 +38,22 @@ namespace GitTrends.Droid
 
             LoadApplication(new App());
 
-            ExecuteCallbackUri();
+            if (Intent?.Data is Android.Net.Uri callbackUri)
+                ExecuteCallbackUri(callbackUri);
         }
 
-        void ExecuteCallbackUri()
+        void ExecuteCallbackUri(Android.Net.Uri callbackUri)
         {
-            if (Intent?.Data is Android.Net.Uri callbackUri)
+            if (Xamarin.Forms.Application.Current.MainPage is Xamarin.Forms.NavigationPage navigationPage)
             {
-                if (Xamarin.Forms.Application.Current.MainPage is Xamarin.Forms.NavigationPage navigationPage)
-                {
-                    navigationPage.Pushed += HandlePushed;
+                navigationPage.Pushed += HandlePushed;
 
-                    async void HandlePushed(object sender, Xamarin.Forms.NavigationEventArgs e)
+                async void HandlePushed(object sender, Xamarin.Forms.NavigationEventArgs e)
+                {
+                    if (e.Page is ProfilePage)
                     {
-                        if (e.Page is ProfilePage)
-                        {
-                            navigationPage.Pushed -= HandlePushed;
-                            await GitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
-                        }
+                        navigationPage.Pushed -= HandlePushed;
+                        await GitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
                     }
                 }
             }
