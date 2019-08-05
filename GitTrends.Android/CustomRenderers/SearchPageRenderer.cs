@@ -1,4 +1,6 @@
-﻿using Android.Content;
+﻿using System;
+using System.Threading.Tasks;
+using Android.Content;
 using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Text;
@@ -25,10 +27,22 @@ namespace GitTrends.Droid
         {
             base.OnAttachedToWindow();
 
-            if(Element is RepositoryPage repositoryPage)
+            if (Application.Current.MainPage is NavigationPage navigationPage)
+                navigationPage.Popped += HandleNavigationPagePopped;
+
+            if (Element is RepositoryPage repositoryPage)
             {
                 _repositoryPage = repositoryPage;
                 AddSearchToToolbar(repositoryPage);
+            }
+        }
+
+        void HandleNavigationPagePopped(object sender, NavigationEventArgs e)
+        {
+            if (sender is NavigationPage navigationPage
+                && navigationPage.CurrentPage is RepositoryPage)
+            {
+                AddSearchToToolbar(_repositoryPage);
             }
         }
 
@@ -42,7 +56,8 @@ namespace GitTrends.Droid
 
         void AddSearchToToolbar(in RepositoryPage repositoryPage)
         {
-            if (GetToolbar() is Toolbar toolBar)
+            if (GetToolbar() is Toolbar toolBar
+                && toolBar.Menu?.FindItem(Resource.Id.ActionSearch)?.ActionView?.JavaCast<SearchView>().GetType() != typeof(SearchView))
             {
                 toolBar.Title = repositoryPage.Title;
                 toolBar.InflateMenu(Resource.Menu.MainMenu);

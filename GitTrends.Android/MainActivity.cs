@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.V7.Widget;
-using Android.Views;
 using AsyncAwaitBestPractices;
 using Plugin.CurrentActivity;
 
@@ -41,18 +38,24 @@ namespace GitTrends.Droid
 
             LoadApplication(new App());
 
-            executeCallbackUri().SafeFireAndForget();
+            ExecuteCallbackUri();
+        }
 
-            async Task executeCallbackUri()
+        void ExecuteCallbackUri()
+        {
+            if (Intent?.Data is Android.Net.Uri callbackUri)
             {
-                if (Intent?.Data is Android.Net.Uri callbackUri)
+                if (Xamarin.Forms.Application.Current.MainPage is Xamarin.Forms.NavigationPage navigationPage)
                 {
-                    if (Xamarin.Forms.Application.Current.MainPage is BaseNavigationPage baseNavigationPage)
-                    {
-                        while (baseNavigationPage.CurrentPage.GetType() != typeof(ProfilePage))
-                            await Task.Delay(100).ConfigureAwait(false);
+                    navigationPage.Pushed += HandlePushed;
 
-                        await GitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
+                    async void HandlePushed(object sender, Xamarin.Forms.NavigationEventArgs e)
+                    {
+                        if (e.Page is ProfilePage)
+                        {
+                            navigationPage.Pushed -= HandlePushed;
+                            await GitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
+                        }
                     }
                 }
             }
