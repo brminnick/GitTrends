@@ -62,7 +62,10 @@ namespace GitTrends
 
                 if (string.IsNullOrWhiteSpace(token.AccessToken) || string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias))
                 {
-                    await NavigateToSettingsPage();
+                    var shouldNavigateToSettingsPage = await DisplayAlert("GitHub User Not Found", "Sign in to GitHub on the Settings Page", "OK", "Cancel");
+
+                    if (shouldNavigateToSettingsPage)
+                        await NavigateToSettingsPage();
                 }
                 else
                 {
