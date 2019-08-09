@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace GitTrends.Shared
 {
-    class RepositoryClonesModel : BaseRepositoryModel
+    public class RepositoryClonesModel : BaseRepositoryModel
     {
         public RepositoryClonesModel(long count, long uniques, List<DailyClonesModel> clones) : base(count, uniques)
         {

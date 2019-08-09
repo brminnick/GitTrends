@@ -8,23 +8,23 @@ using SQLite;
 
 namespace GitTrends
 {
-    abstract class RepositoryDatabase : BaseDatabase
+    public class RepositoryDatabase : BaseDatabase
     {
-        public static async Task<int> DeleteAllData()
+        public async Task<int> DeleteAllData()
         {
             var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
 
             return await ExecutePollyFunction(() => databaseConnection.DeleteAllAsync<RepositoryDatabaseModel>()).ConfigureAwait(false);
         }
 
-        public static async Task<int> SaveRepository(Repository repository)
+        public async Task<int> SaveRepository(Repository repository)
         {
             var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
 
             return await ExecutePollyFunction(() => databaseConnection.InsertOrReplaceAsync((RepositoryDatabaseModel)repository)).ConfigureAwait(false);
         }
 
-        public static async Task<int> SaveRepositories(IEnumerable<Repository> repositories)
+        public async Task<int> SaveRepositories(IEnumerable<Repository> repositories)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace GitTrends
             }
         }
 
-        public static async Task<Repository> GetRepository(Uri repositoryUri)
+        public async Task<Repository> GetRepository(Uri repositoryUri)
         {
             var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
 
@@ -57,7 +57,7 @@ namespace GitTrends
             return (Repository)repositoryDatabaseModel;
         }
 
-        public static async Task<IEnumerable<Repository>> GetRepositories()
+        public async Task<IEnumerable<Repository>> GetRepositories()
         {
             var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
 

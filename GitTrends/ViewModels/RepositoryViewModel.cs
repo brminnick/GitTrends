@@ -16,14 +16,23 @@ namespace GitTrends
     public class RepositoryViewModel : BaseViewModel
     {
         readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
+        readonly RepositoryDatabase _repositoryDatabase;
+        readonly GitHubAuthenticationService _gitHubAuthenticationService;
+        readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
 
         bool _isRefreshing;
         string _searchBarText = "";
         IReadOnlyList<Repository>? _repositoryList;
 
-        public RepositoryViewModel()
+        public RepositoryViewModel(RepositoryDatabase repositoryDatabase,
+                                    GitHubAuthenticationService gitHubAuthenticationService,
+                                    GitHubGraphQLApiService gitHubGraphQLApiService)
         {
-            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(GitHubAuthenticationService.Alias));
+            _repositoryDatabase = repositoryDatabase;
+            _gitHubAuthenticationService = gitHubAuthenticationService;
+            _gitHubGraphQLApiService = gitHubGraphQLApiService;
+
+            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(_gitHubAuthenticationService.Alias));
             FilterRepositoriesCommand = new Command<string>(searchBarText => SearchBarText = searchBarText);
         }
 
@@ -53,7 +62,7 @@ namespace GitTrends
                 _searchBarText = value;
 
                 if (_repositoryList != null && _repositoryList.Any())
-                    AddRepositoriesToCollection(_repositoryList, GitHubAuthenticationService.Alias, value);
+                    AddRepositoriesToCollection(_repositoryList, _gitHubAuthenticationService.Alias, value);
             }
         }
 
@@ -63,23 +72,23 @@ namespace GitTrends
 
             try
             {
-                var repositoryList = await GitHubGraphQLApiService.GetRepositories(repositoryOwner).ConfigureAwait(false);
+                var repositoryList = await _gitHubGraphQLApiService.GetRepositories(repositoryOwner).ConfigureAwait(false);
 
                 AddRepositoriesToCollection(repositoryList, repositoryOwner, _searchBarText);
 
-                RepositoryDatabase.SaveRepositories(repositoryList).SafeFireAndForget();
+                _repositoryDatabase.SaveRepositories(repositoryList).SafeFireAndForget();
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
             {
                 OnPullToRefreshFailed("Login Expired", "Login again");
 
-                await GitHubAuthenticationService.LogOut().ConfigureAwait(false);
+                await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
 
                 VisibleRepositoryCollection.Clear();
             }
             catch (ApiException)
             {
-                var repositoryList = await RepositoryDatabase.GetRepositories().ConfigureAwait(false);
+                var repositoryList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
 
                 AddRepositoriesToCollection(repositoryList, repositoryOwner, _searchBarText);
             }

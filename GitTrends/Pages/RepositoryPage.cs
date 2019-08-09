@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
 using AsyncAwaitBestPractices;
 using GitTrends.Shared;
 using Xamarin.Forms;
@@ -11,10 +12,14 @@ namespace GitTrends
     {
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
 
+        readonly GitHubAuthenticationService _gitHubAuthenticationService;
+
         readonly ListView _listView;
 
-        public RepositoryPage() : base("Repositories")
+        public RepositoryPage(RepositoryViewModel repositoryViewModel, GitHubAuthenticationService gitHubAuthenticationService) : base("Repositories", repositoryViewModel)
         {
+            _gitHubAuthenticationService = gitHubAuthenticationService;
+
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
 
@@ -24,7 +29,7 @@ namespace GitTrends
                 ItemTemplate = new DataTemplate(typeof(RepositoryViewCell)),
                 SeparatorVisibility = SeparatorVisibility.None,
                 RowHeight = RepositoryViewCell.RowHeight,
-                RefreshControlColor = ColorConstants.ActivityIndicatorColor,
+                RefreshControlColor = ColorConstants.PullToRefreshActivityIndicatorColor,
                 BackgroundColor = Color.Transparent,
                 SelectionMode = ListViewSelectionMode.None
             };
@@ -60,7 +65,7 @@ namespace GitTrends
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken();
 
-                if (string.IsNullOrWhiteSpace(token.AccessToken) || string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias))
+                if (string.IsNullOrWhiteSpace(token.AccessToken) || string.IsNullOrWhiteSpace(_gitHubAuthenticationService.Alias))
                 {
                     var shouldNavigateToSettingsPage = await DisplayAlert("GitHub User Not Found", "Sign in to GitHub on the Settings Page", "OK", "Cancel");
 
@@ -82,12 +87,28 @@ namespace GitTrends
 
                 if (!listView.IsRefreshing && e.Item is Repository repository)
                 {
-                    await Navigation.PushAsync(new TrendsPage(repository.OwnerLogin, repository.Name));
+                    await NavigateToTrendsPage(repository.OwnerLogin, repository.Name);
                 }
             }
         }
 
-        Task NavigateToSettingsPage() => Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(new ProfilePage()));
+        Task NavigateToSettingsPage()
+        {
+            using (var scope = ContainerService.Container.BeginLifetimeScope())
+            {
+                var profilePage = scope.Resolve<ProfilePage>();
+                return Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(profilePage));
+            }
+        }
+
+        Task NavigateToTrendsPage(string repositoryOwner, string repositoryName)
+        {
+            using (var scope = ContainerService.Container.BeginLifetimeScope())
+            {
+                var trendsPage = scope.Resolve<TrendsPage>(new TypedParameter(typeof(string), repositoryOwner), new TypedParameter(typeof(string), repositoryName));
+                return Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
+            }
+        }
 
         async void HandleSettingsToolbarItem(object sender, EventArgs e) => await NavigateToSettingsPage();
 

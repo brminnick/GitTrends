@@ -21,6 +21,7 @@ namespace GitTrends.iOS
                     SearchResultsUpdater = this,
                     DimsBackgroundDuringPresentation = false,
                     HidesNavigationBarDuringPresentation = false,
+                    HidesBottomBarWhenPushed = true
                 };
                 searchController.SearchBar.Placeholder = string.Empty;
 

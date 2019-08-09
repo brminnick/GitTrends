@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace GitTrends.Shared
 {
-    class RepositoryViewsModel : BaseRepositoryModel
+    public class RepositoryViewsModel : BaseRepositoryModel
     {
         public RepositoryViewsModel(long count, long uniques, List<DailyViewsModel> views) : base(count, uniques)
         {

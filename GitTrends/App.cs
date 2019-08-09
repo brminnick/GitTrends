@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms.PlatformConfiguration;
+﻿using Autofac;
+using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends
@@ -12,7 +13,8 @@ namespace GitTrends
                 HttpHeadersTimeout = 60
             });
 
-            MainPage = new BaseNavigationPage(new RepositoryPage());
+            using (var scope = ContainerService.Container.BeginLifetimeScope())
+                MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>());
 
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
         }

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using Autofac;
 using Foundation;
 using UIKit;
 
@@ -20,9 +21,13 @@ namespace GitTrends.iOS
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageSourceHandler();
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
 
-            SyncfusionService.Initialize().SafeFireAndForget(onException: ex => Debug.WriteLine(ex));
-
             LoadApplication(new App());
+
+            using (var scope = ContainerService.Container.BeginLifetimeScope())
+            {
+                var syncFusionService = scope.Resolve<SyncfusionService>();
+                syncFusionService.Initialize().SafeFireAndForget(onException: ex => Debug.WriteLine(ex));
+            }
 
             PrintFontNamesToConsole();
 
@@ -40,7 +45,12 @@ namespace GitTrends.iOS
             async Task HandleCallbackUri()
             {
                 await ViewControllerServices.CloseSFSafariViewController().ConfigureAwait(false);
-                await GitHubAuthenticationService.AuthorizeSession(callbackUri).ConfigureAwait(false);
+
+                using (var scope = ContainerService.Container.BeginLifetimeScope())
+                {
+                    var gitHubAuthenticationService = scope.Resolve<GitHubAuthenticationService>();
+                    await gitHubAuthenticationService.AuthorizeSession(callbackUri).ConfigureAwait(false);
+                }
             }
         }
 

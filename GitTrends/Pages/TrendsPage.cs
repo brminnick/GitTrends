@@ -10,7 +10,7 @@ namespace GitTrends
         readonly string _owner, _repository;
         static readonly Lazy<GitHubTrendsChart> _gitHubTrendsChartHolder = new Lazy<GitHubTrendsChart>();
 
-        public TrendsPage(string owner, string repository) : base(repository)
+        public TrendsPage(TrendsViewModel trendsViewModel, string owner, string repository) : base(repository, trendsViewModel)
         {
             _owner = owner;
             _repository = repository;
