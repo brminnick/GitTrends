@@ -5,19 +5,19 @@ using Refit;
 
 namespace GitTrends
 {
-    abstract class GitHubApiV3Service : BaseMobileApiService
+    public class GitHubApiV3Service : BaseMobileApiService
     {
-        static readonly Lazy<IGitHubApiV3> _githubApiClient = new Lazy<IGitHubApiV3>(() => RestService.For<IGitHubApiV3>(CreateHttpClient(GitHubConstants.GitHubRestApiUrl)));
+        readonly Lazy<IGitHubApiV3> _githubApiClient = new Lazy<IGitHubApiV3>(() => RestService.For<IGitHubApiV3>(CreateHttpClient(GitHubConstants.GitHubRestApiUrl)));
 
-        static IGitHubApiV3 GithubApiClient => _githubApiClient.Value;
+        IGitHubApiV3 GithubApiClient => _githubApiClient.Value;
 
-        public static async Task<RepositoryViewsModel> GetRepositoryViewStatistics(string owner, string repo)
+        public async Task<RepositoryViewsModel> GetRepositoryViewStatistics(string owner, string repo)
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
             return await ExecuteMobilePollyFunction(() => GithubApiClient.GetRepositoryViewStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
         }
 
-        public static async Task<RepositoryClonesModel> GetRepositoryCloneStatistics(string owner, string repo)
+        public async Task<RepositoryClonesModel> GetRepositoryCloneStatistics(string owner, string repo)
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
             return await ExecuteMobilePollyFunction(() => GithubApiClient.GetRepositoryCloneStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);

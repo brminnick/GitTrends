@@ -5,16 +5,16 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public abstract class BaseContentPage<T> : ContentPage where T : BaseViewModel, new()
+    public abstract class BaseContentPage<T> : ContentPage where T : BaseViewModel
     {
-        protected BaseContentPage(string title)
+        protected BaseContentPage(string title, T viewModel)
         {
-            BindingContext = ViewModel;
+            BindingContext = ViewModel = viewModel;
             BackgroundColor = ColorConstants.LightBlue;
             Title = title;
         }
 
-        protected T ViewModel { get; } = new T();
+        protected T ViewModel { get; }
 
         protected Task OpenBrowser(Uri uri) => OpenBrowser(uri.ToString());
 

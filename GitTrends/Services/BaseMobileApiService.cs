@@ -11,20 +11,6 @@ namespace GitTrends
 
         protected static string GetGitHubBearerTokenHeader(GitHubToken token) => $"{token.TokenType} {token.AccessToken}";
 
-        protected static async Task<T> ExecuteMobilePollyFunction<T>(Func<Task<T>> action, int numRetries = 3)
-        {
-            UpdateActivityIndicatorStatus(true);
-
-            try
-            {
-                return await ExecutePollyFunction(action, numRetries).ConfigureAwait(false);
-            }
-            finally
-            {
-                UpdateActivityIndicatorStatus(false);
-            }
-        }
-
         protected static void UpdateActivityIndicatorStatus(bool isActivityIndicatorDisplayed)
         {
             if (isActivityIndicatorDisplayed)
@@ -36,6 +22,20 @@ namespace GitTrends
             {
                 Device.BeginInvokeOnMainThread(() => Application.Current.MainPage.IsBusy = false);
                 _networkIndicatorCount = 0;
+            }
+        }
+
+        protected static async Task<T> ExecuteMobilePollyFunction<T>(Func<Task<T>> action, int numRetries = 3)
+        {
+            UpdateActivityIndicatorStatus(true);
+
+            try
+            {
+                return await ExecutePollyFunction(action, numRetries).ConfigureAwait(false);
+            }
+            finally
+            {
+                UpdateActivityIndicatorStatus(false);
             }
         }
     }

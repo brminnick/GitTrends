@@ -11,12 +11,15 @@ namespace GitTrends
 {
     class TrendsViewModel : BaseViewModel
     {
+        readonly GitHubApiV3Service _gitHubApiV3Service;
+
         bool _isFetchingData = true;
         List<DailyViewsModel> _dailyViewsList = new List<DailyViewsModel>();
         List<DailyClonesModel> _dailyClonesList = new List<DailyClonesModel>();
 
-        public TrendsViewModel()
+        public TrendsViewModel(GitHubApiV3Service gitHubApiV3Service)
         {
+            _gitHubApiV3Service = gitHubApiV3Service;
             FetchDataCommand = new AsyncCommand<(string Owner, string Repository)>(repo => ExecuteFetchDataCommand(repo.Owner, repo.Repository));
         }
 
@@ -64,8 +67,8 @@ namespace GitTrends
 
             try
             {
-                var getRepositoryViewStatisticsTask = GitHubApiV3Service.GetRepositoryViewStatistics(owner, repository);
-                var getRepositoryCloneStatisticsTask = GitHubApiV3Service.GetRepositoryCloneStatistics(owner, repository);
+                var getRepositoryViewStatisticsTask = _gitHubApiV3Service.GetRepositoryViewStatistics(owner, repository);
+                var getRepositoryCloneStatisticsTask = _gitHubApiV3Service.GetRepositoryCloneStatistics(owner, repository);
                 var minimumTimeTask = Task.Delay(2000);
 
                 await Task.WhenAll(getRepositoryViewStatisticsTask, getRepositoryCloneStatisticsTask, minimumTimeTask).ConfigureAwait(false);

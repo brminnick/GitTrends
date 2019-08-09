@@ -7,21 +7,24 @@ using Xamarin.Essentials;
 
 namespace GitTrends
 {
-    public class ProfileViewModel : BaseViewModel
+    class ProfileViewModel : BaseViewModel
     {
         readonly WeakEventManager<string> _gitHubLoginUrlRetrievedEventManager = new WeakEventManager<string>();
+        readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
         string _gitHubUserImageSource = string.Empty;
         string _gitHubUserNameLabelText = string.Empty;
         string _gitHubButtonText = string.Empty;
         bool _isAuthenticating;
 
-        public ProfileViewModel()
+        public ProfileViewModel(GitHubAuthenticationService gitHubAuthenticationService)
         {
+            _gitHubAuthenticationService = gitHubAuthenticationService;
+
             LoginButtonCommand = new AsyncCommand(ExecuteLoginButtonCommand);
 
-            GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
-            GitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
+            _gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+            _gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
 
             SetGitHubValues();
         }
@@ -71,20 +74,20 @@ namespace GitTrends
 
         void SetGitHubValues()
         {
-            GitHubAliasLabelText = GitHubAuthenticationService.IsAuthenticated ? GitHubAuthenticationService.Name : string.Empty;
-            LoginButtonText = FontAwesomeButton.GitHubOctocat.ToString() + (GitHubAuthenticationService.IsAuthenticated ? " Disconnect" : " Connect with GitHub");
+            GitHubAliasLabelText = _gitHubAuthenticationService.IsAuthenticated ? _gitHubAuthenticationService.Name : string.Empty;
+            LoginButtonText = FontAwesomeButton.GitHubOctocat.ToString() + (_gitHubAuthenticationService.IsAuthenticated ? " Disconnect" : " Connect with GitHub");
 
             GitHubAvatarImageSource = "DefaultProfileImage";
 
-            if (Connectivity.NetworkAccess is NetworkAccess.Internet && !string.IsNullOrWhiteSpace(GitHubAuthenticationService.AvatarUrl))
-                GitHubAvatarImageSource = GitHubAuthenticationService.AvatarUrl;
+            if (Connectivity.NetworkAccess is NetworkAccess.Internet && !string.IsNullOrWhiteSpace(_gitHubAuthenticationService.AvatarUrl))
+                GitHubAvatarImageSource = _gitHubAuthenticationService.AvatarUrl;
         }
 
         async Task ExecuteLoginButtonCommand()
         {
-            if (GitHubAuthenticationService.IsAuthenticated)
+            if (_gitHubAuthenticationService.IsAuthenticated)
             {
-                await GitHubAuthenticationService.LogOut().ConfigureAwait(false);
+                await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
 
                 SetGitHubValues();
             }
@@ -92,7 +95,7 @@ namespace GitTrends
             {
                 IsAuthenticating = true;
 
-                var loginUrl = await GitHubAuthenticationService.GetGitHubLoginUrl().ConfigureAwait(false);
+                var loginUrl = await _gitHubAuthenticationService.GetGitHubLoginUrl().ConfigureAwait(false);
 
                 OnGitHubLoginUrlRetrieved(loginUrl);
             }

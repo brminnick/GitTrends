@@ -2,7 +2,7 @@
 
 namespace GitTrends.Shared
 {
-    abstract class BaseRepositoryModel
+    public abstract class BaseRepositoryModel
     {
         protected BaseRepositoryModel(long totalViewCount, long uniqueViewCount) =>
             (TotalCount, TotalUniqueCount) = (totalViewCount, uniqueViewCount);

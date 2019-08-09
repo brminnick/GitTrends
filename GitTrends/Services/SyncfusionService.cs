@@ -5,20 +5,28 @@ using Xamarin.Essentials;
 
 namespace GitTrends
 {
-    public static class SyncfusionService
+    public class SyncfusionService
     {
         readonly static Lazy<long> _assemblyVersionNumberHolder = new Lazy<long>(() => long.Parse(System.Reflection.Assembly.GetAssembly(typeof(Syncfusion.CoreAssembly)).GetName().Version.ToString().Replace(".", "")));
-        readonly static Lazy<string> _syncfusionLicenseKeyHolder = new Lazy<string>(() => $"{nameof(SyncfusionDTO.LicenseKey)}_{AssemblyVersionNumber}");
+        readonly Lazy<string> _syncfusionLicenseKeyHolder = new Lazy<string>(() => $"{nameof(SyncfusionDTO.LicenseKey)}_{_assemblyVersionNumberHolder.Value}");
+
+        readonly AzureFunctionsApiService _azureFunctionsApiService;
+
+        public SyncfusionService(AzureFunctionsApiService azureFunctionsApiService)
+        {
+            _azureFunctionsApiService = azureFunctionsApiService;
+        }
 
         public static long AssemblyVersionNumber => _assemblyVersionNumberHolder.Value;
+        public string SyncfusionLicenseKeyHolder => _syncfusionLicenseKeyHolder.Value;
 
-        public static async Task Initialize()
+        public async Task Initialize()
         {
             string syncFusionLicense;
 
             try
             {
-                var syncusionDto = await AzureFunctionsApiService.GetSyncfusionInformation().ConfigureAwait(false);
+                var syncusionDto = await _azureFunctionsApiService.GetSyncfusionInformation().ConfigureAwait(false);
 
                 syncFusionLicense = syncusionDto.LicenseKey;
 
@@ -33,8 +41,8 @@ namespace GitTrends
                 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicense);
         }
 
-        public static Task<string> GetLicense() => SecureStorage.GetAsync(_syncfusionLicenseKeyHolder.Value);
+        public Task<string> GetLicense() => SecureStorage.GetAsync(SyncfusionLicenseKeyHolder);
 
-        static Task SaveLicense(string license) => SecureStorage.SetAsync(_syncfusionLicenseKeyHolder.Value, license);
+        Task SaveLicense(string license) => SecureStorage.SetAsync(SyncfusionLicenseKeyHolder, license);
     }
 }

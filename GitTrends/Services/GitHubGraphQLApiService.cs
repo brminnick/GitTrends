@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,13 +7,13 @@ using Refit;
 
 namespace GitTrends
 {
-    abstract class GitHubGraphQLApiService : BaseMobileApiService
+    public class GitHubGraphQLApiService : BaseMobileApiService
     {
-        readonly static Lazy<IGitHubGraphQLApi> _githubApiClientHolder = new Lazy<IGitHubGraphQLApi>(() => RestService.For<IGitHubGraphQLApi>(CreateHttpClient(GitHubConstants.GitHubGraphQLApi)));
+        readonly Lazy<IGitHubGraphQLApi> _githubApiClientHolder = new Lazy<IGitHubGraphQLApi>(() => RestService.For<IGitHubGraphQLApi>(CreateHttpClient(GitHubConstants.GitHubGraphQLApi)));
 
-        static IGitHubGraphQLApi GitHubApiClient => _githubApiClientHolder.Value;
+        IGitHubGraphQLApi GitHubApiClient => _githubApiClientHolder.Value;
 
-        public static async Task<(string login, string name, Uri avatarUri)> GetCurrentUserInfo()
+        public async Task<(string login, string name, Uri avatarUri)> GetCurrentUserInfo()
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
             var data = await ExecuteGraphQLRequest(() => GitHubApiClient.ViewerLoginQuery(new ViewerLoginQueryContent(), GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
@@ -22,7 +21,7 @@ namespace GitTrends
             return (data.Viewer.Alias, data.Viewer.Name, data.Viewer.AvatarUri);
         }
 
-        public static async Task<User> GetUser(string username)
+        public async Task<User> GetUser(string username)
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
             var data = await ExecuteGraphQLRequest(() => GitHubApiClient.UserQuery(new UserQueryContent(username), GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
@@ -30,7 +29,7 @@ namespace GitTrends
             return data.User;
         }
 
-        public static async Task<Repository> GetRepository(string repositoryOwner, string repositoryName, int numberOfIssuesPerRequest = 100)
+        public async Task<Repository> GetRepository(string repositoryOwner, string repositoryName, int numberOfIssuesPerRequest = 100)
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
             var data = await ExecuteGraphQLRequest(() => GitHubApiClient.RepositoryQuery(new RepositoryQueryContent(repositoryOwner, repositoryName, numberOfIssuesPerRequest), GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
@@ -38,7 +37,7 @@ namespace GitTrends
             return data.Repository;
         }
 
-        public static async Task<IEnumerable<Repository>> GetRepositories(string repositoryOwner, int numberOfRepositoriesPerRequest = 100)
+        public async Task<IEnumerable<Repository>> GetRepositories(string repositoryOwner, int numberOfRepositoriesPerRequest = 100)
         {
             RepositoryConnection? repositoryConnection = null;
 
@@ -54,7 +53,7 @@ namespace GitTrends
             return gitHubRepositoryList;
         }
 
-        static async Task<RepositoryConnection> GetRepositoryConnection(string repositoryOwner, string? endCursor, int numberOfRepositoriesPerRequest = 100)
+        async Task<RepositoryConnection> GetRepositoryConnection(string repositoryOwner, string? endCursor, int numberOfRepositoriesPerRequest = 100)
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
             var data = await ExecuteGraphQLRequest(() => GitHubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
@@ -62,7 +61,7 @@ namespace GitTrends
             return data.GitHubUser.RepositoryConnection;
         }
 
-        static async Task<T> ExecuteGraphQLRequest<T>(Func<Task<GraphQLResponse<T>>> action, int numRetries = 2)
+        async Task<T> ExecuteGraphQLRequest<T>(Func<Task<GraphQLResponse<T>>> action, int numRetries = 2)
         {
             var response = await ExecuteMobilePollyFunction(action, numRetries).ConfigureAwait(false);
 
@@ -72,6 +71,6 @@ namespace GitTrends
             return response.Data;
         }
 
-        static string GetEndCursorString(string? endCursor) => string.IsNullOrWhiteSpace(endCursor) ? string.Empty : "after: \"" + endCursor + "\"";
+        string GetEndCursorString(string? endCursor) => string.IsNullOrWhiteSpace(endCursor) ? string.Empty : "after: \"" + endCursor + "\"";
     }
 }
