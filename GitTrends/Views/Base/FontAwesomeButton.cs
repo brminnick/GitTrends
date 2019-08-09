@@ -6,8 +6,8 @@ namespace GitTrends
     {
         public const char GitHubOctocat = '\uf09b';
 
-        const string _typeface = "Font Awesome 5 Brands";
+        const string _fontAwesomeTypeface = "Font Awesome 5 Brands";
 
-        public FontAwesomeButton() => FontFamily = _typeface;
+        public FontAwesomeButton() => FontFamily = _fontAwesomeTypeface;
     }
 }
