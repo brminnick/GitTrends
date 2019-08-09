@@ -10,10 +10,10 @@ namespace GitTrends
         readonly string _owner, _repository;
         static readonly Lazy<GitHubTrendsChart> _gitHubTrendsChartHolder = new Lazy<GitHubTrendsChart>();
 
-        public TrendsPage(TrendsViewModel trendsViewModel, string owner, string repository) : base(repository, trendsViewModel)
+        public TrendsPage(TrendsViewModel trendsViewModel, Repository repository) : base(repository.Name, trendsViewModel)
         {
-            _owner = owner;
-            _repository = repository;
+            _owner = repository.OwnerLogin;
+            _repository = repository.Name;
 
             var activityIndicator = new ActivityIndicator { Color = ColorConstants.DarkNavyBlue };
             activityIndicator.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData));

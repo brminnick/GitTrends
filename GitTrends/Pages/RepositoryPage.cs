@@ -87,7 +87,7 @@ namespace GitTrends
 
                 if (!listView.IsRefreshing && e.Item is Repository repository)
                 {
-                    await NavigateToTrendsPage(repository.OwnerLogin, repository.Name);
+                    await NavigateToTrendsPage(repository);
                 }
             }
         }
@@ -101,11 +101,11 @@ namespace GitTrends
             }
         }
 
-        Task NavigateToTrendsPage(string repositoryOwner, string repositoryName)
+        Task NavigateToTrendsPage(Repository repository)
         {
             using (var scope = ContainerService.Container.BeginLifetimeScope())
             {
-                var trendsPage = scope.Resolve<TrendsPage>(new TypedParameter(typeof(string), repositoryOwner), new TypedParameter(typeof(string), repositoryName));
+                var trendsPage = scope.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
                 return Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Autofac;
+using GitTrends.Shared;
 
 namespace GitTrends
 {
@@ -12,11 +13,12 @@ namespace GitTrends
             var builder = new ContainerBuilder();
 
             //Register Services
-            builder.RegisterType<RepositoryDatabase>().AsSelf();
-            builder.RegisterType<GitHubAuthenticationService>().AsSelf();
-            builder.RegisterType<GitHubGraphQLApiService>().AsSelf();
-            builder.RegisterType<AzureFunctionsApiService>().AsSelf();
-            builder.RegisterType<SyncfusionService>().AsSelf();
+            builder.RegisterType<RepositoryDatabase>().AsSelf().SingleInstance();
+            builder.RegisterType<GitHubAuthenticationService>().AsSelf().SingleInstance();
+            builder.RegisterType<GitHubGraphQLApiService>().AsSelf().SingleInstance();
+            builder.RegisterType<AzureFunctionsApiService>().AsSelf().SingleInstance();
+            builder.RegisterType<SyncfusionService>().AsSelf().SingleInstance();
+            builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
 
             //Register ViewModels
             builder.RegisterType<RepositoryViewModel>().AsSelf();
@@ -26,11 +28,7 @@ namespace GitTrends
             //Register Pages
             builder.RegisterType<RepositoryPage>().AsSelf();
             builder.RegisterType<ProfilePage>().AsSelf();
-            builder.RegisterType<TrendsPage>().AsSelf().WithParameters(new List<TypedParameter>
-            {
-                new TypedParameter(typeof(string), "owner"),
-                new TypedParameter(typeof(string), "repository"),
-            });
+            builder.RegisterType<TrendsPage>().AsSelf().WithParameter(new TypedParameter(typeof(Repository), "repository"));
 
             return builder.Build();
         }
