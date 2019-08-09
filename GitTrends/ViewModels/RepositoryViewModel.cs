@@ -37,7 +37,7 @@ namespace GitTrends
 
         public ICommand FilterRepositoriesCommand { get; }
 
-        public ObservableCollection<Repository> VisibleRepositoryCollection { get; } = new ObservableCollection<Repository>();
+        public ObservableRangeCollection<Repository> VisibleRepositoryCollection { get; } = new ObservableRangeCollection<Repository>();
 
         public bool IsRefreshing
         {
@@ -97,16 +97,14 @@ namespace GitTrends
         {
             _repositoryList = repositories.Where(x => x.OwnerLogin.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(x => x.StarCount).ToList();
 
-            VisibleRepositoryCollection.Clear();
-
             IEnumerable<Repository> filteredRepositoryList;
             if (string.IsNullOrWhiteSpace(searchBarText))
                 filteredRepositoryList = _repositoryList;
             else
                 filteredRepositoryList = _repositoryList.Where(x => x.Name.Contains(searchBarText));
 
-            foreach (var repository in filteredRepositoryList)
-                VisibleRepositoryCollection.Add(repository);
+            VisibleRepositoryCollection.Clear();
+            VisibleRepositoryCollection.AddRange(filteredRepositoryList);
         }
 
         void OnPullToRefreshFailed(in string title, in string message) =>
