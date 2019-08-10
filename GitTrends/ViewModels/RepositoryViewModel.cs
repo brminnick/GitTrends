@@ -33,7 +33,7 @@ namespace GitTrends
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
 
             PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(_gitHubAuthenticationService.Alias));
-            FilterRepositoriesCommand = new Command<string>(searchBarText => SearchBarText = searchBarText);
+            FilterRepositoriesCommand = new Command<string>(text => SetSearchBarText(text));
         }
 
         public event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
@@ -54,18 +54,6 @@ namespace GitTrends
             set => SetProperty(ref _isRefreshing, value);
         }
 
-        string SearchBarText
-        {
-            get => _searchBarText;
-            set
-            {
-                _searchBarText = value;
-
-                if (_repositoryList != null && _repositoryList.Any())
-                    AddRepositoriesToCollection(_repositoryList, _gitHubAuthenticationService.Alias, value);
-            }
-        }
-
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
             await Task.Yield();
@@ -74,7 +62,7 @@ namespace GitTrends
             {
                 var repositoryList = await _gitHubGraphQLApiService.GetRepositories(repositoryOwner).ConfigureAwait(false);
 
-                AddRepositoriesToCollection(repositoryList, repositoryOwner, _searchBarText);
+                SetRepositoriesToCollection(repositoryList, repositoryOwner, _searchBarText);
 
                 _repositoryDatabase.SaveRepositories(repositoryList).SafeFireAndForget();
             }
@@ -90,7 +78,7 @@ namespace GitTrends
             {
                 var repositoryList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
 
-                AddRepositoriesToCollection(repositoryList, repositoryOwner, _searchBarText);
+                SetRepositoriesToCollection(repositoryList, repositoryOwner, _searchBarText);
             }
             catch (Exception e)
             {
@@ -102,7 +90,7 @@ namespace GitTrends
             }
         }
 
-        void AddRepositoriesToCollection(in IEnumerable<Repository> repositories, string repositoryOwner, string searchBarText)
+        void SetRepositoriesToCollection(in IEnumerable<Repository> repositories, string repositoryOwner, string searchBarText)
         {
             _repositoryList = repositories.Where(x => x.OwnerLogin.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(x => x.StarCount).ToList();
 
@@ -114,6 +102,17 @@ namespace GitTrends
 
             VisibleRepositoryCollection.Clear();
             VisibleRepositoryCollection.AddRange(filteredRepositoryList);
+        }
+
+        void SetSearchBarText(in string text)
+        {
+            if (EqualityComparer<string>.Default.Equals(_searchBarText, text))
+                return;
+
+            _searchBarText = text;
+
+            if (_repositoryList?.Any() is true)
+                SetRepositoriesToCollection(_repositoryList, _gitHubAuthenticationService.Alias, text);
         }
 
         void OnPullToRefreshFailed(in string title, in string message) =>

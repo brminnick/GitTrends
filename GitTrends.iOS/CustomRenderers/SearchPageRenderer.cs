@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using GitTrends;
 using GitTrends.iOS;
 using UIKit;
@@ -10,29 +12,38 @@ namespace GitTrends.iOS
 {
     public class SearchPageRenderer : PageRenderer, IUISearchResultsUpdating
     {
+        bool _isFirstAppearing = true;
+
+        public override void WillMoveToParentViewController(UIViewController parent)
+        {
+            base.WillMoveToParentViewController(parent);
+
+            var searchController = new UISearchController(searchResultsController: null)
+            {
+                SearchResultsUpdater = this,
+                DimsBackgroundDuringPresentation = false,
+                HidesNavigationBarDuringPresentation = false,
+                HidesBottomBarWhenPushed = true
+            };
+            searchController.SearchBar.Placeholder = string.Empty;
+
+            parent.NavigationItem.SearchController = searchController;
+
+            DefinesPresentationContext = true;
+        }
+
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
 
-            if (ParentViewController.NavigationItem.SearchController is null)
+            //Work-around to ensure the SearchController appears when the page first appears https://stackoverflow.com/a/46313164/5953643
+            if (_isFirstAppearing)
             {
-                var searchController = new UISearchController(searchResultsController: null)
-                {
-                    SearchResultsUpdater = this,
-                    DimsBackgroundDuringPresentation = false,
-                    HidesNavigationBarDuringPresentation = false,
-                    HidesBottomBarWhenPushed = true
-                };
-                searchController.SearchBar.Placeholder = string.Empty;
+                ParentViewController.NavigationItem.SearchController.Active = true;
+                ParentViewController.NavigationItem.SearchController.Active = false;
 
-                ParentViewController.NavigationItem.SearchController = searchController;
-
-                DefinesPresentationContext = true;
+                _isFirstAppearing = false;
             }
-
-            //Work-around to ensure the SearchController appears when the page opens https://stackoverflow.com/a/46313164/5953643
-            ParentViewController.NavigationItem.SearchController.Active = true;
-            ParentViewController.NavigationItem.SearchController.Active = false;
         }
 
         public void UpdateSearchResultsForSearchController(UISearchController searchController)

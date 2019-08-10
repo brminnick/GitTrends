@@ -15,7 +15,7 @@ namespace GitTrends
             _owner = repository.OwnerLogin;
             _repository = repository.Name;
 
-            var activityIndicator = new ActivityIndicator { Color = ColorConstants.DarkNavyBlue };
+            var activityIndicator = new ActivityIndicator { Color = ColorConstants.DarkBlue };
             activityIndicator.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData));
             activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
 
