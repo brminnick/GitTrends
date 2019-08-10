@@ -7,7 +7,7 @@ using Xamarin.Essentials;
 
 namespace GitTrends
 {
-    class ProfileViewModel : BaseViewModel
+    public class ProfileViewModel : BaseViewModel
     {
         readonly WeakEventManager<string> _gitHubLoginUrlRetrievedEventManager = new WeakEventManager<string>();
         readonly GitHubAuthenticationService _gitHubAuthenticationService;

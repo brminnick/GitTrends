@@ -5,6 +5,7 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using AsyncAwaitBestPractices;
+using Autofac;
 using Plugin.CurrentActivity;
 
 namespace GitTrends.Droid
@@ -32,9 +33,13 @@ namespace GitTrends.Droid
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageViewHandler();
-
-            SyncfusionService.Initialize().SafeFireAndForget(onException: ex => System.Diagnostics.Debug.WriteLine(ex));
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
+
+            using (var scope = ContainerService.Container.BeginLifetimeScope())
+            {
+                var syncFusionService = scope.Resolve<SyncfusionService>();
+                syncFusionService.Initialize().SafeFireAndForget(onException: ex => System.Diagnostics.Debug.WriteLine(ex));
+            }
 
             LoadApplication(new App());
 
@@ -53,7 +58,12 @@ namespace GitTrends.Droid
                     if (e.Page is ProfilePage)
                     {
                         navigationPage.Pushed -= HandlePushed;
-                        await GitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
+
+                        using (var scope = ContainerService.Container.BeginLifetimeScope())
+                        {
+                            var gitHubAuthenticationService = scope.Resolve<GitHubAuthenticationService>();
+                            await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
+                        }
                     }
                 }
             }

@@ -3,7 +3,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    class ProfilePage : BaseContentPage<ProfileViewModel>
+    public class ProfilePage : BaseContentPage<ProfileViewModel>
     {
         readonly FontAwesomeButton _gitHubLoginButton;
         readonly ActivityIndicator _activityIndicator;
