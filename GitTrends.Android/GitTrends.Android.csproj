@@ -64,7 +64,7 @@
         <PackageReference Include="Xamarin.Essentials" Version="1.2.0" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
         <PackageReference Include="Refit" Version="4.7.9" />
-        <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="3.1.0-pre2" />
+        <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="3.1.0-pre3" />
         <PackageReference Include="Polly" Version="7.1.0" />
         <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.0.0.5" />
         <PackageReference Include="Plugin.CurrentActivity" Version="2.1.0.4" />
@@ -72,9 +72,7 @@
         <PackageReference Include="sqlite-net-pcl" Version="1.6.258-beta" />
         <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.3" />
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
-        <PackageReference Include="Autofac">
-          <Version>4.9.3</Version>
-        </PackageReference>
+        <PackageReference Include="Autofac" Version="4.9.4" />
     </ItemGroup>
     <ItemGroup>
         <Compile Include="MainActivity.cs" />
