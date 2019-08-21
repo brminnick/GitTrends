@@ -63,7 +63,7 @@ namespace GitTrends
 
         async Task<T> ExecuteGraphQLRequest<T>(Func<Task<GraphQLResponse<T>>> action, int numRetries = 2)
         {
-            var response = await ExecuteMobilePollyFunction(action, numRetries).ConfigureAwait(false);
+            var response = await AttemptAndRetry_Mobile(action, numRetries).ConfigureAwait(false);
 
             if (response.Errors != null)
                 throw new AggregateException(response.Errors.Select(x => new Exception(x.Message)));

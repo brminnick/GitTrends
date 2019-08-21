@@ -50,7 +50,7 @@ namespace GitTrends.Droid
                 {
                     searchView.QueryTextChange += HandleQueryTextChange;
                     searchView.ImeOptions = (int)ImeAction.Search;
-                    searchView.InputType = (int)InputTypes.TextVariationNormal;
+                    searchView.InputType = (int)InputTypes.TextVariationFilter;
                     searchView.MaxWidth = int.MaxValue; //Set to full width - http://stackoverflow.com/questions/31456102/searchview-doesnt-expand-full-width
                 }
             }

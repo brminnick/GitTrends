@@ -14,13 +14,13 @@ namespace GitTrends
         public async Task<RepositoryViewsModel> GetRepositoryViewStatistics(string owner, string repo)
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
-            return await ExecuteMobilePollyFunction(() => GithubApiClient.GetRepositoryViewStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
+            return await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryViewStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
         }
 
         public async Task<RepositoryClonesModel> GetRepositoryCloneStatistics(string owner, string repo)
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
-            return await ExecuteMobilePollyFunction(() => GithubApiClient.GetRepositoryCloneStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
+            return await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryCloneStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
         }
     }
 }

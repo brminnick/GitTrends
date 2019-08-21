@@ -11,8 +11,8 @@ namespace GitTrends
 
         IAzureFunctionsApi AzureFunctionsApiClient => _azureFunctionsApiClientHolder.Value;
 
-        public Task<GetGitHubClientIdDTO> GetGitHubClientId() => ExecuteMobilePollyFunction(() => AzureFunctionsApiClient.GetGitTrendsClientId());
-        public Task<GitHubToken> GenerateGitTrendsOAuthToken(GenerateTokenDTO generateTokenDTO) => ExecuteMobilePollyFunction(() => AzureFunctionsApiClient.GenerateGitTrendsOAuthToken(generateTokenDTO));
-        public Task<SyncfusionDTO> GetSyncfusionInformation() => ExecuteMobilePollyFunction(() => AzureFunctionsApiClient.GetSyncfusionInformation(SyncfusionService.AssemblyVersionNumber));
+        public Task<GetGitHubClientIdDTO> GetGitHubClientId() => AttemptAndRetry_Mobile(() => AzureFunctionsApiClient.GetGitTrendsClientId());
+        public Task<GitHubToken> GenerateGitTrendsOAuthToken(GenerateTokenDTO generateTokenDTO) => AttemptAndRetry_Mobile(() => AzureFunctionsApiClient.GenerateGitTrendsOAuthToken(generateTokenDTO));
+        public Task<SyncfusionDTO> GetSyncfusionInformation() => AttemptAndRetry_Mobile(() => AzureFunctionsApiClient.GetSyncfusionInformation(SyncfusionService.AssemblyVersionNumber));
     }
 }

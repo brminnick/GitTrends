@@ -11,6 +11,6 @@ namespace GitTrends.Functions
 
         static IGitHubAuthApi GitHubAuthClient => _githubAuthClient.Value;
 
-        public static Task<GitHubToken> GetGitHubToken(string clientId, string clientSecret, string loginCode, string state) => ExecutePollyFunction(() => GitHubAuthClient.GetAccessToken(clientId, clientSecret, loginCode, state));
+        public static Task<GitHubToken> GetGitHubToken(string clientId, string clientSecret, string loginCode, string state) => AttemptAndRetry(() => GitHubAuthClient.GetAccessToken(clientId, clientSecret, loginCode, state));
     }
 }

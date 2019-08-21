@@ -8,11 +8,11 @@ namespace GitTrends.Shared
 {
     public abstract class BaseApiService
     {
-        protected static Task<T> ExecutePollyFunction<T>(Func<Task<T>> action, int numRetries = 3)
+        protected static Task<T> AttemptAndRetry<T>(Func<Task<T>> action, int numRetries = 3)
         {
-            return Policy.Handle<Exception>().WaitAndRetryAsync(numRetries, pollyRetryAttempt).ExecuteAsync(action);
+            return Policy.Handle<Exception>().WaitAndRetryAsync(numRetries, retryAttempt).ExecuteAsync(action);
 
-            TimeSpan pollyRetryAttempt(int attemptNumber) => TimeSpan.FromSeconds(Math.Pow(2, attemptNumber));
+            TimeSpan retryAttempt(int attemptNumber) => TimeSpan.FromSeconds(Math.Pow(2, attemptNumber));
         }
 
         protected static HttpClient CreateHttpClient(string url)

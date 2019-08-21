@@ -25,13 +25,13 @@ namespace GitTrends
             }
         }
 
-        protected static async Task<T> ExecuteMobilePollyFunction<T>(Func<Task<T>> action, int numRetries = 3)
+        protected static async Task<T> AttemptAndRetry_Mobile<T>(Func<Task<T>> action, int numRetries = 3)
         {
             UpdateActivityIndicatorStatus(true);
 
             try
             {
-                return await ExecutePollyFunction(action, numRetries).ConfigureAwait(false);
+                return await AttemptAndRetry(action, numRetries).ConfigureAwait(false);
             }
             finally
             {
