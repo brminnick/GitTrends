@@ -59,10 +59,17 @@ namespace GitTrends.Droid
                     {
                         navigationPage.Pushed -= HandlePushed;
 
-                        using (var scope = ContainerService.Container.BeginLifetimeScope())
+                        try
                         {
-                            var gitHubAuthenticationService = scope.Resolve<GitHubAuthenticationService>();
-                            await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
+                            using (var scope = ContainerService.Container.BeginLifetimeScope())
+                            {
+                                var gitHubAuthenticationService = scope.Resolve<GitHubAuthenticationService>();
+                                await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine(ex);
                         }
                     }
                 }

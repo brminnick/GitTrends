@@ -7,27 +7,27 @@ namespace GitTrends
 {
     public abstract class BaseMobileApiService : BaseApiService
     {
-        static int _networkIndicatorCount = 0;
+        static int _networkIndicatorCount;
 
         protected static string GetGitHubBearerTokenHeader(GitHubToken token) => $"{token.TokenType} {token.AccessToken}";
 
-        protected static void UpdateActivityIndicatorStatus(bool isActivityIndicatorDisplayed)
+        protected static async Task UpdateActivityIndicatorStatus(bool isActivityIndicatorDisplayed)
         {
             if (isActivityIndicatorDisplayed)
             {
-                Device.BeginInvokeOnMainThread(() => Application.Current.MainPage.IsBusy = true);
                 _networkIndicatorCount++;
+                await Device.InvokeOnMainThreadAsync(() => Application.Current.MainPage.IsBusy = true).ConfigureAwait(false);
             }
             else if (--_networkIndicatorCount <= 0)
             {
-                Device.BeginInvokeOnMainThread(() => Application.Current.MainPage.IsBusy = false);
                 _networkIndicatorCount = 0;
+                await Device.InvokeOnMainThreadAsync(() => Application.Current.MainPage.IsBusy = false).ConfigureAwait(false);
             }
         }
 
         protected static async Task<T> AttemptAndRetry_Mobile<T>(Func<Task<T>> action, int numRetries = 3)
         {
-            UpdateActivityIndicatorStatus(true);
+            await UpdateActivityIndicatorStatus(true).ConfigureAwait(false);
 
             try
             {
@@ -35,7 +35,7 @@ namespace GitTrends
             }
             finally
             {
-                UpdateActivityIndicatorStatus(false);
+                await UpdateActivityIndicatorStatus(false).ConfigureAwait(false);
             }
         }
     }

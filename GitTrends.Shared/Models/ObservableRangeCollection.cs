@@ -1,4 +1,5 @@
-﻿namespace System.Collections.ObjectModel
+﻿#nullable disable
+namespace System.Collections.ObjectModel
 {
     // Licensed to the .NET Foundation under one or more agreements.
     // The .NET Foundation licenses this file to you under the MIT license.
@@ -670,3 +671,4 @@
         internal static readonly NotifyCollectionChangedEventArgs ResetCollectionChanged = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
     }
 }
+#nullable enable

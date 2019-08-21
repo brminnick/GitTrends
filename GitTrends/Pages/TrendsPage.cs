@@ -69,8 +69,8 @@ namespace GitTrends
                 {
                     DockPosition = LegendPlacement.Bottom,
                     ToggleSeriesVisibility = true,
-                    IconWidth = 8,
-                    IconHeight = 8,
+                    IconWidth = 16,
+                    IconHeight = 16,
                     LabelStyle = new ChartLegendLabelStyle { TextColor = ColorConstants.DarkNavyBlue }
                 };
 

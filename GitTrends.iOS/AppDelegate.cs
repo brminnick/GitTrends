@@ -38,7 +38,7 @@ namespace GitTrends.iOS
         {
             var callbackUri = new Uri(url.AbsoluteString);
 
-            HandleCallbackUri().SafeFireAndForget();
+            HandleCallbackUri().SafeFireAndForget(onException: x => Debug.WriteLine(x));
 
             return true;
 

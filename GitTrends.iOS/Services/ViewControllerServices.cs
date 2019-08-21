@@ -13,20 +13,16 @@ namespace GitTrends.iOS
             {
                 var rootController = UIApplication.SharedApplication.KeyWindow.RootViewController;
 
-                switch (rootController.PresentedViewController)
+                return rootController.PresentedViewController switch
                 {
-                    case UINavigationController navigationController:
-                        return navigationController.TopViewController;
+                    UINavigationController navigationController => navigationController.TopViewController,
 
-                    case UITabBarController tabBarController:
-                        return tabBarController.SelectedViewController;
+                    UITabBarController tabBarController => tabBarController.SelectedViewController,
 
-                    case null:
-                        return rootController;
+                    null => rootController,
 
-                    default:
-                        return rootController.PresentedViewController;
-                }
+                    _ => rootController.PresentedViewController,
+                };
             });
         }
 
@@ -41,7 +37,7 @@ namespace GitTrends.iOS
 
 #pragma warning disable CS8600 //Converting null literal or possible null value to non-nullable type
                     sfSafariViewController = null;
-#pragma warning enable CS8600
+#pragma warning restore CS8600
                 }).ConfigureAwait(false);
             }
         }
