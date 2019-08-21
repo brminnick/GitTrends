@@ -13,6 +13,6 @@ namespace GitTrends.Functions
         readonly static string _clientId = Environment.GetEnvironmentVariable("GitTrendsClientId");
 
         [FunctionName(nameof(GetGitHubClientId))]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request, ILogger log) => new OkObjectResult(new GetGitHubClientIdDTO(_clientId));
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest request, ILogger log) => new OkObjectResult(new GetGitHubClientIdDTO(_clientId));
     }
 }

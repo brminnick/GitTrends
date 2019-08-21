@@ -17,7 +17,7 @@ namespace GitTrends.Functions
         readonly static string _clientId = Environment.GetEnvironmentVariable("GitTrendsClientId");
 
         [FunctionName(nameof(GenerateGitHubOAuthToken))]
-        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest httpRequest, ILogger log)
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest httpRequest, ILogger log)
         {
             log.LogInformation("Received request for OAuth Token");
 
