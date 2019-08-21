@@ -11,13 +11,13 @@
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />
     <Folder Include="$(MSBuildThisFileDirectory)Services\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Constants\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\Base\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\Base\GraphQLModels\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\DTOs\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\Interfaces\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\AzureConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GitHubToken.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\BaseApiService.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IAzureFunctionsApi.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
