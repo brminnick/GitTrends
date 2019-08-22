@@ -1,5 +1,4 @@
-﻿using System;
-namespace GitTrends.Shared
+﻿namespace GitTrends.Shared
 {
     public class GetGitHubClientIdDTO
     {

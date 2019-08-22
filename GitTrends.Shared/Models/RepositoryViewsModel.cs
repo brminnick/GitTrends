@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace GitTrends.Shared
 {
     public class RepositoryViewsModel : BaseRepositoryModel
     {
-        public RepositoryViewsModel(long count, long uniques, List<DailyViewsModel> views) : base(count, uniques)
+        public RepositoryViewsModel(long count, long uniques, IEnumerable<DailyViewsModel> views) : base(count, uniques)
         {
-            DailyViewsList = views;
+            DailyViewsList = views.ToList();
         }
 
         [JsonProperty("views")]

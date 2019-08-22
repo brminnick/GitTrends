@@ -1,8 +1,8 @@
 ﻿namespace GitTrends.Shared
 {
-    public class SyncfusionDTO
+    public class SyncFusionDTO
     {
-        public SyncfusionDTO(string licenseKey, long licenseVersion) =>
+        public SyncFusionDTO(string licenseKey, long licenseVersion) =>
             (LicenseKey, LicenseVersion) = (licenseKey, licenseVersion);
 
         public string LicenseKey { get; }
