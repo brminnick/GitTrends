@@ -3,12 +3,12 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class ProfilePage : BaseContentPage<ProfileViewModel>
+    public class SettingsPage : BaseContentPage<SettingsViewModel>
     {
         readonly FontAwesomeButton _gitHubLoginButton;
         readonly ActivityIndicator _activityIndicator;
 
-        public ProfilePage(ProfileViewModel profileViewModel) : base("Settings", profileViewModel)
+        public SettingsPage(SettingsViewModel settingsViewModel) : base("Settings", settingsViewModel)
         {
             ViewModel.GitHubLoginUrlRetrieved += HandleGitHubLoginUrlRetrieved;
 

@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using Autofac;
 using GitTrends.Shared;
 
 namespace GitTrends
 {
-    public class ContainerService
+    public static class ContainerService
     {
-        public static IContainer Container { get; } = CreateContainer();
+        readonly static Lazy<IContainer> _containerHolder = new Lazy<IContainer>(CreateContainer);
+
+        public static IContainer Container => _containerHolder.Value;
 
         static IContainer CreateContainer()
         {
@@ -17,17 +19,17 @@ namespace GitTrends
             builder.RegisterType<GitHubAuthenticationService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubGraphQLApiService>().AsSelf().SingleInstance();
             builder.RegisterType<AzureFunctionsApiService>().AsSelf().SingleInstance();
-            builder.RegisterType<SyncfusionService>().AsSelf().SingleInstance();
+            builder.RegisterType<SyncFusionService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
 
             //Register ViewModels
             builder.RegisterType<RepositoryViewModel>().AsSelf();
-            builder.RegisterType<ProfileViewModel>().AsSelf();
+            builder.RegisterType<SettingsViewModel>().AsSelf();
             builder.RegisterType<TrendsViewModel>().AsSelf();
 
             //Register Pages
             builder.RegisterType<RepositoryPage>().AsSelf();
-            builder.RegisterType<ProfilePage>().AsSelf();
+            builder.RegisterType<SettingsPage>().AsSelf();
             builder.RegisterType<TrendsPage>().AsSelf().WithParameter(new TypedParameter(typeof(Repository), "repository"));
 
             return builder.Build();

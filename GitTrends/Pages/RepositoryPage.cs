@@ -96,7 +96,7 @@ namespace GitTrends
         {
             using (var scope = ContainerService.Container.BeginLifetimeScope())
             {
-                var profilePage = scope.Resolve<ProfilePage>();
+                var profilePage = scope.Resolve<SettingsPage>();
                 return Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(profilePage));
             }
         }

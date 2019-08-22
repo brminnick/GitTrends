@@ -37,7 +37,7 @@ namespace GitTrends.Droid
 
             using (var scope = ContainerService.Container.BeginLifetimeScope())
             {
-                var syncFusionService = scope.Resolve<SyncfusionService>();
+                var syncFusionService = scope.Resolve<SyncFusionService>();
                 syncFusionService.Initialize().SafeFireAndForget(onException: ex => System.Diagnostics.Debug.WriteLine(ex));
             }
 
@@ -55,7 +55,7 @@ namespace GitTrends.Droid
 
                 async void HandlePushed(object sender, Xamarin.Forms.NavigationEventArgs e)
                 {
-                    if (e.Page is ProfilePage)
+                    if (e.Page is SettingsPage)
                     {
                         navigationPage.Pushed -= HandlePushed;
 

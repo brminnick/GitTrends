@@ -25,7 +25,7 @@ namespace GitTrends.iOS
 
             using (var scope = ContainerService.Container.BeginLifetimeScope())
             {
-                var syncFusionService = scope.Resolve<SyncfusionService>();
+                var syncFusionService = scope.Resolve<SyncFusionService>();
                 syncFusionService.Initialize().SafeFireAndForget(onException: ex => Debug.WriteLine(ex));
             }
 
