@@ -5,20 +5,20 @@ using Xamarin.Essentials;
 
 namespace GitTrends
 {
-    public class SyncfusionService
+    public class SyncFusionService
     {
         readonly static Lazy<long> _assemblyVersionNumberHolder = new Lazy<long>(() => long.Parse(System.Reflection.Assembly.GetAssembly(typeof(Syncfusion.CoreAssembly)).GetName().Version.ToString().Replace(".", "")));
-        readonly Lazy<string> _syncfusionLicenseKeyHolder = new Lazy<string>(() => $"{nameof(SyncfusionDTO.LicenseKey)}_{_assemblyVersionNumberHolder.Value}");
+        readonly Lazy<string> _syncfusionLicenseKeyHolder = new Lazy<string>(() => $"{nameof(SyncFusionDTO.LicenseKey)}_{_assemblyVersionNumberHolder.Value}");
 
         readonly AzureFunctionsApiService _azureFunctionsApiService;
 
-        public SyncfusionService(AzureFunctionsApiService azureFunctionsApiService)
+        public SyncFusionService(AzureFunctionsApiService azureFunctionsApiService)
         {
             _azureFunctionsApiService = azureFunctionsApiService;
         }
 
+        string SyncfusionLicenseKey => _syncfusionLicenseKeyHolder.Value;
         public static long AssemblyVersionNumber => _assemblyVersionNumberHolder.Value;
-        public string SyncfusionLicenseKeyHolder => _syncfusionLicenseKeyHolder.Value;
 
         public async Task Initialize()
         {
@@ -41,8 +41,8 @@ namespace GitTrends
                 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicense);
         }
 
-        public Task<string> GetLicense() => SecureStorage.GetAsync(SyncfusionLicenseKeyHolder);
+        public Task<string> GetLicense() => SecureStorage.GetAsync(SyncfusionLicenseKey);
 
-        Task SaveLicense(string license) => SecureStorage.SetAsync(SyncfusionLicenseKeyHolder, license);
+        Task SaveLicense(in string license) => SecureStorage.SetAsync(SyncfusionLicenseKey, license);
     }
 }
