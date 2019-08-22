@@ -12,27 +12,27 @@ namespace GitTrends
     {
         public async Task<int> DeleteAllData()
         {
-            var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
+            var databaseConnection = await GetDatabaseConnection<RepositoryDatabaseModel>().ConfigureAwait(false);
 
-            return await ExecutePollyFunction(() => databaseConnection.DeleteAllAsync<RepositoryDatabaseModel>()).ConfigureAwait(false);
+            return await AttemptAndRetry(() => databaseConnection.DeleteAllAsync<RepositoryDatabaseModel>()).ConfigureAwait(false);
         }
 
         public async Task<int> SaveRepository(Repository repository)
         {
-            var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
+            var databaseConnection = await GetDatabaseConnection<RepositoryDatabaseModel>().ConfigureAwait(false);
 
-            return await ExecutePollyFunction(() => databaseConnection.InsertOrReplaceAsync((RepositoryDatabaseModel)repository)).ConfigureAwait(false);
+            return await AttemptAndRetry(() => databaseConnection.InsertOrReplaceAsync((RepositoryDatabaseModel)repository)).ConfigureAwait(false);
         }
 
         public async Task<int> SaveRepositories(IEnumerable<Repository> repositories)
         {
             try
             {
-                var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
+                var databaseConnection = await GetDatabaseConnection<RepositoryDatabaseModel>().ConfigureAwait(false);
 
                 var repositoryDatabaseModels = repositories.Select(x => (RepositoryDatabaseModel)x);
 
-                return await ExecutePollyFunction(() => databaseConnection.InsertAllAsync(repositoryDatabaseModels)).ConfigureAwait(false);
+                return await AttemptAndRetry(() => databaseConnection.InsertAllAsync(repositoryDatabaseModels)).ConfigureAwait(false);
             }
             catch (SQLiteException e) when (e.Result is SQLite3.Result.Constraint)
             {
@@ -50,18 +50,18 @@ namespace GitTrends
 
         public async Task<Repository> GetRepository(Uri repositoryUri)
         {
-            var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
+            var databaseConnection = await GetDatabaseConnection<RepositoryDatabaseModel>().ConfigureAwait(false);
 
-            var repositoryDatabaseModel = await ExecutePollyFunction(() => databaseConnection.GetAsync<RepositoryDatabaseModel>(repositoryUri)).ConfigureAwait(false);
+            var repositoryDatabaseModel = await AttemptAndRetry(() => databaseConnection.GetAsync<RepositoryDatabaseModel>(repositoryUri)).ConfigureAwait(false);
 
             return (Repository)repositoryDatabaseModel;
         }
 
         public async Task<IEnumerable<Repository>> GetRepositories()
         {
-            var databaseConnection = await GetDatabaseConnectionAsync<RepositoryDatabaseModel>().ConfigureAwait(false);
+            var databaseConnection = await GetDatabaseConnection<RepositoryDatabaseModel>().ConfigureAwait(false);
 
-            var repositoryDatabaseModels = await ExecutePollyFunction(() => databaseConnection.Table<RepositoryDatabaseModel>().ToListAsync()).ConfigureAwait(false);
+            var repositoryDatabaseModels = await AttemptAndRetry(() => databaseConnection.Table<RepositoryDatabaseModel>().ToListAsync()).ConfigureAwait(false);
 
             return repositoryDatabaseModels.Select(x => (Repository)x);
         }

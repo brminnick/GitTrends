@@ -17,7 +17,7 @@ namespace GitTrends
 
         static SQLiteAsyncConnection DatabaseConnection => _databaseConnectionHolder.Value;
 
-        protected static async ValueTask<SQLiteAsyncConnection> GetDatabaseConnectionAsync<T>()
+        protected static async ValueTask<SQLiteAsyncConnection> GetDatabaseConnection<T>()
         {
             if (!DatabaseConnection.TableMappings.Any(x => x.MappedType.Name == typeof(T).Name))
             {
@@ -28,9 +28,9 @@ namespace GitTrends
             return DatabaseConnection;
         }
 
-        protected static Task<T> ExecutePollyFunction<T>(Func<Task<T>> action, int numRetries = 3)
+        protected static Task<T> AttemptAndRetry<T>(Func<Task<T>> action, int numRetries = 3)
         {
-            return Policy.Handle<Exception>().WaitAndRetryAsync(numRetries, pollyRetryAttempt).ExecuteAsync(action);
+            return Policy.Handle<SQLiteException>().WaitAndRetryAsync(numRetries, pollyRetryAttempt).ExecuteAsync(action);
 
             TimeSpan pollyRetryAttempt(int attemptNumber) => TimeSpan.FromSeconds(Math.Pow(2, attemptNumber));
         }
