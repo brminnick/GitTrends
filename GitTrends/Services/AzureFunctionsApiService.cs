@@ -13,6 +13,6 @@ namespace GitTrends
 
         public Task<GetGitHubClientIdDTO> GetGitHubClientId() => AttemptAndRetry_Mobile(() => AzureFunctionsApiClient.GetGitTrendsClientId());
         public Task<GitHubToken> GenerateGitTrendsOAuthToken(GenerateTokenDTO generateTokenDTO) => AttemptAndRetry_Mobile(() => AzureFunctionsApiClient.GenerateGitTrendsOAuthToken(generateTokenDTO));
-        public Task<SyncfusionDTO> GetSyncfusionInformation() => AttemptAndRetry_Mobile(() => AzureFunctionsApiClient.GetSyncfusionInformation(SyncfusionService.AssemblyVersionNumber));
+        public Task<SyncFusionDTO> GetSyncfusionInformation() => AttemptAndRetry_Mobile(() => AzureFunctionsApiClient.GetSyncfusionInformation(SyncFusionService.AssemblyVersionNumber));
     }
 }

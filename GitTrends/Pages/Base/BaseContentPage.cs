@@ -7,7 +7,7 @@ namespace GitTrends
 {
     public abstract class BaseContentPage<T> : ContentPage where T : BaseViewModel
     {
-        protected BaseContentPage(string title, T viewModel)
+        protected BaseContentPage(in string title, in T viewModel)
         {
             BindingContext = ViewModel = viewModel;
             BackgroundColor = ColorConstants.LightBlue;

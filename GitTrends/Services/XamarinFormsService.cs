@@ -42,17 +42,17 @@ namespace GitTrends
             }
         }
 
-        static IList<Layout<View>> GetChildLayouts(in Layout<View> layout)
+        static IEnumerable<Layout<View>> GetChildLayouts(in Layout<View> layout)
         {
-            if (layout?.Children is null || !layout.Children.Any())
-                return new List<Layout<View>>();
+            if (layout.Children is null || !layout.Children.Any())
+                return Enumerable.Empty<Layout<View>>();
 
-            var childLayouts = layout.Children.OfType<Layout<View>>()?.ToList() ?? new List<Layout<View>>();
+            var childLayouts = layout.Children.OfType<Layout<View>>();
 
-            var childContentViews = layout.Children.OfType<ContentView>()?.ToList() ?? new List<ContentView>();
-            var childContentViewLayouts = childContentViews.Where(x => x?.Content is Layout<View>)?.Select(x => x?.Content as Layout<View>)?.ToList() ?? new List<Layout<View>>();
+            var childContentViews = layout.Children.OfType<ContentView>();
+            var childContentViewLayouts = childContentViews.Where(x => x.Content is Layout<View>)?.Select(x => x?.Content as Layout<View>) ?? Enumerable.Empty<Layout<View>>(); 
 
-            return childLayouts?.Concat(childContentViewLayouts)?.ToList() ?? new List<Layout<View>>();
+            return childLayouts.Concat(childContentViewLayouts);
         }
     }
 }

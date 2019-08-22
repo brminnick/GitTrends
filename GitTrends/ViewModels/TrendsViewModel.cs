@@ -73,13 +73,13 @@ namespace GitTrends
 
                 await Task.WhenAll(getRepositoryViewStatisticsTask, getRepositoryCloneStatisticsTask, minimumTimeTask).ConfigureAwait(false);
 
-                var repositoryViewsModel = await getRepositoryViewStatisticsTask.ConfigureAwait(false);
-                var repositoryClonesModel = await getRepositoryCloneStatisticsTask.ConfigureAwait(false);
+                var repositoryViews = await getRepositoryViewStatisticsTask.ConfigureAwait(false);
+                var repositoryClones = await getRepositoryCloneStatisticsTask.ConfigureAwait(false);
 
-                addMissingDates(repositoryViewsModel.DailyViewsList, repositoryClonesModel.DailyClonesList);
+                addMissingDates(repositoryViews.DailyViewsList, repositoryClones.DailyClonesList);
 
-                DailyViewsList = repositoryViewsModel.DailyViewsList.OrderBy(x => x.Day).ToList();
-                DailyClonesList = repositoryClonesModel.DailyClonesList.OrderBy(x => x.Day).ToList();
+                DailyViewsList = repositoryViews.DailyViewsList.OrderBy(x => x.Day).ToList();
+                DailyClonesList = repositoryClones.DailyClonesList.OrderBy(x => x.Day).ToList();
 
                 PrintDays();
             }
@@ -88,24 +88,21 @@ namespace GitTrends
                 IsFetchingData = false;
             }
 
-            void addMissingDates(in List<DailyViewsModel> dailyViewsList, in List<DailyClonesModel> dailyClonesList)
+            void addMissingDates(in IList<DailyViewsModel> dailyViewsList, in IList<DailyClonesModel> dailyClonesList)
             {
                 var day = GetMinimumDateTimeOffset(dailyViewsList, dailyClonesList);
                 var maximumDay = GetMaximumDateTimeOffset(dailyViewsList, dailyClonesList);
 
+                var viewsDays = dailyViewsList.Select(x => x.Day.Day).ToList();
+                var clonesDays = dailyClonesList.Select(x => x.Day.Day).ToList();
+
                 while (day.Day != maximumDay.Day + 1)
                 {
-                    var viewsDays = dailyViewsList.Select(x => x.Day.Day).ToList();
                     if (!viewsDays.Contains(day.Day))
-                    {
                         dailyViewsList.Add(new DailyViewsModel(removeHourMinuteSecond(day), 0, 0));
-                    }
 
-                    var clonesDays = dailyClonesList.Select(x => x.Day.Day).ToList();
                     if (!clonesDays.Contains(day.Day))
-                    {
                         dailyClonesList.Add(new DailyClonesModel(removeHourMinuteSecond(day), 0, 0));
-                    }
 
                     day = day.AddDays(1);
                 }
