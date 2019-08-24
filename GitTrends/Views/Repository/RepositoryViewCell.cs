@@ -128,7 +128,7 @@ namespace GitTrends
         {
             public SmallNavyBlueSVGImage(in string svgFileName)
             {
-                ReplaceStringMap = SvgService.GetColorStringMap(ColorConstants.LightNavyBlueHex);
+                ReplaceStringMap = SvgService.GetColorStringMap(ColorConstants.LightNavyBlue.ToHex());
                 Source = SvgService.GetSVGResourcePath(svgFileName);
                 HeightRequest = _smallFontSize;
             }

@@ -95,6 +95,7 @@ namespace GitTrends
             _repositoryList = repositories.Where(x => x.OwnerLogin.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(x => x.StarCount).ToList();
 
             IEnumerable<Repository> filteredRepositoryList;
+
             if (string.IsNullOrWhiteSpace(searchBarText))
                 filteredRepositoryList = _repositoryList;
             else

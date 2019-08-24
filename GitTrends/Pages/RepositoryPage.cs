@@ -5,6 +5,7 @@ using Autofac;
 using AsyncAwaitBestPractices;
 using GitTrends.Shared;
 using Xamarin.Forms;
+using System.Collections.ObjectModel;
 
 namespace GitTrends
 {
@@ -61,7 +62,7 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            if (ViewModel.VisibleRepositoryCollection?.Any() != true)
+            if (_listView.ItemsSource is ObservableCollection<Repository> repositoryCollection && !repositoryCollection.Any())
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken();
 
@@ -92,21 +93,21 @@ namespace GitTrends
             }
         }
 
-        Task NavigateToSettingsPage()
+        async Task NavigateToSettingsPage()
         {
             using (var scope = ContainerService.Container.BeginLifetimeScope())
             {
                 var profilePage = scope.Resolve<SettingsPage>();
-                return Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(profilePage));
+                await Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(profilePage));
             }
         }
 
-        Task NavigateToTrendsPage(Repository repository)
+        async Task NavigateToTrendsPage(Repository repository)
         {
             using (var scope = ContainerService.Container.BeginLifetimeScope())
             {
                 var trendsPage = scope.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
-                return Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
+                await Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
             }
         }
 
@@ -124,6 +125,6 @@ namespace GitTrends
             });
         }
 
-        void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand?.Execute(searchBarText);
+        void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand.Execute(searchBarText);
     }
 }

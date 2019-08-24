@@ -18,7 +18,7 @@ namespace GitTrends
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly RepositoryDatabase _repositoryDatabase;
 
-        string _sessionId;
+        string _sessionId = string.Empty;
 
         public GitHubAuthenticationService(AzureFunctionsApiService azureFunctionsApiService,
                                             GitHubGraphQLApiService gitHubGraphQLApiService,

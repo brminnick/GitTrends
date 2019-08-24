@@ -132,16 +132,16 @@ namespace GitTrends
 
         DateTimeOffset GetMinimumDateTimeOffset(in IEnumerable<DailyViewsModel> dailyViewsList, in IEnumerable<DailyClonesModel> dailyClonesList)
         {
-            var minViewsDateTimeOffset = dailyViewsList?.Min(x => x?.Day) ?? DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
-            var minClonesDateTimeOffset = dailyClonesList?.Min(x => x?.Day) ?? DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
+            var minViewsDateTimeOffset = dailyViewsList.Any() ? dailyViewsList.Min(x => x.Day) : DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
+            var minClonesDateTimeOffset = dailyClonesList.Any() ? dailyClonesList.Min(x => x.Day) : DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
 
             return new DateTime(Math.Min(minViewsDateTimeOffset.Ticks, minClonesDateTimeOffset.Ticks));
         }
 
         DateTimeOffset GetMaximumDateTimeOffset(in IEnumerable<DailyViewsModel> dailyViewsList, in IEnumerable<DailyClonesModel> dailyClonesList)
         {
-            var maxViewsDateTime = dailyViewsList?.Max(x => x?.Day) ?? DateTimeOffset.UtcNow;
-            var maxClonesDateTime = dailyClonesList?.Max(x => x?.Day) ?? DateTimeOffset.UtcNow;
+            var maxViewsDateTime = dailyViewsList.Any() ? dailyViewsList.Max(x => x.Day) : DateTimeOffset.UtcNow;
+            var maxClonesDateTime = dailyClonesList.Any() ? dailyClonesList.Max(x => x.Day) : DateTimeOffset.UtcNow;
 
             return new DateTime(Math.Max(maxViewsDateTime.Ticks, maxClonesDateTime.Ticks));
         }
@@ -151,16 +151,16 @@ namespace GitTrends
 
         DateTime GetMinimumLocalDateTime(in IEnumerable<DailyViewsModel> dailyViewsList, in IEnumerable<DailyClonesModel> dailyClonesList)
         {
-            var minViewsDateTimeOffset = dailyViewsList?.Min(x => x?.LocalDay) ?? DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
-            var minClonesDateTimeOffset = dailyClonesList?.Min(x => x?.LocalDay) ?? DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
+            var minViewsDateTimeOffset = dailyViewsList.Any() ? dailyViewsList.Min(x => x.LocalDay) : DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
+            var minClonesDateTimeOffset = dailyClonesList.Any() ? dailyClonesList.Min(x => x.LocalDay) : DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
 
             return new DateTime(Math.Min(minViewsDateTimeOffset.Ticks, minClonesDateTimeOffset.Ticks));
         }
 
         DateTime GetMaximumLocalDateTime(in IEnumerable<DailyViewsModel> dailyViewsList, in IEnumerable<DailyClonesModel> dailyClonesList)
         {
-            var maxViewsDateTime = dailyViewsList?.Max(x => x?.LocalDay) ?? DateTimeOffset.UtcNow;
-            var maxClonesDateTime = dailyClonesList?.Max(x => x?.LocalDay) ?? DateTimeOffset.UtcNow;
+            var maxViewsDateTime = dailyViewsList.Any() ? dailyViewsList.Max(x => x.LocalDay) : DateTimeOffset.UtcNow;
+            var maxClonesDateTime = dailyClonesList.Any() ? dailyClonesList.Max(x => x.LocalDay) : DateTimeOffset.UtcNow;
 
             return new DateTime(Math.Max(maxViewsDateTime.Ticks, maxClonesDateTime.Ticks));
         }

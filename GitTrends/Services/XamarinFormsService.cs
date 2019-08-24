@@ -50,7 +50,7 @@ namespace GitTrends
             var childLayouts = layout.Children.OfType<Layout<View>>();
 
             var childContentViews = layout.Children.OfType<ContentView>();
-            var childContentViewLayouts = childContentViews.Where(x => x.Content is Layout<View>)?.Select(x => x?.Content as Layout<View>) ?? Enumerable.Empty<Layout<View>>(); 
+            var childContentViewLayouts = childContentViews.Where(x => x.Content is Layout<View>).Select(x => x.Content as Layout<View>);
 
             return childLayouts.Concat(childContentViewLayouts);
         }

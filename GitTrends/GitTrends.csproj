@@ -11,9 +11,13 @@
         <DebugType>pdbonly</DebugType>
         <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+      <DebugType></DebugType>
+      <Optimize>true</Optimize>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Xamarin.Forms" Version="4.2.0.709249" />
-        <PackageReference Include="Xamarin.Essentials" Version="1.2.0" />
+        <PackageReference Include="Xamarin.Essentials" Version="1.3.0" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
         <PackageReference Include="Refit" Version="4.7.51" />
         <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="3.1.0-pre5" />
@@ -24,6 +28,7 @@
         <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.3" />
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
         <PackageReference Include="Autofac" Version="4.9.4" />
+        <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.0.16" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="EventArgs\" />
@@ -32,6 +37,7 @@
       <Folder Include="Views\Base\" />
       <Folder Include="Database\" />
       <Folder Include="Resources\" />
+      <Folder Include="Views\Settings\" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="repo_forked.svg" />

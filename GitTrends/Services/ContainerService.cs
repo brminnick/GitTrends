@@ -21,6 +21,7 @@ namespace GitTrends
             builder.RegisterType<AzureFunctionsApiService>().AsSelf().SingleInstance();
             builder.RegisterType<SyncFusionService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
+            builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
 
             //Register ViewModels
             builder.RegisterType<RepositoryViewModel>().AsSelf();

@@ -11,15 +11,17 @@ namespace GitTrends
     {
         readonly WeakEventManager<string> _gitHubLoginUrlRetrievedEventManager = new WeakEventManager<string>();
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
+        readonly TrendsChartSettingsService _trendsChartSettingsService;
 
         string _gitHubUserImageSource = string.Empty;
         string _gitHubUserNameLabelText = string.Empty;
         string _gitHubButtonText = string.Empty;
         bool _isAuthenticating;
 
-        public SettingsViewModel(GitHubAuthenticationService gitHubAuthenticationService)
+        public SettingsViewModel(GitHubAuthenticationService gitHubAuthenticationService, TrendsChartSettingsService trendsChartSettingsService)
         {
             _gitHubAuthenticationService = gitHubAuthenticationService;
+            _trendsChartSettingsService = trendsChartSettingsService;
 
             LoginButtonCommand = new AsyncCommand(ExecuteLoginButtonCommand);
 
@@ -38,6 +40,46 @@ namespace GitTrends
         public bool IsNotAuthenticating => !IsAuthenticating;
 
         public ICommand LoginButtonCommand { get; }
+
+        public bool ShouldShowClonesByDefaultSwitchValue
+        {
+            get => _trendsChartSettingsService.ShouldShowClonesByDefault;
+            set
+            {
+                _trendsChartSettingsService.ShouldShowClonesByDefault = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool ShouldShowUniqueClonesByDefaultSwitchValue
+        {
+            get => _trendsChartSettingsService.ShouldShowUniqueClonesByDefault;
+            set
+            {
+                _trendsChartSettingsService.ShouldShowUniqueClonesByDefault = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool ShouldShowViewsByDefaultSwitchValue
+        {
+            get => _trendsChartSettingsService.ShouldShowViewsByDefault;
+            set
+            {
+                _trendsChartSettingsService.ShouldShowViewsByDefault = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool ShouldShowUniqueViewsByDefaultSwitchValue
+        {
+            get => _trendsChartSettingsService.ShouldShowUniqueViewsByDefault;
+            set
+            {
+                _trendsChartSettingsService.ShouldShowUniqueViewsByDefault = value;
+                OnPropertyChanged();
+            }
+        }
 
         public string LoginButtonText
         {

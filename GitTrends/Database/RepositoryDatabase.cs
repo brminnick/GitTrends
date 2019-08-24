@@ -76,20 +76,23 @@ namespace GitTrends
             public long ForkCount { get; set; }
 
             [PrimaryKey]
-            public Uri? Uri { get; set; }
+            public Uri Uri { get; set; }
 
             public int StarCount { get; set; }
 
             public string OwnerLogin { get; set; } = string.Empty;
 
+#pragma warning disable CS8613 //Nullability of reference types doesn't match implicitly implemented member
             public Uri? OwnerAvatarUrl { get; set; }
+#pragma warning restore CS8613
 
             public int IssuesCount { get; set; }
 
             public static explicit operator Repository(RepositoryDatabaseModel repositoryDatabaseModel)
             {
-                return new Repository(repositoryDatabaseModel.Name, repositoryDatabaseModel.Description,
-                    repositoryDatabaseModel.ForkCount, new RepositoryOwner(repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl), new IssuesConnection(repositoryDatabaseModel.IssuesCount, new List<Issue>()),
+                return new Repository(repositoryDatabaseModel.Name, repositoryDatabaseModel.Description, repositoryDatabaseModel.ForkCount,
+                    new RepositoryOwner(repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl),
+                    new IssuesConnection(repositoryDatabaseModel.IssuesCount, Enumerable.Empty<Issue>()),
                     repositoryDatabaseModel.Uri, new StarGazers(repositoryDatabaseModel.StarCount));
             }
 

@@ -13,7 +13,7 @@
         <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
         <PackageReference Include="Polly" Version="7.1.0" />
         <PackageReference Include="Refit" Version="4.7.51" />
-        <PackageReference Include="Xamarin.Essentials" Version="1.2.0" />
+        <PackageReference Include="Xamarin.Essentials" Version="1.3.0" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="obj\*" />

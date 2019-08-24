@@ -4,25 +4,25 @@ namespace GitTrends
 {
     public static class ColorConstants
     {
-        public const string DarkestBlueHex = "#2C7797";
-        public const string DarkBlueHex = "#185E7C";
-        public const string MediumBlueHex = "#1FAECE";
-        public const string LightBlueHex = "#96E2F5";
+        const string _darkestBlueHex = "#2C7797";
+        const string _darkBlueHex = "#185E7C";
+        const string _mediumBlueHex = "#1FAECE";
+        const string _lightBlueHex = "#96E2F5";
 
-        public const string GitHubColorHex = "#333333";
+        const string _gitHubColorHex = "#333333";
 
-        public const string LightNavyBlueHex = "#365271";
-        public const string DarkNavyBlueHex = "#1C2B39";
+        const string _lightNavyBlueHex = "#365271";
+        const string _darkNavyBlueHex = "#1C2B39";
 
-        public static Color DarkestBlue { get; } = Color.FromHex(DarkestBlueHex);
-        public static Color DarkBlue { get; } = Color.FromHex(DarkBlueHex);
-        public static Color MediumBlue { get; } = Color.FromHex(MediumBlueHex);
-        public static Color LightBlue { get; } = Color.FromHex(LightBlueHex);
+        public static Color DarkestBlue { get; } = Color.FromHex(_darkestBlueHex);
+        public static Color DarkBlue { get; } = Color.FromHex(_darkBlueHex);
+        public static Color MediumBlue { get; } = Color.FromHex(_mediumBlueHex);
+        public static Color LightBlue { get; } = Color.FromHex(_lightBlueHex);
 
-        public static Color LightNavyBlue { get; } = Color.FromHex(LightNavyBlueHex);
-        public static Color DarkNavyBlue { get; } = Color.FromHex(DarkNavyBlueHex);
+        public static Color LightNavyBlue { get; } = Color.FromHex(_lightNavyBlueHex);
+        public static Color DarkNavyBlue { get; } = Color.FromHex(_darkNavyBlueHex);
 
-        public static Color GitHubColor { get; } = Color.FromHex(GitHubColorHex);
+        public static Color GitHubColor { get; } = Color.FromHex(_gitHubColorHex);
 
         public static Color PullToRefreshActivityIndicatorColor { get; } = Device.RuntimePlatform is Device.iOS ? Color.White : DarkBlue;
     }
