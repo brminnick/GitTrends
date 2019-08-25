@@ -76,8 +76,8 @@ namespace GitTrends
                 {
                     DockPosition = LegendPlacement.Bottom,
                     ToggleSeriesVisibility = true,
-                    IconWidth = Device.RuntimePlatform is Device.iOS ? 30 : 20,
-                    IconHeight = Device.RuntimePlatform is Device.iOS ? 30 : 20,
+                    IconWidth = 20,
+                    IconHeight = 20,
                     LabelStyle = new ChartLegendLabelStyle { TextColor = ColorConstants.DarkNavyBlue }
                 };
 

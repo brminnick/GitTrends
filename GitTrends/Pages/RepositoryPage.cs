@@ -6,6 +6,7 @@ using AsyncAwaitBestPractices;
 using GitTrends.Shared;
 using Xamarin.Forms;
 using System.Collections.ObjectModel;
+using GitTrends.Mobile.Shared;
 
 namespace GitTrends
 {
@@ -17,7 +18,7 @@ namespace GitTrends
 
         readonly ListView _listView;
 
-        public RepositoryPage(RepositoryViewModel repositoryViewModel, GitHubAuthenticationService gitHubAuthenticationService) : base("Repositories", repositoryViewModel)
+        public RepositoryPage(RepositoryViewModel repositoryViewModel, GitHubAuthenticationService gitHubAuthenticationService) : base(PageTitles.RepositoryPage, repositoryViewModel)
         {
             _gitHubAuthenticationService = gitHubAuthenticationService;
 

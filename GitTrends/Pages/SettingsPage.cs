@@ -1,10 +1,11 @@
-﻿using Xamarin.Forms;
+﻿using GitTrends.Mobile.Shared;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
     public class SettingsPage : BaseContentPage<SettingsViewModel>
     {
-        public SettingsPage(SettingsViewModel settingsViewModel) : base("Settings", settingsViewModel)
+        public SettingsPage(SettingsViewModel settingsViewModel, TrendsChartSettingsService trendsChartSettingsService) : base(PageTitles.SettingsPage, settingsViewModel)
         {
             ViewModel.GitHubLoginUrlRetrieved += HandleGitHubLoginUrlRetrieved;
 
@@ -16,7 +17,7 @@ namespace GitTrends
                 Children =
                 {
                     new GitHubSettingsView(),
-                    new TrendsChartSettingsView()
+                    new TrendsChartSettingsView(trendsChartSettingsService)
                 }
             };
 

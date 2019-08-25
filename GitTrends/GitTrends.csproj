@@ -23,12 +23,13 @@
         <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="3.1.0-pre5" />
         <PackageReference Include="Polly" Version="7.1.0" />
         <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.0.0.5" />
-        <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="17.2.0.40" />
+        <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="17.2.0.46" />
         <PackageReference Include="sqlite-net-pcl" Version="1.6.258-beta" />
         <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.3" />
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
         <PackageReference Include="Autofac" Version="4.9.4" />
         <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.0.16" />
+        <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="17.2.0.46" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="EventArgs\" />
@@ -50,5 +51,6 @@
       <EmbeddedResource Include="Resources\star.svg" />
       <EmbeddedResource Include="Resources\issue_opened.svg" />
     </ItemGroup>
+    <Import Project="..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems')" />
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
 </Project>
