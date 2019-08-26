@@ -31,62 +31,65 @@ namespace GitTrends
 
         public TrendsChartOptions CurrentTrendsChartOption
         {
-            get
+            get => GetCurrentTrendsChartOption();
+            set => SetCurrentTrendsChartOption(value);
+        }
+
+        void SetCurrentTrendsChartOption(in TrendsChartOptions currentTrendsChartOption)
+        {
+            switch (currentTrendsChartOption)
             {
-                if (ShouldShowUniqueClonesByDefault
-                    && ShouldShowUniqueViewsByDefault
-                    && ShouldShowClonesByDefault
-                    && ShouldShowViewsByDefault)
-                {
-                    return TrendsChartOptions.All;
-                }
+                case TrendsChartOptions.All:
+                    ShouldShowUniqueClonesByDefault = true;
+                    ShouldShowUniqueViewsByDefault = true;
+                    ShouldShowClonesByDefault = true;
+                    ShouldShowViewsByDefault = true;
+                    break;
 
-                if (ShouldShowUniqueClonesByDefault
-                    && ShouldShowUniqueViewsByDefault
-                    && !ShouldShowClonesByDefault
-                    && !ShouldShowViewsByDefault)
-                {
-                    return TrendsChartOptions.JustUniques;
-                }
+                case TrendsChartOptions.JustUniques:
+                    ShouldShowUniqueClonesByDefault = true;
+                    ShouldShowUniqueViewsByDefault = true;
+                    ShouldShowClonesByDefault = false;
+                    ShouldShowViewsByDefault = false;
+                    break;
 
-                //No Uniques is the Defaul Value 
-                ShouldShowUniqueClonesByDefault = false;
-                ShouldShowUniqueViewsByDefault = false;
-                ShouldShowClonesByDefault = true;
-                ShouldShowViewsByDefault = true;
+                case TrendsChartOptions.NoUniques:
+                    ShouldShowUniqueClonesByDefault = false;
+                    ShouldShowUniqueViewsByDefault = false;
+                    ShouldShowClonesByDefault = true;
+                    ShouldShowViewsByDefault = true;
+                    break;
 
-                return TrendsChartOptions.NoUniques;
+                default:
+                    throw new NotSupportedException($"{currentTrendsChartOption.ToString()} not supported");
+            }
+        }
+
+        TrendsChartOptions GetCurrentTrendsChartOption()
+        {
+            if (ShouldShowUniqueClonesByDefault
+                && ShouldShowUniqueViewsByDefault
+                && ShouldShowClonesByDefault
+                && ShouldShowViewsByDefault)
+            {
+                return TrendsChartOptions.All;
             }
 
-            set
+            if (ShouldShowUniqueClonesByDefault
+                && ShouldShowUniqueViewsByDefault
+                && !ShouldShowClonesByDefault
+                && !ShouldShowViewsByDefault)
             {
-                switch (value)
-                {
-                    case TrendsChartOptions.All:
-                        ShouldShowUniqueClonesByDefault = true;
-                        ShouldShowUniqueViewsByDefault = true;
-                        ShouldShowClonesByDefault = true;
-                        ShouldShowViewsByDefault = true;
-                        break;
-
-                    case TrendsChartOptions.JustUniques:
-                        ShouldShowUniqueClonesByDefault = true;
-                        ShouldShowUniqueViewsByDefault = true;
-                        ShouldShowClonesByDefault = false;
-                        ShouldShowViewsByDefault = false;
-                        break;
-
-                    case TrendsChartOptions.NoUniques:
-                        ShouldShowUniqueClonesByDefault = false;
-                        ShouldShowUniqueViewsByDefault = false;
-                        ShouldShowClonesByDefault = true;
-                        ShouldShowViewsByDefault = true;
-                        break;
-
-                    default:
-                        throw new NotSupportedException($"{value.ToString()} not supported");
-                }
+                return TrendsChartOptions.JustUniques;
             }
+
+            //No Uniques is the Defauly Value 
+            ShouldShowUniqueClonesByDefault = false;
+            ShouldShowUniqueViewsByDefault = false;
+            ShouldShowClonesByDefault = true;
+            ShouldShowViewsByDefault = true;
+
+            return TrendsChartOptions.NoUniques;
         }
     }
 

@@ -8,7 +8,7 @@ namespace GitTrends
     class TrendsPage : BaseContentPage<TrendsViewModel>
     {
         readonly string _owner, _repository;
-        static readonly Lazy<GitHubTrendsChart> _trendsChartHolder = new Lazy<GitHubTrendsChart>();
+        static readonly Lazy<GitHubTrendsChart> _trendsChartHolder = new Lazy<GitHubTrendsChart>(() => new GitHubTrendsChart());
 
         public TrendsPage(TrendsViewModel trendsViewModel, TrendsChartSettingsService trendsChartSettingsService, Repository repository) : base(repository.Name, trendsViewModel)
         {
@@ -113,7 +113,7 @@ namespace GitTrends
 
                 BackgroundColor = Color.Transparent;
 
-                ChartPadding = 0;
+                ChartPadding = new Thickness(0, 5, 0, 0);
                 Margin = Device.RuntimePlatform is Device.iOS ? new Thickness(0, 5, 0, 15) : new Thickness(0, 5, 0, 0);
             }
 
