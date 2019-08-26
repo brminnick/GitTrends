@@ -35,6 +35,33 @@ namespace GitTrends
             set => SetCurrentTrendsChartOption(value);
         }
 
+        TrendsChartOptions GetCurrentTrendsChartOption()
+        {
+            if (ShouldShowUniqueClonesByDefault
+                && ShouldShowUniqueViewsByDefault
+                && ShouldShowClonesByDefault
+                && ShouldShowViewsByDefault)
+            {
+                return TrendsChartOptions.All;
+            }
+
+            if (ShouldShowUniqueClonesByDefault
+                && ShouldShowUniqueViewsByDefault
+                && !ShouldShowClonesByDefault
+                && !ShouldShowViewsByDefault)
+            {
+                return TrendsChartOptions.JustUniques;
+            }
+
+            //No Uniques is the Defauly Value 
+            ShouldShowUniqueClonesByDefault = false;
+            ShouldShowUniqueViewsByDefault = false;
+            ShouldShowClonesByDefault = true;
+            ShouldShowViewsByDefault = true;
+
+            return TrendsChartOptions.NoUniques;
+        }
+
         void SetCurrentTrendsChartOption(in TrendsChartOptions currentTrendsChartOption)
         {
             switch (currentTrendsChartOption)
@@ -63,33 +90,6 @@ namespace GitTrends
                 default:
                     throw new NotSupportedException($"{currentTrendsChartOption.ToString()} not supported");
             }
-        }
-
-        TrendsChartOptions GetCurrentTrendsChartOption()
-        {
-            if (ShouldShowUniqueClonesByDefault
-                && ShouldShowUniqueViewsByDefault
-                && ShouldShowClonesByDefault
-                && ShouldShowViewsByDefault)
-            {
-                return TrendsChartOptions.All;
-            }
-
-            if (ShouldShowUniqueClonesByDefault
-                && ShouldShowUniqueViewsByDefault
-                && !ShouldShowClonesByDefault
-                && !ShouldShowViewsByDefault)
-            {
-                return TrendsChartOptions.JustUniques;
-            }
-
-            //No Uniques is the Defauly Value 
-            ShouldShowUniqueClonesByDefault = false;
-            ShouldShowUniqueViewsByDefault = false;
-            ShouldShowClonesByDefault = true;
-            ShouldShowViewsByDefault = true;
-
-            return TrendsChartOptions.NoUniques;
         }
     }
 
