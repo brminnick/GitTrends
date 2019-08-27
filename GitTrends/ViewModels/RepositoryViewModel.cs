@@ -23,7 +23,7 @@ namespace GitTrends
 
         bool _isRefreshing;
         string _searchBarText = "";
-        IReadOnlyList<Repository>? _repositoryList;
+        IReadOnlyList<Repository> _repositoryList = Enumerable.Empty<Repository>().ToList();
 
         public RepositoryViewModel(RepositoryDatabase repositoryDatabase,
                                     GitHubAuthenticationService gitHubAuthenticationService,
@@ -31,7 +31,6 @@ namespace GitTrends
         {
             //Make ObservableCollection Thread-Safe
             BindingBase.EnableCollectionSynchronization(VisibleRepositoryCollection, null, ObservableCollectionCallback);
-
 
             _repositoryDatabase = repositoryDatabase;
             _gitHubAuthenticationService = gitHubAuthenticationService;
@@ -48,7 +47,6 @@ namespace GitTrends
         }
 
         public ICommand PullToRefreshCommand { get; }
-
         public ICommand FilterRepositoriesCommand { get; }
 
         public ObservableRangeCollection<Repository> VisibleRepositoryCollection { get; } = new ObservableRangeCollection<Repository>();
@@ -117,7 +115,7 @@ namespace GitTrends
 
             _searchBarText = text;
 
-            if (_repositoryList?.Any() is true)
+            if (_repositoryList.Any())
                 SetRepositoriesCollection(_repositoryList, _gitHubAuthenticationService.Alias, text);
         }
 
