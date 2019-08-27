@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -28,6 +29,10 @@ namespace GitTrends
                                     GitHubAuthenticationService gitHubAuthenticationService,
                                     GitHubGraphQLApiService gitHubGraphQLApiService)
         {
+            //Make ObservableCollection Thread-Safe
+            BindingBase.EnableCollectionSynchronization(VisibleRepositoryCollection, null, ObservableCollectionCallback);
+
+
             _repositoryDatabase = repositoryDatabase;
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
@@ -114,6 +119,14 @@ namespace GitTrends
 
             if (_repositoryList?.Any() is true)
                 SetRepositoriesCollection(_repositoryList, _gitHubAuthenticationService.Alias, text);
+        }
+
+        void ObservableCollectionCallback(IEnumerable collection, object context, Action accessMethod, bool writeAccess)
+        {
+            lock (collection)
+            {
+                accessMethod?.Invoke();
+            }
         }
 
         void OnPullToRefreshFailed(in string title, in string message) =>
