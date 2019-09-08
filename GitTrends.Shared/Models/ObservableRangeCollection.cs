@@ -25,7 +25,7 @@ namespace System.Collections.ObjectModel
 
         #region Private Fields    
         [NonSerialized]
-        private DeferredEventsCollection _deferredEvents;
+        DeferredEventsCollection _deferredEvents;
         #endregion Private Fields
 
 
@@ -108,7 +108,7 @@ namespace System.Collections.ObjectModel
 
             if (collection is ICollection<T> countable)
             {
-                if (countable.Count == 0)
+                if (countable.Count is 0)
                 {
                     return;
                 }
@@ -143,15 +143,15 @@ namespace System.Collections.ObjectModel
             if (collection is null)
                 throw new ArgumentNullException(nameof(collection));
 
-            if (Count == 0)
+            if (Count is 0)
             {
                 return;
             }
             else if (collection is ICollection<T> countable)
             {
-                if (countable.Count == 0)
+                if (countable.Count is 0)
                     return;
-                else if (countable.Count == 1)
+                else if (countable.Count is 1)
                     using (IEnumerator<T> enumerator = countable.GetEnumerator())
                     {
                         enumerator.MoveNext();
@@ -191,7 +191,7 @@ namespace System.Collections.ObjectModel
 
             OnEssentialPropertiesChanged();
 
-            if (Count == 0)
+            if (Count is 0)
                 OnCollectionReset();
             else
                 foreach (KeyValuePair<int, List<T>> cluster in clusters)
@@ -230,10 +230,10 @@ namespace System.Collections.ObjectModel
                 throw new ArgumentOutOfRangeException(nameof(count));
             if (index + count > Count)
                 throw new ArgumentOutOfRangeException(nameof(index));
-            if (match == null)
+            if (match is null)
                 throw new ArgumentNullException(nameof(match));
 
-            if (Count == 0)
+            if (Count is 0)
                 return 0;
 
             List<T> cluster = null;
@@ -297,10 +297,10 @@ namespace System.Collections.ObjectModel
             if (index + count > Count)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
-            if (count == 0)
+            if (count is 0)
                 return;
 
-            if (count == 1)
+            if (count is 1)
             {
                 RemoveItem(index);
                 return;
@@ -316,7 +316,7 @@ namespace System.Collections.ObjectModel
 
             OnEssentialPropertiesChanged();
 
-            if (Count == 0)
+            if (Count is 0)
                 OnCollectionReset();
             else
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, removedItems, index));
@@ -383,14 +383,14 @@ namespace System.Collections.ObjectModel
             if (index + count > Count)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
-            if (collection == null)
+            if (collection is null)
                 throw new ArgumentNullException(nameof(collection));
-            if (comparer == null)
+            if (comparer is null)
                 throw new ArgumentNullException(nameof(comparer));
 
             if (collection is ICollection<T> countable)
             {
-                if (countable.Count == 0)
+                if (countable.Count is 0)
                 {
                     RemoveRange(index, count);
                     return;
@@ -402,7 +402,7 @@ namespace System.Collections.ObjectModel
                 return;
             }
 
-            if (index + count == 0)
+            if (index + count is 0)
             {
                 InsertRange(0, collection);
                 return;
@@ -437,9 +437,9 @@ namespace System.Collections.ObjectModel
                     {
                         Items[i] = @new;
 
-                        if (newCluster == null)
+                        if (newCluster is null)
                         {
-                            Debug.Assert(oldCluster == null);
+                            Debug.Assert(oldCluster is null);
                             newCluster = new List<T> { @new };
                             oldCluster = new List<T> { old };
                         }
@@ -487,6 +487,25 @@ namespace System.Collections.ObjectModel
                     OnIndexerPropertyChanged();
                 }
             }
+
+            void OnRangeReplaced(int followingItemIndex, ICollection<T> newCluster, ICollection<T> oldCluster)
+            {
+                if (oldCluster is null || oldCluster.Count is 0)
+                {
+                    Debug.Assert(newCluster is null || newCluster.Count is 0);
+                    return;
+                }
+
+                OnCollectionChanged(
+                    new NotifyCollectionChangedEventArgs(
+                        NotifyCollectionChangedAction.Replace,
+                        new List<T>(newCluster),
+                        new List<T>(oldCluster),
+                        followingItemIndex - oldCluster.Count));
+
+                oldCluster.Clear();
+                newCluster.Clear();
+            }
         }
 
         #endregion Public Methods
@@ -506,7 +525,7 @@ namespace System.Collections.ObjectModel
         /// </summary>
         protected override void ClearItems()
         {
-            if (Count == 0)
+            if (Count is 0)
                 return;
 
             CheckReentrancy();
@@ -558,18 +577,18 @@ namespace System.Collections.ObjectModel
 
         //------------------------------------------------------
         //
-        //  Private Methods
+        //   Methods
         //
         //------------------------------------------------------
 
-        #region Private Methods
+        #region  Methods
 
         /// <summary>
         /// Helper function to determine if a collection contains any elements.
         /// </summary>
         /// <param name="collection">The collection to evaluate.</param>
         /// <returns></returns>
-        private static bool ContainsAny(IEnumerable<T> collection)
+        static bool ContainsAny(IEnumerable<T> collection)
         {
             using (IEnumerator<T> enumerator = collection.GetEnumerator())
                 return enumerator.MoveNext();
@@ -578,7 +597,7 @@ namespace System.Collections.ObjectModel
         /// <summary>
         /// Helper to raise Count property and the Indexer property.
         /// </summary>
-        private void OnEssentialPropertiesChanged()
+        void OnEssentialPropertiesChanged()
         {
             OnPropertyChanged(EventArgsCache.CountPropertyChanged);
             OnIndexerPropertyChanged();
@@ -587,64 +606,37 @@ namespace System.Collections.ObjectModel
         /// <summary>
         /// /// Helper to raise a PropertyChanged event for the Indexer property
         /// /// </summary>
-        private void OnIndexerPropertyChanged() =>
-          OnPropertyChanged(EventArgsCache.IndexerPropertyChanged);
+        void OnIndexerPropertyChanged() =>
+         OnPropertyChanged(EventArgsCache.IndexerPropertyChanged);
 
         /// <summary>
         /// Helper to raise CollectionChanged event to any listeners
         /// </summary>
-        private void OnCollectionChanged(NotifyCollectionChangedAction action, object oldItem, object newItem, int index) =>
-          OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, newItem, oldItem, index));
+        void OnCollectionChanged(NotifyCollectionChangedAction action, object oldItem, object newItem, int index) =>
+         OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, newItem, oldItem, index));
 
         /// <summary>
-        /// Helper to raise CollectionChanged event with action == Reset to any listeners
+        /// Helper to raise CollectionChanged event with action is Reset to any listeners
         /// </summary>
-        private void OnCollectionReset() =>
-          OnCollectionChanged(EventArgsCache.ResetCollectionChanged);
+        void OnCollectionReset() =>
+         OnCollectionChanged(EventArgsCache.ResetCollectionChanged);
 
-        /// <summary>
-        /// Helper to raise event for clustered action and clear cluster.
-        /// </summary>
-        /// <param name="followingItemIndex">The index of the item following the replacement block.</param>
-        /// <param name="newCluster"></param>
-        /// <param name="oldCluster"></param>
-        //TODO should have really been a local method inside ReplaceRange(int index, int count, IEnumerable<T> collection, IEqualityComparer<T> comparer),
-        //move when supported language version updated.
-        private void OnRangeReplaced(int followingItemIndex, ICollection<T> newCluster, ICollection<T> oldCluster)
-        {
-            if (oldCluster == null || oldCluster.Count == 0)
-            {
-                Debug.Assert(newCluster == null || newCluster.Count == 0);
-                return;
-            }
-
-            OnCollectionChanged(
-                new NotifyCollectionChangedEventArgs(
-                    NotifyCollectionChangedAction.Replace,
-                    new List<T>(newCluster),
-                    new List<T>(oldCluster),
-                    followingItemIndex - oldCluster.Count));
-
-            oldCluster.Clear();
-            newCluster.Clear();
-        }
-
-        #endregion Private Methods
+        #endregion  Methods
 
         //------------------------------------------------------
         //
-        //  Private Types
+        //   Types
         //
         //------------------------------------------------------
 
-        #region Private Types
-        private sealed class DeferredEventsCollection : List<NotifyCollectionChangedEventArgs>, IDisposable
+        #region  Types
+        sealed class DeferredEventsCollection : List<NotifyCollectionChangedEventArgs>, IDisposable
         {
-            private readonly ObservableRangeCollection<T> _collection;
+            readonly ObservableRangeCollection<T> _collection;
             public DeferredEventsCollection(ObservableRangeCollection<T> collection)
             {
                 Debug.Assert(collection != null);
-                Debug.Assert(collection._deferredEvents == null);
+                Debug.Assert(collection._deferredEvents is null);
                 _collection = collection;
                 _collection._deferredEvents = this;
             }
@@ -657,7 +649,7 @@ namespace System.Collections.ObjectModel
             }
         }
 
-        #endregion Private Types
+        #endregion  Types
 
     }
 

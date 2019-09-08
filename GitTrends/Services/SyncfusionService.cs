@@ -12,10 +12,7 @@ namespace GitTrends
 
         readonly AzureFunctionsApiService _azureFunctionsApiService;
 
-        public SyncFusionService(AzureFunctionsApiService azureFunctionsApiService)
-        {
-            _azureFunctionsApiService = azureFunctionsApiService;
-        }
+        public SyncFusionService(AzureFunctionsApiService azureFunctionsApiService) => _azureFunctionsApiService = azureFunctionsApiService;
 
         string SyncfusionLicenseKey => _syncfusionLicenseKeyHolder.Value;
         public static long AssemblyVersionNumber => _assemblyVersionNumberHolder.Value;

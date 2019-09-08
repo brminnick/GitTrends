@@ -9,7 +9,7 @@ using UIKit;
 namespace GitTrends.iOS
 {
     [Register(nameof(AppDelegate))]
-    public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
+    public class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
     {
         UIVisualEffectView? _blurWindow;
 
