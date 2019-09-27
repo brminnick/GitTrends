@@ -63,17 +63,18 @@ namespace GitTrends
 
             try
             {
-                var repositoryList = await _gitHubGraphQLApiService.GetRepositories(repositoryOwner).ConfigureAwait(false);
-
-                SetRepositoriesCollection(repositoryList, repositoryOwner, _searchBarText);
-
-                _repositoryDatabase.SaveRepositories(repositoryList).SafeFireAndForget();
+                await foreach (var retrievedRepository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner))
+                {
+                    AddRepositoriesToCollection(retrievedRepository, repositoryOwner, _searchBarText);
+                    _repositoryDatabase.SaveRepositories(retrievedRepository).SafeFireAndForget();
+                }
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
             {
                 OnPullToRefreshFailed("Login Expired", "Login again");
 
                 await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
+                await _repositoryDatabase.DeleteAllData().ConfigureAwait(false);
 
                 VisibleRepositoryCollection.Clear();
             }
@@ -97,15 +98,30 @@ namespace GitTrends
         {
             _repositoryList = repositories.Where(x => x.OwnerLogin.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(x => x.StarCount).ToList();
 
-            IEnumerable<Repository> filteredRepositoryList;
-
-            if (string.IsNullOrWhiteSpace(searchBarText))
-                filteredRepositoryList = _repositoryList;
-            else
-                filteredRepositoryList = _repositoryList.Where(x => x.Name.Contains(searchBarText));
+            var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
 
             VisibleRepositoryCollection.Clear();
             VisibleRepositoryCollection.AddRange(filteredRepositoryList);
+        }
+
+        void AddRepositoriesToCollection(in IEnumerable<Repository> repositories, string repositoryOwner, string searchBarText)
+        {
+            _repositoryList = _repositoryList.Concat(GetOwnersRepositories(repositories, repositoryOwner)).ToList();
+
+            var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
+
+            VisibleRepositoryCollection.AddRange(filteredRepositoryList);
+        }
+
+        IEnumerable<Repository> GetOwnersRepositories(in IEnumerable<Repository> repositories, string repositoryOwner) =>
+            repositories.Where(x => x.OwnerLogin.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(x => x.StarCount);
+
+        IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IEnumerable<Repository> repositories, string searchBarText)
+        {
+            if (string.IsNullOrWhiteSpace(searchBarText))
+                return repositories;
+
+            return repositories.Where(x => x.Name.Contains(searchBarText));
         }
 
         void SetSearchBarText(in string text)

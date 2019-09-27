@@ -14,8 +14,9 @@ namespace GitTrends
 
         public SyncFusionService(AzureFunctionsApiService azureFunctionsApiService) => _azureFunctionsApiService = azureFunctionsApiService;
 
-        string SyncfusionLicenseKey => _syncfusionLicenseKeyHolder.Value;
         public static long AssemblyVersionNumber => _assemblyVersionNumberHolder.Value;
+
+        string SyncfusionLicenseKey => _syncfusionLicenseKeyHolder.Value;
 
         public async Task Initialize()
         {

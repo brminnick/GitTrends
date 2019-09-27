@@ -32,12 +32,12 @@ namespace GitTrends
             {
                 ApplyToDerivedTypes = true,
                 Setters = {
-                 new Setter
-                 {
-                     Property = Xamarin.Forms.DebugRainbows.DebugRainbow.IsDebugProperty,
-                     Value = shouldUseDebugRainbows
-                 }
-             }
+                    new Setter
+                    {
+                        Property = Xamarin.Forms.DebugRainbows.DebugRainbow.IsDebugProperty,
+                        Value = shouldUseDebugRainbows
+                    }
+                }
             });
         }
     }
