@@ -1,4 +1,5 @@
-﻿using Android.Content;
+﻿using System;
+using Android.Content;
 using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Text;
@@ -23,11 +24,11 @@ namespace GitTrends.Droid
         {
             base.OnAttachedToWindow();
 
-            if (Application.Current.MainPage is NavigationPage navigationPage)
+            if (GetNavigationPage() is NavigationPage navigationPage)
                 navigationPage.Popped += HandleNavigationPagePopped;
 
             if (Element is ISearchPage && Element is Page page)
-                AddSearchToToolbar(page);
+                AddSearchToToolbar(page.Title);
         }
 
         protected override void Dispose(bool disposing)
@@ -38,12 +39,20 @@ namespace GitTrends.Droid
             base.Dispose(disposing);
         }
 
-        void AddSearchToToolbar(in Page page)
+        NavigationPage? GetNavigationPage() => Application.Current.MainPage switch
+        {
+            NavigationPage navigationPage => navigationPage,
+            MasterDetailPage masterDetailPage => masterDetailPage.Detail as NavigationPage,
+            TabbedPage tabbedPage => tabbedPage.CurrentPage as NavigationPage,
+            _ => throw new NotImplementedException($"{Application.Current.MainPage.GetType()} Not Implemented")
+        };
+
+        void AddSearchToToolbar(in string pageTitle)
         {
             if (GetToolbar() is Toolbar toolBar
                 && toolBar.Menu?.FindItem(Resource.Id.ActionSearch)?.ActionView?.JavaCast<SearchView>().GetType() != typeof(SearchView))
             {
-                toolBar.Title = page.Title;
+                toolBar.Title = pageTitle;
                 toolBar.InflateMenu(Resource.Menu.MainMenu);
 
                 if (toolBar.Menu?.FindItem(Resource.Id.ActionSearch)?.ActionView?.JavaCast<SearchView>() is SearchView searchView)
