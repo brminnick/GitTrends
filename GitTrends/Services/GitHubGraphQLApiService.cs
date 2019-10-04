@@ -37,16 +37,20 @@ namespace GitTrends
             return data.Repository;
         }
 
-        public async IAsyncEnumerable<IEnumerable<Repository>> GetRepositories(string repositoryOwner, int numberOfRepositoriesPerRequest = 100)
+        public async Task<IEnumerable<Repository>> GetRepositories(string repositoryOwner, int numberOfRepositoriesPerRequest = 100)
         {
             RepositoryConnection? repositoryConnection = null;
+
+            List<Repository> gitHubRepositoryList = new List<Repository>();
 
             do
             {
                 repositoryConnection = await GetRepositoryConnection(repositoryOwner, repositoryConnection?.PageInfo?.EndCursor, numberOfRepositoriesPerRequest).ConfigureAwait(false);
-                yield return repositoryConnection?.RepositoryList ?? Enumerable.Empty<Repository>();
+                gitHubRepositoryList.AddRange(repositoryConnection?.RepositoryList);
             }
             while (repositoryConnection?.PageInfo?.HasNextPage is true);
+
+            return gitHubRepositoryList;
         }
 
         async Task<RepositoryConnection> GetRepositoryConnection(string repositoryOwner, string? endCursor, int numberOfRepositoriesPerRequest = 100)
