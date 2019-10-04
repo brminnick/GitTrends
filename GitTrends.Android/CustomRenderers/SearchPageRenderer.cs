@@ -24,11 +24,11 @@ namespace GitTrends.Droid
         {
             base.OnAttachedToWindow();
 
-            if (GetNavigationPage() is NavigationPage navigationPage)
+            if (Element is ISearchPage && Element is Page page && page.Parent is NavigationPage navigationPage)
+            {
                 navigationPage.Popped += HandleNavigationPagePopped;
-
-            if (Element is ISearchPage && Element is Page page)
                 AddSearchToToolbar(page.Title);
+            }
         }
 
         protected override void Dispose(bool disposing)
@@ -38,14 +38,6 @@ namespace GitTrends.Droid
 
             base.Dispose(disposing);
         }
-
-        NavigationPage? GetNavigationPage() => Application.Current.MainPage switch
-        {
-            NavigationPage navigationPage => navigationPage,
-            MasterDetailPage masterDetailPage => masterDetailPage.Detail as NavigationPage,
-            TabbedPage tabbedPage => tabbedPage.CurrentPage as NavigationPage,
-            _ => throw new NotImplementedException($"{Application.Current.MainPage.GetType()} Not Implemented")
-        };
 
         void AddSearchToToolbar(in string pageTitle)
         {
@@ -77,7 +69,7 @@ namespace GitTrends.Droid
             if (sender is NavigationPage navigationPage
                 && navigationPage.CurrentPage is ISearchPage)
             {
-                AddSearchToToolbar(navigationPage.CurrentPage);
+                AddSearchToToolbar(navigationPage.CurrentPage.Title);
             }
         }
 
