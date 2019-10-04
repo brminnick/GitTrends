@@ -63,11 +63,11 @@ namespace GitTrends
 
             try
             {
-                await foreach (var retrievedRepository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner))
-                {
-                    AddRepositoriesToCollection(retrievedRepository, repositoryOwner, _searchBarText);
-                    _repositoryDatabase.SaveRepositories(retrievedRepository).SafeFireAndForget();
-                }
+                var repositoryList = await _gitHubGraphQLApiService.GetRepositories(repositoryOwner).ConfigureAwait(false);
+
+                SetRepositoriesCollection(repositoryList, repositoryOwner, _searchBarText);
+
+                _repositoryDatabase.SaveRepositories(repositoryList).SafeFireAndForget();
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
             {
