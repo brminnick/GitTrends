@@ -507,7 +507,6 @@ namespace System.Collections.ObjectModel
                 newCluster.Clear();
             }
         }
-
         #endregion Public Methods
 
 
@@ -662,5 +661,20 @@ namespace System.Collections.ObjectModel
         internal static readonly PropertyChangedEventArgs IndexerPropertyChanged = new PropertyChangedEventArgs("Item[]");
         internal static readonly NotifyCollectionChangedEventArgs ResetCollectionChanged = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
     }
+
+    public static class ObservableRangeExtensions
+    {
+        public static void Sort<T>(this ObservableCollection<T> collection, Comparison<T> comparison)
+        {
+            var sortableList = new List<T>(collection);
+            sortableList.Sort(comparison);
+
+            for (int i = 0; i < sortableList.Count; i++)
+            {
+                collection.Move(collection.IndexOf(sortableList[i]), i);
+            }
+        }
+    }
+
 }
 #nullable enable
