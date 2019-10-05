@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using GitTrends;
+﻿using GitTrends;
 using GitTrends.iOS;
 using UIKit;
 using Xamarin.Forms;

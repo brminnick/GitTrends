@@ -1,5 +1,4 @@
-﻿using System;
-using Android.Content;
+﻿using Android.Content;
 using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Text;
@@ -25,10 +24,7 @@ namespace GitTrends.Droid
             base.OnAttachedToWindow();
 
             if (Element is ISearchPage && Element is Page page && page.Parent is NavigationPage navigationPage)
-            {
                 navigationPage.Popped += HandleNavigationPagePopped;
-                AddSearchToToolbar(page.Title);
-            }
         }
 
         protected override void Dispose(bool disposing)
@@ -37,6 +33,23 @@ namespace GitTrends.Droid
                 toolBar.Menu?.RemoveItem(Resource.Menu.MainMenu);
 
             base.Dispose(disposing);
+        }
+
+        protected override void OnSizeChanged(int w, int h, int oldw, int oldh)
+        {
+            base.OnSizeChanged(w, h, oldw, oldh);
+
+            if (Element is ISearchPage && Element is Page page)
+                AddSearchToToolbar(page.Title);
+        }
+
+        void HandleNavigationPagePopped(object sender, NavigationEventArgs e)
+        {
+            if (sender is NavigationPage navigationPage
+                && navigationPage.CurrentPage is ISearchPage)
+            {
+                AddSearchToToolbar(navigationPage.CurrentPage.Title);
+            }
         }
 
         void AddSearchToToolbar(in string pageTitle)
@@ -61,16 +74,6 @@ namespace GitTrends.Droid
         {
             if (Element is ISearchPage searchPage)
                 searchPage.OnSearchBarTextChanged(e.NewText);
-
-        }
-
-        void HandleNavigationPagePopped(object sender, NavigationEventArgs e)
-        {
-            if (sender is NavigationPage navigationPage
-                && navigationPage.CurrentPage is ISearchPage)
-            {
-                AddSearchToToolbar(navigationPage.CurrentPage.Title);
-            }
         }
 
         Toolbar GetToolbar() => CrossCurrentActivity.Current.Activity.FindViewById<Toolbar>(Resource.Id.toolbar);
