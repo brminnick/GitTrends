@@ -24,14 +24,12 @@ namespace GitTrends
         bool _isRefreshing;
         string _searchBarText = "";
         IReadOnlyList<Repository> _repositoryList = Enumerable.Empty<Repository>().ToList();
+        IReadOnlyList<Repository> _visibleRepositoryList = Enumerable.Empty<Repository>().ToList();
 
         public RepositoryViewModel(RepositoryDatabase repositoryDatabase,
                                     GitHubAuthenticationService gitHubAuthenticationService,
                                     GitHubGraphQLApiService gitHubGraphQLApiService)
         {
-            //Make ObservableCollection Thread-Safe
-            BindingBase.EnableCollectionSynchronization(VisibleRepositoryCollection, null, ObservableCollectionCallback);
-
             _repositoryDatabase = repositoryDatabase;
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
@@ -49,7 +47,11 @@ namespace GitTrends
         public ICommand PullToRefreshCommand { get; }
         public ICommand FilterRepositoriesCommand { get; }
 
-        public ObservableRangeCollection<Repository> VisibleRepositoryCollection { get; } = new ObservableRangeCollection<Repository>();
+        public IReadOnlyList<Repository> VisibleRepositoryList
+        {
+            get => _visibleRepositoryList;
+            set => SetProperty(ref _visibleRepositoryList, value);
+        }
 
         public bool IsRefreshing
         {
@@ -65,7 +67,7 @@ namespace GitTrends
             {
                 await foreach (var retrievedRepository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner))
                 {
-                    AddRepositoriesToCollection(retrievedRepository, repositoryOwner, _searchBarText, (a, b) => b.StarCount.CompareTo(a.StarCount));
+                    AddRepositoriesToCollection(retrievedRepository, repositoryOwner, _searchBarText);
                     _repositoryDatabase.SaveRepositories(retrievedRepository).SafeFireAndForget();
                 }
             }
@@ -76,13 +78,13 @@ namespace GitTrends
                 await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
                 await _repositoryDatabase.DeleteAllData().ConfigureAwait(false);
 
-                VisibleRepositoryCollection.Clear();
+                VisibleRepositoryList = Enumerable.Empty<Repository>().ToList();
             }
             catch (ApiException)
             {
                 var repositoryList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
 
-                SetRepositoriesCollection(repositoryList, repositoryOwner, _searchBarText, (a, b) => b.StarCount.CompareTo(a.StarCount));
+                SetRepositoriesCollection(repositoryList, repositoryOwner, _searchBarText);
             }
             catch (Exception e)
             {
@@ -94,26 +96,27 @@ namespace GitTrends
             }
         }
 
-        void SetRepositoriesCollection(in IEnumerable<Repository> repositories, string repositoryOwner, string searchBarText, Comparison<Repository> comparison)
+        void SetRepositoriesCollection(in IEnumerable<Repository> repositories, string repositoryOwner, string searchBarText)
         {
             _repositoryList = GetOwnersRepositories(repositories, repositoryOwner).ToList();
 
-            var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
-
-            VisibleRepositoryCollection.Clear();
-            VisibleRepositoryCollection.AddRange(filteredRepositoryList);
-            VisibleRepositoryCollection.Sort(comparison);
+            UpdateVisibleRepositoryList(searchBarText);
         }
 
-        void AddRepositoriesToCollection(in IEnumerable<Repository> repositories, string repositoryOwner, string searchBarText, Comparison<Repository> comparison)
+        void AddRepositoriesToCollection(in IEnumerable<Repository> repositories, string repositoryOwner, string searchBarText)
         {
-            _repositoryList = _repositoryList.Concat(GetOwnersRepositories(repositories, repositoryOwner)).GroupBy(x => x.Name).Select(x => x.First()).ToList();
+            var updatedRepositoryList = _repositoryList.Concat(GetOwnersRepositories(repositories, repositoryOwner)).ToList();
+            _repositoryList = RemoveDuplicateRepositories(updatedRepositoryList);
 
+            UpdateVisibleRepositoryList(searchBarText);
+
+            static IReadOnlyList<Repository> RemoveDuplicateRepositories(in IEnumerable<Repository> repositoriesList) => repositoriesList.GroupBy(x => x.Name).Select(x => x.First()).ToList();
+        }
+
+        void UpdateVisibleRepositoryList(string searchBarText)
+        {
             var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
-
-            VisibleRepositoryCollection.Clear();
-            VisibleRepositoryCollection.AddRange(filteredRepositoryList);
-            VisibleRepositoryCollection.Sort(comparison);
+            VisibleRepositoryList = filteredRepositoryList.OrderByDescending(x => x.StarCount).ToList();
         }
 
         IEnumerable<Repository> GetOwnersRepositories(in IEnumerable<Repository> repositories, string repositoryOwner) =>
@@ -135,15 +138,7 @@ namespace GitTrends
             _searchBarText = text;
 
             if (_repositoryList.Any())
-                SetRepositoriesCollection(_repositoryList, _gitHubAuthenticationService.Alias, text, (a, b) => b.StarCount.CompareTo(a.StarCount));
-        }
-
-        void ObservableCollectionCallback(IEnumerable collection, object context, Action accessMethod, bool writeAccess)
-        {
-            lock (collection)
-            {
-                accessMethod?.Invoke();
-            }
+                UpdateVisibleRepositoryList(_searchBarText);
         }
 
         void OnPullToRefreshFailed(in string title, in string message) =>

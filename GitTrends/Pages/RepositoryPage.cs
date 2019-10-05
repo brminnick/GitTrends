@@ -7,6 +7,8 @@ using GitTrends.Shared;
 using Xamarin.Forms;
 using System.Collections.ObjectModel;
 using GitTrends.Mobile.Shared;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace GitTrends
 {
@@ -37,7 +39,7 @@ namespace GitTrends
             };
             _listView.ItemTapped += HandleListViewItemTapped;
             _listView.SetBinding(ListView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
-            _listView.SetBinding(ListView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryCollection));
+            _listView.SetBinding(ListView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));
             _listView.SetBinding(ListView.RefreshCommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
 
             var settingsToolbarItem = new ToolbarItem
@@ -63,7 +65,8 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            if (_listView.ItemsSource is ObservableCollection<Repository> repositoryCollection && !repositoryCollection.Any())
+            var visibleRepositoryList = (IList<Repository>)_listView.ItemsSource;
+            if (!visibleRepositoryList.Any())
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken();
 
