@@ -96,7 +96,7 @@ namespace GitTrends
 
         void SetRepositoriesCollection(in IEnumerable<Repository> repositories, string repositoryOwner, string searchBarText)
         {
-            _repositoryList = repositories.Where(x => x.OwnerLogin.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(x => x.StarCount).ToList();
+            _repositoryList = GetOwnersRepositories(repositories, repositoryOwner).ToList();
 
             var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
 
@@ -106,6 +106,8 @@ namespace GitTrends
 
         void AddRepositoriesToCollection(in IEnumerable<Repository> repositories, string repositoryOwner, string searchBarText)
         {
+            var ownerRepositories = GetOwnersRepositories(repositories, repositoryOwner);
+
             _repositoryList = _repositoryList.Concat(GetOwnersRepositories(repositories, repositoryOwner)).ToList();
 
             var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
