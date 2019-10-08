@@ -106,11 +106,11 @@ namespace GitTrends
         void AddRepositoriesToCollection(in IEnumerable<Repository> repositories, string repositoryOwner, string searchBarText)
         {
             var updatedRepositoryList = _repositoryList.Concat(GetOwnersRepositories(repositories, repositoryOwner)).ToList();
-            _repositoryList = RemoveDuplicateRepositories(updatedRepositoryList);
+            _repositoryList = RemoveDuplicateRepositories(updatedRepositoryList).ToList();
 
             UpdateVisibleRepositoryList(searchBarText);
 
-            static IReadOnlyList<Repository> RemoveDuplicateRepositories(in IEnumerable<Repository> repositoriesList) => repositoriesList.GroupBy(x => x.Name).Select(x => x.First()).ToList();
+            static IEnumerable<Repository> RemoveDuplicateRepositories(in IEnumerable<Repository> repositoriesList) => repositoriesList.GroupBy(x => x.Name).Select(x => x.First());
         }
 
         void UpdateVisibleRepositoryList(string searchBarText)
