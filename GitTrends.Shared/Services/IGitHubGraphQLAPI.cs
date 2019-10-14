@@ -30,7 +30,7 @@ namespace GitTrends.Shared
 
     class UserQueryContent : GraphQLRequest
     {
-        public UserQueryContent(string username) : base("query { user(login:" + username + "){ name, company, createdAt, followers{ totalCount }}}")
+        public UserQueryContent(string username) : base("query { user(login: \"" + username + "\" ){ name, company, createdAt, followers{ totalCount }}}")
         {
 
         }
@@ -48,7 +48,7 @@ namespace GitTrends.Shared
     class RepositoryConnectionQueryContent : GraphQLRequest
     {
         public RepositoryConnectionQueryContent(string repositoryOwner, string endCursorString, int numberOfRepositoriesPerRequest = 100)
-            : base("query{ user(login:" + repositoryOwner + ") {followers { totalCount }, repositories(first:" + numberOfRepositoriesPerRequest + endCursorString + ") { nodes { name, description, forkCount, url, owner { avatarUrl, login }, stargazers { totalCount }, issues(states:OPEN) { totalCount } }, pageInfo { endCursor, hasNextPage, hasPreviousPage, startCursor } } } }")
+            : base("query{ user(login: \"" + repositoryOwner + "\") {followers { totalCount }, repositories(first:" + numberOfRepositoriesPerRequest + endCursorString + ") { nodes { name, description, forkCount, url, owner { avatarUrl, login }, stargazers { totalCount }, issues(states:OPEN) { totalCount } }, pageInfo { endCursor, hasNextPage, hasPreviousPage, startCursor } } } }")
         {
 
         }
