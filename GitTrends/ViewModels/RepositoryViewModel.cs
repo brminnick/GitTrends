@@ -65,7 +65,7 @@ namespace GitTrends
 
             try
             {
-                await foreach (var retrievedRepository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner))
+                await foreach (var retrievedRepository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner).ConfigureAwait(false))
                 {
                     AddRepositoriesToCollection(retrievedRepository, repositoryOwner, _searchBarText);
                     _repositoryDatabase.SaveRepositories(retrievedRepository).SafeFireAndForget();
