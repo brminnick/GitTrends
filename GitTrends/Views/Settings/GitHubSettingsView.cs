@@ -47,7 +47,7 @@ namespace GitTrends
                 {
                     new RowDefinition { Height = new GridLength(7, GridUnitType.Star) },
                     new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) },
-                    new RowDefinition { Height = new GridLength(1, GridUnitType.Star) }
+                    new RowDefinition { Height = new GridLength(20, GridUnitType.Absolute) }
                 },
 
                 ColumnDefinitions =

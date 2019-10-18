@@ -65,7 +65,7 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            var visibleRepositoryList = (IList<Repository>)_listView.ItemsSource;
+            var visibleRepositoryList = (ICollection<Repository>)_listView.ItemsSource;
             if (!visibleRepositoryList.Any())
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken();
