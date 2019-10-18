@@ -8,7 +8,7 @@ namespace GitTrends
 {
     public class App : Xamarin.Forms.Application
     {
-        public App()
+        public App(bool isInitiatedByCallBackUri = false)
         {
             EnableDebugRainbows(false);
 
@@ -19,7 +19,7 @@ namespace GitTrends
 
             using (var scope = ContainerService.Container.BeginLifetimeScope())
             {
-                MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>());
+                MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>(new TypedParameter(typeof(bool), isInitiatedByCallBackUri)));
             }
 
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);

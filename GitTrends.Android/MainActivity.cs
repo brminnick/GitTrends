@@ -41,10 +41,15 @@ namespace GitTrends.Droid
                 syncFusionService.Initialize().SafeFireAndForget(onException: ex => System.Diagnostics.Debug.WriteLine(ex));
             }
 
-            LoadApplication(new App());
-
             if (Intent?.Data is Android.Net.Uri callbackUri)
+            {
+                LoadApplication(new App(true));
                 ExecuteCallbackUri(callbackUri);
+            }
+            else
+            {
+                LoadApplication(new App(false));
+            }
         }
 
         void ExecuteCallbackUri(Android.Net.Uri callbackUri)
@@ -67,7 +72,7 @@ namespace GitTrends.Droid
                                 await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             System.Diagnostics.Debug.WriteLine(ex);
                         }

@@ -1,14 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Autofac;
 using AsyncAwaitBestPractices;
+using Autofac;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Xamarin.Forms;
-using System.Collections.ObjectModel;
-using GitTrends.Mobile.Shared;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace GitTrends
 {
@@ -20,8 +18,11 @@ namespace GitTrends
 
         readonly ListView _listView;
 
-        public RepositoryPage(RepositoryViewModel repositoryViewModel, GitHubAuthenticationService gitHubAuthenticationService) : base(PageTitles.RepositoryPage, repositoryViewModel)
+        bool _shouldNavigateToSettingsPageOnAppearing;
+
+        public RepositoryPage(RepositoryViewModel repositoryViewModel, GitHubAuthenticationService gitHubAuthenticationService, bool isInitiatedByCallBackUri = false) : base(PageTitles.RepositoryPage, repositoryViewModel)
         {
+            _shouldNavigateToSettingsPageOnAppearing = isInitiatedByCallBackUri;
             _gitHubAuthenticationService = gitHubAuthenticationService;
 
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
@@ -65,13 +66,18 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            var visibleRepositoryList = (ICollection<Repository>)_listView.ItemsSource;
-            if (!visibleRepositoryList.Any())
+            if (_shouldNavigateToSettingsPageOnAppearing)
+            {
+                _shouldNavigateToSettingsPageOnAppearing = false;
+                await NavigateToSettingsPage();
+            }
+            else if (!_listView.ItemsSource.Cast<ICollection<Repository>>().Any())
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken();
 
                 if (string.IsNullOrWhiteSpace(token.AccessToken) || string.IsNullOrWhiteSpace(_gitHubAuthenticationService.Alias))
                 {
+
                     var shouldNavigateToSettingsPage = await DisplayAlert("GitHub User Not Found", "Sign in to GitHub on the Settings Page", "OK", "Cancel");
 
                     if (shouldNavigateToSettingsPage)
