@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -96,21 +94,21 @@ namespace GitTrends
             }
         }
 
-        void SetRepositoriesCollection(in IEnumerable<Repository> repositories, string repositoryOwner, string searchBarText)
+        void SetRepositoriesCollection(in IEnumerable<Repository> repositories, string loggedInUserGitHubAlias, string searchBarText)
         {
-            _repositoryList = GetOwnersRepositories(repositories, repositoryOwner).ToList();
+            _repositoryList = repositories.ToList();
 
             UpdateVisibleRepositoryList(searchBarText);
         }
 
-        void AddRepositoriesToCollection(in IEnumerable<Repository> repositories, string repositoryOwner, string searchBarText)
+        void AddRepositoriesToCollection(IEnumerable<Repository> repositories, string loggedInUserGitHubAlias, string searchBarText)
         {
-            var updatedRepositoryList = _repositoryList.Concat(GetOwnersRepositories(repositories, repositoryOwner)).ToList();
-            _repositoryList = RemoveDuplicateRepositories(updatedRepositoryList).ToList();
+            var updatedRepositoryList = _repositoryList.Concat(repositories);
+            _repositoryList = RemoveDuplicatesAndForks(updatedRepositoryList, loggedInUserGitHubAlias).ToList();
 
             UpdateVisibleRepositoryList(searchBarText);
 
-            static IEnumerable<Repository> RemoveDuplicateRepositories(in IEnumerable<Repository> repositoriesList) => repositoriesList.GroupBy(x => x.Name).Select(x => x.First());
+            IEnumerable<Repository> RemoveDuplicatesAndForks(in IEnumerable<Repository> repositoriesList, string loggedInUser) => repositoriesList.GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.OwnerLogin != loggedInUser) ?? x.First());
         }
 
         void UpdateVisibleRepositoryList(string searchBarText)
