@@ -125,7 +125,7 @@ namespace GitTrends
             if (string.IsNullOrWhiteSpace(searchBarText))
                 return repositories;
 
-            return repositories.Where(x => x.Name.Contains(searchBarText));
+            return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
         }
 
         void SetSearchBarText(in string text)
