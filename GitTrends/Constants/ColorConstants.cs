@@ -24,6 +24,6 @@ namespace GitTrends
 
         public static Color GitHubColor { get; } = Color.FromHex(_gitHubColorHex);
 
-        public static Color PullToRefreshActivityIndicatorColor { get; } = Device.RuntimePlatform is Device.iOS ? Color.White : DarkBlue;
+        public static Color PullToRefreshActivityIndicatorColor { get; } = DarkBlue;
     }
 }

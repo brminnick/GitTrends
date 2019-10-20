@@ -13,10 +13,8 @@ namespace GitTrends
     public class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISearchPage
     {
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
-
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
-
-        readonly ListView _listView;
+        readonly RefreshView _repositoriesListRefreshView;
 
         bool _shouldNavigateToSettingsPageOnAppearing;
 
@@ -28,20 +26,22 @@ namespace GitTrends
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
 
-            _listView = new ListView(ListViewCachingStrategy.RecycleElement)
+            var collectionView = new CollectionView
             {
-                IsPullToRefreshEnabled = true,
-                ItemTemplate = new DataTemplate(typeof(RepositoryViewCell)),
-                SeparatorVisibility = SeparatorVisibility.None,
-                RowHeight = RepositoryViewCell.RowHeight,
-                RefreshControlColor = ColorConstants.PullToRefreshActivityIndicatorColor,
+                ItemTemplate = new RepositoryDataTemplate(),
                 BackgroundColor = Color.Transparent,
-                SelectionMode = ListViewSelectionMode.None
+                SelectionMode = SelectionMode.Single
             };
-            _listView.ItemTapped += HandleListViewItemTapped;
-            _listView.SetBinding(ListView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
-            _listView.SetBinding(ListView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));
-            _listView.SetBinding(ListView.RefreshCommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
+            collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
+            collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));
+
+            _repositoriesListRefreshView = new RefreshView
+            {
+                RefreshColor = ColorConstants.PullToRefreshActivityIndicatorColor,
+                Content = collectionView
+            };
+            _repositoriesListRefreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
+            _repositoriesListRefreshView.SetBinding(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
 
             var settingsToolbarItem = new ToolbarItem
             {
@@ -51,7 +51,7 @@ namespace GitTrends
             settingsToolbarItem.Clicked += HandleSettingsToolbarItem;
             ToolbarItems.Add(settingsToolbarItem);
 
-            Content = _listView;
+            Content = _repositoriesListRefreshView;
         }
 
         public event EventHandler<string> SearchBarTextChanged
@@ -71,7 +71,9 @@ namespace GitTrends
                 _shouldNavigateToSettingsPageOnAppearing = false;
                 await NavigateToSettingsPage();
             }
-            else if (!_listView.ItemsSource.Cast<ICollection<Repository>>().Any())
+            else if (_repositoriesListRefreshView.Content is CollectionView collectionView
+                        && collectionView.ItemsSource is ICollection<Repository> itemSource
+                        && !itemSource.Any())
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken();
 
@@ -85,22 +87,18 @@ namespace GitTrends
                 }
                 else
                 {
-                    _listView.BeginRefresh();
+                    _repositoriesListRefreshView.IsRefreshing = true;
                 }
             }
         }
 
-        async void HandleListViewItemTapped(object sender, ItemTappedEventArgs e)
+        async void HandleCollectionViewSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is ListView listView)
-            {
-                listView.SelectedItem = null;
+            var collectionView = (CollectionView)sender;
+            collectionView.SelectedItem = null;
 
-                if (!listView.IsRefreshing && e.Item is Repository repository)
-                {
-                    await NavigateToTrendsPage(repository);
-                }
-            }
+            if (e?.CurrentSelection.FirstOrDefault() is Repository repository)
+                await NavigateToTrendsPage(repository);
         }
 
         async Task NavigateToSettingsPage()
