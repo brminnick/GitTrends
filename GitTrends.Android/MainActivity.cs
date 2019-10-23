@@ -29,8 +29,10 @@ namespace GitTrends.Droid
             base.OnCreate(savedInstanceState);
 
             CrossCurrentActivity.Current.Init(this, savedInstanceState);
+
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageViewHandler();
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
@@ -54,28 +56,25 @@ namespace GitTrends.Droid
 
         void ExecuteCallbackUri(Android.Net.Uri callbackUri)
         {
-            if (Xamarin.Forms.Application.Current.MainPage is Xamarin.Forms.NavigationPage navigationPage)
+            var navigationPage = (Xamarin.Forms.NavigationPage)Xamarin.Forms.Application.Current.MainPage;
+            navigationPage.Pushed += HandlePushed;
+
+            async void HandlePushed(object sender, Xamarin.Forms.NavigationEventArgs e)
             {
-                navigationPage.Pushed += HandlePushed;
-
-                async void HandlePushed(object sender, Xamarin.Forms.NavigationEventArgs e)
+                if (e.Page is SettingsPage)
                 {
-                    if (e.Page is SettingsPage)
-                    {
-                        navigationPage.Pushed -= HandlePushed;
+                    navigationPage.Pushed -= HandlePushed;
 
-                        try
-                        {
-                            using (var scope = ContainerService.Container.BeginLifetimeScope())
-                            {
-                                var gitHubAuthenticationService = scope.Resolve<GitHubAuthenticationService>();
-                                await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            System.Diagnostics.Debug.WriteLine(ex);
-                        }
+                    try
+                    {
+                        using var scope = ContainerService.Container.BeginLifetimeScope();
+                        var gitHubAuthenticationService = scope.Resolve<GitHubAuthenticationService>();
+
+                        await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex);
                     }
                 }
             }
