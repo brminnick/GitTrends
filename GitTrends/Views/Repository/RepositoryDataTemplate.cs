@@ -1,5 +1,4 @@
-﻿using System;
-using FFImageLoading.Svg.Forms;
+﻿using FFImageLoading.Svg.Forms;
 using GitTrends.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
@@ -74,6 +73,7 @@ namespace GitTrends
                     new RowDefinition { Height = new GridLength(20, GridUnitType.Absolute) },
                     new RowDefinition { Height = new GridLength(45, GridUnitType.Absolute) },
                     new RowDefinition { Height = new GridLength(_smallFontSize + 2, GridUnitType.Absolute) },
+                    new RowDefinition { Height = new GridLength(5, GridUnitType.Absolute) },
                 },
                 ColumnDefinitions = {
                     new ColumnDefinition { Width = new GridLength(circleImageHeight, GridUnitType.Absolute) },
@@ -89,7 +89,7 @@ namespace GitTrends
             };
 
             grid.Children.Add(image, 0, 0);
-            Grid.SetRowSpan(image, 3);
+            Grid.SetRowSpan(image, 4);
 
             grid.Children.Add(repositoryNameLabel, 2, 0);
             Grid.SetColumnSpan(repositoryNameLabel, 7);

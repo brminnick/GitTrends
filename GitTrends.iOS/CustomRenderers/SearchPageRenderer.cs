@@ -1,5 +1,4 @@
-﻿using System;
-using GitTrends;
+﻿using GitTrends;
 using GitTrends.iOS;
 using UIKit;
 using Xamarin.Forms;

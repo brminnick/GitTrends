@@ -1,11 +1,10 @@
-﻿using System;
-using GitTrends.iOS.CustomRenderers;
+﻿using GitTrends.iOS;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 
 [assembly: ExportRenderer(typeof(NavigationPage), typeof(LargeTitleNavigationRenderer))]
-namespace GitTrends.iOS.CustomRenderers
+namespace GitTrends.iOS
 {
     public class LargeTitleNavigationRenderer : NavigationRenderer
     {
