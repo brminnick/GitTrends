@@ -1,4 +1,5 @@
-﻿using FFImageLoading.Svg.Forms;
+﻿using System;
+using FFImageLoading.Svg.Forms;
 using GitTrends.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
@@ -112,11 +113,21 @@ namespace GitTrends
         {
             public SmallNavyBlueSVGImage(in string svgFileName)
             {
-                var textColor = (Color)Application.Current.Resources[nameof(BaseTheme.TextColor)];
-                ReplaceStringMap = SvgService.GetColorStringMap(textColor.ToHex());
+                var app = (App)Application.Current;
+                app.ThemeChanged += HandleThemeChanged;
+
+                UpdateSVGColor();
 
                 Source = SvgService.GetSVGResourcePath(svgFileName);
                 HeightRequest = _smallFontSize;
+            }
+
+            void HandleThemeChanged(object sender, Theme e) => UpdateSVGColor();
+
+            void UpdateSVGColor()
+            {
+                var textColor = (Color)Application.Current.Resources[nameof(BaseTheme.TextColor)];
+                ReplaceStringMap = SvgService.GetColorStringMap(textColor.ToHex());
             }
         }
 
@@ -129,7 +140,7 @@ namespace GitTrends
                 HorizontalTextAlignment = TextAlignment.Start;
                 VerticalTextAlignment = TextAlignment.End;
 
-                SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
+                SetDynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
             }
         }
     }

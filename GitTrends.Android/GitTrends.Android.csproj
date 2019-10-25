@@ -139,6 +139,7 @@
           <SubType></SubType>
           <Generator></Generator>
         </AndroidResource>
+        <AndroidResource Include="Resources\values-night\styles.xml" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Resources\drawable\" />
@@ -150,6 +151,7 @@
         <Folder Include="CustomRenderers\" />
         <Folder Include="Resources\menu\" />
         <Folder Include="Services\" />
+        <Folder Include="Resources\values-night\" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\GitTrends\GitTrends.csproj">

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using AsyncAwaitBestPractices;
 using Autofac;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
@@ -9,6 +10,7 @@ namespace GitTrends
 {
     public class App : Xamarin.Forms.Application
     {
+        readonly WeakEventManager<Theme> _themeChangedEventManager = new WeakEventManager<Theme>();
         readonly bool _isInitiatedByCallBackUri;
 
         public App(bool isInitiatedByCallBackUri = false)
@@ -24,6 +26,12 @@ namespace GitTrends
             MainPage = new Xamarin.Forms.Page();
 
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
+        }
+
+        public event EventHandler<Theme> ThemeChanged
+        {
+            add => _themeChangedEventManager.AddEventHandler(value);
+            remove => _themeChangedEventManager.RemoveEventHandler(value);
         }
 
         protected override void OnStart()
@@ -48,14 +56,23 @@ namespace GitTrends
 
         void SetTheme()
         {
-            Resources = DependencyService.Get<IEnvironment>().GetOperatingSystemTheme() switch
+            var operatingSystemTheme = DependencyService.Get<IEnvironment>().GetOperatingSystemTheme();
+
+            BaseTheme preferedTheme = operatingSystemTheme switch
             {
                 Theme.Light => new LightTheme(),
-                Theme.Dark => throw new NotImplementedException(),
+                Theme.Dark => new DarkTheme(),
                 _ => throw new NotSupportedException()
             };
 
-            EnableDebugRainbows(false);
+            if (Resources.GetType() != preferedTheme.GetType())
+            {
+                Resources = preferedTheme;
+
+                EnableDebugRainbows(false);
+
+                OnThemeChanged(operatingSystemTheme);
+            }
         }
 
         [Conditional("DEBUG")]
@@ -73,5 +90,7 @@ namespace GitTrends
                 }
             });
         }
+
+        void OnThemeChanged(Theme newTheme) => _themeChangedEventManager.HandleEvent(this, newTheme, nameof(ThemeChanged));
     }
 }
