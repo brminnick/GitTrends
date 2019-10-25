@@ -112,7 +112,9 @@ namespace GitTrends
         {
             public SmallNavyBlueSVGImage(in string svgFileName)
             {
-                ReplaceStringMap = SvgService.GetColorStringMap(ColorConstants.LightNavyBlue.ToHex());
+                var textColor = (Color)Application.Current.Resources[nameof(BaseTheme.TextColor)];
+                ReplaceStringMap = SvgService.GetColorStringMap(textColor.ToHex());
+
                 Source = SvgService.GetSVGResourcePath(svgFileName);
                 HeightRequest = _smallFontSize;
             }
@@ -124,9 +126,10 @@ namespace GitTrends
 
             public DarkBlueLabel()
             {
-                TextColor = ColorConstants.DarkBlue;
                 HorizontalTextAlignment = TextAlignment.Start;
                 VerticalTextAlignment = TextAlignment.End;
+
+                SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
             }
         }
     }

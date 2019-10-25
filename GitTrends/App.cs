@@ -10,6 +10,8 @@ namespace GitTrends
     {
         public App(bool isInitiatedByCallBackUri = false)
         {
+            Resources = new LightTheme();
+
             EnableDebugRainbows(false);
 
             FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration

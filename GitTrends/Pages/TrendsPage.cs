@@ -20,7 +20,8 @@ namespace GitTrends
             TrendsChart.TotalClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowClonesByDefault;
             TrendsChart.TotalUniqueClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueClonesByDefault;
 
-            var activityIndicator = new ActivityIndicator { Color = ColorConstants.DarkBlue };
+            var activityIndicator = new ActivityIndicator();
+            activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.RefreshControlColor));
             activityIndicator.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData));
             activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
 
@@ -44,16 +45,16 @@ namespace GitTrends
         {
             public GitHubTrendsChart()
             {
-                TotalViewsSeries = new TrendsAreaSeries("Views", nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalViews), ColorConstants.DarkestBlue);
+                TotalViewsSeries = new TrendsAreaSeries("Views", nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalViews), nameof(BaseTheme.TotalViewsColor));
                 TotalViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList));
 
-                TotalUniqueViewsSeries = new TrendsAreaSeries("Unique Views", nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalUniqueViews), ColorConstants.MediumBlue);
+                TotalUniqueViewsSeries = new TrendsAreaSeries("Unique Views", nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalUniqueViews), nameof(BaseTheme.TotalUniqueViewsColor));
                 TotalUniqueViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList));
 
-                TotalClonesSeries = new TrendsAreaSeries("Clones", nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalClones), ColorConstants.DarkNavyBlue);
+                TotalClonesSeries = new TrendsAreaSeries("Clones", nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalClones), nameof(BaseTheme.TotalClonesColor));
                 TotalClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyClonesList));
 
-                TotalUniqueClonesSeries = new TrendsAreaSeries("Unique Clones", nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalUniqueClones), ColorConstants.LightNavyBlue);
+                TotalUniqueClonesSeries = new TrendsAreaSeries("Unique Clones", nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalUniqueClones), nameof(BaseTheme.TotalUniqueClonesColor));
                 TotalUniqueClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyClonesList));
 
                 this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsChartVisible));
@@ -72,21 +73,26 @@ namespace GitTrends
                     TotalUniqueClonesSeries
                 };
 
+                var chartLegendLabelStyle = new ChartLegendLabelStyle();
+                chartLegendLabelStyle.SetDynamicResource(ChartLegendLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
+
                 Legend = new ChartLegend
                 {
                     DockPosition = LegendPlacement.Bottom,
                     ToggleSeriesVisibility = true,
                     IconWidth = 20,
                     IconHeight = 20,
-                    LabelStyle = new ChartLegendLabelStyle { TextColor = ColorConstants.DarkNavyBlue }
+                    LabelStyle = chartLegendLabelStyle
                 };
 
                 var axisLabelStyle = new ChartAxisLabelStyle
                 {
-                    TextColor = ColorConstants.DarkNavyBlue,
                     FontSize = 14
                 };
-                var axisLineStyle = new ChartLineStyle { StrokeColor = ColorConstants.LightNavyBlue };
+                axisLabelStyle.SetDynamicResource(ChartAxisLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
+
+                var axisLineStyle = new ChartLineStyle();
+                axisLineStyle.SetDynamicResource(ChartLineStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
 
                 PrimaryAxis = new DateTimeAxis
                 {
@@ -101,11 +107,14 @@ namespace GitTrends
                 PrimaryAxis.SetBinding(DateTimeAxis.MinimumProperty, nameof(TrendsViewModel.MinDateValue));
                 PrimaryAxis.SetBinding(DateTimeAxis.MaximumProperty, nameof(TrendsViewModel.MaxDateValue));
 
+                var secondaryAxisMajorTickStyle = new ChartAxisTickStyle();
+                secondaryAxisMajorTickStyle.SetDynamicResource(ChartAxisTickStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
+
                 SecondaryAxis = new NumericalAxis
                 {
                     LabelStyle = axisLabelStyle,
                     AxisLineStyle = axisLineStyle,
-                    MajorTickStyle = new ChartAxisTickStyle { StrokeColor = ColorConstants.LightNavyBlue },
+                    MajorTickStyle = secondaryAxisMajorTickStyle,
                     ShowMajorGridLines = false
                 };
                 SecondaryAxis.SetBinding(NumericalAxis.MinimumProperty, nameof(TrendsViewModel.DailyViewsClonesMinValue));
@@ -124,14 +133,15 @@ namespace GitTrends
 
             class TrendsAreaSeries : AreaSeries
             {
-                public TrendsAreaSeries(in string title, in string xDataTitle, in string yDataTitle, in Color color)
+                public TrendsAreaSeries(in string title, in string xDataTitle, in string yDataTitle, in string colorResource)
                 {
                     Opacity = 0.9;
                     Label = title;
                     XBindingPath = xDataTitle;
                     YBindingPath = yDataTitle;
                     LegendIcon = ChartLegendIcon.SeriesType;
-                    Color = color;
+
+                    SetDynamicResource(ColorProperty, colorResource);
                 }
             }
         }
