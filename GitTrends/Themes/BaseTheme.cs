@@ -2,6 +2,8 @@
 
 namespace GitTrends
 {
+    public enum Theme { Light, Dark };
+
     public abstract class BaseTheme : ResourceDictionary
     {
         protected BaseTheme()

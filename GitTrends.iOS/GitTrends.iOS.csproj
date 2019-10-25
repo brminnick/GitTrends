@@ -87,6 +87,7 @@
         <Compile Include="CustomRenderers\SearchPageRenderer.cs" />
         <Compile Include="CustomRenderers\DarkBlueSwitchCustomRederer.cs" />
         <Compile Include="CustomRenderers\LargeTitleNavigationRenderer.cs" />
+        <Compile Include="Services\Environment_iOS.cs" />
     </ItemGroup>
     <ItemGroup>
         <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
