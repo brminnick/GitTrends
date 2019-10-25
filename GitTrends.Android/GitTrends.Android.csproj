@@ -80,6 +80,7 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="CustomRenderers\FontAwesomeIconRenderer.cs" />
         <Compile Include="CustomRenderers\SearchPageRenderer.cs" />
+        <Compile Include="Services\Environment_Android.cs" />
     </ItemGroup>
     <ItemGroup>
         <None Include="Resources\AboutResources.txt" />
@@ -138,6 +139,7 @@
           <SubType></SubType>
           <Generator></Generator>
         </AndroidResource>
+        <AndroidResource Include="Resources\values-night\styles.xml" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Resources\drawable\" />
@@ -148,6 +150,8 @@
         <Folder Include="Resources\xml\" />
         <Folder Include="CustomRenderers\" />
         <Folder Include="Resources\menu\" />
+        <Folder Include="Services\" />
+        <Folder Include="Resources\values-night\" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\GitTrends\GitTrends.csproj">

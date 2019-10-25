@@ -37,9 +37,9 @@ namespace GitTrends
 
             _repositoriesListRefreshView = new RefreshView
             {
-                RefreshColor = ColorConstants.PullToRefreshActivityIndicatorColor,
                 Content = collectionView
             };
+            _repositoriesListRefreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.RefreshControlColor));
             _repositoriesListRefreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
             _repositoriesListRefreshView.SetBinding(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
 

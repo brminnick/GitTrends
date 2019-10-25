@@ -1,5 +1,4 @@
-﻿using Xamarin.Forms;
-using Xamarin.Forms.PlatformConfiguration;
+﻿using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends
@@ -8,9 +7,9 @@ namespace GitTrends
     {
         public BaseNavigationPage(Xamarin.Forms.Page root) : base(root)
         {
-            BackgroundColor = ColorConstants.LightBlue;
-            BarBackgroundColor = ColorConstants.MediumBlue;
-            BarTextColor = Color.White;
+            SetDynamicResource(BarBackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
+            SetDynamicResource(BarTextColorProperty, nameof(BaseTheme.NavigationBarTextColor));
+            SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 
             On<iOS>().SetPrefersLargeTitles(true);
         }

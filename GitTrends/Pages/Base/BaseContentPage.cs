@@ -9,8 +9,8 @@ namespace GitTrends
     {
         protected BaseContentPage(in string title, in T viewModel)
         {
+            SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             BindingContext = ViewModel = viewModel;
-            BackgroundColor = ColorConstants.LightBlue;
             Title = title;
         }
 
@@ -24,8 +24,8 @@ namespace GitTrends
             {
                 var browserOptions = new BrowserLaunchOptions
                 {
-                    PreferredToolbarColor = ColorConstants.LightBlue,
-                    PreferredControlColor = ColorConstants.DarkBlue
+                    PreferredToolbarColor = (Color)Application.Current.Resources[nameof(BaseTheme.PageBackgroundColor)],
+                    PreferredControlColor = (Color)Application.Current.Resources[nameof(BaseTheme.TextColor)],
                 };
 
                 return Browser.OpenAsync(url, browserOptions);

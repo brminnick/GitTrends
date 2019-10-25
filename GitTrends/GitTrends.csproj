@@ -38,6 +38,7 @@
       <Folder Include="Database\" />
       <Folder Include="Resources\" />
       <Folder Include="Views\Settings\" />
+      <Folder Include="Themes\" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="repo_forked.svg" />

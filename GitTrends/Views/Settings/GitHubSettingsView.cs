@@ -23,21 +23,21 @@ namespace GitTrends
             {
                 TextColor = Color.White,
                 FontSize = 24,
-                BackgroundColor = ColorConstants.DarkNavyBlue,
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
                 Padding = new Thickness(10),
                 Margin = new Thickness(0, 25, 0, 5)
             };
+            gitHubLoginButton.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.ButtonBackgroundColor));
             gitHubLoginButton.SetBinding(IsEnabledProperty, nameof(SettingsViewModel.IsNotAuthenticating));
             gitHubLoginButton.SetBinding(Button.TextProperty, nameof(SettingsViewModel.LoginButtonText));
             gitHubLoginButton.SetBinding(Button.CommandProperty, nameof(SettingsViewModel.LoginButtonCommand));
 
             var activityIndicator = new ActivityIndicator
             {
-                Color = ColorConstants.DarkBlue,
                 VerticalOptions = LayoutOptions.Start
             };
+            activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.RefreshControlColor));
             activityIndicator.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsAuthenticating));
             activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(SettingsViewModel.IsAuthenticating));
 

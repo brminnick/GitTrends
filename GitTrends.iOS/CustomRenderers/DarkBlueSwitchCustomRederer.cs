@@ -12,7 +12,10 @@ namespace GitTrends.iOS
             base.OnElementChanged(e);
 
             if (Control != null)
-                Control.TintColor = ColorConstants.DarkNavyBlue.MultiplyAlpha(0.25).ToUIColor();
+            {
+                var buttonBackgroundColor = (Color)Xamarin.Forms.Application.Current.Resources[nameof(BaseTheme.ButtonBackgroundColor)];
+                Control.TintColor = buttonBackgroundColor.MultiplyAlpha(0.25).ToUIColor();
+            }
         }
     }
 }

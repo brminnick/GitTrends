@@ -27,24 +27,26 @@ namespace GitTrends
                 Text = "Default Charts",
                 FontAttributes = FontAttributes.Bold,
                 FontSize = 18,
-                TextColor = ColorConstants.DarkNavyBlue,
                 VerticalTextAlignment = TextAlignment.Center
             };
+            trendsChartSettingsLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TrendsChartSettingsLabelTextColor));
+
+            var selectionIndicatorSettings = new SelectionIndicatorSettings
+            {
+                CornerRadius = cornerRadius
+            };
+            selectionIndicatorSettings.SetDynamicResource(SelectionIndicatorSettings.ColorProperty, nameof(BaseTheme.TrendsChartSettingsSelectionIndicatorColor));
 
             var trendsChartSettingControl = new SfSegmentedControl
             {
                 ItemsSource = _trendsChartOptions.Values.ToList(),
                 VisibleSegmentsCount = _trendsChartOptions.Values.Count,
-                BorderColor = ColorConstants.DarkBlue,
                 CornerRadius = cornerRadius,
                 SelectedIndex = (int)_trendsChartSettingsService.CurrentTrendsChartOption,
-                FontColor = ColorConstants.DarkNavyBlue,
-                SelectionIndicatorSettings = new SelectionIndicatorSettings
-                {
-                    Color = ColorConstants.DarkBlue,
-                    CornerRadius = cornerRadius
-                }
+                SelectionIndicatorSettings = selectionIndicatorSettings
             };
+            trendsChartSettingControl.SetDynamicResource(SfSegmentedControl.BorderColorProperty, nameof(BaseTheme.TrendsChartSettingsBorderColor));
+            trendsChartSettingControl.SetDynamicResource(SfSegmentedControl.FontColorProperty, nameof(BaseTheme.TrendsChartSettingsFontColor));
             trendsChartSettingControl.SelectionChanged += HandleSelectionChanged;
 
             var grid = new Grid
