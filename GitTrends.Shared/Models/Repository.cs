@@ -7,25 +7,20 @@ namespace GitTrends.Shared
 {
     public class Repository : IRepository
     {
-        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection issues, Uri url, StarGazers stargazers) =>
-            (Name, Description, ForkCount, OwnerLogin, OwnerAvatarUrl, IssuesCount, Uri, StarCount) = (name, description, forkCount, owner.Login, owner.AvatarUrl, issues?.IssuesCount ?? 0, url, stargazers.TotalCount);
+        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection issues, Uri url, StarGazers stargazers, bool isFork) =>
+            (Name, Description, ForkCount, OwnerLogin, OwnerAvatarUrl, IssuesCount, Uri, StarCount, IsFork) = (name, description, forkCount, owner.Login, owner.AvatarUrl, issues?.IssuesCount ?? 0, url, stargazers.TotalCount, isFork);
 
         public string OwnerLogin { get; }
         public Uri OwnerAvatarUrl { get; }
         public int StarCount { get; }
         public int IssuesCount { get; }
-
-        [JsonProperty("name")]
         public string Name { get; }
-
-        [JsonProperty("description")]
         public string Description { get; }
-
-        [JsonProperty("forkCount")]
         public long ForkCount { get; }
+        public bool IsFork { get; }
 
         [JsonProperty("url")]
-        public Uri Uri { get; }
+        public Uri Uri { get; }       
 
         public override string ToString()
         {

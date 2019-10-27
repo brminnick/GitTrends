@@ -88,12 +88,14 @@ namespace GitTrends
 
             public int IssuesCount { get; set; }
 
+            public bool IsFork { get; set; }
+
             public static explicit operator Repository(RepositoryDatabaseModel repositoryDatabaseModel)
             {
                 return new Repository(repositoryDatabaseModel.Name, repositoryDatabaseModel.Description, repositoryDatabaseModel.ForkCount,
                     new RepositoryOwner(repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl ?? new Uri(repositoryDatabaseModel.OwnerLogin)),
                     new IssuesConnection(repositoryDatabaseModel.IssuesCount, Enumerable.Empty<Issue>()),
-                    repositoryDatabaseModel.Uri, new StarGazers(repositoryDatabaseModel.StarCount));
+                    repositoryDatabaseModel.Uri, new StarGazers(repositoryDatabaseModel.StarCount), repositoryDatabaseModel.IsFork);
             }
 
             public static implicit operator RepositoryDatabaseModel(Repository repository)
@@ -107,7 +109,8 @@ namespace GitTrends
                     ForkCount = repository.ForkCount,
                     Name = repository.Name,
                     OwnerAvatarUrl = repository.OwnerAvatarUrl,
-                    OwnerLogin = repository.OwnerLogin
+                    OwnerLogin = repository.OwnerLogin,
+                    IsFork = repository.IsFork
                 };
             }
         }

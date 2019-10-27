@@ -65,7 +65,7 @@ namespace GitTrends
             {
                 await foreach (var retrievedRepository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner).ConfigureAwait(false))
                 {
-                    AddRepositoriesToCollection(retrievedRepository, repositoryOwner, _searchBarText);
+                    AddRepositoriesToCollection(retrievedRepository, _searchBarText);
                     _repositoryDatabase.SaveRepositories(retrievedRepository).SafeFireAndForget();
                 }
             }
@@ -82,7 +82,7 @@ namespace GitTrends
             {
                 var repositoryList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
 
-                SetRepositoriesCollection(repositoryList, repositoryOwner, _searchBarText);
+                SetRepositoriesCollection(repositoryList, _searchBarText);
             }
             catch (Exception e)
             {
@@ -94,21 +94,21 @@ namespace GitTrends
             }
         }
 
-        void SetRepositoriesCollection(in IEnumerable<Repository> repositories, string loggedInUserGitHubAlias, string searchBarText)
+        void SetRepositoriesCollection(in IEnumerable<Repository> repositories, string searchBarText)
         {
             _repositoryList = repositories.ToList();
 
             UpdateVisibleRepositoryList(searchBarText);
         }
 
-        void AddRepositoriesToCollection(IEnumerable<Repository> repositories, string loggedInUserGitHubAlias, string searchBarText)
+        void AddRepositoriesToCollection(IEnumerable<Repository> repositories, string searchBarText)
         {
             var updatedRepositoryList = _repositoryList.Concat(repositories);
-            _repositoryList = RemoveDuplicatesAndForks(updatedRepositoryList, loggedInUserGitHubAlias).ToList();
+            _repositoryList = RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
             UpdateVisibleRepositoryList(searchBarText);
 
-            IEnumerable<Repository> RemoveDuplicatesAndForks(in IEnumerable<Repository> repositoriesList, string loggedInUser) => repositoriesList.GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.OwnerLogin != loggedInUser) ?? x.First());
+            static IEnumerable<Repository> RemoveForksAndDuplicates(in IEnumerable<Repository> repositoriesList) => repositoriesList.Where(x => !x.IsFork).GroupBy(x => x.Name).Select(x => x.First());
         }
 
         void UpdateVisibleRepositoryList(string searchBarText)
