@@ -73,6 +73,7 @@ namespace GitTrends
                     new RowDefinition { Height = new GridLength(1, GridUnitType.Absolute) },
                     new RowDefinition { Height = new GridLength(20, GridUnitType.Absolute) },
                     new RowDefinition { Height = new GridLength(45, GridUnitType.Absolute) },
+                    new RowDefinition { Height = new GridLength(1, GridUnitType.Absolute) },
                     new RowDefinition { Height = new GridLength(_smallFontSize + 2, GridUnitType.Absolute) },
                     new RowDefinition { Height = new GridLength(5, GridUnitType.Absolute) },
                 },
@@ -90,7 +91,7 @@ namespace GitTrends
             };
 
             grid.Children.Add(image, 0, 0);
-            Grid.SetRowSpan(image, 5);
+            Grid.SetRowSpan(image, 6);
 
             grid.Children.Add(repositoryNameLabel, 2, 1);
             Grid.SetColumnSpan(repositoryNameLabel, 7);
@@ -98,14 +99,14 @@ namespace GitTrends
             grid.Children.Add(repositoryDescriptionLabel, 2, 2);
             Grid.SetColumnSpan(repositoryDescriptionLabel, 7);
 
-            grid.Children.Add(starsSVGImage, 2, 3);
-            grid.Children.Add(starsCountLabel, 3, 3);
+            grid.Children.Add(starsSVGImage, 2, 4);
+            grid.Children.Add(starsCountLabel, 3, 4);
 
-            grid.Children.Add(forksSVGImage, 4, 3);
-            grid.Children.Add(forksCountLabel, 5, 3);
+            grid.Children.Add(forksSVGImage, 4, 4);
+            grid.Children.Add(forksCountLabel, 5, 4);
 
-            grid.Children.Add(issuesSVGImage, 6, 3);
-            grid.Children.Add(issuesCountLabel, 7, 3);
+            grid.Children.Add(issuesSVGImage, 6, 4);
+            grid.Children.Add(issuesCountLabel, 7, 4);
 
             return grid;
         }
