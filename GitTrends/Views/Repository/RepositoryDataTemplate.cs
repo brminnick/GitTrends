@@ -62,7 +62,7 @@ namespace GitTrends
             {
                 BackgroundColor = Color.Transparent,
 
-                Margin = new Thickness(10, 10, 10, 0),
+                Padding = new Thickness(2, 0, 0, 5),
                 RowSpacing = 2,
                 ColumnSpacing = 3,
 
@@ -70,6 +70,7 @@ namespace GitTrends
                 VerticalOptions = LayoutOptions.StartAndExpand,
 
                 RowDefinitions = {
+                    new RowDefinition { Height = new GridLength(1, GridUnitType.Absolute) },
                     new RowDefinition { Height = new GridLength(20, GridUnitType.Absolute) },
                     new RowDefinition { Height = new GridLength(45, GridUnitType.Absolute) },
                     new RowDefinition { Height = new GridLength(_smallFontSize + 2, GridUnitType.Absolute) },
@@ -89,22 +90,22 @@ namespace GitTrends
             };
 
             grid.Children.Add(image, 0, 0);
-            Grid.SetRowSpan(image, 4);
+            Grid.SetRowSpan(image, 5);
 
-            grid.Children.Add(repositoryNameLabel, 2, 0);
+            grid.Children.Add(repositoryNameLabel, 2, 1);
             Grid.SetColumnSpan(repositoryNameLabel, 7);
 
-            grid.Children.Add(repositoryDescriptionLabel, 2, 1);
+            grid.Children.Add(repositoryDescriptionLabel, 2, 2);
             Grid.SetColumnSpan(repositoryDescriptionLabel, 7);
 
-            grid.Children.Add(starsSVGImage, 2, 2);
-            grid.Children.Add(starsCountLabel, 3, 2);
+            grid.Children.Add(starsSVGImage, 2, 3);
+            grid.Children.Add(starsCountLabel, 3, 3);
 
-            grid.Children.Add(forksSVGImage, 4, 2);
-            grid.Children.Add(forksCountLabel, 5, 2);
+            grid.Children.Add(forksSVGImage, 4, 3);
+            grid.Children.Add(forksCountLabel, 5, 3);
 
-            grid.Children.Add(issuesSVGImage, 6, 2);
-            grid.Children.Add(issuesCountLabel, 7, 2);
+            grid.Children.Add(issuesSVGImage, 6, 3);
+            grid.Children.Add(issuesCountLabel, 7, 3);
 
             return grid;
         }
