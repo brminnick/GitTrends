@@ -15,7 +15,7 @@ namespace GitTrends
 
         static Grid CreateRepositoryDataTemplate()
         {
-            const int circleImageHeight = 84;
+            const int circleImageHeight = 90;
             const int emojiColumnSize = 15;
             const int countColumnSize = 30;
 
