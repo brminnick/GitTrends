@@ -62,7 +62,7 @@ namespace GitTrends
             {
                 BackgroundColor = Color.Transparent,
 
-                Padding = new Thickness(2, 0, 0, 5),
+                Padding = new Thickness(2, 0, 5, 0),
                 RowSpacing = 2,
                 ColumnSpacing = 3,
 
