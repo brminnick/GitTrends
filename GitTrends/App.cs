@@ -22,8 +22,10 @@ namespace GitTrends
                 HttpHeadersTimeout = 60
             });
 
-            //Initialize a blank page in the Constructor because the Theme cannot be set on iOS until a UIViewController has been initialized
-            MainPage = new Xamarin.Forms.Page();
+            using (var scope = ContainerService.Container.BeginLifetimeScope())
+            {
+                MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>(new TypedParameter(typeof(bool), _isInitiatedByCallBackUri)));
+            }
 
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
         }
@@ -39,12 +41,6 @@ namespace GitTrends
             base.OnStart();
 
             SetTheme();
-
-            //Initialize the MainPage in OnStart() because the Theme cannot be set on iOS until a UIViewController has been initialized
-            using (var scope = ContainerService.Container.BeginLifetimeScope())
-            {
-                MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>(new TypedParameter(typeof(bool), _isInitiatedByCallBackUri)));
-            }
         }
 
         protected override void OnResume()
