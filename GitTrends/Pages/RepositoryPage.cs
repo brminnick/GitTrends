@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,7 +15,6 @@ namespace GitTrends
     {
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
-        readonly RefreshView _repositoriesListRefreshView;
 
         bool _shouldNavigateToSettingsPageOnAppearing;
 
@@ -35,13 +35,13 @@ namespace GitTrends
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));
 
-            _repositoriesListRefreshView = new RefreshView
+            var repositoriesListRefreshView = new RefreshView
             {
                 Content = collectionView
             };
-            _repositoriesListRefreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.RefreshControlColor));
-            _repositoriesListRefreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
-            _repositoriesListRefreshView.SetBinding(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
+            repositoriesListRefreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.RefreshControlColor));
+            repositoriesListRefreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
+            repositoriesListRefreshView.SetBinding(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
 
             var settingsToolbarItem = new ToolbarItem
             {
@@ -51,7 +51,7 @@ namespace GitTrends
             settingsToolbarItem.Clicked += HandleSettingsToolbarItem;
             ToolbarItems.Add(settingsToolbarItem);
 
-            Content = _repositoriesListRefreshView;
+            Content = repositoriesListRefreshView;
         }
 
         public event EventHandler<string> SearchBarTextChanged
@@ -71,9 +71,9 @@ namespace GitTrends
                 _shouldNavigateToSettingsPageOnAppearing = false;
                 await NavigateToSettingsPage();
             }
-            else if (_repositoriesListRefreshView.Content is CollectionView collectionView
-                        && collectionView.ItemsSource is ICollection<Repository> itemSource
-                        && !itemSource.Any())
+            else if (Content is RefreshView refreshView
+                        && refreshView.Content is CollectionView collectionView
+                        && IsNullOrEmpty(collectionView.ItemsSource))
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken();
 
@@ -87,9 +87,11 @@ namespace GitTrends
                 }
                 else
                 {
-                    _repositoriesListRefreshView.IsRefreshing = true;
+                    refreshView.IsRefreshing = true;
                 }
             }
+
+            static bool IsNullOrEmpty(in IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
         }
 
         async void HandleCollectionViewSelectionChanged(object sender, SelectionChangedEventArgs e)
