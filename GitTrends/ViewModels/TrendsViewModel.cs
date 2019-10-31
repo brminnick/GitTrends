@@ -96,7 +96,7 @@ namespace GitTrends
                 var viewsDays = dailyViewsList.Select(x => x.Day.Day).ToList();
                 var clonesDays = dailyClonesList.Select(x => x.Day.Day).ToList();
 
-                while (day.Day != maximumDay.Day + 1)
+                while (day.Day != maximumDay.AddDays(1).Day)
                 {
                     if (!viewsDays.Contains(day.Day))
                         dailyViewsList.Add(new DailyViewsModel(removeHourMinuteSecond(day), 0, 0));
@@ -108,7 +108,7 @@ namespace GitTrends
                 }
             }
 
-            DateTimeOffset removeHourMinuteSecond(in DateTimeOffset date) => new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
+            static DateTimeOffset removeHourMinuteSecond(in DateTimeOffset date) => new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
         }
 
         void UpdateDailyClonesListPropertiesChanged()
