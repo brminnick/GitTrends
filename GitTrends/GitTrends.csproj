@@ -2,10 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <ProduceAssemblyReference>true</ProduceAssemblyReference>
-        <LangVersion>8.0</LangVersion>
+        <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <Nullable>enable</Nullable>
-        <NullableContextOptions>enable</NullableContextOptions>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DebugType>pdbonly</DebugType>
