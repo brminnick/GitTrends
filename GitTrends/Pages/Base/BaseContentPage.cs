@@ -24,8 +24,8 @@ namespace GitTrends
             {
                 var browserOptions = new BrowserLaunchOptions
                 {
-                    PreferredToolbarColor = (Color)Application.Current.Resources[nameof(BaseTheme.PageBackgroundColor)],
-                    PreferredControlColor = (Color)Application.Current.Resources[nameof(BaseTheme.TextColor)],
+                    PreferredToolbarColor = (Color)Application.Current.Resources[nameof(BaseTheme.NavigationBarBackgroundColor)],
+                    PreferredControlColor = (Color)Application.Current.Resources[nameof(BaseTheme.NavigationBarTextColor)],
                 };
 
                 return Browser.OpenAsync(url, browserOptions);
