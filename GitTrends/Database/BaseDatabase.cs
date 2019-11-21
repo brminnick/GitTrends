@@ -10,10 +10,10 @@ namespace GitTrends
 {
     public abstract class BaseDatabase
     {
-        static readonly string DatabasePath = Path.Combine(FileSystem.AppDataDirectory, $"{nameof(GitTrends)}.db3");
+        static readonly string _databasePath = Path.Combine(FileSystem.AppDataDirectory, $"{nameof(GitTrends)}.db3");
 
         static readonly Lazy<SQLiteAsyncConnection> _databaseConnectionHolder =
-            new Lazy<SQLiteAsyncConnection>(() => new SQLiteAsyncConnection(DatabasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache));
+            new Lazy<SQLiteAsyncConnection>(() => new SQLiteAsyncConnection(_databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache));
 
         static SQLiteAsyncConnection DatabaseConnection => _databaseConnectionHolder.Value;
 
@@ -32,7 +32,7 @@ namespace GitTrends
         {
             return Policy.Handle<SQLiteException>().WaitAndRetryAsync(numRetries, pollyRetryAttempt).ExecuteAsync(action);
 
-            TimeSpan pollyRetryAttempt(int attemptNumber) => TimeSpan.FromSeconds(Math.Pow(2, attemptNumber));
+            static TimeSpan pollyRetryAttempt(int attemptNumber) => TimeSpan.FromSeconds(Math.Pow(2, attemptNumber));
         }
     }
 }

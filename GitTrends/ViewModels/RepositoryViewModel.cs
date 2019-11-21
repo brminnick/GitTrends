@@ -59,8 +59,6 @@ namespace GitTrends
 
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
-            await Task.Yield();
-
             try
             {
                 await foreach (var retrievedRepository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner).ConfigureAwait(false))
