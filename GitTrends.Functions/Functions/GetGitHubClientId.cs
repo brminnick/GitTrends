@@ -10,9 +10,15 @@ namespace GitTrends.Functions
 {
     public static class GetGitHubClientId
     {
-        readonly static string _clientId = Environment.GetEnvironmentVariable("GitTrendsClientId");
+        readonly static string _clientId = Environment.GetEnvironmentVariable("GitTrendsClientId") ?? string.Empty;
 
         [FunctionName(nameof(GetGitHubClientId))]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest request, ILogger log) => new OkObjectResult(new GetGitHubClientIdDTO(_clientId));
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest request, ILogger log)
+        {
+            if (string.IsNullOrWhiteSpace(_clientId))
+                return new NotFoundObjectResult("Client ID Not Found");
+
+            return new OkObjectResult(new GetGitHubClientIdDTO(_clientId));
+        }
     }
 }
