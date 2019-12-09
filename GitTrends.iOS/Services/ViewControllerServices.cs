@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using SafariServices;
 using UIKit;
 using Xamarin.Forms;
@@ -7,38 +9,55 @@ namespace GitTrends.iOS
 {
     public static class ViewControllerServices
     {
-        public static Task<UIViewController> GetVisibleViewController()
+        public static UIViewController GetVisibleViewController()
         {
-            return Device.InvokeOnMainThreadAsync(() =>
+            UIViewController? viewController = null;
+
+            var window = UIApplication.SharedApplication.KeyWindow;
+
+            if (window.WindowLevel == UIWindowLevel.Normal)
+                viewController = window.RootViewController;
+
+            if (viewController is null)
             {
-                var rootController = UIApplication.SharedApplication.KeyWindow.RootViewController;
+                window = UIApplication.SharedApplication
+                    .Windows
+                    .OrderByDescending(w => w.WindowLevel)
+                    .FirstOrDefault(w => w.RootViewController != null && w.WindowLevel == UIWindowLevel.Normal);
 
-                return rootController.PresentedViewController switch
-                {
-                    UINavigationController navigationController => navigationController.TopViewController,
+                viewController = window?.RootViewController ?? throw new InvalidOperationException("Could not find current view controller.");
+            }
 
-                    UITabBarController tabBarController => tabBarController.SelectedViewController,
+            while (viewController.PresentedViewController != null)
+                viewController = viewController.PresentedViewController;
 
-                    null => rootController,
+            return viewController;
+        }
 
-                    _ => rootController.PresentedViewController,
-                };
-            });
+        public static async ValueTask<UIViewController> GetVisibleViewControllerAsync()
+        {
+            if (Xamarin.Essentials.MainThread.IsMainThread)
+                return GetVisibleViewController();
+
+            return await Device.InvokeOnMainThreadAsync(GetVisibleViewController).ConfigureAwait(false);
         }
 
         public static async Task CloseSFSafariViewController()
         {
-            while (await GetVisibleViewController().ConfigureAwait(false) is SFSafariViewController sfSafariViewController)
+            while (await GetVisibleViewControllerAsync().ConfigureAwait(false) is SFSafariViewController sfSafariViewController)
             {
-                await Device.InvokeOnMainThreadAsync(() =>
-                {
-                    sfSafariViewController.DismissViewControllerAsync(true);
-                    sfSafariViewController.Dispose();
+                if (Xamarin.Essentials.MainThread.IsMainThread)
+                    await closeSFSafariViewController(sfSafariViewController).ConfigureAwait(false);
+                else
+                    await Device.InvokeOnMainThreadAsync(() => closeSFSafariViewController(sfSafariViewController)).ConfigureAwait(false);
+            }
 
-#pragma warning disable CS8600 //Converting null literal or possible null value to non-nullable type
-                    sfSafariViewController = null;
-#pragma warning restore CS8600
-                }).ConfigureAwait(false);
+            static async Task closeSFSafariViewController(SFSafariViewController? safariViewController)
+            {
+                await (safariViewController?.DismissViewControllerAsync(true) ?? Task.CompletedTask).ConfigureAwait(false);
+
+                safariViewController?.Dispose();
+                safariViewController = null;
             }
         }
     }

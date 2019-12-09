@@ -40,8 +40,7 @@ namespace GitTrends
 
                 foreach (var repository in repositories)
                 {
-                    await SaveRepository(repository).ConfigureAwait(false);
-                    count++;
+                    count += await SaveRepository(repository).ConfigureAwait(false);
                 }
 
                 return count;

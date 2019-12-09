@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using GitTrends.iOS;
 using UIKit;
 using Xamarin.Forms;
@@ -10,7 +11,7 @@ namespace GitTrends.iOS
     {
         public Theme GetOperatingSystemTheme()
         {
-            var currentUIViewController = GetVisibleViewController();
+            var currentUIViewController = ViewControllerServices.GetVisibleViewController();
 
             var userInterfaceStyle = currentUIViewController.TraitCollection.UserInterfaceStyle;
 
@@ -22,17 +23,12 @@ namespace GitTrends.iOS
             };
         }
 
-        static UIViewController GetVisibleViewController()
+        public async ValueTask <Theme> GetOperatingSystemThemeAsync()
         {
-            var rootController = UIApplication.SharedApplication.KeyWindow.RootViewController;
+            if (Xamarin.Essentials.MainThread.IsMainThread)
+                return GetOperatingSystemTheme();
 
-            return rootController.PresentedViewController switch
-            {
-                UINavigationController navigationController => navigationController.TopViewController,
-                UITabBarController tabBarController => tabBarController.SelectedViewController,
-                null => rootController,
-                _ => rootController.PresentedViewController,
-            };
+            return await Device.InvokeOnMainThreadAsync(GetOperatingSystemTheme).ConfigureAwait(false);
         }
     }
 }

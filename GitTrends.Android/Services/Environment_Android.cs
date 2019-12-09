@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Android.Content.Res;
+using GitTrends.Droid;
 using Plugin.CurrentActivity;
 using Xamarin.Forms;
-using GitTrends.Droid;
 
 [assembly: Dependency(typeof(Environment_Android))]
 namespace GitTrends.Droid
@@ -20,5 +21,7 @@ namespace GitTrends.Droid
                 _ => throw new NotSupportedException($"UiMode {uiModeFlags} not supported"),
             };
         }
+
+        public ValueTask<Theme> GetOperatingSystemThemeAsync() => new ValueTask<Theme>(GetOperatingSystemTheme());
     }
 }
