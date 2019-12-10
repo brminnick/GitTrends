@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
         <AzureFunctionsVersion>v3-preview</AzureFunctionsVersion>
+        <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     </PropertyGroup>
@@ -14,6 +15,61 @@
     </ItemGroup>
     <ItemGroup>
         <None Remove="obj\*" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Authentication.Abstractions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Authentication.Core.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Authorization.Policy.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Authorization.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Http.Abstractions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Http.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Mvc.Core.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Http.Features.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Http.Extensions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.JsonPatch.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Hosting.Server.Abstractions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.WebUtilities.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Mvc.Formatters.Json.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.ResponseCaching.Abstractions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Azure.WebJobs.Host.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Routing.Abstractions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Mvc.Abstractions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Mvc.WebApiCompatShim.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.AspNetCore.Routing.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Azure.WebJobs.Extensions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.Configuration.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Azure.WebJobs.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Azure.WebJobs.Host.Storage.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.Configuration.Abstractions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Build.Utilities.Core.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Build.Framework.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Azure.WebJobs.Extensions.Http.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.DotNet.PlatformAbstractions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.Hosting.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.FileProviders.Physical.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.Configuration.Json.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.Logging.Abstractions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.Logging.Configuration.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.Configuration.FileExtensions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Net.Http.Headers.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.Hosting.Abstractions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.Configuration.Binder.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.ObjectPool.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.Primitives.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.Options.ConfigurationExtensions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.Options.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.DependencyModel.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\NCrontab.Signed.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.FileProviders.Abstractions.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Polly.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Newtonsoft.Json.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Refit.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.Configuration.EnvironmentVariables.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.Logging.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Newtonsoft.Json.Bson.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.WindowsAzure.Storage.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Xamarin.Essentials.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.DependencyInjection.dll" />
+        <None Remove="obj\Release\netcoreapp3.1\PubTmp\Out\bin\Microsoft.Extensions.FileSystemGlobbing.dll" />
     </ItemGroup>
     <ItemGroup>
         <None Update="host.json">

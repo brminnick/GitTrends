@@ -25,11 +25,9 @@ namespace GitTrends.iOS
 
             LoadApplication(new App());
 
-            using (var scope = ContainerService.Container.BeginLifetimeScope())
-            {
-                var syncFusionService = scope.Resolve<SyncFusionService>();
-                syncFusionService.Initialize().SafeFireAndForget(onException: ex => Debug.WriteLine(ex));
-            }
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var syncFusionService = scope.Resolve<SyncFusionService>();
+            syncFusionService.Initialize().SafeFireAndForget(onException: ex => Debug.WriteLine(ex));
 
             PrintFontNamesToConsole();
 
@@ -48,11 +46,9 @@ namespace GitTrends.iOS
             {
                 await ViewControllerServices.CloseSFSafariViewController().ConfigureAwait(false);
 
-                using (var scope = ContainerService.Container.BeginLifetimeScope())
-                {
-                    var gitHubAuthenticationService = scope.Resolve<GitHubAuthenticationService>();
-                    await gitHubAuthenticationService.AuthorizeSession(callbackUri).ConfigureAwait(false);
-                }
+                using var scope = ContainerService.Container.BeginLifetimeScope();
+                var gitHubAuthenticationService = scope.Resolve<GitHubAuthenticationService>();
+                await gitHubAuthenticationService.AuthorizeSession(callbackUri).ConfigureAwait(false);
             }
         }
 
