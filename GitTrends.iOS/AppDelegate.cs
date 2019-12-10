@@ -23,13 +23,13 @@ namespace GitTrends.iOS
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageSourceHandler();
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
 
-            LoadApplication(new App());
-
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var syncFusionService = scope.Resolve<SyncFusionService>();
             syncFusionService.Initialize().SafeFireAndForget(onException: ex => Debug.WriteLine(ex));
 
             PrintFontNamesToConsole();
+
+            LoadApplication(new App());
 
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
