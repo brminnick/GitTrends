@@ -6,20 +6,25 @@ using Refit;
 
 namespace GitTrends.Functions
 {
-    abstract class GitHubAuthService : BaseApiService
+    class GitHubAuthService : BaseApiService
     {
-        readonly static Lazy<IGitHubAuthApi> _githubAuthClient = new Lazy<IGitHubAuthApi>(() => RestService.For<IGitHubAuthApi>(CreateFunctionsHttpClient(GitHubConstants.GitHubAuthBaseUrl)));
+        readonly IGitHubAuthApi _gitHubAuthClient;
 
-        static IGitHubAuthApi GitHubAuthClient => _githubAuthClient.Value;
+        public GitHubAuthService(GitHubAuthServiceClient client) => _gitHubAuthClient = client.Client;
 
-        public static Task<GitHubToken> GetGitHubToken(string clientId, string clientSecret, string loginCode, string state) => AttemptAndRetry(() => GitHubAuthClient.GetAccessToken(clientId, clientSecret, loginCode, state));
+        public Task<GitHubToken> GetGitHubToken(string clientId, string clientSecret, string loginCode, string state) => AttemptAndRetry(() => _gitHubAuthClient.GetAccessToken(clientId, clientSecret, loginCode, state));
+    }
 
-        static HttpClient CreateFunctionsHttpClient(string url)
+    class GitHubAuthServiceClient
+    {
+        public GitHubAuthServiceClient(HttpClient client)
         {
-            var client = CreateHttpClient(url);
+            client.BaseAddress = new Uri(GitHubConstants.GitHubAuthBaseUrl);
             client.DefaultRequestVersion = new Version(2, 0);
 
-            return client;
+            Client = RestService.For<IGitHubAuthApi>(client);
         }
+
+        public IGitHubAuthApi Client { get; }
     }
 }
