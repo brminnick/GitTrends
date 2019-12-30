@@ -16,11 +16,9 @@ namespace GitTrends.Functions
         {
             builder.Services.AddRefitClient<IGitHubAuthApi>()
               .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubAuthBaseUrl))
-              .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = getAutomaticDecompressionMethods() });
+              .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip });
 
             builder.Services.AddSingleton<GitHubAuthService>();
-
-            static DecompressionMethods getAutomaticDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip;
         }
     }
 }
