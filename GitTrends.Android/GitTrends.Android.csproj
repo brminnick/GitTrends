@@ -33,7 +33,6 @@
         <DefineConstants>DEBUG;</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
-        <AndroidLinkMode>None</AndroidLinkMode>
         <AndroidDexTool>d8</AndroidDexTool>
         <AndroidUseAapt2>true</AndroidUseAapt2>
     </PropertyGroup>
