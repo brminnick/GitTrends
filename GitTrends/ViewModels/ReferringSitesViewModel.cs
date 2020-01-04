@@ -23,7 +23,7 @@ namespace GitTrends
             Xamarin.Forms.BindingBase.EnableCollectionSynchronization(ReferringSitesCollection, null, ObservableCollectionCallback);
         }
 
-        public ObservableCollection<ReferingSiteModel> ReferringSitesCollection { get; } = new ObservableCollection<ReferingSiteModel>();
+        public ObservableCollection<ReferringSiteModel> ReferringSitesCollection { get; } = new ObservableCollection<ReferringSiteModel>();
 
         public ICommand RefreshCommand { get; }
 

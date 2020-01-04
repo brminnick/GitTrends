@@ -14,6 +14,6 @@ namespace GitTrends.Shared
         Task<RepositoryClonesModel> GetRepositoryCloneStatistics(string owner, string repo, [Header("Authorization")] string authorization);
 
         [Get("/repos/{owner}/{repo}/traffic/popular/referrers")]
-        Task<List<ReferingSiteModel>> GetReferingSites(string owner, string repo, [Header("Authorization")] string authorization);
+        Task<List<ReferringSiteModel>> GetReferingSites(string owner, string repo, [Header("Authorization")] string authorization);
     }
 }

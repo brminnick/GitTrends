@@ -24,7 +24,7 @@ namespace GitTrends
             return await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryCloneStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
         }
 
-        public async Task<List<ReferingSiteModel>> GetReferingSites(string owner, string repo)
+        public async Task<List<ReferringSiteModel>> GetReferingSites(string owner, string repo)
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
             return await AttemptAndRetry_Mobile(() => GithubApiClient.GetReferingSites(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);

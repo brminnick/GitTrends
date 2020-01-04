@@ -13,13 +13,13 @@ namespace GitTrends
         static Grid CreateGrid()
         {
             var referrerLabel = new Label();
-            referrerLabel.SetBinding(Label.TextProperty, nameof(ReferingSiteModel.Referrer));
+            referrerLabel.SetBinding(Label.TextProperty, nameof(ReferringSiteModel.Referrer));
 
             var viewsCountText = new Span();
-            viewsCountText.SetBinding(Span.TextProperty, nameof(ReferingSiteModel.TotalCount));
+            viewsCountText.SetBinding(Span.TextProperty, nameof(ReferringSiteModel.TotalCount));
 
             var uniqueViewsCountText = new Span();
-            uniqueViewsCountText.SetBinding(Span.TextProperty, nameof(ReferingSiteModel.TotalUniqueCount));
+            uniqueViewsCountText.SetBinding(Span.TextProperty, nameof(ReferringSiteModel.TotalUniqueCount));
 
             var viewsText = new FormattedString
             {

@@ -34,16 +34,11 @@ namespace GitTrends
             absoluteLayout.Children.Add(TrendsChart, new Rectangle(0, 0, 1, 1), AbsoluteLayoutFlags.All);
 
             Content = absoluteLayout;
-        }
-
-        static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
 
             ViewModel.FetchDataCommand.Execute((_repository.OwnerLogin, _repository.Name));
         }
+
+        static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
 
         async void HandleRefferingSitesToolbarItemClicked(object sender, EventArgs e)
         {

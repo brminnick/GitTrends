@@ -52,12 +52,13 @@ namespace GitTrends
             var collectionView = (CollectionView)sender;
             collectionView.SelectedItem = null;
 
-            if (e?.CurrentSelection.FirstOrDefault() is ReferingSiteModel referingSite
-                && Uri.TryCreate("https://" + referingSite.Referrer, UriKind.Absolute, out var referringSiteUri))
+            if (e?.CurrentSelection.FirstOrDefault() is ReferringSiteModel referingSite
+                && referingSite.IsReferrerUriValid
+                && referingSite.ReferrerUri != null)
             {
                 Disappearing -= HandleDisappearing;
 
-                await OpenBrowser(referringSiteUri);
+                await OpenBrowser(referingSite.ReferrerUri);
             }
         }
 
