@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using GitTrends.Shared;
 using Xamarin.Forms;
@@ -7,37 +8,61 @@ namespace GitTrends
 {
     public class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>
     {
-        readonly string _owner, _repository;
-
         public ReferringSitesPage(ReferringSitesViewModel refferringSitesViewModel, Repository repository) : base("Referring Sites", refferringSitesViewModel)
         {
-            _owner = repository.OwnerLogin;
-            _repository = repository.Name;
-
-            var referringSitesLabel = new Label
+            var collectionView = new CollectionView
             {
-                Margin = new Thickness(10),
-                HorizontalOptions = LayoutOptions.Start,
-                VerticalOptions = LayoutOptions.Center,
-                HorizontalTextAlignment = TextAlignment.Center,
-                VerticalTextAlignment = TextAlignment.Center,
+                ItemTemplate = new ReferringSitesDataTemplate(),
+                SelectionMode = SelectionMode.Single
             };
-            referringSitesLabel.SetBinding(Label.TextProperty, nameof(ReferringSitesViewModel.ReferringSitesLabelText));
+            collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
+            collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.ReferringSitesCollection));
 
-            Content = referringSitesLabel;
+            var refreshView = new RefreshView
+            {
+                CommandParameter = (repository.OwnerLogin, repository.Name),
+                Content = collectionView
+            };
+            refreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.RefreshControlColor));
+            refreshView.SetBinding(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.RefreshCommand));
+            refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing));
+
+            Content = refreshView;
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
 
-            ViewModel.GetReferringSitesCommand.Execute((_owner, _repository));
+            Disappearing += HandleDisappearing;
+
+            if (Content is RefreshView refreshView
+                        && refreshView.Content is CollectionView collectionView
+                        && IsNullOrEmpty(collectionView.ItemsSource))
+            {
+                refreshView.IsRefreshing = true;
+                refreshView.IsEnabled = false;
+            }
+
+            static bool IsNullOrEmpty(in IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
         }
 
-        protected override async void OnDisappearing()
+        async void HandleCollectionViewSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            base.OnDisappearing();
+            var collectionView = (CollectionView)sender;
+            collectionView.SelectedItem = null;
 
+            if (e?.CurrentSelection.FirstOrDefault() is ReferingSiteModel referingSite
+                && Uri.TryCreate("https://" + referingSite.Referrer, UriKind.Absolute, out var referringSiteUri))
+            {
+                Disappearing -= HandleDisappearing;
+
+                await OpenBrowser(referringSiteUri);
+            }
+        }
+
+        async void HandleDisappearing(object sender, EventArgs e)
+        {
             if (Navigation.ModalStack.Any())
                 await Navigation.PopModalAsync();
         }

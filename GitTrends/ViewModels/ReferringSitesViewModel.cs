@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Shared;
@@ -9,30 +12,51 @@ namespace GitTrends
     {
         readonly GitHubApiV3Service _gitHubApiV3Service;
 
-        string _referringSitesLabelText = string.Empty;
+        bool _isRefreshing;
 
         public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service)
         {
             _gitHubApiV3Service = gitHubApiV3Service;
-            GetReferringSitesCommand = new AsyncCommand<(string Owner, string Repository)>(repo => ExecuteGetReferringSitesCommand(repo.Owner, repo.Repository));
+            RefreshCommand = new AsyncCommand<(string Owner, string Repository)>(repo => ExecuteRefreshCommand(repo.Owner, repo.Repository));
+
+            //https://codetraveler.io/2019/09/11/using-observablecollection-in-a-multi-threaded-xamarin-forms-application/
+            Xamarin.Forms.BindingBase.EnableCollectionSynchronization(ReferringSitesCollection, null, ObservableCollectionCallback);
         }
 
-        public string ReferringSitesLabelText
+        public ObservableCollection<ReferingSiteModel> ReferringSitesCollection { get; } = new ObservableCollection<ReferingSiteModel>();
+
+        public ICommand RefreshCommand { get; }
+
+        public bool IsRefreshing
         {
-            get => _referringSitesLabelText;
-            set => SetProperty(ref _referringSitesLabelText, value);
+            get => _isRefreshing;
+            set => SetProperty(ref _isRefreshing, value);
         }
 
-        public ICommand GetReferringSitesCommand { get; }
-
-        async Task ExecuteGetReferringSitesCommand(string owner, string repository)
+        async Task ExecuteRefreshCommand(string owner, string repository)
         {
-            ReferringSitesLabelText = string.Empty;
+            ReferringSitesCollection.Clear();
 
-            var referringSites = await _gitHubApiV3Service.GetReferingSites(owner, repository).ConfigureAwait(false);
+            try
+            {
+                var referringSites = await _gitHubApiV3Service.GetReferingSites(owner, repository);
 
-            foreach (var site in referringSites)
-                ReferringSitesLabelText += $"{nameof(ReferingSiteModel.Referrer)}: {site.Referrer}\n{nameof(ReferingSiteModel.TotalCount)}: {site.TotalCount}\n{nameof(ReferingSiteModel.TotalUniqueCount)}: {site.TotalUniqueCount}\n\n";
-         }
+                foreach (var site in referringSites)
+                    ReferringSitesCollection.Add(site);
+            }
+            finally
+            {
+                IsRefreshing = false;
+            }
+        }
+
+        //https://codetraveler.io/2019/09/11/using-observablecollection-in-a-multi-threaded-xamarin-forms-application/
+        void ObservableCollectionCallback(IEnumerable collection, object context, Action accessMethod, bool writeAccess)
+        {
+            lock (collection)
+            {
+                accessMethod?.Invoke();
+            }
+        }
     }
 }

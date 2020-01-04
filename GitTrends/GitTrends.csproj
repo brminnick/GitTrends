@@ -36,6 +36,7 @@
       <Folder Include="Resources\" />
       <Folder Include="Views\Settings\" />
       <Folder Include="Themes\" />
+      <Folder Include="Views\ReferringSites\" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="repo_forked.svg" />
