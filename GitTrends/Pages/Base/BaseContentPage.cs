@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using Xamarin.Forms.PlatformConfiguration;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends
 {
@@ -12,6 +14,8 @@ namespace GitTrends
             SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             BindingContext = ViewModel = viewModel;
             Title = title;
+
+            On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
         }
 
         protected T ViewModel { get; }
@@ -24,8 +28,8 @@ namespace GitTrends
             {
                 var browserOptions = new BrowserLaunchOptions
                 {
-                    PreferredToolbarColor = (Color)Application.Current.Resources[nameof(BaseTheme.NavigationBarBackgroundColor)],
-                    PreferredControlColor = (Color)Application.Current.Resources[nameof(BaseTheme.NavigationBarTextColor)],
+                    PreferredToolbarColor = (Color)Xamarin.Forms.Application.Current.Resources[nameof(BaseTheme.NavigationBarBackgroundColor)],
+                    PreferredControlColor = (Color)Xamarin.Forms.Application.Current.Resources[nameof(BaseTheme.NavigationBarTextColor)],
                 };
 
                 return Browser.OpenAsync(url, browserOptions);

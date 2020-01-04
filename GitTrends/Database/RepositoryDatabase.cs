@@ -65,7 +65,6 @@ namespace GitTrends
             return repositoryDatabaseModels.Select(x => (Repository)x);
         }
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
         class RepositoryDatabaseModel : IRepository
         {
             public string Name { get; set; } = string.Empty;

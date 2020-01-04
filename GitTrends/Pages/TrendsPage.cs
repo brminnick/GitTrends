@@ -1,4 +1,5 @@
 ﻿using System;
+using Autofac;
 using GitTrends.Shared;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Forms;
@@ -7,13 +8,16 @@ namespace GitTrends
 {
     class TrendsPage : BaseContentPage<TrendsViewModel>
     {
-        readonly string _owner, _repository;
+        readonly Repository _repository;
         static readonly Lazy<GitHubTrendsChart> _trendsChartHolder = new Lazy<GitHubTrendsChart>(() => new GitHubTrendsChart());
 
         public TrendsPage(TrendsViewModel trendsViewModel, TrendsChartSettingsService trendsChartSettingsService, Repository repository) : base(repository.Name, trendsViewModel)
         {
-            _owner = repository.OwnerLogin;
-            _repository = repository.Name;
+            _repository = repository;
+
+            var refferingSitesToolbarItem = new ToolbarItem { Text = "Referring Sites" };
+            refferingSitesToolbarItem.Clicked += HandleRefferingSitesToolbarItemClicked;
+            ToolbarItems.Add(refferingSitesToolbarItem);
 
             TrendsChart.TotalViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowViewsByDefault;
             TrendsChart.TotalUniqueViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueViewsByDefault;
@@ -38,7 +42,19 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            ViewModel.FetchDataCommand.Execute((_owner, _repository));
+            ViewModel.FetchDataCommand.Execute((_repository.OwnerLogin, _repository.Name));
+        }
+
+        async void HandleRefferingSitesToolbarItemClicked(object sender, EventArgs e)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+
+            var referringSites = scope.Resolve<ReferringSitesPage>(new TypedParameter(typeof(Repository), _repository));
+
+            if(Device.RuntimePlatform is Device.iOS)
+                await Device.InvokeOnMainThreadAsync(() => Navigation.PushModalAsync(referringSites));
+            else
+                await Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(referringSites));
         }
 
         class GitHubTrendsChart : SfChart

@@ -32,7 +32,7 @@ namespace GitTrends
             var referringSites = await _gitHubApiV3Service.GetReferingSites(owner, repository).ConfigureAwait(false);
 
             foreach (var site in referringSites)
-                ReferringSitesLabelText += $"{nameof(ReferingSiteModel.Referrer)}: {site.Referrer}\n{nameof(ReferingSiteModel.TotalCount)}: {site.TotalCount}\n{nameof(ReferingSiteModel.TotalUniqueCount)}: {site.TotalUniqueCount}";
+                ReferringSitesLabelText += $"{nameof(ReferingSiteModel.Referrer)}: {site.Referrer}\n{nameof(ReferingSiteModel.TotalCount)}: {site.TotalCount}\n{nameof(ReferingSiteModel.TotalUniqueCount)}: {site.TotalUniqueCount}\n\n";
          }
     }
 }

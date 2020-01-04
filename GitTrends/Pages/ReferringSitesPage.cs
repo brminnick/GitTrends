@@ -1,4 +1,6 @@
-﻿using GitTrends.Shared;
+﻿using System;
+using System.Linq;
+using GitTrends.Shared;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -14,7 +16,8 @@ namespace GitTrends
 
             var referringSitesLabel = new Label
             {
-                HorizontalOptions = LayoutOptions.Center,
+                Margin = new Thickness(10),
+                HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
                 HorizontalTextAlignment = TextAlignment.Center,
                 VerticalTextAlignment = TextAlignment.Center,
@@ -29,6 +32,14 @@ namespace GitTrends
             base.OnAppearing();
 
             ViewModel.GetReferringSitesCommand.Execute((_owner, _repository));
+        }
+
+        protected override async void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            if (Navigation.ModalStack.Any())
+                await Navigation.PopModalAsync();
         }
     }
 }
