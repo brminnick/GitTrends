@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using Refit;
@@ -21,6 +22,12 @@ namespace GitTrends
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
             return await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryCloneStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
+        }
+
+        public async Task<List<ReferingSiteModel>> GetReferingSites(string owner, string repo)
+        {
+            var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
+            return await AttemptAndRetry_Mobile(() => GithubApiClient.GetReferingSites(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Refit;
 
 namespace GitTrends.Shared
@@ -11,5 +12,8 @@ namespace GitTrends.Shared
 
         [Get("/repos/{owner}/{repo}/traffic/clones")]
         Task<RepositoryClonesModel> GetRepositoryCloneStatistics(string owner, string repo, [Header("Authorization")] string authorization);
+
+        [Get("/repos/{owner}/{repo}/traffic/popular/referrers")]
+        Task<List<ReferingSiteModel>> GetReferingSites(string owner, string repo, [Header("Authorization")] string authorization);
     }
 }
