@@ -25,7 +25,7 @@ namespace GitTrends.Shared
             }
             else
             {
-                client = new HttpClient(new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.GZip });
+                client = new HttpClient(new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate });
             }
 
             client.BaseAddress = new Uri(url);
