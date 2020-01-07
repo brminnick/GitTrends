@@ -19,7 +19,7 @@ namespace GitTrends
 
         protected static async ValueTask<SQLiteAsyncConnection> GetDatabaseConnection<T>()
         {
-            if (!DatabaseConnection.TableMappings.Any(x => x.MappedType.Name == typeof(T).Name))
+            if (!DatabaseConnection.TableMappings.Any(x => x.MappedType == typeof(T)))
             {
                 await DatabaseConnection.EnableWriteAheadLoggingAsync().ConfigureAwait(false);
                 await DatabaseConnection.CreateTablesAsync(CreateFlags.None, typeof(T)).ConfigureAwait(false);
