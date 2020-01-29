@@ -22,10 +22,8 @@ namespace GitTrends
                 HttpHeadersTimeout = 60
             });
 
-            using (var scope = ContainerService.Container.BeginLifetimeScope())
-            {
-                MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>(new TypedParameter(typeof(bool), _isInitiatedByCallBackUri)));
-            }
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>(new TypedParameter(typeof(bool), _isInitiatedByCallBackUri)));
 
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
         }
@@ -80,7 +78,7 @@ namespace GitTrends
                 Setters = {
                     new Setter
                     {
-                        Property = Xamarin.Forms.DebugRainbows.DebugRainbow.IsDebugProperty,
+                        Property = Xamarin.Forms.DebugRainbows.DebugRainbow.ShowColorsProperty,
                         Value = shouldUseDebugRainbows
                     }
                 }
