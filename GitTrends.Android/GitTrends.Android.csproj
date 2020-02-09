@@ -15,7 +15,7 @@
         <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
         <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
         <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-        <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
+        <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
         <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
         <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
         <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
@@ -59,12 +59,12 @@
         <Reference Include="System" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Xamarin.Forms" Version="4.5.0.187-pre2" />
+        <PackageReference Include="Xamarin.Forms" Version="4.5.0.266-pre3" />
         <PackageReference Include="Xamarin.Essentials" Version="1.4.0-pre2" />
         <PackageReference Include="Refit" Version="5.0.23" />
-        <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.0-pre2" />
+        <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.0" />
         <PackageReference Include="Polly" Version="7.2.0" />
-        <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.0.0.5" />
+        <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.1.1.1-beta" />
         <PackageReference Include="Plugin.CurrentActivity" Version="2.1.0.4" />
         <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="17.2.0.46" />
         <PackageReference Include="sqlite-net-pcl" Version="1.6.292" />

@@ -48,6 +48,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GetGitHubClientIdDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\SyncFusionDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IRepository.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\ReferringSiteModel.cs" />
   </ItemGroup>
 </Project>

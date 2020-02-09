@@ -8,11 +8,11 @@ namespace GitTrends
 {
     public class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>
     {
-        public ReferringSitesPage(ReferringSitesViewModel refferringSitesViewModel, Repository repository) : base("Referring Sites", refferringSitesViewModel)
+        public ReferringSitesPage(ReferringSitesViewModel referringSitesViewModel, Repository repository) : base("Referring Sites", referringSitesViewModel)
         {
             var collectionView = new CollectionView
             {
-                ItemTemplate = new ReferringSitesDataTemplate(),
+                ItemTemplate = new ReferringSitesDataTemplateSelector(),
                 SelectionMode = SelectionMode.Single
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;

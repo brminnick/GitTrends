@@ -15,9 +15,9 @@ namespace GitTrends
         {
             _repository = repository;
 
-            var refferingSitesToolbarItem = new ToolbarItem { Text = "Referring Sites" };
-            refferingSitesToolbarItem.Clicked += HandleRefferingSitesToolbarItemClicked;
-            ToolbarItems.Add(refferingSitesToolbarItem);
+            var referringSitesToolbarItem = new ToolbarItem { Text = "Referring Sites" };
+            referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked;
+            ToolbarItems.Add(referringSitesToolbarItem);
 
             TrendsChart.TotalViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowViewsByDefault;
             TrendsChart.TotalUniqueViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueViewsByDefault;
@@ -40,16 +40,16 @@ namespace GitTrends
 
         static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
 
-        async void HandleRefferingSitesToolbarItemClicked(object sender, EventArgs e)
+        async void HandleReferringSitesToolbarItemClicked(object sender, EventArgs e)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
 
-            var referringSites = scope.Resolve<ReferringSitesPage>(new TypedParameter(typeof(Repository), _repository));
+            var referringSitesPage = scope.Resolve<ReferringSitesPage>(new TypedParameter(typeof(Repository), _repository));
 
             if(Device.RuntimePlatform is Device.iOS)
-                await Device.InvokeOnMainThreadAsync(() => Navigation.PushModalAsync(referringSites));
+                await Device.InvokeOnMainThreadAsync(() => Navigation.PushModalAsync(referringSitesPage));
             else
-                await Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(referringSites));
+                await Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(referringSitesPage));
         }
 
         class GitHubTrendsChart : SfChart

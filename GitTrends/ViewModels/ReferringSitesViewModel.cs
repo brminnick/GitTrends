@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Shared;
+using HtmlAgilityPack;
+using Xamarin.Forms.Internals;
 
 namespace GitTrends
 {
@@ -49,6 +54,8 @@ namespace GitTrends
                 IsRefreshing = false;
             }
         }
+
+        
 
         //https://codetraveler.io/2019/09/11/using-observablecollection-in-a-multi-threaded-xamarin-forms-application/
         void ObservableCollectionCallback(IEnumerable collection, object context, Action accessMethod, bool writeAccess)
