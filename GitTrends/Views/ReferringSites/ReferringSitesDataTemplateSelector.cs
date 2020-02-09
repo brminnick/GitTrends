@@ -28,14 +28,14 @@ namespace GitTrends
                     Source = referringSiteModel.FavIcon,
                 };
 
-                var urlTitleLabel = new TitleLabel("Referring Site");
+                var urlTitleLabel = new TitleLabel("Site");
 
                 var urlDescriptionLabel = new DescriptionLabel(referringSiteModel.Referrer)
                 {
                     LineBreakMode = LineBreakMode.TailTruncation
                 };
 
-                var viewsTitleLabel = new TitleLabel("Views");
+                var viewsTitleLabel = new TitleLabel("Referrals");
                 var viewsDescriptionLabel = new DescriptionLabel(referringSiteModel.TotalCount.ToString());
 
                 var uniqueViewsTitleLabel = new TitleLabel("Uniqe Visitors");

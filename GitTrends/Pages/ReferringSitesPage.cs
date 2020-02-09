@@ -8,7 +8,11 @@ namespace GitTrends
 {
     public class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>
     {
-        public ReferringSitesPage(ReferringSitesViewModel referringSitesViewModel, Repository repository) : base("Referring Sites", referringSitesViewModel)
+        const string _title = "Referring Sites";
+
+        readonly RefreshView _refreshView;
+
+        public ReferringSitesPage(ReferringSitesViewModel referringSitesViewModel, Repository repository) : base(_title, referringSitesViewModel)
         {
             var collectionView = new CollectionView
             {
@@ -18,17 +22,50 @@ namespace GitTrends
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.ReferringSitesCollection));
 
-            var refreshView = new RefreshView
+            _refreshView = new RefreshView
             {
                 InputTransparent = true,
                 CommandParameter = (repository.OwnerLogin, repository.Name),
                 Content = collectionView
             };
-            refreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.RefreshControlColor));
-            refreshView.SetBinding(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.RefreshCommand));
-            refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing));
+            _refreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.RefreshControlColor));
+            _refreshView.SetBinding(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.RefreshCommand));
+            _refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing));
 
-            Content = refreshView;
+            if (Device.RuntimePlatform is Device.iOS)
+            {
+                var titleLabel = new Label
+                {
+                    FontAttributes = FontAttributes.Bold,
+                    Text = _title,
+                    FontSize = 30,
+                    VerticalTextAlignment = TextAlignment.Center,
+                    Margin = new Thickness(10, 0)
+                };
+                titleLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
+
+                var grid = new Grid
+                {
+                    RowDefinitions =
+                    {
+                        new RowDefinition { Height = new GridLength(50, GridUnitType.Absolute) },
+                        new RowDefinition { Height = new GridLength(1, GridUnitType.Star) },
+                    },
+                    ColumnDefinitions =
+                    {
+                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
+                    }
+                };
+
+                grid.Children.Add(titleLabel, 0, 0);
+                grid.Children.Add(_refreshView, 0, 1);
+
+                Content = grid;
+            }
+            else
+            {
+                Content = _refreshView;
+            }
         }
 
         protected override void OnAppearing()
@@ -37,12 +74,8 @@ namespace GitTrends
 
             Disappearing += HandleDisappearing;
 
-            if (Content is RefreshView refreshView
-                        && refreshView.Content is CollectionView collectionView
-                        && IsNullOrEmpty(collectionView.ItemsSource))
-            {
-                refreshView.IsRefreshing = true;
-            }
+            if (_refreshView.Content is CollectionView collectionView && IsNullOrEmpty(collectionView.ItemsSource))
+                _refreshView.IsRefreshing = true;
 
             static bool IsNullOrEmpty(in IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
         }
