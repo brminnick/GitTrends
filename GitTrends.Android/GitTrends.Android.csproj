@@ -71,6 +71,7 @@
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
         <PackageReference Include="Autofac" Version="5.0.0" />
         <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="17.2.0.46" />
+        <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.3" />
     </ItemGroup>
     <ItemGroup>
         <Compile Include="MainActivity.cs" />

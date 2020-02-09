@@ -106,6 +106,7 @@ namespace GitTrends
                     VerticalOptions = LayoutOptions.Center;
                     HorizontalTextAlignment = TextAlignment.Center;
                     VerticalTextAlignment = TextAlignment.Center;
+                    SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
                 }
             }
         }

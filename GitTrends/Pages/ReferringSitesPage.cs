@@ -20,6 +20,7 @@ namespace GitTrends
 
             var refreshView = new RefreshView
             {
+                InputTransparent = true,
                 CommandParameter = (repository.OwnerLogin, repository.Name),
                 Content = collectionView
             };
@@ -41,7 +42,6 @@ namespace GitTrends
                         && IsNullOrEmpty(collectionView.ItemsSource))
             {
                 refreshView.IsRefreshing = true;
-                refreshView.IsEnabled = false;
             }
 
             static bool IsNullOrEmpty(in IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
