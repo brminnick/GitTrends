@@ -1,4 +1,5 @@
 ﻿using System;
+using Autofac;
 using GitTrends.Shared;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Forms;
@@ -7,13 +8,16 @@ namespace GitTrends
 {
     class TrendsPage : BaseContentPage<TrendsViewModel>
     {
-        readonly string _owner, _repository;
+        readonly Repository _repository;
         static readonly Lazy<GitHubTrendsChart> _trendsChartHolder = new Lazy<GitHubTrendsChart>(() => new GitHubTrendsChart());
 
         public TrendsPage(TrendsViewModel trendsViewModel, TrendsChartSettingsService trendsChartSettingsService, Repository repository) : base(repository.Name, trendsViewModel)
         {
-            _owner = repository.OwnerLogin;
-            _repository = repository.Name;
+            _repository = repository;
+
+            var referringSitesToolbarItem = new ToolbarItem { Text = "Referring Sites" };
+            referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked;
+            ToolbarItems.Add(referringSitesToolbarItem);
 
             TrendsChart.TotalViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowViewsByDefault;
             TrendsChart.TotalUniqueViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueViewsByDefault;
@@ -30,15 +34,22 @@ namespace GitTrends
             absoluteLayout.Children.Add(TrendsChart, new Rectangle(0, 0, 1, 1), AbsoluteLayoutFlags.All);
 
             Content = absoluteLayout;
+
+            ViewModel.FetchDataCommand.Execute((_repository.OwnerLogin, _repository.Name));
         }
 
         static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
 
-        protected override void OnAppearing()
+        async void HandleReferringSitesToolbarItemClicked(object sender, EventArgs e)
         {
-            base.OnAppearing();
+            using var scope = ContainerService.Container.BeginLifetimeScope();
 
-            ViewModel.FetchDataCommand.Execute((_owner, _repository));
+            var referringSitesPage = scope.Resolve<ReferringSitesPage>(new TypedParameter(typeof(Repository), _repository));
+
+            if(Device.RuntimePlatform is Device.iOS)
+                await Device.InvokeOnMainThreadAsync(() => Navigation.PushModalAsync(referringSitesPage));
+            else
+                await Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(referringSitesPage));
         }
 
         class GitHubTrendsChart : SfChart

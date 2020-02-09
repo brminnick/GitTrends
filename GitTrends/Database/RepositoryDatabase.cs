@@ -65,7 +65,6 @@ namespace GitTrends
             return repositoryDatabaseModels.Select(x => (Repository)x);
         }
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
         class RepositoryDatabaseModel : IRepository
         {
             public string Name { get; set; } = string.Empty;
@@ -74,8 +73,10 @@ namespace GitTrends
 
             public long ForkCount { get; set; }
 
+#pragma warning disable CS8618 //Non-nullable property 'Uri' is uninitialized. Consider declaring the property as nullable. (CS8618) (GitTrends)
             [PrimaryKey]
             public Uri Uri { get; set; }
+#pragma warning restore CS8618
 
             public int StarCount { get; set; }
 

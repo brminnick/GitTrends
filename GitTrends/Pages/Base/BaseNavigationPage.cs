@@ -17,6 +17,7 @@ namespace GitTrends
             SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 
             On<iOS>().SetPrefersLargeTitles(true);
+            On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
         }
     }
 }

@@ -37,11 +37,10 @@ namespace GitTrends.Droid
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageViewHandler();
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
 
-            using (var scope = ContainerService.Container.BeginLifetimeScope())
-            {
-                var syncFusionService = scope.Resolve<SyncFusionService>();
-                syncFusionService.Initialize().SafeFireAndForget(onException: ex => System.Diagnostics.Debug.WriteLine(ex));
-            }
+            using var containerScope = ContainerService.Container.BeginLifetimeScope();
+
+            var syncFusionService = containerScope.Resolve<SyncFusionService>();
+            syncFusionService.Initialize().SafeFireAndForget(onException: ex => System.Diagnostics.Debug.WriteLine(ex));
 
             if (Intent?.Data is Android.Net.Uri callbackUri)
             {
@@ -67,8 +66,8 @@ namespace GitTrends.Droid
 
                     try
                     {
-                        using var scope = ContainerService.Container.BeginLifetimeScope();
-                        var gitHubAuthenticationService = scope.Resolve<GitHubAuthenticationService>();
+                        using var containerScope = ContainerService.Container.BeginLifetimeScope();
+                        var gitHubAuthenticationService = containerScope.Resolve<GitHubAuthenticationService>();
 
                         await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
                     }

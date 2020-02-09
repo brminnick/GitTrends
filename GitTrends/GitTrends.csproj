@@ -14,18 +14,19 @@
       <Optimize>true</Optimize>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Xamarin.Forms" Version="4.5.0.142-pre1" />
+        <PackageReference Include="Xamarin.Forms" Version="4.5.0.266-pre3" />
         <PackageReference Include="Xamarin.Essentials" Version="1.4.0-pre2" />
         <PackageReference Include="Refit" Version="5.0.23" />
-        <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.0-pre2" />
+        <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.0" />
         <PackageReference Include="Polly" Version="7.2.0" />
-        <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.0.0.5" />
+        <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.1.1.1-beta" />
         <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="17.2.0.46" />
         <PackageReference Include="sqlite-net-pcl" Version="1.6.292" />
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
-        <PackageReference Include="Autofac" Version="4.9.4" />
-        <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.0.16" />
+        <PackageReference Include="Autofac" Version="5.0.0" />
+        <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.1.4" />
         <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="17.2.0.46" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.18" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="EventArgs\" />
@@ -36,6 +37,8 @@
       <Folder Include="Resources\" />
       <Folder Include="Views\Settings\" />
       <Folder Include="Themes\" />
+      <Folder Include="Views\ReferringSites\" />
+      <Folder Include="Models\" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="repo_forked.svg" />

@@ -36,8 +36,11 @@ namespace GitTrends.iOS
                                                                     ? UINavigationBar.Appearance.BarTintColor
                                                                     : navigationPageBackgroundColor.ToUIColor();
 
-                NavigationBar.StandardAppearance.TitleTextAttributes = NavigationBar.TitleTextAttributes;
-                NavigationBar.StandardAppearance.LargeTitleTextAttributes = NavigationBar.LargeTitleTextAttributes;
+                if (NavigationBar.TitleTextAttributes != null)
+                    NavigationBar.StandardAppearance.TitleTextAttributes = NavigationBar.TitleTextAttributes;
+
+                if (NavigationBar.LargeTitleTextAttributes != null)
+                    NavigationBar.StandardAppearance.LargeTitleTextAttributes = NavigationBar.LargeTitleTextAttributes;
 
                 NavigationBar.ScrollEdgeAppearance = NavigationBar.StandardAppearance;
             }

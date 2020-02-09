@@ -9,7 +9,7 @@ namespace GitTrends
 {
     public class SettingsViewModel : BaseViewModel
     {
-        readonly WeakEventManager<string> _gitHubLoginUrlRetrievedEventManager = new WeakEventManager<string>();
+        readonly WeakEventManager<string?> _gitHubLoginUrlRetrievedEventManager = new WeakEventManager<string?>();
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly TrendsChartSettingsService _trendsChartSettingsService;
 
@@ -31,7 +31,7 @@ namespace GitTrends
             SetGitHubValues();
         }
 
-        public event EventHandler<string> GitHubLoginUrlRetrieved
+        public event EventHandler<string?> GitHubLoginUrlRetrieved
         {
             add => _gitHubLoginUrlRetrievedEventManager.AddEventHandler(value);
             remove => _gitHubLoginUrlRetrievedEventManager.RemoveEventHandler(value);
@@ -137,12 +137,20 @@ namespace GitTrends
             {
                 IsAuthenticating = true;
 
-                var loginUrl = await _gitHubAuthenticationService.GetGitHubLoginUrl().ConfigureAwait(false);
+                try
+                {
+                    var loginUrl = await _gitHubAuthenticationService.GetGitHubLoginUrl().ConfigureAwait(false);
+                    OnGitHubLoginUrlRetrieved(loginUrl);
+                }
+                catch
+                {
+                    OnGitHubLoginUrlRetrieved(null);
+                    IsAuthenticating = false;
+                }
 
-                OnGitHubLoginUrlRetrieved(loginUrl);
             }
         }
 
-        void OnGitHubLoginUrlRetrieved(string loginUrl) => _gitHubLoginUrlRetrievedEventManager.HandleEvent(this, loginUrl, nameof(GitHubLoginUrlRetrieved));
+        void OnGitHubLoginUrlRetrieved(string? loginUrl) => _gitHubLoginUrlRetrievedEventManager.HandleEvent(this, loginUrl, nameof(GitHubLoginUrlRetrieved));
     }
 }

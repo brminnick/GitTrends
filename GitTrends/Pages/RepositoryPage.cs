@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
@@ -104,20 +103,18 @@ namespace GitTrends
 
         async Task NavigateToSettingsPage()
         {
-            using (var scope = ContainerService.Container.BeginLifetimeScope())
-            {
-                var profilePage = scope.Resolve<SettingsPage>();
-                await Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(profilePage));
-            }
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+
+            var profilePage = scope.Resolve<SettingsPage>();
+            await Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(profilePage));
         }
 
         async Task NavigateToTrendsPage(Repository repository)
         {
-            using (var scope = ContainerService.Container.BeginLifetimeScope())
-            {
-                var trendsPage = scope.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
-                await Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
-            }
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+
+            var trendsPage = scope.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
+            await Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
         }
 
         async void HandleSettingsToolbarItem(object sender, EventArgs e) => await NavigateToSettingsPage();

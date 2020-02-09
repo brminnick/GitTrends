@@ -1,8 +1,8 @@
 ﻿using Android.Content;
 using Android.Runtime;
-using Android.Support.V7.Widget;
 using Android.Text;
 using Android.Views.InputMethods;
+using AndroidX.AppCompat.Widget;
 using GitTrends;
 using GitTrends.Droid;
 using Plugin.CurrentActivity;

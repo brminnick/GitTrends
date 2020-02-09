@@ -11,20 +11,6 @@ namespace GitTrends
 
         protected static string GetGitHubBearerTokenHeader(GitHubToken token) => $"{token.TokenType} {token.AccessToken}";
 
-        protected static async Task UpdateActivityIndicatorStatus(bool isActivityIndicatorDisplayed)
-        {
-            if (isActivityIndicatorDisplayed)
-            {
-                _networkIndicatorCount++;
-                await Device.InvokeOnMainThreadAsync(() => Application.Current.MainPage.IsBusy = true).ConfigureAwait(false);
-            }
-            else if (--_networkIndicatorCount <= 0)
-            {
-                _networkIndicatorCount = 0;
-                await Device.InvokeOnMainThreadAsync(() => Application.Current.MainPage.IsBusy = false).ConfigureAwait(false);
-            }
-        }
-
         protected static async Task<T> AttemptAndRetry_Mobile<T>(Func<Task<T>> action, int numRetries = 3)
         {
             await UpdateActivityIndicatorStatus(true).ConfigureAwait(false);
@@ -37,6 +23,30 @@ namespace GitTrends
             {
                 await UpdateActivityIndicatorStatus(false).ConfigureAwait(false);
             }
+        }
+
+        static async ValueTask UpdateActivityIndicatorStatus(bool isActivityIndicatorDisplayed)
+        {
+            if (isActivityIndicatorDisplayed)
+            {
+                _networkIndicatorCount++;
+
+                if (Xamarin.Essentials.MainThread.IsMainThread)
+                    setIsBusy(true);
+                else
+                    await Device.InvokeOnMainThreadAsync(() => setIsBusy(true));
+            }
+            else if (--_networkIndicatorCount <= 0)
+            {
+                _networkIndicatorCount = 0;
+
+                if (Xamarin.Essentials.MainThread.IsMainThread)
+                    setIsBusy(false);
+                else
+                    await Device.InvokeOnMainThreadAsync(() => setIsBusy(false));
+            }
+
+            static void setIsBusy(bool isBusy) => Application.Current.MainPage.IsBusy = isBusy;
         }
     }
 }

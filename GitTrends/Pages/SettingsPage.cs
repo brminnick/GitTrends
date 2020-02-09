@@ -31,6 +31,12 @@ namespace GitTrends
             base.OnAppearing();
         }
 
-        async void HandleGitHubLoginUrlRetrieved(object sender, string loginUrl) => await OpenBrowser(loginUrl);
+        async void HandleGitHubLoginUrlRetrieved(object sender, string? loginUrl)
+        {
+            if (!string.IsNullOrWhiteSpace(loginUrl))
+                await OpenBrowser(loginUrl);
+            else
+                await DisplayAlert("Error", "Couldn't connect to GitHub Login. Check your internet connection and try again", "OK");
+        }
     }
 }
