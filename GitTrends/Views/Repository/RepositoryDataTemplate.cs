@@ -23,7 +23,7 @@ namespace GitTrends
             {
                 HeightRequest = circleImageHeight,
                 HorizontalOptions = LayoutOptions.Start,
-                VerticalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
             };
             image.SetBinding(CircleImage.SourceProperty, nameof(Repository.OwnerAvatarUrl));
 

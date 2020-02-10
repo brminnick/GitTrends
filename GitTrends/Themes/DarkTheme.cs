@@ -4,12 +4,13 @@ namespace GitTrends
 {
     public class DarkTheme : BaseTheme
     {
-        const string _mediumBlueHex = "#12687C";
+        const string _darkestBlueHex = "#1D566E";
         const string _darkBlueHex = "#08232E";
+        const string _mediumBlueHex = "#12687C";
         const string _lightBlueHex = "#74B4C3";
+
         const string _darkNavyBlueHex = "#0E1820";
         const string _lightNavyBlueHex = "#273D56";
-        const string _darkestBlueHex = "#1D566E";
 
         const string _gitHubColorHex = "#333333";
 

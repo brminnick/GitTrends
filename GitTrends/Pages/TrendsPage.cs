@@ -46,10 +46,10 @@ namespace GitTrends
 
             var referringSitesPage = scope.Resolve<ReferringSitesPage>(new TypedParameter(typeof(Repository), _repository));
 
-            if(Device.RuntimePlatform is Device.iOS)
-                await Device.InvokeOnMainThreadAsync(() => Navigation.PushModalAsync(referringSitesPage));
+            if (Device.RuntimePlatform is Device.iOS)
+                await Navigation.PushModalAsync(referringSitesPage);
             else
-                await Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(referringSitesPage));
+                await Navigation.PushAsync(referringSitesPage);
         }
 
         class GitHubTrendsChart : SfChart

@@ -11,19 +11,16 @@ namespace GitTrends
     public class App : Xamarin.Forms.Application
     {
         readonly WeakEventManager<Theme> _themeChangedEventManager = new WeakEventManager<Theme>();
-        readonly bool _isInitiatedByCallBackUri;
 
         public App(bool isInitiatedByCallBackUri = false)
         {
-            _isInitiatedByCallBackUri = isInitiatedByCallBackUri;
-
             FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration
             {
                 HttpHeadersTimeout = 60
             });
 
             using var scope = ContainerService.Container.BeginLifetimeScope();
-            MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>(new TypedParameter(typeof(bool), _isInitiatedByCallBackUri)));
+            MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>(new TypedParameter(typeof(bool), isInitiatedByCallBackUri)));
 
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
         }

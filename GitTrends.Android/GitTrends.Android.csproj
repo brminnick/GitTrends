@@ -93,16 +93,6 @@
         <AndroidResource Include="Resources\values\colors.xml" />
         <AndroidResource Include="Resources\mipmap-anydpi-v26\icon.xml" />
         <AndroidResource Include="Resources\mipmap-anydpi-v26\icon_round.xml" />
-        <AndroidResource Include="Resources\mipmap-hdpi\icon.png" />
-        <AndroidResource Include="Resources\mipmap-hdpi\launcher_foreground.png" />
-        <AndroidResource Include="Resources\mipmap-mdpi\icon.png" />
-        <AndroidResource Include="Resources\mipmap-mdpi\launcher_foreground.png" />
-        <AndroidResource Include="Resources\mipmap-xhdpi\icon.png" />
-        <AndroidResource Include="Resources\mipmap-xhdpi\launcher_foreground.png" />
-        <AndroidResource Include="Resources\mipmap-xxhdpi\icon.png" />
-        <AndroidResource Include="Resources\mipmap-xxhdpi\launcher_foreground.png" />
-        <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png" />
-        <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
         <AndroidResource Include="Resources\xml\auto_backup_rules.xml" />
         <AndroidResource Include="Resources\drawable-xxhdpi\DefaultProfileImage.png">
             <SubType>
@@ -159,6 +149,46 @@
           <SubType></SubType>
           <Generator></Generator>
         </AndroidResource>
+        <AndroidResource Include="Resources\mipmap-hdpi\icon.png">
+          <SubType></SubType>
+          <Generator></Generator>
+        </AndroidResource>
+        <AndroidResource Include="Resources\mipmap-hdpi\launcher_foreground.png">
+          <SubType></SubType>
+          <Generator></Generator>
+        </AndroidResource>
+        <AndroidResource Include="Resources\mipmap-mdpi\icon.png">
+          <SubType></SubType>
+          <Generator></Generator>
+        </AndroidResource>
+        <AndroidResource Include="Resources\mipmap-mdpi\launcher_foreground.png">
+          <SubType></SubType>
+          <Generator></Generator>
+        </AndroidResource>
+        <AndroidResource Include="Resources\mipmap-xhdpi\icon.png">
+          <SubType></SubType>
+          <Generator></Generator>
+        </AndroidResource>
+        <AndroidResource Include="Resources\mipmap-xhdpi\launcher_foreground.png">
+          <SubType></SubType>
+          <Generator></Generator>
+        </AndroidResource>
+        <AndroidResource Include="Resources\mipmap-xxhdpi\icon.png">
+          <SubType></SubType>
+          <Generator></Generator>
+        </AndroidResource>
+        <AndroidResource Include="Resources\mipmap-xxhdpi\launcher_foreground.png">
+          <SubType></SubType>
+          <Generator></Generator>
+        </AndroidResource>
+        <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png">
+          <SubType></SubType>
+          <Generator></Generator>
+        </AndroidResource>
+        <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png">
+          <SubType></SubType>
+          <Generator></Generator>
+        </AndroidResource>
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Resources\drawable\" />
@@ -172,6 +202,11 @@
         <Folder Include="Services\" />
         <Folder Include="Resources\values-night\" />
         <Folder Include="Resources\drawable-night\" />
+        <Folder Include="Resources\mipmap-hdpi\" />
+        <Folder Include="Resources\mipmap-mdpi\" />
+        <Folder Include="Resources\mipmap-xhdpi\" />
+        <Folder Include="Resources\mipmap-xxhdpi\" />
+        <Folder Include="Resources\mipmap-xxxhdpi\" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\GitTrends\GitTrends.csproj">

@@ -8,9 +8,11 @@ namespace GitTrends
         const string _darkBlueHex = "#185E7C";
         const string _mediumBlueHex = "#1FAECE";
         const string _lightBlueHex = "#96E2F5";
-        const string _gitHubColorHex = "#333333";
-        const string _lightNavyBlueHex = "#365271";
+        
         const string _darkNavyBlueHex = "#1C2B39";
+        const string _lightNavyBlueHex = "#365271";
+
+        const string _gitHubColorHex = "#333333";
 
         public override Color NavigationBarBackgroundColor { get; } = Color.FromHex(_mediumBlueHex);
         public override Color NavigationBarTextColor { get; } = Color.White;
