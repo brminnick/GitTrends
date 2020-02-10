@@ -39,7 +39,7 @@ namespace GitTrends.Droid
         {
             base.OnSizeChanged(w, h, oldw, oldh);
 
-            if (Element is ISearchPage && Element is Page page)
+            if (Element is ISearchPage && Element is Page page && page.Parent is NavigationPage navigationPage && navigationPage.CurrentPage is ISearchPage)
                 AddSearchToToolbar(page.Title);
         }
 
