@@ -38,51 +38,17 @@ namespace GitTrends.iOS
         {
             var callbackUri = new Uri(url.AbsoluteString);
 
-            HandleCallbackUri().SafeFireAndForget(onException: x => Debug.WriteLine(x));
+            HandleCallbackUri(callbackUri).SafeFireAndForget(onException: x => Debug.WriteLine(x));
 
             return true;
 
-            async Task HandleCallbackUri()
+            static async Task HandleCallbackUri(Uri callbackUri)
             {
                 await ViewControllerServices.CloseSFSafariViewController().ConfigureAwait(false);
 
                 using var scope = ContainerService.Container.BeginLifetimeScope();
                 var gitHubAuthenticationService = scope.Resolve<GitHubAuthenticationService>();
                 await gitHubAuthenticationService.AuthorizeSession(callbackUri).ConfigureAwait(false);
-            }
-        }
-
-        public override void OnActivated(UIApplication uiApplication)
-        {
-            base.OnActivated(uiApplication);
-
-            removeBlurOverlay();
-
-            void removeBlurOverlay()
-            {
-                _blurWindow?.RemoveFromSuperview();
-                _blurWindow?.Dispose();
-                _blurWindow = null;
-            }
-        }
-
-        public override void OnResignActivation(UIApplication uiApplication)
-        {
-            base.OnResignActivation(uiApplication);
-
-            addBlurOverlay();
-
-            void addBlurOverlay()
-            {
-                using (var blurEffect = UIBlurEffect.FromStyle(UIBlurEffectStyle.Light))
-                {
-                    _blurWindow = new UIVisualEffectView(blurEffect)
-                    {
-                        Frame = UIApplication.SharedApplication.KeyWindow.RootViewController.View.Bounds
-                    };
-                }
-
-                UIApplication.SharedApplication.KeyWindow.RootViewController.View.AddSubview(_blurWindow);
             }
         }
 

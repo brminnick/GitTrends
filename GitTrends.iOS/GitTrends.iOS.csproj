@@ -28,7 +28,7 @@
         <WarningLevel>4</WarningLevel>
         <ConsolePause>false</ConsolePause>
         <MtouchArch>x86_64</MtouchArch>
-        <MtouchLink>None</MtouchLink>
+        <MtouchLink>SdkOnly</MtouchLink>
         <MtouchDebug>true</MtouchDebug>
         <CodesignKey>iPhone Developer</CodesignKey>
         <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
@@ -42,11 +42,12 @@
         <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
-        <MtouchLink>None</MtouchLink>
+        <MtouchLink>SdkOnly</MtouchLink>
         <MtouchArch>x86_64</MtouchArch>
         <ConsolePause>false</ConsolePause>
         <CodesignKey>iPhone Developer</CodesignKey>
         <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+        <MtouchUseLlvm>true</MtouchUseLlvm>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
         <DebugSymbols>true</DebugSymbols>
@@ -74,7 +75,7 @@
         <CodesignKey>iPhone Developer</CodesignKey>
         <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
         <MtouchUseLlvm>true</MtouchUseLlvm>
-        <MtouchLink>None</MtouchLink>
+        <MtouchLink>SdkOnly</MtouchLink>
     </PropertyGroup>
     <ItemGroup>
         <Compile Include="Main.cs" />
@@ -132,6 +133,10 @@
         <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_76pt%402x.png" />
         <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_83.5%402x.png" />
         <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\App Store Icon.png" />
+        <ImageAsset Include="Assets.xcassets\GitTrends.imageset\Contents.json" />
+        <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends.png" />
+        <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends%402x-1.png" />
+        <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends%403x-1.png" />
     </ItemGroup>
     <ItemGroup>
         <Reference Include="System" />
@@ -165,6 +170,7 @@
         <Folder Include="Services\" />
         <Folder Include="CustomRenderers\" />
         <Folder Include="Assets.xcassets\DefaultProfileImage.imageset\" />
+        <Folder Include="Assets.xcassets\GitTrends.imageset\" />
     </ItemGroup>
     <ItemGroup>
         <BundleResource Include="Resources\FontAwesomeBrands.ttf" />
