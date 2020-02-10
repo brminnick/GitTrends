@@ -24,11 +24,11 @@ namespace GitTrends
             Content = new ScrollView { Content = stackLayout };
         }
 
-        protected override void OnAppearing()
+        protected override void OnDisappearing()
         {
-            ViewModel.IsAuthenticating = false;
+            base.OnDisappearing();
 
-            base.OnAppearing();
+            ViewModel.IsAuthenticating = false;
         }
 
         async void HandleGitHubLoginUrlRetrieved(object sender, string? loginUrl)

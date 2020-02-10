@@ -12,7 +12,7 @@ namespace GitTrends
     {
         readonly WeakEventManager<Theme> _themeChangedEventManager = new WeakEventManager<Theme>();
 
-        public App(bool isInitiatedByCallBackUri = false)
+        public App()
         {
             FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration
             {
@@ -20,7 +20,7 @@ namespace GitTrends
             });
 
             using var scope = ContainerService.Container.BeginLifetimeScope();
-            MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>(new TypedParameter(typeof(bool), isInitiatedByCallBackUri)));
+            MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>());
 
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
         }
@@ -32,7 +32,7 @@ namespace GitTrends
         }
 
         protected override void OnStart()
-        {
+        {   
             base.OnStart();
 
             SetTheme();

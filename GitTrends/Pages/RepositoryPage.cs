@@ -15,11 +15,8 @@ namespace GitTrends
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
-        bool _shouldNavigateToSettingsPageOnAppearing;
-
-        public RepositoryPage(RepositoryViewModel repositoryViewModel, GitHubAuthenticationService gitHubAuthenticationService, bool isInitiatedByCallBackUri = false) : base(PageTitles.RepositoryPage, repositoryViewModel)
+        public RepositoryPage(RepositoryViewModel repositoryViewModel, GitHubAuthenticationService gitHubAuthenticationService) : base(PageTitles.RepositoryPage, repositoryViewModel)
         {
-            _shouldNavigateToSettingsPageOnAppearing = isInitiatedByCallBackUri;
             _gitHubAuthenticationService = gitHubAuthenticationService;
 
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
@@ -65,12 +62,7 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            if (_shouldNavigateToSettingsPageOnAppearing)
-            {
-                _shouldNavigateToSettingsPageOnAppearing = false;
-                await NavigateToSettingsPage();
-            }
-            else if (Content is RefreshView refreshView
+            if (Content is RefreshView refreshView
                         && refreshView.Content is CollectionView collectionView
                         && IsNullOrEmpty(collectionView.ItemsSource))
             {

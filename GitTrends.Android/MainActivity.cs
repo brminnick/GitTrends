@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Provider;
 using Android.Runtime;
+using Android.Telecom;
 using AsyncAwaitBestPractices;
 using Autofac;
 using Plugin.CurrentActivity;
+using Xamarin.Forms;
 
 namespace GitTrends.Droid
 {
@@ -43,40 +47,75 @@ namespace GitTrends.Droid
             var syncFusionService = containerScope.Resolve<SyncFusionService>();
             syncFusionService.Initialize().SafeFireAndForget(onException: ex => System.Diagnostics.Debug.WriteLine(ex));
 
+            var app = new App();
+
             if (Intent?.Data is Android.Net.Uri callbackUri)
             {
-                LoadApplication(new App(true));
-                ExecuteCallbackUri(callbackUri);
+                //Wait for Application.MainPage to load before handling the callbackUri
+                app.PageAppearing += HandlePageAppearing;
             }
-            else
+
+            LoadApplication(app);
+
+            async void HandlePageAppearing(object sender, Page e)
             {
-                LoadApplication(new App(false));
+                if (e is SettingsPage)
+                {
+                    app.PageAppearing -= HandlePageAppearing;
+                    await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
+                }
+                else
+                {
+                    await NavigateToSettingsPage().ConfigureAwait(false);
+                }
             }
         }
 
-        void ExecuteCallbackUri(Android.Net.Uri callbackUri)
+        protected override async void OnNewIntent(Intent intent)
         {
-            var navigationPage = (Xamarin.Forms.NavigationPage)Xamarin.Forms.Application.Current.MainPage;
-            navigationPage.Pushed += HandlePushed;
+            base.OnNewIntent(intent);
 
-            async void HandlePushed(object sender, Xamarin.Forms.NavigationEventArgs e)
+            if (intent?.Data is Android.Net.Uri callbackUri)
             {
-                if (e.Page is SettingsPage)
-                {
-                    navigationPage.Pushed -= HandlePushed;
+                await NavigateToSettingsPage().ConfigureAwait(false);
+                await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
+            }
+        }
 
-                    try
-                    {
-                        using var containerScope = ContainerService.Container.BeginLifetimeScope();
-                        var gitHubAuthenticationService = containerScope.Resolve<GitHubAuthenticationService>();
+        static async ValueTask NavigateToSettingsPage()
+        {
+            var navigationPage = (NavigationPage)Xamarin.Forms.Application.Current.MainPage;
 
-                        await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine(ex);
-                    }
-                }
+            if (navigationPage.CurrentPage.GetType() != typeof(SettingsPage))
+            {
+                using var containerScope = ContainerService.Container.BeginLifetimeScope();
+                var settingsPage = containerScope.Resolve<SettingsPage>();
+
+                if (Xamarin.Essentials.MainThread.IsMainThread)
+                    await navigateToSettingsPage(navigationPage, settingsPage).ConfigureAwait(false);
+                else
+                    await Device.InvokeOnMainThreadAsync(() => navigateToSettingsPage(navigationPage, settingsPage)).ConfigureAwait(false);
+            }
+
+            static async Task navigateToSettingsPage(NavigationPage mainNavigationPage, SettingsPage settingsPage)
+            {
+                await mainNavigationPage.PopToRootAsync();
+                await mainNavigationPage.PushAsync(settingsPage);
+            }
+        }
+
+        static async Task AuthorizeGitHubSession(Android.Net.Uri callbackUri)
+        {
+            using var containerScope = ContainerService.Container.BeginLifetimeScope();
+
+            try
+            {
+                var gitHubAuthenticationService = containerScope.Resolve<GitHubAuthenticationService>();
+                await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
             }
         }
     }

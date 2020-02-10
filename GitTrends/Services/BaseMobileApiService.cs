@@ -46,7 +46,11 @@ namespace GitTrends
                     await Device.InvokeOnMainThreadAsync(() => setIsBusy(false));
             }
 
-            static void setIsBusy(bool isBusy) => Application.Current.MainPage.IsBusy = isBusy;
+            static void setIsBusy(bool isBusy)
+            {
+                if (Application.Current?.MainPage != null)
+                    Application.Current.MainPage.IsBusy = isBusy;
+            }
         }
     }
 }
