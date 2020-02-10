@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <RootNamespace>GitTrends.UITests</RootNamespace>
+        <AssemblyName>GitTrends.UITests</AssemblyName>
+        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+        <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug</OutputPath>
+        <DefineConstants>DEBUG;</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release</OutputPath>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Xamarin.UITest" Version="3.0.6" />
+        <PackageReference Include="NUnit" Version="3.12.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Pages\BasePage.cs" />
+        <Compile Include="Tests\BaseTest.cs" />
+        <Compile Include="Pages\ReferringSitesPage.cs" />
+        <Compile Include="Pages\RepositoryPage.cs" />
+        <Compile Include="Pages\SettingsPage.cs" />
+        <Compile Include="Pages\TrendsPage.cs" />
+        <Compile Include="AppInitializer.cs" />
+        <Compile Include="Tests\LaunchTests.cs" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Pages\" />
+        <Folder Include="Tests\" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\GitTrends.iOS\GitTrends.iOS.csproj">
+        <Project>{E1C47721-EF16-4F21-AA2F-78951DB0D715}</Project>
+        <Name>GitTrends.iOS</Name>
+        <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+        <Private>False</Private>
+      </ProjectReference>
+      <ProjectReference Include="..\GitTrends.Android\GitTrends.Android.csproj">
+        <Project>{E5785129-AB94-4359-9947-B600D33A9958}</Project>
+        <Name>GitTrends.Android</Name>
+        <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+        <Private>False</Private>
+      </ProjectReference>
+    </ItemGroup>
+    <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

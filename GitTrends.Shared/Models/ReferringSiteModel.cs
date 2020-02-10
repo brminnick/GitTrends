@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Xml.XPath;
-using AsyncAwaitBestPractices;
-using FFImageLoading.Work;
-using GitTrends.Shared;
-using HtmlAgilityPack;
 using Newtonsoft.Json;
 
-namespace GitTrends
+namespace GitTrends.Shared
 {
     public class ReferringSiteModel : BaseRepositoryModel
     {
@@ -47,8 +37,5 @@ namespace GitTrends
 
         [JsonProperty("referrerUri")]
         public Uri? ReferrerUri { get; }
-
-        [JsonProperty("favIcon")]
-        public Xamarin.Forms.ImageSource? FavIcon { get; set; }
     }
 }

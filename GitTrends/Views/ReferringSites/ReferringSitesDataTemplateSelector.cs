@@ -6,21 +6,21 @@ namespace GitTrends
 {
     class ReferringSitesDataTemplateSelector : DataTemplateSelector
     {
-        protected override DataTemplate OnSelectTemplate(object item, BindableObject container) => new ReferringSitesDataTemplate((ReferringSiteModel)item);
+        protected override DataTemplate OnSelectTemplate(object item, BindableObject container) => new ReferringSitesDataTemplate((MobileReferringSiteModel)item);
 
         class ReferringSitesDataTemplate : DataTemplate
         {
-            public ReferringSitesDataTemplate(ReferringSiteModel referringSiteModel) : base(() => CreateReferringSitesDataTemplate(referringSiteModel))
+            public ReferringSitesDataTemplate(MobileReferringSiteModel referringSiteModel) : base(() => CreateReferringSitesDataTemplate(referringSiteModel))
             {
             }
 
-            static View CreateReferringSitesDataTemplate(in ReferringSiteModel referringSiteModel)
+            static View CreateReferringSitesDataTemplate(in MobileReferringSiteModel referringSiteModel)
             {
-                const int rowHeight = ReferringSiteModel.FavIconSize + 10;
+                const int rowHeight = MobileReferringSiteModel.FavIconSize + 10;
 
                 var favIcon = new CachedImage
                 {
-                    HeightRequest = ReferringSiteModel.FavIconSize,
+                    HeightRequest = MobileReferringSiteModel.FavIconSize,
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     VerticalOptions = LayoutOptions.CenterAndExpand,
                     LoadingPlaceholder = FavIconService.DefaultFavIcon,

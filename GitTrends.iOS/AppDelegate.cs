@@ -11,8 +11,6 @@ namespace GitTrends.iOS
     [Register(nameof(AppDelegate))]
     public class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
     {
-        UIVisualEffectView? _blurWindow;
-
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             global::Xamarin.Forms.Forms.Init();
