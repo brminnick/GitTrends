@@ -25,26 +25,38 @@ namespace GitTrends
             return await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryCloneStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
         }
 
-        public async Task<List<ReferringSiteModel>> GetReferingSites(string owner, string repo)
+        public async IAsyncEnumerable<MobileReferringSiteModel> GetReferingSites(string owner, string repo)
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
             var referringSites = await AttemptAndRetry_Mobile(() => GithubApiClient.GetReferingSites(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
 
-            await setFavIcons(referringSites).ConfigureAwait(false);
-
-            return referringSites;
-
-            static Task setFavIcons(IEnumerable<ReferringSiteModel> referringSites)
+            await foreach (var referringSite in getMobileReferringSiteModels(referringSites).ConfigureAwait(false))
             {
-                return Task.WhenAll(referringSites.Select(x => setFavIcon(x)));
+                yield return referringSite;
+            }
 
-                static async Task setFavIcon(ReferringSiteModel referringSiteModel)
+            static async IAsyncEnumerable<MobileReferringSiteModel> getMobileReferringSiteModels(IEnumerable<ReferringSiteModel> referringSites)
+            {
+                var setFavIconTaskList = referringSites.Select(x => setFavIcon(x)).ToList();
+
+                while (setFavIconTaskList.Any())
+                {
+                    var completedSetFavIconTask = await Task.WhenAny(setFavIconTaskList).ConfigureAwait(false);
+
+                    setFavIconTaskList.Remove(completedSetFavIconTask);
+
+                    yield return await completedSetFavIconTask.ConfigureAwait(false);
+                }
+
+                static async Task<MobileReferringSiteModel> setFavIcon(ReferringSiteModel referringSiteModel)
                 {
                     if (referringSiteModel.ReferrerUri != null)
                     {
                         var favIcon = await FavIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri.ToString()).ConfigureAwait(false);
-                        referringSiteModel.FavIcon = favIcon;
+                        return new MobileReferringSiteModel(referringSiteModel, favIcon);
                     }
+
+                    return new MobileReferringSiteModel(referringSiteModel, null);
                 }
             }
         }
