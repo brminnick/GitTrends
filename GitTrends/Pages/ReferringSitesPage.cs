@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Xamarin.Forms;
 
@@ -8,11 +9,9 @@ namespace GitTrends
 {
     public class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>
     {
-        const string _title = "Referring Sites";
-
         readonly RefreshView _refreshView;
 
-        public ReferringSitesPage(ReferringSitesViewModel referringSitesViewModel, Repository repository) : base(_title, referringSitesViewModel)
+        public ReferringSitesPage(ReferringSitesViewModel referringSitesViewModel, Repository repository) : base(PageTitles.ReferringSitesPage, referringSitesViewModel)
         {
             var collectionView = new CollectionView
             {
@@ -37,7 +36,7 @@ namespace GitTrends
                 var titleLabel = new Label
                 {
                     FontAttributes = FontAttributes.Bold,
-                    Text = _title,
+                    Text = PageTitles.ReferringSitesPage,
                     FontSize = 30,
                     VerticalTextAlignment = TextAlignment.Center,
                     Margin = new Thickness(10, 0)
