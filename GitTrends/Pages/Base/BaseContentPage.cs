@@ -16,6 +16,9 @@ namespace GitTrends
             Title = title;
 
             On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
+            SetSafeArea();
+
+            DeviceDisplay.MainDisplayInfoChanged += HandleDisplayInfoChanged;
         }
 
         protected T ViewModel { get; }
@@ -34,6 +37,18 @@ namespace GitTrends
 
                 return Browser.OpenAsync(url, browserOptions);
             });
+        }
+
+        protected virtual void HandleDisplayInfoChanged(object sender, DisplayInfoChangedEventArgs e)
+        {
+            SetSafeArea();
+            ForceLayout();
+        }
+
+        void SetSafeArea()
+        {
+            var isLandscape = DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Landscape;
+            On<iOS>().SetUseSafeArea(isLandscape);
         }
     }
 }

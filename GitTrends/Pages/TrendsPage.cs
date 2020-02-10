@@ -2,6 +2,7 @@
 using Autofac;
 using GitTrends.Shared;
 using Syncfusion.SfChart.XForms;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -35,10 +36,27 @@ namespace GitTrends
 
             Content = absoluteLayout;
 
+            Padding = GetPadding();
+
             ViewModel.FetchDataCommand.Execute((_repository.OwnerLogin, _repository.Name));
         }
 
         static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
+
+        protected override void HandleDisplayInfoChanged(object sender, DisplayInfoChangedEventArgs e)
+        {
+            Padding = GetPadding();
+
+            base.HandleDisplayInfoChanged(sender, e);
+        }
+
+        Thickness GetPadding()
+        {
+            if (DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Landscape)
+                return new Thickness(0, 5, 0, 0);
+            else
+                return Device.RuntimePlatform is Device.iOS ? new Thickness(0, 5, 0, 15) : new Thickness(0, 5, 0, 0);
+        }
 
         async void HandleReferringSitesToolbarItemClicked(object sender, EventArgs e)
         {
@@ -134,7 +152,6 @@ namespace GitTrends
                 BackgroundColor = Color.Transparent;
 
                 ChartPadding = new Thickness(0, 5, 0, 0);
-                Margin = Device.RuntimePlatform is Device.iOS ? new Thickness(0, 5, 0, 15) : new Thickness(0, 5, 0, 0);
             }
 
             public AreaSeries TotalViewsSeries { get; }
