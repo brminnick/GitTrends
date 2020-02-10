@@ -14,7 +14,7 @@
       <Optimize>true</Optimize>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Xamarin.Forms" Version="4.5.0.266-pre3" />
+        <PackageReference Include="Xamarin.Forms" Version="4.5.0.282-pre4" />
         <PackageReference Include="Xamarin.Essentials" Version="1.4.0-pre2" />
         <PackageReference Include="Refit" Version="5.0.23" />
         <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.0" />
