@@ -20,27 +20,39 @@ namespace GitTrends
 
         public async Task Initialize()
         {
-            string syncFusionLicense;
+            var syncFusionLicense = await GetLicense().ConfigureAwait(false);
 
-            try
+            if (string.IsNullOrWhiteSpace(syncFusionLicense))
             {
-                var syncusionDto = await _azureFunctionsApiService.GetSyncfusionInformation().ConfigureAwait(false);
+                try
+                {
+                    var syncusionDto = await _azureFunctionsApiService.GetSyncfusionInformation().ConfigureAwait(false);
 
-                syncFusionLicense = syncusionDto.LicenseKey;
+                    syncFusionLicense = syncusionDto.LicenseKey;
 
-                await SaveLicense(syncFusionLicense).ConfigureAwait(false);
-            }
-            catch
-            {
-                syncFusionLicense = await GetLicense().ConfigureAwait(false);
+                    await SaveLicense(syncFusionLicense).ConfigureAwait(false);
+                }
+                catch
+                {
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(syncFusionLicense))
                 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicense);
+            else
+                throw new SyncFusionLicenseException($"{nameof(syncFusionLicense)} is null");
         }
 
         public Task<string> GetLicense() => SecureStorage.GetAsync(SyncfusionLicenseKey);
 
         Task SaveLicense(in string license) => SecureStorage.SetAsync(SyncfusionLicenseKey, license);
+    }
+
+    public class SyncFusionLicenseException : Exception
+    {
+        public SyncFusionLicenseException(string message) : base(message)
+        {
+
+        }
     }
 }

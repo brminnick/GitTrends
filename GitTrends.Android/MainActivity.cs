@@ -5,7 +5,6 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
-using AsyncAwaitBestPractices;
 using Autofac;
 using Plugin.CurrentActivity;
 using Xamarin.Forms;
@@ -39,11 +38,6 @@ namespace GitTrends.Droid
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageViewHandler();
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
-
-            using var containerScope = ContainerService.Container.BeginLifetimeScope();
-
-            var syncFusionService = containerScope.Resolve<SyncFusionService>();
-            syncFusionService.Initialize().SafeFireAndForget(onException: ex => System.Diagnostics.Debug.WriteLine(ex));
 
             var app = new App();
 

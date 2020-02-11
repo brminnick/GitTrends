@@ -20,7 +20,7 @@ namespace GitTrends
             });
 
             using var scope = ContainerService.Container.BeginLifetimeScope();
-            MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>());
+            MainPage = scope.Resolve<SplashScreenPage>();
 
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
         }
