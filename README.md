@@ -1,6 +1,4 @@
-#  Git Trends
-
- <img src="https://github.com/brminnick/GitTrends/blob/master/GitTrends.iOS/Assets.xcassets/GitTrends.imageset/GitTrends.png?raw=true" height="50" />
+ <img src="https://github.com/brminnick/GitTrends/blob/master/GitTrends.iOS/Assets.xcassets/GitTrends.imageset/GitTrends.png?raw=true" height="200" />
 
 An iOS and Android app to monitor the Views and Clones happening on your GitHub repositories
 
