@@ -97,6 +97,8 @@ namespace GitTrends
 
                 await _syncFusionService.Initialize();
                 pulseCancellationTokenSource.Cancel();
+
+                await ChangeLabelText(new FormattedString { Spans = { new Span { Text = "Let's go!" } } });
 #endif
 
                 //Explode Content
