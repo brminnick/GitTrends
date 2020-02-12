@@ -13,7 +13,7 @@ namespace GitTrends
 
         public bool ShouldShowUniqueClonesByDefault
         {
-            get => Preferences.Get(nameof(ShouldShowUniqueClonesByDefault), false);
+            get => Preferences.Get(nameof(ShouldShowUniqueClonesByDefault), true);
             set => Preferences.Set(nameof(ShouldShowUniqueClonesByDefault), value);
         }
 
@@ -25,7 +25,7 @@ namespace GitTrends
 
         public bool ShouldShowUniqueViewsByDefault
         {
-            get => Preferences.Get(nameof(ShouldShowUniqueViewsByDefault), false);
+            get => Preferences.Get(nameof(ShouldShowUniqueViewsByDefault), true);
             set => Preferences.Set(nameof(ShouldShowUniqueViewsByDefault), value);
         }
 
@@ -37,12 +37,12 @@ namespace GitTrends
 
         TrendsChartOptions GetCurrentTrendsChartOption()
         {
-            if (ShouldShowUniqueClonesByDefault
-                && ShouldShowUniqueViewsByDefault
+            if (!ShouldShowUniqueClonesByDefault
+                && !ShouldShowUniqueViewsByDefault
                 && ShouldShowClonesByDefault
                 && ShouldShowViewsByDefault)
             {
-                return TrendsChartOptions.All;
+                return TrendsChartOptions.NoUniques;
             }
 
             if (ShouldShowUniqueClonesByDefault
@@ -53,13 +53,13 @@ namespace GitTrends
                 return TrendsChartOptions.JustUniques;
             }
 
-            //No Uniques is the Defauly Value 
-            ShouldShowUniqueClonesByDefault = false;
-            ShouldShowUniqueViewsByDefault = false;
+            //All is the Default Value 
+            ShouldShowUniqueClonesByDefault = true;
+            ShouldShowUniqueViewsByDefault = true;
             ShouldShowClonesByDefault = true;
             ShouldShowViewsByDefault = true;
 
-            return TrendsChartOptions.NoUniques;
+            return TrendsChartOptions.All;
         }
 
         void SetCurrentTrendsChartOption(in TrendsChartOptions currentTrendsChartOption)

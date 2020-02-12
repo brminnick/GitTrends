@@ -115,9 +115,6 @@ namespace GitTrends
             VisibleRepositoryList = filteredRepositoryList.OrderByDescending(x => x.StarCount).ToList();
         }
 
-        IEnumerable<Repository> GetOwnersRepositories(in IEnumerable<Repository> repositories, string repositoryOwner) =>
-            repositories.Where(x => x.OwnerLogin.Equals(repositoryOwner, StringComparison.InvariantCultureIgnoreCase));
-
         IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IEnumerable<Repository> repositories, string searchBarText)
         {
             if (string.IsNullOrWhiteSpace(searchBarText))

@@ -113,7 +113,7 @@ namespace GitTrends
 
             try
             {
-                var token = await Task.Run(() => JsonConvert.DeserializeObject<GitHubToken>(serializedToken)).ConfigureAwait(false);
+                var token = JsonConvert.DeserializeObject<GitHubToken>(serializedToken);
 
                 if (token is null)
                     return new GitHubToken(string.Empty, string.Empty, string.Empty);
