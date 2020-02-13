@@ -43,12 +43,14 @@ namespace GitTrends
 
 
             var relativeLayout = new RelativeLayout();
-            relativeLayout.Children.Add(_gitTrendsImage,
-                Constraint.RelativeToParent(parent => parent.Width / 2 - getWidth(parent, _gitTrendsImage) / 2),
-                Constraint.RelativeToParent(parent => parent.Height / 2 - getHeight(parent, _gitTrendsImage) / 2));
+
             relativeLayout.Children.Add(_statusLabel,
                 Constraint.RelativeToParent(parent => parent.Width / 2 - getWidth(parent, _statusLabel) / 2),
                 Constraint.RelativeToParent(parent => parent.Height - getHeight(parent, _statusLabel) - 50));
+
+            relativeLayout.Children.Add(_gitTrendsImage,
+                Constraint.RelativeToParent(parent => parent.Width / 2 - getWidth(parent, _gitTrendsImage) / 2),
+                Constraint.RelativeToParent(parent => parent.Height / 2 - getHeight(parent, _gitTrendsImage) / 2));            
 
             Content = relativeLayout;
 

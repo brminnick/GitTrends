@@ -29,7 +29,6 @@ namespace GitTrends
                 Margin = new Thickness(0, 25, 0, 5)
             };
             gitHubLoginButton.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.ButtonBackgroundColor));
-            gitHubLoginButton.SetBinding(IsEnabledProperty, nameof(SettingsViewModel.IsNotAuthenticating));
             gitHubLoginButton.SetBinding(Button.TextProperty, nameof(SettingsViewModel.LoginButtonText));
             gitHubLoginButton.SetBinding(Button.CommandProperty, nameof(SettingsViewModel.LoginButtonCommand));
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using Xamarin.Essentials;
@@ -23,7 +22,7 @@ namespace GitTrends
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _trendsChartSettingsService = trendsChartSettingsService;
 
-            LoginButtonCommand = new AsyncCommand(ExecuteLoginButtonCommand);
+            LoginButtonCommand = new AsyncCommand(ExecuteLoginButtonCommand, _ => !IsAuthenticating);
 
             _gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
             _gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
@@ -37,9 +36,7 @@ namespace GitTrends
             remove => _gitHubLoginUrlRetrievedEventManager.RemoveEventHandler(value);
         }
 
-        public bool IsNotAuthenticating => !IsAuthenticating;
-
-        public ICommand LoginButtonCommand { get; }
+        public IAsyncCommand LoginButtonCommand { get; }
 
         public bool ShouldShowClonesByDefaultSwitchValue
         {
@@ -102,7 +99,7 @@ namespace GitTrends
         public bool IsAuthenticating
         {
             get => _isAuthenticating;
-            set => SetProperty(ref _isAuthenticating, value, () => OnPropertyChanged(nameof(IsNotAuthenticating)));
+            set => SetProperty(ref _isAuthenticating, value, () => Xamarin.Forms.Device.InvokeOnMainThreadAsync(LoginButtonCommand.RaiseCanExecuteChanged));
         }
 
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)

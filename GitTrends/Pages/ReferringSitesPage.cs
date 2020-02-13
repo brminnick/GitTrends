@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -13,6 +15,9 @@ namespace GitTrends
 
         public ReferringSitesPage(ReferringSitesViewModel referringSitesViewModel, Repository repository) : base(PageTitles.ReferringSitesPage, referringSitesViewModel)
         {
+            const int titleRowHeight = 50;
+            const int titleTopMargin = 15;
+
             var collectionView = new CollectionView
             {
                 ItemTemplate = new ReferringSitesDataTemplateSelector(),
@@ -23,7 +28,6 @@ namespace GitTrends
 
             _refreshView = new RefreshView
             {
-                InputTransparent = true,
                 CommandParameter = (repository.OwnerLogin, repository.Name),
                 Content = collectionView
             };
@@ -31,39 +35,96 @@ namespace GitTrends
             _refreshView.SetBinding(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.RefreshCommand));
             _refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing));
 
+            //Add Title and Back Button to UIModalPresentationStyle.FormSheet 
             if (Device.RuntimePlatform is Device.iOS)
             {
+                var closeButton = new Button
+                {
+                    Text = "Close",
+                    HorizontalOptions = LayoutOptions.End,
+                    VerticalOptions = LayoutOptions.Center,
+                    HeightRequest = titleRowHeight * 3 / 5,
+                    Padding = new Thickness(5, 0),
+                    BorderWidth = 1,
+                    IsVisible = DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Landscape ? true : false
+                };
+                closeButton.Clicked += HandleCloseButtonClicked;
+                closeButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.NavigationBarTextColor));
+                closeButton.SetDynamicResource(Button.BorderColorProperty, nameof(BaseTheme.TrendsChartSettingsBorderColor));
+                closeButton.SetDynamicResource(Button.BackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
+
+
+                var titleRowBlurView = new BoxView { Opacity = 0.5 };
+                titleRowBlurView.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+
+                var collectionViewHeader = new BoxView { HeightRequest = titleRowHeight + titleTopMargin };
+                collectionViewHeader.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+                collectionView.Header = collectionViewHeader;
+
                 var titleLabel = new Label
                 {
                     FontAttributes = FontAttributes.Bold,
                     Text = PageTitles.ReferringSitesPage,
-                    FontSize = 30,
-                    VerticalTextAlignment = TextAlignment.Center,
-                    Margin = new Thickness(10, 0)
+                    FontSize = 30
                 };
                 titleLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
 
-                var grid = new Grid
-                {
-                    RowDefinitions =
-                    {
-                        new RowDefinition { Height = new GridLength(50, GridUnitType.Absolute) },
-                        new RowDefinition { Height = new GridLength(1, GridUnitType.Star) },
-                    },
-                    ColumnDefinitions =
-                    {
-                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
-                    }
-                };
+                closeButton.Margin = titleLabel.Margin = new Thickness(0, titleTopMargin, 0, 0);
 
-                grid.Children.Add(titleLabel, 0, 0);
-                grid.Children.Add(_refreshView, 0, 1);
+                var activityIndicator = new ActivityIndicator();
+                activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.RefreshControlColor));
+                activityIndicator.SetBinding(IsVisibleProperty, nameof(ReferringSitesViewModel.IsRefreshing));
+                activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(ReferringSitesViewModel.IsRefreshing));
 
-                Content = grid;
+                var relativeLayout = new RelativeLayout();
+
+                relativeLayout.Children.Add(_refreshView,
+                                             Constraint.Constant(0),
+                                             Constraint.Constant(0),
+                                             Constraint.RelativeToParent(parent => parent.Width),
+                                             Constraint.RelativeToParent(parent => parent.Height));
+
+                relativeLayout.Children.Add(titleRowBlurView,
+                                            Constraint.Constant(0),
+                                            Constraint.Constant(0),
+                                            Constraint.RelativeToParent(parent => parent.Width),
+                                            Constraint.Constant(titleRowHeight));
+
+                relativeLayout.Children.Add(titleLabel,
+                                            Constraint.Constant(10),
+                                            Constraint.Constant(0));
+
+                relativeLayout.Children.Add(closeButton,
+                                            Constraint.RelativeToParent(parent => parent.Width - getWidth(parent, closeButton) - 5),
+                                            Constraint.Constant(0),
+                                            Constraint.RelativeToParent(parent => getWidth(parent, closeButton)));
+
+                relativeLayout.Children.Add(activityIndicator,
+                                            Constraint.RelativeToParent(parent => parent.Width / 2 - getWidth(parent, activityIndicator) / 2),
+                                            Constraint.RelativeToParent(parent => parent.Height / 2 - getHeight(parent, activityIndicator) / 2));
+
+                Content = relativeLayout;
+
+                static double getWidth(RelativeLayout parent, View view) => view.Measure(parent.Width, parent.Height).Request.Width;
+                static double getHeight(RelativeLayout parent, View view) => view.Measure(parent.Width, parent.Height).Request.Height;
             }
             else
             {
                 Content = _refreshView;
+            }
+        }
+
+        protected override void HandleDisplayInfoChanged(object sender, DisplayInfoChangedEventArgs e)
+        {
+            base.HandleDisplayInfoChanged(sender, e);
+
+            //On iOS, UIModalPresentationStyle.FormSheet only requires a close button when in Landscape
+            if (Device.RuntimePlatform is Device.iOS)
+            {
+                var layout = (Layout<View>)Content;
+                var backButton = layout.Children.OfType<Button>().First();
+
+                backButton.IsVisible = e.DisplayInfo.Orientation is DisplayOrientation.Landscape;
             }
         }
 
@@ -94,10 +155,13 @@ namespace GitTrends
             }
         }
 
+        //Workaround for https://github.com/xamarin/Xamarin.Forms/issues/7878
         async void HandleDisappearing(object sender, EventArgs e)
         {
             if (Navigation.ModalStack.Any())
                 await Navigation.PopModalAsync();
         }
+
+        async void HandleCloseButtonClicked(object sender, EventArgs e) => await Navigation.PopModalAsync();
     }
 }
