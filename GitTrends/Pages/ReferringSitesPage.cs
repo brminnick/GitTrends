@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Xamarin.Essentials;
@@ -57,9 +56,7 @@ namespace GitTrends
                 var titleRowBlurView = new BoxView { Opacity = 0.5 };
                 titleRowBlurView.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 
-                var collectionViewHeader = new BoxView { HeightRequest = titleRowHeight + titleTopMargin };
-                collectionViewHeader.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
-                collectionView.Header = collectionViewHeader;
+                collectionView.Header = new BoxView { HeightRequest = titleRowHeight + titleTopMargin };
 
                 var titleLabel = new Label
                 {
@@ -73,8 +70,8 @@ namespace GitTrends
 
                 var activityIndicator = new ActivityIndicator();
                 activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.RefreshControlColor));
-                activityIndicator.SetBinding(IsVisibleProperty, nameof(ReferringSitesViewModel.IsRefreshing));
-                activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(ReferringSitesViewModel.IsRefreshing));
+                activityIndicator.SetBinding(IsVisibleProperty, nameof(ReferringSitesViewModel.IsActivityIndicatorVisible));
+                activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(ReferringSitesViewModel.IsActivityIndicatorVisible));
 
                 var relativeLayout = new RelativeLayout();
 

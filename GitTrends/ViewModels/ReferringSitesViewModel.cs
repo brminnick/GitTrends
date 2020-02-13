@@ -2,15 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
-using GitTrends.Shared;
-using HtmlAgilityPack;
-using Xamarin.Forms;
-using Xamarin.Forms.Internals;
 
 namespace GitTrends
 {
@@ -19,6 +14,7 @@ namespace GitTrends
         readonly GitHubApiV3Service _gitHubApiV3Service;
 
         bool _isRefreshing;
+        bool _isActivityIndicatorVisible;
 
         public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service)
         {
@@ -33,6 +29,12 @@ namespace GitTrends
 
         public ICommand RefreshCommand { get; }
 
+        public bool IsActivityIndicatorVisible
+        {
+            get => _isActivityIndicatorVisible;
+            set => SetProperty(ref _isActivityIndicatorVisible, value);
+        }
+
         public bool IsRefreshing
         {
             get => _isRefreshing;
@@ -41,7 +43,15 @@ namespace GitTrends
 
         async Task ExecuteRefreshCommand(string owner, string repository)
         {
-            ReferringSitesCollection.Clear();
+            if (ReferringSitesCollection.Any())
+            {
+                ReferringSitesCollection.Clear();
+            }
+            else
+            {
+                //Only show the Activity Indicator when the page is first loaded
+                IsActivityIndicatorVisible = true;
+            }
 
             try
             {
@@ -57,7 +67,7 @@ namespace GitTrends
             }
             finally
             {
-                IsRefreshing = false;
+                IsActivityIndicatorVisible = IsRefreshing = false;
             }
         }
 
