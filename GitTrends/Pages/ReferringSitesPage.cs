@@ -45,8 +45,7 @@ namespace GitTrends
                     HeightRequest = titleRowHeight * 3 / 5,
                     Padding = new Thickness(5, 0),
                     BorderWidth = 1,
-                    IsVisible = DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Landscape ? true : false
-                };
+                 };
                 closeButton.Clicked += HandleCloseButtonClicked;
                 closeButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.NavigationBarTextColor));
                 closeButton.SetDynamicResource(Button.BorderColorProperty, nameof(BaseTheme.TrendsChartSettingsBorderColor));
@@ -108,20 +107,6 @@ namespace GitTrends
             else
             {
                 Content = _refreshView;
-            }
-        }
-
-        protected override void HandleDisplayInfoChanged(object sender, DisplayInfoChangedEventArgs e)
-        {
-            base.HandleDisplayInfoChanged(sender, e);
-
-            //On iOS, UIModalPresentationStyle.FormSheet only requires a close button when in Landscape
-            if (Device.RuntimePlatform is Device.iOS)
-            {
-                var layout = (Layout<View>)Content;
-                var backButton = layout.Children.OfType<Button>().First();
-
-                backButton.IsVisible = e.DisplayInfo.Orientation is DisplayOrientation.Landscape;
             }
         }
 
