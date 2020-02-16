@@ -155,7 +155,7 @@
         <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="17.2.0.46" />
         <PackageReference Include="sqlite-net-pcl" Version="1.6.292" />
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
-        <PackageReference Include="Autofac" Version="5.1.0" />
+        <PackageReference Include="Autofac" Version="5.1.1" />
         <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="17.2.0.46" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
