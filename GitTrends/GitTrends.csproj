@@ -23,10 +23,10 @@
         <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="17.2.0.46" />
         <PackageReference Include="sqlite-net-pcl" Version="1.6.292" />
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
-        <PackageReference Include="Autofac" Version="5.1.1" />
+        <PackageReference Include="Autofac" Version="5.1.2" />
         <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.1.4" />
         <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="17.2.0.46" />
-        <PackageReference Include="HtmlAgilityPack" Version="1.11.18" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.19" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="EventArgs\" />

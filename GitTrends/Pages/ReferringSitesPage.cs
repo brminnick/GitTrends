@@ -43,8 +43,7 @@ namespace GitTrends
                     HorizontalOptions = LayoutOptions.End,
                     VerticalOptions = LayoutOptions.Center,
                     HeightRequest = titleRowHeight * 3 / 5,
-                    Padding = new Thickness(5, 0),
-                    BorderWidth = 1,
+                    Padding = new Thickness(5, 0)
                  };
                 closeButton.Clicked += HandleCloseButtonClicked;
                 closeButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.NavigationBarTextColor));
