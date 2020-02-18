@@ -67,11 +67,11 @@
         <PackageReference Include="Polly" Version="7.2.0" />
         <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.1.1.1-beta" />
         <PackageReference Include="Plugin.CurrentActivity" Version="2.1.0.4" />
-        <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="17.2.0.46" />
+        <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="17.4.0.50" />
         <PackageReference Include="sqlite-net-pcl" Version="1.6.292" />
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
         <PackageReference Include="Autofac" Version="5.1.2" />
-        <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="17.2.0.46" />
+        <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="17.4.0.50" />
         <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.3" />
     </ItemGroup>
     <ItemGroup>
