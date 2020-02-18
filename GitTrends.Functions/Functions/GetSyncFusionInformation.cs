@@ -13,12 +13,12 @@ namespace GitTrends.Functions
         [FunctionName(nameof(GetSyncfusionInformation))]
         public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = nameof(GetSyncfusionInformation) + "/{licenseVersion:long}")] HttpRequest request, long licenseVersion, ILogger log)
         {
-            log.LogInformation("Received request for SyncFusion Information");
+            log.LogInformation("Received request for Syncfusion Information");
 
             var licenseKey = Environment.GetEnvironmentVariable($"SyncfusionLicense{licenseVersion}", EnvironmentVariableTarget.Process);
 
             if (string.IsNullOrWhiteSpace(licenseKey))
-                return new BadRequestObjectResult($"Key for {nameof(licenseVersion)} {licenseVersion} not found");
+                return new BadRequestObjectResult($"Key for {nameof(licenseVersion)}{licenseVersion} not found");
 
             return new OkObjectResult(new SyncFusionDTO(licenseKey, licenseVersion));
         }

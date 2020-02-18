@@ -48,7 +48,7 @@ namespace GitTrends
         Task SaveLicense(in string license) => SecureStorage.SetAsync(SyncfusionLicenseKey, license);
     }
 
-    public class SyncFusionLicenseException : Exception
+    class SyncFusionLicenseException : Exception
     {
         public SyncFusionLicenseException(string message) : base(message)
         {
