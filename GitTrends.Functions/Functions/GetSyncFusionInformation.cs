@@ -15,7 +15,7 @@ namespace GitTrends.Functions
         {
             log.LogInformation("Received request for SyncFusion Information");
 
-            var licenseKey = Environment.GetEnvironmentVariable($"SyncfusionLicense_{licenseVersion}");
+            var licenseKey = Environment.GetEnvironmentVariable($"SyncfusionLicense{licenseVersion}", EnvironmentVariableTarget.Process);
 
             if (string.IsNullOrWhiteSpace(licenseKey))
                 return new BadRequestObjectResult($"Key for {nameof(licenseVersion)} {licenseVersion} not found");
