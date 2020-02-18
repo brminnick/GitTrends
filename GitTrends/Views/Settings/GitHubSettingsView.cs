@@ -1,4 +1,5 @@
-﻿using ImageCircle.Forms.Plugin.Abstractions;
+﻿using GitTrends.Mobile.Shared;
+using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -9,6 +10,7 @@ namespace GitTrends
         {
             var gitHubAvatarImage = new CircleImage
             {
+                AutomationId = SettingsPageAutomationIds.GitHubAvatarImage,
                 HeightRequest = 200,
                 WidthRequest = 200,
                 HorizontalOptions = LayoutOptions.CenterAndExpand,
@@ -16,11 +18,16 @@ namespace GitTrends
             };
             gitHubAvatarImage.SetBinding(CircleImage.SourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource));
 
-            var gitHubAliasLabel = new Label { HorizontalTextAlignment = TextAlignment.Center };
+            var gitHubAliasLabel = new Label
+            {
+                HorizontalTextAlignment = TextAlignment.Center,
+                AutomationId = SettingsPageAutomationIds.GitHubAliasLabel,
+            };
             gitHubAliasLabel.SetBinding(Label.TextProperty, nameof(SettingsViewModel.GitHubAliasLabelText));
 
             var gitHubLoginButton = new FontAwesomeButton
             {
+                AutomationId = SettingsPageAutomationIds.GitHubLoginButton,
                 TextColor = Color.White,
                 FontSize = 24,
                 HorizontalOptions = LayoutOptions.Center,
@@ -34,6 +41,7 @@ namespace GitTrends
 
             var activityIndicator = new ActivityIndicator
             {
+                AutomationId = SettingsPageAutomationIds.GitHubSettingsViewActivityIndicator,
                 VerticalOptions = LayoutOptions.Start
             };
             activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.RefreshControlColor));

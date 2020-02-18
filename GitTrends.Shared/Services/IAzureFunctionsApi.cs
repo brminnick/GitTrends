@@ -6,13 +6,13 @@ namespace GitTrends.Shared
     [Headers("Accept-Encoding: gzip", "Accept: application/json")]
     interface IAzureFunctionsApi
     {
-        [Get(@"/GetGitHubClientId")]
+        [Get("/GetGitHubClientId")]
         Task<GetGitHubClientIdDTO> GetGitTrendsClientId();
 
-        [Post(@"/GenerateGitHubOAuthToken")]
+        [Post("/GenerateGitHubOAuthToken")]
         Task<GitHubToken> GenerateGitTrendsOAuthToken([Body] GenerateTokenDTO generateTokenDTO);
 
-        [Get(@"/GetSyncfusionInformation/{licenseVersion}")]
+        [Get("/GetSyncfusionInformation/{licenseVersion}")]
         Task<SyncFusionDTO> GetSyncfusionInformation(long licenseVersion, [AliasAs("code")] string functionKey = AzureConstants.GetSyncFusionInformationApiKey);
     }
 }
