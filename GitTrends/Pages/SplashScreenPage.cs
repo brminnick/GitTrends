@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
+using GitTrends.Mobile.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -25,6 +26,7 @@ namespace GitTrends
 
             _gitTrendsImage = new Image
             {
+                AutomationId = SplashScreenPageAutomationIds.GitTrendsImage,
                 Source = "GitTrends",
                 Opacity = 0,
                 HorizontalOptions = LayoutOptions.CenterAndExpand,
@@ -36,6 +38,7 @@ namespace GitTrends
 
             _statusLabel = new Label
             {
+                AutomationId = SplashScreenPageAutomationIds.StatusLabel,
                 Text = _statusMessageEnumerator.Current,
                 HorizontalTextAlignment = TextAlignment.Center,
                 TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2,
@@ -77,27 +80,27 @@ namespace GitTrends
                 //Wait for Image to reach an opacity of 1
                 await Task.WhenAll(fadeImageTask, pulseImageTask);
 
-                //#if DEBUG
-                //_syncFusionService.Initialize().SafeFireAndForget();
-                //await ChangeLabelText(new FormattedString
-                //{
-                //    Spans =
-                //    {
-                //        new Span
-                //        {
-                //            FontAttributes = FontAttributes.Bold,
-                //            Text = "Preview Mode"
-                //        },
-                //        new Span
-                //        {
-                //            Text = "\nLaunching app without Syncfusion License"
-                //        }
-                //    }
-                //});
+#if DEBUG
+                _syncFusionService.Initialize().SafeFireAndForget();
+                await ChangeLabelText(new FormattedString
+                {
+                    Spans =
+                    {
+                        new Span
+                        {
+                            FontAttributes = FontAttributes.Bold,
+                            Text = "Preview Mode"
+                        },
+                        new Span
+                        {
+                            Text = "\nLaunching app without Syncfusion License"
+                        }
+                    }
+                });
 
-                ////Display Text
-                //await Task.Delay(500);
-                //#else
+                //Display Text
+                await Task.Delay(500);
+#else
 
                 Animate(animationCancellationToken.Token);
 
@@ -105,7 +108,7 @@ namespace GitTrends
                 animationCancellationToken.Cancel();
 
                 await ChangeLabelText("Let's go!");
-                //#endif
+#endif
 
                 //Explode & Fade Everything
                 var explodeImageTask = Task.WhenAll(Content.ScaleTo(100, 250, Easing.CubicOut), Content.FadeTo(0, 250, Easing.CubicIn));
@@ -114,7 +117,7 @@ namespace GitTrends
                 await explodeImageTask;
 
                 using var scope = ContainerService.Container.BeginLifetimeScope();
-                Xamarin.Forms.Application.Current.MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>());
+                Application.Current.MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>());
             }
             catch
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Syncfusion.XForms.Buttons;
 using Xamarin.Forms;
+using GitTrends.Mobile.Shared;
 
 namespace GitTrends
 {
@@ -24,6 +25,7 @@ namespace GitTrends
 
             var trendsChartSettingsLabel = new Label
             {
+                AutomationId = SettingsPageAutomationIds.TrendsChartSettingsLabel,
                 Text = "Default Charts",
                 FontAttributes = FontAttributes.Bold,
                 FontSize = 18,
@@ -39,6 +41,7 @@ namespace GitTrends
 
             var trendsChartSettingControl = new SfSegmentedControl
             {
+                AutomationId = SettingsPageAutomationIds.TrendsChartSettingsControl,
                 ItemsSource = _trendsChartOptions.Values.ToList(),
                 VisibleSegmentsCount = _trendsChartOptions.Values.Count,
                 CornerRadius = cornerRadius,

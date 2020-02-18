@@ -42,6 +42,7 @@
         <Compile Include="Pages\TrendsPage.cs" />
         <Compile Include="AppInitializer.cs" />
         <Compile Include="Tests\LaunchTests.cs" />
+        <Compile Include="Pages\SplashScreenPage.cs" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Pages\" />

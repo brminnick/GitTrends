@@ -26,13 +26,15 @@ namespace GitTrends
             {
                 ItemTemplate = new RepositoryDataTemplate(),
                 BackgroundColor = Color.Transparent,
-                SelectionMode = SelectionMode.Single
+                SelectionMode = SelectionMode.Single,
+                AutomationId = RepositoryPageAutomationIds.CollectionView
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));
 
             var repositoriesListRefreshView = new RefreshView
             {
+                AutomationId = RepositoryPageAutomationIds.RefreshView,
                 Content = collectionView
             };
             repositoriesListRefreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.RefreshControlColor));
@@ -42,7 +44,8 @@ namespace GitTrends
             var settingsToolbarItem = new ToolbarItem
             {
                 Text = "Settings",
-                Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default
+                Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
+                AutomationId = RepositoryPageAutomationIds.SettingsButton
             };
             settingsToolbarItem.Clicked += HandleSettingsToolbarItem;
             ToolbarItems.Add(settingsToolbarItem);

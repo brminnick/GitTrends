@@ -3,7 +3,6 @@ using System.Collections;
 using System.Linq;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -19,6 +18,7 @@ namespace GitTrends
 
             var collectionView = new CollectionView
             {
+                AutomationId = ReferringSitesPageAutomationIds.CollectionView,
                 ItemTemplate = new ReferringSitesDataTemplateSelector(),
                 SelectionMode = SelectionMode.Single
             };
@@ -27,6 +27,7 @@ namespace GitTrends
 
             _refreshView = new RefreshView
             {
+                AutomationId = ReferringSitesPageAutomationIds.RefreshView,
                 CommandParameter = (repository.OwnerLogin, repository.Name),
                 Content = collectionView
             };
@@ -39,6 +40,7 @@ namespace GitTrends
             {
                 var closeButton = new Button
                 {
+                    AutomationId = ReferringSitesPageAutomationIds.CloseButton,
                     Text = "Close",
                     HorizontalOptions = LayoutOptions.End,
                     VerticalOptions = LayoutOptions.Center,
@@ -66,7 +68,10 @@ namespace GitTrends
 
                 closeButton.Margin = titleLabel.Margin = new Thickness(0, titleTopMargin, 0, 0);
 
-                var activityIndicator = new ActivityIndicator();
+                var activityIndicator = new ActivityIndicator
+                {
+                    AutomationId = ReferringSitesPageAutomationIds.ActivityIndicator,
+                };
                 activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.RefreshControlColor));
                 activityIndicator.SetBinding(IsVisibleProperty, nameof(ReferringSitesViewModel.IsActivityIndicatorVisible));
                 activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(ReferringSitesViewModel.IsActivityIndicatorVisible));

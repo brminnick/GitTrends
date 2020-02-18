@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Essentials;
@@ -25,7 +26,10 @@ namespace GitTrends
             TrendsChart.TotalClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowClonesByDefault;
             TrendsChart.TotalUniqueClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueClonesByDefault;
 
-            var activityIndicator = new ActivityIndicator();
+            var activityIndicator = new ActivityIndicator
+            {
+                AutomationId = TrendsPageAutomationIds.ActivityIndicator
+            };
             activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.RefreshControlColor));
             activityIndicator.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData));
             activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
@@ -74,16 +78,18 @@ namespace GitTrends
         {
             public GitHubTrendsChart()
             {
-                TotalViewsSeries = new TrendsAreaSeries("Views", nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalViews), nameof(BaseTheme.TotalViewsColor));
+                AutomationId = TrendsPageAutomationIds.TrendsChart;
+
+                TotalViewsSeries = new TrendsAreaSeries("Views", nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalViews), nameof(BaseTheme.TotalViewsColor), TrendsPageAutomationIds.TotalViewsSeries);
                 TotalViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList));
 
-                TotalUniqueViewsSeries = new TrendsAreaSeries("Unique Views", nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalUniqueViews), nameof(BaseTheme.TotalUniqueViewsColor));
+                TotalUniqueViewsSeries = new TrendsAreaSeries("Unique Views", nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalUniqueViews), nameof(BaseTheme.TotalUniqueViewsColor), TrendsPageAutomationIds.TotalUniqueViewsSeries);
                 TotalUniqueViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList));
 
-                TotalClonesSeries = new TrendsAreaSeries("Clones", nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalClones), nameof(BaseTheme.TotalClonesColor));
+                TotalClonesSeries = new TrendsAreaSeries("Clones", nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalClones), nameof(BaseTheme.TotalClonesColor), TrendsPageAutomationIds.TotalClonesSeries);
                 TotalClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyClonesList));
 
-                TotalUniqueClonesSeries = new TrendsAreaSeries("Unique Clones", nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalUniqueClones), nameof(BaseTheme.TotalUniqueClonesColor));
+                TotalUniqueClonesSeries = new TrendsAreaSeries("Unique Clones", nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalUniqueClones), nameof(BaseTheme.TotalUniqueClonesColor), TrendsPageAutomationIds.TotalUniqueClonesSeries);
                 TotalUniqueClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyClonesList));
 
                 this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsChartVisible));
@@ -107,6 +113,7 @@ namespace GitTrends
 
                 Legend = new ChartLegend
                 {
+                    AutomationId = TrendsPageAutomationIds.TrendsChartLegend,
                     DockPosition = LegendPlacement.Bottom,
                     ToggleSeriesVisibility = true,
                     IconWidth = 20,
@@ -125,6 +132,7 @@ namespace GitTrends
 
                 PrimaryAxis = new DateTimeAxis
                 {
+                    AutomationId = TrendsPageAutomationIds.TrendsChartPrimaryAxis,
                     IntervalType = DateTimeIntervalType.Days,
                     Interval = 1,
                     RangePadding = DateTimeRangePadding.Round,
@@ -141,6 +149,7 @@ namespace GitTrends
 
                 SecondaryAxis = new NumericalAxis
                 {
+                    AutomationId = TrendsPageAutomationIds.TrendsChartSecondaryAxis,
                     LabelStyle = axisLabelStyle,
                     AxisLineStyle = axisLineStyle,
                     MajorTickStyle = secondaryAxisMajorTickStyle,
@@ -161,8 +170,9 @@ namespace GitTrends
 
             class TrendsAreaSeries : AreaSeries
             {
-                public TrendsAreaSeries(in string title, in string xDataTitle, in string yDataTitle, in string colorResource)
+                public TrendsAreaSeries(in string title, in string xDataTitle, in string yDataTitle, in string colorResource, in string automationId)
                 {
+                    AutomationId = automationId;
                     Opacity = 0.9;
                     Label = title;
                     XBindingPath = xDataTitle;

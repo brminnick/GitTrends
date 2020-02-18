@@ -10,8 +10,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Constants\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Constants\PageTitles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\RepositoryPageAutomationIds.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\SettingsPageAutomationIds.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\ReferringSitesPageAutomationIds.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\SplashScreenPageAutomationIds.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\TrendsPageAutomationIds.cs" />
   </ItemGroup>
 </Project>
