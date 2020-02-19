@@ -17,6 +17,7 @@ namespace GitTrends.UITests
         RepositoryPage? _repositoryPage;
         SettingsPage? _settingsPage;
         TrendsPage? _trendsPage;
+        SplashScreenPage? _splashScreenPage;
 
         protected BaseTest(Platform platform) => _platform = platform;
 
@@ -25,12 +26,14 @@ namespace GitTrends.UITests
         protected RepositoryPage RepositoryPage => _repositoryPage ?? throw new NullReferenceException();
         protected SettingsPage SettingsPage => _settingsPage ?? throw new NullReferenceException();
         protected TrendsPage TrendsPage => _trendsPage ?? throw new NullReferenceException();
+        protected SplashScreenPage SplashScreenPage => _splashScreenPage ?? throw new NullReferenceException();
 
         [SetUp]
-        public virtual async Task BeforeEachTest()
+        public virtual Task BeforeEachTest()
         {
             _app = AppInitializer.StartApp(_platform);
 
+            _splashScreenPage = new SplashScreenPage(App);
             _referringSitesPage = new ReferringSitesPage(App);
             _repositoryPage = new RepositoryPage(App);
             _settingsPage = new SettingsPage(App);
@@ -38,7 +41,14 @@ namespace GitTrends.UITests
 
             App.Screenshot("App Initialized");
 
-            RepositoryPage.WaitForPageToLoad();
+            return Task.CompletedTask;
+        }
+
+        protected async Task LoginToGitHub()
+        {
+            var gitHubToken = await AzureFunctionsApiService.GenerateGitTrendsOAuthToken().ConfigureAwait(false);
+
+            BackdoorServices.SetGitHubUser(App, gitHubToken.AccessToken);
         }
     }
 }

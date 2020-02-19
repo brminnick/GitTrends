@@ -157,6 +157,7 @@
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
         <PackageReference Include="Autofac" Version="5.1.2" />
         <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="17.4.0.50" />
+        <PackageReference Include="Xamarin.TestCloud.Agent" Version="0.21.9" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
     <ItemGroup>

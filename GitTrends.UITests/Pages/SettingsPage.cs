@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using Xamarin.UITest;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
@@ -22,11 +21,21 @@ namespace GitTrends.UITests
             _trendsChartSettingsControl = GenerateQuery(SettingsPageAutomationIds.TrendsChartSettingsControl);
         }
 
+        public bool IsLoggedIn() => App.Query(GitHubLoginButtonConstants.Disconnect).Any();
+
         public bool IsActivityIndicatorRunning => App.Query(_gitHubSettingsViewActivityIndicator).Any();
         public string GitHubAliasLabelText => App.Query(_gitHubAliasLabel).First().Text;
         public string TrendsChartLabelText => App.Query(_trendsChartSettingsLabel).First().Text;
 
         public void WaitForActivityIndicator() => App.WaitForElement(_gitHubSettingsViewActivityIndicator);
         public void WaitForNoActivityIndicator() => App.WaitForNoElement(_gitHubSettingsViewActivityIndicator);
+
+        public void TapBackButton() => App.Back();
+
+        public void WaitForGitHubLoginToComplete()
+        {
+            App.WaitForNoElement(_gitHubSettingsViewActivityIndicator);
+            App.WaitForElement(GitHubLoginButtonConstants.Disconnect);
+        }
     }
 }

@@ -21,6 +21,10 @@ namespace GitTrends.iOS
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageSourceHandler();
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
 
+#if DEBUG
+            Xamarin.Calabash.Start();
+#endif
+
             PrintFontNamesToConsole();
 
             LoadApplication(new App());
@@ -49,12 +53,12 @@ namespace GitTrends.iOS
 #if DEBUG
         #region UI Test Back Door Methods
         [Preserve, Export("setGitHubUser:")]
-        public async void SetGitHubUser(NSString token)
+        public async void SetGitHubUser(NSString accessToken)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var backdoorMethodService = scope.Resolve<UITestBackdoorService>();
 
-            await backdoorMethodService.SetGitHubUser(token.ToString()).ConfigureAwait(false);
+            await backdoorMethodService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
         }
         #endregion
 #endif

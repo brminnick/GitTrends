@@ -17,5 +17,11 @@ namespace GitTrends.UITests
         }
 
         public void EnterSearchBarText(string text) => EnterText(_searchBar, text);
+
+        public void TapSettingsButton() => App.Tap(_settingsButton);
+
+        public void WaitForGitHubUserNotFoundPopup() => App.WaitForElement(GitHubUserNotFoundConstants.Title);
+        public void DeclineGitHubUserNotFoundPopup() => App.Tap(GitHubUserNotFoundConstants.Decline);
+        public void AcceptGitHubUserNotFoundPopup() => App.Tap(GitHubUserNotFoundConstants.Accept);
     }
 }

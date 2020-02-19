@@ -9,6 +9,8 @@ namespace GitTrends.UITests
 {
     abstract class BasePage
     {
+        const string _syncfusionLicenseWarningTitle = "Syncfusion License";
+
         protected BasePage(IApp app, string pageTitle = "")
         {
             App = app;
@@ -27,10 +29,22 @@ namespace GitTrends.UITests
 
         protected static Query GenerateQuery(string automationId) => (x => x.Marked(automationId));
 
-        public virtual void WaitForPageToLoad()
+        protected void DismissSyncfusionLicensePopup()
+        {
+            try
+            {
+                App.WaitForElement(_syncfusionLicenseWarningTitle);
+                App.Tap("Ok");
+            }
+            catch
+            {
+            }
+        }
+
+        public virtual void WaitForPageToLoad(TimeSpan? timeout = null)
         {
             if (!string.IsNullOrWhiteSpace(PageTitle))
-                App.WaitForElement(x => x.Marked(PageTitle));
+                App.WaitForElement(x => x.Marked(PageTitle), timeout: timeout);
             else
                 throw new InvalidOperationException($"{nameof(PageTitle)} cannot be empty");
         }

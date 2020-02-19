@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using GitTrends.Mobile.Shared;
 using Xamarin.UITest;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
@@ -17,6 +18,6 @@ namespace GitTrends.UITests
 
         public string StatusLabelText => App.Query(_statusLabel).First().Text;
 
-        public override void WaitForPageToLoad() => App.WaitForElement(_gitTrendsImage);
+        public override void WaitForPageToLoad(TimeSpan? timespan = null) => App.WaitForElement(_gitTrendsImage);
     }
 }

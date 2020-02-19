@@ -1,5 +1,6 @@
-﻿using Xamarin.UITest;
+﻿using System;
 using GitTrends.Mobile.Shared;
+using Xamarin.UITest;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
 namespace GitTrends.UITests
@@ -25,7 +26,7 @@ namespace GitTrends.UITests
             _activityIndicator = GenerateQuery(TrendsPageAutomationIds.ActivityIndicator);
         }
 
-        public override void WaitForPageToLoad()
+        public override void WaitForPageToLoad(TimeSpan? timespan)
         {
             App.WaitForElement(_activityIndicator);
             App.WaitForNoElement(_activityIndicator);

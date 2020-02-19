@@ -26,12 +26,12 @@ namespace GitTrends.Droid
 #if DEBUG
         #region UI Test Back Door Methods
         [Preserve, Export(nameof(SetGitHubUser))]
-        public async void SetGitHubUser(string token)
+        public async void SetGitHubUser(string accessToken)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var backdoorMethodService = scope.Resolve<UITestBackdoorService>();
 
-            await backdoorMethodService.SetGitHubUser(token.ToString()).ConfigureAwait(false);
+            await backdoorMethodService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
         }
         #endregion
 #endif

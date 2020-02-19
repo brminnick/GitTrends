@@ -11,6 +11,6 @@ namespace GitTrends.UITests
 
         static IAzureFunctionsApi AzureFunctionsApiClient => _azureFunctionsApiClientHolder.Value;
 
-        public static Task<GitHubToken> GenerateGitTrendsOAuthToken(GenerateTokenDTO generateTokenDTO) => AttemptAndRetry(() => AzureFunctionsApiClient.GenerateGitTrendsOAuthToken(generateTokenDTO));
+        public static Task<GitHubToken> GenerateGitTrendsOAuthToken() => AttemptAndRetry(() => AzureFunctionsApiClient.GetUITestToken());
     }
 }
