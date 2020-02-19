@@ -115,7 +115,7 @@ namespace GitTrends
         void SetGitHubValues()
         {
             GitHubAliasLabelText = _gitHubAuthenticationService.IsAuthenticated ? _gitHubAuthenticationService.Name : string.Empty;
-            LoginButtonText = FontAwesomeButton.GitHubOctocat.ToString() + (_gitHubAuthenticationService.IsAuthenticated ? $" {GitHubLoginButtonConstants.Disconnect}" : $" {GitHubLoginButtonConstants.ConnectWithGitHub}");
+            LoginButtonText = _gitHubAuthenticationService.IsAuthenticated ? $"{GitHubLoginButtonConstants.Disconnect}" : $"{GitHubLoginButtonConstants.ConnectWithGitHub}";
 
             GitHubAvatarImageSource = "DefaultProfileImage";
 

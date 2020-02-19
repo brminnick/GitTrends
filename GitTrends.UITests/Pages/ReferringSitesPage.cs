@@ -37,7 +37,16 @@ namespace GitTrends.UITests
             }
         }
 
-        public void WaitForActivityIndicator() => App.WaitForElement(_activityIndicator);
-        public void WaitForNoActivityIndicator() => App.WaitForNoElement(_activityIndicator);
+        public void WaitForActivityIndicator()
+        {
+            App.WaitForElement(_activityIndicator);
+            App.Screenshot("Activity Indicator Appeared");
+        }
+
+        public void WaitForNoActivityIndicator()
+        {
+            App.WaitForNoElement(_activityIndicator);
+            App.Screenshot("Activity Indicator Disappeared");
+        }
     }
 }

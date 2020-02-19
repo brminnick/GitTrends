@@ -27,14 +27,14 @@ namespace GitTrends.UITests
             _ => throw new NotSupportedException("Xamarin.UITest only supports Android and iOS"),
         };
 
-        protected static Query GenerateQuery(string automationId) => (x => x.Marked(automationId));
-
-        protected void DismissSyncfusionLicensePopup()
+        public void DismissSyncfusionLicensePopup()
         {
             try
             {
                 App.WaitForElement(_syncfusionLicenseWarningTitle);
                 App.Tap("Ok");
+
+                App.Screenshot("Syncfusion License Popup Dismissed");
             }
             catch
             {
@@ -48,6 +48,8 @@ namespace GitTrends.UITests
             else
                 throw new InvalidOperationException($"{nameof(PageTitle)} cannot be empty");
         }
+
+        protected static Query GenerateQuery(string automationId) => (x => x.Marked(automationId));
 
         protected void EnterText(in Query textEntryQuery, in string text, in bool shouldDismissKeyboard = true)
         {

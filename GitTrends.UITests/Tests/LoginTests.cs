@@ -30,6 +30,8 @@ namespace GitTrends.UITests
             }
 
             SettingsPage.WaitForPageToLoad();
+            SettingsPage.DismissSyncfusionLicensePopup();
+
             SettingsPage.WaitForGitHubLoginToComplete();
             SettingsPage.TapBackButton();
 

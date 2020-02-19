@@ -21,21 +21,36 @@ namespace GitTrends.UITests
             _trendsChartSettingsControl = GenerateQuery(SettingsPageAutomationIds.TrendsChartSettingsControl);
         }
 
-        public bool IsLoggedIn() => App.Query(GitHubLoginButtonConstants.Disconnect).Any();
+        public bool IsLoggedIn => App.Query(GitHubLoginButtonConstants.Disconnect).Any();
 
         public bool IsActivityIndicatorRunning => App.Query(_gitHubSettingsViewActivityIndicator).Any();
         public string GitHubAliasLabelText => App.Query(_gitHubAliasLabel).First().Text;
         public string TrendsChartLabelText => App.Query(_trendsChartSettingsLabel).First().Text;
 
-        public void WaitForActivityIndicator() => App.WaitForElement(_gitHubSettingsViewActivityIndicator);
-        public void WaitForNoActivityIndicator() => App.WaitForNoElement(_gitHubSettingsViewActivityIndicator);
+        public void WaitForActivityIndicator()
+        {
+            App.WaitForElement(_gitHubSettingsViewActivityIndicator);
+            App.Screenshot("Activity Indicator Appeared");
+        }
 
-        public void TapBackButton() => App.Back();
+        public void WaitForNoActivityIndicator()
+        {
+            App.WaitForNoElement(_gitHubSettingsViewActivityIndicator);
+            App.Screenshot("Activity Indicator Disappeared");
+        }
+
+        public void TapBackButton()
+        {
+            App.Back();
+            App.Screenshot("Back Button Tapped");
+        }
 
         public void WaitForGitHubLoginToComplete()
         {
             App.WaitForNoElement(_gitHubSettingsViewActivityIndicator);
             App.WaitForElement(GitHubLoginButtonConstants.Disconnect);
+
+            App.Screenshot("GitHub Login Completed");
         }
     }
 }
