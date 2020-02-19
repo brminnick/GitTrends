@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
     <Import Project="..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems')" />
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -8,7 +9,7 @@
         <OutputType>Library</OutputType>
         <RootNamespace>GitTrends.UITests</RootNamespace>
         <AssemblyName>GitTrends.UITests</AssemblyName>
-        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
@@ -32,6 +33,9 @@
         <PackageReference Include="Xamarin.UITest" Version="3.0.6" />
         <PackageReference Include="NUnit" Version="3.12.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+        <PackageReference Include="Refit" Version="5.0.23" />
+        <PackageReference Include="Polly" Version="7.2.0" />
+        <PackageReference Include="Xamarin.Essentials" Version="1.4.0-pre2" />
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Pages\BasePage.cs" />
@@ -43,24 +47,17 @@
         <Compile Include="AppInitializer.cs" />
         <Compile Include="Tests\LaunchTests.cs" />
         <Compile Include="Pages\SplashScreenPage.cs" />
+        <Compile Include="Services\BackdoorServices.cs" />
+        <Compile Include="Services\AzureFunctionsApiService.cs" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Pages\" />
         <Folder Include="Tests\" />
+        <Folder Include="Services\" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\GitTrends.iOS\GitTrends.iOS.csproj">
-        <Project>{E1C47721-EF16-4F21-AA2F-78951DB0D715}</Project>
-        <Name>GitTrends.iOS</Name>
-        <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
-        <Private>False</Private>
-      </ProjectReference>
-      <ProjectReference Include="..\GitTrends.Android\GitTrends.Android.csproj">
-        <Project>{E5785129-AB94-4359-9947-B600D33A9958}</Project>
-        <Name>GitTrends.Android</Name>
-        <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
-        <Private>False</Private>
-      </ProjectReference>
+      <Reference Include="System" />
+      <Reference Include="System.Net.Http" />
     </ItemGroup>
     <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 using Xamarin.UITest;
@@ -26,7 +27,7 @@ namespace GitTrends.UITests
         protected TrendsPage TrendsPage => _trendsPage ?? throw new NullReferenceException();
 
         [SetUp]
-        public virtual void BeforeEachTest()
+        public virtual async Task BeforeEachTest()
         {
             _app = AppInitializer.StartApp(_platform);
 
@@ -36,6 +37,7 @@ namespace GitTrends.UITests
             _trendsPage = new TrendsPage(App);
 
             App.Screenshot("App Initialized");
+
             RepositoryPage.WaitForPageToLoad();
         }
     }

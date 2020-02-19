@@ -46,6 +46,19 @@ namespace GitTrends.iOS
             }
         }
 
+#if DEBUG
+        #region UI Test Back Door Methods
+        [Preserve, Export("setGitHubUser:")]
+        public async void SetGitHubUser(NSString token)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorMethodService = scope.Resolve<UITestBackdoorService>();
+
+            await backdoorMethodService.SetGitHubUser(token.ToString()).ConfigureAwait(false);
+        }
+        #endregion
+#endif
+
         [Conditional("DEBUG")]
         void PrintFontNamesToConsole()
         {

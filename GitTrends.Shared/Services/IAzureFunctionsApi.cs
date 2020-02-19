@@ -14,5 +14,8 @@ namespace GitTrends.Shared
 
         [Get("/GetSyncfusionInformation/{licenseVersion}")]
         Task<SyncFusionDTO> GetSyncfusionInformation(long licenseVersion, [AliasAs("code")] string functionKey = AzureConstants.GetSyncFusionInformationApiKey);
+
+        [Get("/GetUITestToken")]
+        Task<GitHubToken> GetUITestToken([AliasAs("code")] string functionKey = AzureConstants.GetUITestTokenApiKey);
     }
 }

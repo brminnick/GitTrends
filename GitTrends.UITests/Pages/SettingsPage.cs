@@ -1,7 +1,8 @@
-﻿using Xamarin.UITest;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
+using Xamarin.UITest;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
-using System.Linq;
 
 namespace GitTrends.UITests
 {

@@ -58,6 +58,7 @@
     <ItemGroup>
         <Reference Include="Mono.Android" />
         <Reference Include="System" />
+        <Reference Include="Mono.Android.Export" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Xamarin.Forms" Version="4.5.0.282-pre4" />
