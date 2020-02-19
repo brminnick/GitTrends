@@ -21,5 +21,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\TrendsPageAutomationIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\GitHubUserNotFoundConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\GitHubLoginButtonConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\BackdoorMethodConstants.cs" />
   </ItemGroup>
 </Project>

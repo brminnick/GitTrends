@@ -6,6 +6,7 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Autofac;
+using GitTrends.Mobile.Shared;
 using Java.Interop;
 using Plugin.CurrentActivity;
 using Xamarin.Forms;
@@ -25,13 +26,13 @@ namespace GitTrends.Droid
 
 #if DEBUG
         #region UI Test Back Door Methods
-        [Preserve, Export(nameof(SetGitHubUser))]
+        [Preserve, Export(BackdoorMethodConstants.SetGitHubUser)]
         public async void SetGitHubUser(string accessToken)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorMethodService = scope.Resolve<UITestBackdoorService>();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
 
-            await backdoorMethodService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
+            await backdoorService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
         }
         #endregion
 #endif

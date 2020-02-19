@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
 using Foundation;
+using GitTrends.Mobile.Shared;
 using UIKit;
 
 namespace GitTrends.iOS
@@ -52,13 +53,13 @@ namespace GitTrends.iOS
 
 #if DEBUG
         #region UI Test Back Door Methods
-        [Preserve, Export("setGitHubUser:")]
+        [Preserve, Export(BackdoorMethodConstants.SetGitHubUser + ":")]
         public async void SetGitHubUser(NSString accessToken)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorMethodService = scope.Resolve<UITestBackdoorService>();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
 
-            await backdoorMethodService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
+            await backdoorService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
         }
         #endregion
 #endif
