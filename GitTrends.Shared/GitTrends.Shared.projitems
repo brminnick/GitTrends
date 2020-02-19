@@ -19,9 +19,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AzureConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GitHubToken.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\BaseApiService.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\IAzureFunctionsApi.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubApiV3.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\GithubConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DailyClonesModel.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DailyViewsModel.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
@@ -29,8 +26,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryViewsModel.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Base\BaseDailyModel.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Base\BaseRepositoryModel.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubAuthApi.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubGraphQLAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GitHubUserResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\User.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Base\GraphQLModels\GraphQLError.cs" />
@@ -49,5 +44,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\SyncFusionDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ReferringSiteModel.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\BaseApiService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IAzureFunctionsApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubApiV3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubAuthApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubGraphQLAPI.cs" />
   </ItemGroup>
 </Project>
