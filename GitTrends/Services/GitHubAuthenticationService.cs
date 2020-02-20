@@ -139,7 +139,7 @@ namespace GitTrends
             return Task.WhenAll(InvalidateToken(), _repositoryDatabase.DeleteAllData());
         }
 
-        public Task SaveGitHubToken(GitHubToken token)
+        internal Task SaveGitHubToken(GitHubToken token)
         {
             if (token is null)
                 throw new ArgumentNullException(nameof(token));

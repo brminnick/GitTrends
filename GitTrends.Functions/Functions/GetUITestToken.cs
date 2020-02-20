@@ -12,12 +12,12 @@ namespace GitTrends.Functions
 {
     public class GetUITestToken
     {
-        readonly static string _token = Environment.GetEnvironmentVariable("UITestToken") ?? string.Empty;
+        readonly static string _uiTestToken = Environment.GetEnvironmentVariable("UITestToken") ?? string.Empty;
 
         [FunctionName(nameof(GetUITestToken))]
         public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request, ILogger log)
         {
-            var token = new GitHubToken(_token, string.Empty, "Bearer");
+            var token = new GitHubToken(_uiTestToken, string.Empty, "Bearer");
 
             return new ContentResult
             {

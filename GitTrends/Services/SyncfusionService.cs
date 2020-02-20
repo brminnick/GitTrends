@@ -8,7 +8,7 @@ namespace GitTrends
     public class SyncFusionService
     {
         readonly static Lazy<long> _assemblyVersionNumberHolder = new Lazy<long>(() => long.Parse(System.Reflection.Assembly.GetAssembly(typeof(Syncfusion.CoreAssembly)).GetName().Version.ToString().Replace(".", "")));
-        readonly static Lazy<string> _syncfusionLicenseKeyHolder = new Lazy<string>(() => $"{nameof(SyncFusionDTO.LicenseKey)}_{_assemblyVersionNumberHolder.Value}");
+        readonly static Lazy<string> _syncfusionLicenseKeyHolder = new Lazy<string>(() => $"{nameof(SyncFusionDTO.LicenseKey)}{_assemblyVersionNumberHolder.Value}");
 
         readonly AzureFunctionsApiService _azureFunctionsApiService;
 
@@ -20,7 +20,7 @@ namespace GitTrends
 
         public async Task Initialize()
         {
-            var syncFusionLicense = await GetLicense().ConfigureAwait(false);
+            string? syncFusionLicense = await GetLicense().ConfigureAwait(false);
 
             if (string.IsNullOrWhiteSpace(syncFusionLicense))
             {
@@ -40,19 +40,19 @@ namespace GitTrends
             if (!string.IsNullOrWhiteSpace(syncFusionLicense))
                 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicense);
             else
-                throw new SyncFusionLicenseException($"{nameof(syncFusionLicense)} is null");
+                throw new SyncFusionLicenseException($"{nameof(syncFusionLicense)} is empty");
         }
 
         public Task<string> GetLicense() => SecureStorage.GetAsync(SyncfusionLicenseKey);
 
         Task SaveLicense(in string license) => SecureStorage.SetAsync(SyncfusionLicenseKey, license);
-    }
 
-    class SyncFusionLicenseException : Exception
-    {
-        public SyncFusionLicenseException(string message) : base(message)
+        class SyncFusionLicenseException : Exception
         {
+            public SyncFusionLicenseException(string message) : base(message)
+            {
 
+            }
         }
     }
 }
