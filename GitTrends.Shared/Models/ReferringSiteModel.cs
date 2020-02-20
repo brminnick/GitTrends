@@ -12,7 +12,7 @@ namespace GitTrends.Shared
             Referrer = referrer;
             Uri.TryCreate("https://" + referrer, UriKind.Absolute, out var referringUri);
 
-            if (referringUri != null && !referringUri.ToString().Contains('.'))
+            if (referringUri != null && !referringUri.ToString().Contains("."))
             {
                 ReferrerUri = new Uri(referringUri.ToString().TrimEnd('/') + ".com/");
                 IsReferrerUriValid = true;

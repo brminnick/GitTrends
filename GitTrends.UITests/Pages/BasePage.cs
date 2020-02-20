@@ -9,6 +9,8 @@ namespace GitTrends.UITests
 {
     abstract class BasePage
     {
+        const string _syncfusionLicenseWarningTitle = "Syncfusion License";
+
         protected BasePage(IApp app, string pageTitle = "")
         {
             App = app;
@@ -25,15 +27,29 @@ namespace GitTrends.UITests
             _ => throw new NotSupportedException("Xamarin.UITest only supports Android and iOS"),
         };
 
-        protected static Query GenerateQuery(string automationId) => (x => x.Marked(automationId));
+        public void DismissSyncfusionLicensePopup()
+        {
+            try
+            {
+                App.WaitForElement(_syncfusionLicenseWarningTitle);
+                App.Tap("Ok");
 
-        public virtual void WaitForPageToLoad()
+                App.Screenshot("Syncfusion License Popup Dismissed");
+            }
+            catch
+            {
+            }
+        }
+
+        public virtual void WaitForPageToLoad(TimeSpan? timeout = null)
         {
             if (!string.IsNullOrWhiteSpace(PageTitle))
-                App.WaitForElement(x => x.Marked(PageTitle));
+                App.WaitForElement(x => x.Marked(PageTitle), timeout: timeout);
             else
                 throw new InvalidOperationException($"{nameof(PageTitle)} cannot be empty");
         }
+
+        protected static Query GenerateMarkedQuery(string automationId) => (x => x.Marked(automationId));
 
         protected void EnterText(in Query textEntryQuery, in string text, in bool shouldDismissKeyboard = true)
         {

@@ -139,9 +139,7 @@ namespace GitTrends
             return Task.WhenAll(InvalidateToken(), _repositoryDatabase.DeleteAllData());
         }
 
-        Task InvalidateToken() => SecureStorage.SetAsync(_oauthTokenKey, string.Empty);
-
-        async Task SaveGitHubToken(GitHubToken token)
+        public Task SaveGitHubToken(GitHubToken token)
         {
             if (token is null)
                 throw new ArgumentNullException(nameof(token));
@@ -149,9 +147,11 @@ namespace GitTrends
             if (token.AccessToken is null)
                 throw new ArgumentNullException(nameof(token.AccessToken));
 
-            var serializedToken = await Task.Run(() => JsonConvert.SerializeObject(token)).ConfigureAwait(false);
-            await SecureStorage.SetAsync(_oauthTokenKey, serializedToken).ConfigureAwait(false);
+            var serializedToken = JsonConvert.SerializeObject(token);
+            return SecureStorage.SetAsync(_oauthTokenKey, serializedToken);
         }
+
+        Task InvalidateToken() => SecureStorage.SetAsync(_oauthTokenKey, string.Empty);
 
         void OnAuthorizeSessionCompleted(bool isSessionAuthorized) =>
            _authorizeSessionCompletedEventManager.HandleEvent(null, new AuthorizeSessionCompletedEventArgs(isSessionAuthorized), nameof(AuthorizeSessionCompleted));

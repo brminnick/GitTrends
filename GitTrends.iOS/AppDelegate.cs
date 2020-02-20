@@ -1,9 +1,11 @@
-﻿using System;
+﻿    using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
 using Foundation;
+using GitTrends.Mobile.Shared;
+using Newtonsoft.Json;
 using UIKit;
 
 namespace GitTrends.iOS
@@ -20,6 +22,10 @@ namespace GitTrends.iOS
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init();
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageSourceHandler();
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
+
+#if DEBUG
+            Xamarin.Calabash.Start();
+#endif
 
             PrintFontNamesToConsole();
 
@@ -45,6 +51,38 @@ namespace GitTrends.iOS
                 await gitHubAuthenticationService.AuthorizeSession(callbackUri).ConfigureAwait(false);
             }
         }
+
+#if DEBUG
+        #region UI Test Back Door Methods
+        [Preserve, Export(BackdoorMethodConstants.SetGitHubUser + ":")]
+        public async void SetGitHubUser(NSString accessToken)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
+
+            await backdoorService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
+        }
+
+        [Preserve, Export(BackdoorMethodConstants.TriggerRepositoriesPullToRefresh + ":")]
+        public async void TriggerRepositoriesPullToRefresh(NSString noValue)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
+
+            await backdoorService.TriggerRepositoryPullToRefresh().ConfigureAwait(false);
+        }
+
+        [Preserve, Export(BackdoorMethodConstants.GetVisibleRepositoryList + ":")]
+        public NSString GetVisibleRepositoryList(NSString noValue)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
+
+            var serializedRepositoryList = JsonConvert.SerializeObject(backdoorService.GetVisibleRepositoryList());
+            return new NSString(serializedRepositoryList);
+        }
+        #endregion
+#endif
 
         [Conditional("DEBUG")]
         void PrintFontNamesToConsole()

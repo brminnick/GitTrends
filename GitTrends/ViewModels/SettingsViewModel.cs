@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
+using GitTrends.Mobile.Shared;
 using Xamarin.Essentials;
 
 namespace GitTrends
@@ -114,7 +115,7 @@ namespace GitTrends
         void SetGitHubValues()
         {
             GitHubAliasLabelText = _gitHubAuthenticationService.IsAuthenticated ? _gitHubAuthenticationService.Name : string.Empty;
-            LoginButtonText = FontAwesomeButton.GitHubOctocat.ToString() + (_gitHubAuthenticationService.IsAuthenticated ? " Disconnect" : " Connect with GitHub");
+            LoginButtonText = _gitHubAuthenticationService.IsAuthenticated ? $"{GitHubLoginButtonConstants.Disconnect}" : $"{GitHubLoginButtonConstants.ConnectWithGitHub}";
 
             GitHubAvatarImageSource = "DefaultProfileImage";
 

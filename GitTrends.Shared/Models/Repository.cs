@@ -20,7 +20,7 @@ namespace GitTrends.Shared
         public bool IsFork { get; }
 
         [JsonProperty("url")]
-        public Uri Uri { get; }       
+        public Uri Uri { get; }
 
         public override string ToString()
         {

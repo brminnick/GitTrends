@@ -1,5 +1,6 @@
-﻿using Xamarin.UITest;
+﻿using System;
 using GitTrends.Mobile.Shared;
+using Xamarin.UITest;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
 namespace GitTrends.UITests
@@ -12,20 +13,20 @@ namespace GitTrends.UITests
 
         public TrendsPage(IApp app) : base(app)
         {
-            _trendsChart = GenerateQuery(TrendsPageAutomationIds.TrendsChart);
-            _trendsChartLegend = GenerateQuery(TrendsPageAutomationIds.TrendsChartLegend);
-            _trendsChartPrimaryAxis = GenerateQuery(TrendsPageAutomationIds.TrendsChartPrimaryAxis);
-            _trendsChartSecondaryAxis = GenerateQuery(TrendsPageAutomationIds.TrendsChartSecondaryAxis);
+            _trendsChart = GenerateMarkedQuery(TrendsPageAutomationIds.TrendsChart);
+            _trendsChartLegend = GenerateMarkedQuery(TrendsPageAutomationIds.TrendsChartLegend);
+            _trendsChartPrimaryAxis = GenerateMarkedQuery(TrendsPageAutomationIds.TrendsChartPrimaryAxis);
+            _trendsChartSecondaryAxis = GenerateMarkedQuery(TrendsPageAutomationIds.TrendsChartSecondaryAxis);
 
-            _totalViewsSeries = GenerateQuery(TrendsPageAutomationIds.TotalViewsSeries);
-            _totalUniqueViewsSeries = GenerateQuery(TrendsPageAutomationIds.TotalUniqueViewsSeries);
-            _totalClonesSeries = GenerateQuery(TrendsPageAutomationIds.TotalClonesSeries);
-            _totalUniqueClonesSeries = GenerateQuery(TrendsPageAutomationIds.TotalUniqueClonesSeries);
+            _totalViewsSeries = GenerateMarkedQuery(TrendsPageAutomationIds.TotalViewsSeries);
+            _totalUniqueViewsSeries = GenerateMarkedQuery(TrendsPageAutomationIds.TotalUniqueViewsSeries);
+            _totalClonesSeries = GenerateMarkedQuery(TrendsPageAutomationIds.TotalClonesSeries);
+            _totalUniqueClonesSeries = GenerateMarkedQuery(TrendsPageAutomationIds.TotalUniqueClonesSeries);
 
-            _activityIndicator = GenerateQuery(TrendsPageAutomationIds.ActivityIndicator);
+            _activityIndicator = GenerateMarkedQuery(TrendsPageAutomationIds.ActivityIndicator);
         }
 
-        public override void WaitForPageToLoad()
+        public override void WaitForPageToLoad(TimeSpan? timespan)
         {
             App.WaitForElement(_activityIndicator);
             App.WaitForNoElement(_activityIndicator);

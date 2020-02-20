@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
@@ -53,7 +54,7 @@ namespace GitTrends
 
             relativeLayout.Children.Add(_gitTrendsImage,
                 Constraint.RelativeToParent(parent => parent.Width / 2 - getWidth(parent, _gitTrendsImage) / 2),
-                Constraint.RelativeToParent(parent => parent.Height / 2 - getHeight(parent, _gitTrendsImage) / 2));            
+                Constraint.RelativeToParent(parent => parent.Height / 2 - getHeight(parent, _gitTrendsImage) / 2));
 
             Content = relativeLayout;
 
@@ -81,7 +82,7 @@ namespace GitTrends
                 await Task.WhenAll(fadeImageTask, pulseImageTask);
 
 #if DEBUG
-                _syncFusionService.Initialize().SafeFireAndForget();
+                _syncFusionService.Initialize().SafeFireAndForget(ex => Debug.WriteLine(ex));
                 await ChangeLabelText(new FormattedString
                 {
                     Spans =
@@ -93,7 +94,7 @@ namespace GitTrends
                         },
                         new Span
                         {
-                            Text = "\nLaunching app without Syncfusion License"
+                            Text = "\nCertain license warnings may appear"
                         }
                     }
                 });

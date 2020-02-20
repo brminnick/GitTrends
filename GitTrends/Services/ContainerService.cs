@@ -23,6 +23,10 @@ namespace GitTrends
             builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
 
+#if DEBUG
+            builder.RegisterType<UITestBackdoorService>().AsSelf().SingleInstance();
+#endif
+
             //Register ViewModels
             builder.RegisterType<RepositoryViewModel>().AsSelf();
             builder.RegisterType<SettingsViewModel>().AsSelf();

@@ -14,10 +14,10 @@ namespace GitTrends.UITests
 
         public ReferringSitesPage(IApp app) : base(app, PageTitles.ReferringSitesPage)
         {
-            _collectionView = GenerateQuery(ReferringSitesPageAutomationIds.CollectionView);
-            _refreshView = GenerateQuery(ReferringSitesPageAutomationIds.RefreshView);
-            _closeButton = GenerateQuery(ReferringSitesPageAutomationIds.CloseButton);
-            _activityIndicator = GenerateQuery(ReferringSitesPageAutomationIds.ActivityIndicator);
+            _collectionView = GenerateMarkedQuery(ReferringSitesPageAutomationIds.CollectionView);
+            _refreshView = GenerateMarkedQuery(ReferringSitesPageAutomationIds.RefreshView);
+            _closeButton = GenerateMarkedQuery(ReferringSitesPageAutomationIds.CloseButton);
+            _activityIndicator = GenerateMarkedQuery(ReferringSitesPageAutomationIds.ActivityIndicator);
         }
 
         public bool IsActivityIndicatorRunning => App.Query(_activityIndicator).Any();
@@ -37,7 +37,16 @@ namespace GitTrends.UITests
             }
         }
 
-        public void WaitForActivityIndicator() => App.WaitForElement(_activityIndicator);
-        public void WaitForNoActivityIndicator() => App.WaitForNoElement(_activityIndicator);
+        public void WaitForActivityIndicator()
+        {
+            App.WaitForElement(_activityIndicator);
+            App.Screenshot("Activity Indicator Appeared");
+        }
+
+        public void WaitForNoActivityIndicator()
+        {
+            App.WaitForNoElement(_activityIndicator);
+            App.Screenshot("Activity Indicator Disappeared");
+        }
     }
 }

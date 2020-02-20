@@ -17,7 +17,6 @@ namespace GitTrends.Shared
 
         [Post("")]
         Task<GraphQLResponse<GitHubViewerResponse>> ViewerLoginQuery([Body] ViewerLoginQueryContent request, [Header("Authorization")] string authorization);
-
     }
 
     class ViewerLoginQueryContent : GraphQLRequest
