@@ -20,7 +20,7 @@ namespace GitTrends
 
         public async Task Initialize()
         {
-            string? syncFusionLicense = await GetLicense().ConfigureAwait(false);
+            var syncFusionLicense = await GetLicense().ConfigureAwait(false);
 
             if (string.IsNullOrWhiteSpace(syncFusionLicense))
             {
@@ -43,7 +43,7 @@ namespace GitTrends
                 throw new SyncFusionLicenseException($"{nameof(syncFusionLicense)} is empty");
         }
 
-        public Task<string> GetLicense() => SecureStorage.GetAsync(SyncfusionLicenseKey);
+        public Task<string?> GetLicense() => SecureStorage.GetAsync(SyncfusionLicenseKey);
 
         Task SaveLicense(in string license) => SecureStorage.SetAsync(SyncfusionLicenseKey, license);
 
