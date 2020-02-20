@@ -1,6 +1,9 @@
 ﻿#if DEBUG
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Shared;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -21,6 +24,22 @@ namespace GitTrends
             _gitHubAuthenticationService.Alias = alias;
             _gitHubAuthenticationService.AvatarUrl = avatarUri.ToString();
             _gitHubAuthenticationService.Name = name;
+        }
+
+        public Task TriggerRepositoryPullToRefresh()
+        {
+            var repositoryPage = (RepositoryPage)Application.Current.MainPage.Navigation.NavigationStack.First();
+
+            var refreshView = (RefreshView)repositoryPage.Content;
+            return Device.InvokeOnMainThreadAsync(() => refreshView.IsRefreshing = true);
+        }
+
+        public IReadOnlyList<Repository> GetVisibleRepositoryList()
+        {
+            var repositoryPage = (RepositoryPage)Application.Current.MainPage.Navigation.NavigationStack.First();
+            var repositoryViewModel = (RepositoryViewModel)repositoryPage.BindingContext;
+
+            return repositoryViewModel.VisibleRepositoryList;
         }
     }
 }

@@ -12,20 +12,30 @@ namespace GitTrends.UITests
 
         public SettingsPage(IApp app) : base(app, PageTitles.SettingsPage)
         {
-            _gitHubAvatarImage = GenerateQuery(SettingsPageAutomationIds.GitHubAvatarImage);
-            _gitHubAliasLabel = GenerateQuery(SettingsPageAutomationIds.GitHubAliasLabel);
-            _gitHubLoginButton = GenerateQuery(SettingsPageAutomationIds.GitHubLoginButton);
-            _gitHubSettingsViewActivityIndicator = GenerateQuery(SettingsPageAutomationIds.GitHubSettingsViewActivityIndicator);
+            _gitHubAvatarImage = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubAvatarImage);
+            _gitHubAliasLabel = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubAliasLabel);
+            _gitHubLoginButton = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubLoginButton);
+            _gitHubSettingsViewActivityIndicator = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubSettingsViewActivityIndicator);
 
-            _trendsChartSettingsLabel = GenerateQuery(SettingsPageAutomationIds.TrendsChartSettingsLabel);
-            _trendsChartSettingsControl = GenerateQuery(SettingsPageAutomationIds.TrendsChartSettingsControl);
+            _trendsChartSettingsLabel = GenerateMarkedQuery(SettingsPageAutomationIds.TrendsChartSettingsLabel);
+            _trendsChartSettingsControl = GenerateMarkedQuery(SettingsPageAutomationIds.TrendsChartSettingsControl);
         }
 
         public bool IsLoggedIn => App.Query(GitHubLoginButtonConstants.Disconnect).Any();
 
         public bool IsActivityIndicatorRunning => App.Query(_gitHubSettingsViewActivityIndicator).Any();
+
         public string GitHubAliasLabelText => App.Query(_gitHubAliasLabel).First().Text;
+
+        public string GitHubButtonText => App.Query(_gitHubLoginButton).First().Text ?? App.Query(_gitHubLoginButton).First().Label;
+
         public string TrendsChartLabelText => App.Query(_trendsChartSettingsLabel).First().Text;
+
+        public void TapGitHubButton()
+        {
+            App.Tap(_gitHubLoginButton);
+            App.Screenshot("GitHub Button Tapped");
+        }
 
         public void WaitForActivityIndicator()
         {
@@ -51,6 +61,14 @@ namespace GitTrends.UITests
             App.WaitForElement(GitHubLoginButtonConstants.Disconnect);
 
             App.Screenshot("GitHub Login Completed");
+        }
+
+        public void WaitForGitHubLogoutToComplete()
+        {
+            App.WaitForNoElement(_gitHubSettingsViewActivityIndicator);
+            App.WaitForElement(GitHubLoginButtonConstants.ConnectWithGitHub);
+
+            App.Screenshot("GitHub Logout Completed");
         }
     }
 }

@@ -1,5 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
+using Newtonsoft.Json;
 using Xamarin.UITest;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
@@ -12,12 +16,25 @@ namespace GitTrends.UITests
 
         public RepositoryPage(IApp app) : base(app, PageTitles.RepositoryPage)
         {
-            _searchBar = GenerateQuery(RepositoryPageAutomationIds.SearchBar);
-            _settingsButton = GenerateQuery(RepositoryPageAutomationIds.SettingsButton);
-            _collectionView = GenerateQuery(RepositoryPageAutomationIds.CollectionView);
-            _refreshView = GenerateQuery(RepositoryPageAutomationIds.RefreshView);
+            _searchBar = GenerateMarkedQuery(RepositoryPageAutomationIds.SearchBar);
+            _settingsButton = GenerateMarkedQuery(RepositoryPageAutomationIds.SettingsButton);
+            _collectionView = GenerateMarkedQuery(RepositoryPageAutomationIds.CollectionView);
+            _refreshView = GenerateMarkedQuery(RepositoryPageAutomationIds.RefreshView);
             _androidContextMenuOverflowButton = x => x.Class("androidx.appcompat.widget.ActionMenuPresenter$OverflowMenuButton");
             _androidSearchBarButton = x => x.Id("ActionSearch");
+        }
+
+        public async Task WaitForNoPullToRefresh(int timeoutInSeconds = 25)
+        {
+            int counter = 0;
+            while (IsRefreshViewRefreshIndicatorDisplayed && counter < timeoutInSeconds)
+            {
+                await Task.Delay(1000).ConfigureAwait(false);
+                counter++;
+
+                if (counter >= timeoutInSeconds)
+                    throw new Exception($"Loading the list took longer than {timeoutInSeconds}");
+            }
         }
 
         public void EnterSearchBarText(string text)
@@ -62,6 +79,15 @@ namespace GitTrends.UITests
         {
             App.Tap(GitHubUserNotFoundConstants.Accept);
             App.Screenshot("Accepted GitHub User Not Found Popup");
+        }
+
+        public void TriggerRepositoryPullToRefresh() =>
+            App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerRepositoriesPullToRefresh);
+
+        public List<Repository> GetVisibleRepositoryList()
+        {
+            var serializedRepositoryList = App.InvokeBackdoorMethod(BackdoorMethodConstants.GetVisibleRepositoryList).ToString();
+            return JsonConvert.DeserializeObject<List<Repository>>(serializedRepositoryList);
         }
     }
 }

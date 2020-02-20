@@ -8,25 +8,15 @@ namespace GitTrends.UITests
 {
     static class BackdoorServices
     {
-        public static void SetGitHubUser(IApp app, string accessToken)=>
+        public static void SetGitHubUser(IApp app, string accessToken) =>
             InvokeBackdoorMethod(app, BackdoorMethodConstants.SetGitHubUser, accessToken);
 
-        public static void TriggerRepositoryPullToRefresh(IApp app) =>
-            InvokeBackdoorMethod(app, BackdoorMethodConstants.TriggerRepositoriesPullToRefresh);
-
-        static void InvokeBackdoorMethod(IApp app, string methodName, string? parameter = null)
+        public static object InvokeBackdoorMethod(this IApp app, string backdoorMethodName, string parameter = "") => app switch
         {
-            switch (app)
-            {
-                case iOSApp iosApp:
-                    iosApp.Invoke(methodName + ":", parameter);
-                    break;
-                case AndroidApp androidApp:
-                    androidApp.Invoke(methodName, parameter);
-                    break;
-                default:
-                    throw new NotSupportedException("Platform Not Supported");
-            }
-        }
+            iOSApp iosApp => iosApp.Invoke(backdoorMethodName + ":", parameter),
+            AndroidApp androidApp when string.IsNullOrWhiteSpace(parameter) => androidApp.Invoke(backdoorMethodName),
+            AndroidApp androidApp => androidApp.Invoke(backdoorMethodName, parameter),
+            _ => throw new NotSupportedException("Platform Not Supported"),
+        };
     }
 }

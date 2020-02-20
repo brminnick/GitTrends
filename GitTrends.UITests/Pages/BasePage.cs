@@ -49,7 +49,7 @@ namespace GitTrends.UITests
                 throw new InvalidOperationException($"{nameof(PageTitle)} cannot be empty");
         }
 
-        protected static Query GenerateQuery(string automationId) => (x => x.Marked(automationId));
+        protected static Query GenerateMarkedQuery(string automationId) => (x => x.Marked(automationId));
 
         protected void EnterText(in Query textEntryQuery, in string text, in bool shouldDismissKeyboard = true)
         {

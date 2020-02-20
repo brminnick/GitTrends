@@ -1,10 +1,11 @@
-﻿using System;
+﻿    using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
 using Foundation;
 using GitTrends.Mobile.Shared;
+using Newtonsoft.Json;
 using UIKit;
 
 namespace GitTrends.iOS
@@ -60,6 +61,25 @@ namespace GitTrends.iOS
             var backdoorService = scope.Resolve<UITestBackdoorService>();
 
             await backdoorService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
+        }
+
+        [Preserve, Export(BackdoorMethodConstants.TriggerRepositoriesPullToRefresh + ":")]
+        public async void TriggerRepositoriesPullToRefresh(NSString noValue)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
+
+            await backdoorService.TriggerRepositoryPullToRefresh().ConfigureAwait(false);
+        }
+
+        [Preserve, Export(BackdoorMethodConstants.GetVisibleRepositoryList + ":")]
+        public NSString GetVisibleRepositoryList(NSString noValue)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
+
+            var serializedRepositoryList = JsonConvert.SerializeObject(backdoorService.GetVisibleRepositoryList());
+            return new NSString(serializedRepositoryList);
         }
         #endregion
 #endif

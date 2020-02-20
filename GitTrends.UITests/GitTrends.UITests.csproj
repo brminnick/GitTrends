@@ -51,11 +51,13 @@
         <Compile Include="Services\AzureFunctionsApiService.cs" />
         <Compile Include="Tests\LoginTests.cs" />
         <Compile Include="Tests\ReplTests.cs" />
+        <Compile Include="Models\Repository.cs" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Pages\" />
         <Folder Include="Tests\" />
         <Folder Include="Services\" />
+        <Folder Include="Models\" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="System" />

@@ -1,4 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
 using NUnit.Framework;
 using Xamarin.UITest;
 
@@ -39,9 +43,38 @@ namespace GitTrends.UITests
         }
 
         [Test]
-        public void Login()
+        public async Task Login()
         {
+            //Arrange
+            IReadOnlyList<Repository> visibleRepositoryList;
 
+            //Act
+            await RepositoryPage.WaitForNoPullToRefresh().ConfigureAwait(false);
+
+            visibleRepositoryList = RepositoryPage.GetVisibleRepositoryList();
+
+            //Assert
+            Assert.IsTrue(visibleRepositoryList.Any());
+
+        }
+
+        [Test]
+        public void LogOut()
+        {
+            //Arrange
+
+            //Act
+            RepositoryPage.TapSettingsButton();
+
+            //Assert
+            Assert.AreEqual(GitHubLoginButtonConstants.Disconnect, SettingsPage.GitHubButtonText);
+
+            //Act
+            SettingsPage.TapGitHubButton();
+            SettingsPage.WaitForGitHubLogoutToComplete();
+
+            //Assert
+            Assert.AreEqual(GitHubLoginButtonConstants.ConnectWithGitHub, SettingsPage.GitHubButtonText);
         }
     }
 }

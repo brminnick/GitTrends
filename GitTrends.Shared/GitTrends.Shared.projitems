@@ -23,7 +23,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\IAzureFunctionsApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubApiV3.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubAuthApi.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubGraphQLAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DailyClonesModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DailyViewsModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GitHubToken.cs" />
@@ -49,5 +48,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GetGitHubClientIdDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\SyncFusionDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubGraphQLAPI.cs" />
   </ItemGroup>
 </Project>

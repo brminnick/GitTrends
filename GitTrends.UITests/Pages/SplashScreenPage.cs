@@ -12,8 +12,8 @@ namespace GitTrends.UITests
 
         public SplashScreenPage(IApp app) : base(app)
         {
-            _gitTrendsImage = GenerateQuery(SplashScreenPageAutomationIds.GitTrendsImage);
-            _statusLabel = GenerateQuery(SplashScreenPageAutomationIds.StatusLabel);
+            _gitTrendsImage = GenerateMarkedQuery(SplashScreenPageAutomationIds.GitTrendsImage);
+            _statusLabel = GenerateMarkedQuery(SplashScreenPageAutomationIds.StatusLabel);
         }
 
         public string StatusLabelText => App.Query(_statusLabel).First().Text;

@@ -8,6 +8,7 @@ using Android.Runtime;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using Java.Interop;
+using Newtonsoft.Json;
 using Plugin.CurrentActivity;
 using Xamarin.Forms;
 
@@ -33,6 +34,24 @@ namespace GitTrends.Droid
             var backdoorService = scope.Resolve<UITestBackdoorService>();
 
             await backdoorService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
+        }
+
+        [Preserve, Export(BackdoorMethodConstants.TriggerRepositoriesPullToRefresh)]
+        public async void TriggerRepositoriesPullToRefresh()
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
+
+            await backdoorService.TriggerRepositoryPullToRefresh().ConfigureAwait(false);
+        }
+
+        [Preserve, Export(BackdoorMethodConstants.GetVisibleRepositoryList)]
+        public string GetVisibleRepositoryList()
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
+
+            return JsonConvert.SerializeObject(backdoorService.GetVisibleRepositoryList());
         }
         #endregion
 #endif
