@@ -103,7 +103,7 @@ namespace GitTrends
         public bool IsAuthenticating
         {
             get => _isAuthenticating;
-            set => SetProperty(ref _isAuthenticating, value, () => Xamarin.Forms.Device.InvokeOnMainThreadAsync(LoginButtonCommand.RaiseCanExecuteChanged));
+            set => SetProperty(ref _isAuthenticating, value, () => MainThread.InvokeOnMainThreadAsync(LoginButtonCommand.RaiseCanExecuteChanged));
         }
 
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)

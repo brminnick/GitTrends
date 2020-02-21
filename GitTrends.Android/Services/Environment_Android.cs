@@ -22,6 +22,6 @@ namespace GitTrends.Droid
             };
         }
 
-        public ValueTask<Theme> GetOperatingSystemThemeAsync() => new ValueTask<Theme>(GetOperatingSystemTheme());
+        public Task<Theme> GetOperatingSystemThemeAsync() => Task.FromResult(GetOperatingSystemTheme());
     }
 }

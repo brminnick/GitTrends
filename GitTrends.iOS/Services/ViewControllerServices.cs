@@ -1,32 +1,22 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using SafariServices;
 using UIKit;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace GitTrends.iOS
 {
     public static class ViewControllerServices
     {
-        public static UIViewController GetVisibleViewController() => Xamarin.Essentials.Platform.GetCurrentUIViewController();
+        public static UIViewController GetVisibleViewController() => Platform.GetCurrentUIViewController();
 
-        public static async ValueTask<UIViewController> GetVisibleViewControllerAsync()
-        {
-            if (Xamarin.Essentials.MainThread.IsMainThread)
-                return GetVisibleViewController();
-
-            return await Device.InvokeOnMainThreadAsync(GetVisibleViewController).ConfigureAwait(false);
-        }
+        public static Task<UIViewController> GetVisibleViewControllerAsync() => MainThread.InvokeOnMainThreadAsync(GetVisibleViewController);
 
         public static async Task CloseSFSafariViewController()
         {
-            while (await GetVisibleViewControllerAsync().ConfigureAwait(false) is SFSafariViewController sfSafariViewController)
+            while (await GetVisibleViewControllerAsync() is SFSafariViewController sfSafariViewController)
             {
-                if (Xamarin.Essentials.MainThread.IsMainThread)
-                    await closeSFSafariViewController(sfSafariViewController).ConfigureAwait(false);
-                else
-                    await Device.InvokeOnMainThreadAsync(() => closeSFSafariViewController(sfSafariViewController)).ConfigureAwait(false);
+                await MainThread.InvokeOnMainThreadAsync(() => closeSFSafariViewController(sfSafariViewController));
             }
 
             static async Task closeSFSafariViewController(SFSafariViewController? safariViewController)

@@ -11,11 +11,11 @@ namespace GitTrends
 
         public DeepLinkingService(AnalyticsService analyticsService) => _analyticsService = analyticsService;
 
-        public Task ShowSettingsUI() => Device.InvokeOnMainThreadAsync(AppInfo.ShowSettingsUI);
+        public Task ShowSettingsUI() => MainThread.InvokeOnMainThreadAsync(AppInfo.ShowSettingsUI);
 
         public Task OpenApp(string deepLinkingUrl, string browserUrl)
         {
-            return Device.InvokeOnMainThreadAsync(async () =>
+            return MainThread.InvokeOnMainThreadAsync(async () =>
             {
                 var supportsUri = await Launcher.CanOpenAsync(deepLinkingUrl);
 
@@ -40,7 +40,7 @@ namespace GitTrends
 
         public Task SendEmail(string subject, string body, List<string> recipients)
         {
-            return Device.InvokeOnMainThreadAsync(() =>
+            return MainThread.InvokeOnMainThreadAsync(() =>
             {
                 var message = new EmailMessage
                 {

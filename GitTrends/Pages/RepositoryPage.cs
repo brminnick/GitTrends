@@ -7,6 +7,7 @@ using AsyncAwaitBestPractices;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -112,7 +113,7 @@ namespace GitTrends
             using var scope = ContainerService.Container.BeginLifetimeScope();
 
             var profilePage = scope.Resolve<SettingsPage>();
-            return Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(profilePage));
+            return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(profilePage));
         }
 
         Task NavigateToTrendsPage(Repository repository)
@@ -120,7 +121,7 @@ namespace GitTrends
             using var scope = ContainerService.Container.BeginLifetimeScope();
 
             var trendsPage = scope.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
-            return Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
+            return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
         }
 
         async void HandleSettingsToolbarItem(object sender, EventArgs e)
@@ -132,7 +133,7 @@ namespace GitTrends
 
         void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)
         {
-            Device.BeginInvokeOnMainThread(async () =>
+            MainThread.BeginInvokeOnMainThread(async () =>
             {
                 if (!Application.Current.MainPage.Navigation.ModalStack.Any()
                     && Application.Current.MainPage.Navigation.NavigationStack.Last() is RepositoryPage)

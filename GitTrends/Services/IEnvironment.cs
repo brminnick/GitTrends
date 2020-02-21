@@ -5,6 +5,6 @@ namespace GitTrends
     public interface IEnvironment
     {
         Theme GetOperatingSystemTheme();
-        ValueTask<Theme> GetOperatingSystemThemeAsync();
+        Task<Theme> GetOperatingSystemThemeAsync();
     }
 }

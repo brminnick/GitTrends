@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using GitTrends.iOS;
 using UIKit;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(Environment_iOS))]
@@ -23,12 +24,6 @@ namespace GitTrends.iOS
             };
         }
 
-        public async ValueTask <Theme> GetOperatingSystemThemeAsync()
-        {
-            if (Xamarin.Essentials.MainThread.IsMainThread)
-                return GetOperatingSystemTheme();
-
-            return await Device.InvokeOnMainThreadAsync(GetOperatingSystemTheme).ConfigureAwait(false);
-        }
+        public Task<Theme> GetOperatingSystemThemeAsync() => MainThread.InvokeOnMainThreadAsync(GetOperatingSystemTheme);
     }
 }

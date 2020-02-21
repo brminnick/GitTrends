@@ -44,7 +44,7 @@ namespace GitTrends
 
         protected Task OpenBrowser(string url)
         {
-            return Device.InvokeOnMainThreadAsync(() =>
+            return MainThread.InvokeOnMainThreadAsync(() =>
             {
                 var browserOptions = new BrowserLaunchOptions
                 {

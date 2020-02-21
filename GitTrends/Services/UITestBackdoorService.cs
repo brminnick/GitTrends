@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Shared;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -31,7 +32,7 @@ namespace GitTrends
             var repositoryPage = (RepositoryPage)Application.Current.MainPage.Navigation.NavigationStack.First();
 
             var refreshView = (RefreshView)repositoryPage.Content;
-            return Device.InvokeOnMainThreadAsync(() => refreshView.IsRefreshing = true);
+            return MainThread.InvokeOnMainThreadAsync(() => refreshView.IsRefreshing = true);
         }
 
         public IReadOnlyList<Repository> GetVisibleRepositoryList()

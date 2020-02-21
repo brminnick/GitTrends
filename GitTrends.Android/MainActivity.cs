@@ -10,6 +10,7 @@ using GitTrends.Mobile.Shared;
 using Java.Interop;
 using Newtonsoft.Json;
 using Plugin.CurrentActivity;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace GitTrends.Droid
@@ -108,7 +109,7 @@ namespace GitTrends.Droid
             }
         }
 
-        static async ValueTask NavigateToSettingsPage()
+        static Task NavigateToSettingsPage()
         {
             var navigationPage = (NavigationPage)Xamarin.Forms.Application.Current.MainPage;
 
@@ -117,10 +118,11 @@ namespace GitTrends.Droid
                 using var containerScope = ContainerService.Container.BeginLifetimeScope();
                 var settingsPage = containerScope.Resolve<SettingsPage>();
 
-                if (Xamarin.Essentials.MainThread.IsMainThread)
-                    await navigateToSettingsPage(navigationPage, settingsPage).ConfigureAwait(false);
-                else
-                    await Device.InvokeOnMainThreadAsync(() => navigateToSettingsPage(navigationPage, settingsPage)).ConfigureAwait(false);
+                return MainThread.InvokeOnMainThreadAsync(() => navigateToSettingsPage(navigationPage, settingsPage));
+            }
+            else
+            {
+                return Task.CompletedTask;
             }
 
             static async Task navigateToSettingsPage(NavigationPage mainNavigationPage, SettingsPage settingsPage)

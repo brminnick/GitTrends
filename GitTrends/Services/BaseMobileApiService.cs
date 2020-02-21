@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Autofac;
 using GitTrends.Shared;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -43,19 +44,13 @@ namespace GitTrends
             {
                 _networkIndicatorCount++;
 
-                if (Xamarin.Essentials.MainThread.IsMainThread)
-                    setIsBusy(true);
-                else
-                    await Device.InvokeOnMainThreadAsync(() => setIsBusy(true));
+                await MainThread.InvokeOnMainThreadAsync(() => setIsBusy(true)).ConfigureAwait(false);
             }
             else if (--_networkIndicatorCount <= 0)
             {
                 _networkIndicatorCount = 0;
 
-                if (Xamarin.Essentials.MainThread.IsMainThread)
-                    setIsBusy(false);
-                else
-                    await Device.InvokeOnMainThreadAsync(() => setIsBusy(false));
+                await MainThread.InvokeOnMainThreadAsync(() => setIsBusy(false)).ConfigureAwait(false);
             }
 
             static void setIsBusy(bool isBusy)
