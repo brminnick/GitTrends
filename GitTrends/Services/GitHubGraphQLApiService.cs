@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using Refit;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -57,9 +59,9 @@ namespace GitTrends
             return data.GitHubUser.RepositoryConnection;
         }
 
-        async Task<T> ExecuteGraphQLRequest<T>(Func<Task<GraphQLResponse<T>>> action, int numRetries = 2)
+        async Task<T> ExecuteGraphQLRequest<T>(Func<Task<GraphQLResponse<T>>> action, int numRetries = 2, [CallerMemberName] string callerName = "")
         {
-            var response = await AttemptAndRetry_Mobile(action, numRetries).ConfigureAwait(false);
+            var response = await AttemptAndRetry_Mobile(action, numRetries, callerName: callerName).ConfigureAwait(false);
 
             if (response.Errors != null)
                 throw new AggregateException(response.Errors.Select(x => new Exception(x.Message)));

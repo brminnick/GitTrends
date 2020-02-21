@@ -26,8 +26,6 @@
 	<string>GitTrends</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.minnick.GitTrends</string>
-	<key>CFBundleVersion</key>
-	<string>1.0</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>CFBundleName</key>
@@ -52,5 +50,9 @@
 		<string></string>
 		<string>FontAwesomeBrands.ttf</string>
 	</array>
+	<key>CFBundleShortVersionString</key>
+	<string>0.9.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
 </dict>
 </plist>

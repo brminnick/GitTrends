@@ -62,7 +62,7 @@ namespace GitTrends
                 },
                 ColumnDefinitions =
                 {
-                    new ColumnDefinition { Width = new GridLength(1,GridUnitType.Star) }
+                    new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
                 }
             };
 

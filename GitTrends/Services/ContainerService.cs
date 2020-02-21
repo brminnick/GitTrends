@@ -15,31 +15,32 @@ namespace GitTrends
             var builder = new ContainerBuilder();
 
             //Register Services
-            builder.RegisterType<RepositoryDatabase>().AsSelf().SingleInstance();
+            builder.RegisterType<AnalyticsService>().AsSelf().SingleInstance();
+            builder.RegisterType<AzureFunctionsApiService>().AsSelf().SingleInstance();
+            builder.RegisterType<DeepLinkingService>().AsSelf().SingleInstance();
+            builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubAuthenticationService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubGraphQLApiService>().AsSelf().SingleInstance();
-            builder.RegisterType<AzureFunctionsApiService>().AsSelf().SingleInstance();
+            builder.RegisterType<RepositoryDatabase>().AsSelf().SingleInstance();
             builder.RegisterType<SyncFusionService>().AsSelf().SingleInstance();
-            builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
-            builder.RegisterType<AnalyticsService>().AsSelf().SingleInstance();
 
 #if DEBUG
             builder.RegisterType<UITestBackdoorService>().AsSelf().SingleInstance();
 #endif
 
             //Register ViewModels
+            builder.RegisterType<ReferringSitesViewModel>().AsSelf();
             builder.RegisterType<RepositoryViewModel>().AsSelf();
             builder.RegisterType<SettingsViewModel>().AsSelf();
             builder.RegisterType<TrendsViewModel>().AsSelf();
-            builder.RegisterType<ReferringSitesViewModel>().AsSelf();
 
             //Register Pages
-            builder.RegisterType<SplashScreenPage>().AsSelf();
+            builder.RegisterType<ReferringSitesPage>().AsSelf().WithParameter(new TypedParameter(typeof(Repository), nameof(Repository).ToLower()));
             builder.RegisterType<RepositoryPage>().AsSelf();
             builder.RegisterType<SettingsPage>().AsSelf();
+            builder.RegisterType<SplashScreenPage>().AsSelf();
             builder.RegisterType<TrendsPage>().AsSelf().WithParameter(new TypedParameter(typeof(Repository), nameof(Repository).ToLower()));
-            builder.RegisterType<ReferringSitesPage>().AsSelf().WithParameter(new TypedParameter(typeof(Repository), nameof(Repository).ToLower()));
 
             return builder.Build();
         }
