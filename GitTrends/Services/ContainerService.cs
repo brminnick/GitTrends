@@ -33,6 +33,7 @@ namespace GitTrends
             builder.RegisterType<ReferringSitesViewModel>().AsSelf();
             builder.RegisterType<RepositoryViewModel>().AsSelf();
             builder.RegisterType<SettingsViewModel>().AsSelf();
+            builder.RegisterType<SplashScreenViewModel>().AsSelf();
             builder.RegisterType<TrendsViewModel>().AsSelf();
 
             //Register Pages

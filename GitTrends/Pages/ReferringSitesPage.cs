@@ -97,18 +97,15 @@ namespace GitTrends
                                             Constraint.Constant(0));
 
                 relativeLayout.Children.Add(closeButton,
-                                            Constraint.RelativeToParent(parent => parent.Width - getWidth(parent, closeButton) - 10),
+                                            Constraint.RelativeToParent(parent => parent.Width - GetWidth(parent, closeButton) - 10),
                                             Constraint.Constant(0),
-                                            Constraint.RelativeToParent(parent => getWidth(parent, closeButton)));
+                                            Constraint.RelativeToParent(parent => GetWidth(parent, closeButton)));
 
                 relativeLayout.Children.Add(activityIndicator,
-                                            Constraint.RelativeToParent(parent => parent.Width / 2 - getWidth(parent, activityIndicator) / 2),
-                                            Constraint.RelativeToParent(parent => parent.Height / 2 - getHeight(parent, activityIndicator) / 2));
+                                            Constraint.RelativeToParent(parent => parent.Width / 2 - GetWidth(parent, activityIndicator) / 2),
+                                            Constraint.RelativeToParent(parent => parent.Height / 2 - GetHeight(parent, activityIndicator) / 2));
 
                 Content = relativeLayout;
-
-                static double getWidth(RelativeLayout parent, View view) => view.Measure(parent.Width, parent.Height).Request.Width;
-                static double getHeight(RelativeLayout parent, View view) => view.Measure(parent.Width, parent.Height).Request.Height;
             }
             else
             {

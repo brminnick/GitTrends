@@ -9,8 +9,12 @@ namespace GitTrends
 {
     public abstract class BaseContentPage<T> : ContentPage where T : BaseViewModel
     {
-        protected BaseContentPage(in string title, in T viewModel, AnalyticsService analyticsService)
+        readonly bool _shouldUseSafeArea;
+
+        protected BaseContentPage(in string title, in T viewModel, AnalyticsService analyticsService, bool shouldUseSafeArea = true)
         {
+            _shouldUseSafeArea = shouldUseSafeArea;
+
             SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             BindingContext = ViewModel = viewModel;
             Title = title;
@@ -25,6 +29,9 @@ namespace GitTrends
 
         protected T ViewModel { get; }
         protected AnalyticsService AnalyticsService { get; }
+
+        protected static double GetWidth(in RelativeLayout parent, in View view) => view.Measure(parent.Width, parent.Height).Request.Width;
+        protected static double GetHeight(in RelativeLayout parent, in View view) => view.Measure(parent.Width, parent.Height).Request.Height;
 
         protected override void OnAppearing()
         {
@@ -65,7 +72,7 @@ namespace GitTrends
         void SetSafeArea()
         {
             var isLandscape = DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Landscape;
-            On<iOS>().SetUseSafeArea(isLandscape);
+            On<iOS>().SetUseSafeArea(isLandscape && _shouldUseSafeArea);
         }
     }
 }

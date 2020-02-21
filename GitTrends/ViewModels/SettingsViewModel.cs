@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
-using Syncfusion.XForms.Buttons;
 using Xamarin.Essentials;
 
 namespace GitTrends
