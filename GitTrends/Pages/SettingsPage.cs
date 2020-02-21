@@ -35,9 +35,9 @@ namespace GitTrends
 
         protected override void HandleDisplayInfoChanged(object sender, DisplayInfoChangedEventArgs e)
         {
-            Content = CreateLayout();
-
             base.HandleDisplayInfoChanged(sender, e);
+
+            Content = CreateLayout();
         }
 
         RelativeLayout CreateLayout()
@@ -57,6 +57,7 @@ namespace GitTrends
 
             var createdByLabel = new Label
             {
+                Margin = new Thickness(0, 5),
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 HorizontalTextAlignment = TextAlignment.Center,
@@ -67,18 +68,30 @@ namespace GitTrends
             createdByLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
             createdByLabel.GestureRecognizers.Add(new TapGestureRecognizer { Command = new AsyncCommand(CreatedByLabelTapped) });
 
-            var relativeLayout = new RelativeLayout { Margin = new Thickness(20) };
+            var relativeLayout = new RelativeLayout
+            {
+                Margin = DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Portrait
+                            ? new Thickness(20, 20, 20, 30)
+                            : new Thickness(20, 20, 20, 0)
+            };
+
+            relativeLayout.Children.Add(createdByLabel,
+                xConstraint: Constraint.RelativeToParent(parent => parent.Width / 2 - GetWidth(parent, createdByLabel) / 2),
+                yConstraint: Constraint.RelativeToParent(parent => parent.Height - GetHeight(parent, createdByLabel) - 10));
 
             relativeLayout.Children.Add(gitHubSettingsView,
-                //Portrait: Center GitHubSettingsView; Landscape: Left-justify  GitHubSettingsView
-                xConstraint: DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Portrait
-                                ? null : Constraint.Constant(0),
+                //Keep at left of the screen
+                xConstraint: Constraint.Constant(0),
                 //Keep at top of the screen
                 yConstraint: Constraint.Constant(0),
                 //Portrait: Full width; Landscape: Half of the screen
                 widthConstraint: DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Portrait
                                     ? Constraint.RelativeToParent(parent => parent.Width)
-                                    : Constraint.RelativeToParent(parent => parent.Width / 2));
+                                    : Constraint.RelativeToParent(parent => parent.Width / 2),
+                //Portrait: Half height; Landscape: Full height
+                heightConstraint: DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Portrait
+                                    ? Constraint.RelativeToParent(parent => parent.Height / 2)
+                                    : Constraint.RelativeToParent(parent => parent.Height));
 
             relativeLayout.Children.Add(trendsSettingsView,
                 //Portrait: Place under GitHubSettingsView; Landscape: Place to the right of GitHubSettingsView
@@ -87,7 +100,7 @@ namespace GitTrends
                                 : Constraint.RelativeToParent(parent => parent.Width / 2),
                 //Portrait: Place under GitHubSettingsView; Landscape: Place on the top
                 yConstraint: DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Portrait
-                                ? Constraint.RelativeToView(gitHubSettingsView, (parent, view) => view.Y + GetHeight(parent, gitHubSettingsView) + 10)
+                                ? Constraint.RelativeToView(gitHubSettingsView, (parent, view) => view.Y + view.Height + 10)
                                 : Constraint.Constant(0),
                 //Portrait: Full width; Landscape: Half of the screen
                 widthConstraint: DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Portrait
@@ -96,14 +109,7 @@ namespace GitTrends
 
             relativeLayout.Children.Add(versionNumberLabel,
                 xConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.X),
-                yConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Y + GetHeight(parent, trendsSettingsView) + 10));
-
-            relativeLayout.Children.Add(createdByLabel,
-                //Portrait: Center the Label on the screen; Landscape: Center the Label on the right-half of the screen
-                xConstraint: DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Portrait
-                                ? Constraint.RelativeToParent(parent => parent.Width / 2 - GetWidth(parent, createdByLabel) / 2)
-                                : Constraint.RelativeToParent(parent => parent.Width * 3 / 4 - GetWidth(parent, createdByLabel) / 2),
-                yConstraint: Constraint.RelativeToParent(parent => parent.Height - GetHeight(parent, createdByLabel) - 20));
+                yConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Y + view.Height + 10));
 
             return relativeLayout;
         }

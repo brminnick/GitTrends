@@ -15,6 +15,7 @@ namespace GitTrends
                 WidthRequest = 200,
                 HorizontalOptions = LayoutOptions.CenterAndExpand,
                 VerticalOptions = LayoutOptions.CenterAndExpand,
+                Aspect = Aspect.AspectFill
             };
             gitHubAvatarImage.SetBinding(CircleImage.SourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource));
 

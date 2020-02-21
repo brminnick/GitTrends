@@ -29,7 +29,7 @@ namespace GitTrends
                 Text = "Default Charts",
                 FontAttributes = FontAttributes.Bold,
                 FontSize = 18,
-                VerticalTextAlignment = TextAlignment.Center
+                VerticalTextAlignment = TextAlignment.Start
             };
             trendsChartSettingsLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TrendsChartSettingsLabelTextColor));
 
@@ -54,11 +54,11 @@ namespace GitTrends
 
             var grid = new Grid
             {
-                RowSpacing = 0,
+                RowSpacing = 2,
                 RowDefinitions =
                 {
                     new RowDefinition { Height = new GridLength(1, GridUnitType.Star) },
-                    new RowDefinition { Height = new GridLength(1, GridUnitType.Star) }
+                    new RowDefinition { Height = new GridLength(2, GridUnitType.Star) }
                 },
                 ColumnDefinitions =
                 {
