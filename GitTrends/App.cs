@@ -11,6 +11,7 @@ namespace GitTrends
     public class App : Xamarin.Forms.Application
     {
         readonly WeakEventManager<Theme> _themeChangedEventManager = new WeakEventManager<Theme>();
+        readonly AnalyticsService _analyticsService;
 
         public App()
         {
@@ -20,9 +21,11 @@ namespace GitTrends
             });
 
             using var scope = ContainerService.Container.BeginLifetimeScope();
+            _analyticsService = scope.Resolve<AnalyticsService>();
+
             MainPage = scope.Resolve<SplashScreenPage>();
 
-            On<iOS>().SetHandleControlUpdatesOnMainThread(true);
+            On<iOS>().SetHandleControlUpdatesOnMainThread(true);            
         }
 
         public event EventHandler<Theme> ThemeChanged
@@ -35,6 +38,8 @@ namespace GitTrends
         {   
             base.OnStart();
 
+            _analyticsService.Track("App Started");
+
             SetTheme();
         }
 
@@ -42,7 +47,16 @@ namespace GitTrends
         {
             base.OnResume();
 
+            _analyticsService.Track("App Resumed");
+
             SetTheme();
+        }
+
+        protected override void OnSleep()
+        {
+            base.OnSleep();
+
+            _analyticsService.Track("App Backgrounded");
         }
 
         void SetTheme()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
@@ -15,7 +16,9 @@ namespace GitTrends
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
-        public RepositoryPage(RepositoryViewModel repositoryViewModel, GitHubAuthenticationService gitHubAuthenticationService) : base(PageTitles.RepositoryPage, repositoryViewModel)
+        public RepositoryPage(RepositoryViewModel repositoryViewModel,
+                                GitHubAuthenticationService gitHubAuthenticationService,
+                                AnalyticsService analyticsService) : base(PageTitles.RepositoryPage, repositoryViewModel, analyticsService)
         {
             _gitHubAuthenticationService = gitHubAuthenticationService;
 
@@ -93,26 +96,39 @@ namespace GitTrends
             collectionView.SelectedItem = null;
 
             if (e?.CurrentSelection.FirstOrDefault() is Repository repository)
+            {
+                AnalyticsService.Track("Repository Tapped", new Dictionary<string, string>
+                {
+                    { nameof(Repository.OwnerLogin), repository.OwnerLogin },
+                    { nameof(Repository.Name), repository.Name }
+                });
+
                 await NavigateToTrendsPage(repository);
+            }
         }
 
-        async Task NavigateToSettingsPage()
+        Task NavigateToSettingsPage()
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
 
             var profilePage = scope.Resolve<SettingsPage>();
-            await Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(profilePage));
+            return Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(profilePage));
         }
 
-        async Task NavigateToTrendsPage(Repository repository)
+        Task NavigateToTrendsPage(Repository repository)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
 
             var trendsPage = scope.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
-            await Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
+            return Device.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
         }
 
-        async void HandleSettingsToolbarItem(object sender, EventArgs e) => await NavigateToSettingsPage();
+        async void HandleSettingsToolbarItem(object sender, EventArgs e)
+        {
+            AnalyticsService.Track("Settings Button Tapped");
+
+            await NavigateToSettingsPage();
+        }
 
         void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)
         {

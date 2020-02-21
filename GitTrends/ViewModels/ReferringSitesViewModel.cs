@@ -16,7 +16,7 @@ namespace GitTrends
         bool _isRefreshing;
         bool _isActivityIndicatorVisible;
 
-        public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service)
+        public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service, AnalyticsService analyticsService) : base(analyticsService)
         {
             _gitHubApiV3Service = gitHubApiV3Service;
             RefreshCommand = new AsyncCommand<(string Owner, string Repository)>(repo => ExecuteRefreshCommand(repo.Owner, repo.Repository));

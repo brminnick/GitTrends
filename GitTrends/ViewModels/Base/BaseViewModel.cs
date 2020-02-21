@@ -9,11 +9,15 @@ namespace GitTrends
     {
         readonly WeakEventManager _propertyChangedEventManager = new WeakEventManager();
 
+        public BaseViewModel(AnalyticsService analyticsService) => AnalyticsService = analyticsService;
+
         event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
         {
             add => _propertyChangedEventManager.AddEventHandler(value);
             remove => _propertyChangedEventManager.RemoveEventHandler(value);
         }
+
+        protected AnalyticsService AnalyticsService { get; }
 
         protected void SetProperty<T>(ref T backingStore, in T value, in System.Action? onChanged = null, [CallerMemberName] in string propertyname = "")
         {

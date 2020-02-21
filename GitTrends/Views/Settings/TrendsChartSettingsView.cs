@@ -54,6 +54,7 @@ namespace GitTrends
 
             var grid = new Grid
             {
+                RowSpacing = 0,
                 RowDefinitions =
                 {
                     new RowDefinition { Height = new GridLength(1, GridUnitType.Star) },

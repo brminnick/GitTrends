@@ -17,16 +17,16 @@ namespace GitTrends
         List<DailyViewsModel> _dailyViewsList = new List<DailyViewsModel>();
         List<DailyClonesModel> _dailyClonesList = new List<DailyClonesModel>();
 
-        public TrendsViewModel(GitHubApiV3Service gitHubApiV3Service)
+        public TrendsViewModel(GitHubApiV3Service gitHubApiV3Service, AnalyticsService analyticsService) : base(analyticsService)
         {
             _gitHubApiV3Service = gitHubApiV3Service;
             FetchDataCommand = new AsyncCommand<(string Owner, string Repository)>(repo => ExecuteFetchDataCommand(repo.Owner, repo.Repository));
         }
 
         public ICommand FetchDataCommand { get; }
+        public double DailyViewsClonesMinValue { get; } = 0;
 
         public bool IsChartVisible => !IsFetchingData;
-        public double DailyViewsClonesMinValue => 0;
         public DateTime MinDateValue => GetMinimumLocalDateTime();
         public DateTime MaxDateValue => GetMaximumLocalDateTime();
 

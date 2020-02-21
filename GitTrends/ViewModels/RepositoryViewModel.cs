@@ -28,7 +28,8 @@ namespace GitTrends
 
         public RepositoryViewModel(RepositoryDatabase repositoryDatabase,
                                     GitHubAuthenticationService gitHubAuthenticationService,
-                                    GitHubGraphQLApiService gitHubGraphQLApiService)
+                                    GitHubGraphQLApiService gitHubGraphQLApiService,
+                                    AnalyticsService analyticsService) : base(analyticsService)
         {
             _repositoryDatabase = repositoryDatabase;
             _gitHubAuthenticationService = gitHubAuthenticationService;
@@ -86,6 +87,7 @@ namespace GitTrends
             }
             catch (Exception e)
             {
+                AnalyticsService.Report(e);
                 OnPullToRefreshFailed("Error", e.Message);
             }
             finally

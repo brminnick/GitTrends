@@ -9,11 +9,13 @@ namespace GitTrends
 {
     public abstract class BaseContentPage<T> : ContentPage where T : BaseViewModel
     {
-        protected BaseContentPage(in string title, in T viewModel)
+        protected BaseContentPage(in string title, in T viewModel, AnalyticsService analyticsService)
         {
             SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             BindingContext = ViewModel = viewModel;
             Title = title;
+
+            AnalyticsService = analyticsService;
 
             On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
             SetSafeArea();
@@ -22,6 +24,21 @@ namespace GitTrends
         }
 
         protected T ViewModel { get; }
+        protected AnalyticsService AnalyticsService { get; }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            AnalyticsService.Track($"{GetType().Name} Appeared");
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            AnalyticsService.Track($"{GetType().Name} Disappeared");
+        }
 
         protected Task OpenBrowser(Uri uri) => OpenBrowser(uri.ToString());
 

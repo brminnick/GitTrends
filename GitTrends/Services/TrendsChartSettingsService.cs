@@ -5,6 +5,16 @@ namespace GitTrends
 {
     public class TrendsChartSettingsService
     {
+        readonly AnalyticsService _analyticsService;
+
+        public TrendsChartSettingsService(AnalyticsService analyticsService) => _analyticsService = analyticsService;
+
+        public TrendsChartOptions CurrentTrendsChartOption
+        {
+            get => GetCurrentTrendsChartOption();
+            set => SetCurrentTrendsChartOption(value);
+        }
+
         public bool ShouldShowClonesByDefault
         {
             get => Preferences.Get(nameof(ShouldShowClonesByDefault), true);
@@ -27,12 +37,6 @@ namespace GitTrends
         {
             get => Preferences.Get(nameof(ShouldShowUniqueViewsByDefault), true);
             set => Preferences.Set(nameof(ShouldShowUniqueViewsByDefault), value);
-        }
-
-        public TrendsChartOptions CurrentTrendsChartOption
-        {
-            get => GetCurrentTrendsChartOption();
-            set => SetCurrentTrendsChartOption(value);
         }
 
         TrendsChartOptions GetCurrentTrendsChartOption()
@@ -64,6 +68,8 @@ namespace GitTrends
 
         void SetCurrentTrendsChartOption(in TrendsChartOptions currentTrendsChartOption)
         {
+            _analyticsService.Track($"{nameof(TrendsChartOptions)} changed", nameof(TrendsChartOptions), currentTrendsChartOption.ToString());
+
             switch (currentTrendsChartOption)
             {
                 case TrendsChartOptions.All:
@@ -88,7 +94,7 @@ namespace GitTrends
                     break;
 
                 default:
-                    throw new NotSupportedException($"{currentTrendsChartOption.ToString()} not supported");
+                    throw new NotSupportedException($"{currentTrendsChartOption} not supported");
             }
         }
     }

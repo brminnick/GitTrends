@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
+using Syncfusion.XForms.Buttons;
 using Xamarin.Essentials;
 
 namespace GitTrends
@@ -18,7 +19,9 @@ namespace GitTrends
         string _gitHubButtonText = string.Empty;
         bool _isAuthenticating;
 
-        public SettingsViewModel(GitHubAuthenticationService gitHubAuthenticationService, TrendsChartSettingsService trendsChartSettingsService)
+        public SettingsViewModel(GitHubAuthenticationService gitHubAuthenticationService,
+                                    TrendsChartSettingsService trendsChartSettingsService,
+                                    AnalyticsService analyticsService) : base(analyticsService)
         {
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _trendsChartSettingsService = trendsChartSettingsService;
@@ -125,6 +128,8 @@ namespace GitTrends
 
         async Task ExecuteLoginButtonCommand()
         {
+            AnalyticsService.Track("GitHub Button Tapped", nameof(GitHubAuthenticationService.IsAuthenticated), _gitHubAuthenticationService.IsAuthenticated.ToString());
+
             if (_gitHubAuthenticationService.IsAuthenticated)
             {
                 await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
@@ -140,12 +145,13 @@ namespace GitTrends
                     var loginUrl = await _gitHubAuthenticationService.GetGitHubLoginUrl().ConfigureAwait(false);
                     OnGitHubLoginUrlRetrieved(loginUrl);
                 }
-                catch
+                catch (Exception e)
                 {
+                    AnalyticsService.Report(e);
+
                     OnGitHubLoginUrlRetrieved(null);
                     IsAuthenticating = false;
                 }
-
             }
         }
 

@@ -13,7 +13,10 @@ namespace GitTrends
         readonly Repository _repository;
         static readonly Lazy<GitHubTrendsChart> _trendsChartHolder = new Lazy<GitHubTrendsChart>(() => new GitHubTrendsChart());
 
-        public TrendsPage(TrendsViewModel trendsViewModel, TrendsChartSettingsService trendsChartSettingsService, Repository repository) : base(repository.Name, trendsViewModel)
+        public TrendsPage(TrendsViewModel trendsViewModel,
+                            TrendsChartSettingsService trendsChartSettingsService,
+                            Repository repository,
+                            AnalyticsService analyticsService) : base(repository.Name, trendsViewModel, analyticsService)
         {
             _repository = repository;
 
@@ -64,8 +67,9 @@ namespace GitTrends
 
         async void HandleReferringSitesToolbarItemClicked(object sender, EventArgs e)
         {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
+            AnalyticsService.Track("Referring Sites Button Tapped");
 
+            using var scope = ContainerService.Container.BeginLifetimeScope();
             var referringSitesPage = scope.Resolve<ReferringSitesPage>(new TypedParameter(typeof(Repository), _repository));
 
             if (Device.RuntimePlatform is Device.iOS)

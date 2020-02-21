@@ -11,7 +11,9 @@ namespace GitTrends
     {
         readonly RefreshView _refreshView;
 
-        public ReferringSitesPage(ReferringSitesViewModel referringSitesViewModel, Repository repository) : base(PageTitles.ReferringSitesPage, referringSitesViewModel)
+        public ReferringSitesPage(ReferringSitesViewModel referringSitesViewModel,
+                                    Repository repository,
+                                    AnalyticsService analyticsService) : base(PageTitles.ReferringSitesPage, referringSitesViewModel, analyticsService)
         {
             const int titleRowHeight = 50;
             const int titleTopMargin = 15;
@@ -46,7 +48,7 @@ namespace GitTrends
                     VerticalOptions = LayoutOptions.Center,
                     HeightRequest = titleRowHeight * 3 / 5,
                     Padding = new Thickness(5, 0)
-                 };
+                };
                 closeButton.Clicked += HandleCloseButtonClicked;
                 closeButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.NavigationBarTextColor));
                 closeButton.SetDynamicResource(Button.BorderColorProperty, nameof(BaseTheme.TrendsChartSettingsBorderColor));
@@ -95,7 +97,7 @@ namespace GitTrends
                                             Constraint.Constant(0));
 
                 relativeLayout.Children.Add(closeButton,
-                                            Constraint.RelativeToParent(parent => parent.Width - getWidth(parent, closeButton) - 5),
+                                            Constraint.RelativeToParent(parent => parent.Width - getWidth(parent, closeButton) - 10),
                                             Constraint.Constant(0),
                                             Constraint.RelativeToParent(parent => getWidth(parent, closeButton)));
 

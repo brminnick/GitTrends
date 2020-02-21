@@ -22,6 +22,7 @@ namespace GitTrends
             builder.RegisterType<SyncFusionService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
+            builder.RegisterType<AnalyticsService>().AsSelf().SingleInstance();
 
 #if DEBUG
             builder.RegisterType<UITestBackdoorService>().AsSelf().SingleInstance();

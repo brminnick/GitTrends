@@ -11,8 +11,10 @@ namespace GitTrends
         readonly static Lazy<string> _syncfusionLicenseKeyHolder = new Lazy<string>(() => $"{nameof(SyncFusionDTO.LicenseKey)}{_assemblyVersionNumberHolder.Value}");
 
         readonly AzureFunctionsApiService _azureFunctionsApiService;
+        readonly AnalyticsService _analyticsService;
 
-        public SyncFusionService(AzureFunctionsApiService azureFunctionsApiService) => _azureFunctionsApiService = azureFunctionsApiService;
+        public SyncFusionService(AzureFunctionsApiService azureFunctionsApiService, AnalyticsService analyticsService) =>
+           (_azureFunctionsApiService, _analyticsService) = (azureFunctionsApiService, analyticsService);
 
         public static long AssemblyVersionNumber => _assemblyVersionNumberHolder.Value;
 
@@ -32,8 +34,9 @@ namespace GitTrends
 
                     await SaveLicense(syncFusionLicense).ConfigureAwait(false);
                 }
-                catch
+                catch (Exception e)
                 {
+                    _analyticsService.Report(e);
                 }
             }
 

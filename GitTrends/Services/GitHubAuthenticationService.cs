@@ -17,16 +17,19 @@ namespace GitTrends
         readonly AzureFunctionsApiService _azureFunctionsApiService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly RepositoryDatabase _repositoryDatabase;
+        readonly AnalyticsService _analyticsService;
 
         string _sessionId = string.Empty;
 
         public GitHubAuthenticationService(AzureFunctionsApiService azureFunctionsApiService,
                                             GitHubGraphQLApiService gitHubGraphQLApiService,
-                                            RepositoryDatabase repositoryDatabase)
+                                            RepositoryDatabase repositoryDatabase,
+                                            AnalyticsService analyticsService)
         {
             _azureFunctionsApiService = azureFunctionsApiService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _repositoryDatabase = repositoryDatabase;
+            _analyticsService = analyticsService;
         }
 
         public event EventHandler AuthorizeSessionStarted
@@ -59,6 +62,29 @@ namespace GitTrends
         {
             get => Preferences.Get(nameof(AvatarUrl), string.Empty);
             set => Preferences.Set(nameof(AvatarUrl), value);
+        }
+
+        public static async Task<GitHubToken> GetGitHubToken()
+        {
+            var serializedToken = await SecureStorage.GetAsync(_oauthTokenKey).ConfigureAwait(false);
+
+            try
+            {
+                var token = JsonConvert.DeserializeObject<GitHubToken>(serializedToken);
+
+                if (token is null)
+                    return new GitHubToken(string.Empty, string.Empty, string.Empty);
+
+                return token;
+            }
+            catch (ArgumentNullException)
+            {
+                return new GitHubToken(string.Empty, string.Empty, string.Empty);
+            }
+            catch (JsonReaderException)
+            {
+                return new GitHubToken(string.Empty, string.Empty, string.Empty);
+            }
         }
 
         public async Task<string> GetGitHubLoginUrl()
@@ -100,33 +126,12 @@ namespace GitTrends
 
                 OnAuthorizeSessionCompleted(true);
             }
-            catch
+            catch (Exception e)
             {
+                _analyticsService.Report(e);
+
                 OnAuthorizeSessionCompleted(false);
                 throw;
-            }
-        }
-
-        public static async Task<GitHubToken> GetGitHubToken()
-        {
-            var serializedToken = await SecureStorage.GetAsync(_oauthTokenKey).ConfigureAwait(false);
-
-            try
-            {
-                var token = JsonConvert.DeserializeObject<GitHubToken>(serializedToken);
-
-                if (token is null)
-                    return new GitHubToken(string.Empty, string.Empty, string.Empty);
-
-                return token;
-            }
-            catch (ArgumentNullException)
-            {
-                return new GitHubToken(string.Empty, string.Empty, string.Empty);
-            }
-            catch (JsonReaderException)
-            {
-                return new GitHubToken(string.Empty, string.Empty, string.Empty);
             }
         }
 

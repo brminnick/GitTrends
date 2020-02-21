@@ -3,6 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using HtmlAgilityPack;
+using System;
+using Autofac;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace GitTrends
 {
@@ -30,8 +34,11 @@ namespace GitTrends
                 else
                     return favIconUri;
             }
-            catch
+            catch (Exception e)
             {
+                using var scope = ContainerService.Container.BeginLifetimeScope();
+                scope.Resolve<AnalyticsService>().Report(e, new Dictionary<string, string> { { nameof(siteUrl), siteUrl } });
+
                 return DefaultFavIcon;
             }
         }

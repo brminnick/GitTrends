@@ -5,7 +5,9 @@ namespace GitTrends
 {
     public class SettingsPage : BaseContentPage<SettingsViewModel>
     {
-        public SettingsPage(SettingsViewModel settingsViewModel, TrendsChartSettingsService trendsChartSettingsService) : base(PageTitles.SettingsPage, settingsViewModel)
+        public SettingsPage(SettingsViewModel settingsViewModel,
+                            TrendsChartSettingsService trendsChartSettingsService,
+                            AnalyticsService analyticsService) : base(PageTitles.SettingsPage, settingsViewModel, analyticsService)
         {
             ViewModel.GitHubLoginUrlRetrieved += HandleGitHubLoginUrlRetrieved;
 

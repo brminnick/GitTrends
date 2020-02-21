@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,14 +13,16 @@ namespace GitTrends
 {
     public class SplashScreenPage : ContentPage
     {
-        readonly IEnumerator<string> _statusMessageEnumerator;
         readonly SyncFusionService _syncFusionService;
+        readonly AnalyticsService _analyticsService;
+        readonly IEnumerator<string> _statusMessageEnumerator;
         readonly Image _gitTrendsImage;
         readonly Label _statusLabel;
 
-        public SplashScreenPage(SyncFusionService syncFusionService)
+        public SplashScreenPage(SyncFusionService syncFusionService, AnalyticsService analyticsService)
         {
             _syncFusionService = syncFusionService;
+            _analyticsService = analyticsService;
 
             IEnumerable<string> statusMessageList = new[] { "Initializing", "Connecting to servers", "Initializing", "Connecting to servers", "Initializing", "Connecting to servers", "Still working on it", "Let's try it like this", "Maybe this", "Another try", "Hmmm, it shouldn't take this long", "Are you sure the internet connection is good?" };
             _statusMessageEnumerator = statusMessageList.GetEnumerator();
@@ -120,7 +123,7 @@ namespace GitTrends
                 using var scope = ContainerService.Container.BeginLifetimeScope();
                 Application.Current.MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>());
             }
-            catch
+            catch (Exception e)
             {
                 animationCancellationToken.Cancel();
                 await ChangeLabelText(new FormattedString
@@ -138,6 +141,9 @@ namespace GitTrends
                         }
                     }
                 });
+
+                _analyticsService.Report(e);
+                _analyticsService.Track("Initialization Failed");
             }
         }
 
