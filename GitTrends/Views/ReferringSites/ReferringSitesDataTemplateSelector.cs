@@ -26,6 +26,7 @@ namespace GitTrends
                     LoadingPlaceholder = FavIconService.DefaultFavIcon,
                     ErrorPlaceholder = FavIconService.DefaultFavIcon,
                     Source = referringSiteModel.FavIcon,
+                    Aspect = Aspect.AspectFill
                 };
 
                 var urlTitleLabel = new TitleLabel("Site");
@@ -38,7 +39,7 @@ namespace GitTrends
                 var viewsTitleLabel = new TitleLabel("Referrals");
                 var viewsDescriptionLabel = new DescriptionLabel(referringSiteModel.TotalCount.ToString());
 
-                var uniqueViewsTitleLabel = new TitleLabel("Uniqe Visitors");
+                var uniqueViewsTitleLabel = new TitleLabel("Unique Visitors");
                 var uniqueViewsDescriptionLabel = new DescriptionLabel(referringSiteModel.TotalUniqueCount.ToString());
 
                 var grid = new Grid
