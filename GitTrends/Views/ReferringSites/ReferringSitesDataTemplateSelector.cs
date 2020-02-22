@@ -25,8 +25,7 @@ namespace GitTrends
                     VerticalOptions = LayoutOptions.CenterAndExpand,
                     LoadingPlaceholder = FavIconService.DefaultFavIcon,
                     ErrorPlaceholder = FavIconService.DefaultFavIcon,
-                    Source = referringSiteModel.FavIcon,
-                    Aspect = Aspect.AspectFill
+                    Source = referringSiteModel.FavIcon
                 };
 
                 var urlTitleLabel = new TitleLabel("Site");

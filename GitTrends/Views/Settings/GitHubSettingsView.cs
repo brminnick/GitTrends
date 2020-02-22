@@ -13,8 +13,8 @@ namespace GitTrends
                 AutomationId = SettingsPageAutomationIds.GitHubAvatarImage,
                 HeightRequest = 200,
                 WidthRequest = 200,
-                HorizontalOptions = LayoutOptions.CenterAndExpand,
-                VerticalOptions = LayoutOptions.CenterAndExpand,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center,
                 Aspect = Aspect.AspectFill
             };
             gitHubAvatarImage.SetBinding(CircleImage.SourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource));
