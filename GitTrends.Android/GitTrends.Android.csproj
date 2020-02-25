@@ -64,7 +64,6 @@
       <JavaMaximumHeapSize></JavaMaximumHeapSize>
       <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
       <AndroidUseAapt2>true</AndroidUseAapt2>
-      <AndroidManifest></AndroidManifest>
       <LangVersion>Default</LangVersion>
       <Nullable></Nullable>
       <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>

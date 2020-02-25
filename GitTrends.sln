@@ -25,9 +25,12 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems*{16224020-a5fb-41cb-ad1d-a411b4c7b75b}*SharedItemsImports = 13
+		GitTrends.Shared\GitTrends.Shared.projitems*{8d5220e6-5783-47c2-9010-98015ece53c0}*SharedItemsImports = 5
 		GitTrends.Shared\GitTrends.Shared.projitems*{d14f8262-1d13-493f-b78b-5c34f282ef07}*SharedItemsImports = 13
 		GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems*{e1c47721-ef16-4f21-aa2f-78951db0d715}*SharedItemsImports = 4
 		GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems*{e5785129-ab94-4359-9947-b600d33a9958}*SharedItemsImports = 4
+		GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems*{e9e411f7-7bb9-4176-8950-3a2d1c27ff33}*SharedItemsImports = 5
+		GitTrends.Shared\GitTrends.Shared.projitems*{e9e411f7-7bb9-4176-8950-3a2d1c27ff33}*SharedItemsImports = 5
 		GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems*{f8f450dd-09c2-4bdd-b46b-a81bdaec25be}*SharedItemsImports = 4
 		GitTrends.Shared\GitTrends.Shared.projitems*{f8f450dd-09c2-4bdd-b46b-a81bdaec25be}*SharedItemsImports = 4
 	EndGlobalSection
