@@ -6,9 +6,6 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Autofac;
-using GitTrends.Mobile.Shared;
-using Java.Interop;
-using Newtonsoft.Json;
 using Plugin.CurrentActivity;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -21,7 +18,7 @@ namespace GitTrends.Droid
     {
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
-            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
