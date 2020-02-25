@@ -26,7 +26,7 @@ namespace GitTrends
             var trendsChartSettingsLabel = new Label
             {
                 AutomationId = SettingsPageAutomationIds.TrendsChartSettingsLabel,
-                Text = "Default Charts",
+                Text = "Preferred Charts",
                 FontAttributes = FontAttributes.Bold,
                 FontSize = 18,
                 VerticalTextAlignment = TextAlignment.Start
