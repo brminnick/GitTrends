@@ -7,6 +7,17 @@
         <Nullable>enable</Nullable>
         <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
+      <IntermediateOutputPath>obj\AppStore</IntermediateOutputPath>
+      <DebugType></DebugType>
+      <Optimize>false</Optimize>
+      <OutputPath>bin\AppStore</OutputPath>
+      <DefineConstants></DefineConstants>
+      <NoWarn></NoWarn>
+      <LangVersion>Default</LangVersion>
+      <NoStdLib>false</NoStdLib>
+      <Nullable></Nullable>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.3" />
         <PackageReference Include="Xamarin.Essentials" Version="1.5.0-pre1" />

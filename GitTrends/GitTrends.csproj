@@ -13,6 +13,16 @@
       <DebugType></DebugType>
       <Optimize>true</Optimize>
     </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
+      <IntermediateOutputPath>obj\AppStore</IntermediateOutputPath>
+      <DebugType></DebugType>
+      <Optimize>false</Optimize>
+      <OutputPath>bin\AppStore</OutputPath>
+      <DefineConstants>AppStore</DefineConstants>
+      <NoWarn></NoWarn>
+      <NoStdLib>false</NoStdLib>
+      <Nullable></Nullable>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Xamarin.Forms" Version="4.5.0.282-pre4" />
         <PackageReference Include="Xamarin.Essentials" Version="1.5.0-pre1" />

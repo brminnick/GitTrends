@@ -63,6 +63,7 @@
         <MtouchDebug>true</MtouchDebug>
         <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
         <MtouchFastDev>true</MtouchFastDev>
+        <MtouchProfiling>true</MtouchProfiling>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
         <DebugType>none</DebugType>
@@ -76,6 +77,21 @@
         <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
         <MtouchUseLlvm>true</MtouchUseLlvm>
         <MtouchLink>SdkOnly</MtouchLink>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
+      <Optimize>true</Optimize>
+      <OutputPath>bin\AppStore</OutputPath>
+      <DefineConstants>AppStore</DefineConstants>
+      <WarningLevel>4</WarningLevel>
+      <CodesignKey>iPhone Distribution</CodesignKey>
+      <MtouchVerbosity></MtouchVerbosity>
+      <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
+      <MtouchLink>SdkOnly</MtouchLink>
+      <LangVersion>Default</LangVersion>
+      <Nullable></Nullable>
+      <CodesignProvision>Git Trends App Store</CodesignProvision>
+      <MtouchUseLlvm>true</MtouchUseLlvm>
+      <MtouchArch>ARM64</MtouchArch>
     </PropertyGroup>
     <ItemGroup>
         <Compile Include="Main.cs" />

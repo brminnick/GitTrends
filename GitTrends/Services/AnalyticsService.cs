@@ -10,12 +10,12 @@ namespace GitTrends
 {
     public class AnalyticsService
     {
-#if DEBUG
-        const string _iOSKey = "0e194e2a-3aad-41c5-a6bc-61900e185075";
-        const string _androidKey = "272973ed-d3cc-4ee0-b4f2-5b5d01ad487d";
-#else
+#if AppStore
         const string _iOSKey = "7baad29b-66fa-4c52-8533-217c11595714";
         const string _androidKey = "d55a09c1-9908-4bc6-99b8-caa4e9083530";
+#else
+        const string _iOSKey = "0e194e2a-3aad-41c5-a6bc-61900e185075";
+        const string _androidKey = "272973ed-d3cc-4ee0-b4f2-5b5d01ad487d";
 #endif
 
         public AnalyticsService() => AppCenter.Start(ApiKey, typeof(Analytics), typeof(Crashes));

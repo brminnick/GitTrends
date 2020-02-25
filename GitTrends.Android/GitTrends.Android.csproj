@@ -54,6 +54,29 @@
         <AndroidUseAapt2>true</AndroidUseAapt2>
         <EnableLLVM>true</EnableLLVM>
         <AndroidPackageFormat>aab</AndroidPackageFormat>
+        <AndroidTlsProvider>btls</AndroidTlsProvider>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
+      <DebugType></DebugType>
+      <Optimize>false</Optimize>
+      <OutputPath>bin\AppStore</OutputPath>
+      <WarningLevel>4</WarningLevel>
+      <JavaMaximumHeapSize></JavaMaximumHeapSize>
+      <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+      <AndroidUseAapt2>true</AndroidUseAapt2>
+      <AndroidManifest></AndroidManifest>
+      <LangVersion>Default</LangVersion>
+      <Nullable></Nullable>
+      <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+      <AndroidSupportedAbis>armeabi-v7a;x86;arm64-v8a;x86_64</AndroidSupportedAbis>
+      <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+      <BundleAssemblies>true</BundleAssemblies>
+      <AndroidPackageFormat>aab</AndroidPackageFormat>
+      <AotAssemblies>true</AotAssemblies>
+      <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
+      <EnableLLVM>true</EnableLLVM>
+      <AndroidTlsProvider>btls</AndroidTlsProvider>
+      <AndroidLinkTool>r8</AndroidLinkTool>
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="Mono.Android" />
