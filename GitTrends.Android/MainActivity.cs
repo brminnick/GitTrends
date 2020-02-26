@@ -25,7 +25,7 @@ namespace GitTrends.Droid
 
 #if DEBUG
         #region UI Test Back Door Methods
-        [Preserve, Export(BackdoorMethodConstants.SetGitHubUser)]
+        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.SetGitHubUser)]
         public async void SetGitHubUser(string accessToken)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
@@ -34,7 +34,7 @@ namespace GitTrends.Droid
             await backdoorService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
         }
 
-        [Preserve, Export(BackdoorMethodConstants.TriggerRepositoriesPullToRefresh)]
+        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.TriggerRepositoriesPullToRefresh)]
         public async void TriggerRepositoriesPullToRefresh()
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
@@ -43,13 +43,13 @@ namespace GitTrends.Droid
             await backdoorService.TriggerRepositoryPullToRefresh().ConfigureAwait(false);
         }
 
-        [Preserve, Export(BackdoorMethodConstants.GetVisibleRepositoryList)]
+        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.GetVisibleRepositoryList)]
         public string GetVisibleRepositoryList()
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var backdoorService = scope.Resolve<UITestBackdoorService>();
 
-            return JsonConvert.SerializeObject(backdoorService.GetVisibleRepositoryList());
+            return Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleRepositoryList());
         }
         #endregion
 #endif
