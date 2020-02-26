@@ -1,4 +1,4 @@
- <img src="https://github.com/brminnick/GitTrends/blob/master/GitTrends.iOS/Assets.xcassets/GitTrends.imageset/GitTrends.png?raw=true" height="200" />
+<p><a href="https://twitter.com/GitTrendsApp"><img src="https://github.com/brminnick/GitTrends/blob/master/GitTrends.iOS/Assets.xcassets/GitTrends.imageset/GitTrends.png?raw=true" height="200" /> </p>
  
 [![Twitter Icon](http://i.imgur.com/wWzX9uB.png)](https://twitter.com/GitTrendsApp) [@GitTrendsApp](https://twitter.com/GitTrendsApp)
 
