@@ -1,10 +1,10 @@
  <img src="https://github.com/brminnick/GitTrends/blob/master/GitTrends.iOS/Assets.xcassets/GitTrends.imageset/GitTrends.png?raw=true" height="200" />
 
-GitTrends helps you monitor the traffic to your GitHub Repos
-- ✅ Connect to GitHub
-- ✅ Monitor GitHub Repo Views
-- ✅ Monitor GitHub Repo Clones
-- ✅ Discover Referring Sites
+GitTrends helps you monitor the traffic to your GitHub Repos <br/>
+✅ Connect to GitHub <br/>
+✅ Monitor GitHub Repo Views <br/>
+✅ Monitor GitHub Repo Clones <br/>
+✅ Discover Referring Sites <br/>
 
 | GitHub Login | Repo Traffic | Referring Sites |
 | -- | -- | -- |
