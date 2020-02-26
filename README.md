@@ -1,6 +1,6 @@
  <img src="https://github.com/brminnick/GitTrends/blob/master/GitTrends.iOS/Assets.xcassets/GitTrends.imageset/GitTrends.png?raw=true" height="200" />
  
-![Twitter Icon](http://i.imgur.com/wWzX9uB.png) [@GitTrendsApp](https://twitter.com/GitTrendsApp)
+[![Twitter Icon](http://i.imgur.com/wWzX9uB.png)](https://twitter.com/GitTrendsApp) [@GitTrendsApp](https://twitter.com/GitTrendsApp)
 
 Monitor the traffic to your GitHub Repos<br/>
 ✅ Connect to GitHub <br/>
