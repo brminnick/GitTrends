@@ -1,6 +1,6 @@
  <img src="https://github.com/brminnick/GitTrends/blob/master/GitTrends.iOS/Assets.xcassets/GitTrends.imageset/GitTrends.png?raw=true" height="200" />
 
-GitTrends helps you monitor the traffic to your GitHub Repos <br/>
+Monitor the traffic to your GitHub Repos <br/>
 ✅ Connect to GitHub <br/>
 ✅ Monitor GitHub Repo Views <br/>
 ✅ Monitor GitHub Repo Clones <br/>
