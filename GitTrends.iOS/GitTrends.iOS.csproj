@@ -189,16 +189,36 @@
     <ImageAsset Include="Assets.xcassets\GitTrends.imageset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrendsBackgroundColor.colorset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark%402x.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark%403x.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light-1.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x-1.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x-1.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrendsBackgroundColor.colorset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
