@@ -57,7 +57,7 @@ namespace GitTrends
             {
                 var referringSitesList = new List<MobileReferringSiteModel>();
 
-                await foreach (var site in _gitHubApiV3Service.GetReferingSites(owner, repository).ConfigureAwait(false))
+                await foreach (var site in _gitHubApiV3Service.GetReferringSites(owner, repository).ConfigureAwait(false))
                 {
                     referringSitesList.Add(site);
                 }
