@@ -46,7 +46,7 @@ namespace GitTrends
             var demoButton = new Button
             {
                 FontSize = 8,
-                Text = "Enable Demo Mode"
+                Text = "Enter Demo Mode"
             };
             demoButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.TextColor));
             demoButton.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsDemoButtonVisible));
@@ -65,13 +65,13 @@ namespace GitTrends
 
             relativeLayout.Children.Add(gitHubAvatarImage,
                 //Center the image horizontally within the RelativeLayout
-                xConstraint: Constraint.RelativeToParent(parent => parent.Width / 2 - getImageSize(parent) / 2),
+                xConstraint: Constraint.RelativeToParent(parent => parent.Width / 2 - getImageSizeConstraint(parent) / 2),
                 //Pin the image to the top of the screen
                 yConstraint: Constraint.Constant(0),
                 //Width and Height should be the same
-                widthConstraint: Constraint.RelativeToParent(parent => getImageSize(parent)),
+                widthConstraint: Constraint.RelativeToParent(parent => getImageSizeConstraint(parent)),
                 //Width and Height should be the same
-                heightConstraint: Constraint.RelativeToParent(parent => getImageSize(parent)));
+                heightConstraint: Constraint.RelativeToParent(parent => getImageSizeConstraint(parent)));
 
             relativeLayout.Children.Add(gitHubLoginButton,
                 //Center the button horizontally within the RelativeLayout
@@ -95,9 +95,9 @@ namespace GitTrends
 
             static double getWidth(in RelativeLayout parent, in View view) => view.Measure(parent.Width, parent.Height).Request.Width;
 
-            static double getImageSize(RelativeLayout relativeLayout)
+            static double getImageSizeConstraint(RelativeLayout relativeLayout)
             {
-                var maximimumImageSize = Math.Min(relativeLayout.Width, relativeLayout.Height) / 2;
+                var maximimumImageSize = Math.Min(relativeLayout.Width, relativeLayout.Height) / 1.75;
                 return Math.Min(imageHeight, maximimumImageSize);
             }
         }

@@ -50,11 +50,11 @@ namespace GitTrends
 
         static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
 
-        protected override void HandleDisplayInfoChanged(object sender, DisplayInfoChangedEventArgs e)
+        protected override void HandlePageSizeChanged(object sender, EventArgs e)
         {
             Padding = GetPadding();
 
-            base.HandleDisplayInfoChanged(sender, e);
+            base.HandlePageSizeChanged(sender, e);
         }
 
         Thickness GetPadding()

@@ -45,6 +45,7 @@ namespace GitTrends
                 HorizontalTextAlignment = TextAlignment.Center,
                 TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2,
             };
+            _statusLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TotalClonesColor));
 
 
             var relativeLayout = new RelativeLayout();
