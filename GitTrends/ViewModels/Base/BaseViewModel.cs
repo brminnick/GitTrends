@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 
 namespace GitTrends
@@ -19,9 +18,6 @@ namespace GitTrends
         }
 
         protected AnalyticsService AnalyticsService { get; }
-
-        protected void SetProperty<T>(ref T backingStore, in T value, System.Func<Task> onChanged, [CallerMemberName] in string propertyname = "") =>
-            SetProperty(ref backingStore, value, async () => await onChanged().ConfigureAwait(false), propertyname);
 
         protected void SetProperty<T>(ref T backingStore, in T value, in System.Action? onChanged = null, [CallerMemberName] in string propertyname = "")
         {

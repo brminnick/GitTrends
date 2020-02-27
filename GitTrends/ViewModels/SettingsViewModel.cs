@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices;
@@ -113,7 +114,7 @@ namespace GitTrends
             set => SetProperty(ref _isAuthenticating, value, () =>
             {
                 OnPropertyChanged(nameof(IsDemoButtonVisible));
-                return MainThread.InvokeOnMainThreadAsync(LoginButtonCommand.RaiseCanExecuteChanged);
+                MainThread.InvokeOnMainThreadAsync(LoginButtonCommand.RaiseCanExecuteChanged).SafeFireAndForget(ex => Debug.WriteLine(ex));
             });
         }
 

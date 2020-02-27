@@ -15,7 +15,7 @@ namespace GitTrends
 
         static Grid CreateRepositoryDataTemplate()
         {
-            const int circleImageHeight = 86;
+            const int circleImageHeight = 90;
             const int emojiColumnSize = 15;
             const int countColumnSize = 30;
 
@@ -79,7 +79,7 @@ namespace GitTrends
                     new RowDefinition { Height = new GridLength(5, GridUnitType.Absolute) },
                 },
                 ColumnDefinitions = {
-                    new ColumnDefinition { Width = new GridLength(circleImageHeight + 5, GridUnitType.Absolute) },
+                    new ColumnDefinition { Width = new GridLength(circleImageHeight, GridUnitType.Absolute) },
                     new ColumnDefinition { Width = new GridLength(2, GridUnitType.Absolute) },
                     new ColumnDefinition { Width = new GridLength(emojiColumnSize, GridUnitType.Absolute) },
                     new ColumnDefinition { Width = new GridLength(countColumnSize, GridUnitType.Absolute) },

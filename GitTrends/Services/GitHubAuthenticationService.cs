@@ -14,6 +14,7 @@ namespace GitTrends
         const string _oauthTokenKey = "OAuthToken";
         readonly WeakEventManager<AuthorizeSessionCompletedEventArgs> _authorizeSessionCompletedEventManager = new WeakEventManager<AuthorizeSessionCompletedEventArgs>();
         readonly WeakEventManager _authorizeSessionStartedEventManager = new WeakEventManager();
+        readonly WeakEventManager _loggedOuteventManager = new WeakEventManager();
 
         readonly AzureFunctionsApiService _azureFunctionsApiService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
@@ -43,6 +44,12 @@ namespace GitTrends
         {
             add => _authorizeSessionCompletedEventManager.AddEventHandler(value);
             remove => _authorizeSessionCompletedEventManager.RemoveEventHandler(value);
+        }
+
+        public event EventHandler LoggedOut
+        {
+            add => _loggedOuteventManager.AddEventHandler(value);
+            remove => _loggedOuteventManager.RemoveEventHandler(value);
         }
 
         public static bool IsDemoUser => Alias is DemoDataConstants.Alias;
@@ -138,13 +145,15 @@ namespace GitTrends
             }
         }
 
-        public Task LogOut()
+        public async Task LogOut()
         {
             Alias = string.Empty;
             Name = string.Empty;
             AvatarUrl = string.Empty;
 
-            return Task.WhenAll(InvalidateToken(), _repositoryDatabase.DeleteAllData());
+            await Task.WhenAll(InvalidateToken(), _repositoryDatabase.DeleteAllData()).ConfigureAwait(false);
+
+            OnLoggedOut();
         }
 
         internal Task SaveGitHubToken(GitHubToken token)
@@ -162,9 +171,11 @@ namespace GitTrends
         Task InvalidateToken() => SecureStorage.SetAsync(_oauthTokenKey, string.Empty);
 
         void OnAuthorizeSessionCompleted(bool isSessionAuthorized) =>
-           _authorizeSessionCompletedEventManager.HandleEvent(null, new AuthorizeSessionCompletedEventArgs(isSessionAuthorized), nameof(AuthorizeSessionCompleted));
+           _authorizeSessionCompletedEventManager.HandleEvent(this, new AuthorizeSessionCompletedEventArgs(isSessionAuthorized), nameof(AuthorizeSessionCompleted));
 
         void OnAuthorizeSessionStarted() =>
-           _authorizeSessionStartedEventManager.HandleEvent(null, EventArgs.Empty, nameof(AuthorizeSessionStarted));
+           _authorizeSessionStartedEventManager.HandleEvent(this, EventArgs.Empty, nameof(AuthorizeSessionStarted));
+
+        void OnLoggedOut() => _loggedOuteventManager.HandleEvent(this, EventArgs.Empty, nameof(LoggedOut));
     }
 }

@@ -18,7 +18,9 @@ namespace GitTrends
 
         public SplashScreenPage(AnalyticsService analyticsService, SplashScreenViewModel splashScreenViewModel) : base("", splashScreenViewModel, analyticsService, false)
         {
+            //Remove BaseContentPageBackground
             RemoveDynamicResource(BackgroundColorProperty);
+            SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.GitTrendsImageBackgroundColor));
 
             ViewModel.InitializationComplete += HandleInitializationComplete;
 

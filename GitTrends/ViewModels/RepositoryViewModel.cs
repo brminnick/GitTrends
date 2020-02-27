@@ -37,6 +37,8 @@ namespace GitTrends
 
             PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(GitHubAuthenticationService.Alias));
             FilterRepositoriesCommand = new Command<string>(text => SetSearchBarText(text));
+
+            _gitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
         }
 
         public event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
@@ -136,6 +138,12 @@ namespace GitTrends
 
             if (_repositoryList.Any())
                 UpdateVisibleRepositoryList(_searchBarText);
+        }
+
+        void HandleGitHubAuthenticationServiceLoggedOut(object sender, EventArgs e)
+        {
+            _repositoryList = Enumerable.Empty<Repository>().ToList();
+            UpdateVisibleRepositoryList(string.Empty);
         }
 
         void OnPullToRefreshFailed(in string title, in string message) =>

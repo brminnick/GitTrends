@@ -97,7 +97,7 @@ namespace GitTrends
                 //Center the activityIndicator horizontally within the RelativeLayout
                 xConstraint: Constraint.RelativeToParent(parent => parent.Width / 2 - getWidth(parent, activityIndicator) / 2),
                 //Place the activityIndicator below gitHubLoginButton
-                yConstraint: Constraint.RelativeToView(gitHubLoginButton, (parent, view) => view.Y + view.Height + 2));
+                yConstraint: Constraint.RelativeToView(gitHubLoginButton, (parent, view) => view.Y + view.Height + 5));
 
             Content = relativeLayout;
 
