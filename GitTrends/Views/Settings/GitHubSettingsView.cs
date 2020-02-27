@@ -1,18 +1,21 @@
-﻿using GitTrends.Mobile.Shared;
+﻿using System;
+using GitTrends.Mobile.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class GitHubSettingsView : ContentView
+    class GitHubSettingsView : ContentView
     {
         public GitHubSettingsView()
         {
+            const int imageHeight = 200;
+
             var gitHubAvatarImage = new CircleImage
             {
                 AutomationId = SettingsPageAutomationIds.GitHubAvatarImage,
-                HeightRequest = 200,
-                WidthRequest = 200,
+                HeightRequest = imageHeight,
+                WidthRequest = imageHeight,
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
                 Aspect = Aspect.AspectFit
@@ -58,28 +61,45 @@ namespace GitTrends
             activityIndicator.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsAuthenticating));
             activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(SettingsViewModel.IsAuthenticating));
 
-            var grid = new Grid
+            var relativeLayout = new RelativeLayout();
+
+            relativeLayout.Children.Add(gitHubAvatarImage,
+                //Center the image horizontally within the RelativeLayout
+                xConstraint: Constraint.RelativeToParent(parent => parent.Width / 2 - getImageSize(parent) / 2),
+                //Pin the image to the top of the screen
+                yConstraint: Constraint.Constant(0),
+                //Width and Height should be the same
+                widthConstraint: Constraint.RelativeToParent(parent => getImageSize(parent)),
+                //Width and Height should be the same
+                heightConstraint: Constraint.RelativeToParent(parent => getImageSize(parent)));
+
+            relativeLayout.Children.Add(gitHubLoginButton,
+                //Center the button horizontally within the RelativeLayout
+                xConstraint: Constraint.RelativeToParent(parent => parent.Width / 2 - getWidth(parent, gitHubLoginButton) / 2),
+                //Place the button below gitHubAvatarImage
+                yConstraint: Constraint.RelativeToView(gitHubAvatarImage, (parent, view) => view.Y + view.Height + 5));
+
+            relativeLayout.Children.Add(demoButton,
+                //Center the button horizontally within the RelativeLayout
+                xConstraint: Constraint.RelativeToParent(parent => parent.Width / 2 - getWidth(parent, demoButton) / 2),
+                //Place the button below gitHubLoginButton
+                yConstraint: Constraint.RelativeToView(gitHubLoginButton, (parent, view) => view.Y + view.Height + 5));
+
+            relativeLayout.Children.Add(activityIndicator,
+                //Center the activityIndicator horizontally within the RelativeLayout
+                xConstraint: Constraint.RelativeToParent(parent => parent.Width / 2 - getWidth(parent, activityIndicator) / 2),
+                //Place the activityIndicator below gitHubLoginButton
+                yConstraint: Constraint.RelativeToView(gitHubLoginButton, (parent, view) => view.Y + view.Height + 5));
+
+            Content = relativeLayout;
+
+            static double getWidth(in RelativeLayout parent, in View view) => view.Measure(parent.Width, parent.Height).Request.Width;
+
+            static double getImageSize(RelativeLayout relativeLayout)
             {
-                RowDefinitions =
-                {
-                    new RowDefinition { Height = new GridLength(7, GridUnitType.Star) },
-                    new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) },
-                    new RowDefinition { Height = new GridLength(10, GridUnitType.Absolute) },
-                    new RowDefinition { Height = new GridLength(20, GridUnitType.Absolute) }
-                },
-
-                ColumnDefinitions =
-                {
-                    new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
-                }
-            };
-
-            grid.Children.Add(gitHubAvatarImage, 0, 0);
-            grid.Children.Add(gitHubLoginButton, 0, 1);
-            grid.Children.Add(demoButton, 0, 2);
-            grid.Children.Add(activityIndicator, 0, 3);
-
-            Content = grid;
+                var maximimumImageSize = Math.Min(relativeLayout.Width, relativeLayout.Height) / 2;
+                return Math.Min(imageHeight, maximimumImageSize);
+            }
         }
     }
 }
