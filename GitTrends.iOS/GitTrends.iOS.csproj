@@ -89,8 +89,6 @@
     <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
     <MtouchLink>SdkOnly</MtouchLink>
     <LangVersion>Default</LangVersion>
-    <Nullable>
-    </Nullable>
     <CodesignProvision>Git Trends App Store</CodesignProvision>
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchArch>ARM64</MtouchArch>
@@ -192,33 +190,15 @@
     <ImageAsset Include="Assets.xcassets\GitTrendsBackgroundColor.colorset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark%402x.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark%403x.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light-1.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x-1.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x-1.png">
-      <Visible>false</Visible>
-    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light-2.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x-2.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTreands_Dark.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark%402x-1.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark%403x-1.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x-2.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

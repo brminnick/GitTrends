@@ -51,8 +51,8 @@
 		<string>FontAwesomeBrands.ttf</string>
 	</array>
 	<key>CFBundleShortVersionString</key>
-	<string>0.10.2</string>
+	<string>0.10.3</string>
 	<key>CFBundleVersion</key>
-	<string>4</string>
+	<string>5</string>
 </dict>
 </plist>
