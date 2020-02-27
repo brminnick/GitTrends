@@ -9,13 +9,14 @@ namespace GitTrends
     {
         public GitHubSettingsView()
         {
-            const int imageHeight = 200;
+            const int _imageHeight = 200;
+            const int _demoButtonFontSize = 8;
 
             var gitHubAvatarImage = new CircleImage
             {
                 AutomationId = SettingsPageAutomationIds.GitHubAvatarImage,
-                HeightRequest = imageHeight,
-                WidthRequest = imageHeight,
+                HeightRequest = _imageHeight,
+                WidthRequest = _imageHeight,
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
                 Aspect = Aspect.AspectFit
@@ -45,8 +46,12 @@ namespace GitTrends
 
             var demoButton = new Button
             {
-                FontSize = 8,
-                Text = "Enter Demo Mode"
+                Padding = new Thickness(2),
+                BackgroundColor = Color.Transparent,
+                FontSize = _demoButtonFontSize,
+                Text = "Enter Demo Mode",
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center,
             };
             demoButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.TextColor));
             demoButton.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsDemoButtonVisible));
@@ -77,19 +82,22 @@ namespace GitTrends
                 //Center the button horizontally within the RelativeLayout
                 xConstraint: Constraint.RelativeToParent(parent => parent.Width / 2 - getWidth(parent, gitHubLoginButton) / 2),
                 //Place the button below gitHubAvatarImage
-                yConstraint: Constraint.RelativeToView(gitHubAvatarImage, (parent, view) => view.Y + view.Height + 5));
+                yConstraint: Constraint.RelativeToView(gitHubAvatarImage, (parent, view) => view.Y + view.Height + 5),
+                //Ensure the button scales to the height of the RelativeLayout
+                heightConstraint: Constraint.RelativeToParent(parent => getLoginButtonSizeConstraint(parent)));
 
             relativeLayout.Children.Add(demoButton,
                 //Center the button horizontally within the RelativeLayout
                 xConstraint: Constraint.RelativeToParent(parent => parent.Width / 2 - getWidth(parent, demoButton) / 2),
                 //Place the button below gitHubLoginButton
-                yConstraint: Constraint.RelativeToView(gitHubLoginButton, (parent, view) => view.Y + view.Height + 5));
+                yConstraint: Constraint.RelativeToView(gitHubLoginButton, (parent, view) => view.Y + view.Height + 2),
+                heightConstraint: Constraint.Constant(getDemoButtonSizeConstraint()));
 
             relativeLayout.Children.Add(activityIndicator,
                 //Center the activityIndicator horizontally within the RelativeLayout
                 xConstraint: Constraint.RelativeToParent(parent => parent.Width / 2 - getWidth(parent, activityIndicator) / 2),
                 //Place the activityIndicator below gitHubLoginButton
-                yConstraint: Constraint.RelativeToView(gitHubLoginButton, (parent, view) => view.Y + view.Height + 5));
+                yConstraint: Constraint.RelativeToView(gitHubLoginButton, (parent, view) => view.Y + view.Height + 2));
 
             Content = relativeLayout;
 
@@ -98,8 +106,16 @@ namespace GitTrends
             static double getImageSizeConstraint(RelativeLayout relativeLayout)
             {
                 var maximimumImageSize = Math.Min(relativeLayout.Width, relativeLayout.Height) / 1.75;
-                return Math.Min(imageHeight, maximimumImageSize);
+                return Math.Min(_imageHeight, maximimumImageSize);
             }
+
+            static double getLoginButtonSizeConstraint(RelativeLayout relativeLayout)
+            {
+                var maximimumButtonSize = relativeLayout.Height / 2.25;
+                return Math.Min(75, maximimumButtonSize);
+            }
+
+            static double getDemoButtonSizeConstraint() => _demoButtonFontSize + 10;
         }
     }
 }

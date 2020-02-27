@@ -4,6 +4,7 @@ using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace GitTrends
 {
@@ -34,7 +35,7 @@ namespace GitTrends
         {
             base.HandlePageSizeChanged(sender, e);
 
-            Content = CreateLayout(DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Portrait);
+            Content = CreateLayout(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width);
         }
 
         RelativeLayout CreateLayout(bool isPortraitOrientation)

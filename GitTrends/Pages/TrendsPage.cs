@@ -43,8 +43,6 @@ namespace GitTrends
 
             Content = absoluteLayout;
 
-            Padding = GetPadding();
-
             ViewModel.FetchDataCommand.Execute((_repository.OwnerLogin, _repository.Name));
         }
 
