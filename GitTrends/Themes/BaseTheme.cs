@@ -31,6 +31,8 @@ namespace GitTrends
             Add(nameof(TrendsChartSettingsBorderColor), TrendsChartSettingsBorderColor);
             Add(nameof(TrendsChartSettingsFontColor), TrendsChartSettingsFontColor);
             Add(nameof(TrendsChartSettingsSelectionIndicatorColor), TrendsChartSettingsSelectionIndicatorColor);
+
+            Add(nameof(GitTrendsImageBackgroundColor), GitTrendsImageBackgroundColor);
         }
 
         public abstract Color NavigationBarBackgroundColor { get; }
@@ -56,5 +58,7 @@ namespace GitTrends
         public abstract Color TrendsChartSettingsBorderColor { get; }
         public abstract Color TrendsChartSettingsFontColor { get; }
         public abstract Color TrendsChartSettingsSelectionIndicatorColor { get; }
+
+        public abstract Color GitTrendsImageBackgroundColor { get; }
     }
 }

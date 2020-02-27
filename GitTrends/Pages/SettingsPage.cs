@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
-using GitTrends.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace GitTrends
 {
@@ -22,8 +22,6 @@ namespace GitTrends
             _deepLinkingService = deepLinkingService;
 
             ViewModel.GitHubLoginUrlRetrieved += HandleGitHubLoginUrlRetrieved;
-
-            Content = CreateLayout();
         }
 
         protected override void OnDisappearing()
@@ -33,14 +31,14 @@ namespace GitTrends
             ViewModel.IsAuthenticating = false;
         }
 
-        protected override void HandleDisplayInfoChanged(object sender, DisplayInfoChangedEventArgs e)
+        protected override void HandlePageSizeChanged(object sender, EventArgs e)
         {
-            base.HandleDisplayInfoChanged(sender, e);
+            base.HandlePageSizeChanged(sender, e);
 
-            Content = CreateLayout();
+            Content = CreateLayout(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width);
         }
 
-        RelativeLayout CreateLayout()
+        RelativeLayout CreateLayout(bool isPortraitOrientation)
         {
             var gitHubSettingsView = new GitHubSettingsView();
             var trendsSettingsView = new TrendsChartSettingsView(_trendsChartSettingsService);
@@ -70,9 +68,7 @@ namespace GitTrends
 
             var relativeLayout = new RelativeLayout
             {
-                Margin = DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Portrait
-                            ? new Thickness(20, 20, 20, 30)
-                            : new Thickness(20, 20, 20, 0)
+                Margin = isPortraitOrientation ? new Thickness(20, 20, 20, 30) : new Thickness(20, 20, 20, 0)
             };
 
             relativeLayout.Children.Add(createdByLabel,
@@ -85,25 +81,25 @@ namespace GitTrends
                 //Keep at top of the screen
                 yConstraint: Constraint.Constant(0),
                 //Portrait: Full width; Landscape: Half of the screen
-                widthConstraint: DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Portrait
+                widthConstraint: isPortraitOrientation
                                     ? Constraint.RelativeToParent(parent => parent.Width)
                                     : Constraint.RelativeToParent(parent => parent.Width / 2),
                 //Portrait: Half height; Landscape: Full height
-                heightConstraint: DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Portrait
+                heightConstraint: isPortraitOrientation
                                     ? Constraint.RelativeToParent(parent => parent.Height / 2)
                                     : Constraint.RelativeToParent(parent => parent.Height));
 
             relativeLayout.Children.Add(trendsSettingsView,
                 //Portrait: Place under GitHubSettingsView; Landscape: Place to the right of GitHubSettingsView
-                xConstraint: DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Portrait
+                xConstraint: isPortraitOrientation
                                 ? Constraint.Constant(0)
                                 : Constraint.RelativeToParent(parent => parent.Width / 2),
                 //Portrait: Place under GitHubSettingsView; Landscape: Place on the top
-                yConstraint: DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Portrait
+                yConstraint: isPortraitOrientation
                                 ? Constraint.RelativeToView(gitHubSettingsView, (parent, view) => view.Y + view.Height + 10)
                                 : Constraint.Constant(0),
                 //Portrait: Full width; Landscape: Half of the screen
-                widthConstraint: DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Portrait
+                widthConstraint: isPortraitOrientation
                                     ? Constraint.RelativeToParent(parent => parent.Width)
                                     : Constraint.RelativeToParent(parent => parent.Width / 2));
 

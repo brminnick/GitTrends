@@ -189,15 +189,16 @@
     <ImageAsset Include="Assets.xcassets\GitTrends.imageset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends%402x-1.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends%403x-1.png">
-      <Visible>false</Visible>
-    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrendsBackgroundColor.colorset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark%402x.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark%403x.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light-1.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x-1.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x-1.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -236,6 +237,7 @@
     <Folder Include="CustomRenderers\" />
     <Folder Include="Assets.xcassets\DefaultProfileImage.imageset\" />
     <Folder Include="Assets.xcassets\GitTrends.imageset\" />
+    <Folder Include="Assets.xcassets\GitTrendsBackgroundColor.colorset\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\FontAwesomeBrands.ttf" />

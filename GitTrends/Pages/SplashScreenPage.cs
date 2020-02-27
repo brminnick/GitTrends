@@ -18,7 +18,9 @@ namespace GitTrends
 
         public SplashScreenPage(AnalyticsService analyticsService, SplashScreenViewModel splashScreenViewModel) : base("", splashScreenViewModel, analyticsService, false)
         {
+            //Remove BaseContentPageBackground
             RemoveDynamicResource(BackgroundColorProperty);
+            SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.GitTrendsImageBackgroundColor));
 
             ViewModel.InitializationComplete += HandleInitializationComplete;
 
@@ -33,9 +35,7 @@ namespace GitTrends
                 Opacity = 0,
                 HorizontalOptions = LayoutOptions.CenterAndExpand,
                 VerticalOptions = LayoutOptions.CenterAndExpand,
-                Aspect = Aspect.AspectFit,
-                WidthRequest = Device.RuntimePlatform is Device.iOS ? -1 : 250,
-                HeightRequest = Device.RuntimePlatform is Device.iOS ? -1 : 190
+                Aspect = Aspect.AspectFit
             };
 
             _statusLabel = new Label
@@ -45,6 +45,7 @@ namespace GitTrends
                 HorizontalTextAlignment = TextAlignment.Center,
                 TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2,
             };
+            _statusLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TotalClonesColor));
 
 
             var relativeLayout = new RelativeLayout();

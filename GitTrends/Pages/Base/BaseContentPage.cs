@@ -24,7 +24,7 @@ namespace GitTrends
             On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
             SetSafeArea();
 
-            DeviceDisplay.MainDisplayInfoChanged += HandleDisplayInfoChanged;
+            SizeChanged += HandlePageSizeChanged;
         }
 
         protected T ViewModel { get; }
@@ -63,7 +63,7 @@ namespace GitTrends
             });
         }
 
-        protected virtual void HandleDisplayInfoChanged(object sender, DisplayInfoChangedEventArgs e)
+        protected virtual void HandlePageSizeChanged(object sender, EventArgs e)
         {
             SetSafeArea();
             ForceLayout();

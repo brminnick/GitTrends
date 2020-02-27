@@ -26,5 +26,6 @@
     </style>
     <style name="LaunchTheme" parent="Theme.AppCompat">
         <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 </resources>

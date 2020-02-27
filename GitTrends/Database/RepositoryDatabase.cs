@@ -73,18 +73,14 @@ namespace GitTrends
 
             public long ForkCount { get; set; }
 
-#pragma warning disable CS8618 //Non-nullable property 'Uri' is uninitialized. Consider declaring the property as nullable. (CS8618) (GitTrends)
             [PrimaryKey]
-            public Uri Uri { get; set; }
-#pragma warning restore CS8618
+            public string Url { get; set; } = string.Empty;
 
             public int StarCount { get; set; }
 
             public string OwnerLogin { get; set; } = string.Empty;
 
-#pragma warning disable CS8613 //Nullability of reference types doesn't match implicitly implemented member
-            public Uri? OwnerAvatarUrl { get; set; }
-#pragma warning restore CS8613
+            public string OwnerAvatarUrl { get; set; } = string.Empty;
 
             public int IssuesCount { get; set; }
 
@@ -93,9 +89,9 @@ namespace GitTrends
             public static explicit operator Repository(RepositoryDatabaseModel repositoryDatabaseModel)
             {
                 return new Repository(repositoryDatabaseModel.Name, repositoryDatabaseModel.Description, repositoryDatabaseModel.ForkCount,
-                    new RepositoryOwner(repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl ?? new Uri(repositoryDatabaseModel.OwnerLogin)),
+                    new RepositoryOwner(repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl ?? repositoryDatabaseModel.OwnerLogin),
                     new IssuesConnection(repositoryDatabaseModel.IssuesCount, Enumerable.Empty<Issue>()),
-                    repositoryDatabaseModel.Uri, new StarGazers(repositoryDatabaseModel.StarCount), repositoryDatabaseModel.IsFork);
+                    repositoryDatabaseModel.Url, new StarGazers(repositoryDatabaseModel.StarCount), repositoryDatabaseModel.IsFork);
             }
 
             public static implicit operator RepositoryDatabaseModel(Repository repository)
@@ -104,7 +100,7 @@ namespace GitTrends
                 {
                     Description = repository.Description,
                     StarCount = repository.StarCount,
-                    Uri = repository.Uri,
+                    Url = repository.Url,
                     IssuesCount = repository.IssuesCount,
                     ForkCount = repository.ForkCount,
                     Name = repository.Name,

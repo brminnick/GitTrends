@@ -75,7 +75,8 @@ namespace GitTrends
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken();
 
-                if (string.IsNullOrWhiteSpace(token.AccessToken) || string.IsNullOrWhiteSpace(_gitHubAuthenticationService.Alias))
+                if (GitHubAuthenticationService.Alias != DemoDataConstants.Alias
+                    && (string.IsNullOrWhiteSpace(token.AccessToken) || string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias)))
                 {
                     var shouldNavigateToSettingsPage = await DisplayAlert(GitHubUserNotFoundConstants.Title, GitHubUserNotFoundConstants.Description, GitHubUserNotFoundConstants.Accept, GitHubUserNotFoundConstants.Decline);
 

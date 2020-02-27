@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web;
 using AsyncAwaitBestPractices;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.Essentials;
@@ -13,6 +14,7 @@ namespace GitTrends
         const string _oauthTokenKey = "OAuthToken";
         readonly WeakEventManager<AuthorizeSessionCompletedEventArgs> _authorizeSessionCompletedEventManager = new WeakEventManager<AuthorizeSessionCompletedEventArgs>();
         readonly WeakEventManager _authorizeSessionStartedEventManager = new WeakEventManager();
+        readonly WeakEventManager _loggedOuteventManager = new WeakEventManager();
 
         readonly AzureFunctionsApiService _azureFunctionsApiService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
@@ -44,21 +46,29 @@ namespace GitTrends
             remove => _authorizeSessionCompletedEventManager.RemoveEventHandler(value);
         }
 
-        public bool IsAuthenticated => !string.IsNullOrWhiteSpace(Name);
+        public event EventHandler LoggedOut
+        {
+            add => _loggedOuteventManager.AddEventHandler(value);
+            remove => _loggedOuteventManager.RemoveEventHandler(value);
+        }
 
-        public string Alias
+        public static bool IsDemoUser => Alias is DemoDataConstants.Alias;
+
+        public bool IsAuthenticated => !string.IsNullOrWhiteSpace(Alias);
+
+        public static string Alias
         {
             get => Preferences.Get(nameof(Alias), string.Empty);
             set => Preferences.Set(nameof(Alias), value);
         }
 
-        public string Name
+        public static string Name
         {
             get => Preferences.Get(nameof(Name), string.Empty);
             set => Preferences.Set(nameof(Name), value);
         }
 
-        public string AvatarUrl
+        public static string AvatarUrl
         {
             get => Preferences.Get(nameof(AvatarUrl), string.Empty);
             set => Preferences.Set(nameof(AvatarUrl), value);
@@ -135,13 +145,15 @@ namespace GitTrends
             }
         }
 
-        public Task LogOut()
+        public async Task LogOut()
         {
             Alias = string.Empty;
             Name = string.Empty;
             AvatarUrl = string.Empty;
 
-            return Task.WhenAll(InvalidateToken(), _repositoryDatabase.DeleteAllData());
+            await Task.WhenAll(InvalidateToken(), _repositoryDatabase.DeleteAllData()).ConfigureAwait(false);
+
+            OnLoggedOut();
         }
 
         internal Task SaveGitHubToken(GitHubToken token)
@@ -159,9 +171,11 @@ namespace GitTrends
         Task InvalidateToken() => SecureStorage.SetAsync(_oauthTokenKey, string.Empty);
 
         void OnAuthorizeSessionCompleted(bool isSessionAuthorized) =>
-           _authorizeSessionCompletedEventManager.HandleEvent(null, new AuthorizeSessionCompletedEventArgs(isSessionAuthorized), nameof(AuthorizeSessionCompleted));
+           _authorizeSessionCompletedEventManager.HandleEvent(this, new AuthorizeSessionCompletedEventArgs(isSessionAuthorized), nameof(AuthorizeSessionCompleted));
 
         void OnAuthorizeSessionStarted() =>
-           _authorizeSessionStartedEventManager.HandleEvent(null, EventArgs.Empty, nameof(AuthorizeSessionStarted));
+           _authorizeSessionStartedEventManager.HandleEvent(this, EventArgs.Empty, nameof(AuthorizeSessionStarted));
+
+        void OnLoggedOut() => _loggedOuteventManager.HandleEvent(this, EventArgs.Empty, nameof(LoggedOut));
     }
 }

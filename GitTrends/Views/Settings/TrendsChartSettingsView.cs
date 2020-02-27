@@ -6,7 +6,7 @@ using GitTrends.Mobile.Shared;
 
 namespace GitTrends
 {
-    public class TrendsChartSettingsView : ContentView
+    class TrendsChartSettingsView : ContentView
     {
         readonly Dictionary<TrendsChartOptions, string> _trendsChartOptions = new Dictionary<TrendsChartOptions, string>
         {

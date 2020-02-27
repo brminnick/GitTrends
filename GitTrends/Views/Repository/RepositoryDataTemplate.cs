@@ -22,6 +22,7 @@ namespace GitTrends
             var image = new CircleImage
             {
                 HeightRequest = circleImageHeight,
+                WidthRequest = circleImageHeight,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center
             };

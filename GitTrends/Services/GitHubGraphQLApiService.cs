@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Refit;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
     public class GitHubGraphQLApiService : BaseMobileApiService
     {
-        readonly Lazy<IGitHubGraphQLApi> _githubApiClientHolder = new Lazy<IGitHubGraphQLApi>(() => RestService.For<IGitHubGraphQLApi>(CreateHttpClient(GitHubConstants.GitHubGraphQLApi)));
+        readonly static Lazy<IGitHubGraphQLApi> _githubApiClientHolder = new Lazy<IGitHubGraphQLApi>(() => RestService.For<IGitHubGraphQLApi>(CreateHttpClient(GitHubConstants.GitHubGraphQLApi)));
 
-        IGitHubGraphQLApi GitHubApiClient => _githubApiClientHolder.Value;
+        static IGitHubGraphQLApi GitHubApiClient => _githubApiClientHolder.Value;
 
         public async Task<(string login, string name, Uri avatarUri)> GetCurrentUserInfo()
         {
@@ -41,14 +41,38 @@ namespace GitTrends
 
         public async IAsyncEnumerable<IEnumerable<Repository>> GetRepositories(string repositoryOwner, int numberOfRepositoriesPerRequest = 100)
         {
-            RepositoryConnection? repositoryConnection = null;
-
-            do
+            if (GitHubAuthenticationService.IsDemoUser)
             {
-                repositoryConnection = await GetRepositoryConnection(repositoryOwner, repositoryConnection?.PageInfo?.EndCursor, numberOfRepositoriesPerRequest).ConfigureAwait(false);
-                yield return repositoryConnection?.RepositoryList ?? Enumerable.Empty<Repository>();
+                //Yield off of main thread to generate the demoDataList
+                await Task.Yield();
+
+                var demoDataList = new List<Repository>();
+
+                for (int i = 0; i < DemoDataConstants.RepoCount; i++)
+                {
+                    var demoRepo = new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
+                                                new RepositoryOwner(DemoDataConstants.Alias, DemoDataConstants.AvatarUrl),
+                                                new IssuesConnection(DemoDataConstants.GetRandomNumber(), Enumerable.Empty<Issue>()),
+                                                DemoDataConstants.AvatarUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false);
+                    demoDataList.Add(demoRepo);
+                }
+
+                yield return demoDataList;
+
+                //Allow UI to update
+                await Task.Delay(1000).ConfigureAwait(false);
             }
-            while (repositoryConnection?.PageInfo?.HasNextPage is true);
+            else
+            {
+                RepositoryConnection? repositoryConnection = null;
+
+                do
+                {
+                    repositoryConnection = await GetRepositoryConnection(repositoryOwner, repositoryConnection?.PageInfo?.EndCursor, numberOfRepositoriesPerRequest).ConfigureAwait(false);
+                    yield return repositoryConnection?.RepositoryList ?? Enumerable.Empty<Repository>();
+                }
+                while (repositoryConnection?.PageInfo?.HasNextPage is true);
+            }
         }
 
         async Task<RepositoryConnection> GetRepositoryConnection(string repositoryOwner, string? endCursor, int numberOfRepositoriesPerRequest = 100)
