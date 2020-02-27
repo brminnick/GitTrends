@@ -66,7 +66,7 @@ namespace GitTrends
             }
         }
 
-        public async IAsyncEnumerable<MobileReferringSiteModel> GetReferingSites(string owner, string repo)
+        public async IAsyncEnumerable<MobileReferringSiteModel> GetReferringSites(string owner, string repo)
         {
             if (GitHubAuthenticationService.IsDemoUser)
             {

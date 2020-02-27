@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
@@ -23,7 +23,7 @@ namespace GitTrends.iOS
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageSourceHandler();
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
 
-#if DEBUG
+#if !AppStore
             Xamarin.Calabash.Start();
 #endif
 
