@@ -1,11 +1,13 @@
 ﻿<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
-    <item android:drawable="@android:color/white"/>
+    <item android:drawable="@color/launcher_background"/>
+
     <item
-        android:width="250dp"
-        android:height="190dp"
+        android:width="384dp"
+        android:height="384dp"
         android:gravity="center">
+
         <bitmap
             android:src="@drawable/GitTrends"
-            android:gravity="fill"/>
+            android:gravity="fill" />
     </item>
 </layer-list>

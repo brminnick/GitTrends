@@ -35,9 +35,7 @@ namespace GitTrends
                 Opacity = 0,
                 HorizontalOptions = LayoutOptions.CenterAndExpand,
                 VerticalOptions = LayoutOptions.CenterAndExpand,
-                Aspect = Aspect.AspectFit,
-                WidthRequest = Device.RuntimePlatform is Device.iOS ? -1 : 250,
-                HeightRequest = Device.RuntimePlatform is Device.iOS ? -1 : 190
+                Aspect = Aspect.AspectFit
             };
 
             _statusLabel = new Label
