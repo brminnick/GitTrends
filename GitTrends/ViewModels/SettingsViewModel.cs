@@ -168,8 +168,8 @@ namespace GitTrends
 
         void ExecuteDemoButtonCommand()
         {
-            GitHubAliasLabelText = GitHubAuthenticationService.Name = DemoDataConstants.Name;
-            GitHubAvatarImageSource = GitHubAuthenticationService.AvatarUrl = DemoDataConstants.AvatarUrl;
+            GitHubAuthenticationService.Name = DemoDataConstants.Name;
+            GitHubAuthenticationService.AvatarUrl = DemoDataConstants.AvatarUrl;
             GitHubAuthenticationService.Alias = DemoDataConstants.Alias;
 
             SetGitHubValues();

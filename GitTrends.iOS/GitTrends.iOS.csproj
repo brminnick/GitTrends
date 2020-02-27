@@ -189,15 +189,12 @@
     <ImageAsset Include="Assets.xcassets\GitTrends.imageset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends%402x-1.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends%403x-1.png">
-      <Visible>false</Visible>
-    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\Logo-3.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\Logo%402x-3.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\Logo%403x-3.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\Logo.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\Logo%402x.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\Logo%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

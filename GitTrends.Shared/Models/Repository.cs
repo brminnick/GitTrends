@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -7,11 +6,11 @@ namespace GitTrends.Shared
 {
     public class Repository : IRepository
     {
-        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection issues, Uri url, StarGazers stargazers, bool isFork) =>
-            (Name, Description, ForkCount, OwnerLogin, OwnerAvatarUrl, IssuesCount, Uri, StarCount, IsFork) = (name, description, forkCount, owner.Login, owner.AvatarUrl, issues?.IssuesCount ?? 0, url, stargazers.TotalCount, isFork);
+        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection issues, string url, StarGazers stargazers, bool isFork) =>
+            (Name, Description, ForkCount, OwnerLogin, OwnerAvatarUrl, IssuesCount, Url, StarCount, IsFork) = (name, description, forkCount, owner.Login, owner.AvatarUrl, issues?.IssuesCount ?? 0, url, stargazers.TotalCount, isFork);
 
         public string OwnerLogin { get; }
-        public Uri OwnerAvatarUrl { get; }
+        public string OwnerAvatarUrl { get; }
         public int StarCount { get; }
         public int IssuesCount { get; }
         public string Name { get; }
@@ -20,7 +19,7 @@ namespace GitTrends.Shared
         public bool IsFork { get; }
 
         [JsonProperty("url")]
-        public Uri Uri { get; }
+        public string Url { get; }
 
         public override string ToString()
         {
@@ -39,13 +38,13 @@ namespace GitTrends.Shared
 
     public class RepositoryOwner
     {
-        public RepositoryOwner(string login, Uri avatarUrl) => (Login, AvatarUrl) = (login, avatarUrl);
+        public RepositoryOwner(string login, string avatarUrl) => (Login, AvatarUrl) = (login, avatarUrl);
 
         [JsonProperty("login")]
         public string Login { get; }
 
         [JsonProperty("avatarUrl")]
-        public Uri AvatarUrl { get; }
+        public string AvatarUrl { get; }
     }
 
     public class StarGazers

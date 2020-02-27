@@ -6,7 +6,7 @@ namespace GitTrends.Mobile.Shared
     {
         public const string Alias = "Demo";
         public const string Name = "Demo User";
-        public const string AvatarUrl = "https://avatars3.githubusercontent.com/u/61480020?s=400&v=4";
+        public const string AvatarUrl = "GitTrends";
         public const int RepoCount = 50;
         public const int ReferringSitesCount = 11;
 
