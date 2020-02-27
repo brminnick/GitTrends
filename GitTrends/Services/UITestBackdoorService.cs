@@ -22,9 +22,9 @@ namespace GitTrends
 
             var (alias, name, avatarUri) = await _gitHubGraphQLApiService.GetCurrentUserInfo().ConfigureAwait(false);
 
-            _gitHubAuthenticationService.Alias = alias;
-            _gitHubAuthenticationService.AvatarUrl = avatarUri.ToString();
-            _gitHubAuthenticationService.Name = name;
+            GitHubAuthenticationService.Alias = alias;
+            GitHubAuthenticationService.AvatarUrl = avatarUri.ToString();
+            GitHubAuthenticationService.Name = name;
         }
 
         public Task TriggerRepositoryPullToRefresh()

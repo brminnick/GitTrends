@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web;
 using AsyncAwaitBestPractices;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.Essentials;
@@ -44,21 +45,23 @@ namespace GitTrends
             remove => _authorizeSessionCompletedEventManager.RemoveEventHandler(value);
         }
 
-        public bool IsAuthenticated => !string.IsNullOrWhiteSpace(Name);
+        public static bool IsDemoUser => Alias is DemoDataConstants.Alias;
 
-        public string Alias
+        public bool IsAuthenticated => !string.IsNullOrWhiteSpace(Alias);
+
+        public static string Alias
         {
             get => Preferences.Get(nameof(Alias), string.Empty);
             set => Preferences.Set(nameof(Alias), value);
         }
 
-        public string Name
+        public static string Name
         {
             get => Preferences.Get(nameof(Name), string.Empty);
             set => Preferences.Set(nameof(Name), value);
         }
 
-        public string AvatarUrl
+        public static string AvatarUrl
         {
             get => Preferences.Get(nameof(AvatarUrl), string.Empty);
             set => Preferences.Set(nameof(AvatarUrl), value);

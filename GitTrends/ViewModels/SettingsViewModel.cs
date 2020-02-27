@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
 using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -26,6 +28,7 @@ namespace GitTrends
             _trendsChartSettingsService = trendsChartSettingsService;
 
             LoginButtonCommand = new AsyncCommand(ExecuteLoginButtonCommand, _ => !IsAuthenticating);
+            DemoButtonCommand = new Command(ExecuteDemoButtonCommand);
 
             _gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
             _gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
@@ -39,7 +42,12 @@ namespace GitTrends
             remove => _gitHubLoginUrlRetrievedEventManager.RemoveEventHandler(value);
         }
 
+        public ICommand DemoButtonCommand { get; }
         public IAsyncCommand LoginButtonCommand { get; }
+
+        public bool IsDemoButtonVisible => !IsAuthenticating
+                                            && LoginButtonText is GitHubLoginButtonConstants.ConnectWithGitHub
+                                            && GitHubAuthenticationService.Alias != DemoDataConstants.Alias;
 
         public bool ShouldShowClonesByDefaultSwitchValue
         {
@@ -84,7 +92,7 @@ namespace GitTrends
         public string LoginButtonText
         {
             get => _gitHubButtonText;
-            set => SetProperty(ref _gitHubButtonText, value);
+            set => SetProperty(ref _gitHubButtonText, value, () => OnPropertyChanged(nameof(IsDemoButtonVisible)));
         }
 
         public string GitHubAvatarImageSource
@@ -102,7 +110,11 @@ namespace GitTrends
         public bool IsAuthenticating
         {
             get => _isAuthenticating;
-            set => SetProperty(ref _isAuthenticating, value, () => MainThread.InvokeOnMainThreadAsync(LoginButtonCommand.RaiseCanExecuteChanged));
+            set => SetProperty(ref _isAuthenticating, value, () =>
+            {
+                OnPropertyChanged(nameof(IsDemoButtonVisible));
+                return MainThread.InvokeOnMainThreadAsync(LoginButtonCommand.RaiseCanExecuteChanged);
+            });
         }
 
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
@@ -116,13 +128,13 @@ namespace GitTrends
 
         void SetGitHubValues()
         {
-            GitHubAliasLabelText = _gitHubAuthenticationService.IsAuthenticated ? _gitHubAuthenticationService.Name : string.Empty;
+            GitHubAliasLabelText = _gitHubAuthenticationService.IsAuthenticated ? GitHubAuthenticationService.Name : string.Empty;
             LoginButtonText = _gitHubAuthenticationService.IsAuthenticated ? $"{GitHubLoginButtonConstants.Disconnect}" : $"{GitHubLoginButtonConstants.ConnectWithGitHub}";
 
             GitHubAvatarImageSource = "DefaultProfileImage";
 
-            if (Connectivity.NetworkAccess is NetworkAccess.Internet && !string.IsNullOrWhiteSpace(_gitHubAuthenticationService.AvatarUrl))
-                GitHubAvatarImageSource = _gitHubAuthenticationService.AvatarUrl;
+            if (Connectivity.NetworkAccess is NetworkAccess.Internet && !string.IsNullOrWhiteSpace(GitHubAuthenticationService.AvatarUrl))
+                GitHubAvatarImageSource = GitHubAuthenticationService.AvatarUrl;
         }
 
         async Task ExecuteLoginButtonCommand()
@@ -152,6 +164,15 @@ namespace GitTrends
                     IsAuthenticating = false;
                 }
             }
+        }
+
+        void ExecuteDemoButtonCommand()
+        {
+            GitHubAliasLabelText = GitHubAuthenticationService.Name = DemoDataConstants.Name;
+            GitHubAvatarImageSource = GitHubAuthenticationService.AvatarUrl = DemoDataConstants.AvatarUrl;
+            GitHubAuthenticationService.Alias = DemoDataConstants.Alias;
+
+            SetGitHubValues();
         }
 
         void OnGitHubLoginUrlRetrieved(string? loginUrl) => _gitHubLoginUrlRetrievedEventManager.HandleEvent(this, loginUrl, nameof(GitHubLoginUrlRetrieved));

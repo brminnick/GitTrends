@@ -35,7 +35,7 @@ namespace GitTrends
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
 
-            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(_gitHubAuthenticationService.Alias));
+            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(GitHubAuthenticationService.Alias));
             FilterRepositoriesCommand = new Command<string>(text => SetSearchBarText(text));
         }
 
