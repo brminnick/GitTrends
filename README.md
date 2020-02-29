@@ -1,6 +1,8 @@
-<p><a href="https://twitter.com/GitTrendsApp"><img src="https://github.com/brminnick/GitTrends/blob/master/GitTrends.iOS/Assets.xcassets/GitTrends.imageset/GitTrends.png?raw=true" height="200" /> </p>
+<p><a href="https://twitter.com/GitTrendsApp"><img src="https://user-images.githubusercontent.com/13558917/75601130-1b0d1a00-5a6d-11ea-8bdc-204c65a70d52.png" height="200" /> </p>
  
-[![Twitter Icon](http://i.imgur.com/wWzX9uB.png)](https://twitter.com/GitTrendsApp) [@GitTrendsApp](https://twitter.com/GitTrendsApp)
+<p><a href="https://play.google.com/store/apps/details?id=com.minnick.gittrends"> <img src="https://github.com/steverichey/google-play-badge-svg/blob/master/img/en_get.svg" height="50 /></p>
+ 
+[![Twitter Icon](http://i.imgur.com/wWzX9uB.png)](https://twitter.com/GitTrendsApp)[@GitTrendsApp](https://twitter.com/GitTrendsApp)
 
 Monitor the traffic to your GitHub Repos<br/>
 ✅ Connect to GitHub <br/>
