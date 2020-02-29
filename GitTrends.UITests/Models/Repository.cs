@@ -1,5 +1,4 @@
-﻿using System;
-using GitTrends.Shared;
+﻿using GitTrends.Shared;
 
 namespace GitTrends.UITests
 {
@@ -17,10 +16,8 @@ namespace GitTrends.UITests
 
         public long ForkCount { get; set; }
 
-#pragma warning disable CS8613 // Nullability of reference types in return type doesn't match implicitly implemented member.
-        public Uri? OwnerAvatarUrl { get; set; }
+        public string OwnerAvatarUrl { get; set; } = string.Empty;
 
-        public Uri? Uri { get; set; }
-#pragma warning restore CS8613 // Nullability of reference types in return type doesn't match implicitly implemented member.
+        public string Url { get; set; } = string.Empty;
     }
 }

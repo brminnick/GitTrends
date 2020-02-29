@@ -81,8 +81,8 @@ namespace GitTrends.UITests
             App.Screenshot("Accepted GitHub User Not Found Popup");
         }
 
-        public void TriggerRepositoryPullToRefresh() =>
-            App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerRepositoriesPullToRefresh);
+        public void TriggerPullToRefresh() =>
+            App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerPullToRefresh);
 
         public List<Repository> GetVisibleRepositoryList()
         {

@@ -46,6 +46,7 @@ namespace GitTrends
 
             var demoButton = new Button
             {
+                AutomationId = SettingsPageAutomationIds.DemoModeButton,
                 Padding = new Thickness(2),
                 BackgroundColor = Color.Transparent,
                 FontSize = _demoButtonFontSize,

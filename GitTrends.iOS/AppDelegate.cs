@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
 using Foundation;
-using GitTrends.Mobile.Shared;
-using Newtonsoft.Json;
 using UIKit;
 
 namespace GitTrends.iOS
@@ -52,9 +50,9 @@ namespace GitTrends.iOS
             }
         }
 
-#if DEBUG
+#if !AppStore
         #region UI Test Back Door Methods
-        [Preserve, Export(BackdoorMethodConstants.SetGitHubUser + ":")]
+        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.SetGitHubUser + ":")]
         public async void SetGitHubUser(NSString accessToken)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
@@ -63,23 +61,33 @@ namespace GitTrends.iOS
             await backdoorService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
         }
 
-        [Preserve, Export(BackdoorMethodConstants.TriggerRepositoriesPullToRefresh + ":")]
+        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.TriggerPullToRefresh + ":")]
         public async void TriggerRepositoriesPullToRefresh(NSString noValue)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var backdoorService = scope.Resolve<UITestBackdoorService>();
 
-            await backdoorService.TriggerRepositoryPullToRefresh().ConfigureAwait(false);
+            await backdoorService.TriggerPullToRefresh().ConfigureAwait(false);
         }
 
-        [Preserve, Export(BackdoorMethodConstants.GetVisibleRepositoryList + ":")]
+        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.GetVisibleRepositoryList + ":")]
         public NSString GetVisibleRepositoryList(NSString noValue)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var backdoorService = scope.Resolve<UITestBackdoorService>();
 
-            var serializedRepositoryList = JsonConvert.SerializeObject(backdoorService.GetVisibleRepositoryList());
+            var serializedRepositoryList = Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleRepositoryList());
             return new NSString(serializedRepositoryList);
+        }
+
+        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.GetVisibleReferringSitesList + ":")]
+        public NSString GetVisibleReferringSitesList(NSString noValue)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
+
+            var serializedReferringSitesList = Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleReferringSitesList());
+            return new NSString(serializedReferringSitesList);
         }
         #endregion
 #endif

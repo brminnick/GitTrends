@@ -25,7 +25,7 @@ namespace GitTrends
             builder.RegisterType<SyncFusionService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
 
-#if DEBUG
+#if !AppStore
             builder.RegisterType<UITestBackdoorService>().AsSelf().SingleInstance();
 #endif
 

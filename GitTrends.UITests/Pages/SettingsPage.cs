@@ -8,13 +8,15 @@ namespace GitTrends.UITests
     class SettingsPage : BasePage
     {
         readonly Query _gitHubAvatarImage, _gitHubAliasLabel, _gitHubLoginButton,
-            _gitHubSettingsViewActivityIndicator, _trendsChartSettingsLabel, _trendsChartSettingsControl;
+            _gitHubSettingsViewActivityIndicator, _trendsChartSettingsLabel,
+            _trendsChartSettingsControl, _demoModeButton;
 
         public SettingsPage(IApp app) : base(app, PageTitles.SettingsPage)
         {
             _gitHubAvatarImage = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubAvatarImage);
             _gitHubAliasLabel = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubAliasLabel);
             _gitHubLoginButton = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubLoginButton);
+            _demoModeButton = GenerateMarkedQuery(SettingsPageAutomationIds.DemoModeButton);
             _gitHubSettingsViewActivityIndicator = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubSettingsViewActivityIndicator);
 
             _trendsChartSettingsLabel = GenerateMarkedQuery(SettingsPageAutomationIds.TrendsChartSettingsLabel);
@@ -30,6 +32,12 @@ namespace GitTrends.UITests
         public string GitHubButtonText => App.Query(_gitHubLoginButton).First().Text ?? App.Query(_gitHubLoginButton).First().Label;
 
         public string TrendsChartLabelText => App.Query(_trendsChartSettingsLabel).First().Text;
+
+        public void TapDemoModeButton()
+        {
+            App.Tap(_demoModeButton);
+            App.Screenshot("Demo Mode Button Tapped");
+        }
 
         public void TapGitHubButton()
         {

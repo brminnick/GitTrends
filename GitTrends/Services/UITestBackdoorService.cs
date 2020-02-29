@@ -1,4 +1,5 @@
-﻿#if DEBUG
+﻿#if !AppStore
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,12 +28,19 @@ namespace GitTrends
             GitHubAuthenticationService.Name = name;
         }
 
-        public Task TriggerRepositoryPullToRefresh()
+        public Task TriggerPullToRefresh()
         {
-            var repositoryPage = (RepositoryPage)Application.Current.MainPage.Navigation.NavigationStack.First();
+            var contentPage = (ContentPage)Application.Current.MainPage.Navigation.ModalStack.FirstOrDefault()
+                                ?? (ContentPage)Application.Current.MainPage.Navigation.NavigationStack.FirstOrDefault();
 
-            var refreshView = (RefreshView)repositoryPage.Content;
-            return MainThread.InvokeOnMainThreadAsync(() => refreshView.IsRefreshing = true);
+            if (contentPage.Content is RefreshView refreshView)
+                return triggerPullToRefresh(refreshView);
+            else if (contentPage.Content is Layout<View> layout && layout.Children.OfType<RefreshView>().FirstOrDefault() is RefreshView layoutRefreshView)
+                return triggerPullToRefresh(layoutRefreshView);
+            else
+                throw new NotSupportedException($"{contentPage.GetType()} Does Not Contain a RefreshView");
+
+            static Task triggerPullToRefresh(RefreshView refreshView) => MainThread.InvokeOnMainThreadAsync(() => refreshView.IsRefreshing = true);
         }
 
         public IReadOnlyList<Repository> GetVisibleRepositoryList()
@@ -41,6 +49,14 @@ namespace GitTrends
             var repositoryViewModel = (RepositoryViewModel)repositoryPage.BindingContext;
 
             return repositoryViewModel.VisibleRepositoryList;
+        }
+
+        public IReadOnlyList<ReferringSiteModel> GetVisibleReferringSitesList()
+        {
+            var repositoryPage = (ReferringSitesPage)Application.Current.MainPage.Navigation.NavigationStack.First();
+            var repositoryViewModel = (ReferringSitesViewModel)repositoryPage.BindingContext;
+
+            return repositoryViewModel.ReferringSitesCollection;
         }
     }
 }

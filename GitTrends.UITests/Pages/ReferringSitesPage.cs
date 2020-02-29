@@ -48,5 +48,8 @@ namespace GitTrends.UITests
             App.WaitForNoElement(_activityIndicator);
             App.Screenshot("Activity Indicator Disappeared");
         }
+
+        public void TriggerrPullToRefresh() =>
+            App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerPullToRefresh);
     }
 }

@@ -2,24 +2,20 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
-using GitTrends.Shared;
 using NUnit.Framework;
 using Xamarin.UITest;
 
 namespace GitTrends.UITests
 {
-    class LoginTests : BaseTest
+    class DemoModeTests : BaseTest
     {
-        public LoginTests(Platform platform) : base(platform)
+        public DemoModeTests(Platform platform) : base(platform)
         {
-
         }
 
         public override async Task BeforeEachTest()
         {
             await base.BeforeEachTest().ConfigureAwait(false);
-
-            await LoginToGitHub().ConfigureAwait(false);
 
             RepositoryPage.WaitForPageToLoad();
 
@@ -36,7 +32,7 @@ namespace GitTrends.UITests
             SettingsPage.WaitForPageToLoad();
             SettingsPage.DismissSyncfusionLicensePopup();
 
-            SettingsPage.WaitForGitHubLoginToComplete();
+            SettingsPage.TapDemoModeButton();
             SettingsPage.TapBackButton();
 
             RepositoryPage.WaitForPageToLoad();

@@ -7,8 +7,6 @@ using Android.OS;
 using Android.Runtime;
 using Autofac;
 using Plugin.CurrentActivity;
-using Xamarin.Essentials;
-using Xamarin.Forms;
 
 namespace GitTrends.Droid
 {
@@ -18,12 +16,12 @@ namespace GitTrends.Droid
     {
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
-            Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
-#if DEBUG
+#if !AppStore
         #region UI Test Back Door Methods
         [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.SetGitHubUser)]
         public async void SetGitHubUser(string accessToken)
@@ -34,13 +32,13 @@ namespace GitTrends.Droid
             await backdoorService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
         }
 
-        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.TriggerRepositoriesPullToRefresh)]
+        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.TriggerPullToRefresh)]
         public async void TriggerRepositoriesPullToRefresh()
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var backdoorService = scope.Resolve<UITestBackdoorService>();
 
-            await backdoorService.TriggerRepositoryPullToRefresh().ConfigureAwait(false);
+            await backdoorService.TriggerPullToRefresh().ConfigureAwait(false);
         }
 
         [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.GetVisibleRepositoryList)]
@@ -50,6 +48,15 @@ namespace GitTrends.Droid
             var backdoorService = scope.Resolve<UITestBackdoorService>();
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleRepositoryList());
+        }
+
+        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.GetVisibleReferringSitesList)]
+        public string GetVisibleReferringSitesList()
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleReferringSitesList());
         }
         #endregion
 #endif
@@ -81,7 +88,7 @@ namespace GitTrends.Droid
 
             LoadApplication(app);
 
-            async void HandlePageAppearing(object sender, Page e)
+            async void HandlePageAppearing(object sender, Xamarin.Forms.Page e)
             {
                 if (e is SettingsPage)
                 {
@@ -108,21 +115,21 @@ namespace GitTrends.Droid
 
         static Task NavigateToSettingsPage()
         {
-            var navigationPage = (NavigationPage)Xamarin.Forms.Application.Current.MainPage;
+            var navigationPage = (Xamarin.Forms.NavigationPage)Xamarin.Forms.Application.Current.MainPage;
 
             if (navigationPage.CurrentPage.GetType() != typeof(SettingsPage))
             {
                 using var containerScope = ContainerService.Container.BeginLifetimeScope();
                 var settingsPage = containerScope.Resolve<SettingsPage>();
 
-                return MainThread.InvokeOnMainThreadAsync(() => navigateToSettingsPage(navigationPage, settingsPage));
+                return Xamarin.Essentials.MainThread.InvokeOnMainThreadAsync(() => navigateToSettingsPage(navigationPage, settingsPage));
             }
             else
             {
                 return Task.CompletedTask;
             }
 
-            static async Task navigateToSettingsPage(NavigationPage mainNavigationPage, SettingsPage settingsPage)
+            static async Task navigateToSettingsPage(Xamarin.Forms.NavigationPage mainNavigationPage, SettingsPage settingsPage)
             {
                 await mainNavigationPage.PopToRootAsync();
                 await mainNavigationPage.PushAsync(settingsPage);

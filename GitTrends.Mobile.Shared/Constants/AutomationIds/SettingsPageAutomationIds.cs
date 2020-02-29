@@ -6,6 +6,7 @@
         public const string GitHubAvatarImage = nameof(GitHubAvatarImage);
         public const string GitHubAliasLabel = nameof(GitHubAliasLabel);
         public const string GitHubLoginButton = nameof(GitHubLoginButton);
+        public const string DemoModeButton = nameof(DemoModeButton);
         public const string GitHubSettingsViewActivityIndicator = nameof(GitHubSettingsViewActivityIndicator);
         #endregion
 
