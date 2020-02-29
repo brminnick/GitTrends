@@ -1,10 +1,8 @@
 <p><a href="https://twitter.com/GitTrendsApp"><img src="https://user-images.githubusercontent.com/13558917/75601130-1b0d1a00-5a6d-11ea-8bdc-204c65a70d52.png" height="200" /> </p>
- 
-<p><a href="https://play.google.com/store/apps/details?id=com.minnick.gittrends"> <img src="https://github.com/steverichey/google-play-badge-svg/blob/master/img/en_get.svg" height="50" /></p>
- 
- <p> <a href="https://apps.apple.com/us/app/gittrends-github-insights/id1500300399"> <img src="https://user-images.githubusercontent.com/13558917/75613580-2baca700-5ae4-11ea-8f3c-8ad1a8ace8ef.png" height="125" /> </p>
- 
-[![Twitter Icon](http://i.imgur.com/wWzX9uB.png)](https://twitter.com/GitTrendsApp)[@GitTrendsApp](https://twitter.com/GitTrendsApp)
+
+| Download on Android | Download on iOS | Follow on ![Twitter Icon](http://i.imgur.com/wWzX9uB.png) Twitter |
+| ----------- | ------------- | ------- |
+| <p><a href="https://play.google.com/store/apps/details?id=com.minnick.gittrends"> <img src="https://github.com/steverichey/google-play-badge-svg/blob/master/img/en_get.svg" height="50" /></p> |  <p> <a href="https://apps.apple.com/us/app/gittrends-github-insights/id1500300399"> <img src="https://user-images.githubusercontent.com/13558917/75613580-2baca700-5ae4-11ea-8f3c-8ad1a8ace8ef.png" height="125" /> </p> | <p><a href="https://twitter.com/GitTrendsApp"><img src="https://user-images.githubusercontent.com/13558917/75601130-1b0d1a00-5a6d-11ea-8bdc-204c65a70d52.png" height="125" /> </p> [@GitTrendsApp](https://twitter.com/GitTrendsApp) | 
 
 Monitor the traffic to your GitHub Repos<br/>
 ✅ Connect to GitHub <br/>
