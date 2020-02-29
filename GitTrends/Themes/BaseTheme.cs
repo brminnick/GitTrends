@@ -25,6 +25,7 @@ namespace GitTrends
             Add(nameof(ChartAxisTextColor), ChartAxisTextColor);
             Add(nameof(ChartAxisLineColor), ChartAxisLineColor);
 
+            Add(nameof(ButtonTextColor), ButtonTextColor);
             Add(nameof(ButtonBackgroundColor), ButtonBackgroundColor);
 
             Add(nameof(TrendsChartSettingsLabelTextColor), TrendsChartSettingsLabelTextColor);
@@ -52,6 +53,7 @@ namespace GitTrends
         public abstract Color ChartAxisTextColor { get; }
         public abstract Color ChartAxisLineColor { get; }
 
+        public abstract Color ButtonTextColor { get; }
         public abstract Color ButtonBackgroundColor { get; }
 
         public abstract Color TrendsChartSettingsLabelTextColor { get; }

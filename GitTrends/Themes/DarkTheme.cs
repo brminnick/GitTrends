@@ -14,10 +14,10 @@ namespace GitTrends
 
         const string _gitHubColorHex = "#333333";
 
-        const string _gitTrendImageBackgroundColor = "#F0EFEF";
+        const string _offWhite = "#F0EFEF";
 
         public override Color NavigationBarBackgroundColor { get; } = Color.FromHex(_mediumBlueHex);
-        public override Color NavigationBarTextColor { get; } = Color.White;
+        public override Color NavigationBarTextColor { get; } = Color.FromHex(_offWhite);
 
         public override Color PageBackgroundColor { get; } = Color.FromHex(_lightBlueHex);
 
@@ -33,6 +33,7 @@ namespace GitTrends
         public override Color ChartAxisTextColor { get; } = Color.FromHex(_darkNavyBlueHex);
         public override Color ChartAxisLineColor { get; } = Color.FromHex(_lightNavyBlueHex);
 
+        public override Color ButtonTextColor { get; } = Color.FromHex(_offWhite);
         public override Color ButtonBackgroundColor { get; } = Color.FromHex(_darkNavyBlueHex);
 
         public override Color TrendsChartSettingsLabelTextColor { get; } = Color.FromHex(_darkNavyBlueHex);
@@ -40,6 +41,6 @@ namespace GitTrends
         public override Color TrendsChartSettingsFontColor { get; } = Color.FromHex(_darkNavyBlueHex);
         public override Color TrendsChartSettingsSelectionIndicatorColor { get; } = Color.FromHex(_darkBlueHex);
 
-        public override Color GitTrendsImageBackgroundColor { get; } = Color.FromHex(_gitTrendImageBackgroundColor);
+        public override Color GitTrendsImageBackgroundColor { get; } = Color.FromHex(_offWhite);
     }
 }

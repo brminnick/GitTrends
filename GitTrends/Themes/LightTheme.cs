@@ -31,6 +31,7 @@ namespace GitTrends
         public override Color ChartAxisTextColor { get; } = Color.FromHex(_darkNavyBlueHex);
         public override Color ChartAxisLineColor { get; } = Color.FromHex(_lightNavyBlueHex);
 
+        public override Color ButtonTextColor { get; } = Color.White;
         public override Color ButtonBackgroundColor { get; } = Color.FromHex(_darkNavyBlueHex);
 
         public override Color TrendsChartSettingsLabelTextColor { get; } = Color.FromHex(_darkNavyBlueHex);

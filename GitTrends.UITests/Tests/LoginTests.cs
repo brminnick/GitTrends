@@ -51,9 +51,8 @@ namespace GitTrends.UITests
             //Act
             await RepositoryPage.WaitForNoPullToRefresh().ConfigureAwait(false);
 
-            visibleRepositoryList = RepositoryPage.GetVisibleRepositoryList();
-
             //Assert
+            visibleRepositoryList = RepositoryPage.GetVisibleRepositoryList();
             Assert.IsTrue(visibleRepositoryList.Any());
 
         }

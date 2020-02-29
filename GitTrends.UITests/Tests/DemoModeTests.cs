@@ -33,6 +33,8 @@ namespace GitTrends.UITests
             SettingsPage.DismissSyncfusionLicensePopup();
 
             SettingsPage.TapDemoModeButton();
+            SettingsPage.WaitForGitHubLoginToComplete();
+
             SettingsPage.TapBackButton();
 
             RepositoryPage.WaitForPageToLoad();
@@ -47,11 +49,9 @@ namespace GitTrends.UITests
             //Act
             await RepositoryPage.WaitForNoPullToRefresh().ConfigureAwait(false);
 
-            visibleRepositoryList = RepositoryPage.GetVisibleRepositoryList();
-
             //Assert
+            visibleRepositoryList = RepositoryPage.GetVisibleRepositoryList();
             Assert.IsTrue(visibleRepositoryList.Any());
-
         }
 
         [Test]
