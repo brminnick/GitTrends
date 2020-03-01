@@ -3,8 +3,7 @@ using GitTrends.Droid;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
-//workaround for this issue: https://github.com/xamarin/Xamarin.Forms/issues/8626
-//also think there may be an issue on labels in general
+//workaround for this issue: https://github.com/xamarin/Xamarin.Forms/issues/8626 and https://github.com/xamarin/Xamarin.Forms/issues/8986
 
 [assembly: ExportRenderer(typeof(Label), typeof(LabelCustomRenderer))]
 namespace GitTrends.Droid
