@@ -11,17 +11,12 @@ namespace GitTrends.Droid
 {
     public class FontAwesomeIconRenderer : ButtonRenderer
     {
-        #region Constructors
         public FontAwesomeIconRenderer(Context context) : base(context)
         {
         }
-        #endregion
 
-        #region Properties
         Context CurrentContext => CrossCurrentActivity.Current.AppContext;
-        #endregion
 
-        #region Methods
         protected override void OnElementChanged(ElementChangedEventArgs<Button> e)
         {
             base.OnElementChanged(e);
@@ -29,6 +24,5 @@ namespace GitTrends.Droid
             if (e.OldElement is null && Control is Android.Widget.Button button)
                 button.Typeface = Typeface.CreateFromAsset(CurrentContext.Assets, "FontAwesomeBrands.ttf");
         }
-        #endregion
     }
 }

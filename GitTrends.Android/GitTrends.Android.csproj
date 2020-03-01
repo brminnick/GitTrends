@@ -109,6 +109,7 @@
     <Compile Include="CustomRenderers\FontAwesomeIconRenderer.cs" />
     <Compile Include="CustomRenderers\SearchPageRenderer.cs" />
     <Compile Include="Services\Environment_Android.cs" />
+    <Compile Include="CustomRenderers\LabelCustomRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

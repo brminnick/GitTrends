@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
-using GitTrends.Shared;
 using NUnit.Framework;
 using Xamarin.UITest;
 
@@ -40,6 +39,7 @@ namespace GitTrends.UITests
             SettingsPage.TapBackButton();
 
             RepositoryPage.WaitForPageToLoad();
+            await RepositoryPage.WaitForNoPullToRefresh().ConfigureAwait(false);
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace GitTrends.UITests
         }
 
         [Test]
-        public void LogOut()
+        public async Task LogOut()
         {
             //Arrange
             IReadOnlyList<Repository> visibleRepositoryList;
@@ -81,6 +81,7 @@ namespace GitTrends.UITests
 
             RepositoryPage.DeclineGitHubUserNotFoundPopup();
             RepositoryPage.TriggerPullToRefresh();
+            await RepositoryPage.WaitForNoPullToRefresh().ConfigureAwait(false);
 
             //Assert
             visibleRepositoryList = RepositoryPage.GetVisibleRepositoryList();

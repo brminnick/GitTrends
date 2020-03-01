@@ -1,0 +1,29 @@
+﻿using Android.Content;
+using GitTrends.Droid;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.Android;
+
+//workaround for this issue: https://github.com/xamarin/Xamarin.Forms/issues/8626
+//also think there may be an issue on labels in general
+
+[assembly: ExportRenderer(typeof(Label), typeof(LabelCustomRenderer))]
+namespace GitTrends.Droid
+{
+    class LabelCustomRenderer : Xamarin.Forms.Platform.Android.FastRenderers.LabelRenderer
+    {
+        public LabelCustomRenderer(Context context) : base(context)
+        {
+
+        }
+
+        protected override void OnElementChanged(ElementChangedEventArgs<Label> e)
+        {
+            base.OnElementChanged(e);
+
+            if (Control is null || e.NewElement is null)
+                return;
+
+            Control.VerticalScrollBarEnabled = false;
+        }
+    }
+}

@@ -55,7 +55,7 @@ namespace GitTrends.UITests
         }
 
         [Test]
-        public void LogOut()
+        public async Task LogOut()
         {
             //Arrange
             IReadOnlyList<Repository> visibleRepositoryList;
@@ -78,6 +78,7 @@ namespace GitTrends.UITests
 
             RepositoryPage.DeclineGitHubUserNotFoundPopup();
             RepositoryPage.TriggerPullToRefresh();
+            await RepositoryPage.WaitForNoPullToRefresh().ConfigureAwait(false);
 
             //Assert
             visibleRepositoryList = RepositoryPage.GetVisibleRepositoryList();
