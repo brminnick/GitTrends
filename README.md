@@ -57,8 +57,8 @@ Cloud Backend
 
 👤 **Brandon Minnick**
 
--   Twitter: [@jenlooper](https://twitter.com/TheCodeTraveler)
--   Github: [@jlooper](https://github.com/brminnick)
+-   Twitter: [@TheCodeTraveler](https://twitter.com/TheCodeTraveler)
+-   Github: [@brminnick](https://github.com/brminnick)
 
 ## Show your support
 
