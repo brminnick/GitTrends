@@ -18,7 +18,7 @@
 
 ## Features
 
-Monitor the traffic to your GitHub Repos<br/>
+Monitor the traffic to your GitHub Repos!<br/>
 ✅ Connect to GitHub <br/>
 ✅ Monitor GitHub Repo Views <br/>
 ✅ Monitor GitHub Repo Clones <br/>
@@ -62,7 +62,6 @@ Cloud Backend
 
 ## Show your support
 
-If you love this app... <br/>
 ⭐️ [Star the GitHub Repo](https://github.com/brminnick/GitTrends/) <br/>
 ⭐️ [Rate the iOS App](https://apps.apple.com/us/app/gittrends-github-insights/id1500300399) <br/>
 ⭐️ [Rate the Android App](https://play.google.com/store/apps/details?id=com.minnick.gittrends) <br/>
