@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
+using Polly.Fallback;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -44,7 +45,15 @@ namespace GitTrends
 
             var versionNumberLabel = new Label
             {
+#if AppStore
                 Text = $"Version: {VersionTracking.CurrentVersion}",
+#elif RELEASE
+                Text = $"Version: {VersionTracking.CurrentVersion} (Release)",
+#elif DEBUG
+                Text = $"Version: {VersionTracking.CurrentVersion} (Debug)",
+#else
+                throw new NotSupportedException()
+#endif
                 HorizontalTextAlignment = TextAlignment.Start,
                 Opacity = 0.75,
                 Margin = new Thickness(2, 5, 0, 0),
