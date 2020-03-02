@@ -8,7 +8,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    class SettingsPage : BaseContentPage<SettingsViewModel>
+    public class SettingsPage : BaseContentPage<SettingsViewModel>
     {
         readonly DeepLinkingService _deepLinkingService;
         readonly TrendsChartSettingsService _trendsChartSettingsService;
