@@ -1,4 +1,3 @@
-
 <div class="header" align="center">
   <h1 align="center">GitTrends: GitHub Insights</h1>
 </div>
@@ -58,6 +57,7 @@ Cloud Backend
 👤 **Brandon Minnick**
 
 -   Twitter: [@TheCodeTraveler](https://twitter.com/TheCodeTraveler)
+-   Blog: https://codetraveler.io
 -   Github: [@brminnick](https://github.com/brminnick)
 
 ## Show your support
