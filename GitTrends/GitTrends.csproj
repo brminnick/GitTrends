@@ -26,7 +26,6 @@
       <DefineConstants>AppStore</DefineConstants>
       <NoWarn></NoWarn>
       <NoStdLib>false</NoStdLib>
-      <Nullable></Nullable>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Xamarin.Forms" Version="4.5.0.356" />

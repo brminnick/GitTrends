@@ -34,7 +34,6 @@
       <OutputPath>bin\AppStore</OutputPath>
       <WarningLevel>4</WarningLevel>
       <LangVersion>Default</LangVersion>
-      <Nullable></Nullable>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Xamarin.UITest" Version="3.0.7-dev1" />
