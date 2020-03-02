@@ -103,6 +103,7 @@
     <Compile Include="CustomRenderers\SearchPageRenderer.cs" />
     <Compile Include="CustomRenderers\DarkBlueSwitchCustomRederer.cs" />
     <Compile Include="Services\Environment_iOS.cs" />
+    <Compile Include="Services\SKStoreReviewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />

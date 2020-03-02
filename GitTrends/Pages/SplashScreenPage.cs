@@ -8,7 +8,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class SplashScreenPage : BaseContentPage<SplashScreenViewModel>
+    class SplashScreenPage : BaseContentPage<SplashScreenViewModel>
     {
         readonly IEnumerator<string> _statusMessageEnumerator;
         readonly Image _gitTrendsImage;

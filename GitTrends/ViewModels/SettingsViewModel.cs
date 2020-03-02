@@ -10,7 +10,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class SettingsViewModel : BaseViewModel
+    class SettingsViewModel : BaseViewModel
     {
         readonly WeakEventManager<string?> _gitHubLoginUrlRetrievedEventManager = new WeakEventManager<string?>();
         readonly GitHubAuthenticationService _gitHubAuthenticationService;

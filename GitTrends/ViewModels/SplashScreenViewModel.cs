@@ -7,7 +7,7 @@ using AsyncAwaitBestPractices.MVVM;
 
 namespace GitTrends
 {
-    public class SplashScreenViewModel : BaseViewModel
+    class SplashScreenViewModel : BaseViewModel
     {
         readonly WeakEventManager<InitializationCompleteEventArgs> _initializationCompleteEventManager = new WeakEventManager<InitializationCompleteEventArgs>();
 
