@@ -88,14 +88,14 @@ namespace GitTrends.Droid
 
             LoadApplication(app);
 
-            async void HandlePageAppearing(object sender, Xamarin.Forms.Page e)
+            async void HandlePageAppearing(object sender, Xamarin.Forms.Page page)
             {
-                if (e is SettingsPage)
+                if (page is SettingsPage)
                 {
                     app.PageAppearing -= HandlePageAppearing;
                     await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
                 }
-                else
+                else if (page is RepositoryPage)
                 {
                     await NavigateToSettingsPage().ConfigureAwait(false);
                 }
@@ -113,7 +113,7 @@ namespace GitTrends.Droid
             }
         }
 
-        static Task NavigateToSettingsPage()
+        static async ValueTask NavigateToSettingsPage()
         {
             var navigationPage = (Xamarin.Forms.NavigationPage)Xamarin.Forms.Application.Current.MainPage;
 
@@ -122,11 +122,7 @@ namespace GitTrends.Droid
                 using var containerScope = ContainerService.Container.BeginLifetimeScope();
                 var settingsPage = containerScope.Resolve<SettingsPage>();
 
-                return Xamarin.Essentials.MainThread.InvokeOnMainThreadAsync(() => navigateToSettingsPage(navigationPage, settingsPage));
-            }
-            else
-            {
-                return Task.CompletedTask;
+                await Xamarin.Essentials.MainThread.InvokeOnMainThreadAsync(() => navigateToSettingsPage(navigationPage, settingsPage)).ConfigureAwait(false);
             }
 
             static async Task navigateToSettingsPage(Xamarin.Forms.NavigationPage mainNavigationPage, SettingsPage settingsPage)
@@ -147,7 +143,7 @@ namespace GitTrends.Droid
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                containerScope.Resolve<AnalyticsService>().Report(ex);
             }
         }
     }

@@ -21,8 +21,6 @@ namespace GitTrends
         readonly RepositoryDatabase _repositoryDatabase;
         readonly AnalyticsService _analyticsService;
 
-        string _sessionId = string.Empty;
-
         public GitHubAuthenticationService(AzureFunctionsApiService azureFunctionsApiService,
                                             GitHubGraphQLApiService gitHubGraphQLApiService,
                                             RepositoryDatabase repositoryDatabase,
@@ -74,6 +72,12 @@ namespace GitTrends
             set => Preferences.Set(nameof(AvatarUrl), value);
         }
 
+        string MostRecentSessionId
+        {
+            get => Preferences.Get(nameof(MostRecentSessionId), string.Empty);
+            set => Preferences.Set(nameof(MostRecentSessionId), value);
+        }
+
         public static async Task<GitHubToken> GetGitHubToken()
         {
             var serializedToken = await SecureStorage.GetAsync(_oauthTokenKey).ConfigureAwait(false);
@@ -99,11 +103,11 @@ namespace GitTrends
 
         public async Task<string> GetGitHubLoginUrl()
         {
-            _sessionId = Guid.NewGuid().ToString();
+            MostRecentSessionId = Guid.NewGuid().ToString();
 
             var clientIdDTO = await _azureFunctionsApiService.GetGitHubClientId().ConfigureAwait(false);
 
-            return $"{GitHubConstants.GitHubAuthBaseUrl}/login/oauth/authorize?client_id={clientIdDTO.ClientId}&scope=repo%20read:user&state={_sessionId}";
+            return $"{GitHubConstants.GitHubAuthBaseUrl}/login/oauth/authorize?client_id={clientIdDTO.ClientId}&scope=repo%20read:user&state={MostRecentSessionId}";
         }
 
         public async Task AuthorizeSession(Uri callbackUri)
@@ -118,10 +122,10 @@ namespace GitTrends
                 if (string.IsNullOrEmpty(code))
                     throw new Exception("Invalid Authorization Code");
 
-                if (state != _sessionId)
+                if (state != MostRecentSessionId)
                     throw new InvalidOperationException("Invalid SessionId");
 
-                _sessionId = string.Empty;
+                MostRecentSessionId = string.Empty;
 
                 var generateTokenDTO = new GenerateTokenDTO(code, state);
                 var token = await _azureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO).ConfigureAwait(false);
