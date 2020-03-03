@@ -65,7 +65,9 @@ namespace GitTrends
                 foreach (var site in referringSitesList.OrderByDescending(x => x.TotalCount))
                 {
                     ReferringSitesCollection.Add(site);
-                    await Task.Delay(500);
+
+                    //Workaround for https://github.com/xamarin/Xamarin.Forms/issues/9753
+                    await Task.Delay(500).ConfigureAwait(false);
                 }
             }
             finally
