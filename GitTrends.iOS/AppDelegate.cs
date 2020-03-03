@@ -36,7 +36,7 @@ namespace GitTrends.iOS
         {
             var callbackUri = new Uri(url.AbsoluteString);
 
-            HandleCallbackUri(callbackUri).SafeFireAndForget(onException: x => Debug.WriteLine(x));
+            HandleCallbackUri(callbackUri).SafeFireAndForget(onException);
 
             return true;
 
@@ -45,8 +45,15 @@ namespace GitTrends.iOS
                 await ViewControllerServices.CloseSFSafariViewController().ConfigureAwait(false);
 
                 using var scope = ContainerService.Container.BeginLifetimeScope();
+
                 var gitHubAuthenticationService = scope.Resolve<GitHubAuthenticationService>();
                 await gitHubAuthenticationService.AuthorizeSession(callbackUri).ConfigureAwait(false);
+            }
+
+            static void onException(Exception e)
+            {
+                using var containerScope = ContainerService.Container.BeginLifetimeScope();
+                containerScope.Resolve<AnalyticsService>().Report(e);
             }
         }
 

@@ -6,7 +6,7 @@ namespace GitTrends.Shared
 {
     public class IssuesConnection
     {
-        public IssuesConnection(int totalCount, IEnumerable<Issue> nodes) =>
+        public IssuesConnection(int totalCount, IEnumerable<Issue>? nodes) =>
             (IssuesCount, IssueList) = (totalCount, nodes?.ToList() ?? Enumerable.Empty<Issue>().ToList());
 
         [JsonProperty("nodes")]

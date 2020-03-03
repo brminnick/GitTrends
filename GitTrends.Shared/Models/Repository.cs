@@ -6,8 +6,18 @@ namespace GitTrends.Shared
 {
     public class Repository : IRepository
     {
-        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection issues, string url, StarGazers stargazers, bool isFork) =>
-            (Name, Description, ForkCount, OwnerLogin, OwnerAvatarUrl, IssuesCount, Url, StarCount, IsFork) = (name, description, forkCount, owner.Login, owner.AvatarUrl, issues?.IssuesCount ?? 0, url, stargazers.TotalCount, isFork);
+        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork)
+        {
+            Name = name;
+            Description = description;
+            ForkCount = forkCount;
+            OwnerLogin = owner.Login;
+            OwnerAvatarUrl = owner.AvatarUrl;
+            IssuesCount = issues?.IssuesCount ?? 0;
+            Url = url;
+            StarCount = stargazers.TotalCount;
+            IsFork = isFork;
+        }
 
         public string OwnerLogin { get; }
         public string OwnerAvatarUrl { get; }

@@ -65,6 +65,10 @@ namespace GitTrends
 
         protected virtual void HandlePageSizeChanged(object sender, EventArgs e)
         {
+            AnalyticsService.Track("Page Size Changed",
+                                    "Is Portrait",
+                                    (DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width).ToString());
+
             SetSafeArea();
             ForceLayout();
         }

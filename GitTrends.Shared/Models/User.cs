@@ -6,8 +6,16 @@ namespace GitTrends.Shared
 {
     public class User
     {
-        public User(RepositoryConnection repositories, string name, string company, DateTimeOffset createdAt, string login, Uri avatarUrl, GitHubFollowers followers) =>
-            (RepositoryConnection, Name, Company, AccountCreationDate, Alias, AvatarUri, FollowerCount) = (repositories, name, company, createdAt, login, avatarUrl, followers?.Count ?? -1);
+        public User(RepositoryConnection repositories, string name, string company, DateTimeOffset createdAt, string login, Uri avatarUrl, GitHubFollowers? followers)
+        {
+            RepositoryConnection = repositories;
+            Name = name;
+            Company = company;
+            AccountCreationDate = createdAt;
+            Alias = login;
+            AvatarUri = avatarUrl;
+            FollowerCount = followers?.Count ?? 0;
+        }
 
         [JsonProperty("repositories")]
         public RepositoryConnection RepositoryConnection { get; }

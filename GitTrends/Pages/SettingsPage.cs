@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
-using Polly.Fallback;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 

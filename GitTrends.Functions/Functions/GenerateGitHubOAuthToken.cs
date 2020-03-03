@@ -33,7 +33,7 @@ namespace GitTrends.Functions
 
             var token = await _gitHubAuthService.GetGitHubToken(_clientId, _clientSecret, generateTokenDTO.LoginCode, generateTokenDTO.State).ConfigureAwait(false);
 
-            log.LogInformation("Token Retrived");
+            log.LogInformation("Token Retrieved");
 
             return new ContentResult
             {
