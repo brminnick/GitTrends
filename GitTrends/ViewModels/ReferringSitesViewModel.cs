@@ -9,7 +9,7 @@ using AsyncAwaitBestPractices.MVVM;
 
 namespace GitTrends
 {
-    public class ReferringSitesViewModel : BaseViewModel
+    class ReferringSitesViewModel : BaseViewModel
     {
         readonly GitHubApiV3Service _gitHubApiV3Service;
 

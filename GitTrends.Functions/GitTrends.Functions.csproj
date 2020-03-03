@@ -16,7 +16,6 @@
       <NoWarn></NoWarn>
       <LangVersion>Default</LangVersion>
       <NoStdLib>false</NoStdLib>
-      <Nullable></Nullable>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.3" />

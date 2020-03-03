@@ -7,7 +7,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>
+    class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>
     {
         readonly RefreshView _refreshView;
 

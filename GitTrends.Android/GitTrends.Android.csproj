@@ -21,7 +21,6 @@
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <NullableContextOptions>enable</NullableContextOptions>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -67,8 +66,6 @@
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidUseAapt2>true</AndroidUseAapt2>
     <LangVersion>Default</LangVersion>
-    <Nullable>
-    </Nullable>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AndroidSupportedAbis>armeabi-v7a;x86;arm64-v8a;x86_64</AndroidSupportedAbis>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>

@@ -8,7 +8,6 @@ using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using Autofac;
 using GitTrends.Shared;
-using Newtonsoft.Json;
 using Refit;
 using Xamarin.Forms;
 

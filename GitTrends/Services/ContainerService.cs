@@ -22,9 +22,9 @@ namespace GitTrends
             builder.RegisterType<GitHubAuthenticationService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubGraphQLApiService>().AsSelf().SingleInstance();
             builder.RegisterType<RepositoryDatabase>().AsSelf().SingleInstance();
+            builder.RegisterType<ReviewService>().AsSelf().SingleInstance();
             builder.RegisterType<SyncFusionService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
-
 #if !AppStore
             builder.RegisterType<UITestBackdoorService>().AsSelf().SingleInstance();
 #endif

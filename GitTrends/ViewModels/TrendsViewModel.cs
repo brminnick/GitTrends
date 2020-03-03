@@ -12,13 +12,17 @@ namespace GitTrends
     class TrendsViewModel : BaseViewModel
     {
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly ReviewService _reviewService;
 
         bool _isFetchingData = true;
         List<DailyViewsModel> _dailyViewsList = new List<DailyViewsModel>();
         List<DailyClonesModel> _dailyClonesList = new List<DailyClonesModel>();
 
-        public TrendsViewModel(GitHubApiV3Service gitHubApiV3Service, AnalyticsService analyticsService) : base(analyticsService)
+        public TrendsViewModel(GitHubApiV3Service gitHubApiV3Service,
+                                AnalyticsService analyticsService,
+                                ReviewService reviewService) : base(analyticsService)
         {
+            _reviewService = reviewService;
             _gitHubApiV3Service = gitHubApiV3Service;
             FetchDataCommand = new AsyncCommand<(string Owner, string Repository)>(repo => ExecuteFetchDataCommand(repo.Owner, repo.Repository));
         }
@@ -94,6 +98,8 @@ namespace GitTrends
         async Task ExecuteFetchDataCommand(string owner, string repository)
         {
             IsFetchingData = true;
+
+            _reviewService.TryRequestReview();
 
             try
             {
