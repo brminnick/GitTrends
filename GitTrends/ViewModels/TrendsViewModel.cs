@@ -119,6 +119,11 @@ namespace GitTrends
 
                 PrintDays();
             }
+            catch(Exception e)
+            {
+                //ToDo Add note reporting to the user that the statistics are unavailable due to internet connectivity
+                AnalyticsService.Report(e);
+            }
             finally
             {
                 IsFetchingData = false;
