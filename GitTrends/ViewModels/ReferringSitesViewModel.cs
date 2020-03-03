@@ -63,7 +63,10 @@ namespace GitTrends
                 }
 
                 foreach (var site in referringSitesList.OrderByDescending(x => x.TotalCount))
+                {
                     ReferringSitesCollection.Add(site);
+                    await Task.Delay(500);
+                }
             }
             finally
             {
