@@ -25,7 +25,7 @@ namespace GitTrends
                 SelectionMode = SelectionMode.Single
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
-            collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.ReferringSitesCollection));
+            collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.MobileReferringSitesList));
 
             _refreshView = new RefreshView
             {

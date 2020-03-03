@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
+using GitTrends.Shared;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -16,17 +17,13 @@ namespace GitTrends
 
         bool _isRefreshing;
         bool _isActivityIndicatorVisible;
+        IReadOnlyList<MobileReferringSiteModel> _mobileReferringSiteList = Enumerable.Empty<MobileReferringSiteModel>().ToList();
 
         public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service, AnalyticsService analyticsService) : base(analyticsService)
         {
             _gitHubApiV3Service = gitHubApiV3Service;
             RefreshCommand = new AsyncCommand<(string Owner, string Repository)>(repo => ExecuteRefreshCommand(repo.Owner, repo.Repository));
-
-            //https://codetraveler.io/2019/09/11/using-observablecollection-in-a-multi-threaded-xamarin-forms-application/
-            Xamarin.Forms.BindingBase.EnableCollectionSynchronization(ReferringSitesCollection, null, ObservableCollectionCallback);
         }
-
-        public ObservableCollection<MobileReferringSiteModel> ReferringSitesCollection { get; } = new ObservableCollection<MobileReferringSiteModel>();
 
         public ICommand RefreshCommand { get; }
 
@@ -42,50 +39,68 @@ namespace GitTrends
             set => SetProperty(ref _isRefreshing, value);
         }
 
+        public IReadOnlyList<MobileReferringSiteModel> MobileReferringSitesList
+        {
+            get => _mobileReferringSiteList;
+            set => SetProperty(ref _mobileReferringSiteList, value);
+        }
+
         async Task ExecuteRefreshCommand(string owner, string repository)
         {
-            if (ReferringSitesCollection.Any())
+            //Only show the Activity Indicator when the page is first loaded
+            if (!MobileReferringSitesList.Any())
             {
-                ReferringSitesCollection.Clear();
-            }
-            else
-            {
-                //Only show the Activity Indicator when the page is first loaded
                 IsActivityIndicatorVisible = true;
             }
 
             try
             {
-                var referringSitesList = new List<MobileReferringSiteModel>();
+                var referringSitesList = await _gitHubApiV3Service.GetReferringSites(owner, repository).ConfigureAwait(false);
+                var mobileReferringSitesList_NoFavIcon = referringSitesList.Select(x => new MobileReferringSiteModel(x, "DefaultProfileImage"));
 
-                await foreach (var site in _gitHubApiV3Service.GetReferringSites(owner, repository).ConfigureAwait(false))
-                {
-                    referringSitesList.Add(site);
-                }
+                //Display the Referring Sites and hide the activity indicators while FavIcons are still being retreived
+                IsActivityIndicatorVisible = false;
+                displayMobileReferringSites(mobileReferringSitesList_NoFavIcon);
 
-                foreach (var site in referringSitesList.OrderByDescending(x => x.TotalCount))
-                {
-                    ReferringSitesCollection.Add(site);
+                var mobileReferringSitesList_WithFavIcon = await GetMobileReferringSiteWithFavIconList(referringSitesList).ConfigureAwait(false);
 
-                    if (Device.RuntimePlatform is Device.Android)
-                    {
-                        //Workaround for https://github.com/xamarin/Xamarin.Forms/issues/9753
-                        await Task.Delay(500).ConfigureAwait(false);
-                    }
-                }
+                //Display the Final Referring Sites with FavIcons
+                displayMobileReferringSites(mobileReferringSitesList_WithFavIcon);
             }
             finally
             {
                 IsActivityIndicatorVisible = IsRefreshing = false;
             }
+
+            void displayMobileReferringSites(in IEnumerable<MobileReferringSiteModel> mobileReferringSiteList) => MobileReferringSitesList = mobileReferringSiteList.OrderByDescending(x => x.TotalCount).ThenByDescending(x => x.TotalUniqueCount).ToList();
         }
 
-        //https://codetraveler.io/2019/09/11/using-observablecollection-in-a-multi-threaded-xamarin-forms-application/
-        void ObservableCollectionCallback(IEnumerable collection, object context, Action accessMethod, bool writeAccess)
+        async Task<List<MobileReferringSiteModel>> GetMobileReferringSiteWithFavIconList(List<ReferringSiteModel> referringSites)
         {
-            lock (collection)
+            var mobileReferringSiteList = new List<MobileReferringSiteModel>();
+
+            var favIconTaskList = referringSites.Select(x => setFavIcon(x)).ToList();
+
+            while (favIconTaskList.Any())
             {
-                accessMethod?.Invoke();
+                var completedFavIconTask = await Task.WhenAny(favIconTaskList).ConfigureAwait(false);
+                favIconTaskList.Remove(completedFavIconTask);
+
+                var mobileReferringSiteModel = await completedFavIconTask.ConfigureAwait(false);
+                mobileReferringSiteList.Add(mobileReferringSiteModel);
+            }
+
+            return mobileReferringSiteList;
+
+            static async Task<MobileReferringSiteModel> setFavIcon(ReferringSiteModel referringSiteModel)
+            {
+                if (referringSiteModel.ReferrerUri != null)
+                {
+                    var favIcon = await FavIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri.ToString()).ConfigureAwait(false);
+                    return new MobileReferringSiteModel(referringSiteModel, favIcon);
+                }
+
+                return new MobileReferringSiteModel(referringSiteModel, null);
             }
         }
     }

@@ -66,53 +66,28 @@ namespace GitTrends
             }
         }
 
-        public async IAsyncEnumerable<MobileReferringSiteModel> GetReferringSites(string owner, string repo)
+        public async Task<List<ReferringSiteModel>> GetReferringSites(string owner, string repo)
         {
             if (GitHubAuthenticationService.IsDemoUser)
             {
                 //Yield off of main thread to generate MobileReferringSiteModels
                 await Task.Yield();
 
-                for (int i = 0; i < DemoDataConstants.ReferringSitesCount; i++)
-                    yield return new MobileReferringSiteModel(new ReferringSiteModel(DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomText()), "DefaultProfileImage");
+                var referringSitesList = new List<ReferringSiteModel>();
 
-                //Allow UI to update
-                await Task.Delay(1000).ConfigureAwait(false);
+                for (int i = 0; i < DemoDataConstants.ReferringSitesCount; i++)
+                {
+                    referringSitesList.Add(new ReferringSiteModel(DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomText()));
+                }
+
+                return referringSitesList;
             }
             else
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
                 var referringSites = await AttemptAndRetry_Mobile(() => GithubApiClient.GetReferingSites(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
 
-                await foreach (var referringSite in getMobileReferringSiteModels(referringSites).ConfigureAwait(false))
-                {
-                    yield return referringSite;
-                }
-
-                static async IAsyncEnumerable<MobileReferringSiteModel> getMobileReferringSiteModels(IEnumerable<ReferringSiteModel> referringSites)
-                {
-                    var setFavIconTaskList = referringSites.Select(x => setFavIcon(x)).ToList();
-
-                    while (setFavIconTaskList.Any())
-                    {
-                        var completedSetFavIconTask = await Task.WhenAny(setFavIconTaskList).ConfigureAwait(false);
-
-                        setFavIconTaskList.Remove(completedSetFavIconTask);
-
-                        yield return await completedSetFavIconTask.ConfigureAwait(false);
-                    }
-
-                    static async Task<MobileReferringSiteModel> setFavIcon(ReferringSiteModel referringSiteModel)
-                    {
-                        if (referringSiteModel.ReferrerUri != null)
-                        {
-                            var favIcon = await FavIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri.ToString()).ConfigureAwait(false);
-                            return new MobileReferringSiteModel(referringSiteModel, favIcon);
-                        }
-
-                        return new MobileReferringSiteModel(referringSiteModel, null);
-                    }
-                }
+                return referringSites;
             }
         }
     }

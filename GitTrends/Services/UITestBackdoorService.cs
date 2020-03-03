@@ -56,7 +56,7 @@ namespace GitTrends
             var repositoryPage = (ReferringSitesPage)Application.Current.MainPage.Navigation.NavigationStack.First();
             var repositoryViewModel = (ReferringSitesViewModel)repositoryPage.BindingContext;
 
-            return repositoryViewModel.ReferringSitesCollection;
+            return repositoryViewModel.MobileReferringSitesList;
         }
     }
 }
