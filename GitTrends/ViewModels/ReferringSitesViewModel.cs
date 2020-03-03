@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -66,8 +67,11 @@ namespace GitTrends
                 {
                     ReferringSitesCollection.Add(site);
 
-                    //Workaround for https://github.com/xamarin/Xamarin.Forms/issues/9753
-                    await Task.Delay(500).ConfigureAwait(false);
+                    if (Device.RuntimePlatform is Device.Android)
+                    {
+                        //Workaround for https://github.com/xamarin/Xamarin.Forms/issues/9753
+                        await Task.Delay(500).ConfigureAwait(false);
+                    }
                 }
             }
             finally
