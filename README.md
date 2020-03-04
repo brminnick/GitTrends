@@ -16,6 +16,10 @@
   </a>
 </p>
 
+I created GitTrends because I love contributing to open source libraries, but I had trouble keeping track of which repos were receiving traffic and which ones were not. For example, I recently discovered that a repo I hadn't updated in +2 years was still getting 10-20 views per week. 
+
+With GitTrends, I can now stay on top of which repos are trending and ensure its code doesn't go stale!
+
 ## Features
 
 Monitor the traffic to your GitHub Repos!<br/>
