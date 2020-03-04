@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using GitTrends.Mobile.Shared;
 using NUnit.Framework;
 
 using Xamarin.UITest;
@@ -48,7 +49,7 @@ namespace GitTrends.UITests
         {
             var gitHubToken = await AzureFunctionsApiService.GenerateGitTrendsOAuthToken().ConfigureAwait(false);
 
-            BackdoorServices.SetGitHubUser(App, gitHubToken.AccessToken);
+            App.InvokeBackdoorMethod(BackdoorMethodConstants.SetGitHubUser, gitHubToken.AccessToken);
         }
     }
 }
