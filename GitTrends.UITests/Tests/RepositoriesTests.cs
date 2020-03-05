@@ -13,7 +13,7 @@ namespace GitTrends.UITests
     [TestFixture(Platform.iOS, UserType.Demo)]
     class RepositoriesTests : BaseTest
     {
-        protected RepositoriesTests(Platform platform, UserType userType) : base(platform, userType)
+        public RepositoriesTests(Platform platform, UserType userType) : base(platform, userType)
         {
         }
 
