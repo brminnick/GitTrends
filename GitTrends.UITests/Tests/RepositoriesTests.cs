@@ -7,7 +7,11 @@ using Xamarin.UITest;
 
 namespace GitTrends.UITests
 {
-    abstract class RepositoriesTests : BaseTest
+    [TestFixture(Platform.Android, UserType.Demo)]
+    [TestFixture(Platform.Android, UserType.LoggedIn)]
+    [TestFixture(Platform.iOS, UserType.LoggedIn)]
+    [TestFixture(Platform.iOS, UserType.Demo)]
+    class RepositoriesTests : BaseTest
     {
         protected RepositoriesTests(Platform platform, UserType userType) : base(platform, userType)
         {

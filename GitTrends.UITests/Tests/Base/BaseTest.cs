@@ -7,8 +7,6 @@ using Xamarin.UITest;
 
 namespace GitTrends.UITests
 {
-    [TestFixture(Platform.Android)]
-    [TestFixture(Platform.iOS)]
     abstract class BaseTest
     {
         readonly Platform _platform;
