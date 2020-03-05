@@ -35,7 +35,7 @@ namespace GitTrends
             try
             {
 #if DEBUG
-                _syncFusionService.Initialize().SafeFireAndForget(ex => Debug.WriteLine(ex));
+                _syncFusionService.Initialize().SafeFireAndForget(ex => AnalyticsService.Report(ex));
 #else
                 await _syncFusionService.Initialize().ConfigureAwait(false);
 #endif
