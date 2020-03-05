@@ -57,12 +57,8 @@
         <Compile Include="Tests\ReplTests.cs" />
         <Compile Include="Models\Repository.cs" />
         <Compile Include="Tests\Base\BaseTest.cs" />
-        <Compile Include="Tests\ReferringSites\ReferringSitesTests_LoggedIn.cs" />
-        <Compile Include="Tests\ReferringSites\ReferringSitesTests_Demo.cs" />
-        <Compile Include="Tests\ReferringSites\ReferringSitesTests.cs" />
-        <Compile Include="Tests\Repositories\RepositoriesTests.cs" />
-        <Compile Include="Tests\Repositories\RepositoriesTests_LoggedIn.cs" />
-        <Compile Include="Tests\Repositories\RepositoriesTests_Demo.cs" />
+        <Compile Include="Tests\RepositoriesTests.cs" />
+        <Compile Include="Tests\ReferringSitesTests.cs" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Pages\" />
@@ -70,8 +66,6 @@
         <Folder Include="Services\" />
         <Folder Include="Models\" />
         <Folder Include="Tests\Base\" />
-        <Folder Include="Tests\ReferringSites\" />
-        <Folder Include="Tests\Repositories\" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="System" />
