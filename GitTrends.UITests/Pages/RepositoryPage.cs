@@ -24,6 +24,8 @@ namespace GitTrends.UITests
             _androidSearchBarButton = x => x.Id("ActionSearch");
         }
 
+        public void TriggerPullToRefresh() => App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerPullToRefresh);
+
         public async Task WaitForNoPullToRefresh(int timeoutInSeconds = 25)
         {
             int counter = 0;
@@ -35,6 +37,14 @@ namespace GitTrends.UITests
                 if (counter >= timeoutInSeconds)
                     throw new Exception($"Loading the list took longer than {timeoutInSeconds}");
             }
+        }
+
+        public void TapRepository(string repositoryName)
+        {
+            App.ScrollDownTo(repositoryName);
+            App.Tap(repositoryName);
+
+            App.Screenshot($"Tapped {repositoryName}");
         }
 
         public void EnterSearchBarText(string text)
@@ -81,12 +91,9 @@ namespace GitTrends.UITests
             App.Screenshot("Accepted GitHub User Not Found Popup");
         }
 
-        public void TriggerPullToRefresh() =>
-            App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerPullToRefresh);
-
         public List<Repository> GetVisibleRepositoryList()
         {
-            var serializedRepositoryList = App.InvokeBackdoorMethod(BackdoorMethodConstants.GetVisibleRepositoryList).ToString();
+            var serializedRepositoryList = App.InvokeBackdoorMethod(BackdoorMethodConstants.GetVisibleCollection).ToString();
             return JsonConvert.DeserializeObject<List<Repository>>(serializedRepositoryList);
         }
     }

@@ -7,48 +7,20 @@ using Xamarin.UITest;
 
 namespace GitTrends.UITests
 {
-    class LoginTests : BaseTest
+    abstract class RepositoriesTests : BaseTest
     {
-        public LoginTests(Platform platform) : base(platform)
+        protected RepositoriesTests(Platform platform, UserType userType) : base(platform, userType)
         {
-
-        }
-
-        public override async Task BeforeEachTest()
-        {
-            await base.BeforeEachTest().ConfigureAwait(false);
-
-            await LoginToGitHub().ConfigureAwait(false);
-
-            RepositoryPage.WaitForPageToLoad();
-
-            try
-            {
-                RepositoryPage.WaitForGitHubUserNotFoundPopup();
-                RepositoryPage.AcceptGitHubUserNotFoundPopup();
-            }
-            catch
-            {
-                RepositoryPage.TapSettingsButton();
-            }
-
-            SettingsPage.WaitForPageToLoad();
-            SettingsPage.DismissSyncfusionLicensePopup();
-
-            SettingsPage.WaitForGitHubLoginToComplete();
-            SettingsPage.TapBackButton();
-
-            RepositoryPage.WaitForPageToLoad();
-            await RepositoryPage.WaitForNoPullToRefresh().ConfigureAwait(false);
         }
 
         [Test]
-        public async Task Login()
+        public async Task VerifyRepositoriesAfterLogin()
         {
             //Arrange
             IReadOnlyList<Repository> visibleRepositoryList;
 
             //Act
+            RepositoryPage.TriggerPullToRefresh();
             await RepositoryPage.WaitForNoPullToRefresh().ConfigureAwait(false);
 
             //Assert
@@ -58,7 +30,7 @@ namespace GitTrends.UITests
         }
 
         [Test]
-        public async Task LogOut()
+        public async Task VerifyNoRepositoriesAfterLogOut()
         {
             //Arrange
             IReadOnlyList<Repository> visibleRepositoryList;

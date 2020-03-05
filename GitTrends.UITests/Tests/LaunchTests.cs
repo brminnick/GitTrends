@@ -6,9 +6,9 @@ namespace GitTrends.UITests
 {
     class LaunchTests : BaseTest
     {
-        public LaunchTests(Platform platform) : base(platform)
+        public LaunchTests(Platform platform) : base(platform, UserType.Neither)
         {
-        
+
         }
 
         [Test]

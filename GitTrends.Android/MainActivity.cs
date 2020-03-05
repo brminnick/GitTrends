@@ -41,22 +41,13 @@ namespace GitTrends.Droid
             await backdoorService.TriggerPullToRefresh().ConfigureAwait(false);
         }
 
-        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.GetVisibleRepositoryList)]
-        public string GetVisibleRepositoryList()
+        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.GetVisibleCollection)]
+        public string GetVisibleCollection()
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var backdoorService = scope.Resolve<UITestBackdoorService>();
 
-            return Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleRepositoryList());
-        }
-
-        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.GetVisibleReferringSitesList)]
-        public string GetVisibleReferringSitesList()
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            return Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleReferringSitesList());
+            return Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleCollection());
         }
         #endregion
 #endif

@@ -5,7 +5,7 @@ namespace GitTrends.UITests
 {
     class ReplTests : BaseTest
     {
-        public ReplTests(Platform platform) : base(platform)
+        public ReplTests(Platform platform) : base(platform, UserType.Neither)
         {
         }
 
