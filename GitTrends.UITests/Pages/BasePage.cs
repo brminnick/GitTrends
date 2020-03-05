@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
 using Xamarin.UITest.iOS;
@@ -41,12 +42,14 @@ namespace GitTrends.UITests
             }
         }
 
-        public virtual void WaitForPageToLoad(TimeSpan? timeout = null)
+        public virtual Task WaitForPageToLoad(TimeSpan? timeout = null)
         {
             if (!string.IsNullOrWhiteSpace(PageTitle))
                 App.WaitForElement(x => x.Marked(PageTitle), timeout: timeout);
             else
                 throw new InvalidOperationException($"{nameof(PageTitle)} cannot be empty");
+
+            return Task.CompletedTask;
         }
 
         protected static Query GenerateMarkedQuery(string automationId) => (x => x.Marked(automationId));

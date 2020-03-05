@@ -13,5 +13,7 @@
         public const string TotalUniqueViewsSeries = nameof(TotalUniqueViewsSeries);
         public const string TotalClonesSeries = nameof(TotalClonesSeries);
         public const string TotalUniqueClonesSeries = nameof(TotalUniqueClonesSeries);
+
+        public const string ReferringSitesButton = nameof(ReferringSitesButton);
     }
 }

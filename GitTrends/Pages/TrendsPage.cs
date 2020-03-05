@@ -20,7 +20,11 @@ namespace GitTrends
         {
             _repository = repository;
 
-            var referringSitesToolbarItem = new ToolbarItem { Text = "Referring Sites" };
+            var referringSitesToolbarItem = new ToolbarItem
+            {
+                Text = "Referring Sites",
+                AutomationId = TrendsPageAutomationIds.ReferringSitesButton
+            };
             referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked;
             ToolbarItems.Add(referringSitesToolbarItem);
 

@@ -45,7 +45,6 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Pages\BasePage.cs" />
-        <Compile Include="Tests\BaseTest.cs" />
         <Compile Include="Pages\ReferringSitesPage.cs" />
         <Compile Include="Pages\RepositoryPage.cs" />
         <Compile Include="Pages\SettingsPage.cs" />
@@ -55,16 +54,24 @@
         <Compile Include="Pages\SplashScreenPage.cs" />
         <Compile Include="Services\BackdoorServices.cs" />
         <Compile Include="Services\AzureFunctionsApiService.cs" />
-        <Compile Include="Tests\LoginTests.cs" />
         <Compile Include="Tests\ReplTests.cs" />
         <Compile Include="Models\Repository.cs" />
-        <Compile Include="Tests\DemoModeTests.cs" />
+        <Compile Include="Tests\Base\BaseTest.cs" />
+        <Compile Include="Tests\ReferringSites\ReferringSitesTests_LoggedIn.cs" />
+        <Compile Include="Tests\ReferringSites\ReferringSitesTests_Demo.cs" />
+        <Compile Include="Tests\ReferringSites\ReferringSitesTests.cs" />
+        <Compile Include="Tests\Repositories\RepositoriesTests.cs" />
+        <Compile Include="Tests\Repositories\RepositoriesTests_LoggedIn.cs" />
+        <Compile Include="Tests\Repositories\RepositoriesTests_Demo.cs" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Pages\" />
         <Folder Include="Tests\" />
         <Folder Include="Services\" />
         <Folder Include="Models\" />
+        <Folder Include="Tests\Base\" />
+        <Folder Include="Tests\ReferringSites\" />
+        <Folder Include="Tests\Repositories\" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="System" />

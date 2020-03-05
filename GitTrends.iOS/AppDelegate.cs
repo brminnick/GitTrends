@@ -77,24 +77,14 @@ namespace GitTrends.iOS
             await backdoorService.TriggerPullToRefresh().ConfigureAwait(false);
         }
 
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.GetVisibleRepositoryList + ":")]
+        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.GetVisibleCollection + ":")]
         public NSString GetVisibleRepositoryList(NSString noValue)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var backdoorService = scope.Resolve<UITestBackdoorService>();
 
-            var serializedRepositoryList = Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleRepositoryList());
+            var serializedRepositoryList = Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleCollection());
             return new NSString(serializedRepositoryList);
-        }
-
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.GetVisibleReferringSitesList + ":")]
-        public NSString GetVisibleReferringSitesList(NSString noValue)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            var serializedReferringSitesList = Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleReferringSitesList());
-            return new NSString(serializedReferringSitesList);
         }
         #endregion
 #endif
