@@ -41,7 +41,7 @@
         <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
         <PackageReference Include="Refit" Version="5.0.23" />
         <PackageReference Include="Polly" Version="7.2.0" />
-        <PackageReference Include="Xamarin.Essentials" Version="1.5.0" />
+        <PackageReference Include="Xamarin.Essentials" Version="1.5.1" />
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Pages\BasePage.cs" />
