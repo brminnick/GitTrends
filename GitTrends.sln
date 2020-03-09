@@ -4,7 +4,7 @@ VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.Android", "GitTrends.Android\GitTrends.Android.csproj", "{E5785129-AB94-4359-9947-B600D33A9958}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends", "GitTrends\GitTrends.csproj", "{E9E411F7-7BB9-4176-8950-3A2D1C27FF33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends", "GitTrends\GitTrends.csproj", "{E9E411F7-7BB9-4176-8950-3A2D1C27FF33}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mobile", "Mobile", "{BA9E6A61-3143-42DF-9669-97F7F557B7A2}"
 EndProject
@@ -20,12 +20,11 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GitTrends.Mobile.Shared", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.UITests", "GitTrends.UITests\GitTrends.UITests.csproj", "{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.Functions", "GitTrends.Functions\GitTrends.Functions.csproj", "{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends.Functions", "GitTrends.Functions\GitTrends.Functions.csproj", "{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems*{16224020-a5fb-41cb-ad1d-a411b4c7b75b}*SharedItemsImports = 13
-		GitTrends.Shared\GitTrends.Shared.projitems*{8d5220e6-5783-47c2-9010-98015ece53c0}*SharedItemsImports = 5
 		GitTrends.Shared\GitTrends.Shared.projitems*{d14f8262-1d13-493f-b78b-5c34f282ef07}*SharedItemsImports = 13
 		GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems*{e1c47721-ef16-4f21-aa2f-78951db0d715}*SharedItemsImports = 4
 		GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems*{e5785129-ab94-4359-9947-b600d33a9958}*SharedItemsImports = 4
@@ -49,6 +48,7 @@ Global
 		{E5785129-AB94-4359-9947-B600D33A9958}.AppStore|iPhone.ActiveCfg = AppStore|Any CPU
 		{E5785129-AB94-4359-9947-B600D33A9958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E5785129-AB94-4359-9947-B600D33A9958}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5785129-AB94-4359-9947-B600D33A9958}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{E5785129-AB94-4359-9947-B600D33A9958}.Debug|iPhone.ActiveCfg = Debug|Any CPU
 		{E5785129-AB94-4359-9947-B600D33A9958}.Debug|iPhone.Build.0 = Debug|Any CPU
 		{E5785129-AB94-4359-9947-B600D33A9958}.Release|Any CPU.ActiveCfg = Release|Any CPU
