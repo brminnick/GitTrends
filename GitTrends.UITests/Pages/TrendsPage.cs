@@ -33,7 +33,15 @@ namespace GitTrends.UITests
 
         public override Task WaitForPageToLoad(TimeSpan? timespan = null)
         {
-            App.WaitForElement(_activityIndicator, timeout: timespan);
+            try
+            {
+                App.WaitForElement(_activityIndicator, timeout: timespan);
+            }
+            catch
+            {
+
+            }
+
             App.WaitForNoElement(_activityIndicator, timeout: timespan);
             App.WaitForElement(_trendsChart, timeout: timespan);
 

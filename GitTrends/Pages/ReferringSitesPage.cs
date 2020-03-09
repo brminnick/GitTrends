@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
@@ -135,6 +136,12 @@ namespace GitTrends
                 && referingSite.ReferrerUri != null)
             {
                 Disappearing -= HandleDisappearing;
+
+                AnalyticsService.Track("Referring Site Tapped", new Dictionary<string, string>
+                {
+                    { nameof(ReferringSiteModel.Referrer), referingSite.Referrer },
+                    { nameof(ReferringSiteModel.ReferrerUri), referingSite.ReferrerUri.ToString() }
+                });
 
                 await OpenBrowser(referingSite.ReferrerUri);
             }

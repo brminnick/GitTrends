@@ -29,8 +29,6 @@ namespace GitTrends.UITests
             TrendsPage.TapReferringSitesButton();
 
             await ReferringSitesPage.WaitForPageToLoad().ConfigureAwait(false);
-            ReferringSitesPage.WaitForNoActivityIndicator();
-            ReferringSitesPage.WaitForNoActivityIndicator();
         }
 
         [Test]

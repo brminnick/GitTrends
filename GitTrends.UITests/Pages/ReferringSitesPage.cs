@@ -32,23 +32,10 @@ namespace GitTrends.UITests
 
             WaitForNoActivityIndicator();
 
-            await WaitForNoPullToRefresh().ConfigureAwait(false);
+            await WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
         }
 
         public void TriggerPullToRefresh() => App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerPullToRefresh);
-
-        public async Task WaitForNoPullToRefresh(int timeoutInSeconds = 25)
-        {
-            int counter = 0;
-            while (IsRefreshViewRefreshIndicatorDisplayed && counter < timeoutInSeconds)
-            {
-                await Task.Delay(1000).ConfigureAwait(false);
-                counter++;
-
-                if (counter >= timeoutInSeconds)
-                    throw new Exception($"Loading the list took longer than {timeoutInSeconds}");
-            }
-        }
 
         public void ClosePage()
         {
@@ -79,11 +66,8 @@ namespace GitTrends.UITests
 
         public List<ReferringSiteModel> GetVisibleReferringSitesList()
         {
-            var serializedRepositoryList = App.InvokeBackdoorMethod(BackdoorMethodConstants.GetVisibleCollection).ToString();
-            return JsonConvert.DeserializeObject<List<ReferringSiteModel>>(serializedRepositoryList);
+            var serializedReferringSitesList = App.InvokeBackdoorMethod(BackdoorMethodConstants.GetVisibleCollection).ToString();
+            return JsonConvert.DeserializeObject<List<ReferringSiteModel>>(serializedReferringSitesList);
         }
-
-        public void TriggerrPullToRefresh() =>
-            App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerPullToRefresh);
     }
 }
