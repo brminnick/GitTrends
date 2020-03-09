@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using Newtonsoft.Json;
 using Xamarin.UITest;
@@ -25,19 +23,6 @@ namespace GitTrends.UITests
         }
 
         public void TriggerPullToRefresh() => App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerPullToRefresh);
-
-        public async Task WaitForNoPullToRefresh(int timeoutInSeconds = 25)
-        {
-            int counter = 0;
-            while (IsRefreshViewRefreshIndicatorDisplayed && counter < timeoutInSeconds)
-            {
-                await Task.Delay(1000).ConfigureAwait(false);
-                counter++;
-
-                if (counter >= timeoutInSeconds)
-                    throw new Exception($"Loading the list took longer than {timeoutInSeconds}");
-            }
-        }
 
         public void TapRepository(string repositoryName)
         {

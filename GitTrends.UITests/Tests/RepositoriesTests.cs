@@ -25,7 +25,7 @@ namespace GitTrends.UITests
 
             //Act
             RepositoryPage.TriggerPullToRefresh();
-            await RepositoryPage.WaitForNoPullToRefresh().ConfigureAwait(false);
+            await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
 
             //Assert
             visibleRepositoryList = RepositoryPage.GetVisibleRepositoryList();
@@ -57,7 +57,9 @@ namespace GitTrends.UITests
 
             RepositoryPage.DeclineGitHubUserNotFoundPopup();
             RepositoryPage.TriggerPullToRefresh();
-            await RepositoryPage.WaitForNoPullToRefresh().ConfigureAwait(false);
+
+            await RepositoryPage.WaitForPullToRefreshIndicator().ConfigureAwait(false);
+            await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
 
             //Assert
             visibleRepositoryList = RepositoryPage.GetVisibleRepositoryList();

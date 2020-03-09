@@ -83,8 +83,8 @@ namespace GitTrends.iOS
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var backdoorService = scope.Resolve<UITestBackdoorService>();
 
-            var serializedRepositoryList = Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleCollection());
-            return new NSString(serializedRepositoryList);
+            var serializedCollection = Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleCollection());
+            return new NSString(serializedCollection);
         }
         #endregion
 #endif

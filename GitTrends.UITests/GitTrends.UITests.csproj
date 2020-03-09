@@ -36,7 +36,7 @@
       <LangVersion>Default</LangVersion>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Xamarin.UITest" Version="3.0.7-dev2" />
+        <PackageReference Include="Xamarin.UITest" Version="3.0.7" />
         <PackageReference Include="NUnit" Version="3.12.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
         <PackageReference Include="Refit" Version="5.0.23" />

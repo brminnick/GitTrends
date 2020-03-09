@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Shared;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -56,7 +52,7 @@ namespace GitTrends
             try
             {
                 var referringSitesList = await _gitHubApiV3Service.GetReferringSites(owner, repository).ConfigureAwait(false);
-                var mobileReferringSitesList_NoFavIcon = referringSitesList.Select(x => new MobileReferringSiteModel(x, "DefaultProfileImage"));
+                var mobileReferringSitesList_NoFavIcon = referringSitesList.Select(x => new MobileReferringSiteModel(x));
 
                 //Display the Referring Sites and hide the activity indicators while FavIcons are still being retreived
                 IsActivityIndicatorVisible = false;
@@ -100,7 +96,7 @@ namespace GitTrends
                     return new MobileReferringSiteModel(referringSiteModel, favIcon);
                 }
 
-                return new MobileReferringSiteModel(referringSiteModel, null);
+                return new MobileReferringSiteModel(referringSiteModel);
             }
         }
     }

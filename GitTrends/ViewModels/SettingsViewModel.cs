@@ -15,6 +15,7 @@ namespace GitTrends
         readonly WeakEventManager<string?> _gitHubLoginUrlRetrievedEventManager = new WeakEventManager<string?>();
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly TrendsChartSettingsService _trendsChartSettingsService;
+        readonly DeepLinkingService _deepLinkingService;
 
         string _gitHubUserImageSource = string.Empty;
         string _gitHubUserNameLabelText = string.Empty;
@@ -23,11 +24,14 @@ namespace GitTrends
 
         public SettingsViewModel(GitHubAuthenticationService gitHubAuthenticationService,
                                     TrendsChartSettingsService trendsChartSettingsService,
-                                    AnalyticsService analyticsService) : base(analyticsService)
+                                    AnalyticsService analyticsService,
+                                    DeepLinkingService deepLinkingService) : base(analyticsService)
         {
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _trendsChartSettingsService = trendsChartSettingsService;
+            _deepLinkingService = deepLinkingService;
 
+            CreatedByLabelTappedCommand = new AsyncCommand(ExecuteCreatedByLabelTapped);
             LoginButtonCommand = new AsyncCommand(ExecuteLoginButtonCommand, _ => !IsAuthenticating);
             DemoButtonCommand = new Command(ExecuteDemoButtonCommand);
 
@@ -44,6 +48,7 @@ namespace GitTrends
         }
 
         public ICommand DemoButtonCommand { get; }
+        public ICommand CreatedByLabelTappedCommand { get; }
         public IAsyncCommand LoginButtonCommand { get; }
 
         public bool IsDemoButtonVisible => !IsAuthenticating
@@ -176,6 +181,13 @@ namespace GitTrends
             GitHubAuthenticationService.Alias = DemoDataConstants.Alias;
 
             SetGitHubValues();
+        }
+
+
+        Task ExecuteCreatedByLabelTapped()
+        {
+            AnalyticsService.Track("CreatedBy Label Tapped");
+            return _deepLinkingService.OpenApp("twitter://user?id=3418408341", "https://twitter.com/intent/user?user_id=3418408341");
         }
 
         void OnGitHubLoginUrlRetrieved(string? loginUrl) => _gitHubLoginUrlRetrievedEventManager.HandleEvent(this, loginUrl, nameof(GitHubLoginUrlRetrieved));

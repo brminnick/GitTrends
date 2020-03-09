@@ -4,21 +4,19 @@ using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {
     public class SettingsPage : BaseContentPage<SettingsViewModel>
     {
-        readonly DeepLinkingService _deepLinkingService;
         readonly TrendsChartSettingsService _trendsChartSettingsService;
 
         public SettingsPage(SettingsViewModel settingsViewModel,
                             TrendsChartSettingsService trendsChartSettingsService,
-                            AnalyticsService analyticsService,
-                            DeepLinkingService deepLinkingService) : base(PageTitles.SettingsPage, settingsViewModel, analyticsService)
+                            AnalyticsService analyticsService) : base(PageTitles.SettingsPage, settingsViewModel, analyticsService)
         {
             _trendsChartSettingsService = trendsChartSettingsService;
-            _deepLinkingService = deepLinkingService;
 
             ViewModel.GitHubLoginUrlRetrieved += HandleGitHubLoginUrlRetrieved;
         }
@@ -71,7 +69,7 @@ namespace GitTrends
                 FontSize = 12,
             };
             createdByLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
-            createdByLabel.GestureRecognizers.Add(new TapGestureRecognizer { Command = new AsyncCommand(CreatedByLabelTapped) });
+            createdByLabel.BindTapGesture(nameof(SettingsViewModel.CreatedByLabelTappedCommand));
 
             var relativeLayout = new RelativeLayout
             {
@@ -123,12 +121,6 @@ namespace GitTrends
                 await OpenBrowser(loginUrl);
             else
                 await DisplayAlert("Error", "Couldn't connect to GitHub Login. Check your internet connection and try again", "OK");
-        }
-
-        Task CreatedByLabelTapped()
-        {
-            AnalyticsService.Track("CreatedBy Label Tapped");
-            return _deepLinkingService.OpenApp("twitter://user?id=3418408341", "https://twitter.com/intent/user?user_id=3418408341");
         }
     }
 }

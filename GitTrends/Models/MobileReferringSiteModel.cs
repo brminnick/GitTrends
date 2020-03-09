@@ -1,4 +1,5 @@
-﻿using GitTrends.Shared;
+﻿using System;
+using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 
@@ -6,12 +7,14 @@ namespace GitTrends
 {
     public class MobileReferringSiteModel : ReferringSiteModel
     {
-        public MobileReferringSiteModel(ReferringSiteModel referringSiteModel, ImageSource? favIcon) : base(referringSiteModel.TotalCount, referringSiteModel.TotalUniqueCount, referringSiteModel.Referrer)
+        const string DefaultFavIcon = "DefaultProfileImage";
+
+        public MobileReferringSiteModel(ReferringSiteModel referringSiteModel, ImageSource? favIcon = null) : base(referringSiteModel.TotalCount, referringSiteModel.TotalUniqueCount, referringSiteModel.Referrer)
         {
-            FavIcon = favIcon;
+            FavIcon = favIcon ?? DefaultFavIcon;
         }
 
-        [JsonProperty("favIcon")]
-        public ImageSource? FavIcon { get; }
+        [JsonIgnore]
+        public ImageSource FavIcon { get; }
     }
 }

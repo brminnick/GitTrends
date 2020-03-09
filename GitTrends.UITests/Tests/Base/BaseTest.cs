@@ -75,6 +75,7 @@ namespace GitTrends.UITests
             SettingsPage.TapBackButton();
 
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
+            await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
         }
 
         async Task SetupLoggedInUser()
@@ -100,7 +101,7 @@ namespace GitTrends.UITests
             SettingsPage.TapBackButton();
 
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
-            await RepositoryPage.WaitForNoPullToRefresh().ConfigureAwait(false);
+            await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
         }
 
         protected async Task LoginToGitHub()

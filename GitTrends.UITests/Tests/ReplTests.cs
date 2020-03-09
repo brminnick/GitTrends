@@ -3,7 +3,11 @@ using Xamarin.UITest;
 
 namespace GitTrends.UITests
 {
+    [TestFixture(Platform.Android, UserType.Demo)]
+    [TestFixture(Platform.Android, UserType.LoggedIn)]
     [TestFixture(Platform.Android, UserType.Neither)]
+    [TestFixture(Platform.iOS, UserType.Demo)]
+    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     [TestFixture(Platform.iOS, UserType.Neither)]
     class ReplTests : BaseTest
     {
