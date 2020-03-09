@@ -15,6 +15,8 @@ namespace GitTrends
 
         public App()
         {
+            Device.SetFlags(new[] { "Markup_Experimental" });
+
             FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration
             {
                 HttpHeadersTimeout = 60
@@ -25,7 +27,7 @@ namespace GitTrends
 
             MainPage = scope.Resolve<SplashScreenPage>();
 
-            On<iOS>().SetHandleControlUpdatesOnMainThread(true);            
+            On<iOS>().SetHandleControlUpdatesOnMainThread(true);
         }
 
         public event EventHandler<Theme> ThemeChanged
@@ -35,7 +37,7 @@ namespace GitTrends
         }
 
         protected override void OnStart()
-        {   
+        {
             base.OnStart();
 
             _analyticsService.Track("App Started");
