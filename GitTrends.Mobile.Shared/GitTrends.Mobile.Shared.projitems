@@ -23,5 +23,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Constants\GitHubLoginButtonConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\BackdoorMethodConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\DemoDataConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\TrendsChartConstants.cs" />
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -14,9 +15,16 @@ namespace GitTrends
     {
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
+        readonly TrendsChartSettingsService _trendsChartSettingsService;
 
-        public UITestBackdoorService(GitHubAuthenticationService gitHubAuthenticationService, GitHubGraphQLApiService gitHubGraphQLApiService) =>
-            (_gitHubAuthenticationService, _gitHubGraphQLApiService) = (gitHubAuthenticationService, gitHubGraphQLApiService);
+        public UITestBackdoorService(GitHubAuthenticationService gitHubAuthenticationService,
+                                        GitHubGraphQLApiService gitHubGraphQLApiService,
+                                        TrendsChartSettingsService trendsChartSettingsService)
+        {
+            _gitHubAuthenticationService = gitHubAuthenticationService;
+            _gitHubGraphQLApiService = gitHubGraphQLApiService;
+            _trendsChartSettingsService = trendsChartSettingsService;
+        }
 
         public async Task SetGitHubUser(string token)
         {
@@ -38,6 +46,8 @@ namespace GitTrends
             var collectionView = (CollectionView)GetVisibleRefreshView().Content;
             return collectionView.ItemsSource;
         }
+
+        public TrendsChartOption GetCurrentTrendsChartOption() => _trendsChartSettingsService.CurrentTrendsChartOption;
 
         RefreshView GetVisibleRefreshView()
         {

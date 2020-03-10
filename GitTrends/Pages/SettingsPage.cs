@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
-using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -60,6 +58,7 @@ namespace GitTrends
 
             var createdByLabel = new Label
             {
+                AutomationId = SettingsPageAutomationIds.CreatedByLabel,
                 Margin = new Thickness(0, 5),
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,

@@ -49,6 +49,15 @@ namespace GitTrends.Droid
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleCollection());
         }
+
+        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.GetCurrentTrendsChartOption)]
+        public string GetCurrentTrendsChartOption()
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetCurrentTrendsChartOption());
+        }
         #endregion
 #endif
 

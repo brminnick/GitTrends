@@ -1,4 +1,5 @@
 ﻿using System;
+using GitTrends.Mobile.Shared;
 using Xamarin.Essentials;
 
 namespace GitTrends
@@ -9,7 +10,7 @@ namespace GitTrends
 
         public TrendsChartSettingsService(AnalyticsService analyticsService) => _analyticsService = analyticsService;
 
-        public TrendsChartOptions CurrentTrendsChartOption
+        public TrendsChartOption CurrentTrendsChartOption
         {
             get => GetCurrentTrendsChartOption();
             set => SetCurrentTrendsChartOption(value);
@@ -39,14 +40,14 @@ namespace GitTrends
             set => Preferences.Set(nameof(ShouldShowUniqueViewsByDefault), value);
         }
 
-        TrendsChartOptions GetCurrentTrendsChartOption()
+        TrendsChartOption GetCurrentTrendsChartOption()
         {
             if (!ShouldShowUniqueClonesByDefault
                 && !ShouldShowUniqueViewsByDefault
                 && ShouldShowClonesByDefault
                 && ShouldShowViewsByDefault)
             {
-                return TrendsChartOptions.NoUniques;
+                return TrendsChartOption.NoUniques;
             }
 
             if (ShouldShowUniqueClonesByDefault
@@ -54,7 +55,7 @@ namespace GitTrends
                 && !ShouldShowClonesByDefault
                 && !ShouldShowViewsByDefault)
             {
-                return TrendsChartOptions.JustUniques;
+                return TrendsChartOption.JustUniques;
             }
 
             //All is the Default Value 
@@ -63,30 +64,30 @@ namespace GitTrends
             ShouldShowClonesByDefault = true;
             ShouldShowViewsByDefault = true;
 
-            return TrendsChartOptions.All;
+            return TrendsChartOption.All;
         }
 
-        void SetCurrentTrendsChartOption(in TrendsChartOptions currentTrendsChartOption)
+        void SetCurrentTrendsChartOption(in TrendsChartOption currentTrendsChartOption)
         {
-            _analyticsService.Track($"{nameof(TrendsChartOptions)} changed", nameof(TrendsChartOptions), currentTrendsChartOption.ToString());
+            _analyticsService.Track($"{nameof(TrendsChartOption)} changed", nameof(TrendsChartOption), currentTrendsChartOption.ToString());
 
             switch (currentTrendsChartOption)
             {
-                case TrendsChartOptions.All:
+                case TrendsChartOption.All:
                     ShouldShowUniqueClonesByDefault = true;
                     ShouldShowUniqueViewsByDefault = true;
                     ShouldShowClonesByDefault = true;
                     ShouldShowViewsByDefault = true;
                     break;
 
-                case TrendsChartOptions.JustUniques:
+                case TrendsChartOption.JustUniques:
                     ShouldShowUniqueClonesByDefault = true;
                     ShouldShowUniqueViewsByDefault = true;
                     ShouldShowClonesByDefault = false;
                     ShouldShowViewsByDefault = false;
                     break;
 
-                case TrendsChartOptions.NoUniques:
+                case TrendsChartOption.NoUniques:
                     ShouldShowUniqueClonesByDefault = false;
                     ShouldShowUniqueViewsByDefault = false;
                     ShouldShowClonesByDefault = true;
@@ -98,6 +99,4 @@ namespace GitTrends
             }
         }
     }
-
-    public enum TrendsChartOptions { All, NoUniques, JustUniques }
 }

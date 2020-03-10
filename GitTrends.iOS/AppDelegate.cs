@@ -86,6 +86,16 @@ namespace GitTrends.iOS
             var serializedCollection = Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleCollection());
             return new NSString(serializedCollection);
         }
+
+        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.GetCurrentTrendsChartOption + ":")]
+        public NSString GetCurrentTrendsChartOption(NSString noValue)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
+
+            var serializedTrendChartOption = Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetCurrentTrendsChartOption());
+            return new NSString(serializedTrendChartOption);
+        }
         #endregion
 #endif
 

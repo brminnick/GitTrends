@@ -14,5 +14,7 @@
         public const string TrendsChartSettingsLabel = nameof(TrendsChartSettingsLabel);
         public const string TrendsChartSettingsControl = nameof(TrendsChartSettingsControl);
         #endregion
+
+        public const string CreatedByLabel = nameof(CreatedByLabel);
     }
 }

@@ -1,20 +1,12 @@
 ﻿using System.Linq;
-using System.Collections.Generic;
+using GitTrends.Mobile.Shared;
 using Syncfusion.XForms.Buttons;
 using Xamarin.Forms;
-using GitTrends.Mobile.Shared;
 
 namespace GitTrends
 {
     class TrendsChartSettingsView : ContentView
     {
-        readonly Dictionary<TrendsChartOptions, string> _trendsChartOptions = new Dictionary<TrendsChartOptions, string>
-        {
-            { TrendsChartOptions.All, "All" },
-            { TrendsChartOptions.NoUniques, "No Uniques" },
-            { TrendsChartOptions.JustUniques, "Just Uniques" }
-        };
-
         readonly TrendsChartSettingsService _trendsChartSettingsService;
 
         public TrendsChartSettingsView(TrendsChartSettingsService trendsChartSettingsService)
@@ -42,8 +34,8 @@ namespace GitTrends
             var trendsChartSettingControl = new SfSegmentedControl
             {
                 AutomationId = SettingsPageAutomationIds.TrendsChartSettingsControl,
-                ItemsSource = _trendsChartOptions.Values.ToList(),
-                VisibleSegmentsCount = _trendsChartOptions.Values.Count,
+                ItemsSource = TrendsChartConstants.TrendsChartTitles.Values.ToList(),
+                VisibleSegmentsCount = TrendsChartConstants.TrendsChartTitles.Values.Count,
                 CornerRadius = cornerRadius,
                 SelectedIndex = (int)_trendsChartSettingsService.CurrentTrendsChartOption,
                 SelectionIndicatorSettings = selectionIndicatorSettings
@@ -73,6 +65,6 @@ namespace GitTrends
         }
 
         void HandleSelectionChanged(object sender, Syncfusion.XForms.Buttons.SelectionChangedEventArgs e) =>
-            _trendsChartSettingsService.CurrentTrendsChartOption = (TrendsChartOptions)e.Index;
+            _trendsChartSettingsService.CurrentTrendsChartOption = (TrendsChartOption)e.Index;
     }
 }
