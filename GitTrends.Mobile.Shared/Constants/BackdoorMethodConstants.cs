@@ -7,6 +7,7 @@ namespace GitTrends.Mobile.Shared
         public const string TriggerPullToRefresh = nameof(TriggerPullToRefresh);
         public const string GetVisibleCollection = nameof(GetVisibleCollection);
         public const string GetCurrentTrendsChartOption = nameof(GetCurrentTrendsChartOption);
+        public const string IsTrendsSeriesVisible = nameof(IsTrendsSeriesVisible);
     }
 }
 #endif

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
+using Syncfusion.SfChart.XForms;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -49,17 +50,31 @@ namespace GitTrends
 
         public TrendsChartOption GetCurrentTrendsChartOption() => _trendsChartSettingsService.CurrentTrendsChartOption;
 
+        public bool IsTrendsSeriesVisible(string seriesTitle)
+        {
+            var trendsPageLayout = (Layout<View>)GetVisibleContentPage().Content;
+
+            var trendsChart = trendsPageLayout.Children.OfType<SfChart>().First();
+
+            return trendsChart.Series.First(x => x.Label.Equals(seriesTitle)).IsVisible;
+        }
+
         RefreshView GetVisibleRefreshView()
         {
-            var contentPage = (ContentPage)Application.Current.MainPage.Navigation.ModalStack.FirstOrDefault()
-                                ?? (ContentPage)Application.Current.MainPage.Navigation.NavigationStack.FirstOrDefault();
+            var visibleContentPage = GetVisibleContentPage();
 
-            if (contentPage.Content is RefreshView refreshView)
+            if (visibleContentPage.Content is RefreshView refreshView)
                 return refreshView;
-            else if (contentPage.Content is Layout<View> layout && layout.Children.OfType<RefreshView>().FirstOrDefault() is RefreshView layoutRefreshView)
+            else if (visibleContentPage.Content is Layout<View> layout && layout.Children.OfType<RefreshView>().FirstOrDefault() is RefreshView layoutRefreshView)
                 return layoutRefreshView;
             else
-                throw new NotSupportedException($"{contentPage.GetType()} Does Not Contain a RefreshView");
+                throw new NotSupportedException($"{visibleContentPage.GetType()} Does Not Contain a RefreshView");
+        }
+
+        ContentPage GetVisibleContentPage()
+        {
+            return (ContentPage)Application.Current.MainPage.Navigation.ModalStack.LastOrDefault()
+                    ?? (ContentPage)Application.Current.MainPage.Navigation.NavigationStack.Last();
         }
     }
 }

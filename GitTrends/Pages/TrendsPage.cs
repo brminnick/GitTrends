@@ -10,8 +10,8 @@ namespace GitTrends
 {
     class TrendsPage : BaseContentPage<TrendsViewModel>
     {
-        readonly Repository _repository;
         static readonly Lazy<GitHubTrendsChart> _trendsChartHolder = new Lazy<GitHubTrendsChart>(() => new GitHubTrendsChart());
+        readonly Repository _repository;
 
         public TrendsPage(TrendsViewModel trendsViewModel,
                             TrendsChartSettingsService trendsChartSettingsService,
@@ -86,16 +86,16 @@ namespace GitTrends
             {
                 AutomationId = TrendsPageAutomationIds.TrendsChart;
 
-                TotalViewsSeries = new TrendsAreaSeries("Views", nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalViews), nameof(BaseTheme.TotalViewsColor), TrendsPageAutomationIds.TotalViewsSeries);
+                TotalViewsSeries = new TrendsAreaSeries(TrendsChartConstants.TotalViewsTitle, nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalViews), nameof(BaseTheme.TotalViewsColor));
                 TotalViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList));
 
-                TotalUniqueViewsSeries = new TrendsAreaSeries("Unique Views", nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalUniqueViews), nameof(BaseTheme.TotalUniqueViewsColor), TrendsPageAutomationIds.TotalUniqueViewsSeries);
+                TotalUniqueViewsSeries = new TrendsAreaSeries(TrendsChartConstants.UniqueViewsTitle, nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalUniqueViews), nameof(BaseTheme.TotalUniqueViewsColor));
                 TotalUniqueViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList));
 
-                TotalClonesSeries = new TrendsAreaSeries("Clones", nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalClones), nameof(BaseTheme.TotalClonesColor), TrendsPageAutomationIds.TotalClonesSeries);
+                TotalClonesSeries = new TrendsAreaSeries(TrendsChartConstants.TotalClonesTitle, nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalClones), nameof(BaseTheme.TotalClonesColor));
                 TotalClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyClonesList));
 
-                TotalUniqueClonesSeries = new TrendsAreaSeries("Unique Clones", nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalUniqueClones), nameof(BaseTheme.TotalUniqueClonesColor), TrendsPageAutomationIds.TotalUniqueClonesSeries);
+                TotalUniqueClonesSeries = new TrendsAreaSeries(TrendsChartConstants.UniqueClonesTitle, nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalUniqueClones), nameof(BaseTheme.TotalUniqueClonesColor));
                 TotalUniqueClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyClonesList));
 
                 this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsChartVisible));
@@ -176,9 +176,8 @@ namespace GitTrends
 
             class TrendsAreaSeries : AreaSeries
             {
-                public TrendsAreaSeries(in string title, in string xDataTitle, in string yDataTitle, in string colorResource, in string automationId)
+                public TrendsAreaSeries(in string title, in string xDataTitle, in string yDataTitle, in string colorResource)
                 {
-                    AutomationId = automationId;
                     Opacity = 0.9;
                     Label = title;
                     XBindingPath = xDataTitle;

@@ -58,6 +58,15 @@ namespace GitTrends.Droid
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetCurrentTrendsChartOption());
         }
+
+        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.IsTrendsSeriesVisible)]
+        public bool IsTrendsSeriesVisible(string seriesLabel)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
+
+            return backdoorService.IsTrendsSeriesVisible(seriesLabel);
+        }
         #endregion
 #endif
 
