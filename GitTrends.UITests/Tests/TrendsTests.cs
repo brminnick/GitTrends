@@ -13,8 +13,6 @@ namespace GitTrends.UITests
     [TestFixture(Platform.iOS, UserType.Demo)]
     class TrendsTests : BaseTest
     {
-        Repository? _tappedRepository;
-
         public TrendsTests(Platform platform, UserType userType) : base(platform, userType)
         {
         }
@@ -23,13 +21,13 @@ namespace GitTrends.UITests
         {
             await base.BeforeEachTest().ConfigureAwait(false);
 
-            _tappedRepository = RepositoryPage.GetVisibleRepositoryList().First();
+            var selectedRepository = RepositoryPage.GetVisibleRepositoryList().First();
 
-            RepositoryPage.TapRepository(_tappedRepository.Name);
+            RepositoryPage.TapRepository(selectedRepository.Name);
 
             await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
 
-            Assert.IsTrue(App.Query(_tappedRepository.Name).Any());
+            Assert.IsTrue(App.Query(selectedRepository.Name).Any());
         }
 
         [Test]

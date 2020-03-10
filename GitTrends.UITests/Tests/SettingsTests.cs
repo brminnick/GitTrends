@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using NUnit.Framework;
 using Xamarin.UITest;
@@ -6,8 +7,10 @@ using Xamarin.UITest.iOS;
 
 namespace GitTrends.UITests
 {
-    [TestFixture(Platform.iOS, UserType.Neither)]
-    [TestFixture(Platform.Android, UserType.Neither)]
+    [TestFixture(Platform.iOS, UserType.Demo)]
+    [TestFixture(Platform.iOS, UserType.LoggedIn)]
+    [TestFixture(Platform.Android, UserType.Demo)]
+    [TestFixture(Platform.Android, UserType.LoggedIn)]
     class SettingsTests : BaseTest
     {
         public SettingsTests(Platform platform, UserType userType) : base(platform, userType)
@@ -18,7 +21,6 @@ namespace GitTrends.UITests
         {
             await base.BeforeEachTest().ConfigureAwait(false);
 
-            RepositoryPage.DeclineGitHubUserNotFoundPopup();
             RepositoryPage.TapSettingsButton();
 
             await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
@@ -60,16 +62,33 @@ namespace GitTrends.UITests
             Assert.AreEqual(TrendsChartOption.JustUniques, SettingsPage.CurrentTrendsChartOption);
 
             //Act
+            await SettingsPage.SetTrendsChartOption(TrendsChartOption.All).ConfigureAwait(false);
+
+            //Assert
+            Assert.AreEqual(TrendsChartOption.All, SettingsPage.CurrentTrendsChartOption);
+
+            //Act
             await SettingsPage.SetTrendsChartOption(TrendsChartOption.NoUniques);
 
             //Assert
             Assert.AreEqual(TrendsChartOption.NoUniques, SettingsPage.CurrentTrendsChartOption);
 
             //Act
-            await SettingsPage.SetTrendsChartOption(TrendsChartOption.All).ConfigureAwait(false);
+            SettingsPage.TapBackButton();
+
+            await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
+            await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
+
+            var visibleRepositories = RepositoryPage.GetVisibleRepositoryList();
+            RepositoryPage.TapRepository(visibleRepositories.First().Name);
+
+            await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
 
             //Assert
-            Assert.AreEqual(TrendsChartOption.All, SettingsPage.CurrentTrendsChartOption);
+            Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalViewsTitle));
+            Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalClonesTitle));
+            Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueViewsTitle));
+            Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueClonesTitle));
         }
     }
 }
