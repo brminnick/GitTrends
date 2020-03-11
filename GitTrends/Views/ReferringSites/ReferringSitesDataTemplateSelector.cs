@@ -1,6 +1,7 @@
-﻿using System;
-using FFImageLoading.Forms;
+﻿using FFImageLoading.Forms;
 using Xamarin.Forms;
+using Xamarin.Forms.Markup;
+using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -10,72 +11,54 @@ namespace GitTrends
 
         class ReferringSitesDataTemplate : DataTemplate
         {
+            const int rowHeight = MobileReferringSiteModel.FavIconSize + 10;
+
             public ReferringSitesDataTemplate(MobileReferringSiteModel referringSiteModel) : base(() => CreateReferringSitesDataTemplate(referringSiteModel))
             {
             }
 
-            static View CreateReferringSitesDataTemplate(in MobileReferringSiteModel referringSiteModel)
+            static View CreateReferringSitesDataTemplate(in MobileReferringSiteModel referringSiteModel) => new Grid
             {
-                const int rowHeight = MobileReferringSiteModel.FavIconSize + 10;
+                RowSpacing = 1,
+                Margin = new Thickness(5),
 
-                var favIcon = new CachedImage
+                RowDefinitions = Rows.Define(
+                    (Row.TopPadding, new GridLength(2, GridUnitType.Absolute)),
+                    (Row.Title, new GridLength(rowHeight / 2, GridUnitType.Absolute)),
+                    (Row.Description, new GridLength(rowHeight / 2, GridUnitType.Absolute)),
+                    (Row.BotomPadding, new GridLength(2, GridUnitType.Absolute))),
+
+                ColumnDefinitions = Columns.Define(
+                    (Column.LeftPadding, new GridLength(5, GridUnitType.Absolute)),
+                    (Column.FavIcon, new GridLength(rowHeight, GridUnitType.Absolute)),
+                    (Column.Site, new GridLength(3, GridUnitType.Star)),
+                    (Column.Referrals, new GridLength(2, GridUnitType.Star)),
+                    (Column.Uniques, new GridLength(2, GridUnitType.Star)),
+                    (Column.RightPadding, new GridLength(5, GridUnitType.Absolute))),
+
+                Children =
                 {
-                    HeightRequest = MobileReferringSiteModel.FavIconSize,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    VerticalOptions = LayoutOptions.CenterAndExpand,
-                    LoadingPlaceholder = FavIconService.DefaultFavIcon,
-                    ErrorPlaceholder = FavIconService.DefaultFavIcon,
-                    Source = referringSiteModel.FavIcon
-                };
+                    new FavIconImage(referringSiteModel.FavIcon).Row(Row.Title).Column(Column.FavIcon).RowSpan(4),
+                    new TitleLabel("Site").Row(Row.Title).Column(Column.Site),
+                    new DescriptionLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site),
+                    new TitleLabel("Referrals"){ LineBreakMode = LineBreakMode.TailTruncation }.Row(Row.Title).Column(Column.Referrals),
+                    new DescriptionLabel(referringSiteModel.TotalCount.ToString()).Row(Row.Description).Column(Column.Referrals),
+                    new TitleLabel("Unique Visitors").Row(Row.Title).Column(Column.Uniques),
+                    new DescriptionLabel(referringSiteModel.TotalUniqueCount.ToString()).Row(Row.Description).Column(Column.Uniques),
+                }
+            };
 
-                var urlTitleLabel = new TitleLabel("Site");
-
-                var urlDescriptionLabel = new DescriptionLabel(referringSiteModel.Referrer)
+            class FavIconImage : CachedImage
+            {
+                public FavIconImage(ImageSource imageSource)
                 {
-                    LineBreakMode = LineBreakMode.TailTruncation
-                };
-
-                var viewsTitleLabel = new TitleLabel("Referrals");
-                var viewsDescriptionLabel = new DescriptionLabel(referringSiteModel.TotalCount.ToString());
-
-                var uniqueViewsTitleLabel = new TitleLabel("Unique Visitors");
-                var uniqueViewsDescriptionLabel = new DescriptionLabel(referringSiteModel.TotalUniqueCount.ToString());
-
-                var grid = new Grid
-                {
-                    RowSpacing = 1,
-                    Margin = new Thickness(5),
-                    RowDefinitions =
-                    {
-                        new RowDefinition { Height = new GridLength(2, GridUnitType.Absolute) },
-                        new RowDefinition { Height = new GridLength(rowHeight / 2, GridUnitType.Absolute) },
-                        new RowDefinition { Height = new GridLength(rowHeight / 2, GridUnitType.Absolute) },
-                        new RowDefinition { Height = new GridLength(2, GridUnitType.Absolute) },
-                    },
-                    ColumnDefinitions =
-                    {
-                        new ColumnDefinition { Width = new GridLength(5, GridUnitType.Absolute) },
-                        new ColumnDefinition { Width = new GridLength(rowHeight, GridUnitType.Absolute) },
-                        new ColumnDefinition { Width = new GridLength(3, GridUnitType.Star) },
-                        new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) },
-                        new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) },
-                        new ColumnDefinition { Width = new GridLength(5, GridUnitType.Absolute) },
-                    }
-                };
-
-                grid.Children.Add(favIcon, 1, 0);
-                Grid.SetRowSpan(favIcon, 4);
-
-                grid.Children.Add(urlTitleLabel, 2, 1);
-                grid.Children.Add(urlDescriptionLabel, 2, 2);
-
-                grid.Children.Add(viewsTitleLabel, 3, 1);
-                grid.Children.Add(viewsDescriptionLabel, 3, 2);
-
-                grid.Children.Add(uniqueViewsTitleLabel, 4, 1);
-                grid.Children.Add(uniqueViewsDescriptionLabel, 4, 2);
-
-                return grid;
+                    HeightRequest = MobileReferringSiteModel.FavIconSize;
+                    HorizontalOptions = LayoutOptions.FillAndExpand;
+                    VerticalOptions = LayoutOptions.CenterAndExpand;
+                    LoadingPlaceholder = FavIconService.DefaultFavIcon;
+                    ErrorPlaceholder = FavIconService.DefaultFavIcon;
+                    Source = imageSource;
+                }
             }
 
             class TitleLabel : CenteredLabel
@@ -109,6 +92,9 @@ namespace GitTrends
                     SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
                 }
             }
+
+            enum Row { TopPadding, Title, Description, BotomPadding }
+            enum Column { LeftPadding, FavIcon, Site, Referrals, Uniques, RightPadding }
         }
     }
 }
