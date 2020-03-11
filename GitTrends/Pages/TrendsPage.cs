@@ -61,7 +61,8 @@ namespace GitTrends
 
         Thickness GetPadding()
         {
-            if (DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Landscape)
+            //Check if Device is in Landscape
+            if (DeviceDisplay.MainDisplayInfo.Width > DeviceDisplay.MainDisplayInfo.Height)
                 return new Thickness(0, 5, 0, 0);
             else
                 return Device.RuntimePlatform is Device.iOS ? new Thickness(0, 5, 0, 15) : new Thickness(0, 5, 0, 0);
