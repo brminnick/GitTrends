@@ -9,6 +9,7 @@ using AsyncAwaitBestPractices.MVVM;
 using Autofac;
 using GitTrends.Shared;
 using Refit;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -35,7 +36,8 @@ namespace GitTrends
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
 
             PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(GitHubAuthenticationService.Alias));
-            FilterRepositoriesCommand = new Command<string>(text => SetSearchBarText(text));
+            FilterRepositoriesCommand = new Command<string>(SetSearchBarText);
+            SortRepositoriesCommand = new Command<SortingOption>(ExecuteSortRepositoriesCommand);
 
             _gitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
         }
@@ -48,6 +50,7 @@ namespace GitTrends
 
         public ICommand PullToRefreshCommand { get; }
         public ICommand FilterRepositoriesCommand { get; }
+        public ICommand SortRepositoriesCommand { get; }
 
         public IReadOnlyList<Repository> VisibleRepositoryList
         {
@@ -59,6 +62,18 @@ namespace GitTrends
         {
             get => _isRefreshing;
             set => SetProperty(ref _isRefreshing, value);
+        }
+
+        bool IsSortingReversed
+        {
+            get => Preferences.Get(nameof(IsSortingReversed), false);
+            set => Preferences.Set(nameof(IsSortingReversed), value);
+        }
+
+        SortingOption CurrentSortingOption
+        {
+            get => (SortingOption)Preferences.Get(nameof(CurrentSortingOption), (int)SortingOption.Stars);
+            set => Preferences.Set(nameof(CurrentSortingOption), (int)value);
         }
 
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
@@ -97,11 +112,29 @@ namespace GitTrends
             }
         }
 
+        void ExecuteSortRepositoriesCommand(SortingOption option)
+        {
+            if (CurrentSortingOption == option)
+                IsSortingReversed = !IsSortingReversed;
+            else
+                IsSortingReversed = false;
+
+            CurrentSortingOption = option;
+
+            AnalyticsService.Track("Sorting Options Updated", new Dictionary<string, string>
+            {
+                { nameof(CurrentSortingOption), CurrentSortingOption.ToString() },
+                { nameof(IsSortingReversed), IsSortingReversed.ToString() }
+            });
+
+            UpdateVisibleRepositoryList(_searchBarText, CurrentSortingOption, IsSortingReversed);
+        }
+
         void SetRepositoriesCollection(in IEnumerable<Repository> repositories, string searchBarText)
         {
             _repositoryList = repositories.ToList();
 
-            UpdateVisibleRepositoryList(searchBarText);
+            UpdateVisibleRepositoryList(searchBarText, CurrentSortingOption, IsSortingReversed);
         }
 
         void AddRepositoriesToCollection(IEnumerable<Repository> repositories, string searchBarText)
@@ -109,15 +142,33 @@ namespace GitTrends
             var updatedRepositoryList = _repositoryList.Concat(repositories);
             _repositoryList = RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
-            UpdateVisibleRepositoryList(searchBarText);
+            UpdateVisibleRepositoryList(searchBarText, CurrentSortingOption, IsSortingReversed);
 
             static IEnumerable<Repository> RemoveForksAndDuplicates(in IEnumerable<Repository> repositoriesList) => repositoriesList.Where(x => !x.IsFork).GroupBy(x => x.Name).Select(x => x.First());
         }
 
-        void UpdateVisibleRepositoryList(string searchBarText)
+        void UpdateVisibleRepositoryList(in string searchBarText, in SortingOption sortingOption, in bool isReversed)
         {
             var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
-            VisibleRepositoryList = filteredRepositoryList.OrderByDescending(x => x.StarCount).ToList();
+
+            VisibleRepositoryList = sortingOption switch
+            {
+                SortingOption.Clones when isReversed => throw new NotImplementedException(),
+                SortingOption.Clones => throw new NotImplementedException(),
+                SortingOption.Forks when isReversed => filteredRepositoryList.OrderBy(x => x.ForkCount).ToList(),
+                SortingOption.Forks => filteredRepositoryList.OrderByDescending(x => x.ForkCount).ToList(),
+                SortingOption.Issues when isReversed => filteredRepositoryList.OrderBy(x => x.IssuesCount).ToList(),
+                SortingOption.Issues => filteredRepositoryList.OrderByDescending(x => x.IssuesCount).ToList(),
+                SortingOption.Stars when isReversed => filteredRepositoryList.OrderBy(x => x.StarCount).ToList(),
+                SortingOption.Stars => filteredRepositoryList.OrderByDescending(x => x.StarCount).ToList(),
+                SortingOption.UniqueClones when isReversed => throw new NotImplementedException(),
+                SortingOption.UniqueClones => throw new NotImplementedException(),
+                SortingOption.UniqueViews when isReversed => throw new NotImplementedException(),
+                SortingOption.UniqueViews => throw new NotImplementedException(),
+                SortingOption.Views when isReversed => throw new NotImplementedException(),
+                SortingOption.Views => throw new NotImplementedException(),
+                _ => throw new NotSupportedException()
+            };
         }
 
         IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IEnumerable<Repository> repositories, string searchBarText)
@@ -128,7 +179,7 @@ namespace GitTrends
             return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
         }
 
-        void SetSearchBarText(in string text)
+        void SetSearchBarText(string text)
         {
             if (EqualityComparer<string>.Default.Equals(_searchBarText, text))
                 return;
@@ -136,13 +187,13 @@ namespace GitTrends
             _searchBarText = text;
 
             if (_repositoryList.Any())
-                UpdateVisibleRepositoryList(_searchBarText);
+                UpdateVisibleRepositoryList(_searchBarText, CurrentSortingOption, IsSortingReversed);
         }
 
         void HandleGitHubAuthenticationServiceLoggedOut(object sender, EventArgs e)
         {
             _repositoryList = Enumerable.Empty<Repository>().ToList();
-            UpdateVisibleRepositoryList(string.Empty);
+            UpdateVisibleRepositoryList(string.Empty, CurrentSortingOption, IsSortingReversed);
         }
 
         void OnPullToRefreshFailed(in string title, in string message) =>

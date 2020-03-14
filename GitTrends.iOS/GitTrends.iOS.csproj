@@ -227,7 +227,6 @@
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.0.0" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.0.0" />
   </ItemGroup>
-  <Import Project="..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\GitTrends\GitTrends.csproj">

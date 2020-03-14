@@ -15,14 +15,10 @@ namespace GitTrends
     public class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISearchPage
     {
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
-        readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
         public RepositoryPage(RepositoryViewModel repositoryViewModel,
-                                GitHubAuthenticationService gitHubAuthenticationService,
                                 AnalyticsService analyticsService) : base(PageTitles.RepositoryPage, repositoryViewModel, analyticsService)
         {
-            _gitHubAuthenticationService = gitHubAuthenticationService;
-
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
 
@@ -45,13 +41,23 @@ namespace GitTrends
             repositoriesListRefreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
             repositoriesListRefreshView.SetBinding(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
 
+
+            var sortToolbarItem = new ToolbarItem
+            {
+                Text = "Sort",
+                Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
+                AutomationId = RepositoryPageAutomationIds.SettingsButton,
+            };
+            sortToolbarItem.Clicked += HandleSortToolbarItemCliked;
+            ToolbarItems.Add(sortToolbarItem);
+
             var settingsToolbarItem = new ToolbarItem
             {
                 Text = "Settings",
                 Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
-                AutomationId = RepositoryPageAutomationIds.SettingsButton
+                AutomationId = RepositoryPageAutomationIds.SettingsButton,
             };
-            settingsToolbarItem.Clicked += HandleSettingsToolbarItem;
+            settingsToolbarItem.Clicked += HandleSettingsToolbarItemCliked;
             ToolbarItems.Add(settingsToolbarItem);
 
             Content = repositoriesListRefreshView;
@@ -62,8 +68,6 @@ namespace GitTrends
             add => _searchTextChangedEventManager.AddEventHandler(value);
             remove => _searchTextChangedEventManager.RemoveEventHandler(value);
         }
-
-        public void OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.HandleEvent(this, text, nameof(SearchBarTextChanged));
 
         protected override async void OnAppearing()
         {
@@ -125,7 +129,7 @@ namespace GitTrends
             return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
         }
 
-        async void HandleSettingsToolbarItem(object sender, EventArgs e)
+        async void HandleSettingsToolbarItemCliked(object sender, EventArgs e)
         {
             AnalyticsService.Track("Settings Button Tapped");
 
@@ -144,6 +148,20 @@ namespace GitTrends
             });
         }
 
+        async void HandleSortToolbarItemCliked(object sender, EventArgs e)
+        {
+            var alphabetizedSortingOptions = SortingConstants.SortingOptionsDictionary.Values.OrderBy(x => x);
+
+            var selection = await DisplayActionSheet("Sort By", "Cancel", null, alphabetizedSortingOptions.ToArray());
+
+            if (Enum.IsDefined(typeof(SortingOption), selection))
+            {
+                ViewModel.SortRepositoriesCommand.Execute(SortingConstants.SortingOptionsDictionary.First(x => x.Value == selection).Key);
+            }
+        }
+
         void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand.Execute(searchBarText);
+
+        void ISearchPage.OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.HandleEvent(this, text, nameof(SearchBarTextChanged));
     }
 }

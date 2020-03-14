@@ -87,25 +87,12 @@ namespace GitTrends
             }
         }
 
-        class SmallNavyBlueSVGImage : SvgCachedImage
+        class SmallNavyBlueSVGImage : SvgImage
         {
             public SmallNavyBlueSVGImage(in string svgFileName)
+                : base(svgFileName, () => (Color)Application.Current.Resources[nameof(BaseTheme.TextColor)])
             {
-                var app = (App)Application.Current;
-                app.ThemeChanged += HandleThemeChanged;
-
-                UpdateSVGColor();
-
-                Source = SvgService.GetSVGResourcePath(svgFileName);
                 HeightRequest = _smallFontSize;
-            }
-
-            void HandleThemeChanged(object sender, Theme e) => UpdateSVGColor();
-
-            void UpdateSVGColor()
-            {
-                var textColor = (Color)Application.Current.Resources[nameof(BaseTheme.TextColor)];
-                ReplaceStringMap = SvgService.GetColorStringMap(textColor.ToHex());
             }
         }
 
