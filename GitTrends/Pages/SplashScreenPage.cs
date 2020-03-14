@@ -40,9 +40,11 @@ namespace GitTrends
 
             _statusLabel = new Label
             {
+                Margin = new Thickness(10, 0),
                 AutomationId = SplashScreenPageAutomationIds.StatusLabel,
                 Text = _statusMessageEnumerator.Current,
                 HorizontalTextAlignment = TextAlignment.Center,
+                //Begin with Label off of the screen
                 TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2,
             };
             _statusLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TotalClonesColor));
@@ -190,11 +192,11 @@ namespace GitTrends
                         new Span
                         {
                             FontAttributes = FontAttributes.Bold,
-                            Text = "Initialization Failed"
+                            Text = "Initialization Failed\n"
                         },
                         new Span
                         {
-                            Text = "\nPlease Ensure Internet Connection Is Available"
+                            Text = "Ensure Internet Connection Is Available\n + \nUpdate App to the Latest Version"
                         }
                     }
                 });
