@@ -12,11 +12,11 @@ namespace GitTrends.Shared
         static Dictionary<SortingOption, string> CreateSortingDictionary() => new Dictionary<SortingOption, string>
         {
             { SortingOption.Stars,  "Stars" },
-            { SortingOption.Issues,  "Issues" },
             { SortingOption.Forks,  "Forks" },
+            { SortingOption.Issues,  "Issues" },
             { SortingOption.Views,  "Views" },
-            { SortingOption.UniqueViews,  "Unique Views" },
             { SortingOption.Clones,  "Clones" },
+            { SortingOption.UniqueViews,  "Unique Views" },
             { SortingOption.UniqueClones,  "Unique Clones" },
         };
     }

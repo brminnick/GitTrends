@@ -202,6 +202,16 @@
     <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light.png" />
     <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x-2.png" />
     <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x.png" />
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%401x_light.png" />
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%402x_light.png" />
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%403x_light-1.png" />
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%401x_dark.png" />
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%402x_dark.png" />
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%403x_dark.png" />
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%401x_light-1.png" />
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%402x_light-1.png" />
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%403x_light.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -240,6 +250,7 @@
     <Folder Include="Assets.xcassets\DefaultProfileImage.imageset\" />
     <Folder Include="Assets.xcassets\GitTrends.imageset\" />
     <Folder Include="Assets.xcassets\GitTrendsBackgroundColor.colorset\" />
+    <Folder Include="Assets.xcassets\Sort.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\FontAwesomeBrands.ttf" />

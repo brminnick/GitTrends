@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using FFImageLoading.Svg.Forms;
 using GitTrends.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
@@ -63,7 +64,6 @@ namespace GitTrends
                     (Row.Statistics, new GridLength(_smallFontSize + 2, GridUnitType.Absolute)),
                     (Row.BottomPadding, new GridLength(5, GridUnitType.Absolute))),
 
-
                 ColumnDefinitions = Columns.Define(
                     (Column.Avatar, new GridLength(circleImageHeight, GridUnitType.Absolute)),
                     (Column.AvatarPadding, new GridLength(2, GridUnitType.Absolute)),
@@ -81,17 +81,18 @@ namespace GitTrends
                 {
                     new AvatarImage().Row(Row.TopPadding).Column(Column.Avatar).RowSpan(6)
                         .Bind(Image.SourceProperty, nameof(Repository.OwnerAvatarUrl)),
-
                     new RepositoryNameLabel(repository.Name).Row(Row.Title).Column(Column.Emoji1).ColumnSpan(9),
                     new RepositoryDescriptionLabel(repository.Description).Row(Row.Description).Column(Column.Emoji1).ColumnSpan(9),
-                    new SmallNavyBlueSVGImage(shouldShowStarsForksIssues ? "star.svg" : "totalViews.svg").Row(Row.Statistics).Column(Column.Emoji1),
+                    new SmallNavyBlueSVGImage(shouldShowStarsForksIssues ? "star.svg" : "total_views.svg").Row(Row.Statistics).Column(Column.Emoji1),
                     new DarkBlueLabel(_smallFontSize - 1, shouldShowStarsForksIssues ? repository.StarCount.ToString() : repository.TotalViews.ToString()).Row(Row.Statistics).Column(Column.Statistic1),
-                    new SmallNavyBlueSVGImage(shouldShowStarsForksIssues ? "repo_forked.svg" : "uniqueViews.svg").Row(Row.Statistics).Column(Column.Emoji2),
+                    new SmallNavyBlueSVGImage(shouldShowStarsForksIssues ? "repo_forked.svg" : "unique_views.svg").Row(Row.Statistics).Column(Column.Emoji2),
                     new DarkBlueLabel(_smallFontSize - 1, shouldShowStarsForksIssues ? repository.ForkCount.ToString() : repository.TotalUniqueViews.ToString()).Row(Row.Statistics).Column(Column.Statistic2),
-                    new SmallNavyBlueSVGImage(shouldShowStarsForksIssues ? "issue_opened.svg" : "totalClones.svg").Row(Row.Statistics).Column(Column.Emoji3),
+                    new SmallNavyBlueSVGImage(shouldShowStarsForksIssues ? "issue_opened.svg" : "total_clones.svg").Row(Row.Statistics).Column(Column.Emoji3),
                     new DarkBlueLabel(_smallFontSize - 1, shouldShowStarsForksIssues ? repository.IssuesCount.ToString() : repository.TotalClones.ToString()).Row(Row.Statistics).Column(Column.Statistic3),
-                    new SmallNavyBlueSVGImage(shouldShowStarsForksIssues ? "no_image.svg" : "totalUniqueClones.svg").Row(Row.Statistics).Column(Column.Emoji4),
-                    new DarkBlueLabel(_smallFontSize - 1, shouldShowStarsForksIssues ? string.Empty : repository.TotalUniqueClones.ToString()).Row(Row.Statistics).Column(Column.Statistic4)
+
+                    //Column.Emoji4 & Column.Statistic4 are not needed for StarsForksIssues
+                    shouldShowStarsForksIssues ? new SvgCachedImage() : new SmallNavyBlueSVGImage("unique_clones.svg").Row(Row.Statistics).Column(Column.Emoji4),
+                    shouldShowStarsForksIssues ? new Label()  : new DarkBlueLabel(_smallFontSize - 1, repository.TotalUniqueClones.ToString()).Row(Row.Statistics).Column(Column.Statistic4)
                 }
             };
         }

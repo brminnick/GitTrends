@@ -42,16 +42,6 @@ namespace GitTrends
             repositoriesListRefreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
             repositoriesListRefreshView.SetBinding(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
 
-
-            var sortToolbarItem = new ToolbarItem
-            {
-                Text = "Sort",
-                Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
-                AutomationId = RepositoryPageAutomationIds.SettingsButton,
-            };
-            sortToolbarItem.Clicked += HandleSortToolbarItemCliked;
-            ToolbarItems.Add(sortToolbarItem);
-
             var settingsToolbarItem = new ToolbarItem
             {
                 Text = "Settings",
@@ -60,6 +50,16 @@ namespace GitTrends
             };
             settingsToolbarItem.Clicked += HandleSettingsToolbarItemCliked;
             ToolbarItems.Add(settingsToolbarItem);
+
+            var sortToolbarItem = new ToolbarItem
+            {
+                Text = "Sort",
+                IconImageSource = "Sort",
+                Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
+                AutomationId = RepositoryPageAutomationIds.SettingsButton,
+            };
+            sortToolbarItem.Clicked += HandleSortToolbarItemCliked;
+            ToolbarItems.Add(sortToolbarItem);
 
             Content = repositoriesListRefreshView;
         }
@@ -151,13 +151,13 @@ namespace GitTrends
 
         async void HandleSortToolbarItemCliked(object sender, EventArgs e)
         {
-            const string cancel = "Cancel";
+            const string cancelText = "Cancel";
 
-            var alphabetizedSortingOptions = SortingConstants.SortingOptionsDictionary.Values.OrderBy(x => x);
+            var sortingOptions = SortingConstants.SortingOptionsDictionary.Values;
 
-            var selection = await DisplayActionSheet("Sort By", cancel, null, alphabetizedSortingOptions.ToArray());
+            var selection = await DisplayActionSheet("Sort By", cancelText, null, sortingOptions.ToArray());
 
-            if (selection != cancel)
+            if (selection != cancelText)
                 ViewModel.SortRepositoriesCommand.Execute(SortingConstants.SortingOptionsDictionary.First(x => x.Value == selection).Key);
         }
 

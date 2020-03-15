@@ -166,7 +166,7 @@ namespace GitTrends
 
             _sortingService.CurrentOption = option;
 
-            AnalyticsService.Track("Sorting Options Updated", new Dictionary<string, string>
+            AnalyticsService.Track("Sort Button Tapped", new Dictionary<string, string>
             {
                 { nameof(SortingService.CurrentOption), _sortingService.CurrentOption.ToString() },
                 { nameof(SortingService.IsReversed), _sortingService.IsReversed.ToString() }
