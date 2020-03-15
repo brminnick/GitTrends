@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Refit;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -14,7 +15,7 @@ namespace GitTrends
 
         static IGitHubApiV3 GithubApiClient => _githubApiClient.Value;
 
-        public async Task<RepositoryViewsModel> GetRepositoryViewStatistics(string owner, string repo)
+        public async Task<RepositoryViewsResponseModel> GetRepositoryViewStatistics(string owner, string repo)
         {
             if (GitHubAuthenticationService.IsDemoUser)
             {
@@ -31,16 +32,18 @@ namespace GitTrends
                     dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
                 }
 
-                return new RepositoryViewsModel(dailyViewsModelList.Sum(x => x.TotalViews), dailyViewsModelList.Sum(x => x.TotalUniqueViews), dailyViewsModelList);
+                return new RepositoryViewsResponseModel(repo, owner, dailyViewsModelList.Sum(x => x.TotalViews), dailyViewsModelList.Sum(x => x.TotalUniqueViews), dailyViewsModelList);
             }
             else
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
-                return await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryViewStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
+                var response = await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryViewStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
+
+                return new RepositoryViewsResponseModel(repo, owner, response.TotalCount, response.TotalUniqueCount, response.DailyViewsList);
             }
         }
 
-        public async Task<RepositoryClonesModel> GetRepositoryCloneStatistics(string owner, string repo)
+        public async Task<RepositoryClonesResponseModel> GetRepositoryCloneStatistics(string owner, string repo)
         {
             if (GitHubAuthenticationService.IsDemoUser)
             {
@@ -57,12 +60,14 @@ namespace GitTrends
                     dailyViewsModelList.Add(new DailyClonesModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
                 }
 
-                return new RepositoryClonesModel(dailyViewsModelList.Sum(x => x.TotalClones), dailyViewsModelList.Sum(x => x.TotalUniqueClones), dailyViewsModelList);
+                return new RepositoryClonesResponseModel(repo, owner, dailyViewsModelList.Sum(x => x.TotalClones), dailyViewsModelList.Sum(x => x.TotalUniqueClones), dailyViewsModelList);
             }
             else
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
-                return await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryCloneStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
+                var response = await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryCloneStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
+
+                return new RepositoryClonesResponseModel(repo, owner, response.TotalCount, response.TotalUniqueCount, response.DailyClonesList);
             }
         }
 

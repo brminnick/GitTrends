@@ -21,5 +21,5 @@ namespace GitTrends.Shared
         };
     }
 
-    enum SortingOption  { Stars, Issues, Forks, Views, UniqueViews, Clones, UniqueClones }
+    public enum SortingOption  { Stars, Issues, Forks, Views, UniqueViews, Clones, UniqueClones }
 }

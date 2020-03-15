@@ -17,14 +17,15 @@ namespace GitTrends
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
 
         public RepositoryPage(RepositoryViewModel repositoryViewModel,
-                                AnalyticsService analyticsService) : base(PageTitles.RepositoryPage, repositoryViewModel, analyticsService)
+                                AnalyticsService analyticsService,
+                                SortingService sortingService) : base(PageTitles.RepositoryPage, repositoryViewModel, analyticsService)
         {
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
 
             var collectionView = new CollectionView
             {
-                ItemTemplate = new RepositoryDataTemplate(),
+                ItemTemplate = new RepositoryDataTemplateSelector(sortingService),
                 BackgroundColor = Color.Transparent,
                 SelectionMode = SelectionMode.Single,
                 AutomationId = RepositoryPageAutomationIds.CollectionView

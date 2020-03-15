@@ -88,10 +88,14 @@ namespace GitTrends
 
             public static explicit operator Repository(RepositoryDatabaseModel repositoryDatabaseModel)
             {
-                return new Repository(repositoryDatabaseModel.Name, repositoryDatabaseModel.Description, repositoryDatabaseModel.ForkCount,
-                    new RepositoryOwner(repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl ?? repositoryDatabaseModel.OwnerLogin),
-                    new IssuesConnection(repositoryDatabaseModel.IssuesCount, Enumerable.Empty<Issue>()),
-                    repositoryDatabaseModel.Url, new StarGazers(repositoryDatabaseModel.StarCount), repositoryDatabaseModel.IsFork);
+                return new Repository(repositoryDatabaseModel.Name,
+                                        repositoryDatabaseModel.Description,
+                                        repositoryDatabaseModel.ForkCount,
+                                        new RepositoryOwner(repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl ?? repositoryDatabaseModel.OwnerLogin),
+                                        new IssuesConnection(repositoryDatabaseModel.IssuesCount, Enumerable.Empty<Issue>()),
+                                        repositoryDatabaseModel.Url,
+                                        new StarGazers(repositoryDatabaseModel.StarCount),
+                                        repositoryDatabaseModel.IsFork);
             }
 
             public static implicit operator RepositoryDatabaseModel(Repository repository)

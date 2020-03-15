@@ -24,7 +24,7 @@ namespace GitTrends
         {
             _reviewService = reviewService;
             _gitHubApiV3Service = gitHubApiV3Service;
-            FetchDataCommand = new AsyncCommand<(string Owner, string Repository)>(repo => ExecuteFetchDataCommand(repo.Owner, repo.Repository));
+            FetchDataCommand = new AsyncCommand<Repository>(repo => ExecuteFetchDataCommand(repo));
         }
 
         public ICommand FetchDataCommand { get; }
@@ -95,39 +95,58 @@ namespace GitTrends
             return new DateTime(Math.Max(maxViewsDateTime.Ticks, maxClonesDateTime.Ticks));
         }
 
-        async Task ExecuteFetchDataCommand(string owner, string repository)
+        async Task ExecuteFetchDataCommand(Repository repository)
         {
-            IsFetchingData = true;
-
             _reviewService.TryRequestReview();
 
-            try
+            List<DailyViewsModel> repositoryViews;
+            List<DailyClonesModel> repositoryClones;
+
+            var minimumTimeTask = Task.Delay(2000);
+
+            if (repository.DailyClonesList.Any() && repository.DailyViewsList.Any())
             {
-                var getRepositoryViewStatisticsTask = _gitHubApiV3Service.GetRepositoryViewStatistics(owner, repository);
-                var getRepositoryCloneStatisticsTask = _gitHubApiV3Service.GetRepositoryCloneStatistics(owner, repository);
-                var minimumTimeTask = Task.Delay(2000);
-
-                await Task.WhenAll(getRepositoryViewStatisticsTask, getRepositoryCloneStatisticsTask, minimumTimeTask).ConfigureAwait(false);
-
-                var repositoryViews = await getRepositoryViewStatisticsTask.ConfigureAwait(false);
-                var repositoryClones = await getRepositoryCloneStatisticsTask.ConfigureAwait(false);
-
-                addMissingDates(repositoryViews.DailyViewsList, repositoryClones.DailyClonesList);
-
-                DailyViewsList = repositoryViews.DailyViewsList.OrderBy(x => x.Day).ToList();
-                DailyClonesList = repositoryClones.DailyClonesList.OrderBy(x => x.Day).ToList();
-
-                PrintDays();
+                repositoryViews = repository.DailyViewsList;
+                repositoryClones = repository.DailyClonesList;
             }
-            catch(Exception e)
+            else
             {
-                //ToDo Add note reporting to the user that the statistics are unavailable due to internet connectivity
-                AnalyticsService.Report(e);
+                try
+                {
+                    IsFetchingData = true;
+
+                    var getRepositoryViewStatisticsTask = _gitHubApiV3Service.GetRepositoryViewStatistics(repository.OwnerLogin, repository.Name);
+                    var getRepositoryCloneStatisticsTask = _gitHubApiV3Service.GetRepositoryCloneStatistics(repository.OwnerLogin, repository.Name);
+
+                    await Task.WhenAll(getRepositoryViewStatisticsTask, getRepositoryCloneStatisticsTask).ConfigureAwait(false);
+
+                    var repositoryViewsResponse = await getRepositoryViewStatisticsTask.ConfigureAwait(false);
+                    var repositoryClonesResponse = await getRepositoryCloneStatisticsTask.ConfigureAwait(false);
+
+                    repositoryViews = repositoryViewsResponse.DailyViewsList;
+                    repositoryClones = repositoryClonesResponse.DailyClonesList;
+
+                }
+                catch (Exception e)
+                {
+                    //ToDo Add note reporting to the user that the statistics are unavailable due to internet connectivity
+                    repositoryViews = Enumerable.Empty<DailyViewsModel>().ToList();
+                    repositoryClones = Enumerable.Empty<DailyClonesModel>().ToList();
+
+                    AnalyticsService.Report(e);
+                }
             }
-            finally
-            {
-                IsFetchingData = false;
-            }
+
+            addMissingDates(repositoryViews, repositoryClones);
+
+            //Display the Activity Indicator for a minimum time to ensure consistant UX 
+            await minimumTimeTask.ConfigureAwait(false);
+            IsFetchingData = false;
+
+            DailyViewsList = repositoryViews.OrderBy(x => x.Day).ToList();
+            DailyClonesList = repositoryClones.OrderBy(x => x.Day).ToList();
+
+            PrintDays();
 
             static void addMissingDates(in IList<DailyViewsModel> dailyViewsList, in IList<DailyClonesModel> dailyClonesList)
             {

@@ -7,7 +7,12 @@ namespace GitTrends.Shared
     {
         public const int FavIconSize = 32;
 
-        public ReferringSiteModel(long count, long uniques, string referrer) : base(count, uniques)
+        [JsonConstructor]
+        public ReferringSiteModel(long count, long uniques, string referrer) : this(string.Empty, string.Empty, count, uniques, referrer)
+        {
+        }
+
+        public ReferringSiteModel(string repositoryName, string repositoryOwner, long count, long uniques, string referrer) : base(repositoryName, repositoryOwner, count, uniques)
         {
             Referrer = referrer;
             Uri.TryCreate("https://" + referrer, UriKind.Absolute, out var referringUri);
