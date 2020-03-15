@@ -151,14 +151,14 @@ namespace GitTrends
 
         async void HandleSortToolbarItemCliked(object sender, EventArgs e)
         {
+            const string cancel = "Cancel";
+
             var alphabetizedSortingOptions = SortingConstants.SortingOptionsDictionary.Values.OrderBy(x => x);
 
-            var selection = await DisplayActionSheet("Sort By", "Cancel", null, alphabetizedSortingOptions.ToArray());
+            var selection = await DisplayActionSheet("Sort By", cancel, null, alphabetizedSortingOptions.ToArray());
 
-            if (Enum.IsDefined(typeof(SortingOption), selection))
-            {
+            if (selection != cancel)
                 ViewModel.SortRepositoriesCommand.Execute(SortingConstants.SortingOptionsDictionary.First(x => x.Value == selection).Key);
-            }
         }
 
         void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand.Execute(searchBarText);
