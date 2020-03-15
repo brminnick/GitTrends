@@ -47,7 +47,7 @@ namespace GitTrends
 
             Content = absoluteLayout;
 
-            ViewModel.FetchDataCommand.Execute((_repository.OwnerLogin, _repository.Name));
+            ViewModel.FetchDataCommand.Execute(_repository);
         }
 
         static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;

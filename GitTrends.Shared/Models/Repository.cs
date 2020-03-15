@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -6,7 +9,7 @@ namespace GitTrends.Shared
 {
     public class Repository : IRepository
     {
-        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork)
+        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork, IEnumerable<DailyViewsModel>? views = null, IEnumerable<DailyClonesModel>? clones = null)
         {
             Name = name;
             Description = description;
@@ -17,7 +20,14 @@ namespace GitTrends.Shared
             Url = url;
             StarCount = stargazers.TotalCount;
             IsFork = isFork;
+            DailyViewsList = (views ?? Enumerable.Empty<DailyViewsModel>()).ToList();
+            DailyClonesList = (clones ?? Enumerable.Empty<DailyClonesModel>()).ToList();
         }
+
+        public long TotalViews => DailyViewsList.Sum(x => x.TotalViews);
+        public long TotalUniqueViews => DailyViewsList.Sum(x => x.TotalUniqueViews);
+        public long TotalClones => DailyClonesList.Sum(x => x.TotalClones);
+        public long TotalUniqueClones => DailyClonesList.Sum(x => x.TotalUniqueClones);
 
         public string OwnerLogin { get; }
         public string OwnerAvatarUrl { get; }
@@ -27,6 +37,9 @@ namespace GitTrends.Shared
         public string Description { get; }
         public long ForkCount { get; }
         public bool IsFork { get; }
+
+        public List<DailyViewsModel> DailyViewsList { get; }
+        public List<DailyClonesModel> DailyClonesList { get; }
 
         [JsonProperty("url")]
         public string Url { get; }

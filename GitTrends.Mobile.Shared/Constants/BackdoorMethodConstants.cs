@@ -1,7 +1,7 @@
 ﻿#if !AppStore
 namespace GitTrends.Mobile.Shared
 {
-    class BackdoorMethodConstants
+    public class BackdoorMethodConstants
     {
         public const string SetGitHubUser = nameof(SetGitHubUser);
         public const string TriggerPullToRefresh = nameof(TriggerPullToRefresh);

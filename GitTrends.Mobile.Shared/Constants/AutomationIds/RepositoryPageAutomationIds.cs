@@ -4,6 +4,7 @@
     {
         public const string SearchBar = nameof(SearchBar);
         public const string SettingsButton = nameof(SettingsButton);
+        public const string SortButton = nameof(SortButton);
         public const string CollectionView = nameof(CollectionView);
         public const string RefreshView = nameof(RefreshView);
     }

@@ -61,11 +61,19 @@
       <None Remove="Resources\repo_forked.svg" />
       <None Remove="Resources\star.svg" />
       <None Remove="Resources\issue_opened.svg" />
+      <None Remove="Resources\unique_clones.svg" />
+      <None Remove="Resources\total_clones.svg" />
+      <None Remove="Resources\unique_views.svg" />
+      <None Remove="Resources\total_views.svg" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="Resources\repo_forked.svg" />
       <EmbeddedResource Include="Resources\star.svg" />
       <EmbeddedResource Include="Resources\issue_opened.svg" />
+      <EmbeddedResource Include="Resources\unique_clones.svg" />
+      <EmbeddedResource Include="Resources\total_clones.svg" />
+      <EmbeddedResource Include="Resources\unique_views.svg" />
+      <EmbeddedResource Include="Resources\total_views.svg" />
     </ItemGroup>
     <Import Project="..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems')" />
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />

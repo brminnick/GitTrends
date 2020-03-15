@@ -15,20 +15,17 @@ namespace GitTrends
     public class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISearchPage
     {
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
-        readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
         public RepositoryPage(RepositoryViewModel repositoryViewModel,
-                                GitHubAuthenticationService gitHubAuthenticationService,
-                                AnalyticsService analyticsService) : base(PageTitles.RepositoryPage, repositoryViewModel, analyticsService)
+                                AnalyticsService analyticsService,
+                                SortingService sortingService) : base(PageTitles.RepositoryPage, repositoryViewModel, analyticsService)
         {
-            _gitHubAuthenticationService = gitHubAuthenticationService;
-
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
 
             var collectionView = new CollectionView
             {
-                ItemTemplate = new RepositoryDataTemplate(),
+                ItemTemplate = new RepositoryDataTemplateSelector(sortingService),
                 BackgroundColor = Color.Transparent,
                 SelectionMode = SelectionMode.Single,
                 AutomationId = RepositoryPageAutomationIds.CollectionView
@@ -49,10 +46,20 @@ namespace GitTrends
             {
                 Text = "Settings",
                 Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
-                AutomationId = RepositoryPageAutomationIds.SettingsButton
+                AutomationId = RepositoryPageAutomationIds.SettingsButton,
             };
-            settingsToolbarItem.Clicked += HandleSettingsToolbarItem;
+            settingsToolbarItem.Clicked += HandleSettingsToolbarItemCliked;
             ToolbarItems.Add(settingsToolbarItem);
+
+            var sortToolbarItem = new ToolbarItem
+            {
+                Text = "Sort",
+                IconImageSource = "Sort",
+                Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
+                AutomationId = RepositoryPageAutomationIds.SettingsButton,
+            };
+            sortToolbarItem.Clicked += HandleSortToolbarItemCliked;
+            ToolbarItems.Add(sortToolbarItem);
 
             Content = repositoriesListRefreshView;
         }
@@ -62,8 +69,6 @@ namespace GitTrends
             add => _searchTextChangedEventManager.AddEventHandler(value);
             remove => _searchTextChangedEventManager.RemoveEventHandler(value);
         }
-
-        public void OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.HandleEvent(this, text, nameof(SearchBarTextChanged));
 
         protected override async void OnAppearing()
         {
@@ -125,7 +130,7 @@ namespace GitTrends
             return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
         }
 
-        async void HandleSettingsToolbarItem(object sender, EventArgs e)
+        async void HandleSettingsToolbarItemCliked(object sender, EventArgs e)
         {
             AnalyticsService.Track("Settings Button Tapped");
 
@@ -144,6 +149,20 @@ namespace GitTrends
             });
         }
 
+        async void HandleSortToolbarItemCliked(object sender, EventArgs e)
+        {
+            const string cancelText = "Cancel";
+
+            var sortingOptions = SortingConstants.SortingOptionsDictionary.Values;
+
+            var selection = await DisplayActionSheet("Sort By", cancelText, null, sortingOptions.ToArray());
+
+            if (selection != cancelText)
+                ViewModel.SortRepositoriesCommand.Execute(SortingConstants.SortingOptionsDictionary.First(x => x.Value == selection).Key);
+        }
+
         void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand.Execute(searchBarText);
+
+        void ISearchPage.OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.HandleEvent(this, text, nameof(SearchBarTextChanged));
     }
 }

@@ -4,9 +4,10 @@ namespace GitTrends
 {
     public static class SvgService
     {
-        public static string GetSVGResourcePath(string fileName) => $"resource://{nameof(GitTrends)}.Resources.{fileName}";
+        public static string GetResourcePath(in string fileName) => $"{nameof(GitTrends)}.Resources.{fileName}";
+        public static string GetFullPath(in string fileName) => $"resource://{GetResourcePath(fileName)}";
 
-        public static Dictionary<string, string> GetColorStringMap(Xamarin.Forms.Color color) => GetColorStringMap(color.ToHex());
-        public static Dictionary<string, string> GetColorStringMap(string hex) => new Dictionary<string, string> { { "#000000", hex } };
+        public static Dictionary<string, string> GetColorStringMap(in Xamarin.Forms.Color color) => GetColorStringMap(color.ToHex());
+        public static Dictionary<string, string> GetColorStringMap(in string hex) => new Dictionary<string, string> { { "#000000", hex } };
     }
 }

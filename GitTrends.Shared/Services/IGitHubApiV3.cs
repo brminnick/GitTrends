@@ -8,10 +8,10 @@ namespace GitTrends.Shared
     interface IGitHubApiV3
     {
         [Get("/repos/{owner}/{repo}/traffic/views")]
-        Task<RepositoryViewsModel> GetRepositoryViewStatistics(string owner, string repo, [Header("Authorization")] string authorization);
+        Task<RepositoryViewsResponseModel> GetRepositoryViewStatistics(string owner, string repo, [Header("Authorization")] string authorization);
 
         [Get("/repos/{owner}/{repo}/traffic/clones")]
-        Task<RepositoryClonesModel> GetRepositoryCloneStatistics(string owner, string repo, [Header("Authorization")] string authorization);
+        Task<RepositoryClonesResponseModel> GetRepositoryCloneStatistics(string owner, string repo, [Header("Authorization")] string authorization);
 
         [Get("/repos/{owner}/{repo}/traffic/popular/referrers")]
         Task<List<ReferringSiteModel>> GetReferingSites(string owner, string repo, [Header("Authorization")] string authorization);

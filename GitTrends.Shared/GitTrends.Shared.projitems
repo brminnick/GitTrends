@@ -49,5 +49,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\SyncFusionDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubGraphQLAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\SortingConstants.cs" />
   </ItemGroup>
 </Project>
