@@ -77,6 +77,8 @@ namespace GitTrends
         {
             const int repositoriesPerFetch = 100;
 
+            AnalyticsService.Track("Refresh Triggered", "Sorting Option", _sortingService.CurrentOption.ToString());
+
             try
             {
                 await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, repositoriesPerFetch).ConfigureAwait(false))

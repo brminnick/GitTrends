@@ -42,7 +42,7 @@ namespace GitTrends.UITests
             finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
             finalSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
 
-            Assert.GreaterOrEqual(initialTopRepository.StarCount, initialSecondTopRepository.StarCount);
+            Assert.GreaterOrEqual(initialTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
 
             Assert.AreNotEqual(initialTopRepository, finalTopRepository);
             Assert.AreNotEqual(initialSecondTopRepository, finalSecondTopRepository);
@@ -52,7 +52,7 @@ namespace GitTrends.UITests
             switch (sortingOption)
             {
                 case SortingOption.Stars:
-                    Assert.LessOrEqual(finalTopRepository.StarCount, finalSecondTopRepository.StarCount);
+                    Assert.GreaterOrEqual(finalTopRepository.StarCount, finalSecondTopRepository.StarCount);
                     break;
                 case SortingOption.Clones:
                     Assert.GreaterOrEqual(finalTopRepository.TotalClones, finalSecondTopRepository.TotalClones);
@@ -70,7 +70,7 @@ namespace GitTrends.UITests
                     Assert.GreaterOrEqual(finalTopRepository.TotalUniqueViews, finalSecondTopRepository.TotalUniqueViews);
                     break;
                 case SortingOption.Views:
-                    Assert.GreaterOrEqual(finalTopRepository.TotalViews, finalSecondTopRepository.TotalViews);
+                    Assert.LessOrEqual(finalTopRepository.TotalViews, finalSecondTopRepository.TotalViews);
                     break;
                 default:
                     throw new NotSupportedException();
