@@ -5,6 +5,8 @@ namespace GitTrends.Shared
 {
     class SortingConstants
     {
+        public const SortingOption DefaultSortingOption = SortingOption.Stars;
+
         readonly static Lazy<Dictionary<SortingOption, string>> _sortingOptionsDictionaryHolder = new Lazy<Dictionary<SortingOption, string>>(CreateSortingDictionary);
 
         public static Dictionary<SortingOption, string> SortingOptionsDictionary => _sortingOptionsDictionaryHolder.Value;

@@ -86,6 +86,14 @@ namespace GitTrends
 
             public bool IsFork { get; set; }
 
+            public long TotalViews { get; set; }
+
+            public long TotalUniqueViews { get; set; }
+
+            public long TotalClones { get; set; }
+
+            public long TotalUniqueClones { get; set; }
+
             public static explicit operator Repository(RepositoryDatabaseModel repositoryDatabaseModel)
             {
                 return new Repository(repositoryDatabaseModel.Name,
@@ -110,7 +118,11 @@ namespace GitTrends
                     Name = repository.Name,
                     OwnerAvatarUrl = repository.OwnerAvatarUrl,
                     OwnerLogin = repository.OwnerLogin,
-                    IsFork = repository.IsFork
+                    IsFork = repository.IsFork,
+                    TotalClones = repository.TotalClones,
+                    TotalUniqueClones = repository.TotalUniqueClones,
+                    TotalViews = repository.TotalViews,
+                    TotalUniqueViews = repository.TotalUniqueViews,
                 };
             }
         }

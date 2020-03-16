@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.UITest;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
@@ -10,12 +11,13 @@ namespace GitTrends.UITests
     class RepositoryPage : BasePage
     {
         readonly Query _searchBar, _settingsButton, _collectionView, _refreshView,
-            _androidContextMenuOverflowButton, _androidSearchBarButton;
+            _androidContextMenuOverflowButton, _androidSearchBarButton, _sortButton;
 
         public RepositoryPage(IApp app) : base(app, PageTitles.RepositoryPage)
         {
             _searchBar = GenerateMarkedQuery(RepositoryPageAutomationIds.SearchBar);
             _settingsButton = GenerateMarkedQuery(RepositoryPageAutomationIds.SettingsButton);
+            _sortButton = GenerateMarkedQuery(RepositoryPageAutomationIds.SortButton);
             _collectionView = GenerateMarkedQuery(RepositoryPageAutomationIds.CollectionView);
             _refreshView = GenerateMarkedQuery(RepositoryPageAutomationIds.RefreshView);
             _androidContextMenuOverflowButton = x => x.Class("androidx.appcompat.widget.ActionMenuPresenter$OverflowMenuButton");
@@ -23,6 +25,20 @@ namespace GitTrends.UITests
         }
 
         public void TriggerPullToRefresh() => App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerPullToRefresh);
+
+        public void SetSortingOption(SortingOption sortingOption)
+        {
+            if (App.Query(_androidContextMenuOverflowButton).Any())
+            {
+                App.Tap(_androidContextMenuOverflowButton);
+                App.Screenshot("Tapped Android Search Bar Button");
+            }
+
+            App.Tap(_sortButton);
+            App.Screenshot("Sort Button Tapped");
+
+            App.Tap(SortingConstants.SortingOptionsDictionary[sortingOption]);
+        }
 
         public void TapRepository(string repositoryName)
         {

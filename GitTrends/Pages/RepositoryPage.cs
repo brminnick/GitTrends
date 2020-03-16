@@ -56,7 +56,7 @@ namespace GitTrends
                 Text = "Sort",
                 IconImageSource = "Sort",
                 Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
-                AutomationId = RepositoryPageAutomationIds.SettingsButton,
+                AutomationId = RepositoryPageAutomationIds.SortButton,
             };
             sortToolbarItem.Clicked += HandleSortToolbarItemCliked;
             ToolbarItems.Add(sortToolbarItem);

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace GitTrends.Shared
+﻿namespace GitTrends.Shared
 {
     interface IRepository
     {
@@ -12,5 +10,9 @@ namespace GitTrends.Shared
         string Description { get; }
         long ForkCount { get; }
         string Url { get; }
+        public long TotalViews { get; }
+        public long TotalUniqueViews { get; }
+        public long TotalClones { get; }
+        public long TotalUniqueClones { get; }
     }
 }

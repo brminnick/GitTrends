@@ -19,5 +19,13 @@ namespace GitTrends.UITests
         public string OwnerAvatarUrl { get; set; } = string.Empty;
 
         public string Url { get; set; } = string.Empty;
+
+        public long TotalViews { get; set; }
+
+        public long TotalUniqueViews { get; set; }
+
+        public long TotalClones { get; set; }
+
+        public long TotalUniqueClones { get; set; }
     }
 }

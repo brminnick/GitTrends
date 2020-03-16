@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
 using NUnit.Framework;
 using Xamarin.UITest;
 
@@ -15,6 +17,65 @@ namespace GitTrends.UITests
     {
         public RepositoriesTests(Platform platform, UserType userType) : base(platform, userType)
         {
+        }
+
+        [TestCase(SortingConstants.DefaultSortingOption)]
+        [TestCase(SortingOption.Clones)]
+        [TestCase(SortingOption.Forks)]
+        [TestCase(SortingOption.Issues)]
+        [TestCase(SortingOption.Stars)]
+        [TestCase(SortingOption.UniqueClones)]
+        [TestCase(SortingOption.UniqueViews)]
+        [TestCase(SortingOption.Views)]
+        public void VerifySortingOptions(SortingOption sortingOption)
+        {
+            //Arrange
+            Repository finalTopRepository;
+            Repository finalSecondTopRepository;
+            Repository initialTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
+            Repository initialSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
+
+            //Act
+            RepositoryPage.SetSortingOption(sortingOption);
+
+            //Assert
+            finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
+            finalSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
+
+            Assert.GreaterOrEqual(initialTopRepository.StarCount, initialSecondTopRepository.StarCount);
+
+            Assert.AreNotEqual(initialTopRepository, finalTopRepository);
+            Assert.AreNotEqual(initialSecondTopRepository, finalSecondTopRepository);
+            Assert.AreNotEqual(initialTopRepository, initialSecondTopRepository);
+            Assert.AreNotEqual(finalTopRepository, finalSecondTopRepository);
+
+            switch (sortingOption)
+            {
+                case SortingOption.Stars:
+                    Assert.LessOrEqual(finalTopRepository.StarCount, finalSecondTopRepository.StarCount);
+                    break;
+                case SortingOption.Clones:
+                    Assert.GreaterOrEqual(finalTopRepository.TotalClones, finalSecondTopRepository.TotalClones);
+                    break;
+                case SortingOption.Forks:
+                    Assert.GreaterOrEqual(finalTopRepository.ForkCount, finalSecondTopRepository.ForkCount);
+                    break;
+                case SortingOption.Issues:
+                    Assert.GreaterOrEqual(finalTopRepository.IssuesCount, finalSecondTopRepository.IssuesCount);
+                    break;
+                case SortingOption.UniqueClones:
+                    Assert.GreaterOrEqual(finalTopRepository.TotalUniqueClones, finalSecondTopRepository.TotalUniqueClones);
+                    break;
+                case SortingOption.UniqueViews:
+                    Assert.GreaterOrEqual(finalTopRepository.TotalUniqueViews, finalSecondTopRepository.TotalUniqueViews);
+                    break;
+                case SortingOption.Views:
+                    Assert.GreaterOrEqual(finalTopRepository.TotalViews, finalSecondTopRepository.TotalViews);
+                    break;
+                default:
+                    throw new NotSupportedException();
+
+            };
         }
 
         [Test]
