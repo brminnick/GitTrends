@@ -1,5 +1,8 @@
 ﻿using System.Threading.Tasks;
+using GitTrends;
+using Xamarin.Forms;
 
+[assembly: Dependency(typeof(ISKStoreReviewController))]
 namespace GitTrends.iOS
 {
     public class SKStoreReviewController : ISKStoreReviewController

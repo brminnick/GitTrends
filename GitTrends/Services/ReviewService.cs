@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Xamarin.Essentials;
@@ -49,6 +50,11 @@ namespace GitTrends
         {
             if (ShouldDisplayReviewRequest())
             {
+                _analyticsService.Track("Review Request Triggered", new Dictionary<string, string>
+                {
+                    { nameof(Device.RuntimePlatform), Device.RuntimePlatform },
+                });
+
                 if (Device.RuntimePlatform is Device.iOS)
                     DependencyService.Get<ISKStoreReviewController>().RequestReview().SafeFireAndForget(ex => _analyticsService.Report(ex));
                 else
