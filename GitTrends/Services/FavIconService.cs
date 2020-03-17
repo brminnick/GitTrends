@@ -1,12 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Xamarin.Forms;
-using HtmlAgilityPack;
-using System;
 using Autofac;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using HtmlAgilityPack;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
