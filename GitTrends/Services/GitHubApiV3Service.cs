@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Refit;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -14,6 +13,41 @@ namespace GitTrends
         readonly static Lazy<IGitHubApiV3> _githubApiClient = new Lazy<IGitHubApiV3>(() => RestService.For<IGitHubApiV3>(CreateHttpClient(GitHubConstants.GitHubRestApiUrl)));
 
         static IGitHubApiV3 GithubApiClient => _githubApiClient.Value;
+
+        public async IAsyncEnumerable<Repository> UpdateRepositoriesWithViewsAndClonesData(List<Repository> repositories)
+        {
+            var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsResponseModel, RepositoryClonesResponseModel)>>(repositories.Select(x => getRepositoryStatistics(x)));
+
+            while (getRepositoryStatisticsTaskList.Any())
+            {
+                var completedStatisticsTask = await Task.WhenAny(getRepositoryStatisticsTaskList).ConfigureAwait(false);
+                getRepositoryStatisticsTaskList.Remove(completedStatisticsTask);
+
+                var (viewsResponse, clonesResponse) = await completedStatisticsTask.ConfigureAwait(false);
+
+                var matchingRepository = repositories.First(x => x.Name == viewsResponse.RepositoryName);
+
+                yield return new Repository(matchingRepository.Name, matchingRepository.Description, matchingRepository.ForkCount,
+                                            new RepositoryOwner(matchingRepository.OwnerLogin, matchingRepository.OwnerAvatarUrl),
+                                            new IssuesConnection(matchingRepository.IssuesCount, null),
+                                            matchingRepository.Url,
+                                            new StarGazers(matchingRepository.StarCount),
+                                            matchingRepository.IsFork,
+                                            viewsResponse.DailyViewsList,
+                                            clonesResponse.DailyClonesList);
+            }
+
+            async Task<(RepositoryViewsResponseModel ViewsResponse, RepositoryClonesResponseModel ClonesResponse)> getRepositoryStatistics(Repository repository)
+            {
+                var getViewStatisticsTask = GetRepositoryViewStatistics(repository.OwnerLogin, repository.Name);
+                var getCloneStatisticsTask = GetRepositoryCloneStatistics(repository.OwnerLogin, repository.Name);
+
+                await Task.WhenAll(getViewStatisticsTask, getCloneStatisticsTask).ConfigureAwait(false);
+
+                return (await getViewStatisticsTask.ConfigureAwait(false),
+                        await getCloneStatisticsTask.ConfigureAwait(false));
+            }
+        }
 
         public async Task<RepositoryViewsResponseModel> GetRepositoryViewStatistics(string owner, string repo)
         {

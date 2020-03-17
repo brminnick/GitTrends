@@ -27,6 +27,7 @@ namespace GitTrends.UITests
         [TestCase(SortingOption.UniqueClones)]
         [TestCase(SortingOption.UniqueViews)]
         [TestCase(SortingOption.Views)]
+        [TestCase(SortingOption.Trending)]
         public void VerifySortingOptions(SortingOption sortingOption)
         {
             //Arrange
@@ -71,6 +72,9 @@ namespace GitTrends.UITests
                     break;
                 case SortingOption.Views:
                     Assert.LessOrEqual(finalTopRepository.TotalViews, finalSecondTopRepository.TotalViews);
+                    break;
+                case SortingOption.Trending:
+                    Assert.IsTrue(finalTopRepository.IsTrending);
                     break;
                 default:
                     throw new NotSupportedException();

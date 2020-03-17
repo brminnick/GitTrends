@@ -27,5 +27,7 @@ namespace GitTrends.UITests
         public long TotalClones { get; set; }
 
         public long TotalUniqueClones { get; set; }
+
+        public bool IsTrending { get; set; }
     }
 }

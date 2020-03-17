@@ -87,7 +87,7 @@ namespace GitTrends
                 }
 
                 var completedRepoitories = new List<Repository>();
-                await foreach (var retrievedRepositoriesWithViewsAndClonesData in GetRepositoryWithViewsAndClonesData(_repositoryList.ToList()).ConfigureAwait(false))
+                await foreach (var retrievedRepositoriesWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.ToList()).ConfigureAwait(false))
                 {
                     _repositoryDatabase.SaveRepository(retrievedRepositoriesWithViewsAndClonesData).SafeFireAndForget();
                     completedRepoitories.Add(retrievedRepositoriesWithViewsAndClonesData);
@@ -127,41 +127,6 @@ namespace GitTrends
             finally
             {
                 IsRefreshing = false;
-            }
-
-            async IAsyncEnumerable<Repository> GetRepositoryWithViewsAndClonesData(List<Repository> repositories)
-            {
-                var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsResponseModel, RepositoryClonesResponseModel)>>(repositories.Select(x => getRepositoryStatistics(x)));
-
-                while (getRepositoryStatisticsTaskList.Any())
-                {
-                    var completedStatisticsTask = await Task.WhenAny(getRepositoryStatisticsTaskList).ConfigureAwait(false);
-                    getRepositoryStatisticsTaskList.Remove(completedStatisticsTask);
-
-                    var (viewsResponse, clonesResponse) = await completedStatisticsTask.ConfigureAwait(false);
-
-                    var matchingRepository = repositories.First(x => x.Name == viewsResponse.RepositoryName);
-
-                    yield return new Repository(matchingRepository.Name, matchingRepository.Description, matchingRepository.ForkCount,
-                                                new RepositoryOwner(matchingRepository.OwnerLogin, matchingRepository.OwnerAvatarUrl),
-                                                new IssuesConnection(matchingRepository.IssuesCount, null),
-                                                matchingRepository.Url,
-                                                new StarGazers(matchingRepository.StarCount),
-                                                matchingRepository.IsFork,
-                                                viewsResponse.DailyViewsList,
-                                                clonesResponse.DailyClonesList);
-                }
-
-                async Task<(RepositoryViewsResponseModel ViewsResponse, RepositoryClonesResponseModel ClonesResponse)> getRepositoryStatistics(Repository repository)
-                {
-                    var getViewStatisticsTask = _gitHubApiV3Service.GetRepositoryViewStatistics(repository.OwnerLogin, repository.Name);
-                    var getCloneStatisticsTask = _gitHubApiV3Service.GetRepositoryCloneStatistics(repository.OwnerLogin, repository.Name);
-
-                    await Task.WhenAll(getViewStatisticsTask, getCloneStatisticsTask).ConfigureAwait(false);
-
-                    return (await getViewStatisticsTask.ConfigureAwait(false),
-                            await getCloneStatisticsTask.ConfigureAwait(false));
-                }
             }
         }
 

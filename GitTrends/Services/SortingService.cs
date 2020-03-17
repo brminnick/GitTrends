@@ -23,6 +23,7 @@ namespace GitTrends
         //Sorting Priority: Stars > Forks > Issues
         //Sorting Priority: Clones > Unique Clones > Views > Unique Views
         //Sorting Priority: Views > Unique Views > Clones > Unique Clones
+        //Sorting Priiroty: Trending > Views > Unique Views > Clones > Unique Clones
         public static IEnumerable<Repository> SortRepositories(in IEnumerable<Repository> repositories, in SortingOption sortingOption, in bool isReversed) => sortingOption switch
         {
             SortingOption.Forks when isReversed => repositories.OrderBy(x => x.ForkCount).ThenBy(x => x.StarCount).ThenBy(x => x.IssuesCount),
@@ -45,6 +46,9 @@ namespace GitTrends
 
             SortingOption.UniqueViews when isReversed => repositories.OrderBy(x => x.TotalUniqueViews).ThenBy(x => x.TotalViews).ThenBy(x => x.TotalClones).ThenBy(x => x.TotalUniqueClones),
             SortingOption.UniqueViews => repositories.OrderByDescending(x => x.TotalUniqueViews).ThenByDescending(x => x.TotalViews).ThenByDescending(x => x.TotalClones).ThenByDescending(x => x.TotalUniqueClones),
+
+            SortingOption.Trending when isReversed => repositories.OrderBy(x => x.IsTrending).ThenBy(x => x.TotalViews).ThenBy(x => x.TotalUniqueViews).ThenBy(x => x.TotalClones).ThenBy(x => x.TotalUniqueClones),
+            SortingOption.Trending => repositories.OrderByDescending(x => x.IsTrending).ThenByDescending(x => x.TotalViews).ThenByDescending(x => x.TotalUniqueViews).ThenByDescending(x => x.TotalClones).ThenByDescending(x => x.TotalUniqueClones),
 
             _ => throw new NotSupportedException()
         };

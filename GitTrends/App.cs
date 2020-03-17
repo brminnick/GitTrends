@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using AsyncAwaitBestPractices;
 using Autofac;
+using Shiny;
+using Shiny.Notifications;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
@@ -39,6 +41,8 @@ namespace GitTrends
         protected override void OnStart()
         {
             base.OnStart();
+
+            ShinyHost.Resolve<INotificationManager>().Badge = 0;
 
             _analyticsService.Track("App Started");
 

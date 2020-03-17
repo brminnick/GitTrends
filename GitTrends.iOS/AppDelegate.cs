@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
 using Foundation;
+using Shiny;
 using UIKit;
 
 namespace GitTrends.iOS
@@ -13,6 +14,8 @@ namespace GitTrends.iOS
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
+            iOSShinyHost.Init(platformBuild: services => services.UseNotifications());
+
             global::Xamarin.Forms.Forms.Init();
             Syncfusion.SfChart.XForms.iOS.Renderers.SfChartRenderer.Init();
             Syncfusion.XForms.iOS.Buttons.SfSegmentedControlRenderer.Init();

@@ -50,5 +50,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubGraphQLAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\SortingConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\TrendingService.cs" />
   </ItemGroup>
 </Project>

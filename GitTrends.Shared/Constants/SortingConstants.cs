@@ -20,8 +20,9 @@ namespace GitTrends.Shared
             { SortingOption.Clones,  "Clones" },
             { SortingOption.UniqueViews,  "Unique Views" },
             { SortingOption.UniqueClones,  "Unique Clones" },
+            { SortingOption.Trending, "Trending" }
         };
     }
 
-    public enum SortingOption  { Stars, Issues, Forks, Views, UniqueViews, Clones, UniqueClones }
+    public enum SortingOption  { Stars, Issues, Forks, Views, UniqueViews, Clones, UniqueClones, Trending }
 }
