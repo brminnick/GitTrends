@@ -92,14 +92,14 @@ namespace GitTrends
                     new SmallNavyBlueSVGImage(shouldShowStarsForksIssues ? "star.svg" : "total_views.svg").Row(Row.Statistics).Column(Column.Emoji1),
 
                     //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                    shouldDisplayValue(repository.DailyClonesList)
+                    shouldDisplayValue(repository.DailyViewsList)
                         ? new DarkBlueLabel(_smallFontSize - 1, shouldShowStarsForksIssues ? repository.StarCount.ToString() : repository.TotalViews.ToString()).Row(Row.Statistics).Column(Column.Statistic1)
                         : new Label(),
 
                     new SmallNavyBlueSVGImage(shouldShowStarsForksIssues ? "repo_forked.svg" : "unique_views.svg").Row(Row.Statistics).Column(Column.Emoji2),
 
                     //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                    shouldDisplayValue(repository.DailyClonesList)
+                    shouldDisplayValue(repository.DailyViewsList)
                         ? new DarkBlueLabel(_smallFontSize - 1, shouldShowStarsForksIssues ? repository.ForkCount.ToString() : repository.TotalUniqueViews.ToString()).Row(Row.Statistics).Column(Column.Statistic2)
                         : new Label(),
 
