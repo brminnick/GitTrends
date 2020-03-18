@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
+using Autofac.Core;
 using Shiny;
 using Shiny.Notifications;
 using Xamarin.Forms;
@@ -42,11 +44,12 @@ namespace GitTrends
         {
             base.OnStart();
 
-            ShinyHost.Resolve<INotificationManager>().Badge = 0;
-
             _analyticsService.Track("App Started");
 
             SetTheme();
+
+            ClearBageNotifications().SafeFireAndForget(ex => _analyticsService.Report(ex));
+            RegisterBackgroundFetch().SafeFireAndForget(ex => _analyticsService.Report(ex));
         }
 
         protected override void OnResume()
@@ -56,6 +59,8 @@ namespace GitTrends
             _analyticsService.Track("App Resumed");
 
             SetTheme();
+
+            ClearBageNotifications().SafeFireAndForget(ex => _analyticsService.Report(ex));
         }
 
         protected override void OnSleep()
@@ -100,6 +105,24 @@ namespace GitTrends
                     }
                 }
             });
+        }
+
+        async Task RegisterBackgroundFetch()
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
+
+            await backgroundFetchService.Register().ConfigureAwait(false);
+
+        }
+
+        async Task ClearBageNotifications()
+        {
+            var notificationService = ShinyHost.Resolve<INotificationManager>();
+            var accessState = await notificationService.RequestAccess();
+
+            if (accessState is AccessState.Available)
+                notificationService.Badge = 0;
         }
 
         void OnThemeChanged(Theme newTheme) => _themeChangedEventManager.HandleEvent(this, newTheme, nameof(ThemeChanged));

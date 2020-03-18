@@ -32,8 +32,12 @@ namespace GitTrends.iOS
 
             LoadApplication(new App());
 
+            if (launchOptions?.ContainsKey(UIApplication.LaunchOptionsLocalNotificationKey) is true)
+                HandleLocalNotification((UILocalNotification)launchOptions[UIApplication.LaunchOptionsLocalNotificationKey]).SafeFireAndForget(ex => ContainerService.Container.Resolve<AnalyticsService>().Report(ex));
+
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
+
 
         public override bool OpenUrl(UIApplication app, NSUrl url, NSDictionary options)
         {
@@ -58,6 +62,16 @@ namespace GitTrends.iOS
                 using var containerScope = ContainerService.Container.BeginLifetimeScope();
                 containerScope.Resolve<AnalyticsService>().Report(e);
             }
+        }
+
+        public override async void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
+        {
+            await HandleLocalNotification(notification).ConfigureAwait(false);
+        }
+
+        public override void PerformFetch(UIApplication application, Action<UIBackgroundFetchResult> completionHandler)
+        {
+            Shiny.Jobs.JobManager.OnBackgroundFetch(completionHandler);
         }
 
 #if !AppStore
@@ -111,6 +125,12 @@ namespace GitTrends.iOS
         }
         #endregion
 #endif
+
+        Task HandleLocalNotification(UILocalNotification notification)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            return scope.Resolve<NotificationService>().HandleReceivedLocalNotification(notification.AlertTitle, notification.AlertBody);
+        }
 
         [Conditional("DEBUG")]
         void PrintFontNamesToConsole()

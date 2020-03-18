@@ -16,8 +16,10 @@ namespace GitTrends.Droid
         public override void OnCreate()
         {
             base.OnCreate();
-            AndroidShinyHost.Init(this, platformBuild: services => services.UseNotifications());
-            Shiny.Notifications.AndroidOptions.DefaultSmallIconResourceName = "icon";
+
+            AndroidShinyHost.Init(this, ShinyStartup.AutoRegister(), platformBuild: services => services.UseNotifications());
+            Shiny.Notifications.AndroidOptions.DefaultSmallIconResourceName = nameof(Resource.Drawable.icon);
+            Shiny.Notifications.AndroidOptions.DefaultColorResourceName = nameof(Resource.Color.colorPrimary);
 
             Plugin.CurrentActivity.CrossCurrentActivity.Current.Init(this);
 

@@ -4,14 +4,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using Autofac;
 using GitTrends.Shared;
 using Shiny;
 using Shiny.Jobs;
-using Shiny.Notifications;
 
 namespace GitTrends
 {
-    class BackgroundFetchService : IJob
+    class BackgroundFetchService
     {
         readonly AnalyticsService _analyticsService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
@@ -30,14 +30,23 @@ namespace GitTrends
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _repositoryDatabase = repositoryDatabase;
             _notificationService = notificationService;
-
-            Register().SafeFireAndForget();
         }
 
-        public async Task<bool> Run(JobInfo jobInfo, CancellationToken cancelToken)
+        public Task Register()
+        {
+            var backgroundFetchJob = new JobInfo(typeof(TrendingRepositoryNotificationJob), nameof(TrendingRepositoryNotificationJob))
+            {
+               
+            };
+
+            return ShinyHost.Resolve<IJobManager>().Schedule(backgroundFetchJob);
+        }
+
+        public async Task<bool> ExecuteTrendingRepositoryNotificationJob(JobInfo jobInfo, CancellationToken cancelToken)
         {
             try
             {
+                using var timedEvent = _analyticsService.TrackTime("Trending Repository Notification Job Triggered");
                 var trendingRepositories = await GetTrendingRepositories().ConfigureAwait(false);
                 await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
 
@@ -52,10 +61,10 @@ namespace GitTrends
 
         async Task<List<Repository>> GetTrendingRepositories()
         {
-            if (!GitHubAuthenticationService.IsDemoUser && !string.IsNullOrEmpty(GitHubAuthenticationService.Name))
+            if (!GitHubAuthenticationService.IsDemoUser && !string.IsNullOrEmpty(GitHubAuthenticationService.Alias))
             {
                 var retrievedRepositoryList = new List<Repository>();
-                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(GitHubAuthenticationService.Name).ConfigureAwait(false))
+                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(GitHubAuthenticationService.Alias).ConfigureAwait(false))
                 {
                     retrievedRepositoryList.AddRange(retrievedRepositories);
                 }
@@ -74,19 +83,14 @@ namespace GitTrends
 
             return Enumerable.Empty<Repository>().ToList();
         }
+    }
 
-        Task Register()
+    public class TrendingRepositoryNotificationJob : IJob
+    {
+        public Task<bool> Run(JobInfo jobInfo, CancellationToken cancelToken)
         {
-            var backgroundFetchJob = new JobInfo(typeof(BackgroundFetchService), nameof(BackgroundFetchService))
-            {
-                BatteryNotLow = true,
-                DeviceCharging = false,
-                RequiredInternetAccess = InternetAccess.Any,
-                Repeat = true,
-                PeriodicTime = TimeSpan.FromHours(12)
-            };
-
-            return ShinyHost.Resolve<IJobManager>().Schedule(backgroundFetchJob);
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            return scope.Resolve<BackgroundFetchService>().ExecuteTrendingRepositoryNotificationJob(jobInfo, cancelToken);
         }
     }
 }

@@ -54,5 +54,9 @@
 	<string>0.12.0</string>
 	<key>CFBundleVersion</key>
 	<string>16</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
 </dict>
 </plist>

@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using GitTrends.Shared;
+using Shiny.Notifications;
 
 namespace GitTrends
 {

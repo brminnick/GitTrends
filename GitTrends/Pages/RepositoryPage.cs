@@ -54,7 +54,7 @@ namespace GitTrends
             var sortToolbarItem = new ToolbarItem
             {
                 Text = "Sort",
-                IconImageSource = "Sort",
+                IconImageSource = Device.RuntimePlatform is Device.iOS ? "Sort" : null,
                 Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
                 AutomationId = RepositoryPageAutomationIds.SortButton,
             };

@@ -6,7 +6,6 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Autofac;
-using Plugin.CurrentActivity;
 
 namespace GitTrends.Droid
 {
