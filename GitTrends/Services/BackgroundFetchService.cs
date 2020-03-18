@@ -36,7 +36,11 @@ namespace GitTrends
         {
             var backgroundFetchJob = new JobInfo(typeof(TrendingRepositoryNotificationJob), nameof(TrendingRepositoryNotificationJob))
             {
-               
+               BatteryNotLow = true,
+               PeriodicTime = TimeSpan.FromHours(12),
+               Repeat = true,
+               RequiredInternetAccess = InternetAccess.Any,
+               RunOnForeground = false
             };
 
             return ShinyHost.Resolve<IJobManager>().Schedule(backgroundFetchJob);
@@ -47,6 +51,7 @@ namespace GitTrends
             try
             {
                 using var timedEvent = _analyticsService.TrackTime("Trending Repository Notification Job Triggered");
+
                 var trendingRepositories = await GetTrendingRepositories().ConfigureAwait(false);
                 await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
 

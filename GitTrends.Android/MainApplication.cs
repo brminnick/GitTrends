@@ -17,7 +17,7 @@ namespace GitTrends.Droid
         {
             base.OnCreate();
 
-            AndroidShinyHost.Init(this, ShinyStartup.AutoRegister(), platformBuild: services => services.UseNotifications());
+            AndroidShinyHost.Init(this, platformBuild: services => services.UseNotifications());
             Shiny.Notifications.AndroidOptions.DefaultSmallIconResourceName = nameof(Resource.Drawable.icon);
             Shiny.Notifications.AndroidOptions.DefaultColorResourceName = nameof(Resource.Color.colorPrimary);
 

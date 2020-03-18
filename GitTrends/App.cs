@@ -113,7 +113,6 @@ namespace GitTrends
             var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
 
             await backgroundFetchService.Register().ConfigureAwait(false);
-
         }
 
         async Task ClearBageNotifications()

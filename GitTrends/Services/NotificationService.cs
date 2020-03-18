@@ -101,7 +101,6 @@ namespace GitTrends
 
                 if (result.AccessStatus is AccessState.Available)
                     notificationService.Badge++;
-
             }
             else if (trendingRepositories.Count > 1)
             {
