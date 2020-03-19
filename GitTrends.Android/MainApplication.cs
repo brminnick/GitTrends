@@ -17,9 +17,12 @@ namespace GitTrends.Droid
         {
             base.OnCreate();
 
-            AndroidShinyHost.Init(this, platformBuild: services => services.UseNotifications());
+            Shiny.Notifications.AndroidOptions.DefaultUseBigTextStyle = true;
             Shiny.Notifications.AndroidOptions.DefaultSmallIconResourceName = nameof(Resource.Drawable.icon);
             Shiny.Notifications.AndroidOptions.DefaultColorResourceName = nameof(Resource.Color.colorPrimary);
+            Shiny.Notifications.AndroidOptions.DefaultChannel = nameof(GitTrends);
+            Shiny.Notifications.AndroidOptions.DefaultChannelDescription = "GitTrends Notifications";
+            AndroidShinyHost.Init(this, platformBuild: services => services.UseNotifications());
 
             Plugin.CurrentActivity.CrossCurrentActivity.Current.Init(this);
 

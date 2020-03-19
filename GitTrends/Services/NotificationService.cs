@@ -13,35 +13,41 @@ namespace GitTrends
 {
     public class NotificationService
     {
-        const string _singleTrendingRepositoryNotificationMesage = "This repository is getting more traffic than usual! Tap here to see its chart.";
-        const string _multipleTrendingRepositoriesNotificationTitle = "Your Repositories are Trending";
-        const string _multipleTrendingReposiotiresNotificationMessage = "The folloing repositories are getting more traffic than usual:";
+        const string _trendingRepositoriesNotificationTitle = "Your Repositories are Trending";
 
         readonly AnalyticsService _analyticsService;
 
         public NotificationService(AnalyticsService analyticsService) => _analyticsService = analyticsService;
 
-        public ValueTask TrySendTrendingNotificaiton(in List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
+        public ValueTask TrySendTrendingNotificaiton(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
         {
-            var repositoriesToNotify = trendingRepositories.Where(ShouldSendNotification).ToList();
-#if AppStore
-            return SendTrendingNotification(repositoriesToNotify, notificationDateTime);
-#else
+#if !AppStore
             return SendTrendingNotification(trendingRepositories, notificationDateTime);
+#else
+            var repositoriesToNotify = trendingRepositories.Where(shouldSendNotification).ToList();
+            return SendTrendingNotification(repositoriesToNotify, notificationDateTime);
+
+            static bool shouldSendNotification(Repository trendingRepository)
+            {
+                var nextNotificationDate = getMostRecentNotificationDate(trendingRepository).AddDays(14);
+                return DateTime.Compare(nextNotificationDate, DateTime.UtcNow) > 1;
+
+                static DateTime getMostRecentNotificationDate(Repository repository) => Preferences.Get(repository.Name, default(DateTime));
+            }
 #endif
         }
 
-        public async Task HandleReceivedLocalNotification(string title, string message)
+        public async Task HandleReceivedLocalNotification(Notification notification)
         {
             var baseNavigationPage = await GetBaseNavigationPage();
 
-            if (isSingleTrendingRepositoryMessage(message))
+            if (isSingleTrendingRepositoryMessage(notification))
             {
-                var repositoryName = ParseRepositoryName(title);
-                var ownerName = ParseOwnerName(title);
+                var repositoryName = ParseRepositoryName(notification.Message);
+                var ownerName = ParseOwnerName(notification.Message);
 
                 var shouldNavigateToTrendsPage = await MainThread.InvokeOnMainThreadAsync(() =>
-                     baseNavigationPage.DisplayAlert($"{repositoryName} is Trending", "Let's check out its chart!", "Let's Go", "Not Right Now"));
+                     baseNavigationPage.DisplayAlert($"{repositoryName} is Trending", "Let's check out its chart", "Let's Go", "Not Right Now"));
 
                 _analyticsService.Track("Single Trending Repository Prompt Displayed", "Did Accept Response", shouldNavigateToTrendsPage.ToString());
 
@@ -58,7 +64,7 @@ namespace GitTrends
                     await MainThread.InvokeOnMainThreadAsync(async () =>
                     {
                         await baseNavigationPage.PopToRootAsync();
-                        await MainThread.InvokeOnMainThreadAsync(() => baseNavigationPage.Navigation.PushAsync(trendsPage));
+                        await baseNavigationPage.Navigation.PushAsync(trendsPage);
                     });
                 }
             }
@@ -66,19 +72,15 @@ namespace GitTrends
             {
                 _analyticsService.Track("Multiple Trending Repositories Prompt Displayed");
 
-                await MainThread.InvokeOnMainThreadAsync(() => baseNavigationPage.DisplayAlert(title, message, "Thanks!"));
+                var messageBuilder = new StringBuilder();
+                messageBuilder.AppendLine(notification.Message);
+                messageBuilder.AppendLine();
+                messageBuilder.Append("Sort by Trending to see them all");
+
+                await MainThread.InvokeOnMainThreadAsync(() => baseNavigationPage.DisplayAlert(notification.Title, messageBuilder.ToString(), "Thanks!"));
             }
 
-
-            static bool isSingleTrendingRepositoryMessage(in string message) => message is _singleTrendingRepositoryNotificationMesage;
-        }
-
-        bool ShouldSendNotification(Repository trendingRepository)
-        {
-            var nextNotificationDate = getMostRecentNotificationDate(trendingRepository).AddDays(14);
-            return DateTime.Compare(nextNotificationDate, DateTime.UtcNow) > 1;
-
-            static DateTime getMostRecentNotificationDate(Repository repository) => Preferences.Get(repository.Name, default(DateTime));
+            static bool isSingleTrendingRepositoryMessage(in Notification notification) => notification.BadgeCount is 1;
         }
 
         async ValueTask SendTrendingNotification(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime)
@@ -87,57 +89,56 @@ namespace GitTrends
             {
                 var trendingRepository = trendingRepositories.First();
 
+                var notificationService = ShinyHost.Resolve<INotificationManager>();
+
                 var notification = new Notification
                 {
-                    Title = CreateSingleRepositoryNotificationTitle(trendingRepository.Name, trendingRepository.OwnerLogin),
-                    Message = _singleTrendingRepositoryNotificationMesage,
-                    ScheduleDate = notificationDateTime
+                    Title = _trendingRepositoriesNotificationTitle,
+                    Message = CreateSingleRepositoryNotificationMessage(trendingRepository.Name, trendingRepository.OwnerLogin),
+                    ScheduleDate = notificationDateTime,
+                    BadgeCount = 1
                 };
 
                 setMostRecentNotificationDate(trendingRepository);
 
-                var notificationService = ShinyHost.Resolve<INotificationManager>();
-                var result = await notificationService.RequestAccessAndSend(notification).ConfigureAwait(false);
 
-                if (result.AccessStatus is AccessState.Available)
-                    notificationService.Badge++;
+                notificationService.Badge++;
+                await notificationService.Send(notification).ConfigureAwait(false);
             }
             else if (trendingRepositories.Count > 1)
             {
-                var notificationMesageBuilder = new StringBuilder();
-                notificationMesageBuilder.AppendLine(_multipleTrendingReposiotiresNotificationMessage);
-
                 foreach (var repository in trendingRepositories)
                 {
-                    notificationMesageBuilder.AppendLine(createMultipleRepositoryNotificationMessageLine(repository.Name));
                     setMostRecentNotificationDate(repository);
                 }
 
                 var notification = new Notification
                 {
-                    Title = _multipleTrendingRepositoriesNotificationTitle,
-                    Message = notificationMesageBuilder.ToString(),
-                    ScheduleDate = notificationDateTime
+                    Title = _trendingRepositoriesNotificationTitle,
+                    Message = CreateMultipleRepositoryNotifiationMessage(trendingRepositories.Count),
+                    ScheduleDate = notificationDateTime,
+                    BadgeCount = trendingRepositories.Count
                 };
 
                 var notificationService = ShinyHost.Resolve<INotificationManager>();
-                var result = await notificationService.RequestAccessAndSend(notification).ConfigureAwait(false);
-
-                if (result.AccessStatus is AccessState.Available)
-                    ShinyNotifications.Badge = trendingRepositories.Count;
+                await notificationService.Send(notification).ConfigureAwait(false);
             }
 
             static void setMostRecentNotificationDate(Repository repository) => Preferences.Set(repository.Name, DateTime.UtcNow);
-            static string createMultipleRepositoryNotificationMessageLine(in string repositoryName) => $"- {repositoryName}";
         }
 
-        string CreateSingleRepositoryNotificationTitle(in string repositoryName, in string repositoryOwner) => $"{repositoryName} by {repositoryOwner} is Trending";
-        string ParseRepositoryName(in string singleRepositoryNotificationTitle) => singleRepositoryNotificationTitle.Substring(0, singleRepositoryNotificationTitle.IndexOf(" "));
-        string ParseOwnerName(in string singleRepositoryNotificationTitle)
+        string CreateMultipleRepositoryNotifiationMessage(int trendingRepoCount) => $"You have {trendingRepoCount} repos trending!";
+
+        string CreateSingleRepositoryNotificationMessage(in string repositoryName, in string repositoryOwner) => $"{repositoryName} by {repositoryOwner} is Trending";
+        string ParseRepositoryName(in string? singleRepositoryNotificationMessage) => singleRepositoryNotificationMessage?.Substring(0, singleRepositoryNotificationMessage.IndexOf(" by ")) ?? string.Empty;
+        string ParseOwnerName(in string? singleRepositoryNotificationMessage)
         {
-            var ownerNameIndex = singleRepositoryNotificationTitle.IndexOf("by") + "by".Length + 1;
-            var ownerNameLength = singleRepositoryNotificationTitle.IndexOf(" ", ownerNameIndex);
-            return singleRepositoryNotificationTitle.Substring(ownerNameIndex, ownerNameLength);
+            if (string.IsNullOrWhiteSpace(singleRepositoryNotificationMessage))
+                return string.Empty;
+
+            var ownerNameIndex = singleRepositoryNotificationMessage.IndexOf(" by ") + " by ".Length;
+            var ownerNameLength = singleRepositoryNotificationMessage.IndexOf(" is Trending", ownerNameIndex) - ownerNameIndex;
+            return singleRepositoryNotificationMessage.Substring(ownerNameIndex, ownerNameLength);
         }
 
         async ValueTask<BaseNavigationPage> GetBaseNavigationPage()

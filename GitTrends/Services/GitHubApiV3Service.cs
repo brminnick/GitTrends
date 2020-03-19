@@ -28,6 +28,7 @@ namespace GitTrends
 
                 var matchingRepository = repositories.First(x => x.Name == viewsResponse.RepositoryName);
 
+
                 yield return new Repository(matchingRepository.Name, matchingRepository.Description, matchingRepository.ForkCount,
                                             new RepositoryOwner(matchingRepository.OwnerLogin, matchingRepository.OwnerAvatarUrl),
                                             new IssuesConnection(matchingRepository.IssuesCount, null),
@@ -59,13 +60,16 @@ namespace GitTrends
 
                 var dailyViewsModelList = new List<DailyViewsModel>();
 
-                for (int i = 0; i < 14; i++)
+                for (int i = 1; i < 14; i++)
                 {
                     var count = DemoDataConstants.GetRandomNumber();
                     var uniqeCount = count / 2; //Ensures uniqueCount is always less than count
 
                     dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
                 }
+
+                //Add one trending repo
+                dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow, DemoDataConstants.MaximumRandomNumber * 4, DemoDataConstants.MaximumRandomNumber / 2));
 
                 return new RepositoryViewsResponseModel(repo, owner, dailyViewsModelList.Sum(x => x.TotalViews), dailyViewsModelList.Sum(x => x.TotalUniqueViews), dailyViewsModelList);
             }

@@ -78,7 +78,6 @@ namespace GitTrends.UITests
                     Assert.GreaterOrEqual(finalTopRepository.TotalViews, finalSecondTopRepository.TotalViews);
                     break;
                 case SortingOption.Trending:
-                    Assert.IsFalse(finalTopRepository.IsTrending);
                     Assert.LessOrEqual(finalTopRepository.TotalViews, finalSecondTopRepository.TotalViews);
                     break;
                 default:

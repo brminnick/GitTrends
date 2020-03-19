@@ -5,7 +5,10 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
+using AsyncAwaitBestPractices;
 using Autofac;
+using Newtonsoft.Json;
+using Shiny;
 
 namespace GitTrends.Droid
 {
@@ -16,7 +19,7 @@ namespace GitTrends.Droid
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-            Shiny.AndroidShinyHost.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            AndroidShinyHost.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -37,6 +40,17 @@ namespace GitTrends.Droid
             {
                 //Wait for Application.MainPage to load before handling the callbackUri
                 app.PageAppearing += HandlePageAppearing;
+            }
+
+            if (Intent?.GetStringExtra("ShinyNotification") is string notificationString)
+            {
+                var notification = JsonConvert.DeserializeObject<Shiny.Notifications.Notification>(notificationString);
+
+                using var scope = ContainerService.Container.BeginLifetimeScope();
+                var analyticsService = scope.Resolve<AnalyticsService>();
+
+                scope.Resolve<NotificationService>().HandleReceivedLocalNotification(notification)
+                                                    .SafeFireAndForget(ex => analyticsService.Report(ex));
             }
 
             LoadApplication(app);

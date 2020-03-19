@@ -45,6 +45,8 @@ namespace GitTrends
             PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(GitHubAuthenticationService.Alias));
             FilterRepositoriesCommand = new Command<string>(SetSearchBarText);
             SortRepositoriesCommand = new Command<SortingOption>(ExecuteSortRepositoriesCommand);
+
+            _gitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
         }
 
         public event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
@@ -129,11 +131,8 @@ namespace GitTrends
             {
                 _gitHubAuthenticationService.LoggedOut -= HandleLoggedOut;
 
-                if (cancellationTokenSource.Token.IsCancellationRequested)
-                {
-                    _repositoryList = Enumerable.Empty<Repository>().ToList();
-                    UpdateVisibleRepositoryList(string.Empty, _sortingService.CurrentOption, _sortingService.IsReversed);
-                }
+                if (cancellationTokenSource.IsCancellationRequested)
+                    UpdateListForLoggedOutUser();
 
                 IsRefreshing = false;
             }
@@ -184,6 +183,12 @@ namespace GitTrends
             VisibleRepositoryList = SortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
         }
 
+        void UpdateListForLoggedOutUser()
+        {
+            _repositoryList = Enumerable.Empty<Repository>().ToList();
+            UpdateVisibleRepositoryList(string.Empty, _sortingService.CurrentOption, _sortingService.IsReversed);
+        }
+
         IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IEnumerable<Repository> repositories, string searchBarText)
         {
             if (string.IsNullOrWhiteSpace(searchBarText))
@@ -202,6 +207,8 @@ namespace GitTrends
             if (_repositoryList.Any())
                 UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
         }
+
+        void HandleGitHubAuthenticationServiceLoggedOut(object sender, EventArgs e) => UpdateListForLoggedOutUser();
 
         void OnPullToRefreshFailed(in string title, in string message) =>
             _pullToRefreshFailedEventManager.HandleEvent(this, new PullToRefreshFailedEventArgs(message, title), nameof(PullToRefreshFailed));

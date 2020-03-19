@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
 using Autofac.Core;
+using Autofac;
 using Shiny;
 using Shiny.Notifications;
 using Xamarin.Forms;
@@ -109,6 +110,10 @@ namespace GitTrends
 
         async Task RegisterBackgroundFetch()
         {
+            //Currently crashing on iOS
+            if (Device.RuntimePlatform is Device.iOS)
+                return;
+
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
 

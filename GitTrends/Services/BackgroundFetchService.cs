@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,18 +33,28 @@ namespace GitTrends
             _notificationService = notificationService;
         }
 
-        public Task Register()
+        public async Task Register()
         {
-            var backgroundFetchJob = new JobInfo(typeof(TrendingRepositoryNotificationJob), nameof(TrendingRepositoryNotificationJob))
+            var isRegistered = await isTrendingRepositoryNotificationJobRegistered().ConfigureAwait(false);
+            if (!isRegistered)
             {
-               BatteryNotLow = true,
-               PeriodicTime = TimeSpan.FromHours(12),
-               Repeat = true,
-               RequiredInternetAccess = InternetAccess.Any,
-               RunOnForeground = false
-            };
+                var backgroundFetchJob = new JobInfo(typeof(TrendingRepositoryNotificationJob), TrendingRepositoryNotificationJob.Identifier)
+                {
+                    BatteryNotLow = true,
+                    PeriodicTime = TimeSpan.FromHours(12),
+                    Repeat = true,
+                    RequiredInternetAccess = InternetAccess.Any,
+                    RunOnForeground = false
+                };
 
-            return ShinyHost.Resolve<IJobManager>().Schedule(backgroundFetchJob);
+                await ShinyHost.Resolve<IJobManager>().Schedule(backgroundFetchJob).ConfigureAwait(false);
+            }
+
+            static async Task<bool> isTrendingRepositoryNotificationJobRegistered()
+            {
+                var registeredJobs = await ShinyHost.Resolve<IJobManager>().GetJobs().ConfigureAwait(false);
+                return registeredJobs.Any(x => x.Identifier is TrendingRepositoryNotificationJob.Identifier);
+            }
         }
 
         public async Task<bool> NotifyTrendingRepositories()
@@ -66,7 +77,11 @@ namespace GitTrends
 
         async Task<List<Repository>> GetTrendingRepositories()
         {
+#if AppStore
             if (!GitHubAuthenticationService.IsDemoUser && !string.IsNullOrEmpty(GitHubAuthenticationService.Alias))
+#else
+            if (!string.IsNullOrEmpty(GitHubAuthenticationService.Alias))
+#endif
             {
                 var retrievedRepositoryList = new List<Repository>();
                 await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(GitHubAuthenticationService.Alias).ConfigureAwait(false))
@@ -92,6 +107,8 @@ namespace GitTrends
 
     public class TrendingRepositoryNotificationJob : IJob
     {
+        public const string Identifier = nameof(TrendingRepositoryNotificationJob);
+
         public Task<bool> Run(JobInfo jobInfo, CancellationToken cancelToken)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
