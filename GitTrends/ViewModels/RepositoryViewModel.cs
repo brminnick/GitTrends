@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices;
@@ -44,8 +45,6 @@ namespace GitTrends
             PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(GitHubAuthenticationService.Alias));
             FilterRepositoriesCommand = new Command<string>(SetSearchBarText);
             SortRepositoriesCommand = new Command<SortingOption>(ExecuteSortRepositoriesCommand);
-
-            _gitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
         }
 
         public event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
@@ -74,19 +73,22 @@ namespace GitTrends
 
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
+            var cancellationTokenSource = new CancellationTokenSource();
+            _gitHubAuthenticationService.LoggedOut += HandleLoggedOut;
+
             const int repositoriesPerFetch = 100;
 
             AnalyticsService.Track("Refresh Triggered", "Sorting Option", _sortingService.CurrentOption.ToString());
 
             try
             {
-                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, repositoriesPerFetch).ConfigureAwait(false))
+                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, repositoriesPerFetch).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     AddRepositoriesToCollection(retrievedRepositories, _searchBarText);
                 }
 
                 var completedRepoitories = new List<Repository>();
-                await foreach (var retrievedRepositoriesWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.ToList()).ConfigureAwait(false))
+                await foreach (var retrievedRepositoriesWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.ToList()).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     _repositoryDatabase.SaveRepository(retrievedRepositoriesWithViewsAndClonesData).SafeFireAndForget();
                     completedRepoitories.Add(retrievedRepositoriesWithViewsAndClonesData);
@@ -125,8 +127,18 @@ namespace GitTrends
             }
             finally
             {
+                _gitHubAuthenticationService.LoggedOut -= HandleLoggedOut;
+
+                if (cancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    _repositoryList = Enumerable.Empty<Repository>().ToList();
+                    UpdateVisibleRepositoryList(string.Empty, _sortingService.CurrentOption, _sortingService.IsReversed);
+                }
+
                 IsRefreshing = false;
             }
+
+            void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
         }
 
         void ExecuteSortRepositoriesCommand(SortingOption option)
@@ -189,12 +201,6 @@ namespace GitTrends
 
             if (_repositoryList.Any())
                 UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
-        }
-
-        void HandleGitHubAuthenticationServiceLoggedOut(object sender, EventArgs e)
-        {
-            _repositoryList = Enumerable.Empty<Repository>().ToList();
-            UpdateVisibleRepositoryList(string.Empty, _sortingService.CurrentOption, _sortingService.IsReversed);
         }
 
         void OnPullToRefreshFailed(in string title, in string message) =>

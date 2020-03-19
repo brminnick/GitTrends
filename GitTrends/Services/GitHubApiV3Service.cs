@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
@@ -49,7 +50,7 @@ namespace GitTrends
             }
         }
 
-        public async Task<RepositoryViewsResponseModel> GetRepositoryViewStatistics(string owner, string repo)
+        public async Task<RepositoryViewsResponseModel> GetRepositoryViewStatistics(string owner, string repo, CancellationToken cancellationToken = default)
         {
             if (GitHubAuthenticationService.IsDemoUser)
             {
@@ -77,7 +78,7 @@ namespace GitTrends
             }
         }
 
-        public async Task<RepositoryClonesResponseModel> GetRepositoryCloneStatistics(string owner, string repo)
+        public async Task<RepositoryClonesResponseModel> GetRepositoryCloneStatistics(string owner, string repo, CancellationToken cancellationToken = default)
         {
             if (GitHubAuthenticationService.IsDemoUser)
             {
@@ -105,7 +106,7 @@ namespace GitTrends
             }
         }
 
-        public async Task<List<ReferringSiteModel>> GetReferringSites(string owner, string repo)
+        public async Task<List<ReferringSiteModel>> GetReferringSites(string owner, string repo, CancellationToken cancellationToken = default)
         {
             if (GitHubAuthenticationService.IsDemoUser)
             {

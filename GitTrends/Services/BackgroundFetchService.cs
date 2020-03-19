@@ -46,7 +46,7 @@ namespace GitTrends
             return ShinyHost.Resolve<IJobManager>().Schedule(backgroundFetchJob);
         }
 
-        public async Task<bool> ExecuteTrendingRepositoryNotificationJob(JobInfo jobInfo, CancellationToken cancelToken)
+        public async Task<bool> NotifyTrendingRepositories()
         {
             try
             {
@@ -95,7 +95,7 @@ namespace GitTrends
         public Task<bool> Run(JobInfo jobInfo, CancellationToken cancelToken)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
-            return scope.Resolve<BackgroundFetchService>().ExecuteTrendingRepositoryNotificationJob(jobInfo, cancelToken);
+            return scope.Resolve<BackgroundFetchService>().NotifyTrendingRepositories();
         }
     }
 }

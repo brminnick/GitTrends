@@ -37,8 +37,8 @@ namespace GitTrends
 
             if (isSingleTrendingRepositoryMessage(message))
             {
-                var repositoryName = ParseRepositoryNameFromSingleRepositoryNotificationTitleLine(title);
-                var ownerName = ParseOwnerNameFromSingleRepositoryNotificationTitleLine(title);
+                var repositoryName = ParseRepositoryName(title);
+                var ownerName = ParseOwnerName(title);
 
                 var shouldNavigateToTrendsPage = await MainThread.InvokeOnMainThreadAsync(() =>
                      baseNavigationPage.DisplayAlert($"{repositoryName} is Trending", "Let's check out its chart!", "Let's Go", "Not Right Now"));
@@ -132,12 +132,12 @@ namespace GitTrends
         }
 
         string CreateSingleRepositoryNotificationTitle(in string repositoryName, in string repositoryOwner) => $"{repositoryName} by {repositoryOwner} is Trending";
-        string ParseRepositoryNameFromSingleRepositoryNotificationTitleLine(in string title) => title.Substring(0, title.IndexOf(" "));
-        string ParseOwnerNameFromSingleRepositoryNotificationTitleLine(in string title)
+        string ParseRepositoryName(in string singleRepositoryNotificationTitle) => singleRepositoryNotificationTitle.Substring(0, singleRepositoryNotificationTitle.IndexOf(" "));
+        string ParseOwnerName(in string singleRepositoryNotificationTitle)
         {
-            var ownerNameIndex = title.IndexOf("by") + "by".Length + 1;
-            var ownerNameLength = title.IndexOf(" ", ownerNameIndex);
-            return title.Substring(ownerNameIndex, ownerNameLength);
+            var ownerNameIndex = singleRepositoryNotificationTitle.IndexOf("by") + "by".Length + 1;
+            var ownerNameLength = singleRepositoryNotificationTitle.IndexOf(" ", ownerNameIndex);
+            return singleRepositoryNotificationTitle.Substring(ownerNameIndex, ownerNameLength);
         }
 
         async ValueTask<BaseNavigationPage> GetBaseNavigationPage()
