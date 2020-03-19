@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,12 +9,13 @@ using GitTrends.Shared;
 using Shiny;
 using Shiny.Notifications;
 using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
     public class NotificationService
     {
-        const string _trendingRepositoriesNotificationTitle = "Your Repositories are Trending";
+        const string _trendingRepositoriesNotificationTitle = "Your Repos Are Trending";
 
         readonly AnalyticsService _analyticsService;
 
@@ -37,21 +39,21 @@ namespace GitTrends
 #endif
         }
 
-        public async Task HandleReceivedLocalNotification(Notification notification)
+        public async Task HandleReceivedLocalNotification(string title, string message, int badgeCount)
         {
             var baseNavigationPage = await GetBaseNavigationPage();
 
-            if (isSingleTrendingRepositoryMessage(notification))
+            if (badgeCount is 1)
             {
-                var repositoryName = ParseRepositoryName(notification.Message);
-                var ownerName = ParseOwnerName(notification.Message);
+                var repositoryName = ParseRepositoryName(message);
+                var ownerName = ParseOwnerName(message);
 
-                var shouldNavigateToTrendsPage = await MainThread.InvokeOnMainThreadAsync(() =>
-                     baseNavigationPage.DisplayAlert($"{repositoryName} is Trending", "Let's check out its chart", "Let's Go", "Not Right Now"));
+                var shouldNavigateToChart = await MainThread.InvokeOnMainThreadAsync(() =>
+                                baseNavigationPage.DisplayAlert($"{repositoryName} is Trending", "Let's check out its chart", "Let's Go", "Not Right Now"));
 
-                _analyticsService.Track("Single Trending Repository Prompt Displayed", "Did Accept Response", shouldNavigateToTrendsPage.ToString());
+                _analyticsService.Track("Single Trending Repository Prompt Displayed", "Did Accept Response", shouldNavigateToChart.ToString());
 
-                if (shouldNavigateToTrendsPage)
+                if (shouldNavigateToChart)
                 {
                     //Create repository with only Name & Owner, because those are the only metrics that TrendsPage needs to fetch the chart data
                     var repository = new Repository(repositoryName, string.Empty, 0,
@@ -73,14 +75,15 @@ namespace GitTrends
                 _analyticsService.Track("Multiple Trending Repositories Prompt Displayed");
 
                 var messageBuilder = new StringBuilder();
-                messageBuilder.AppendLine(notification.Message);
-                messageBuilder.AppendLine();
+
+                if (Device.RuntimePlatform is Device.iOS)
+                    messageBuilder.AppendLine();
+
+                messageBuilder.AppendLine(message);
                 messageBuilder.Append("Sort by Trending to see them all");
 
-                await MainThread.InvokeOnMainThreadAsync(() => baseNavigationPage.DisplayAlert(notification.Title, messageBuilder.ToString(), "Thanks!"));
+                await MainThread.InvokeOnMainThreadAsync(() => baseNavigationPage.DisplayAlert(title, messageBuilder.ToString(), "Thanks!"));
             }
-
-            static bool isSingleTrendingRepositoryMessage(in Notification notification) => notification.BadgeCount is 1;
         }
 
         async ValueTask SendTrendingNotification(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime)
@@ -93,6 +96,8 @@ namespace GitTrends
 
                 var notification = new Notification
                 {
+                    //iOS crashes when ID is not set
+                    Id = Device.RuntimePlatform is Device.iOS ? 1 : 0,
                     Title = _trendingRepositoriesNotificationTitle,
                     Message = CreateSingleRepositoryNotificationMessage(trendingRepository.Name, trendingRepository.OwnerLogin),
                     ScheduleDate = notificationDateTime,
@@ -101,8 +106,6 @@ namespace GitTrends
 
                 setMostRecentNotificationDate(trendingRepository);
 
-
-                notificationService.Badge++;
                 await notificationService.Send(notification).ConfigureAwait(false);
             }
             else if (trendingRepositories.Count > 1)
@@ -114,6 +117,8 @@ namespace GitTrends
 
                 var notification = new Notification
                 {
+                    //iOS crashes when ID is not set
+                    Id = Device.RuntimePlatform is Device.iOS ? 1 : 0,
                     Title = _trendingRepositoriesNotificationTitle,
                     Message = CreateMultipleRepositoryNotifiationMessage(trendingRepositories.Count),
                     ScheduleDate = notificationDateTime,
@@ -127,7 +132,7 @@ namespace GitTrends
             static void setMostRecentNotificationDate(Repository repository) => Preferences.Set(repository.Name, DateTime.UtcNow);
         }
 
-        string CreateMultipleRepositoryNotifiationMessage(int trendingRepoCount) => $"You have {trendingRepoCount} repos trending!";
+        string CreateMultipleRepositoryNotifiationMessage(int trendingRepoCount) => $"You have {trendingRepoCount} repos trending";
 
         string CreateSingleRepositoryNotificationMessage(in string repositoryName, in string repositoryOwner) => $"{repositoryName} by {repositoryOwner} is Trending";
         string ParseRepositoryName(in string? singleRepositoryNotificationMessage) => singleRepositoryNotificationMessage?.Substring(0, singleRepositoryNotificationMessage.IndexOf(" by ")) ?? string.Empty;
@@ -143,12 +148,12 @@ namespace GitTrends
 
         async ValueTask<BaseNavigationPage> GetBaseNavigationPage()
         {
-            if (Xamarin.Forms.Application.Current.MainPage is BaseNavigationPage baseNavigationPage)
+            if (Application.Current.MainPage is BaseNavigationPage baseNavigationPage)
                 return baseNavigationPage;
 
             var tcs = new TaskCompletionSource<BaseNavigationPage>();
 
-            Xamarin.Forms.Application.Current.PageAppearing += HandlePageAppearing;
+            Application.Current.PageAppearing += HandlePageAppearing;
 
             return await tcs.Task.ConfigureAwait(false);
 

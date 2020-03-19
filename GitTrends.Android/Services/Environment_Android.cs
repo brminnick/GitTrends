@@ -23,5 +23,7 @@ namespace GitTrends.Droid
         }
 
         public Task<Theme> GetOperatingSystemThemeAsync() => Task.FromResult(GetOperatingSystemTheme());
+
+        public Task SetiOSBadgeCount(int count) => throw new NotSupportedException();
     }
 }

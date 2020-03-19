@@ -49,7 +49,9 @@ namespace GitTrends.Droid
                 using var scope = ContainerService.Container.BeginLifetimeScope();
                 var analyticsService = scope.Resolve<AnalyticsService>();
 
-                scope.Resolve<NotificationService>().HandleReceivedLocalNotification(notification)
+                scope.Resolve<NotificationService>().HandleReceivedLocalNotification(notification.Title ?? string.Empty,
+                                                                                        notification.Message ?? string.Empty,
+                                                                                        notification.BadgeCount ?? 0)
                                                     .SafeFireAndForget(ex => analyticsService.Report(ex));
             }
 

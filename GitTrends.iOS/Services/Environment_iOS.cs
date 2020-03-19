@@ -25,5 +25,7 @@ namespace GitTrends.iOS
         }
 
         public Task<Theme> GetOperatingSystemThemeAsync() => MainThread.InvokeOnMainThreadAsync(GetOperatingSystemTheme);
+
+        public Task SetiOSBadgeCount(int count) => MainThread.InvokeOnMainThreadAsync(() => UIApplication.SharedApplication.ApplicationIconBadgeNumber = count);
     }
 }

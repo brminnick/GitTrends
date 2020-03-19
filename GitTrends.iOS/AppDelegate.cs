@@ -129,7 +129,9 @@ namespace GitTrends.iOS
         Task HandleLocalNotification(UILocalNotification notification)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
-            return scope.Resolve<NotificationService>().HandleReceivedLocalNotification(notification.AlertTitle, notification.AlertBody);
+            var notificationService = scope.Resolve<NotificationService>();
+
+            return notificationService.HandleReceivedLocalNotification(notification.AlertTitle, notification.AlertBody, (int)notification.ApplicationIconBadgeNumber);
         }
 
         [Conditional("DEBUG")]

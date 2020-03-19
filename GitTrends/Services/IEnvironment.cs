@@ -6,5 +6,7 @@ namespace GitTrends
     {
         Theme GetOperatingSystemTheme();
         Task<Theme> GetOperatingSystemThemeAsync();
+
+        Task SetiOSBadgeCount(int count);
     }
 }
