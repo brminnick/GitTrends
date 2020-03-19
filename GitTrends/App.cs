@@ -50,7 +50,10 @@ namespace GitTrends
             SetTheme();
 
             ClearBageNotifications().SafeFireAndForget(ex => _analyticsService.Report(ex));
+
+#if !DEBUG
             RegisterBackgroundFetch().SafeFireAndForget(ex => _analyticsService.Report(ex));
+#endif
         }
 
         protected override void OnResume()
@@ -110,10 +113,6 @@ namespace GitTrends
 
         async Task RegisterBackgroundFetch()
         {
-            //Currently crashing on iOS
-            if (Device.RuntimePlatform is Device.iOS)
-                return;
-
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
 
@@ -125,7 +124,10 @@ namespace GitTrends
             var notificationService = ShinyHost.Resolve<INotificationManager>();
             var accessState = await notificationService.RequestAccess();
 
-            if (accessState is AccessState.Available)
+            //INotificationManager.Badge Crashes on iOS
+            if (accessState is AccessState.Available && Device.RuntimePlatform is Device.iOS)
+                await DependencyService.Get<IEnvironment>().SetiOSBadgeCount(0).ConfigureAwait(false);
+            else if (accessState is AccessState.Available)
                 notificationService.Badge = 0;
         }
 
