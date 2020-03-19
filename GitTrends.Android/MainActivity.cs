@@ -5,8 +5,10 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
+using AsyncAwaitBestPractices;
 using Autofac;
-using Plugin.CurrentActivity;
+using Newtonsoft.Json;
+using Shiny;
 
 namespace GitTrends.Droid
 {
@@ -17,58 +19,10 @@ namespace GitTrends.Droid
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            AndroidShinyHost.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-
-#if !AppStore
-        #region UI Test Back Door Methods
-        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.SetGitHubUser)]
-        public async void SetGitHubUser(string accessToken)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            await backdoorService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
-        }
-
-        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.TriggerPullToRefresh)]
-        public async void TriggerRepositoriesPullToRefresh()
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            await backdoorService.TriggerPullToRefresh().ConfigureAwait(false);
-        }
-
-        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.GetVisibleCollection)]
-        public string GetVisibleCollection()
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            return Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleCollection());
-        }
-
-        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.GetCurrentTrendsChartOption)]
-        public string GetCurrentTrendsChartOption()
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            return Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetCurrentTrendsChartOption());
-        }
-
-        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.IsTrendsSeriesVisible)]
-        public bool IsTrendsSeriesVisible(string seriesLabel)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            return backdoorService.IsTrendsSeriesVisible(seriesLabel);
-        }
-        #endregion
-#endif
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -78,14 +32,7 @@ namespace GitTrends.Droid
             base.SetTheme(Resource.Style.MainTheme);
             base.OnCreate(savedInstanceState);
 
-            CrossCurrentActivity.Current.Init(this, savedInstanceState);
-
-            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
-
-            FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
-            FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageViewHandler();
-            var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
+            Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
             var app = new App();
 
@@ -93,6 +40,19 @@ namespace GitTrends.Droid
             {
                 //Wait for Application.MainPage to load before handling the callbackUri
                 app.PageAppearing += HandlePageAppearing;
+            }
+
+            if (Intent?.GetStringExtra("ShinyNotification") is string notificationString)
+            {
+                var notification = JsonConvert.DeserializeObject<Shiny.Notifications.Notification>(notificationString);
+
+                using var scope = ContainerService.Container.BeginLifetimeScope();
+                var analyticsService = scope.Resolve<AnalyticsService>();
+
+                scope.Resolve<NotificationService>().HandleReceivedLocalNotification(notification.Title ?? string.Empty,
+                                                                                        notification.Message ?? string.Empty,
+                                                                                        notification.BadgeCount ?? 0)
+                                                    .SafeFireAndForget(ex => analyticsService.Report(ex));
             }
 
             LoadApplication(app);

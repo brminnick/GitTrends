@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices;
@@ -11,7 +12,6 @@ using GitTrends.Shared;
 using Refit;
 using Xamarin.Essentials;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace GitTrends
 {
@@ -75,19 +75,22 @@ namespace GitTrends
 
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
+            var cancellationTokenSource = new CancellationTokenSource();
+            _gitHubAuthenticationService.LoggedOut += HandleLoggedOut;
+
             const int repositoriesPerFetch = 100;
 
             AnalyticsService.Track("Refresh Triggered", "Sorting Option", _sortingService.CurrentOption.ToString());
 
             try
             {
-                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, repositoriesPerFetch).ConfigureAwait(false))
+                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, repositoriesPerFetch).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     AddRepositoriesToCollection(retrievedRepositories, _searchBarText);
                 }
 
                 var completedRepoitories = new List<Repository>();
-                await foreach (var retrievedRepositoriesWithViewsAndClonesData in GetRepositoryWithViewsAndClonesData(_repositoryList.ToList()).ConfigureAwait(false))
+                await foreach (var retrievedRepositoriesWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.ToList()).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     _repositoryDatabase.SaveRepository(retrievedRepositoriesWithViewsAndClonesData).SafeFireAndForget();
                     completedRepoitories.Add(retrievedRepositoriesWithViewsAndClonesData);
@@ -126,43 +129,15 @@ namespace GitTrends
             }
             finally
             {
+                _gitHubAuthenticationService.LoggedOut -= HandleLoggedOut;
+
+                if (cancellationTokenSource.IsCancellationRequested)
+                    UpdateListForLoggedOutUser();
+
                 IsRefreshing = false;
             }
 
-            async IAsyncEnumerable<Repository> GetRepositoryWithViewsAndClonesData(List<Repository> repositories)
-            {
-                var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsResponseModel, RepositoryClonesResponseModel)>>(repositories.Select(x => getRepositoryStatistics(x)));
-
-                while (getRepositoryStatisticsTaskList.Any())
-                {
-                    var completedStatisticsTask = await Task.WhenAny(getRepositoryStatisticsTaskList).ConfigureAwait(false);
-                    getRepositoryStatisticsTaskList.Remove(completedStatisticsTask);
-
-                    var (viewsResponse, clonesResponse) = await completedStatisticsTask.ConfigureAwait(false);
-
-                    var matchingRepository = repositories.First(x => x.Name == viewsResponse.RepositoryName);
-
-                    yield return new Repository(matchingRepository.Name, matchingRepository.Description, matchingRepository.ForkCount,
-                                                new RepositoryOwner(matchingRepository.OwnerLogin, matchingRepository.OwnerAvatarUrl),
-                                                new IssuesConnection(matchingRepository.IssuesCount, null),
-                                                matchingRepository.Url,
-                                                new StarGazers(matchingRepository.StarCount),
-                                                matchingRepository.IsFork,
-                                                viewsResponse.DailyViewsList,
-                                                clonesResponse.DailyClonesList);
-                }
-
-                async Task<(RepositoryViewsResponseModel ViewsResponse, RepositoryClonesResponseModel ClonesResponse)> getRepositoryStatistics(Repository repository)
-                {
-                    var getViewStatisticsTask = _gitHubApiV3Service.GetRepositoryViewStatistics(repository.OwnerLogin, repository.Name);
-                    var getCloneStatisticsTask = _gitHubApiV3Service.GetRepositoryCloneStatistics(repository.OwnerLogin, repository.Name);
-
-                    await Task.WhenAll(getViewStatisticsTask, getCloneStatisticsTask).ConfigureAwait(false);
-
-                    return (await getViewStatisticsTask.ConfigureAwait(false),
-                            await getCloneStatisticsTask.ConfigureAwait(false));
-                }
-            }
+            void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
         }
 
         void ExecuteSortRepositoriesCommand(SortingOption option)
@@ -208,6 +183,12 @@ namespace GitTrends
             VisibleRepositoryList = SortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
         }
 
+        void UpdateListForLoggedOutUser()
+        {
+            _repositoryList = Enumerable.Empty<Repository>().ToList();
+            UpdateVisibleRepositoryList(string.Empty, _sortingService.CurrentOption, _sortingService.IsReversed);
+        }
+
         IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IEnumerable<Repository> repositories, string searchBarText)
         {
             if (string.IsNullOrWhiteSpace(searchBarText))
@@ -227,11 +208,7 @@ namespace GitTrends
                 UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
         }
 
-        void HandleGitHubAuthenticationServiceLoggedOut(object sender, EventArgs e)
-        {
-            _repositoryList = Enumerable.Empty<Repository>().ToList();
-            UpdateVisibleRepositoryList(string.Empty, _sortingService.CurrentOption, _sortingService.IsReversed);
-        }
+        void HandleGitHubAuthenticationServiceLoggedOut(object sender, EventArgs e) => UpdateListForLoggedOutUser();
 
         void OnPullToRefreshFailed(in string title, in string message) =>
             _pullToRefreshFailedEventManager.HandleEvent(this, new PullToRefreshFailedEventArgs(message, title), nameof(PullToRefreshFailed));

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
@@ -15,7 +16,7 @@ namespace GitTrends
 
         static IGitHubGraphQLApi GitHubApiClient => _githubApiClientHolder.Value;
 
-        public async Task<(string login, string name, Uri avatarUri)> GetCurrentUserInfo()
+        public async Task<(string login, string name, Uri avatarUri)> GetCurrentUserInfo(CancellationToken cancellationToken = default)
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
             var data = await ExecuteGraphQLRequest(() => GitHubApiClient.ViewerLoginQuery(new ViewerLoginQueryContent(), GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
@@ -23,7 +24,7 @@ namespace GitTrends
             return (data.Viewer.Alias, data.Viewer.Name, data.Viewer.AvatarUri);
         }
 
-        public async Task<User> GetUser(string username)
+        public async Task<User> GetUser(string username, CancellationToken cancellationToken = default)
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
             var data = await ExecuteGraphQLRequest(() => GitHubApiClient.UserQuery(new UserQueryContent(username), GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
@@ -31,7 +32,7 @@ namespace GitTrends
             return data.User;
         }
 
-        public async Task<Repository> GetRepository(string repositoryOwner, string repositoryName, int numberOfIssuesPerRequest = 100)
+        public async Task<Repository> GetRepository(string repositoryOwner, string repositoryName, int numberOfIssuesPerRequest = 100, CancellationToken cancellationToken = default)
         {
             var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
             var data = await ExecuteGraphQLRequest(() => GitHubApiClient.RepositoryQuery(new RepositoryQueryContent(repositoryOwner, repositoryName, numberOfIssuesPerRequest), GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);

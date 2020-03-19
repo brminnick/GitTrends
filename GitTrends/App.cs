@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
+using Autofac.Core;
+using Autofac;
+using Shiny;
+using Shiny.Notifications;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
@@ -43,6 +48,12 @@ namespace GitTrends
             _analyticsService.Track("App Started");
 
             SetTheme();
+
+            ClearBageNotifications().SafeFireAndForget(ex => _analyticsService.Report(ex));
+
+#if !DEBUG
+            RegisterBackgroundFetch().SafeFireAndForget(ex => _analyticsService.Report(ex));
+#endif
         }
 
         protected override void OnResume()
@@ -52,6 +63,8 @@ namespace GitTrends
             _analyticsService.Track("App Resumed");
 
             SetTheme();
+
+            ClearBageNotifications().SafeFireAndForget(ex => _analyticsService.Report(ex));
         }
 
         protected override void OnSleep()
@@ -96,6 +109,26 @@ namespace GitTrends
                     }
                 }
             });
+        }
+
+        async Task RegisterBackgroundFetch()
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
+
+            await backgroundFetchService.Register().ConfigureAwait(false);
+        }
+
+        async Task ClearBageNotifications()
+        {
+            var notificationService = ShinyHost.Resolve<INotificationManager>();
+            var accessState = await notificationService.RequestAccess();
+
+            //INotificationManager.Badge Crashes on iOS
+            if (accessState is AccessState.Available && Device.RuntimePlatform is Device.iOS)
+                await DependencyService.Get<IEnvironment>().SetiOSBadgeCount(0).ConfigureAwait(false);
+            else if (accessState is AccessState.Available)
+                notificationService.Badge = 0;
         }
 
         void OnThemeChanged(Theme newTheme) => _themeChangedEventManager.HandleEvent(this, newTheme, nameof(ThemeChanged));

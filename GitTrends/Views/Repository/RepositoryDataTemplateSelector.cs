@@ -27,6 +27,7 @@ namespace GitTrends
 
         static bool ShouldShowStarkForksIssues(SortingService sortingService) => sortingService.CurrentOption switch
         {
+            SortingOption.Trending => false,
             SortingOption.Clones => false,
             SortingOption.UniqueClones => false,
             SortingOption.Views => false,
@@ -45,7 +46,7 @@ namespace GitTrends
             }
 
             enum Row { TopPadding, Title, Description, DescriptionPadding, Statistics, BottomPadding }
-            enum Column { Avatar, AvatarPadding, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3, Emoji4, Statistic4, RightPadding }
+            enum Column { Avatar, AvatarPadding, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3, Emoji4, Statistic4, Trending }
 
             static Grid CreateRepositoryDataTemplate(Repository repository, bool shouldShowStarsForksIssues) => new Grid
             {
@@ -77,7 +78,7 @@ namespace GitTrends
                     (Column.Statistic3, new GridLength(statisticColumnSize, GridUnitType.Absolute)),
                     (Column.Emoji4, new GridLength(emojiColumnSize, GridUnitType.Absolute)),
                     (Column.Statistic4, new GridLength(statisticColumnSize, GridUnitType.Absolute)),
-                    (Column.RightPadding, new GridLength(1, GridUnitType.Star))),
+                    (Column.Trending, new GridLength(1, GridUnitType.Star))),
 
                 Children =
                 {
@@ -91,14 +92,14 @@ namespace GitTrends
                     new SmallNavyBlueSVGImage(shouldShowStarsForksIssues ? "star.svg" : "total_views.svg").Row(Row.Statistics).Column(Column.Emoji1),
 
                     //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                    shouldDisplayValue(repository.DailyClonesList)
+                    shouldDisplayValue(repository.DailyViewsList)
                         ? new DarkBlueLabel(_smallFontSize - 1, shouldShowStarsForksIssues ? repository.StarCount.ToString() : repository.TotalViews.ToString()).Row(Row.Statistics).Column(Column.Statistic1)
                         : new Label(),
 
                     new SmallNavyBlueSVGImage(shouldShowStarsForksIssues ? "repo_forked.svg" : "unique_views.svg").Row(Row.Statistics).Column(Column.Emoji2),
 
                     //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                    shouldDisplayValue(repository.DailyClonesList)
+                    shouldDisplayValue(repository.DailyViewsList)
                         ? new DarkBlueLabel(_smallFontSize - 1, shouldShowStarsForksIssues ? repository.ForkCount.ToString() : repository.TotalUniqueViews.ToString()).Row(Row.Statistics).Column(Column.Statistic2)
                         : new Label(),
 
@@ -118,11 +119,25 @@ namespace GitTrends
                     //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
                     !shouldShowStarsForksIssues && shouldDisplayValue(repository.DailyClonesList)
                         ? new DarkBlueLabel(_smallFontSize - 1, repository.TotalUniqueClones.ToString()).Row(Row.Statistics).Column(Column.Statistic4)
-                        : new Label()
+                        : new Label(),
+
+                    //Only display the Trending label when a repository is trending
+                    repository.IsTrending
+                        ? new TrendingLabel().Row(Row.Statistics).Column(Column.Trending)
+                        : new Label(),
                 }
             };
 
             static bool shouldDisplayValue<T>(IList<T> list) where T : BaseDailyModel => list.Any();
+        }
+
+        class TrendingLabel : DarkBlueLabel
+        {
+            public TrendingLabel() : base(_smallFontSize, "Trending")
+            {
+                Opacity = 0.75;
+                FontAttributes = FontAttributes.Italic | FontAttributes.Bold;
+            }
         }
 
         class AvatarImage : CircleImage

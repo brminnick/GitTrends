@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Refit;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -15,7 +15,43 @@ namespace GitTrends
 
         static IGitHubApiV3 GithubApiClient => _githubApiClient.Value;
 
-        public async Task<RepositoryViewsResponseModel> GetRepositoryViewStatistics(string owner, string repo)
+        public async IAsyncEnumerable<Repository> UpdateRepositoriesWithViewsAndClonesData(List<Repository> repositories)
+        {
+            var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsResponseModel, RepositoryClonesResponseModel)>>(repositories.Select(x => getRepositoryStatistics(x)));
+
+            while (getRepositoryStatisticsTaskList.Any())
+            {
+                var completedStatisticsTask = await Task.WhenAny(getRepositoryStatisticsTaskList).ConfigureAwait(false);
+                getRepositoryStatisticsTaskList.Remove(completedStatisticsTask);
+
+                var (viewsResponse, clonesResponse) = await completedStatisticsTask.ConfigureAwait(false);
+
+                var matchingRepository = repositories.First(x => x.Name == viewsResponse.RepositoryName);
+
+
+                yield return new Repository(matchingRepository.Name, matchingRepository.Description, matchingRepository.ForkCount,
+                                            new RepositoryOwner(matchingRepository.OwnerLogin, matchingRepository.OwnerAvatarUrl),
+                                            new IssuesConnection(matchingRepository.IssuesCount, null),
+                                            matchingRepository.Url,
+                                            new StarGazers(matchingRepository.StarCount),
+                                            matchingRepository.IsFork,
+                                            viewsResponse.DailyViewsList,
+                                            clonesResponse.DailyClonesList);
+            }
+
+            async Task<(RepositoryViewsResponseModel ViewsResponse, RepositoryClonesResponseModel ClonesResponse)> getRepositoryStatistics(Repository repository)
+            {
+                var getViewStatisticsTask = GetRepositoryViewStatistics(repository.OwnerLogin, repository.Name);
+                var getCloneStatisticsTask = GetRepositoryCloneStatistics(repository.OwnerLogin, repository.Name);
+
+                await Task.WhenAll(getViewStatisticsTask, getCloneStatisticsTask).ConfigureAwait(false);
+
+                return (await getViewStatisticsTask.ConfigureAwait(false),
+                        await getCloneStatisticsTask.ConfigureAwait(false));
+            }
+        }
+
+        public async Task<RepositoryViewsResponseModel> GetRepositoryViewStatistics(string owner, string repo, CancellationToken cancellationToken = default)
         {
             if (GitHubAuthenticationService.IsDemoUser)
             {
@@ -24,13 +60,16 @@ namespace GitTrends
 
                 var dailyViewsModelList = new List<DailyViewsModel>();
 
-                for (int i = 0; i < 14; i++)
+                for (int i = 1; i < 14; i++)
                 {
                     var count = DemoDataConstants.GetRandomNumber();
                     var uniqeCount = count / 2; //Ensures uniqueCount is always less than count
 
                     dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
                 }
+
+                //Add one trending repo
+                dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow, DemoDataConstants.MaximumRandomNumber * 4, DemoDataConstants.MaximumRandomNumber / 2));
 
                 return new RepositoryViewsResponseModel(repo, owner, dailyViewsModelList.Sum(x => x.TotalViews), dailyViewsModelList.Sum(x => x.TotalUniqueViews), dailyViewsModelList);
             }
@@ -43,7 +82,7 @@ namespace GitTrends
             }
         }
 
-        public async Task<RepositoryClonesResponseModel> GetRepositoryCloneStatistics(string owner, string repo)
+        public async Task<RepositoryClonesResponseModel> GetRepositoryCloneStatistics(string owner, string repo, CancellationToken cancellationToken = default)
         {
             if (GitHubAuthenticationService.IsDemoUser)
             {
@@ -71,7 +110,7 @@ namespace GitTrends
             }
         }
 
-        public async Task<List<ReferringSiteModel>> GetReferringSites(string owner, string repo)
+        public async Task<List<ReferringSiteModel>> GetReferringSites(string owner, string repo, CancellationToken cancellationToken = default)
         {
             if (GitHubAuthenticationService.IsDemoUser)
             {

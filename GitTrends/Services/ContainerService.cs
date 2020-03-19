@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using GitTrends.Shared;
+using Shiny.Notifications;
 
 namespace GitTrends
 {
@@ -17,15 +18,17 @@ namespace GitTrends
             //Register Services
             builder.RegisterType<AnalyticsService>().AsSelf().SingleInstance();
             builder.RegisterType<AzureFunctionsApiService>().AsSelf().SingleInstance();
+            builder.RegisterType<BackgroundFetchService>().AsSelf().SingleInstance();
             builder.RegisterType<DeepLinkingService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubAuthenticationService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubGraphQLApiService>().AsSelf().SingleInstance();
+            builder.RegisterType<NotificationService>().AsSelf().SingleInstance();
             builder.RegisterType<RepositoryDatabase>().AsSelf().SingleInstance();
             builder.RegisterType<ReviewService>().AsSelf().SingleInstance();
+            builder.RegisterType<SortingService>().AsSelf().SingleInstance();
             builder.RegisterType<SyncFusionService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
-            builder.RegisterType<SortingService>().AsSelf().SingleInstance();
 #if !AppStore
             builder.RegisterType<UITestBackdoorService>().AsSelf().SingleInstance();
 #endif

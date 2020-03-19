@@ -5,7 +5,7 @@ namespace GitTrends.Shared
 {
     class SortingConstants
     {
-        public const SortingOption DefaultSortingOption = SortingOption.Views;
+        public const SortingOption DefaultSortingOption = SortingOption.Trending;
 
         readonly static Lazy<Dictionary<SortingOption, string>> _sortingOptionsDictionaryHolder = new Lazy<Dictionary<SortingOption, string>>(CreateSortingDictionary);
 
@@ -20,8 +20,9 @@ namespace GitTrends.Shared
             { SortingOption.Clones,  "Clones" },
             { SortingOption.UniqueViews,  "Unique Views" },
             { SortingOption.UniqueClones,  "Unique Clones" },
+            { SortingOption.Trending, "Trending" }
         };
     }
 
-    public enum SortingOption  { Stars, Issues, Forks, Views, UniqueViews, Clones, UniqueClones }
+    public enum SortingOption  { Stars, Issues, Forks, Views, UniqueViews, Clones, UniqueClones, Trending }
 }

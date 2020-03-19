@@ -21,6 +21,9 @@ namespace GitTrends.Shared
             IsFork = isFork;
             DailyViewsList = (views ?? Enumerable.Empty<DailyViewsModel>()).ToList();
             DailyClonesList = (clones ?? Enumerable.Empty<DailyClonesModel>()).ToList();
+
+            var (isViewsTrending, isClonesTrending) = TrendingService.IsTrending(this);
+            IsTrending = (isViewsTrending ?? false) || (isClonesTrending ?? false);
         }
 
         public long TotalViews => DailyViewsList.Sum(x => x.TotalViews);
@@ -36,6 +39,8 @@ namespace GitTrends.Shared
         public string Description { get; }
         public long ForkCount { get; }
         public bool IsFork { get; }
+
+        public bool IsTrending { get; }
 
         public List<DailyViewsModel> DailyViewsList { get; }
         public List<DailyClonesModel> DailyClonesList { get; }

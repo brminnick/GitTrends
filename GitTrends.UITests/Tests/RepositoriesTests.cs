@@ -27,6 +27,7 @@ namespace GitTrends.UITests
         [TestCase(SortingOption.UniqueClones)]
         [TestCase(SortingOption.UniqueViews)]
         [TestCase(SortingOption.Views)]
+        [TestCase(SortingOption.Trending)]
         public void VerifySortingOptions(SortingOption sortingOption)
         {
             //Arrange
@@ -42,7 +43,11 @@ namespace GitTrends.UITests
             finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
             finalSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
 
-            Assert.GreaterOrEqual(initialTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
+            if (initialTopRepository.IsTrending && initialSecondTopRepository.IsTrending
+                || !initialTopRepository.IsTrending && !initialSecondTopRepository.IsTrending)
+            {
+                Assert.GreaterOrEqual(initialSecondTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
+            }
 
             Assert.AreNotEqual(initialTopRepository, finalTopRepository);
             Assert.AreNotEqual(initialSecondTopRepository, finalSecondTopRepository);
@@ -70,6 +75,9 @@ namespace GitTrends.UITests
                     Assert.GreaterOrEqual(finalTopRepository.TotalUniqueViews, finalSecondTopRepository.TotalUniqueViews);
                     break;
                 case SortingOption.Views:
+                    Assert.GreaterOrEqual(finalTopRepository.TotalViews, finalSecondTopRepository.TotalViews);
+                    break;
+                case SortingOption.Trending:
                     Assert.LessOrEqual(finalTopRepository.TotalViews, finalSecondTopRepository.TotalViews);
                     break;
                 default:
