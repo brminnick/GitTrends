@@ -31,7 +31,7 @@ namespace GitTrends
 
             static bool shouldSendNotification(Repository trendingRepository)
             {
-                var nextNotificationDate = getMostRecentNotificationDate(trendingRepository).AddDays(14);
+                var nextNotificationDate = getMostRecentNotificationDate(trendingRepository).AddDays(3);
                 return DateTime.Compare(nextNotificationDate, DateTime.UtcNow) > 1;
 
                 static DateTime getMostRecentNotificationDate(Repository repository) => Preferences.Get(repository.Name, default(DateTime));
