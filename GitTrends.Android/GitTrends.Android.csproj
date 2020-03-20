@@ -44,12 +44,10 @@
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
-    <BundleAssemblies>true</BundleAssemblies>
     <AotAssemblies>true</AotAssemblies>
     <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
     <AndroidDexTool>d8</AndroidDexTool>
     <AndroidLinkTool>r8</AndroidLinkTool>
-    <AndroidSupportedAbis>armeabi-v7a;x86;arm64-v8a;x86_64</AndroidSupportedAbis>
     <AndroidUseAapt2>true</AndroidUseAapt2>
     <EnableLLVM>true</EnableLLVM>
     <AndroidPackageFormat>aab</AndroidPackageFormat>
@@ -67,9 +65,7 @@
     <AndroidUseAapt2>true</AndroidUseAapt2>
     <LangVersion>Default</LangVersion>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-    <AndroidSupportedAbis>armeabi-v7a;x86;arm64-v8a;x86_64</AndroidSupportedAbis>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
-    <BundleAssemblies>true</BundleAssemblies>
     <AndroidPackageFormat>aab</AndroidPackageFormat>
     <AotAssemblies>true</AotAssemblies>
     <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
