@@ -36,39 +36,10 @@ namespace GitTrends.Droid
 
             var app = new App();
 
-            if (Intent?.Data is Android.Net.Uri callbackUri)
-            {
-                //Wait for Application.MainPage to load before handling the callbackUri
-                app.PageAppearing += HandlePageAppearing;
-            }
-
-            if (Intent?.GetStringExtra("ShinyNotification") is string notificationString)
-            {
-                var notification = JsonConvert.DeserializeObject<Shiny.Notifications.Notification>(notificationString);
-
-                using var scope = ContainerService.Container.BeginLifetimeScope();
-                var analyticsService = scope.Resolve<AnalyticsService>();
-
-                scope.Resolve<NotificationService>().HandleReceivedLocalNotification(notification.Title ?? string.Empty,
-                                                                                        notification.Message ?? string.Empty,
-                                                                                        notification.BadgeCount ?? 0)
-                                                    .SafeFireAndForget(ex => analyticsService.Report(ex));
-            }
+            TryHandleOpenedFromUri(app, Intent.Data);
+            TryHandleOpenedFromNotification(Intent);
 
             LoadApplication(app);
-
-            async void HandlePageAppearing(object sender, Xamarin.Forms.Page page)
-            {
-                if (page is SettingsPage)
-                {
-                    app.PageAppearing -= HandlePageAppearing;
-                    await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
-                }
-                else if (page is RepositoryPage)
-                {
-                    await NavigateToSettingsPage().ConfigureAwait(false);
-                }
-            }
         }
 
         protected override async void OnNewIntent(Intent intent)
@@ -80,6 +51,8 @@ namespace GitTrends.Droid
                 await NavigateToSettingsPage().ConfigureAwait(false);
                 await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
             }
+
+            TryHandleOpenedFromNotification(intent);
         }
 
         static async ValueTask NavigateToSettingsPage()
@@ -113,6 +86,45 @@ namespace GitTrends.Droid
             catch (Exception ex)
             {
                 containerScope.Resolve<AnalyticsService>().Report(ex);
+            }
+        }
+
+        async void TryHandleOpenedFromNotification(Intent? intent)
+        {
+            if (intent?.GetStringExtra("ShinyNotification") is string notificationString)
+            {
+                var notification = JsonConvert.DeserializeObject<Shiny.Notifications.Notification>(notificationString);
+
+                using var scope = ContainerService.Container.BeginLifetimeScope();
+                var analyticsService = scope.Resolve<AnalyticsService>();
+
+                var notificationService = scope.Resolve<NotificationService>();
+
+                await notificationService.HandleReceivedLocalNotification(notification.Title ?? string.Empty,
+                                                                            notification.Message ?? string.Empty,
+                                                                            notification.BadgeCount ?? 0).ConfigureAwait(false);
+            }
+        }
+
+        void TryHandleOpenedFromUri(App app, Android.Net.Uri? callbackUri)
+        {
+            if (callbackUri != null)
+            {
+                //Wait for Application.MainPage to load before handling the callbackUri
+                app.PageAppearing += HandlePageAppearing;
+
+                async void HandlePageAppearing(object sender, Xamarin.Forms.Page page)
+                {
+                    if (page is SettingsPage)
+                    {
+                        app.PageAppearing -= HandlePageAppearing;
+                        await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
+                    }
+                    else if (page is RepositoryPage)
+                    {
+                        await NavigateToSettingsPage().ConfigureAwait(false);
+                    }
+                }
             }
         }
     }
