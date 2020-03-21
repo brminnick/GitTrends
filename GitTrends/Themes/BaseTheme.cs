@@ -41,10 +41,12 @@ namespace GitTrends
 
         public abstract Color PageBackgroundColor { get; }
 
+        public abstract Color PrimaryTextColor { get; }
         public abstract Color TextColor { get; }
 
         public abstract Color RefreshControlColor { get; }
 
+        //Chart
         public abstract Color TotalViewsColor { get; }
         public abstract Color TotalUniqueViewsColor { get; }
         public abstract Color TotalClonesColor { get; }
@@ -53,9 +55,35 @@ namespace GitTrends
         public abstract Color ChartAxisTextColor { get; }
         public abstract Color ChartAxisLineColor { get; }
 
+        //Components
+        public abstract Color SplashScreenStatusColor { get; }
+
+        //Icons
+        public abstract Color IconColor { get; }
+        public abstract Color IconPrimaryColor { get; }
+
+        //Buttons
         public abstract Color ButtonTextColor { get; }
         public abstract Color ButtonBackgroundColor { get; }
 
+        //Card Stats Color
+        public abstract Color CardStarsStatsTextColor { get; }
+        public abstract Color CardStarsStatsIconColor { get; }
+        public abstract Color CardForksStatsTextColor { get; }
+        public abstract Color CardForksStatsIconColor { get; }
+        public abstract Color CardIssuesStatsTextColor { get; }
+        public abstract Color CardIssuesStatsIconColor { get; }
+        public abstract Color CardViewsStatsTextColor { get; }
+        public abstract Color CardViewsStatsIconColor { get; }
+        public abstract Color CardClonesStatsTextColor { get; }
+        public abstract Color CardClonesStatsIconColor { get; }
+        public abstract Color CardUniqueViewsStatsTextColor { get; }
+        public abstract Color CardUniqueViewsStatsIconColor { get; }
+        public abstract Color CardUniqueClonesStatsTextColor { get; }
+        public abstract Color CardUniqueClonesStatsIconColor { get; }
+        public abstract Color CardTrendingStatsColor { get; }
+
+        //Trends Settings Component
         public abstract Color TrendsChartSettingsLabelTextColor { get; }
         public abstract Color TrendsChartSettingsBorderColor { get; }
         public abstract Color TrendsChartSettingsFontColor { get; }

@@ -47,7 +47,7 @@ namespace GitTrends
                 //Begin with Label off of the screen
                 TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2,
             };
-            _statusLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TotalClonesColor));
+            _statusLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.SplashScreenStatusColor));
 
 
             var relativeLayout = new RelativeLayout();
