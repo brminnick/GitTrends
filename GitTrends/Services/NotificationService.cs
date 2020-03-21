@@ -126,7 +126,7 @@ namespace GitTrends
                     //iOS crashes when ID is not set
                     Id = Device.RuntimePlatform is Device.iOS ? 1 : 0,
                     Title = _trendingRepositoriesNotificationTitle,
-                    Message = CreateMultipleRepositoryNotifiationMessage(trendingRepositories.Count),
+                    Message = $"You have {trendingRepositories.Count} repos trending",
                     ScheduleDate = notificationDateTime,
                     BadgeCount = trendingRepositories.Count
                 };
@@ -157,8 +157,6 @@ namespace GitTrends
                 return dictionary;
             }
         }
-
-        string CreateMultipleRepositoryNotifiationMessage(int trendingRepoCount) => $"You have {trendingRepoCount} repos trending";
 
         string CreateSingleRepositoryNotificationMessage(in string repositoryName, in string repositoryOwner) => $"{repositoryName} by {repositoryOwner} is Trending";
         string ParseRepositoryName(in string? singleRepositoryNotificationMessage) => singleRepositoryNotificationMessage?.Substring(0, singleRepositoryNotificationMessage.IndexOf(" by ")) ?? string.Empty;
