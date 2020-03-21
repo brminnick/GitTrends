@@ -49,7 +49,10 @@
 	<array>
 		<string></string>
 		<string>FontAwesomeBrands.ttf</string>
-	</array>
+	    <string>Roboto-Bold.ttf</string>
+    <string>Roboto-Medium.ttf</string>
+    <string>Roboto-Regular.ttf</string>
+</array>
 	<key>CFBundleShortVersionString</key>
 	<string>0.12.0</string>
 	<key>CFBundleVersion</key>

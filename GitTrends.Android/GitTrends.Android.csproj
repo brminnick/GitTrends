@@ -331,12 +331,18 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\FontAwesomeBrands.ttf" />
+    <AndroidAsset Include="Assets\Roboto-Bold.ttf" />
+    <AndroidAsset Include="Assets\Roboto-Medium.ttf" />
+    <AndroidAsset Include="Assets\Roboto-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
     <ProguardConfiguration Include="proguard.cfg" />
   </ItemGroup>
   <ItemGroup>
     <LinkDescription Include="linker.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
