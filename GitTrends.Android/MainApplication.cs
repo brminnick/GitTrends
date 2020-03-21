@@ -3,6 +3,7 @@ using Android.App;
 using Android.Runtime;
 using Autofac;
 using Shiny;
+using Shiny.Notifications;
 
 namespace GitTrends.Droid
 {
@@ -17,11 +18,12 @@ namespace GitTrends.Droid
         {
             base.OnCreate();
 
-            Shiny.Notifications.AndroidOptions.DefaultUseBigTextStyle = true;
-            Shiny.Notifications.AndroidOptions.DefaultSmallIconResourceName = nameof(Resource.Drawable.icon);
-            Shiny.Notifications.AndroidOptions.DefaultColorResourceName = nameof(Resource.Color.colorPrimary);
-            Shiny.Notifications.AndroidOptions.DefaultChannel = nameof(GitTrends);
-            Shiny.Notifications.AndroidOptions.DefaultChannelDescription = "GitTrends Notifications";
+            AndroidOptions.DefaultSmallIconResourceName = nameof(Resource.Drawable.icon);
+            AndroidOptions.DefaultColorResourceName = nameof(Resource.Color.colorPrimary);
+            AndroidOptions.DefaultChannel = nameof(GitTrends);
+            AndroidOptions.DefaultChannelDescription = "GitTrends Notifications";
+            AndroidOptions.DefaultLaunchActivityFlags = AndroidActivityFlags.FromBackground;
+            AndroidOptions.DefaultNotificationImportance = AndroidNotificationImportance.High;
             AndroidShinyHost.Init(this, platformBuild: services => services.UseNotifications());
 
             Plugin.CurrentActivity.CrossCurrentActivity.Current.Init(this);
