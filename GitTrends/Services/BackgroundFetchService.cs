@@ -112,7 +112,9 @@ namespace GitTrends
         public Task<bool> Run(JobInfo jobInfo, CancellationToken cancelToken)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
-            return scope.Resolve<BackgroundFetchService>().NotifyTrendingRepositories();
+
+            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
+            return backgroundFetchService.NotifyTrendingRepositories();
         }
     }
 }

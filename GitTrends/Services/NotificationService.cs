@@ -23,7 +23,7 @@ namespace GitTrends
 
         public ValueTask TrySendTrendingNotificaiton(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
         {
-#if !AppStore
+#if DEBUG
             return SendTrendingNotification(trendingRepositories, notificationDateTime);
 #else
             var repositoriesToNotify = trendingRepositories.Where(shouldSendNotification).ToList();
@@ -107,6 +107,12 @@ namespace GitTrends
                 setMostRecentNotificationDate(trendingRepository);
 
                 await notificationService.Send(notification).ConfigureAwait(false);
+
+                _analyticsService.Track("Single Trending Repository Notification Sent", new Dictionary<string, string>
+                {
+                    { nameof(Repository.Name), trendingRepository.Name },
+                    { nameof(Repository.OwnerLogin), trendingRepository.OwnerLogin },
+                });
             }
             else if (trendingRepositories.Count > 1)
             {
@@ -120,19 +126,37 @@ namespace GitTrends
                     //iOS crashes when ID is not set
                     Id = Device.RuntimePlatform is Device.iOS ? 1 : 0,
                     Title = _trendingRepositoriesNotificationTitle,
-                    Message = CreateMultipleRepositoryNotifiationMessage(trendingRepositories.Count),
+                    Message = $"You have {trendingRepositories.Count} repos trending",
                     ScheduleDate = notificationDateTime,
                     BadgeCount = trendingRepositories.Count
                 };
 
                 var notificationService = ShinyHost.Resolve<INotificationManager>();
                 await notificationService.Send(notification).ConfigureAwait(false);
+
+                _analyticsService.Track("Multiple Trending Repositories Notification Sent", getTrendingRepositoriesAnalytics(trendingRepositories));
             }
 
             static void setMostRecentNotificationDate(Repository repository) => Preferences.Set(repository.Name, DateTime.UtcNow);
-        }
 
-        string CreateMultipleRepositoryNotifiationMessage(int trendingRepoCount) => $"You have {trendingRepoCount} repos trending";
+            static Dictionary<string, string> getTrendingRepositoriesAnalytics(in List<Repository> trendingRepositories)
+            {
+                var dictionary = new Dictionary<string, string>
+                {
+                    { "Count", trendingRepositories.Count.ToString() }
+                };
+
+                var owner = trendingRepositories.GroupBy(v => v.OwnerLogin).OrderByDescending(g => g.Count()).First().Key;
+                dictionary.Add(nameof(Repository.OwnerLogin), owner);
+
+                foreach (var repository in trendingRepositories)
+                {
+                    dictionary.Add(nameof(Repository.Name), repository.Name);
+                }
+
+                return dictionary;
+            }
+        }
 
         string CreateSingleRepositoryNotificationMessage(in string repositoryName, in string repositoryOwner) => $"{repositoryName} by {repositoryOwner} is Trending";
         string ParseRepositoryName(in string? singleRepositoryNotificationMessage) => singleRepositoryNotificationMessage?.Substring(0, singleRepositoryNotificationMessage.IndexOf(" by ")) ?? string.Empty;
@@ -157,16 +181,16 @@ namespace GitTrends
 
             return await tcs.Task.ConfigureAwait(false);
 
-            void HandlePageAppearing(object sender, Xamarin.Forms.Page page)
+            void HandlePageAppearing(object sender, Page page)
             {
                 if (page is BaseNavigationPage baseNavigationPage)
                 {
-                    Xamarin.Forms.Application.Current.PageAppearing -= HandlePageAppearing;
+                    Application.Current.PageAppearing -= HandlePageAppearing;
                     tcs.SetResult(baseNavigationPage);
                 }
                 else if (page.Parent is BaseNavigationPage baseNavigation)
                 {
-                    Xamarin.Forms.Application.Current.PageAppearing -= HandlePageAppearing;
+                    Application.Current.PageAppearing -= HandlePageAppearing;
                     tcs.SetResult(baseNavigation);
                 }
             }

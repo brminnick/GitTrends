@@ -6,11 +6,11 @@ namespace GitTrends
 {
     class SvgImage : SvgCachedImage
     {
-        readonly Func<Color> _textColor;
+        readonly Func<Color> _getTextColor;
 
-        public SvgImage(in string svgFileName, in Func<Color> textColor)
+        public SvgImage(in string svgFileName, in Func<Color> getTextColor)
         {
-            _textColor = textColor;
+            _getTextColor = getTextColor;
 
             var app = (App)Application.Current;
             app.ThemeChanged += HandleThemeChanged;
@@ -22,6 +22,6 @@ namespace GitTrends
 
         void HandleThemeChanged(object sender, Theme e) => UpdateSVGColor();
 
-        void UpdateSVGColor() => ReplaceStringMap = SvgService.GetColorStringMap(_textColor());
+        void UpdateSVGColor() => ReplaceStringMap = SvgService.GetColorStringMap(_getTextColor());
     }
 }
