@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,10 +8,11 @@ using Autofac;
 using GitTrends.Shared;
 using Shiny;
 using Shiny.Jobs;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
-    class BackgroundFetchService
+    public class BackgroundFetchService
     {
         readonly AnalyticsService _analyticsService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
@@ -35,19 +35,25 @@ namespace GitTrends
 
         public async Task Register()
         {
+            var periodicTime = TimeSpan.FromHours(12);
+
             var isRegistered = await isTrendingRepositoryNotificationJobRegistered().ConfigureAwait(false);
-            if (!isRegistered)
+            if (!isRegistered && Device.RuntimePlatform is Device.iOS)
             {
                 var backgroundFetchJob = new JobInfo(typeof(TrendingRepositoryNotificationJob), TrendingRepositoryNotificationJob.Identifier)
                 {
                     BatteryNotLow = true,
-                    PeriodicTime = TimeSpan.FromHours(12),
+                    PeriodicTime = periodicTime,
                     Repeat = true,
                     RequiredInternetAccess = InternetAccess.Any,
                     RunOnForeground = false
                 };
 
                 await ShinyHost.Resolve<IJobManager>().Schedule(backgroundFetchJob).ConfigureAwait(false);
+            }
+            else if(Device.RuntimePlatform is Device.Android)
+            {
+                DependencyService.Get<IEnvironment>().EnqueueAndroidWorkRequest(periodicTime);
             }
 
             static async Task<bool> isTrendingRepositoryNotificationJobRegistered()
@@ -61,7 +67,7 @@ namespace GitTrends
         {
             try
             {
-                using var timedEvent = _analyticsService.TrackTime("Trending Repository Notification Job Triggered");
+                using var timedEvent = _analyticsService.TrackTime("Notify Trending Repository Background Job Triggered");
 
                 var trendingRepositories = await GetTrendingRepositories().ConfigureAwait(false);
                 await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
