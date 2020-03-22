@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace GitTrends
 {
@@ -8,5 +9,6 @@ namespace GitTrends
         Task<Theme> GetOperatingSystemThemeAsync();
 
         Task SetiOSBadgeCount(int count);
+        void EnqueueAndroidWorkRequest(TimeSpan repeatInterval);
     }
 }
