@@ -4,6 +4,7 @@ using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.UITest;
+using Xamarin.UITest.Android;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
 namespace GitTrends.UITests
@@ -64,7 +65,7 @@ namespace GitTrends.UITests
 
         public void TapSettingsButton()
         {
-            if (App.Query(_androidContextMenuOverflowButton).Any())
+            if (App is AndroidApp)
             {
                 App.Tap(_androidContextMenuOverflowButton);
                 App.Screenshot("Android Overflow Button Tapped");
