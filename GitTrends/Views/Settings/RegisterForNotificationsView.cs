@@ -12,27 +12,29 @@ namespace GitTrends
         {
             Content = new Grid
             {
-                RowDefinitions = Rows.Define(AbsoluteGridLength(40)),
+                RowSpacing = 5,
 
-                ColumnDefinitions = Columns.Define(
-                    (Column.Label, StarGridLength(2)),
-                    (Column.Button, StarGridLength(1))),
+                RowDefinitions = Rows.Define(
+                    (Row.Label, AbsoluteGridLength(20)),
+                    (Row.Button, AbsoluteGridLength(40))),
+
+                ColumnDefinitions = Columns.Define(Star),
 
                 Children =
                 {
-                    new RegisterForNotificationsLabel().Column(Column.Label),
-                    new RegisterForNotificationsButton().Column(Column.Button),
+                    new RegisterForNotificationsLabel().Row(Row.Label),
+                    new RegisterForNotificationsButton().Row(Row.Button)
                 }
             };
         }
 
-        enum Column { Label, Button }
+        enum Row { Label, Button }
 
         class RegisterForNotificationsLabel : SettingsLabel
         {
             public RegisterForNotificationsLabel() : base("Register For Notifications", SettingsPageAutomationIds.RegisterForNotificationsLabel)
             {
-                VerticalTextAlignment = TextAlignment.Center;
+                VerticalTextAlignment = TextAlignment.End;
             }
         }
 
@@ -40,7 +42,7 @@ namespace GitTrends
         {
             public RegisterForNotificationsButton() : base("Register", SettingsPageAutomationIds.RegisterForNotificationsButton)
             {
-                HorizontalOptions = LayoutOptions.End;
+                HorizontalOptions = LayoutOptions.Start;
 
                 this.SetBinding(CommandProperty, nameof(SettingsViewModel.RegisterForPushNotificationsButtonCommand));
             }
