@@ -28,9 +28,9 @@ namespace GitTrends
             Add(nameof(ButtonTextColor), ButtonTextColor);
             Add(nameof(ButtonBackgroundColor), ButtonBackgroundColor);
 
-            Add(nameof(TrendsChartSettingsLabelTextColor), TrendsChartSettingsLabelTextColor);
-            Add(nameof(TrendsChartSettingsBorderColor), TrendsChartSettingsBorderColor);
-            Add(nameof(TrendsChartSettingsFontColor), TrendsChartSettingsFontColor);
+            Add(nameof(SettingsLabelTextColor), SettingsLabelTextColor);
+            Add(nameof(SettingsButtonBorderColor), SettingsButtonBorderColor);
+            Add(nameof(SettingsButtonFontColor), SettingsButtonFontColor);
             Add(nameof(TrendsChartSettingsSelectionIndicatorColor), TrendsChartSettingsSelectionIndicatorColor);
 
             Add(nameof(GitTrendsImageBackgroundColor), GitTrendsImageBackgroundColor);
@@ -56,9 +56,9 @@ namespace GitTrends
         public abstract Color ButtonTextColor { get; }
         public abstract Color ButtonBackgroundColor { get; }
 
-        public abstract Color TrendsChartSettingsLabelTextColor { get; }
-        public abstract Color TrendsChartSettingsBorderColor { get; }
-        public abstract Color TrendsChartSettingsFontColor { get; }
+        public abstract Color SettingsLabelTextColor { get; }
+        public abstract Color SettingsButtonBorderColor { get; }
+        public abstract Color SettingsButtonFontColor { get; }
         public abstract Color TrendsChartSettingsSelectionIndicatorColor { get; }
 
         public abstract Color GitTrendsImageBackgroundColor { get; }

@@ -224,7 +224,7 @@
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="4.6.0.379-pre1" />
     <PackageReference Include="Xamarin.Essentials" Version="1.5.1" />
-    <PackageReference Include="Refit" Version="5.0.23" />
+    <PackageReference Include="Refit" Version="5.1.27" />
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.0" />
     <PackageReference Include="Polly" Version="7.2.0" />
     <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.1.1.1-beta" />
@@ -234,8 +234,8 @@
     <PackageReference Include="Autofac" Version="5.1.2" />
     <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="17.4.0.55" />
     <PackageReference Include="Xamarin.TestCloud.Agent" Version="0.21.9" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.0.0" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.1.0" />
     <PackageReference Include="Shiny.Notifications" Version="1.1.0.1473" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

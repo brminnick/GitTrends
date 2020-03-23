@@ -29,7 +29,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Xamarin.Essentials" Version="1.5.1" />
-        <PackageReference Include="Refit" Version="5.0.23" />
+        <PackageReference Include="Refit" Version="5.1.27" />
         <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.0" />
         <PackageReference Include="Polly" Version="7.2.0" />
         <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.1.1.1-beta" />
@@ -40,8 +40,8 @@
         <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.1.4" />
         <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="17.4.0.55" />
         <PackageReference Include="HtmlAgilityPack" Version="1.11.23" />
-        <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.0.0" />
-        <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.0.0" />
+        <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.1.0" />
+        <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.1.0" />
         <PackageReference Include="Xamarin.Forms" Version="4.6.0.379-pre1" />
         <PackageReference Include="Shiny.Notifications" Version="1.1.0.1473" />
     </ItemGroup>
@@ -56,6 +56,7 @@
       <Folder Include="Themes\" />
       <Folder Include="Views\ReferringSites\" />
       <Folder Include="Models\" />
+      <Folder Include="Views\Settings\Base\" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="repo_forked.svg" />

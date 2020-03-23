@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,8 +17,12 @@ namespace GitTrends
         const string _trendingRepositoriesNotificationTitle = "Your Repos Are Trending";
 
         readonly AnalyticsService _analyticsService;
+        readonly DeepLinkingService _deepLinkingService;
 
-        public NotificationService(AnalyticsService analyticsService) => _analyticsService = analyticsService;
+        public NotificationService(AnalyticsService analyticsService, DeepLinkingService deepLinkingService) =>
+            (_analyticsService, _deepLinkingService) = (analyticsService, deepLinkingService);
+
+        public Task<AccessState> Register() => ShinyHost.Resolve<INotificationManager>().RequestAccess();
 
         public ValueTask TrySendTrendingNotificaiton(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
         {
@@ -41,15 +44,12 @@ namespace GitTrends
 
         public async Task HandleReceivedLocalNotification(string title, string message, int badgeCount)
         {
-            var baseNavigationPage = await GetBaseNavigationPage();
-
             if (badgeCount is 1)
             {
                 var repositoryName = ParseRepositoryName(message);
                 var ownerName = ParseOwnerName(message);
 
-                var shouldNavigateToChart = await MainThread.InvokeOnMainThreadAsync(() =>
-                                baseNavigationPage.DisplayAlert($"{repositoryName} is Trending", "Let's check out its chart", "Let's Go", "Not Right Now"));
+                var shouldNavigateToChart = await _deepLinkingService.DisplayAlert($"{repositoryName} is Trending", "Let's check out its chart", "Let's Go", "Not Right Now").ConfigureAwait(false);
 
                 _analyticsService.Track("Single Trending Repository Prompt Displayed", "Did Accept Response", shouldNavigateToChart.ToString());
 
@@ -60,14 +60,7 @@ namespace GitTrends
                                                     new RepositoryOwner(ownerName, string.Empty),
                                                     null, string.Empty, new StarGazers(0), false);
 
-                    using var scope = ContainerService.Container.BeginLifetimeScope();
-                    var trendsPage = scope.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
-
-                    await MainThread.InvokeOnMainThreadAsync(async () =>
-                    {
-                        await baseNavigationPage.PopToRootAsync();
-                        await baseNavigationPage.Navigation.PushAsync(trendsPage);
-                    });
+                    await _deepLinkingService.NavigateToTrendsPage(repository).ConfigureAwait(false);
                 }
             }
             else
@@ -82,7 +75,7 @@ namespace GitTrends
                 messageBuilder.AppendLine(message);
                 messageBuilder.Append("Sort by Trending to see them all");
 
-                await MainThread.InvokeOnMainThreadAsync(() => baseNavigationPage.DisplayAlert(title, messageBuilder.ToString(), "Thanks!"));
+                await _deepLinkingService.DisplayAlert(title, messageBuilder.ToString(), "Thanks!").ConfigureAwait(false);
             }
         }
 
@@ -92,7 +85,7 @@ namespace GitTrends
             {
                 var trendingRepository = trendingRepositories.First();
 
-                var notificationService = ShinyHost.Resolve<INotificationManager>();
+                var notificationManager = ShinyHost.Resolve<INotificationManager>();
 
                 var notification = new Notification
                 {
@@ -106,7 +99,7 @@ namespace GitTrends
 
                 setMostRecentNotificationDate(trendingRepository);
 
-                await notificationService.Send(notification).ConfigureAwait(false);
+                await notificationManager.Send(notification).ConfigureAwait(false);
 
                 _analyticsService.Track("Single Trending Repository Notification Sent", new Dictionary<string, string>
                 {
@@ -168,32 +161,6 @@ namespace GitTrends
             var ownerNameIndex = singleRepositoryNotificationMessage.IndexOf(" by ") + " by ".Length;
             var ownerNameLength = singleRepositoryNotificationMessage.IndexOf(" is Trending", ownerNameIndex) - ownerNameIndex;
             return singleRepositoryNotificationMessage.Substring(ownerNameIndex, ownerNameLength);
-        }
-
-        async ValueTask<BaseNavigationPage> GetBaseNavigationPage()
-        {
-            if (Application.Current.MainPage is BaseNavigationPage baseNavigationPage)
-                return baseNavigationPage;
-
-            var tcs = new TaskCompletionSource<BaseNavigationPage>();
-
-            Application.Current.PageAppearing += HandlePageAppearing;
-
-            return await tcs.Task.ConfigureAwait(false);
-
-            void HandlePageAppearing(object sender, Page page)
-            {
-                if (page is BaseNavigationPage baseNavigationPage)
-                {
-                    Application.Current.PageAppearing -= HandlePageAppearing;
-                    tcs.SetResult(baseNavigationPage);
-                }
-                else if (page.Parent is BaseNavigationPage baseNavigation)
-                {
-                    Application.Current.PageAppearing -= HandlePageAppearing;
-                    tcs.SetResult(baseNavigation);
-                }
-            }
         }
     }
 }

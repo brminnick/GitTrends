@@ -5,6 +5,8 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
+using Shiny;
+using Shiny.Notifications;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -12,25 +14,31 @@ namespace GitTrends
 {
     public class SettingsViewModel : BaseViewModel
     {
+        readonly WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new WeakEventManager<(bool isSuccessful, string errorMessage)>();
         readonly WeakEventManager<string?> _gitHubLoginUrlRetrievedEventManager = new WeakEventManager<string?>();
+
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly TrendsChartSettingsService _trendsChartSettingsService;
         readonly DeepLinkingService _deepLinkingService;
+        readonly NotificationService _notificationService;
 
         string _gitHubUserImageSource = string.Empty;
         string _gitHubUserNameLabelText = string.Empty;
         string _gitHubButtonText = string.Empty;
-        bool _isAuthenticating;
+        bool _isAuthenticating, _isRegisteringForNotifications;
 
         public SettingsViewModel(GitHubAuthenticationService gitHubAuthenticationService,
                                     TrendsChartSettingsService trendsChartSettingsService,
                                     AnalyticsService analyticsService,
-                                    DeepLinkingService deepLinkingService) : base(analyticsService)
+                                    DeepLinkingService deepLinkingService,
+                                    NotificationService notificationService) : base(analyticsService)
         {
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _trendsChartSettingsService = trendsChartSettingsService;
             _deepLinkingService = deepLinkingService;
+            _notificationService = notificationService;
 
+            RegisterForPushNotificationsButtonCommand = new AsyncCommand(ExecuteRegisterForPushNotificationsButtonCommand, _ => !IsRegisteringForNotifications);
             CreatedByLabelTappedCommand = new AsyncCommand(ExecuteCreatedByLabelTapped);
             LoginButtonCommand = new AsyncCommand(ExecuteLoginButtonCommand, _ => !IsAuthenticating);
             DemoButtonCommand = new Command(ExecuteDemoButtonCommand);
@@ -39,6 +47,12 @@ namespace GitTrends
             _gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
 
             SetGitHubValues();
+        }
+
+        public event EventHandler<(bool isSuccessful, string errorMessage)> RegisterForNotificationsCompleted
+        {
+            add => _registerForNotificationCompletedEventHandler.AddEventHandler(value);
+            remove => _registerForNotificationCompletedEventHandler.RemoveEventHandler(value);
         }
 
         public event EventHandler<string?> GitHubLoginUrlRetrieved
@@ -50,6 +64,7 @@ namespace GitTrends
         public ICommand DemoButtonCommand { get; }
         public ICommand CreatedByLabelTappedCommand { get; }
         public IAsyncCommand LoginButtonCommand { get; }
+        public IAsyncCommand RegisterForPushNotificationsButtonCommand { get; }
 
         public bool IsDemoButtonVisible => !IsAuthenticating
                                             && LoginButtonText is GitHubLoginButtonConstants.ConnectWithGitHub
@@ -123,6 +138,19 @@ namespace GitTrends
             });
         }
 
+        bool IsRegisteringForNotifications
+        {
+            get => _isRegisteringForNotifications;
+            set
+            {
+                if (_isRegisteringForNotifications != value)
+                {
+                    _isRegisteringForNotifications = value;
+                    MainThread.BeginInvokeOnMainThread(RegisterForPushNotificationsButtonCommand.RaiseCanExecuteChanged);
+                }
+            }
+        }
+
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
         {
             SetGitHubValues();
@@ -183,6 +211,49 @@ namespace GitTrends
             SetGitHubValues();
         }
 
+        async Task ExecuteRegisterForPushNotificationsButtonCommand()
+        {
+            IsRegisteringForNotifications = true;
+
+            try
+            {
+                var notificationRequestResult = await ShinyHost.Resolve<INotificationManager>().RequestAccess().ConfigureAwait(false);
+
+                AnalyticsService.Track("Register For Notifications Button Tapped", nameof(notificationRequestResult), notificationRequestResult.ToString());
+
+                switch (notificationRequestResult)
+                {
+                    case AccessState.Denied:
+                    case AccessState.Disabled:
+                        await _deepLinkingService.ShowSettingsUI().ConfigureAwait(false);
+                        break;
+
+                    case AccessState.Available:
+                    case AccessState.Restricted:
+                        OnRegisterForNotificationsCompleted(true, string.Empty);
+                        break;
+
+                    case AccessState.NotSetup:
+                        await ShinyHost.Resolve<INotificationManager>().RequestAccess().ConfigureAwait(false);
+                        break;
+
+                    case AccessState.NotSupported:
+                        OnRegisterForNotificationsCompleted(false, "Notifications Are Not Supported");
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+            catch (Exception e)
+            {
+                AnalyticsService.Report(e);
+            }
+            finally
+            {
+                IsRegisteringForNotifications = false;
+            }
+        }
 
         Task ExecuteCreatedByLabelTapped()
         {
@@ -191,5 +262,8 @@ namespace GitTrends
         }
 
         void OnGitHubLoginUrlRetrieved(string? loginUrl) => _gitHubLoginUrlRetrievedEventManager.HandleEvent(this, loginUrl, nameof(GitHubLoginUrlRetrieved));
+
+        void OnRegisterForNotificationsCompleted(bool isSuccessful, string errorMessage) =>
+            _registerForNotificationCompletedEventHandler.HandleEvent(this, (isSuccessful, errorMessage), nameof(RegisterForNotificationsCompleted));
     }
 }

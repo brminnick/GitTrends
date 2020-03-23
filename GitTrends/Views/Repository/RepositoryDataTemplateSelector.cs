@@ -7,6 +7,7 @@ using GitTrends.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -60,25 +61,25 @@ namespace GitTrends
                 VerticalOptions = LayoutOptions.StartAndExpand,
 
                 RowDefinitions = Rows.Define(
-                    (Row.TopPadding, new GridLength(1, GridUnitType.Absolute)),
-                    (Row.Title, new GridLength(20, GridUnitType.Absolute)),
-                    (Row.Description, new GridLength(45, GridUnitType.Absolute)),
-                    (Row.DescriptionPadding, new GridLength(1, GridUnitType.Absolute)),
-                    (Row.Statistics, new GridLength(_smallFontSize + 2, GridUnitType.Absolute)),
-                    (Row.BottomPadding, new GridLength(5, GridUnitType.Absolute))),
+                    (Row.TopPadding, AbsoluteGridLength(1)),
+                    (Row.Title, AbsoluteGridLength(20)),
+                    (Row.Description, AbsoluteGridLength(45)),
+                    (Row.DescriptionPadding, AbsoluteGridLength(1)),
+                    (Row.Statistics, AbsoluteGridLength(_smallFontSize + 2)),
+                    (Row.BottomPadding, AbsoluteGridLength(5))),
 
                 ColumnDefinitions = Columns.Define(
-                    (Column.Avatar, new GridLength(circleImageHeight, GridUnitType.Absolute)),
-                    (Column.AvatarPadding, new GridLength(2, GridUnitType.Absolute)),
-                    (Column.Emoji1, new GridLength(emojiColumnSize, GridUnitType.Absolute)),
-                    (Column.Statistic1, new GridLength(statisticColumnSize, GridUnitType.Absolute)),
-                    (Column.Emoji2, new GridLength(emojiColumnSize, GridUnitType.Absolute)),
-                    (Column.Statistic2, new GridLength(statisticColumnSize, GridUnitType.Absolute)),
-                    (Column.Emoji3, new GridLength(emojiColumnSize, GridUnitType.Absolute)),
-                    (Column.Statistic3, new GridLength(statisticColumnSize, GridUnitType.Absolute)),
-                    (Column.Emoji4, new GridLength(emojiColumnSize, GridUnitType.Absolute)),
-                    (Column.Statistic4, new GridLength(statisticColumnSize, GridUnitType.Absolute)),
-                    (Column.Trending, new GridLength(1, GridUnitType.Star))),
+                    (Column.Avatar, AbsoluteGridLength(circleImageHeight)),
+                    (Column.AvatarPadding, AbsoluteGridLength(2)),
+                    (Column.Emoji1, AbsoluteGridLength(emojiColumnSize)),
+                    (Column.Statistic1, AbsoluteGridLength(statisticColumnSize)),
+                    (Column.Emoji2, AbsoluteGridLength(emojiColumnSize)),
+                    (Column.Statistic2, AbsoluteGridLength(statisticColumnSize)),
+                    (Column.Emoji3, AbsoluteGridLength(emojiColumnSize)),
+                    (Column.Statistic3, AbsoluteGridLength(statisticColumnSize)),
+                    (Column.Emoji4, AbsoluteGridLength(emojiColumnSize)),
+                    (Column.Statistic4, AbsoluteGridLength(statisticColumnSize)),
+                    (Column.Trending, StarGridLength(1))),
 
                 Children =
                 {

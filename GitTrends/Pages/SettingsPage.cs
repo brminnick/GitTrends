@@ -17,6 +17,7 @@ namespace GitTrends
             _trendsChartSettingsService = trendsChartSettingsService;
 
             ViewModel.GitHubLoginUrlRetrieved += HandleGitHubLoginUrlRetrieved;
+            ViewModel.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
         }
 
         protected override void OnDisappearing()
@@ -33,10 +34,22 @@ namespace GitTrends
             Content = CreateLayout(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width);
         }
 
+        void HandleRegisterForNotificationsCompleted(object sender, (bool IsSuccessful, string ErrorMessage) result)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                if (result.IsSuccessful)
+                    await DisplayAlert("Success", "Device Registered for Notificaitons", "OK");
+                else
+                    await DisplayAlert("Registration Failed", result.ErrorMessage, "OK");
+            });
+        }
+
         RelativeLayout CreateLayout(bool isPortraitOrientation)
         {
             var gitHubSettingsView = new GitHubSettingsView();
             var trendsSettingsView = new TrendsChartSettingsView(_trendsChartSettingsService);
+            var registerforNotificationsView = new RegisterForNotificationsView();
 
             var versionNumberLabel = new Label
             {
@@ -107,9 +120,14 @@ namespace GitTrends
                                     ? Constraint.RelativeToParent(parent => parent.Width)
                                     : Constraint.RelativeToParent(parent => parent.Width / 2));
 
-            relativeLayout.Children.Add(versionNumberLabel,
+            relativeLayout.Children.Add(registerforNotificationsView,
                 xConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.X),
-                yConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Y + view.Height + 10));
+                yConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Y + view.Height + 10),
+                widthConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Width));
+
+            relativeLayout.Children.Add(versionNumberLabel,
+                xConstraint: Constraint.RelativeToView(registerforNotificationsView, (parent, view) => view.X),
+                yConstraint: Constraint.RelativeToView(registerforNotificationsView, (parent, view) => view.Y + view.Height + 10));
 
             return relativeLayout;
         }

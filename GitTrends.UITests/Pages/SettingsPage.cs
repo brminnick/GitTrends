@@ -13,7 +13,8 @@ namespace GitTrends.UITests
     {
         readonly Query _gitHubAvatarImage, _gitHubAliasLabel, _gitHubLoginButton,
             _gitHubSettingsViewActivityIndicator, _trendsChartSettingsLabel,
-            _trendsChartSettingsControl, _demoModeButton, _createdByLabel;
+            _trendsChartSettingsControl, _demoModeButton, _createdByLabel,
+            _registerForNotificationsLabel, _registerForNotificationsButton;
 
         public SettingsPage(IApp app) : base(app, PageTitles.SettingsPage)
         {
@@ -27,6 +28,9 @@ namespace GitTrends.UITests
             _trendsChartSettingsControl = GenerateMarkedQuery(SettingsPageAutomationIds.TrendsChartSettingsControl);
 
             _createdByLabel = GenerateMarkedQuery(SettingsPageAutomationIds.CreatedByLabel);
+
+            _registerForNotificationsLabel = GenerateMarkedQuery(SettingsPageAutomationIds.RegisterForNotificationsLabel);
+            _registerForNotificationsButton = GenerateMarkedQuery(SettingsPageAutomationIds.RegisterForNotificationsButton);
         }
 
         public bool IsLoggedIn => App.Query(GitHubLoginButtonConstants.Disconnect).Any();
@@ -34,6 +38,8 @@ namespace GitTrends.UITests
         public bool IsActivityIndicatorRunning => App.Query(_gitHubSettingsViewActivityIndicator).Any();
 
         public string GitHubAliasLabelText => App.Query(_gitHubAliasLabel).First().Text;
+
+        public string RegisterForNotificationsLabelText => App.Query(_registerForNotificationsLabel).First().Text;
 
         public string GitHubButtonText => App.Query(_gitHubLoginButton).First().Text ?? App.Query(_gitHubLoginButton).First().Label;
 
@@ -76,6 +82,12 @@ namespace GitTrends.UITests
             App.Screenshot($"Trends Chart Option Changed to {trendsChartOption}");
 
             static Task waitForSettingsToUpdate() => Task.Delay(1000);
+        }
+
+        public void TapRegisterForNotificationsButton()
+        {
+            App.Tap(_registerForNotificationsButton);
+            App.Screenshot("Register For Notifiations Button Tapped");
         }
 
         public void WaitForBrowserToOpen()

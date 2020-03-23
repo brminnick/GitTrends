@@ -36,9 +36,9 @@ namespace GitTrends
         public override Color ButtonTextColor { get; } = Color.FromHex(_offWhite);
         public override Color ButtonBackgroundColor { get; } = Color.FromHex(_darkNavyBlueHex);
 
-        public override Color TrendsChartSettingsLabelTextColor { get; } = Color.FromHex(_darkNavyBlueHex);
-        public override Color TrendsChartSettingsBorderColor { get; } = Color.FromHex(_darkBlueHex);
-        public override Color TrendsChartSettingsFontColor { get; } = Color.FromHex(_darkNavyBlueHex);
+        public override Color SettingsLabelTextColor { get; } = Color.FromHex(_darkNavyBlueHex);
+        public override Color SettingsButtonBorderColor { get; } = Color.FromHex(_darkBlueHex);
+        public override Color SettingsButtonFontColor { get; } = Color.FromHex(_darkNavyBlueHex);
         public override Color TrendsChartSettingsSelectionIndicatorColor { get; } = Color.FromHex(_darkBlueHex);
 
         public override Color GitTrendsImageBackgroundColor { get; } = Color.FromHex(_offWhite);

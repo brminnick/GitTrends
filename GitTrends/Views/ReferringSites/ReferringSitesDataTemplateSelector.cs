@@ -1,6 +1,7 @@
 ﻿using FFImageLoading.Forms;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -11,7 +12,7 @@ namespace GitTrends
 
         class ReferringSitesDataTemplate : DataTemplate
         {
-            const int rowHeight = MobileReferringSiteModel.FavIconSize + 10;
+            const int rowHeight = Shared.ReferringSiteModel.FavIconSize + 10;
 
             public ReferringSitesDataTemplate(MobileReferringSiteModel referringSiteModel) : base(() => CreateReferringSitesDataTemplate(referringSiteModel))
             {
@@ -23,18 +24,18 @@ namespace GitTrends
                 Margin = new Thickness(5),
 
                 RowDefinitions = Rows.Define(
-                    (Row.TopPadding, new GridLength(2, GridUnitType.Absolute)),
-                    (Row.Title, new GridLength(rowHeight / 2, GridUnitType.Absolute)),
-                    (Row.Description, new GridLength(rowHeight / 2, GridUnitType.Absolute)),
-                    (Row.BotomPadding, new GridLength(2, GridUnitType.Absolute))),
+                    (Row.TopPadding, AbsoluteGridLength(2)),
+                    (Row.Title, AbsoluteGridLength(rowHeight / 2)),
+                    (Row.Description, AbsoluteGridLength(rowHeight / 2)),
+                    (Row.BotomPadding, AbsoluteGridLength(2))),
 
                 ColumnDefinitions = Columns.Define(
-                    (Column.LeftPadding, new GridLength(5, GridUnitType.Absolute)),
-                    (Column.FavIcon, new GridLength(rowHeight, GridUnitType.Absolute)),
-                    (Column.Site, new GridLength(3, GridUnitType.Star)),
-                    (Column.Referrals, new GridLength(2, GridUnitType.Star)),
-                    (Column.Uniques, new GridLength(2, GridUnitType.Star)),
-                    (Column.RightPadding, new GridLength(5, GridUnitType.Absolute))),
+                    (Column.LeftPadding, AbsoluteGridLength(5)),
+                    (Column.FavIcon, AbsoluteGridLength(rowHeight)),
+                    (Column.Site, StarGridLength(3)),
+                    (Column.Referrals, StarGridLength(2)),
+                    (Column.Uniques, StarGridLength(2)),
+                    (Column.RightPadding, AbsoluteGridLength(5))),
 
                 Children =
                 {
