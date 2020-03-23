@@ -122,7 +122,7 @@ namespace GitTrends
 
             relativeLayout.Children.Add(registerforNotificationsView,
                 xConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.X),
-                yConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Y + view.Height + 10),
+                yConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Y + view.Height + 20),
                 widthConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Width));
 
             relativeLayout.Children.Add(versionNumberLabel,
