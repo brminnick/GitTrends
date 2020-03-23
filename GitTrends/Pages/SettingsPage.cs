@@ -51,24 +51,16 @@ namespace GitTrends
             var trendsSettingsView = new TrendsChartSettingsView(_trendsChartSettingsService);
             var registerforNotificationsView = new RegisterForNotificationsView();
 
-            var versionNumberLabel = new Label
-            {
+            var versionNumberText =
 #if AppStore
-                Text = $"Version: {VersionTracking.CurrentVersion}",
+                $"Version: {VersionTracking.CurrentVersion}";
 #elif RELEASE
-                Text = $"Version: {VersionTracking.CurrentVersion} (Release)",
+                $"Version: {VersionTracking.CurrentVersion} (Release)";
 #elif DEBUG
-                Text = $"Version: {VersionTracking.CurrentVersion} (Debug)",
+                $"Version: {VersionTracking.CurrentVersion} (Debug)";
 #else
-                throw new NotSupportedException()
+                throw new NotSupportedException();
 #endif
-                HorizontalTextAlignment = TextAlignment.Start,
-                Opacity = 0.75,
-                Margin = new Thickness(2, 5, 0, 0),
-                FontSize = 14
-            };
-            versionNumberLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
-
             var createdByLabel = new Label
             {
                 AutomationId = SettingsPageAutomationIds.CreatedByLabel,
@@ -77,7 +69,7 @@ namespace GitTrends
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 HorizontalTextAlignment = TextAlignment.Center,
                 VerticalTextAlignment = TextAlignment.End,
-                Text = "Mobile App Created by Code Traveler LLC",
+                Text = $"{versionNumberText}\nMobile App Created by Code Traveler LLC",
                 FontSize = 12,
             };
             createdByLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
@@ -124,10 +116,6 @@ namespace GitTrends
                 xConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.X),
                 yConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Y + view.Height + 20),
                 widthConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Width));
-
-            relativeLayout.Children.Add(versionNumberLabel,
-                xConstraint: Constraint.RelativeToView(registerforNotificationsView, (parent, view) => view.X),
-                yConstraint: Constraint.RelativeToView(registerforNotificationsView, (parent, view) => view.Y + view.Height + 10));
 
             return relativeLayout;
         }
