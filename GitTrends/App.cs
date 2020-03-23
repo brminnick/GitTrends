@@ -3,8 +3,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
-using Autofac.Core;
-using Autofac;
 using Shiny;
 using Shiny.Notifications;
 using Xamarin.Forms;

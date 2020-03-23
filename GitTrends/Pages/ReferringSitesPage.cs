@@ -52,7 +52,7 @@ namespace GitTrends
                 };
                 closeButton.Clicked += HandleCloseButtonClicked;
                 closeButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.NavigationBarTextColor));
-                closeButton.SetDynamicResource(Button.BorderColorProperty, nameof(BaseTheme.TrendsChartSettingsBorderColor));
+                closeButton.SetDynamicResource(Button.BorderColorProperty, nameof(BaseTheme.SettingsButtonBorderColor));
                 closeButton.SetDynamicResource(Button.BackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
 
 

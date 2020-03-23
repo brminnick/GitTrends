@@ -10,6 +10,11 @@
         public const string GitHubSettingsViewActivityIndicator = nameof(GitHubSettingsViewActivityIndicator);
         #endregion
 
+        #region RegisterForNotificationsView
+        public const string RegisterForNotificationsLabel = nameof(RegisterForNotificationsLabel);
+        public const string RegisterForNotificationsButton = nameof(RegisterForNotificationsButton);
+        #endregion
+
         #region TrendsChartSettingsView
         public const string TrendsChartSettingsLabel = nameof(TrendsChartSettingsLabel);
         public const string TrendsChartSettingsControl = nameof(TrendsChartSettingsControl);
