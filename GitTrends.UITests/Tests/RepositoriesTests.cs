@@ -39,7 +39,7 @@ namespace GitTrends.UITests
             //Act
             RepositoryPage.SetSortingOption(sortingOption);
 
-            //Wait for RepositoryList to refresh
+            //Allow RepositoryList to update
             await Task.Delay(1000).ConfigureAwait(false);
 
             //Assert

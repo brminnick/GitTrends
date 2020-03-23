@@ -51,16 +51,14 @@ namespace GitTrends
             var trendsSettingsView = new TrendsChartSettingsView(_trendsChartSettingsService);
             var registerforNotificationsView = new RegisterForNotificationsView();
 
-            var versionNumberText =
 #if AppStore
-                $"Version: {VersionTracking.CurrentVersion}";
+            var versionNumberText = $"Version {VersionTracking.CurrentVersion}";
 #elif RELEASE
-                $"Version: {VersionTracking.CurrentVersion} (Release)";
+            var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Release)";
 #elif DEBUG
-                $"Version: {VersionTracking.CurrentVersion} (Debug)";
-#else
-                throw new NotSupportedException();
+            var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Debug)";
 #endif
+
             var createdByLabel = new Label
             {
                 AutomationId = SettingsPageAutomationIds.CreatedByLabel,
