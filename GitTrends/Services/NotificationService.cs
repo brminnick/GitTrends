@@ -21,7 +21,9 @@ namespace GitTrends
         public NotificationService(AnalyticsService analyticsService, DeepLinkingService deepLinkingService) =>
             (_analyticsService, _deepLinkingService) = (analyticsService, deepLinkingService);
 
-        public Task<AccessState> Register() => ShinyHost.Resolve<INotificationManager>().RequestAccess();
+        static INotificationManager NotificationManager => ShinyHost.Resolve<INotificationManager>();
+
+        public Task<AccessState> Register() => NotificationManager.RequestAccess();
 
         public async Task SetAppBadgeCount(int count)
         {
@@ -31,7 +33,7 @@ namespace GitTrends
             if (accessState is AccessState.Available && Device.RuntimePlatform is Device.iOS)
                 await DependencyService.Get<IEnvironment>().SetiOSBadgeCount(count).ConfigureAwait(false);
             else if (accessState is AccessState.Available)
-                ShinyHost.Resolve<INotificationManager>().Badge = count;
+                NotificationManager.Badge = count;
         }
 
         public ValueTask TrySendTrendingNotificaiton(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
@@ -95,8 +97,6 @@ namespace GitTrends
             {
                 var trendingRepository = trendingRepositories.First();
 
-                var notificationManager = ShinyHost.Resolve<INotificationManager>();
-
                 var notification = new Notification
                 {
                     //iOS crashes when ID is not set
@@ -109,7 +109,7 @@ namespace GitTrends
 
                 setMostRecentNotificationDate(trendingRepository);
 
-                await notificationManager.Send(notification).ConfigureAwait(false);
+                await NotificationManager.Send(notification).ConfigureAwait(false);
 
                 _analyticsService.Track("Single Trending Repository Notification Sent", new Dictionary<string, string>
                 {
