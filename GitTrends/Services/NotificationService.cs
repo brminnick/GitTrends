@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Autofac;
 using GitTrends.Shared;
 using Shiny;
 using Shiny.Notifications;
@@ -23,6 +22,17 @@ namespace GitTrends
             (_analyticsService, _deepLinkingService) = (analyticsService, deepLinkingService);
 
         public Task<AccessState> Register() => ShinyHost.Resolve<INotificationManager>().RequestAccess();
+
+        public async Task SetAppBadgeCount(int count)
+        {
+            var accessState = await Register().ConfigureAwait(false);
+
+            //INotificationManager.Badge Crashes on iOS
+            if (accessState is AccessState.Available && Device.RuntimePlatform is Device.iOS)
+                await DependencyService.Get<IEnvironment>().SetiOSBadgeCount(count).ConfigureAwait(false);
+            else if (accessState is AccessState.Available)
+                ShinyHost.Resolve<INotificationManager>().Badge = count;
+        }
 
         public ValueTask TrySendTrendingNotificaiton(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
         {
