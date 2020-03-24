@@ -3,6 +3,7 @@ using GitTrends.Mobile.Shared;
 using Syncfusion.XForms.Buttons;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -16,10 +17,10 @@ namespace GitTrends
                 RowSpacing = 2,
 
                 RowDefinitions = Rows.Define(
-                    (Row.Label, new GridLength(1, GridUnitType.Star)),
-                    (Row.Control, new GridLength(2, GridUnitType.Star))),
+                    (Row.Label, Star),
+                    (Row.Control, StarGridLength(2))),
 
-                ColumnDefinitions = Columns.Define(new GridLength(1, GridUnitType.Star)),
+                ColumnDefinitions = Columns.Define(StarGridLength(1)),
 
                 Children =
                 {
@@ -31,16 +32,11 @@ namespace GitTrends
 
         enum Row { Label, Control }
 
-        class TrendsChartSettingsLabel : Label
+        class TrendsChartSettingsLabel : SettingsLabel
         {
-            public TrendsChartSettingsLabel()
+            public TrendsChartSettingsLabel() : base("Preferred Charts", SettingsPageAutomationIds.TrendsChartSettingsLabel)
             {
-                AutomationId = SettingsPageAutomationIds.TrendsChartSettingsLabel;
-                Text = "Preferred Charts";
-                FontAttributes = FontAttributes.Bold;
-                FontSize = 18;
                 VerticalTextAlignment = TextAlignment.Start;
-                SetDynamicResource(TextColorProperty, nameof(BaseTheme.TrendsChartSettingsLabelTextColor));
             }
         }
 
@@ -53,19 +49,18 @@ namespace GitTrends
             {
                 _trendsChartSettingsService = trendsChartSettingsService;
 
+                CornerRadius = cornerRadius;
                 AutomationId = SettingsPageAutomationIds.TrendsChartSettingsControl;
                 ItemsSource = TrendsChartConstants.TrendsChartTitles.Values.ToList();
                 VisibleSegmentsCount = TrendsChartConstants.TrendsChartTitles.Values.Count;
-                CornerRadius = cornerRadius;
                 SelectedIndex = (int)trendsChartSettingsService.CurrentTrendsChartOption;
                 SelectionIndicatorSettings = new TrendsChartSettingsSelectionIndicatorSettings();
 
-                SetDynamicResource(BorderColorProperty, nameof(BaseTheme.TrendsChartSettingsBorderColor));
-                SetDynamicResource(FontColorProperty, nameof(BaseTheme.TrendsChartSettingsFontColor));
+                SetDynamicResource(FontColorProperty, nameof(BaseTheme.SettingsButtonFontColor));
+                SetDynamicResource(BorderColorProperty, nameof(BaseTheme.SettingsButtonBorderColor));
 
                 SelectionChanged += HandleSelectionChanged;
             }
-
 
             void HandleSelectionChanged(object sender, Syncfusion.XForms.Buttons.SelectionChangedEventArgs e) =>
                 _trendsChartSettingsService.CurrentTrendsChartOption = (TrendsChartOption)e.Index;
@@ -75,7 +70,7 @@ namespace GitTrends
                 public TrendsChartSettingsSelectionIndicatorSettings()
                 {
                     CornerRadius = cornerRadius;
-                    this.SetDynamicResource(ColorProperty, nameof(BaseTheme.TrendsChartSettingsSelectionIndicatorColor));
+                    SetDynamicResource(ColorProperty, nameof(BaseTheme.TrendsChartSettingsSelectionIndicatorColor));
                 }
             }
         }

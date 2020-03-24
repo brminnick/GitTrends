@@ -70,7 +70,7 @@ namespace GitTrends
         public bool IsRefreshing
         {
             get => _isRefreshing;
-            set => SetProperty(ref _isRefreshing, value, () => MainThread.InvokeOnMainThreadAsync(() => OnPropertyChanged(nameof(IsNotRefreshing))));
+            set => SetProperty(ref _isRefreshing, value, () => OnPropertyChanged(nameof(IsNotRefreshing)));
         }
 
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
@@ -95,9 +95,9 @@ namespace GitTrends
                     _repositoryDatabase.SaveRepository(retrievedRepositoriesWithViewsAndClonesData).SafeFireAndForget();
                     completedRepoitories.Add(retrievedRepositoriesWithViewsAndClonesData);
 
-                    //Limit the VisibleRepositoryList Updates to avoid overworking the UI Thread
+                    //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
                     if (!GitHubAuthenticationService.IsDemoUser
-                        && completedRepoitories.Count > repositoriesPerFetch / 20)
+                        && completedRepoitories.Count > repositoriesPerFetch / 5)
                     {
                         AddRepositoriesToCollection(completedRepoitories, _searchBarText);
                         completedRepoitories.Clear();

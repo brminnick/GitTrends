@@ -7,6 +7,9 @@ namespace GitTrends
 {
     public static class XamarinFormsService
     {
+        public static GridLength StarGridLength(double value) => new GridLength(value, GridUnitType.Star);
+        public static GridLength AbsoluteGridLength(double value) => new GridLength(value, GridUnitType.Absolute);
+
         public static void CompressAllLayouts(this Layout<View> layout)
         {
             var childLayouts = GetChildLayouts(layout);

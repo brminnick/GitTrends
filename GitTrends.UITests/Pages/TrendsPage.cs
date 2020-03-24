@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using Newtonsoft.Json;
 using Xamarin.UITest;
+using Xamarin.UITest.Android;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
 namespace GitTrends.UITests
@@ -81,7 +82,7 @@ namespace GitTrends.UITests
 
         public void TapReferringSitesButton()
         {
-            if (App.Query(_androidContextMenuOverflowButton).Any())
+            if (App is AndroidApp)
             {
                 App.Tap(_androidContextMenuOverflowButton);
                 App.Screenshot("Android Overflow Button Tapped");

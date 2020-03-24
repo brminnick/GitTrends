@@ -28,7 +28,7 @@ namespace GitTrends.UITests
         [TestCase(SortingOption.UniqueViews)]
         [TestCase(SortingOption.Views)]
         [TestCase(SortingOption.Trending)]
-        public void VerifySortingOptions(SortingOption sortingOption)
+        public async Task VerifySortingOptions(SortingOption sortingOption)
         {
             //Arrange
             Repository finalTopRepository;
@@ -38,6 +38,9 @@ namespace GitTrends.UITests
 
             //Act
             RepositoryPage.SetSortingOption(sortingOption);
+
+            //Allow RepositoryList to update
+            await Task.Delay(1000).ConfigureAwait(false);
 
             //Assert
             finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();

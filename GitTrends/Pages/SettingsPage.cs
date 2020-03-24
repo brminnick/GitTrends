@@ -17,6 +17,7 @@ namespace GitTrends
             _trendsChartSettingsService = trendsChartSettingsService;
 
             ViewModel.GitHubLoginUrlRetrieved += HandleGitHubLoginUrlRetrieved;
+            ViewModel.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
         }
 
         protected override void OnDisappearing()
@@ -33,28 +34,30 @@ namespace GitTrends
             Content = CreateLayout(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width);
         }
 
+        void HandleRegisterForNotificationsCompleted(object sender, (bool IsSuccessful, string ErrorMessage) result)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                if (result.IsSuccessful)
+                    await DisplayAlert("Success", "Device Registered for Notificaitons", "OK");
+                else
+                    await DisplayAlert("Registration Failed", result.ErrorMessage, "OK");
+            });
+        }
+
         RelativeLayout CreateLayout(bool isPortraitOrientation)
         {
             var gitHubSettingsView = new GitHubSettingsView();
             var trendsSettingsView = new TrendsChartSettingsView(_trendsChartSettingsService);
+            var registerforNotificationsView = new RegisterForNotificationsView();
 
-            var versionNumberLabel = new Label
-            {
 #if AppStore
-                Text = $"Version: {VersionTracking.CurrentVersion}",
+            var versionNumberText = $"Version {VersionTracking.CurrentVersion}";
 #elif RELEASE
-                Text = $"Version: {VersionTracking.CurrentVersion} (Release)",
+            var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Release)";
 #elif DEBUG
-                Text = $"Version: {VersionTracking.CurrentVersion} (Debug)",
-#else
-                throw new NotSupportedException()
+            var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Debug)";
 #endif
-                HorizontalTextAlignment = TextAlignment.Start,
-                Opacity = 0.75,
-                Margin = new Thickness(2, 5, 0, 0),
-                FontSize = 14
-            };
-            versionNumberLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
 
             var createdByLabel = new Label
             {
@@ -64,7 +67,7 @@ namespace GitTrends
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 HorizontalTextAlignment = TextAlignment.Center,
                 VerticalTextAlignment = TextAlignment.End,
-                Text = "Mobile App Created by Code Traveler LLC",
+                Text = $"{versionNumberText}\nMobile App Created by Code Traveler LLC",
                 FontSize = 12,
             };
             createdByLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
@@ -107,9 +110,10 @@ namespace GitTrends
                                     ? Constraint.RelativeToParent(parent => parent.Width)
                                     : Constraint.RelativeToParent(parent => parent.Width / 2));
 
-            relativeLayout.Children.Add(versionNumberLabel,
+            relativeLayout.Children.Add(registerforNotificationsView,
                 xConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.X),
-                yConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Y + view.Height + 10));
+                yConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Y + view.Height + 20),
+                widthConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Width));
 
             return relativeLayout;
         }

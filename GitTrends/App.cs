@@ -3,8 +3,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
-using Autofac.Core;
-using Autofac;
 using Shiny;
 using Shiny.Notifications;
 using Xamarin.Forms;
@@ -119,16 +117,12 @@ namespace GitTrends
             await backgroundFetchService.Register().ConfigureAwait(false);
         }
 
-        async Task ClearBageNotifications()
+        Task ClearBageNotifications()
         {
-            var notificationService = ShinyHost.Resolve<INotificationManager>();
-            var accessState = await notificationService.RequestAccess();
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var notificationService = scope.Resolve<NotificationService>();
 
-            //INotificationManager.Badge Crashes on iOS
-            if (accessState is AccessState.Available && Device.RuntimePlatform is Device.iOS)
-                await DependencyService.Get<IEnvironment>().SetiOSBadgeCount(0).ConfigureAwait(false);
-            else if (accessState is AccessState.Available)
-                notificationService.Badge = 0;
+            return notificationService.SetAppBadgeCount(0);
         }
 
         void OnThemeChanged(Theme newTheme) => _themeChangedEventManager.HandleEvent(this, newTheme, nameof(ThemeChanged));

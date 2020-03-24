@@ -103,10 +103,10 @@ namespace GitTrends
         public override Color CardTrendingStatsColor { get; } = Color.FromHex(_lightPrimaryTealHex);
 
 
-        //Trends Settings Component
-        public override Color TrendsChartSettingsLabelTextColor { get; } = Color.FromHex(_textHex);
-        public override Color TrendsChartSettingsBorderColor { get; } = Color.FromHex(_white12PercentBlend);
-        public override Color TrendsChartSettingsFontColor { get; } = Color.FromHex(_textHex);
+        //Settings Components
+        public override Color SettingsLabelTextColor { get; } = Color.FromHex(_textHex);
+        public override Color SettingsButtonBorderColor { get; } = Color.FromHex(_white12PercentBlend);
+        public override Color SettingsButtonFontColor { get; } = Color.FromHex(_textHex);
         public override Color TrendsChartSettingsSelectionIndicatorColor { get; } = Color.FromHex(_lightPrimaryTealHex);
 
         public override Color GitTrendsImageBackgroundColor { get; } = Color.FromHex(_offWhite);
