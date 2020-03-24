@@ -35,25 +35,27 @@ namespace GitTrends
 
         public async Task Register()
         {
-            var periodicTime = TimeSpan.FromHours(12);
+            var periodicTimeSpan = TimeSpan.FromHours(12);
 
             var isRegistered = await isTrendingRepositoryNotificationJobRegistered().ConfigureAwait(false);
-            if (!isRegistered && Device.RuntimePlatform is Device.iOS)
+
+            //Shiny.Jobs.IJobManager.Schedule always schedules background jobs for TimeSpan.FromMinutes(15) https://github.com/shinyorg/shiny/blob/c53a31732c57c4cc78f8bccba54b543e024425ee/src/Shiny.Core/Jobs/Platforms/Android/JobManager.cs#L95
+            if (Device.RuntimePlatform is Device.Android)
+            {
+                DependencyService.Get<IEnvironment>().EnqueueAndroidWorkRequest(periodicTimeSpan);
+            }
+            else if (!isRegistered)
             {
                 var backgroundFetchJob = new JobInfo(typeof(TrendingRepositoryNotificationJob), TrendingRepositoryNotificationJob.Identifier)
                 {
                     BatteryNotLow = true,
-                    PeriodicTime = periodicTime,
+                    PeriodicTime = periodicTimeSpan,
                     Repeat = true,
                     RequiredInternetAccess = InternetAccess.Any,
                     RunOnForeground = false
                 };
 
                 await ShinyHost.Resolve<IJobManager>().Schedule(backgroundFetchJob).ConfigureAwait(false);
-            }
-            else if(Device.RuntimePlatform is Device.Android)
-            {
-                DependencyService.Get<IEnvironment>().EnqueueAndroidWorkRequest(periodicTime);
             }
 
             static async Task<bool> isTrendingRepositoryNotificationJobRegistered()

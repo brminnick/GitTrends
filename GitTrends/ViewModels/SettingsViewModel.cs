@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -213,15 +214,15 @@ namespace GitTrends
 
         async Task ExecuteRegisterForPushNotificationsButtonCommand()
         {
+            AccessState? finalNotificationRequestResult = null;
+
             IsRegisteringForNotifications = true;
+
+            var initialNotificationRequestResult = await _notificationService.Register().ConfigureAwait(false);
 
             try
             {
-                var notificationRequestResult = await ShinyHost.Resolve<INotificationManager>().RequestAccess().ConfigureAwait(false);
-
-                AnalyticsService.Track("Register For Notifications Button Tapped", nameof(notificationRequestResult), notificationRequestResult.ToString());
-
-                switch (notificationRequestResult)
+                switch (initialNotificationRequestResult)
                 {
                     case AccessState.Denied:
                     case AccessState.Disabled:
@@ -234,7 +235,7 @@ namespace GitTrends
                         break;
 
                     case AccessState.NotSetup:
-                        await ShinyHost.Resolve<INotificationManager>().RequestAccess().ConfigureAwait(false);
+                        await _notificationService.Register().ConfigureAwait(false);
                         break;
 
                     case AccessState.NotSupported:
@@ -244,6 +245,8 @@ namespace GitTrends
                     default:
                         throw new NotImplementedException();
                 }
+
+                finalNotificationRequestResult = await _notificationService.Register().ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -252,6 +255,12 @@ namespace GitTrends
             finally
             {
                 IsRegisteringForNotifications = false;
+
+                AnalyticsService.Track("Register For Notifications Button Tapped", new Dictionary<string, string>
+                {
+                    { nameof(initialNotificationRequestResult), initialNotificationRequestResult.ToString() },
+                    { nameof(finalNotificationRequestResult), finalNotificationRequestResult?.ToString() ?? "null" },
+                });
             }
         }
 
