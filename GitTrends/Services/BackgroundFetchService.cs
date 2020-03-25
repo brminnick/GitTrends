@@ -33,6 +33,8 @@ namespace GitTrends
             _notificationService = notificationService;
         }
 
+        static IJobManager JobManager => ShinyHost.Resolve<IJobManager>();
+
         public async Task Register()
         {
             var periodicTimeSpan = TimeSpan.FromHours(12);
@@ -55,12 +57,12 @@ namespace GitTrends
                     RunOnForeground = false
                 };
 
-                await ShinyHost.Resolve<IJobManager>().Schedule(backgroundFetchJob).ConfigureAwait(false);
+                await JobManager.Schedule(backgroundFetchJob).ConfigureAwait(false);
             }
 
             static async Task<bool> isTrendingRepositoryNotificationJobRegistered()
             {
-                var registeredJobs = await ShinyHost.Resolve<IJobManager>().GetJobs().ConfigureAwait(false);
+                var registeredJobs = await JobManager.GetJobs().ConfigureAwait(false);
                 return registeredJobs.Any(x => x.Identifier is TrendingRepositoryNotificationJob.Identifier);
             }
         }
