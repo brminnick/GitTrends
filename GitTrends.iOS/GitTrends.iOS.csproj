@@ -222,7 +222,7 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="4.6.0.379-pre1" />
+    <PackageReference Include="Xamarin.Forms" Version="4.6.0.494-pre2" />
     <PackageReference Include="Xamarin.Essentials" Version="1.5.1" />
     <PackageReference Include="Refit" Version="5.1.27" />
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.0" />
