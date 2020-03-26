@@ -23,13 +23,27 @@ namespace GitTrends
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
 
+            Padding = new Thickness(16, 0);
+
             var collectionView = new CollectionView
             {
                 ItemTemplate = new RepositoryDataTemplateSelector(sortingService),
                 BackgroundColor = Color.Transparent,
                 SelectionMode = SelectionMode.Single,
+                ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical)
+                {
+                    ItemSpacing = 16
+                },
                 AutomationId = RepositoryPageAutomationIds.CollectionView
             };
+            collectionView.Header = collectionView.Footer = new StackLayout
+            {
+                HeightRequest = 16,
+                Margin = new Thickness(0),
+                Padding = new Thickness(0),
+                VerticalOptions = LayoutOptions.FillAndExpand
+            };
+
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));
 
