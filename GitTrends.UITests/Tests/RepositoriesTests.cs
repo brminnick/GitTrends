@@ -19,6 +19,58 @@ namespace GitTrends.UITests
         {
         }
 
+        [Test]
+        public async Task CancelSortingMenu()
+        {
+            //Arrange
+            Repository finalTopRepository;
+            Repository finalSecondTopRepository;
+            Repository initialTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
+            Repository initialSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
+
+            //Act
+            await RepositoryPage.CancelSortingMenu().ConfigureAwait(false);
+
+            //Assert
+            finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
+            finalSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
+
+            if (initialTopRepository.IsTrending && initialSecondTopRepository.IsTrending
+               || !initialTopRepository.IsTrending && !initialSecondTopRepository.IsTrending)
+            {
+                Assert.GreaterOrEqual(initialTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
+            }
+
+            Assert.AreEqual(initialTopRepository.Name, finalTopRepository.Name);
+            Assert.AreEqual(initialSecondTopRepository.Name, finalSecondTopRepository.Name);
+        }
+
+        [Test]
+        public async Task DismissSortingMenu()
+        {
+            //Arrange
+            Repository finalTopRepository;
+            Repository finalSecondTopRepository;
+            Repository initialTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
+            Repository initialSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
+
+            //Act
+            await RepositoryPage.DismissSortingMenu().ConfigureAwait(false);
+
+            //Assert
+            finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
+            finalSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
+
+            if (initialTopRepository.IsTrending && initialSecondTopRepository.IsTrending
+               || !initialTopRepository.IsTrending && !initialSecondTopRepository.IsTrending)
+            {
+                Assert.GreaterOrEqual(initialTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
+            }
+
+            Assert.AreEqual(initialTopRepository.Name, finalTopRepository.Name);
+            Assert.AreEqual(initialSecondTopRepository.Name, finalSecondTopRepository.Name);
+        }
+
         [TestCase(SortingConstants.DefaultSortingOption)]
         [TestCase(SortingOption.Clones)]
         [TestCase(SortingOption.Forks)]
@@ -37,10 +89,7 @@ namespace GitTrends.UITests
             Repository initialSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
 
             //Act
-            RepositoryPage.SetSortingOption(sortingOption);
-
-            //Allow RepositoryList to update
-            await Task.Delay(1000).ConfigureAwait(false);
+            await RepositoryPage.SetSortingOption(sortingOption).ConfigureAwait(false);
 
             //Assert
             finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
@@ -49,7 +98,7 @@ namespace GitTrends.UITests
             if (initialTopRepository.IsTrending && initialSecondTopRepository.IsTrending
                 || !initialTopRepository.IsTrending && !initialSecondTopRepository.IsTrending)
             {
-                Assert.GreaterOrEqual(initialSecondTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
+                Assert.GreaterOrEqual(initialTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
             }
 
             Assert.AreNotEqual(initialTopRepository, finalTopRepository);
