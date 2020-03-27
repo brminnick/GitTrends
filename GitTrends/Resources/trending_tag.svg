@@ -1,9 +1,20 @@
-<svg id="Light_Fork_Component" data-name="Light Fork Component" xmlns="http://www.w3.org/2000/svg" width="62" height="16" viewBox="0 0 62 16">
-  <g id="Group_626" data-name="Group 626">
-    <g id="Rectangle_631" data-name="Rectangle 631" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="4">
-      <rect width="62" height="16" stroke="none"/>
-      <rect x="0.5" y="0.5" width="61" height="15" fill="none"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="62px" height="16px" viewBox="0 0 62 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Artboard</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="62" height="16"></rect>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="62" height="16" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+    </defs>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Trending-Tag">
+            <use id="Rectangle" stroke="#000000" mask="url(#mask-2)" stroke-width="2" stroke-dasharray="4,4" xlink:href="#path-1"></use>
+            <text id="TRENDING" font-family="Roboto-Medium, Roboto" font-size="8" font-weight="400" line-spacing="9.2" fill="#000000">
+                <tspan x="12" y="11">TRENDING</tspan>
+            </text>
+        </g>
     </g>
-    <text id="TRENDING" transform="translate(12.621 11)" font-size="8" font-family="Roboto-Medium, Roboto" font-weight="500" letter-spacing="0.013em"><tspan x="0" y="0">TRENDING</tspan></text>
-  </g>
 </svg>
