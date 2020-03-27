@@ -95,5 +95,10 @@ namespace GitTrends
         public override Color TrendsChartSettingsSelectionIndicatorColor { get; } = Color.FromHex(_primaryTealHex);
 
         public override Color GitTrendsImageBackgroundColor { get; } = Color.White;
+
+        //Fonts
+        public override string RobotoBold { get; } = Device.RuntimePlatform == Device.iOS ? "Roboto-Bold" : "Roboto-Bold.ttf#Roboto-Bold";
+        public override string RobotoMedium { get; } = Device.RuntimePlatform == Device.iOS ? "Roboto-Medium" : "Roboto-Medium.ttf#Roboto-Medium";
+        public override string RobotoRegular { get; } = Device.RuntimePlatform == Device.iOS ? "Roboto-Regular" : "Roboto-Regular.ttf#Roboto-Regular";
     }
 }

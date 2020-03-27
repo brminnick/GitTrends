@@ -61,6 +61,10 @@ namespace GitTrends
             Add(nameof(TrendsChartSettingsSelectionIndicatorColor), TrendsChartSettingsSelectionIndicatorColor);
 
             Add(nameof(GitTrendsImageBackgroundColor), GitTrendsImageBackgroundColor);
+
+            Add(nameof(RobotoBold), RobotoBold);
+            Add(nameof(RobotoMedium), RobotoMedium);
+            Add(nameof(RobotoRegular), RobotoRegular);
         }
 
         public abstract Color NavigationBarBackgroundColor { get; }
@@ -123,5 +127,10 @@ namespace GitTrends
         public abstract Color TrendsChartSettingsSelectionIndicatorColor { get; }
 
         public abstract Color GitTrendsImageBackgroundColor { get; }
+
+        //Fonts
+        public abstract string RobotoBold { get; }
+        public abstract string RobotoMedium { get; }
+        public abstract string RobotoRegular { get; }
     }
 }

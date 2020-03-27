@@ -187,6 +187,7 @@ namespace GitTrends
 
         class RepositoryNameLabel : PrimaryColorLabel
         {
+
             public RepositoryNameLabel(in string text) : base(text)
             {
                 FontSize = 20;
@@ -194,19 +195,23 @@ namespace GitTrends
                 VerticalTextAlignment = TextAlignment.Start;
                 LineBreakMode = LineBreakMode.TailTruncation;
                 HorizontalOptions = LayoutOptions.FillAndExpand;
-                FontFamily = "Roboto-Bold";
+
+                SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoBold));
             }
         }
 
         class RepositoryDescriptionLabel : PrimaryColorLabel
         {
+            const string _fontRobotoRegular = "Roboto-Bold.ttf#Roboto-Bold";
+
             public RepositoryDescriptionLabel(in string text) : base(text)
             {
                 FontSize = 14;
                 LineBreakMode = LineBreakMode.TailTruncation;
                 VerticalTextAlignment = TextAlignment.Start;
                 MaxLines = 2;
-                FontFamily = "Roboto-Regular";
+
+                SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoRegular));
             }
         }
 
