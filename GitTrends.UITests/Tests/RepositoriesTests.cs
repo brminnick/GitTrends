@@ -35,11 +35,8 @@ namespace GitTrends.UITests
             finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
             finalSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
 
-            if (initialTopRepository.IsTrending && initialSecondTopRepository.IsTrending
-               || !initialTopRepository.IsTrending && !initialSecondTopRepository.IsTrending)
-            {
+            if (initialTopRepository.IsTrending == initialSecondTopRepository.IsTrending)
                 Assert.GreaterOrEqual(initialTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
-            }
 
             Assert.AreEqual(initialTopRepository.Name, finalTopRepository.Name);
             Assert.AreEqual(initialSecondTopRepository.Name, finalSecondTopRepository.Name);
@@ -61,11 +58,8 @@ namespace GitTrends.UITests
             finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
             finalSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
 
-            if (initialTopRepository.IsTrending && initialSecondTopRepository.IsTrending
-               || !initialTopRepository.IsTrending && !initialSecondTopRepository.IsTrending)
-            {
+            if (initialTopRepository.IsTrending == initialSecondTopRepository.IsTrending)
                 Assert.GreaterOrEqual(initialTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
-            }
 
             Assert.AreEqual(initialTopRepository.Name, finalTopRepository.Name);
             Assert.AreEqual(initialSecondTopRepository.Name, finalSecondTopRepository.Name);
@@ -95,11 +89,8 @@ namespace GitTrends.UITests
             finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
             finalSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
 
-            if (initialTopRepository.IsTrending && initialSecondTopRepository.IsTrending
-                || !initialTopRepository.IsTrending && !initialSecondTopRepository.IsTrending)
-            {
+            if (initialTopRepository.IsTrending == initialSecondTopRepository.IsTrending)
                 Assert.GreaterOrEqual(initialTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
-            }
 
             Assert.AreNotEqual(initialTopRepository, finalTopRepository);
             Assert.AreNotEqual(initialSecondTopRepository, finalSecondTopRepository);
