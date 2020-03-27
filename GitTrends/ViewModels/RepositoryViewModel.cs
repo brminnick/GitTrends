@@ -10,7 +10,6 @@ using AsyncAwaitBestPractices.MVVM;
 using Autofac;
 using GitTrends.Shared;
 using Refit;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -34,7 +33,8 @@ namespace GitTrends
                                     GitHubGraphQLApiService gitHubGraphQLApiService,
                                     AnalyticsService analyticsService,
                                     SortingService sortingService,
-                                    GitHubApiV3Service gitHubApiV3Service) : base(analyticsService)
+                                    GitHubApiV3Service gitHubApiV3Service,
+                                    NotificationService notificationService) : base(analyticsService)
         {
             _repositoryDatabase = repositoryDatabase;
             _gitHubAuthenticationService = gitHubAuthenticationService;
@@ -47,6 +47,7 @@ namespace GitTrends
             SortRepositoriesCommand = new Command<SortingOption>(ExecuteSortRepositoriesCommand);
 
             _gitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
+            notificationService.SortingOptionRequested += HandleSortingOptionRequested;
         }
 
         public event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
@@ -209,6 +210,8 @@ namespace GitTrends
         }
 
         void HandleGitHubAuthenticationServiceLoggedOut(object sender, EventArgs e) => UpdateListForLoggedOutUser();
+
+        void HandleSortingOptionRequested(object sender, SortingOption sortingOption) => SortRepositoriesCommand.Execute(sortingOption);
 
         void OnPullToRefreshFailed(in string title, in string message) =>
             _pullToRefreshFailedEventManager.HandleEvent(this, new PullToRefreshFailedEventArgs(message, title), nameof(PullToRefreshFailed));
