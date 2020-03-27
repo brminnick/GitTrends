@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace GitTrends.Shared
@@ -23,9 +22,9 @@ namespace GitTrends.Shared
             return DoesContainUpperOutlier(sortedDailyClonesList);
         }
 
-        public static bool? IsTrending(in List<DailyViewsModel> daileViews)
+        public static bool? IsTrending(in List<DailyViewsModel> dailyViews)
         {
-            var sortedDailyViewsList = daileViews.OrderByDescending(x => x.TotalViews).ToList();
+            var sortedDailyViewsList = dailyViews.OrderByDescending(x => x.TotalViews).ToList();
 
             return DoesContainUpperOutlier(sortedDailyViewsList);
         }

@@ -31,8 +31,8 @@ namespace GitTrends
         public double DailyViewsClonesMinValue { get; } = 0;
 
         public bool IsChartVisible => !IsFetchingData;
-        public DateTime MinDateValue => GetMinimumLocalDateTime();
-        public DateTime MaxDateValue => GetMaximumLocalDateTime();
+        public DateTime MinDateValue => DateTimeService.GetMinimumLocalDateTime(DailyViewsList, DailyClonesList);
+        public DateTime MaxDateValue => DateTimeService.GetMaximumLocalDateTime(DailyViewsList, DailyClonesList);
 
         public double DailyViewsClonesMaxValue
         {
@@ -63,44 +63,12 @@ namespace GitTrends
             set => SetProperty(ref _dailyClonesList, value, UpdateDailyClonesListPropertiesChanged);
         }
 
-        static DateTimeOffset GetMinimumDateTimeOffset(in IEnumerable<DailyViewsModel> dailyViewsList, in IEnumerable<DailyClonesModel> dailyClonesList)
-        {
-            var minViewsDateTimeOffset = dailyViewsList.Any() ? dailyViewsList.Min(x => x.Day) : DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
-            var minClonesDateTimeOffset = dailyClonesList.Any() ? dailyClonesList.Min(x => x.Day) : DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
-
-            return new DateTime(Math.Min(minViewsDateTimeOffset.Ticks, minClonesDateTimeOffset.Ticks));
-        }
-
-        static DateTimeOffset GetMaximumDateTimeOffset(in IEnumerable<DailyViewsModel> dailyViewsList, in IEnumerable<DailyClonesModel> dailyClonesList)
-        {
-            var maxViewsDateTime = dailyViewsList.Any() ? dailyViewsList.Max(x => x.Day) : DateTimeOffset.UtcNow;
-            var maxClonesDateTime = dailyClonesList.Any() ? dailyClonesList.Max(x => x.Day) : DateTimeOffset.UtcNow;
-
-            return new DateTime(Math.Max(maxViewsDateTime.Ticks, maxClonesDateTime.Ticks));
-        }
-
-        static DateTime GetMinimumLocalDateTime(in IEnumerable<DailyViewsModel> dailyViewsList, in IEnumerable<DailyClonesModel> dailyClonesList)
-        {
-            var minViewsDateTimeOffset = dailyViewsList.Any() ? dailyViewsList.Min(x => x.LocalDay) : DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
-            var minClonesDateTimeOffset = dailyClonesList.Any() ? dailyClonesList.Min(x => x.LocalDay) : DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
-
-            return new DateTime(Math.Min(minViewsDateTimeOffset.Ticks, minClonesDateTimeOffset.Ticks));
-        }
-
-        static DateTime GetMaximumLocalDateTime(in IEnumerable<DailyViewsModel> dailyViewsList, in IEnumerable<DailyClonesModel> dailyClonesList)
-        {
-            var maxViewsDateTime = dailyViewsList.Any() ? dailyViewsList.Max(x => x.LocalDay) : DateTimeOffset.UtcNow;
-            var maxClonesDateTime = dailyClonesList.Any() ? dailyClonesList.Max(x => x.LocalDay) : DateTimeOffset.UtcNow;
-
-            return new DateTime(Math.Max(maxViewsDateTime.Ticks, maxClonesDateTime.Ticks));
-        }
-
         async Task ExecuteFetchDataCommand(Repository repository)
         {
             _reviewService.TryRequestReview();
 
-            List<DailyViewsModel> repositoryViews;
-            List<DailyClonesModel> repositoryClones;
+            IReadOnlyList<DailyViewsModel> repositoryViews;
+            IReadOnlyList<DailyClonesModel> repositoryClones;
 
             var minimumTimeTask = Task.Delay(2000);
 
@@ -137,8 +105,6 @@ namespace GitTrends
                 }
             }
 
-            addMissingDates(repositoryViews, repositoryClones);
-
             //Display the Activity Indicator for a minimum time to ensure consistant UX 
             await minimumTimeTask.ConfigureAwait(false);
             IsFetchingData = false;
@@ -147,28 +113,6 @@ namespace GitTrends
             DailyClonesList = repositoryClones.OrderBy(x => x.Day).ToList();
 
             PrintDays();
-
-            static void addMissingDates(in IList<DailyViewsModel> dailyViewsList, in IList<DailyClonesModel> dailyClonesList)
-            {
-                var day = GetMinimumDateTimeOffset(dailyViewsList, dailyClonesList);
-                var maximumDay = GetMaximumDateTimeOffset(dailyViewsList, dailyClonesList);
-
-                var viewsDays = dailyViewsList.Select(x => x.Day.Day).ToList();
-                var clonesDays = dailyClonesList.Select(x => x.Day.Day).ToList();
-
-                while (day.Day != maximumDay.AddDays(1).Day)
-                {
-                    if (!viewsDays.Contains(day.Day))
-                        dailyViewsList.Add(new DailyViewsModel(removeHourMinuteSecond(day), 0, 0));
-
-                    if (!clonesDays.Contains(day.Day))
-                        dailyClonesList.Add(new DailyClonesModel(removeHourMinuteSecond(day), 0, 0));
-
-                    day = day.AddDays(1);
-                }
-            }
-
-            static DateTimeOffset removeHourMinuteSecond(in DateTimeOffset date) => new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
         }
 
         void UpdateDailyClonesListPropertiesChanged()
@@ -186,12 +130,6 @@ namespace GitTrends
             OnPropertyChanged(nameof(MinDateValue));
             OnPropertyChanged(nameof(MaxDateValue));
         }
-
-        DateTimeOffset GetMinimumDateTimeOffset() => GetMinimumDateTimeOffset(DailyViewsList, DailyClonesList);
-        DateTimeOffset GetMaximumDateTimeOffset() => GetMaximumDateTimeOffset(DailyViewsList, DailyClonesList);
-
-        DateTime GetMinimumLocalDateTime() => GetMinimumLocalDateTime(DailyViewsList, DailyClonesList);
-        DateTime GetMaximumLocalDateTime() => GetMaximumLocalDateTime(DailyViewsList, DailyClonesList);
 
         [Conditional("DEBUG")]
         void PrintDays()

@@ -51,5 +51,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubGraphQLAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\SortingConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\TrendingService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\DateTimeService.cs" />
   </ItemGroup>
 </Project>
