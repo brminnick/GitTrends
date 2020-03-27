@@ -44,6 +44,7 @@
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.1.0" />
         <PackageReference Include="Xamarin.Forms" Version="4.6.0.494-pre2" />
         <PackageReference Include="Shiny.Notifications" Version="1.1.0.1473" />
+        <PackageReference Include="Xamarin.Forms.Visual.Material" Version="4.5.0.495" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="EventArgs\" />
@@ -67,6 +68,7 @@
       <None Remove="Resources\total_clones.svg" />
       <None Remove="Resources\unique_views.svg" />
       <None Remove="Resources\total_views.svg" />
+      <None Remove="Resources\trending_tag.svg" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="Resources\repo_forked.svg" />
@@ -76,6 +78,7 @@
       <EmbeddedResource Include="Resources\total_clones.svg" />
       <EmbeddedResource Include="Resources\unique_views.svg" />
       <EmbeddedResource Include="Resources\total_views.svg" />
+      <EmbeddedResource Include="Resources\trending_tag.svg" />
     </ItemGroup>
     <Import Project="..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems')" />
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />

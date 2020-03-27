@@ -38,10 +38,7 @@ namespace GitTrends
             };
             collectionView.Header = collectionView.Footer = new StackLayout
             {
-                HeightRequest = 16,
-                Margin = new Thickness(0),
-                Padding = new Thickness(0),
-                VerticalOptions = LayoutOptions.FillAndExpand
+                HeightRequest = 0,
             };
 
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;

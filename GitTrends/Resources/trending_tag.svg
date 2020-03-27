@@ -1,0 +1,9 @@
+<svg id="Light_Fork_Component" data-name="Light Fork Component" xmlns="http://www.w3.org/2000/svg" width="62" height="16" viewBox="0 0 62 16">
+  <g id="Group_626" data-name="Group 626">
+    <g id="Rectangle_631" data-name="Rectangle 631" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="4">
+      <rect width="62" height="16" stroke="none"/>
+      <rect x="0.5" y="0.5" width="61" height="15" fill="none"/>
+    </g>
+    <text id="TRENDING" transform="translate(12.621 11)" font-size="8" font-family="Roboto-Medium, Roboto" font-weight="500" letter-spacing="0.013em"><tspan x="0" y="0">TRENDING</tspan></text>
+  </g>
+</svg>

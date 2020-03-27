@@ -85,6 +85,12 @@ namespace GitTrends
         //Indicators
         public override Color RefreshControlColor { get; } = Color.FromHex(_lightPrimaryTealHex);
 
+        //Card
+        public override Color CardSurfaceColor { get; } = Color.FromHex(_cardSurfaceHex);
+        public override Color CardBorderColor { get; } = Device.RuntimePlatform == Device.iOS ? Color.Gray : Color.FromHex(_white12PercentBlend);
+
+        public override Color SeparatorColor { get; } = Color.FromHex(_white12PercentBlend);
+
         //Card Stats Color
         public override Color CardStarsStatsTextColor { get; } = Color.FromHex(_lightAccentYellowHex);
         public override Color CardStarsStatsIconColor { get; } = Color.FromHex(_lightAccentYellowHex);
@@ -100,7 +106,7 @@ namespace GitTrends
         public override Color CardUniqueViewsStatsIconColor { get; } = Color.FromHex(_saturatedGreenHex);
         public override Color CardUniqueClonesStatsTextColor { get; } = Color.FromHex(_saturatedPinkHex);
         public override Color CardUniqueClonesStatsIconColor { get; } = Color.FromHex(_saturatedPinkHex);
-        public override Color CardTrendingStatsColor { get; } = Color.FromHex(_lightPrimaryTealHex);
+        public override Color CardTrendingStatsColor { get; } = Color.FromHex(_primaryTealHex);
 
 
         //Settings Components
@@ -110,5 +116,6 @@ namespace GitTrends
         public override Color TrendsChartSettingsSelectionIndicatorColor { get; } = Color.FromHex(_lightPrimaryTealHex);
 
         public override Color GitTrendsImageBackgroundColor { get; } = Color.FromHex(_offWhite);
+        
     }
 }

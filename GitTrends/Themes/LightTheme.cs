@@ -65,20 +65,26 @@ namespace GitTrends
         //Indicators
         public override Color RefreshControlColor { get; } = Color.FromHex(_primaryDarkTealHex);
 
+        //Card
+        public override Color CardSurfaceColor { get; } = Color.FromHex(_cardSurfaceHex);
+        public override Color CardBorderColor { get; } = Device.RuntimePlatform == Device.iOS ? Color.Gray : Color.FromHex(_black12PercentBlend);
+
+        public override Color SeparatorColor { get; } = Color.FromHex(_black12PercentBlend);
+
         //Card Stats Color
-        public override Color CardStarsStatsTextColor { get; } = Color.FromHex(_accentYellowHex);
+        public override Color CardStarsStatsTextColor { get; } = Color.FromHex(_textHex);
         public override Color CardStarsStatsIconColor { get; } = Color.FromHex(_accentYellowHex);
-        public override Color CardForksStatsTextColor { get; } = Color.FromHex(_primaryTealHex);
+        public override Color CardForksStatsTextColor { get; } = Color.FromHex(_textHex);
         public override Color CardForksStatsIconColor { get; } = Color.FromHex(_primaryTealHex);
-        public override Color CardIssuesStatsTextColor { get; } = Color.FromHex(_accentOrangeHex);
+        public override Color CardIssuesStatsTextColor { get; } = Color.FromHex(_textHex);
         public override Color CardIssuesStatsIconColor { get; } = Color.FromHex(_accentOrangeHex);
-        public override Color CardViewsStatsTextColor { get; } = Color.FromHex(_saturatedLightBlueHex);
+        public override Color CardViewsStatsTextColor { get; } = Color.FromHex(_textHex);
         public override Color CardViewsStatsIconColor { get; } = Color.FromHex(_saturatedLightBlueHex);
-        public override Color CardClonesStatsTextColor { get; } = Color.FromHex(_saturatedYellowHex);
+        public override Color CardClonesStatsTextColor { get; } = Color.FromHex(_textHex);
         public override Color CardClonesStatsIconColor { get; } = Color.FromHex(_saturatedYellowHex);
-        public override Color CardUniqueViewsStatsTextColor { get; } = Color.FromHex(_saturatedGreenHex);
+        public override Color CardUniqueViewsStatsTextColor { get; } = Color.FromHex(_textHex);
         public override Color CardUniqueViewsStatsIconColor { get; } = Color.FromHex(_saturatedGreenHex);
-        public override Color CardUniqueClonesStatsTextColor { get; } = Color.FromHex(_saturatedPinkHex);
+        public override Color CardUniqueClonesStatsTextColor { get; } = Color.FromHex(_textHex);
         public override Color CardUniqueClonesStatsIconColor { get; } = Color.FromHex(_saturatedPinkHex);
         public override Color CardTrendingStatsColor { get; } = Color.FromHex(_primaryTealHex);
 
