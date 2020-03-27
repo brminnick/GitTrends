@@ -168,7 +168,7 @@ namespace GitTrends
 
             var selection = await DisplayActionSheet("Sort By", cancelText, null, sortingOptions.ToArray());
 
-            if (selection != cancelText)
+            if (selection != null && selection != cancelText)
                 ViewModel.SortRepositoriesCommand.Execute(SortingConstants.SortingOptionsDictionary.First(x => x.Value == selection).Key);
         }
 
