@@ -14,9 +14,6 @@ namespace GitTrends
     class RepositoryDataTemplateSelector : DataTemplateSelector
     {
         const int circleImageHeight = 62;
-        const int emojiColumnSize = 24;
-        const int statisticColumnSize = 32;
-
         const int _statsFontSize = 11;
 
         readonly SortingService _sortingService;
