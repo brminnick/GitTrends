@@ -38,10 +38,12 @@ namespace GitTrends
         {
             get
             {
+                const int minimumValue = 20;
+
                 var dailyViewMaxValue = DailyViewsList.Any() ? DailyViewsList.Max(x => x.TotalViews) : 0;
                 var dailyClonesMaxValue = DailyClonesList.Any() ? DailyClonesList.Max(x => x.TotalClones) : 0;
 
-                return Math.Max(dailyViewMaxValue, dailyClonesMaxValue);
+                return Math.Max(Math.Max(dailyViewMaxValue, dailyClonesMaxValue), minimumValue);
             }
         }
 

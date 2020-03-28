@@ -74,8 +74,11 @@ namespace GitTrends.UITests
             App.Tap(_sortButton);
             App.Screenshot("Sort Button Tapped");
 
-            App.Tap(SortingConstants.SortingOptionsDictionary[sortingOption]);
-            App.Screenshot($"{SortingConstants.SortingOptionsDictionary[sortingOption]} Tapped");
+            var sortingOptionDescription = SortingConstants.SortingOptionsDictionary[sortingOption];
+            var trendingOptionsRect = App.Query(sortingOptionDescription).Last().Rect;
+
+            App.TapCoordinates(trendingOptionsRect.CenterX, trendingOptionsRect.CenterY);
+            App.Screenshot($"{sortingOptionDescription} Tapped");
 
             return WaitForRepositoriesToFinishSorting();
         }
