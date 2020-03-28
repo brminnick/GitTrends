@@ -87,9 +87,11 @@ namespace GitTrends
                         new AvatarImage().Row(Row.Title).Column(Column.Avatar).RowSpan(2).Center()
                             .Bind(Image.SourceProperty, nameof(Repository.OwnerAvatarUrl)),
 
-                        new RepositoryNameLabel(repository.Name).Row(Row.Title).Column(Column.Trending).ColumnSpan(10),
+                        new RepositoryNameLabel("heello").Row(Row.Title).Column(Column.Trending).ColumnSpan(10)
+                        .Bind(Label.TextProperty, nameof(Repository.Name)),
 
-                        new RepositoryDescriptionLabel(repository.Description).Row(Row.Description).Column(Column.Trending).ColumnSpan(10),
+                        new RepositoryDescriptionLabel(repository.Description).Row(Row.Description).Column(Column.Trending).ColumnSpan(10)
+                        .Bind(Label.TextProperty, nameof(Repository.Description)),
 
                         new Separator().Row(Row.Separator).Column(Column.Trending).ColumnSpan(10),
 
@@ -106,6 +108,7 @@ namespace GitTrends
                         shouldDisplayValue(repository.DailyViewsList)
                             ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsTextColor)], shouldShowStarsForksIssues ? repository.StarCount.ToString() : repository.TotalViews.ToString())
                         .Row(Row.Statistics).Column(Column.Statistic1).End()
+                        .Bind(Label.TextProperty, shouldShowStarsForksIssues ? nameof(Repository.StarCount) : nameof(Repository.TotalViews), converter: numberConverter)
                             : new Label(), 
 
                         new RepoStatSVGImage(shouldShowStarsForksIssues ? "repo_forked.svg" : "unique_views.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.CardForksStatsIconColor)])
@@ -113,7 +116,9 @@ namespace GitTrends
 
                         //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
                         shouldDisplayValue(repository.DailyViewsList)
-                            ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardForksStatsTextColor)], shouldShowStarsForksIssues ? repository.ForkCount.ToString() : repository.TotalUniqueViews.ToString()).Row(Row.Statistics).Column(Column.Statistic2).End()
+                            ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardForksStatsTextColor)], shouldShowStarsForksIssues ? repository.ForkCount.ToString() : repository.TotalUniqueViews.ToString())
+                        .Row(Row.Statistics).Column(Column.Statistic2).End()
+                        .Bind(Label.TextProperty, shouldShowStarsForksIssues ? nameof(Repository.ForkCount) : nameof(Repository.TotalUniqueViews), converter: numberConverter)
                             : new Label(),
 
                         new RepoStatSVGImage(shouldShowStarsForksIssues ? "issue_opened.svg" : "total_clones.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.CardIssuesStatsIconColor)])
@@ -121,7 +126,9 @@ namespace GitTrends
 
                         //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
                         shouldDisplayValue(repository.DailyClonesList)
-                            ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardIssuesStatsTextColor)], shouldShowStarsForksIssues ? repository.IssuesCount.ToString() : repository.TotalClones.ToString()).Row(Row.Statistics).Column(Column.Statistic3).End()
+                            ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardIssuesStatsTextColor)], shouldShowStarsForksIssues ? repository.IssuesCount.ToString() : repository.TotalClones.ToString())
+                        .Row(Row.Statistics).Column(Column.Statistic3).End()
+                        .Bind(Label.TextProperty, shouldShowStarsForksIssues ? nameof(Repository.IssuesCount) : nameof(Repository.TotalClones), converter: numberConverter)
                             : new Label(),
 
                         //Column.Emoji4 & Column.Statistic4 are not needed for StarsForksIssues
@@ -133,15 +140,36 @@ namespace GitTrends
                         //Column.Emoji4 & Column.Statistic4 are not needed for StarsForksIssues
                         //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
                         !shouldShowStarsForksIssues && shouldDisplayValue(repository.DailyClonesList)
-                            ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardUniqueClonesStatsTextColor)],repository.TotalUniqueClones.ToString()).Row(Row.Statistics).Column(Column.Statistic4).End()
+                            ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardUniqueClonesStatsTextColor)],repository.TotalUniqueClones.ToString())
+                        .Row(Row.Statistics).Column(Column.Statistic4).End()
+                        .Bind(Label.TextProperty, nameof(Repository.TotalUniqueClones), converter: numberConverter)
                             : new Label(),
-
                         
                     }
                 }
             };
 
             static bool shouldDisplayValue<T>(IList<T> list) where T : BaseDailyModel => list.Any();
+
+            static FuncConverter<object, string> numberConverter => new FuncConverter<object, string>(value =>
+            {
+                if (value == null) return "0";
+
+                double number = 0;
+                if (double.TryParse(value.ToString(), out number))
+                {
+                    if (number < 10e2)
+                        return String.Format("{0:0}", number);
+                    else if (number < 10e5)
+                        return $"{String.Format("{0:0.0}", number / 10e2)}K";
+                    else if (number < 10e8)
+                        return $"{String.Format("{0:0.0}", number / 10e5)}M";
+                    else if (number < 10e11)
+                        return $"{String.Format("{0:0.0}", number / 10e8)}B";
+                }
+
+                return "0";
+            });
         }
 
         class CardView : Frame
