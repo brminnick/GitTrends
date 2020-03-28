@@ -104,6 +104,11 @@ namespace GitTrends
                     {
                         Property = Xamarin.Forms.DebugRainbows.DebugRainbow.ShowColorsProperty,
                         Value = shouldUseDebugRainbows
+                    },
+                    new Setter
+                    {
+                        Property = Xamarin.Forms.DebugRainbows.DebugRainbow.ShowGridProperty,
+                        Value = shouldUseDebugRainbows
                     }
                 }
             });

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using FFImageLoading.Svg.Forms;
 using GitTrends.Shared;
@@ -13,11 +14,10 @@ namespace GitTrends
 {
     class RepositoryDataTemplateSelector : DataTemplateSelector
     {
-        const int circleImageHeight = 62;
-        const int emojiColumnSize = 24;
-        const int statisticColumnSize = 32;
-
-        const int _statsFontSize = 11;
+        const int _circleImageHeight = 62;
+        const int _emojiColumnSize = 24;
+        const int _statsFontSize = 12;
+        const int _statsColumnSize = 40;
 
         readonly SortingService _sortingService;
 
@@ -45,131 +45,91 @@ namespace GitTrends
 
             }
 
-            enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics}
+            enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
             enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3, Emoji4, Statistic4, StatisticsPadding }
 
             static CardView CreateRepositoryDataTemplate(Repository repository, bool shouldShowStarsForksIssues) => new CardView
             {
-
                 Content = new Grid
                 {
-                    BackgroundColor = Color.Transparent,
-
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     VerticalOptions = LayoutOptions.FillAndExpand,
-                    ColumnSpacing = 0,
+                    ColumnSpacing = 2,
 
                     RowDefinitions = Rows.Define(
-                    (Row.Title, Auto),
-                    (Row.Description, Auto),
-                    (Row.DescriptionPadding, AbsoluteGridLength(12)),
-                    (Row.Separator, AbsoluteGridLength(1)),
-                    (Row.SeparatorPadding, AbsoluteGridLength(4)),
-                    (Row.Statistics, AbsoluteGridLength(_statsFontSize + 2))),
+                        (Row.Title, AbsoluteGridLength(25)),
+                        (Row.Description, AbsoluteGridLength(40)),
+                        (Row.DescriptionPadding, AbsoluteGridLength(4)),
+                        (Row.Separator, AbsoluteGridLength(1)),
+                        (Row.SeparatorPadding, AbsoluteGridLength(4)),
+                        (Row.Statistics, AbsoluteGridLength(_statsFontSize + 2))),
 
                     ColumnDefinitions = Columns.Define(
-                    (Column.Avatar, AbsoluteGridLength(circleImageHeight)),
-                    (Column.AvatarPadding, AbsoluteGridLength(16)),
-                    (Column.Trending, StarGridLength(1)),
-                    (Column.Emoji1, Auto),
-                    (Column.Statistic1, Auto),
-                    (Column.Emoji2, Auto),
-                    (Column.Statistic2, Auto),
-                    (Column.Emoji3, Auto),
-                    (Column.Statistic3, Auto),
-                    (Column.Emoji4, Auto),
-                    (Column.Statistic4, Auto),
-                    (Column.StatisticsPadding, AbsoluteGridLength(4))),
-
+                        (Column.Avatar, AbsoluteGridLength(_circleImageHeight)),
+                        (Column.AvatarPadding, AbsoluteGridLength(16)),
+                        (Column.Trending, StarGridLength(1)),
+                        (Column.Emoji1, AbsoluteGridLength(_emojiColumnSize)),
+                        (Column.Statistic1, AbsoluteGridLength(_statsColumnSize)),
+                        (Column.Emoji2, AbsoluteGridLength(_emojiColumnSize)),
+                        (Column.Statistic2, AbsoluteGridLength(_statsColumnSize)),
+                        (Column.Emoji3, AbsoluteGridLength(_emojiColumnSize)),
+                        (Column.Statistic3, AbsoluteGridLength(_statsColumnSize)),
+                        (Column.Emoji4, AbsoluteGridLength(_emojiColumnSize)),
+                        (Column.Statistic4, AbsoluteGridLength(_statsColumnSize)),
+                        (Column.StatisticsPadding, AbsoluteGridLength(4))),
 
                     Children =
                     {
-                        new AvatarImage().Row(Row.Title).Column(Column.Avatar).RowSpan(2).Center()
-                            .Bind(Image.SourceProperty, nameof(Repository.OwnerAvatarUrl)),
+                        new AvatarImage(repository.OwnerAvatarUrl).Row(Row.Title).Column(Column.Avatar).RowSpan(2).Center(),
 
-                        new RepositoryNameLabel("heello").Row(Row.Title).Column(Column.Trending).ColumnSpan(10)
-                        .Bind(Label.TextProperty, nameof(Repository.Name)),
+                        new RepositoryNameLabel(repository.Name).Row(Row.Title).Column(Column.Trending).ColumnSpan(10),
 
-                        new RepositoryDescriptionLabel(repository.Description).Row(Row.Description).Column(Column.Trending).ColumnSpan(10)
-                        .Bind(Label.TextProperty, nameof(Repository.Description)),
+                        new RepositoryDescriptionLabel(repository.Description).Row(Row.Description).Column(Column.Trending).ColumnSpan(10),
 
                         new Separator().Row(Row.Separator).Column(Column.Trending).ColumnSpan(10),
 
                         //Only display the Trending label when a repository is trending
                         repository.IsTrending
-                            ? new RepoStatSVGImage("trending_tag.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)], 62, 16).Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2)
-                        .Margin(new Thickness(8,0,0,0)).Start().Bottom()
+                            ? new RepositoryStatSVGImage("trending_tag.svg", nameof(BaseTheme.CardTrendingStatsColor), 62, 16).Row(Row.SeparatorPadding).Column(Column.Avatar).ColumnSpan(3).RowSpan(2).Start().Bottom()
                             : new SvgCachedImage(),
 
-                        new RepoStatSVGImage(shouldShowStarsForksIssues ? "star.svg" : "total_views.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)])
-                        .Row(Row.Statistics).Column(Column.Emoji1).Margin(new Thickness(0,0,4,0)).End(),
+                        new RepositoryStatSVGImage(shouldShowStarsForksIssues ? "star.svg" : "total_views.svg", nameof(BaseTheme.CardStarsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
 
                         //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
                         shouldDisplayValue(repository.DailyViewsList)
-                            ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsTextColor)], shouldShowStarsForksIssues ? repository.StarCount.ToString() : repository.TotalViews.ToString())
-                        .Row(Row.Statistics).Column(Column.Statistic1).End()
-                        .Bind(Label.TextProperty, shouldShowStarsForksIssues ? nameof(Repository.StarCount) : nameof(Repository.TotalViews), converter: NumberConverter)
-                            : new Label(), 
-
-                        new RepoStatSVGImage(shouldShowStarsForksIssues ? "repo_forked.svg" : "unique_views.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.CardForksStatsIconColor)])
-                        .Row(Row.Statistics).Column(Column.Emoji2).Margin(new Thickness(16,0,4,0)).End().End(),
-
-                        //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                        shouldDisplayValue(repository.DailyViewsList)
-                            ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardForksStatsTextColor)], shouldShowStarsForksIssues ? repository.ForkCount.ToString() : repository.TotalUniqueViews.ToString())
-                        .Row(Row.Statistics).Column(Column.Statistic2).End()
-                        .Bind(Label.TextProperty, shouldShowStarsForksIssues ? nameof(Repository.ForkCount) : nameof(Repository.TotalUniqueViews), converter: NumberConverter)
+                            ? new StatisticsLabel(shouldShowStarsForksIssues ? repository.StarCount : repository.TotalViews, (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsTextColor)]).Row(Row.Statistics).Column(Column.Statistic1)
                             : new Label(),
 
-                        new RepoStatSVGImage(shouldShowStarsForksIssues ? "issue_opened.svg" : "total_clones.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.CardIssuesStatsIconColor)])
-                        .Row(Row.Statistics).Column(Column.Emoji3).Margin(new Thickness(16,0,4,0)).End(),
+                        new RepositoryStatSVGImage(shouldShowStarsForksIssues ? "repo_forked.svg" : "unique_views.svg", nameof(BaseTheme.CardForksStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji2),
+
+                        //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+                        shouldDisplayValue(repository.DailyViewsList)
+                            ? new StatisticsLabel(shouldShowStarsForksIssues ? repository.ForkCount : repository.TotalUniqueViews, (Color)Application.Current.Resources[nameof(BaseTheme.CardForksStatsTextColor)]).Row(Row.Statistics).Column(Column.Statistic2)
+                            : new Label(),
+
+                        new RepositoryStatSVGImage(shouldShowStarsForksIssues ? "issue_opened.svg" : "total_clones.svg", nameof(BaseTheme.CardIssuesStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji3),
 
                         //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
                         shouldDisplayValue(repository.DailyClonesList)
-                            ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardIssuesStatsTextColor)], shouldShowStarsForksIssues ? repository.IssuesCount.ToString() : repository.TotalClones.ToString())
-                        .Row(Row.Statistics).Column(Column.Statistic3).End()
-                        .Bind(Label.TextProperty, shouldShowStarsForksIssues ? nameof(Repository.IssuesCount) : nameof(Repository.TotalClones), converter: NumberConverter)
+                            ? new StatisticsLabel(shouldShowStarsForksIssues ? repository.IssuesCount : repository.TotalClones, (Color)Application.Current.Resources[nameof(BaseTheme.CardIssuesStatsTextColor)]).Row(Row.Statistics).Column(Column.Statistic3)
                             : new Label(),
 
                         //Column.Emoji4 & Column.Statistic4 are not needed for StarsForksIssues
                         !shouldShowStarsForksIssues
-                            ? new RepoStatSVGImage("unique_clones.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.CardUniqueClonesStatsIconColor)])
-                        .Row(Row.Statistics).Column(Column.Emoji4).Margin(new Thickness(16,0,4,0)).End()
+                            ? new RepositoryStatSVGImage("unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji4)
                             : new SvgCachedImage(),
 
                         //Column.Emoji4 & Column.Statistic4 are not needed for StarsForksIssues
                         //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
                         !shouldShowStarsForksIssues && shouldDisplayValue(repository.DailyClonesList)
-                            ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardUniqueClonesStatsTextColor)],repository.TotalUniqueClones.ToString())
-                        .Row(Row.Statistics).Column(Column.Statistic4).End()
-                        .Bind(Label.TextProperty, nameof(Repository.TotalUniqueClones), converter: NumberConverter)
+                            ? new StatisticsLabel(repository.TotalUniqueClones, (Color)Application.Current.Resources[nameof(BaseTheme.CardUniqueClonesStatsTextColor)]).Row(Row.Statistics).Column(Column.Statistic4)
                             : new Label(),
-                        
+
                     }
                 }
             };
 
             static bool shouldDisplayValue<T>(IList<T> list) where T : BaseDailyModel => list.Any();
-
-            static FuncConverter<object, string> NumberConverter => new FuncConverter<object, string>(value =>
-            {
-                if (value == null) return "0";
-
-                double number = 0;
-                if (double.TryParse(value.ToString(), out number))
-                {
-                    if (number < 10e2)
-                        return string.Format("{0:0}", number);
-                    else if (number < 10e5)
-                        return $"{string.Format("{0:0.0}", number / 10e2)}K";
-                    else if (number < 10e8)
-                        return $"{string.Format("{0:0.0}", number / 10e5)}M";
-                    else if (number < 10e11)
-                        return $"{string.Format("{0:0.0}", number / 10e8)}B";
-                }
-
-                return "0";
-            });
         }
 
         class CardView : Frame
@@ -188,39 +148,38 @@ namespace GitTrends
 
         class AvatarImage : CircleImage
         {
-            public AvatarImage()
+            public AvatarImage(string imageSource)
             {
-                HeightRequest = circleImageHeight;
-                WidthRequest = circleImageHeight;
+                HeightRequest = _circleImageHeight;
+                WidthRequest = _circleImageHeight;
                 HorizontalOptions = LayoutOptions.Center;
                 VerticalOptions = LayoutOptions.Center;
                 BorderThickness = 1;
+                Source = imageSource;
+
                 SetDynamicResource(BorderColorProperty, nameof(BaseTheme.SeparatorColor));
             }
         }
 
-        class RepoStatSVGImage : SvgImage
+        class RepositoryStatSVGImage : SvgImage
         {
-            public RepoStatSVGImage(in string svgFileName, in Func<Color> func, double width = 0.00, double height = 0.00)
-                : base(svgFileName, func)
+            public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor, double width = 0, double height = 0)
+                : base(svgFileName, () => (Color)Application.Current.Resources[baseThemeColor])
             {
-                
-                WidthRequest = (width != 0.00) ? width : _statsFontSize;
-                HeightRequest = (height != 0.00) ? height : _statsFontSize;
+                Margin = new Thickness(0, 0, 3, 0);
+
+                WidthRequest = (width != 0.00) ? width : _emojiColumnSize / 2;
+                HeightRequest = (height != 0.00) ? height : _emojiColumnSize / 2;
 
                 VerticalOptions = LayoutOptions.CenterAndExpand;
-                HorizontalOptions = LayoutOptions.CenterAndExpand;
+                HorizontalOptions = LayoutOptions.EndAndExpand;
             }
         }
 
         class RepositoryNameLabel : PrimaryColorLabel
         {
-
-            public RepositoryNameLabel(in string text) : base(text)
+            public RepositoryNameLabel(in string text) : base(20, text)
             {
-                FontSize = 20;
-                HorizontalTextAlignment = TextAlignment.Start;
-                VerticalTextAlignment = TextAlignment.Start;
                 LineBreakMode = LineBreakMode.TailTruncation;
                 HorizontalOptions = LayoutOptions.FillAndExpand;
 
@@ -230,59 +189,62 @@ namespace GitTrends
 
         class RepositoryDescriptionLabel : PrimaryColorLabel
         {
-            const string _fontRobotoRegular = "Roboto-Bold.ttf#Roboto-Bold";
-
-            public RepositoryDescriptionLabel(in string text) : base(text)
+            public RepositoryDescriptionLabel(in string text) : base(14, text)
             {
-                FontSize = 14;
-                LineBreakMode = LineBreakMode.TailTruncation;
-                VerticalTextAlignment = TextAlignment.Start;
                 MaxLines = 2;
-
                 SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoRegular));
             }
         }
 
-        class PrimaryColorLabel : Label
+        abstract class PrimaryColorLabel : Label
         {
-            public PrimaryColorLabel(in double fontSize, in string text) : this(text) => FontSize = fontSize;
-
-            public PrimaryColorLabel(in string text)
+            protected PrimaryColorLabel(in double fontSize, in string text)
             {
+                FontSize = fontSize;
                 Text = text;
-
+                LineBreakMode = LineBreakMode.TailTruncation;
                 HorizontalTextAlignment = TextAlignment.Start;
-                VerticalTextAlignment = TextAlignment.End;
+                VerticalTextAlignment = TextAlignment.Start;
 
                 SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
             }
         }
 
-
-        class CustomColorLabel : Label
+        class StatisticsLabel : Label
         {
-            public CustomColorLabel(in double fontSize, Color textColor, in string text) : this(text)
+            public StatisticsLabel(in long number, in Color textColor)
             {
-                FontSize = fontSize;
+                Text = GetNumberAsText(number);
                 TextColor = textColor;
-            }
-
-            public CustomColorLabel(in string text)
-            {
-                Text = text;
-
+                FontSize = _statsFontSize;
                 HorizontalTextAlignment = TextAlignment.Start;
                 VerticalTextAlignment = TextAlignment.End;
+
+                LineBreakMode = LineBreakMode.TailTruncation;
+
+                Debug.WriteLine($"{nameof(number)}: {number} | {nameof(Text)}: {Text}");
+            }
+
+            static string GetNumberAsText(long number)
+            {
+                if (number < 10e2)
+                    return string.Format("{0:0}", number);
+                else if (number < 10e5)
+                    return $"{string.Format("{0:0.0}", number / 10e2)}K";
+                else if (number < 10e8)
+                    return $"{string.Format("{0:0.0}", number / 10e5)}M";
+                else if (number < 10e11)
+                    return $"{string.Format("{0:0.0}", number / 10e8)}B";
+                else if (number < 10e14)
+                    return $"{string.Format("{0:0.0}", number / 10e11)}T";
+
+                return "0";
             }
         }
 
-
         class Separator : BoxView
         {
-            public Separator()
-            {
-                SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
-            }
+            public Separator() => SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
         }
     }
 }
