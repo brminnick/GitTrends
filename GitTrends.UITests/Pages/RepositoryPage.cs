@@ -6,6 +6,7 @@ using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
+using Xamarin.UITest.iOS;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
 namespace GitTrends.UITests
@@ -75,9 +76,17 @@ namespace GitTrends.UITests
             App.Screenshot("Sort Button Tapped");
 
             var sortingOptionDescription = SortingConstants.SortingOptionsDictionary[sortingOption];
-            var trendingOptionsRect = App.Query(sortingOptionDescription).Last().Rect;
 
-            App.TapCoordinates(trendingOptionsRect.CenterX, trendingOptionsRect.CenterY);
+            if (App is iOSApp)
+            {
+                var trendingOptionsRect = App.Query(sortingOptionDescription).Last().Rect;
+                App.TapCoordinates(trendingOptionsRect.CenterX, trendingOptionsRect.CenterY);
+            }
+            else
+            {
+                App.Tap(sortingOptionDescription);
+            }
+
             App.Screenshot($"{sortingOptionDescription} Tapped");
 
             return WaitForRepositoriesToFinishSorting();
