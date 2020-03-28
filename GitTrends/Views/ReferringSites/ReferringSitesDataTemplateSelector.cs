@@ -27,11 +27,13 @@ namespace GitTrends
                         (Row.Description, Auto)),
 
                     ColumnDefinitions = Columns.Define(
-                        (Column.FavIcon, 32),
-                        (Column.FavIconPadding, 16),
+                        (Column.FavIcon, AbsoluteGridLength(32)),
+                        (Column.FavIconPadding, AbsoluteGridLength(16)),
                         (Column.Site, StarGridLength(1)),
                         (Column.Referrals, Auto),
+                        (Column.ReferralPadding, AbsoluteGridLength(4)),
                         (Column.Separator, AbsoluteGridLength(1)),
+                        (Column.UniquePadding, AbsoluteGridLength(4)),
                         (Column.Uniques, Auto)),
 
                     Children =
@@ -139,7 +141,7 @@ namespace GitTrends
             });
 
             enum Row { Title, Description }
-            enum Column { FavIcon, FavIconPadding, Site, Referrals, Separator, Uniques }
+            enum Column { FavIcon, FavIconPadding, Site, Referrals, ReferralPadding, Separator, UniquePadding, Uniques }
         }
     }
 }
