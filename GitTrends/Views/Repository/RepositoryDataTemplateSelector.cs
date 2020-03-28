@@ -108,7 +108,7 @@ namespace GitTrends
                         shouldDisplayValue(repository.DailyViewsList)
                             ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsTextColor)], shouldShowStarsForksIssues ? repository.StarCount.ToString() : repository.TotalViews.ToString())
                         .Row(Row.Statistics).Column(Column.Statistic1).End()
-                        .Bind(Label.TextProperty, shouldShowStarsForksIssues ? nameof(Repository.StarCount) : nameof(Repository.TotalViews), converter: numberConverter)
+                        .Bind(Label.TextProperty, shouldShowStarsForksIssues ? nameof(Repository.StarCount) : nameof(Repository.TotalViews), converter: NumberConverter)
                             : new Label(), 
 
                         new RepoStatSVGImage(shouldShowStarsForksIssues ? "repo_forked.svg" : "unique_views.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.CardForksStatsIconColor)])
@@ -118,7 +118,7 @@ namespace GitTrends
                         shouldDisplayValue(repository.DailyViewsList)
                             ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardForksStatsTextColor)], shouldShowStarsForksIssues ? repository.ForkCount.ToString() : repository.TotalUniqueViews.ToString())
                         .Row(Row.Statistics).Column(Column.Statistic2).End()
-                        .Bind(Label.TextProperty, shouldShowStarsForksIssues ? nameof(Repository.ForkCount) : nameof(Repository.TotalUniqueViews), converter: numberConverter)
+                        .Bind(Label.TextProperty, shouldShowStarsForksIssues ? nameof(Repository.ForkCount) : nameof(Repository.TotalUniqueViews), converter: NumberConverter)
                             : new Label(),
 
                         new RepoStatSVGImage(shouldShowStarsForksIssues ? "issue_opened.svg" : "total_clones.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.CardIssuesStatsIconColor)])
@@ -128,7 +128,7 @@ namespace GitTrends
                         shouldDisplayValue(repository.DailyClonesList)
                             ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardIssuesStatsTextColor)], shouldShowStarsForksIssues ? repository.IssuesCount.ToString() : repository.TotalClones.ToString())
                         .Row(Row.Statistics).Column(Column.Statistic3).End()
-                        .Bind(Label.TextProperty, shouldShowStarsForksIssues ? nameof(Repository.IssuesCount) : nameof(Repository.TotalClones), converter: numberConverter)
+                        .Bind(Label.TextProperty, shouldShowStarsForksIssues ? nameof(Repository.IssuesCount) : nameof(Repository.TotalClones), converter: NumberConverter)
                             : new Label(),
 
                         //Column.Emoji4 & Column.Statistic4 are not needed for StarsForksIssues
@@ -142,7 +142,7 @@ namespace GitTrends
                         !shouldShowStarsForksIssues && shouldDisplayValue(repository.DailyClonesList)
                             ? new CustomColorLabel(_statsFontSize, (Color)Application.Current.Resources[nameof(BaseTheme.CardUniqueClonesStatsTextColor)],repository.TotalUniqueClones.ToString())
                         .Row(Row.Statistics).Column(Column.Statistic4).End()
-                        .Bind(Label.TextProperty, nameof(Repository.TotalUniqueClones), converter: numberConverter)
+                        .Bind(Label.TextProperty, nameof(Repository.TotalUniqueClones), converter: NumberConverter)
                             : new Label(),
                         
                     }
@@ -151,7 +151,7 @@ namespace GitTrends
 
             static bool shouldDisplayValue<T>(IList<T> list) where T : BaseDailyModel => list.Any();
 
-            static FuncConverter<object, string> numberConverter => new FuncConverter<object, string>(value =>
+            static FuncConverter<object, string> NumberConverter => new FuncConverter<object, string>(value =>
             {
                 if (value == null) return "0";
 
@@ -159,13 +159,13 @@ namespace GitTrends
                 if (double.TryParse(value.ToString(), out number))
                 {
                     if (number < 10e2)
-                        return String.Format("{0:0}", number);
+                        return string.Format("{0:0}", number);
                     else if (number < 10e5)
-                        return $"{String.Format("{0:0.0}", number / 10e2)}K";
+                        return $"{string.Format("{0:0.0}", number / 10e2)}K";
                     else if (number < 10e8)
-                        return $"{String.Format("{0:0.0}", number / 10e5)}M";
+                        return $"{string.Format("{0:0.0}", number / 10e5)}M";
                     else if (number < 10e11)
-                        return $"{String.Format("{0:0.0}", number / 10e8)}B";
+                        return $"{string.Format("{0:0.0}", number / 10e8)}B";
                 }
 
                 return "0";
