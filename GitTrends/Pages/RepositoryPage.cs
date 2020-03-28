@@ -151,13 +151,11 @@ namespace GitTrends
 
         async void HandleSortToolbarItemCliked(object sender, EventArgs e)
         {
-            const string cancelText = "Cancel";
-
             var sortingOptions = SortingConstants.SortingOptionsDictionary.Values;
 
-            var selection = await DisplayActionSheet("Sort By", cancelText, null, sortingOptions.ToArray());
+            string? selection = await DisplayActionSheet("Sort By", SortingConstants.CancelText, null, sortingOptions.ToArray());
 
-            if (selection != cancelText)
+            if (!string.IsNullOrWhiteSpace(selection) && selection != SortingConstants.CancelText)
                 ViewModel.SortRepositoriesCommand.Execute(SortingConstants.SortingOptionsDictionary.First(x => x.Value == selection).Key);
         }
 

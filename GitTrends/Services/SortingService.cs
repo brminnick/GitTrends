@@ -38,8 +38,8 @@ namespace GitTrends
             SortingOption.Clones when isReversed => repositories.OrderBy(x => x.TotalClones).ThenBy(x => x.TotalUniqueClones).ThenBy(x => x.TotalViews).ThenBy(x => x.TotalUniqueViews),
             SortingOption.Clones => repositories.OrderByDescending(x => x.TotalClones).ThenByDescending(x => x.TotalUniqueClones).ThenByDescending(x => x.TotalViews).ThenByDescending(x => x.TotalUniqueViews),
 
-            SortingOption.UniqueClones when isReversed => repositories.OrderBy(x => x.TotalUniqueViews).ThenBy(x => x.TotalClones).ThenBy(x => x.TotalViews).ThenBy(x => x.TotalUniqueViews),
-            SortingOption.UniqueClones => repositories.OrderByDescending(x => x.TotalUniqueViews).ThenByDescending(x => x.TotalClones).ThenByDescending(x => x.TotalViews).ThenByDescending(x => x.TotalUniqueViews),
+            SortingOption.UniqueClones when isReversed => repositories.OrderBy(x => x.TotalUniqueClones).ThenBy(x => x.TotalClones).ThenBy(x => x.TotalViews).ThenBy(x => x.TotalUniqueViews),
+            SortingOption.UniqueClones => repositories.OrderByDescending(x => x.TotalUniqueClones).ThenByDescending(x => x.TotalClones).ThenByDescending(x => x.TotalViews).ThenByDescending(x => x.TotalUniqueViews),
 
             SortingOption.Views when isReversed => repositories.OrderBy(x => x.TotalViews).ThenBy(x => x.TotalUniqueViews).ThenBy(x => x.TotalClones).ThenBy(x => x.TotalUniqueClones),
             SortingOption.Views => repositories.OrderByDescending(x => x.TotalViews).ThenByDescending(x => x.TotalUniqueViews).ThenByDescending(x => x.TotalClones).ThenByDescending(x => x.TotalUniqueClones),
