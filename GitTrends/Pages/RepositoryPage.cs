@@ -36,10 +36,7 @@ namespace GitTrends
                 },
                 AutomationId = RepositoryPageAutomationIds.CollectionView
             };
-            collectionView.Header = collectionView.Footer = new StackLayout
-            {
-                HeightRequest = 0,
-            };
+            collectionView.Header = collectionView.Footer = new BoxView { HeightRequest = 0 };
 
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));
