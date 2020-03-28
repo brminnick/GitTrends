@@ -38,7 +38,7 @@ namespace GitTrends
 
                     Children =
                     {
-                        new FavIconImage(referringSiteModel.FavIcon).Row(Row.Title).Column(Column.FavIcon).RowSpan(2),
+                        new CircleBoxView(){ Content = new FavIconImage(referringSiteModel.FavIcon) }.Row(Row.Title).Column(Column.FavIcon).RowSpan(2),
                         new TitleLabel("SITE").Row(Row.Title).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
                         new PrimaryColorLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
                         new TitleLabel("REFERRALS").Row(Row.Title).Column(Column.Referrals).Center(),
@@ -68,11 +68,10 @@ namespace GitTrends
 
             class FavIconImage : CachedImage
             {
-                public FavIconImage(ImageSource imageSource)
+                public FavIconImage(Xamarin.Forms.ImageSource imageSource)
                 {
-                    HeightRequest = MobileReferringSiteModel.FavIconSize;
-                    HorizontalOptions = LayoutOptions.FillAndExpand;
-                    VerticalOptions = LayoutOptions.FillAndExpand;
+                    WidthRequest = HeightRequest = MobileReferringSiteModel.FavIconSize;
+                    HorizontalOptions = VerticalOptions = LayoutOptions.Center;
                     LoadingPlaceholder = FavIconService.DefaultFavIcon;
                     ErrorPlaceholder = FavIconService.DefaultFavIcon;
                     Source = imageSource;
@@ -117,6 +116,21 @@ namespace GitTrends
                 public Separator()
                 {
                     SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
+                }
+            }
+
+            class CircleBoxView : Frame
+            {
+                public CircleBoxView()
+                {
+                    Visual = VisualMarker.Material;
+                    HeightRequest = 32;
+                    WidthRequest = 32;
+                    HorizontalOptions = VerticalOptions = LayoutOptions.Start;
+                    CornerRadius = 18;
+                    HasShadow = false;
+                    Padding = new Thickness(0);
+                    BackgroundColor = Color.White;
                 }
             }
 
