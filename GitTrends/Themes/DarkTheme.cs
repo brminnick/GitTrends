@@ -108,7 +108,6 @@ namespace GitTrends
         public override Color CardUniqueClonesStatsIconColor { get; } = Color.FromHex(_saturatedPinkHex);
         public override Color CardTrendingStatsColor { get; } = Color.FromHex(_primaryTealHex);
 
-
         //Settings Components
         public override Color SettingsLabelTextColor { get; } = Color.FromHex(_textHex);
         public override Color SettingsButtonBorderColor { get; } = Color.FromHex(_white12PercentBlend);
@@ -116,11 +115,5 @@ namespace GitTrends
         public override Color TrendsChartSettingsSelectionIndicatorColor { get; } = Color.FromHex(_lightPrimaryTealHex);
 
         public override Color GitTrendsImageBackgroundColor { get; } = Color.FromHex(_offWhite);
-
-        //Fonts
-        public override string RobotoBold { get; } = Device.RuntimePlatform == Device.iOS ? "Roboto-Bold" : "Roboto-Bold.ttf#Roboto-Bold";
-        public override string RobotoMedium { get; } = Device.RuntimePlatform == Device.iOS ? "Roboto-Medium" : "Roboto-Medium.ttf#Roboto-Medium";
-        public override string RobotoRegular { get; } = Device.RuntimePlatform == Device.iOS ? "Roboto-Regular" : "Roboto-Regular.ttf#Roboto-Regular";
-
     }
 }

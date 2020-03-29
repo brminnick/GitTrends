@@ -10,8 +10,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
@@ -49,10 +47,10 @@
 	<array>
 		<string></string>
 		<string>FontAwesomeBrands.ttf</string>
-	    <string>Roboto-Bold.ttf</string>
-    <string>Roboto-Medium.ttf</string>
-    <string>Roboto-Regular.ttf</string>
-</array>
+		<string>Roboto-Bold.ttf</string>
+		<string>Roboto-Medium.ttf</string>
+		<string>Roboto-Regular.ttf</string>
+	</array>
 	<key>CFBundleShortVersionString</key>
 	<string>0.12.1</string>
 	<key>CFBundleVersion</key>
