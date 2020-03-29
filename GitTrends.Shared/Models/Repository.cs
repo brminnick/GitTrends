@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
@@ -8,7 +9,7 @@ namespace GitTrends.Shared
 {
     public class Repository : IRepository
     {
-        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork, IEnumerable<DailyViewsModel>? views = null, IEnumerable<DailyClonesModel>? clones = null)
+        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork, IList<DailyViewsModel>? views = null, IList<DailyClonesModel>? clones = null)
         {
             Name = name;
             Description = description;
@@ -19,6 +20,10 @@ namespace GitTrends.Shared
             Url = url;
             StarCount = stargazers.TotalCount;
             IsFork = isFork;
+
+            if (views != null && clones != null)
+                AddMissingDates(views, clones);
+
             DailyViewsList = (views ?? Enumerable.Empty<DailyViewsModel>()).ToList();
             DailyClonesList = (clones ?? Enumerable.Empty<DailyClonesModel>()).ToList();
 
@@ -42,8 +47,8 @@ namespace GitTrends.Shared
 
         public bool IsTrending { get; }
 
-        public List<DailyViewsModel> DailyViewsList { get; }
-        public List<DailyClonesModel> DailyClonesList { get; }
+        public IReadOnlyList<DailyViewsModel> DailyViewsList { get; }
+        public IReadOnlyList<DailyClonesModel> DailyClonesList { get; }
 
         [JsonProperty("url")]
         public string Url { get; }
@@ -60,6 +65,28 @@ namespace GitTrends.Shared
             stringBuilder.AppendLine($"{nameof(IssuesCount)}: {IssuesCount}");
 
             return stringBuilder.ToString();
+        }
+
+        static void AddMissingDates(in IList<DailyViewsModel> dailyViewsList, in IList<DailyClonesModel> dailyClonesList)
+        {
+            var day = DateTimeService.GetMinimumDateTimeOffset(dailyViewsList, dailyClonesList);
+            var maximumDay = DateTimeService.GetMaximumDateTimeOffset(dailyViewsList, dailyClonesList);
+
+            var viewsDays = dailyViewsList.Select(x => x.Day.Day).ToList();
+            var clonesDays = dailyClonesList.Select(x => x.Day.Day).ToList();
+
+            while (day.Day != maximumDay.AddDays(1).Day)
+            {
+                if (!viewsDays.Contains(day.Day))
+                    dailyViewsList.Add(new DailyViewsModel(removeHourMinuteSecond(day), 0, 0));
+
+                if (!clonesDays.Contains(day.Day))
+                    dailyClonesList.Add(new DailyClonesModel(removeHourMinuteSecond(day), 0, 0));
+
+                day = day.AddDays(1);
+            }
+
+            static DateTimeOffset removeHourMinuteSecond(in DateTimeOffset date) => new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
         }
     }
 

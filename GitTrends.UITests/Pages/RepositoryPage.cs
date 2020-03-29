@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
+using Xamarin.UITest.iOS;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
 namespace GitTrends.UITests
@@ -27,7 +29,7 @@ namespace GitTrends.UITests
 
         public void TriggerPullToRefresh() => App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerPullToRefresh);
 
-        public void SetSortingOption(SortingOption sortingOption)
+        public Task DismissSortingMenu()
         {
             if (App.Query(_androidContextMenuOverflowButton).Any())
             {
@@ -38,7 +40,56 @@ namespace GitTrends.UITests
             App.Tap(_sortButton);
             App.Screenshot("Sort Button Tapped");
 
-            App.Tap(SortingConstants.SortingOptionsDictionary[sortingOption]);
+            App.Tap(PageTitle);
+
+            App.Screenshot("Dismissed Sorting Options");
+
+            return WaitForRepositoriesToFinishSorting();
+        }
+
+        public Task CancelSortingMenu()
+        {
+            if (App.Query(_androidContextMenuOverflowButton).Any())
+            {
+                App.Tap(_androidContextMenuOverflowButton);
+                App.Screenshot("Tapped Android Search Bar Button");
+            }
+
+            App.Tap(_sortButton);
+            App.Screenshot("Sort Button Tapped");
+
+            App.Tap(SortingConstants.CancelText);
+            App.Screenshot("Cancel Button Tapped");
+
+            return WaitForRepositoriesToFinishSorting();
+        }
+
+        public Task SetSortingOption(SortingOption sortingOption)
+        {
+            if (App.Query(_androidContextMenuOverflowButton).Any())
+            {
+                App.Tap(_androidContextMenuOverflowButton);
+                App.Screenshot("Tapped Android Search Bar Button");
+            }
+
+            App.Tap(_sortButton);
+            App.Screenshot("Sort Button Tapped");
+
+            var sortingOptionDescription = SortingConstants.SortingOptionsDictionary[sortingOption];
+
+            if (App is iOSApp)
+            {
+                var trendingOptionsRect = App.Query(sortingOptionDescription).Last().Rect;
+                App.TapCoordinates(trendingOptionsRect.CenterX, trendingOptionsRect.CenterY);
+            }
+            else
+            {
+                App.Tap(sortingOptionDescription);
+            }
+
+            App.Screenshot($"{sortingOptionDescription} Tapped");
+
+            return WaitForRepositoriesToFinishSorting();
         }
 
         public void TapRepository(string repositoryName)
@@ -98,5 +149,7 @@ namespace GitTrends.UITests
             var serializedRepositoryList = App.InvokeBackdoorMethod(BackdoorMethodConstants.GetVisibleCollection).ToString();
             return JsonConvert.DeserializeObject<List<Repository>>(serializedRepositoryList);
         }
+
+        Task WaitForRepositoriesToFinishSorting() => Task.Delay(1000);
     }
 }

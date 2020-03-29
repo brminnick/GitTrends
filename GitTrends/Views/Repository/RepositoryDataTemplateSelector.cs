@@ -129,7 +129,7 @@ namespace GitTrends
                 }
             };
 
-            static bool shouldDisplayValue<T>(IList<T> list) where T : BaseDailyModel => list.Any();
+            static bool shouldDisplayValue<T>(IReadOnlyList<T> list) where T : BaseDailyModel => list.Any();
         }
 
         class CardView : Frame
