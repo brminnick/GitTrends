@@ -216,7 +216,8 @@ namespace GitTrends
                     await explodeImageTask;
 
                     using var scope = ContainerService.Container.BeginLifetimeScope();
-                    Application.Current.MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>());
+                    var repositoryPage = scope.Resolve<RepositoryPage>();
+                    Application.Current.MainPage = new BaseNavigationPage(repositoryPage);
                 });
             }
         }

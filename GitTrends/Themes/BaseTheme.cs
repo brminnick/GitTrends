@@ -13,6 +13,7 @@ namespace GitTrends
 
             Add(nameof(PageBackgroundColor), PageBackgroundColor);
 
+            Add(nameof(PrimaryTextColor), PrimaryTextColor);
             Add(nameof(TextColor), TextColor);
 
             Add(nameof(RefreshControlColor), RefreshControlColor);
@@ -25,8 +26,34 @@ namespace GitTrends
             Add(nameof(ChartAxisTextColor), ChartAxisTextColor);
             Add(nameof(ChartAxisLineColor), ChartAxisLineColor);
 
+            Add(nameof(SplashScreenStatusColor), SplashScreenStatusColor);
+
+            Add(nameof(IconColor), IconColor);
+            Add(nameof(IconPrimaryColor), IconPrimaryColor);
+
             Add(nameof(ButtonTextColor), ButtonTextColor);
             Add(nameof(ButtonBackgroundColor), ButtonBackgroundColor);
+
+            Add(nameof(CardSurfaceColor), CardSurfaceColor);
+            Add(nameof(CardBorderColor), CardBorderColor);
+
+            Add(nameof(SeparatorColor), SeparatorColor);
+
+            Add(nameof(CardStarsStatsTextColor), CardStarsStatsTextColor);
+            Add(nameof(CardStarsStatsIconColor), CardStarsStatsIconColor);
+            Add(nameof(CardForksStatsTextColor), CardForksStatsTextColor);
+            Add(nameof(CardForksStatsIconColor), CardForksStatsIconColor);
+            Add(nameof(CardIssuesStatsTextColor), CardIssuesStatsTextColor);
+            Add(nameof(CardIssuesStatsIconColor), CardIssuesStatsIconColor);
+            Add(nameof(CardViewsStatsTextColor), CardViewsStatsTextColor);
+            Add(nameof(CardViewsStatsIconColor), CardViewsStatsIconColor);
+            Add(nameof(CardClonesStatsTextColor), CardClonesStatsTextColor);
+            Add(nameof(CardClonesStatsIconColor), CardClonesStatsIconColor);
+            Add(nameof(CardUniqueViewsStatsTextColor), CardUniqueViewsStatsTextColor);
+            Add(nameof(CardUniqueViewsStatsIconColor), CardUniqueViewsStatsIconColor);
+            Add(nameof(CardUniqueClonesStatsTextColor), CardUniqueClonesStatsTextColor);
+            Add(nameof(CardUniqueClonesStatsIconColor), CardUniqueClonesStatsIconColor);
+            Add(nameof(CardTrendingStatsColor), CardTrendingStatsColor);
 
             Add(nameof(SettingsLabelTextColor), SettingsLabelTextColor);
             Add(nameof(SettingsButtonBorderColor), SettingsButtonBorderColor);
@@ -34,6 +61,10 @@ namespace GitTrends
             Add(nameof(TrendsChartSettingsSelectionIndicatorColor), TrendsChartSettingsSelectionIndicatorColor);
 
             Add(nameof(GitTrendsImageBackgroundColor), GitTrendsImageBackgroundColor);
+
+            Add(nameof(RobotoBold), RobotoBold);
+            Add(nameof(RobotoMedium), RobotoMedium);
+            Add(nameof(RobotoRegular), RobotoRegular);
         }
 
         public abstract Color NavigationBarBackgroundColor { get; }
@@ -66,6 +97,12 @@ namespace GitTrends
         public abstract Color ButtonTextColor { get; }
         public abstract Color ButtonBackgroundColor { get; }
 
+        //Card
+        public abstract Color CardSurfaceColor { get; }
+        public abstract Color CardBorderColor { get; }
+
+        public abstract Color SeparatorColor { get; }
+
         //Card Stats Color
         public abstract Color CardStarsStatsTextColor { get; }
         public abstract Color CardStarsStatsIconColor { get; }
@@ -90,5 +127,10 @@ namespace GitTrends
         public abstract Color TrendsChartSettingsSelectionIndicatorColor { get; }
 
         public abstract Color GitTrendsImageBackgroundColor { get; }
+
+        //Fonts
+        public abstract string RobotoBold { get; }
+        public abstract string RobotoMedium { get; }
+        public abstract string RobotoRegular { get; }
     }
 }

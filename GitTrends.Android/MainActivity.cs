@@ -9,6 +9,7 @@ using AsyncAwaitBestPractices;
 using Autofac;
 using Newtonsoft.Json;
 using Shiny;
+using Xamarin.Forms;
 
 namespace GitTrends.Droid
 {
@@ -33,7 +34,7 @@ namespace GitTrends.Droid
             base.OnCreate(savedInstanceState);
 
             Xamarin.Forms.Forms.Init(this, savedInstanceState);
-
+            FormsMaterial.Init(this, savedInstanceState);
             var app = new App();
 
             TryHandleOpenedFromUri(app, Intent.Data);
