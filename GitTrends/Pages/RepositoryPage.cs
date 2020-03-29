@@ -23,22 +23,16 @@ namespace GitTrends
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
 
-            Padding = new Thickness(16, 0);
+            Padding = new Thickness(2, 0);
 
             var collectionView = new CollectionView
             {
                 ItemTemplate = new RepositoryDataTemplateSelector(sortingService),
                 BackgroundColor = Color.Transparent,
                 SelectionMode = SelectionMode.Single,
-                ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical)
-                {
-                    ItemSpacing = 16
-                },
-                AutomationId = RepositoryPageAutomationIds.CollectionView
+                AutomationId = RepositoryPageAutomationIds.CollectionView,
+                Footer = new BoxView { HeightRequest = Device.RuntimePlatform is Device.iOS ? 40 : 20 }
             };
-            collectionView.Header = new BoxView { HeightRequest = 0 };
-            collectionView.Footer = new BoxView { HeightRequest = 0 };
-
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));
 
