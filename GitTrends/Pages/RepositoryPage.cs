@@ -36,10 +36,7 @@ namespace GitTrends
                 },
                 AutomationId = RepositoryPageAutomationIds.CollectionView
             };
-            collectionView.Header = collectionView.Footer = new StackLayout
-            {
-                HeightRequest = 0,
-            };
+            collectionView.Header = collectionView.Footer = new BoxView { HeightRequest = 0 };
 
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));
@@ -162,13 +159,11 @@ namespace GitTrends
 
         async void HandleSortToolbarItemCliked(object sender, EventArgs e)
         {
-            const string cancelText = "Cancel";
-
             var sortingOptions = SortingConstants.SortingOptionsDictionary.Values;
 
-            var selection = await DisplayActionSheet("Sort By", cancelText, null, sortingOptions.ToArray());
+            string? selection = await DisplayActionSheet("Sort By", SortingConstants.CancelText, null, sortingOptions.ToArray());
 
-            if (selection != null && selection != cancelText)
+            if (!string.IsNullOrWhiteSpace(selection) && selection != SortingConstants.CancelText)
                 ViewModel.SortRepositoriesCommand.Execute(SortingConstants.SortingOptionsDictionary.First(x => x.Value == selection).Key);
         }
 

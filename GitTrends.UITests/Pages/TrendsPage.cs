@@ -33,6 +33,23 @@ namespace GitTrends.UITests
             _referringSiteButton = GenerateMarkedQuery(TrendsPageAutomationIds.ReferringSitesButton);
         }
 
+        public override Task WaitForPageToLoad(TimeSpan? timespan = null)
+        {
+            try
+            {
+                App.WaitForElement(_activityIndicator, timeout: TimeSpan.FromSeconds(2));
+            }
+            catch
+            {
+
+            }
+
+            App.WaitForNoElement(_activityIndicator, timeout: timespan);
+            App.WaitForElement(_trendsChart, timeout: timespan);
+
+            return Task.CompletedTask;
+        }
+
         public bool IsSeriesVisible(string seriesName)
         {
             var serializedIsSeriesVisible = App.InvokeBackdoorMethod(BackdoorMethodConstants.IsTrendsSeriesVisible, seriesName).ToString();
@@ -63,31 +80,8 @@ namespace GitTrends.UITests
             App.Screenshot("Unique Clones Legend Icon Tapped");
         }
 
-        public override Task WaitForPageToLoad(TimeSpan? timespan = null)
-        {
-            try
-            {
-                App.WaitForElement(_activityIndicator, timeout: timespan);
-            }
-            catch
-            {
-
-            }
-
-            App.WaitForNoElement(_activityIndicator, timeout: timespan);
-            App.WaitForElement(_trendsChart, timeout: timespan);
-
-            return Task.CompletedTask;
-        }
-
         public void TapReferringSitesButton()
         {
-            if (App is AndroidApp)
-            {
-                App.Tap(_androidContextMenuOverflowButton);
-                App.Screenshot("Android Overflow Button Tapped");
-            }
-
             App.Tap(_referringSiteButton);
             App.Screenshot("Referring Sites Button Tapped");
         }
