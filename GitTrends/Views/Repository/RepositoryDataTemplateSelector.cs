@@ -138,29 +138,26 @@ namespace GitTrends
                 static bool shouldDisplayValue<T>(IReadOnlyList<T> list) where T : BaseDailyModel => list.Any();
             }
 
-            class CardView : ContentView
+            class CardView : Grid
             {
                 public CardView(View content)
                 {
-                    Content = new Grid
-                    {
-                        RowDefinitions = Rows.Define(
-                            (Row.TopPadding, AbsoluteGridLength(8)),
-                            (Row.Card, StarGridLength(1))),
+                    SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 
-                        ColumnDefinitions = Columns.Define(
-                            (Column.LeftPadding, AbsoluteGridLength(1)),
-                            (Column.Card, StarGridLength(1)),
-                            (Column.RightPadding, AbsoluteGridLength(1))),
+                    RowDefinitions = Rows.Define(
+                        (Row.TopPadding, AbsoluteGridLength(8)),
+                        (Row.Card, StarGridLength(1)),
+                        (Row.BottomPadding, AbsoluteGridLength(1)));
 
-                        Children =
-                        {
-                            new CardViewFrame(content).Row(Row.Card).Column(Column.Card)
-                        }
-                    };
+                    ColumnDefinitions = Columns.Define(
+                        (Column.LeftPadding, AbsoluteGridLength(1)),
+                        (Column.Card, StarGridLength(1)),
+                        (Column.RightPadding, AbsoluteGridLength(1)));
+
+                    Children.Add(new CardViewFrame(content).Row(Row.Card).Column(Column.Card));
                 }
 
-                enum Row { TopPadding, Card }
+                enum Row { TopPadding, Card, BottomPadding }
                 enum Column { LeftPadding, Card, RightPadding }
 
                 class CardViewFrame : PancakeView

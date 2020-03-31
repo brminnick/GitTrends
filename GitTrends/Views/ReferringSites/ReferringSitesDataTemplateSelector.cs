@@ -18,36 +18,45 @@ namespace GitTrends
             {
             }
 
-            static View CreateReferringSitesDataTemplate(in MobileReferringSiteModel referringSiteModel) => new Grid
+            enum Row { TopPadding, Title, Description, BotomPadding }
+            enum Column { LeftPadding, FavIcon, Site, Referrals, Uniques, RightPadding }
+
+            static View CreateReferringSitesDataTemplate(in MobileReferringSiteModel referringSiteModel)
             {
-                RowSpacing = 1,
-                Margin = new Thickness(5),
-
-                RowDefinitions = Rows.Define(
-                    (Row.TopPadding, AbsoluteGridLength(2)),
-                    (Row.Title, AbsoluteGridLength(rowHeight / 2)),
-                    (Row.Description, AbsoluteGridLength(rowHeight / 2)),
-                    (Row.BotomPadding, AbsoluteGridLength(2))),
-
-                ColumnDefinitions = Columns.Define(
-                    (Column.LeftPadding, AbsoluteGridLength(5)),
-                    (Column.FavIcon, AbsoluteGridLength(rowHeight)),
-                    (Column.Site, StarGridLength(3)),
-                    (Column.Referrals, StarGridLength(2)),
-                    (Column.Uniques, StarGridLength(2)),
-                    (Column.RightPadding, AbsoluteGridLength(5))),
-
-                Children =
+                var referringSitesGrid = new Grid
                 {
-                    new FavIconImage(referringSiteModel.FavIcon).Row(Row.Title).Column(Column.FavIcon).RowSpan(4),
-                    new TitleLabel("Site").Row(Row.Title).Column(Column.Site),
-                    new DescriptionLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site),
-                    new TitleLabel("Referrals"){ LineBreakMode = LineBreakMode.TailTruncation }.Row(Row.Title).Column(Column.Referrals),
-                    new DescriptionLabel(referringSiteModel.TotalCount.ToString()).Row(Row.Description).Column(Column.Referrals),
-                    new TitleLabel("Unique Visitors").Row(Row.Title).Column(Column.Uniques),
-                    new DescriptionLabel(referringSiteModel.TotalUniqueCount.ToString()).Row(Row.Description).Column(Column.Uniques),
-                }
-            };
+                    RowSpacing = 1,
+                    Margin = new Thickness(5),
+
+                    RowDefinitions = Rows.Define(
+                        (Row.TopPadding, AbsoluteGridLength(2)),
+                        (Row.Title, AbsoluteGridLength(rowHeight / 2)),
+                        (Row.Description, AbsoluteGridLength(rowHeight / 2)),
+                        (Row.BotomPadding, AbsoluteGridLength(2))),
+
+                    ColumnDefinitions = Columns.Define(
+                        (Column.LeftPadding, AbsoluteGridLength(5)),
+                        (Column.FavIcon, AbsoluteGridLength(rowHeight)),
+                        (Column.Site, StarGridLength(3)),
+                        (Column.Referrals, StarGridLength(2)),
+                        (Column.Uniques, StarGridLength(2)),
+                        (Column.RightPadding, AbsoluteGridLength(5))),
+
+                    Children =
+                    {
+                        new FavIconImage(referringSiteModel.FavIcon).Row(Row.Title).Column(Column.FavIcon).RowSpan(4),
+                        new TitleLabel("Site").Row(Row.Title).Column(Column.Site),
+                        new DescriptionLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site),
+                        new TitleLabel("Referrals") { LineBreakMode = LineBreakMode.TailTruncation }.Row(Row.Title).Column(Column.Referrals),
+                        new DescriptionLabel(referringSiteModel.TotalCount.ToString()).Row(Row.Description).Column(Column.Referrals),
+                        new TitleLabel("Unique Visitors").Row(Row.Title).Column(Column.Uniques),
+                        new DescriptionLabel(referringSiteModel.TotalUniqueCount.ToString()).Row(Row.Description).Column(Column.Uniques),
+                    }
+                };
+
+                referringSitesGrid.SetDynamicResource(VisualElement.BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+                return referringSitesGrid;
+            }
 
             class FavIconImage : CachedImage
             {
@@ -93,9 +102,6 @@ namespace GitTrends
                     SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
                 }
             }
-
-            enum Row { TopPadding, Title, Description, BotomPadding }
-            enum Column { LeftPadding, FavIcon, Site, Referrals, Uniques, RightPadding }
         }
     }
 }
