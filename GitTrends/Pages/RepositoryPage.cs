@@ -31,7 +31,7 @@ namespace GitTrends
                 BackgroundColor = Color.Transparent,
                 SelectionMode = SelectionMode.Single,
                 AutomationId = RepositoryPageAutomationIds.CollectionView,
-                Footer = new BoxView { HeightRequest = Device.RuntimePlatform is Device.iOS ? 40 : 20 }
+                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 20 } : null
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));

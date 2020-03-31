@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using FFImageLoading.Svg.Forms;
 using GitTrends.Shared;
@@ -52,6 +51,9 @@ namespace GitTrends
 
             static CardView CreateRepositoryDataTemplate(Repository repository, bool shouldShowStarsForksIssues)
             {
+                var largeScreenTrendingImage = new LargeScreenTrendingImage();
+                var smallScreenTrendingImage = new SmallScreenTrendingImage(largeScreenTrendingImage);
+
                 return new CardView(new Grid
                 {
                     HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -89,9 +91,14 @@ namespace GitTrends
 
                         new Separator().Row(Row.Separator).Column(Column.Trending).ColumnSpan(9),
 
-                        //Only display the Trending label when a repository is trending
+                        //On smaller screens, display TrendingImage under the Avatar
                         repository.IsTrending
-                            ? new RepositoryStatSVGImage("trending_tag.svg", nameof(BaseTheme.CardTrendingStatsColor), 62, 16).Row(Row.SeparatorPadding).Column(Column.Avatar).ColumnSpan(3).RowSpan(2).EndExpand().Bottom()
+                            ? smallScreenTrendingImage.Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2)
+                            : new SvgCachedImage(),
+
+                        //On larger screens, display TrendingImage under the Separator
+                        repository.IsTrending
+                            ? largeScreenTrendingImage.Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2)
                             : new SvgCachedImage(),
 
                         new RepositoryStatSVGImage(shouldShowStarsForksIssues ? "star.svg" : "total_views.svg", nameof(BaseTheme.CardStarsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
@@ -188,90 +195,123 @@ namespace GitTrends
                 }
             }
 
-            class RepositoryStatSVGImage : SvgImage
+            class LargeScreenTrendingImage : TrendingImage
             {
-                public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor, double width = 0, double height = 0)
-                    : base(svgFileName, () => (Color)Application.Current.Resources[baseThemeColor])
+                public LargeScreenTrendingImage()
                 {
-                    Margin = new Thickness(0, 0, 3, 0);
-
-                    WidthRequest = (width != 0.00) ? width : _emojiColumnSize / 2;
-                    HeightRequest = (height != 0.00) ? height : _emojiColumnSize / 2;
-
-                    VerticalOptions = LayoutOptions.CenterAndExpand;
-                    HorizontalOptions = LayoutOptions.EndAndExpand;
-                }
-            }
-
-            class RepositoryNameLabel : PrimaryColorLabel
-            {
-                public RepositoryNameLabel(in string text) : base(20, text)
-                {
-                    LineBreakMode = LineBreakMode.TailTruncation;
-                    HorizontalOptions = LayoutOptions.FillAndExpand;
-
-                    SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoBold));
-                }
-            }
-
-            class RepositoryDescriptionLabel : PrimaryColorLabel
-            {
-                public RepositoryDescriptionLabel(in string text) : base(14, text)
-                {
-                    MaxLines = 2;
-                    SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoRegular));
-                }
-            }
-
-            abstract class PrimaryColorLabel : Label
-            {
-                protected PrimaryColorLabel(in double fontSize, in string text)
-                {
-                    FontSize = fontSize;
-                    Text = text;
-                    LineBreakMode = LineBreakMode.TailTruncation;
-                    HorizontalTextAlignment = TextAlignment.Start;
-                    VerticalTextAlignment = TextAlignment.Start;
-
-                    SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
-                }
-            }
-
-            class StatisticsLabel : Label
-            {
-                public StatisticsLabel(in long number, in string textColorThemeName)
-                {
-                    Text = GetNumberAsText(number);
-                    FontSize = _statsFontSize;
-                    HorizontalTextAlignment = TextAlignment.Start;
-                    VerticalTextAlignment = TextAlignment.End;
-
-                    LineBreakMode = LineBreakMode.TailTruncation;
-
-                    SetDynamicResource(TextColorProperty, textColorThemeName);
+                    SetBinding(IsVisibleProperty, new Binding(nameof(Width), converter: IsVisibleWidthConverter, source: this));
                 }
 
-                static string GetNumberAsText(long number)
-                {
-                    if (number < 10e2)
-                        return string.Format("{0:0}", number);
-                    else if (number < 10e5)
-                        return $"{string.Format("{0:0.0}", number / 10e2)}K";
-                    else if (number < 10e8)
-                        return $"{string.Format("{0:0.0}", number / 10e5)}M";
-                    else if (number < 10e11)
-                        return $"{string.Format("{0:0.0}", number / 10e8)}B";
-                    else if (number < 10e14)
-                        return $"{string.Format("{0:0.0}", number / 10e11)}T";
+                static FuncConverter<double, bool> IsVisibleWidthConverter { get; } = new FuncConverter<double, bool>(width => width is -1 || width >= SvgWidthRequest);
+            }
 
-                    return "0";
+
+            class SmallScreenTrendingImage : TrendingImage
+            {
+                public SmallScreenTrendingImage(in LargeScreenTrendingImage largeScreenTrendingImage)
+                {
+                    SetBinding(IsVisibleProperty, new Binding(nameof(IsVisible), converter: IsLargeScreenTrendingImageNotVisible, source: largeScreenTrendingImage));
+                }
+
+                static FuncConverter<bool, bool> IsLargeScreenTrendingImageNotVisible { get; } = new FuncConverter<bool, bool>(isLargeScreenTrendingImageVisible => !isLargeScreenTrendingImageVisible);
+            }
+
+            abstract class TrendingImage : RepositoryStatSVGImage
+            {
+                protected const double SvgWidthRequest = 62;
+                protected const double SvgHeightRequest = 16;
+
+                public TrendingImage() : base("trending_tag.svg", nameof(BaseTheme.CardTrendingStatsColor), SvgWidthRequest, SvgHeightRequest)
+                {
+
                 }
             }
+        }
 
-            class Separator : BoxView
+
+        class RepositoryStatSVGImage : SvgImage
+        {
+            public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor, double width = 0, double height = 0)
+                : base(svgFileName, () => (Color)Application.Current.Resources[baseThemeColor])
             {
-                public Separator() => SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
+                Margin = new Thickness(0, 0, 3, 0);
+
+                WidthRequest = (width != 0.00) ? width : _emojiColumnSize / 2;
+                HeightRequest = (height != 0.00) ? height : _emojiColumnSize / 2;
+
+                VerticalOptions = LayoutOptions.CenterAndExpand;
+                HorizontalOptions = LayoutOptions.EndAndExpand;
             }
+        }
+
+        class RepositoryNameLabel : PrimaryColorLabel
+        {
+            public RepositoryNameLabel(in string text) : base(20, text)
+            {
+                LineBreakMode = LineBreakMode.TailTruncation;
+                HorizontalOptions = LayoutOptions.FillAndExpand;
+
+                SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoBold));
+            }
+        }
+
+        class RepositoryDescriptionLabel : PrimaryColorLabel
+        {
+            public RepositoryDescriptionLabel(in string text) : base(14, text)
+            {
+                MaxLines = 2;
+                SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoRegular));
+            }
+        }
+
+        abstract class PrimaryColorLabel : Label
+        {
+            protected PrimaryColorLabel(in double fontSize, in string text)
+            {
+                FontSize = fontSize;
+                Text = text;
+                LineBreakMode = LineBreakMode.TailTruncation;
+                HorizontalTextAlignment = TextAlignment.Start;
+                VerticalTextAlignment = TextAlignment.Start;
+
+                SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+            }
+        }
+
+        class StatisticsLabel : Label
+        {
+            public StatisticsLabel(in long number, in string textColorThemeName)
+            {
+                Text = GetNumberAsText(number);
+                FontSize = _statsFontSize;
+                HorizontalTextAlignment = TextAlignment.Start;
+                VerticalTextAlignment = TextAlignment.End;
+
+                LineBreakMode = LineBreakMode.TailTruncation;
+
+                SetDynamicResource(TextColorProperty, textColorThemeName);
+            }
+
+            static string GetNumberAsText(long number)
+            {
+                if (number < 10e2)
+                    return string.Format("{0:0}", number);
+                else if (number < 10e5)
+                    return $"{string.Format("{0:0.0}", number / 10e2)}K";
+                else if (number < 10e8)
+                    return $"{string.Format("{0:0.0}", number / 10e5)}M";
+                else if (number < 10e11)
+                    return $"{string.Format("{0:0.0}", number / 10e8)}B";
+                else if (number < 10e14)
+                    return $"{string.Format("{0:0.0}", number / 10e11)}T";
+
+                return "0";
+            }
+        }
+
+        class Separator : BoxView
+        {
+            public Separator() => SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
         }
     }
 }
