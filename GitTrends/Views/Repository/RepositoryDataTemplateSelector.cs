@@ -14,10 +14,11 @@ namespace GitTrends
 {
     class RepositoryDataTemplateSelector : DataTemplateSelector
     {
-        const int _emojiColumnSize = 32;
-        const int _statsColumnSize = 30;
+        const int _statsColumnSize = 40;
         const int _circleImageHeight = 62;
         const double _statsFontSize = 12;
+        const double _statisticsRowHeight = _statsFontSize + 4;
+        const double _emojiColumnSize = _statisticsRowHeight;
 
         readonly SortingService _sortingService;
 
@@ -29,8 +30,9 @@ namespace GitTrends
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
             var repository = (Repository)item;
+            var sortingCategory = SortingConstants.GetSortingCategory(_sortingService.CurrentOption);
 
-            return SortingConstants.GetSortingCategory(_sortingService.CurrentOption) switch
+            return sortingCategory switch
             {
                 SortingCategory.Clones => new ClonesDataTemplate(repository),
                 SortingCategory.Views => new ViewsDataTemplate(repository),
@@ -38,8 +40,6 @@ namespace GitTrends
                 _ => throw new NotSupportedException()
             };
         }
-
-        static bool ShouldDisplayValue<T>(IReadOnlyList<T> list) where T : BaseDailyModel => list.Any();
 
         class ClonesDataTemplate : RepositoryDataTemplate
         {
@@ -50,11 +50,10 @@ namespace GitTrends
 
             static IEnumerable<View> CreateViews(Repository repository)
             {
-                var shouldDisplayValues = ShouldDisplayValue(repository.DailyClonesList);
+                var shouldDisplayValues = repository.DailyClonesList.Any();
 
                 return new View[]
                 {
-
                     new RepositoryStatSVGImage("total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
 
                     //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
@@ -88,11 +87,10 @@ namespace GitTrends
 
             static IEnumerable<View> CreateViews(Repository repository)
             {
-                var shouldDisplayValues = ShouldDisplayValue(repository.DailyViewsList);
+                var shouldDisplayValues = repository.DailyViewsList.Any();
 
                 return new View[]
                 {
-
                     new RepositoryStatSVGImage("total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
 
                     //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
@@ -126,7 +124,7 @@ namespace GitTrends
 
             static IEnumerable<View> CreateViews(Repository repository)
             {
-                var shouldDisplayValues = ShouldDisplayValue(repository.DailyViewsList);
+                var shouldDisplayValues = repository.DailyViewsList.Any();
 
                 return new View[]
                 {
@@ -156,29 +154,29 @@ namespace GitTrends
 
         class CardView : Grid
         {
-            public CardView(IEnumerable<View> children)
+            public CardView(in IEnumerable<View> children)
             {
-                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
-
                 RowDefinitions = Rows.Define(
-                    (Row.TopPadding, AbsoluteGridLength(8)),
-                    (Row.Card, StarGridLength(1)),
-                    (Row.BottomPadding, AbsoluteGridLength(1)));
+                    (CardViewRow.TopPadding, AbsoluteGridLength(8)),
+                    (CardViewRow.Card, StarGridLength(1)),
+                    (CardViewRow.BottomPadding, AbsoluteGridLength(1)));
 
                 ColumnDefinitions = Columns.Define(
-                    (Column.LeftPadding, AbsoluteGridLength(1)),
-                    (Column.Card, StarGridLength(1)),
-                    (Column.RightPadding, AbsoluteGridLength(1)));
+                    (CardViewColumn.LeftPadding, AbsoluteGridLength(1)),
+                    (CardViewColumn.Card, StarGridLength(1)),
+                    (CardViewColumn.RightPadding, AbsoluteGridLength(1)));
 
-                Children.Add(new CardViewFrame(children).Row(Row.Card).Column(Column.Card));
+                Children.Add(new CardViewFrame(children).Row(CardViewRow.Card).Column(CardViewColumn.Card));
+
+                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             }
 
-            enum Row { TopPadding, Card, BottomPadding }
-            enum Column { LeftPadding, Card, RightPadding }
+            enum CardViewRow { TopPadding, Card, BottomPadding }
+            enum CardViewColumn { LeftPadding, Card, RightPadding }
 
             class CardViewFrame : PancakeView
             {
-                public CardViewFrame(IEnumerable<View> children)
+                public CardViewFrame(in IEnumerable<View> children)
                 {
                     Padding = new Thickness(16, 16, 12, 8);
                     BorderThickness = 1;
@@ -193,30 +191,29 @@ namespace GitTrends
 
                 class ContentGrid : Grid
                 {
-                    public ContentGrid(IEnumerable<View> children)
+                    public ContentGrid(in IEnumerable<View> children)
                     {
                         HorizontalOptions = LayoutOptions.FillAndExpand;
                         VerticalOptions = LayoutOptions.FillAndExpand;
-                        ColumnSpacing = 2;
 
                         RowDefinitions = Rows.Define(
-                            (RepositoryDataTemplateSelector.Row.Title, AbsoluteGridLength(25)),
-                            (RepositoryDataTemplateSelector.Row.Description, AbsoluteGridLength(40)),
-                            (RepositoryDataTemplateSelector.Row.DescriptionPadding, AbsoluteGridLength(4)),
-                            (RepositoryDataTemplateSelector.Row.Separator, AbsoluteGridLength(1)),
-                            (RepositoryDataTemplateSelector.Row.SeparatorPadding, AbsoluteGridLength(4)),
-                            (RepositoryDataTemplateSelector.Row.Statistics, AbsoluteGridLength(_statsFontSize + 2)));
+                            (Row.Title, AbsoluteGridLength(25)),
+                            (Row.Description, AbsoluteGridLength(40)),
+                            (Row.DescriptionPadding, AbsoluteGridLength(4)),
+                            (Row.Separator, AbsoluteGridLength(1)),
+                            (Row.SeparatorPadding, AbsoluteGridLength(4)),
+                            (Row.Statistics, AbsoluteGridLength(_statisticsRowHeight)));
 
                         ColumnDefinitions = Columns.Define(
-                            (RepositoryDataTemplateSelector.Column.Avatar, AbsoluteGridLength(_circleImageHeight)),
-                            (RepositoryDataTemplateSelector.Column.AvatarPadding, AbsoluteGridLength(16)),
-                            (RepositoryDataTemplateSelector.Column.Trending, StarGridLength(1)),
-                            (RepositoryDataTemplateSelector.Column.Emoji1, AbsoluteGridLength(_emojiColumnSize)),
-                            (RepositoryDataTemplateSelector.Column.Statistic1, AbsoluteGridLength(_statsColumnSize)),
-                            (RepositoryDataTemplateSelector.Column.Emoji2, AbsoluteGridLength(_emojiColumnSize)),
-                            (RepositoryDataTemplateSelector.Column.Statistic2, AbsoluteGridLength(_statsColumnSize)),
-                            (RepositoryDataTemplateSelector.Column.Emoji3, AbsoluteGridLength(_emojiColumnSize)),
-                            (RepositoryDataTemplateSelector.Column.Statistic3, AbsoluteGridLength(_statsColumnSize)));
+                            (Column.Avatar, AbsoluteGridLength(_circleImageHeight)),
+                            (Column.AvatarPadding, AbsoluteGridLength(16)),
+                            (Column.Trending, StarGridLength(1)),
+                            (Column.Emoji1, AbsoluteGridLength(_emojiColumnSize)),
+                            (Column.Statistic1, AbsoluteGridLength(_statsColumnSize)),
+                            (Column.Emoji2, AbsoluteGridLength(_emojiColumnSize)),
+                            (Column.Statistic2, AbsoluteGridLength(_statsColumnSize)),
+                            (Column.Emoji3, AbsoluteGridLength(_emojiColumnSize)),
+                            (Column.Statistic3, AbsoluteGridLength(_statsColumnSize)));
 
                         foreach (var child in children)
                         {
@@ -248,44 +245,16 @@ namespace GitTrends
             static FuncConverter<bool, bool> IsLargeScreenTrendingImageNotVisible { get; } = new FuncConverter<bool, bool>(isLargeScreenTrendingImageVisible => !isLargeScreenTrendingImageVisible);
         }
 
-        abstract class TrendingImage : RepositoryStatSVGImage
-        {
-            protected const double SvgWidthRequest = 62;
-            protected const double SvgHeightRequest = 16;
-
-            public TrendingImage() : base("trending_tag.svg", nameof(BaseTheme.CardTrendingStatsColor), SvgWidthRequest, SvgHeightRequest)
-            {
-                VerticalOptions = LayoutOptions.End;
-            }
-        }
-
-
         class RepositoryStatSVGImage : SvgImage
         {
-            public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor, double width = 0, double height = 0)
+            public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor, in double width = default, in double height = default)
                 : base(svgFileName, () => (Color)Application.Current.Resources[baseThemeColor])
             {
-                Margin = new Thickness(0, 0, 3, 0);
-
-                WidthRequest = (width != 0.00) ? width : _emojiColumnSize / 2;
-                HeightRequest = (height != 0.00) ? height : _emojiColumnSize / 2;
+                WidthRequest = (width == default) ? int.MaxValue : width;
+                HeightRequest = (height == default) ? int.MaxValue : height;
 
                 VerticalOptions = LayoutOptions.CenterAndExpand;
                 HorizontalOptions = LayoutOptions.EndAndExpand;
-            }
-        }
-
-        abstract class PrimaryColorLabel : Label
-        {
-            protected PrimaryColorLabel(in double fontSize, in string text)
-            {
-                FontSize = fontSize;
-                Text = text;
-                LineBreakMode = LineBreakMode.TailTruncation;
-                HorizontalTextAlignment = TextAlignment.Start;
-                VerticalTextAlignment = TextAlignment.Start;
-
-                SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
             }
         }
 
@@ -295,6 +264,9 @@ namespace GitTrends
             {
                 Text = GetNumberAsText(number);
                 FontSize = _statsFontSize;
+
+                HorizontalOptions = LayoutOptions.FillAndExpand;
+
                 HorizontalTextAlignment = TextAlignment.Start;
                 VerticalTextAlignment = TextAlignment.End;
 
@@ -320,6 +292,32 @@ namespace GitTrends
             }
         }
 
+        abstract class TrendingImage : RepositoryStatSVGImage
+        {
+            protected const double SvgWidthRequest = 62;
+            protected const double SvgHeightRequest = 16;
+
+            public TrendingImage() : base("trending_tag.svg", nameof(BaseTheme.CardTrendingStatsColor), SvgWidthRequest, SvgHeightRequest)
+            {
+                HorizontalOptions = LayoutOptions.Start;
+                VerticalOptions = LayoutOptions.End;
+            }
+        }
+
+        abstract class PrimaryColorLabel : Label
+        {
+            protected PrimaryColorLabel(in double fontSize, in string text)
+            {
+                FontSize = fontSize;
+                Text = text;
+                LineBreakMode = LineBreakMode.TailTruncation;
+                HorizontalTextAlignment = TextAlignment.Start;
+                VerticalTextAlignment = TextAlignment.Start;
+
+                SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+            }
+        }
+
         abstract class RepositoryDataTemplate : DataTemplate
         {
             protected RepositoryDataTemplate(string ownerAvatarUrl, string repositoryName, string repositoryDescription, bool isTrending, IEnumerable<View> views)
@@ -337,20 +335,20 @@ namespace GitTrends
                 {
                     new AvatarImage(ownerAvatarUrl).Row(Row.Title).Column(Column.Avatar).RowSpan(2).Center(),
 
-                    new RepositoryNameLabel(repositoryName).Row(Row.Title).Column(Column.Trending).ColumnSpan(9),
+                    new RepositoryNameLabel(repositoryName).Row(Row.Title).Column(Column.Trending).ColumnSpan(7),
 
-                    new RepositoryDescriptionLabel(repositoryDescription).Row(Row.Description).Column(Column.Trending).ColumnSpan(9),
+                    new RepositoryDescriptionLabel(repositoryDescription).Row(Row.Description).Column(Column.Trending).ColumnSpan(7),
 
-                    new Separator().Row(Row.Separator).Column(Column.Trending).ColumnSpan(9),
+                    new Separator().Row(Row.Separator).Column(Column.Trending).ColumnSpan(7),
 
                     //On smaller screens, display TrendingImage under the Avatar
                     isTrending
-                        ? smallScreenTrendingImage.Row(Row.Statistics).Column(Column.Avatar)
+                        ? smallScreenTrendingImage.Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2)
                         : new SvgCachedImage(),
 
                     //On larger screens, display TrendingImage under the Separator
                     isTrending
-                        ? largeScreenTrendingImage.Row(Row.Statistics).Column(Column.Trending)
+                        ? largeScreenTrendingImage.Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2)
                         : new SvgCachedImage(),
                 };
 
