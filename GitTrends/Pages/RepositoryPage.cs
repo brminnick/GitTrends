@@ -23,8 +23,6 @@ namespace GitTrends
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
 
-            Padding = new Thickness(2, 0);
-
             var collectionView = new CollectionView
             {
                 ItemTemplate = new RepositoryDataTemplateSelector(sortingService),
