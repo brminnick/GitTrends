@@ -179,7 +179,7 @@ namespace GitTrends
                 public CardViewFrame(in IEnumerable<View> children)
                 {
                     Padding = new Thickness(16, 16, 12, 8);
-                    BorderThickness = 1;
+                    BorderThickness = 2;
                     CornerRadius = 4;
                     HasShadow = false;
                     Visual = VisualMarker.Material;
