@@ -16,6 +16,7 @@ namespace GitTrends
 
         public SortingOption CurrentOption
         {
+            //Bug Fix for Removing SortingConstants.Trending in v1.0
             get
             {
                 try
@@ -33,9 +34,9 @@ namespace GitTrends
             set => Preferences.Set(nameof(CurrentOption), (int)value);
         }
 
-        //Sorting Priority: Trending > Stars > Forks > Issues
-        //Sorting Priority: Trending > Views > Unique Views > Stars
-        //Sorting Priority: Trending > Clones > Unique Clones > Stars
+        //SortingCategory.IssuesForks Priority: Trending > Stars > Forks > Issues
+        //SortingCategory.Views Priority: Trending > Views > Unique Views > Stars
+        //SortingCategory.Clones Priority: Trending > Clones > Unique Clones > Stars
         public static IEnumerable<Repository> SortRepositories(in IEnumerable<Repository> repositories, in SortingOption sortingOption, in bool isReversed) => sortingOption switch
         {
             SortingOption.Forks when isReversed => repositories.OrderBy(x => x.IsTrending).ThenBy(x => x.ForkCount).ThenBy(x => x.StarCount).ThenBy(x => x.IssuesCount),
