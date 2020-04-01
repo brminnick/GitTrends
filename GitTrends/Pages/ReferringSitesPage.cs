@@ -118,8 +118,6 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            Disappearing += HandleDisappearing;
-
             if (_refreshView.Content is CollectionView collectionView && IsNullOrEmpty(collectionView.ItemsSource))
                 _refreshView.IsRefreshing = true;
 
@@ -135,8 +133,6 @@ namespace GitTrends
                 && referingSite.IsReferrerUriValid
                 && referingSite.ReferrerUri != null)
             {
-                Disappearing -= HandleDisappearing;
-
                 AnalyticsService.Track("Referring Site Tapped", new Dictionary<string, string>
                 {
                     { nameof(ReferringSiteModel.Referrer), referingSite.Referrer },
@@ -145,13 +141,6 @@ namespace GitTrends
 
                 await OpenBrowser(referingSite.ReferrerUri);
             }
-        }
-
-        //Workaround for https://github.com/xamarin/Xamarin.Forms/issues/7878
-        async void HandleDisappearing(object sender, EventArgs e)
-        {
-            if (Navigation.ModalStack.Any())
-                await Navigation.PopModalAsync();
         }
 
         async void HandleCloseButtonClicked(object sender, EventArgs e) => await Navigation.PopModalAsync();
