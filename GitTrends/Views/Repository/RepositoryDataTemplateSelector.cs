@@ -157,9 +157,9 @@ namespace GitTrends
             public CardView(in IEnumerable<View> children)
             {
                 RowDefinitions = Rows.Define(
-                    (CardViewRow.TopPadding, AbsoluteGridLength(15)),
+                    (CardViewRow.TopPadding, AbsoluteGridLength(16)),
                     (CardViewRow.Card, StarGridLength(1)),
-                    (CardViewRow.BottomPadding, AbsoluteGridLength(1)));
+                    (CardViewRow.BottomPadding, AbsoluteGridLength(0)));
 
                 ColumnDefinitions = Columns.Define(
                     (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
