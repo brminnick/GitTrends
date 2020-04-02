@@ -1,7 +1,9 @@
 ﻿using FFImageLoading.Forms;
 using GitTrends.Shared;
+using GitTrends.Views.Base;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using Xamarin.Forms.PancakeView;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
@@ -23,8 +25,8 @@ namespace GitTrends
                 {
 
                     RowDefinitions = Rows.Define(
-                        (Row.Title, Auto),
-                        (Row.Description, Auto)),
+                        (Row.Title, StarGridLength(1)),
+                        (Row.Description, StarGridLength(1))),
 
                     ColumnDefinitions = Columns.Define(
                         (Column.FavIcon, AbsoluteGridLength(32)),
@@ -42,20 +44,19 @@ namespace GitTrends
                         new TitleLabel("SITE").Row(Row.Title).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
                         new PrimaryColorLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
                         new TitleLabel("REFERRALS").Row(Row.Title).Column(Column.Referrals).Center(),
-                        new PrimaryColorLabel(referringSiteModel.TotalCount.ToString()).Row(Row.Description).Column(Column.Referrals).Center()
-                        .Bind(Label.TextProperty, nameof(ReferringSiteModel.TotalCount), converter: NumberConverter),
+                        new StatisticsLabel(12, referringSiteModel.TotalCount, nameof(BaseTheme.PrimaryTextColor)).Row(Row.Description).Column(Column.Referrals).Center(),
                         new Separator().Row(Row.Title).Column(Column.Separator).RowSpan(2).FillExpandVertical(),
                         new TitleLabel("UNIQUE").Row(Row.Title).Column(Column.Uniques).Center(),
-                        new PrimaryColorLabel(referringSiteModel.TotalUniqueCount.ToString()).Row(Row.Description).Column(Column.Uniques).Center()
-                        .Bind(Label.TextProperty, nameof(ReferringSiteModel.TotalUniqueCount), converter: NumberConverter),
+                        new StatisticsLabel(12, referringSiteModel.TotalUniqueCount, nameof(BaseTheme.PrimaryTextColor)).Row(Row.Description).Column(Column.Uniques).Center()
                     }
                 }
             };
 
-            class CardView : Frame
+            class CardView : PancakeView
             {
                 public CardView()
                 {
+                    BorderThickness = 2;
                     CornerRadius = 4;
                     HasShadow = false;
                     Visual = VisualMarker.Material;
@@ -83,11 +84,9 @@ namespace GitTrends
 
                 public TitleLabel(in string text) : base(text)
                 {
-                    FontSize = 12;
                     CharacterSpacing = 1.56;
                     HorizontalTextAlignment = TextAlignment.Start;
                     VerticalTextAlignment = TextAlignment.Start;
-                    HorizontalOptions = LayoutOptions.FillAndExpand;
 
                     SetDynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
                     SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoMedium));
@@ -105,6 +104,7 @@ namespace GitTrends
                     MaxLines = 1;
                     LineBreakMode = LineBreakMode.TailTruncation;
                     HorizontalTextAlignment = TextAlignment.Start;
+                    HorizontalOptions = LayoutOptions.FillAndExpand;
 
                     SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
                     SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoRegular));
