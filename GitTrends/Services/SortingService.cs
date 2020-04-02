@@ -52,19 +52,19 @@ namespace GitTrends
         //Bug Fix caused by removing SortingConstants.Trending between v0.12.0 and v1.0
         SortingOption GetCurrentOption()
         {
-            var currentOption = getSortingOpion();
+            var currentOption = getCurrentSortingOption();
 
             if (containsMultipleFlags(currentOption))
             {
-                Preferences.Set(nameof(CurrentOption), (int)SortingConstants.DefaultSortingOption);
-                return getSortingOpion();
+                Preferences.Remove(nameof(CurrentOption));
+                return getCurrentSortingOption();
             }
             else
             {
                 return currentOption;
             }
 
-            SortingOption getSortingOpion() => (SortingOption)Preferences.Get(nameof(CurrentOption), (int)SortingConstants.DefaultSortingOption);
+            SortingOption getCurrentSortingOption() => (SortingOption)Preferences.Get(nameof(CurrentOption), (int)SortingConstants.DefaultSortingOption);
             static bool containsMultipleFlags<TEnum>(in TEnum flag) where TEnum : Enum => (Convert.ToInt32(flag) & (Convert.ToInt32(flag) - 1)) != 0;
         }
     }
