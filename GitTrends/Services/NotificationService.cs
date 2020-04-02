@@ -87,17 +87,17 @@ namespace GitTrends
             {
                 bool? shouldSortByTrending = null;
 
-                if (_sortingService.CurrentOption is SortingOption.Trending && !_sortingService.IsReversed)
+                if (!_sortingService.IsReversed)
                 {
                     await _deepLinkingService.DisplayAlert(message, $"Tap the repositories tagged \"Trending\" to learn more!", "Thanks").ConfigureAwait(false);
                 }
                 else
                 {
-                    shouldSortByTrending = await _deepLinkingService.DisplayAlert(message, "Sort By \"Trending\" To Discover Which Ones", "Sort by Trending", "Not Now").ConfigureAwait(false);
+                    shouldSortByTrending = await _deepLinkingService.DisplayAlert(message, "Reverse The Sorting Order To Discover Which Ones", "Reverse Sorting", "Not Now").ConfigureAwait(false);
                 }
 
                 if (shouldSortByTrending is true)
-                    OnSortingOptionRequestion(SortingOption.Trending);
+                    OnSortingOptionRequestion(_sortingService.CurrentOption);
 
                 _analyticsService.Track("Multiple Trending Repository Prompt Displayed", nameof(shouldSortByTrending), shouldSortByTrending?.ToString() ?? "null");
             }

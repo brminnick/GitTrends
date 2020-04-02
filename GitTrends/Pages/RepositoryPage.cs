@@ -23,14 +23,13 @@ namespace GitTrends
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
 
-            Padding = new Thickness(2, 0);
-
             var collectionView = new CollectionView
             {
                 ItemTemplate = new RepositoryDataTemplateSelector(sortingService),
                 BackgroundColor = Color.Transparent,
                 SelectionMode = SelectionMode.Single,
                 AutomationId = RepositoryPageAutomationIds.CollectionView,
+                //Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
                 Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 20 } : null
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;

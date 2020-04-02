@@ -22,11 +22,16 @@ namespace GitTrends.UITests
         [Test]
         public async Task CancelSortingMenu()
         {
+            //Fail all tests if the DefaultSortingOption has changed
+            Assert.AreEqual(SortingConstants.DefaultSortingOption, SortingOption.Views);
+
             //Arrange
             Repository finalTopRepository;
             Repository finalSecondTopRepository;
+            Repository finalLastRepository;
             Repository initialTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
             Repository initialSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
+            Repository initialLastRepository = RepositoryPage.GetVisibleRepositoryList().Last();
 
             //Act
             await RepositoryPage.CancelSortingMenu().ConfigureAwait(false);
@@ -34,22 +39,35 @@ namespace GitTrends.UITests
             //Assert
             finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
             finalSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
+            finalLastRepository = RepositoryPage.GetVisibleRepositoryList().Last();
 
             if (initialTopRepository.IsTrending == initialSecondTopRepository.IsTrending)
                 Assert.GreaterOrEqual(initialTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
+            else
+                Assert.GreaterOrEqual(initialSecondTopRepository.TotalViews, initialLastRepository.TotalViews);
 
             Assert.AreEqual(initialTopRepository.Name, finalTopRepository.Name);
             Assert.AreEqual(initialSecondTopRepository.Name, finalSecondTopRepository.Name);
+
+            if (finalTopRepository.IsTrending == finalSecondTopRepository.IsTrending)
+                Assert.GreaterOrEqual(finalTopRepository.TotalViews, finalSecondTopRepository.TotalViews);
+            else
+                Assert.GreaterOrEqual(finalSecondTopRepository.TotalViews, finalLastRepository.TotalViews);
         }
 
         [Test]
         public async Task DismissSortingMenu()
         {
+            //Fail all tests if the DefaultSortingOption has changed
+            Assert.AreEqual(SortingConstants.DefaultSortingOption, SortingOption.Views);
+
             //Arrange
             Repository finalTopRepository;
             Repository finalSecondTopRepository;
+            Repository finalLastRepository;
             Repository initialTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
             Repository initialSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
+            Repository initialLastRepository = RepositoryPage.GetVisibleRepositoryList().Last();
 
             //Act
             await RepositoryPage.DismissSortingMenu().ConfigureAwait(false);
@@ -57,12 +75,20 @@ namespace GitTrends.UITests
             //Assert
             finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
             finalSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
+            finalLastRepository = RepositoryPage.GetVisibleRepositoryList().Last();
 
             if (initialTopRepository.IsTrending == initialSecondTopRepository.IsTrending)
                 Assert.GreaterOrEqual(initialTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
+            else
+                Assert.GreaterOrEqual(initialSecondTopRepository.TotalViews, initialLastRepository.TotalViews);
 
             Assert.AreEqual(initialTopRepository.Name, finalTopRepository.Name);
             Assert.AreEqual(initialSecondTopRepository.Name, finalSecondTopRepository.Name);
+
+            if (finalTopRepository.IsTrending == finalSecondTopRepository.IsTrending)
+                Assert.GreaterOrEqual(finalTopRepository.TotalViews, finalSecondTopRepository.TotalViews);
+            else
+                Assert.GreaterOrEqual(finalSecondTopRepository.TotalViews, finalLastRepository.TotalViews);
         }
 
         [TestCase(SortingConstants.DefaultSortingOption)]
@@ -73,55 +99,76 @@ namespace GitTrends.UITests
         [TestCase(SortingOption.UniqueClones)]
         [TestCase(SortingOption.UniqueViews)]
         [TestCase(SortingOption.Views)]
-        [TestCase(SortingOption.Trending)]
         public async Task VerifySortingOptions(SortingOption sortingOption)
         {
+            //Fail all tests if the DefaultSortingOption has changed
+            Assert.AreEqual(SortingConstants.DefaultSortingOption, SortingOption.Views);
+
             //Arrange
-            Repository finalTopRepository;
+            Repository finalFirstRepository;
             Repository finalSecondTopRepository;
-            Repository initialTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
+            Repository finalLastRepository;
+            Repository initialFirstRepository = RepositoryPage.GetVisibleRepositoryList().First();
             Repository initialSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
+            Repository initialLastRepository = RepositoryPage.GetVisibleRepositoryList().Last();
 
             //Act
             await RepositoryPage.SetSortingOption(sortingOption).ConfigureAwait(false);
 
             //Assert
-            finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
+            finalFirstRepository = RepositoryPage.GetVisibleRepositoryList().First();
             finalSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
+            finalLastRepository = RepositoryPage.GetVisibleRepositoryList().Last();
 
-            if (initialTopRepository.IsTrending == initialSecondTopRepository.IsTrending)
-                Assert.GreaterOrEqual(initialTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
+            if (initialFirstRepository.IsTrending == initialSecondTopRepository.IsTrending)
+                Assert.GreaterOrEqual(initialFirstRepository.TotalViews, initialSecondTopRepository.TotalViews);
+
+            Assert.GreaterOrEqual(initialFirstRepository.TotalViews, initialLastRepository.TotalViews);
 
             switch (sortingOption)
             {
-                case SortingOption.Trending when finalTopRepository.IsTrending == finalTopRepository.IsTrending:
-                    Assert.LessOrEqual(finalTopRepository.TotalViews, finalSecondTopRepository.TotalViews);
-                    break;
-                case SortingOption.Trending:
-                    Assert.IsTrue(finalTopRepository.IsTrending);
-                    Assert.IsFalse(finalSecondTopRepository.IsTrending);
-                    break;
-                case SortingOption.Stars:
-                    Assert.GreaterOrEqual(finalTopRepository.StarCount, finalSecondTopRepository.StarCount);
-                    break;
-                case SortingOption.Clones:
-                    Assert.GreaterOrEqual(finalTopRepository.TotalClones, finalSecondTopRepository.TotalClones);
-                    break;
-                case SortingOption.Forks:
-                    Assert.GreaterOrEqual(finalTopRepository.ForkCount, finalSecondTopRepository.ForkCount);
-                    break;
-                case SortingOption.Issues:
-                    Assert.GreaterOrEqual(finalTopRepository.IssuesCount, finalSecondTopRepository.IssuesCount);
-                    break;
-                case SortingOption.UniqueClones:
-                    Assert.GreaterOrEqual(finalTopRepository.TotalUniqueClones, finalSecondTopRepository.TotalUniqueClones);
-                    break;
-                case SortingOption.UniqueViews:
-                    Assert.GreaterOrEqual(finalTopRepository.TotalUniqueViews, finalSecondTopRepository.TotalUniqueViews);
+                case SortingOption.Views when finalFirstRepository.IsTrending == finalSecondTopRepository.IsTrending:
+                    Assert.LessOrEqual(finalFirstRepository.TotalViews, finalSecondTopRepository.TotalViews);
                     break;
                 case SortingOption.Views:
-                    Assert.GreaterOrEqual(finalTopRepository.TotalViews, finalSecondTopRepository.TotalViews);
-                    break;                
+                    Assert.LessOrEqual(finalSecondTopRepository.TotalViews, finalLastRepository.TotalViews);
+                    break;
+                case SortingOption.Stars when finalFirstRepository.IsTrending == finalSecondTopRepository.IsTrending:
+                    Assert.GreaterOrEqual(finalFirstRepository.StarCount, finalSecondTopRepository.StarCount);
+                    break;
+                case SortingOption.Stars:
+                    Assert.GreaterOrEqual(finalSecondTopRepository.StarCount, finalLastRepository.StarCount);
+                    break;
+                case SortingOption.Forks when finalFirstRepository.IsTrending == finalSecondTopRepository.IsTrending:
+                    Assert.GreaterOrEqual(finalFirstRepository.ForkCount, finalSecondTopRepository.ForkCount);
+                    break;
+                case SortingOption.Forks:
+                    Assert.GreaterOrEqual(finalSecondTopRepository.ForkCount, finalLastRepository.ForkCount);
+                    break;
+                case SortingOption.Issues when finalFirstRepository.IsTrending == finalSecondTopRepository.IsTrending:
+                    Assert.GreaterOrEqual(finalFirstRepository.IssuesCount, finalSecondTopRepository.IssuesCount);
+                    break;
+                case SortingOption.Issues:
+                    Assert.GreaterOrEqual(finalSecondTopRepository.IssuesCount, finalLastRepository.IssuesCount);
+                    break;
+                case SortingOption.Clones when finalFirstRepository.IsTrending == finalSecondTopRepository.IsTrending:
+                    Assert.GreaterOrEqual(finalFirstRepository.TotalClones, finalSecondTopRepository.TotalClones);
+                    break;
+                case SortingOption.Clones:
+                    Assert.GreaterOrEqual(finalSecondTopRepository.TotalClones, finalLastRepository.TotalClones);
+                    break;
+                case SortingOption.UniqueClones when finalFirstRepository.IsTrending == finalSecondTopRepository.IsTrending:
+                    Assert.GreaterOrEqual(finalFirstRepository.TotalUniqueClones, finalSecondTopRepository.TotalUniqueClones);
+                    break;
+                case SortingOption.UniqueClones:
+                    Assert.GreaterOrEqual(finalSecondTopRepository.TotalUniqueClones, finalLastRepository.TotalUniqueClones);
+                    break;
+                case SortingOption.UniqueViews when finalFirstRepository.IsTrending == finalSecondTopRepository.IsTrending:
+                    Assert.GreaterOrEqual(finalFirstRepository.TotalUniqueViews, finalSecondTopRepository.TotalUniqueViews);
+                    break;
+                case SortingOption.UniqueViews:
+                    Assert.GreaterOrEqual(finalSecondTopRepository.TotalUniqueViews, finalLastRepository.TotalUniqueViews);
+                    break;
                 default:
                     throw new NotSupportedException();
             };

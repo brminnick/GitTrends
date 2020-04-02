@@ -93,6 +93,6 @@ namespace GitTrends
         public override Color SettingsButtonFontColor { get; } = Color.FromHex(_primaryTextHex);
         public override Color TrendsChartSettingsSelectionIndicatorColor { get; } = Color.FromHex(_primaryTealHex);
 
-        public override Color GitTrendsImageBackgroundColor { get; } = Color.White;       
+        public override Color GitTrendsImageBackgroundColor { get; } = Color.White;
     }
 }
