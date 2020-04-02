@@ -343,7 +343,7 @@ namespace GitTrends
 
                     //On smaller screens, display TrendingImage under the Avatar
                     isTrending
-                        ? smallScreenTrendingImage.Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2)
+                        ? smallScreenTrendingImage.Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3)
                         : new SvgCachedImage(),
 
                     //On larger screens, display TrendingImage under the Separator
