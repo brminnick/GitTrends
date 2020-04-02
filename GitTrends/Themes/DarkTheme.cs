@@ -72,7 +72,7 @@ namespace GitTrends
 
         //Components
         //Splash
-        public override Color SplashScreenStatusColor { get; } = Color.FromHex(_primaryTextHex);
+        public override Color SplashScreenStatusColor { get; } = Color.FromHex(_offWhite);
 
         //Icons
         public override Color IconColor { get; } = Color.FromHex(_buttonTextColor);
@@ -114,6 +114,6 @@ namespace GitTrends
         public override Color SettingsButtonFontColor { get; } = Color.FromHex(_textHex);
         public override Color TrendsChartSettingsSelectionIndicatorColor { get; } = Color.FromHex(_lightPrimaryTealHex);
 
-        public override Color GitTrendsImageBackgroundColor { get; } = Color.FromHex(_offWhite);
+        public override Color GitTrendsImageBackgroundColor { get; } = Color.FromHex("4CADA2");
     }
 }
