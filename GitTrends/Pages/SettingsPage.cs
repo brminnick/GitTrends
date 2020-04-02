@@ -18,6 +18,8 @@ namespace GitTrends
 
             ViewModel.GitHubLoginUrlRetrieved += HandleGitHubLoginUrlRetrieved;
             ViewModel.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
+
+            Content = CreateLayout(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width);
         }
 
         protected override void OnDisappearing()
@@ -25,13 +27,6 @@ namespace GitTrends
             base.OnDisappearing();
 
             ViewModel.IsAuthenticating = false;
-        }
-
-        protected override void HandlePageSizeChanged(object sender, EventArgs e)
-        {
-            base.HandlePageSizeChanged(sender, e);
-
-            Content = CreateLayout(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width);
         }
 
         void HandleRegisterForNotificationsCompleted(object sender, (bool IsSuccessful, string ErrorMessage) result)

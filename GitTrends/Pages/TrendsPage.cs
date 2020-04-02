@@ -45,19 +45,13 @@ namespace GitTrends
             absoluteLayout.Children.Add(activityIndicator, new Rectangle(.5, .5, -1, -1), AbsoluteLayoutFlags.PositionProportional);
             absoluteLayout.Children.Add(TrendsChart, new Rectangle(0, 0, 1, 1), AbsoluteLayoutFlags.All);
 
+            Padding = GetPadding();
             Content = absoluteLayout;
 
             ViewModel.FetchDataCommand.Execute(_repository);
         }
 
         static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
-
-        protected override void HandlePageSizeChanged(object sender, EventArgs e)
-        {
-            Padding = GetPadding();
-
-            base.HandlePageSizeChanged(sender, e);
-        }
 
         Thickness GetPadding()
         {

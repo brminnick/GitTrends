@@ -59,6 +59,7 @@
       <Folder Include="Views\ReferringSites\" />
       <Folder Include="Models\" />
       <Folder Include="Views\Settings\Base\" />
+      <Folder Include="Views\Onboarding\" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="repo_forked.svg" />

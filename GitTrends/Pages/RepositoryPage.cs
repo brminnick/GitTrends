@@ -76,7 +76,16 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            if (Content is RefreshView refreshView
+            if (FirstRunService.IsFirstRun)
+            {
+                using var scope = ContainerService.Container.BeginLifetimeScope();
+                var onboardingPage = scope.Resolve<OnboardingPage>();
+
+                //Let the RepositoryPage appear briefly, because pushing the OnboardingPage immediately is jarring.
+                await Task.Delay(500);
+                await Navigation.PushModalAsync(onboardingPage);
+            }
+            else if (Content is RefreshView refreshView
                         && refreshView.Content is CollectionView collectionView
                         && IsNullOrEmpty(collectionView.ItemsSource))
             {

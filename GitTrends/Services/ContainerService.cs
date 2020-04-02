@@ -34,6 +34,7 @@ namespace GitTrends
 #endif
 
             //Register ViewModels
+            builder.RegisterType<OnboardingViewModel>().AsSelf();
             builder.RegisterType<ReferringSitesViewModel>().AsSelf();
             builder.RegisterType<RepositoryViewModel>().AsSelf();
             builder.RegisterType<SettingsViewModel>().AsSelf();
@@ -41,6 +42,7 @@ namespace GitTrends
             builder.RegisterType<TrendsViewModel>().AsSelf();
 
             //Register Pages
+            builder.RegisterType<OnboardingPage>().AsSelf();
             builder.RegisterType<ReferringSitesPage>().AsSelf().WithParameter(new TypedParameter(typeof(Repository), nameof(Repository).ToLower()));
             builder.RegisterType<RepositoryPage>().AsSelf();
             builder.RegisterType<SettingsPage>().AsSelf();

@@ -9,22 +9,16 @@ namespace GitTrends
 {
     public abstract class BaseContentPage<T> : ContentPage where T : BaseViewModel
     {
-        readonly bool _shouldUseSafeArea;
-
         protected BaseContentPage(in string title, in T viewModel, AnalyticsService analyticsService, bool shouldUseSafeArea = true)
         {
-            _shouldUseSafeArea = shouldUseSafeArea;
-
             SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             BindingContext = ViewModel = viewModel;
             Title = title;
 
             AnalyticsService = analyticsService;
 
+            On<iOS>().SetUseSafeArea(shouldUseSafeArea);
             On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
-            SetSafeArea();
-
-            SizeChanged += HandlePageSizeChanged;
         }
 
         protected T ViewModel { get; }
@@ -61,22 +55,6 @@ namespace GitTrends
 
                 return Browser.OpenAsync(url, browserOptions);
             });
-        }
-
-        protected virtual void HandlePageSizeChanged(object sender, EventArgs e)
-        {
-            AnalyticsService.Track("Page Size Changed",
-                                    "Is Portrait",
-                                    (DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width).ToString());
-
-            SetSafeArea();
-            ForceLayout();
-        }
-
-        void SetSafeArea()
-        {
-            var isLandscape = DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Landscape;
-            On<iOS>().SetUseSafeArea(isLandscape && _shouldUseSafeArea);
         }
     }
 }

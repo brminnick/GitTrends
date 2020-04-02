@@ -17,7 +17,7 @@ namespace GitTrends
 
         public App()
         {
-            Device.SetFlags(new[] { "Markup_Experimental" });
+            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental" });
 
             FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration
             {
