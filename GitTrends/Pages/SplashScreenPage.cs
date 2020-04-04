@@ -137,7 +137,22 @@ namespace GitTrends
             });
         }
 
-        Task ChangeLabelText(string text) => ChangeLabelText(new FormattedString { Spans = { new Span { Text = text } } });
+        Task ChangeLabelText(string text)
+        {
+            var formattedString = new FormattedString
+            {
+                Spans =
+                {
+                    new Span
+                    {
+                        Text = text,
+                        FontFamily = FontFamilyConstants.RobotoRegular,
+                    }
+                }
+            };
+
+            return ChangeLabelText(formattedString);
+        }
 
         Task ChangeLabelText(FormattedString formattedString)
         {
@@ -162,12 +177,13 @@ namespace GitTrends
                 {
                     new Span
                     {
-                        FontAttributes = FontAttributes.Bold,
-                        Text = "Preview Mode"
+                        Text = "Preview Mode",
+                        FontFamily = FontFamilyConstants.RobotoBold
                     },
                     new Span
                     {
-                        Text = "\nCertain license warnings may appear"
+                        Text = "\nCertain license warnings may appear",
+                        FontFamily = FontFamilyConstants.RobotoRegular
                     }
                 }
             });

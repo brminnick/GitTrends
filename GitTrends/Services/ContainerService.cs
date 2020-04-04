@@ -42,13 +42,14 @@ namespace GitTrends
             builder.RegisterType<TrendsViewModel>().AsSelf();
 
             //Register Pages
+            builder.RegisterType<ChartOnboardingPage>().AsSelf();
             builder.RegisterType<OnboardingPage>().AsSelf();
             builder.RegisterType<ReferringSitesPage>().AsSelf().WithParameter(new TypedParameter(typeof(Repository), nameof(Repository).ToLower()));
             builder.RegisterType<RepositoryPage>().AsSelf();
             builder.RegisterType<SettingsPage>().AsSelf();
             builder.RegisterType<SplashScreenPage>().AsSelf();
             builder.RegisterType<TrendsPage>().AsSelf().WithParameter(new TypedParameter(typeof(Repository), nameof(Repository).ToLower()));
-            builder.RegisterType<WelcomePage>().AsSelf();
+            builder.RegisterType<WelcomeOnboardingPage>().AsSelf();
 
             return builder.Build();
         }

@@ -205,9 +205,7 @@ namespace GitTrends
         {
             AnalyticsService.Track("Demo Button Tapped");
 
-            GitHubAuthenticationService.Name = DemoDataConstants.Name;
-            GitHubAuthenticationService.AvatarUrl = DemoDataConstants.AvatarUrl;
-            GitHubAuthenticationService.Alias = DemoDataConstants.Alias;
+            _gitHubAuthenticationService.ActivateDemoUser();
 
             SetGitHubValues();
         }

@@ -101,6 +101,13 @@ namespace GitTrends
             }
         }
 
+        public void ActivateDemoUser()
+        {
+            Name = DemoDataConstants.Name;
+            AvatarUrl = DemoDataConstants.AvatarUrl;
+            Alias = DemoDataConstants.Alias;
+        }
+
         public async Task<string> GetGitHubLoginUrl()
         {
             MostRecentSessionId = Guid.NewGuid().ToString();

@@ -6,9 +6,10 @@ using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    class WelcomePage : BaseOnboardingPage
+    class WelcomeOnboardingPage : BaseOnboardingPage
     {
-        public WelcomePage() : base(OnboardingConstants.TealBackgroundColorHex, OnboardingConstants.SkipText)
+        public WelcomeOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService)
+            : base(gitHubAuthenticationService, OnboardingConstants.TealBackgroundColorHex, OnboardingConstants.SkipText, 0)
         {
         }
 
@@ -27,9 +28,9 @@ namespace GitTrends
 
             RowDefinitions = Rows.Define(
                 (Row.Title, AbsoluteGridLength(20)),
-                (Row.Row1, AbsoluteGridLength(24)),
-                (Row.Row2, AbsoluteGridLength(24)),
-                (Row.Row3, AbsoluteGridLength(24))),
+                (Row.Connect, AbsoluteGridLength(24)),
+                (Row.Monitor, AbsoluteGridLength(24)),
+                (Row.Discover, AbsoluteGridLength(24))),
 
             ColumnDefinitions = Columns.Define(
                 (Column.Image, AbsoluteGridLength(56)),
@@ -39,14 +40,14 @@ namespace GitTrends
             {
                 new BodyLabel("GitTrends helps monitor your GitHub repos:").Row(Row.Title).ColumnSpan(All<Column>()),
 
-                new GitHubLogoLabel().Row(Row.Row1).Column(Column.Image),
-                new BodyLabel("Connect to Github").Row(Row.Row1).Column(Column.Description),
+                new GitHubLogoLabel().Row(Row.Connect).Column(Column.Image),
+                new BodyLabel("Connect to Github").Row(Row.Connect).Column(Column.Description),
 
-                new BodySvg("chart.svg").Row(Row.Row2).Column(Column.Image),
-                new BodyLabel("Monitor Github Repo Views, Clones, Forks, Stars and Issues").Row(Row.Row2).Column(Column.Description),
+                new BodySvg("chart.svg").Row(Row.Monitor).Column(Column.Image),
+                new BodyLabel("Monitor Github Repo Views, Clones, Forks, Stars and Issues").Row(Row.Monitor).Column(Column.Description),
 
-                new BodySvg("megaphone.svg").Row(Row.Row3).Column(Column.Image),
-                new BodyLabel("Discover Referring Sites").Row(Row.Row3).Column(Column.Description),
+                new BodySvg("megaphone.svg").Row(Row.Discover).Column(Column.Image),
+                new BodyLabel("Discover Referring Sites").Row(Row.Discover).Column(Column.Description),
             }
         };
 
@@ -63,7 +64,7 @@ namespace GitTrends
             }
         }
 
-        enum Row { Title, Row1, Row2, Row3 }
+        enum Row { Title, Connect, Monitor, Discover }
         enum Column { Image, Description }
     }
 }
