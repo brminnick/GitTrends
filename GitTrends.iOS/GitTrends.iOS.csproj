@@ -211,10 +211,4 @@
     <Folder Include="Assets.xcassets\Sort.imageset\" />
     <Folder Include="Resources\" />
   </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\FontAwesomeBrands.ttf" />
-    <BundleResource Include="Resources\Roboto-Bold.ttf" />
-    <BundleResource Include="Resources\Roboto-Medium.ttf" />
-    <BundleResource Include="Resources\Roboto-Regular.ttf" />
-  </ItemGroup>
 </Project>

@@ -14,8 +14,16 @@ namespace GitTrends
             var imageView = CreateImageView();
             imageView.Margin = new Thickness(30);
 
-            var descriptionView = CreateDescriptionView();
-            descriptionView.Margin = new Thickness(30, 10);
+            var descriptionLayout = new StackLayout
+            {
+                Spacing = 24,
+                Margin = new Thickness(30, 10),
+                Children =
+                {
+                    CreateDescriptionTitleLabel(),
+                    CreateDescriptionBodyView()
+                }
+            };
 
             Content = new Grid
             {
@@ -32,7 +40,7 @@ namespace GitTrends
                 {
                     new OpacityOverlay().Row(Row.ImageRow).ColumnSpan(All<Column>()),
                     imageView.Row(Row.ImageRow).ColumnSpan(All<Column>()),
-                    CreateDescriptionView().Row(Row.DescriptionRow).ColumnSpan(All<Column>()),
+                    descriptionLayout.Row(Row.DescriptionRow).ColumnSpan(All<Column>()),
                     new OnboardingIndicatorView().Row(Row.IndicatorRow).Column(Column.IndicatorColumn),
                     new NextButton(nextButtonText).Row(Row.IndicatorRow).Column(Column.ButtonColumn),
                 }
@@ -43,18 +51,48 @@ namespace GitTrends
         enum Column { IndicatorColumn, ButtonColumn }
 
         protected abstract View CreateImageView();
-        protected abstract View CreateDescriptionView();
+        protected abstract TitleLabel CreateDescriptionTitleLabel();
+        protected abstract View CreateDescriptionBodyView();
 
         class NextButton : Button
         {
-            public NextButton(string text)
+            public NextButton(in string text)
             {
                 Margin = new Thickness(0, 0, 30, 0);
                 TextColor = Color.White;
                 HorizontalOptions = LayoutOptions.End;
                 Text = text;
+                BackgroundColor = Color.Transparent;
+                FontFamily = FontFamilyConstants.RobotoBold;
+            }
+        }
 
-                SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoBold));
+        protected class BodySvg : SvgImage
+        {
+            public BodySvg(in string svgFileName) : base(svgFileName, () => Color.White)
+            {
+            }
+        }
+
+        protected class TitleLabel : Label
+        {
+            public TitleLabel(in string text)
+            {
+                Text = text;
+                FontSize = 34;
+                TextColor = Color.White;
+                FontFamily = FontFamilyConstants.RobotoBold;
+            }
+        }
+
+        protected class BodyLabel : Label
+        {
+            public BodyLabel(in string text)
+            {
+                Text = text;
+                FontSize = 16;
+                TextColor = Color.White;
+                FontFamily = FontFamilyConstants.RobotoRegular;
             }
         }
 

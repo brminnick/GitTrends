@@ -104,7 +104,6 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CustomRenderers\FontAwesomeIconRenderer.cs" />
     <Compile Include="CustomRenderers\SearchPageRenderer.cs" />
     <Compile Include="Services\Environment_Android.cs" />
     <Compile Include="CustomRenderers\LabelCustomRenderer.cs" />
@@ -309,12 +308,6 @@
       <Project>{E9E411F7-7BB9-4176-8950-3A2D1C27FF33}</Project>
       <Name>GitTrends</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\FontAwesomeBrands.ttf" />
-    <AndroidAsset Include="Assets\Roboto-Bold.ttf" />
-    <AndroidAsset Include="Assets\Roboto-Medium.ttf" />
-    <AndroidAsset Include="Assets\Roboto-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
     <ProguardConfiguration Include="proguard.cfg" />

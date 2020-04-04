@@ -48,6 +48,7 @@ namespace GitTrends
             builder.RegisterType<SettingsPage>().AsSelf();
             builder.RegisterType<SplashScreenPage>().AsSelf();
             builder.RegisterType<TrendsPage>().AsSelf().WithParameter(new TypedParameter(typeof(Repository), nameof(Repository).ToLower()));
+            builder.RegisterType<WelcomePage>().AsSelf();
 
             return builder.Build();
         }

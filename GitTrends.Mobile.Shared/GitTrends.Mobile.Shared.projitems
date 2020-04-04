@@ -25,5 +25,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Constants\DemoDataConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\TrendsChartConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\OnboardingConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\FontAwesomeBrandsConstants.cs" />
   </ItemGroup>
 </Project>

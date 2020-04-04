@@ -30,7 +30,7 @@ namespace GitTrends
             };
             gitHubAliasLabel.SetBinding(Label.TextProperty, nameof(SettingsViewModel.GitHubAliasLabelText));
 
-            var gitHubLoginButton = new FontAwesomeButton
+            var gitHubLoginButton = new  Button
             {
                 AutomationId = SettingsPageAutomationIds.GitHubLoginButton,
                 TextColor = Color.White,
@@ -38,7 +38,8 @@ namespace GitTrends
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
                 Padding = new Thickness(10),
-                Margin = new Thickness(0, 25, 0, 5)
+                Margin = new Thickness(0, 25, 0, 5),
+                FontFamily = FontFamilyConstants.FontAwesomeBrands
             };
             gitHubLoginButton.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.ButtonBackgroundColor));
             gitHubLoginButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.ButtonTextColor));

@@ -200,14 +200,14 @@ namespace GitTrends.UITests
             RepositoryPage.TapSettingsButton();
 
             //Assert
-            Assert.AreEqual(GitHubLoginButtonConstants.Disconnect, SettingsPage.GitHubButtonText);
+            Assert.AreEqual(Mobile.Shared.FontAwesomeConstants.Disconnect, SettingsPage.GitHubButtonText);
 
             //Act
             SettingsPage.TapGitHubButton();
             SettingsPage.WaitForGitHubLogoutToComplete();
 
             //Assert
-            Assert.AreEqual(GitHubLoginButtonConstants.ConnectWithGitHub, SettingsPage.GitHubButtonText);
+            Assert.AreEqual(Mobile.Shared.FontAwesomeConstants.ConnectWithGitHub, SettingsPage.GitHubButtonText);
 
             //Act
             SettingsPage.TapBackButton();

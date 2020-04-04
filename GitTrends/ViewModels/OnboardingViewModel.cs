@@ -1,9 +1,8 @@
-﻿using System;
-namespace GitTrends
+﻿namespace GitTrends
 {
     public class OnboardingViewModel : BaseViewModel
     {
-        int _currentPageIndex;
+        int _currentPageIndex = 0;
 
         public OnboardingViewModel(AnalyticsService analyticsService) : base(analyticsService)
         {

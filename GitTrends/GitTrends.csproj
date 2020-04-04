@@ -59,28 +59,42 @@
       <Folder Include="Views\ReferringSites\" />
       <Folder Include="Models\" />
       <Folder Include="Views\Settings\Base\" />
-      <Folder Include="Views\Onboarding\" />
+      <Folder Include="Pages\Onboarding\" />
+      <Folder Include="Resources\SVGs\" />
+      <Folder Include="Resources\Fonts\" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="repo_forked.svg" />
-      <None Remove="Resources\repo_forked.svg" />
-      <None Remove="Resources\star.svg" />
-      <None Remove="Resources\issue_opened.svg" />
-      <None Remove="Resources\unique_clones.svg" />
-      <None Remove="Resources\total_clones.svg" />
-      <None Remove="Resources\unique_views.svg" />
-      <None Remove="Resources\total_views.svg" />
-      <None Remove="Resources\trending_tag.svg" />
+      <None Remove="Resources\SVGs\chart.svg" />
+      <None Remove="Resources\SVGs\issue_opened.svg" />
+      <None Remove="Resources\SVGs\megaphone.svg" />
+      <None Remove="Resources\SVGs\repo_forked.svg" />
+      <None Remove="Resources\SVGs\star.svg" />
+      <None Remove="Resources\SVGs\total_clones.svg" />
+      <None Remove="Resources\SVGs\total_views.svg" />
+      <None Remove="Resources\SVGs\trending_tag.svg" />
+      <None Remove="Resources\SVGs\unique_clones.svg" />
+      <None Remove="Resources\SVGs\unique_views.svg" />
+      <None Remove="Resources\Fonts\FontAwesomeBrands.ttf" />
+      <None Remove="Resources\Fonts\Roboto-Bold.ttf" />
+      <None Remove="Resources\Fonts\Roboto-Medium.ttf" />
+      <None Remove="Resources\Fonts\Roboto-Regular.ttf" />
     </ItemGroup>
     <ItemGroup>
-      <EmbeddedResource Include="Resources\repo_forked.svg" />
-      <EmbeddedResource Include="Resources\star.svg" />
-      <EmbeddedResource Include="Resources\issue_opened.svg" />
-      <EmbeddedResource Include="Resources\unique_clones.svg" />
-      <EmbeddedResource Include="Resources\total_clones.svg" />
-      <EmbeddedResource Include="Resources\unique_views.svg" />
-      <EmbeddedResource Include="Resources\total_views.svg" />
-      <EmbeddedResource Include="Resources\trending_tag.svg" />
+      <EmbeddedResource Include="Resources\SVGs\chart.svg" />
+      <EmbeddedResource Include="Resources\SVGs\issue_opened.svg" />
+      <EmbeddedResource Include="Resources\SVGs\megaphone.svg" />
+      <EmbeddedResource Include="Resources\SVGs\repo_forked.svg" />
+      <EmbeddedResource Include="Resources\SVGs\star.svg" />
+      <EmbeddedResource Include="Resources\SVGs\total_clones.svg" />
+      <EmbeddedResource Include="Resources\SVGs\total_views.svg" />
+      <EmbeddedResource Include="Resources\SVGs\trending_tag.svg" />
+      <EmbeddedResource Include="Resources\SVGs\unique_clones.svg" />
+      <EmbeddedResource Include="Resources\SVGs\unique_views.svg" />
+      <EmbeddedResource Include="Resources\Fonts\FontAwesomeBrands.ttf" />
+      <EmbeddedResource Include="Resources\Fonts\Roboto-Bold.ttf" />
+      <EmbeddedResource Include="Resources\Fonts\Roboto-Medium.ttf" />
+      <EmbeddedResource Include="Resources\Fonts\Roboto-Regular.ttf" />
     </ItemGroup>
     <Import Project="..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems')" />
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
