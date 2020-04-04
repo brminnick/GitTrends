@@ -6,16 +6,16 @@ using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    class WelcomeOnboardingPage : BaseOnboardingPage
+    class GitTrendsOnboardingPage : BaseOnboardingContentPage
     {
-        public WelcomeOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService)
-            : base(gitHubAuthenticationService, OnboardingConstants.TealBackgroundColorHex, OnboardingConstants.SkipText, 0)
+        public GitTrendsOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService)
+            : base(gitHubAuthenticationService, TealBackgroundColorHex, OnboardingConstants.SkipText, 0)
         {
         }
 
         protected override View CreateImageView() => new Image
         {
-            Source = "GitTrends",
+            Source = "GitTrendsWhite",
             HorizontalOptions = LayoutOptions.Center,
             VerticalOptions = LayoutOptions.Center
         };

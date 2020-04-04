@@ -76,33 +76,31 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            if (FirstRunService.IsFirstRun)
+            var token = await GitHubAuthenticationService.GetGitHubToken();
+
+            if (shouldShowWelcomePage(Navigation, token.AccessToken) && FirstRunService.IsFirstRun)
             {
                 using var scope = ContainerService.Container.BeginLifetimeScope();
-                var onboardingPage = scope.Resolve<OnboardingPage>();
+                var onboardingPage = scope.Resolve<OnboardingCarouselPage>();
 
-                //Let the RepositoryPage appear briefly, because pushing the OnboardingPage immediately is jarring.
-                await Task.Delay(500);
                 await Navigation.PushModalAsync(onboardingPage);
             }
-            else if (Content is RefreshView refreshView
-                        && refreshView.Content is CollectionView collectionView
-                        && IsNullOrEmpty(collectionView.ItemsSource))
+            else if (shouldShowWelcomePage(Navigation, token.AccessToken))
             {
-                var token = await GitHubAuthenticationService.GetGitHubToken();
+                //Push Modal WelcomePage
+            }
+            else if (Content is RefreshView refreshView
+                       && refreshView.Content is CollectionView collectionView
+                       && IsNullOrEmpty(collectionView.ItemsSource))
+            {
+                refreshView.IsRefreshing = true;
+            }
 
-                if (GitHubAuthenticationService.Alias != DemoDataConstants.Alias
-                    && (string.IsNullOrWhiteSpace(token.AccessToken) || string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias)))
-                {
-                    var shouldNavigateToSettingsPage = await DisplayAlert(GitHubUserNotFoundConstants.Title, GitHubUserNotFoundConstants.Description, GitHubUserNotFoundConstants.Accept, GitHubUserNotFoundConstants.Decline);
-
-                    if (shouldNavigateToSettingsPage)
-                        await NavigateToSettingsPage();
-                }
-                else
-                {
-                    refreshView.IsRefreshing = true;
-                }
+            static bool shouldShowWelcomePage(in INavigation navigation, in string accessToken)
+            {
+                return !navigation.ModalStack.Any()
+                        && GitHubAuthenticationService.Alias != DemoDataConstants.Alias
+                        && (string.IsNullOrWhiteSpace(accessToken) || string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias));
             }
 
             static bool IsNullOrEmpty(in IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;

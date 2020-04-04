@@ -81,6 +81,8 @@
       <None Remove="Resources\Fonts\Roboto-Regular.ttf" />
       <None Remove="Resources\SVGs\zoom_gesture.svg" />
       <None Remove="Resources\SVGs\longpress_gesture.svg" />
+      <None Remove="Resources\Fonts\Font Awesome 5 Free-Solid-900.otf" />
+      <None Remove="Resources\SVGs\bell.svg" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="Resources\SVGs\chart.svg" />
@@ -99,6 +101,8 @@
       <EmbeddedResource Include="Resources\Fonts\Roboto-Regular.ttf" />
       <EmbeddedResource Include="Resources\SVGs\zoom_gesture.svg" />
       <EmbeddedResource Include="Resources\SVGs\longpress_gesture.svg" />
+      <EmbeddedResource Include="Resources\Fonts\FontAwesome.otf" />
+      <EmbeddedResource Include="Resources\SVGs\bell.svg" />
     </ItemGroup>
     <Import Project="..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems')" />
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />

@@ -33,7 +33,7 @@ namespace GitTrends.UITests
             _registerForNotificationsButton = GenerateMarkedQuery(SettingsPageAutomationIds.RegisterForNotificationsButton);
         }
 
-        public bool IsLoggedIn => App.Query(FontAwesomeConstants.Disconnect).Any();
+        public bool IsLoggedIn => App.Query(FontAwesomeBrandsConstants.Disconnect).Any();
 
         public bool IsActivityIndicatorRunning => App.Query(_gitHubSettingsViewActivityIndicator).Any();
 
@@ -139,7 +139,7 @@ namespace GitTrends.UITests
         public void WaitForGitHubLoginToComplete()
         {
             App.WaitForNoElement(_gitHubSettingsViewActivityIndicator);
-            App.WaitForElement(FontAwesomeConstants.Disconnect);
+            App.WaitForElement(FontAwesomeBrandsConstants.Disconnect);
 
             App.Screenshot("GitHub Login Completed");
         }
@@ -147,7 +147,7 @@ namespace GitTrends.UITests
         public void WaitForGitHubLogoutToComplete()
         {
             App.WaitForNoElement(_gitHubSettingsViewActivityIndicator);
-            App.WaitForElement(FontAwesomeConstants.ConnectWithGitHub);
+            App.WaitForElement(FontAwesomeBrandsConstants.ConnectWithGitHub);
 
             App.Screenshot("GitHub Logout Completed");
         }

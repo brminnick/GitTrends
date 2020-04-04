@@ -167,6 +167,14 @@
     <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark-1.png" />
     <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark%402x-1.png" />
     <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark%403x-1.png" />
+    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding.png" />
+    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding%402x.png" />
+    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding%403x.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\GitTreands_Dark-1.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\GitTrends_Dark%402x.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\GitTrends_Dark%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -210,5 +218,7 @@
     <Folder Include="Assets.xcassets\GitTrendsBackgroundColor.colorset\" />
     <Folder Include="Assets.xcassets\Sort.imageset\" />
     <Folder Include="Resources\" />
+    <Folder Include="Assets.xcassets\NotificationsOnboarding.imageset\" />
+    <Folder Include="Assets.xcassets\GitTrendsWhite.imageset\" />
   </ItemGroup>
 </Project>

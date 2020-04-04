@@ -121,7 +121,7 @@ namespace GitTrends
             await backgroundFetchService.Register().ConfigureAwait(false);
         }
 
-        Task ClearBageNotifications()
+        ValueTask ClearBageNotifications()
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var notificationService = scope.Resolve<NotificationService>();

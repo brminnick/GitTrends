@@ -31,10 +31,23 @@ namespace GitTrends
 
         static INotificationManager NotificationManager => ShinyHost.Resolve<INotificationManager>();
 
-        public Task<AccessState> Register() => NotificationManager.RequestAccess();
-
-        public async Task SetAppBadgeCount(int count)
+        bool HaveNotificationsBeenRequested
         {
+            get => Preferences.Get(nameof(HaveNotificationsBeenRequested), false);
+            set => Preferences.Set(nameof(HaveNotificationsBeenRequested), value);
+        }
+
+        public Task<AccessState> Register()
+        {
+            HaveNotificationsBeenRequested = true;
+            return NotificationManager.RequestAccess();
+        }
+
+        public async ValueTask SetAppBadgeCount(int count)
+        {
+            if (!HaveNotificationsBeenRequested)
+                return;
+
             var accessState = await Register().ConfigureAwait(false);
 
             //INotificationManager.Badge Crashes on iOS
@@ -44,13 +57,15 @@ namespace GitTrends
                 NotificationManager.Badge = count;
         }
 
-        public ValueTask TrySendTrendingNotificaiton(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
+        public async ValueTask TrySendTrendingNotificaiton(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
         {
+            if (!HaveNotificationsBeenRequested)
+                return;
 #if DEBUG
-            return SendTrendingNotification(trendingRepositories, notificationDateTime);
+            await SendTrendingNotification(trendingRepositories, notificationDateTime).ConfigureAwait(false);
 #else
             var repositoriesToNotify = trendingRepositories.Where(shouldSendNotification).ToList();
-            return SendTrendingNotification(repositoriesToNotify, notificationDateTime);
+            await SendTrendingNotification(repositoriesToNotify, notificationDateTime).ConfigureAwait(false);
 
             static bool shouldSendNotification(Repository trendingRepository)
             {

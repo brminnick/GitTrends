@@ -8,11 +8,14 @@ using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    abstract class BaseOnboardingPage : ContentPage
+    abstract class BaseOnboardingContentPage : ContentPage
     {
+        protected const string TealBackgroundColorHex = "338F82";
+        protected const string CoralBackgroundColorHex = "F97B4F";
+
         readonly static WeakEventManager _skipButtonTappedEventManager = new WeakEventManager();
 
-        public BaseOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService, string backgroundColorHex, string nextButtonText, int carouselPositionIndex)
+        public BaseOnboardingContentPage(GitHubAuthenticationService gitHubAuthenticationService, string backgroundColorHex, string nextButtonText, int carouselPositionIndex)
         {
             BackgroundColor = Color.FromHex(backgroundColorHex);
 
@@ -33,21 +36,21 @@ namespace GitTrends
             Content = new Grid
             {
                 RowDefinitions = Rows.Define(
-                    (Row.ImageRow, StarGridLength(9)),
-                    (Row.DescriptionRow, StarGridLength(6)),
-                    (Row.IndicatorRow, StarGridLength(1))),
+                    (Row.Image, StarGridLength(Device.RuntimePlatform is Device.iOS ? 9 : 5)),
+                    (Row.Description, StarGridLength(Device.RuntimePlatform is Device.iOS ? 6 : 4)),
+                    (Row.Indicator, StarGridLength(1))),
 
                 ColumnDefinitions = Columns.Define(
-                    (Column.IndicatorColumn, StarGridLength(1)),
-                    (Column.ButtonColumn, StarGridLength(1))),
+                    (Column.Indicator, StarGridLength(1)),
+                    (Column.Button, StarGridLength(1))),
 
                 Children =
                 {
-                    new OpacityOverlay().Row(Row.ImageRow).ColumnSpan(All<Column>()),
-                    imageView.Row(Row.ImageRow).ColumnSpan(All<Column>()),
-                    descriptionLayout.Row(Row.DescriptionRow).ColumnSpan(All<Column>()),
-                    new OnboardingIndicatorView(carouselPositionIndex).Row(Row.IndicatorRow).Column(Column.IndicatorColumn),
-                    new NextButton(nextButtonText, gitHubAuthenticationService).Row(Row.IndicatorRow).Column(Column.ButtonColumn),
+                    new OpacityOverlay().Row(Row.Image).ColumnSpan(All<Column>()),
+                    imageView.Row(Row.Image).ColumnSpan(All<Column>()),
+                    descriptionLayout.Row(Row.Description).ColumnSpan(All<Column>()),
+                    new OnboardingIndicatorView(carouselPositionIndex).Row(Row.Indicator).Column(Column.Indicator),
+                    new NextButton(nextButtonText, gitHubAuthenticationService).Row(Row.Indicator).Column(Column.Button),
                 }
             };
         }
@@ -58,8 +61,8 @@ namespace GitTrends
             remove => _skipButtonTappedEventManager.RemoveEventHandler(value);
         }
 
-        enum Row { ImageRow, DescriptionRow, IndicatorRow }
-        enum Column { IndicatorColumn, ButtonColumn }
+        enum Row { Image, Description, Indicator }
+        enum Column { Indicator, Button }
 
         protected abstract View CreateImageView();
         protected abstract TitleLabel CreateDescriptionTitleLabel();
@@ -75,12 +78,15 @@ namespace GitTrends
             {
                 _gitHubAuthenticationService = gitHubAuthenticationService;
 
-                Margin = new Thickness(0, 0, 30, 0);
+                Padding = 0;
+                Margin = new Thickness(0, 0, Device.RuntimePlatform is Device.iOS ? 30 : 0, 0);
                 TextColor = Color.White;
                 HorizontalOptions = LayoutOptions.End;
                 Text = text;
                 BackgroundColor = Color.Transparent;
                 FontFamily = FontFamilyConstants.RobotoBold;
+                AutomationId = OnboardingAutomationIds.NextButon;
+
                 Clicked += HandleNextButtonClicked;
             }
 
@@ -130,18 +136,19 @@ namespace GitTrends
 
         class OpacityOverlay : BoxView
         {
-            public OpacityOverlay() => BackgroundColor = Color.FromRgba(255, 255, 255, 0.25);
+            public OpacityOverlay() => BackgroundColor = Color.White.MultiplyAlpha(0.25);
         }
 
         class OnboardingIndicatorView : IndicatorView
         {
-            public OnboardingIndicatorView(int position)
+            public OnboardingIndicatorView(in int position)
             {
+                Position = position;
+                SelectedIndicatorColor = Color.White;
+                IndicatorColor = Color.White.MultiplyAlpha(0.25);
                 Margin = new Thickness(30, 0, 0, 0);
                 Count = 4;
                 HorizontalOptions = LayoutOptions.Start;
-
-                Position = position;
             }
         }
     }

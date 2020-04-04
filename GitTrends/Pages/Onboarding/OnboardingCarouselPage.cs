@@ -7,12 +7,13 @@ using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends
 {
-    class OnboardingPage : CarouselPage
+    class OnboardingCarouselPage : CarouselPage
     {
         readonly AnalyticsService _analyticsService;
 
-        public OnboardingPage(WelcomeOnboardingPage welcomeOnboardingPage,
+        public OnboardingCarouselPage(GitTrendsOnboardingPage welcomeOnboardingPage,
                                 ChartOnboardingPage chartOnboardingPage,
+                                NotificationsOnboardingPage notificationsOnboardingPage,
                                 OnboardingViewModel onboardingViewModel,
                                 AnalyticsService analyticsService)
         {
@@ -21,10 +22,11 @@ namespace GitTrends
             BindingContext = onboardingViewModel;
             _analyticsService = analyticsService;
 
-            BaseOnboardingPage.SkipButtonTapped += HandleSkipButtonTapped;
+            BaseOnboardingContentPage.SkipButtonTapped += HandleSkipButtonTapped;
 
             Children.Add(welcomeOnboardingPage);
             Children.Add(chartOnboardingPage);
+            Children.Add(notificationsOnboardingPage);            
         }
 
         void HandleSkipButtonTapped(object sender, EventArgs e)

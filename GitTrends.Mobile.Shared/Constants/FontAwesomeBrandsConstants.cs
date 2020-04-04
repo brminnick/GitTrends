@@ -1,5 +1,4 @@
-﻿using System;
-namespace GitTrends.Mobile.Shared
+﻿namespace GitTrends.Mobile.Shared
 {
     static class FontAwesomeBrandsConstants
     {
