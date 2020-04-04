@@ -61,7 +61,6 @@ namespace GitTrends
             Add(nameof(TrendsChartSettingsSelectionIndicatorColor), TrendsChartSettingsSelectionIndicatorColor);
 
             Add(nameof(GitTrendsImageBackgroundColor), GitTrendsImageBackgroundColor);
-            Add(nameof(RobotoMedium), RobotoMedium);
         }
 
         public abstract Color NavigationBarBackgroundColor { get; }
