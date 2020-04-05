@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
@@ -48,16 +49,30 @@ namespace GitTrends.Droid
 
             if (intent?.Data is Android.Net.Uri callbackUri)
             {
-                await NavigateToSettingsPage().ConfigureAwait(false);
+                if (FirstRunService.IsFirstRun)
+                    NavigateToConnectToGitHubOnboardingPage();
+                else
+                    await NavigateToSettingsPage().ConfigureAwait(false);
+
                 await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
             }
 
             TryHandleOpenedFromNotification(intent);
         }
 
+        static void NavigateToConnectToGitHubOnboardingPage()
+        {
+            var navigationPage = (NavigationPage)Xamarin.Forms.Application.Current.MainPage;
+
+            if (navigationPage.Navigation.ModalStack.Last() is OnboardingCarouselPage carouselPage)
+            {
+                carouselPage.CurrentPage = carouselPage.Children.Last();
+            }
+        }
+
         static async ValueTask NavigateToSettingsPage()
         {
-            var navigationPage = (Xamarin.Forms.NavigationPage)Xamarin.Forms.Application.Current.MainPage;
+            var navigationPage = (NavigationPage)Xamarin.Forms.Application.Current.MainPage;
 
             if (navigationPage.CurrentPage.GetType() != typeof(SettingsPage))
             {
@@ -81,6 +96,7 @@ namespace GitTrends.Droid
             try
             {
                 var gitHubAuthenticationService = containerScope.Resolve<GitHubAuthenticationService>();
+
                 await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -115,7 +131,13 @@ namespace GitTrends.Droid
 
                 async void HandlePageAppearing(object sender, Page page)
                 {
-                    if (page is SettingsPage)
+                    if (FirstRunService.IsFirstRun && page is OnboardingCarouselPage carouselPage)
+                    {
+                        app.PageAppearing -= HandlePageAppearing;
+                        NavigateToConnectToGitHubOnboardingPage();
+                        await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
+                    }
+                    else if (page is SettingsPage)
                     {
                         app.PageAppearing -= HandlePageAppearing;
                         await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);

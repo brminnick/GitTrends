@@ -2,7 +2,7 @@
 
 namespace GitTrends
 {
-    static class FirstRunService
+    public static class FirstRunService
     {
         public static bool IsFirstRun
         {

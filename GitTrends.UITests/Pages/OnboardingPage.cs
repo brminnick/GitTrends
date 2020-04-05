@@ -72,7 +72,7 @@ namespace GitTrends.UITests
             var initialPageNumber = CurrentPageNumber;
 
             var screenSize = App.Query().First().Rect;
-            App.DragCoordinates(screenSize.Width * 1 / 4, screenSize.CenterY, screenSize.Width * 3 / 4, screenSize.CenterY);
+            App.DragCoordinates(screenSize.Width * 1 / 10, screenSize.CenterY, screenSize.Width * 9 / 10, screenSize.CenterY);
 
             var finalPageNumber = CurrentPageNumber;
 

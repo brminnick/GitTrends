@@ -8,7 +8,7 @@ using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    abstract class BaseOnboardingContentPage : ContentPage
+    public abstract class BaseOnboardingContentPage : ContentPage
     {
         protected const string TealBackgroundColorHex = "338F82";
         protected const string CoralBackgroundColorHex = "F97B4F";

@@ -6,7 +6,7 @@ using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    class ChartOnboardingPage : BaseOnboardingContentPage
+    public class ChartOnboardingPage : BaseOnboardingContentPage
     {
         public ChartOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService)
                 : base(gitHubAuthenticationService, CoralBackgroundColorHex, OnboardingConstants.SkipText, 1)

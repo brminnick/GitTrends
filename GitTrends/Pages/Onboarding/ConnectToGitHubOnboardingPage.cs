@@ -7,7 +7,7 @@ using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
+    public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
     {
         public ConnectToGitHubOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService)
                 : base(gitHubAuthenticationService, CoralBackgroundColorHex, OnboardingConstants.TryDemoText, 3)
@@ -63,8 +63,6 @@ namespace GitTrends
 
                 HorizontalOptions = LayoutOptions.FillAndExpand;
                 VerticalOptions = LayoutOptions.FillAndExpand;
-
-                Padding = new Thickness(10);
 
                 CornerRadius = 5;
 

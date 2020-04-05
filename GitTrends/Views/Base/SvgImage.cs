@@ -4,7 +4,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    class SvgImage : SvgCachedImage
+    public class SvgImage : SvgCachedImage
     {
         readonly Func<Color> _getTextColor;
 

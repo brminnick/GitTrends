@@ -7,7 +7,7 @@ using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends
 {
-    class OnboardingCarouselPage : CarouselPage
+    public class OnboardingCarouselPage : CarouselPage
     {
         readonly AnalyticsService _analyticsService;
         readonly OnboardingViewModel _onboardingViewModel;

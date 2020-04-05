@@ -7,7 +7,7 @@ using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    class NotificationsOnboardingPage : BaseOnboardingContentPage
+    public class NotificationsOnboardingPage : BaseOnboardingContentPage
     {
         public NotificationsOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService)
                 : base(gitHubAuthenticationService, TealBackgroundColorHex, OnboardingConstants.SkipText, 2)

@@ -85,13 +85,14 @@ namespace GitTrends
 
                 await Navigation.PushModalAsync(onboardingPage);
             }
-            else if (shouldShowWelcomePage(Navigation, token.AccessToken))
+            else if (shouldShowWelcomePage(Navigation, token.AccessToken) && !FirstRunService.IsFirstRun)
             {
                 //Push Modal WelcomePage
             }
-            else if (Content is RefreshView refreshView
-                       && refreshView.Content is CollectionView collectionView
-                       && IsNullOrEmpty(collectionView.ItemsSource))
+            else if (!FirstRunService.IsFirstRun
+                        && Content is RefreshView refreshView
+                        && refreshView.Content is CollectionView collectionView
+                        && IsNullOrEmpty(collectionView.ItemsSource))
             {
                 refreshView.IsRefreshing = true;
             }

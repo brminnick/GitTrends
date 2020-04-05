@@ -45,7 +45,6 @@ namespace GitTrends
 
                 if (!string.IsNullOrWhiteSpace(loginUrl))
                 {
-                    FirstRunService.IsFirstRun = false;
                     await deepLinkingService.OpenBrowser(loginUrl).ConfigureAwait(false);
                 }
                 else
@@ -61,6 +60,10 @@ namespace GitTrends
         }
 
         void HandleAuthorizeSessionStarted(object sender, EventArgs e) => IsAuthenticating = true;
-        void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsAuthenticating = false;
+        void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
+        {
+            IsAuthenticating = false;
+            FirstRunService.IsFirstRun = false;
+        }
     }
 }

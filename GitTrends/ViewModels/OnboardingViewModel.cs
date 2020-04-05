@@ -5,7 +5,7 @@ using Shiny;
 
 namespace GitTrends
 {
-    class OnboardingViewModel : GitHubAuthenticationViewModel
+    public class OnboardingViewModel : GitHubAuthenticationViewModel
     {
         readonly AnalyticsService _analyticsService;
         readonly NotificationService _notificationService;
