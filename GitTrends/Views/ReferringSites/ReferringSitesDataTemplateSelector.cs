@@ -44,10 +44,10 @@ namespace GitTrends
                         new TitleLabel("SITE").Row(Row.Title).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
                         new PrimaryColorLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
                         new TitleLabel("REFERRALS").Row(Row.Title).Column(Column.Referrals).Center(),
-                        new StatisticsLabel(12, referringSiteModel.TotalCount, nameof(BaseTheme.PrimaryTextColor)).Row(Row.Description).Column(Column.Referrals).Center(),
+                        new StatisticsLabel(12, referringSiteModel.TotalCount, nameof(BaseTheme.PrimaryTextColor), nameof(BaseTheme.RobotoRegular)).Row(Row.Description).Column(Column.Referrals).Center(),
                         new Separator().Row(Row.Title).Column(Column.Separator).RowSpan(2).FillExpandVertical(),
                         new TitleLabel("UNIQUE").Row(Row.Title).Column(Column.Uniques).Center(),
-                        new StatisticsLabel(12, referringSiteModel.TotalUniqueCount, nameof(BaseTheme.PrimaryTextColor)).Row(Row.Description).Column(Column.Uniques).Center()
+                        new StatisticsLabel(12, referringSiteModel.TotalUniqueCount, nameof(BaseTheme.PrimaryTextColor), nameof(BaseTheme.RobotoRegular)).Row(Row.Description).Column(Column.Uniques).Center()
                     }
                 }
             };
