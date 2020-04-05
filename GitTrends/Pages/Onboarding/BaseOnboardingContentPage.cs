@@ -106,6 +106,11 @@ namespace GitTrends
 
                     await Navigation.PopModalAsync();
                 }
+                else
+                {
+                    throw new NotSupportedException($"{nameof(HandleNextButtonClicked)} Does Not Support: {Text}");
+                }
+                    
             }
         }
 
