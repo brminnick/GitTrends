@@ -13,6 +13,9 @@ namespace GitTrends
         {
         }
 
+        enum Row { Title, Connect, Monitor, Discover }
+        enum Column { Image, Description }
+
         protected override View CreateImageView() => new Image
         {
             Source = "GitTrendsWhite",
@@ -63,8 +66,5 @@ namespace GitTrends
                 HorizontalTextAlignment = TextAlignment.Center;
             }
         }
-
-        enum Row { Title, Connect, Monitor, Discover }
-        enum Column { Image, Description }
     }
 }

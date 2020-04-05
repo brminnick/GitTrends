@@ -11,13 +11,12 @@ namespace GitTrends
         readonly TrendsChartSettingsService _trendsChartSettingsService;
 
         public SettingsPage(SettingsViewModel settingsViewModel,
+                            NotificationService notificationService,
                             TrendsChartSettingsService trendsChartSettingsService,
-                            AnalyticsService analyticsService) : base(PageTitles.SettingsPage, settingsViewModel, analyticsService)
+                            AnalyticsService analyticsService) : base(settingsViewModel, analyticsService, PageTitles.SettingsPage)
         {
             _trendsChartSettingsService = trendsChartSettingsService;
-
-            ViewModel.GitHubLoginUrlRetrieved += HandleGitHubLoginUrlRetrieved;
-            ViewModel.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
+            notificationService.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
 
             Content = CreateLayout(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width);
         }
@@ -111,14 +110,6 @@ namespace GitTrends
                 widthConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Width));
 
             return relativeLayout;
-        }
-
-        async void HandleGitHubLoginUrlRetrieved(object sender, string? loginUrl)
-        {
-            if (!string.IsNullOrWhiteSpace(loginUrl))
-                await OpenBrowser(loginUrl);
-            else
-                await DisplayAlert("Error", "Couldn't connect to GitHub Login. Check your internet connection and try again", "OK");
         }
     }
 }

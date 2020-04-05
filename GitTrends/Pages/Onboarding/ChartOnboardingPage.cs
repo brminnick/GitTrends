@@ -9,9 +9,12 @@ namespace GitTrends
     class ChartOnboardingPage : BaseOnboardingContentPage
     {
         public ChartOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService)
-            : base(gitHubAuthenticationService, CoralBackgroundColorHex, OnboardingConstants.SkipText, 1)
+                : base(gitHubAuthenticationService, CoralBackgroundColorHex, OnboardingConstants.SkipText, 1)
         {
         }
+
+        enum Row { Title, Zoom, LongPress }
+        enum Column { Image, Description }
 
         protected override View CreateImageView() => new Image
         {
@@ -46,8 +49,5 @@ namespace GitTrends
                 new BodyLabel("Long press on the chart to see precise numeric values").Row(Row.LongPress).Column(Column.Description),
             }
         };
-
-        enum Row { Title, Zoom, LongPress }
-        enum Column { Image, Description }
     }
 }

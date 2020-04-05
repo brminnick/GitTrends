@@ -18,7 +18,7 @@ namespace GitTrends
 
         public RepositoryPage(RepositoryViewModel repositoryViewModel,
                                 AnalyticsService analyticsService,
-                                SortingService sortingService) : base(PageTitles.RepositoryPage, repositoryViewModel, analyticsService)
+                                SortingService sortingService) : base(repositoryViewModel, analyticsService, PageTitles.RepositoryPage)
         {
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;

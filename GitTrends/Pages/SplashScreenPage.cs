@@ -17,7 +17,7 @@ namespace GitTrends
 
         CancellationTokenSource? _animationCancellationToken;
 
-        public SplashScreenPage(AnalyticsService analyticsService, SplashScreenViewModel splashScreenViewModel) : base("", splashScreenViewModel, analyticsService, false)
+        public SplashScreenPage(AnalyticsService analyticsService, SplashScreenViewModel splashScreenViewModel) : base(splashScreenViewModel, analyticsService, shouldUseSafeArea: false)
         {
             //Remove BaseContentPageBackground
             RemoveDynamicResource(BackgroundColorProperty);

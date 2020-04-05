@@ -1,4 +1,6 @@
-﻿using GitTrends.Mobile.Shared;
+﻿using System;
+using System.Threading;
+using GitTrends.Mobile.Shared;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
@@ -10,9 +12,12 @@ namespace GitTrends
     class NotificationsOnboardingPage : BaseOnboardingContentPage
     {
         public NotificationsOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService)
-            : base(gitHubAuthenticationService, TealBackgroundColorHex, OnboardingConstants.SkipText, 2)
+                : base(gitHubAuthenticationService, TealBackgroundColorHex, OnboardingConstants.SkipText, 2)
         {
+            
         }
+
+        enum Row { Description, Button }
 
         protected override View CreateImageView() => new Image
         {
@@ -55,16 +60,19 @@ namespace GitTrends
                     Orientation = StackOrientation.Horizontal,
                     Children =
                     {
-                        new BellSvgImage(),
+                        new NotificationStatusSvgImage(),
                         new EnableNotificationsLabel()
                     }
                 };
+
+                this.BindTapGesture(nameof(OnboardingViewModel.EnableNotificationsButtonTapped));
             }
 
-            class BellSvgImage : SvgImage
+            class NotificationStatusSvgImage : SvgImage
             {
-                public BellSvgImage() : base("bell.svg", () => Color.White, 24, 24)
+                public NotificationStatusSvgImage() : base("bell.svg", () => Color.White, 24, 24)
                 {
+                    this.Bind(SvgImage.SourceProperty, nameof(OnboardingViewModel.NotificationStatusSvgImageSource));
                 }
             }
 
@@ -81,7 +89,5 @@ namespace GitTrends
                 }
             }
         }
-
-        enum Row { Description, Button }
     }
 }

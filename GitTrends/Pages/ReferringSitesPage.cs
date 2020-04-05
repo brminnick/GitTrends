@@ -11,13 +11,16 @@ namespace GitTrends
     class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>
     {
         readonly RefreshView _refreshView;
+        readonly DeepLinkingService _deepLinkingService;
 
-        public ReferringSitesPage(ReferringSitesViewModel referringSitesViewModel,
+        public ReferringSitesPage(DeepLinkingService deepLinkingService,
+                                    ReferringSitesViewModel referringSitesViewModel,
                                     Repository repository,
-                                    AnalyticsService analyticsService) : base(PageTitles.ReferringSitesPage, referringSitesViewModel, analyticsService)
+                                    AnalyticsService analyticsService) : base(referringSitesViewModel, analyticsService, PageTitles.ReferringSitesPage)
         {
             const int titleRowHeight = 50;
             const int titleTopMargin = 15;
+            _deepLinkingService = deepLinkingService;
 
             var collectionView = new CollectionView
             {
@@ -139,7 +142,7 @@ namespace GitTrends
                     { nameof(ReferringSiteModel.ReferrerUri), referingSite.ReferrerUri.ToString() }
                 });
 
-                await OpenBrowser(referingSite.ReferrerUri);
+                await _deepLinkingService.OpenBrowser(referingSite.ReferrerUri);
             }
         }
 

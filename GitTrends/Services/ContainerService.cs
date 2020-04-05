@@ -43,6 +43,7 @@ namespace GitTrends
 
             //Register Pages
             builder.RegisterType<ChartOnboardingPage>().AsSelf();
+            builder.RegisterType<ConnectToGitHubOnboardingPage>().AsSelf();
             builder.RegisterType<GitTrendsOnboardingPage>().AsSelf();
             builder.RegisterType<NotificationsOnboardingPage>().AsSelf();
             builder.RegisterType<OnboardingCarouselPage>().AsSelf();

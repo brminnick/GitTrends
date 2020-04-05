@@ -30,21 +30,20 @@ namespace GitTrends
             };
             gitHubAliasLabel.SetBinding(Label.TextProperty, nameof(SettingsViewModel.GitHubAliasLabelText));
 
-            var gitHubLoginButton = new  Button
+            var gitHubLoginButton = new Button
             {
-                AutomationId = SettingsPageAutomationIds.GitHubLoginButton,
-                TextColor = Color.White,
                 FontSize = 24,
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center,
                 Padding = new Thickness(10),
                 Margin = new Thickness(0, 25, 0, 5),
-                FontFamily = FontFamilyConstants.FontAwesomeBrands
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center,
+                FontFamily = FontFamilyConstants.FontAwesomeBrands,
+                AutomationId = SettingsPageAutomationIds.GitHubLoginButton
             };
-            gitHubLoginButton.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.ButtonBackgroundColor));
             gitHubLoginButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.ButtonTextColor));
+            gitHubLoginButton.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.ButtonBackgroundColor));
             gitHubLoginButton.SetBinding(Button.TextProperty, nameof(SettingsViewModel.LoginButtonText));
-            gitHubLoginButton.SetBinding(Button.CommandProperty, nameof(SettingsViewModel.LoginButtonCommand));
+            gitHubLoginButton.SetBinding(Button.CommandProperty, nameof(SettingsViewModel.ConnectToGitHubButtonTapped));
 
             var demoButton = new Button
             {

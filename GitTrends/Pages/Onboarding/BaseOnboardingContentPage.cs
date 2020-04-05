@@ -87,6 +87,8 @@ namespace GitTrends
                 FontFamily = FontFamilyConstants.RobotoBold;
                 AutomationId = OnboardingAutomationIds.NextButon;
 
+                this.SetBinding(IsVisibleProperty, nameof(OnboardingViewModel.IsDemoButtonVisible));
+
                 Clicked += HandleNextButtonClicked;
             }
 
@@ -98,7 +100,10 @@ namespace GitTrends
                 }
                 else if (Text is OnboardingConstants.TryDemoText)
                 {
+                    FirstRunService.IsFirstRun = false;
+
                     _gitHubAuthenticationService.ActivateDemoUser();
+
                     await Navigation.PopModalAsync();
                 }
             }

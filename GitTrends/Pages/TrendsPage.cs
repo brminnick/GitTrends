@@ -16,7 +16,7 @@ namespace GitTrends
         public TrendsPage(TrendsViewModel trendsViewModel,
                             TrendsChartSettingsService trendsChartSettingsService,
                             Repository repository,
-                            AnalyticsService analyticsService) : base(repository.Name, trendsViewModel, analyticsService)
+                            AnalyticsService analyticsService) : base(trendsViewModel, analyticsService, repository.Name)
         {
             _repository = repository;
 
