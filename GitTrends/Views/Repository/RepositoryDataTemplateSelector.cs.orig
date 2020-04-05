@@ -1,9 +1,13 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using FFImageLoading.Svg.Forms;
+<<<<<<< HEAD
 using GitTrends.Shared;
 using GitTrends.Views.Base;
+=======
+using GitTrends.Shared;
+>>>>>>> a53c912c307b73495f7ab34512affaabff673828
 using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
