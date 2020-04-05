@@ -4,16 +4,17 @@
       "idiom": "universal"
     },
     {
+      "filename": "DefaultProfileImageLight.png",
       "scale": "1x",
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImage@2x.png",
+      "filename": "DefaultProfileImageLight@2x.png",
       "scale": "2x",
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImage@3x.png",
+      "filename": "DefaultProfileImageLight@3x.png",
       "scale": "3x",
       "idiom": "universal"
     },
@@ -97,6 +98,7 @@
       "idiom": "universal"
     },
     {
+      "filename": "DefaultProfileImageDark-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -107,7 +109,7 @@
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImage@2x-1.png",
+      "filename": "DefaultProfileImageDark@2x-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -118,7 +120,7 @@
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImage@3x-1.png",
+      "filename": "DefaultProfileImageDark@3x-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -316,6 +318,7 @@
       "idiom": "universal"
     },
     {
+      "filename": "DefaultProfileImageLight-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -326,7 +329,7 @@
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImage@2x-2.png",
+      "filename": "DefaultProfileImageLight@2x-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -337,7 +340,7 @@
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImage@3x-2.png",
+      "filename": "DefaultProfileImageLight@3x-1.png",
       "appearances": [
         {
           "appearance": "luminosity",

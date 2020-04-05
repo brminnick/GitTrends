@@ -16,21 +16,7 @@ namespace GitTrends
 
         public SortingOption CurrentOption
         {
-            //Bug Fix for Removing SortingConstants.Trending in v1.0
-            get
-            {
-                try
-                {
-                    return getSortingOpion();
-                }
-                catch
-                {
-                    Preferences.Clear(nameof(CurrentOption));
-                    return getSortingOpion();
-                }
-
-                SortingOption getSortingOpion() => (SortingOption)Preferences.Get(nameof(CurrentOption), (int)SortingConstants.DefaultSortingOption);
-            }
+            get => GetCurrentOption();
             set => Preferences.Set(nameof(CurrentOption), (int)value);
         }
 
@@ -62,5 +48,24 @@ namespace GitTrends
 
             _ => throw new NotSupportedException()
         };
+
+        //Bug Fix caused by removing SortingConstants.Trending between v0.12.0 and v1.0
+        SortingOption GetCurrentOption()
+        {
+            var currentOption = getCurrentSortingOption();
+
+            if (containsMultipleFlags(currentOption))
+            {
+                Preferences.Remove(nameof(CurrentOption));
+                return getCurrentSortingOption();
+            }
+            else
+            {
+                return currentOption;
+            }
+
+            SortingOption getCurrentSortingOption() => (SortingOption)Preferences.Get(nameof(CurrentOption), (int)SortingConstants.DefaultSortingOption);
+            static bool containsMultipleFlags<TEnum>(in TEnum flag) where TEnum : Enum => (Convert.ToInt32(flag) & (Convert.ToInt32(flag) - 1)) != 0;
+        }
     }
 }
