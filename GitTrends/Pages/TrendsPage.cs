@@ -32,6 +32,7 @@ namespace GitTrends
             var referringSitesToolbarItem = new ToolbarItem
             {
                 Text = "Referring Sites",
+                IconImageSource = "RefferingSitesIcon",
                 AutomationId = TrendsPageAutomationIds.ReferringSitesButton
             };
             referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked;
