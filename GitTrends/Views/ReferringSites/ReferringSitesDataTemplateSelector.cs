@@ -134,26 +134,6 @@ namespace GitTrends
                 }
             }
 
-            static FuncConverter<object, string> NumberConverter => new FuncConverter<object, string>(value =>
-            {
-                if (value == null) return "0";
-
-                double number = 0;
-                if (double.TryParse(value.ToString(), out number))
-                {
-                    if (number < 10e2)
-                        return string.Format("{0:0}", number);
-                    else if (number < 10e5)
-                        return $"{string.Format("{0:0.0}", number / 10e2)}K";
-                    else if (number < 10e8)
-                        return $"{string.Format("{0:0.0}", number / 10e5)}M";
-                    else if (number < 10e11)
-                        return $"{string.Format("{0:0.0}", number / 10e8)}B";
-                }
-
-                return "0";
-            });
-
             enum Row { Title, Description }
             enum Column { FavIcon, FavIconPadding, Site, Referrals, ReferralPadding, Separator, UniquePadding, Uniques }
         }
