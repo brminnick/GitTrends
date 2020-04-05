@@ -61,6 +61,9 @@
         <Compile Include="Tests\ReferringSitesTests.cs" />
         <Compile Include="Tests\SettingsTests.cs" />
         <Compile Include="Tests\TrendsTests.cs" />
+        <Compile Include="Pages\OnboardingPage.cs" />
+        <Compile Include="Pages\BaseCollectionPage.cs" />
+        <Compile Include="Tests\OnboardingTests.cs" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Pages\" />

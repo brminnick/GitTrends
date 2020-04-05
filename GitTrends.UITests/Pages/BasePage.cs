@@ -86,6 +86,8 @@ namespace GitTrends.UITests
             if (shouldDismissKeyboard)
                 App.DismissKeyboard();
         }
+
+        protected string GetText(Query query) => App.Query(query).First().Text ?? App.Query(query).First().Label;
     }
 }
 

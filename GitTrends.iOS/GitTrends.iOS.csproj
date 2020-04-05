@@ -175,9 +175,9 @@
     <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\GitTrends_Dark%402x.png" />
     <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\GitTrends_Dark%403x.png" />
     <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding.png" />
-    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding%402x.png" />
-    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding%403x.png" />
+    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding-1.png" />
+    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding%402x-1.png" />
+    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding%403x-1.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

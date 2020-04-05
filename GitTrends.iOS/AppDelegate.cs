@@ -124,6 +124,25 @@ namespace GitTrends.iOS
             var isSeriesVisible = backdoorService.IsTrendsSeriesVisible(seriesLabel.ToString());
             return new NSString(Newtonsoft.Json.JsonConvert.SerializeObject(isSeriesVisible));
         }
+
+        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.GetCurrentOnboardingPageNumber + ":")]
+        public NSString GetCurrentOnboardingPageNumber(NSString noValue)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
+
+            var pageNumber = backdoorService.GetCurrentOnboardingPageNumber();
+            return new NSString(Newtonsoft.Json.JsonConvert.SerializeObject(pageNumber));
+        }
+
+        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.PopPage)]
+        public async void PopPage()
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backdoorService = scope.Resolve<UITestBackdoorService>();
+
+            await backdoorService.PopPage().ConfigureAwait(false);
+        }
         #endregion
 #endif
 

@@ -5,7 +5,6 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
-using AsyncAwaitBestPractices;
 using Autofac;
 using Newtonsoft.Json;
 using Shiny;
@@ -33,7 +32,7 @@ namespace GitTrends.Droid
             base.SetTheme(Resource.Style.MainTheme);
             base.OnCreate(savedInstanceState);
 
-            Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            Forms.Init(this, savedInstanceState);
             FormsMaterial.Init(this, savedInstanceState);
             var app = new App();
 
@@ -68,7 +67,7 @@ namespace GitTrends.Droid
                 await Xamarin.Essentials.MainThread.InvokeOnMainThreadAsync(() => navigateToSettingsPage(navigationPage, settingsPage)).ConfigureAwait(false);
             }
 
-            static async Task navigateToSettingsPage(Xamarin.Forms.NavigationPage mainNavigationPage, SettingsPage settingsPage)
+            static async Task navigateToSettingsPage(NavigationPage mainNavigationPage, SettingsPage settingsPage)
             {
                 await mainNavigationPage.PopToRootAsync();
                 await mainNavigationPage.PushAsync(settingsPage);
@@ -114,7 +113,7 @@ namespace GitTrends.Droid
                 //Wait for Application.MainPage to load before handling the callbackUri
                 app.PageAppearing += HandlePageAppearing;
 
-                async void HandlePageAppearing(object sender, Xamarin.Forms.Page page)
+                async void HandlePageAppearing(object sender, Page page)
                 {
                     if (page is SettingsPage)
                     {

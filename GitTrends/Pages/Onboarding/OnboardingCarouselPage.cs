@@ -20,6 +20,7 @@ namespace GitTrends
                                         AnalyticsService analyticsService)
         {
             On<iOS>().SetUseSafeArea(true);
+            ChildAdded += HandleChildAdded;
 
             BindingContext = _onboardingViewModel = onboardingViewModel;
             _analyticsService = analyticsService;
@@ -31,6 +32,8 @@ namespace GitTrends
             Children.Add(notificationsOnboardingPage);
             Children.Add(connectToGitHubOnboardingPage);
         }
+
+        public int PageCount => Children.Count;
 
         protected override void OnDisappearing()
         {
@@ -45,5 +48,7 @@ namespace GitTrends
 
             MainThread.BeginInvokeOnMainThread(() => CurrentPage = Children.Last());
         }
+
+        void HandleChildAdded(object sender, ElementEventArgs e) => OnPropertyChanged(nameof(PageCount));
     }
 }

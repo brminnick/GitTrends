@@ -42,6 +42,14 @@ namespace GitTrends
 
         public IReadOnlyList<T> GetVisibleCollection<T>() => GetVisibleCollection().Cast<T>().ToList();
 
+        public Task PopPage()
+        {
+            if (GetVisibleContentPageFromModalStack() is ContentPage contentPage)
+                return contentPage.Navigation.PopModalAsync();
+
+            return GetVisibleContentPageFromNavigationStack().Navigation.PopAsync();
+        }
+
         public IEnumerable GetVisibleCollection()
         {
             var collectionView = (CollectionView)GetVisibleRefreshView().Content;
@@ -59,6 +67,14 @@ namespace GitTrends
             return trendsChart.Series.First(x => x.Label.Equals(seriesTitle)).IsVisible;
         }
 
+        public int GetCurrentOnboardingPageNumber()
+        {
+            var onboardingCarouselPage = (OnboardingCarouselPage)Application.Current.MainPage.Navigation.ModalStack.Last();
+            var currentPage = onboardingCarouselPage.CurrentPage;
+
+            return onboardingCarouselPage.Children.IndexOf(currentPage);
+        }
+
         RefreshView GetVisibleRefreshView()
         {
             var visibleContentPage = GetVisibleContentPage();
@@ -71,11 +87,11 @@ namespace GitTrends
                 throw new NotSupportedException($"{visibleContentPage.GetType()} Does Not Contain a RefreshView");
         }
 
-        ContentPage GetVisibleContentPage()
-        {
-            return (ContentPage)Application.Current.MainPage.Navigation.ModalStack.LastOrDefault()
-                    ?? (ContentPage)Application.Current.MainPage.Navigation.NavigationStack.Last();
-        }
+        ContentPage GetVisibleContentPage() => GetVisibleContentPageFromModalStack() ?? GetVisibleContentPageFromNavigationStack();
+
+        ContentPage? GetVisibleContentPageFromModalStack() => (ContentPage)Application.Current.MainPage.Navigation.ModalStack.LastOrDefault();
+
+        ContentPage GetVisibleContentPageFromNavigationStack() => (ContentPage)Application.Current.MainPage.Navigation.NavigationStack.Last();
     }
 }
 #endif

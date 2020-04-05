@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
-using Newtonsoft.Json;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
 using Xamarin.UITest.iOS;
@@ -11,7 +9,7 @@ using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Querie
 
 namespace GitTrends.UITests
 {
-    class RepositoryPage : BasePage
+    class RepositoryPage : BaseCollectionPage<Repository>
     {
         readonly Query _searchBar, _settingsButton, _collectionView, _refreshView,
             _androidContextMenuOverflowButton, _androidSearchBarButton, _sortButton;
@@ -27,11 +25,9 @@ namespace GitTrends.UITests
             _androidSearchBarButton = x => x.Id("ActionSearch");
         }
 
-        public void TriggerPullToRefresh() => App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerPullToRefresh);
-
         public Task DismissSortingMenu()
         {
-            if (App.Query(_androidContextMenuOverflowButton).Any())
+            if (App is AndroidApp && App.Query(_androidContextMenuOverflowButton).Any())
             {
                 App.Tap(_androidContextMenuOverflowButton);
                 App.Screenshot("Tapped Android Search Bar Button");
@@ -49,7 +45,7 @@ namespace GitTrends.UITests
 
         public Task CancelSortingMenu()
         {
-            if (App.Query(_androidContextMenuOverflowButton).Any())
+            if (App is AndroidApp && App.Query(_androidContextMenuOverflowButton).Any())
             {
                 App.Tap(_androidContextMenuOverflowButton);
                 App.Screenshot("Tapped Android Search Bar Button");
@@ -66,7 +62,7 @@ namespace GitTrends.UITests
 
         public Task SetSortingOption(SortingOption sortingOption)
         {
-            if (App.Query(_androidContextMenuOverflowButton).Any())
+            if (App is AndroidApp && App.Query(_androidContextMenuOverflowButton).Any())
             {
                 App.Tap(_androidContextMenuOverflowButton);
                 App.Screenshot("Tapped Android Search Bar Button");
@@ -102,7 +98,7 @@ namespace GitTrends.UITests
 
         public void EnterSearchBarText(string text)
         {
-            if (App.Query(_androidSearchBarButton).Any())
+            if (App is AndroidApp && App.Query(_androidSearchBarButton).Any())
             {
                 App.Tap(_androidSearchBarButton);
                 App.Screenshot("Tapped Android Search Bar Button");
@@ -116,7 +112,7 @@ namespace GitTrends.UITests
 
         public void TapSettingsButton()
         {
-            if (App is AndroidApp)
+            if (App is AndroidApp && App.Query(_androidContextMenuOverflowButton).Any())
             {
                 App.Tap(_androidContextMenuOverflowButton);
                 App.Screenshot("Android Overflow Button Tapped");
@@ -142,12 +138,6 @@ namespace GitTrends.UITests
         {
             App.Tap(GitHubUserNotFoundConstants.Accept);
             App.Screenshot("Accepted GitHub User Not Found Popup");
-        }
-
-        public List<Repository> GetVisibleRepositoryList()
-        {
-            var serializedRepositoryList = App.InvokeBackdoorMethod(BackdoorMethodConstants.GetVisibleCollection).ToString();
-            return JsonConvert.DeserializeObject<List<Repository>>(serializedRepositoryList);
         }
 
         Task WaitForRepositoriesToFinishSorting() => Task.Delay(1000);

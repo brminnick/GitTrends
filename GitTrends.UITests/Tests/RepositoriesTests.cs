@@ -29,17 +29,17 @@ namespace GitTrends.UITests
             Repository finalTopRepository;
             Repository finalSecondTopRepository;
             Repository finalLastRepository;
-            Repository initialTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
-            Repository initialSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
-            Repository initialLastRepository = RepositoryPage.GetVisibleRepositoryList().Last();
+            Repository initialTopRepository = RepositoryPage.VisibleCollection.First();
+            Repository initialSecondTopRepository = RepositoryPage.VisibleCollection.Skip(1).First();
+            Repository initialLastRepository = RepositoryPage.VisibleCollection.Last();
 
             //Act
             await RepositoryPage.CancelSortingMenu().ConfigureAwait(false);
 
             //Assert
-            finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
-            finalSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
-            finalLastRepository = RepositoryPage.GetVisibleRepositoryList().Last();
+            finalTopRepository = RepositoryPage.VisibleCollection.First();
+            finalSecondTopRepository = RepositoryPage.VisibleCollection.Skip(1).First();
+            finalLastRepository = RepositoryPage.VisibleCollection.Last();
 
             if (initialTopRepository.IsTrending == initialSecondTopRepository.IsTrending)
                 Assert.GreaterOrEqual(initialTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
@@ -65,17 +65,17 @@ namespace GitTrends.UITests
             Repository finalTopRepository;
             Repository finalSecondTopRepository;
             Repository finalLastRepository;
-            Repository initialTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
-            Repository initialSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
-            Repository initialLastRepository = RepositoryPage.GetVisibleRepositoryList().Last();
+            Repository initialTopRepository = RepositoryPage.VisibleCollection.First();
+            Repository initialSecondTopRepository = RepositoryPage.VisibleCollection.Skip(1).First();
+            Repository initialLastRepository = RepositoryPage.VisibleCollection.Last();
 
             //Act
             await RepositoryPage.DismissSortingMenu().ConfigureAwait(false);
 
             //Assert
-            finalTopRepository = RepositoryPage.GetVisibleRepositoryList().First();
-            finalSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
-            finalLastRepository = RepositoryPage.GetVisibleRepositoryList().Last();
+            finalTopRepository = RepositoryPage.VisibleCollection.First();
+            finalSecondTopRepository = RepositoryPage.VisibleCollection.Skip(1).First();
+            finalLastRepository = RepositoryPage.VisibleCollection.Last();
 
             if (initialTopRepository.IsTrending == initialSecondTopRepository.IsTrending)
                 Assert.GreaterOrEqual(initialTopRepository.TotalViews, initialSecondTopRepository.TotalViews);
@@ -108,17 +108,17 @@ namespace GitTrends.UITests
             Repository finalFirstRepository;
             Repository finalSecondTopRepository;
             Repository finalLastRepository;
-            Repository initialFirstRepository = RepositoryPage.GetVisibleRepositoryList().First();
-            Repository initialSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
-            Repository initialLastRepository = RepositoryPage.GetVisibleRepositoryList().Last();
+            Repository initialFirstRepository = RepositoryPage.VisibleCollection.First();
+            Repository initialSecondTopRepository = RepositoryPage.VisibleCollection.Skip(1).First();
+            Repository initialLastRepository = RepositoryPage.VisibleCollection.Last();
 
             //Act
             await RepositoryPage.SetSortingOption(sortingOption).ConfigureAwait(false);
 
             //Assert
-            finalFirstRepository = RepositoryPage.GetVisibleRepositoryList().First();
-            finalSecondTopRepository = RepositoryPage.GetVisibleRepositoryList().Skip(1).First();
-            finalLastRepository = RepositoryPage.GetVisibleRepositoryList().Last();
+            finalFirstRepository = RepositoryPage.VisibleCollection.First();
+            finalSecondTopRepository = RepositoryPage.VisibleCollection.Skip(1).First();
+            finalLastRepository = RepositoryPage.VisibleCollection.Last();
 
             if (initialFirstRepository.IsTrending == initialSecondTopRepository.IsTrending)
                 Assert.GreaterOrEqual(initialFirstRepository.TotalViews, initialSecondTopRepository.TotalViews);
@@ -185,7 +185,7 @@ namespace GitTrends.UITests
             await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
 
             //Assert
-            visibleRepositoryList = RepositoryPage.GetVisibleRepositoryList();
+            visibleRepositoryList = RepositoryPage.VisibleCollection;
             Assert.IsTrue(visibleRepositoryList.Any());
 
         }
@@ -194,20 +194,19 @@ namespace GitTrends.UITests
         public async Task VerifyNoRepositoriesAfterLogOut()
         {
             //Arrange
-            IReadOnlyList<Repository> visibleRepositoryList;
 
             //Act
             RepositoryPage.TapSettingsButton();
 
             //Assert
-            Assert.AreEqual(Mobile.Shared.FontAwesomeBrandsConstants.Disconnect, SettingsPage.GitHubButtonText);
+            Assert.AreEqual(GitHubLoginButtonConstants.Disconnect, SettingsPage.GitHubButtonText);
 
             //Act
             SettingsPage.TapGitHubButton();
             SettingsPage.WaitForGitHubLogoutToComplete();
 
             //Assert
-            Assert.AreEqual(Mobile.Shared.FontAwesomeBrandsConstants.ConnectWithGitHub, SettingsPage.GitHubButtonText);
+            Assert.AreEqual(GitHubLoginButtonConstants.ConnectWithGitHub, SettingsPage.GitHubButtonText);
 
             //Act
             SettingsPage.TapBackButton();
@@ -219,8 +218,7 @@ namespace GitTrends.UITests
             await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
 
             //Assert
-            visibleRepositoryList = RepositoryPage.GetVisibleRepositoryList();
-            Assert.IsFalse(visibleRepositoryList.Any());
+            Assert.IsFalse(RepositoryPage.VisibleCollection.Any());
         }
     }
 }

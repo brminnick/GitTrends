@@ -15,7 +15,10 @@ namespace GitTrends
 
         readonly static WeakEventManager _skipButtonTappedEventManager = new WeakEventManager();
 
-        public BaseOnboardingContentPage(GitHubAuthenticationService gitHubAuthenticationService, string backgroundColorHex, string nextButtonText, int carouselPositionIndex)
+        public BaseOnboardingContentPage(in GitHubAuthenticationService gitHubAuthenticationService,
+                                            in string backgroundColorHex,
+                                            in string nextButtonText,
+                                            in int carouselPositionIndex)
         {
             BackgroundColor = Color.FromHex(backgroundColorHex);
 
@@ -108,9 +111,8 @@ namespace GitTrends
                 }
                 else
                 {
-                    throw new NotSupportedException($"{nameof(HandleNextButtonClicked)} Does Not Support: {Text}");
+                    throw new NotSupportedException($"{nameof(HandleNextButtonClicked)} Does Not Support {Text}");
                 }
-                    
             }
         }
 
@@ -129,6 +131,7 @@ namespace GitTrends
                 FontSize = 34;
                 TextColor = Color.White;
                 FontFamily = FontFamilyConstants.RobotoBold;
+                AutomationId = OnboardingAutomationIds.TitleLabel;
             }
         }
 
@@ -157,8 +160,11 @@ namespace GitTrends
                 SelectedIndicatorColor = Color.White;
                 IndicatorColor = Color.White.MultiplyAlpha(0.25);
                 Margin = new Thickness(30, 0, 0, 0);
-                Count = 4;
                 HorizontalOptions = LayoutOptions.Start;
+                AutomationId = OnboardingAutomationIds.PageIndicator;
+
+                SetBinding(CountProperty, new Binding(nameof(OnboardingCarouselPage.PageCount),
+                                                        source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(OnboardingCarouselPage))));
             }
         }
     }

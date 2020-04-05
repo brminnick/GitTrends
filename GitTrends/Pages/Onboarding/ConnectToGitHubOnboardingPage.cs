@@ -10,7 +10,7 @@ namespace GitTrends
     class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
     {
         public ConnectToGitHubOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService)
-                : base(gitHubAuthenticationService, TealBackgroundColorHex, OnboardingConstants.TryDemoText, 3)
+                : base(gitHubAuthenticationService, CoralBackgroundColorHex, OnboardingConstants.TryDemoText, 3)
         {
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
         }
@@ -25,7 +25,7 @@ namespace GitTrends
             Aspect = Aspect.AspectFit
         };
 
-        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel("Enable notifications to stay in the loop");
+        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ConnectToGitHubPageTitle);
 
         protected override View CreateDescriptionBodyView() => new Grid
         {

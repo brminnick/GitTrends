@@ -23,7 +23,7 @@ namespace GitTrends
             VerticalOptions = LayoutOptions.Center
         };
 
-        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel("Get an overview of your repos");
+        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ChartPageTitle);
 
         protected override View CreateDescriptionBodyView() => new Grid
         {

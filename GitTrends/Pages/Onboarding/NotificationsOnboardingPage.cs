@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using GitTrends.Mobile.Shared;
+﻿using GitTrends.Mobile.Shared;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
@@ -27,7 +25,7 @@ namespace GitTrends
             Aspect = Aspect.AspectFit
         };
 
-        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel("Enable notifications to stay in the loop");
+        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.NotificationsPageTitle);
 
         protected override View CreateDescriptionBodyView() => new Grid
         {

@@ -23,7 +23,7 @@ namespace GitTrends
             VerticalOptions = LayoutOptions.Center
         };
 
-        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel("Welcome to GitTrends");
+        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.GitTrendsPageTitle);
 
         protected override View CreateDescriptionBodyView() => new Grid
         {
