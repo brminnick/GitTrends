@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows.Input;
-using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
-using Shiny;
 using Xamarin.Essentials;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -37,14 +32,12 @@ namespace GitTrends
 
             RegisterForPushNotificationsButtonCommand = new AsyncCommand(ExecuteRegisterForPushNotificationsButtonCommand, _ => !IsRegisteringForNotifications);
             CreatedByLabelTappedCommand = new AsyncCommand(ExecuteCreatedByLabelTapped);
-            DemoButtonCommand = new Command(ExecuteDemoButtonCommand);
 
             _gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
             SetGitHubValues();
         }
 
-        public ICommand DemoButtonCommand { get; }
         public ICommand CreatedByLabelTappedCommand { get; }
         public IAsyncCommand RegisterForPushNotificationsButtonCommand { get; }
 
@@ -134,7 +127,7 @@ namespace GitTrends
                 GitHubAvatarImageSource = GitHubAuthenticationService.AvatarUrl;
         }
 
-        protected override async Task ExecuteConnectToGitHubButtonTapped(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService)
+        protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService)
         {
             AnalyticsService.Track("GitHub Button Tapped", nameof(GitHubAuthenticationService.IsAuthenticated), gitHubAuthenticationService.IsAuthenticated.ToString());
 
@@ -146,17 +139,26 @@ namespace GitTrends
             }
             else
             {
-                await base.ExecuteConnectToGitHubButtonTapped(gitHubAuthenticationService, deepLinkingService).ConfigureAwait(false);
+                await base.ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService).ConfigureAwait(false);
             }
         }
 
-        void ExecuteDemoButtonCommand()
+        protected override async Task ExecuteDemoButtonCommand(string buttonText)
         {
-            AnalyticsService.Track("Demo Button Tapped");
+            try
+            {
+                await base.ExecuteDemoButtonCommand(buttonText).ConfigureAwait(false);
 
-            _gitHubAuthenticationService.ActivateDemoUser();
+                AnalyticsService.Track("Settings Demo Button Tapped");
 
-            SetGitHubValues();
+                await _gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
+
+                SetGitHubValues();
+            }
+            finally
+            {
+                IsAuthenticating = false;
+            }
         }
 
         async Task ExecuteRegisterForPushNotificationsButtonCommand()

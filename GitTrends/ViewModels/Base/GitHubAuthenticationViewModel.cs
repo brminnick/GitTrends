@@ -18,12 +18,18 @@ namespace GitTrends
         {
             gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
-            ConnectToGitHubButtonTapped = new AsyncCommand(() => ExecuteConnectToGitHubButtonTapped(gitHubAuthenticationService, deepLinkingService), _ => !IsAuthenticating);
+
+            ConnectToGitHubButtonCommand = new AsyncCommand(() => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService), _ => !IsAuthenticating);
+            DemoButtonCommand = new AsyncCommand<string>(text => ExecuteDemoButtonCommand(text), _ => !IsAuthenticating);
+            GitHubAuthenticationService = gitHubAuthenticationService;
         }
 
-        public IAsyncCommand ConnectToGitHubButtonTapped { get; }
+        public IAsyncCommand ConnectToGitHubButtonCommand { get; }
+        public IAsyncCommand<string> DemoButtonCommand { get; }
 
         public virtual bool IsDemoButtonVisible => !IsAuthenticating && GitHubAuthenticationService.Alias != DemoDataConstants.Alias;
+
+        protected GitHubAuthenticationService GitHubAuthenticationService { get; }
 
         public bool IsAuthenticating
         {
@@ -31,11 +37,17 @@ namespace GitTrends
             set => SetProperty(ref _isAuthenticating, value, () =>
             {
                 OnPropertyChanged(nameof(IsDemoButtonVisible));
-                MainThread.InvokeOnMainThreadAsync(ConnectToGitHubButtonTapped.RaiseCanExecuteChanged).SafeFireAndForget(ex => Debug.WriteLine(ex));
+                MainThread.InvokeOnMainThreadAsync(ConnectToGitHubButtonCommand.RaiseCanExecuteChanged).SafeFireAndForget(ex => Debug.WriteLine(ex));
             });
         }
 
-        protected async virtual Task ExecuteConnectToGitHubButtonTapped(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService)
+        protected virtual Task ExecuteDemoButtonCommand(string buttonText)
+        {
+            IsAuthenticating = true;
+            return Task.CompletedTask;
+        }
+
+        protected async virtual Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService)
         {
             IsAuthenticating = true;
 

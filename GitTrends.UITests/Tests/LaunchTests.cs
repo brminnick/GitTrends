@@ -22,7 +22,7 @@ namespace GitTrends.UITests
             }
             catch
             {
-                RepositoryPage.WaitForPageToLoad(TimeSpan.FromSeconds(10));
+                OnboardingPage.WaitForPageToLoad(TimeSpan.FromSeconds(10));
             }
         }
     }

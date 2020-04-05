@@ -43,7 +43,7 @@ namespace GitTrends
             gitHubLoginButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.ButtonTextColor));
             gitHubLoginButton.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.ButtonBackgroundColor));
             gitHubLoginButton.SetBinding(Button.TextProperty, nameof(SettingsViewModel.LoginButtonText));
-            gitHubLoginButton.SetBinding(Button.CommandProperty, nameof(SettingsViewModel.ConnectToGitHubButtonTapped));
+            gitHubLoginButton.SetBinding(Button.CommandProperty, nameof(SettingsViewModel.ConnectToGitHubButtonCommand));
 
             var demoButton = new Button
             {

@@ -1,12 +1,17 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
+using GitTrends.Mobile.Shared;
 using Shiny;
 
 namespace GitTrends
 {
     public class OnboardingViewModel : GitHubAuthenticationViewModel
     {
+        readonly WeakEventManager _skipButtonTappedEventManager = new WeakEventManager();
+
         readonly AnalyticsService _analyticsService;
         readonly NotificationService _notificationService;
 
@@ -28,12 +33,48 @@ namespace GitTrends
             EnableNotificationsButtonTapped = new AsyncCommand(ExecuteEnableNotificationsButtonTapped);
         }
 
+        public event EventHandler SkipButtonTapped
+        {
+            add => _skipButtonTappedEventManager.AddEventHandler(value);
+            remove => _skipButtonTappedEventManager.RemoveEventHandler(value);
+        }
+
         public ICommand EnableNotificationsButtonTapped { get; }
 
         public string NotificationStatusSvgImageSource
         {
             get => _notificationStatusSvgImageSource;
             set => SetProperty(ref _notificationStatusSvgImageSource, SvgService.GetFullPath(value));
+        }
+
+        protected override async Task ExecuteDemoButtonCommand(string buttonText)
+        {
+            try
+            {
+                await base.ExecuteDemoButtonCommand(buttonText).ConfigureAwait(false);
+
+                if (buttonText is OnboardingConstants.SkipText)
+                {
+                    OnSkipButtonTapped();
+                }
+                else if (buttonText is OnboardingConstants.TryDemoText)
+                {
+                    FirstRunService.IsFirstRun = false;
+
+                    AnalyticsService.Track("Onboarding Demo Button Tapped");
+
+                    //Allow Activity Indicator to run for a minum of 1500ms
+                    await Task.WhenAll(GitHubAuthenticationService.ActivateDemoUser(), Task.Delay(1500)).ConfigureAwait(false);
+                }
+                else
+                {
+                    throw new NotSupportedException($"{nameof(ExecuteDemoButtonCommand)} Does Not Support {buttonText}");
+                }
+            }
+            finally
+            {
+                IsAuthenticating = false;
+            }
         }
 
         async Task ExecuteEnableNotificationsButtonTapped()
@@ -67,5 +108,7 @@ namespace GitTrends
                 }
             }
         }
+
+        void OnSkipButtonTapped() => _skipButtonTappedEventManager.HandleEvent(null, EventArgs.Empty, nameof(SkipButtonTapped));
     }
 }

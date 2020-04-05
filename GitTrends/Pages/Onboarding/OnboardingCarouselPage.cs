@@ -17,6 +17,7 @@ namespace GitTrends
                                         NotificationsOnboardingPage notificationsOnboardingPage,
                                         ConnectToGitHubOnboardingPage connectToGitHubOnboardingPage,
                                         OnboardingViewModel onboardingViewModel,
+                                        GitHubAuthenticationService gitHubAuthenticationService,
                                         AnalyticsService analyticsService)
         {
             On<iOS>().SetUseSafeArea(true);
@@ -25,7 +26,8 @@ namespace GitTrends
             BindingContext = _onboardingViewModel = onboardingViewModel;
             _analyticsService = analyticsService;
 
-            BaseOnboardingContentPage.SkipButtonTapped += HandleSkipButtonTapped;
+            onboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
+            gitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 
             Children.Add(welcomeOnboardingPage);
             Children.Add(chartOnboardingPage);
@@ -48,6 +50,8 @@ namespace GitTrends
 
             MainThread.BeginInvokeOnMainThread(() => CurrentPage = Children.Last());
         }
+
+        void HandleDemoUserActivated(object sender, EventArgs e) => MainThread.BeginInvokeOnMainThread(() => Navigation.PopModalAsync());
 
         void HandleChildAdded(object sender, ElementEventArgs e) => OnPropertyChanged(nameof(PageCount));
     }

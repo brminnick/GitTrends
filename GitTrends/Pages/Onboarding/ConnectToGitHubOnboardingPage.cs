@@ -10,7 +10,7 @@ namespace GitTrends
     public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
     {
         public ConnectToGitHubOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService)
-                : base(gitHubAuthenticationService, CoralBackgroundColorHex, OnboardingConstants.TryDemoText, 3)
+                : base(CoralBackgroundColorHex, OnboardingConstants.TryDemoText, 3)
         {
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
         }
@@ -68,7 +68,7 @@ namespace GitTrends
 
                 AutomationId = OnboardingAutomationIds.ConnectToGitHubButton;
 
-                this.SetBinding(CommandProperty, nameof(OnboardingViewModel.ConnectToGitHubButtonTapped));
+                this.SetBinding(CommandProperty, nameof(OnboardingViewModel.ConnectToGitHubButtonCommand));
             }
         }
 

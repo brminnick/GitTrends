@@ -9,10 +9,9 @@ namespace GitTrends
 {
     public class NotificationsOnboardingPage : BaseOnboardingContentPage
     {
-        public NotificationsOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService)
-                : base(gitHubAuthenticationService, TealBackgroundColorHex, OnboardingConstants.SkipText, 2)
+        public NotificationsOnboardingPage() : base(TealBackgroundColorHex, OnboardingConstants.SkipText, 2)
         {
-            
+
         }
 
         enum Row { Description, Button }

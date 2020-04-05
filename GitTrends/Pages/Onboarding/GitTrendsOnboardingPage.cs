@@ -8,12 +8,11 @@ namespace GitTrends
 {
     public class GitTrendsOnboardingPage : BaseOnboardingContentPage
     {
-        public GitTrendsOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService)
-            : base(gitHubAuthenticationService, TealBackgroundColorHex, OnboardingConstants.SkipText, 0)
+        public GitTrendsOnboardingPage() : base(TealBackgroundColorHex, OnboardingConstants.SkipText, 0)
         {
         }
 
-        enum Row { Title, Connect, Monitor, Discover }
+        enum Row { Title, Connect, MonitorImage, MonitorDescription, Discover }
         enum Column { Image, Description }
 
         protected override View CreateImageView() => new Image
@@ -32,7 +31,8 @@ namespace GitTrends
             RowDefinitions = Rows.Define(
                 (Row.Title, AbsoluteGridLength(20)),
                 (Row.Connect, AbsoluteGridLength(24)),
-                (Row.Monitor, AbsoluteGridLength(24)),
+                (Row.MonitorImage, AbsoluteGridLength(24)),
+                (Row.MonitorDescription, AbsoluteGridLength(0)),
                 (Row.Discover, AbsoluteGridLength(24))),
 
             ColumnDefinitions = Columns.Define(
@@ -46,8 +46,8 @@ namespace GitTrends
                 new GitHubLogoLabel().Row(Row.Connect).Column(Column.Image),
                 new BodyLabel("Connect to Github").Row(Row.Connect).Column(Column.Description),
 
-                new BodySvg("chart.svg").Row(Row.Monitor).Column(Column.Image),
-                new BodyLabel("Monitor Github Repo Views, Clones, Forks, Stars and Issues").Row(Row.Monitor).Column(Column.Description),
+                new BodySvg("chart.svg").Row(Row.MonitorImage).Column(Column.Image),
+                new BodyLabel("Monitor Github Repo Views, Clones, Forks, Stars and Issues"){ VerticalTextAlignment = TextAlignment.Start }.Row(Row.MonitorImage).RowSpan(2).Column(Column.Description),
 
                 new BodySvg("megaphone.svg").Row(Row.Discover).Column(Column.Image),
                 new BodyLabel("Discover Referring Sites").Row(Row.Discover).Column(Column.Description),

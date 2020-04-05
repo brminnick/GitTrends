@@ -64,6 +64,16 @@ namespace GitTrends.UITests
             OnboardingPage.TapNextButton();
 
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
+
+            try
+            {
+                await RepositoryPage.WaitForPullToRefreshIndicator().ConfigureAwait(false);
+            }
+            catch
+            {
+
+            }
+
             await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
         }
 
@@ -84,6 +94,16 @@ namespace GitTrends.UITests
             SettingsPage.TapBackButton();
 
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
+
+            try
+            {
+                await RepositoryPage.WaitForPullToRefreshIndicator().ConfigureAwait(false);
+            }
+            catch
+            {
+
+            }
+
             await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
         }
 
