@@ -5,7 +5,7 @@ namespace GitTrends.Shared
 {
     public class ReferringSiteModel : BaseRepositoryModel
     {
-        public const int FavIconSize = 32;
+        public const int FavIconSize = 20;
 
         [JsonConstructor]
         public ReferringSiteModel(long count, long uniques, string referrer) : this(string.Empty, string.Empty, count, uniques, referrer)

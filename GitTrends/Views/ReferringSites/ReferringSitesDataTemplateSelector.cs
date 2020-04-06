@@ -1,6 +1,9 @@
 ﻿using FFImageLoading.Forms;
+using GitTrends.Shared;
+using GitTrends.Views.Base;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using Xamarin.Forms.PancakeView;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
@@ -12,96 +15,127 @@ namespace GitTrends
 
         class ReferringSitesDataTemplate : DataTemplate
         {
-            const int rowHeight = Shared.ReferringSiteModel.FavIconSize + 10;
-
             public ReferringSitesDataTemplate(MobileReferringSiteModel referringSiteModel) : base(() => CreateReferringSitesDataTemplate(referringSiteModel))
             {
             }
 
-            enum Row { TopPadding, Title, Description, BotomPadding }
-            enum Column { LeftPadding, FavIcon, Site, Referrals, Uniques, RightPadding }
-
-            static View CreateReferringSitesDataTemplate(in MobileReferringSiteModel referringSiteModel)
+            static View CreateReferringSitesDataTemplate(in MobileReferringSiteModel referringSiteModel) => new CardView
             {
-                var referringSitesGrid = new Grid
+                Content = new Grid
                 {
-                    RowSpacing = 1,
-                    Margin = new Thickness(5),
 
                     RowDefinitions = Rows.Define(
-                        (Row.TopPadding, AbsoluteGridLength(2)),
-                        (Row.Title, AbsoluteGridLength(rowHeight / 2)),
-                        (Row.Description, AbsoluteGridLength(rowHeight / 2)),
-                        (Row.BotomPadding, AbsoluteGridLength(2))),
+                        (Row.Title, StarGridLength(1)),
+                        (Row.Description, StarGridLength(1))),
 
                     ColumnDefinitions = Columns.Define(
-                        (Column.LeftPadding, AbsoluteGridLength(5)),
-                        (Column.FavIcon, AbsoluteGridLength(rowHeight)),
-                        (Column.Site, StarGridLength(3)),
-                        (Column.Referrals, StarGridLength(2)),
-                        (Column.Uniques, StarGridLength(2)),
-                        (Column.RightPadding, AbsoluteGridLength(5))),
+                        (Column.FavIcon, AbsoluteGridLength(32)),
+                        (Column.FavIconPadding, AbsoluteGridLength(16)),
+                        (Column.Site, StarGridLength(1)),
+                        (Column.Referrals, Auto),
+                        (Column.ReferralPadding, AbsoluteGridLength(4)),
+                        (Column.Separator, AbsoluteGridLength(1)),
+                        (Column.UniquePadding, AbsoluteGridLength(4)),
+                        (Column.Uniques, Auto)),
 
                     Children =
                     {
-                        new FavIconImage(referringSiteModel.FavIcon).Row(Row.Title).Column(Column.FavIcon).RowSpan(4),
-                        new TitleLabel("Site").Row(Row.Title).Column(Column.Site),
-                        new DescriptionLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site),
-                        new TitleLabel("Referrals") { LineBreakMode = LineBreakMode.TailTruncation }.Row(Row.Title).Column(Column.Referrals),
-                        new DescriptionLabel(referringSiteModel.TotalCount.ToString()).Row(Row.Description).Column(Column.Referrals),
-                        new TitleLabel("Unique Visitors").Row(Row.Title).Column(Column.Uniques),
-                        new DescriptionLabel(referringSiteModel.TotalUniqueCount.ToString()).Row(Row.Description).Column(Column.Uniques),
+                        new CircleBoxView(){ Content = new FavIconImage(referringSiteModel.FavIcon) }.Row(Row.Title).Column(Column.FavIcon).RowSpan(2),
+                        new TitleLabel("SITE").Row(Row.Title).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
+                        new PrimaryColorLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
+                        new TitleLabel("REFERRALS").Row(Row.Title).Column(Column.Referrals).Center(),
+                        new StatisticsLabel(12, referringSiteModel.TotalCount, nameof(BaseTheme.PrimaryTextColor)).Row(Row.Description).Column(Column.Referrals).Center(),
+                        new Separator().Row(Row.Title).Column(Column.Separator).RowSpan(2).FillExpandVertical(),
+                        new TitleLabel("UNIQUE").Row(Row.Title).Column(Column.Uniques).Center(),
+                        new StatisticsLabel(12, referringSiteModel.TotalUniqueCount, nameof(BaseTheme.PrimaryTextColor)).Row(Row.Description).Column(Column.Uniques).Center()
                     }
-                };
+                }
+            };
 
-                referringSitesGrid.SetDynamicResource(VisualElement.BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
-                return referringSitesGrid;
+            class CardView : PancakeView
+            {
+                public CardView()
+                {
+                    BorderThickness = 2;
+                    CornerRadius = 4;
+                    HasShadow = false;
+                    Visual = VisualMarker.Material;
+                    Padding = new Thickness(16);
+
+                    SetDynamicResource(BorderColorProperty, nameof(BaseTheme.CardBorderColor));
+                    SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
+                }
             }
 
             class FavIconImage : CachedImage
             {
-                public FavIconImage(ImageSource imageSource)
+                public FavIconImage(Xamarin.Forms.ImageSource imageSource)
                 {
-                    HeightRequest = MobileReferringSiteModel.FavIconSize;
-                    HorizontalOptions = LayoutOptions.FillAndExpand;
-                    VerticalOptions = LayoutOptions.CenterAndExpand;
+                    WidthRequest = HeightRequest = MobileReferringSiteModel.FavIconSize;
+                    HorizontalOptions = VerticalOptions = LayoutOptions.Center;
                     LoadingPlaceholder = FavIconService.DefaultFavIcon;
                     ErrorPlaceholder = FavIconService.DefaultFavIcon;
                     Source = imageSource;
                 }
             }
 
-            class TitleLabel : CenteredLabel
+            class TitleLabel : PrimaryColorLabel
             {
-                public TitleLabel(string text)
+
+                public TitleLabel(in string text) : base(text)
                 {
-                    FontAttributes = FontAttributes.Bold;
-                    FontSize = 14;
-                    Text = text;
-                    Padding = new Thickness(0, 2, 0, 0);
+                    CharacterSpacing = 1.56;
+                    HorizontalTextAlignment = TextAlignment.Start;
+                    VerticalTextAlignment = TextAlignment.Start;
+
+                    SetDynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
+                    SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoMedium));
                 }
             }
 
-            class DescriptionLabel : CenteredLabel
+            class PrimaryColorLabel : Label
             {
-                public DescriptionLabel(string text)
+                public PrimaryColorLabel(in double fontSize, in string text) : this(text) => FontSize = fontSize;
+
+                public PrimaryColorLabel(in string text)
                 {
                     Text = text;
-                    FontSize = 14;
-                    Padding = new Thickness(0, 0, 0, 2);
+                    FontSize = 12;
+                    MaxLines = 1;
+                    LineBreakMode = LineBreakMode.TailTruncation;
+                    HorizontalTextAlignment = TextAlignment.Start;
+                    HorizontalOptions = LayoutOptions.FillAndExpand;
+
+                    SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+                    SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoRegular));
                 }
             }
 
-            abstract class CenteredLabel : Label
+            class Separator : BoxView
             {
-                protected CenteredLabel()
+                public Separator()
                 {
-                    VerticalOptions = LayoutOptions.Center;
-                    HorizontalTextAlignment = TextAlignment.Center;
-                    VerticalTextAlignment = TextAlignment.Center;
-                    SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
+                    SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
                 }
             }
+
+            class CircleBoxView : Frame
+            {
+                public CircleBoxView()
+                {
+                    Visual = VisualMarker.Material;
+                    HeightRequest = 32;
+                    WidthRequest = 32;
+                    HorizontalOptions = VerticalOptions = LayoutOptions.Start;
+                    CornerRadius = 18;
+                    HasShadow = false;
+                    Padding = new Thickness(0);
+                    BackgroundColor = Color.White;
+                }
+            }
+
+            enum Row { Title, Description }
+            enum Column { FavIcon, FavIconPadding, Site, Referrals, ReferralPadding, Separator, UniquePadding, Uniques }
         }
     }
 }

@@ -14,7 +14,6 @@ namespace GitTrends
         const string _buttonTextColor = "#FFFFFF";
         const string _accentLightBlueHex = "#66A7FC";
         const string _accentPurpleHex = "#8F3795";
-        const string _accentIndigoHex = "#4251A4";
         const string _backgroundSurfaceHex = "#FFFFFF";
         const string _cardSurfaceHex = "#FFFFFF";
         const string _toolbarSurfaceHex = "#338F82";
@@ -23,7 +22,7 @@ namespace GitTrends
 
         //Graph Palette
         const string _saturatedLightBlueHex = "#2BC3BE";
-        const string _saturatedGreenHex = "#63B58F";
+        const string _saturatedIndigoHex = "#5D6AB1";
         const string _saturatedYellowHex = "#FFC534";
         const string _saturatedPinkHex = "#F2726F";
 
@@ -43,7 +42,7 @@ namespace GitTrends
 
         //Chart
         public override Color TotalViewsColor { get; } = Color.FromHex(_saturatedLightBlueHex);
-        public override Color TotalUniqueViewsColor { get; } = Color.FromHex(_saturatedGreenHex);
+        public override Color TotalUniqueViewsColor { get; } = Color.FromHex(_saturatedIndigoHex);
         public override Color TotalClonesColor { get; } = Color.FromHex(_saturatedYellowHex);
         public override Color TotalUniqueClonesColor { get; } = Color.FromHex(_saturatedPinkHex);
 
@@ -83,7 +82,7 @@ namespace GitTrends
         public override Color CardClonesStatsTextColor { get; } = Color.FromHex(_textHex);
         public override Color CardClonesStatsIconColor { get; } = Color.FromHex(_saturatedYellowHex);
         public override Color CardUniqueViewsStatsTextColor { get; } = Color.FromHex(_textHex);
-        public override Color CardUniqueViewsStatsIconColor { get; } = Color.FromHex(_saturatedGreenHex);
+        public override Color CardUniqueViewsStatsIconColor { get; } = Color.FromHex(_saturatedIndigoHex);
         public override Color CardUniqueClonesStatsTextColor { get; } = Color.FromHex(_textHex);
         public override Color CardUniqueClonesStatsIconColor { get; } = Color.FromHex(_saturatedPinkHex);
         public override Color CardTrendingStatsColor { get; } = Color.FromHex(_primaryTealHex);

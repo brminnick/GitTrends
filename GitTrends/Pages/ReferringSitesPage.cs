@@ -22,12 +22,25 @@ namespace GitTrends
             const int titleTopMargin = 15;
             _deepLinkingService = deepLinkingService;
 
+            Padding = new Thickness(16, 0);
+
             var collectionView = new CollectionView
             {
                 AutomationId = ReferringSitesPageAutomationIds.CollectionView,
+                BackgroundColor = Color.Transparent,
                 ItemTemplate = new ReferringSitesDataTemplateSelector(),
-                SelectionMode = SelectionMode.Single
+                SelectionMode = SelectionMode.Single,
+                ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical)
+                {
+                    ItemSpacing = 16
+                },
             };
+
+            collectionView.Header = collectionView.Footer = new StackLayout
+            {
+                HeightRequest = 0,
+            };
+
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.MobileReferringSitesList));
 
