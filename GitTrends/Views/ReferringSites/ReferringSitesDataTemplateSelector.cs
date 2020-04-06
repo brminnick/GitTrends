@@ -70,7 +70,7 @@ namespace GitTrends
 
             class FavIconImage : CachedImage
             {
-                public FavIconImage(Xamarin.Forms.ImageSource imageSource)
+                public FavIconImage(in ImageSource imageSource)
                 {
                     WidthRequest = HeightRequest = MobileReferringSiteModel.FavIconSize;
                     HorizontalOptions = VerticalOptions = LayoutOptions.Center;

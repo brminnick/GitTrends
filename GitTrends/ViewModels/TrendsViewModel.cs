@@ -30,7 +30,7 @@ namespace GitTrends
         public ICommand FetchDataCommand { get; }
         public double DailyViewsClonesMinValue { get; } = 0;
 
-        public bool IsChartVisible => !IsFetchingData;
+        public bool AreStatisticsVisible => !IsFetchingData;
         public DateTime MinDateValue => DateTimeService.GetMinimumLocalDateTime(DailyViewsList, DailyClonesList);
         public DateTime MaxDateValue => DateTimeService.GetMaximumLocalDateTime(DailyViewsList, DailyClonesList);
 
@@ -50,7 +50,7 @@ namespace GitTrends
         public bool IsFetchingData
         {
             get => _isFetchingData;
-            set => SetProperty(ref _isFetchingData, value, () => OnPropertyChanged(nameof(IsChartVisible)));
+            set => SetProperty(ref _isFetchingData, value, () => OnPropertyChanged(nameof(AreStatisticsVisible)));
         }
 
         public List<DailyViewsModel> DailyViewsList

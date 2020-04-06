@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FFImageLoading.Svg.Forms;
 using GitTrends.Shared;
-using GitTrends.Views.Base;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;

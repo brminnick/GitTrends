@@ -1,17 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Syncfusion.SfChart.XForms;
-using Xamarin.Essentials;
-using System.Collections.Generic;
-using FFImageLoading.Svg.Forms;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
-using GitTrends.Views.Base;
 
 namespace GitTrends
 {
@@ -37,25 +34,12 @@ namespace GitTrends
             referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked;
             ToolbarItems.Add(referringSitesToolbarItem);
 
-            TrendsChart.Margin(new Thickness(0, 24, -16, 24));
-            TrendsChart.ChartPadding = new Thickness(0, 24, 0, 0);
             TrendsChart.TotalViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowViewsByDefault;
             TrendsChart.TotalUniqueViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueViewsByDefault;
             TrendsChart.TotalClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowClonesByDefault;
             TrendsChart.TotalUniqueClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueClonesByDefault;
 
-
-            var activityIndicator = new ActivityIndicator
-            {
-                AutomationId = TrendsPageAutomationIds.ActivityIndicator,
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center,
-            };
-            activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.RefreshControlColor));
-            activityIndicator.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData));
-            activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
-
-            Content = new GridContainer(TrendsChart, activityIndicator);
+            Content = new GridContainer();
 
             ViewModel.FetchDataCommand.Execute(_repository);
         }
@@ -65,7 +49,7 @@ namespace GitTrends
 
         class GridContainer : Grid
         {
-            public GridContainer(in View chart, in View activityIndicator)
+            public GridContainer()
             {
                 ColumnSpacing = 8;
                 RowSpacing = 8;
@@ -84,17 +68,31 @@ namespace GitTrends
                     .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Total));
                 Children.Add(new CardView(CreateViews("Unique Views", 32000, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor)))
                     .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Unique));
-                Children.Add(activityIndicator
-                    .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Total).RowSpan(3).ColumnSpan(2));
                 Children.Add(new CardView(CreateViews("Clones", 200, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor)))
                     .Row(GridContainerRow.ClonesStats).Column(GridContainerColumn.Total));
                 Children.Add(new CardView(CreateViews("Unique Clones", 130, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor)))
                     .Row(GridContainerRow.ClonesStats).Column(GridContainerColumn.Unique));
-                Children.Add(chart
+                Children.Add(new TrendsChartActivityIndicator()
                     .Row(GridContainerRow.Chart).Column(GridContainerColumn.Total).ColumnSpan(2));
-                
+                Children.Add(TrendsChart
+                    .Row(GridContainerRow.Chart).Column(GridContainerColumn.Total).ColumnSpan(2));
 
                 SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+            }
+
+            class TrendsChartActivityIndicator : ActivityIndicator
+            {
+                public TrendsChartActivityIndicator()
+                {
+                    AutomationId = TrendsPageAutomationIds.ActivityIndicator;
+                    HorizontalOptions = LayoutOptions.Center;
+                    VerticalOptions = LayoutOptions.Center;
+
+                    SetDynamicResource(ColorProperty, nameof(BaseTheme.RefreshControlColor));
+
+                    this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData));
+                    this.SetBinding(IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
+                }
             }
 
             class CardView : PancakeView
@@ -105,7 +103,6 @@ namespace GitTrends
                     BorderThickness = 2;
                     CornerRadius = 4;
                     HasShadow = false;
-                    Visual = VisualMarker.Material;
                     Content = new ContentGrid(children);
 
                     SetDynamicResource(BorderColorProperty, nameof(BaseTheme.CardBorderColor));
@@ -149,20 +146,8 @@ namespace GitTrends
             {
                new PrimaryColorLabel(14, title).Row(CardViewRow.StatsTitle).Column(CardViewColumn.Stats),
                new TrendsStatisticsLabel(34, number, nameof(BaseTheme.PrimaryTextColor)).Row(CardViewRow.StatsNumber).Column(CardViewColumn.Stats).ColumnSpan(2),
-               new RepositoryStatSVGImage(icon, baseIconThemeColor, 32, 32)
-               {
-                   VerticalOptions = LayoutOptions.StartAndExpand,
-               }.Row(CardViewRow.StatsTitle).Column(CardViewColumn.Icon).RowSpan(2)
+               new RepositoryStatSVGImage(icon, baseIconThemeColor, 32, 32).Row(CardViewRow.StatsTitle).Column(CardViewColumn.Icon).RowSpan(2)
             };
-        }
-
-        Thickness GetPadding()
-        {
-            //Check if Device is in Landscape
-            if (DeviceDisplay.MainDisplayInfo.Width > DeviceDisplay.MainDisplayInfo.Height)
-                return new Thickness(0, 5, 0, 0);
-            else
-                return Device.RuntimePlatform is Device.iOS ? new Thickness(0, 5, 0, 15) : new Thickness(0, 5, 0, 0);
         }
 
         async void HandleReferringSitesToolbarItemClicked(object sender, EventArgs e)
@@ -178,15 +163,26 @@ namespace GitTrends
                 await Navigation.PushAsync(referringSitesPage);
         }
 
+        class RepositoryStatSVGImage : SvgImage
+        {
+            public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor, in double width, in double height)
+                : base(svgFileName, () => (Color)Application.Current.Resources[baseThemeColor], width, height)
+            {
+                VerticalOptions = LayoutOptions.CenterAndExpand;
+                HorizontalOptions = LayoutOptions.EndAndExpand;
+            }
+        }
+
         class TrendsStatisticsLabel : StatisticsLabel
         {
             public TrendsStatisticsLabel(in double fontSize, in long number, in string textColorThemeName) : base(fontSize, number, textColorThemeName, FontFamilyConstants.RobotoMedium)
             {
-                HorizontalTextAlignment = TextAlignment.Start;
                 VerticalTextAlignment = TextAlignment.Start;
                 VerticalOptions = LayoutOptions.Start;
                 Opacity = 0.87;
                 Margin = new Thickness(0, 4, 0, 0);
+
+                this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.AreStatisticsVisible));
             }
         }
 
@@ -211,6 +207,8 @@ namespace GitTrends
             {
                 AutomationId = TrendsPageAutomationIds.TrendsChart;
 
+                Margin = new Thickness(0, 24, -16, 0);
+
                 TotalViewsSeries = new TrendsAreaSeries(TrendsChartConstants.TotalViewsTitle, nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalViews), nameof(BaseTheme.TotalViewsColor));
                 TotalViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList));
 
@@ -223,7 +221,7 @@ namespace GitTrends
                 TotalUniqueClonesSeries = new TrendsAreaSeries(TrendsChartConstants.UniqueClonesTitle, nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalUniqueClones), nameof(BaseTheme.TotalUniqueClonesColor));
                 TotalUniqueClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyClonesList));
 
-                this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsChartVisible));
+                this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.AreStatisticsVisible));
 
                 ChartBehaviors = new ChartBehaviorCollection
                 {
