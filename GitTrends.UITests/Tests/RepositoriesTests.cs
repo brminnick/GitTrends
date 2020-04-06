@@ -187,7 +187,6 @@ namespace GitTrends.UITests
             //Assert
             visibleRepositoryList = RepositoryPage.VisibleCollection;
             Assert.IsTrue(visibleRepositoryList.Any());
-
         }
 
         [Test]
@@ -197,6 +196,7 @@ namespace GitTrends.UITests
 
             //Act
             RepositoryPage.TapSettingsButton();
+            await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
 
             //Assert
             Assert.AreEqual(GitHubLoginButtonConstants.Disconnect, SettingsPage.GitHubButtonText);
@@ -211,7 +211,7 @@ namespace GitTrends.UITests
             //Act
             SettingsPage.TapBackButton();
 
-            RepositoryPage.DeclineGitHubUserNotFoundPopup();
+            await RepositoryPage.WaitForPageToLoad();
             RepositoryPage.TriggerPullToRefresh();
 
             await RepositoryPage.WaitForPullToRefreshIndicator().ConfigureAwait(false);

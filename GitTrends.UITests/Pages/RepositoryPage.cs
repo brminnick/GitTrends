@@ -122,24 +122,6 @@ namespace GitTrends.UITests
             App.Screenshot("Settings Button Tapped");
         }
 
-        public void WaitForGitHubUserNotFoundPopup()
-        {
-            App.WaitForElement(GitHubUserNotFoundConstants.Title);
-            App.Screenshot("GitHub User Not Found Popup Appeared");
-        }
-
-        public void DeclineGitHubUserNotFoundPopup()
-        {
-            App.Tap(GitHubUserNotFoundConstants.Decline);
-            App.Screenshot("Declined GitHub User Not Found Popup");
-        }
-
-        public void AcceptGitHubUserNotFoundPopup()
-        {
-            App.Tap(GitHubUserNotFoundConstants.Accept);
-            App.Screenshot("Accepted GitHub User Not Found Popup");
-        }
-
         Task WaitForRepositoriesToFinishSorting() => Task.Delay(1000);
     }
 }

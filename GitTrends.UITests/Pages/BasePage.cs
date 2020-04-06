@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.UITest;
-using Xamarin.UITest.Android;
-using Xamarin.UITest.iOS;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
 namespace GitTrends.UITests
@@ -21,42 +19,11 @@ namespace GitTrends.UITests
         public string PageTitle { get; }
         protected IApp App { get; }
 
-        bool IsRefreshViewRefreshIndicatorDisplayed => App switch
-        {
-            AndroidApp androidApp => (bool)androidApp.Query(x => x.Class("RefreshViewRenderer").Invoke("isRefreshing")).First(),
-            iOSApp iOSApp => iOSApp.Query(x => x.Class("UIRefreshControl")).Any(),
-            _ => throw new NotSupportedException("Xamarin.UITest only supports Android and iOS"),
-        };
-
-        public async Task WaitForPullToRefreshIndicator(int timeoutInSeconds = 25)
-        {
-            int counter = 0;
-            while (!IsRefreshViewRefreshIndicatorDisplayed)
-            {
-                await Task.Delay(1000).ConfigureAwait(false);
-
-                if (counter++ >= timeoutInSeconds)
-                    throw new Exception($"Loading the list took longer than {timeoutInSeconds} seconds");
-            }
-        }
-
-        public async Task WaitForNoPullToRefreshIndicator(int timeoutInSeconds = 25)
-        {
-            int counter = 0;
-            while (IsRefreshViewRefreshIndicatorDisplayed)
-            {
-                await Task.Delay(1000).ConfigureAwait(false);
-
-                if (counter++ >= timeoutInSeconds)
-                    throw new Exception($"Loading the list took longer than {timeoutInSeconds} seconds");
-            }
-        }
-
         public void DismissSyncfusionLicensePopup()
         {
             try
             {
-                App.WaitForElement(_syncfusionLicenseWarningTitle);
+                App.WaitForElement(_syncfusionLicenseWarningTitle, timeout: TimeSpan.FromSeconds(1));
                 App.Tap("Ok");
 
                 App.Screenshot("Syncfusion License Popup Dismissed");
