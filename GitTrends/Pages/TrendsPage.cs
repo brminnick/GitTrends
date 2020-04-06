@@ -4,13 +4,22 @@ using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Essentials;
+using System.Collections.Generic;
+using FFImageLoading.Svg.Forms;
 using Xamarin.Forms;
+using Xamarin.Forms.Markup;
+using Xamarin.Forms.PancakeView;
+using static GitTrends.XamarinFormsService;
+using static Xamarin.Forms.Markup.GridRowsColumns;
+using GitTrends.Views.Base;
 
 namespace GitTrends
 {
     class TrendsPage : BaseContentPage<TrendsViewModel>
     {
-        static readonly Lazy<GitHubTrendsChart> _trendsChartHolder = new Lazy<GitHubTrendsChart>(() => new GitHubTrendsChart());
+        static readonly Lazy<GitHubTrendsChart> _trendsChartHolder = new Lazy<GitHubTrendsChart>(() => new GitHubTrendsChart()
+        .Row(GridContainerRow.Chart).Column(GridContainerColumn.Total).ColumnSpan(2));
+
         readonly Repository _repository;
 
         public TrendsPage(TrendsViewModel trendsViewModel,
@@ -23,32 +32,151 @@ namespace GitTrends
             var referringSitesToolbarItem = new ToolbarItem
             {
                 Text = "Referring Sites",
+                IconImageSource = "RefferingSitesIcon",
                 AutomationId = TrendsPageAutomationIds.ReferringSitesButton
             };
             referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked;
             ToolbarItems.Add(referringSitesToolbarItem);
 
+            TrendsChart.Margin(new Thickness(0, 24, -16, 24));
+            TrendsChart.ChartPadding = new Thickness(0,24,0,0);
             TrendsChart.TotalViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowViewsByDefault;
             TrendsChart.TotalUniqueViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueViewsByDefault;
             TrendsChart.TotalClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowClonesByDefault;
             TrendsChart.TotalUniqueClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueClonesByDefault;
+            
 
             var activityIndicator = new ActivityIndicator
             {
                 AutomationId = TrendsPageAutomationIds.ActivityIndicator
-            };
+            }.Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Total).RowSpan(3).ColumnSpan(2).Center();
+
             activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.RefreshControlColor));
             activityIndicator.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData));
             activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
 
-            var absoluteLayout = new AbsoluteLayout();
-            absoluteLayout.Children.Add(activityIndicator, new Rectangle(.5, .5, -1, -1), AbsoluteLayoutFlags.PositionProportional);
-            absoluteLayout.Children.Add(TrendsChart, new Rectangle(0, 0, 1, 1), AbsoluteLayoutFlags.All);
-
-            Padding = GetPadding();
-            Content = absoluteLayout;
+            Content = new GridContainer(TrendsChart, activityIndicator);
 
             ViewModel.FetchDataCommand.Execute(_repository);
+        }
+
+        enum GridContainerRow { ViewsStats, ClonesStats, Chart }
+        enum GridContainerColumn { Total, Unique }
+
+        class GridContainer : Grid
+        {
+            public GridContainer(in View chart, in View activityIndicator)
+            {
+                ColumnSpacing = 8;
+                RowSpacing = 8;
+                Padding = new Thickness(16);
+
+                RowDefinitions = Rows.Define(
+                    (GridContainerRow.ViewsStats, AbsoluteGridLength(96)),
+                    (GridContainerRow.ClonesStats, AbsoluteGridLength(96)),
+                    (GridContainerRow.Chart, StarGridLength(1)));
+
+                ColumnDefinitions = Columns.Define(
+                    (GridContainerColumn.Total, StarGridLength(1)),
+                    (GridContainerColumn.Unique, StarGridLength(1)));
+
+                Children.Add(new CardView(CreateViews("Views", 5000000000, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor)))
+                    .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Total));
+                Children.Add(new CardView(CreateViews("Unique Views", 32000, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor)))
+                    .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Unique));
+                Children.Add(new CardView(CreateViews("Clones", 200, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor)))
+                    .Row(GridContainerRow.ClonesStats).Column(GridContainerColumn.Total));
+                Children.Add(new CardView(CreateViews("Unique Clones", 130, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor)))
+                    .Row(GridContainerRow.ClonesStats).Column(GridContainerColumn.Unique));
+
+                Children.Add(chart);
+                Children.Add(activityIndicator);
+
+                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+            }
+
+            class CardView : PancakeView
+            {
+                public CardView(in IEnumerable<View> children)
+                {
+                    Padding = new Thickness(16, 12);
+                    BorderThickness = 2;
+                    CornerRadius = 4;
+                    HasShadow = false;
+                    Visual = VisualMarker.Material;
+                    Content = new ContentGrid(children);
+
+                    SetDynamicResource(BorderColorProperty, nameof(BaseTheme.CardBorderColor));
+                    SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
+                }
+
+                class ContentGrid : Grid
+                {
+                    public ContentGrid(in IEnumerable<View> children)
+                    {
+                        HorizontalOptions = LayoutOptions.FillAndExpand;
+                        VerticalOptions = LayoutOptions.FillAndExpand;
+                        ColumnSpacing = 0;
+                        RowSpacing = 0;
+
+                        RowDefinitions = Rows.Define(
+                            (CardViewRow.StatsTitle, Auto),
+                            (CardViewRow.StatsNumber, StarGridLength(1)));
+
+                        ColumnDefinitions = Columns.Define(
+                            (CardViewColumn.Stats, StarGridLength(1)),
+                            (CardViewColumn.Icon, AbsoluteGridLength(32)));
+
+                        foreach (var child in children)
+                        {
+                            Children.Add(child);
+                        }
+                    }
+                }
+            }
+        }
+
+        enum CardViewRow { StatsTitle, StatsNumber }
+        enum CardViewColumn { Stats, Icon }
+
+        static IEnumerable<View> CreateViews(in string title, in long number, in string icon, in string baseIconThemeColor)
+        {
+            return new View[]
+            {
+               new PrimaryColorLabel(14, title).Row(CardViewRow.StatsTitle).Column(CardViewColumn.Stats),
+               new StatsLabel(34, number, nameof(BaseTheme.PrimaryTextColor), nameof(BaseTheme.RobotoMedium)).Row(CardViewRow.StatsNumber).Column(CardViewColumn.Stats).ColumnSpan(2),
+               new RepositoryStatSVGImage(icon, baseIconThemeColor, 32, 32)
+               {
+                   VerticalOptions = LayoutOptions.StartAndExpand,
+               }.Row(CardViewRow.StatsTitle).Column(CardViewColumn.Icon).RowSpan(2)
+            };
+        }
+
+        public class StatsLabel : StatisticsLabel
+        {
+            public StatsLabel(in double fontSize, in long number, in string textColorThemeName, in string fontFamilyName) : base(fontSize, number, textColorThemeName, fontFamilyName)
+            {
+                HorizontalTextAlignment = TextAlignment.Start;
+                VerticalTextAlignment = TextAlignment.Start;
+                VerticalOptions = LayoutOptions.Start;
+                Opacity = 0.87;
+                Margin = new Thickness(0,4,0,0);
+            }
+        }
+
+        public class PrimaryColorLabel : Label
+        {
+            public PrimaryColorLabel(in double fontSize, in string text)
+            {
+                FontSize = fontSize;
+                Text = text;
+                Opacity = 0.6;
+                LineBreakMode = LineBreakMode.TailTruncation;
+                HorizontalTextAlignment = TextAlignment.Start;
+                VerticalOptions = LayoutOptions.Start;
+
+                SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+            }
         }
 
         static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
@@ -109,14 +237,19 @@ namespace GitTrends
                     TotalUniqueClonesSeries
                 };
 
-                var chartLegendLabelStyle = new ChartLegendLabelStyle();
+                var chartLegendLabelStyle = new ChartLegendLabelStyle()
+                {
+                    FontSize = 12,
+                };
                 chartLegendLabelStyle.SetDynamicResource(ChartLegendLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
+                chartLegendLabelStyle.SetDynamicResource(ChartLegendLabelStyle.FontFamilyProperty, nameof(BaseTheme.RobotoRegular));
 
                 Legend = new ChartLegend
                 {
                     AutomationId = TrendsPageAutomationIds.TrendsChartLegend,
                     DockPosition = LegendPlacement.Bottom,
                     ToggleSeriesVisibility = true,
+                    Margin = new Thickness(0,8,0,0),
                     IconWidth = 20,
                     IconHeight = 20,
                     LabelStyle = chartLegendLabelStyle
@@ -124,11 +257,15 @@ namespace GitTrends
 
                 var axisLabelStyle = new ChartAxisLabelStyle
                 {
-                    FontSize = 14
+                    FontSize = 14,
                 };
                 axisLabelStyle.SetDynamicResource(ChartAxisLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
+                axisLabelStyle.SetDynamicResource(ChartAxisLabelStyle.FontFamilyProperty, nameof(BaseTheme.RobotoRegular));
 
-                var axisLineStyle = new ChartLineStyle();
+                var axisLineStyle = new ChartLineStyle()
+                {
+                    StrokeWidth = 1.51
+                };
                 axisLineStyle.SetDynamicResource(ChartLineStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
 
                 PrimaryAxis = new DateTimeAxis

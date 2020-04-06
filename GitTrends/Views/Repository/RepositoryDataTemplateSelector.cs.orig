@@ -1,9 +1,13 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using FFImageLoading.Svg.Forms;
+<<<<<<< HEAD
 using GitTrends.Shared;
 using GitTrends.Views.Base;
+=======
+using GitTrends.Shared;
+>>>>>>> a53c912c307b73495f7ab34512affaabff673828
 using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -246,15 +250,6 @@ namespace GitTrends
             static FuncConverter<bool, bool> IsLargeScreenTrendingImageNotVisible { get; } = new FuncConverter<bool, bool>(isLargeScreenTrendingImageVisible => !isLargeScreenTrendingImageVisible);
         }
 
-        class RepositoryStatSVGImage : SvgImage
-        {
-            public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor, in double widthRequest = default, in double heightRequest = default)
-                : base(svgFileName, () => (Color)Application.Current.Resources[baseThemeColor], widthRequest, heightRequest)
-            {
-                VerticalOptions = LayoutOptions.CenterAndExpand;
-                HorizontalOptions = LayoutOptions.EndAndExpand;
-            }
-        }
         class StatisticsLabel : Label
         {
             public StatisticsLabel(in long number, in string textColorThemeName)
@@ -373,7 +368,8 @@ namespace GitTrends
                 {
                     LineBreakMode = LineBreakMode.TailTruncation;
                     HorizontalOptions = LayoutOptions.FillAndExpand;
-                    FontFamily = FontFamilyConstants.RobotoBold;
+
+                    SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoBold));
                 }
             }
 
@@ -382,7 +378,7 @@ namespace GitTrends
                 public RepositoryDescriptionLabel(in string text) : base(14, text)
                 {
                     MaxLines = 2;
-                    FontFamily = FontFamilyConstants.RobotoRegular;
+                    SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoRegular));
                 }
             }
 

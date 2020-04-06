@@ -5,7 +5,7 @@ namespace GitTrends.Views.Base
 {
     class StatisticsLabel : Label
     {
-        public StatisticsLabel(in double fontSize, in long number, in string textColorThemeName)
+        public StatisticsLabel(in double fontSize, in long number, in string textColorThemeName, in string fontFamilyName)
         {
             Text = GetNumberAsText(number);
             FontSize = fontSize;
@@ -17,7 +17,7 @@ namespace GitTrends.Views.Base
             LineBreakMode = LineBreakMode.TailTruncation;
 
             SetDynamicResource(TextColorProperty, textColorThemeName);
-            SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoRegular));
+            SetDynamicResource(FontFamilyProperty, nameof(fontFamilyName));
         }
 
         static string GetNumberAsText(long number)

@@ -31,7 +31,7 @@ namespace GitTrends
 
         //Graph Palette
         const string _saturatedLightBlueHex = "#2BC3BE";
-        const string _saturatedIndigoHex = "#63B58F";
+        const string _saturatedIndigoHex = "#5D6AB1";
         const string _saturatedYellowHex = "#FFC534";
         const string _saturatedPinkHex = "#F2726F";
 
