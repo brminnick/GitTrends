@@ -25,7 +25,7 @@ namespace GitTrends
         public TrendsPage(TrendsViewModel trendsViewModel,
                             TrendsChartSettingsService trendsChartSettingsService,
                             Repository repository,
-                            AnalyticsService analyticsService) : base(repository.Name, trendsViewModel, analyticsService)
+                            AnalyticsService analyticsService) : base(trendsViewModel, analyticsService, repository.Name)
         {
             _repository = repository;
 
@@ -180,13 +180,6 @@ namespace GitTrends
         }
 
         static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
-
-        protected override void HandlePageSizeChanged(object sender, EventArgs e)
-        {
-            Padding = GetPadding();
-
-            base.HandlePageSizeChanged(sender, e);
-        }
 
         Thickness GetPadding()
         {

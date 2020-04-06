@@ -54,18 +54,17 @@ namespace GitTrends
         {
             var currentOption = getCurrentSortingOption();
 
-            if (containsMultipleFlags(currentOption))
+            if (Enum.IsDefined(typeof(SortingOption), currentOption))
+            {
+                return currentOption;                
+            }
+            else
             {
                 Preferences.Remove(nameof(CurrentOption));
                 return getCurrentSortingOption();
             }
-            else
-            {
-                return currentOption;
-            }
 
             SortingOption getCurrentSortingOption() => (SortingOption)Preferences.Get(nameof(CurrentOption), (int)SortingConstants.DefaultSortingOption);
-            static bool containsMultipleFlags<TEnum>(in TEnum flag) where TEnum : Enum => (Convert.ToInt32(flag) & (Convert.ToInt32(flag) - 1)) != 0;
         }
     }
 }

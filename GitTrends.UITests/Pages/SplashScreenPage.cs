@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using Xamarin.UITest;
@@ -17,7 +16,7 @@ namespace GitTrends.UITests
             _statusLabel = GenerateMarkedQuery(SplashScreenPageAutomationIds.StatusLabel);
         }
 
-        public string StatusLabelText => App.Query(_statusLabel).First().Text;
+        public string StatusLabelText => GetText(_statusLabel);
 
         public override Task WaitForPageToLoad(TimeSpan? timespan = null)
         {

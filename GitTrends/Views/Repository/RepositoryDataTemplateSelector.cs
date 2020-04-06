@@ -246,6 +246,15 @@ namespace GitTrends
             static FuncConverter<bool, bool> IsLargeScreenTrendingImageNotVisible { get; } = new FuncConverter<bool, bool>(isLargeScreenTrendingImageVisible => !isLargeScreenTrendingImageVisible);
         }
 
+        class RepositoryStatSVGImage : SvgImage
+        {
+            public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor, in double widthRequest = default, in double heightRequest = default)
+                : base(svgFileName, () => (Color)Application.Current.Resources[baseThemeColor], widthRequest, heightRequest)
+            {
+                VerticalOptions = LayoutOptions.CenterAndExpand;
+                HorizontalOptions = LayoutOptions.EndAndExpand;
+            }
+        }
         class StatisticsLabel : Label
         {
             public StatisticsLabel(in long number, in string textColorThemeName)
@@ -364,8 +373,7 @@ namespace GitTrends
                 {
                     LineBreakMode = LineBreakMode.TailTruncation;
                     HorizontalOptions = LayoutOptions.FillAndExpand;
-
-                    SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoBold));
+                    FontFamily = FontFamilyConstants.RobotoBold;
                 }
             }
 
@@ -374,7 +382,7 @@ namespace GitTrends
                 public RepositoryDescriptionLabel(in string text) : base(14, text)
                 {
                     MaxLines = 2;
-                    SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoRegular));
+                    FontFamily = FontFamilyConstants.RobotoRegular;
                 }
             }
 

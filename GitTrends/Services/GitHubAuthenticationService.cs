@@ -15,6 +15,7 @@ namespace GitTrends
         readonly WeakEventManager<AuthorizeSessionCompletedEventArgs> _authorizeSessionCompletedEventManager = new WeakEventManager<AuthorizeSessionCompletedEventArgs>();
         readonly WeakEventManager _authorizeSessionStartedEventManager = new WeakEventManager();
         readonly WeakEventManager _loggedOuteventManager = new WeakEventManager();
+        readonly WeakEventManager _demoUserActivatedEventManager = new WeakEventManager();
 
         readonly AzureFunctionsApiService _azureFunctionsApiService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
@@ -42,6 +43,12 @@ namespace GitTrends
         {
             add => _authorizeSessionCompletedEventManager.AddEventHandler(value);
             remove => _authorizeSessionCompletedEventManager.RemoveEventHandler(value);
+        }
+
+        public event EventHandler DemoUserActivated
+        {
+            add => _demoUserActivatedEventManager.AddEventHandler(value);
+            remove => _demoUserActivatedEventManager.RemoveEventHandler(value);
         }
 
         public event EventHandler LoggedOut
@@ -84,12 +91,9 @@ namespace GitTrends
 
             try
             {
-                var token = JsonConvert.DeserializeObject<GitHubToken>(serializedToken);
+                var token = JsonConvert.DeserializeObject<GitHubToken?>(serializedToken);
 
-                if (token is null)
-                    return new GitHubToken(string.Empty, string.Empty, string.Empty);
-
-                return token;
+                return token ?? new GitHubToken(string.Empty, string.Empty, string.Empty);
             }
             catch (ArgumentNullException)
             {
@@ -99,6 +103,17 @@ namespace GitTrends
             {
                 return new GitHubToken(string.Empty, string.Empty, string.Empty);
             }
+        }
+
+        public async Task ActivateDemoUser()
+        {
+            await LogOut().ConfigureAwait(false);
+
+            Name = DemoDataConstants.Name;
+            AvatarUrl = DemoDataConstants.AvatarUrl;
+            Alias = DemoDataConstants.Alias;
+
+            OnDemoUserActivated();
         }
 
         public async Task<string> GetGitHubLoginUrl()
@@ -181,5 +196,7 @@ namespace GitTrends
            _authorizeSessionStartedEventManager.HandleEvent(this, EventArgs.Empty, nameof(AuthorizeSessionStarted));
 
         void OnLoggedOut() => _loggedOuteventManager.HandleEvent(this, EventArgs.Empty, nameof(LoggedOut));
+
+        void OnDemoUserActivated() => _demoUserActivatedEventManager.HandleEvent(this, EventArgs.Empty, nameof(DemoUserActivated));
     }
 }
