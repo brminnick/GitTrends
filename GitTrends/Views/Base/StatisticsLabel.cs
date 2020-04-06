@@ -1,11 +1,10 @@
-﻿using System;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
-namespace GitTrends.Views.Base
+namespace GitTrends
 {
     class StatisticsLabel : Label
     {
-        public StatisticsLabel(in double fontSize, in long number, in string textColorThemeName, in string fontFamilyName)
+        public StatisticsLabel(in double fontSize, in long number, in string textColorThemeName, in string fontFamily)
         {
             Text = GetNumberAsText(number);
             FontSize = fontSize;
@@ -15,9 +14,9 @@ namespace GitTrends.Views.Base
             HorizontalTextAlignment = TextAlignment.Start;
             VerticalTextAlignment = TextAlignment.End;
             LineBreakMode = LineBreakMode.TailTruncation;
+            FontFamily = fontFamily;
 
             SetDynamicResource(TextColorProperty, textColorThemeName);
-            SetDynamicResource(FontFamilyProperty, nameof(fontFamilyName));
         }
 
         static string GetNumberAsText(long number)

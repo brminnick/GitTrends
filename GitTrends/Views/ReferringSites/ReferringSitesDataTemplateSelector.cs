@@ -1,5 +1,4 @@
 ﻿using FFImageLoading.Forms;
-using GitTrends.Shared;
 using GitTrends.Views.Base;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -18,6 +17,9 @@ namespace GitTrends
             public ReferringSitesDataTemplate(MobileReferringSiteModel referringSiteModel) : base(() => CreateReferringSitesDataTemplate(referringSiteModel))
             {
             }
+
+            enum Row { Title, Description }
+            enum Column { FavIcon, FavIconPadding, Site, Referrals, ReferralPadding, Separator, UniquePadding, Uniques }
 
             static View CreateReferringSitesDataTemplate(in MobileReferringSiteModel referringSiteModel) => new CardView
             {
@@ -44,10 +46,10 @@ namespace GitTrends
                         new TitleLabel("SITE").Row(Row.Title).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
                         new PrimaryColorLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
                         new TitleLabel("REFERRALS").Row(Row.Title).Column(Column.Referrals).Center(),
-                        new StatisticsLabel(12, referringSiteModel.TotalCount, nameof(BaseTheme.PrimaryTextColor), nameof(BaseTheme.RobotoRegular)).Row(Row.Description).Column(Column.Referrals).Center(),
+                        new StatisticsLabel(12, referringSiteModel.TotalCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular).Row(Row.Description).Column(Column.Referrals).Center(),
                         new Separator().Row(Row.Title).Column(Column.Separator).RowSpan(2).FillExpandVertical(),
                         new TitleLabel("UNIQUE").Row(Row.Title).Column(Column.Uniques).Center(),
-                        new StatisticsLabel(12, referringSiteModel.TotalUniqueCount, nameof(BaseTheme.PrimaryTextColor), nameof(BaseTheme.RobotoRegular)).Row(Row.Description).Column(Column.Uniques).Center()
+                        new StatisticsLabel(12, referringSiteModel.TotalUniqueCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular).Row(Row.Description).Column(Column.Uniques).Center()
                     }
                 }
             };
@@ -87,9 +89,9 @@ namespace GitTrends
                     CharacterSpacing = 1.56;
                     HorizontalTextAlignment = TextAlignment.Start;
                     VerticalTextAlignment = TextAlignment.Start;
+                    FontFamily = FontFamilyConstants.RobotoMedium;
 
                     SetDynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
-                    SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoMedium));
                 }
             }
 
@@ -105,9 +107,9 @@ namespace GitTrends
                     LineBreakMode = LineBreakMode.TailTruncation;
                     HorizontalTextAlignment = TextAlignment.Start;
                     HorizontalOptions = LayoutOptions.FillAndExpand;
+                    FontFamily = FontFamilyConstants.RobotoRegular;
 
                     SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
-                    SetDynamicResource(FontFamilyProperty, nameof(BaseTheme.RobotoRegular));
                 }
             }
 
@@ -133,9 +135,6 @@ namespace GitTrends
                     BackgroundColor = Color.White;
                 }
             }
-
-            enum Row { Title, Description }
-            enum Column { FavIcon, FavIconPadding, Site, Referrals, ReferralPadding, Separator, UniquePadding, Uniques }
         }
     }
 }

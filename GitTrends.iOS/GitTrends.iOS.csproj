@@ -130,10 +130,6 @@
     <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%401x_light-1.png" />
     <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%402x_light-1.png" />
     <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%403x_light.png" />
-    <ImageAsset Include="Assets.xcassets\RefferingSitesIcon.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\RefferingSitesIcon.imageset\RefferingSitesIcon%402x-1.png" />
-    <ImageAsset Include="Assets.xcassets\RefferingSitesIcon.imageset\RefferingSitesIcon%403x-1.png" />
-    <ImageAsset Include="Assets.xcassets\RefferingSitesIcon.imageset\RefferingSitesIcon-1.png" />
     <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light-1.png" />
     <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x-1.png" />
     <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x-1.png" />
@@ -182,6 +178,10 @@
     <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding-1.png" />
     <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding%402x-1.png" />
     <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding%403x-1.png" />
+    <ImageAsset Include="Assets.xcassets\ReferringSitesIcon.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\ReferringSitesIcon.imageset\RefferingSitesIcon%402x-1.png" />
+    <ImageAsset Include="Assets.xcassets\ReferringSitesIcon.imageset\RefferingSitesIcon%403x-1.png" />
+    <ImageAsset Include="Assets.xcassets\ReferringSitesIcon.imageset\RefferingSitesIcon-1.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -225,7 +225,7 @@
     <Folder Include="Assets.xcassets\GitTrendsBackgroundColor.colorset\" />
     <Folder Include="Assets.xcassets\Sort.imageset\" />
     <Folder Include="Resources\" />
-    <Folder Include="Assets.xcassets\RefferingSitesIcon.imageset\" />
+    <Folder Include="Assets.xcassets\ReferringSitesIcon.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets.xcassets\NotificationsOnboarding.imageset\" />

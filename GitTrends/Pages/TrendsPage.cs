@@ -17,8 +17,7 @@ namespace GitTrends
 {
     class TrendsPage : BaseContentPage<TrendsViewModel>
     {
-        static readonly Lazy<GitHubTrendsChart> _trendsChartHolder = new Lazy<GitHubTrendsChart>(() => new GitHubTrendsChart()
-        .Row(GridContainerRow.Chart).Column(GridContainerColumn.Total).ColumnSpan(2));
+        static readonly Lazy<GitHubTrendsChart> _trendsChartHolder = new Lazy<GitHubTrendsChart>(() => new GitHubTrendsChart());
 
         readonly Repository _repository;
 
@@ -32,25 +31,26 @@ namespace GitTrends
             var referringSitesToolbarItem = new ToolbarItem
             {
                 Text = "Referring Sites",
-                IconImageSource = "RefferingSitesIcon",
+                IconImageSource = "ReferringSitesIcon",
                 AutomationId = TrendsPageAutomationIds.ReferringSitesButton
             };
             referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked;
             ToolbarItems.Add(referringSitesToolbarItem);
 
             TrendsChart.Margin(new Thickness(0, 24, -16, 24));
-            TrendsChart.ChartPadding = new Thickness(0,24,0,0);
+            TrendsChart.ChartPadding = new Thickness(0, 24, 0, 0);
             TrendsChart.TotalViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowViewsByDefault;
             TrendsChart.TotalUniqueViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueViewsByDefault;
             TrendsChart.TotalClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowClonesByDefault;
             TrendsChart.TotalUniqueClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueClonesByDefault;
-            
+
 
             var activityIndicator = new ActivityIndicator
             {
-                AutomationId = TrendsPageAutomationIds.ActivityIndicator
-            }.Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Total).RowSpan(3).ColumnSpan(2).Center();
-
+                AutomationId = TrendsPageAutomationIds.ActivityIndicator,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center,
+            };
             activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.RefreshControlColor));
             activityIndicator.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData));
             activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
@@ -84,13 +84,15 @@ namespace GitTrends
                     .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Total));
                 Children.Add(new CardView(CreateViews("Unique Views", 32000, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor)))
                     .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Unique));
+                Children.Add(activityIndicator
+                    .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Total).RowSpan(3).ColumnSpan(2));
                 Children.Add(new CardView(CreateViews("Clones", 200, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor)))
                     .Row(GridContainerRow.ClonesStats).Column(GridContainerColumn.Total));
                 Children.Add(new CardView(CreateViews("Unique Clones", 130, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor)))
                     .Row(GridContainerRow.ClonesStats).Column(GridContainerColumn.Unique));
-
-                Children.Add(chart);
-                Children.Add(activityIndicator);
+                Children.Add(chart
+                    .Row(GridContainerRow.Chart).Column(GridContainerColumn.Total).ColumnSpan(2));
+                
 
                 SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             }
@@ -139,47 +141,20 @@ namespace GitTrends
         enum CardViewRow { StatsTitle, StatsNumber }
         enum CardViewColumn { Stats, Icon }
 
+        static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
+
         static IEnumerable<View> CreateViews(in string title, in long number, in string icon, in string baseIconThemeColor)
         {
             return new View[]
             {
                new PrimaryColorLabel(14, title).Row(CardViewRow.StatsTitle).Column(CardViewColumn.Stats),
-               new StatsLabel(34, number, nameof(BaseTheme.PrimaryTextColor), nameof(BaseTheme.RobotoMedium)).Row(CardViewRow.StatsNumber).Column(CardViewColumn.Stats).ColumnSpan(2),
+               new TrendsStatisticsLabel(34, number, nameof(BaseTheme.PrimaryTextColor)).Row(CardViewRow.StatsNumber).Column(CardViewColumn.Stats).ColumnSpan(2),
                new RepositoryStatSVGImage(icon, baseIconThemeColor, 32, 32)
                {
                    VerticalOptions = LayoutOptions.StartAndExpand,
                }.Row(CardViewRow.StatsTitle).Column(CardViewColumn.Icon).RowSpan(2)
             };
         }
-
-        public class StatsLabel : StatisticsLabel
-        {
-            public StatsLabel(in double fontSize, in long number, in string textColorThemeName, in string fontFamilyName) : base(fontSize, number, textColorThemeName, fontFamilyName)
-            {
-                HorizontalTextAlignment = TextAlignment.Start;
-                VerticalTextAlignment = TextAlignment.Start;
-                VerticalOptions = LayoutOptions.Start;
-                Opacity = 0.87;
-                Margin = new Thickness(0,4,0,0);
-            }
-        }
-
-        public class PrimaryColorLabel : Label
-        {
-            public PrimaryColorLabel(in double fontSize, in string text)
-            {
-                FontSize = fontSize;
-                Text = text;
-                Opacity = 0.6;
-                LineBreakMode = LineBreakMode.TailTruncation;
-                HorizontalTextAlignment = TextAlignment.Start;
-                VerticalOptions = LayoutOptions.Start;
-
-                SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
-            }
-        }
-
-        static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
 
         Thickness GetPadding()
         {
@@ -201,6 +176,33 @@ namespace GitTrends
                 await Navigation.PushModalAsync(referringSitesPage);
             else
                 await Navigation.PushAsync(referringSitesPage);
+        }
+
+        class TrendsStatisticsLabel : StatisticsLabel
+        {
+            public TrendsStatisticsLabel(in double fontSize, in long number, in string textColorThemeName) : base(fontSize, number, textColorThemeName, FontFamilyConstants.RobotoMedium)
+            {
+                HorizontalTextAlignment = TextAlignment.Start;
+                VerticalTextAlignment = TextAlignment.Start;
+                VerticalOptions = LayoutOptions.Start;
+                Opacity = 0.87;
+                Margin = new Thickness(0, 4, 0, 0);
+            }
+        }
+
+        class PrimaryColorLabel : Label
+        {
+            public PrimaryColorLabel(in double fontSize, in string text)
+            {
+                FontSize = fontSize;
+                Text = text;
+                Opacity = 0.6;
+                LineBreakMode = LineBreakMode.TailTruncation;
+                HorizontalTextAlignment = TextAlignment.Start;
+                VerticalOptions = LayoutOptions.Start;
+
+                SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+            }
         }
 
         class GitHubTrendsChart : SfChart
@@ -240,16 +242,16 @@ namespace GitTrends
                 var chartLegendLabelStyle = new ChartLegendLabelStyle()
                 {
                     FontSize = 12,
+                    FontFamily = FontFamilyConstants.RobotoRegular
                 };
                 chartLegendLabelStyle.SetDynamicResource(ChartLegendLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
-                chartLegendLabelStyle.SetDynamicResource(ChartLegendLabelStyle.FontFamilyProperty, nameof(BaseTheme.RobotoRegular));
 
                 Legend = new ChartLegend
                 {
                     AutomationId = TrendsPageAutomationIds.TrendsChartLegend,
                     DockPosition = LegendPlacement.Bottom,
                     ToggleSeriesVisibility = true,
-                    Margin = new Thickness(0,8,0,0),
+                    Margin = new Thickness(0, 8, 0, 0),
                     IconWidth = 20,
                     IconHeight = 20,
                     LabelStyle = chartLegendLabelStyle
@@ -258,9 +260,9 @@ namespace GitTrends
                 var axisLabelStyle = new ChartAxisLabelStyle
                 {
                     FontSize = 14,
+                    FontFamily = FontFamilyConstants.RobotoRegular
                 };
                 axisLabelStyle.SetDynamicResource(ChartAxisLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
-                axisLabelStyle.SetDynamicResource(ChartAxisLabelStyle.FontFamilyProperty, nameof(BaseTheme.RobotoRegular));
 
                 var axisLineStyle = new ChartLineStyle()
                 {
