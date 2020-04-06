@@ -11,13 +11,14 @@ namespace GitTrends
         readonly TrendsChartSettingsService _trendsChartSettingsService;
 
         public SettingsPage(SettingsViewModel settingsViewModel,
+                            NotificationService notificationService,
                             TrendsChartSettingsService trendsChartSettingsService,
-                            AnalyticsService analyticsService) : base(PageTitles.SettingsPage, settingsViewModel, analyticsService)
+                            AnalyticsService analyticsService) : base(settingsViewModel, analyticsService, PageTitles.SettingsPage)
         {
             _trendsChartSettingsService = trendsChartSettingsService;
+            notificationService.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
 
-            ViewModel.GitHubLoginUrlRetrieved += HandleGitHubLoginUrlRetrieved;
-            ViewModel.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
+            Content = CreateLayout(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width);
         }
 
         protected override void OnDisappearing()
@@ -25,13 +26,6 @@ namespace GitTrends
             base.OnDisappearing();
 
             ViewModel.IsAuthenticating = false;
-        }
-
-        protected override void HandlePageSizeChanged(object sender, EventArgs e)
-        {
-            base.HandlePageSizeChanged(sender, e);
-
-            Content = CreateLayout(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width);
         }
 
         void HandleRegisterForNotificationsCompleted(object sender, (bool IsSuccessful, string ErrorMessage) result)
@@ -116,14 +110,6 @@ namespace GitTrends
                 widthConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Width));
 
             return relativeLayout;
-        }
-
-        async void HandleGitHubLoginUrlRetrieved(object sender, string? loginUrl)
-        {
-            if (!string.IsNullOrWhiteSpace(loginUrl))
-                await OpenBrowser(loginUrl);
-            else
-                await DisplayAlert("Error", "Couldn't connect to GitHub Login. Check your internet connection and try again", "OK");
         }
     }
 }

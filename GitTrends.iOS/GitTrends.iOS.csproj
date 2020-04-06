@@ -103,7 +103,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ViewControllerServices.cs" />
     <Compile Include="CustomRenderers\SearchPageRenderer.cs" />
-    <Compile Include="CustomRenderers\DarkBlueSwitchCustomRederer.cs" />
     <Compile Include="Services\Environment_iOS.cs" />
     <Compile Include="Services\SKStoreReviewController.cs" />
   </ItemGroup>
@@ -167,6 +166,18 @@
     <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark-1.png" />
     <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark%402x-1.png" />
     <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark%403x-1.png" />
+    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding.png" />
+    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding%402x.png" />
+    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding%403x.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\GitTreands_Dark-1.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\GitTrends_Dark%402x.png" />
+    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\GitTrends_Dark%403x.png" />
+    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding-1.png" />
+    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding%402x-1.png" />
+    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding%403x-1.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -210,11 +221,8 @@
     <Folder Include="Assets.xcassets\GitTrendsBackgroundColor.colorset\" />
     <Folder Include="Assets.xcassets\Sort.imageset\" />
     <Folder Include="Resources\" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\FontAwesomeBrands.ttf" />
-    <BundleResource Include="Resources\Roboto-Bold.ttf" />
-    <BundleResource Include="Resources\Roboto-Medium.ttf" />
-    <BundleResource Include="Resources\Roboto-Regular.ttf" />
+    <Folder Include="Assets.xcassets\NotificationsOnboarding.imageset\" />
+    <Folder Include="Assets.xcassets\GitTrendsWhite.imageset\" />
+    <Folder Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\" />
   </ItemGroup>
 </Project>

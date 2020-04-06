@@ -61,10 +61,6 @@ namespace GitTrends
             Add(nameof(TrendsChartSettingsSelectionIndicatorColor), TrendsChartSettingsSelectionIndicatorColor);
 
             Add(nameof(GitTrendsImageBackgroundColor), GitTrendsImageBackgroundColor);
-
-            Add(nameof(RobotoBold), RobotoBold);
-            Add(nameof(RobotoMedium), RobotoMedium);
-            Add(nameof(RobotoRegular), RobotoRegular);
         }
 
         public abstract Color NavigationBarBackgroundColor { get; }
@@ -127,10 +123,5 @@ namespace GitTrends
         public abstract Color TrendsChartSettingsSelectionIndicatorColor { get; }
 
         public abstract Color GitTrendsImageBackgroundColor { get; }
-
-        //Fonts
-        public string RobotoBold { get; } = Device.RuntimePlatform is Device.iOS ? "Roboto-Bold" : "Roboto-Bold.ttf#Roboto-Bold";
-        public string RobotoMedium { get; } = Device.RuntimePlatform is Device.iOS ? "Roboto-Medium" : "Roboto-Medium.ttf#Roboto-Medium";
-        public string RobotoRegular { get; } = Device.RuntimePlatform is Device.iOS ? "Roboto-Regular" : "Roboto-Regular.ttf#Roboto-Regular";
     }
 }

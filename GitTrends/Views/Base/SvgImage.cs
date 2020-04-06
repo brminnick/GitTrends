@@ -4,12 +4,15 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    class SvgImage : SvgCachedImage
+    public class SvgImage : SvgCachedImage
     {
         readonly Func<Color> _getTextColor;
 
-        public SvgImage(in string svgFileName, in Func<Color> getTextColor)
+        public SvgImage(in string svgFileName, in Func<Color> getTextColor, double widthRequest = default, double heightRequest = default)
         {
+            if (!svgFileName.EndsWith(".svg"))
+                throw new ArgumentException($"{nameof(svgFileName)} must end with .svg", nameof(svgFileName));
+
             _getTextColor = getTextColor;
 
             var app = (App)Application.Current;
@@ -18,6 +21,9 @@ namespace GitTrends
             UpdateSVGColor();
 
             Source = SvgService.GetFullPath(svgFileName);
+
+            WidthRequest = (widthRequest == default) ? int.MaxValue : widthRequest;
+            HeightRequest = (heightRequest == default) ? int.MaxValue : heightRequest;
         }
 
         void HandleThemeChanged(object sender, Theme e) => UpdateSVGColor();

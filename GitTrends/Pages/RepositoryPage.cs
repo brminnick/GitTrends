@@ -18,7 +18,7 @@ namespace GitTrends
 
         public RepositoryPage(RepositoryViewModel repositoryViewModel,
                                 AnalyticsService analyticsService,
-                                SortingService sortingService) : base(PageTitles.RepositoryPage, repositoryViewModel, analyticsService)
+                                SortingService sortingService) : base(repositoryViewModel, analyticsService, PageTitles.RepositoryPage)
         {
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
@@ -76,24 +76,32 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            if (Content is RefreshView refreshView
+            var token = await GitHubAuthenticationService.GetGitHubToken();
+
+            if (shouldShowWelcomePage(Navigation, token.AccessToken) && FirstRunService.IsFirstRun)
+            {
+                using var scope = ContainerService.Container.BeginLifetimeScope();
+                var onboardingPage = scope.Resolve<OnboardingCarouselPage>();
+
+                await Navigation.PushModalAsync(onboardingPage);
+            }
+            else if (shouldShowWelcomePage(Navigation, token.AccessToken) && !FirstRunService.IsFirstRun)
+            {
+                //Push Modal WelcomePage
+            }
+            else if (!FirstRunService.IsFirstRun
+                        && Content is RefreshView refreshView
                         && refreshView.Content is CollectionView collectionView
                         && IsNullOrEmpty(collectionView.ItemsSource))
             {
-                var token = await GitHubAuthenticationService.GetGitHubToken();
+                refreshView.IsRefreshing = true;
+            }
 
-                if (GitHubAuthenticationService.Alias != DemoDataConstants.Alias
-                    && (string.IsNullOrWhiteSpace(token.AccessToken) || string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias)))
-                {
-                    var shouldNavigateToSettingsPage = await DisplayAlert(GitHubUserNotFoundConstants.Title, GitHubUserNotFoundConstants.Description, GitHubUserNotFoundConstants.Accept, GitHubUserNotFoundConstants.Decline);
-
-                    if (shouldNavigateToSettingsPage)
-                        await NavigateToSettingsPage();
-                }
-                else
-                {
-                    refreshView.IsRefreshing = true;
-                }
+            static bool shouldShowWelcomePage(in INavigation navigation, in string accessToken)
+            {
+                return !navigation.ModalStack.Any()
+                        && GitHubAuthenticationService.Alias != DemoDataConstants.Alias
+                        && (string.IsNullOrWhiteSpace(accessToken) || string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias));
             }
 
             static bool IsNullOrEmpty(in IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;

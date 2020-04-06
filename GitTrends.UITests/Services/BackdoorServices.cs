@@ -14,5 +14,11 @@ namespace GitTrends.UITests
             AndroidApp androidApp => androidApp.Invoke(backdoorMethodName, parameter),
             _ => throw new NotSupportedException("Platform Not Supported"),
         };
+
+        public static T InvokeBackdoorMethod<T>(this IApp app, string backdoorMethodName, string parameter = "")
+        {
+            var result = app.InvokeBackdoorMethod(backdoorMethodName, parameter).ToString();
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(result);
+        }
     }
 }
