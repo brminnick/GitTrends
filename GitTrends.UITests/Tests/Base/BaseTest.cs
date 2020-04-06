@@ -83,6 +83,8 @@ namespace GitTrends.UITests
 
             await LoginToGitHub().ConfigureAwait(false);
 
+            await Task.Delay(1000).ConfigureAwait(false);
+
             OnboardingPage.PopPage();
 
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);

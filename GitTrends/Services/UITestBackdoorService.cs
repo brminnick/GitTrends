@@ -44,6 +44,8 @@ namespace GitTrends
 
         public Task PopPage()
         {
+            FirstRunService.IsFirstRun = false;
+
             if (GetVisiblePageFromModalStack() is Page page)
                 return page.Navigation.PopModalAsync();
 

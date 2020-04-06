@@ -6,7 +6,7 @@ namespace GitTrends
 {
     public abstract class BaseContentPage<T> : ContentPage where T : BaseViewModel
     {
-        protected BaseContentPage(in T viewModel, AnalyticsService analyticsService, in string title = "", bool shouldUseSafeArea = true)
+        protected BaseContentPage(in T viewModel, AnalyticsService analyticsService, in string title = "", bool shouldUseSafeArea = false)
         {
             SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             BindingContext = ViewModel = viewModel;
