@@ -135,8 +135,8 @@ namespace GitTrends.iOS
             return new NSString(Newtonsoft.Json.JsonConvert.SerializeObject(pageNumber));
         }
 
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.PopPage)]
-        public async void PopPage()
+        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.PopPage + ":")]
+        public async void PopPage(NSString noValue)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var backdoorService = scope.Resolve<UITestBackdoorService>();

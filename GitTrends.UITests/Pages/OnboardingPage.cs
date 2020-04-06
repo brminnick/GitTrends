@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using NUnit.Framework;
-using Refit;
 using Xamarin.UITest;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 

@@ -67,7 +67,7 @@ namespace GitTrends.UITests
 
             try
             {
-                await RepositoryPage.WaitForPullToRefreshIndicator().ConfigureAwait(false);
+                await RepositoryPage.WaitForPullToRefreshIndicator(5).ConfigureAwait(false);
             }
             catch
             {
@@ -79,12 +79,14 @@ namespace GitTrends.UITests
 
         async Task SetupLoggedInUser()
         {
+            await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
+
             await LoginToGitHub().ConfigureAwait(false);
 
-            await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
             OnboardingPage.PopPage();
 
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
+            RepositoryPage.TriggerPullToRefresh();
             RepositoryPage.TapSettingsButton();
 
             await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
@@ -97,7 +99,7 @@ namespace GitTrends.UITests
 
             try
             {
-                await RepositoryPage.WaitForPullToRefreshIndicator().ConfigureAwait(false);
+                await RepositoryPage.WaitForPullToRefreshIndicator(5).ConfigureAwait(false);
             }
             catch
             {

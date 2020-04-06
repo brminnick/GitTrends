@@ -44,10 +44,10 @@ namespace GitTrends
 
         public Task PopPage()
         {
-            if (GetVisibleContentPageFromModalStack() is ContentPage contentPage)
-                return contentPage.Navigation.PopModalAsync();
+            if (GetVisiblePageFromModalStack() is Page page)
+                return page.Navigation.PopModalAsync();
 
-            return GetVisibleContentPageFromNavigationStack().Navigation.PopAsync();
+            return GetVisiblePageFromNavigationStack().Navigation.PopAsync();
         }
 
         public IEnumerable GetVisibleCollection()
@@ -87,11 +87,11 @@ namespace GitTrends
                 throw new NotSupportedException($"{visibleContentPage.GetType()} Does Not Contain a RefreshView");
         }
 
-        ContentPage GetVisibleContentPage() => GetVisibleContentPageFromModalStack() ?? GetVisibleContentPageFromNavigationStack();
+        ContentPage GetVisibleContentPage() => (ContentPage)(GetVisiblePageFromModalStack() ?? GetVisiblePageFromNavigationStack());
 
-        ContentPage? GetVisibleContentPageFromModalStack() => (ContentPage)Application.Current.MainPage.Navigation.ModalStack.LastOrDefault();
+        Page? GetVisiblePageFromModalStack() => Application.Current.MainPage.Navigation.ModalStack.LastOrDefault();
 
-        ContentPage GetVisibleContentPageFromNavigationStack() => (ContentPage)Application.Current.MainPage.Navigation.NavigationStack.Last();
+        Page GetVisiblePageFromNavigationStack() => Application.Current.MainPage.Navigation.NavigationStack.Last();
     }
 }
 #endif
