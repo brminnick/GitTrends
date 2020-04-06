@@ -34,13 +34,9 @@ namespace GitTrends
                 {
                     ItemSpacing = 16
                 },
+                Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 0 } : new BoxView { HeightRequest = titleRowHeight + titleTopMargin },
+                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 0 } : null
             };
-
-            collectionView.Header = collectionView.Footer = new StackLayout
-            {
-                HeightRequest = 0,
-            };
-
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.MobileReferringSitesList));
 
@@ -54,7 +50,7 @@ namespace GitTrends
             _refreshView.SetBinding(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.RefreshCommand));
             _refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing));
 
-            //Add Title and Back Button to UIModalPresentationStyle.FormSheet 
+            //Add Title and Close Button to UIModalPresentationStyle.FormSheet 
             if (Device.RuntimePlatform is Device.iOS)
             {
                 var closeButton = new Button
@@ -74,8 +70,6 @@ namespace GitTrends
 
                 var titleRowBlurView = new BoxView { Opacity = 0.5 };
                 titleRowBlurView.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
-
-                collectionView.Header = new BoxView { HeightRequest = titleRowHeight + titleTopMargin };
 
                 var titleLabel = new Label
                 {

@@ -1,5 +1,4 @@
 ﻿using FFImageLoading.Forms;
-using GitTrends.Views.Base;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
