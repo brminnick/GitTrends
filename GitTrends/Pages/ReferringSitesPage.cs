@@ -22,20 +22,15 @@ namespace GitTrends
             const int titleTopMargin = 15;
             _deepLinkingService = deepLinkingService;
 
-            Padding = new Thickness(16, 0);
-
             var collectionView = new CollectionView
             {
                 AutomationId = ReferringSitesPageAutomationIds.CollectionView,
                 BackgroundColor = Color.Transparent,
                 ItemTemplate = new ReferringSitesDataTemplateSelector(),
                 SelectionMode = SelectionMode.Single,
-                ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical)
-                {
-                    ItemSpacing = 16
-                },
-                Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 0 } : new BoxView { HeightRequest = titleRowHeight + titleTopMargin },
-                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 0 } : null
+                ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical),
+                Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : new BoxView { HeightRequest = titleRowHeight + titleTopMargin },
+                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.MobileReferringSitesList));

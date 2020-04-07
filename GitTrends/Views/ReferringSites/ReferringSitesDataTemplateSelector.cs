@@ -1,4 +1,5 @@
-﻿using FFImageLoading.Forms;
+﻿using System.Collections.Generic;
+using FFImageLoading.Forms;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
@@ -20,51 +21,88 @@ namespace GitTrends
             enum Row { Title, Description }
             enum Column { FavIcon, FavIconPadding, Site, Referrals, ReferralPadding, Separator, UniquePadding, Uniques }
 
-            static View CreateReferringSitesDataTemplate(in MobileReferringSiteModel referringSiteModel) => new CardView
-            {
-                Content = new Grid
-                {
+            static CardView CreateReferringSitesDataTemplate(in MobileReferringSiteModel referringSiteModel) => new CardView(CreateViews(referringSiteModel));
 
+            static IEnumerable<View> CreateViews(in MobileReferringSiteModel referringSiteModel)
+            {
+                return new View[]
+                {
+                    new CircleBoxView(){ Content = new FavIconImage(referringSiteModel.FavIcon) }.Row(Row.Title).Column(Column.FavIcon).RowSpan(2),
+                    new TitleLabel("SITE").Row(Row.Title).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
+                    new PrimaryColorLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
+                    new TitleLabel("REFERRALS").Row(Row.Title).Column(Column.Referrals).Center(),
+                    new StatisticsLabel(12, referringSiteModel.TotalCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular).Row(Row.Description).Column(Column.Referrals).Center(),
+                    new Separator().Row(Row.Title).Column(Column.Separator).RowSpan(2).FillExpandVertical(),
+                    new TitleLabel("UNIQUE").Row(Row.Title).Column(Column.Uniques).Center(),
+                    new StatisticsLabel(12, referringSiteModel.TotalUniqueCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular).Row(Row.Description).Column(Column.Uniques).Center()
+                };
+            }
+
+            class CardView : Grid
+            {
+                public CardView(in IEnumerable<View> children)
+                {
+                    RowSpacing = 0;
                     RowDefinitions = Rows.Define(
-                        (Row.Title, StarGridLength(1)),
-                        (Row.Description, StarGridLength(1))),
+                   (CardViewRow.TopPadding, AbsoluteGridLength(8)),
+                   (CardViewRow.Card, StarGridLength(1)),
+                   (CardViewRow.BottomPadding, AbsoluteGridLength(8)));
 
                     ColumnDefinitions = Columns.Define(
-                        (Column.FavIcon, AbsoluteGridLength(32)),
-                        (Column.FavIconPadding, AbsoluteGridLength(16)),
-                        (Column.Site, StarGridLength(1)),
-                        (Column.Referrals, Auto),
-                        (Column.ReferralPadding, AbsoluteGridLength(4)),
-                        (Column.Separator, AbsoluteGridLength(1)),
-                        (Column.UniquePadding, AbsoluteGridLength(4)),
-                        (Column.Uniques, Auto)),
+                        (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
+                        (CardViewColumn.Card, StarGridLength(1)),
+                        (CardViewColumn.RightPadding, AbsoluteGridLength(16)));
 
-                    Children =
+                    Children.Add(new CardViewFrame(children).Row(CardViewRow.Card).Column(CardViewColumn.Card));
+
+                    SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+                }
+
+                enum CardViewRow { TopPadding, Card, BottomPadding }
+                enum CardViewColumn { LeftPadding, Card, RightPadding }
+
+                class CardViewFrame : PancakeView
+                {
+                    public CardViewFrame(in IEnumerable<View> children)
                     {
-                        new CircleBoxView(){ Content = new FavIconImage(referringSiteModel.FavIcon) }.Row(Row.Title).Column(Column.FavIcon).RowSpan(2),
-                        new TitleLabel("SITE").Row(Row.Title).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
-                        new PrimaryColorLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
-                        new TitleLabel("REFERRALS").Row(Row.Title).Column(Column.Referrals).Center(),
-                        new StatisticsLabel(12, referringSiteModel.TotalCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular).Row(Row.Description).Column(Column.Referrals).Center(),
-                        new Separator().Row(Row.Title).Column(Column.Separator).RowSpan(2).FillExpandVertical(),
-                        new TitleLabel("UNIQUE").Row(Row.Title).Column(Column.Uniques).Center(),
-                        new StatisticsLabel(12, referringSiteModel.TotalUniqueCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular).Row(Row.Description).Column(Column.Uniques).Center()
+                        CornerRadius = 4;
+                        HasShadow = false;
+                        Padding = new Thickness(16);
+                        BorderThickness = 2;
+                        Content = new ContentGrid(children);
+
+                        SetDynamicResource(BorderColorProperty, nameof(BaseTheme.CardBorderColor));
+                        SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
                     }
                 }
-            };
 
-            class CardView : PancakeView
-            {
-                public CardView()
+                class ContentGrid : Grid
                 {
-                    BorderThickness = 2;
-                    CornerRadius = 4;
-                    HasShadow = false;
-                    Visual = VisualMarker.Material;
-                    Padding = new Thickness(16);
+                    public ContentGrid(in IEnumerable<View> children)
+                    {
+                        HorizontalOptions = LayoutOptions.FillAndExpand;
+                        VerticalOptions = LayoutOptions.FillAndExpand;
 
-                    SetDynamicResource(BorderColorProperty, nameof(BaseTheme.CardBorderColor));
-                    SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
+                        RowDefinitions = Rows.Define(
+                        (Row.Title, StarGridLength(1)),
+                        (Row.Description, StarGridLength(1)));
+
+                        ColumnDefinitions = Columns.Define(
+                            (Column.FavIcon, AbsoluteGridLength(32)),
+                            (Column.FavIconPadding, AbsoluteGridLength(16)),
+                            (Column.Site, StarGridLength(1)),
+                            (Column.Referrals, Auto),
+                            (Column.ReferralPadding, AbsoluteGridLength(4)),
+                            (Column.Separator, AbsoluteGridLength(1)),
+                            (Column.UniquePadding, AbsoluteGridLength(4)),
+                            (Column.Uniques, Auto));
+
+                        foreach (var child in children)
+                        {
+                            Children.Add(child);
+                        }
+                    }
+
                 }
             }
 

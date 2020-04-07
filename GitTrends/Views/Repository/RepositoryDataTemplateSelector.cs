@@ -156,10 +156,11 @@ namespace GitTrends
         {
             public CardView(in IEnumerable<View> children)
             {
+                RowSpacing = 0;
                 RowDefinitions = Rows.Define(
-                    (CardViewRow.TopPadding, AbsoluteGridLength(16)),
+                    (CardViewRow.TopPadding, AbsoluteGridLength(8)),
                     (CardViewRow.Card, StarGridLength(1)),
-                    (CardViewRow.BottomPadding, AbsoluteGridLength(0)));
+                    (CardViewRow.BottomPadding, AbsoluteGridLength(8)));
 
                 ColumnDefinitions = Columns.Define(
                     (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
@@ -181,7 +182,7 @@ namespace GitTrends
                     Padding = new Thickness(16, 16, 12, 8);
                     CornerRadius = 4;
                     HasShadow = false;
-                    Elevation = 4;
+                    BorderThickness = 2;
                     Content = new ContentGrid(children);
 
                     SetDynamicResource(BorderColorProperty, nameof(BaseTheme.CardBorderColor));
