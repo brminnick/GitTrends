@@ -18,12 +18,12 @@ namespace GitTrends
             BackgroundColor = Color.FromHex(backgroundColorHex);
 
             var imageView = CreateImageView();
-            imageView.Margin = new Thickness(30);
+            imageView.Margin = new Thickness(32);
 
             var descriptionLayout = new StackLayout
             {
+                Margin = new Thickness(32, 16),
                 Spacing = 24,
-                Margin = new Thickness(30, 10),
                 Children =
                 {
                     CreateDescriptionTitleLabel(),
@@ -65,9 +65,10 @@ namespace GitTrends
             public NextButton(in string text)
             {
                 Padding = 0;
-                Margin = new Thickness(0, 0, Device.RuntimePlatform is Device.iOS ? 30 : 0, 0);
+                Margin = new Thickness(0, 0, Device.RuntimePlatform is Device.iOS ? 32 : 0, 0);
                 TextColor = Color.White;
                 HorizontalOptions = LayoutOptions.End;
+                VerticalOptions = LayoutOptions.Center;
                 CommandParameter = Text = text;
                 BackgroundColor = Color.Transparent;
                 FontFamily = FontFamilyConstants.RobotoBold;
@@ -93,6 +94,7 @@ namespace GitTrends
                 Text = text;
                 FontSize = 34;
                 TextColor = Color.White;
+                LineHeight = 1.12;
                 FontFamily = FontFamilyConstants.RobotoBold;
                 AutomationId = OnboardingAutomationIds.TitleLabel;
             }
@@ -105,9 +107,10 @@ namespace GitTrends
                 Text = text;
                 FontSize = 16;
                 TextColor = Color.White;
+                LineHeight = 1.021;
                 LineBreakMode = LineBreakMode.WordWrap;
                 FontFamily = FontFamilyConstants.RobotoRegular;
-                VerticalTextAlignment = TextAlignment.Center;
+                VerticalTextAlignment = TextAlignment.Start;
             }
         }
 

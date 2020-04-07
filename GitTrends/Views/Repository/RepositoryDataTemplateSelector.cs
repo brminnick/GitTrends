@@ -179,10 +179,9 @@ namespace GitTrends
                 public CardViewFrame(in IEnumerable<View> children)
                 {
                     Padding = new Thickness(16, 16, 12, 8);
-                    BorderThickness = 2;
                     CornerRadius = 4;
                     HasShadow = false;
-                    Visual = VisualMarker.Material;
+                    Elevation = 4;
                     Content = new ContentGrid(children);
 
                     SetDynamicResource(BorderColorProperty, nameof(BaseTheme.CardBorderColor));
@@ -381,6 +380,7 @@ namespace GitTrends
                 public RepositoryDescriptionLabel(in string text) : base(14, text)
                 {
                     MaxLines = 2;
+                    LineHeight = 1.16;
                     FontFamily = FontFamilyConstants.RobotoRegular;
                 }
             }

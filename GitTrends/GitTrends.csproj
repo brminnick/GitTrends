@@ -85,6 +85,7 @@
       <None Remove="Resources\SVGs\bell.svg" />
       <None Remove="Resources\SVGs\check.svg" />
       <None Remove="Resources\SVGs\error.svg" />
+      <None Remove="Resources\SVGs\github.svg" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="Resources\SVGs\chart.svg" />
@@ -107,6 +108,7 @@
       <EmbeddedResource Include="Resources\SVGs\bell.svg" />
       <EmbeddedResource Include="Resources\SVGs\check.svg" />
       <EmbeddedResource Include="Resources\SVGs\error.svg" />
+      <EmbeddedResource Include="Resources\SVGs\github.svg" />
     </ItemGroup>
     <Import Project="..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems')" />
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
