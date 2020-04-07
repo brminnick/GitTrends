@@ -23,17 +23,14 @@ namespace GitTrends
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
 
-            const int titleRowHeight = 50;
-            const int titleTopMargin = 15;
-
             var collectionView = new CollectionView
             {
                 ItemTemplate = new RepositoryDataTemplateSelector(sortingService),
                 BackgroundColor = Color.Transparent,
                 SelectionMode = SelectionMode.Single,
                 AutomationId = RepositoryPageAutomationIds.CollectionView,
-                Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : new BoxView { HeightRequest = titleRowHeight + titleTopMargin },
                 //Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
+                Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
                 Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;

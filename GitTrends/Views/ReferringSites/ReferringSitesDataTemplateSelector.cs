@@ -44,9 +44,9 @@ namespace GitTrends
                 {
                     RowSpacing = 0;
                     RowDefinitions = Rows.Define(
-                   (CardViewRow.TopPadding, AbsoluteGridLength(8)),
-                   (CardViewRow.Card, StarGridLength(1)),
-                   (CardViewRow.BottomPadding, AbsoluteGridLength(8)));
+                       (CardViewRow.TopPadding, AbsoluteGridLength(8)),
+                       (CardViewRow.Card, StarGridLength(1)),
+                       (CardViewRow.BottomPadding, AbsoluteGridLength(8)));
 
                     ColumnDefinitions = Columns.Define(
                         (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),

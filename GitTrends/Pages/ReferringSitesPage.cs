@@ -60,7 +60,7 @@ namespace GitTrends
                 closeButton.Clicked += HandleCloseButtonClicked;
                 closeButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.NavigationBarTextColor));
                 closeButton.SetDynamicResource(Button.BorderColorProperty, nameof(BaseTheme.SettingsButtonBorderColor));
-                closeButton.SetDynamicResource(Button.BackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
+                closeButton.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
 
 
                 var titleRowBlurView = new BoxView { Opacity = 0.5 };
