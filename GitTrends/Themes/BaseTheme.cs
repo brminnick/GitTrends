@@ -61,6 +61,8 @@ namespace GitTrends
             Add(nameof(TrendsChartSettingsSelectionIndicatorColor), TrendsChartSettingsSelectionIndicatorColor);
 
             Add(nameof(GitTrendsImageBackgroundColor), GitTrendsImageBackgroundColor);
+
+            Add(nameof(GitHubButtonSurfaceColor), GitHubButtonSurfaceColor);
         }
 
         public abstract Color NavigationBarBackgroundColor { get; }
@@ -123,5 +125,7 @@ namespace GitTrends
         public abstract Color TrendsChartSettingsSelectionIndicatorColor { get; }
 
         public abstract Color GitTrendsImageBackgroundColor { get; }
+
+        public abstract Color GitHubButtonSurfaceColor { get; }
     }
 }

@@ -51,10 +51,12 @@ namespace GitTrends
                 Padding = new Thickness(10);
                 BackgroundColor = Color.FromHex(CoralBackgroundColorHex);
                 CornerRadius = 5;
+                Padding = new Thickness(16, 10);
 
                 Content = new StackLayout
                 {
                     Orientation = StackOrientation.Horizontal,
+                    Spacing = 16,
                     Children =
                     {
                         new NotificationStatusSvgImage(),
