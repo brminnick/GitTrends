@@ -82,7 +82,8 @@ namespace GitTrends
         public override Color ButtonBackgroundColor { get; } = Color.FromHex(_buttonTextColor);
 
         //Indicators
-        public override Color RefreshControlColor { get; } = Color.FromHex(_lightPrimaryTealHex);
+        public override Color ActivityIndicatorColor { get; } = Color.FromHex(_lightPrimaryTealHex);
+        public override Color PullToRefreshColor { get; } = Color.FromHex(_toolbarSurfaceHex);
 
         //Card
         public override Color CardSurfaceColor { get; } = Color.FromHex(_cardSurfaceHex);

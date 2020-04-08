@@ -14,7 +14,7 @@ namespace GitTrends
     {
         public const string DefaultFavIcon = "DefaultProfileImageGreen";
 
-        static Lazy<HttpClient> _clientHolder = new Lazy<HttpClient>(new HttpClient());
+        static readonly Lazy<HttpClient> _clientHolder = new Lazy<HttpClient>(new HttpClient { Timeout = TimeSpan.FromSeconds(1) });
 
         static HttpClient Client => _clientHolder.Value;
 

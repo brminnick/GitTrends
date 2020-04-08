@@ -88,7 +88,7 @@ namespace GitTrends
                     HorizontalOptions = LayoutOptions.Center;
                     VerticalOptions = LayoutOptions.Center;
 
-                    SetDynamicResource(ColorProperty, nameof(BaseTheme.RefreshControlColor));
+                    SetDynamicResource(ColorProperty, nameof(BaseTheme.PullToRefreshColor));
 
                     this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData));
                     this.SetBinding(IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));

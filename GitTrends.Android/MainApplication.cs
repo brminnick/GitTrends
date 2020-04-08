@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Net;
 using Android.App;
 using Android.Runtime;
 using Autofac;
 using Shiny;
 using Shiny.Notifications;
+using Xamarin.Android.Net;
 
 namespace GitTrends.Droid
 {
@@ -33,6 +35,15 @@ namespace GitTrends.Droid
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageViewHandler();
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
+
+            FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration
+            {
+                HttpHeadersTimeout = 60,
+                HttpClient = new System.Net.Http.HttpClient(new AndroidClientHandler
+                {
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+                })
+            });
         }
 
 #if !AppStore

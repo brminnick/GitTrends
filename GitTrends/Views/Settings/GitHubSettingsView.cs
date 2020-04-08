@@ -64,7 +64,7 @@ namespace GitTrends
                 AutomationId = SettingsPageAutomationIds.GitHubSettingsViewActivityIndicator,
                 VerticalOptions = LayoutOptions.Start
             };
-            activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.RefreshControlColor));
+            activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.ActivityIndicatorColor));
             activityIndicator.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsAuthenticating));
             activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(SettingsViewModel.IsAuthenticating));
 

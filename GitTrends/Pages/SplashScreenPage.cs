@@ -157,7 +157,7 @@ namespace GitTrends
                 new Span
                 {
                     Text = title,
-                    FontSize = 18,
+                    FontSize = 16,
                     FontFamily = FontFamilyConstants.RobotoBold
                 },
                 new Span
