@@ -247,7 +247,7 @@ namespace GitTrends
 
         class RepositoryStatSVGImage : SvgImage
         {
-            public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor, in double widthRequest = default, in double heightRequest = default)
+            public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor, in double widthRequest = 24, in double heightRequest = 24)
                 : base(svgFileName, () => (Color)Application.Current.Resources[baseThemeColor], widthRequest, heightRequest)
             {
                 VerticalOptions = LayoutOptions.CenterAndExpand;

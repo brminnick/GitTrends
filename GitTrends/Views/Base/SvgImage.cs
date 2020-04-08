@@ -8,10 +8,13 @@ namespace GitTrends
     {
         readonly Func<Color> _getTextColor;
 
-        public SvgImage(in string svgFileName, in Func<Color> getTextColor, double widthRequest = default, double heightRequest = default)
+        public SvgImage(in string svgFileName, in Func<Color> getTextColor, double widthRequest = 24, double heightRequest = 24)
         {
             if (!svgFileName.EndsWith(".svg"))
                 throw new ArgumentException($"{nameof(svgFileName)} must end with .svg", nameof(svgFileName));
+
+            HorizontalOptions = LayoutOptions.FillAndExpand;
+            VerticalOptions = LayoutOptions.FillAndExpand;
 
             _getTextColor = getTextColor;
 
@@ -22,8 +25,8 @@ namespace GitTrends
 
             Source = SvgService.GetFullPath(svgFileName);
 
-            WidthRequest = (widthRequest == default) ? int.MaxValue : widthRequest;
-            HeightRequest = (heightRequest == default) ? int.MaxValue : heightRequest;
+            WidthRequest = widthRequest;
+            HeightRequest = heightRequest;
         }
 
         void HandleThemeChanged(object sender, Theme e) => UpdateSVGColor();
