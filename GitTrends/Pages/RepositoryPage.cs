@@ -15,6 +15,7 @@ namespace GitTrends
     public class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISearchPage
     {
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
+        readonly RefreshView _refreshView;
 
         public RepositoryPage(RepositoryViewModel repositoryViewModel,
                                 AnalyticsService analyticsService,
@@ -36,14 +37,14 @@ namespace GitTrends
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));
 
-            var repositoriesListRefreshView = new RefreshView
+            _refreshView = new RefreshView
             {
                 AutomationId = RepositoryPageAutomationIds.RefreshView,
                 Content = collectionView
             };
-            repositoriesListRefreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor));
-            repositoriesListRefreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
-            repositoriesListRefreshView.SetBinding(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
+            _refreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor));
+            _refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
+            _refreshView.SetBinding(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
 
             var settingsToolbarItem = new ToolbarItem
             {
@@ -64,7 +65,22 @@ namespace GitTrends
             sortToolbarItem.Clicked += HandleSortToolbarItemCliked;
             ToolbarItems.Add(sortToolbarItem);
 
-            Content = repositoriesListRefreshView;
+            //Work-around to prevent LargeNavigationBar from collapsing when CollectionView is scrolled; prevents janky animation when LargeNavigationBar collapses
+            if (Device.RuntimePlatform is Device.iOS)
+            {
+                Content = new Grid
+                {
+                    Children =
+                    {
+                        new BoxView { HeightRequest = 0 },
+                        _refreshView
+                    }
+                };
+            }
+            else
+            {
+                Content = _refreshView;
+            }
         }
 
         public event EventHandler<string> SearchBarTextChanged
@@ -91,11 +107,10 @@ namespace GitTrends
                 //Push Modal WelcomePage
             }
             else if (!FirstRunService.IsFirstRun
-                        && Content is RefreshView refreshView
-                        && refreshView.Content is CollectionView collectionView
+                        && _refreshView.Content is CollectionView collectionView
                         && IsNullOrEmpty(collectionView.ItemsSource))
             {
-                refreshView.IsRefreshing = true;
+                _refreshView.IsRefreshing = true;
             }
 
             static bool shouldShowWelcomePage(in INavigation navigation, in string accessToken)

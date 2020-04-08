@@ -1,8 +1,9 @@
-﻿using Xamarin.Forms;
-
-namespace GitTrends
+﻿namespace GitTrends
 {
-    class WelcomePage : ContentPage
+    class WelcomePage : BaseContentPage
     {
+        public WelcomePage(in AnalyticsService analyticsService) : base(analyticsService, shouldUseSafeArea: true)
+        {
+        }
     }
 }

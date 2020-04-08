@@ -2,8 +2,6 @@
 using System.Linq;
 using Xamarin.Essentials;
 using Xamarin.Forms;
-using Xamarin.Forms.PlatformConfiguration;
-using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends
 {
@@ -20,7 +18,6 @@ namespace GitTrends
                                         GitHubAuthenticationService gitHubAuthenticationService,
                                         AnalyticsService analyticsService)
         {
-            On<iOS>().SetUseSafeArea(true);
             ChildAdded += HandleChildAdded;
 
             BindingContext = _onboardingViewModel = onboardingViewModel;
@@ -37,11 +34,19 @@ namespace GitTrends
 
         public int PageCount => Children.Count;
 
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            _analyticsService.Track($"{GetType().Name} Appeared");
+        }
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
 
             _onboardingViewModel.IsAuthenticating = false;
+
+            _analyticsService.Track($"{GetType().Name} Disappeared");
         }
 
         void HandleSkipButtonTapped(object sender, EventArgs e)

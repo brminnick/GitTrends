@@ -10,8 +10,8 @@ namespace GitTrends
 {
     public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
     {
-        public ConnectToGitHubOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService)
-                : base(CoralBackgroundColorHex, OnboardingConstants.TryDemoText, 3)
+        public ConnectToGitHubOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService, AnalyticsService analyticsService)
+                : base(analyticsService, CoralBackgroundColorHex, OnboardingConstants.TryDemoText, 3)
         {
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
         }

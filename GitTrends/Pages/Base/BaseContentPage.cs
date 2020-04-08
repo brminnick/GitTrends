@@ -4,21 +4,19 @@ using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends
 {
-    public abstract class BaseContentPage<T> : ContentPage where T : BaseViewModel
+    public abstract class BaseContentPage : ContentPage
     {
-        protected BaseContentPage(in T viewModel, AnalyticsService analyticsService, in string title = "", bool shouldUseSafeArea = false)
+        protected BaseContentPage(in AnalyticsService analyticsService, in string title = "", bool shouldUseSafeArea = false)
         {
-            SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
-            BindingContext = ViewModel = viewModel;
+            AnalyticsService = analyticsService;
             Title = title;
 
-            AnalyticsService = analyticsService;
+            SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 
             On<iOS>().SetUseSafeArea(shouldUseSafeArea);
             On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
         }
 
-        protected T ViewModel { get; }
         protected AnalyticsService AnalyticsService { get; }
 
         protected static double GetWidth(in RelativeLayout parent, in View view) => view.Measure(parent.Width, parent.Height).Request.Width;
@@ -37,5 +35,16 @@ namespace GitTrends
 
             AnalyticsService.Track($"{GetType().Name} Disappeared");
         }
+    }
+
+    public abstract class BaseContentPage<T> : BaseContentPage where T : BaseViewModel
+    {
+        protected BaseContentPage(in T viewModel, AnalyticsService analyticsService, in string title = "", bool shouldUseSafeArea = false)
+            : base(analyticsService, title, shouldUseSafeArea)
+        {
+            BindingContext = ViewModel = viewModel;
+        }
+
+        protected T ViewModel { get; }
     }
 }

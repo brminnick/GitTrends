@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using AsyncAwaitBestPractices;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using Xamarin.Essentials;
