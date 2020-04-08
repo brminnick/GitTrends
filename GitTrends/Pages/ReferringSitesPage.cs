@@ -41,7 +41,7 @@ namespace GitTrends
                 CommandParameter = (repository.OwnerLogin, repository.Name),
                 Content = collectionView
             };
-            _refreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.RefreshControlColor));
+            _refreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor));
             _refreshView.SetBinding(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.RefreshCommand));
             _refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing));
 
@@ -80,7 +80,7 @@ namespace GitTrends
                 {
                     AutomationId = ReferringSitesPageAutomationIds.ActivityIndicator,
                 };
-                activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.RefreshControlColor));
+                activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.ActivityIndicatorColor));
                 activityIndicator.SetBinding(IsVisibleProperty, nameof(ReferringSitesViewModel.IsActivityIndicatorVisible));
                 activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(ReferringSitesViewModel.IsActivityIndicatorVisible));
 

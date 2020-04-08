@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
@@ -24,6 +26,12 @@ namespace GitTrends.iOS
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init();
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageSourceHandler();
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
+
+            FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration
+            {
+                HttpHeadersTimeout = 60,
+                HttpClient = new HttpClient(new NSUrlSessionHandler())
+            });
 
 #if !AppStore
             Xamarin.Calabash.Start();

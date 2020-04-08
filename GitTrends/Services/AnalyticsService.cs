@@ -40,6 +40,16 @@ namespace GitTrends
             TrackTime(trackIdentifier, new Dictionary<string, string> { { key, value } });
 
         public void Report(Exception exception,
+                                  string key,
+                                  string value,
+                                  [CallerMemberName] string callerMemberName = "",
+                                  [CallerLineNumber] int lineNumber = 0,
+                                  [CallerFilePath] string filePath = "")
+        {
+            Report(exception, new Dictionary<string, string> { { key, value } }, callerMemberName, lineNumber, filePath);
+        }
+
+        public void Report(Exception exception,
                                   IDictionary<string, string>? properties = null,
                                   [CallerMemberName] string callerMemberName = "",
                                   [CallerLineNumber] int lineNumber = 0,

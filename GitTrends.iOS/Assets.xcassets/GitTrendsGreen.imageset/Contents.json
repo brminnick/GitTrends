@@ -4,14 +4,17 @@
       "idiom": "universal"
     },
     {
+      "filename": "GitTrends_Light.png",
       "scale": "1x",
       "idiom": "universal"
     },
     {
+      "filename": "GitTrends_Light@2x.png",
       "scale": "2x",
       "idiom": "universal"
     },
     {
+      "filename": "GitTrends_Light@3x.png",
       "scale": "3x",
       "idiom": "universal"
     },
@@ -95,7 +98,6 @@
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImageDark-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -106,7 +108,6 @@
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImageDark@2x-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -117,7 +118,6 @@
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImageDark@3x-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -315,7 +315,6 @@
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImageLight-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -326,7 +325,6 @@
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImageLight@2x-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -337,7 +335,6 @@
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImageLight@3x-1.png",
       "appearances": [
         {
           "appearance": "luminosity",

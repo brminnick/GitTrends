@@ -43,22 +43,35 @@ namespace GitTrends
 
         async Task ExecuteRefreshCommand(string owner, string repository)
         {
+            Task minimumActivityIndicatorTimeTask;
+
             //Only show the Activity Indicator when the page is first loaded
             if (!MobileReferringSitesList.Any())
             {
                 IsActivityIndicatorVisible = true;
+                minimumActivityIndicatorTimeTask = Task.Delay(1000);
+            }
+            else
+            {
+                minimumActivityIndicatorTimeTask = Task.CompletedTask;
             }
 
             try
             {
                 var referringSitesList = await _gitHubApiV3Service.GetReferringSites(owner, repository).ConfigureAwait(false);
+
                 var mobileReferringSitesList_NoFavIcon = referringSitesList.Select(x => new MobileReferringSiteModel(x));
+
+                //Begin retrieving favicon list before waiting for minimumActivityIndicatorTimeTask
+                var getMobileReferringSiteWithFavIconListTask = GetMobileReferringSiteWithFavIconList(referringSitesList);
+
+                await minimumActivityIndicatorTimeTask.ConfigureAwait(false);
 
                 //Display the Referring Sites and hide the activity indicators while FavIcons are still being retreived
                 IsActivityIndicatorVisible = false;
                 displayMobileReferringSites(mobileReferringSitesList_NoFavIcon);
 
-                var mobileReferringSitesList_WithFavIcon = await GetMobileReferringSiteWithFavIconList(referringSitesList).ConfigureAwait(false);
+                var mobileReferringSitesList_WithFavIcon = await getMobileReferringSiteWithFavIconListTask.ConfigureAwait(false);
 
                 //Display the Final Referring Sites with FavIcons
                 displayMobileReferringSites(mobileReferringSitesList_WithFavIcon);

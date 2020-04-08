@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
@@ -19,11 +21,6 @@ namespace GitTrends
         public App()
         {
             Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental" });
-
-            FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration
-            {
-                HttpHeadersTimeout = 60
-            });
 
             using var scope = ContainerService.Container.BeginLifetimeScope();
             _analyticsService = scope.Resolve<AnalyticsService>();
@@ -55,9 +52,6 @@ namespace GitTrends
 
             ClearBageNotifications().SafeFireAndForget(ex => _analyticsService.Report(ex));
 
-#if !DEBUG
-            RegisterBackgroundFetch().SafeFireAndForget(ex => _analyticsService.Report(ex));
-#endif
         }
 
         protected override void OnResume()
@@ -120,14 +114,6 @@ namespace GitTrends
                     }
                 }
             });
-        }
-
-        async Task RegisterBackgroundFetch()
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
-
-            await backgroundFetchService.Register().ConfigureAwait(false);
         }
 
         ValueTask ClearBageNotifications()

@@ -16,7 +16,8 @@ namespace GitTrends
             Add(nameof(PrimaryTextColor), PrimaryTextColor);
             Add(nameof(TextColor), TextColor);
 
-            Add(nameof(RefreshControlColor), RefreshControlColor);
+            Add(nameof(ActivityIndicatorColor), ActivityIndicatorColor);
+            Add(nameof(PullToRefreshColor), PullToRefreshColor);
 
             Add(nameof(TotalViewsColor), TotalViewsColor);
             Add(nameof(TotalUniqueViewsColor), TotalUniqueViewsColor);
@@ -73,7 +74,8 @@ namespace GitTrends
         public abstract Color PrimaryTextColor { get; }
         public abstract Color TextColor { get; }
 
-        public abstract Color RefreshControlColor { get; }
+        public abstract Color ActivityIndicatorColor { get; }
+        public abstract Color PullToRefreshColor { get; }
 
         //Chart
         public abstract Color TotalViewsColor { get; }

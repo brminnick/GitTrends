@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
-using FFImageLoading.Forms;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
@@ -14,29 +16,29 @@ namespace GitTrends
 
         class ReferringSitesDataTemplate : DataTemplate
         {
+            const int _favIconWidth = MobileReferringSiteModel.FavIconSize;
+            const int _favIconHeight = MobileReferringSiteModel.FavIconSize;
+
             public ReferringSitesDataTemplate(MobileReferringSiteModel referringSiteModel) : base(() => CreateReferringSitesDataTemplate(referringSiteModel))
             {
             }
 
             enum Row { Title, Description }
-            enum Column { FavIcon, FavIconPadding, Site, Referrals, ReferralPadding, Separator, UniquePadding, Uniques }
+            enum Column { FavIcon, FavIconPadding, Site, SitePadding, Referrals, ReferralPadding, Separator, UniquePadding, Uniques }
 
             static CardView CreateReferringSitesDataTemplate(in MobileReferringSiteModel referringSiteModel) => new CardView(CreateViews(referringSiteModel));
 
-            static IEnumerable<View> CreateViews(in MobileReferringSiteModel referringSiteModel)
+            static IEnumerable<View> CreateViews(in MobileReferringSiteModel referringSiteModel) => new View[]
             {
-                return new View[]
-                {
-                    new CircleBoxView(){ Content = new FavIconImage(referringSiteModel.FavIcon) }.Row(Row.Title).Column(Column.FavIcon).RowSpan(2),
-                    new TitleLabel("SITE").Row(Row.Title).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
-                    new PrimaryColorLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
-                    new TitleLabel("REFERRALS").Row(Row.Title).Column(Column.Referrals).Center(),
-                    new StatisticsLabel(12, referringSiteModel.TotalCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular).Row(Row.Description).Column(Column.Referrals).Center(),
-                    new Separator().Row(Row.Title).Column(Column.Separator).RowSpan(2).FillExpandVertical(),
-                    new TitleLabel("UNIQUE").Row(Row.Title).Column(Column.Uniques).Center(),
-                    new StatisticsLabel(12, referringSiteModel.TotalUniqueCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular).Row(Row.Description).Column(Column.Uniques).Center()
-                };
-            }
+                new FavIconImage(referringSiteModel.FavIcon).Row(Row.Title).Column(Column.FavIcon).RowSpan(2),
+                new TitleLabel("SITE").Row(Row.Title).Column(Column.Site),
+                new PrimaryColorLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site),
+                new TitleLabel("REFERRALS").Row(Row.Title).Column(Column.Referrals).Center(),
+                new StatisticsLabel(12, referringSiteModel.TotalCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular).Row(Row.Description).Column(Column.Referrals).Center(),
+                new Separator().Row(Row.Title).Column(Column.Separator).RowSpan(2).FillExpandVertical(),
+                new TitleLabel("UNIQUE").Row(Row.Title).Column(Column.Uniques).Center(),
+                new StatisticsLabel(12, referringSiteModel.TotalUniqueCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular).Row(Row.Description).Column(Column.Uniques).Center()
+            };
 
             class CardView : Grid
             {
@@ -44,9 +46,9 @@ namespace GitTrends
                 {
                     RowSpacing = 0;
                     RowDefinitions = Rows.Define(
-                       (CardViewRow.TopPadding, AbsoluteGridLength(8)),
-                       (CardViewRow.Card, StarGridLength(1)),
-                       (CardViewRow.BottomPadding, AbsoluteGridLength(8)));
+                        (CardViewRow.TopPadding, AbsoluteGridLength(8)),
+                        (CardViewRow.Card, StarGridLength(1)),
+                        (CardViewRow.BottomPadding, AbsoluteGridLength(8)));
 
                     ColumnDefinitions = Columns.Define(
                         (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
@@ -80,53 +82,52 @@ namespace GitTrends
                 {
                     public ContentGrid(in IEnumerable<View> children)
                     {
+                        const int rowSpacing = 6;
+
                         HorizontalOptions = LayoutOptions.FillAndExpand;
                         VerticalOptions = LayoutOptions.FillAndExpand;
 
+                        RowSpacing = rowSpacing;
+                        ColumnSpacing = 0;
+
                         RowDefinitions = Rows.Define(
-                        (Row.Title, StarGridLength(1)),
-                        (Row.Description, StarGridLength(1)));
+                            (Row.Title, AbsoluteGridLength(_favIconHeight / 2 - rowSpacing / 2)),
+                            (Row.Description, AbsoluteGridLength(_favIconHeight / 2 - rowSpacing / 2)));
 
                         ColumnDefinitions = Columns.Define(
-                            (Column.FavIcon, AbsoluteGridLength(32)),
+                            (Column.FavIcon, AbsoluteGridLength(_favIconWidth)),
                             (Column.FavIconPadding, AbsoluteGridLength(16)),
-                            (Column.Site, StarGridLength(1)),
-                            (Column.Referrals, Auto),
+                            (Column.Site, StarGridLength(2)),
+                            (Column.SitePadding, AbsoluteGridLength(16)),
+                            (Column.Referrals, StarGridLength(1.5)),
                             (Column.ReferralPadding, AbsoluteGridLength(4)),
                             (Column.Separator, AbsoluteGridLength(1)),
                             (Column.UniquePadding, AbsoluteGridLength(4)),
-                            (Column.Uniques, Auto));
+                            (Column.Uniques, StarGridLength(1)));
 
                         foreach (var child in children)
                         {
                             Children.Add(child);
                         }
                     }
-
                 }
             }
 
-            class FavIconImage : CachedImage
-            {
-                public FavIconImage(in ImageSource imageSource)
-                {
-                    WidthRequest = HeightRequest = MobileReferringSiteModel.FavIconSize;
-                    HorizontalOptions = VerticalOptions = LayoutOptions.Center;
-                    LoadingPlaceholder = FavIconService.DefaultFavIcon;
-                    ErrorPlaceholder = FavIconService.DefaultFavIcon;
-                    Source = imageSource;
-                }
-            }
-
-            class TitleLabel : PrimaryColorLabel
+            class TitleLabel : Label
             {
 
-                public TitleLabel(in string text) : base(text)
+                public TitleLabel(in string text)
                 {
+                    Text = text;
+                    MaxLines = 1;
+                    FontSize = 12;
                     CharacterSpacing = 1.56;
+                    HorizontalOptions = LayoutOptions.Start;
                     HorizontalTextAlignment = TextAlignment.Start;
+                    VerticalOptions = LayoutOptions.Start;
                     VerticalTextAlignment = TextAlignment.Start;
                     FontFamily = FontFamilyConstants.RobotoMedium;
+                    LineBreakMode = LineBreakMode.TailTruncation;
 
                     SetDynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
                 }
@@ -134,17 +135,16 @@ namespace GitTrends
 
             class PrimaryColorLabel : Label
             {
-                public PrimaryColorLabel(in double fontSize, in string text) : this(text) => FontSize = fontSize;
-
                 public PrimaryColorLabel(in string text)
                 {
                     Text = text;
-                    FontSize = 12;
                     MaxLines = 1;
-                    LineBreakMode = LineBreakMode.TailTruncation;
+                    FontSize = 12;
                     HorizontalTextAlignment = TextAlignment.Start;
-                    HorizontalOptions = LayoutOptions.FillAndExpand;
+                    HorizontalOptions = LayoutOptions.Start;
+                    VerticalTextAlignment = TextAlignment.End;
                     FontFamily = FontFamilyConstants.RobotoRegular;
+                    LineBreakMode = LineBreakMode.TailTruncation;
 
                     SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
                 }
@@ -158,18 +158,24 @@ namespace GitTrends
                 }
             }
 
-            class CircleBoxView : Frame
+            class FavIconImage : PancakeView
             {
-                public CircleBoxView()
+                public FavIconImage(in ImageSource? imageSource)
                 {
-                    Visual = VisualMarker.Material;
-                    HeightRequest = 32;
-                    WidthRequest = 32;
+                    HeightRequest = _favIconHeight;
+                    WidthRequest = _favIconWidth;
+                    CornerRadius = Math.Max(_favIconHeight, _favIconWidth) / 2;
                     HorizontalOptions = VerticalOptions = LayoutOptions.Start;
-                    CornerRadius = 18;
-                    HasShadow = false;
-                    Padding = new Thickness(0);
                     BackgroundColor = Color.White;
+
+                    Padding = new Thickness(1);
+
+                    Debug.WriteLine($"FavIconImageSource: {imageSource}");
+
+                    Content = new CircleImage
+                    {
+                        Source = imageSource
+                    };
                 }
             }
         }

@@ -22,7 +22,9 @@ namespace GitTrends
         readonly DeepLinkingService _deepLinkingService;
         readonly SortingService _sortingService;
 
-        public NotificationService(AnalyticsService analyticsService, DeepLinkingService deepLinkingService, SortingService sortingService)
+        public NotificationService(AnalyticsService analyticsService,
+                                    DeepLinkingService deepLinkingService,
+                                    SortingService sortingService)
         {
             _analyticsService = analyticsService;
             _deepLinkingService = deepLinkingService;
@@ -98,7 +100,7 @@ namespace GitTrends
                 return initialNotificationRequestResult;
             }
             finally
-            {
+            { 
                 _analyticsService.Track("Register For Notifications", new Dictionary<string, string>
                 {
                     { nameof(initialNotificationRequestResult), initialNotificationRequestResult.ToString() },
