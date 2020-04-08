@@ -82,16 +82,17 @@ namespace GitTrends
                 {
                     public ContentGrid(in IEnumerable<View> children)
                     {
+                        const int rowSpacing = 6;
+
                         HorizontalOptions = LayoutOptions.FillAndExpand;
                         VerticalOptions = LayoutOptions.FillAndExpand;
 
-                        //Keep RowSpacing at 0 to ensure the RowSpan(All<Row>()) == Column.FavIcon
-                        RowSpacing = 0;
+                        RowSpacing = rowSpacing;
                         ColumnSpacing = 0;
 
                         RowDefinitions = Rows.Define(
-                            (Row.Title, AbsoluteGridLength(_favIconHeight / 2)),
-                            (Row.Description, AbsoluteGridLength(_favIconHeight / 2)));
+                            (Row.Title, AbsoluteGridLength(_favIconHeight / 2 - rowSpacing / 2)),
+                            (Row.Description, AbsoluteGridLength(_favIconHeight / 2 - rowSpacing / 2)));
 
                         ColumnDefinitions = Columns.Define(
                             (Column.FavIcon, AbsoluteGridLength(_favIconWidth)),
@@ -112,14 +113,21 @@ namespace GitTrends
                 }
             }
 
-            class TitleLabel : PrimaryColorLabel
+            class TitleLabel : Label
             {
 
-                public TitleLabel(in string text) : base(text)
+                public TitleLabel(in string text)
                 {
+                    Text = text;
+                    MaxLines = 1;
+                    FontSize = 12;
                     CharacterSpacing = 1.56;
+                    HorizontalOptions = LayoutOptions.Start;
+                    HorizontalTextAlignment = TextAlignment.Start;
+                    VerticalOptions = LayoutOptions.Start;
                     VerticalTextAlignment = TextAlignment.Start;
                     FontFamily = FontFamilyConstants.RobotoMedium;
+                    LineBreakMode = LineBreakMode.TailTruncation;
 
                     SetDynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
                 }
@@ -130,12 +138,13 @@ namespace GitTrends
                 public PrimaryColorLabel(in string text)
                 {
                     Text = text;
-                    FontSize = 12;
                     MaxLines = 1;
-                    LineBreakMode = LineBreakMode.TailTruncation;
+                    FontSize = 12;
                     HorizontalTextAlignment = TextAlignment.Start;
                     HorizontalOptions = LayoutOptions.Start;
+                    VerticalTextAlignment = TextAlignment.End;
                     FontFamily = FontFamilyConstants.RobotoRegular;
+                    LineBreakMode = LineBreakMode.TailTruncation;
 
                     SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
                 }
