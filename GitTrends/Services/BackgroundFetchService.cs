@@ -31,6 +31,8 @@ namespace GitTrends
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _repositoryDatabase = repositoryDatabase;
             _notificationService = notificationService;
+
+            _notificationService.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
         }
 
         static IJobManager JobManager => ShinyHost.Resolve<IJobManager>();
@@ -112,6 +114,12 @@ namespace GitTrends
             }
 
             return Enumerable.Empty<Repository>().ToList();
+        }
+
+        async void HandleRegisterForNotificationsCompleted(object sender, (bool isSuccessful, string errorMessage) e)
+        {
+            if (e.isSuccessful)
+                await Register().ConfigureAwait(false);
         }
     }
 

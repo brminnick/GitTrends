@@ -83,7 +83,7 @@ namespace GitTrends
 
         //Indicators
         public override Color ActivityIndicatorColor { get; } = Color.FromHex(_lightPrimaryTealHex);
-        public override Color PullToRefreshColor { get; } = Color.FromHex(_toolbarSurfaceHex);
+        public override Color PullToRefreshColor { get; } = Device.RuntimePlatform is Device.iOS ? Color.FromHex(_lightPrimaryTealHex) : Color.FromHex(_toolbarSurfaceHex);
 
         //Card
         public override Color CardSurfaceColor { get; } = Color.FromHex(_cardSurfaceHex);

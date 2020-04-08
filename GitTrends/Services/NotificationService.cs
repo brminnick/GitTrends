@@ -21,17 +21,14 @@ namespace GitTrends
         readonly AnalyticsService _analyticsService;
         readonly DeepLinkingService _deepLinkingService;
         readonly SortingService _sortingService;
-        readonly BackgroundFetchService _backgroundFetchService;
 
         public NotificationService(AnalyticsService analyticsService,
                                     DeepLinkingService deepLinkingService,
-                                    SortingService sortingService,
-                                    BackgroundFetchService backgroundFetchService)
+                                    SortingService sortingService)
         {
             _analyticsService = analyticsService;
             _deepLinkingService = deepLinkingService;
             _sortingService = sortingService;
-            _backgroundFetchService = backgroundFetchService;
         }
 
         public event EventHandler<SortingOption> SortingOptionRequested
@@ -103,9 +100,7 @@ namespace GitTrends
                 return initialNotificationRequestResult;
             }
             finally
-            {
-                await _backgroundFetchService.Register().ConfigureAwait(false);
-
+            { 
                 _analyticsService.Track("Register For Notifications", new Dictionary<string, string>
                 {
                     { nameof(initialNotificationRequestResult), initialNotificationRequestResult.ToString() },
