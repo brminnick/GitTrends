@@ -14,7 +14,7 @@ namespace GitTrends
 {
     class TrendsPage : BaseContentPage<TrendsViewModel>
     {
-        static readonly Lazy<GitHubTrendsChart> _trendsChartHolder = new Lazy<GitHubTrendsChart>(() => new GitHubTrendsChart());
+        static readonly Lazy<GitHubTrendsChart> _trendsChartHolder = new Lazy<GitHubTrendsChart>(new GitHubTrendsChart());
 
         readonly Repository _repository;
 
@@ -64,13 +64,13 @@ namespace GitTrends
                     (GridContainerColumn.Total, StarGridLength(1)),
                     (GridContainerColumn.Unique, StarGridLength(1)));
 
-                Children.Add(new CardView(CreateViews("Views", 5000000000, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor)))
+                Children.Add(new CardView(CreateCardViewContent("Views", 5000000000, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor)), TrendsChart.TotalViewsSeries)
                     .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Total));
-                Children.Add(new CardView(CreateViews("Unique Views", 32000, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor)))
+                Children.Add(new CardView(CreateCardViewContent("Unique Views", 32000, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor)), TrendsChart.TotalUniqueViewsSeries)
                     .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Unique));
-                Children.Add(new CardView(CreateViews("Clones", 200, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor)))
+                Children.Add(new CardView(CreateCardViewContent("Clones", 200, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor)), TrendsChart.TotalClonesSeries)
                     .Row(GridContainerRow.ClonesStats).Column(GridContainerColumn.Total));
-                Children.Add(new CardView(CreateViews("Unique Clones", 130, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor)))
+                Children.Add(new CardView(CreateCardViewContent("Unique Clones", 130, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor)), TrendsChart.TotalUniqueClonesSeries)
                     .Row(GridContainerRow.ClonesStats).Column(GridContainerColumn.Unique));
                 Children.Add(new TrendsChartActivityIndicator()
                     .Row(GridContainerRow.Chart).Column(GridContainerColumn.Total).ColumnSpan(2));
@@ -97,13 +97,20 @@ namespace GitTrends
 
             class CardView : PancakeView
             {
-                public CardView(in IEnumerable<View> children)
+                public CardView(in IEnumerable<View> children, AreaSeries series)
                 {
                     Padding = new Thickness(16, 12);
                     BorderThickness = 2;
                     CornerRadius = 4;
                     HasShadow = false;
                     Content = new ContentGrid(children);
+
+                    var tapGestureRecognizer = new TapGestureRecognizer
+                    {
+                        Command = new Command(() => series.IsVisible = !series.IsVisible)
+                    };
+
+                    GestureRecognizers.Add(tapGestureRecognizer);
 
                     SetDynamicResource(BorderColorProperty, nameof(BaseTheme.CardBorderColor));
                     SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
@@ -140,15 +147,12 @@ namespace GitTrends
 
         static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
 
-        static IEnumerable<View> CreateViews(in string title, in long number, in string icon, in string baseIconThemeColor)
+        static IEnumerable<View> CreateCardViewContent(in string title, in long number, in string icon, in string baseIconThemeColor) => new View[]
         {
-            return new View[]
-            {
-               new PrimaryColorLabel(14, title).Row(CardViewRow.StatsTitle).Column(CardViewColumn.Stats),
-               new TrendsStatisticsLabel(34, number, nameof(BaseTheme.PrimaryTextColor)).Row(CardViewRow.StatsNumber).Column(CardViewColumn.Stats).ColumnSpan(2),
-               new RepositoryStatSVGImage(icon, baseIconThemeColor, 32, 32).Row(CardViewRow.StatsTitle).Column(CardViewColumn.Icon).RowSpan(2)
-            };
-        }
+            new PrimaryColorLabel(14, title).Row(CardViewRow.StatsTitle).Column(CardViewColumn.Stats),
+            new TrendsStatisticsLabel(34, number, nameof(BaseTheme.PrimaryTextColor)).Row(CardViewRow.StatsNumber).Column(CardViewColumn.Stats).ColumnSpan(2),
+            new RepositoryStatSVGImage(icon, baseIconThemeColor, 32, 32).Row(CardViewRow.StatsTitle).Column(CardViewColumn.Icon).RowSpan(2)
+        };
 
         async void HandleReferringSitesToolbarItemClicked(object sender, EventArgs e)
         {
