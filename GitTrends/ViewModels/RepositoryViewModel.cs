@@ -218,12 +218,7 @@ namespace GitTrends
                 IsRefreshing |= e.IsSessionAuthorized;
         }
 
-        void HandleDemoUserActivated(object sender, EventArgs e)
-        {
-            //Work-around because Android.ContentPage.OnAppearing does not fire after `ContentPage.PushModalAsync()`
-            if (Device.RuntimePlatform is Device.Android)
-                IsRefreshing = true;
-        }
+        void HandleDemoUserActivated(object sender, EventArgs e) => IsRefreshing = true;
 
         void HandleGitHubAuthenticationServiceLoggedOut(object sender, EventArgs e) => UpdateListForLoggedOutUser();
 

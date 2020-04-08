@@ -2,6 +2,8 @@
 using System.Linq;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using Xamarin.Forms.PlatformConfiguration;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends
 {
@@ -18,6 +20,8 @@ namespace GitTrends
                                         GitHubAuthenticationService gitHubAuthenticationService,
                                         AnalyticsService analyticsService)
         {
+            On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.OverFullScreen);
+
             ChildAdded += HandleChildAdded;
 
             BindingContext = _onboardingViewModel = onboardingViewModel;

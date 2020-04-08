@@ -104,7 +104,10 @@ namespace GitTrends
             }
             else if (shouldShowWelcomePage(Navigation, token.AccessToken) && !FirstRunService.IsFirstRun)
             {
-                //Push Modal WelcomePage
+                using var scope = ContainerService.Container.BeginLifetimeScope();
+                var welcomePage = scope.Resolve<WelcomePage>();
+
+                await Navigation.PushModalAsync(welcomePage);
             }
             else if (!FirstRunService.IsFirstRun
                         && _refreshView.Content is CollectionView collectionView
