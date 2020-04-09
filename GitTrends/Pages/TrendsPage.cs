@@ -47,6 +47,31 @@ namespace GitTrends
         enum GridContainerRow { ViewsStats, ClonesStats, Chart }
         enum GridContainerColumn { Total, Unique }
 
+        enum CardViewRow { StatsTitle, StatsNumber }
+        enum CardViewColumn { Stats, Icon }
+
+        static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
+
+        static IEnumerable<View> CreateCardViewContent(in string title, in long number, in string icon, in string baseIconThemeColor) => new View[]
+        {
+            new PrimaryColorLabel(14, title).Row(CardViewRow.StatsTitle).Column(CardViewColumn.Stats),
+            new TrendsStatisticsLabel(34, number, nameof(BaseTheme.PrimaryTextColor)).Row(CardViewRow.StatsNumber).Column(CardViewColumn.Stats).ColumnSpan(2),
+            new RepositoryStatSVGImage(icon, baseIconThemeColor, 32, 32).Row(CardViewRow.StatsTitle).Column(CardViewColumn.Icon).RowSpan(2)
+        };
+
+        async void HandleReferringSitesToolbarItemClicked(object sender, EventArgs e)
+        {
+            AnalyticsService.Track("Referring Sites Button Tapped");
+
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var referringSitesPage = scope.Resolve<ReferringSitesPage>(new TypedParameter(typeof(Repository), _repository));
+
+            if (Device.RuntimePlatform is Device.iOS)
+                await Navigation.PushModalAsync(referringSitesPage);
+            else
+                await Navigation.PushAsync(referringSitesPage);
+        }
+
         class GridContainer : Grid
         {
             public GridContainer()
@@ -64,13 +89,13 @@ namespace GitTrends
                     (GridContainerColumn.Total, StarGridLength(1)),
                     (GridContainerColumn.Unique, StarGridLength(1)));
 
-                Children.Add(new CardView(CreateCardViewContent("Views", 5000000000, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor)), TrendsChart.TotalViewsSeries)
+                Children.Add(new CardView(CreateCardViewContent("Views", 5000000000, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor)), TrendsChart.TotalViewsSeries, nameof(TrendsPageAutomationIds.ViewsCard))
                     .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Total));
-                Children.Add(new CardView(CreateCardViewContent("Unique Views", 32000, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor)), TrendsChart.TotalUniqueViewsSeries)
-                    .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Unique));
-                Children.Add(new CardView(CreateCardViewContent("Clones", 200, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor)), TrendsChart.TotalClonesSeries)
+                Children.Add(new CardView(CreateCardViewContent("Unique Views", 32000, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor)), TrendsChart.TotalUniqueViewsSeries, nameof(TrendsPageAutomationIds.UniqueViewsCard))
+                    .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Unique)); ;
+                Children.Add(new CardView(CreateCardViewContent("Clones", 200, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor)), TrendsChart.TotalClonesSeries, nameof(TrendsPageAutomationIds.ClonesCard))
                     .Row(GridContainerRow.ClonesStats).Column(GridContainerColumn.Total));
-                Children.Add(new CardView(CreateCardViewContent("Unique Clones", 130, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor)), TrendsChart.TotalUniqueClonesSeries)
+                Children.Add(new CardView(CreateCardViewContent("Unique Clones", 130, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor)), TrendsChart.TotalUniqueClonesSeries, nameof(TrendsPageAutomationIds.UniqueClonesCard))
                     .Row(GridContainerRow.ClonesStats).Column(GridContainerColumn.Unique));
                 Children.Add(new TrendsChartActivityIndicator()
                     .Row(GridContainerRow.Chart).Column(GridContainerColumn.Total).ColumnSpan(2));
@@ -97,17 +122,19 @@ namespace GitTrends
 
             class CardView : PancakeView
             {
-                public CardView(in IEnumerable<View> children, AreaSeries series)
+                public CardView(in IEnumerable<View> children, in AreaSeries series, string automationId)
                 {
                     Padding = new Thickness(16, 12);
-                    BorderThickness = 2;
-                    CornerRadius = 4;
-                    HasShadow = false;
                     Content = new ContentGrid(children);
+                    HasShadow = false;
+                    CornerRadius = 4;
+                    BorderThickness = 2;
+                    AutomationId = automationId;
 
                     var tapGestureRecognizer = new TapGestureRecognizer
                     {
-                        Command = new Command(() => series.IsVisible = !series.IsVisible)
+                        CommandParameter = series,
+                        Command = new Command<AreaSeries>(series => series.IsVisible = !series.IsVisible)
                     };
 
                     GestureRecognizers.Add(tapGestureRecognizer);
@@ -140,31 +167,6 @@ namespace GitTrends
                     }
                 }
             }
-        }
-
-        enum CardViewRow { StatsTitle, StatsNumber }
-        enum CardViewColumn { Stats, Icon }
-
-        static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
-
-        static IEnumerable<View> CreateCardViewContent(in string title, in long number, in string icon, in string baseIconThemeColor) => new View[]
-        {
-            new PrimaryColorLabel(14, title).Row(CardViewRow.StatsTitle).Column(CardViewColumn.Stats),
-            new TrendsStatisticsLabel(34, number, nameof(BaseTheme.PrimaryTextColor)).Row(CardViewRow.StatsNumber).Column(CardViewColumn.Stats).ColumnSpan(2),
-            new RepositoryStatSVGImage(icon, baseIconThemeColor, 32, 32).Row(CardViewRow.StatsTitle).Column(CardViewColumn.Icon).RowSpan(2)
-        };
-
-        async void HandleReferringSitesToolbarItemClicked(object sender, EventArgs e)
-        {
-            AnalyticsService.Track("Referring Sites Button Tapped");
-
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var referringSitesPage = scope.Resolve<ReferringSitesPage>(new TypedParameter(typeof(Repository), _repository));
-
-            if (Device.RuntimePlatform is Device.iOS)
-                await Navigation.PushModalAsync(referringSitesPage);
-            else
-                await Navigation.PushAsync(referringSitesPage);
         }
 
         class RepositoryStatSVGImage : SvgImage

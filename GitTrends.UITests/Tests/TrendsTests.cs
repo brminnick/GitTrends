@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using NUnit.Framework;
 using Xamarin.UITest;
-using Xamarin.UITest.iOS;
 
 namespace GitTrends.UITests
 {
@@ -31,6 +30,40 @@ namespace GitTrends.UITests
         }
 
         [Test]
+        public void EnsureCardsIsInteractive()
+        {
+            //Arrange
+            bool isViewsSeriesVisible_Initial = TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalViewsTitle);
+            bool isUniqueViewsSeriesVisible_Initial = TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueViewsTitle);
+            bool isClonesSeriesVisible_Initial = TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalClonesTitle);
+            bool isUniqueClonesSeriesVisible_Initial = TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueClonesTitle);
+
+            //Act
+            TrendsPage.TapViewsCard();
+
+            //Assert
+            Assert.AreNotEqual(isViewsSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalViewsTitle));
+
+            //Act
+            TrendsPage.TapUniqueViewsCard();
+
+            //Assert
+            Assert.AreNotEqual(isUniqueViewsSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueViewsTitle));
+
+            //Act
+            TrendsPage.TapClonesCard();
+
+            //Assert
+            Assert.AreNotEqual(isClonesSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalClonesTitle));
+
+            //Act
+            TrendsPage.TapUniqueClonesCard();
+
+            //Assert
+            Assert.AreNotEqual(isUniqueClonesSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueClonesTitle));
+        }
+
+        [Test]
         public void EnsureLegendIsInteractive()
         {
             //Arrange
@@ -41,14 +74,26 @@ namespace GitTrends.UITests
 
             //Act
             TrendsPage.TapViewsLegendIcon();
-            TrendsPage.TapUniqueViewsLegendIcon();
-            TrendsPage.TapClonesLegendIcon();
-            TrendsPage.TapUniqueClonesLegendIcon();
 
             //Assert
             Assert.AreNotEqual(isViewsSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalViewsTitle));
+
+            //Act
+            TrendsPage.TapUniqueViewsLegendIcon();
+
+            //Assert
             Assert.AreNotEqual(isUniqueViewsSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueViewsTitle));
+
+            //Act
+            TrendsPage.TapClonesLegendIcon();
+
+            //Assert
             Assert.AreNotEqual(isClonesSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalClonesTitle));
+
+            //Act
+            TrendsPage.TapUniqueClonesLegendIcon();
+
+            //Assert
             Assert.AreNotEqual(isUniqueClonesSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueClonesTitle));
         }
     }
