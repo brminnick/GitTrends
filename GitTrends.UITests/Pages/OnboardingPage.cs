@@ -33,16 +33,16 @@ namespace GitTrends.UITests
             switch (CurrentPageNumber)
             {
                 case 0:
-                    App.WaitForElement(OnboardingConstants.GitTrendsPageTitle);
+                    App.WaitForElement(x => x.Text(OnboardingConstants.GitTrendsPageTitle));
                     break;
                 case 1:
-                    App.WaitForElement(OnboardingConstants.ChartPageTitle);
+                    App.WaitForElement(x => x.Text(OnboardingConstants.ChartPageTitle));
                     break;
                 case 2:
-                    App.WaitForElement(OnboardingConstants.NotificationsPageTitle);
+                    App.WaitForElement(x => x.Text(OnboardingConstants.NotificationsPageTitle));
                     break;
                 case 3:
-                    App.WaitForElement(OnboardingConstants.ConnectToGitHubPageTitle);
+                    App.WaitForElement(x => x.Text(OnboardingConstants.ConnectToGitHubPageTitle));
                     break;
 
                 default:

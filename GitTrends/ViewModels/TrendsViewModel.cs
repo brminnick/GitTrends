@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -15,19 +17,44 @@ namespace GitTrends
         readonly ReviewService _reviewService;
 
         bool _isFetchingData = true;
+        bool _isViewsSeriesVisible, _isUniqueViewsSeriesVisible, _isClonesSeriesVisible, _isUniqueClonesSeriesVisible;
+
+        string _viewsStatisticsText = string.Empty;
+        string _uniqueViewsStatisticsText = string.Empty;
+        string _clonesStatisticsText = string.Empty;
+        string _uniqueClonesStatisticsText = string.Empty;
+
         List<DailyViewsModel> _dailyViewsList = new List<DailyViewsModel>();
         List<DailyClonesModel> _dailyClonesList = new List<DailyClonesModel>();
 
         public TrendsViewModel(GitHubApiV3Service gitHubApiV3Service,
                                 AnalyticsService analyticsService,
+                                TrendsChartSettingsService trendsChartSettingsService,
                                 ReviewService reviewService) : base(analyticsService)
         {
             _reviewService = reviewService;
             _gitHubApiV3Service = gitHubApiV3Service;
+
+            IsViewsSeriesVisible = trendsChartSettingsService.ShouldShowViewsByDefault;
+            IsUniqueViewsSeriesVisible = trendsChartSettingsService.ShouldShowUniqueViewsByDefault;
+            IsClonesSeriesVisible = trendsChartSettingsService.ShouldShowClonesByDefault;
+            IsUniqueClonesSeriesVisible = trendsChartSettingsService.ShouldShowUniqueClonesByDefault;
+
+            ViewsCardTappedCommand = new Command(() => IsViewsSeriesVisible = !IsViewsSeriesVisible);
+            UniqueViewsCardTappedCommand = new Command(() => IsUniqueViewsSeriesVisible = !IsUniqueViewsSeriesVisible);
+            ClonesCardTappedCommand = new Command(() => IsClonesSeriesVisible = !IsClonesSeriesVisible);
+            UniqueClonesCardTappedCommand = new Command(() => IsUniqueClonesSeriesVisible = !IsUniqueClonesSeriesVisible);
+
             FetchDataCommand = new AsyncCommand<Repository>(repo => ExecuteFetchDataCommand(repo));
         }
 
+        public ICommand ViewsCardTappedCommand { get; }
+        public ICommand UniqueViewsCardTappedCommand { get; }
+        public ICommand ClonesCardTappedCommand { get; }
+        public ICommand UniqueClonesCardTappedCommand { get; }
+
         public ICommand FetchDataCommand { get; }
+
         public double DailyViewsClonesMinValue { get; } = 0;
 
         public bool AreStatisticsVisible => !IsFetchingData;
@@ -45,6 +72,54 @@ namespace GitTrends
 
                 return Math.Max(Math.Max(dailyViewMaxValue, dailyClonesMaxValue), minimumValue);
             }
+        }
+
+        public string ViewsStatisticsText
+        {
+            get => _viewsStatisticsText;
+            set => SetProperty(ref _viewsStatisticsText, value);
+        }
+
+        public string UniqueViewsStatisticsText
+        {
+            get => _uniqueViewsStatisticsText;
+            set => SetProperty(ref _uniqueViewsStatisticsText, value);
+        }
+
+        public string ClonesStatisticsText
+        {
+            get => _clonesStatisticsText;
+            set => SetProperty(ref _clonesStatisticsText, value);
+        }
+
+        public string UniqueClonesStatisticsText
+        {
+            get => _uniqueClonesStatisticsText;
+            set => SetProperty(ref _uniqueClonesStatisticsText, value);
+        }
+
+        public bool IsViewsSeriesVisible
+        {
+            get => _isViewsSeriesVisible;
+            set => SetProperty(ref _isViewsSeriesVisible, value);
+        }
+
+        public bool IsUniqueViewsSeriesVisible
+        {
+            get => _isUniqueViewsSeriesVisible;
+            set => SetProperty(ref _isUniqueViewsSeriesVisible, value);
+        }
+
+        public bool IsClonesSeriesVisible
+        {
+            get => _isClonesSeriesVisible;
+            set => SetProperty(ref _isClonesSeriesVisible, value);
+        }
+
+        public bool IsUniqueClonesSeriesVisible
+        {
+            get => _isUniqueClonesSeriesVisible;
+            set => SetProperty(ref _isUniqueClonesSeriesVisible, value);
         }
 
         public bool IsFetchingData
@@ -74,14 +149,16 @@ namespace GitTrends
 
             var minimumTimeTask = Task.Delay(2000);
 
-            if (repository.DailyClonesList.Any() && repository.DailyViewsList.Any())
+            try
             {
-                repositoryViews = repository.DailyViewsList;
-                repositoryClones = repository.DailyClonesList;
-            }
-            else
-            {
-                try
+                if (repository.DailyClonesList.Any() && repository.DailyViewsList.Any())
+                {
+                    repositoryViews = repository.DailyViewsList;
+                    repositoryClones = repository.DailyClonesList;
+
+                    await minimumTimeTask.ConfigureAwait(false);
+                }
+                else
                 {
                     IsFetchingData = true;
 
@@ -95,24 +172,31 @@ namespace GitTrends
 
                     repositoryViews = repositoryViewsResponse.DailyViewsList;
                     repositoryClones = repositoryClonesResponse.DailyClonesList;
-
-                }
-                catch (Exception e)
-                {
-                    //ToDo Add note reporting to the user that the statistics are unavailable due to internet connectivity
-                    repositoryViews = Enumerable.Empty<DailyViewsModel>().ToList();
-                    repositoryClones = Enumerable.Empty<DailyClonesModel>().ToList();
-
-                    AnalyticsService.Report(e);
                 }
             }
+            catch (Exception e)
+            {
+                //ToDo Add note reporting to the user that the statistics are unavailable due to internet connectivity
+                repositoryViews = Enumerable.Empty<DailyViewsModel>().ToList();
+                repositoryClones = Enumerable.Empty<DailyClonesModel>().ToList();
 
-            //Display the Activity Indicator for a minimum time to ensure consistant UX 
-            await minimumTimeTask.ConfigureAwait(false);
-            IsFetchingData = false;
+                AnalyticsService.Report(e);
+            }
+            finally
+            {
+                //Display the Activity Indicator for a minimum time to ensure consistant UX 
+                await minimumTimeTask.ConfigureAwait(false);
+                IsFetchingData = false;
+            }
 
             DailyViewsList = repositoryViews.OrderBy(x => x.Day).ToList();
             DailyClonesList = repositoryClones.OrderBy(x => x.Day).ToList();
+
+            ViewsStatisticsText = repositoryViews.Sum(x => x.TotalViews).ConvertToAbbreviatedText();
+            UniqueViewsStatisticsText = repositoryViews.Sum(x => x.TotalUniqueViews).ConvertToAbbreviatedText();
+
+            ClonesStatisticsText = repositoryClones.Sum(x => x.TotalClones).ConvertToAbbreviatedText();
+            UniqueClonesStatisticsText = repositoryClones.Sum(x => x.TotalUniqueClones).ConvertToAbbreviatedText();
 
             PrintDays();
         }

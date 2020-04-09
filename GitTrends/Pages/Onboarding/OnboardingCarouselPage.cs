@@ -38,6 +38,9 @@ namespace GitTrends
 
         public int PageCount => Children.Count;
 
+        //Disable the Hardware Back Button on Android
+        protected override bool OnBackButtonPressed() => false;
+
         protected override void OnAppearing()
         {
             base.OnAppearing();

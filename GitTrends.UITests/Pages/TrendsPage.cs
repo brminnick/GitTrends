@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using Newtonsoft.Json;
 using Xamarin.UITest;
+using Xamarin.UITest.Queries;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
 namespace GitTrends.UITests
@@ -10,8 +12,9 @@ namespace GitTrends.UITests
     class TrendsPage : BasePage
     {
         readonly Query _trendsChart, _trendsChartLegend, _trendsChartPrimaryAxis, _trendsChartSecondaryAxis,
-            _activityIndicator, _androidContextMenuOverflowButton, _referringSiteButton, _viewsLegendIcon,
-            _uniqueViewsLegendIcon, _clonesLegendIcon, _uniqueClonesLegendIcon;
+            _activityIndicator, _androidContextMenuOverflowButton, _referringSiteButton, _viewsCard,
+            _uniqueViewsCard, _clonesCard, _uniqueClonesCard, _viewsStatisticsLabel, _uniqueViewsStatisticsLabel,
+            _clonesStatisticsLabel, _uniqueClonesStatisticsLabel;
 
         public TrendsPage(IApp app) : base(app)
         {
@@ -20,16 +23,31 @@ namespace GitTrends.UITests
             _trendsChartPrimaryAxis = GenerateMarkedQuery(TrendsPageAutomationIds.TrendsChartPrimaryAxis);
             _trendsChartSecondaryAxis = GenerateMarkedQuery(TrendsPageAutomationIds.TrendsChartSecondaryAxis);
 
-            _viewsLegendIcon = GenerateMarkedQuery(TrendsChartConstants.TotalViewsTitle);
-            _uniqueViewsLegendIcon = GenerateMarkedQuery(TrendsChartConstants.UniqueViewsTitle);
-            _clonesLegendIcon = GenerateMarkedQuery(TrendsChartConstants.TotalClonesTitle);
-            _uniqueClonesLegendIcon = GenerateMarkedQuery(TrendsChartConstants.UniqueClonesTitle);
+            _viewsCard = GenerateMarkedQuery(TrendsPageAutomationIds.ViewsCard);
+            _uniqueViewsCard = GenerateMarkedQuery(TrendsPageAutomationIds.UniqueViewsCard);
+            _clonesCard = GenerateMarkedQuery(TrendsPageAutomationIds.ClonesCard);
+            _uniqueClonesCard = GenerateMarkedQuery(TrendsPageAutomationIds.UniqueClonesCard);
 
             _activityIndicator = GenerateMarkedQuery(TrendsPageAutomationIds.ActivityIndicator);
 
             _androidContextMenuOverflowButton = x => x.Class("androidx.appcompat.widget.ActionMenuPresenter$OverflowMenuButton");
             _referringSiteButton = GenerateMarkedQuery(TrendsPageAutomationIds.ReferringSitesButton);
+
+            _viewsStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.ViewsStatisticsLabel);
+            _uniqueViewsStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.UniqueViewsStatisticsLabel);
+            _clonesStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.ClonesStatisticsLabel);
+            _uniqueClonesStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.UniqueClonesStatisticsLabel);
         }
+
+        public string ViewsStatisticsLabelText => GetText(_viewsStatisticsLabel);
+        public string UniqueViewsStatisticsLabelText => GetText(_uniqueViewsStatisticsLabel);
+        public string ClonesStatisticsLabelText => GetText(_clonesStatisticsLabel);
+        public string UniqueClonesStatisticsLabelText => GetText(_uniqueClonesStatisticsLabel);
+
+        AppResult ViewsLegendIcon => App.Query(GenerateMarkedQuery(TrendsChartConstants.TotalViewsTitle)).Last();
+        AppResult UniqueViewsLegendIcon => App.Query(GenerateMarkedQuery(TrendsChartConstants.UniqueViewsTitle)).Last();
+        AppResult ClonesLegendIcon => App.Query(GenerateMarkedQuery(TrendsChartConstants.TotalClonesTitle)).Last();
+        AppResult UniqueClonesLegendIcon => App.Query(GenerateMarkedQuery(TrendsChartConstants.UniqueClonesTitle)).Last();
 
         public override Task WaitForPageToLoad(TimeSpan? timespan = null)
         {
@@ -54,27 +72,59 @@ namespace GitTrends.UITests
             return JsonConvert.DeserializeObject<bool>(serializedIsSeriesVisible);
         }
 
+        public void TapViewsCard()
+        {
+            App.Tap(_viewsCard);
+            App.Screenshot("Views Card Tapped");
+        }
+
+        public void TapUniqueViewsCard()
+        {
+            App.Tap(_uniqueViewsCard);
+            App.Screenshot("Unique Views Card Tapped");
+        }
+
+        public void TapClonesCard()
+        {
+            App.Tap(_clonesCard);
+            App.Screenshot("Clones Card Tapped");
+        }
+
+        public void TapUniqueClonesCard()
+        {
+            App.Tap(_uniqueClonesCard);
+            App.Screenshot("Unique Clones Card Tapped");
+        }
+
         public void TapViewsLegendIcon()
         {
-            App.Tap(_viewsLegendIcon);
+            var rect = ViewsLegendIcon.Rect;
+
+            App.TapCoordinates(rect.CenterX, rect.CenterY);
             App.Screenshot("Views Legend Icon Tapped");
         }
 
         public void TapUniqueViewsLegendIcon()
         {
-            App.Tap(_uniqueViewsLegendIcon);
+            var rect = UniqueViewsLegendIcon.Rect;
+
+            App.TapCoordinates(rect.CenterX, rect.CenterY);
             App.Screenshot("Unique Views Legend Icon Tapped");
         }
 
         public void TapClonesLegendIcon()
         {
-            App.Tap(_clonesLegendIcon);
+            var rect = ClonesLegendIcon.Rect;
+
+            App.TapCoordinates(rect.CenterX, rect.CenterY);
             App.Screenshot("Clones Legend Icon Tapped");
         }
 
         public void TapUniqueClonesLegendIcon()
         {
-            App.Tap(_uniqueClonesLegendIcon);
+            var rect = UniqueClonesLegendIcon.Rect;
+
+            App.TapCoordinates(rect.CenterX, rect.CenterY);
             App.Screenshot("Unique Clones Legend Icon Tapped");
         }
 

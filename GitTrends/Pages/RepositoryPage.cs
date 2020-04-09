@@ -100,6 +100,8 @@ namespace GitTrends
                 using var scope = ContainerService.Container.BeginLifetimeScope();
                 var onboardingPage = scope.Resolve<OnboardingCarouselPage>();
 
+                //Allow RepositoryPage to appear briefly before loading 
+                await Task.Delay(250);
                 await Navigation.PushModalAsync(onboardingPage);
             }
             else if (shouldShowWelcomePage(Navigation, token.AccessToken) && !FirstRunService.IsFirstRun)
@@ -107,6 +109,8 @@ namespace GitTrends
                 using var scope = ContainerService.Container.BeginLifetimeScope();
                 var welcomePage = scope.Resolve<WelcomePage>();
 
+                //Allow RepositoryPage to appear briefly before loading 
+                await Task.Delay(250);
                 await Navigation.PushModalAsync(welcomePage);
             }
             else if (!FirstRunService.IsFirstRun

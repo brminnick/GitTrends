@@ -42,9 +42,9 @@
         <PackageReference Include="HtmlAgilityPack" Version="1.11.23" />
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.1.0" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.1.0" />
-        <PackageReference Include="Xamarin.Forms" Version="4.6.0.529-pre3" />
+        <PackageReference Include="Xamarin.Forms" Version="4.6.0.616-pre4" />
         <PackageReference Include="Shiny.Notifications" Version="1.1.0.1473" />
-        <PackageReference Include="Xamarin.Forms.Visual.Material" Version="4.6.0.529-pre3" />
+        <PackageReference Include="Xamarin.Forms.Visual.Material" Version="4.6.0.616-pre4" />
         <PackageReference Include="Xamarin.Forms.PancakeView" Version="1.3.7" />
     </ItemGroup>
     <ItemGroup>
@@ -62,6 +62,7 @@
       <Folder Include="Pages\Onboarding\" />
       <Folder Include="Resources\SVGs\" />
       <Folder Include="Resources\Fonts\" />
+      <Folder Include="Views\Trends\" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="repo_forked.svg" />
