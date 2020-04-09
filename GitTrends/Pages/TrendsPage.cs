@@ -34,6 +34,8 @@ namespace GitTrends
             referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked;
             ToolbarItems.Add(referringSitesToolbarItem);
 
+            TrendsChart.ChartPadding = new Thickness(0, 5, 0, 0);
+
             TrendsChart.TotalViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowViewsByDefault;
             TrendsChart.TotalUniqueViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueViewsByDefault;
             TrendsChart.TotalClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowClonesByDefault;
@@ -303,8 +305,6 @@ namespace GitTrends
                 SecondaryAxis.SetBinding(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.DailyViewsClonesMaxValue));
 
                 BackgroundColor = Color.Transparent;
-
-                ChartPadding = new Thickness(0, 5, 0, 0);
             }
 
             public AreaSeries TotalViewsSeries { get; }
