@@ -23,7 +23,7 @@ namespace GitTrends.iOS
             _searchController.SearchBar.Placeholder = string.Empty;
         }
 
-        public override void ViewDidAppear(bool animated)
+        public override void ViewWillAppear(bool animated)
         {
             base.ViewDidAppear(animated);
 
