@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using GitTrends.Mobile.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -130,6 +131,24 @@ namespace GitTrends
                     LineBreakMode = LineBreakMode.TailTruncation;
 
                     SetDynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
+                }
+            }
+
+            class StatisticsLabel : Label
+            {
+                public StatisticsLabel(in double fontSize, in long number, in string textColorThemeName, in string fontFamily)
+                {
+                    Text = number.ConvertToAbbreviatedText();
+                    FontSize = fontSize;
+
+                    HorizontalOptions = LayoutOptions.FillAndExpand;
+                    MaxLines = 1;
+                    HorizontalTextAlignment = TextAlignment.Start;
+                    VerticalTextAlignment = TextAlignment.End;
+                    LineBreakMode = LineBreakMode.TailTruncation;
+                    FontFamily = fontFamily;
+
+                    SetDynamicResource(TextColorProperty, textColorThemeName);
                 }
             }
 

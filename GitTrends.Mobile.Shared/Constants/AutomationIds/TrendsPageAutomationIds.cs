@@ -14,6 +14,11 @@
         public const string ClonesCard = nameof(ClonesCard);
         public const string UniqueClonesCard = nameof(UniqueClonesCard);
 
+        public const string ViewsStatisticsLabel = nameof(ViewsStatisticsLabel);
+        public const string UniqueViewsStatisticsLabel = nameof(UniqueViewsStatisticsLabel);
+        public const string ClonesStatisticsLabel = nameof(ClonesStatisticsLabel);
+        public const string UniqueClonesStatisticsLabel = nameof(UniqueClonesStatisticsLabel);
+
         public const string ReferringSitesButton = nameof(ReferringSitesButton);
     }
 }

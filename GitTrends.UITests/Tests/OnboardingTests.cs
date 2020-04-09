@@ -13,11 +13,20 @@ namespace GitTrends.UITests
         {
         }
 
+        public override async Task BeforeEachTest()
+        {
+            await base.BeforeEachTest().ConfigureAwait(false);
+
+            await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
+
+            App.Back();
+
+            await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
+        }
+
         [Test]
         public async Task EnsureEachPageLoads()
         {
-            //Act
-            await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
 
             //Assert
             Assert.AreEqual(0, OnboardingPage.CurrentPageNumber);

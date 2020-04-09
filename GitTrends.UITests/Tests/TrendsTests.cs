@@ -27,10 +27,15 @@ namespace GitTrends.UITests
             await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
 
             Assert.IsTrue(App.Query(selectedRepository.Name).Any());
+
+            Assert.AreEqual(selectedRepository.TotalViews.ConvertToAbbreviatedText(), TrendsPage.ViewsStatisticsLabelText);
+            Assert.AreEqual(selectedRepository.TotalUniqueViews.ConvertToAbbreviatedText(), TrendsPage.UniqueViewsStatisticsLabelText);
+            Assert.AreEqual(selectedRepository.TotalClones.ConvertToAbbreviatedText(), TrendsPage.ClonesStatisticsLabelText);
+            Assert.AreEqual(selectedRepository.TotalUniqueClones.ConvertToAbbreviatedText(), TrendsPage.UniqueClonesStatisticsLabelText);
         }
 
         [Test]
-        public void EnsureCardsIsInteractive()
+        public void EnsureCardsAreInteractive()
         {
             //Arrange
             bool isViewsSeriesVisible_Initial = TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalViewsTitle);

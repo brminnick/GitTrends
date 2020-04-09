@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using Newtonsoft.Json;
 using Xamarin.UITest;
+using Xamarin.UITest.Queries;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
 namespace GitTrends.UITests
@@ -11,9 +12,9 @@ namespace GitTrends.UITests
     class TrendsPage : BasePage
     {
         readonly Query _trendsChart, _trendsChartLegend, _trendsChartPrimaryAxis, _trendsChartSecondaryAxis,
-            _activityIndicator, _androidContextMenuOverflowButton, _referringSiteButton, _viewsLegendIcon,
-            _uniqueViewsLegendIcon, _clonesLegendIcon, _uniqueClonesLegendIcon, _viewsCard,
-            _uniqueViewsCard, _clonesCard, _uniqueClonesCard;
+            _activityIndicator, _androidContextMenuOverflowButton, _referringSiteButton, _viewsCard,
+            _uniqueViewsCard, _clonesCard, _uniqueClonesCard, _viewsStatisticsLabel, _uniqueViewsStatisticsLabel,
+            _clonesStatisticsLabel, _uniqueClonesStatisticsLabel;
 
         public TrendsPage(IApp app) : base(app)
         {
@@ -21,16 +22,6 @@ namespace GitTrends.UITests
             _trendsChartLegend = GenerateMarkedQuery(TrendsPageAutomationIds.TrendsChartLegend);
             _trendsChartPrimaryAxis = GenerateMarkedQuery(TrendsPageAutomationIds.TrendsChartPrimaryAxis);
             _trendsChartSecondaryAxis = GenerateMarkedQuery(TrendsPageAutomationIds.TrendsChartSecondaryAxis);
-
-            var viewsLegendIconsQuery = GenerateMarkedQuery(TrendsChartConstants.TotalViewsTitle);
-            var uniqueViewsLegendIconsQuery = GenerateMarkedQuery(TrendsChartConstants.UniqueViewsTitle);
-            var clonesLegendIconsQuery = GenerateMarkedQuery(TrendsChartConstants.TotalClonesTitle);
-            var uniqueClonesLegendIconsQuery = GenerateMarkedQuery(TrendsChartConstants.UniqueClonesTitle);
-
-            _viewsLegendIcon = x => x.Id(App.Query(viewsLegendIconsQuery).Last().Id);
-            _uniqueViewsLegendIcon = x => x.Id(App.Query(uniqueViewsLegendIconsQuery).Last().Id);
-            _clonesLegendIcon = x => x.Id(App.Query(clonesLegendIconsQuery).Last().Id);
-            _uniqueClonesLegendIcon = x => x.Id(App.Query(uniqueClonesLegendIconsQuery).Last().Id);
 
             _viewsCard = GenerateMarkedQuery(TrendsPageAutomationIds.ViewsCard);
             _uniqueViewsCard = GenerateMarkedQuery(TrendsPageAutomationIds.UniqueViewsCard);
@@ -41,7 +32,22 @@ namespace GitTrends.UITests
 
             _androidContextMenuOverflowButton = x => x.Class("androidx.appcompat.widget.ActionMenuPresenter$OverflowMenuButton");
             _referringSiteButton = GenerateMarkedQuery(TrendsPageAutomationIds.ReferringSitesButton);
+
+            _viewsStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.ViewsStatisticsLabel);
+            _uniqueViewsStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.UniqueViewsStatisticsLabel);
+            _clonesStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.ClonesStatisticsLabel);
+            _uniqueClonesStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.UniqueClonesStatisticsLabel);
         }
+
+        public string ViewsStatisticsLabelText => GetText(_viewsStatisticsLabel);
+        public string UniqueViewsStatisticsLabelText => GetText(_uniqueViewsStatisticsLabel);
+        public string ClonesStatisticsLabelText => GetText(_clonesStatisticsLabel);
+        public string UniqueClonesStatisticsLabelText => GetText(_uniqueClonesStatisticsLabel);
+
+        AppResult ViewsLegendIcon => App.Query(GenerateMarkedQuery(TrendsChartConstants.TotalViewsTitle)).Last();
+        AppResult UniqueViewsLegendIcon => App.Query(GenerateMarkedQuery(TrendsChartConstants.UniqueViewsTitle)).Last();
+        AppResult ClonesLegendIcon => App.Query(GenerateMarkedQuery(TrendsChartConstants.TotalClonesTitle)).Last();
+        AppResult UniqueClonesLegendIcon => App.Query(GenerateMarkedQuery(TrendsChartConstants.UniqueClonesTitle)).Last();
 
         public override Task WaitForPageToLoad(TimeSpan? timespan = null)
         {
@@ -92,25 +98,33 @@ namespace GitTrends.UITests
 
         public void TapViewsLegendIcon()
         {
-            App.Tap(_viewsLegendIcon);
+            var rect = ViewsLegendIcon.Rect;
+
+            App.TapCoordinates(rect.CenterX, rect.CenterY);
             App.Screenshot("Views Legend Icon Tapped");
         }
 
         public void TapUniqueViewsLegendIcon()
         {
-            App.Tap(_uniqueViewsLegendIcon);
+            var rect = UniqueViewsLegendIcon.Rect;
+
+            App.TapCoordinates(rect.CenterX, rect.CenterY);
             App.Screenshot("Unique Views Legend Icon Tapped");
         }
 
         public void TapClonesLegendIcon()
         {
-            App.Tap(_clonesLegendIcon);
+            var rect = ClonesLegendIcon.Rect;
+
+            App.TapCoordinates(rect.CenterX, rect.CenterY);
             App.Screenshot("Clones Legend Icon Tapped");
         }
 
         public void TapUniqueClonesLegendIcon()
         {
-            App.Tap(_uniqueClonesLegendIcon);
+            var rect = UniqueClonesLegendIcon.Rect;
+
+            App.TapCoordinates(rect.CenterX, rect.CenterY);
             App.Screenshot("Unique Clones Legend Icon Tapped");
         }
 
