@@ -39,9 +39,9 @@ namespace GitTrends
             TrendsChart.TotalClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowClonesByDefault;
             TrendsChart.TotalUniqueClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueClonesByDefault;
 
-            Content = new GridContainer();
+            Content = new GridContainer(repository);
 
-            ViewModel.FetchDataCommand.Execute(_repository);
+            ViewModel.FetchDataCommand.Execute(repository);
         }
 
         enum GridContainerRow { ViewsStats, ClonesStats, Chart }
@@ -74,7 +74,7 @@ namespace GitTrends
 
         class GridContainer : Grid
         {
-            public GridContainer()
+            public GridContainer(in Repository repository)
             {
                 ColumnSpacing = 8;
                 RowSpacing = 8;
@@ -89,13 +89,13 @@ namespace GitTrends
                     (GridContainerColumn.Total, StarGridLength(1)),
                     (GridContainerColumn.Unique, StarGridLength(1)));
 
-                Children.Add(new CardView(CreateCardViewContent("Views", 5000000000, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor)), TrendsChart.TotalViewsSeries, nameof(TrendsPageAutomationIds.ViewsCard))
+                Children.Add(new CardView(CreateCardViewContent("Views", repository.TotalViews, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor)), TrendsChart.TotalViewsSeries, nameof(TrendsPageAutomationIds.ViewsCard))
                     .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Total));
-                Children.Add(new CardView(CreateCardViewContent("Unique Views", 32000, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor)), TrendsChart.TotalUniqueViewsSeries, nameof(TrendsPageAutomationIds.UniqueViewsCard))
+                Children.Add(new CardView(CreateCardViewContent("Unique Views", repository.TotalUniqueViews, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor)), TrendsChart.TotalUniqueViewsSeries, nameof(TrendsPageAutomationIds.UniqueViewsCard))
                     .Row(GridContainerRow.ViewsStats).Column(GridContainerColumn.Unique)); ;
-                Children.Add(new CardView(CreateCardViewContent("Clones", 200, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor)), TrendsChart.TotalClonesSeries, nameof(TrendsPageAutomationIds.ClonesCard))
+                Children.Add(new CardView(CreateCardViewContent("Clones", repository.TotalClones, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor)), TrendsChart.TotalClonesSeries, nameof(TrendsPageAutomationIds.ClonesCard))
                     .Row(GridContainerRow.ClonesStats).Column(GridContainerColumn.Total));
-                Children.Add(new CardView(CreateCardViewContent("Unique Clones", 130, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor)), TrendsChart.TotalUniqueClonesSeries, nameof(TrendsPageAutomationIds.UniqueClonesCard))
+                Children.Add(new CardView(CreateCardViewContent("Unique Clones", repository.TotalUniqueClones, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor)), TrendsChart.TotalUniqueClonesSeries, nameof(TrendsPageAutomationIds.UniqueClonesCard))
                     .Row(GridContainerRow.ClonesStats).Column(GridContainerColumn.Unique));
                 Children.Add(new TrendsChartActivityIndicator()
                     .Row(GridContainerRow.Chart).Column(GridContainerColumn.Total).ColumnSpan(2));
