@@ -35,12 +35,11 @@ namespace GitTrends.Droid
 
             Forms.Init(this, savedInstanceState);
             FormsMaterial.Init(this, savedInstanceState);
-            var app = new App();
 
-            TryHandleOpenedFromUri(app, Intent.Data);
+            LoadApplication(new App());
+
+            TryHandleOpenedFromUri(Intent.Data);
             TryHandleOpenedFromNotification(Intent);
-
-            LoadApplication(app);
         }
 
         protected override async void OnNewIntent(Intent intent)
@@ -49,73 +48,10 @@ namespace GitTrends.Droid
 
             if (intent?.Data is Android.Net.Uri callbackUri)
             {
-                if (FirstRunService.IsFirstRun)
-                {
-                    NavigateToConnectToGitHubOnboardingPage();
-                }
-                else if (!FirstRunService.IsFirstRun
-                    && Xamarin.Forms.Application.Current.MainPage is BaseNavigationPage baseNavigationPage
-                    && baseNavigationPage.CurrentPage is RepositoryPage)
-                {
-                    await NavigateToWelcomePage().ConfigureAwait(false);
-                }
-                else
-                {
-                    await NavigateToSettingsPage().ConfigureAwait(false);
-                }
-
                 await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
             }
 
             TryHandleOpenedFromNotification(intent);
-        }
-
-        static void NavigateToConnectToGitHubOnboardingPage()
-        {
-            var navigationPage = (NavigationPage)Xamarin.Forms.Application.Current.MainPage;
-
-            if (navigationPage.Navigation.ModalStack.Last() is OnboardingCarouselPage carouselPage)
-            {
-                carouselPage.CurrentPage = carouselPage.Children.Last();
-            }
-        }
-
-        static async ValueTask NavigateToWelcomePage()
-        {
-            var navigationPage = (NavigationPage)Xamarin.Forms.Application.Current.MainPage;
-
-            if (navigationPage.CurrentPage.GetType() != typeof(WelcomePage))
-            {
-                using var containerScope = ContainerService.Container.BeginLifetimeScope();
-                var welcomePage = containerScope.Resolve<WelcomePage>();
-
-                await Xamarin.Essentials.MainThread.InvokeOnMainThreadAsync(() => navigateToWelcomePage(navigationPage, welcomePage)).ConfigureAwait(false);
-            }
-
-            static async Task navigateToWelcomePage(NavigationPage mainNavigationPage, WelcomePage welcomePage)
-            {
-                await mainNavigationPage.PopToRootAsync();
-                await Xamarin.Forms.Application.Current.MainPage.Navigation.PushModalAsync(welcomePage);
-            }
-        }
-
-        static async ValueTask NavigateToSettingsPage()
-        {
-            var navigationPage = (NavigationPage)Xamarin.Forms.Application.Current.MainPage;
-
-            if (navigationPage.CurrentPage.GetType() != typeof(SettingsPage))
-            {
-                using var containerScope = ContainerService.Container.BeginLifetimeScope();
-                var settingsPage = containerScope.Resolve<SettingsPage>();
-
-                await Xamarin.Essentials.MainThread.InvokeOnMainThreadAsync(() => navigateToSettingsPage(navigationPage, settingsPage)).ConfigureAwait(false);
-            }
-
-            static async Task navigateToSettingsPage(NavigationPage mainNavigationPage, SettingsPage settingsPage)
-            {
-                await mainNavigationPage.PopToRootAsync();
-                await mainNavigationPage.PushAsync(settingsPage);
-            }
         }
 
         static async Task AuthorizeGitHubSession(Android.Net.Uri callbackUri)
@@ -136,51 +72,33 @@ namespace GitTrends.Droid
 
         async void TryHandleOpenedFromNotification(Intent? intent)
         {
-            if (intent?.GetStringExtra("ShinyNotification") is string notificationString)
+            try
             {
-                var notification = JsonConvert.DeserializeObject<Shiny.Notifications.Notification>(notificationString);
+                if (intent?.GetStringExtra("ShinyNotification") is string notificationString)
+                {
+                    var notification = JsonConvert.DeserializeObject<Shiny.Notifications.Notification>(notificationString);
 
-                using var scope = ContainerService.Container.BeginLifetimeScope();
-                var analyticsService = scope.Resolve<AnalyticsService>();
+                    using var scope = ContainerService.Container.BeginLifetimeScope();
+                    var analyticsService = scope.Resolve<AnalyticsService>();
 
-                var notificationService = scope.Resolve<NotificationService>();
+                    var notificationService = scope.Resolve<NotificationService>();
 
-                await notificationService.HandleReceivedLocalNotification(notification.Title ?? string.Empty,
-                                                                            notification.Message ?? string.Empty,
-                                                                            notification.BadgeCount ?? 0).ConfigureAwait(false);
+                    await notificationService.HandleReceivedLocalNotification(notification.Title ?? string.Empty,
+                                                                                notification.Message ?? string.Empty,
+                                                                                notification.BadgeCount ?? 0).ConfigureAwait(false);
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+
             }
         }
 
-        void TryHandleOpenedFromUri(App app, Android.Net.Uri? callbackUri)
+        async void TryHandleOpenedFromUri(Android.Net.Uri? callbackUri)
         {
             if (callbackUri != null)
             {
-                //Wait for Application.MainPage to load before handling the callbackUri
-                app.PageAppearing += HandlePageAppearing;
-
-                async void HandlePageAppearing(object sender, Page page)
-                {
-                    if (FirstRunService.IsFirstRun && page is OnboardingCarouselPage carouselPage)
-                    {
-                        app.PageAppearing -= HandlePageAppearing;
-                        NavigateToConnectToGitHubOnboardingPage();
-                        await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
-                    }
-                    else if (page is SettingsPage)
-                    {
-                        app.PageAppearing -= HandlePageAppearing;
-                        await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
-                    }
-                    else if (!FirstRunService.IsFirstRun && page is RepositoryPage)
-                    {
-                        app.PageAppearing -= HandlePageAppearing;
-                        await NavigateToWelcomePage();
-                    }
-                    else if (page is RepositoryPage)
-                    {
-                        await NavigateToSettingsPage().ConfigureAwait(false);
-                    }
-                }
+                await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
             }
         }
     }
