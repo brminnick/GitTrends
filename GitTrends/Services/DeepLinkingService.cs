@@ -26,13 +26,15 @@ namespace GitTrends
         {
             return MainThread.InvokeOnMainThreadAsync(() =>
             {
-                var browserOptions = new BrowserLaunchOptions
+                var currentTheme = (BaseTheme)Application.Current.Resources;
+
+                var browserLaunchOptions = new BrowserLaunchOptions
                 {
-                    PreferredToolbarColor = (Color)Application.Current.Resources[nameof(BaseTheme.NavigationBarBackgroundColor)],
-                    PreferredControlColor = (Color)Application.Current.Resources[nameof(BaseTheme.NavigationBarTextColor)],
+                    PreferredControlColor = currentTheme.NavigationBarTextColor,
+                    PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor,
                 };
 
-                return Browser.OpenAsync(url, browserOptions);
+                return Browser.OpenAsync(url, browserLaunchOptions);
             });
         }
 
@@ -57,21 +59,9 @@ namespace GitTrends
                 var supportsUri = await Launcher.CanOpenAsync(deepLinkingUrl);
 
                 if (supportsUri)
-                {
                     await Launcher.OpenAsync(deepLinkingUrl);
-                }
                 else
-                {
-                    var currentTheme = (BaseTheme)Application.Current.Resources;
-
-                    var browserLaunchOptions = new BrowserLaunchOptions
-                    {
-                        PreferredControlColor = currentTheme.NavigationBarTextColor,
-                        PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor,
-                    };
-
-                    await Browser.OpenAsync(browserUrl, browserLaunchOptions);
-                }
+                    await OpenBrowser(browserUrl);
             });
         }
 
