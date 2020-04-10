@@ -81,6 +81,7 @@ namespace GitTrends
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
             var cancellationTokenSource = new CancellationTokenSource();
+            _gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
             _gitHubAuthenticationService.LoggedOut += HandleLoggedOut;
 
             const int repositoriesPerFetch = 100;
@@ -135,6 +136,7 @@ namespace GitTrends
             finally
             {
                 _gitHubAuthenticationService.LoggedOut -= HandleLoggedOut;
+                _gitHubAuthenticationService.AuthorizeSessionStarted -= HandleAuthorizeSessionStarted;
 
                 if (cancellationTokenSource.IsCancellationRequested)
                     UpdateListForLoggedOutUser();
@@ -143,6 +145,7 @@ namespace GitTrends
             }
 
             void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
+            void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();
         }
 
         void ExecuteSortRepositoriesCommand(SortingOption option)
@@ -213,12 +216,8 @@ namespace GitTrends
                 UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
         }
 
-        void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
-        {
-            //Work-around because Android.ContentPage.OnAppearing does not fire after `ContentPage.PushModalAsync()`
-            if (Device.RuntimePlatform is Device.Android)
-                IsRefreshing |= e.IsSessionAuthorized;
-        }
+        //Work-around because ContentPage.OnAppearing does not fire after `ContentPage.PushModalAsync()`
+        void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsRefreshing |= e.IsSessionAuthorized;
 
         void HandleDemoUserActivated(object sender, EventArgs e) => IsRefreshing = true;
 

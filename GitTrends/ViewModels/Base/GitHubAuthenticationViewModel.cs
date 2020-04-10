@@ -67,6 +67,9 @@ namespace GitTrends
             catch (Exception e)
             {
                 AnalyticsService.Report(e);
+            }
+            finally
+            {
                 IsAuthenticating = false;
             }
         }
@@ -74,8 +77,8 @@ namespace GitTrends
         void HandleAuthorizeSessionStarted(object sender, EventArgs e) => IsAuthenticating = true;
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
         {
-            IsAuthenticating = false;
             FirstRunService.IsFirstRun = false;
+            IsAuthenticating = false;
         }
     }
 }

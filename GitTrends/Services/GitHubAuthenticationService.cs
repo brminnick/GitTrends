@@ -139,8 +139,8 @@ namespace GitTrends
 
                 if (state != MostRecentSessionId)
                     throw new InvalidOperationException("Invalid SessionId");
-
-                MostRecentSessionId = string.Empty;
+                else
+                    MostRecentSessionId = string.Empty;
 
                 var generateTokenDTO = new GenerateTokenDTO(code, state);
                 var token = await _azureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO).ConfigureAwait(false);

@@ -43,9 +43,9 @@ namespace GitTrends
                         .Row(Row.Image),
                     new ConnectToGitHubButton()
                         .Row(Row.GitHubButton),
-                    new ConnectToGitHubActivityIndicator()
-                        .Row(Row.GitHubButton).RowSpan(3),
                     new DemoLabel()
+                        .Row(Row.DemoButton),
+                    new ConnectToGitHubActivityIndicator()
                         .Row(Row.DemoButton),
                     new VersionNumberLabel()
                         .Row(Row.VersionLabel)
@@ -55,20 +55,19 @@ namespace GitTrends
 
         enum Row { WelcomeLabel, Image, GitHubButton, DemoButton, VersionLabel }
 
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-
-            ViewModel.IsAuthenticating = false;
-        }
-
         async void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
         {
             if (e.IsSessionAuthorized)
                 await PopPage();
         }
 
-        async void HandleDemoUserActivated(object sender, EventArgs e) => await PopPage();
+        async void HandleDemoUserActivated(object sender, EventArgs e)
+        {
+            var minimumActivityIndicatorTime = Task.Delay(1500);
+
+            await minimumActivityIndicatorTime;
+            await PopPage();
+        }
 
         Task PopPage() => MainThread.InvokeOnMainThreadAsync(Navigation.PopModalAsync);
 
@@ -76,9 +75,9 @@ namespace GitTrends
         {
             public ConnectToGitHubActivityIndicator()
             {
-                this.Center();
-
                 Color = Color.White;
+
+                this.Center();
 
                 this.Bind(IsVisibleProperty, nameof(WelcomeViewModel.IsAuthenticating));
                 this.Bind(IsRunningProperty, nameof(WelcomeViewModel.IsAuthenticating));
@@ -104,8 +103,7 @@ namespace GitTrends
                 FontSize = 12;
                 FontFamily = FontFamilyConstants.RobotoBold;
 
-                HorizontalOptions = LayoutOptions.Center;
-                VerticalOptions = LayoutOptions.Center;
+                this.Center();
 
                 HorizontalTextAlignment = TextAlignment.Center;
                 VerticalTextAlignment = TextAlignment.End;
