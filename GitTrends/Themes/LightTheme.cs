@@ -5,10 +5,10 @@ namespace GitTrends
     public class LightTheme : BaseTheme
     {
         const string _primaryTextHex = "#584053";
-        const string _primaryTealHex = "#338F82";
+        const string _primaryTealHex = LightTealColorHex;
         const string _primaryDarkTealHex = "#1C473D";
         const string _accentYellowHex = "#FCBC66";
-        const string _accentOrangeHex = "#F97B4F";
+        const string _accentOrangeHex = CoralColorHex;
         const string _toolbarTextHex = "#FFFFFF";
         const string _textHex = "#121212";
         const string _buttonTextColor = "#FFFFFF";
@@ -16,7 +16,7 @@ namespace GitTrends
         const string _accentPurpleHex = "#8F3795";
         const string _backgroundSurfaceHex = "#FFFFFF";
         const string _cardSurfaceHex = "#FFFFFF";
-        const string _toolbarSurfaceHex = "#338F82";
+        const string _toolbarSurfaceHex = LightTealColorHex;
         const string _circleImageBackgroundHex = "#FFFFFF";
         const string _githubButtonSurfaceHex = "#231F20";
 

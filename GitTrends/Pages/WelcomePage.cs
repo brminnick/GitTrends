@@ -19,7 +19,7 @@ namespace GitTrends
             RemoveDynamicResource(BackgroundColorProperty);
             On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.OverFullScreen);
 
-            BackgroundColor = Color.FromHex(BaseTheme.TealBackgroundColorHex);
+            BackgroundColor = Color.FromHex(BaseTheme.LightTealColorHex);
 
             gitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;

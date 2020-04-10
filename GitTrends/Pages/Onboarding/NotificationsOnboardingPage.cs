@@ -9,7 +9,7 @@ namespace GitTrends
 {
     public class NotificationsOnboardingPage : BaseOnboardingContentPage
     {
-        public NotificationsOnboardingPage(AnalyticsService analyticsService) : base(analyticsService, BaseTheme.TealBackgroundColorHex, OnboardingConstants.SkipText, 2)
+        public NotificationsOnboardingPage(AnalyticsService analyticsService) : base(analyticsService, BaseTheme.LightTealColorHex, OnboardingConstants.SkipText, 2)
         {
 
         }
@@ -49,7 +49,7 @@ namespace GitTrends
 
                 AutomationId = OnboardingAutomationIds.EnableNotificationsButton;
 
-                BackgroundColor = Color.FromHex(BaseTheme.CoralBackgroundColorHex);
+                BackgroundColor = Color.FromHex(BaseTheme.CorallCColorHex);
                 CornerRadius = 5;
                 Padding = new Thickness(16, 10);
 

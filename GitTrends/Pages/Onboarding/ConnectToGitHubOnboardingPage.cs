@@ -11,7 +11,7 @@ namespace GitTrends
     public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
     {
         public ConnectToGitHubOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService, AnalyticsService analyticsService)
-                : base(analyticsService, BaseTheme.CoralBackgroundColorHex, OnboardingConstants.TryDemoText, 3)
+                : base(analyticsService, BaseTheme.CorallCColorHex, OnboardingConstants.TryDemoText, 3)
         {
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
         }

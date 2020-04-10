@@ -24,10 +24,10 @@ namespace GitTrends
 
         //Saturated colors from light theme
         const string _lightAccentYellowHex = "#FCBC66";
-        const string _lightAccentOrangeHex = "#F97B4F";
+        const string _lightAccentOrangeHex = CoralColorHex;
         const string _lightAccentLightBlueHex = "#66A7FC";
         const string _lightAccentPurpleHex = "#8F3795";
-        const string _lightPrimaryTealHex = "#338F82";
+        const string _lightPrimaryTealHex = LightTealColorHex;
 
         //Graph Palette
         const string _saturatedLightBlueHex = "#2BC3BE";

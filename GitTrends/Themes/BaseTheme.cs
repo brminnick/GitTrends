@@ -4,8 +4,8 @@ namespace GitTrends
 {
     public abstract class BaseTheme : ResourceDictionary
     {
-        public const string TealBackgroundColorHex = "338F82";
-        public const string CoralBackgroundColorHex = "F97B4F";
+        public const string LightTealColorHex = "338F82";
+        public const string CoralColorHex = "F97B4F";
 
         protected BaseTheme()
         {
