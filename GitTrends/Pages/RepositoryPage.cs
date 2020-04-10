@@ -95,16 +95,7 @@ namespace GitTrends
 
             var token = await GitHubAuthenticationService.GetGitHubToken();
 
-            if (shouldShowWelcomePage(Navigation, token.AccessToken) && FirstRunService.IsFirstRun)
-            {
-                using var scope = ContainerService.Container.BeginLifetimeScope();
-                var onboardingPage = scope.Resolve<OnboardingCarouselPage>();
-
-                //Allow RepositoryPage to appear briefly before loading 
-                await Task.Delay(250);
-                await Navigation.PushModalAsync(onboardingPage);
-            }
-            else if (shouldShowWelcomePage(Navigation, token.AccessToken) && !FirstRunService.IsFirstRun)
+            if (!FirstRunService.IsFirstRun && shouldShowWelcomePage(Navigation, token.AccessToken))
             {
                 using var scope = ContainerService.Container.BeginLifetimeScope();
                 var welcomePage = scope.Resolve<WelcomePage>();
@@ -114,6 +105,7 @@ namespace GitTrends
                 await Navigation.PushModalAsync(welcomePage);
             }
             else if (!FirstRunService.IsFirstRun
+                        && isUserValid(token.AccessToken)
                         && _refreshView.Content is CollectionView collectionView
                         && IsNullOrEmpty(collectionView.ItemsSource))
             {
@@ -124,8 +116,10 @@ namespace GitTrends
             {
                 return !navigation.ModalStack.Any()
                         && GitHubAuthenticationService.Alias != DemoDataConstants.Alias
-                        && (string.IsNullOrWhiteSpace(accessToken) || string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias));
+                        && !isUserValid(accessToken);
             }
+
+            static bool isUserValid(in string accessToken) => !string.IsNullOrWhiteSpace(accessToken) || !string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias);
 
             static bool IsNullOrEmpty(in IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
         }
