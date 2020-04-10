@@ -5,26 +5,11 @@ using UIKit;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
-[assembly: Dependency(typeof(Environment_iOS))]
+[assembly: Dependency(typeof(PlatformSpecificService_iOS))]
 namespace GitTrends.iOS
 {
-    public class Environment_iOS : IEnvironment
+    public class PlatformSpecificService_iOS : IPlatformSpecificService
     {
-        public Theme GetOperatingSystemTheme()
-        {
-            var currentUIViewController = ViewControllerServices.GetVisibleViewController();
-
-            var userInterfaceStyle = currentUIViewController.TraitCollection.UserInterfaceStyle;
-
-            return userInterfaceStyle switch
-            {
-                UIUserInterfaceStyle.Light => Theme.Light,
-                UIUserInterfaceStyle.Dark => Theme.Dark,
-                _ => throw new NotSupportedException($"UIUserInterfaceStyle {userInterfaceStyle} not supported"),
-            };
-        }
-
-        public Task<Theme> GetOperatingSystemThemeAsync() => MainThread.InvokeOnMainThreadAsync(GetOperatingSystemTheme);
 
         public Task SetiOSBadgeCount(int count) => MainThread.InvokeOnMainThreadAsync(() => UIApplication.SharedApplication.ApplicationIconBadgeNumber = count);
 

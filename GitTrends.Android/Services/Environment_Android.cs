@@ -1,31 +1,17 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Android.Content;
-using Android.Content.Res;
 using AndroidX.Work;
 using Autofac;
 using GitTrends.Droid;
 using Plugin.CurrentActivity;
 using Xamarin.Forms;
 
-[assembly: Dependency(typeof(Environment_Android))]
+[assembly: Dependency(typeof(PlatformSpecificService_Android))]
 namespace GitTrends.Droid
 {
-    public class Environment_Android : IEnvironment
+    public class PlatformSpecificService_Android : IPlatformSpecificService
     {
-        public Theme GetOperatingSystemTheme()
-        {
-            var uiModeFlags = CrossCurrentActivity.Current.AppContext.Resources.Configuration.UiMode & UiMode.NightMask;
-
-            return uiModeFlags switch
-            {
-                UiMode.NightYes => Theme.Dark,
-                UiMode.NightNo => Theme.Light,
-                _ => throw new NotSupportedException($"UiMode {uiModeFlags} not supported"),
-            };
-        }
-
-        public Task<Theme> GetOperatingSystemThemeAsync() => Task.FromResult(GetOperatingSystemTheme());
 
         public Task SetiOSBadgeCount(int count) => throw new NotSupportedException();
 

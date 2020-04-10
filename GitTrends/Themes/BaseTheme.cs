@@ -2,8 +2,6 @@
 
 namespace GitTrends
 {
-    public enum Theme { Light, Dark };
-
     public abstract class BaseTheme : ResourceDictionary
     {
         public const string TealBackgroundColorHex = "338F82";

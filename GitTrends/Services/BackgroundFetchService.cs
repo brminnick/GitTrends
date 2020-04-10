@@ -46,7 +46,7 @@ namespace GitTrends
             //Shiny.Jobs.IJobManager.Schedule always schedules background jobs for TimeSpan.FromMinutes(15) https://github.com/shinyorg/shiny/blob/c53a31732c57c4cc78f8bccba54b543e024425ee/src/Shiny.Core/Jobs/Platforms/Android/JobManager.cs#L95
             if (Device.RuntimePlatform is Device.Android)
             {
-                DependencyService.Get<IEnvironment>().EnqueueAndroidWorkRequest(periodicTimeSpan);
+                DependencyService.Get<IPlatformSpecificService>().EnqueueAndroidWorkRequest(periodicTimeSpan);
             }
             else if (!isRegistered)
             {
