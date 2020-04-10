@@ -13,13 +13,12 @@ namespace GitTrends
             if (!svgFileName.EndsWith(".svg"))
                 throw new ArgumentException($"{nameof(svgFileName)} must end with .svg", nameof(svgFileName));
 
+            Application.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
+
             HorizontalOptions = LayoutOptions.FillAndExpand;
             VerticalOptions = LayoutOptions.FillAndExpand;
 
             _getTextColor = getTextColor;
-
-            var app = (App)Application.Current;
-            app.ThemeChanged += HandleThemeChanged;
 
             UpdateSVGColor();
 
@@ -29,7 +28,7 @@ namespace GitTrends
             HeightRequest = heightRequest;
         }
 
-        void HandleThemeChanged(object sender, Theme e) => UpdateSVGColor();
+        void HandleRequestedThemeChanged(object sender, AppThemeChangedEventArgs e) => UpdateSVGColor();
 
         void UpdateSVGColor() => ReplaceStringMap = SvgService.GetColorStringMap(_getTextColor());
     }
