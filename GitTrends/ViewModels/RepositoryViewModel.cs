@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -176,7 +178,7 @@ namespace GitTrends
             UpdateVisibleRepositoryList(searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
 
             static IEnumerable<Repository> RemoveForksAndDuplicates(in IEnumerable<Repository> repositoriesList) =>
-                repositoriesList.Where(x => !x.IsFork).OrderByDescending(x => x.TotalViews).GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.DailyViewsList.Any()) ?? x.First());
+                repositoriesList.Where(x => !x.IsFork).OrderByDescending(x => x.DataDownloadedAt).GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.DailyViewsList.Any()) ?? x.First());
         }
 
         void UpdateVisibleRepositoryList(in string searchBarText, in SortingOption sortingOption, in bool isReversed)

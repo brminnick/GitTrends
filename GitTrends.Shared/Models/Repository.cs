@@ -9,8 +9,17 @@ namespace GitTrends.Shared
 {
     public class Repository : IRepository
     {
+        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork, DateTimeOffset dataDownloadedAt, IList<DailyViewsModel>? views = null, IList<DailyClonesModel>? clones = null)
+            : this(name, description, forkCount, owner, issues, url, stargazers, isFork, views, clones)
+        {
+            DataDownloadedAt = dataDownloadedAt;
+        }
+
+        [JsonConstructor]
         public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork, IList<DailyViewsModel>? views = null, IList<DailyClonesModel>? clones = null)
         {
+            DataDownloadedAt = DateTimeOffset.UtcNow;
+
             Name = name;
             Description = description;
             ForkCount = forkCount;
@@ -36,9 +45,11 @@ namespace GitTrends.Shared
             IsTrending = (isViewsTrending ?? false) || (isClonesTrending ?? false);
         }
 
-        public long TotalViews { get; } 
-        public long TotalUniqueViews { get; } 
-        public long TotalClones { get; } 
+        public DateTimeOffset DataDownloadedAt { get; }
+
+        public long TotalViews { get; }
+        public long TotalUniqueViews { get; }
+        public long TotalClones { get; }
         public long TotalUniqueClones { get; }
 
         public string OwnerLogin { get; }
@@ -68,6 +79,7 @@ namespace GitTrends.Shared
             stringBuilder.AppendLine($"{nameof(Description)}: {Description}");
             stringBuilder.AppendLine($"{nameof(ForkCount)}: {ForkCount}");
             stringBuilder.AppendLine($"{nameof(IssuesCount)}: {IssuesCount}");
+            stringBuilder.AppendLine($"{nameof(DataDownloadedAt)}: {DataDownloadedAt}");
 
             return stringBuilder.ToString();
         }

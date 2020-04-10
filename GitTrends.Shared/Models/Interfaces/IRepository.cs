@@ -1,7 +1,10 @@
-﻿namespace GitTrends.Shared
+﻿using System;
+
+namespace GitTrends.Shared
 {
     interface IRepository
     {
+        DateTimeOffset DataDownloadedAt { get; }
         string OwnerLogin { get; }
         string OwnerAvatarUrl { get; }
         int StarCount { get; }
