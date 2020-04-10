@@ -49,7 +49,7 @@ namespace GitTrends
 
                 AutomationId = OnboardingAutomationIds.EnableNotificationsButton;
 
-                BackgroundColor = Color.FromHex(BaseTheme.CorallCColorHex);
+                BackgroundColor = Color.FromHex(BaseTheme.CoralColorHex);
                 CornerRadius = 5;
                 Padding = new Thickness(16, 10);
 
