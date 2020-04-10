@@ -52,8 +52,6 @@ namespace GitTrends
         {
             base.OnDisappearing();
 
-            _onboardingViewModel.IsAuthenticating = false;
-
             _analyticsService.Track($"{GetType().Name} Disappeared");
         }
 

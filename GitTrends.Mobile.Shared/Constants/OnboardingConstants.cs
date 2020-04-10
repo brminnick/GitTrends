@@ -8,6 +8,6 @@
         public const string ChartPageTitle = "Get an overview of\nyour repos";
         public const string ConnectToGitHubPageTitle = "Connect to\nGitHub";
         public const string GitTrendsPageTitle = "Welcome to\nGitTrends";
-        public const string NotificationsPageTitle = "Enable notifications to stay in the loop";
+        public const string NotificationsPageTitle = "Be notified when\nrepos are trending";
     }
 }

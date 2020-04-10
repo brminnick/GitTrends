@@ -45,10 +45,10 @@ namespace GitTrends
         {
             public EnableNotificationsView()
             {
+                this.CenterExpand();
+
                 AutomationId = OnboardingAutomationIds.EnableNotificationsButton;
-                HorizontalOptions = LayoutOptions.CenterAndExpand;
-                VerticalOptions = LayoutOptions.CenterAndExpand;
-                Padding = new Thickness(10);
+
                 BackgroundColor = Color.FromHex(BaseTheme.CoralBackgroundColorHex);
                 CornerRadius = 5;
                 Padding = new Thickness(16, 10);

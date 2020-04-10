@@ -32,9 +32,9 @@ namespace GitTrends
             Content = new Grid
             {
                 RowDefinitions = Rows.Define(
-                    (Row.Image, StarGridLength(Device.RuntimePlatform is Device.iOS ? 9 : 5)),
-                    (Row.Description, StarGridLength(Device.RuntimePlatform is Device.iOS ? 6 : 4)),
-                    (Row.Indicator, StarGridLength(1))),
+                    (Row.Image, StarGridLength(Device.RuntimePlatform is Device.iOS ? 9 : 1)),
+                    (Row.Description, StarGridLength(Device.RuntimePlatform is Device.iOS ? 6 : 1)),
+                    (Row.Indicator, AbsoluteGridLength(44))),
 
                 ColumnDefinitions = Columns.Define(
                     (Column.Indicator, StarGridLength(1)),
@@ -53,6 +53,8 @@ namespace GitTrends
 
         enum Row { Image, Description, Indicator }
         enum Column { Indicator, Button }
+
+        protected OnboardingViewModel ViewModel => (OnboardingViewModel)BindingContext;
 
         protected abstract View CreateImageView();
         protected abstract TitleLabel CreateDescriptionTitleLabel();
