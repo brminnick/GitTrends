@@ -47,6 +47,7 @@ namespace GitTrends
 
             _analyticsService.Track($"{GetType().Name} Appeared");
         }
+
         protected override void OnDisappearing()
         {
             base.OnDisappearing();

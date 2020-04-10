@@ -50,9 +50,19 @@ namespace GitTrends.Droid
             if (intent?.Data is Android.Net.Uri callbackUri)
             {
                 if (FirstRunService.IsFirstRun)
+                {
                     NavigateToConnectToGitHubOnboardingPage();
+                }
+                else if (!FirstRunService.IsFirstRun
+                    && Xamarin.Forms.Application.Current.MainPage is BaseNavigationPage baseNavigationPage
+                    && baseNavigationPage.CurrentPage is RepositoryPage)
+                {
+                    await NavigateToWelcomePage().ConfigureAwait(false);
+                }
                 else
+                {
                     await NavigateToSettingsPage().ConfigureAwait(false);
+                }
 
                 await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
             }
@@ -67,6 +77,25 @@ namespace GitTrends.Droid
             if (navigationPage.Navigation.ModalStack.Last() is OnboardingCarouselPage carouselPage)
             {
                 carouselPage.CurrentPage = carouselPage.Children.Last();
+            }
+        }
+
+        static async ValueTask NavigateToWelcomePage()
+        {
+            var navigationPage = (NavigationPage)Xamarin.Forms.Application.Current.MainPage;
+
+            if (navigationPage.CurrentPage.GetType() != typeof(WelcomePage))
+            {
+                using var containerScope = ContainerService.Container.BeginLifetimeScope();
+                var welcomePage = containerScope.Resolve<WelcomePage>();
+
+                await Xamarin.Essentials.MainThread.InvokeOnMainThreadAsync(() => navigateToWelcomePage(navigationPage, welcomePage)).ConfigureAwait(false);
+            }
+
+            static async Task navigateToWelcomePage(NavigationPage mainNavigationPage, WelcomePage welcomePage)
+            {
+                await mainNavigationPage.PopToRootAsync();
+                await Xamarin.Forms.Application.Current.MainPage.Navigation.PushModalAsync(welcomePage);
             }
         }
 
@@ -141,6 +170,11 @@ namespace GitTrends.Droid
                     {
                         app.PageAppearing -= HandlePageAppearing;
                         await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
+                    }
+                    else if (!FirstRunService.IsFirstRun && page is RepositoryPage)
+                    {
+                        app.PageAppearing -= HandlePageAppearing;
+                        await NavigateToWelcomePage();
                     }
                     else if (page is RepositoryPage)
                     {

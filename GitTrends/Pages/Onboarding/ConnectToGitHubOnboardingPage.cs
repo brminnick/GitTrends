@@ -11,7 +11,7 @@ namespace GitTrends
     public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
     {
         public ConnectToGitHubOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService, AnalyticsService analyticsService)
-                : base(analyticsService, CoralBackgroundColorHex, OnboardingConstants.TryDemoText, 3)
+                : base(analyticsService, BaseTheme.CoralBackgroundColorHex, OnboardingConstants.TryDemoText, 3)
         {
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
         }
@@ -40,7 +40,7 @@ namespace GitTrends
             Children =
             {
                 new BodyLabel("Get started by connecting your GitHub account, or try demo mode to tour GitTrends!").Row(Row.Description),
-                new ConnectToGitHubView().Row(Row.Button),
+                new ConnectToGitHubView(OnboardingAutomationIds.ConnectToGitHubButton).Row(Row.Button),
                 new IsAuthenticatingIndicator().Row(Row.ActivityIndicator)
             }
         };
@@ -49,55 +49,6 @@ namespace GitTrends
         {
             if (e.IsSessionAuthorized)
                 MainThread.BeginInvokeOnMainThread(() => Navigation.PopModalAsync());
-        }
-
-        class ConnectToGitHubView : PancakeView
-        {
-            public ConnectToGitHubView()
-            {
-                AutomationId = OnboardingAutomationIds.ConnectToGitHubButton;
-                HorizontalOptions = LayoutOptions.CenterAndExpand;
-                VerticalOptions = LayoutOptions.CenterAndExpand;
-                Padding = new Thickness(16, 10);
-                CornerRadius = 4;
-
-                Content = new StackLayout
-                {
-                    Orientation = StackOrientation.Horizontal,
-                    Spacing = 16,
-                    Children =
-                    {
-                        new GitHubSvgImage(),
-                        new ConnectToGitHubLabel()
-                    }
-                };
-
-                BackgroundColor = Color.FromHex("#231F20");
-                //SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
-
-                this.BindTapGesture(nameof(OnboardingViewModel.ConnectToGitHubButtonCommand));
-            }
-
-            class GitHubSvgImage : SvgImage
-            {
-                public GitHubSvgImage() : base("github.svg", () => Color.White, 24, 24)
-                {
-                }
-            }
-
-            class ConnectToGitHubLabel : Label
-            {
-                public ConnectToGitHubLabel()
-                {
-                    HorizontalTextAlignment = TextAlignment.Center;
-                    VerticalTextAlignment = TextAlignment.Center;
-                    VerticalOptions = LayoutOptions.CenterAndExpand;
-                    TextColor = Color.White;
-                    FontSize = 18;
-                    FontFamily = FontFamilyConstants.RobotoRegular;
-                    Text = "Connect to GitHub";
-                }
-            }
         }
 
         class IsAuthenticatingIndicator : ActivityIndicator

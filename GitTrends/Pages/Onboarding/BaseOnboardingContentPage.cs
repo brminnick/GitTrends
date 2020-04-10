@@ -8,9 +8,6 @@ namespace GitTrends
 {
     public abstract class BaseOnboardingContentPage : BaseContentPage
     {
-        protected const string TealBackgroundColorHex = "338F82";
-        protected const string CoralBackgroundColorHex = "F97B4F";
-
         protected BaseOnboardingContentPage(AnalyticsService analyticsService, in string backgroundColorHex, in string nextButtonText, in int carouselPositionIndex) : base(analyticsService)
         {
             //Don't Use BaseTheme.PageBackgroundColor

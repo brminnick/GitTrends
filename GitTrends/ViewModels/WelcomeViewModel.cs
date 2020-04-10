@@ -1,13 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace GitTrends
 {
     public class WelcomeViewModel : GitHubAuthenticationViewModel
     {
         public WelcomeViewModel(GitHubAuthenticationService gitHubAuthenticationService,
-                                                    DeepLinkingService deepLinkingService,
-                                                    AnalyticsService analyticsService)
+                                    DeepLinkingService deepLinkingService,
+                                    AnalyticsService analyticsService)
             : base(gitHubAuthenticationService, deepLinkingService, analyticsService)
         {
         }
