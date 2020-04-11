@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using Newtonsoft.Json;
 using Xamarin.UITest;
+using Xamarin.UITest.Android;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
 namespace GitTrends.UITests

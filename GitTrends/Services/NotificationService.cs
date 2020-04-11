@@ -14,20 +14,14 @@ namespace GitTrends
     public class NotificationService
     {
         const string _trendingRepositoriesNotificationTitle = "Your Repos Are Trending";
-
         readonly WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new WeakEventManager<SortingOption>();
-        readonly WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new WeakEventManager<(bool isSuccessful, string errorMessage)>();
 
         readonly AnalyticsService _analyticsService;
         readonly DeepLinkingService _deepLinkingService;
         readonly SortingService _sortingService;
 
-        public NotificationService(AnalyticsService analyticsService, DeepLinkingService deepLinkingService, SortingService sortingService)
-        {
-            _analyticsService = analyticsService;
-            _deepLinkingService = deepLinkingService;
-            _sortingService = sortingService;
-        }
+        public NotificationService(AnalyticsService analyticsService, DeepLinkingService deepLinkingService, SortingService sortingService) =>
+            (_analyticsService, _deepLinkingService, _sortingService) = (analyticsService, deepLinkingService, sortingService);
 
         public event EventHandler<SortingOption> SortingOptionRequested
         {
@@ -37,91 +31,11 @@ namespace GitTrends
 
         static INotificationManager NotificationManager => ShinyHost.Resolve<INotificationManager>();
 
-        public bool HaveNotificationsBeenRequested
+        public Task<AccessState> Register() => NotificationManager.RequestAccess();
+
+        public async Task SetAppBadgeCount(int count)
         {
-            get => Preferences.Get(nameof(HaveNotificationsBeenRequested), false);
-            private set => Preferences.Set(nameof(HaveNotificationsBeenRequested), value);
-        }
-
-        public event EventHandler<(bool isSuccessful, string errorMessage)> RegisterForNotificationsCompleted
-        {
-            add => _registerForNotificationCompletedEventHandler.AddEventHandler(value);
-            remove => _registerForNotificationCompletedEventHandler.RemoveEventHandler(value);
-        }
-
-        public async Task<AccessState> Register(bool shouldShowSettingsUI)
-        {
-            AccessState? finalNotificationRequestResult = null;
-            HaveNotificationsBeenRequested = true;
-
-            var settingsResultCompletionSource = new TaskCompletionSource<AccessState>();
-
-            var initialNotificationRequestResult = await NotificationManager.RequestAccess().ConfigureAwait(false);
-
-            try
-            {
-                switch (initialNotificationRequestResult)
-                {
-                    case AccessState.Denied when shouldShowSettingsUI:
-                    case AccessState.Disabled when shouldShowSettingsUI:
-                        var app = (App)Application.Current;
-                        app.Resumed += HandleResumed;
-
-                        await _deepLinkingService.ShowSettingsUI().ConfigureAwait(false);
-                        finalNotificationRequestResult = await settingsResultCompletionSource.Task.ConfigureAwait(false);
-                        break;
-
-                    case AccessState.Denied:
-                    case AccessState.Disabled:
-                        OnRegisterForNotificationsCompleted(false, "Notifications Disabled");
-                        break;
-
-                    case AccessState.Available:
-                    case AccessState.Restricted:
-                        OnRegisterForNotificationsCompleted(true, string.Empty);
-                        break;
-
-                    case AccessState.NotSetup:
-                        finalNotificationRequestResult = await NotificationManager.RequestAccess().ConfigureAwait(false);
-                        break;
-
-                    case AccessState.NotSupported:
-                        OnRegisterForNotificationsCompleted(false, "Notifications Are Not Supported");
-                        break;
-                }
-
-                return finalNotificationRequestResult ?? initialNotificationRequestResult;
-            }
-            catch (Exception e)
-            {
-                _analyticsService.Report(e);
-                return initialNotificationRequestResult;
-            }
-            finally
-            {
-                _analyticsService.Track("Register For Notifications", new Dictionary<string, string>
-                {
-                    { nameof(initialNotificationRequestResult), initialNotificationRequestResult.ToString() },
-                    { nameof(finalNotificationRequestResult), finalNotificationRequestResult?.ToString() ?? "null" },
-                });
-            }
-
-            async void HandleResumed(object sender, EventArgs e)
-            {
-                var app = (App)sender;
-                app.Resumed -= HandleResumed;
-
-                var finalResult = await NotificationManager.RequestAccess().ConfigureAwait(false);
-                settingsResultCompletionSource.SetResult(finalResult);
-            }
-        }
-
-        public async ValueTask SetAppBadgeCount(int count)
-        {
-            if (!HaveNotificationsBeenRequested)
-                return;
-
-            var accessState = await Register(false).ConfigureAwait(false);
+            var accessState = await Register().ConfigureAwait(false);
 
             //INotificationManager.Badge Crashes on iOS
             if (accessState is AccessState.Available && Device.RuntimePlatform is Device.iOS)
@@ -130,15 +44,13 @@ namespace GitTrends
                 NotificationManager.Badge = count;
         }
 
-        public async ValueTask TrySendTrendingNotificaiton(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
+        public ValueTask TrySendTrendingNotificaiton(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
         {
-            if (!HaveNotificationsBeenRequested)
-                return;
 #if DEBUG
-            await SendTrendingNotification(trendingRepositories, notificationDateTime).ConfigureAwait(false);
+            return SendTrendingNotification(trendingRepositories, notificationDateTime);
 #else
             var repositoriesToNotify = trendingRepositories.Where(shouldSendNotification).ToList();
-            await SendTrendingNotification(repositoriesToNotify, notificationDateTime).ConfigureAwait(false);
+            return SendTrendingNotification(repositoriesToNotify, notificationDateTime);
 
             static bool shouldSendNotification(Repository trendingRepository)
             {
@@ -175,17 +87,17 @@ namespace GitTrends
             {
                 bool? shouldSortByTrending = null;
 
-                if (!_sortingService.IsReversed)
+                if (_sortingService.CurrentOption is SortingOption.Trending && !_sortingService.IsReversed)
                 {
                     await _deepLinkingService.DisplayAlert(message, $"Tap the repositories tagged \"Trending\" to learn more!", "Thanks").ConfigureAwait(false);
                 }
                 else
                 {
-                    shouldSortByTrending = await _deepLinkingService.DisplayAlert(message, "Reverse The Sorting Order To Discover Which Ones", "Reverse Sorting", "Not Now").ConfigureAwait(false);
+                    shouldSortByTrending = await _deepLinkingService.DisplayAlert(message, "Sort By \"Trending\" To Discover Which Ones", "Sort by Trending", "Not Now").ConfigureAwait(false);
                 }
 
                 if (shouldSortByTrending is true)
-                    OnSortingOptionRequestion(_sortingService.CurrentOption);
+                    OnSortingOptionRequestion(SortingOption.Trending);
 
                 _analyticsService.Track("Multiple Trending Repository Prompt Displayed", nameof(shouldSortByTrending), shouldSortByTrending?.ToString() ?? "null");
             }
@@ -251,8 +163,5 @@ namespace GitTrends
         }
 
         void OnSortingOptionRequestion(SortingOption sortingOption) => _sortingOptionRequestedEventManager.HandleEvent(this, sortingOption, nameof(SortingOptionRequested));
-
-        void OnRegisterForNotificationsCompleted(bool isSuccessful, string errorMessage) =>
-            _registerForNotificationCompletedEventHandler.HandleEvent(this, (isSuccessful, errorMessage), nameof(RegisterForNotificationsCompleted));
     }
 }

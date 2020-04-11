@@ -21,7 +21,7 @@ namespace GitTrends.UITests
         {
             await base.BeforeEachTest().ConfigureAwait(false);
 
-            var selectedRepository = RepositoryPage.VisibleCollection.First();
+            var selectedRepository = RepositoryPage.GetVisibleRepositoryList().First();
 
             RepositoryPage.TapRepository(selectedRepository.Name);
 

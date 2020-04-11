@@ -81,24 +81,6 @@ namespace GitTrends.Droid
 
             return backdoorService.IsTrendsSeriesVisible(seriesLabel);
         }
-
-        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.GetCurrentOnboardingPageNumber)]
-        public string GetCurrentOnboardingPageNumber()
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            return Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetCurrentOnboardingPageNumber());
-        }
-
-        [Preserve, Java.Interop.Export(Mobile.Shared.BackdoorMethodConstants.PopPage)]
-        public async void PopPage()
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            await backdoorService.PopPage().ConfigureAwait(false);
-        }
         #endregion
 #endif
     }

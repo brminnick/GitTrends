@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using FFImageLoading.Forms;
+﻿using FFImageLoading.Forms;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using Xamarin.Forms.PancakeView;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
@@ -14,164 +12,90 @@ namespace GitTrends
 
         class ReferringSitesDataTemplate : DataTemplate
         {
+            const int rowHeight = Shared.ReferringSiteModel.FavIconSize + 10;
+
             public ReferringSitesDataTemplate(MobileReferringSiteModel referringSiteModel) : base(() => CreateReferringSitesDataTemplate(referringSiteModel))
             {
             }
 
-            enum Row { Title, Description }
-            enum Column { FavIcon, FavIconPadding, Site, Referrals, ReferralPadding, Separator, UniquePadding, Uniques }
-
-            static CardView CreateReferringSitesDataTemplate(in MobileReferringSiteModel referringSiteModel) => new CardView(CreateViews(referringSiteModel));
-
-            static IEnumerable<View> CreateViews(in MobileReferringSiteModel referringSiteModel)
+            static View CreateReferringSitesDataTemplate(in MobileReferringSiteModel referringSiteModel) => new Grid
             {
-                return new View[]
+                RowSpacing = 1,
+                Margin = new Thickness(5),
+
+                RowDefinitions = Rows.Define(
+                    (Row.TopPadding, AbsoluteGridLength(2)),
+                    (Row.Title, AbsoluteGridLength(rowHeight / 2)),
+                    (Row.Description, AbsoluteGridLength(rowHeight / 2)),
+                    (Row.BotomPadding, AbsoluteGridLength(2))),
+
+                ColumnDefinitions = Columns.Define(
+                    (Column.LeftPadding, AbsoluteGridLength(5)),
+                    (Column.FavIcon, AbsoluteGridLength(rowHeight)),
+                    (Column.Site, StarGridLength(3)),
+                    (Column.Referrals, StarGridLength(2)),
+                    (Column.Uniques, StarGridLength(2)),
+                    (Column.RightPadding, AbsoluteGridLength(5))),
+
+                Children =
                 {
-                    new CircleBoxView(){ Content = new FavIconImage(referringSiteModel.FavIcon) }.Row(Row.Title).Column(Column.FavIcon).RowSpan(2),
-                    new TitleLabel("SITE").Row(Row.Title).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
-                    new PrimaryColorLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site).Start().Margin(new Thickness(0,0,16,0)),
-                    new TitleLabel("REFERRALS").Row(Row.Title).Column(Column.Referrals).Center(),
-                    new StatisticsLabel(12, referringSiteModel.TotalCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular).Row(Row.Description).Column(Column.Referrals).Center(),
-                    new Separator().Row(Row.Title).Column(Column.Separator).RowSpan(2).FillExpandVertical(),
-                    new TitleLabel("UNIQUE").Row(Row.Title).Column(Column.Uniques).Center(),
-                    new StatisticsLabel(12, referringSiteModel.TotalUniqueCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular).Row(Row.Description).Column(Column.Uniques).Center()
-                };
-            }
-
-            class CardView : Grid
-            {
-                public CardView(in IEnumerable<View> children)
-                {
-                    RowSpacing = 0;
-                    RowDefinitions = Rows.Define(
-                       (CardViewRow.TopPadding, AbsoluteGridLength(8)),
-                       (CardViewRow.Card, StarGridLength(1)),
-                       (CardViewRow.BottomPadding, AbsoluteGridLength(8)));
-
-                    ColumnDefinitions = Columns.Define(
-                        (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
-                        (CardViewColumn.Card, StarGridLength(1)),
-                        (CardViewColumn.RightPadding, AbsoluteGridLength(16)));
-
-                    Children.Add(new CardViewFrame(children).Row(CardViewRow.Card).Column(CardViewColumn.Card));
-
-                    SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+                    new FavIconImage(referringSiteModel.FavIcon).Row(Row.Title).Column(Column.FavIcon).RowSpan(4),
+                    new TitleLabel("Site").Row(Row.Title).Column(Column.Site),
+                    new DescriptionLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site),
+                    new TitleLabel("Referrals"){ LineBreakMode = LineBreakMode.TailTruncation }.Row(Row.Title).Column(Column.Referrals),
+                    new DescriptionLabel(referringSiteModel.TotalCount.ToString()).Row(Row.Description).Column(Column.Referrals),
+                    new TitleLabel("Unique Visitors").Row(Row.Title).Column(Column.Uniques),
+                    new DescriptionLabel(referringSiteModel.TotalUniqueCount.ToString()).Row(Row.Description).Column(Column.Uniques),
                 }
-
-                enum CardViewRow { TopPadding, Card, BottomPadding }
-                enum CardViewColumn { LeftPadding, Card, RightPadding }
-
-                class CardViewFrame : PancakeView
-                {
-                    public CardViewFrame(in IEnumerable<View> children)
-                    {
-                        CornerRadius = 4;
-                        HasShadow = false;
-                        Padding = new Thickness(16);
-                        BorderThickness = 2;
-                        Content = new ContentGrid(children);
-
-                        SetDynamicResource(BorderColorProperty, nameof(BaseTheme.CardBorderColor));
-                        SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
-                    }
-                }
-
-                class ContentGrid : Grid
-                {
-                    public ContentGrid(in IEnumerable<View> children)
-                    {
-                        HorizontalOptions = LayoutOptions.FillAndExpand;
-                        VerticalOptions = LayoutOptions.FillAndExpand;
-
-                        RowDefinitions = Rows.Define(
-                        (Row.Title, StarGridLength(1)),
-                        (Row.Description, StarGridLength(1)));
-
-                        ColumnDefinitions = Columns.Define(
-                            (Column.FavIcon, AbsoluteGridLength(32)),
-                            (Column.FavIconPadding, AbsoluteGridLength(16)),
-                            (Column.Site, StarGridLength(1)),
-                            (Column.Referrals, Auto),
-                            (Column.ReferralPadding, AbsoluteGridLength(4)),
-                            (Column.Separator, AbsoluteGridLength(1)),
-                            (Column.UniquePadding, AbsoluteGridLength(4)),
-                            (Column.Uniques, Auto));
-
-                        foreach (var child in children)
-                        {
-                            Children.Add(child);
-                        }
-                    }
-
-                }
-            }
+            };
 
             class FavIconImage : CachedImage
             {
-                public FavIconImage(in ImageSource imageSource)
+                public FavIconImage(ImageSource imageSource)
                 {
-                    WidthRequest = HeightRequest = MobileReferringSiteModel.FavIconSize;
-                    HorizontalOptions = VerticalOptions = LayoutOptions.Center;
+                    HeightRequest = MobileReferringSiteModel.FavIconSize;
+                    HorizontalOptions = LayoutOptions.FillAndExpand;
+                    VerticalOptions = LayoutOptions.CenterAndExpand;
                     LoadingPlaceholder = FavIconService.DefaultFavIcon;
                     ErrorPlaceholder = FavIconService.DefaultFavIcon;
                     Source = imageSource;
                 }
             }
 
-            class TitleLabel : PrimaryColorLabel
+            class TitleLabel : CenteredLabel
             {
-
-                public TitleLabel(in string text) : base(text)
+                public TitleLabel(string text)
                 {
-                    CharacterSpacing = 1.56;
-                    HorizontalTextAlignment = TextAlignment.Start;
-                    VerticalTextAlignment = TextAlignment.Start;
-                    FontFamily = FontFamilyConstants.RobotoMedium;
-
-                    SetDynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
+                    FontAttributes = FontAttributes.Bold;
+                    FontSize = 14;
+                    Text = text;
+                    Padding = new Thickness(0, 2, 0, 0);
                 }
             }
 
-            class PrimaryColorLabel : Label
+            class DescriptionLabel : CenteredLabel
             {
-                public PrimaryColorLabel(in double fontSize, in string text) : this(text) => FontSize = fontSize;
-
-                public PrimaryColorLabel(in string text)
+                public DescriptionLabel(string text)
                 {
                     Text = text;
-                    FontSize = 12;
-                    MaxLines = 1;
-                    LineBreakMode = LineBreakMode.TailTruncation;
-                    HorizontalTextAlignment = TextAlignment.Start;
-                    HorizontalOptions = LayoutOptions.FillAndExpand;
-                    FontFamily = FontFamilyConstants.RobotoRegular;
-
-                    SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+                    FontSize = 14;
+                    Padding = new Thickness(0, 0, 0, 2);
                 }
             }
 
-            class Separator : BoxView
+            abstract class CenteredLabel : Label
             {
-                public Separator()
+                protected CenteredLabel()
                 {
-                    SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
+                    VerticalOptions = LayoutOptions.Center;
+                    HorizontalTextAlignment = TextAlignment.Center;
+                    VerticalTextAlignment = TextAlignment.Center;
+                    SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
                 }
             }
 
-            class CircleBoxView : Frame
-            {
-                public CircleBoxView()
-                {
-                    Visual = VisualMarker.Material;
-                    HeightRequest = 32;
-                    WidthRequest = 32;
-                    HorizontalOptions = VerticalOptions = LayoutOptions.Start;
-                    CornerRadius = 18;
-                    HasShadow = false;
-                    Padding = new Thickness(0);
-                    BackgroundColor = Color.White;
-                }
-            }
+            enum Row { TopPadding, Title, Description, BotomPadding }
+            enum Column { LeftPadding, FavIcon, Site, Referrals, Uniques, RightPadding }
         }
     }
 }

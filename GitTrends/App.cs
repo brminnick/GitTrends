@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
 using Shiny;
+using Shiny.Notifications;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
@@ -13,12 +14,11 @@ namespace GitTrends
     public class App : Xamarin.Forms.Application
     {
         readonly WeakEventManager<Theme> _themeChangedEventManager = new WeakEventManager<Theme>();
-        readonly WeakEventManager _resumedEventManager = new WeakEventManager();
         readonly AnalyticsService _analyticsService;
 
         public App()
         {
-            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental" });
+            Device.SetFlags(new[] { "Markup_Experimental" });
 
             FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration
             {
@@ -39,12 +39,6 @@ namespace GitTrends
             remove => _themeChangedEventManager.RemoveEventHandler(value);
         }
 
-        public event EventHandler Resumed
-        {
-            add => _resumedEventManager.AddEventHandler(value);
-            remove => _resumedEventManager.RemoveEventHandler(value);
-        }
-
         protected override void OnStart()
         {
             base.OnStart();
@@ -63,8 +57,6 @@ namespace GitTrends
         protected override void OnResume()
         {
             base.OnResume();
-
-            OnResumed();
 
             _analyticsService.Track("App Resumed");
 
@@ -112,11 +104,6 @@ namespace GitTrends
                     {
                         Property = Xamarin.Forms.DebugRainbows.DebugRainbow.ShowColorsProperty,
                         Value = shouldUseDebugRainbows
-                    },
-                    new Setter
-                    {
-                        Property = Xamarin.Forms.DebugRainbows.DebugRainbow.ShowGridProperty,
-                        Value = shouldUseDebugRainbows
                     }
                 }
             });
@@ -130,7 +117,7 @@ namespace GitTrends
             await backgroundFetchService.Register().ConfigureAwait(false);
         }
 
-        ValueTask ClearBageNotifications()
+        Task ClearBageNotifications()
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var notificationService = scope.Resolve<NotificationService>();
@@ -139,6 +126,5 @@ namespace GitTrends
         }
 
         void OnThemeChanged(Theme newTheme) => _themeChangedEventManager.HandleEvent(this, newTheme, nameof(ThemeChanged));
-        void OnResumed() => _resumedEventManager.HandleEvent(this, EventArgs.Empty, nameof(Resumed));
     }
 }

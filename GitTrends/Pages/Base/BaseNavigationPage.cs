@@ -7,9 +7,9 @@ namespace GitTrends
     {
         public BaseNavigationPage(Xamarin.Forms.Page root) : base(root)
         {
+            SetDynamicResource(BarBackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
             SetDynamicResource(BarTextColorProperty, nameof(BaseTheme.NavigationBarTextColor));
             SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
-            SetDynamicResource(BarBackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
 
             On<iOS>().SetPrefersLargeTitles(true);
             On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
