@@ -63,6 +63,7 @@ namespace GitTrends.UITests
         protected async Task SetupDemoUser()
         {
             await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
+
             OnboardingPage.TapNextButton();
             OnboardingPage.TapNextButton();
 

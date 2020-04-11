@@ -23,6 +23,7 @@ namespace GitTrends
             On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.OverFullScreen);
 
             ChildAdded += HandleChildAdded;
+            ChildRemoved += HandleChildRemoved;
 
             BindingContext = _onboardingViewModel = onboardingViewModel;
             _analyticsService = analyticsService;
@@ -65,5 +66,6 @@ namespace GitTrends
         void HandleDemoUserActivated(object sender, EventArgs e) => MainThread.BeginInvokeOnMainThread(() => Navigation.PopModalAsync());
 
         void HandleChildAdded(object sender, ElementEventArgs e) => OnPropertyChanged(nameof(PageCount));
+        void HandleChildRemoved(object sender, ElementEventArgs e) => OnPropertyChanged(nameof(PageCount));
     }
 }

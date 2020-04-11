@@ -11,7 +11,7 @@ namespace GitTrends.UITests
     class OnboardingPage : BasePage
     {
         readonly Query _connectToGitHubButton, _enableNotificationsButton, _nextButton,
-            _pageIndicator, _titleLabel;
+            _pageIndicator, _titleLabel, _activityIndicator;
 
         public OnboardingPage(IApp app) : base(app)
         {
@@ -20,6 +20,7 @@ namespace GitTrends.UITests
             _nextButton = GenerateMarkedQuery(OnboardingAutomationIds.NextButon);
             _pageIndicator = GenerateMarkedQuery(OnboardingAutomationIds.PageIndicator);
             _titleLabel = GenerateMarkedQuery(OnboardingAutomationIds.TitleLabel);
+            _activityIndicator = GenerateMarkedQuery(OnboardingAutomationIds.IsAuthenticatingActivityIndicator);
         }
 
         public string TitleLabelText => GetText(_titleLabel);
@@ -29,6 +30,7 @@ namespace GitTrends.UITests
         public override Task WaitForPageToLoad(TimeSpan? timeout = null)
         {
             App.WaitForElement(_pageIndicator);
+            App.WaitForNoElement(_activityIndicator);
 
             switch (CurrentPageNumber)
             {
@@ -50,6 +52,18 @@ namespace GitTrends.UITests
             }
 
             return Task.CompletedTask;
+        }
+
+        public void WaitForIsAuthenticatingActivityIndicator()
+        {
+            App.WaitForElement(_activityIndicator);
+            App.Screenshot("Activity Indicator Appeared");
+        }
+
+        public void WaitForNoIsAuthenticatingActivityIndicator()
+        {
+            App.WaitForNoElement(_activityIndicator);
+            App.Screenshot("Activity Indicator Disappeared");
         }
 
         public void MoveToNextPage()

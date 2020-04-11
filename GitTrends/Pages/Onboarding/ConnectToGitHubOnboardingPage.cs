@@ -2,7 +2,6 @@
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using Xamarin.Forms.PancakeView;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
@@ -56,6 +55,9 @@ namespace GitTrends
             public IsAuthenticatingIndicator()
             {
                 Color = Color.White;
+
+                AutomationId = OnboardingAutomationIds.IsAuthenticatingActivityIndicator;
+
                 this.SetBinding(IsVisibleProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
                 this.SetBinding(IsRunningProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
             }
