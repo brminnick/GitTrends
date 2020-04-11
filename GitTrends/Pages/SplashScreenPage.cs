@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
@@ -189,13 +190,13 @@ namespace GitTrends
             //Display Text
             await Task.Delay(500);
 
-            await NavigateToRepositoryPage();
+            await NavigateToNextPage();
 #else
             if (e.IsInitializationSuccessful)
             {
                 await ChangeLabelText("Let's go!");
 
-                await NavigateToRepositoryPage();
+                await NavigateToNextPage();
             }
             else
             {
@@ -205,7 +206,7 @@ namespace GitTrends
             }
 #endif
 
-            Task NavigateToRepositoryPage()
+            Task NavigateToNextPage()
             {
                 return MainThread.InvokeOnMainThreadAsync(async () =>
                 {
@@ -219,6 +220,15 @@ namespace GitTrends
                     await explodeImageTask;
 
                     Application.Current.MainPage = new BaseNavigationPage(repositoryPage);
+
+                    if (FirstRunService.IsFirstRun)
+                    {
+                        //Yield the UI thread to allow MainPage to be set
+                        await Task.Delay(250);
+
+                        var onboardingCarouselPage = scope.Resolve<OnboardingCarouselPage>();
+                        await repositoryPage.Navigation.PushModalAsync(onboardingCarouselPage);
+                    }
                 });
             }
         }

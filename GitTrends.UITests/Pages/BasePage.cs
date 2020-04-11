@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.UITest;
+using Xamarin.UITest.iOS;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
 namespace GitTrends.UITests
@@ -15,6 +16,12 @@ namespace GitTrends.UITests
             App = app;
             PageTitle = pageTitle;
         }
+
+        public bool IsBrowserOpen => App switch
+        {
+            iOSApp iOSApp => iOSApp.Query(x => x.Class("SFSafariView")).Any(),
+            _ => throw new NotSupportedException("Browser Can Only Be Verified on iOS")
+        };
 
         public string PageTitle { get; }
         protected IApp App { get; }

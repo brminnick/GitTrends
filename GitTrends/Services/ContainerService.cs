@@ -40,6 +40,7 @@ namespace GitTrends
             builder.RegisterType<SettingsViewModel>().AsSelf();
             builder.RegisterType<SplashScreenViewModel>().AsSelf();
             builder.RegisterType<TrendsViewModel>().AsSelf();
+            builder.RegisterType<WelcomeViewModel>().AsSelf();
 
             //Register Pages
             builder.RegisterType<ChartOnboardingPage>().AsSelf();

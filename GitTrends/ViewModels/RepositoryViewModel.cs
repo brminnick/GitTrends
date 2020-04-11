@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -79,6 +81,7 @@ namespace GitTrends
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
             var cancellationTokenSource = new CancellationTokenSource();
+            _gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
             _gitHubAuthenticationService.LoggedOut += HandleLoggedOut;
 
             const int repositoriesPerFetch = 100;
@@ -133,6 +136,7 @@ namespace GitTrends
             finally
             {
                 _gitHubAuthenticationService.LoggedOut -= HandleLoggedOut;
+                _gitHubAuthenticationService.AuthorizeSessionStarted -= HandleAuthorizeSessionStarted;
 
                 if (cancellationTokenSource.IsCancellationRequested)
                     UpdateListForLoggedOutUser();
@@ -141,6 +145,7 @@ namespace GitTrends
             }
 
             void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
+            void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();
         }
 
         void ExecuteSortRepositoriesCommand(SortingOption option)
@@ -176,7 +181,7 @@ namespace GitTrends
             UpdateVisibleRepositoryList(searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
 
             static IEnumerable<Repository> RemoveForksAndDuplicates(in IEnumerable<Repository> repositoriesList) =>
-                repositoriesList.Where(x => !x.IsFork).OrderByDescending(x => x.TotalViews).GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.DailyViewsList.Any()) ?? x.First());
+                repositoriesList.Where(x => !x.IsFork).OrderByDescending(x => x.DataDownloadedAt).GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.DailyViewsList.Any()) ?? x.First());
         }
 
         void UpdateVisibleRepositoryList(in string searchBarText, in SortingOption sortingOption, in bool isReversed)
@@ -211,19 +216,10 @@ namespace GitTrends
                 UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
         }
 
-        void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
-        {
-            //Work-around because Android.ContentPage.OnAppearing does not fire after `ContentPage.PushModalAsync()`
-            if (Device.RuntimePlatform is Device.Android)
-                IsRefreshing |= e.IsSessionAuthorized;
-        }
+        //Work-around because ContentPage.OnAppearing does not fire after `ContentPage.PushModalAsync()`
+        void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsRefreshing |= e.IsSessionAuthorized;
 
-        void HandleDemoUserActivated(object sender, EventArgs e)
-        {
-            //Work-around because Android.ContentPage.OnAppearing does not fire after `ContentPage.PushModalAsync()`
-            if (Device.RuntimePlatform is Device.Android)
-                IsRefreshing = true;
-        }
+        void HandleDemoUserActivated(object sender, EventArgs e) => IsRefreshing = true;
 
         void HandleGitHubAuthenticationServiceLoggedOut(object sender, EventArgs e) => UpdateListForLoggedOutUser();
 

@@ -67,6 +67,8 @@ namespace GitTrends
 
         class RepositoryDatabaseModel : IRepository
         {
+            public DateTimeOffset DataDownloadedAt { get; set; } = DateTimeOffset.UtcNow;
+
             public string Name { get; set; } = string.Empty;
 
             public string Description { get; set; } = string.Empty;
@@ -103,13 +105,15 @@ namespace GitTrends
                                         new IssuesConnection(repositoryDatabaseModel.IssuesCount, Enumerable.Empty<Issue>()),
                                         repositoryDatabaseModel.Url,
                                         new StarGazers(repositoryDatabaseModel.StarCount),
-                                        repositoryDatabaseModel.IsFork);
+                                        repositoryDatabaseModel.IsFork,
+                                        repositoryDatabaseModel.DataDownloadedAt);
             }
 
             public static implicit operator RepositoryDatabaseModel(Repository repository)
             {
                 return new RepositoryDatabaseModel
                 {
+                    DataDownloadedAt = repository.DataDownloadedAt,
                     Description = repository.Description,
                     StarCount = repository.StarCount,
                     Url = repository.Url,

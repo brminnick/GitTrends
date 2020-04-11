@@ -12,13 +12,12 @@ namespace GitTrends
 {
     public class App : Xamarin.Forms.Application
     {
-        readonly WeakEventManager<Theme> _themeChangedEventManager = new WeakEventManager<Theme>();
         readonly WeakEventManager _resumedEventManager = new WeakEventManager();
         readonly AnalyticsService _analyticsService;
 
         public App()
         {
-            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental" });
+            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental" });
 
             using var scope = ContainerService.Container.BeginLifetimeScope();
             _analyticsService = scope.Resolve<AnalyticsService>();
@@ -26,12 +25,9 @@ namespace GitTrends
             MainPage = scope.Resolve<SplashScreenPage>();
 
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
-        }
 
-        public event EventHandler<Theme> ThemeChanged
-        {
-            add => _themeChangedEventManager.AddEventHandler(value);
-            remove => _themeChangedEventManager.RemoveEventHandler(value);
+            SetAppTheme();
+            Current.RequestedThemeChanged += HandleRequestedThemeChanged;
         }
 
         public event EventHandler Resumed
@@ -46,10 +42,7 @@ namespace GitTrends
 
             _analyticsService.Track("App Started");
 
-            SetTheme();
-
             ClearBageNotifications().SafeFireAndForget(ex => _analyticsService.Report(ex));
-
         }
 
         protected override void OnResume()
@@ -60,8 +53,6 @@ namespace GitTrends
 
             _analyticsService.Track("App Resumed");
 
-            SetTheme();
-
             ClearBageNotifications().SafeFireAndForget(ex => _analyticsService.Report(ex));
         }
 
@@ -69,18 +60,21 @@ namespace GitTrends
         {
             base.OnSleep();
 
+            SetAppTheme();
+
             _analyticsService.Track("App Backgrounded");
         }
 
-        void SetTheme()
+        void HandleRequestedThemeChanged(object sender, AppThemeChangedEventArgs e) => SetAppTheme();
+
+        void SetAppTheme()
         {
-            var operatingSystemTheme = DependencyService.Get<IEnvironment>().GetOperatingSystemTheme();
+            var operatingSystemTheme = Current.RequestedTheme;
 
             BaseTheme preferedTheme = operatingSystemTheme switch
             {
-                Theme.Light => new LightTheme(),
-                Theme.Dark => new DarkTheme(),
-                _ => throw new NotSupportedException()
+                AppTheme.Dark => new DarkTheme(),
+                _ => new LightTheme(),
             };
 
             if (Resources.GetType() != preferedTheme.GetType())
@@ -88,8 +82,6 @@ namespace GitTrends
                 Resources = preferedTheme;
 
                 EnableDebugRainbows(false);
-
-                OnThemeChanged(operatingSystemTheme);
             }
         }
 
@@ -122,7 +114,6 @@ namespace GitTrends
             return notificationService.SetAppBadgeCount(0);
         }
 
-        void OnThemeChanged(Theme newTheme) => _themeChangedEventManager.HandleEvent(this, newTheme, nameof(ThemeChanged));
         void OnResumed() => _resumedEventManager.HandleEvent(this, EventArgs.Empty, nameof(Resumed));
     }
 }

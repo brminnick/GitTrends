@@ -21,6 +21,7 @@ namespace GitTrends.UITests
         TrendsPage? _trendsPage;
         SplashScreenPage? _splashScreenPage;
         OnboardingPage? _onboardingPage;
+        WelcomePage? _welcomePage;
 
         protected BaseTest(Platform platform, UserType userType) => (_platform, _userType) = (platform, userType);
 
@@ -31,6 +32,7 @@ namespace GitTrends.UITests
         protected TrendsPage TrendsPage => _trendsPage ?? throw new NullReferenceException();
         protected SplashScreenPage SplashScreenPage => _splashScreenPage ?? throw new NullReferenceException();
         protected OnboardingPage OnboardingPage => _onboardingPage ?? throw new NullReferenceException();
+        protected WelcomePage WelcomePage => _welcomePage ?? throw new NullReferenceException();
 
         [SetUp]
         public virtual Task BeforeEachTest()
@@ -43,6 +45,7 @@ namespace GitTrends.UITests
             _settingsPage = new SettingsPage(App);
             _trendsPage = new TrendsPage(App);
             _onboardingPage = new OnboardingPage(App);
+            _welcomePage = new WelcomePage(App);
 
             App.Screenshot("App Initialized");
 
@@ -60,6 +63,7 @@ namespace GitTrends.UITests
         protected async Task SetupDemoUser()
         {
             await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
+
             OnboardingPage.TapNextButton();
             OnboardingPage.TapNextButton();
 

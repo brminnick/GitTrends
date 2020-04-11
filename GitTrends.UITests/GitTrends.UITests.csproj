@@ -64,6 +64,8 @@
         <Compile Include="Pages\OnboardingPage.cs" />
         <Compile Include="Pages\BaseCollectionPage.cs" />
         <Compile Include="Tests\OnboardingTests.cs" />
+        <Compile Include="Pages\WelcomePage.cs" />
+        <Compile Include="Tests\WelcomeTests.cs" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Pages\" />

@@ -100,7 +100,7 @@ namespace GitTrends
                 return initialNotificationRequestResult;
             }
             finally
-            { 
+            {
                 _analyticsService.Track("Register For Notifications", new Dictionary<string, string>
                 {
                     { nameof(initialNotificationRequestResult), initialNotificationRequestResult.ToString() },
@@ -127,7 +127,7 @@ namespace GitTrends
 
             //INotificationManager.Badge Crashes on iOS
             if (accessState is AccessState.Available && Device.RuntimePlatform is Device.iOS)
-                await DependencyService.Get<IEnvironment>().SetiOSBadgeCount(count).ConfigureAwait(false);
+                await DependencyService.Get<IPlatformSpecificService>().SetiOSBadgeCount(count).ConfigureAwait(false);
             else if (accessState is AccessState.Available)
                 NotificationManager.Badge = count;
         }

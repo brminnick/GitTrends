@@ -1,5 +1,4 @@
-﻿using System;
-using GitTrends.Mobile.Shared;
+﻿using GitTrends.Mobile.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -19,13 +18,6 @@ namespace GitTrends
             notificationService.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
 
             Content = CreateLayout(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width);
-        }
-
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-
-            ViewModel.IsAuthenticating = false;
         }
 
         void HandleRegisterForNotificationsCompleted(object sender, (bool IsSuccessful, string ErrorMessage) result)

@@ -46,12 +46,6 @@ namespace GitTrends.UITests
 
         public TrendsChartOption CurrentTrendsChartOption => App.InvokeBackdoorMethod<TrendsChartOption>(BackdoorMethodConstants.GetCurrentTrendsChartOption);
 
-        public bool IsBrowserOpen => App switch
-        {
-            iOSApp iOSApp => iOSApp.Query(x => x.Class("SFSafariView")).Any(),
-            _ => throw new NotSupportedException("Browser Can Only Be Verified on iOS")
-        };
-
         public async Task SetTrendsChartOption(TrendsChartOption trendsChartOption)
         {
             const int margin = 10;

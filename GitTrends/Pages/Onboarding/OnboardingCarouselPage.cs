@@ -2,6 +2,8 @@
 using System.Linq;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using Xamarin.Forms.PlatformConfiguration;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends
 {
@@ -18,7 +20,10 @@ namespace GitTrends
                                         GitHubAuthenticationService gitHubAuthenticationService,
                                         AnalyticsService analyticsService)
         {
+            On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.OverFullScreen);
+
             ChildAdded += HandleChildAdded;
+            ChildRemoved += HandleChildRemoved;
 
             BindingContext = _onboardingViewModel = onboardingViewModel;
             _analyticsService = analyticsService;
@@ -43,11 +48,10 @@ namespace GitTrends
 
             _analyticsService.Track($"{GetType().Name} Appeared");
         }
+
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-
-            _onboardingViewModel.IsAuthenticating = false;
 
             _analyticsService.Track($"{GetType().Name} Disappeared");
         }
@@ -62,5 +66,6 @@ namespace GitTrends
         void HandleDemoUserActivated(object sender, EventArgs e) => MainThread.BeginInvokeOnMainThread(() => Navigation.PopModalAsync());
 
         void HandleChildAdded(object sender, ElementEventArgs e) => OnPropertyChanged(nameof(PageCount));
+        void HandleChildRemoved(object sender, ElementEventArgs e) => OnPropertyChanged(nameof(PageCount));
     }
 }

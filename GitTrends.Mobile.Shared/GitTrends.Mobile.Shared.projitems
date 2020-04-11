@@ -28,5 +28,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\OnboardingAutomationIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\FontAwesomeConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StatisticsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\WelcomePageAutomationIds.cs" />
   </ItemGroup>
 </Project>

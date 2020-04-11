@@ -193,6 +193,10 @@
     <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight-1-1.png" />
     <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight%402x-1-1.png" />
     <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight%403x-1-1.png" />
+    <ImageAsset Include="Assets.xcassets\WelcomeImage.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\WelcomeImage.imageset\WelcomeImage.png" />
+    <ImageAsset Include="Assets.xcassets\WelcomeImage.imageset\WelcomeImage%402x.png" />
+    <ImageAsset Include="Assets.xcassets\WelcomeImage.imageset\WelcomeImage%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -239,6 +243,7 @@
     <Folder Include="Assets.xcassets\ReferringSitesIcon.imageset\" />
     <Folder Include="Assets.xcassets\GitTrendsGreen.imageset\" />
     <Folder Include="Assets.xcassets\DefaultProfileImageGreen.imageset\" />
+    <Folder Include="Assets.xcassets\WelcomeImage.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets.xcassets\NotificationsOnboarding.imageset\" />
