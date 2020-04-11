@@ -3,16 +3,9 @@ using Newtonsoft.Json;
 
 namespace GitTrends.Shared
 {
-    public class ReferringSiteModel : BaseRepositoryModel
+    public class ReferringSiteModel : BaseTotalCountModel
     {
-        public const int FavIconSize = 32;
-
-        [JsonConstructor]
-        public ReferringSiteModel(long count, long uniques, string referrer) : this(string.Empty, string.Empty, count, uniques, referrer)
-        {
-        }
-
-        public ReferringSiteModel(string repositoryName, string repositoryOwner, long count, long uniques, string referrer) : base(repositoryName, repositoryOwner, count, uniques)
+        public ReferringSiteModel(long count, long uniques, string referrer) : base(count, uniques)
         {
             Referrer = referrer;
             Uri.TryCreate("https://" + referrer, UriKind.Absolute, out var referringUri);

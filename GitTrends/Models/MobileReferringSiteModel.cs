@@ -6,6 +6,8 @@ namespace GitTrends
 {
     public class MobileReferringSiteModel : ReferringSiteModel
     {
+        public const int FavIconSize = 32;
+
         public MobileReferringSiteModel(in ReferringSiteModel referringSiteModel, in ImageSource? favIcon = null)
             : base(referringSiteModel.TotalCount, referringSiteModel.TotalUniqueCount, referringSiteModel.Referrer)
         {

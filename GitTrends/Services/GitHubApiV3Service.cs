@@ -71,14 +71,14 @@ namespace GitTrends
                 //Add one trending repo
                 dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow, DemoDataConstants.MaximumRandomNumber * 4, DemoDataConstants.MaximumRandomNumber / 2));
 
-                return new RepositoryViewsResponseModel(repo, owner, dailyViewsModelList.Sum(x => x.TotalViews), dailyViewsModelList.Sum(x => x.TotalUniqueViews), dailyViewsModelList);
+                return new RepositoryViewsResponseModel(dailyViewsModelList.Sum(x => x.TotalViews), dailyViewsModelList.Sum(x => x.TotalUniqueViews), dailyViewsModelList, repo, owner);
             }
             else
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
                 var response = await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryViewStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
 
-                return new RepositoryViewsResponseModel(repo, owner, response.TotalCount, response.TotalUniqueCount, response.DailyViewsList);
+                return new RepositoryViewsResponseModel(response.TotalCount, response.TotalUniqueCount, response.DailyViewsList, repo, owner);
             }
         }
 
@@ -99,14 +99,14 @@ namespace GitTrends
                     dailyViewsModelList.Add(new DailyClonesModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
                 }
 
-                return new RepositoryClonesResponseModel(repo, owner, dailyViewsModelList.Sum(x => x.TotalClones), dailyViewsModelList.Sum(x => x.TotalUniqueClones), dailyViewsModelList);
+                return new RepositoryClonesResponseModel(dailyViewsModelList.Sum(x => x.TotalClones), dailyViewsModelList.Sum(x => x.TotalUniqueClones), dailyViewsModelList, repo, owner);
             }
             else
             {
                 var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
                 var response = await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryCloneStatistics(owner, repo, GetGitHubBearerTokenHeader(token))).ConfigureAwait(false);
 
-                return new RepositoryClonesResponseModel(repo, owner, response.TotalCount, response.TotalUniqueCount, response.DailyClonesList);
+                return new RepositoryClonesResponseModel(response.TotalCount, response.TotalUniqueCount, response.DailyClonesList, repo, owner);
             }
         }
 

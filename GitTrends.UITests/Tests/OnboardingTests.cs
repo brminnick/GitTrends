@@ -18,10 +18,6 @@ namespace GitTrends.UITests
             await base.BeforeEachTest().ConfigureAwait(false);
 
             await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
-
-            App.Back();
-
-            await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
         }
 
         [Test]

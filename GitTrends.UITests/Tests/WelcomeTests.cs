@@ -49,7 +49,6 @@ namespace GitTrends.UITests
 
             //Act
             WelcomePage.TapTryDemoButton();
-            WelcomePage.WaitForActivityIndicator();
 
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
             await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
@@ -67,7 +66,6 @@ namespace GitTrends.UITests
 
             //Act
             WelcomePage.TapConnectToGitHubButton();
-            WelcomePage.WaitForActivityIndicator();
 
             //Assert
             await Task.Delay(1000).ConfigureAwait(false);

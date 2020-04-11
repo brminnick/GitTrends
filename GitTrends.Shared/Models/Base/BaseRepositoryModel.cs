@@ -1,23 +1,15 @@
-﻿using Newtonsoft.Json;
-
-namespace GitTrends.Shared
+﻿namespace GitTrends.Shared
 {
-    public abstract class BaseRepositoryModel
+    public abstract class BaseRepositoryModel : BaseTotalCountModel
     {
-        protected BaseRepositoryModel(string repositoryName, string repositoryOwner, long totalViewCount, long uniqueViewCount) : this(totalViewCount, uniqueViewCount) =>
-            (RepositoryName, RepositoryOwner) = (repositoryName, repositoryOwner);
+        protected BaseRepositoryModel(long totalCount, long uniqueCount, string repositoryName, string repositoryOwner)
+            : base(totalCount, uniqueCount)
+        {
+            RepositoryName = repositoryName;
+            RepositoryOwner = repositoryOwner;
+        }
 
-        [JsonConstructor]
-        protected BaseRepositoryModel(long totalViewCount, long uniqueViewCount) =>
-            (TotalCount, TotalUniqueCount) = (totalViewCount, uniqueViewCount);
-
-        [JsonProperty("count")]
-        public long TotalCount { get; }
-
-        [JsonProperty("uniques")]
-        public long TotalUniqueCount { get; }
-
-        public string RepositoryName { get; } = string.Empty;
-        public string RepositoryOwner { get; } = string.Empty;
+        public string RepositoryName { get; }
+        public string RepositoryOwner { get; }
     }
 }

@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using GitTrends.Shared;
 using NUnit.Framework;
 using Xamarin.UITest;
+using Xamarin.UITest.Android;
+using Xamarin.UITest.iOS;
 
 namespace GitTrends.UITests
 {
@@ -32,14 +34,28 @@ namespace GitTrends.UITests
         }
 
         [Test]
-        public void ReferringSitesPageDoesLoad()
+        public async Task ReferringSitesPageDoesLoad()
         {
             //Arrange
+            IReadOnlyCollection<ReferringSiteModel> referringSiteList = ReferringSitesPage.VisibleCollection;
+            var referringSite = referringSiteList.First();
+            bool isUrlValid = referringSite.IsReferrerUriValid;
 
             //Act
+            if (isUrlValid)
+            {
+                App.Tap(referringSite.Referrer);
+                await Task.Delay(1000).ConfigureAwait(false);
+            }
 
             //Assert
-            Assert.IsTrue(ReferringSitesPage.VisibleCollection.Any());
+            Assert.IsTrue(referringSiteList.Any());
+
+            if (isUrlValid && App is iOSApp)
+                Assert.IsTrue(ReferringSitesPage.IsBrowserOpen);
+            else if (!isUrlValid)
+                Assert.IsTrue(App.Query(referringSite.Referrer).Any());
+
         }
     }
 }

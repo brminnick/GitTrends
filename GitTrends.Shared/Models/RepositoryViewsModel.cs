@@ -6,13 +6,8 @@ namespace GitTrends.Shared
 {
     public class RepositoryViewsResponseModel : BaseRepositoryModel
     {
-        public RepositoryViewsResponseModel(string repositoryName, string repositoryOwner, long count, long uniques, IEnumerable<DailyViewsModel> views) : base(repositoryName, repositoryOwner, count, uniques)
-        {
-            DailyViewsList = views.ToList();
-        }
-
-        [JsonConstructor]
-        public RepositoryViewsResponseModel(long count, long uniques, IEnumerable<DailyViewsModel> views) : base(count, uniques)
+        public RepositoryViewsResponseModel(long count, long uniques, IEnumerable<DailyViewsModel> views, string repositoryName = "", string repositoryOwner = "")
+            : base(count, uniques, repositoryName, repositoryOwner)
         {
             DailyViewsList = views.ToList();
         }
