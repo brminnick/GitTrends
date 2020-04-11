@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using AsyncAwaitBestPractices;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using Xamarin.Essentials;
@@ -17,7 +16,7 @@ namespace GitTrends
 
         CancellationTokenSource? _animationCancellationToken;
 
-        public SplashScreenPage(AnalyticsService analyticsService, SplashScreenViewModel splashScreenViewModel) : base(splashScreenViewModel, analyticsService, shouldUseSafeArea: false)
+        public SplashScreenPage(AnalyticsService analyticsService, SplashScreenViewModel splashScreenViewModel) : base("", splashScreenViewModel, analyticsService, false)
         {
             //Remove BaseContentPageBackground
             RemoveDynamicResource(BackgroundColorProperty);
@@ -41,13 +40,15 @@ namespace GitTrends
 
             _statusLabel = new Label
             {
-                //Begin with Label off of the screen
-                TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2,
                 Margin = new Thickness(10, 0),
                 AutomationId = SplashScreenPageAutomationIds.StatusLabel,
+                Text = _statusMessageEnumerator.Current,
                 HorizontalTextAlignment = TextAlignment.Center,
+                //Begin with Label off of the screen
+                TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2,
             };
-            _statusLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.SplashScreenStatusColor));
+            _statusLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TotalClonesColor));
+
 
             var relativeLayout = new RelativeLayout();
 
@@ -65,8 +66,6 @@ namespace GitTrends
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-
-            await ChangeLabelText(_statusMessageEnumerator.Current);
 
             _animationCancellationToken = new CancellationTokenSource();
 
@@ -138,35 +137,7 @@ namespace GitTrends
             });
         }
 
-        Task ChangeLabelText(string text) => ChangeLabelText(new FormattedString
-        {
-            Spans =
-            {
-                new Span
-                {
-                    Text = text,
-                    FontFamily = FontFamilyConstants.RobotoRegular
-                }
-            }
-        });
-
-        Task ChangeLabelText(string title, string body) => ChangeLabelText(new FormattedString
-        {
-            Spans =
-            {
-                new Span
-                {
-                    Text = title,
-                    FontSize = 18,
-                    FontFamily = FontFamilyConstants.RobotoBold
-                },
-                new Span
-                {
-                    Text = "\n" + body,
-                    FontFamily = FontFamilyConstants.RobotoRegular
-                }
-            }
-        });
+        Task ChangeLabelText(string text) => ChangeLabelText(new FormattedString { Spans = { new Span { Text = text } } });
 
         Task ChangeLabelText(FormattedString formattedString)
         {
@@ -185,7 +156,21 @@ namespace GitTrends
         {
             _animationCancellationToken?.Cancel();
 #if DEBUG
-            await ChangeLabelText("Preview Mode", "Certain license warnings may appear");
+            await ChangeLabelText(new FormattedString
+            {
+                Spans =
+                {
+                    new Span
+                    {
+                        FontAttributes = FontAttributes.Bold,
+                        Text = "Preview Mode"
+                    },
+                    new Span
+                    {
+                        Text = "\nCertain license warnings may appear"
+                    }
+                }
+            });
 
             //Display Text
             await Task.Delay(500);
@@ -200,7 +185,21 @@ namespace GitTrends
             }
             else
             {
-                await ChangeLabelText("Initialization Failed", "Ensure Internet Connection Is Available\n + \nUpdate App to the Latest Version");
+                await ChangeLabelText(new FormattedString
+                {
+                    Spans =
+                    {
+                        new Span
+                        {
+                            FontAttributes = FontAttributes.Bold,
+                            Text = "Initialization Failed\n"
+                        },
+                        new Span
+                        {
+                            Text = "Ensure Internet Connection Is Available\n + \nUpdate App to the Latest Version"
+                        }
+                    }
+                });
 
                 AnalyticsService.Track("Initialization Failed");
             }
@@ -214,12 +213,10 @@ namespace GitTrends
                     var explodeImageTask = Task.WhenAll(Content.ScaleTo(100, 250, Easing.CubicOut), Content.FadeTo(0, 250, Easing.CubicIn));
                     BackgroundColor = (Color)Application.Current.Resources[nameof(BaseTheme.PageBackgroundColor)];
 
-                    using var scope = ContainerService.Container.BeginLifetimeScope();
-                    var repositoryPage = scope.Resolve<RepositoryPage>();
-
                     await explodeImageTask;
 
-                    Application.Current.MainPage = new BaseNavigationPage(repositoryPage);
+                    using var scope = ContainerService.Container.BeginLifetimeScope();
+                    Application.Current.MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>());
                 });
             }
         }

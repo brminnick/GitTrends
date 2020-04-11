@@ -27,19 +27,14 @@ namespace GitTrends.Shared
             DailyViewsList = (views ?? Enumerable.Empty<DailyViewsModel>()).ToList();
             DailyClonesList = (clones ?? Enumerable.Empty<DailyClonesModel>()).ToList();
 
-            TotalViews = DailyViewsList.Sum(x => x.TotalViews);
-            TotalUniqueViews = DailyViewsList.Sum(x => x.TotalUniqueViews);
-            TotalClones = DailyClonesList.Sum(x => x.TotalClones);
-            TotalUniqueClones = DailyClonesList.Sum(x => x.TotalUniqueClones);
-
             var (isViewsTrending, isClonesTrending) = TrendingService.IsTrending(this);
             IsTrending = (isViewsTrending ?? false) || (isClonesTrending ?? false);
         }
 
-        public long TotalViews { get; } 
-        public long TotalUniqueViews { get; } 
-        public long TotalClones { get; } 
-        public long TotalUniqueClones { get; }
+        public long TotalViews => DailyViewsList.Sum(x => x.TotalViews);
+        public long TotalUniqueViews => DailyViewsList.Sum(x => x.TotalUniqueViews);
+        public long TotalClones => DailyClonesList.Sum(x => x.TotalClones);
+        public long TotalUniqueClones => DailyClonesList.Sum(x => x.TotalUniqueClones);
 
         public string OwnerLogin { get; }
         public string OwnerAvatarUrl { get; }

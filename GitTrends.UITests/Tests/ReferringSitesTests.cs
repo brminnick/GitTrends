@@ -21,7 +21,7 @@ namespace GitTrends.UITests
         {
             await base.BeforeEachTest().ConfigureAwait(false);
 
-            var repositories = RepositoryPage.VisibleCollection;
+            var repositories = RepositoryPage.GetVisibleRepositoryList();
 
             RepositoryPage.TapRepository(repositories.First().Name);
 
@@ -35,11 +35,13 @@ namespace GitTrends.UITests
         public void ReferringSitesPageDoesLoad()
         {
             //Arrange
+            IReadOnlyList<ReferringSiteModel> referringSites;
 
             //Act
 
             //Assert
-            Assert.IsTrue(ReferringSitesPage.VisibleCollection.Any());
+            referringSites = ReferringSitesPage.GetVisibleReferringSitesList();
+            Assert.IsTrue(referringSites.Any());
         }
     }
 }

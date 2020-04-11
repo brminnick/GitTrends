@@ -11,26 +11,19 @@ namespace GitTrends
     class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>
     {
         readonly RefreshView _refreshView;
-        readonly DeepLinkingService _deepLinkingService;
 
-        public ReferringSitesPage(DeepLinkingService deepLinkingService,
-                                    ReferringSitesViewModel referringSitesViewModel,
+        public ReferringSitesPage(ReferringSitesViewModel referringSitesViewModel,
                                     Repository repository,
-                                    AnalyticsService analyticsService) : base(referringSitesViewModel, analyticsService, PageTitles.ReferringSitesPage)
+                                    AnalyticsService analyticsService) : base(PageTitles.ReferringSitesPage, referringSitesViewModel, analyticsService)
         {
             const int titleRowHeight = 50;
             const int titleTopMargin = 15;
-            _deepLinkingService = deepLinkingService;
 
             var collectionView = new CollectionView
             {
                 AutomationId = ReferringSitesPageAutomationIds.CollectionView,
-                BackgroundColor = Color.Transparent,
                 ItemTemplate = new ReferringSitesDataTemplateSelector(),
-                SelectionMode = SelectionMode.Single,
-                ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical),
-                Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : new BoxView { HeightRequest = titleRowHeight + titleTopMargin },
-                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null
+                SelectionMode = SelectionMode.Single
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.MobileReferringSitesList));
@@ -45,7 +38,7 @@ namespace GitTrends
             _refreshView.SetBinding(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.RefreshCommand));
             _refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing));
 
-            //Add Title and Close Button to UIModalPresentationStyle.FormSheet 
+            //Add Title and Back Button to UIModalPresentationStyle.FormSheet 
             if (Device.RuntimePlatform is Device.iOS)
             {
                 var closeButton = new Button
@@ -60,11 +53,13 @@ namespace GitTrends
                 closeButton.Clicked += HandleCloseButtonClicked;
                 closeButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.NavigationBarTextColor));
                 closeButton.SetDynamicResource(Button.BorderColorProperty, nameof(BaseTheme.SettingsButtonBorderColor));
-                closeButton.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
+                closeButton.SetDynamicResource(Button.BackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
 
 
                 var titleRowBlurView = new BoxView { Opacity = 0.5 };
                 titleRowBlurView.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+
+                collectionView.Header = new BoxView { HeightRequest = titleRowHeight + titleTopMargin };
 
                 var titleLabel = new Label
                 {
@@ -123,6 +118,8 @@ namespace GitTrends
         {
             base.OnAppearing();
 
+            Disappearing += HandleDisappearing;
+
             if (_refreshView.Content is CollectionView collectionView && IsNullOrEmpty(collectionView.ItemsSource))
                 _refreshView.IsRefreshing = true;
 
@@ -138,14 +135,23 @@ namespace GitTrends
                 && referingSite.IsReferrerUriValid
                 && referingSite.ReferrerUri != null)
             {
+                Disappearing -= HandleDisappearing;
+
                 AnalyticsService.Track("Referring Site Tapped", new Dictionary<string, string>
                 {
                     { nameof(ReferringSiteModel.Referrer), referingSite.Referrer },
                     { nameof(ReferringSiteModel.ReferrerUri), referingSite.ReferrerUri.ToString() }
                 });
 
-                await _deepLinkingService.OpenBrowser(referingSite.ReferrerUri);
+                await OpenBrowser(referingSite.ReferrerUri);
             }
+        }
+
+        //Workaround for https://github.com/xamarin/Xamarin.Forms/issues/7878
+        async void HandleDisappearing(object sender, EventArgs e)
+        {
+            if (Navigation.ModalStack.Any())
+                await Navigation.PopModalAsync();
         }
 
         async void HandleCloseButtonClicked(object sender, EventArgs e) => await Navigation.PopModalAsync();

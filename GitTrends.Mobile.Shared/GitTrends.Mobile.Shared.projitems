@@ -19,13 +19,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\ReferringSitesPageAutomationIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\SplashScreenPageAutomationIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\TrendsPageAutomationIds.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\GitHubUserNotFoundConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\GitHubLoginButtonConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\BackdoorMethodConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\DemoDataConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\TrendsChartConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\OnboardingConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\FontAwesomeBrandsConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\OnboardingAutomationIds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\FontAwesomeConstants.cs" />
   </ItemGroup>
 </Project>

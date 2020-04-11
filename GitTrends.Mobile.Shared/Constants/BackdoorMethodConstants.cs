@@ -8,8 +8,6 @@ namespace GitTrends.Mobile.Shared
         public const string GetVisibleCollection = nameof(GetVisibleCollection);
         public const string GetCurrentTrendsChartOption = nameof(GetCurrentTrendsChartOption);
         public const string IsTrendsSeriesVisible = nameof(IsTrendsSeriesVisible);
-        public const string GetCurrentOnboardingPageNumber = nameof(GetCurrentOnboardingPageNumber);
-        public const string PopPage = nameof(PopPage);
     }
 }
 #endif

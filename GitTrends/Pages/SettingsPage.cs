@@ -1,12 +1,8 @@
 ﻿using System;
 using GitTrends.Mobile.Shared;
-using GitTrends.Views.Settings;
-using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using static GitTrends.XamarinFormsService;
-using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -15,14 +11,13 @@ namespace GitTrends
         readonly TrendsChartSettingsService _trendsChartSettingsService;
 
         public SettingsPage(SettingsViewModel settingsViewModel,
-                            NotificationService notificationService,
                             TrendsChartSettingsService trendsChartSettingsService,
-                            AnalyticsService analyticsService) : base(settingsViewModel, analyticsService, PageTitles.SettingsPage)
+                            AnalyticsService analyticsService) : base(PageTitles.SettingsPage, settingsViewModel, analyticsService)
         {
             _trendsChartSettingsService = trendsChartSettingsService;
-            notificationService.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
 
-            Content = CreateLayout();
+            ViewModel.GitHubLoginUrlRetrieved += HandleGitHubLoginUrlRetrieved;
+            ViewModel.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
         }
 
         protected override void OnDisappearing()
@@ -30,6 +25,13 @@ namespace GitTrends
             base.OnDisappearing();
 
             ViewModel.IsAuthenticating = false;
+        }
+
+        protected override void HandlePageSizeChanged(object sender, EventArgs e)
+        {
+            base.HandlePageSizeChanged(sender, e);
+
+            Content = CreateLayout(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width);
         }
 
         void HandleRegisterForNotificationsCompleted(object sender, (bool IsSuccessful, string ErrorMessage) result)
@@ -43,11 +45,9 @@ namespace GitTrends
             });
         }
 
-        ScrollView CreateLayout()
+        RelativeLayout CreateLayout(bool isPortraitOrientation)
         {
-
             var gitHubSettingsView = new GitHubSettingsView();
-            var appSettingsView = new AppSettingsView();
             var trendsSettingsView = new TrendsChartSettingsView(_trendsChartSettingsService);
             var registerforNotificationsView = new RegisterForNotificationsView();
 
@@ -59,61 +59,71 @@ namespace GitTrends
             var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Debug)";
 #endif
 
-            var createdByLabel = new CopyrightLabel(versionNumberText);
+            var createdByLabel = new Label
+            {
+                AutomationId = SettingsPageAutomationIds.CreatedByLabel,
+                Margin = new Thickness(0, 5),
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                HorizontalTextAlignment = TextAlignment.Center,
+                VerticalTextAlignment = TextAlignment.End,
+                Text = $"{versionNumberText}\nMobile App Created by Code Traveler LLC",
+                FontSize = 12,
+            };
             createdByLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
             createdByLabel.BindTapGesture(nameof(SettingsViewModel.CreatedByLabelTappedCommand));
 
-            return new ScrollView()
+            var relativeLayout = new RelativeLayout
             {
-                Content = new StackLayout()
-                {
-                    Orientation = StackOrientation.Vertical,
-                    Spacing = 0,
-                    Children =
-                    {
-                        gitHubSettingsView,
-                        appSettingsView,
-                        trendsSettingsView.Margin(new Thickness(16,32,16,0)),
-                        createdByLabel.Margin(new Thickness(0,24,0,32))
-
-                    }
-                }
+                Margin = isPortraitOrientation ? new Thickness(20, 20, 20, 30) : new Thickness(20, 20, 20, 0)
             };
+
+            relativeLayout.Children.Add(createdByLabel,
+                xConstraint: Constraint.RelativeToParent(parent => parent.Width / 2 - GetWidth(parent, createdByLabel) / 2),
+                yConstraint: Constraint.RelativeToParent(parent => parent.Height - GetHeight(parent, createdByLabel) - 10));
+
+            relativeLayout.Children.Add(gitHubSettingsView,
+                //Keep at left of the screen
+                xConstraint: Constraint.Constant(0),
+                //Keep at top of the screen
+                yConstraint: Constraint.Constant(0),
+                //Portrait: Full width; Landscape: Half of the screen
+                widthConstraint: isPortraitOrientation
+                                    ? Constraint.RelativeToParent(parent => parent.Width)
+                                    : Constraint.RelativeToParent(parent => parent.Width / 2),
+                //Portrait: Half height; Landscape: Full height
+                heightConstraint: isPortraitOrientation
+                                    ? Constraint.RelativeToParent(parent => parent.Height / 2)
+                                    : Constraint.RelativeToParent(parent => parent.Height));
+
+            relativeLayout.Children.Add(trendsSettingsView,
+                //Portrait: Place under GitHubSettingsView; Landscape: Place to the right of GitHubSettingsView
+                xConstraint: isPortraitOrientation
+                                ? Constraint.Constant(0)
+                                : Constraint.RelativeToParent(parent => parent.Width / 2),
+                //Portrait: Place under GitHubSettingsView; Landscape: Place on the top
+                yConstraint: isPortraitOrientation
+                                ? Constraint.RelativeToView(gitHubSettingsView, (parent, view) => view.Y + view.Height + 10)
+                                : Constraint.Constant(0),
+                //Portrait: Full width; Landscape: Half of the screen
+                widthConstraint: isPortraitOrientation
+                                    ? Constraint.RelativeToParent(parent => parent.Width)
+                                    : Constraint.RelativeToParent(parent => parent.Width / 2));
+
+            relativeLayout.Children.Add(registerforNotificationsView,
+                xConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.X),
+                yConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Y + view.Height + 20),
+                widthConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Width));
+
+            return relativeLayout;
         }
 
-        class CopyrightLabel : Label
+        async void HandleGitHubLoginUrlRetrieved(object sender, string? loginUrl)
         {
-            public CopyrightLabel(in string versionText)
-            {
-                AutomationId = SettingsPageAutomationIds.CreatedByLabel;
-                LineBreakMode = LineBreakMode.WordWrap;
-                VerticalOptions = LayoutOptions.EndAndExpand;
-                HorizontalOptions = LayoutOptions.CenterAndExpand;
-                HorizontalTextAlignment = TextAlignment.Center;
-                VerticalTextAlignment = TextAlignment.End;
-                FontSize = 12;
-
-                LineHeight = 1.82;
-
-                FormattedText = new FormattedString
-                {
-                    Spans =
-                    {
-                        new Span
-                        {
-                            FontSize = 12,
-                            FontFamily = FontFamilyConstants.RobotoMedium,
-                            Text = $"{versionText}\n"
-                        },
-                        new Span
-                        {
-                            FontSize = 12,
-                            FontFamily = FontFamilyConstants.RobotoRegular,
-                            Text = "Mobile App Created by Code Traveler LLC"
-                        }
-                    }
-                };
-            }
+            if (!string.IsNullOrWhiteSpace(loginUrl))
+                await OpenBrowser(loginUrl);
+            else
+                await DisplayAlert("Error", "Couldn't connect to GitHub Login. Check your internet connection and try again", "OK");
         }
     }
 }

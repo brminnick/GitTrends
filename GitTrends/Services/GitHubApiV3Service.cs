@@ -11,7 +11,7 @@ namespace GitTrends
 {
     public class GitHubApiV3Service : BaseMobileApiService
     {
-        readonly static Lazy<IGitHubApiV3> _githubApiClient = new Lazy<IGitHubApiV3>(() => RestService.For<IGitHubApiV3>(CreateHttpClient(Shared.GitHubConstants.GitHubRestApiUrl)));
+        readonly static Lazy<IGitHubApiV3> _githubApiClient = new Lazy<IGitHubApiV3>(() => RestService.For<IGitHubApiV3>(CreateHttpClient(GitHubConstants.GitHubRestApiUrl)));
 
         static IGitHubApiV3 GithubApiClient => _githubApiClient.Value;
 
