@@ -1,7 +1,12 @@
-﻿using GitTrends.Mobile.Shared;
+﻿using System;
+using GitTrends.Mobile.Shared;
+using GitTrends.Views.Settings;
+using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using static GitTrends.XamarinFormsService;
+using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -17,7 +22,7 @@ namespace GitTrends
             _trendsChartSettingsService = trendsChartSettingsService;
             notificationService.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
 
-            Content = CreateLayout(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width);
+            Content = CreateLayout();
         }
 
         void HandleRegisterForNotificationsCompleted(object sender, (bool IsSuccessful, string ErrorMessage) result)
@@ -31,9 +36,11 @@ namespace GitTrends
             });
         }
 
-        RelativeLayout CreateLayout(bool isPortraitOrientation)
+        ScrollView CreateLayout()
         {
+
             var gitHubSettingsView = new GitHubSettingsView();
+            var appSettingsView = new AppSettingsView();
             var trendsSettingsView = new TrendsChartSettingsView(_trendsChartSettingsService);
             var registerforNotificationsView = new RegisterForNotificationsView();
 
@@ -45,63 +52,61 @@ namespace GitTrends
             var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Debug)";
 #endif
 
-            var createdByLabel = new Label
-            {
-                AutomationId = SettingsPageAutomationIds.CreatedByLabel,
-                Margin = new Thickness(0, 5),
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                HorizontalTextAlignment = TextAlignment.Center,
-                VerticalTextAlignment = TextAlignment.End,
-                Text = $"{versionNumberText}\nMobile App Created by Code Traveler LLC",
-                FontSize = 12,
-            };
+            var createdByLabel = new CopyrightLabel(versionNumberText);
             createdByLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
             createdByLabel.BindTapGesture(nameof(SettingsViewModel.CreatedByLabelTappedCommand));
 
-            var relativeLayout = new RelativeLayout
+            return new ScrollView()
             {
-                Margin = isPortraitOrientation ? new Thickness(20, 20, 20, 30) : new Thickness(20, 20, 20, 0)
+                Content = new StackLayout()
+                {
+                    Orientation = StackOrientation.Vertical,
+                    Spacing = 0,
+                    Children =
+                    {
+                        gitHubSettingsView,
+                        appSettingsView,
+                        trendsSettingsView.Margin(new Thickness(16,32,16,0)),
+                        createdByLabel.Margin(new Thickness(0,24,0,32))
+
+                    }
+                }
             };
+        }
 
-            relativeLayout.Children.Add(createdByLabel,
-                xConstraint: Constraint.RelativeToParent(parent => parent.Width / 2 - GetWidth(parent, createdByLabel) / 2),
-                yConstraint: Constraint.RelativeToParent(parent => parent.Height - GetHeight(parent, createdByLabel) - 10));
+        class CopyrightLabel : Label
+        {
+            public CopyrightLabel(in string versionText)
+            {
+                AutomationId = SettingsPageAutomationIds.CreatedByLabel;
+                LineBreakMode = LineBreakMode.WordWrap;
+                VerticalOptions = LayoutOptions.EndAndExpand;
+                HorizontalOptions = LayoutOptions.CenterAndExpand;
+                HorizontalTextAlignment = TextAlignment.Center;
+                VerticalTextAlignment = TextAlignment.End;
+                FontSize = 12;
 
-            relativeLayout.Children.Add(gitHubSettingsView,
-                //Keep at left of the screen
-                xConstraint: Constraint.Constant(0),
-                //Keep at top of the screen
-                yConstraint: Constraint.Constant(0),
-                //Portrait: Full width; Landscape: Half of the screen
-                widthConstraint: isPortraitOrientation
-                                    ? Constraint.RelativeToParent(parent => parent.Width)
-                                    : Constraint.RelativeToParent(parent => parent.Width / 2),
-                //Portrait: Half height; Landscape: Full height
-                heightConstraint: isPortraitOrientation
-                                    ? Constraint.RelativeToParent(parent => parent.Height / 2)
-                                    : Constraint.RelativeToParent(parent => parent.Height));
+                LineHeight = 1.82;
 
-            relativeLayout.Children.Add(trendsSettingsView,
-                //Portrait: Place under GitHubSettingsView; Landscape: Place to the right of GitHubSettingsView
-                xConstraint: isPortraitOrientation
-                                ? Constraint.Constant(0)
-                                : Constraint.RelativeToParent(parent => parent.Width / 2),
-                //Portrait: Place under GitHubSettingsView; Landscape: Place on the top
-                yConstraint: isPortraitOrientation
-                                ? Constraint.RelativeToView(gitHubSettingsView, (parent, view) => view.Y + view.Height + 10)
-                                : Constraint.Constant(0),
-                //Portrait: Full width; Landscape: Half of the screen
-                widthConstraint: isPortraitOrientation
-                                    ? Constraint.RelativeToParent(parent => parent.Width)
-                                    : Constraint.RelativeToParent(parent => parent.Width / 2));
-
-            relativeLayout.Children.Add(registerforNotificationsView,
-                xConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.X),
-                yConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Y + view.Height + 20),
-                widthConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Width));
-
-            return relativeLayout;
+                FormattedText = new FormattedString
+                {
+                    Spans =
+                    {
+                        new Span
+                        {
+                            FontSize = 12,
+                            FontFamily = FontFamilyConstants.RobotoMedium,
+                            Text = $"{versionText}\n"
+                        },
+                        new Span
+                        {
+                            FontSize = 12,
+                            FontFamily = FontFamilyConstants.RobotoRegular,
+                            Text = "Mobile App Created by Code Traveler LLC"
+                        }
+                    }
+                };
+            }
         }
     }
 }
