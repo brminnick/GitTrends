@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
 using GitTrends.Shared;
@@ -18,6 +19,22 @@ namespace GitTrends
         public Task DisplayAlert(string title, string message, string cancel) => MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, cancel));
 
         public Task<bool> DisplayAlert(string title, string message, string accept, string decline) => MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, accept, decline));
+
+        public Task OpenBrowser(Uri uri) => OpenBrowser(uri.ToString());
+
+        public Task OpenBrowser(string url)
+        {
+            return MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                var browserOptions = new BrowserLaunchOptions
+                {
+                    PreferredToolbarColor = (Color)Application.Current.Resources[nameof(BaseTheme.NavigationBarBackgroundColor)],
+                    PreferredControlColor = (Color)Application.Current.Resources[nameof(BaseTheme.NavigationBarTextColor)],
+                };
+
+                return Browser.OpenAsync(url, browserOptions);
+            });
+        }
 
         public Task NavigateToTrendsPage(Repository repository)
         {

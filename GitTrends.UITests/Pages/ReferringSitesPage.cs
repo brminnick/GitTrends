@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
-using Newtonsoft.Json;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
 using Xamarin.UITest.iOS;
@@ -12,7 +10,7 @@ using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Querie
 
 namespace GitTrends.UITests
 {
-    class ReferringSitesPage : BasePage
+    class ReferringSitesPage : BaseCollectionPage<ReferringSiteModel>
     {
         readonly Query _collectionView, _refreshView, _closeButton, _activityIndicator;
 
@@ -34,8 +32,6 @@ namespace GitTrends.UITests
 
             await WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
         }
-
-        public void TriggerPullToRefresh() => App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerPullToRefresh);
 
         public void ClosePage()
         {
@@ -62,12 +58,6 @@ namespace GitTrends.UITests
         {
             App.WaitForNoElement(_activityIndicator);
             App.Screenshot("Activity Indicator Disappeared");
-        }
-
-        public List<ReferringSiteModel> GetVisibleReferringSitesList()
-        {
-            var serializedReferringSitesList = App.InvokeBackdoorMethod(BackdoorMethodConstants.GetVisibleCollection).ToString();
-            return JsonConvert.DeserializeObject<List<ReferringSiteModel>>(serializedReferringSitesList);
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
-using Newtonsoft.Json;
 using Xamarin.UITest;
 using Xamarin.UITest.iOS;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
@@ -37,15 +36,15 @@ namespace GitTrends.UITests
 
         public bool IsActivityIndicatorRunning => App.Query(_gitHubSettingsViewActivityIndicator).Any();
 
-        public string GitHubAliasLabelText => App.Query(_gitHubAliasLabel).First().Text;
+        public string GitHubAliasLabelText => GetText(_gitHubAliasLabel);
 
-        public string RegisterForNotificationsLabelText => App.Query(_registerForNotificationsLabel).First().Text;
+        public string RegisterForNotificationsLabelText => GetText(_registerForNotificationsLabel);
 
-        public string GitHubButtonText => App.Query(_gitHubLoginButton).First().Text ?? App.Query(_gitHubLoginButton).First().Label;
+        public string GitHubButtonText => GetText(_gitHubLoginButton);
 
-        public string TrendsChartLabelText => App.Query(_trendsChartSettingsLabel).First().Text;
+        public string TrendsChartLabelText => GetText(_trendsChartSettingsLabel);
 
-        public TrendsChartOption CurrentTrendsChartOption => GetCurrentTrendsChartOption();
+        public TrendsChartOption CurrentTrendsChartOption => App.InvokeBackdoorMethod<TrendsChartOption>(BackdoorMethodConstants.GetCurrentTrendsChartOption);
 
         public bool IsBrowserOpen => App switch
         {
@@ -150,12 +149,6 @@ namespace GitTrends.UITests
             App.WaitForElement(GitHubLoginButtonConstants.ConnectWithGitHub);
 
             App.Screenshot("GitHub Logout Completed");
-        }
-
-        TrendsChartOption GetCurrentTrendsChartOption()
-        {
-            var serializedCurrentTrendsChartOption = App.InvokeBackdoorMethod(BackdoorMethodConstants.GetCurrentTrendsChartOption).ToString();
-            return JsonConvert.DeserializeObject<TrendsChartOption>(serializedCurrentTrendsChartOption);
         }
     }
 }

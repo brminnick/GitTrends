@@ -46,8 +46,10 @@ namespace GitTrends
             FilterRepositoriesCommand = new Command<string>(SetSearchBarText);
             SortRepositoriesCommand = new Command<SortingOption>(ExecuteSortRepositoriesCommand);
 
-            _gitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
             notificationService.SortingOptionRequested += HandleSortingOptionRequested;
+            gitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
+            gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+            gitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
         }
 
         public event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
@@ -207,6 +209,20 @@ namespace GitTrends
 
             if (_repositoryList.Any())
                 UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
+        }
+
+        void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
+        {
+            //Work-around because Android.ContentPage.OnAppearing does not fire after `ContentPage.PushModalAsync()`
+            if (Device.RuntimePlatform is Device.Android)
+                IsRefreshing |= e.IsSessionAuthorized;
+        }
+
+        void HandleDemoUserActivated(object sender, EventArgs e)
+        {
+            //Work-around because Android.ContentPage.OnAppearing does not fire after `ContentPage.PushModalAsync()`
+            if (Device.RuntimePlatform is Device.Android)
+                IsRefreshing = true;
         }
 
         void HandleGitHubAuthenticationServiceLoggedOut(object sender, EventArgs e) => UpdateListForLoggedOutUser();

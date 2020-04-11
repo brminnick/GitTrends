@@ -12,7 +12,7 @@ namespace GitTrends
 {
     public class GitHubGraphQLApiService : BaseMobileApiService
     {
-        readonly static Lazy<IGitHubGraphQLApi> _githubApiClientHolder = new Lazy<IGitHubGraphQLApi>(() => RestService.For<IGitHubGraphQLApi>(CreateHttpClient(GitHubConstants.GitHubGraphQLApi)));
+        readonly static Lazy<IGitHubGraphQLApi> _githubApiClientHolder = new Lazy<IGitHubGraphQLApi>(() => RestService.For<IGitHubGraphQLApi>(CreateHttpClient(Shared.GitHubConstants.GitHubGraphQLApi)));
 
         static IGitHubGraphQLApi GitHubApiClient => _githubApiClientHolder.Value;
 
