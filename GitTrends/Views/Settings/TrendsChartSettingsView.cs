@@ -60,6 +60,7 @@ namespace GitTrends
 
                 SetDynamicResource(FontColorProperty, nameof(BaseTheme.SettingsButtonFontColor));
                 SetDynamicResource(BorderColorProperty, nameof(BaseTheme.SettingsButtonBorderColor));
+                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
 
                 SelectionChanged += HandleSelectionChanged;
             }
