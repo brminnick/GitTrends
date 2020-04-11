@@ -211,14 +211,8 @@ namespace GitTrends.UITests
             //Act
             SettingsPage.TapBackButton();
 
-            await RepositoryPage.WaitForPageToLoad();
-            RepositoryPage.TriggerPullToRefresh();
-
-            await RepositoryPage.WaitForPullToRefreshIndicator().ConfigureAwait(false);
-            await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
-
             //Assert
-            Assert.IsFalse(RepositoryPage.VisibleCollection.Any());
+            await WelcomePage.WaitForPageToLoad().ConfigureAwait(false);
         }
     }
 }

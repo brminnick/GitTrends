@@ -77,6 +77,8 @@ namespace GitTrends
             {
                 Color = Color.White;
 
+                AutomationId = WelcomePageAutomationIds.IsAuthenticatingActivityIndicator;
+
                 this.Center();
 
                 this.Bind(IsVisibleProperty, nameof(WelcomeViewModel.IsAuthenticating));
@@ -127,6 +129,8 @@ namespace GitTrends
                 VerticalTextAlignment = TextAlignment.Start;
 
                 Opacity = 0.75;
+
+                AutomationId = WelcomePageAutomationIds.DemoModeButton;
 
                 this.BindTapGesture(nameof(WelcomeViewModel.DemoButtonCommand));
                 this.Bind(IsVisibleProperty, nameof(WelcomeViewModel.IsDemoButtonVisible));
