@@ -65,6 +65,8 @@ namespace GitTrends
             Add(nameof(GitTrendsImageBackgroundColor), GitTrendsImageBackgroundColor);
 
             Add(nameof(GitHubButtonSurfaceColor), GitHubButtonSurfaceColor);
+
+            Add(nameof(PrimaryColor), PrimaryColor);
         }
 
         public abstract Color NavigationBarBackgroundColor { get; }
@@ -130,5 +132,8 @@ namespace GitTrends
         public abstract Color GitTrendsImageBackgroundColor { get; }
 
         public abstract Color GitHubButtonSurfaceColor { get; }
+        public abstract Color GitHubHandleColor { get; }
+
+        public abstract Color PrimaryColor { get; }
     }
 }

@@ -15,6 +15,7 @@ namespace GitTrends
 
         string _gitHubUserImageSource = string.Empty;
         string _gitHubUserNameLabelText = string.Empty;
+        string _gitHubNameLabelText = string.Empty;
         string _gitHubButtonText = string.Empty;
         bool _isRegisteringForNotifications;
 
@@ -101,6 +102,12 @@ namespace GitTrends
             set => SetProperty(ref _gitHubUserNameLabelText, value);
         }
 
+        public string GitHubNameLabelText
+        {
+            get => _gitHubNameLabelText;
+            set => SetProperty(ref _gitHubNameLabelText, value);
+        }
+
         bool IsRegisteringForNotifications
         {
             get => _isRegisteringForNotifications;
@@ -118,7 +125,8 @@ namespace GitTrends
 
         void SetGitHubValues()
         {
-            GitHubAliasLabelText = _gitHubAuthenticationService.IsAuthenticated ? GitHubAuthenticationService.Name : string.Empty;
+            GitHubAliasLabelText = _gitHubAuthenticationService.IsAuthenticated ? $"@{GitHubAuthenticationService.Alias}" : string.Empty;
+            GitHubNameLabelText = _gitHubAuthenticationService.IsAuthenticated ? GitHubAuthenticationService.Name : string.Empty;
             LoginButtonText = _gitHubAuthenticationService.IsAuthenticated ? $"{GitHubLoginButtonConstants.Disconnect}" : $"{GitHubLoginButtonConstants.ConnectWithGitHub}";
 
             GitHubAvatarImageSource = "DefaultProfileImage";
