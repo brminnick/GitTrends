@@ -8,26 +8,18 @@ using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    class TrendsChartSettingsView : ContentView
+    class TrendsChartSettingsView : Grid
     {
         public TrendsChartSettingsView(in TrendsChartSettingsService trendsChartSettingsService)
         {
-            Content = new Grid
-            {
-                RowSpacing = 2,
+            RowSpacing = 2;
 
-                RowDefinitions = Rows.Define(
-                    (Row.Label, Star),
-                    (Row.Control, StarGridLength(2))),
+            RowDefinitions = Rows.Define(
+                (Row.Label, StarGridLength(1)),
+                (Row.Control, StarGridLength(2)));
 
-                ColumnDefinitions = Columns.Define(StarGridLength(1)),
-
-                Children =
-                {
-                    new TrendsChartSettingsLabel().Row(Row.Label).Margin(new Thickness(16,0,0,12)),
-                    new TrendsCharSettingsControl(trendsChartSettingsService).Row(Row.Control)
-                }
-            };
+            Children.Add(new TrendsChartSettingsLabel().Row(Row.Label).Margin(new Thickness(16, 0, 0, 12)));
+            Children.Add(new TrendsCharSettingsControl(trendsChartSettingsService).Row(Row.Control));
         }
 
         enum Row { Label, Control }

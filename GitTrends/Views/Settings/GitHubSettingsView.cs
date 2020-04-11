@@ -1,26 +1,21 @@
-﻿using System;
-using GitTrends.Mobile.Shared;
+﻿using GitTrends.Mobile.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
 
 namespace GitTrends
 {
-    class GitHubSettingsView : ContentView
+    class GitHubSettingsView : StackLayout
     {
         const int _imageHeight = 140;
+        const int _imageMargin = 16;
+        const int _nameLabelHeight = 20;
+        const int _aliasLabelHeight = 12;
 
         public GitHubSettingsView()
         {
+            HeightRequest = _imageHeight + _nameLabelHeight + _aliasLabelHeight + _imageMargin * 2;
 
-            var gitHubAvatarImage = new GitHubAvatarImage();
-            gitHubAvatarImage.SetBinding(CircleImage.SourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource));
-
-            var gitHubNameLabel = new NameLabel();
-            gitHubNameLabel.SetBinding(Label.TextProperty, nameof(SettingsViewModel.GitHubNameLabelText));
-
-            var gitHubAliasLabel = new AliasLabel();
-            gitHubAliasLabel.SetBinding(Label.TextProperty, nameof(SettingsViewModel.GitHubAliasLabelText));
-
+            Spacing = 0;
 
             var activityIndicator = new ActivityIndicator
             {
@@ -31,18 +26,9 @@ namespace GitTrends
             activityIndicator.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsAuthenticating));
             activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(SettingsViewModel.IsAuthenticating));
 
-            Content = new StackLayout()
-            {
-                Orientation = StackOrientation.Vertical,
-                Spacing = 0,
-                Children =
-                {
-                    gitHubAvatarImage,
-                    gitHubNameLabel,
-                    gitHubAliasLabel,
-                }
-
-            };
+            Children.Add(new GitHubAvatarImage());
+            Children.Add(new NameLabel());
+            Children.Add(new AliasLabel());
         }
 
         class GitHubAvatarImage : CircleImage
@@ -52,11 +38,12 @@ namespace GitTrends
                 AutomationId = SettingsPageAutomationIds.GitHubAvatarImage;
                 HeightRequest = _imageHeight;
                 WidthRequest = _imageHeight;
-                Margin = new Thickness(16);
+                Margin = new Thickness(_imageMargin);
                 HorizontalOptions = LayoutOptions.Center;
                 VerticalOptions = LayoutOptions.Center;
                 Aspect = Aspect.AspectFit;
 
+                this.SetBinding(CircleImage.SourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource));
             }
         }
 
@@ -64,9 +51,11 @@ namespace GitTrends
         {
             public NameLabel()
             {
-                FontSize = 20;
+                FontSize = _nameLabelHeight;
                 HorizontalOptions = LayoutOptions.CenterAndExpand;
                 FontFamily = FontFamilyConstants.RobotoMedium;
+
+                this.SetBinding(TextProperty, nameof(SettingsViewModel.GitHubNameLabelText));
 
                 SetDynamicResource(TextColorProperty, nameof(BaseTheme.GitHubHandleColor));
             }
@@ -76,10 +65,12 @@ namespace GitTrends
         {
             public AliasLabel()
             {
-                FontSize = 12;
+                FontSize = _aliasLabelHeight;
                 HorizontalOptions = LayoutOptions.CenterAndExpand;
                 FontFamily = FontFamilyConstants.RobotoRegular;
                 Opacity = 0.60;
+
+                this.SetBinding(Label.TextProperty, nameof(SettingsViewModel.GitHubAliasLabelText));
 
                 SetDynamicResource(TextColorProperty, nameof(BaseTheme.GitHubHandleColor));
             }

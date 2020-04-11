@@ -1,34 +1,27 @@
-﻿using System;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 
 namespace GitTrends.Views.Settings
 {
-    public class AppSettingsView : ContentView
+    public class AppSettingsView : StackLayout
     {
         public AppSettingsView()
         {
+            Spacing = 0;
+
             var logoutSetting = new SettingsComponent("logout.svg", "Logout", false);
             logoutSetting.BindTapGesture(nameof(SettingsViewModel.ConnectToGitHubButtonCommand));
 
             var notificationSetting = new SettingsComponent("bell.svg", "Register for Push Notifications", true);
             var themeSetting = new SettingsComponent("darkmode.svg", "Dark Mode", true);
 
-            Content = new StackLayout()
-            {
-                Orientation = StackOrientation.Vertical,
-                Spacing = 0,
-                Children =
-                {
-                    new Separator().Margin(new Thickness(32,24,32,16)),
-                    logoutSetting,
-                    new Separator().Margin(new Thickness(32,16)),
-                    notificationSetting,
-                    new Separator().Margin(new Thickness(32,16)),
-                    new SettingsHeadingLabel("THEME").Margin(new Thickness(32,0)),
-                    themeSetting
-                }
-            };
+            Children.Add(new Separator().Margin(new Thickness(32, 24, 32, 16)));
+            Children.Add(logoutSetting);
+            Children.Add(new Separator().Margin(new Thickness(32, 16)));
+            Children.Add(notificationSetting);
+            Children.Add(new Separator().Margin(new Thickness(32, 16)));
+            Children.Add(new SettingsHeadingLabel("THEME").Margin(new Thickness(32, 0)));
+            Children.Add(themeSetting);
         }
     }
 

@@ -6,26 +6,18 @@ using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    public class RegisterForNotificationsView : ContentView
+    public class RegisterForNotificationsView : Grid
     {
         public RegisterForNotificationsView()
         {
-            Content = new Grid
-            {
-                RowSpacing = 5,
+            RowSpacing = 5;
 
-                RowDefinitions = Rows.Define(
-                    (Row.Label, AbsoluteGridLength(20)),
-                    (Row.Button, AbsoluteGridLength(40))),
+            RowDefinitions = Rows.Define(
+                (Row.Label, AbsoluteGridLength(20)),
+                (Row.Button, AbsoluteGridLength(40)));
 
-                ColumnDefinitions = Columns.Define(Star),
-
-                Children =
-                {
-                    new RegisterForNotificationsLabel().Row(Row.Label),
-                    new RegisterForNotificationsButton().Row(Row.Button)
-                }
-            };
+            Children.Add(new RegisterForNotificationsLabel().Row(Row.Label));
+            Children.Add(new RegisterForNotificationsButton().Row(Row.Button));
         }
 
         enum Row { Label, Button }

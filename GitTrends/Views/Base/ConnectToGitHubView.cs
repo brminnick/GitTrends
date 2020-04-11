@@ -19,10 +19,10 @@ namespace GitTrends
                 Orientation = StackOrientation.Horizontal,
                 Spacing = 16,
                 Children =
-                    {
-                        new GitHubSvgImage(),
-                        new ConnectToGitHubLabel()
-                    }
+                {
+                    new GitHubSvgImage(),
+                    new ConnectToGitHubLabel()
+                }
             };
 
             BackgroundColor = Color.FromHex("#231F20");

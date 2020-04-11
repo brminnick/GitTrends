@@ -1,12 +1,8 @@
-﻿using System;
-using GitTrends.Mobile.Shared;
+﻿using GitTrends.Mobile.Shared;
 using GitTrends.Views.Settings;
-using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using static GitTrends.XamarinFormsService;
-using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -42,7 +38,6 @@ namespace GitTrends
             var gitHubSettingsView = new GitHubSettingsView();
             var appSettingsView = new AppSettingsView();
             var trendsSettingsView = new TrendsChartSettingsView(_trendsChartSettingsService);
-            var registerforNotificationsView = new RegisterForNotificationsView();
 
 #if AppStore
             var versionNumberText = $"Version {VersionTracking.CurrentVersion}";
@@ -66,9 +61,8 @@ namespace GitTrends
                     {
                         gitHubSettingsView,
                         appSettingsView,
-                        trendsSettingsView.Margin(new Thickness(16,32,16,0)),
-                        createdByLabel.Margin(new Thickness(0,24,0,32))
-
+                        trendsSettingsView.Margin(new Thickness(16, 32, 16 ,0)),
+                        createdByLabel.Margin(new Thickness(0, 24 ,0, 32))
                     }
                 }
             };
