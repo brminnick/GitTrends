@@ -12,6 +12,7 @@ namespace GitTrends
         const string _accentOrangeHex = "#FCBAA2";
         const string _toolbarTextHex = "#FFFFFF";
         const string _textHex = "#FFFFFF";
+        const string _iconColor = "#FFFFFF";
         const string _buttonTextColor = "#FFFFFF";
         const string _accentLightBlueHex = "#F0EFEF";
         const string _accentPurpleHex = "#C795CA";
@@ -74,7 +75,7 @@ namespace GitTrends
         public override Color SplashScreenStatusColor { get; } = Color.FromHex(_offWhite);
 
         //Icons
-        public override Color IconColor { get; } = Color.FromHex(_buttonTextColor);
+        public override Color IconColor { get; } = Color.FromHex(_primaryTealHex);
         public override Color IconPrimaryColor { get; } = Color.FromHex(_lightPrimaryTealHex);
 
         //Buttons
@@ -114,6 +115,10 @@ namespace GitTrends
         public override Color TrendsChartSettingsSelectionIndicatorColor { get; } = Color.FromHex(_lightPrimaryTealHex);
 
         public override Color GitTrendsImageBackgroundColor { get; } = Color.FromHex("4CADA2");
+
         public override Color GitHubButtonSurfaceColor { get; } = Color.FromHex(_githubButtonSurfaceHex);
+        public override Color GitHubHandleColor { get; } = Color.FromHex(_primaryTextHex);
+
+        public override Color PrimaryColor { get; } = Color.FromHex(_primaryTealHex);
     }
 }
