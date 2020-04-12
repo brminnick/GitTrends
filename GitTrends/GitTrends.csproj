@@ -113,7 +113,7 @@
       <EmbeddedResource Include="Resources\SVGs\check.svg" />
       <EmbeddedResource Include="Resources\SVGs\error.svg" />
       <EmbeddedResource Include="Resources\SVGs\github.svg" />
-      <EmbeddedResource Include="Resources\SVGs\darkmode.svg" />
+      <EmbeddedResource Include="Resources\SVGs\theme.svg" />
       <EmbeddedResource Include="Resources\SVGs\logout.svg" />
       <EmbeddedResource Include="Resources\SVGs\right_arrow.svg" />
     </ItemGroup>

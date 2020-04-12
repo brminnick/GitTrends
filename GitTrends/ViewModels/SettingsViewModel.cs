@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
@@ -12,14 +13,19 @@ namespace GitTrends
         readonly TrendsChartSettingsService _trendsChartSettingsService;
         readonly DeepLinkingService _deepLinkingService;
         readonly NotificationService _notificationService;
+        readonly ThemeService _themeService;
 
         string _gitHubUserImageSource = string.Empty;
         string _gitHubUserNameLabelText = string.Empty;
         string _gitHubNameLabelText = string.Empty;
         string _gitHubButtonText = string.Empty;
-        bool _isRegisteringForNotifications;
+        bool _isRegisterForNotificationsSwitchEnabled = true;
+        bool _isRegisterForNotificationsSwitchToggled;
+
+        int _themePickerSelectedThemeIndex;
 
         public SettingsViewModel(GitHubAuthenticationService gitHubAuthenticationService,
+                                    ThemeService themeService,
                                     TrendsChartSettingsService trendsChartSettingsService,
                                     AnalyticsService analyticsService,
                                     DeepLinkingService deepLinkingService,
@@ -30,19 +36,21 @@ namespace GitTrends
             _trendsChartSettingsService = trendsChartSettingsService;
             _deepLinkingService = deepLinkingService;
             _notificationService = notificationService;
+            _themeService = themeService;
 
-            RegisterForPushNotificationsButtonCommand = new AsyncCommand(ExecuteRegisterForPushNotificationsButtonCommand, _ => !IsRegisteringForNotifications);
-            CreatedByLabelTappedCommand = new AsyncCommand(ExecuteCreatedByLabelTapped);
+            CopyrightLabelTappedCommand = new AsyncCommand(ExecuteCopyrightLabelTapped);
 
             _gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+
+            IsRegisterForNotificationsSwitchToggled = notificationService.AreNotificationsEnabled;
 
             SetGitHubValues();
         }
 
-        public ICommand CreatedByLabelTappedCommand { get; }
-        public IAsyncCommand RegisterForPushNotificationsButtonCommand { get; }
+        public ICommand CopyrightLabelTappedCommand { get; }
+        public IReadOnlyList<string> ThemePickerItemsSource { get; } = System.Enum.GetNames(typeof(PreferredTheme));
 
-        public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginButtonText is GitHubLoginButtonConstants.ConnectWithGitHub;
+        public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginButtonText is GitHubLoginButtonConstants.ConnectToGitHub;
 
         public bool ShouldShowClonesByDefaultSwitchValue
         {
@@ -108,17 +116,22 @@ namespace GitTrends
             set => SetProperty(ref _gitHubNameLabelText, value);
         }
 
-        bool IsRegisteringForNotifications
+        public int ThemePickerSelectedThemeIndex
         {
-            get => _isRegisteringForNotifications;
-            set
-            {
-                if (_isRegisteringForNotifications != value)
-                {
-                    _isRegisteringForNotifications = value;
-                    MainThread.BeginInvokeOnMainThread(RegisterForPushNotificationsButtonCommand.RaiseCanExecuteChanged);
-                }
-            }
+            get => _themePickerSelectedThemeIndex;
+            set => SetProperty(ref _themePickerSelectedThemeIndex, value, () => _themeService.Preference = (PreferredTheme)value);
+        }
+
+        public bool IsRegisterForNotificationsSwitchEnabled
+        {
+            get => _isRegisterForNotificationsSwitchEnabled;
+            set => SetProperty(ref _isRegisterForNotificationsSwitchEnabled, value);
+        }
+
+        public bool IsRegisterForNotificationsSwitchToggled
+        {
+            get => _isRegisterForNotificationsSwitchToggled;
+            set => SetProperty(ref _isRegisterForNotificationsSwitchToggled, value, async () => await SetNotificationsPreference(value).ConfigureAwait(false));
         }
 
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => SetGitHubValues();
@@ -127,7 +140,7 @@ namespace GitTrends
         {
             GitHubAliasLabelText = _gitHubAuthenticationService.IsAuthenticated ? $"@{GitHubAuthenticationService.Alias}" : string.Empty;
             GitHubNameLabelText = _gitHubAuthenticationService.IsAuthenticated ? GitHubAuthenticationService.Name : "Not Logged In";
-            LoginButtonText = _gitHubAuthenticationService.IsAuthenticated ? $"{GitHubLoginButtonConstants.Disconnect}" : $"{GitHubLoginButtonConstants.ConnectWithGitHub}";
+            LoginButtonText = _gitHubAuthenticationService.IsAuthenticated ? $"{GitHubLoginButtonConstants.Disconnect}" : $"{GitHubLoginButtonConstants.ConnectToGitHub}";
 
             GitHubAvatarImageSource = "DefaultProfileImage";
 
@@ -169,22 +182,34 @@ namespace GitTrends
             }
         }
 
-        async Task ExecuteRegisterForPushNotificationsButtonCommand()
+        async Task SetNotificationsPreference(bool isNotificationsEnabled)
         {
-            IsRegisteringForNotifications = true;
+            IsRegisterForNotificationsSwitchEnabled = false;
 
             try
             {
-                var result = await _notificationService.Register(true).ConfigureAwait(false);
-                AnalyticsService.Track("Settings Notification Button Tapped", "Result", result.ToString());
+                if (isNotificationsEnabled)
+                {
+                    var result = await _notificationService.Register(true).ConfigureAwait(false);
+                    AnalyticsService.Track("Settings Notification Changed", new Dictionary<string, string>
+                    {
+                        { nameof(isNotificationsEnabled), isNotificationsEnabled.ToString() },
+                        { "Result", result.ToString()}
+                    });
+                }
+                else
+                {
+                    _notificationService.UnRegister();
+                    AnalyticsService.Track("Settings Notification Button Tapped", nameof(isNotificationsEnabled), isNotificationsEnabled.ToString());
+                }
             }
             finally
             {
-                IsRegisteringForNotifications = false;
+                IsRegisterForNotificationsSwitchEnabled = true;
             }
         }
 
-        Task ExecuteCreatedByLabelTapped()
+        Task ExecuteCopyrightLabelTapped()
         {
             AnalyticsService.Track("CreatedBy Label Tapped");
             return _deepLinkingService.OpenApp("twitter://user?id=3418408341", "https://twitter.com/intent/user?user_id=3418408341");

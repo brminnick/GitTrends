@@ -206,7 +206,7 @@ namespace GitTrends.UITests
             SettingsPage.WaitForGitHubLogoutToComplete();
 
             //Assert
-            Assert.AreEqual(GitHubLoginButtonConstants.ConnectWithGitHub, SettingsPage.GitHubButtonText);
+            Assert.AreEqual(GitHubLoginButtonConstants.ConnectToGitHub, SettingsPage.GitHubButtonText);
 
             //Act
             SettingsPage.TapBackButton();

@@ -13,6 +13,8 @@ namespace GitTrends
 {
     public class WelcomePage : BaseContentPage<WelcomeViewModel>
     {
+        const int _demoLabelFontSize = 16;
+
         public WelcomePage(GitHubAuthenticationService gitHubAuthenticationService, AnalyticsService analyticsService, WelcomeViewModel welcomeViewModel)
             : base(welcomeViewModel, analyticsService, shouldUseSafeArea: true)
         {
@@ -79,7 +81,10 @@ namespace GitTrends
 
                 AutomationId = WelcomePageAutomationIds.IsAuthenticatingActivityIndicator;
 
-                this.Center();
+                HorizontalOptions = LayoutOptions.Center;
+                VerticalOptions = LayoutOptions.Start;
+
+                HeightRequest = WidthRequest = _demoLabelFontSize;
 
                 this.Bind(IsVisibleProperty, nameof(WelcomeViewModel.IsAuthenticating));
                 this.Bind(IsRunningProperty, nameof(WelcomeViewModel.IsAuthenticating));
@@ -119,7 +124,7 @@ namespace GitTrends
                 Text = "Try Demo";
                 TextColor = Color.White;
 
-                FontSize = 16;
+                FontSize = _demoLabelFontSize;
                 FontFamily = FontFamilyConstants.RobotoRegular;
 
                 HorizontalOptions = LayoutOptions.Center;

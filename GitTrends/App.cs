@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
@@ -25,9 +24,6 @@ namespace GitTrends
             MainPage = scope.Resolve<SplashScreenPage>();
 
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
-
-            SetAppTheme();
-            Current.RequestedThemeChanged += HandleRequestedThemeChanged;
         }
 
         public event EventHandler Resumed
@@ -60,50 +56,7 @@ namespace GitTrends
         {
             base.OnSleep();
 
-            SetAppTheme();
-
             _analyticsService.Track("App Backgrounded");
-        }
-
-        void HandleRequestedThemeChanged(object sender, AppThemeChangedEventArgs e) => SetAppTheme();
-
-        void SetAppTheme()
-        {
-            var operatingSystemTheme = Current.RequestedTheme;
-
-            BaseTheme preferedTheme = operatingSystemTheme switch
-            {
-                AppTheme.Dark => new DarkTheme(),
-                _ => new LightTheme(),
-            };
-
-            if (Resources.GetType() != preferedTheme.GetType())
-            {
-                Resources = preferedTheme;
-
-                EnableDebugRainbows(false);
-            }
-        }
-
-        [Conditional("DEBUG")]
-        void EnableDebugRainbows(bool shouldUseDebugRainbows)
-        {
-            Resources.Add(new Style(typeof(ContentPage))
-            {
-                ApplyToDerivedTypes = true,
-                Setters = {
-                    new Setter
-                    {
-                        Property = Xamarin.Forms.DebugRainbows.DebugRainbow.ShowColorsProperty,
-                        Value = shouldUseDebugRainbows
-                    },
-                    new Setter
-                    {
-                        Property = Xamarin.Forms.DebugRainbows.DebugRainbow.ShowGridProperty,
-                        Value = shouldUseDebugRainbows
-                    }
-                }
-            });
         }
 
         ValueTask ClearBageNotifications()

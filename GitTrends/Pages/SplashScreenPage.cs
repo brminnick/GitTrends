@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
@@ -17,7 +16,10 @@ namespace GitTrends
 
         CancellationTokenSource? _animationCancellationToken;
 
-        public SplashScreenPage(AnalyticsService analyticsService, SplashScreenViewModel splashScreenViewModel) : base(splashScreenViewModel, analyticsService, shouldUseSafeArea: false)
+        public SplashScreenPage(AnalyticsService analyticsService,
+                                SplashScreenViewModel splashScreenViewModel,
+                                ThemeService themeService)
+            : base(splashScreenViewModel, analyticsService, shouldUseSafeArea: false)
         {
             //Remove BaseContentPageBackground
             RemoveDynamicResource(BackgroundColorProperty);

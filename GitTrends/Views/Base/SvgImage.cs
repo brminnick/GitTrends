@@ -1,6 +1,7 @@
 ﻿using System;
 using FFImageLoading.Svg.Forms;
 using Xamarin.Forms;
+using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {
@@ -15,8 +16,7 @@ namespace GitTrends
 
             Application.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
 
-            HorizontalOptions = LayoutOptions.FillAndExpand;
-            VerticalOptions = LayoutOptions.FillAndExpand;
+            this.FillExpand();
 
             _getTextColor = getTextColor;
 

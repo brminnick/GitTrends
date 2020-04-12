@@ -2,7 +2,7 @@
 {
     static class GitHubLoginButtonConstants
     {
-        public const string Disconnect = FontAwesomeBrandsConstants.GitHubOctocat + " Disconnect";
-        public const string ConnectWithGitHub = FontAwesomeBrandsConstants.GitHubOctocat + " Connect with GitHub";
+        public const string Disconnect = "Disconnect";
+        public const string ConnectToGitHub = "Connect to GitHub";
     }
 }

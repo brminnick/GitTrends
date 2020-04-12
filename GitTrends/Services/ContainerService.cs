@@ -1,7 +1,6 @@
 ﻿using System;
 using Autofac;
 using GitTrends.Shared;
-using Shiny.Notifications;
 
 namespace GitTrends
 {
@@ -28,6 +27,7 @@ namespace GitTrends
             builder.RegisterType<ReviewService>().AsSelf().SingleInstance();
             builder.RegisterType<SortingService>().AsSelf().SingleInstance();
             builder.RegisterType<SyncFusionService>().AsSelf().SingleInstance();
+            builder.RegisterType<ThemeService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
 #if !AppStore
             builder.RegisterType<UITestBackdoorService>().AsSelf().SingleInstance();

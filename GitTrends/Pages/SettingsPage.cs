@@ -1,25 +1,83 @@
 ﻿using GitTrends.Mobile.Shared;
-using GitTrends.Views.Settings;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using static GitTrends.XamarinFormsService;
+using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
     public class SettingsPage : BaseContentPage<SettingsViewModel>
     {
-        readonly TrendsChartSettingsService _trendsChartSettingsService;
-
         public SettingsPage(SettingsViewModel settingsViewModel,
                             NotificationService notificationService,
                             TrendsChartSettingsService trendsChartSettingsService,
-                            AnalyticsService analyticsService) : base(settingsViewModel, analyticsService, PageTitles.SettingsPage)
+                            AnalyticsService analyticsService) : base(settingsViewModel, analyticsService, PageTitles.SettingsPage, true)
         {
-            _trendsChartSettingsService = trendsChartSettingsService;
+            const int separatorHeight = 1;
+            const int settingsHeight = 24;
+
             notificationService.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
 
-            Content = CreateLayout();
+            Content = new Grid
+            {
+                RowSpacing = 16.5,
+
+                Margin = new Thickness(30, 0, 30, 5),
+
+                RowDefinitions = Rows.Define(
+                    (Row.GitHubUser, AbsoluteGridLength(GitHubUserView.TotalHeight)),
+                    (Row.GitHubUserSeparator, AbsoluteGridLength(separatorHeight)),
+                    (Row.Logout, AbsoluteGridLength(settingsHeight)),
+                    (Row.LogoutSeparator, AbsoluteGridLength(separatorHeight)),
+                    (Row.Notifications, AbsoluteGridLength(settingsHeight)),
+                    (Row.NotificationsSeparator, AbsoluteGridLength(separatorHeight)),
+                    (Row.Theme, AbsoluteGridLength(settingsHeight + 8)),
+                    (Row.ThemeSeparator, AbsoluteGridLength(separatorHeight)),
+                    (Row.PreferredCharts, AbsoluteGridLength(80)),
+                    (Row.Copyright, Star)),
+
+                ColumnDefinitions = Columns.Define(
+                    (Column.Icon, AbsoluteGridLength(24)),
+                    (Column.Title, StarGridLength(3)),
+                    (Column.Button, StarGridLength(1))),
+
+                Children =
+                {
+                    new GitHubUserView().Row(Row.GitHubUser).ColumnSpan(All<Column>()),
+
+                    new Separator().Row(Row.GitHubUserSeparator).ColumnSpan(All<Column>()),
+
+                    new SvgImage("logout.svg", getSVGIconColor).Row(Row.Logout).Column(Column.Icon),
+                    new LogoutLabel().Row(Row.Logout).Column(Column.Title),
+                    new SvgImage("right_arrow.svg", getSVGIconColor).End().Row(Row.Logout).Column(Column.Button),
+                    new ConnectToGitHubTappableArea().Row(Row.Logout).ColumnSpan(All<Column>()),
+
+                    new Separator().Row(Row.LogoutSeparator).ColumnSpan(All<Column>()),
+
+                    new SvgImage("bell.svg", getSVGIconColor).Row(Row.Notifications).Column(Column.Icon),
+                    new RegisterForNotificationsLabel().Row(Row.Notifications).Column(Column.Title),
+                    new EnableNotificationsSwitch().Row(Row.Notifications).Column(Column.Button),
+
+                    new Separator().Row(Row.NotificationsSeparator).ColumnSpan(All<Column>()),
+
+                    new SvgImage("theme.svg", getSVGIconColor).Row(Row.Theme).Column(Column.Icon),
+                    new ThemeLabel().Row(Row.Theme).Column(Column.Title),
+                    new ThemePicker().Row(Row.Theme).Column(Column.Button),
+
+                    new Separator().Row(Row.ThemeSeparator).ColumnSpan(All<Column>()),
+
+                    new PreferredChartsView(trendsChartSettingsService).Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
+
+                    new CopyrightLabel().Row(Row.Copyright).ColumnSpan(All<Column>())
+                }
+            };
+
+            static Color getSVGIconColor() => (Color)Application.Current.Resources[nameof(BaseTheme.IconColor)];
         }
+
+        enum Row { GitHubUser, GitHubUserSeparator, Logout, LogoutSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, PreferredCharts, Copyright }
+        enum Column { Icon, Title, Button }
 
         void HandleRegisterForNotificationsCompleted(object sender, (bool IsSuccessful, string ErrorMessage) result)
         {
@@ -32,74 +90,78 @@ namespace GitTrends
             });
         }
 
-        ScrollView CreateLayout()
+        class ConnectToGitHubTappableArea : View
         {
-
-            var gitHubSettingsView = new GitHubSettingsView();
-            var appSettingsView = new AppSettingsView();
-            var trendsSettingsView = new TrendsChartSettingsView(_trendsChartSettingsService);
-
-#if AppStore
-            var versionNumberText = $"Version {VersionTracking.CurrentVersion}";
-#elif RELEASE
-            var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Release)";
-#elif DEBUG
-            var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Debug)";
-#endif
-
-            var createdByLabel = new CopyrightLabel(versionNumberText);
-            createdByLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
-            createdByLabel.BindTapGesture(nameof(SettingsViewModel.CreatedByLabelTappedCommand));
-
-            return new ScrollView()
+            public ConnectToGitHubTappableArea()
             {
-                Content = new StackLayout()
+                Opacity = 0;
+
+                this.BindTapGesture(nameof(SettingsViewModel.ConnectToGitHubButtonCommand));
+
+                var tapGesture = new TapGestureRecognizer
                 {
-                    Orientation = StackOrientation.Vertical,
-                    Spacing = 0,
-                    Children =
+                    Command = new Command(async () =>
                     {
-                        gitHubSettingsView,
-                        appSettingsView,
-                        trendsSettingsView.Margin(new Thickness(16, 32, 16 ,0)),
-                        createdByLabel.Margin(new Thickness(0, 24 ,0, 32))
-                    }
-                }
-            };
+                        await this.FadeTo(0.7, 75);
+                        await this.FadeTo(0, 100);
+                    })
+                };
+
+                GestureRecognizers.Add(tapGesture);
+
+                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+            }
         }
 
-        class CopyrightLabel : Label
+        class LogoutLabel : SettingsTitleLabel
         {
-            public CopyrightLabel(in string versionText)
+            public LogoutLabel() => this.SetBinding(TextProperty, nameof(SettingsViewModel.LoginButtonText));
+        }
+
+        class RegisterForNotificationsLabel : SettingsTitleLabel
+        {
+            public RegisterForNotificationsLabel() => Text = "Register for Notifications";
+        }
+
+        class ThemeLabel : SettingsTitleLabel
+        {
+            public ThemeLabel() => Text = "Theme";
+        }
+
+        class DarkModeLabel : SettingsTitleLabel
+        {
+            public DarkModeLabel() => Text = "Dark Mode";
+        }
+
+        class Separator : BoxView
+        {
+            public Separator() => SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
+        }
+
+        class EnableNotificationsSwitch : SettingsSwitch
+        {
+            public EnableNotificationsSwitch()
             {
-                AutomationId = SettingsPageAutomationIds.CreatedByLabel;
-                LineBreakMode = LineBreakMode.WordWrap;
-                VerticalOptions = LayoutOptions.EndAndExpand;
-                HorizontalOptions = LayoutOptions.CenterAndExpand;
-                HorizontalTextAlignment = TextAlignment.Center;
-                VerticalTextAlignment = TextAlignment.End;
-                FontSize = 12;
+                this.SetBinding(IsToggledProperty, nameof(SettingsViewModel.IsRegisterForNotificationsSwitchToggled));
+                this.SetBinding(IsEnabledProperty, nameof(SettingsViewModel.IsRegisterForNotificationsSwitchEnabled));
+            }
+        }
 
-                LineHeight = 1.82;
+        class ThemePicker : Picker
+        {
+            public ThemePicker()
+            {
+                FontSize = 14;
+                FontFamily = FontFamilyConstants.RobotoRegular;
 
-                FormattedText = new FormattedString
-                {
-                    Spans =
-                    {
-                        new Span
-                        {
-                            FontSize = 12,
-                            FontFamily = FontFamilyConstants.RobotoMedium,
-                            Text = $"{versionText}\n"
-                        },
-                        new Span
-                        {
-                            FontSize = 12,
-                            FontFamily = FontFamilyConstants.RobotoRegular,
-                            Text = "Mobile App Created by Code Traveler LLC"
-                        }
-                    }
-                };
+                WidthRequest = 70;
+
+                HorizontalOptions = LayoutOptions.End;
+
+                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+
+                this.SetBinding(ItemsSourceProperty, nameof(SettingsViewModel.ThemePickerItemsSource));
+                this.SetBinding(SelectedIndexProperty, nameof(SettingsViewModel.ThemePickerSelectedThemeIndex));
             }
         }
     }

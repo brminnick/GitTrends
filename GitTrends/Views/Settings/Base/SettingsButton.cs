@@ -2,7 +2,7 @@
 
 namespace GitTrends
 {
-    public class SettingsButton : Button
+    class SettingsButton : Button
     {
         public SettingsButton(string text, string automationId)
         {

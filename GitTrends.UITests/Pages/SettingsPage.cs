@@ -140,7 +140,7 @@ namespace GitTrends.UITests
         public void WaitForGitHubLogoutToComplete()
         {
             App.WaitForNoElement(_gitHubSettingsViewActivityIndicator);
-            App.WaitForElement(GitHubLoginButtonConstants.ConnectWithGitHub);
+            App.WaitForElement(GitHubLoginButtonConstants.ConnectToGitHub);
 
             App.Screenshot("GitHub Logout Completed");
         }

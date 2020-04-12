@@ -39,6 +39,12 @@ namespace GitTrends
 
         static INotificationManager NotificationManager => ShinyHost.Resolve<INotificationManager>();
 
+        public bool AreNotificationsEnabled
+        {
+            get => Preferences.Get(nameof(AreNotificationsEnabled), false);
+            private set => Preferences.Set(nameof(AreNotificationsEnabled), value);
+        }
+
         public bool HaveNotificationsBeenRequested
         {
             get => Preferences.Get(nameof(HaveNotificationsBeenRequested), false);
@@ -51,10 +57,12 @@ namespace GitTrends
             remove => _registerForNotificationCompletedEventHandler.RemoveEventHandler(value);
         }
 
+        public void UnRegister() => AreNotificationsEnabled = false;
+
         public async Task<AccessState> Register(bool shouldShowSettingsUI)
         {
             AccessState? finalNotificationRequestResult = null;
-            HaveNotificationsBeenRequested = true;
+            HaveNotificationsBeenRequested = AreNotificationsEnabled = true;
 
             var settingsResultCompletionSource = new TaskCompletionSource<AccessState>();
 
@@ -120,21 +128,21 @@ namespace GitTrends
 
         public async ValueTask SetAppBadgeCount(int count)
         {
-            if (!HaveNotificationsBeenRequested)
-                return;
+            if (AreNotificationsEnabled || HaveNotificationsBeenRequested && count is 0)
+            {
+                var accessState = await Register(false).ConfigureAwait(false);
 
-            var accessState = await Register(false).ConfigureAwait(false);
-
-            //INotificationManager.Badge Crashes on iOS
-            if (accessState is AccessState.Available && Device.RuntimePlatform is Device.iOS)
-                await DependencyService.Get<IPlatformSpecificService>().SetiOSBadgeCount(count).ConfigureAwait(false);
-            else if (accessState is AccessState.Available)
-                NotificationManager.Badge = count;
+                //INotificationManager.Badge Crashes on iOS
+                if (accessState is AccessState.Available && Device.RuntimePlatform is Device.iOS)
+                    await DependencyService.Get<IPlatformSpecificService>().SetiOSBadgeCount(count).ConfigureAwait(false);
+                else if (accessState is AccessState.Available)
+                    NotificationManager.Badge = count;
+            }
         }
 
         public async ValueTask TrySendTrendingNotificaiton(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
         {
-            if (!HaveNotificationsBeenRequested)
+            if (!AreNotificationsEnabled)
                 return;
 #if DEBUG
             await SendTrendingNotification(trendingRepositories, notificationDateTime).ConfigureAwait(false);

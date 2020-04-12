@@ -27,6 +27,8 @@ namespace GitTrends
         public IAsyncCommand ConnectToGitHubButtonCommand { get; }
         public IAsyncCommand<string> DemoButtonCommand { get; }
 
+        public bool IsNotAuthenticating => !IsAuthenticating;
+
         public virtual bool IsDemoButtonVisible => !IsAuthenticating && GitHubAuthenticationService.Alias != DemoDataConstants.Alias;
 
         protected GitHubAuthenticationService GitHubAuthenticationService { get; }
@@ -36,6 +38,7 @@ namespace GitTrends
             get => _isAuthenticating;
             set => SetProperty(ref _isAuthenticating, value, () =>
             {
+                OnPropertyChanged(nameof(IsNotAuthenticating));
                 OnPropertyChanged(nameof(IsDemoButtonVisible));
                 MainThread.InvokeOnMainThreadAsync(ConnectToGitHubButtonCommand.RaiseCanExecuteChanged).SafeFireAndForget(ex => Debug.WriteLine(ex));
             });

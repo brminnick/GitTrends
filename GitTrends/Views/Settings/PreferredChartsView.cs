@@ -8,26 +8,30 @@ using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    class TrendsChartSettingsView : Grid
+    class PreferredChartsView : Grid
     {
-        public TrendsChartSettingsView(in TrendsChartSettingsService trendsChartSettingsService)
+        public PreferredChartsView(in TrendsChartSettingsService trendsChartSettingsService)
         {
             RowSpacing = 2;
+
+            VerticalOptions = LayoutOptions.End;
 
             RowDefinitions = Rows.Define(
                 (Row.Label, StarGridLength(1)),
                 (Row.Control, StarGridLength(2)));
 
-            Children.Add(new TrendsChartSettingsLabel().Row(Row.Label).Margin(new Thickness(16, 0, 0, 12)));
+            Children.Add(new TrendsChartSettingsLabel().Row(Row.Label));
             Children.Add(new TrendsCharSettingsControl(trendsChartSettingsService).Row(Row.Control));
         }
 
         enum Row { Label, Control }
 
-        class TrendsChartSettingsLabel : SettingsLabel
+        class TrendsChartSettingsLabel : SettingsTitleLabel
         {
-            public TrendsChartSettingsLabel() : base("Preferred Charts", SettingsPageAutomationIds.TrendsChartSettingsLabel)
+            public TrendsChartSettingsLabel()
             {
+                Text = "Preferred Charts";
+                AutomationId = SettingsPageAutomationIds.TrendsChartSettingsLabel;
                 VerticalTextAlignment = TextAlignment.Start;
             }
         }

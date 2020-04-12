@@ -105,6 +105,7 @@
     <Compile Include="CustomRenderers\SearchPageRenderer.cs" />
     <Compile Include="Services\Environment_iOS.cs" />
     <Compile Include="Services\SKStoreReviewController.cs" />
+    <Compile Include="CustomRenderers\PickerCustomRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
