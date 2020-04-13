@@ -17,6 +17,9 @@ namespace GitTrends
 
         protected override View CreateImageView() => new Image
         {
+#if AppStore
+#error Missing Chart GIF
+#endif
             Source = "Chart",
             HorizontalOptions = LayoutOptions.Center,
             VerticalOptions = LayoutOptions.Center

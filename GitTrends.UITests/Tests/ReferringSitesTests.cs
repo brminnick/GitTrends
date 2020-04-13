@@ -23,14 +23,35 @@ namespace GitTrends.UITests
         {
             await base.BeforeEachTest().ConfigureAwait(false);
 
+            var referringSites = new List<ReferringSiteModel>();
+
             var repositories = RepositoryPage.VisibleCollection;
+            var repositoriesEnumerator = repositories.GetEnumerator();
 
-            RepositoryPage.TapRepository(repositories.First().Name);
+            while (!referringSites.Any())
+            {
+                repositoriesEnumerator.MoveNext();
+                RepositoryPage.TapRepository(repositoriesEnumerator.Current.Name);
 
-            await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
-            TrendsPage.TapReferringSitesButton();
+                await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
+                TrendsPage.TapReferringSitesButton();
 
-            await ReferringSitesPage.WaitForPageToLoad().ConfigureAwait(false);
+                await ReferringSitesPage.WaitForPageToLoad().ConfigureAwait(false);
+
+                referringSites = ReferringSitesPage.VisibleCollection;
+
+                if (!referringSites.Any())
+                {
+                    ReferringSitesPage.WaitForTheNoReferringSitesDialog();
+                    ReferringSitesPage.DismissNoReferringSitesDialog();
+                    ReferringSitesPage.ClosePage();
+
+                    await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
+                    TrendsPage.TapBackButton();
+
+                    await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
+                }
+            }
         }
 
         [Test]
@@ -49,7 +70,7 @@ namespace GitTrends.UITests
             }
 
             //Assert
-            Assert.IsTrue(referringSiteList.Any());
+            if(referringSiteList.Any())
 
             if (isUrlValid && App is iOSApp)
             {

@@ -33,6 +33,18 @@ namespace GitTrends.UITests
             await WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
         }
 
+        public void DismissNoReferringSitesDialog()
+        {
+            App.Tap(ReferringSitesConstants.NoReferringSitesOK);
+            App.Screenshot("No Referring Sites Dialog Dismissed");
+        }
+
+        public void WaitForTheNoReferringSitesDialog()
+        {
+            App.WaitForElement(ReferringSitesConstants.NoReferringSitesTitle);
+            App.Screenshot("No Referring Sites Dialog Appeared");
+        }
+
         public void ClosePage()
         {
             switch (App)

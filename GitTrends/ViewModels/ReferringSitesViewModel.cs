@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Refit;
 
@@ -97,6 +98,9 @@ namespace GitTrends
             {
                 IsActivityIndicatorVisible = IsRefreshing = false;
             }
+
+            if (!MobileReferringSitesList.Any())
+                await _deepLinkingService.DisplayAlert(ReferringSitesConstants.NoReferringSitesTitle, ReferringSitesConstants.NoReferringSitesDescription, ReferringSitesConstants.NoReferringSitesOK);
 
             void displayMobileReferringSites(in IEnumerable<MobileReferringSiteModel> mobileReferringSiteList) =>
                 MobileReferringSitesList = SortingService.SortReferringSites(mobileReferringSiteList).ToList();

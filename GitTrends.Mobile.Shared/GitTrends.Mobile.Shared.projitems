@@ -30,5 +30,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)StatisticsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\WelcomePageAutomationIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PreferredTheme.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\ReferringSitesConstants.cs" />
   </ItemGroup>
 </Project>

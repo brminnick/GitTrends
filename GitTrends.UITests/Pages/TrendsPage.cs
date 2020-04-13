@@ -72,6 +72,12 @@ namespace GitTrends.UITests
             return JsonConvert.DeserializeObject<bool>(serializedIsSeriesVisible);
         }
 
+        public void TapBackButton()
+        {
+            App.Back();
+            App.Screenshot("Back Button Tapped");
+        }
+
         public void TapViewsCard()
         {
             App.Tap(_viewsCard);
