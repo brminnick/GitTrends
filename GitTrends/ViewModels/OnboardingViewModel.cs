@@ -39,6 +39,8 @@ namespace GitTrends
             remove => _skipButtonTappedEventManager.RemoveEventHandler(value);
         }
 
+        public override bool IsDemoButtonVisible => IsNotAuthenticating;
+
         public ICommand EnableNotificationsButtonTapped { get; }
 
         public string NotificationStatusSvgImageSource
