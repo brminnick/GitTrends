@@ -9,9 +9,9 @@ namespace GitTrends.UITests
 
         public string OwnerLogin { get; set; } = string.Empty;
 
-        public int StarCount { get; set; }
+        public long StarCount { get; set; }
 
-        public int IssuesCount { get; set; }
+        public long IssuesCount { get; set; }
 
         public string Name { get; set; } = string.Empty;
 

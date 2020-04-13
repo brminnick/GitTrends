@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -15,6 +18,9 @@ namespace GitTrends
         {
             const int separatorRowHeight = 1;
             const int settingsRowHeight = 38;
+
+            var loginRowTapGesture = new TapGestureRecognizer();
+            loginRowTapGesture.Tapped += HandleLoginRowTapped;
 
             Content = new Grid
             {
@@ -46,10 +52,10 @@ namespace GitTrends
 
                     new Separator().Row(Row.GitHubUserSeparator).ColumnSpan(All<Column>()),
 
-                    new SvgImage("logout.svg", getSVGIconColor).Row(Row.Login).Column(Column.Icon),
+                    new LoginRowTappableView(loginRowTapGesture).Row(Row.Login).ColumnSpan(All<Column>()),
+                    new LoginRowSvg("logout.svg", getSVGIconColor).Row(Row.Login).Column(Column.Icon),
                     new LoginLabel().Row(Row.Login).Column(Column.Title),
-                    new SvgImage("right_arrow.svg", getSVGIconColor).End().Row(Row.Login).Column(Column.Button),
-                    new ConnectToGitHubTappableArea().Row(Row.Login).ColumnSpan(All<Column>()),
+                    new LoginRowSvg("right_arrow.svg", getSVGIconColor).End().Row(Row.Login).Column(Column.Button),
 
                     new Separator().Row(Row.LoginSeparator).ColumnSpan(All<Column>()),
 
@@ -77,41 +83,46 @@ namespace GitTrends
         enum Row { GitHubUser, GitHubUserSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, PreferredCharts, Copyright }
         enum Column { Icon, Title, Button }
 
-        class ConnectToGitHubTappableArea : View
+        async void HandleLoginRowTapped(object sender, EventArgs e)
         {
-            public ConnectToGitHubTappableArea()
+            if (ViewModel.IsNotAuthenticating)
             {
-                Opacity = 0;
+                var contentLayout = (Layout)Content;
+                var loginRowViews = contentLayout.Children.OfType<ILoginRowView>().Cast<View>();
 
-                AutomationId = SettingsPageAutomationIds.GitHubLoginLabel;
+                await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(0.3, 75)));
 
-                var tapGesture = new TapGestureRecognizer();
-                tapGesture.Tapped += HandleTapped;
+                ViewModel.ConnectToGitHubButtonCommand.Execute(null);
 
-                GestureRecognizers.Add(tapGesture);
-
-                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
-            }
-
-            async void HandleTapped(object sender, EventArgs e)
-            {
-                if (BindingContext is SettingsViewModel settingsViewModel
-                        && settingsViewModel.IsNotAuthenticating)
-                {
-                    Opacity = 0.7;
-
-                    settingsViewModel.ConnectToGitHubButtonCommand.Execute(null);
-
-                    await this.FadeTo(0, 350, Easing.CubicOut);
-                }
+                await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(1, 350, Easing.CubicOut)));
             }
         }
 
-        class LoginLabel : SettingsTitleLabel
+        class LoginRowTappableView : View, ILoginRowView
+        {
+            public LoginRowTappableView(TapGestureRecognizer tapGestureRecognizer) => GestureRecognizers.Add(tapGestureRecognizer);
+        }
+
+        class LoginRowSvg : SvgImage, ILoginRowView
+        {
+            public LoginRowSvg(in string svgFileName, in Func<Color> getTextColor) : base(svgFileName, getTextColor)
+            {
+                InputTransparent = true;
+            }
+        }
+
+        class LoginLabel : SettingsTitleLabel, ILoginRowView
         {
             public LoginLabel()
             {
+                this.FillExpand();
+                HorizontalTextAlignment = TextAlignment.Start;
+
                 AutomationId = SettingsPageAutomationIds.GitHubLoginLabel;
+
+                //Allow LoginRowTappableView to handle taps
+                InputTransparent = true;
+
                 this.SetBinding(TextProperty, nameof(SettingsViewModel.LoginLabelText));
             }
         }
@@ -162,6 +173,11 @@ namespace GitTrends
                 this.SetBinding(ItemsSourceProperty, nameof(SettingsViewModel.ThemePickerItemsSource));
                 this.SetBinding(SelectedIndexProperty, nameof(SettingsViewModel.ThemePickerSelectedThemeIndex));
             }
+        }
+
+        interface ILoginRowView
+        {
+
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
-using Xamarin.Essentials;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
 using Xamarin.UITest.iOS;

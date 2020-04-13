@@ -46,7 +46,7 @@ namespace GitTrends
                 new GitHubLogoLabel().Row(Row.Connect).Column(Column.Image),
                 new BodyLabel("Connect to Github").Row(Row.Connect).Column(Column.Description),
 
-                new BodySvg("chart.svg").Row(Row.MonitorImage).Column(Column.Image),
+                new BodySvg("chart.svg").Row(Row.MonitorImage).Column(Column.Image).Center().RowSpan(2),
                 new BodyLabel("Monitor Github Repo Views, Clones, Forks, Stars and Issues"){ VerticalTextAlignment = TextAlignment.Start }.Row(Row.MonitorImage).RowSpan(2).Column(Column.Description),
 
                 new BodySvg("megaphone.svg").Row(Row.Discover).Column(Column.Image),

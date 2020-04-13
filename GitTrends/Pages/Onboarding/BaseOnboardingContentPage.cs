@@ -20,8 +20,8 @@ namespace GitTrends
 
             var descriptionLayout = new StackLayout
             {
-                Margin = new Thickness(32, 16),
-                Spacing = 24,
+                Margin = new Thickness(32, 8),
+                Spacing = 16,
                 Children =
                 {
                     CreateDescriptionTitleLabel(),
@@ -32,8 +32,8 @@ namespace GitTrends
             Content = new Grid
             {
                 RowDefinitions = Rows.Define(
-                    (Row.Image, StarGridLength(Device.RuntimePlatform is Device.iOS ? 9 : 1)),
-                    (Row.Description, StarGridLength(Device.RuntimePlatform is Device.iOS ? 6 : 1)),
+                    (Row.Image, StarGridLength(Device.RuntimePlatform is Device.iOS ? 3 : 11)),
+                    (Row.Description, StarGridLength(Device.RuntimePlatform is Device.iOS ? 2 : 9)),
                     (Row.Indicator, AbsoluteGridLength(44))),
 
                 ColumnDefinitions = Columns.Define(
@@ -46,7 +46,7 @@ namespace GitTrends
                     imageView.Row(Row.Image).ColumnSpan(All<Column>()),
                     descriptionLayout.Row(Row.Description).ColumnSpan(All<Column>()),
                     new OnboardingIndicatorView(carouselPositionIndex).Row(Row.Indicator).Column(Column.Indicator),
-                    new NextButton(nextButtonText).Row(Row.Indicator).Column(Column.Button),
+                    new NextLabel(nextButtonText).Row(Row.Indicator).Column(Column.Button),
                 }
             };
         }
@@ -60,21 +60,26 @@ namespace GitTrends
         protected abstract TitleLabel CreateDescriptionTitleLabel();
         protected abstract View CreateDescriptionBodyView();
 
-        class NextButton : Button
+        class NextLabel : Label
         {
-            public NextButton(in string text)
+            public NextLabel(in string text)
             {
-                Padding = 0;
-                Margin = new Thickness(0, 0, Device.RuntimePlatform is Device.iOS ? 32 : 0, 0);
+                Text = text;
                 TextColor = Color.White;
-                HorizontalOptions = LayoutOptions.End;
-                VerticalOptions = LayoutOptions.Center;
-                CommandParameter = Text = text;
                 BackgroundColor = Color.Transparent;
                 FontFamily = FontFamilyConstants.RobotoBold;
+
+                Margin = new Thickness(0, 0, 30, 0);
+
+                HorizontalOptions = LayoutOptions.End;
+                VerticalOptions = LayoutOptions.Center;
+
                 AutomationId = OnboardingAutomationIds.NextButon;
 
-                this.SetBinding(CommandProperty, nameof(OnboardingViewModel.DemoButtonCommand));
+                var tapGestureRecognizer = new TapGestureRecognizer { CommandParameter = text };
+                tapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandProperty, nameof(OnboardingViewModel.DemoButtonCommand));
+                GestureRecognizers.Add(tapGestureRecognizer);
+
                 this.SetBinding(IsVisibleProperty, nameof(OnboardingViewModel.IsDemoButtonVisible));
             }
         }
