@@ -54,8 +54,8 @@ namespace GitTrends.Shared
 
         public string OwnerLogin { get; }
         public string OwnerAvatarUrl { get; }
-        public int StarCount { get; }
-        public int IssuesCount { get; }
+        public long StarCount { get; }
+        public long IssuesCount { get; }
         public string Name { get; }
         public string Description { get; }
         public long ForkCount { get; }
@@ -120,9 +120,9 @@ namespace GitTrends.Shared
 
     public class StarGazers
     {
-        public StarGazers(int totalCount) => TotalCount = totalCount;
+        public StarGazers(long totalCount) => TotalCount = totalCount;
 
         [JsonProperty("totalCount")]
-        public int TotalCount { get; }
+        public long TotalCount { get; }
     }
 }

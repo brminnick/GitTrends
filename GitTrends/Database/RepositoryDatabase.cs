@@ -78,13 +78,13 @@ namespace GitTrends
             [PrimaryKey]
             public string Url { get; set; } = string.Empty;
 
-            public int StarCount { get; set; }
+            public long StarCount { get; set; }
 
             public string OwnerLogin { get; set; } = string.Empty;
 
             public string OwnerAvatarUrl { get; set; } = string.Empty;
 
-            public int IssuesCount { get; set; }
+            public long IssuesCount { get; set; }
 
             public bool IsFork { get; set; }
 
@@ -109,26 +109,23 @@ namespace GitTrends
                                         repositoryDatabaseModel.DataDownloadedAt);
             }
 
-            public static implicit operator RepositoryDatabaseModel(Repository repository)
+            public static implicit operator RepositoryDatabaseModel(Repository repository) => new RepositoryDatabaseModel
             {
-                return new RepositoryDatabaseModel
-                {
-                    DataDownloadedAt = repository.DataDownloadedAt,
-                    Description = repository.Description,
-                    StarCount = repository.StarCount,
-                    Url = repository.Url,
-                    IssuesCount = repository.IssuesCount,
-                    ForkCount = repository.ForkCount,
-                    Name = repository.Name,
-                    OwnerAvatarUrl = repository.OwnerAvatarUrl,
-                    OwnerLogin = repository.OwnerLogin,
-                    IsFork = repository.IsFork,
-                    TotalClones = repository.TotalClones,
-                    TotalUniqueClones = repository.TotalUniqueClones,
-                    TotalViews = repository.TotalViews,
-                    TotalUniqueViews = repository.TotalUniqueViews,
-                };
-            }
+                DataDownloadedAt = repository.DataDownloadedAt,
+                Description = repository.Description,
+                StarCount = repository.StarCount,
+                Url = repository.Url,
+                IssuesCount = repository.IssuesCount,
+                ForkCount = repository.ForkCount,
+                Name = repository.Name,
+                OwnerAvatarUrl = repository.OwnerAvatarUrl,
+                OwnerLogin = repository.OwnerLogin,
+                IsFork = repository.IsFork,
+                TotalClones = repository.TotalClones,
+                TotalUniqueClones = repository.TotalUniqueClones,
+                TotalViews = repository.TotalViews,
+                TotalUniqueViews = repository.TotalUniqueViews,
+            };
         }
     }
 }

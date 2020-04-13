@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using FFImageLoading.Svg.Forms;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
@@ -30,127 +30,111 @@ namespace GitTrends
 
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
-            var repository = (Repository)item;
             var sortingCategory = SortingConstants.GetSortingCategory(_sortingService.CurrentOption);
 
             return sortingCategory switch
             {
-                SortingCategory.Clones => new ClonesDataTemplate(repository),
-                SortingCategory.Views => new ViewsDataTemplate(repository),
-                SortingCategory.IssuesForks => new IssuesForksDataTemplate(repository),
+                SortingCategory.Clones => new ClonesDataTemplate(),
+                SortingCategory.Views => new ViewsDataTemplate(),
+                SortingCategory.IssuesForks => new IssuesForksDataTemplate(),
                 _ => throw new NotSupportedException()
             };
         }
 
         class ClonesDataTemplate : RepositoryDataTemplate
         {
-            public ClonesDataTemplate(Repository repository) : base(repository.OwnerAvatarUrl, repository.Name, repository.Description, repository.IsTrending, CreateViews(repository))
+            public ClonesDataTemplate() : base(CreateClonesDataTemplateViews())
             {
 
             }
 
-            static IEnumerable<View> CreateViews(Repository repository)
+            static IEnumerable<View> CreateClonesDataTemplateViews() => new View[]
             {
-                var shouldDisplayValues = repository.DailyClonesList.Any();
+                new RepositoryStatSVGImage("total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
 
-                return new View[]
-                {
-                    new RepositoryStatSVGImage("total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
+                //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+                new StatisticsLabel(nameof(BaseTheme.CardClonesStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic1)
+                    .Bind<StatisticsLabel, long, string>(Label.TextProperty, nameof(Repository.TotalClones), convert: StatisticsLabelTextConverter)
+                    .Bind<StatisticsLabel, IReadOnlyList<DailyClonesModel>, bool>(VisualElement.IsVisibleProperty, nameof(Repository.DailyClonesList), convert: IsStatisticsLabelVisibleConverter),
 
-                    //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                    shouldDisplayValues
-                        ? new StatisticsLabel(repository.TotalClones, nameof(BaseTheme.CardClonesStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic1)
-                        : new Label(),
+                new RepositoryStatSVGImage("unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji2),
 
-                    new RepositoryStatSVGImage("unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji2),
+                //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+                new StatisticsLabel(nameof(BaseTheme.CardUniqueClonesStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic2)
+                    .Bind<StatisticsLabel, long, string>(Label.TextProperty, nameof(Repository.TotalUniqueClones), convert: StatisticsLabelTextConverter)
+                    .Bind<StatisticsLabel, IReadOnlyList<DailyClonesModel>, bool>(VisualElement.IsVisibleProperty, nameof(Repository.DailyClonesList), convert: IsStatisticsLabelVisibleConverter),
 
-                    //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                    shouldDisplayValues
-                        ? new StatisticsLabel(repository.TotalUniqueClones, nameof(BaseTheme.CardUniqueClonesStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic2)
-                        : new Label(),
+                new RepositoryStatSVGImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji3),
 
-                    new RepositoryStatSVGImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji3),
-
-                    //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                    shouldDisplayValues
-                        ? new StatisticsLabel(repository.StarCount, nameof(BaseTheme.CardStarsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic3)
-                        : new Label()
-                };
-            }
+                //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+                new StatisticsLabel(nameof(BaseTheme.CardStarsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic3)
+                    .Bind<StatisticsLabel, long, string>(Label.TextProperty, nameof(Repository.StarCount), convert: StatisticsLabelTextConverter)
+                    .Bind<StatisticsLabel, IReadOnlyList<DailyClonesModel>, bool>(VisualElement.IsVisibleProperty, nameof(Repository.DailyClonesList), convert: IsStatisticsLabelVisibleConverter),
+            };
         }
 
         class ViewsDataTemplate : RepositoryDataTemplate
         {
-            public ViewsDataTemplate(Repository repository) : base(repository.OwnerAvatarUrl, repository.Name, repository.Description, repository.IsTrending, CreateViews(repository))
+            public ViewsDataTemplate() : base(CreateViewsDataTemplateViews())
             {
 
             }
 
-            static IEnumerable<View> CreateViews(Repository repository)
+            static IEnumerable<View> CreateViewsDataTemplateViews() => new View[]
             {
-                var shouldDisplayValues = repository.DailyViewsList.Any();
+                new RepositoryStatSVGImage("total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
 
-                return new View[]
-                {
-                    new RepositoryStatSVGImage("total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
+                //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+                new StatisticsLabel(nameof(BaseTheme.CardViewsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic1)
+                    .Bind<StatisticsLabel, long, string>(Label.TextProperty, nameof(Repository.TotalViews), convert: StatisticsLabelTextConverter)
+                    .Bind<StatisticsLabel, IReadOnlyList<DailyViewsModel>, bool>(VisualElement.IsVisibleProperty, nameof(Repository.DailyViewsList), convert: IsStatisticsLabelVisibleConverter),
 
-                    //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                    shouldDisplayValues
-                        ? new StatisticsLabel(repository.TotalViews, nameof(BaseTheme.CardViewsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic1)
-                        : new Label(),
+                new RepositoryStatSVGImage("unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji2),
 
-                    new RepositoryStatSVGImage("unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji2),
+                //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+                new StatisticsLabel(nameof(BaseTheme.CardUniqueViewsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic2)
+                    .Bind<StatisticsLabel, long, string>(Label.TextProperty, nameof(Repository.TotalUniqueViews), convert: StatisticsLabelTextConverter)
+                    .Bind<StatisticsLabel, IReadOnlyList<DailyViewsModel>, bool>(VisualElement.IsVisibleProperty, nameof(Repository.DailyViewsList), convert: IsStatisticsLabelVisibleConverter),
 
-                    //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                    shouldDisplayValues
-                        ? new StatisticsLabel(repository.TotalUniqueViews, nameof(BaseTheme.CardUniqueViewsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic2)
-                        : new Label(),
+                new RepositoryStatSVGImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji3),
 
-                    new RepositoryStatSVGImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji3),
-
-                    //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                    shouldDisplayValues
-                        ? new StatisticsLabel(repository.StarCount, nameof(BaseTheme.CardStarsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic3)
-                        : new Label()
-                };
-            }
+                //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+                new StatisticsLabel(nameof(BaseTheme.CardStarsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic3)
+                    .Bind<StatisticsLabel, long, string>(Label.TextProperty, nameof(Repository.StarCount), convert: StatisticsLabelTextConverter)
+                    .Bind<StatisticsLabel, IReadOnlyList<DailyViewsModel>, bool>(VisualElement.IsVisibleProperty, nameof(Repository.DailyViewsList), convert: IsStatisticsLabelVisibleConverter),
+            };
         }
 
         class IssuesForksDataTemplate : RepositoryDataTemplate
         {
-            public IssuesForksDataTemplate(Repository repository) : base(repository.OwnerAvatarUrl, repository.Name, repository.Description, repository.IsTrending, CreateViews(repository))
+            public IssuesForksDataTemplate() : base(CreateIssuesForksDataTemplateViews())
             {
 
             }
 
-            static IEnumerable<View> CreateViews(Repository repository)
+            static IEnumerable<View> CreateIssuesForksDataTemplateViews() => new View[]
             {
-                var shouldDisplayValues = repository.DailyViewsList.Any();
+                new RepositoryStatSVGImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
 
-                return new View[]
-                {
-                    new RepositoryStatSVGImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
+                //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+                new StatisticsLabel(nameof(BaseTheme.CardStarsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic1)
+                    .Bind<StatisticsLabel, long, string>(Label.TextProperty, nameof(Repository.StarCount), convert: StatisticsLabelTextConverter)
+                    .Bind<StatisticsLabel, IReadOnlyList<DailyViewsModel>, bool>(VisualElement.IsVisibleProperty, nameof(Repository.DailyViewsList), convert: IsStatisticsLabelVisibleConverter),
 
-                    //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                    shouldDisplayValues
-                        ? new StatisticsLabel(repository.StarCount, nameof(BaseTheme.CardStarsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic1)
-                        : new Label(),
+                new RepositoryStatSVGImage("repo_forked.svg", nameof(BaseTheme.CardForksStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji2),
 
-                    new RepositoryStatSVGImage("repo_forked.svg", nameof(BaseTheme.CardForksStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji2),
+                //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+                new StatisticsLabel(nameof(BaseTheme.CardForksStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic2)
+                    .Bind<StatisticsLabel, long, string>(Label.TextProperty, nameof(Repository.ForkCount), convert: StatisticsLabelTextConverter)
+                    .Bind<StatisticsLabel, IReadOnlyList<DailyViewsModel>, bool>(VisualElement.IsVisibleProperty, nameof(Repository.DailyViewsList), convert: IsStatisticsLabelVisibleConverter),
 
-                    //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                    shouldDisplayValues
-                        ? new StatisticsLabel(repository.ForkCount, nameof(BaseTheme.CardForksStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic2)
-                        : new Label(),
+                new RepositoryStatSVGImage("issue_opened.svg", nameof(BaseTheme.CardIssuesStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji3),
 
-                    new RepositoryStatSVGImage("issue_opened.svg", nameof(BaseTheme.CardIssuesStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji3),
-
-                    //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                    shouldDisplayValues
-                        ? new StatisticsLabel(repository.IssuesCount, nameof(BaseTheme.CardIssuesStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic3)
-                        : new Label()
-                };
-            }
+                //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+                new StatisticsLabel(nameof(BaseTheme.CardIssuesStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic3)
+                    .Bind<StatisticsLabel, long, string>(Label.TextProperty, nameof(Repository.IssuesCount), convert: StatisticsLabelTextConverter)
+                    .Bind<StatisticsLabel, IReadOnlyList<DailyViewsModel>, bool>(VisualElement.IsVisibleProperty, nameof(Repository.DailyViewsList), convert: IsStatisticsLabelVisibleConverter),
+            };
         }
 
         class CardView : Grid
@@ -194,8 +178,7 @@ namespace GitTrends
                 {
                     public ContentGrid(in IEnumerable<View> children)
                     {
-                        HorizontalOptions = LayoutOptions.FillAndExpand;
-                        VerticalOptions = LayoutOptions.FillAndExpand;
+                        this.FillExpand();
 
                         RowDefinitions = Rows.Define(
                             (Row.Title, AbsoluteGridLength(25)),
@@ -225,27 +208,6 @@ namespace GitTrends
             }
         }
 
-        class LargeScreenTrendingImage : TrendingImage
-        {
-            public LargeScreenTrendingImage()
-            {
-                SetBinding(IsVisibleProperty, new Binding(nameof(Width), converter: IsVisibleWidthConverter, source: this));
-            }
-
-            static FuncConverter<double, bool> IsVisibleWidthConverter { get; } = new FuncConverter<double, bool>(width => width is -1 || width >= SvgWidthRequest);
-        }
-
-
-        class SmallScreenTrendingImage : TrendingImage
-        {
-            public SmallScreenTrendingImage(in LargeScreenTrendingImage largeScreenTrendingImage)
-            {
-                SetBinding(IsVisibleProperty, new Binding(nameof(IsVisible), converter: IsLargeScreenTrendingImageNotVisible, source: largeScreenTrendingImage));
-            }
-
-            static FuncConverter<bool, bool> IsLargeScreenTrendingImageNotVisible { get; } = new FuncConverter<bool, bool>(isLargeScreenTrendingImageVisible => !isLargeScreenTrendingImageVisible);
-        }
-
         class RepositoryStatSVGImage : SvgImage
         {
             public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor, in double widthRequest = 24, in double heightRequest = 24)
@@ -257,9 +219,8 @@ namespace GitTrends
         }
         class StatisticsLabel : Label
         {
-            public StatisticsLabel(in long number, in string textColorThemeName)
+            public StatisticsLabel(in string textColorThemeName)
             {
-                Text = number.ConvertToAbbreviatedText();
                 FontSize = _statsFontSize;
 
                 HorizontalOptions = LayoutOptions.FillAndExpand;
@@ -273,12 +234,42 @@ namespace GitTrends
             }
         }
 
+        class LargeScreenTrendingImage : TrendingImage
+        {
+            protected override async void OnSizeAllocated(double width, double height)
+            {
+                base.OnSizeAllocated(width, height);
+
+                //Reveal the tag if its width meets the SvgWidthRequest by changing its color from matching the CardSurfaceColor
+                if (width >= SvgWidthRequest)
+                    await UpdateColor(() => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)]);
+                else
+                    await UpdateColor(() => (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)]);
+            }
+        }
+
+        class SmallScreenTrendingImage : TrendingImage
+        {
+            public SmallScreenTrendingImage(in LargeScreenTrendingImage largeScreenTrendingImage) =>
+                largeScreenTrendingImage.SvgColorChanged += HandleLargeScreenTrendingImageSvgColorChanged;
+
+            async void HandleLargeScreenTrendingImageSvgColorChanged(object sender, Color color)
+            {
+                //Reveal the tag if the LargeScreenTrendingImage is not shown by changing its color from matching the CardSurfaceColor
+                if (color == (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)])
+                    await UpdateColor(() => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)]);
+                else
+                    await UpdateColor(() => (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)]);
+            }
+        }
+
         abstract class TrendingImage : RepositoryStatSVGImage
         {
             protected const double SvgWidthRequest = 62;
             protected const double SvgHeightRequest = 16;
 
-            public TrendingImage() : base("trending_tag.svg", nameof(BaseTheme.CardTrendingStatsColor), SvgWidthRequest, SvgHeightRequest)
+            //Set default color to match the Card Surface Color to "hide" the tag
+            public TrendingImage() : base("trending_tag.svg", nameof(BaseTheme.CardSurfaceColor), SvgWidthRequest, SvgHeightRequest)
             {
                 HorizontalOptions = LayoutOptions.Start;
                 VerticalOptions = LayoutOptions.End;
@@ -287,10 +278,9 @@ namespace GitTrends
 
         abstract class PrimaryColorLabel : Label
         {
-            protected PrimaryColorLabel(in double fontSize, in string text)
+            protected PrimaryColorLabel(in double fontSize)
             {
                 FontSize = fontSize;
-                Text = text;
                 LineBreakMode = LineBreakMode.TailTruncation;
                 HorizontalTextAlignment = TextAlignment.Start;
                 VerticalTextAlignment = TextAlignment.Start;
@@ -301,36 +291,39 @@ namespace GitTrends
 
         abstract class RepositoryDataTemplate : DataTemplate
         {
-            protected RepositoryDataTemplate(string ownerAvatarUrl, string repositoryName, string repositoryDescription, bool isTrending, IEnumerable<View> views)
-                : base(() => CreateRepositoryDataTemplate(ownerAvatarUrl, repositoryName, repositoryDescription, isTrending, views))
+            protected RepositoryDataTemplate(IEnumerable<View> views)
+                : base(() => CreateRepositoryDataTemplate(views))
             {
 
             }
 
-            static CardView CreateRepositoryDataTemplate(in string ownerAvatarUrl, in string repositoryName, in string repositoryDescription, in bool isTrending, in IEnumerable<View> views)
+            protected static bool IsStatisticsLabelVisibleConverter(IEnumerable<BaseDailyModel> dailyModels) => dailyModels.Any();
+            protected static string StatisticsLabelTextConverter(long number) => number.ConvertToAbbreviatedText();
+
+            static CardView CreateRepositoryDataTemplate(in IEnumerable<View> views)
             {
                 var largeScreenTrendingImage = new LargeScreenTrendingImage();
                 var smallScreenTrendingImage = new SmallScreenTrendingImage(largeScreenTrendingImage);
 
                 var repositoryDataTemplateViews = new View[]
                 {
-                    new AvatarImage(ownerAvatarUrl).Row(Row.Title).Column(Column.Avatar).RowSpan(2).Center(),
+                    new AvatarImage().Row(Row.Title).Column(Column.Avatar).RowSpan(2)
+                        .Bind(Image.SourceProperty, nameof(Repository.OwnerAvatarUrl)),
 
-                    new RepositoryNameLabel(repositoryName).Row(Row.Title).Column(Column.Trending).ColumnSpan(7),
+                    new RepositoryNameLabel().Row(Row.Title).Column(Column.Trending).ColumnSpan(7)
+                        .Bind(Label.TextProperty,nameof(Repository.Name)),
 
-                    new RepositoryDescriptionLabel(repositoryDescription).Row(Row.Description).Column(Column.Trending).ColumnSpan(7),
+                    new RepositoryDescriptionLabel().Row(Row.Description).Column(Column.Trending).ColumnSpan(7)
+                        .Bind(Label.TextProperty,nameof(Repository.Description)),
 
                     new Separator().Row(Row.Separator).Column(Column.Trending).ColumnSpan(7),
 
                     //On smaller screens, display TrendingImage under the Avatar
-                    isTrending
-                        ? smallScreenTrendingImage.Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3)
-                        : new SvgCachedImage(),
+                    smallScreenTrendingImage.Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3)
+                        .Bind(VisualElement.IsVisibleProperty, nameof(Repository.IsTrending)),
 
-                    //On larger screens, display TrendingImage under the Separator
-                    isTrending
-                        ? largeScreenTrendingImage.Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2)
-                        : new SvgCachedImage(),
+                    largeScreenTrendingImage.Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2)
+                        .Bind(VisualElement.IsVisibleProperty, nameof(Repository.IsTrending)),
                 };
 
                 return new CardView(views.Concat(repositoryDataTemplateViews));
@@ -338,14 +331,14 @@ namespace GitTrends
 
             class AvatarImage : CircleImage
             {
-                public AvatarImage(string imageSource)
+                public AvatarImage()
                 {
+                    this.Center();
+
                     HeightRequest = _circleImageHeight;
                     WidthRequest = _circleImageHeight;
-                    HorizontalOptions = LayoutOptions.Center;
-                    VerticalOptions = LayoutOptions.Center;
+
                     BorderThickness = 1;
-                    Source = imageSource;
 
                     SetDynamicResource(BorderColorProperty, nameof(BaseTheme.SeparatorColor));
                 }
@@ -353,7 +346,7 @@ namespace GitTrends
 
             class RepositoryNameLabel : PrimaryColorLabel
             {
-                public RepositoryNameLabel(in string text) : base(20, text)
+                public RepositoryNameLabel() : base(20)
                 {
                     LineBreakMode = LineBreakMode.TailTruncation;
                     HorizontalOptions = LayoutOptions.FillAndExpand;
@@ -363,7 +356,7 @@ namespace GitTrends
 
             class RepositoryDescriptionLabel : PrimaryColorLabel
             {
-                public RepositoryDescriptionLabel(in string text) : base(14, text)
+                public RepositoryDescriptionLabel() : base(14)
                 {
                     MaxLines = 2;
                     LineHeight = 1.16;

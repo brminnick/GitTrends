@@ -7,8 +7,8 @@ namespace GitTrends.Shared
         DateTimeOffset DataDownloadedAt { get; }
         string OwnerLogin { get; }
         string OwnerAvatarUrl { get; }
-        int StarCount { get; }
-        int IssuesCount { get; }
+        long StarCount { get; }
+        long IssuesCount { get; }
         string Name { get; }
         string Description { get; }
         long ForkCount { get; }
