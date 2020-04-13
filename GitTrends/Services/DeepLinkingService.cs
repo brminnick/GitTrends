@@ -10,10 +10,6 @@ namespace GitTrends
 {
     public class DeepLinkingService
     {
-        readonly AnalyticsService _analyticsService;
-
-        public DeepLinkingService(AnalyticsService analyticsService) => _analyticsService = analyticsService;
-
         public Task ShowSettingsUI() => MainThread.InvokeOnMainThreadAsync(AppInfo.ShowSettingsUI);
 
         public Task DisplayAlert(string title, string message, string cancel) => MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, cancel));
@@ -31,7 +27,7 @@ namespace GitTrends
                 var browserLaunchOptions = new BrowserLaunchOptions
                 {
                     PreferredControlColor = currentTheme.NavigationBarTextColor,
-                    PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor,
+                    PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor
                 };
 
                 return Browser.OpenAsync(url, browserLaunchOptions);

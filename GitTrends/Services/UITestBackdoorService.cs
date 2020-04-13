@@ -17,14 +17,20 @@ namespace GitTrends
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly TrendsChartSettingsService _trendsChartSettingsService;
+        readonly NotificationService _notificationService;
+        readonly ThemeService _themeService;
 
         public UITestBackdoorService(GitHubAuthenticationService gitHubAuthenticationService,
+                                        NotificationService notificationService,
                                         GitHubGraphQLApiService gitHubGraphQLApiService,
-                                        TrendsChartSettingsService trendsChartSettingsService)
+                                        TrendsChartSettingsService trendsChartSettingsService,
+                                        ThemeService themeService)
         {
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _trendsChartSettingsService = trendsChartSettingsService;
+            _notificationService = notificationService;
+            _themeService = themeService;
         }
 
         public async Task SetGitHubUser(string token)
@@ -37,6 +43,10 @@ namespace GitTrends
             GitHubAuthenticationService.AvatarUrl = avatarUri.ToString();
             GitHubAuthenticationService.Name = name;
         }
+
+        public PreferredTheme GetPreferredTheme() => _themeService.Preference;
+
+        public bool AreNotificationsEnabled() => _notificationService.AreNotificationsEnabled;
 
         public Task TriggerPullToRefresh() => MainThread.InvokeOnMainThreadAsync(() => GetVisibleRefreshView().IsRefreshing = true);
 

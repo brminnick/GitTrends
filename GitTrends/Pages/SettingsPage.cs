@@ -1,5 +1,5 @@
-﻿using GitTrends.Mobile.Shared;
-using Xamarin.Essentials;
+﻿using System;
+using GitTrends.Mobile.Shared;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -10,30 +10,28 @@ namespace GitTrends
     public class SettingsPage : BaseContentPage<SettingsViewModel>
     {
         public SettingsPage(SettingsViewModel settingsViewModel,
-                            NotificationService notificationService,
                             TrendsChartSettingsService trendsChartSettingsService,
                             AnalyticsService analyticsService) : base(settingsViewModel, analyticsService, PageTitles.SettingsPage, true)
         {
-            const int separatorHeight = 1;
-            const int settingsHeight = 24;
-
-            notificationService.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
+            const int separatorRowHeight = 1;
+            const int settingsRowHeight = 38;
 
             Content = new Grid
             {
-                RowSpacing = 16.5,
+                RowSpacing = 8,
+                ColumnSpacing = 16.5,
 
                 Margin = new Thickness(30, 0, 30, 5),
 
                 RowDefinitions = Rows.Define(
                     (Row.GitHubUser, AbsoluteGridLength(GitHubUserView.TotalHeight)),
-                    (Row.GitHubUserSeparator, AbsoluteGridLength(separatorHeight)),
-                    (Row.Logout, AbsoluteGridLength(settingsHeight)),
-                    (Row.LogoutSeparator, AbsoluteGridLength(separatorHeight)),
-                    (Row.Notifications, AbsoluteGridLength(settingsHeight)),
-                    (Row.NotificationsSeparator, AbsoluteGridLength(separatorHeight)),
-                    (Row.Theme, AbsoluteGridLength(settingsHeight + 8)),
-                    (Row.ThemeSeparator, AbsoluteGridLength(separatorHeight)),
+                    (Row.GitHubUserSeparator, AbsoluteGridLength(separatorRowHeight)),
+                    (Row.Login, AbsoluteGridLength(settingsRowHeight)),
+                    (Row.LoginSeparator, AbsoluteGridLength(separatorRowHeight)),
+                    (Row.Notifications, AbsoluteGridLength(settingsRowHeight)),
+                    (Row.NotificationsSeparator, AbsoluteGridLength(separatorRowHeight)),
+                    (Row.Theme, AbsoluteGridLength(settingsRowHeight)),
+                    (Row.ThemeSeparator, AbsoluteGridLength(separatorRowHeight)),
                     (Row.PreferredCharts, AbsoluteGridLength(80)),
                     (Row.Copyright, Star)),
 
@@ -48,12 +46,12 @@ namespace GitTrends
 
                     new Separator().Row(Row.GitHubUserSeparator).ColumnSpan(All<Column>()),
 
-                    new SvgImage("logout.svg", getSVGIconColor).Row(Row.Logout).Column(Column.Icon),
-                    new LogoutLabel().Row(Row.Logout).Column(Column.Title),
-                    new SvgImage("right_arrow.svg", getSVGIconColor).End().Row(Row.Logout).Column(Column.Button),
-                    new ConnectToGitHubTappableArea().Row(Row.Logout).ColumnSpan(All<Column>()),
+                    new SvgImage("logout.svg", getSVGIconColor).Row(Row.Login).Column(Column.Icon),
+                    new LoginLabel().Row(Row.Login).Column(Column.Title),
+                    new SvgImage("right_arrow.svg", getSVGIconColor).End().Row(Row.Login).Column(Column.Button),
+                    new ConnectToGitHubTappableArea().Row(Row.Login).ColumnSpan(All<Column>()),
 
-                    new Separator().Row(Row.LogoutSeparator).ColumnSpan(All<Column>()),
+                    new Separator().Row(Row.LoginSeparator).ColumnSpan(All<Column>()),
 
                     new SvgImage("bell.svg", getSVGIconColor).Row(Row.Notifications).Column(Column.Icon),
                     new RegisterForNotificationsLabel().Row(Row.Notifications).Column(Column.Title),
@@ -76,19 +74,8 @@ namespace GitTrends
             static Color getSVGIconColor() => (Color)Application.Current.Resources[nameof(BaseTheme.IconColor)];
         }
 
-        enum Row { GitHubUser, GitHubUserSeparator, Logout, LogoutSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, PreferredCharts, Copyright }
+        enum Row { GitHubUser, GitHubUserSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, PreferredCharts, Copyright }
         enum Column { Icon, Title, Button }
-
-        void HandleRegisterForNotificationsCompleted(object sender, (bool IsSuccessful, string ErrorMessage) result)
-        {
-            MainThread.BeginInvokeOnMainThread(async () =>
-            {
-                if (result.IsSuccessful)
-                    await DisplayAlert("Success", "Device Registered for Notificaitons", "OK");
-                else
-                    await DisplayAlert("Registration Failed", result.ErrorMessage, "OK");
-            });
-        }
 
         class ConnectToGitHubTappableArea : View
         {
@@ -96,26 +83,37 @@ namespace GitTrends
             {
                 Opacity = 0;
 
-                this.BindTapGesture(nameof(SettingsViewModel.ConnectToGitHubButtonCommand));
+                AutomationId = SettingsPageAutomationIds.GitHubLoginLabel;
 
-                var tapGesture = new TapGestureRecognizer
-                {
-                    Command = new Command(async () =>
-                    {
-                        await this.FadeTo(0.7, 75);
-                        await this.FadeTo(0, 100);
-                    })
-                };
+                var tapGesture = new TapGestureRecognizer();
+                tapGesture.Tapped += HandleTapped;
 
                 GestureRecognizers.Add(tapGesture);
 
                 SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             }
+
+            async void HandleTapped(object sender, EventArgs e)
+            {
+                if (BindingContext is SettingsViewModel settingsViewModel
+                        && settingsViewModel.IsNotAuthenticating)
+                {
+                    Opacity = 0.7;
+
+                    settingsViewModel.ConnectToGitHubButtonCommand.Execute(null);
+
+                    await this.FadeTo(0, 350, Easing.CubicOut);
+                }
+            }
         }
 
-        class LogoutLabel : SettingsTitleLabel
+        class LoginLabel : SettingsTitleLabel
         {
-            public LogoutLabel() => this.SetBinding(TextProperty, nameof(SettingsViewModel.LoginButtonText));
+            public LoginLabel()
+            {
+                AutomationId = SettingsPageAutomationIds.GitHubLoginLabel;
+                this.SetBinding(TextProperty, nameof(SettingsViewModel.LoginLabelText));
+            }
         }
 
         class RegisterForNotificationsLabel : SettingsTitleLabel
@@ -128,11 +126,6 @@ namespace GitTrends
             public ThemeLabel() => Text = "Theme";
         }
 
-        class DarkModeLabel : SettingsTitleLabel
-        {
-            public DarkModeLabel() => Text = "Dark Mode";
-        }
-
         class Separator : BoxView
         {
             public Separator() => SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
@@ -142,6 +135,8 @@ namespace GitTrends
         {
             public EnableNotificationsSwitch()
             {
+                AutomationId = SettingsPageAutomationIds.RegisterForNotificationsSwitch;
+
                 this.SetBinding(IsToggledProperty, nameof(SettingsViewModel.IsRegisterForNotificationsSwitchToggled));
                 this.SetBinding(IsEnabledProperty, nameof(SettingsViewModel.IsRegisterForNotificationsSwitchEnabled));
             }
@@ -151,13 +146,17 @@ namespace GitTrends
         {
             public ThemePicker()
             {
-                FontSize = 14;
+                FontSize = 12;
                 FontFamily = FontFamilyConstants.RobotoRegular;
 
                 WidthRequest = 70;
 
-                HorizontalOptions = LayoutOptions.End;
+                HorizontalOptions = LayoutOptions.EndAndExpand;
+                VerticalOptions = LayoutOptions.EndAndExpand;
 
+                AutomationId = SettingsPageAutomationIds.ThemePicker;
+
+                SetDynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
                 SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 
                 this.SetBinding(ItemsSourceProperty, nameof(SettingsViewModel.ThemePickerItemsSource));

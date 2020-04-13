@@ -19,8 +19,8 @@ namespace GitTrends
             gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
-            ConnectToGitHubButtonCommand = new AsyncCommand(() => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService), _ => !IsAuthenticating);
-            DemoButtonCommand = new AsyncCommand<string>(text => ExecuteDemoButtonCommand(text), _ => !IsAuthenticating);
+            ConnectToGitHubButtonCommand = new AsyncCommand(() => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService), _ => IsNotAuthenticating);
+            DemoButtonCommand = new AsyncCommand<string>(text => ExecuteDemoButtonCommand(text), _ => IsNotAuthenticating);
             GitHubAuthenticationService = gitHubAuthenticationService;
         }
 
@@ -38,10 +38,15 @@ namespace GitTrends
             get => _isAuthenticating;
             set => SetProperty(ref _isAuthenticating, value, () =>
             {
-                OnPropertyChanged(nameof(IsNotAuthenticating));
-                OnPropertyChanged(nameof(IsDemoButtonVisible));
+                NotifyIsAuthenticatingPropertyChanged();
                 MainThread.InvokeOnMainThreadAsync(ConnectToGitHubButtonCommand.RaiseCanExecuteChanged).SafeFireAndForget(ex => Debug.WriteLine(ex));
             });
+        }
+
+        protected virtual void NotifyIsAuthenticatingPropertyChanged()
+        {
+            OnPropertyChanged(nameof(IsNotAuthenticating));
+            OnPropertyChanged(nameof(IsDemoButtonVisible));
         }
 
         protected virtual Task ExecuteDemoButtonCommand(string buttonText)

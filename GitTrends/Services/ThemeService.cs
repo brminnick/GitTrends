@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using AsyncAwaitBestPractices;
+using GitTrends.Mobile.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -46,6 +47,8 @@ namespace GitTrends
             {
                 Application.Current.Resources = theme;
 
+                OnPreferenceChanged(preferredTheme);
+
                 EnableDebugRainbows(false);
             }
         }
@@ -79,6 +82,4 @@ namespace GitTrends
 
         void OnPreferenceChanged(PreferredTheme theme) => _preferenceChangedEventManager.HandleEvent(this, theme, nameof(PreferenceChanged));
     }
-
-    public enum PreferredTheme { Default, Light, Dark }
 }

@@ -202,7 +202,7 @@ namespace GitTrends.UITests
             Assert.AreEqual(GitHubLoginButtonConstants.Disconnect, SettingsPage.GitHubButtonText);
 
             //Act
-            SettingsPage.TapGitHubButton();
+            SettingsPage.TapLoginButton();
             SettingsPage.WaitForGitHubLogoutToComplete();
 
             //Assert

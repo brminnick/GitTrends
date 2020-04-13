@@ -12,7 +12,6 @@ namespace GitTrends.UITests
     abstract class BaseTest
     {
         readonly Platform _platform;
-        readonly UserType _userType;
 
         IApp? _app;
         ReferringSitesPage? _referringSitesPage;
@@ -23,7 +22,9 @@ namespace GitTrends.UITests
         OnboardingPage? _onboardingPage;
         WelcomePage? _welcomePage;
 
-        protected BaseTest(Platform platform, UserType userType) => (_platform, _userType) = (platform, userType);
+        protected BaseTest(Platform platform, UserType userType) => (_platform, UserType) = (platform, userType);
+
+        protected UserType UserType { get; }
 
         protected IApp App => _app ?? throw new NullReferenceException();
         protected ReferringSitesPage ReferringSitesPage => _referringSitesPage ?? throw new NullReferenceException();
@@ -49,7 +50,7 @@ namespace GitTrends.UITests
 
             App.Screenshot("App Initialized");
 
-            return _userType switch
+            return UserType switch
             {
                 UserType.Demo => SetupDemoUser(),
                 UserType.LoggedIn => SetupLoggedInUser(),

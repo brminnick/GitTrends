@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
 using Xamarin.Essentials;
 
 namespace GitTrends
@@ -38,19 +40,31 @@ namespace GitTrends
             _notificationService = notificationService;
             _themeService = themeService;
 
-            CopyrightLabelTappedCommand = new AsyncCommand(ExecuteCopyrightLabelTapped);
+            CopyrightLabelTappedCommand = new AsyncCommand(ExecuteCopyrightLabelTappedCommand);
+            GitHubUserViewTappedCommand = new AsyncCommand(ExecuteGitHubUserViewTappedCommand, _ => GitHubAuthenticationService.IsAuthenticated || GitHubAuthenticationService.IsDemoUser);
 
             _gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
             IsRegisterForNotificationsSwitchToggled = notificationService.AreNotificationsEnabled;
+            ThemePickerSelectedThemeIndex = (int)themeService.Preference;
 
             SetGitHubValues();
         }
 
-        public ICommand CopyrightLabelTappedCommand { get; }
-        public IReadOnlyList<string> ThemePickerItemsSource { get; } = System.Enum.GetNames(typeof(PreferredTheme));
+        Task ExecuteGitHubUserViewTappedCommand()
+        {
+            string alias = GitHubAuthenticationService.Alias is DemoDataConstants.Alias ? nameof(GitTrends) : GitHubAuthenticationService.Alias;
+            AnalyticsService.Track("Alias Label Tapped", "Alias", alias);
 
-        public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginButtonText is GitHubLoginButtonConstants.ConnectToGitHub;
+            return _deepLinkingService.OpenBrowser($"{GitHubConstants.GitHubBaseUrl}/{alias}");
+        }
+
+        public ICommand CopyrightLabelTappedCommand { get; }
+        public ICommand GitHubUserViewTappedCommand { get; }
+        public IReadOnlyList<string> ThemePickerItemsSource { get; } = Enum.GetNames(typeof(PreferredTheme));
+
+        public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText is GitHubLoginButtonConstants.Disconnect;
+        public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginLabelText is GitHubLoginButtonConstants.ConnectToGitHub;
 
         public bool ShouldShowClonesByDefaultSwitchValue
         {
@@ -92,10 +106,14 @@ namespace GitTrends
             }
         }
 
-        public string LoginButtonText
+        public string LoginLabelText
         {
             get => _gitHubButtonText;
-            set => SetProperty(ref _gitHubButtonText, value, () => OnPropertyChanged(nameof(IsDemoButtonVisible)));
+            set => SetProperty(ref _gitHubButtonText, value, () =>
+            {
+                OnPropertyChanged(nameof(IsDemoButtonVisible));
+                OnPropertyChanged(nameof(IsAliasLabelVisible));
+            });
         }
 
         public string GitHubAvatarImageSource
@@ -134,13 +152,19 @@ namespace GitTrends
             set => SetProperty(ref _isRegisterForNotificationsSwitchToggled, value, async () => await SetNotificationsPreference(value).ConfigureAwait(false));
         }
 
+        protected override void NotifyIsAuthenticatingPropertyChanged()
+        {
+            base.NotifyIsAuthenticatingPropertyChanged();
+            OnPropertyChanged(nameof(IsAliasLabelVisible));
+        }
+
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => SetGitHubValues();
 
         void SetGitHubValues()
         {
             GitHubAliasLabelText = _gitHubAuthenticationService.IsAuthenticated ? $"@{GitHubAuthenticationService.Alias}" : string.Empty;
-            GitHubNameLabelText = _gitHubAuthenticationService.IsAuthenticated ? GitHubAuthenticationService.Name : "Not Logged In";
-            LoginButtonText = _gitHubAuthenticationService.IsAuthenticated ? $"{GitHubLoginButtonConstants.Disconnect}" : $"{GitHubLoginButtonConstants.ConnectToGitHub}";
+            GitHubNameLabelText = _gitHubAuthenticationService.IsAuthenticated ? GitHubAuthenticationService.Name : GitHubLoginButtonConstants.NotLoggedIn;
+            LoginLabelText = _gitHubAuthenticationService.IsAuthenticated ? $"{GitHubLoginButtonConstants.Disconnect}" : $"{GitHubLoginButtonConstants.ConnectToGitHub}";
 
             GitHubAvatarImageSource = "DefaultProfileImage";
 
@@ -150,7 +174,7 @@ namespace GitTrends
 
         protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService)
         {
-            AnalyticsService.Track("GitHub Button Tapped", nameof(GitHubAuthenticationService.IsAuthenticated), gitHubAuthenticationService.IsAuthenticated.ToString());
+            AnalyticsService.Track("Login Button Tapped", nameof(GitHubAuthenticationService.IsAuthenticated), gitHubAuthenticationService.IsAuthenticated.ToString());
 
             if (gitHubAuthenticationService.IsAuthenticated)
             {
@@ -170,10 +194,8 @@ namespace GitTrends
             {
                 await base.ExecuteDemoButtonCommand(buttonText).ConfigureAwait(false);
 
-                AnalyticsService.Track("Settings Demo Button Tapped");
-
+                AnalyticsService.Track("Settings Try Demo Button Tapped");
                 await _gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-
                 SetGitHubValues();
             }
             finally
@@ -209,7 +231,7 @@ namespace GitTrends
             }
         }
 
-        Task ExecuteCopyrightLabelTapped()
+        Task ExecuteCopyrightLabelTappedCommand()
         {
             AnalyticsService.Track("CreatedBy Label Tapped");
             return _deepLinkingService.OpenApp("twitter://user?id=3418408341", "https://twitter.com/intent/user?user_id=3418408341");

@@ -9,17 +9,22 @@ namespace GitTrends
 {
     class GitHubUserView : Grid
     {
-        public const int TotalHeight = _imageHeight + _nameLabelHeight + _aliasLabelHeight + _margin * 2;
+        public const int TotalHeight = _imageHeight + _nameLabelHeight + _aliasLabelHeight + _topMargin + _bottomMargin + _rowSpacing * 3;
 
         const int _imageHeight = 140;
-        const int _margin = 16;
-        const int _nameLabelHeight = 28;
+        const int _topMargin = 16;
+        const int _bottomMargin = 8;
+        const int _widthMargin = 16;
+        const int _nameLabelHeight = 20;
         const int _aliasLabelHeight = 18;
+        const int _rowSpacing = 4;
 
         public GitHubUserView()
         {
-            Margin = new Thickness(_margin);
-            RowSpacing = 6;
+            AutomationId = SettingsPageAutomationIds.GitHubUserView;
+
+            Margin = new Thickness(_widthMargin, _topMargin, _widthMargin, _bottomMargin);
+            RowSpacing = 4;
 
             RowDefinitions = Rows.Define(
                 (Row.Image, AbsoluteGridLength(_imageHeight)),
@@ -28,8 +33,11 @@ namespace GitTrends
 
             Children.Add(new GitHubAvatarImage().Row(Row.Image));
             Children.Add(new NameLabel().Row(Row.Name));
-            Children.Add(new AliasLabel().Row(Row.Alias));
             Children.Add(new IsAuthenticatingActivityIndicator().Row(Row.Name).RowSpan(2));
+            Children.Add(new AliasLabel().Row(Row.Alias));
+            Children.Add(new TryDemoButton().Row(Row.Alias));
+
+            this.BindTapGesture(nameof(SettingsViewModel.GitHubUserViewTappedCommand));
         }
 
         enum Row { Image, Name, Alias }
@@ -38,12 +46,13 @@ namespace GitTrends
         {
             public GitHubAvatarImage()
             {
-                AutomationId = SettingsPageAutomationIds.GitHubAvatarImage;
+                this.Center();
+
                 HeightRequest = _imageHeight;
                 WidthRequest = _imageHeight;
-                HorizontalOptions = LayoutOptions.Center;
-                VerticalOptions = LayoutOptions.Center;
                 Aspect = Aspect.AspectFit;
+
+                AutomationId = SettingsPageAutomationIds.GitHubAvatarImage;
 
                 this.SetBinding(SourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource));
             }
@@ -53,8 +62,11 @@ namespace GitTrends
         {
             public NameLabel()
             {
+                this.Center();
+
+                AutomationId = SettingsPageAutomationIds.GitHubNameLabel;
+
                 FontSize = _nameLabelHeight - 2;
-                HorizontalOptions = LayoutOptions.CenterAndExpand;
                 FontFamily = FontFamilyConstants.RobotoMedium;
 
                 this.SetBinding(TextProperty, nameof(SettingsViewModel.GitHubNameLabelText));
@@ -68,14 +80,38 @@ namespace GitTrends
         {
             public AliasLabel()
             {
-                FontSize = _aliasLabelHeight - 2;
-                HorizontalOptions = LayoutOptions.CenterAndExpand;
+                this.Center();
+                Opacity = 0.6;
+
+                AutomationId = SettingsPageAutomationIds.GitHubAliasLabel;
+
+                FontSize = _aliasLabelHeight - 4;
                 FontFamily = FontFamilyConstants.RobotoRegular;
-                Opacity = 0.60;
 
                 this.SetBinding(TextProperty, nameof(SettingsViewModel.GitHubAliasLabelText));
-                this.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsNotAuthenticating));
+                this.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsAliasLabelVisible));
 
+                SetDynamicResource(TextColorProperty, nameof(BaseTheme.GitHubHandleColor));
+            }
+        }
+
+        class TryDemoButton : Button
+        {
+            public TryDemoButton()
+            {
+                this.Center();
+                Opacity = 0.6;
+
+                AutomationId = SettingsPageAutomationIds.DemoModeButton;
+
+                FontSize = _aliasLabelHeight - 4;
+                FontFamily = FontFamilyConstants.RobotoRegular;
+                Text = GitHubLoginButtonConstants.TryDemo;
+
+                this.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsDemoButtonVisible));
+                this.SetBinding(CommandProperty, nameof(SettingsViewModel.DemoButtonCommand));
+
+                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
                 SetDynamicResource(TextColorProperty, nameof(BaseTheme.GitHubHandleColor));
             }
         }

@@ -52,7 +52,10 @@ namespace GitTrends.UITests
             Assert.IsTrue(referringSiteList.Any());
 
             if (isUrlValid && App is iOSApp)
+            {
+                SettingsPage.WaitForBrowserToOpen();
                 Assert.IsTrue(ReferringSitesPage.IsBrowserOpen);
+            }
             else if (!isUrlValid)
                 Assert.IsTrue(App.Query(referringSite.Referrer).Any());
 

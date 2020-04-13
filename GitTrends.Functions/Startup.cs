@@ -16,7 +16,7 @@ namespace GitTrends.Functions
         public override void Configure(IFunctionsHostBuilder builder)
         {
             builder.Services.AddRefitClient<IGitHubAuthApi>()
-              .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubAuthBaseUrl))
+              .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubBaseUrl))
               .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip })
               .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
 

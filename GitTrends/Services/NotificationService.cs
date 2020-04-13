@@ -37,6 +37,12 @@ namespace GitTrends
             remove => _sortingOptionRequestedEventManager.RemoveEventHandler(value);
         }
 
+        public event EventHandler<(bool isSuccessful, string errorMessage)> RegisterForNotificationsCompleted
+        {
+            add => _registerForNotificationCompletedEventHandler.AddEventHandler(value);
+            remove => _registerForNotificationCompletedEventHandler.RemoveEventHandler(value);
+        }
+
         static INotificationManager NotificationManager => ShinyHost.Resolve<INotificationManager>();
 
         public bool AreNotificationsEnabled
@@ -49,12 +55,6 @@ namespace GitTrends
         {
             get => Preferences.Get(nameof(HaveNotificationsBeenRequested), false);
             private set => Preferences.Set(nameof(HaveNotificationsBeenRequested), value);
-        }
-
-        public event EventHandler<(bool isSuccessful, string errorMessage)> RegisterForNotificationsCompleted
-        {
-            add => _registerForNotificationCompletedEventHandler.AddEventHandler(value);
-            remove => _registerForNotificationCompletedEventHandler.RemoveEventHandler(value);
         }
 
         public void UnRegister() => AreNotificationsEnabled = false;

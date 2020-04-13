@@ -65,6 +65,7 @@ namespace GitTrends
             Add(nameof(GitTrendsImageBackgroundColor), GitTrendsImageBackgroundColor);
 
             Add(nameof(GitHubButtonSurfaceColor), GitHubButtonSurfaceColor);
+            Add(nameof(GitHubHandleColor), GitHubHandleColor);
 
             Add(nameof(PrimaryColor), PrimaryColor);
         }

@@ -110,6 +110,8 @@
     <Compile Include="CustomRenderers\LabelCustomRenderer.cs" />
     <Compile Include="MainApplication.cs" />
     <Compile Include="CustomRenderers\LowerCaseButtonRenderer.cs" />
+    <Compile Include="MainApplication.BackdoorMethods.cs" />
+    <Compile Include="CustomRenderers\PickerCustomRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

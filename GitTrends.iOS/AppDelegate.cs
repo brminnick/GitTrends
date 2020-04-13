@@ -11,7 +11,7 @@ using UIKit;
 namespace GitTrends.iOS
 {
     [Register(nameof(AppDelegate))]
-    public class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
+    public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
@@ -31,10 +31,6 @@ namespace GitTrends.iOS
                 HttpHeadersTimeout = 60,
                 HttpClient = new HttpClient(new NSUrlSessionHandler())
             });
-
-#if !AppStore
-            Xamarin.Calabash.Start();
-#endif
 
             PrintFontNamesToConsole();
 
@@ -72,86 +68,11 @@ namespace GitTrends.iOS
             }
         }
 
-        public override async void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
-        {
+        public override async void ReceivedLocalNotification(UIApplication application, UILocalNotification notification) =>
             await HandleLocalNotification(notification).ConfigureAwait(false);
-        }
 
-        public override void PerformFetch(UIApplication application, Action<UIBackgroundFetchResult> completionHandler)
-        {
+        public override void PerformFetch(UIApplication application, Action<UIBackgroundFetchResult> completionHandler) =>
             Shiny.Jobs.JobManager.OnBackgroundFetch(completionHandler);
-        }
-
-#if !AppStore
-        #region UI Test Back Door Methods
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.SetGitHubUser + ":")]
-        public async void SetGitHubUser(NSString accessToken)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            await backdoorService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
-        }
-
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.TriggerPullToRefresh + ":")]
-        public async void TriggerRepositoriesPullToRefresh(NSString noValue)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            await backdoorService.TriggerPullToRefresh().ConfigureAwait(false);
-        }
-
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.GetVisibleCollection + ":")]
-        public NSString GetVisibleRepositoryList(NSString noValue)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            var serializedCollection = Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleCollection());
-            return new NSString(serializedCollection);
-        }
-
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.GetCurrentTrendsChartOption + ":")]
-        public NSString GetCurrentTrendsChartOption(NSString noValue)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            var serializedTrendChartOption = Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetCurrentTrendsChartOption());
-            return new NSString(serializedTrendChartOption);
-        }
-
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.IsTrendsSeriesVisible + ":")]
-        public NSString IsTrendsSeriesVisible(NSString seriesLabel)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            var isSeriesVisible = backdoorService.IsTrendsSeriesVisible(seriesLabel.ToString());
-            return new NSString(Newtonsoft.Json.JsonConvert.SerializeObject(isSeriesVisible));
-        }
-
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.GetCurrentOnboardingPageNumber + ":")]
-        public NSString GetCurrentOnboardingPageNumber(NSString noValue)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            var pageNumber = backdoorService.GetCurrentOnboardingPageNumber();
-            return new NSString(Newtonsoft.Json.JsonConvert.SerializeObject(pageNumber));
-        }
-
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.PopPage + ":")]
-        public async void PopPage(NSString noValue)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            await backdoorService.PopPage().ConfigureAwait(false);
-        }
-        #endregion
-#endif
 
         Task HandleLocalNotification(UILocalNotification notification)
         {

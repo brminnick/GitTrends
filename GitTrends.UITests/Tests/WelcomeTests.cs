@@ -30,7 +30,7 @@ namespace GitTrends.UITests
             Assert.AreEqual(GitHubLoginButtonConstants.Disconnect, SettingsPage.GitHubButtonText);
 
             //Act
-            SettingsPage.TapGitHubButton();
+            SettingsPage.TapLoginButton();
             SettingsPage.WaitForGitHubLogoutToComplete();
 
             //Assert
@@ -60,7 +60,7 @@ namespace GitTrends.UITests
         }
 
         [Test]
-        public async Task VerifyConnectToGitHubButton()
+        public void VerifyConnectToGitHubButton()
         {
             //Arrange
 
@@ -68,9 +68,11 @@ namespace GitTrends.UITests
             WelcomePage.TapConnectToGitHubButton();
 
             //Assert
-            await Task.Delay(1000).ConfigureAwait(false);
             if (App is iOSApp)
+            {
+                SettingsPage.WaitForBrowserToOpen();
                 Assert.IsTrue(WelcomePage.IsBrowserOpen);
+            }
         }
     }
 }

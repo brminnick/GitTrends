@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using NUnit.Framework;
@@ -27,7 +28,7 @@ namespace GitTrends.UITests
         }
 
         [Test]
-        public async Task EnsureCreatedByLabelOpensBrowser()
+        public void EnsureCreatedByLabelOpensBrowser()
         {
             //Arrange
 
@@ -40,11 +41,53 @@ namespace GitTrends.UITests
                 SettingsPage.WaitForBrowserToOpen();
                 Assert.IsTrue(SettingsPage.IsBrowserOpen);
             }
+        }
+
+        [Test]
+        public void EnsureGitHubUserViewOpensBrowser()
+        {
+            if (UserType is UserType.LoggedIn)
+                EnsureGitHubUserViewOpensBrowser_LoggedIn();
+            else if (UserType is UserType.Demo)
+                EnsureGitHubUserViewOpensBrowser_Demo();
             else
-            {
-                await Task.Delay(2000).ConfigureAwait(false);
-                App.Screenshot("Browswer Opened");
-            }
+                throw new NotImplementedException();
+        }
+
+        [Test]
+        public void VerifyNotificationsSwitch()
+        {
+            //Arrange
+            bool areNotificationsEnabled_Initial = SettingsPage.AreNotificationsEnabled;
+            bool areNotificationsEnabled_Final;
+
+            //Act
+            SettingsPage.ToggleRegisterForNotificationsSwitch();
+            areNotificationsEnabled_Final = SettingsPage.AreNotificationsEnabled;
+
+            //Assert
+            Assert.IsFalse(areNotificationsEnabled_Initial);
+            Assert.IsTrue(areNotificationsEnabled_Final);
+        }
+
+        [Test]
+        public void VerifyThemePicker()
+        {
+            //Arrange
+            PreferredTheme preferredTheme_Initial = SettingsPage.PreferredTheme;
+            PreferredTheme preferredTheme_Light, preferredTheme_Dark;
+
+            //Act
+            SettingsPage.SelectTheme(PreferredTheme.Light);
+            preferredTheme_Light = SettingsPage.PreferredTheme;
+
+            SettingsPage.SelectTheme(PreferredTheme.Dark);
+            preferredTheme_Dark = SettingsPage.PreferredTheme;
+
+            //Assert
+            Assert.AreEqual(PreferredTheme.Default, preferredTheme_Initial);
+            Assert.AreEqual(PreferredTheme.Light, preferredTheme_Light);
+            Assert.AreEqual(PreferredTheme.Dark, preferredTheme_Dark);
         }
 
         [Test]
@@ -89,6 +132,65 @@ namespace GitTrends.UITests
             Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalClonesTitle));
             Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueViewsTitle));
             Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueClonesTitle));
+        }
+
+        void EnsureGitHubUserViewOpensBrowser_LoggedIn()
+        {
+            //Arrange
+            var aliasLabelText = SettingsPage.GitHubAliasLabelText;
+            var nameLabelText = SettingsPage.GitHubAliasNameText;
+
+            //Act
+            SettingsPage.TapGitHubUserView();
+
+            //Assert
+            Assert.AreEqual("@" + LoggedInUserConstants.Alias, aliasLabelText);
+            Assert.AreEqual(LoggedInUserConstants.Name, nameLabelText);
+
+            if (App is iOSApp)
+            {
+                SettingsPage.WaitForBrowserToOpen();
+                Assert.IsTrue(SettingsPage.IsBrowserOpen);
+            }
+        }
+
+        void EnsureGitHubUserViewOpensBrowser_Demo()
+        {
+            //Arrange
+            string nameLabelText, aliasLabelText;
+
+            //Act
+            if (SettingsPage.GitHubButtonText is GitHubLoginButtonConstants.Disconnect)
+            {
+                SettingsPage.TapLoginButton();
+            }
+
+            SettingsPage.TapGitHubUserView();
+
+            //Assert
+            if (App is iOSApp)
+            {
+                Assert.IsFalse(SettingsPage.IsBrowserOpen);
+            }
+
+            //Act
+            SettingsPage.TapDemoModeButton();
+            SettingsPage.WaitForGitHubLoginToComplete();
+
+            aliasLabelText = SettingsPage.GitHubAliasLabelText;
+            nameLabelText = SettingsPage.GitHubAliasNameText;
+
+            SettingsPage.TapGitHubUserView();
+
+            //Assert
+            Assert.AreEqual("@" + DemoDataConstants.Alias, aliasLabelText);
+            Assert.AreEqual(DemoDataConstants.Name, nameLabelText);
+
+            if (App is iOSApp)
+            {
+                SettingsPage.WaitForBrowserToOpen();
+                Assert.IsTrue(SettingsPage.IsBrowserOpen);
+            }
         }
     }
 }

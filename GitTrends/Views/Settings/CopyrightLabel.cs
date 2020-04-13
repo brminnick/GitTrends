@@ -11,7 +11,7 @@ namespace GitTrends
         {
             this.BindTapGesture(nameof(SettingsViewModel.CopyrightLabelTappedCommand));
 
-            AutomationId = SettingsPageAutomationIds.CreatedByLabel;
+            AutomationId = SettingsPageAutomationIds.CopyrightLabel;
 
             LineBreakMode = LineBreakMode.WordWrap;
 

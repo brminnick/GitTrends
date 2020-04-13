@@ -66,6 +66,7 @@
         <Compile Include="Tests\OnboardingTests.cs" />
         <Compile Include="Pages\WelcomePage.cs" />
         <Compile Include="Tests\WelcomeTests.cs" />
+        <Compile Include="Constants\LoggedInUserConstants.cs" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Pages\" />
@@ -73,6 +74,7 @@
         <Folder Include="Services\" />
         <Folder Include="Models\" />
         <Folder Include="Tests\Base\" />
+        <Folder Include="Constants\" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="System" />

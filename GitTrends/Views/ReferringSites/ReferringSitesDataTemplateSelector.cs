@@ -181,18 +181,25 @@ namespace GitTrends
             {
                 public FavIconImage(in ImageSource? imageSource)
                 {
+                    const int padding = 2;
+
                     HeightRequest = _favIconHeight;
                     WidthRequest = _favIconWidth;
                     CornerRadius = Math.Max(_favIconHeight, _favIconWidth) / 2;
                     HorizontalOptions = VerticalOptions = LayoutOptions.Start;
                     BackgroundColor = Color.White;
 
-                    Padding = new Thickness(1);
+                    Padding = new Thickness(padding);
 
                     Debug.WriteLine($"FavIconImageSource: {imageSource}");
 
                     Content = new CircleImage
                     {
+                        Aspect = Aspect.AspectFit,
+                        HorizontalOptions = LayoutOptions.Center,
+                        VerticalOptions = LayoutOptions.Center,
+                        HeightRequest = _favIconHeight - padding * 2,
+                        WidthRequest = _favIconWidth - padding * 2,
                         Source = imageSource
                     };
                 }

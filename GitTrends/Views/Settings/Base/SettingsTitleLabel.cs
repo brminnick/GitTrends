@@ -16,7 +16,7 @@ namespace GitTrends
             FontFamily = FontFamilyConstants.RobotoMedium;
             LineBreakMode = LineBreakMode.TailTruncation;
 
-            SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+            SetDynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
         }
     }
 }

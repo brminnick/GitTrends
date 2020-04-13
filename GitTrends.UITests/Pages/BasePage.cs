@@ -26,6 +26,16 @@ namespace GitTrends.UITests
         public string PageTitle { get; }
         protected IApp App { get; }
 
+        public void WaitForBrowserToOpen()
+        {
+            if (App is iOSApp iOSApp)
+                iOSApp.WaitForElement(x => x.Class("SFSafariView"));
+            else
+                throw new NotSupportedException("Browser Can Only Be Verified on iOS");
+
+            App.Screenshot("Browser Opened");
+        }
+
         public void DismissSyncfusionLicensePopup()
         {
             try

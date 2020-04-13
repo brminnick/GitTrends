@@ -1,5 +1,6 @@
 ﻿using System;
 using FFImageLoading.Svg.Forms;
+using GitTrends.Mobile.Shared;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 
@@ -14,7 +15,7 @@ namespace GitTrends
             if (!svgFileName.EndsWith(".svg"))
                 throw new ArgumentException($"{nameof(svgFileName)} must end with .svg", nameof(svgFileName));
 
-            Application.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
+            ThemeService.PreferenceChanged += HandlePreferenceChanged;
 
             this.FillExpand();
 
@@ -28,7 +29,7 @@ namespace GitTrends
             HeightRequest = heightRequest;
         }
 
-        void HandleRequestedThemeChanged(object sender, AppThemeChangedEventArgs e) => UpdateSVGColor();
+        void HandlePreferenceChanged(object sender, PreferredTheme e) => UpdateSVGColor();
 
         void UpdateSVGColor() => ReplaceStringMap = SvgService.GetColorStringMap(_getTextColor());
     }

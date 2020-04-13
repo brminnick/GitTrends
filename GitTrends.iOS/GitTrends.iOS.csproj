@@ -106,6 +106,7 @@
     <Compile Include="Services\Environment_iOS.cs" />
     <Compile Include="Services\SKStoreReviewController.cs" />
     <Compile Include="CustomRenderers\PickerCustomRenderer.cs" />
+    <Compile Include="AppDelegate.BackdoorMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
