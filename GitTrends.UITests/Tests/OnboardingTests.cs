@@ -23,6 +23,9 @@ namespace GitTrends.UITests
         [Test]
         public async Task EnsureEachPageLoads()
         {
+            //Arrange
+            bool areNotificationsEnabled_Initial = OnboardingPage.AreNotificationsEnabeld;
+            bool areNotificationsEnabled_Final;
 
             //Assert
             Assert.AreEqual(0, OnboardingPage.CurrentPageNumber);
@@ -39,10 +42,16 @@ namespace GitTrends.UITests
             //Act
             OnboardingPage.MoveToNextPage();
             await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
+            OnboardingPage.TapEnableNotificationsButton();
 
             //Assert
+            areNotificationsEnabled_Final = OnboardingPage.AreNotificationsEnabeld;
+
             Assert.AreEqual(2, OnboardingPage.CurrentPageNumber);
             Assert.AreEqual(OnboardingConstants.NotificationsPageTitle, OnboardingPage.TitleLabelText);
+
+            Assert.IsTrue(areNotificationsEnabled_Final);
+            Assert.IsFalse(areNotificationsEnabled_Initial);
 
             //Act
             OnboardingPage.MoveToNextPage();

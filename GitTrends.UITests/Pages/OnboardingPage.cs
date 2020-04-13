@@ -27,6 +27,8 @@ namespace GitTrends.UITests
 
         public int CurrentPageNumber => App.InvokeBackdoorMethod<int>(BackdoorMethodConstants.GetCurrentOnboardingPageNumber);
 
+        public bool AreNotificationsEnabeld => App.InvokeBackdoorMethod<bool>(BackdoorMethodConstants.AreNotificationsEnabled);
+
         public override Task WaitForPageToLoad(TimeSpan? timeout = null)
         {
             App.WaitForElement(_pageIndicator);
