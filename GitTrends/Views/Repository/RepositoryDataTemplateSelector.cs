@@ -236,31 +236,33 @@ namespace GitTrends
 
         class LargeScreenTrendingImage : TrendingImage
         {
-            protected override async void OnSizeAllocated(double width, double height)
+            protected override void OnSizeAllocated(double width, double height)
             {
                 base.OnSizeAllocated(width, height);
 
-                //Reveal the tag if its width meets the SvgWidthRequest by changing its color from matching the CardSurfaceColor
-                if (width >= SvgWidthRequest)
-                    await UpdateColor(() => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)]);
-                else
-                    await UpdateColor(() => (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)]);
+                //Reveal the tag `if (width >= SvgWidthRequest)` by changing its color from the default color which matches the CardSurfaceColor
+                if (IsVisible && width >= SvgWidthRequest)
+                    GetTextColor = () => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)];
+                else if (IsVisible)
+                    GetTextColor = () => (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)];
             }
         }
 
         class SmallScreenTrendingImage : TrendingImage
         {
-            public SmallScreenTrendingImage(in LargeScreenTrendingImage largeScreenTrendingImage) =>
-                largeScreenTrendingImage.SvgColorChanged += HandleLargeScreenTrendingImageSvgColorChanged;
+            public SmallScreenTrendingImage(in LargeScreenTrendingImage largeScreenTrendingImage)
+            {
+                SetBinding(GetTextColorProperty, new Binding(nameof(GetTextColor), source: largeScreenTrendingImage, converter: LargeScreenTrendingImageTextColorConverter));
+            }
 
-            async void HandleLargeScreenTrendingImageSvgColorChanged(object sender, Color color)
+            static FuncConverter<Func<Color>, Func<Color>> LargeScreenTrendingImageTextColorConverter { get; } = new FuncConverter<Func<Color>, Func<Color>>(getLargeScreenTextColor =>
             {
                 //Reveal the tag if the LargeScreenTrendingImage is not shown by changing its color from matching the CardSurfaceColor
-                if (color == (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)])
-                    await UpdateColor(() => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)]);
+                if (getLargeScreenTextColor() == (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)])
+                    return () => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)];
                 else
-                    await UpdateColor(() => (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)]);
-            }
+                    return () => (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)];
+            });
         }
 
         abstract class TrendingImage : RepositoryStatSVGImage

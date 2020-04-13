@@ -12,9 +12,8 @@ namespace GitTrends
 {
     public class SvgImage : SvgCachedImage
     {
-        readonly WeakEventManager<Color> _svgColorChangedEventManager = new WeakEventManager<Color>();
-
-        Func<Color> _getTextColor;
+        public static readonly BindableProperty GetTextColorProperty =
+            BindableProperty.Create(nameof(GetTextColorProperty), typeof(Func<Color>), typeof(SvgImage), (Func<Color>)(() => Color.Default), propertyChanged: HandleGetTextColorPropertyChanged);
 
         public SvgImage(in string svgFileName, in Func<Color> getTextColor, double widthRequest = 24, double heightRequest = 24)
         {
@@ -25,9 +24,7 @@ namespace GitTrends
 
             this.FillExpand();
 
-            _getTextColor = getTextColor;
-
-            SetSvgColor();
+            GetTextColor = getTextColor;
 
             Source = SvgService.GetFullPath(svgFileName);
 
@@ -35,25 +32,31 @@ namespace GitTrends
             HeightRequest = heightRequest;
         }
 
-        public event EventHandler<Color> SvgColorChanged
+        public Func<Color> GetTextColor
         {
-            add => _svgColorChangedEventManager.AddEventHandler(value);
-            remove => _svgColorChangedEventManager.RemoveEventHandler(value);
+            get => (Func<Color>)GetValue(GetTextColorProperty);
+            set
+            {
+                SetSvgColorAsync().SafeFireAndForget();
+
+                if (value() != GetTextColor())
+                {
+                    SetValue(GetTextColorProperty, value);
+                    OnPropertyChanged(nameof(GetTextColor));
+                }
+            }
         }
 
-        public async Task UpdateColor(Func<Color> getTextColor)
+        static void HandleGetTextColorPropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            _getTextColor = getTextColor;
-            await SetSvgColorAsync();
-            OnSvgColorChanged(getTextColor());
+            var svgImage = (SvgImage)bindable;
+            svgImage.GetTextColor = (Func<Color>)newValue;
         }
 
         void HandlePreferenceChanged(object sender, PreferredTheme e) => SetSvgColor();
 
         Task SetSvgColorAsync() => MainThread.InvokeOnMainThreadAsync(SetSvgColor);
 
-        void SetSvgColor() => ReplaceStringMap = SvgService.GetColorStringMap(_getTextColor());
-
-        void OnSvgColorChanged(Color color) => _svgColorChangedEventManager.HandleEvent(this, color, nameof(SvgColorChanged));
+        void SetSvgColor() => ReplaceStringMap = SvgService.GetColorStringMap(GetTextColor());
     }
 }
