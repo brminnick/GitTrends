@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using GitTrends.Mobile.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
@@ -17,62 +16,42 @@ namespace GitTrends
 
         class ReferringSitesDataTemplate : DataTemplate
         {
-            const int _favIconWidth = MobileReferringSiteModel.FavIconSize;
-            const int _favIconHeight = MobileReferringSiteModel.FavIconSize;
-
-            public ReferringSitesDataTemplate(MobileReferringSiteModel referringSiteModel) : base(() => CreateReferringSitesDataTemplate(referringSiteModel))
+            public ReferringSitesDataTemplate(MobileReferringSiteModel referringSiteModel) : base(() => new CardView(referringSiteModel))
             {
             }
 
-            enum Row { Title, Description }
-            enum Column { FavIcon, FavIconPadding, Site, SitePadding, Referrals, ReferralPadding, Separator, UniquePadding, Uniques }
-
-            static CardView CreateReferringSitesDataTemplate(in MobileReferringSiteModel referringSiteModel) => new CardView(CreateViews(referringSiteModel));
-
-            static IEnumerable<View> CreateViews(in MobileReferringSiteModel referringSiteModel) => new View[]
-            {
-                new FavIconImage(referringSiteModel.FavIcon).Row(Row.Title).Column(Column.FavIcon).RowSpan(2),
-                new TitleLabel("SITE").Row(Row.Title).Column(Column.Site),
-                new PrimaryColorLabel(referringSiteModel.Referrer).Row(Row.Description).Column(Column.Site),
-                new TitleLabel("REFERRALS").Row(Row.Title).Column(Column.Referrals).Center(),
-                new StatisticsLabel(12, referringSiteModel.TotalCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular).Row(Row.Description).Column(Column.Referrals).Center(),
-                new Separator().Row(Row.Title).Column(Column.Separator).RowSpan(2).FillExpandVertical(),
-                new TitleLabel("UNIQUE").Row(Row.Title).Column(Column.Uniques).Center(),
-                new StatisticsLabel(12, referringSiteModel.TotalUniqueCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular).Row(Row.Description).Column(Column.Uniques).Center()
-            };
-
             class CardView : Grid
             {
-                public CardView(in IEnumerable<View> children)
+                public CardView(in MobileReferringSiteModel referringSiteModel)
                 {
                     RowSpacing = 0;
                     RowDefinitions = Rows.Define(
-                        (CardViewRow.TopPadding, AbsoluteGridLength(8)),
-                        (CardViewRow.Card, StarGridLength(1)),
-                        (CardViewRow.BottomPadding, AbsoluteGridLength(8)));
+                        (Row.TopPadding, AbsoluteGridLength(8)),
+                        (Row.Card, StarGridLength(1)),
+                        (Row.BottomPadding, AbsoluteGridLength(8)));
 
                     ColumnDefinitions = Columns.Define(
-                        (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
-                        (CardViewColumn.Card, StarGridLength(1)),
-                        (CardViewColumn.RightPadding, AbsoluteGridLength(16)));
+                        (Column.LeftPadding, AbsoluteGridLength(16)),
+                        (Column.Card, StarGridLength(1)),
+                        (Column.RightPadding, AbsoluteGridLength(16)));
 
-                    Children.Add(new CardViewFrame(children).Row(CardViewRow.Card).Column(CardViewColumn.Card));
+                    Children.Add(new CardViewFrame(referringSiteModel).Row(Row.Card).Column(Column.Card));
 
                     SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
                 }
 
-                enum CardViewRow { TopPadding, Card, BottomPadding }
-                enum CardViewColumn { LeftPadding, Card, RightPadding }
+                enum Row { TopPadding, Card, BottomPadding }
+                enum Column { LeftPadding, Card, RightPadding }
 
                 class CardViewFrame : PancakeView
                 {
-                    public CardViewFrame(in IEnumerable<View> children)
+                    public CardViewFrame(in MobileReferringSiteModel referringSiteModel)
                     {
                         CornerRadius = 4;
                         HasShadow = false;
                         Padding = new Thickness(16);
                         BorderThickness = 2;
-                        Content = new ContentGrid(children);
+                        Content = new ContentGrid(referringSiteModel);
 
                         SetDynamicResource(BorderColorProperty, nameof(BaseTheme.CardBorderColor));
                         SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
@@ -81,7 +60,10 @@ namespace GitTrends
 
                 class ContentGrid : Grid
                 {
-                    public ContentGrid(in IEnumerable<View> children)
+                    const int _favIconWidth = MobileReferringSiteModel.FavIconSize;
+                    const int _favIconHeight = MobileReferringSiteModel.FavIconSize;
+
+                    public ContentGrid(in MobileReferringSiteModel referringSiteModel)
                     {
                         const int rowSpacing = 6;
 
@@ -106,102 +88,124 @@ namespace GitTrends
                             (Column.UniquePadding, AbsoluteGridLength(4)),
                             (Column.Uniques, StarGridLength(1)));
 
-                        foreach (var child in children)
+                        Children.Add(new FavIconImage(referringSiteModel.FavIcon)
+                                            .Row(Row.Title).Column(Column.FavIcon).RowSpan(2));
+
+                        Children.Add(new TitleLabel("SITE")
+                                            .Row(Row.Title).Column(Column.Site));
+
+                        Children.Add(new PrimaryColorLabel(referringSiteModel.Referrer)
+                                            .Row(Row.Description).Column(Column.Site));
+
+                        Children.Add(new TitleLabel("REFERRALS")
+                                            .Row(Row.Title).Column(Column.Referrals).Center());
+
+                        Children.Add(new StatisticsLabel(12, referringSiteModel.TotalCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular)
+                                            .Row(Row.Description).Column(Column.Referrals).Center());
+
+                        Children.Add(new Separator()
+                                            .Row(Row.Title).Column(Column.Separator).RowSpan(2).FillExpandVertical());
+
+                        Children.Add(new TitleLabel("UNIQUE")
+                                            .Row(Row.Title).Column(Column.Uniques).Center());
+
+                        Children.Add(new StatisticsLabel(12, referringSiteModel.TotalUniqueCount, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular)
+                                            .Row(Row.Description).Column(Column.Uniques).Center());
+                    }
+
+                    enum Row { Title, Description }
+                    enum Column { FavIcon, FavIconPadding, Site, SitePadding, Referrals, ReferralPadding, Separator, UniquePadding, Uniques }
+
+                    class TitleLabel : Label
+                    {
+
+                        public TitleLabel(in string text)
                         {
-                            Children.Add(child);
+                            Text = text;
+                            MaxLines = 1;
+                            FontSize = 12;
+                            CharacterSpacing = 1.56;
+                            HorizontalOptions = LayoutOptions.Start;
+                            HorizontalTextAlignment = TextAlignment.Start;
+                            VerticalOptions = LayoutOptions.Start;
+                            VerticalTextAlignment = TextAlignment.Start;
+                            FontFamily = FontFamilyConstants.RobotoMedium;
+                            LineBreakMode = LineBreakMode.TailTruncation;
+
+                            SetDynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
                         }
                     }
-                }
-            }
 
-            class TitleLabel : Label
-            {
-
-                public TitleLabel(in string text)
-                {
-                    Text = text;
-                    MaxLines = 1;
-                    FontSize = 12;
-                    CharacterSpacing = 1.56;
-                    HorizontalOptions = LayoutOptions.Start;
-                    HorizontalTextAlignment = TextAlignment.Start;
-                    VerticalOptions = LayoutOptions.Start;
-                    VerticalTextAlignment = TextAlignment.Start;
-                    FontFamily = FontFamilyConstants.RobotoMedium;
-                    LineBreakMode = LineBreakMode.TailTruncation;
-
-                    SetDynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
-                }
-            }
-
-            class StatisticsLabel : Label
-            {
-                public StatisticsLabel(in double fontSize, in long number, in string textColorThemeName, in string fontFamily)
-                {
-                    Text = number.ConvertToAbbreviatedText();
-                    FontSize = fontSize;
-
-                    HorizontalOptions = LayoutOptions.FillAndExpand;
-                    MaxLines = 1;
-                    HorizontalTextAlignment = TextAlignment.Start;
-                    VerticalTextAlignment = TextAlignment.End;
-                    LineBreakMode = LineBreakMode.TailTruncation;
-                    FontFamily = fontFamily;
-
-                    SetDynamicResource(TextColorProperty, textColorThemeName);
-                }
-            }
-
-            class PrimaryColorLabel : Label
-            {
-                public PrimaryColorLabel(in string text)
-                {
-                    Text = text;
-                    MaxLines = 1;
-                    FontSize = 12;
-                    HorizontalTextAlignment = TextAlignment.Start;
-                    HorizontalOptions = LayoutOptions.Start;
-                    VerticalTextAlignment = TextAlignment.End;
-                    FontFamily = FontFamilyConstants.RobotoRegular;
-                    LineBreakMode = LineBreakMode.TailTruncation;
-
-                    SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
-                }
-            }
-
-            class Separator : BoxView
-            {
-                public Separator()
-                {
-                    SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
-                }
-            }
-
-            class FavIconImage : PancakeView
-            {
-                public FavIconImage(in ImageSource? imageSource)
-                {
-                    const int padding = 2;
-
-                    HeightRequest = _favIconHeight;
-                    WidthRequest = _favIconWidth;
-                    CornerRadius = Math.Max(_favIconHeight, _favIconWidth) / 2;
-                    HorizontalOptions = VerticalOptions = LayoutOptions.Start;
-                    BackgroundColor = Color.White;
-
-                    Padding = new Thickness(padding);
-
-                    Debug.WriteLine($"FavIconImageSource: {imageSource}");
-
-                    Content = new CircleImage
+                    class StatisticsLabel : Label
                     {
-                        Aspect = Aspect.AspectFit,
-                        HorizontalOptions = LayoutOptions.Center,
-                        VerticalOptions = LayoutOptions.Center,
-                        HeightRequest = _favIconHeight - padding * 2,
-                        WidthRequest = _favIconWidth - padding * 2,
-                        Source = imageSource
-                    };
+                        public StatisticsLabel(in double fontSize, in long number, in string textColorThemeName, in string fontFamily)
+                        {
+                            Text = number.ConvertToAbbreviatedText();
+                            FontSize = fontSize;
+
+                            HorizontalOptions = LayoutOptions.FillAndExpand;
+                            MaxLines = 1;
+                            HorizontalTextAlignment = TextAlignment.Start;
+                            VerticalTextAlignment = TextAlignment.End;
+                            LineBreakMode = LineBreakMode.TailTruncation;
+                            FontFamily = fontFamily;
+
+                            SetDynamicResource(TextColorProperty, textColorThemeName);
+                        }
+                    }
+
+                    class PrimaryColorLabel : Label
+                    {
+                        public PrimaryColorLabel(in string text)
+                        {
+                            Text = text;
+                            MaxLines = 1;
+                            FontSize = 12;
+                            HorizontalTextAlignment = TextAlignment.Start;
+                            HorizontalOptions = LayoutOptions.Start;
+                            VerticalTextAlignment = TextAlignment.End;
+                            FontFamily = FontFamilyConstants.RobotoRegular;
+                            LineBreakMode = LineBreakMode.TailTruncation;
+
+                            SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+                        }
+                    }
+
+                    class Separator : BoxView
+                    {
+                        public Separator()
+                        {
+                            SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
+                        }
+                    }
+
+                    class FavIconImage : PancakeView
+                    {
+                        public FavIconImage(in ImageSource? imageSource)
+                        {
+                            const int padding = 1;
+
+                            HeightRequest = _favIconHeight;
+                            WidthRequest = _favIconWidth;
+                            CornerRadius = Math.Max(_favIconHeight, _favIconWidth) / 2;
+                            HorizontalOptions = VerticalOptions = LayoutOptions.Start;
+                            BackgroundColor = Color.White;
+
+                            Padding = new Thickness(padding);
+
+                            Debug.WriteLine($"FavIconImageSource: {imageSource}");
+
+                            Content = new CircleImage
+                            {
+                                Aspect = Aspect.AspectFit,
+                                HorizontalOptions = LayoutOptions.Center,
+                                VerticalOptions = LayoutOptions.Center,
+                                HeightRequest = _favIconHeight - padding * 2,
+                                WidthRequest = _favIconWidth - padding * 2,
+                                Source = imageSource
+                            };
+                        }
+                    }
                 }
             }
         }
