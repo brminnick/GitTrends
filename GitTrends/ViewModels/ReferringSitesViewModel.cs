@@ -1,23 +1,31 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Shared;
+using Refit;
 
 namespace GitTrends
 {
     class ReferringSitesViewModel : BaseViewModel
     {
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly DeepLinkingService _deepLinkingService;
 
         bool _isRefreshing;
         bool _isActivityIndicatorVisible;
         IReadOnlyList<MobileReferringSiteModel> _mobileReferringSiteList = Enumerable.Empty<MobileReferringSiteModel>().ToList();
 
-        public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service, AnalyticsService analyticsService) : base(analyticsService)
+        public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service,
+                                        DeepLinkingService deepLinkingService,
+                                        AnalyticsService analyticsService) : base(analyticsService)
         {
             _gitHubApiV3Service = gitHubApiV3Service;
+            _deepLinkingService = deepLinkingService;
+
             RefreshCommand = new AsyncCommand<(string Owner, string Repository)>(repo => ExecuteRefreshCommand(repo.Owner, repo.Repository));
         }
 
@@ -76,12 +84,22 @@ namespace GitTrends
                 //Display the Final Referring Sites with FavIcons
                 displayMobileReferringSites(mobileReferringSitesList_WithFavIcon);
             }
+            catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
+            {
+                await _deepLinkingService.DisplayAlert("Login Expired", "Please login again", "OK").ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                AnalyticsService.Report(e);
+                await _deepLinkingService.DisplayAlert("Error", "Unable to retrieve referring sites. Check your internet connection and try again.", "OK").ConfigureAwait(false);
+            }
             finally
             {
                 IsActivityIndicatorVisible = IsRefreshing = false;
             }
 
-            void displayMobileReferringSites(in IEnumerable<MobileReferringSiteModel> mobileReferringSiteList) => MobileReferringSitesList = mobileReferringSiteList.OrderByDescending(x => x.TotalCount).ThenByDescending(x => x.TotalUniqueCount).ToList();
+            void displayMobileReferringSites(in IEnumerable<MobileReferringSiteModel> mobileReferringSiteList) =>
+                MobileReferringSitesList = SortingService.SortReferringSites(mobileReferringSiteList).ToList();
         }
 
         async Task<List<MobileReferringSiteModel>> GetMobileReferringSiteWithFavIconList(List<ReferringSiteModel> referringSites)

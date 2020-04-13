@@ -26,7 +26,7 @@ namespace GitTrends
             {
                 AutomationId = ReferringSitesPageAutomationIds.CollectionView,
                 BackgroundColor = Color.Transparent,
-                ItemTemplate = new ReferringSitesDataTemplateSelector(),
+                ItemTemplate = new ReferringSitesDataTemplate(),
                 SelectionMode = SelectionMode.Single,
                 ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical),
                 Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : new BoxView { HeightRequest = titleRowHeight + titleTopMargin },

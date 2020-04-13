@@ -20,6 +20,9 @@ namespace GitTrends
             set => Preferences.Set(nameof(CurrentOption), (int)value);
         }
 
+        public static IEnumerable<MobileReferringSiteModel> SortReferringSites(in IEnumerable<MobileReferringSiteModel> referringSites) =>
+            referringSites.OrderByDescending(x => x.TotalCount).ThenByDescending(x => x.TotalUniqueCount).ThenByDescending(x => x.Referrer);
+
         //SortingCategory.IssuesForks Priority: Trending > Stars > Forks > Issues > Name
         //SortingCategory.Views Priority: Trending > Views > Unique Views > Stars > Name
         //SortingCategory.Clones Priority: Trending > Clones > Unique Clones > Stars > Name
@@ -64,7 +67,7 @@ namespace GitTrends
                 return getCurrentSortingOption();
             }
 
-            SortingOption getCurrentSortingOption() => (SortingOption)Preferences.Get(nameof(CurrentOption), (int)SortingConstants.DefaultSortingOption);
+            static SortingOption getCurrentSortingOption() => (SortingOption)Preferences.Get(nameof(CurrentOption), (int)SortingConstants.DefaultSortingOption);
         }
     }
 }
