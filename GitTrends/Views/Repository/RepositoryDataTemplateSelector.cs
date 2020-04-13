@@ -248,24 +248,7 @@ namespace GitTrends
             }
         }
 
-        class SmallScreenTrendingImage : TrendingImage
-        {
-            public SmallScreenTrendingImage(in LargeScreenTrendingImage largeScreenTrendingImage)
-            {
-                SetBinding(GetTextColorProperty, new Binding(nameof(GetTextColor), source: largeScreenTrendingImage, converter: LargeScreenTrendingImageTextColorConverter));
-            }
-
-            static FuncConverter<Func<Color>, Func<Color>> LargeScreenTrendingImageTextColorConverter { get; } = new FuncConverter<Func<Color>, Func<Color>>(getLargeScreenTextColor =>
-            {
-                //Reveal the tag if the LargeScreenTrendingImage is not shown by changing its color from matching the CardSurfaceColor
-                if (getLargeScreenTextColor() == (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)])
-                    return () => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)];
-                else
-                    return () => (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)];
-            });
-        }
-
-        abstract class TrendingImage : RepositoryStatSVGImage
+        class TrendingImage : RepositoryStatSVGImage
         {
             protected const double SvgWidthRequest = 62;
             protected const double SvgHeightRequest = 16;
@@ -305,7 +288,6 @@ namespace GitTrends
             static CardView CreateRepositoryDataTemplate(in IEnumerable<View> views)
             {
                 var largeScreenTrendingImage = new LargeScreenTrendingImage();
-                var smallScreenTrendingImage = new SmallScreenTrendingImage(largeScreenTrendingImage);
 
                 var repositoryDataTemplateViews = new View[]
                 {
@@ -321,15 +303,26 @@ namespace GitTrends
                     new Separator().Row(Row.Separator).Column(Column.Trending).ColumnSpan(7),
 
                     //On smaller screens, display TrendingImage under the Avatar
-                    smallScreenTrendingImage.Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3)
-                        .Bind(VisualElement.IsVisibleProperty, nameof(Repository.IsTrending)),
+                    new TrendingImage().Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3)
+                        .Bind(VisualElement.IsVisibleProperty, nameof(Repository.IsTrending))
+                        .Bind(SvgImage.GetTextColorProperty,nameof(SvgImage.GetTextColor), source: largeScreenTrendingImage, converter: LargeScreenTrendingImageTextColorConverter),
 
+                    //On large screens, display TrendingImage in the same column as the repository name
                     largeScreenTrendingImage.Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2)
                         .Bind(VisualElement.IsVisibleProperty, nameof(Repository.IsTrending)),
                 };
 
                 return new CardView(views.Concat(repositoryDataTemplateViews));
             }
+
+            //Reveal the tag if the LargeScreenTrendingImage is not shown by changing its color from matching the CardSurfaceColor
+            static FuncConverter<Func<Color>, Func<Color>> LargeScreenTrendingImageTextColorConverter { get; } = new FuncConverter<Func<Color>, Func<Color>>(getLargeScreenTextColor =>
+            {
+                if (getLargeScreenTextColor() == (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)])
+                    return () => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)];
+                else
+                    return () => (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)];
+            });
 
             class AvatarImage : CircleImage
             {
