@@ -10,10 +10,14 @@ namespace GitTrends
     public class ThemeService
     {
         readonly static WeakEventManager<PreferredTheme> _preferenceChangedEventManager = new WeakEventManager<PreferredTheme>();
+        readonly AnalyticsService _analyticsService;
 
-        public ThemeService()
+        public ThemeService(AnalyticsService analyticsService)
         {
+            _analyticsService = analyticsService;
+
             Application.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
+
             SetAppTheme(Preference);
         }
 
@@ -45,6 +49,8 @@ namespace GitTrends
 
             if (Application.Current.Resources.GetType() != theme.GetType())
             {
+                _analyticsService.Track("Theme Changed", nameof(PreferredTheme), preferredTheme.ToString());
+
                 Application.Current.Resources = theme;
 
                 OnPreferenceChanged(preferredTheme);
