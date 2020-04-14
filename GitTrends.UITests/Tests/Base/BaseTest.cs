@@ -76,7 +76,7 @@ namespace GitTrends.UITests
             }
             catch
             {
-
+                RepositoryPage.TriggerPullToRefresh();
             }
 
             await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
@@ -110,7 +110,7 @@ namespace GitTrends.UITests
             }
             catch
             {
-
+                RepositoryPage.TriggerPullToRefresh();
             }
 
             await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
