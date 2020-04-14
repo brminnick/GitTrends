@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using NUnit.Framework;
@@ -76,7 +77,8 @@ namespace GitTrends.UITests
             }
             catch
             {
-                RepositoryPage.TriggerPullToRefresh();
+                if (!RepositoryPage.VisibleCollection.Any())
+                    RepositoryPage.TriggerPullToRefresh();
             }
 
             await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
@@ -110,7 +112,8 @@ namespace GitTrends.UITests
             }
             catch
             {
-                RepositoryPage.TriggerPullToRefresh();
+                if (!RepositoryPage.VisibleCollection.Any())
+                    RepositoryPage.TriggerPullToRefresh();
             }
 
             await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
