@@ -80,7 +80,7 @@ namespace GitTrends
                         (Column.Referrals, StarGridLength(1.5)),
                         (Column.ReferralPadding, AbsoluteGridLength(4)),
                         (Column.Separator, AbsoluteGridLength(1)),
-                        (Column.UniquePadding, AbsoluteGridLength(4)),
+                        (Column.UniquePadding, AbsoluteGridLength(6)),
                         (Column.Uniques, StarGridLength(1)));
 
                     Children.Add(new FavIconImage()

@@ -34,7 +34,7 @@ namespace GitTrends
                 RowDefinitions = Rows.Define(
                     (Row.Image, StarGridLength(Device.RuntimePlatform is Device.iOS ? 3 : 11)),
                     (Row.Description, StarGridLength(Device.RuntimePlatform is Device.iOS ? 2 : 9)),
-                    (Row.Indicator, AbsoluteGridLength(44))),
+                    (Row.Indicator, AbsoluteGridLength(48))),
 
                 ColumnDefinitions = Columns.Define(
                     (Column.Indicator, StarGridLength(1)),
@@ -68,11 +68,12 @@ namespace GitTrends
                 TextColor = Color.White;
                 BackgroundColor = Color.Transparent;
                 FontFamily = FontFamilyConstants.RobotoBold;
+                FontSize = 14;
 
                 Margin = new Thickness(0, 0, 30, 0);
 
                 HorizontalOptions = LayoutOptions.End;
-                VerticalOptions = LayoutOptions.Center;
+                VerticalOptions = LayoutOptions.FillAndExpand;
 
                 AutomationId = OnboardingAutomationIds.NextButon;
 
@@ -131,8 +132,10 @@ namespace GitTrends
                 Position = position;
                 SelectedIndicatorColor = Color.White;
                 IndicatorColor = Color.White.MultiplyAlpha(0.25);
-                Margin = new Thickness(30, 0, 0, 0);
+                Margin = new Thickness(30, 4, 0, 0);
                 HorizontalOptions = LayoutOptions.Start;
+                VerticalOptions = LayoutOptions.Start;
+                IndicatorSize = 12;
                 AutomationId = OnboardingAutomationIds.PageIndicator;
 
                 SetBinding(CountProperty, new Binding(nameof(OnboardingCarouselPage.PageCount),
