@@ -10,7 +10,6 @@ namespace GitTrends
     public class OnboardingCarouselPage : CarouselPage
     {
         readonly AnalyticsService _analyticsService;
-        readonly OnboardingViewModel _onboardingViewModel;
 
         public OnboardingCarouselPage(GitTrendsOnboardingPage welcomeOnboardingPage,
                                         ChartOnboardingPage chartOnboardingPage,
@@ -25,7 +24,7 @@ namespace GitTrends
             ChildAdded += HandleChildAdded;
             ChildRemoved += HandleChildRemoved;
 
-            BindingContext = _onboardingViewModel = onboardingViewModel;
+            BindingContext = onboardingViewModel;
             _analyticsService = analyticsService;
 
             onboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
