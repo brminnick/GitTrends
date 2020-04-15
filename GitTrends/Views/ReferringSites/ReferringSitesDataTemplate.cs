@@ -125,12 +125,14 @@ namespace GitTrends
                         MaxLines = 1;
                         FontSize = 12;
                         CharacterSpacing = 1.56;
-                        HorizontalOptions = LayoutOptions.Start;
-                        HorizontalTextAlignment = TextAlignment.Start;
-                        VerticalOptions = LayoutOptions.Start;
-                        VerticalTextAlignment = TextAlignment.Start;
                         FontFamily = FontFamilyConstants.RobotoMedium;
                         LineBreakMode = LineBreakMode.TailTruncation;
+
+                        HorizontalOptions = LayoutOptions.FillAndExpand;
+                        HorizontalTextAlignment = TextAlignment.Start;
+
+                        VerticalOptions = LayoutOptions.Start;
+                        VerticalTextAlignment = TextAlignment.Start;
 
                         SetDynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
                     }
@@ -140,14 +142,15 @@ namespace GitTrends
                 {
                     public StatisticsLabel(in double fontSize, in string textColorThemeName, in string fontFamily)
                     {
+                        MaxLines = 1;
                         FontSize = fontSize;
                         FontFamily = fontFamily;
+                        LineBreakMode = LineBreakMode.TailTruncation;
 
                         HorizontalOptions = LayoutOptions.FillAndExpand;
-                        MaxLines = 1;
                         HorizontalTextAlignment = TextAlignment.Start;
+
                         VerticalTextAlignment = TextAlignment.End;
-                        LineBreakMode = LineBreakMode.TailTruncation;
 
                         SetDynamicResource(TextColorProperty, textColorThemeName);
                     }
@@ -159,11 +162,13 @@ namespace GitTrends
                     {
                         MaxLines = 1;
                         FontSize = 12;
-                        HorizontalTextAlignment = TextAlignment.Start;
-                        HorizontalOptions = LayoutOptions.Start;
-                        VerticalTextAlignment = TextAlignment.End;
                         FontFamily = FontFamilyConstants.RobotoRegular;
                         LineBreakMode = LineBreakMode.TailTruncation;
+
+                        HorizontalOptions = LayoutOptions.FillAndExpand;
+                        HorizontalTextAlignment = TextAlignment.Start;
+
+                        VerticalTextAlignment = TextAlignment.End;
 
                         SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
                     }
