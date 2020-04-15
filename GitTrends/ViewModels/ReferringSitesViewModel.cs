@@ -52,7 +52,7 @@ namespace GitTrends
 
         async Task ExecuteRefreshCommand(string owner, string repository)
         {
-            Task minimumActivityIndicatorTimeTask;
+            Task minimumActivityIndicatorTimeTask = Task.CompletedTask;
 
             //Only show the Activity Indicator when the page is first loaded
             if (!MobileReferringSitesList.Any())
@@ -60,30 +60,47 @@ namespace GitTrends
                 IsActivityIndicatorVisible = true;
                 minimumActivityIndicatorTimeTask = Task.Delay(1000);
             }
-            else
-            {
-                minimumActivityIndicatorTimeTask = Task.CompletedTask;
-            }
 
             try
             {
                 var referringSitesList = await _gitHubApiV3Service.GetReferringSites(owner, repository).ConfigureAwait(false);
 
-                var mobileReferringSitesList_NoFavIcon = referringSitesList.Select(x => new MobileReferringSiteModel(x));
+                if (!referringSitesList.Any())
+                {
+                    await _deepLinkingService.DisplayAlert(ReferringSitesConstants.NoReferringSitesTitle, ReferringSitesConstants.NoReferringSitesDescription, ReferringSitesConstants.NoReferringSitesOK).ConfigureAwait(false);
+                    return;
+                }
 
                 //Begin retrieving favicon list before waiting for minimumActivityIndicatorTimeTask
                 var getMobileReferringSiteWithFavIconListTask = GetMobileReferringSiteWithFavIconList(referringSitesList);
 
                 await minimumActivityIndicatorTimeTask.ConfigureAwait(false);
 
-                //Display the Referring Sites and hide the activity indicators while FavIcons are still being retreived
+                //Display the Referring Sites and hide the ActivityIndicator while FavIcons are still being retreived
                 IsActivityIndicatorVisible = false;
+
+                var mobileReferringSitesList_NoFavIcon = referringSitesList.Select(x => new MobileReferringSiteModel(x));
                 displayMobileReferringSites(mobileReferringSitesList_NoFavIcon);
 
-                var mobileReferringSitesList_WithFavIcon = await getMobileReferringSiteWithFavIconListTask.ConfigureAwait(false);
+                try
+                {
+                    var mobileReferringSitesList_WithFavIcon = await getMobileReferringSiteWithFavIconListTask.ConfigureAwait(false);
 
-                //Display the Final Referring Sites with FavIcons
-                displayMobileReferringSites(mobileReferringSitesList_WithFavIcon);
+                    //Display the Final Referring Sites with FavIcons
+                    displayMobileReferringSites(mobileReferringSitesList_WithFavIcon);
+
+                    //Wait for FavIcons ImageSource to finish loading
+                    await Task.Delay(FavIconService.HttpClientTimeout).ConfigureAwait(false);
+                }
+                catch (Exception e) when (!(e is ApiException apiException && apiException.StatusCode is HttpStatusCode.Unauthorized))
+                {
+                    //If the FavIcon fails to load, don't display an error dialog
+                    AnalyticsService.Report(e);
+                }
+                finally
+                {
+                    IsRefreshing = false;
+                }
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
             {
@@ -98,9 +115,6 @@ namespace GitTrends
             {
                 IsActivityIndicatorVisible = IsRefreshing = false;
             }
-
-            if (!MobileReferringSitesList.Any())
-                await _deepLinkingService.DisplayAlert(ReferringSitesConstants.NoReferringSitesTitle, ReferringSitesConstants.NoReferringSitesDescription, ReferringSitesConstants.NoReferringSitesOK);
 
             void displayMobileReferringSites(in IEnumerable<MobileReferringSiteModel> mobileReferringSiteList) =>
                 MobileReferringSitesList = SortingService.SortReferringSites(mobileReferringSiteList).ToList();

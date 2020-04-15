@@ -14,7 +14,9 @@ namespace GitTrends
     {
         public const string DefaultFavIcon = "DefaultProfileImageGreen";
 
-        static readonly Lazy<HttpClient> _clientHolder = new Lazy<HttpClient>(new HttpClient { Timeout = TimeSpan.FromSeconds(1) });
+        static readonly Lazy<HttpClient> _clientHolder = new Lazy<HttpClient>(() => new HttpClient { Timeout = HttpClientTimeout });
+
+        public static TimeSpan HttpClientTimeout { get; } = TimeSpan.FromSeconds(1);
 
         static HttpClient Client => _clientHolder.Value;
 
@@ -24,18 +26,25 @@ namespace GitTrends
             {
                 var htmlDoc = await new HtmlWeb().LoadFromWebAsync(siteUrl).ConfigureAwait(false);
 
-                var (shortcutIconUrl, appleTouchIconUrl, iconUrl, favIconUrl) = await GetFavIcons(htmlDoc, siteUrl);
+                var (shortcutIconUrlTask, appleTouchIconUrlTask, iconUrlTask, favIconUrlTask) = GetFavIconTasks(htmlDoc, siteUrl);
 
+                var appleTouchIconUrl = await appleTouchIconUrlTask.ConfigureAwait(false);
                 if (appleTouchIconUrl != null)
                     return appleTouchIconUrl;
-                else if (shortcutIconUrl != null)
+
+                var shortcutIconUrl = await shortcutIconUrlTask.ConfigureAwait(false);
+                if (shortcutIconUrl != null)
                     return shortcutIconUrl;
-                else if (iconUrl != null)
+
+                var iconUrl = await iconUrlTask.ConfigureAwait(false);
+                if (iconUrl != null)
                     return iconUrl;
-                else if (favIconUrl != null)
+
+                var favIconUrl = await favIconUrlTask.ConfigureAwait(false);
+                if (favIconUrl != null)
                     return favIconUrl;
-                else
-                    return DefaultFavIcon;
+
+                return DefaultFavIcon;
             }
             catch (Exception e)
             {
@@ -46,21 +55,14 @@ namespace GitTrends
             }
         }
 
-        static async Task<(string? ShortcutIconUrl, string? AppleTouchIconUrl, string? IconUrl, string? FavIconUrl)> GetFavIcons(HtmlDocument htmlDoc, string siteUrl)
+        static (Task<string?> ShortcutIconUrlTask, Task<string?> AppleTouchIconUrlTask, Task<string?> IconUrlTask, Task<string?> FavIconUrlTask) GetFavIconTasks(HtmlDocument htmlDoc, string siteUrl)
         {
             var shortcutIconUrlTask = GetShortcutIconUrl(htmlDoc, siteUrl);
             var appleTouchIconUrlTask = GetAppleTouchIconUrl(htmlDoc, siteUrl);
             var iconUrlTask = GetIconUrl(htmlDoc, siteUrl);
             var favIconUrlTask = GetFavIconUrl(siteUrl);
 
-            await Task.WhenAll(shortcutIconUrlTask, appleTouchIconUrlTask, iconUrlTask, favIconUrlTask).ConfigureAwait(false);
-
-            var shortcutIconUrl = await shortcutIconUrlTask.ConfigureAwait(false);
-            var appleTouchIconUrl = await appleTouchIconUrlTask.ConfigureAwait(false);
-            var iconUrl = await iconUrlTask.ConfigureAwait(false);
-            var favIconUrl = await favIconUrlTask.ConfigureAwait(false);
-
-            return (shortcutIconUrl, appleTouchIconUrl, iconUrl, favIconUrl);
+            return (shortcutIconUrlTask, appleTouchIconUrlTask, iconUrlTask, favIconUrlTask);
         }
 
         static async Task<string?> GetFavIconUrl(string url)
