@@ -21,6 +21,7 @@ namespace GitTrends.iOS
                 HidesBottomBarWhenPushed = true
             };
             _searchController.SearchBar.Placeholder = string.Empty;
+            _searchController.SearchBar.BarStyle = UIBarStyle.Black;
         }
 
         public override void ViewWillAppear(bool animated)
