@@ -20,13 +20,19 @@ namespace GitTrends
 
         static HttpClient Client => _clientHolder.Value;
 
-        public static async Task<ImageSource> GetFavIconImageSource(string siteUrl)
+        public static async Task<ImageSource> GetFavIconImageSource(Uri site)
         {
+            var baseUrl = $"{site.Scheme}://{getRootDomain(site.Host)}";
+
             try
             {
-                var htmlDoc = await new HtmlWeb().LoadFromWebAsync(siteUrl).ConfigureAwait(false);
+                var httpResponseMessage = await Client.GetAsync(baseUrl).ConfigureAwait(false);
+                var html = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-                var (shortcutIconUrlTask, appleTouchIconUrlTask, iconUrlTask, favIconUrlTask) = GetFavIconTasks(htmlDoc, siteUrl);
+                var htmlDocument = new HtmlDocument();
+                htmlDocument.LoadHtml(html);
+
+                var (shortcutIconUrlTask, appleTouchIconUrlTask, iconUrlTask, favIconUrlTask) = GetFavIconTasks(htmlDocument, baseUrl);
 
                 var appleTouchIconUrl = await appleTouchIconUrlTask.ConfigureAwait(false);
                 if (appleTouchIconUrl != null)
@@ -49,9 +55,34 @@ namespace GitTrends
             catch (Exception e)
             {
                 using var scope = ContainerService.Container.BeginLifetimeScope();
-                scope.Resolve<AnalyticsService>().Report(e, new Dictionary<string, string> { { nameof(siteUrl), siteUrl } });
+                scope.Resolve<AnalyticsService>().Report(e, new Dictionary<string, string>
+                {
+                    { nameof(baseUrl), baseUrl },
+                    { nameof(site), site.ToString() }
+                });
 
                 return DefaultFavIcon;
+            }
+
+            //https://stackoverflow.com/a/35213737/5953643
+            static string getRootDomain(in string host)
+            {
+                string[] domains = host.Split('.');
+
+                if (domains.Length >= 3)
+                {
+                    int domainCount = domains.Length;
+                    // handle international country code TLDs 
+                    // www.amazon.co.uk => amazon.co.uk
+                    if (domains[domainCount - 1].Length < 3 && domains[domainCount - 2].Length <= 3)
+                        return string.Join(".", domains, domainCount - 3, 3);
+                    else
+                        return string.Join(".", domains, domainCount - 2, 2);
+                }
+                else
+                {
+                    return host;
+                }
             }
         }
 
@@ -67,18 +98,25 @@ namespace GitTrends
 
         static async Task<string?> GetFavIconUrl(string url)
         {
-            var faviconUrl = $"{url}favicon.ico";
-
-            var isValid = await IsUrlValid(faviconUrl).ConfigureAwait(false);
-
-            if (isValid)
+            try
             {
-                Debug.WriteLine($"{nameof(GetIconUrl)}: {faviconUrl}");
-                return faviconUrl;
+                var faviconUrl = $"{url}favicon.ico";
+
+                var isValid = await IsUrlValid(faviconUrl).ConfigureAwait(false);
+
+                if (isValid)
+                {
+                    Debug.WriteLine($"{nameof(GetIconUrl)}: {faviconUrl}");
+                    return faviconUrl;
+                }
+                else
+                {
+                    Debug.WriteLine($"{nameof(GetIconUrl)}: null");
+                    return null;
+                }
             }
-            else
+            catch
             {
-                Debug.WriteLine($"{nameof(GetIconUrl)}: null");
                 return null;
             }
         }

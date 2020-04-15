@@ -94,7 +94,7 @@ namespace GitTrends
                 }
                 catch (Exception e) when (!(e is ApiException apiException && apiException.StatusCode is HttpStatusCode.Unauthorized))
                 {
-                    //If the FavIcon fails to load, don't display an error dialog
+                    //If the FavIcon fails to load, don't display an error dialog, unless the token has expired
                     AnalyticsService.Report(e);
                 }
                 finally
@@ -141,7 +141,7 @@ namespace GitTrends
             {
                 if (referringSiteModel.ReferrerUri != null)
                 {
-                    var favIcon = await FavIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri.ToString()).ConfigureAwait(false);
+                    var favIcon = await FavIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri).ConfigureAwait(false);
                     return new MobileReferringSiteModel(referringSiteModel, favIcon);
                 }
 
