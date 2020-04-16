@@ -88,9 +88,6 @@ namespace GitTrends
 
                     //Display the Final Referring Sites with FavIcons
                     displayMobileReferringSites(mobileReferringSitesList_WithFavIcon);
-
-                    //Wait for FavIcons ImageSource to finish loading
-                    await Task.Delay(FavIconService.HttpClientTimeout).ConfigureAwait(false);
                 }
                 catch (Exception e) when (!(e is ApiException apiException && apiException.StatusCode is HttpStatusCode.Unauthorized))
                 {

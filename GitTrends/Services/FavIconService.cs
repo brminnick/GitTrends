@@ -16,9 +16,7 @@ namespace GitTrends
     {
         public const string DefaultFavIcon = "DefaultProfileImageGreen";
 
-        static readonly Lazy<HttpClient> _clientHolder = new Lazy<HttpClient>(() => new HttpClient { Timeout = HttpClientTimeout });
-
-        public static TimeSpan HttpClientTimeout { get; } = TimeSpan.FromSeconds(1);
+        static readonly Lazy<HttpClient> _clientHolder = new Lazy<HttpClient>(new HttpClient());
 
         static HttpClient Client => _clientHolder.Value;
 
@@ -36,24 +34,27 @@ namespace GitTrends
                 htmlDocument.LoadHtml(html);
 
                 var appleTouchIconTask = GetAppleTouchIcon(htmlDocument, baseUrl);
-
-                var urlDataSetsTask = Task.WhenAll(appleTouchIconTask,
-                                                        GetFavIcon(baseUrl),
-                                                        GetShortcutIcon(htmlDocument, baseUrl),
-                                                        GetIcon(htmlDocument, baseUrl));
+                var shortcutIconTask = GetShortcutIcon(htmlDocument, baseUrl);
+                var iconTask = GetIcon(htmlDocument, baseUrl);
+                var favIconTask = GetFavIcon(baseUrl);
 
                 var (appleTouchIconUrl, _) = await appleTouchIconTask.ConfigureAwait(false);
-
-                //Apple Touch Icons have the largest default resolution
                 if (!string.IsNullOrWhiteSpace(appleTouchIconUrl))
-                {
                     return appleTouchIconUrl;
-                }
-                else
-                {
-                    var urlDataSets = await urlDataSetsTask.ConfigureAwait(false);
-                    return getLargestImageUrl(urlDataSets) ?? DefaultFavIcon;
-                }
+
+                var (shortcutIconUrl, _) = await shortcutIconTask.ConfigureAwait(false);
+                if (shortcutIconUrl != null)
+                    return shortcutIconUrl;
+
+                var (iconUrl, _) = await iconTask.ConfigureAwait(false);
+                if (iconUrl != null)
+                    return iconUrl;
+
+                var (favIconUrl, _) = await favIconTask.ConfigureAwait(false);
+                if (favIconUrl != null)
+                    return favIconUrl;
+
+                return DefaultFavIcon;
             }
             catch (Exception e)
             {
@@ -65,13 +66,6 @@ namespace GitTrends
                 });
 
                 return DefaultFavIcon;
-            }
-
-            static string? getLargestImageUrl(in IEnumerable<(string? Url, long? Size)> iconDataSet)
-            {
-                var nonNullDataSet = iconDataSet.Where(x => x.Url != null).OrderByDescending(x => x.Size);
-
-                return nonNullDataSet.Any() ? nonNullDataSet.First().Url : null;
             }
         }
 
@@ -110,7 +104,7 @@ namespace GitTrends
             }
         }
 
-        static async Task<(string? FavIconUrl, long? Size)> GetFavIcon(string url)
+        static async Task<(string? FavIconUrl, long? ContentSize)> GetFavIcon(string url)
         {
             try
             {
@@ -134,7 +128,7 @@ namespace GitTrends
             }
         }
 
-        static async Task<(string? ShortcutIconUrl, long? Size)> GetShortcutIcon(HtmlDocument htmlDoc, string url)
+        static async Task<(string? ShortcutIconUrl, long? ContentSize)> GetShortcutIcon(HtmlDocument htmlDoc, string url)
         {
             try
             {
@@ -161,7 +155,7 @@ namespace GitTrends
             }
         }
 
-        static async Task<(string? AppleTouchIconUrl, long? size)> GetAppleTouchIcon(HtmlDocument htmlDoc, string url)
+        static async Task<(string? AppleTouchIconUrl, long? ContentSize)> GetAppleTouchIcon(HtmlDocument htmlDoc, string url)
         {
             try
             {
@@ -188,7 +182,7 @@ namespace GitTrends
             }
         }
 
-        static async Task<(string? IconUrl, long? size)> GetIcon(HtmlDocument htmlDoc, string url)
+        static async Task<(string? IconUrl, long? ContentSize)> GetIcon(HtmlDocument htmlDoc, string url)
         {
             try
             {
@@ -215,7 +209,7 @@ namespace GitTrends
             }
         }
 
-        static async ValueTask<(bool IsUrlValid, long? size)> GetUrlData(string? url)
+        static async ValueTask<(bool IsUrlValid, long? ContentSize)> GetUrlData(string? url)
         {
             try
             {
