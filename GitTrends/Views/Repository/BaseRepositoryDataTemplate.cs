@@ -123,7 +123,7 @@ namespace GitTrends
                         //Reveal the tag if the LargeScreenTrendingImage is not shown by changing its color from matching the CardSurfaceColor
                         static Func<Color> largeScreenTrendingImageTextColorConverter(double largeTrendingImageWidth)
                         {
-                            if (largeTrendingImageWidth > 0 && largeTrendingImageWidth < TrendingImage.SvgWidthRequest)
+                            if (largeTrendingImageWidth >= 0 && largeTrendingImageWidth < TrendingImage.SvgWidthRequest)
                                 return () => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)];
                             else
                                 return () => (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)];
