@@ -77,8 +77,8 @@ namespace GitTrends
                     ColumnDefinitions = Columns.Define(
                         (Column.FavIcon, AbsoluteGridLength(_favIconWidth)),
                         (Column.FavIconPadding, AbsoluteGridLength(16)),
-                        (Column.Site, StarGridLength(isSmallScreen() ? 2 : 5)),
-                        (Column.SitePadding, AbsoluteGridLength(16)),
+                        (Column.Site, StarGridLength(ScreenWidth <= 375 ? 2 : 4)),
+                        (Column.SitePadding, AbsoluteGridLength(8)),
                         (Column.Referrals, StarGridLength(3)),
                         (Column.ReferralPadding, AbsoluteGridLength(separatorPadding)),
                         (Column.Separator, AbsoluteGridLength(1)),
@@ -113,7 +113,6 @@ namespace GitTrends
                                         .Bind<StatisticsLabel, long, string>(Label.TextProperty, nameof(MobileReferringSiteModel.TotalUniqueCount), convert: statisticsConverter));
 
                     static string statisticsConverter(long number) => number.ConvertToAbbreviatedText();
-                    static bool isSmallScreen() => (DeviceDisplay.MainDisplayInfo.Width / DeviceDisplay.MainDisplayInfo.Density) <= 400;
                 }
 
                 enum Row { Title, Description }

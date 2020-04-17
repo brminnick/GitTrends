@@ -99,8 +99,10 @@ namespace GitTrends
                     var favIcon = await FavIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri).ConfigureAwait(false);
                     return new MobileReferringSiteModel(referringSiteModel, favIcon);
                 }
-
-                return new MobileReferringSiteModel(referringSiteModel);
+                else
+                {
+                    return new MobileReferringSiteModel(referringSiteModel, FavIconService.DefaultFavIcon);
+                }
             }
         }
     }
