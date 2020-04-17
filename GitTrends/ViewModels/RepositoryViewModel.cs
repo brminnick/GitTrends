@@ -90,18 +90,25 @@ namespace GitTrends
                 var retrivedRepositoryList = new List<Repository>();
                 await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
                 {
+                    AddRepositoriesToCollection(retrivedRepositoryList, _searchBarText);
                     retrivedRepositoryList.AddRange(retrievedRepositories);
                 }
-
-                AddRepositoriesToCollection(retrivedRepositoryList, _searchBarText);
 
                 var completedRepoitories = new List<Repository>();
                 await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.ToList()).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).SafeFireAndForget();
                     completedRepoitories.Add(retrievedRepositoryWithViewsAndClonesData);
+
+                    //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
+                    if (!GitHubAuthenticationService.IsDemoUser && completedRepoitories.Count > 20)
+                    {
+                        AddRepositoriesToCollection(completedRepoitories, _searchBarText);
+                        completedRepoitories.Clear();
+                    }
                 }
 
+                //Add Remaining Repositories to VisibleRepositoryList
                 AddRepositoriesToCollection(completedRepoitories, _searchBarText);
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
