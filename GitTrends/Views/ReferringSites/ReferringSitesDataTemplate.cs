@@ -61,6 +61,7 @@ namespace GitTrends
                 public ContentGrid()
                 {
                     const int rowSpacing = 6;
+                    const int separatorPadding = 12;
 
                     HorizontalOptions = LayoutOptions.FillAndExpand;
                     VerticalOptions = LayoutOptions.FillAndExpand;
@@ -75,39 +76,39 @@ namespace GitTrends
                     ColumnDefinitions = Columns.Define(
                         (Column.FavIcon, AbsoluteGridLength(_favIconWidth)),
                         (Column.FavIconPadding, AbsoluteGridLength(16)),
-                        (Column.Site, StarGridLength(2)),
+                        (Column.Site, StarGridLength(5)),
                         (Column.SitePadding, AbsoluteGridLength(16)),
-                        (Column.Referrals, StarGridLength(1.5)),
-                        (Column.ReferralPadding, AbsoluteGridLength(4)),
+                        (Column.Referrals, StarGridLength(3)),
+                        (Column.ReferralPadding, AbsoluteGridLength(separatorPadding)),
                         (Column.Separator, AbsoluteGridLength(1)),
-                        (Column.UniquePadding, AbsoluteGridLength(4)),
-                        (Column.Uniques, StarGridLength(1)));
+                        (Column.UniquePadding, AbsoluteGridLength(separatorPadding)),
+                        (Column.Uniques, StarGridLength(2)));
 
                     Children.Add(new FavIconImage()
                                         .Row(Row.Title).Column(Column.FavIcon).RowSpan(2));
 
-                    Children.Add(new TitleLabel("SITE")
+                    Children.Add(new TitleLabel("SITE", TextAlignment.Start, LayoutOptions.Start)
                                         .Row(Row.Title).Column(Column.Site));
 
                     Children.Add(new DescriptionLabel()
                                         .Row(Row.Description).Column(Column.Site)
                                         .Bind(Label.TextProperty, nameof(MobileReferringSiteModel.Referrer)));
 
-                    Children.Add(new TitleLabel("REFERRALS")
-                                        .Row(Row.Title).Column(Column.Referrals).Center());
+                    Children.Add(new TitleLabel("REFERRALS", TextAlignment.End, LayoutOptions.End).Assign(out TitleLabel referralsTitleLabel)
+                                        .Row(Row.Title).Column(Column.Referrals));
 
-                    Children.Add(new StatisticsLabel(12, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular)
-                                        .Row(Row.Description).Column(Column.Referrals).Center()
+                    Children.Add(new StatisticsLabel(referralsTitleLabel)
+                                        .Row(Row.Description).Column(Column.Referrals)
                                         .Bind<StatisticsLabel, long, string>(Label.TextProperty, nameof(MobileReferringSiteModel.TotalCount), convert: statisticsConverter));
 
                     Children.Add(new Separator()
-                                        .Row(Row.Title).Column(Column.Separator).RowSpan(2).FillExpandVertical());
+                                        .Row(Row.Title).Column(Column.Separator).RowSpan(2));
 
-                    Children.Add(new TitleLabel("UNIQUE")
-                                        .Row(Row.Title).Column(Column.Uniques).Center());
+                    Children.Add(new TitleLabel("UNIQUE", TextAlignment.Start, LayoutOptions.Start).Assign(out TitleLabel uniqueTitleLabel)
+                                        .Row(Row.Title).Column(Column.Uniques));
 
-                    Children.Add(new StatisticsLabel(12, nameof(BaseTheme.PrimaryTextColor), FontFamilyConstants.RobotoRegular)
-                                        .Row(Row.Description).Column(Column.Uniques).Center()
+                    Children.Add(new StatisticsLabel(uniqueTitleLabel)
+                                        .Row(Row.Description).Column(Column.Uniques)
                                         .Bind<StatisticsLabel, long, string>(Label.TextProperty, nameof(MobileReferringSiteModel.TotalUniqueCount), convert: statisticsConverter));
 
                     static string statisticsConverter(long number) => number.ConvertToAbbreviatedText();
@@ -119,7 +120,7 @@ namespace GitTrends
                 class TitleLabel : Label
                 {
 
-                    public TitleLabel(in string text)
+                    public TitleLabel(in string text, TextAlignment horizontalTextAlignment, LayoutOptions horizontalOptions)
                     {
                         Text = text;
                         MaxLines = 1;
@@ -128,8 +129,8 @@ namespace GitTrends
                         FontFamily = FontFamilyConstants.RobotoMedium;
                         LineBreakMode = LineBreakMode.TailTruncation;
 
-                        HorizontalOptions = LayoutOptions.FillAndExpand;
-                        HorizontalTextAlignment = TextAlignment.Start;
+                        HorizontalOptions = horizontalOptions;
+                        HorizontalTextAlignment = horizontalTextAlignment;
 
                         VerticalOptions = LayoutOptions.Start;
                         VerticalTextAlignment = TextAlignment.Start;
@@ -140,19 +141,20 @@ namespace GitTrends
 
                 class StatisticsLabel : Label
                 {
-                    public StatisticsLabel(in double fontSize, in string textColorThemeName, in string fontFamily)
+                    public StatisticsLabel(in TitleLabel titleLabel)
                     {
                         MaxLines = 1;
-                        FontSize = fontSize;
-                        FontFamily = fontFamily;
+                        FontSize = 12;
+                        FontFamily = FontFamilyConstants.RobotoRegular;
                         LineBreakMode = LineBreakMode.TailTruncation;
 
-                        HorizontalOptions = LayoutOptions.FillAndExpand;
-                        HorizontalTextAlignment = TextAlignment.Start;
+                        HorizontalOptions = titleLabel.HorizontalOptions;
+                        HorizontalTextAlignment = TextAlignment.Center;
 
                         VerticalTextAlignment = TextAlignment.End;
 
-                        SetDynamicResource(TextColorProperty, textColorThemeName);
+                        SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+                        SetBinding(WidthRequestProperty, new Binding(nameof(Width), source: titleLabel));
                     }
                 }
 
@@ -178,6 +180,7 @@ namespace GitTrends
                 {
                     public Separator()
                     {
+                        VerticalOptions = LayoutOptions.FillAndExpand;
                         SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
                     }
                 }
