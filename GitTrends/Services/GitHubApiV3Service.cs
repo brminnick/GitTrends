@@ -110,7 +110,7 @@ namespace GitTrends
             }
         }
 
-        public async Task<List<ReferringSiteModel>> GetReferringSites(string owner, string repo, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<ReferringSiteModel>> GetReferringSites(string owner, string repo, CancellationToken cancellationToken = default)
         {
             if (GitHubAuthenticationService.IsDemoUser)
             {
