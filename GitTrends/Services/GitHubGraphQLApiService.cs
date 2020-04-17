@@ -52,9 +52,9 @@ namespace GitTrends
                 for (int i = 0; i < DemoDataConstants.RepoCount; i++)
                 {
                     var demoRepo = new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-                                                new RepositoryOwner(DemoDataConstants.Alias, DemoDataConstants.AvatarUrl),
+                                                new RepositoryOwner(DemoDataConstants.Alias, GitHubAuthenticationService.AvatarUrl),
                                                 new IssuesConnection(DemoDataConstants.GetRandomNumber(), Enumerable.Empty<Issue>()),
-                                                DemoDataConstants.AvatarUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false);
+                                                GitHubAuthenticationService.AvatarUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false);
                     demoDataList.Add(demoRepo);
                 }
 

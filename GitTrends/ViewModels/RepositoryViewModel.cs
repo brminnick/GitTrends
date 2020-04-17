@@ -8,6 +8,7 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using Autofac;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Forms;
@@ -82,33 +83,25 @@ namespace GitTrends
             _gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
             _gitHubAuthenticationService.LoggedOut += HandleLoggedOut;
 
-            const int repositoriesPerFetch = 100;
-
             AnalyticsService.Track("Refresh Triggered", "Sorting Option", _sortingService.CurrentOption.ToString());
 
             try
             {
-                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, repositoriesPerFetch).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
+                var retrivedRepositoryList = new List<Repository>();
+                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    AddRepositoriesToCollection(retrievedRepositories, _searchBarText);
+                    retrivedRepositoryList.AddRange(retrievedRepositories);
                 }
+
+                AddRepositoriesToCollection(retrivedRepositoryList, _searchBarText);
 
                 var completedRepoitories = new List<Repository>();
-                await foreach (var retrievedRepositoriesWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.ToList()).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.ToList()).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    _repositoryDatabase.SaveRepository(retrievedRepositoriesWithViewsAndClonesData).SafeFireAndForget();
-                    completedRepoitories.Add(retrievedRepositoriesWithViewsAndClonesData);
-
-                    //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
-                    if (!GitHubAuthenticationService.IsDemoUser
-                        && completedRepoitories.Count > repositoriesPerFetch / 5)
-                    {
-                        AddRepositoriesToCollection(completedRepoitories, _searchBarText);
-                        completedRepoitories.Clear();
-                    }
+                    _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).SafeFireAndForget();
+                    completedRepoitories.Add(retrievedRepositoryWithViewsAndClonesData);
                 }
 
-                //Add Any Remaining Repositories to VisibleRepositoryList
                 AddRepositoriesToCollection(completedRepoitories, _searchBarText);
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)

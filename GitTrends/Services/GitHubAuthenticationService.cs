@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Web;
 using AsyncAwaitBestPractices;
@@ -31,6 +32,8 @@ namespace GitTrends
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _repositoryDatabase = repositoryDatabase;
             _analyticsService = analyticsService;
+
+            ThemeService.PreferenceChanged += HandlePreferenceChanged;
         }
 
         public event EventHandler AuthorizeSessionStarted
@@ -110,8 +113,8 @@ namespace GitTrends
             await LogOut().ConfigureAwait(false);
 
             Name = DemoDataConstants.Name;
-            AvatarUrl = DemoDataConstants.AvatarUrl;
             Alias = DemoDataConstants.Alias;
+            AvatarUrl = BaseTheme.GetGitTrendsImageSource();
 
             OnDemoUserActivated();
         }
@@ -188,6 +191,15 @@ namespace GitTrends
         }
 
         Task InvalidateToken() => SecureStorage.SetAsync(_oauthTokenKey, string.Empty);
+
+        async void HandlePreferenceChanged(object sender, PreferredTheme e)
+        {
+            //Ensure the Demo User Alias matches the PreferredTheme
+            if (Alias is DemoDataConstants.Alias)
+            {
+                await ActivateDemoUser();
+            }
+        }
 
         void OnAuthorizeSessionCompleted(bool isSessionAuthorized) =>
            _authorizeSessionCompletedEventManager.HandleEvent(this, new AuthorizeSessionCompletedEventArgs(isSessionAuthorized), nameof(AuthorizeSessionCompleted));

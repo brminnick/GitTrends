@@ -34,12 +34,12 @@ namespace GitTrends
             _gitTrendsImage = new Image
             {
                 AutomationId = SplashScreenPageAutomationIds.GitTrendsImage,
-                Source = "GitTrends",
                 Opacity = 0,
                 HorizontalOptions = LayoutOptions.CenterAndExpand,
                 VerticalOptions = LayoutOptions.CenterAndExpand,
                 Aspect = Aspect.AspectFit
             };
+            _gitTrendsImage.SetDynamicResource(Image.SourceProperty, nameof(BaseTheme.GitTrendsImageSource));
 
             _statusLabel = new Label
             {

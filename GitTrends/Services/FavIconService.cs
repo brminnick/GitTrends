@@ -14,10 +14,9 @@ namespace GitTrends
 {
     public class FavIconService
     {
-        public const string DefaultFavIcon = "DefaultProfileImageGreen";
-
         static readonly Lazy<HttpClient> _clientHolder = new Lazy<HttpClient>(new HttpClient());
 
+        public static string DefaultFavIcon => BaseTheme.GetDefaultProfileImageSource();
         static HttpClient Client => _clientHolder.Value;
 
         public static async Task<ImageSource> GetFavIconImageSource(Uri site)

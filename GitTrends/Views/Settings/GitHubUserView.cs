@@ -15,7 +15,7 @@ namespace GitTrends
         const int _topMargin = 16;
         const int _bottomMargin = 8;
         const int _widthMargin = 16;
-        const int _nameLabelHeight = 20;
+        const int _nameLabelHeight = 24;
         const int _aliasLabelHeight = 18;
         const int _rowSpacing = 4;
 
@@ -66,7 +66,7 @@ namespace GitTrends
 
                 AutomationId = SettingsPageAutomationIds.GitHubNameLabel;
 
-                FontSize = _nameLabelHeight - 2;
+                FontSize = _nameLabelHeight - 6;
                 FontFamily = FontFamilyConstants.RobotoMedium;
 
                 this.SetBinding(TextProperty, nameof(SettingsViewModel.GitHubNameLabelText));

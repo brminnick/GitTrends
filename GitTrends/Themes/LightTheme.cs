@@ -103,6 +103,7 @@ namespace GitTrends
         
         public override Color PrimaryColor { get; } = Color.FromHex(_primaryTealHex);
 
-
+        public override string GitTrendsImageSource { get; } = "GitTrendsGreen";
+        public override string DefaultProfileImageSource { get; } = "DefaultProfileImageGreen";
     }
 }
