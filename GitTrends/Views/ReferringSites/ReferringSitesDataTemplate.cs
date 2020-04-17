@@ -1,6 +1,7 @@
 ﻿using System;
 using GitTrends.Mobile.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
@@ -76,7 +77,7 @@ namespace GitTrends
                     ColumnDefinitions = Columns.Define(
                         (Column.FavIcon, AbsoluteGridLength(_favIconWidth)),
                         (Column.FavIconPadding, AbsoluteGridLength(16)),
-                        (Column.Site, StarGridLength(5)),
+                        (Column.Site, StarGridLength(isSmallScreen() ? 2 : 5)),
                         (Column.SitePadding, AbsoluteGridLength(16)),
                         (Column.Referrals, StarGridLength(3)),
                         (Column.ReferralPadding, AbsoluteGridLength(separatorPadding)),
@@ -112,6 +113,7 @@ namespace GitTrends
                                         .Bind<StatisticsLabel, long, string>(Label.TextProperty, nameof(MobileReferringSiteModel.TotalUniqueCount), convert: statisticsConverter));
 
                     static string statisticsConverter(long number) => number.ConvertToAbbreviatedText();
+                    static bool isSmallScreen() => (DeviceDisplay.MainDisplayInfo.Width / DeviceDisplay.MainDisplayInfo.Density) <= 400;
                 }
 
                 enum Row { Title, Description }

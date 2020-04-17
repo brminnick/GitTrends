@@ -89,7 +89,9 @@ namespace GitTrends
             {
                 await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    AddRepositoriesToCollection(retrievedRepositories, _searchBarText);
+                    //Only display the first update to avoid unncessary work on the UIThread
+                    var shouldUpdateVisibleRepositoryList = !VisibleRepositoryList.Any();
+                    AddRepositoriesToCollection(retrievedRepositories, _searchBarText, shouldUpdateVisibleRepositoryList);
                 }
 
                 var completedRepoitories = new List<Repository>();
@@ -169,12 +171,13 @@ namespace GitTrends
             UpdateVisibleRepositoryList(searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
         }
 
-        void AddRepositoriesToCollection(IEnumerable<Repository> repositories, string searchBarText)
+        void AddRepositoriesToCollection(IEnumerable<Repository> repositories, string searchBarText, bool shouldUpdateVisibleRepositoryList = true)
         {
             var updatedRepositoryList = _repositoryList.Concat(repositories);
             _repositoryList = RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
-            UpdateVisibleRepositoryList(searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
+            if (shouldUpdateVisibleRepositoryList)
+                UpdateVisibleRepositoryList(searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
 
             static IEnumerable<Repository> RemoveForksAndDuplicates(in IEnumerable<Repository> repositoriesList) =>
                 repositoriesList.Where(x => !x.IsFork).OrderByDescending(x => x.DataDownloadedAt).GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.DailyViewsList.Any()) ?? x.First());
