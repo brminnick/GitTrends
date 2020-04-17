@@ -21,10 +21,11 @@ namespace GitTrends
 
         public static async Task<ImageSource> GetFavIconImageSource(Uri site)
         {
-            var baseUrl = $"{site.Scheme}://{GetRootDomain(site.Host)}/";
+            string baseUrl = string.Empty;
 
             try
             {
+                baseUrl = $"{site.Scheme}://{GetRootDomain(site.Host)}/";
                 var response = await Client.GetAsync(baseUrl).ConfigureAwait(false);
 
                 var html = await GetHtml(response).ConfigureAwait(false);
