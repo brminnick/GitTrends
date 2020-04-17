@@ -122,6 +122,9 @@ namespace GitTrends
             {
                 AutomationId = SettingsPageAutomationIds.GitHubSettingsViewActivityIndicator;
 
+                HeightRequest = _nameLabelHeight;
+                WidthRequest = _nameLabelHeight;
+
                 this.Center();
 
                 this.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsAuthenticating));

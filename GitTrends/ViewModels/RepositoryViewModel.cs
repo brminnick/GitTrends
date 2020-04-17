@@ -87,11 +87,9 @@ namespace GitTrends
 
             try
             {
-                var retrivedRepositoryList = new List<Repository>();
                 await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    AddRepositoriesToCollection(retrivedRepositoryList, _searchBarText);
-                    retrivedRepositoryList.AddRange(retrievedRepositories);
+                    AddRepositoriesToCollection(retrievedRepositories, _searchBarText);
                 }
 
                 var completedRepoitories = new List<Repository>();
