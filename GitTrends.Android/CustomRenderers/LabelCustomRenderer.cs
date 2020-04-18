@@ -18,10 +18,10 @@ namespace GitTrends.Droid
         {
             base.OnElementChanged(e);
 
-            if (Control is null || e.NewElement is null)
-                return;
-
-            Control.VerticalScrollBarEnabled = false;
+            if (Control != null)
+            {
+                Control.VerticalScrollBarEnabled = false;
+            }
         }
     }
 }

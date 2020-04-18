@@ -8,6 +8,7 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using Autofac;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Forms;
@@ -82,33 +83,32 @@ namespace GitTrends
             _gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
             _gitHubAuthenticationService.LoggedOut += HandleLoggedOut;
 
-            const int repositoriesPerFetch = 100;
-
             AnalyticsService.Track("Refresh Triggered", "Sorting Option", _sortingService.CurrentOption.ToString());
 
             try
             {
-                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, repositoriesPerFetch).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
+                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    AddRepositoriesToCollection(retrievedRepositories, _searchBarText);
+                    //Only display the first update to avoid unncessary work on the UIThread
+                    var shouldUpdateVisibleRepositoryList = !VisibleRepositoryList.Any();
+                    AddRepositoriesToCollection(retrievedRepositories, _searchBarText, shouldUpdateVisibleRepositoryList);
                 }
 
                 var completedRepoitories = new List<Repository>();
-                await foreach (var retrievedRepositoriesWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.ToList()).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.ToList()).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    _repositoryDatabase.SaveRepository(retrievedRepositoriesWithViewsAndClonesData).SafeFireAndForget();
-                    completedRepoitories.Add(retrievedRepositoriesWithViewsAndClonesData);
+                    _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).SafeFireAndForget();
+                    completedRepoitories.Add(retrievedRepositoryWithViewsAndClonesData);
 
                     //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
-                    if (!GitHubAuthenticationService.IsDemoUser
-                        && completedRepoitories.Count > repositoriesPerFetch / 5)
+                    if (!GitHubAuthenticationService.IsDemoUser && completedRepoitories.Count > 20)
                     {
                         AddRepositoriesToCollection(completedRepoitories, _searchBarText);
                         completedRepoitories.Clear();
                     }
                 }
 
-                //Add Any Remaining Repositories to VisibleRepositoryList
+                //Add Remaining Repositories to VisibleRepositoryList
                 AddRepositoriesToCollection(completedRepoitories, _searchBarText);
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
@@ -171,12 +171,13 @@ namespace GitTrends
             UpdateVisibleRepositoryList(searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
         }
 
-        void AddRepositoriesToCollection(IEnumerable<Repository> repositories, string searchBarText)
+        void AddRepositoriesToCollection(IEnumerable<Repository> repositories, string searchBarText, bool shouldUpdateVisibleRepositoryList = true)
         {
             var updatedRepositoryList = _repositoryList.Concat(repositories);
             _repositoryList = RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
-            UpdateVisibleRepositoryList(searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
+            if (shouldUpdateVisibleRepositoryList)
+                UpdateVisibleRepositoryList(searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
 
             static IEnumerable<Repository> RemoveForksAndDuplicates(in IEnumerable<Repository> repositoriesList) =>
                 repositoriesList.Where(x => !x.IsFork).OrderByDescending(x => x.DataDownloadedAt).GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.DailyViewsList.Any()) ?? x.First());

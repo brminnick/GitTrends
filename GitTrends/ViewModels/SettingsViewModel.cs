@@ -6,6 +6,7 @@ using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -44,6 +45,7 @@ namespace GitTrends
             GitHubUserViewTappedCommand = new AsyncCommand(ExecuteGitHubUserViewTappedCommand, _ => GitHubAuthenticationService.IsAuthenticated || GitHubAuthenticationService.IsDemoUser);
 
             _gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+            ThemeService.PreferenceChanged += HandlePreferenceChanged;
 
             IsRegisterForNotificationsSwitchToggled = notificationService.AreNotificationsEnabled;
             ThemePickerSelectedThemeIndex = (int)themeService.Preference;
@@ -160,16 +162,20 @@ namespace GitTrends
 
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => SetGitHubValues();
 
+        void HandlePreferenceChanged(object sender, PreferredTheme e)
+        {
+            if (!_gitHubAuthenticationService.IsAuthenticated)
+                GitHubAvatarImageSource = BaseTheme.GetDefaultProfileImageSource();
+            else if (GitHubAuthenticationService.Alias is DemoDataConstants.Alias)
+                GitHubAvatarImageSource = BaseTheme.GetGitTrendsImageSource();
+        }
+
         void SetGitHubValues()
         {
             GitHubAliasLabelText = _gitHubAuthenticationService.IsAuthenticated ? $"@{GitHubAuthenticationService.Alias}" : string.Empty;
             GitHubNameLabelText = _gitHubAuthenticationService.IsAuthenticated ? GitHubAuthenticationService.Name : GitHubLoginButtonConstants.NotLoggedIn;
             LoginLabelText = _gitHubAuthenticationService.IsAuthenticated ? $"{GitHubLoginButtonConstants.Disconnect}" : $"{GitHubLoginButtonConstants.ConnectToGitHub}";
-
-            GitHubAvatarImageSource = "DefaultProfileImage";
-
-            if (Connectivity.NetworkAccess is NetworkAccess.Internet && !string.IsNullOrWhiteSpace(GitHubAuthenticationService.AvatarUrl))
-                GitHubAvatarImageSource = GitHubAuthenticationService.AvatarUrl;
+            GitHubAvatarImageSource = _gitHubAuthenticationService.IsAuthenticated ?  GitHubAuthenticationService.AvatarUrl : BaseTheme.GetDefaultProfileImageSource();
         }
 
         protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService)

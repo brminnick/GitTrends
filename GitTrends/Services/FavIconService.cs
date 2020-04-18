@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using HtmlAgilityPack;
@@ -12,76 +14,121 @@ namespace GitTrends
 {
     public class FavIconService
     {
-        public const string DefaultFavIcon = "DefaultProfileImageGreen";
+        static readonly Lazy<HttpClient> _clientHolder = new Lazy<HttpClient>(new HttpClient());
 
-        static readonly Lazy<HttpClient> _clientHolder = new Lazy<HttpClient>(new HttpClient { Timeout = TimeSpan.FromSeconds(1) });
-
+        public static string DefaultFavIcon => BaseTheme.GetDefaultProfileImageSource();
         static HttpClient Client => _clientHolder.Value;
 
-        public static async Task<ImageSource> GetFavIconImageSource(string siteUrl)
+        public static async Task<ImageSource> GetFavIconImageSource(Uri site)
         {
+            string baseUrl = string.Empty;
+
             try
             {
-                var htmlDoc = await new HtmlWeb().LoadFromWebAsync(siteUrl).ConfigureAwait(false);
+                baseUrl = $"{site.Scheme}://{GetRootDomain(site.Host)}/";
+                var response = await Client.GetAsync(baseUrl).ConfigureAwait(false);
 
-                var (shortcutIconUrl, appleTouchIconUrl, iconUrl, favIconUrl) = await GetFavIcons(htmlDoc, siteUrl);
+                var html = await GetHtml(response).ConfigureAwait(false);
 
-                if (appleTouchIconUrl != null)
+                var htmlDocument = new HtmlDocument();
+                htmlDocument.LoadHtml(html);
+
+                var appleTouchIconTask = GetAppleTouchIcon(htmlDocument, baseUrl);
+                var shortcutIconTask = GetShortcutIcon(htmlDocument, baseUrl);
+                var iconTask = GetIcon(htmlDocument, baseUrl);
+                var favIconTask = GetFavIcon(baseUrl);
+
+                var (appleTouchIconUrl, _) = await appleTouchIconTask.ConfigureAwait(false);
+                if (!string.IsNullOrWhiteSpace(appleTouchIconUrl))
                     return appleTouchIconUrl;
-                else if (shortcutIconUrl != null)
+
+                var (shortcutIconUrl, _) = await shortcutIconTask.ConfigureAwait(false);
+                if (shortcutIconUrl != null)
                     return shortcutIconUrl;
-                else if (iconUrl != null)
+
+                var (iconUrl, _) = await iconTask.ConfigureAwait(false);
+                if (iconUrl != null)
                     return iconUrl;
-                else if (favIconUrl != null)
+
+                var (favIconUrl, _) = await favIconTask.ConfigureAwait(false);
+                if (favIconUrl != null)
                     return favIconUrl;
-                else
-                    return DefaultFavIcon;
+
+                return DefaultFavIcon;
             }
             catch (Exception e)
             {
                 using var scope = ContainerService.Container.BeginLifetimeScope();
-                scope.Resolve<AnalyticsService>().Report(e, new Dictionary<string, string> { { nameof(siteUrl), siteUrl } });
+                scope.Resolve<AnalyticsService>().Report(e, new Dictionary<string, string>
+                {
+                    { nameof(baseUrl), baseUrl },
+                    { nameof(site), site.ToString() }
+                });
 
                 return DefaultFavIcon;
             }
         }
 
-        static async Task<(string? ShortcutIconUrl, string? AppleTouchIconUrl, string? IconUrl, string? FavIconUrl)> GetFavIcons(HtmlDocument htmlDoc, string siteUrl)
+        //https://stackoverflow.com/a/35213737/5953643
+        static string GetRootDomain(in string host)
         {
-            var shortcutIconUrlTask = GetShortcutIconUrl(htmlDoc, siteUrl);
-            var appleTouchIconUrlTask = GetAppleTouchIconUrl(htmlDoc, siteUrl);
-            var iconUrlTask = GetIconUrl(htmlDoc, siteUrl);
-            var favIconUrlTask = GetFavIconUrl(siteUrl);
+            string[] domains = host.Split('.');
 
-            await Task.WhenAll(shortcutIconUrlTask, appleTouchIconUrlTask, iconUrlTask, favIconUrlTask).ConfigureAwait(false);
-
-            var shortcutIconUrl = await shortcutIconUrlTask.ConfigureAwait(false);
-            var appleTouchIconUrl = await appleTouchIconUrlTask.ConfigureAwait(false);
-            var iconUrl = await iconUrlTask.ConfigureAwait(false);
-            var favIconUrl = await favIconUrlTask.ConfigureAwait(false);
-
-            return (shortcutIconUrl, appleTouchIconUrl, iconUrl, favIconUrl);
-        }
-
-        static async Task<string?> GetFavIconUrl(string url)
-        {
-            var faviconUrl = $"{url}favicon.ico";
-
-            var isValid = await IsUrlValid(faviconUrl).ConfigureAwait(false);
-
-            if (isValid)
+            if (domains.Length >= 3)
             {
-                Debug.WriteLine($"{nameof(GetIconUrl)}: {faviconUrl}");
-                return faviconUrl;
+                int domainCount = domains.Length;
+                // handle international country code TLDs 
+                // www.amazon.co.uk => amazon.co.uk
+                if (domains[domainCount - 1].Length < 3 && domains[domainCount - 2].Length <= 3)
+                    return string.Join(".", domains, domainCount - 3, 3);
+                else
+                    return string.Join(".", domains, domainCount - 2, 2);
             }
             else
             {
-                Debug.WriteLine($"{nameof(GetIconUrl)}: null");
-                return null;
+                return host;
             }
         }
 
-        static async Task<string?> GetShortcutIconUrl(HtmlDocument htmlDoc, string url)
+        static async Task<string> GetHtml(HttpResponseMessage response)
+        {
+            try
+            {
+                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            }
+            catch (InvalidOperationException)
+            {
+                //Work-around for UTF-8 https://stackoverflow.com/a/50355945/5953643
+                using var streamReader = new StreamReader(await response.Content.ReadAsStreamAsync(), Encoding.GetEncoding("iso-8859-1"));
+                return await streamReader.ReadToEndAsync().ConfigureAwait(false);
+            }
+        }
+
+        static async Task<(string? FavIconUrl, long? ContentSize)> GetFavIcon(string url)
+        {
+            try
+            {
+                var faviconUrl = $"{url}favicon.ico";
+
+                var (isUrlValid, size) = await GetUrlData(faviconUrl).ConfigureAwait(false);
+
+                if (isUrlValid)
+                {
+                    Debug.WriteLine($"{nameof(GetFavIcon)}: {faviconUrl}, {size}");
+                    return (faviconUrl, size);
+                }
+                else
+                {
+                    return (null, null);
+                }
+            }
+            catch
+            {
+                return (null, null);
+            }
+        }
+
+        static async Task<(string? ShortcutIconUrl, long? ContentSize)> GetShortcutIcon(HtmlDocument htmlDoc, string url)
         {
             try
             {
@@ -90,25 +137,25 @@ namespace GitTrends
 
                 var shortcutIconUrl = hrefValue.Contains("http") ? hrefValue : url.Trim('/') + hrefValue;
 
-                var isValid = await IsUrlValid(shortcutIconUrl).ConfigureAwait(false);
-                if (isValid)
+                var (isUrlValid, size) = await GetUrlData(shortcutIconUrl).ConfigureAwait(false);
+
+                if (isUrlValid)
                 {
-                    Debug.WriteLine($"{nameof(GetIconUrl)}: {shortcutIconUrl}");
-                    return shortcutIconUrl;
+                    Debug.WriteLine($"{nameof(GetIcon)}: {shortcutIconUrl}, {size}");
+                    return (shortcutIconUrl, size);
                 }
                 else
                 {
-                    Debug.WriteLine($"{nameof(GetIconUrl)}: null");
-                    return null;
+                    return (null, null);
                 }
             }
             catch
             {
-                return null;
+                return (null, null);
             }
         }
 
-        static async Task<string?> GetAppleTouchIconUrl(HtmlDocument htmlDoc, string url)
+        static async Task<(string? AppleTouchIconUrl, long? ContentSize)> GetAppleTouchIcon(HtmlDocument htmlDoc, string url)
         {
             try
             {
@@ -117,25 +164,25 @@ namespace GitTrends
 
                 var appleTouchIconUrl = hrefValue.Contains("http") ? hrefValue : url.Trim('/') + hrefValue;
 
-                var isValid = await IsUrlValid(appleTouchIconUrl).ConfigureAwait(false);
-                if (isValid)
+                var (isUrlValid, size) = await GetUrlData(appleTouchIconUrl).ConfigureAwait(false);
+
+                if (isUrlValid)
                 {
-                    Debug.WriteLine($"{nameof(GetIconUrl)}: {appleTouchIconUrl}");
-                    return appleTouchIconUrl;
+                    Debug.WriteLine($"{nameof(GetAppleTouchIcon)}: {appleTouchIconUrl}, {size}");
+                    return (appleTouchIconUrl, size);
                 }
                 else
                 {
-                    Debug.WriteLine($"{nameof(GetIconUrl)}: null");
-                    return null;
+                    return (null, null);
                 }
             }
             catch
             {
-                return null;
+                return (null, null);
             }
         }
 
-        static async Task<string?> GetIconUrl(HtmlDocument htmlDoc, string url)
+        static async Task<(string? IconUrl, long? ContentSize)> GetIcon(HtmlDocument htmlDoc, string url)
         {
             try
             {
@@ -144,31 +191,39 @@ namespace GitTrends
 
                 var iconUrl = hrefValue.Contains("http") ? hrefValue : url.Trim('/') + hrefValue;
 
-                var isValid = await IsUrlValid(iconUrl).ConfigureAwait(false);
-                if (isValid)
+                var (isUrlValid, size) = await GetUrlData(iconUrl).ConfigureAwait(false);
+
+                if (isUrlValid)
                 {
-                    Debug.WriteLine($"{nameof(GetIconUrl)}: {iconUrl}");
-                    return iconUrl;
+                    Debug.WriteLine($"{nameof(GetIcon)}: {iconUrl}, {size}");
+                    return (iconUrl, size);
                 }
                 else
                 {
-                    Debug.WriteLine($"{nameof(GetIconUrl)}: null");
-                    return null;
+                    return (null, null);
                 }
             }
             catch
             {
-                return null;
+                return (null, null);
             }
         }
 
-        static async ValueTask<bool> IsUrlValid(string? url)
+        static async ValueTask<(bool IsUrlValid, long? ContentSize)> GetUrlData(string? url)
         {
-            if (url is null || url.EndsWith(".svg"))
-                return false;
+            try
+            {
+                if (url is null || url.EndsWith(".svg"))
+                    return (false, null);
 
-            var response = await Client.GetAsync(url).ConfigureAwait(false);
-            return response.IsSuccessStatusCode;
+                var response = await Client.GetAsync(url).ConfigureAwait(false);
+
+                return (response.IsSuccessStatusCode, response.Content.Headers.ContentLength);
+            }
+            catch
+            {
+                return (false, null);
+            }
         }
     }
 }

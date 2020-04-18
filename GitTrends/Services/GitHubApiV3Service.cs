@@ -26,7 +26,7 @@ namespace GitTrends
 
                 var (viewsResponse, clonesResponse) = await completedStatisticsTask.ConfigureAwait(false);
 
-                var matchingRepository = repositories.First(x => x.Name == viewsResponse.RepositoryName);
+                var matchingRepository = repositories.Single(x => x.Name == viewsResponse.RepositoryName);
 
 
                 yield return new Repository(matchingRepository.Name, matchingRepository.Description, matchingRepository.ForkCount,
@@ -110,7 +110,7 @@ namespace GitTrends
             }
         }
 
-        public async Task<List<ReferringSiteModel>> GetReferringSites(string owner, string repo, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<ReferringSiteModel>> GetReferringSites(string owner, string repo, CancellationToken cancellationToken = default)
         {
             if (GitHubAuthenticationService.IsDemoUser)
             {

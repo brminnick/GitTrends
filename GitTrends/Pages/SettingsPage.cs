@@ -21,58 +21,61 @@ namespace GitTrends
             var loginRowTapGesture = new TapGestureRecognizer();
             loginRowTapGesture.Tapped += HandleLoginRowTapped;
 
-            Content = new Grid
+            Content = new ScrollView
             {
-                RowSpacing = 8,
-                ColumnSpacing = 16.5,
-
-                Margin = new Thickness(30, 0, 30, 5),
-
-                RowDefinitions = Rows.Define(
-                    (Row.GitHubUser, AbsoluteGridLength(GitHubUserView.TotalHeight)),
-                    (Row.GitHubUserSeparator, AbsoluteGridLength(separatorRowHeight)),
-                    (Row.Login, AbsoluteGridLength(settingsRowHeight)),
-                    (Row.LoginSeparator, AbsoluteGridLength(separatorRowHeight)),
-                    (Row.Notifications, AbsoluteGridLength(settingsRowHeight)),
-                    (Row.NotificationsSeparator, AbsoluteGridLength(separatorRowHeight)),
-                    (Row.Theme, AbsoluteGridLength(settingsRowHeight)),
-                    (Row.ThemeSeparator, AbsoluteGridLength(separatorRowHeight)),
-                    (Row.PreferredCharts, AbsoluteGridLength(80)),
-                    (Row.Copyright, Star)),
-
-                ColumnDefinitions = Columns.Define(
-                    (Column.Icon, AbsoluteGridLength(24)),
-                    (Column.Title, StarGridLength(3)),
-                    (Column.Button, StarGridLength(1))),
-
-                Children =
+                Content = new Grid
                 {
-                    new GitHubUserView().Row(Row.GitHubUser).ColumnSpan(All<Column>()),
+                    RowSpacing = 8,
+                    ColumnSpacing = 16.5,
 
-                    new Separator().Row(Row.GitHubUserSeparator).ColumnSpan(All<Column>()),
+                    Margin = new Thickness(30, 0, 30, 5),
 
-                    new LoginRowTappableView(loginRowTapGesture).Row(Row.Login).ColumnSpan(All<Column>()),
-                    new LoginRowSvg("logout.svg", getSVGIconColor).Row(Row.Login).Column(Column.Icon),
-                    new LoginLabel().Row(Row.Login).Column(Column.Title),
-                    new LoginRowSvg("right_arrow.svg", getSVGIconColor).End().Row(Row.Login).Column(Column.Button),
+                    RowDefinitions = Rows.Define(
+                        (Row.GitHubUser, AbsoluteGridLength(GitHubUserView.TotalHeight)),
+                        (Row.GitHubUserSeparator, AbsoluteGridLength(separatorRowHeight)),
+                        (Row.Login, AbsoluteGridLength(settingsRowHeight)),
+                        (Row.LoginSeparator, AbsoluteGridLength(separatorRowHeight)),
+                        (Row.Notifications, AbsoluteGridLength(settingsRowHeight)),
+                        (Row.NotificationsSeparator, AbsoluteGridLength(separatorRowHeight)),
+                        (Row.Theme, AbsoluteGridLength(settingsRowHeight)),
+                        (Row.ThemeSeparator, AbsoluteGridLength(separatorRowHeight)),
+                        (Row.PreferredCharts, AbsoluteGridLength(80)),
+                        (Row.Copyright, Star)),
 
-                    new Separator().Row(Row.LoginSeparator).ColumnSpan(All<Column>()),
+                    ColumnDefinitions = Columns.Define(
+                        (Column.Icon, AbsoluteGridLength(24)),
+                        (Column.Title, StarGridLength(3)),
+                        (Column.Button, StarGridLength(1))),
 
-                    new SvgImage("bell.svg", getSVGIconColor).Row(Row.Notifications).Column(Column.Icon),
-                    new RegisterForNotificationsLabel().Row(Row.Notifications).Column(Column.Title),
-                    new EnableNotificationsSwitch().Row(Row.Notifications).Column(Column.Button),
+                    Children =
+                    {
+                        new GitHubUserView().Row(Row.GitHubUser).ColumnSpan(All<Column>()),
 
-                    new Separator().Row(Row.NotificationsSeparator).ColumnSpan(All<Column>()),
+                        new Separator().Row(Row.GitHubUserSeparator).ColumnSpan(All<Column>()),
 
-                    new SvgImage("theme.svg", getSVGIconColor).Row(Row.Theme).Column(Column.Icon),
-                    new ThemeLabel().Row(Row.Theme).Column(Column.Title),
-                    new ThemePicker().Row(Row.Theme).Column(Column.Button),
+                        new LoginRowTappableView(loginRowTapGesture).Row(Row.Login).ColumnSpan(All<Column>()),
+                        new LoginRowSvg("logout.svg", getSVGIconColor).Row(Row.Login).Column(Column.Icon),
+                        new LoginLabel().Row(Row.Login).Column(Column.Title),
+                        new LoginRowSvg("right_arrow.svg", getSVGIconColor).End().Row(Row.Login).Column(Column.Button),
 
-                    new Separator().Row(Row.ThemeSeparator).ColumnSpan(All<Column>()),
+                        new Separator().Row(Row.LoginSeparator).ColumnSpan(All<Column>()),
 
-                    new PreferredChartsView(trendsChartSettingsService).Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
+                        new SvgImage("bell.svg", getSVGIconColor).Row(Row.Notifications).Column(Column.Icon),
+                        new RegisterForNotificationsLabel().Row(Row.Notifications).Column(Column.Title),
+                        new EnableNotificationsSwitch().Row(Row.Notifications).Column(Column.Button),
 
-                    new CopyrightLabel().Row(Row.Copyright).ColumnSpan(All<Column>())
+                        new Separator().Row(Row.NotificationsSeparator).ColumnSpan(All<Column>()),
+
+                        new SvgImage("theme.svg", getSVGIconColor).Row(Row.Theme).Column(Column.Icon),
+                        new ThemeLabel().Row(Row.Theme).Column(Column.Title),
+                        new ThemePicker().Row(Row.Theme).Column(Column.Button),
+
+                        new Separator().Row(Row.ThemeSeparator).ColumnSpan(All<Column>()),
+
+                        new PreferredChartsView(trendsChartSettingsService).Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
+
+                        new CopyrightLabel().Row(Row.Copyright).ColumnSpan(All<Column>())
+                    }
                 }
             };
 

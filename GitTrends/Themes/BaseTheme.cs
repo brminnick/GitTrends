@@ -68,7 +68,13 @@ namespace GitTrends
             Add(nameof(GitHubHandleColor), GitHubHandleColor);
 
             Add(nameof(PrimaryColor), PrimaryColor);
+
+            Add(nameof(GitTrendsImageSource), GitTrendsImageSource);
+            Add(nameof(DefaultProfileImageSource), DefaultProfileImageSource);
         }
+
+        public static string GetGitTrendsImageSource() => (string)(Application.Current?.Resources?[nameof(GitTrendsImageSource)] ?? "GitTrends");
+        public static string GetDefaultProfileImageSource() => (string)(Application.Current?.Resources?[nameof(DefaultProfileImageSource)] ?? "DefaultProfileImage");
 
         public abstract Color NavigationBarBackgroundColor { get; }
         public abstract Color NavigationBarTextColor { get; }
@@ -136,5 +142,8 @@ namespace GitTrends
         public abstract Color GitHubHandleColor { get; }
 
         public abstract Color PrimaryColor { get; }
+
+        public abstract string GitTrendsImageSource { get; }
+        public abstract string DefaultProfileImageSource { get; }
     }
 }

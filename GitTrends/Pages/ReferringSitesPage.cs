@@ -29,7 +29,8 @@ namespace GitTrends
                 ItemTemplate = new ReferringSitesDataTemplate(),
                 SelectionMode = SelectionMode.Single,
                 ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical),
-                Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : new BoxView { HeightRequest = titleRowHeight + titleTopMargin },
+                //Set iOS Header to `new BoxView { HeightRequest = titleRowHeight + titleTopMargin }` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
+                Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
                 Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
@@ -68,27 +69,19 @@ namespace GitTrends
 
                 var titleLabel = new Label
                 {
+                    FontSize = 30,
                     FontAttributes = FontAttributes.Bold,
                     Text = PageTitles.ReferringSitesPage,
-                    FontSize = 30
                 };
                 titleLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
 
                 closeButton.Margin = titleLabel.Margin = new Thickness(0, titleTopMargin, 0, 0);
 
-                var activityIndicator = new ActivityIndicator
-                {
-                    AutomationId = ReferringSitesPageAutomationIds.ActivityIndicator,
-                };
-                activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.ActivityIndicatorColor));
-                activityIndicator.SetBinding(IsVisibleProperty, nameof(ReferringSitesViewModel.IsActivityIndicatorVisible));
-                activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(ReferringSitesViewModel.IsActivityIndicatorVisible));
-
                 var relativeLayout = new RelativeLayout();
 
                 relativeLayout.Children.Add(_refreshView,
                                              Constraint.Constant(0),
-                                             Constraint.Constant(0),
+                                             Constraint.Constant(titleRowHeight + 5), ////Set to `0` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
                                              Constraint.RelativeToParent(parent => parent.Width),
                                              Constraint.RelativeToParent(parent => parent.Height));
 
@@ -106,10 +99,6 @@ namespace GitTrends
                                             Constraint.RelativeToParent(parent => parent.Width - GetWidth(parent, closeButton) - 10),
                                             Constraint.Constant(0),
                                             Constraint.RelativeToParent(parent => GetWidth(parent, closeButton)));
-
-                relativeLayout.Children.Add(activityIndicator,
-                                            Constraint.RelativeToParent(parent => parent.Width / 2 - GetWidth(parent, activityIndicator) / 2),
-                                            Constraint.RelativeToParent(parent => parent.Height / 2 - GetHeight(parent, activityIndicator) / 2));
 
                 Content = relativeLayout;
             }

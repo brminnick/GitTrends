@@ -121,5 +121,8 @@ namespace GitTrends
         public override Color GitHubHandleColor { get; } = Color.FromHex(_primaryTextHex);
 
         public override Color PrimaryColor { get; } = Color.FromHex(_primaryTealHex);
+
+        public override string GitTrendsImageSource { get; } = "GitTrendsWhite";
+        public override string DefaultProfileImageSource { get; } = "DefaultProfileImageWhite";
     }
 }

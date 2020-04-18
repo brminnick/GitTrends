@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -11,6 +12,14 @@ namespace GitTrends
 
         public static GridLength AbsoluteGridLength(double value) => new GridLength(value, GridUnitType.Absolute);
         public static GridLength AbsoluteGridLength(int value) => AbsoluteGridLength((double)value);
+
+        // **** Example Screen Sizes ****
+        // iPhone SE 2nd Gen (aka iPhone 8), Width 750, Density 2, Width/Density 375
+        // iPhone 11, Width 828, Density 2, Width/Density 414
+        // Pixel 3, Width 1080, Density 2.75, Width/Density 392.7
+        // Galaxy S5, Width 1080, Density 3, Width/Density 360
+        // Galaxy Nexus, Width 720, Density 2, Width/Density 360
+        public static double ScreenWidth { get; } = DeviceDisplay.MainDisplayInfo.Width / DeviceDisplay.MainDisplayInfo.Density;
 
         public static void SetSelectedStateBackgroundColor(this VisualElement visualElement, Color color)
         {

@@ -19,7 +19,10 @@ namespace GitTrends.Droid
             base.OnElementChanged(e);
 
             if (Control != null)
+            {
                 Control.SetAllCaps(false);
+                Control.VerticalScrollBarEnabled = false;
+            }
         }
     }
 }

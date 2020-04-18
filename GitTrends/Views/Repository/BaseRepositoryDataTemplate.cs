@@ -13,9 +13,10 @@ namespace GitTrends
     abstract class BaseRepositoryDataTemplate : DataTemplate
     {
         const int _statsColumnSize = 40;
-        const int _circleImageHeight = 62;
         const double _statisticsRowHeight = StatisticsLabel.StatiscsFontSize + 4;
         const double _emojiColumnSize = _statisticsRowHeight;
+        readonly static bool _isSmallScreen = ScreenWidth <= 360;
+        readonly static double _circleImageHeight = _isSmallScreen ? 52 : 62;
 
         protected BaseRepositoryDataTemplate(IEnumerable<View> parentDataTemplateChildren) : base(() => new CardView(parentDataTemplateChildren))
         {
@@ -78,7 +79,7 @@ namespace GitTrends
 
                         ColumnDefinitions = Columns.Define(
                             (Column.Avatar, AbsoluteGridLength(_circleImageHeight)),
-                            (Column.AvatarPadding, AbsoluteGridLength(16)),
+                            (Column.AvatarPadding, AbsoluteGridLength(_isSmallScreen ? 8 : 16)),
                             (Column.Trending, StarGridLength(1)),
                             (Column.Emoji1, AbsoluteGridLength(_emojiColumnSize)),
                             (Column.Statistic1, AbsoluteGridLength(_statsColumnSize)),
@@ -123,7 +124,7 @@ namespace GitTrends
                         //Reveal the tag if the LargeScreenTrendingImage is not shown by changing its color from matching the CardSurfaceColor
                         static Func<Color> largeScreenTrendingImageTextColorConverter(double largeTrendingImageWidth)
                         {
-                            if (largeTrendingImageWidth > 0 && largeTrendingImageWidth < TrendingImage.SvgWidthRequest)
+                            if (largeTrendingImageWidth >= 0 && largeTrendingImageWidth < TrendingImage.SvgWidthRequest)
                                 return () => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)];
                             else
                                 return () => (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)];
