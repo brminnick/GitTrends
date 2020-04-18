@@ -16,7 +16,7 @@ namespace GitTrends
     {
         static readonly Lazy<HttpClient> _clientHolder = new Lazy<HttpClient>(new HttpClient());
 
-        public static string DefaultFavIcon => BaseTheme.GetDefaultProfileImageSource();
+        public static string DefaultFavIcon => BaseTheme.GetDefaultReferringSiteImageSource();
         static HttpClient Client => _clientHolder.Value;
 
         public static async Task<ImageSource> GetFavIconImageSource(Uri site)

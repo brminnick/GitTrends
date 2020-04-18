@@ -203,6 +203,12 @@
     <ImageAsset Include="Assets.xcassets\DefaultProfileImageWhite.imageset\DefaultProfileImageDark-1.png" />
     <ImageAsset Include="Assets.xcassets\DefaultProfileImageWhite.imageset\DefaultProfileImageDark%402x-1.png" />
     <ImageAsset Include="Assets.xcassets\DefaultProfileImageWhite.imageset\DefaultProfileImageDark%403x-1.png" />
+    <ImageAsset Include="Assets.xcassets\DefaultReferringSiteImage.imageset\DefaultReferringSiteImage%403x.png" />
+    <ImageAsset Include="Assets.xcassets\DefaultReferringSiteImage.imageset\DefaultReferringSiteImage%402x.png" />
+    <ImageAsset Include="Assets.xcassets\DefaultReferringSiteImage.imageset\DefaultReferringSiteImage.png" />
+    <ImageAsset Include="Assets.xcassets\DefaultReferringSiteImage.imageset\Contents.json">
+      <Visible>False</Visible>
+    </ImageAsset>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

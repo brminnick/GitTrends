@@ -71,10 +71,12 @@ namespace GitTrends
 
             Add(nameof(GitTrendsImageSource), GitTrendsImageSource);
             Add(nameof(DefaultProfileImageSource), DefaultProfileImageSource);
+            Add(nameof(DefaultReferringSiteImageSource), DefaultReferringSiteImageSource);
         }
 
         public static string GetGitTrendsImageSource() => (string)(Application.Current?.Resources?[nameof(GitTrendsImageSource)] ?? "GitTrends");
         public static string GetDefaultProfileImageSource() => (string)(Application.Current?.Resources?[nameof(DefaultProfileImageSource)] ?? "DefaultProfileImage");
+        public static string GetDefaultReferringSiteImageSource() => (string)(Application.Current?.Resources?[nameof(DefaultReferringSiteImageSource)] ?? "DefaultReferringSiteImage");
 
         public abstract Color NavigationBarBackgroundColor { get; }
         public abstract Color NavigationBarTextColor { get; }
@@ -145,5 +147,6 @@ namespace GitTrends
 
         public abstract string GitTrendsImageSource { get; }
         public abstract string DefaultProfileImageSource { get; }
+        public abstract string DefaultReferringSiteImageSource { get; }
     }
 }

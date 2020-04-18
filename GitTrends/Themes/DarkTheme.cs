@@ -124,5 +124,6 @@ namespace GitTrends
 
         public override string GitTrendsImageSource { get; } = "GitTrendsWhite";
         public override string DefaultProfileImageSource { get; } = "DefaultProfileImageWhite";
+        public override string DefaultReferringSiteImageSource { get; } = "DefaultReferringSiteImage";
     }
 }
