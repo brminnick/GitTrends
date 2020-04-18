@@ -28,8 +28,6 @@ namespace GitTrends.Droid
             AndroidOptions.DefaultNotificationImportance = AndroidNotificationImportance.High;
             AndroidShinyHost.Init(this, platformBuild: services => services.UseNotifications());
 
-            Plugin.CurrentActivity.CrossCurrentActivity.Current.Init(this);
-
             Xamarin.Essentials.Platform.Init(this);
 
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);

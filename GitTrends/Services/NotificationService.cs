@@ -22,6 +22,8 @@ namespace GitTrends
         readonly DeepLinkingService _deepLinkingService;
         readonly SortingService _sortingService;
 
+        TaskCompletionSource<AccessState>? _settingsResultCompletionSource;
+
         public NotificationService(AnalyticsService analyticsService,
                                     DeepLinkingService deepLinkingService,
                                     SortingService sortingService)
@@ -29,6 +31,9 @@ namespace GitTrends
             _analyticsService = analyticsService;
             _deepLinkingService = deepLinkingService;
             _sortingService = sortingService;
+
+            var app = (App)Application.Current;
+            app.Resumed += HandleAppResumed;
         }
 
         public event EventHandler<SortingOption> SortingOptionRequested
@@ -43,28 +48,32 @@ namespace GitTrends
             remove => _registerForNotificationCompletedEventHandler.RemoveEventHandler(value);
         }
 
+        public bool ShouldSendNotifications
+        {
+            get => Preferences.Get(nameof(ShouldSendNotifications), false);
+            private set => Preferences.Set(nameof(ShouldSendNotifications), value);
+        }
+
         static INotificationManager NotificationManager => ShinyHost.Resolve<INotificationManager>();
 
-        public bool AreNotificationsEnabled
-        {
-            get => Preferences.Get(nameof(AreNotificationsEnabled), false);
-            private set => Preferences.Set(nameof(AreNotificationsEnabled), value);
-        }
-
-        public bool HaveNotificationsBeenRequested
+        bool HaveNotificationsBeenRequested
         {
             get => Preferences.Get(nameof(HaveNotificationsBeenRequested), false);
-            private set => Preferences.Set(nameof(HaveNotificationsBeenRequested), value);
+            set => Preferences.Set(nameof(HaveNotificationsBeenRequested), value);
         }
 
-        public void UnRegister() => AreNotificationsEnabled = false;
+        public async Task<bool> AreNotificationsEnabled()
+        {
+            bool? areNotificationsEnabled = await DependencyService.Get<INotificationService>().AreNotificationEnabled().ConfigureAwait(false);
+            return areNotificationsEnabled ?? false;
+        }
+
+        public void UnRegister() => ShouldSendNotifications = false;
 
         public async Task<AccessState> Register(bool shouldShowSettingsUI)
         {
             AccessState? finalNotificationRequestResult = null;
-            HaveNotificationsBeenRequested = AreNotificationsEnabled = true;
-
-            var settingsResultCompletionSource = new TaskCompletionSource<AccessState>();
+            HaveNotificationsBeenRequested = ShouldSendNotifications = true;
 
             var initialNotificationRequestResult = await NotificationManager.RequestAccess().ConfigureAwait(false);
 
@@ -74,11 +83,9 @@ namespace GitTrends
                 {
                     case AccessState.Denied when shouldShowSettingsUI:
                     case AccessState.Disabled when shouldShowSettingsUI:
-                        var app = (App)Application.Current;
-                        app.Resumed += HandleResumed;
-
+                        _settingsResultCompletionSource = new TaskCompletionSource<AccessState>();
                         await _deepLinkingService.ShowSettingsUI().ConfigureAwait(false);
-                        finalNotificationRequestResult = await settingsResultCompletionSource.Task.ConfigureAwait(false);
+                        finalNotificationRequestResult = await _settingsResultCompletionSource.Task.ConfigureAwait(false);
                         break;
 
                     case AccessState.Denied:
@@ -109,40 +116,31 @@ namespace GitTrends
             }
             finally
             {
+                _settingsResultCompletionSource = null;
+
                 _analyticsService.Track("Register For Notifications", new Dictionary<string, string>
                 {
                     { nameof(initialNotificationRequestResult), initialNotificationRequestResult.ToString() },
                     { nameof(finalNotificationRequestResult), finalNotificationRequestResult?.ToString() ?? "null" },
                 });
             }
-
-            async void HandleResumed(object sender, EventArgs e)
-            {
-                var app = (App)sender;
-                app.Resumed -= HandleResumed;
-
-                var finalResult = await NotificationManager.RequestAccess().ConfigureAwait(false);
-                settingsResultCompletionSource.SetResult(finalResult);
-            }
         }
 
         public async ValueTask SetAppBadgeCount(int count)
         {
-            if (AreNotificationsEnabled || HaveNotificationsBeenRequested && count is 0)
+            if (HaveNotificationsBeenRequested)
             {
-                var accessState = await Register(false).ConfigureAwait(false);
-
                 //INotificationManager.Badge Crashes on iOS
-                if (accessState is AccessState.Available && Device.RuntimePlatform is Device.iOS)
-                    await DependencyService.Get<IPlatformSpecificService>().SetiOSBadgeCount(count).ConfigureAwait(false);
-                else if (accessState is AccessState.Available)
+                if (Device.RuntimePlatform is Device.iOS)
+                    await DependencyService.Get<INotificationService>().SetiOSBadgeCount(count).ConfigureAwait(false);
+                else
                     NotificationManager.Badge = count;
             }
         }
 
         public async ValueTask TrySendTrendingNotificaiton(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
         {
-            if (!AreNotificationsEnabled)
+            if (!ShouldSendNotifications)
                 return;
 #if DEBUG
             await SendTrendingNotification(trendingRepositories, notificationDateTime).ConfigureAwait(false);
@@ -258,6 +256,15 @@ namespace GitTrends
             var ownerNameIndex = singleRepositoryNotificationMessage.IndexOf(" by ") + " by ".Length;
             var ownerNameLength = singleRepositoryNotificationMessage.IndexOf(" is Trending", ownerNameIndex) - ownerNameIndex;
             return singleRepositoryNotificationMessage.Substring(ownerNameIndex, ownerNameLength);
+        }
+
+        async void HandleAppResumed(object sender, EventArgs e)
+        {
+            if (_settingsResultCompletionSource != null)
+            {
+                var finalResult = await NotificationManager.RequestAccess().ConfigureAwait(false);
+                _settingsResultCompletionSource.SetResult(finalResult);
+            }
         }
 
         void OnSortingOptionRequestion(SortingOption sortingOption) => _sortingOptionRequestedEventManager.HandleEvent(this, sortingOption, nameof(SortingOptionRequested));

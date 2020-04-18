@@ -65,9 +65,12 @@ namespace GitTrends
             public NextLabel(in string text)
             {
                 Text = text;
+                FontSize = 14;
                 TextColor = Color.White;
                 BackgroundColor = Color.Transparent;
-                FontFamily = FontFamilyConstants.RobotoBold;
+                FontFamily = FontFamilyConstants.RobotoRegular;
+
+                Opacity = 0.8;
 
                 Margin = new Thickness(0, 0, 30, 0);
 

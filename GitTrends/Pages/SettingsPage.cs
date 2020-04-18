@@ -109,6 +109,7 @@ namespace GitTrends
         {
             public LoginRowSvg(in string svgFileName, in Func<Color> getTextColor) : base(svgFileName, getTextColor)
             {
+                //Allow LoginRowTappableView to handle taps
                 InputTransparent = true;
             }
         }
@@ -160,7 +161,7 @@ namespace GitTrends
             public ThemePicker()
             {
                 FontSize = 12;
-                FontFamily = FontFamilyConstants.RobotoRegular;
+                FontFamily = FontFamilyConstants.RobotoMedium;
 
                 WidthRequest = 70;
 

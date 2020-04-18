@@ -46,7 +46,7 @@ namespace GitTrends
 
         public PreferredTheme GetPreferredTheme() => _themeService.Preference;
 
-        public bool AreNotificationsEnabled() => _notificationService.AreNotificationsEnabled;
+        public bool ShouldSendNotifications() => _notificationService.ShouldSendNotifications;
 
         public Task TriggerPullToRefresh() => MainThread.InvokeOnMainThreadAsync(() => GetVisibleRefreshView().IsRefreshing = true);
 

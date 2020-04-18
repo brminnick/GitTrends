@@ -10,7 +10,7 @@ namespace GitTrends.Mobile.Shared
         public const string IsTrendsSeriesVisible = nameof(IsTrendsSeriesVisible);
         public const string GetCurrentOnboardingPageNumber = nameof(GetCurrentOnboardingPageNumber);
         public const string PopPage = nameof(PopPage);
-        public const string AreNotificationsEnabled = nameof(AreNotificationsEnabled);
+        public const string ShouldSendNotifications = nameof(ShouldSendNotifications);
         public const string GetPreferredTheme = nameof(GetPreferredTheme);
     }
 }

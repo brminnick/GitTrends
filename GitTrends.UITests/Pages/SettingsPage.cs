@@ -40,7 +40,7 @@ namespace GitTrends.UITests
 
         public bool IsActivityIndicatorRunning => App.Query(_gitHubSettingsViewActivityIndicator).Any();
 
-        public bool AreNotificationsEnabled => App.InvokeBackdoorMethod<bool>(BackdoorMethodConstants.AreNotificationsEnabled);
+        public bool AreNotificationsEnabled => App.InvokeBackdoorMethod<bool>(BackdoorMethodConstants.ShouldSendNotifications);
 
         public string GitHubAliasNameText => GetText(_gitHubNameLabel);
 

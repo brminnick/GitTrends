@@ -18,6 +18,8 @@ namespace GitTrends
         {
             Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental" });
 
+            InitializeEssentialServices();
+
             using var scope = ContainerService.Container.BeginLifetimeScope();
             _analyticsService = scope.Resolve<AnalyticsService>();
 
@@ -64,7 +66,16 @@ namespace GitTrends
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var notificationService = scope.Resolve<NotificationService>();
 
+
             return notificationService.SetAppBadgeCount(0);
+        }
+
+        void InitializeEssentialServices()
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+
+            scope.Resolve<ThemeService>();
+            scope.Resolve<BackgroundFetchService>();
         }
 
         void OnResumed() => _resumedEventManager.HandleEvent(this, EventArgs.Empty, nameof(Resumed));

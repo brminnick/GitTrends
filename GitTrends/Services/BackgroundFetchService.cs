@@ -8,7 +8,7 @@ using Autofac;
 using GitTrends.Shared;
 using Shiny;
 using Shiny.Jobs;
-using Xamarin.Forms;
+using Xamarin.Essentials;
 
 namespace GitTrends
 {
@@ -37,18 +37,13 @@ namespace GitTrends
 
         static IJobManager JobManager => ShinyHost.Resolve<IJobManager>();
 
-        public async Task Register()
+        public Task Register() => MainThread.InvokeOnMainThreadAsync(async () =>
         {
             var periodicTimeSpan = TimeSpan.FromHours(12);
 
-            var isRegistered = await isTrendingRepositoryNotificationJobRegistered().ConfigureAwait(false);
+            var isRegistered = await isTrendingRepositoryNotificationJobRegistered();
 
-            //Shiny.Jobs.IJobManager.Schedule always schedules background jobs for TimeSpan.FromMinutes(15) https://github.com/shinyorg/shiny/blob/c53a31732c57c4cc78f8bccba54b543e024425ee/src/Shiny.Core/Jobs/Platforms/Android/JobManager.cs#L95
-            if (Device.RuntimePlatform is Device.Android)
-            {
-                DependencyService.Get<IPlatformSpecificService>().EnqueueAndroidWorkRequest(periodicTimeSpan);
-            }
-            else if (!isRegistered)
+            if (!isRegistered)
             {
                 var backgroundFetchJob = new JobInfo(typeof(TrendingRepositoryNotificationJob), TrendingRepositoryNotificationJob.Identifier)
                 {
@@ -67,7 +62,7 @@ namespace GitTrends
                 var registeredJobs = await JobManager.GetJobs().ConfigureAwait(false);
                 return registeredJobs.Any(x => x.Identifier is TrendingRepositoryNotificationJob.Identifier);
             }
-        }
+        });
 
         public async Task<bool> NotifyTrendingRepositories()
         {

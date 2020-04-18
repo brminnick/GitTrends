@@ -39,8 +39,8 @@ namespace GitTrends.Droid
         public async void PopPage() =>
             await UITestBackdoorService.PopPage().ConfigureAwait(false);
 
-        [Preserve, Export(BackdoorMethodConstants.AreNotificationsEnabled)]
-        public bool IsNotificationsEnabled() => UITestBackdoorService.AreNotificationsEnabled();
+        [Preserve, Export(BackdoorMethodConstants.ShouldSendNotifications)]
+        public bool ShouldSendNotifications() => UITestBackdoorService.ShouldSendNotifications();
 
         [Preserve, Export(BackdoorMethodConstants.GetPreferredTheme)]
         public string GetPreferredTheme() =>

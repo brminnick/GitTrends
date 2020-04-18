@@ -40,9 +40,9 @@ namespace GitTrends.iOS
         public async void PopPage(NSString noValue) =>
             await UITestBackdoorService.PopPage().ConfigureAwait(false);
 
-        [Preserve, Export(BackdoorMethodConstants.AreNotificationsEnabled + ":")]
-        public NSString AreNotificationsEnabled(NSString noValue) =>
-            SerializeObject(UITestBackdoorService.AreNotificationsEnabled());
+        [Preserve, Export(BackdoorMethodConstants.ShouldSendNotifications + ":")]
+        public NSString ShouldSendNotifications(NSString noValue) =>
+            SerializeObject(UITestBackdoorService.ShouldSendNotifications());
 
         [Preserve, Export(BackdoorMethodConstants.GetPreferredTheme + ":")]
         public NSString GetPreferredTheme(NSString noValue) =>

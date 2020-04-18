@@ -18,6 +18,7 @@ namespace GitTrends.Droid
 
             if (Control != null)
             {
+                Control.Background = null;
                 Control.Gravity = Android.Views.GravityFlags.Center;
                 Control.VerticalScrollBarEnabled = false;
             }
