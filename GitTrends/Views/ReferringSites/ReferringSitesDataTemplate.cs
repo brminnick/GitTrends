@@ -77,13 +77,13 @@ namespace GitTrends
                     ColumnDefinitions = Columns.Define(
                         (Column.FavIcon, AbsoluteGridLength(_favIconWidth)),
                         (Column.FavIconPadding, AbsoluteGridLength(16)),
-                        (Column.Site, StarGridLength(ScreenWidth <= 375 ? 2 : 4)),
+                        (Column.Site, StarGridLength(1)),
                         (Column.SitePadding, AbsoluteGridLength(8)),
-                        (Column.Referrals, StarGridLength(3)),
+                        (Column.Referrals, AbsoluteGridLength(80)),
                         (Column.ReferralPadding, AbsoluteGridLength(separatorPadding)),
                         (Column.Separator, AbsoluteGridLength(1)),
                         (Column.UniquePadding, AbsoluteGridLength(separatorPadding)),
-                        (Column.Uniques, StarGridLength(2)));
+                        (Column.Uniques, AbsoluteGridLength(55)));
 
                     Children.Add(new FavIconImage()
                                         .Row(Row.Title).Column(Column.FavIcon).RowSpan(2));
