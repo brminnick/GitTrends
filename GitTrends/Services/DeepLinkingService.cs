@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using GitTrends.Shared;
@@ -61,7 +62,7 @@ namespace GitTrends
             });
         }
 
-        public Task SendEmail(string subject, string body, List<string> recipients)
+        public Task SendEmail(string subject, string body, IEnumerable<string> recipients)
         {
             return MainThread.InvokeOnMainThreadAsync(() =>
             {
@@ -69,7 +70,7 @@ namespace GitTrends
                 {
                     Subject = subject,
                     Body = body,
-                    To = recipients
+                    To = recipients.ToList()
                 };
 
                 return Email.ComposeAsync(message);

@@ -12,7 +12,8 @@ namespace GitTrends.UITests
 {
     class ReferringSitesPage : BaseCollectionPage<ReferringSiteModel>
     {
-        readonly Query _collectionView, _refreshView, _closeButton, _activityIndicator;
+        readonly Query _collectionView, _refreshView, _closeButton, _activityIndicator,
+            _storeRatingRequestTitleLabel, _storeRatingRequestNoButton, _storeRatingRequestYesButton;
 
         public ReferringSitesPage(IApp app) : base(app, PageTitles.ReferringSitesPage)
         {
@@ -20,9 +21,13 @@ namespace GitTrends.UITests
             _refreshView = GenerateMarkedQuery(ReferringSitesPageAutomationIds.RefreshView);
             _closeButton = GenerateMarkedQuery(ReferringSitesPageAutomationIds.CloseButton);
             _activityIndicator = GenerateMarkedQuery(ReferringSitesPageAutomationIds.ActivityIndicator);
+            _storeRatingRequestTitleLabel = GenerateMarkedQuery(ReferringSitesPageAutomationIds.StoreRatingRequestTitleLabel);
+            _storeRatingRequestNoButton = GenerateMarkedQuery(ReferringSitesPageAutomationIds.StoreRatingRequestNoButton);
+            _storeRatingRequestYesButton = GenerateMarkedQuery(ReferringSitesPageAutomationIds.StoreRatingRequestYesButton);
         }
 
         public bool IsActivityIndicatorRunning => App.Query(_activityIndicator).Any();
+        public string StoreRatingRequestTitleLabelText => GetText(_storeRatingRequestTitleLabel);
 
         public override async Task WaitForPageToLoad(TimeSpan? timeout = null)
         {
@@ -31,6 +36,24 @@ namespace GitTrends.UITests
             WaitForNoActivityIndicator();
 
             await WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
+        }
+
+        public void TriggerReviewRequest()
+        {
+            App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerReviewRequest);
+            App.Screenshot("Triggered Review Request");
+        }
+
+        public void TapStoreRatingRequestYesButton()
+        {
+            App.Tap(_storeRatingRequestYesButton);
+            App.Screenshot("Yes Button Tapped");
+        }
+
+        public void TapStoreRatingRequestNoButton()
+        {
+            App.Tap(_storeRatingRequestNoButton);
+            App.Screenshot("No Button Tapped");
         }
 
         public void DismissNoReferringSitesDialog()

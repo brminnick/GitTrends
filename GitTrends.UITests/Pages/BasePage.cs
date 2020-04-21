@@ -9,17 +9,20 @@ namespace GitTrends.UITests
 {
     abstract class BasePage
     {
+        Query _iOSSafariView;
         const string _syncfusionLicenseWarningTitle = "Syncfusion License";
 
         protected BasePage(IApp app, string pageTitle = "")
         {
             App = app;
             PageTitle = pageTitle;
+
+            _iOSSafariView = x => x.Class("SFSafariView");
         }
 
         public bool IsBrowserOpen => App switch
         {
-            iOSApp iOSApp => iOSApp.Query(x => x.Class("SFSafariView")).Any(),
+            iOSApp iOSApp => iOSApp.Query(_iOSSafariView).Any(),
             _ => throw new NotSupportedException("Browser Can Only Be Verified on iOS")
         };
 
@@ -29,7 +32,7 @@ namespace GitTrends.UITests
         public void WaitForBrowserToOpen()
         {
             if (App is iOSApp iOSApp)
-                iOSApp.WaitForElement(x => x.Class("SFSafariView"));
+                iOSApp.WaitForElement(_iOSSafariView);
             else
                 throw new NotSupportedException("Browser Can Only Be Verified on iOS");
 

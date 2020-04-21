@@ -2,21 +2,24 @@
 
 namespace GitTrends
 {
-    class SettingsButton : Button
+    class BorderButton : BounceButton
     {
-        public SettingsButton(string text, string automationId)
+        public BorderButton(in string automationId)
         {
-            Text = text;
             AutomationId = automationId;
-            Padding = new Thickness(10, 0);
+
             FontSize = 14;
+            FontFamily = FontFamilyConstants.RobotoMedium;
+
+            Padding = new Thickness(10, 0);
             BorderWidth = Device.RuntimePlatform is Device.Android ? 0.75 : 1;
 
             //Use the default corner radius on iOS
             CornerRadius = Device.RuntimePlatform is Device.Android ? 7 : -1;
 
-            SetDynamicResource(TextColorProperty, nameof(BaseTheme.SettingsButtonFontColor));
-            SetDynamicResource(BorderColorProperty, nameof(BaseTheme.SettingsButtonBorderColor));
+
+            SetDynamicResource(TextColorProperty, nameof(BaseTheme.BorderButtonFontColor));
+            SetDynamicResource(BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor));
             SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
         }
     }

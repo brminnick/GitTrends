@@ -220,7 +220,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="4.6.0.616-pre4" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.5.2" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.5.3" />
     <PackageReference Include="Refit" Version="5.1.67" />
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.1-pre1" />
     <PackageReference Include="Polly" Version="7.2.0" />

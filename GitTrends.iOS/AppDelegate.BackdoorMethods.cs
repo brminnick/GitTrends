@@ -48,6 +48,9 @@ namespace GitTrends.iOS
         public NSString GetPreferredTheme(NSString noValue) =>
             SerializeObject(UITestBackdoorService.GetPreferredTheme());
 
+        [Preserve, Export(BackdoorMethodConstants.TriggerReviewRequest + ":")]
+        public void TriggerReviewRequest(NSString noValue) => UITestBackdoorService.TriggerReviewRequest();
+
         static NSString SerializeObject<T>(T value) => new NSString(Newtonsoft.Json.JsonConvert.SerializeObject(value));
     }
 }
