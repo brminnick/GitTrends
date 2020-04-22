@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using NUnit.Framework;
 using Xamarin.UITest;
@@ -70,16 +73,77 @@ namespace GitTrends.UITests
             }
 
             //Assert
-            if(referringSiteList.Any())
-
             if (isUrlValid && App is iOSApp)
             {
                 SettingsPage.WaitForBrowserToOpen();
                 Assert.IsTrue(ReferringSitesPage.IsBrowserOpen);
             }
-            else if (!isUrlValid)
-                Assert.IsTrue(App.Query(referringSite.Referrer).Any());
 
+            Assert.IsTrue(App.Query(referringSite.Referrer).Any());
+        }
+
+        [TestCase(ReviewAction.NoButtonTapped, ReviewAction.NoButtonTapped)]
+        [TestCase(ReviewAction.NoButtonTapped, ReviewAction.YesButtonTapped)]
+        [TestCase(ReviewAction.YesButtonTapped, ReviewAction.NoButtonTapped)]
+        [TestCase(ReviewAction.YesButtonTapped, ReviewAction.YesButtonTapped)]
+        public void VerifyStoreRequest(ReviewAction firstAction, ReviewAction secondAction)
+        {
+            //Arrange
+            string firstTitleText, secondTitleText, firstNoButtonText, secondNoButtonText, firstYesButtonText, secondYesButtonText;
+
+            //Act
+            ReferringSitesPage.TriggerReviewRequest();
+            ReferringSitesPage.WaitForReviewRequest();
+
+            firstTitleText = ReferringSitesPage.StoreRatingRequestTitleLabelText;
+            firstNoButtonText = ReferringSitesPage.StoreRatingRequestNoButtonText;
+            firstYesButtonText = ReferringSitesPage.StoreRatingRequestYesButtonText;
+
+            PerformReviewAction(firstAction);
+
+            secondTitleText = ReferringSitesPage.StoreRatingRequestTitleLabelText;
+            secondNoButtonText = ReferringSitesPage.StoreRatingRequestNoButtonText;
+            secondYesButtonText = ReferringSitesPage.StoreRatingRequestYesButtonText;
+
+            PerformReviewAction(secondAction);
+
+            ReferringSitesPage.WaitForNoReviewRequest();
+
+            //Assert
+            Assert.AreEqual(ReviewServiceConstants.TitleLabel_EnjoyingGitTrends, firstTitleText);
+            Assert.AreEqual(ReviewServiceConstants.NoButton_NotReally, firstNoButtonText);
+            Assert.AreEqual(ReviewServiceConstants.YesButton_Yes, firstYesButtonText);
+            Assert.AreEqual(ReviewServiceConstants.NoButton_NoThanks, secondNoButtonText);
+            Assert.AreEqual(ReviewServiceConstants.YesButton_OkSure, secondYesButtonText);
+
+            if (firstAction is ReviewAction.NoButtonTapped)
+                Assert.AreEqual(ReviewServiceConstants.TitleLabel_Feedback, secondTitleText);
+            else
+                Assert.AreEqual(ReviewServiceConstants.TitleLabel_AppStoreRatingRequest, secondTitleText);
+
+            if (App is iOSApp && secondAction is ReviewAction.YesButtonTapped)
+            {
+                if (firstAction is ReviewAction.NoButtonTapped)
+                {
+                    ReferringSitesPage.WaitForEmailToOpen();
+                    Assert.IsTrue(ReferringSitesPage.IsEmailOpen);
+                }
+                else
+                {
+                    ReferringSitesPage.WaitForBrowserToOpen();
+                    Assert.IsTrue(ReferringSitesPage.IsBrowserOpen);
+                }
+            }
+        }
+
+        void PerformReviewAction(in ReviewAction reviewAction)
+        {
+            if (reviewAction is ReviewAction.YesButtonTapped)
+                ReferringSitesPage.TapStoreRatingRequestYesButton();
+            else if (reviewAction is ReviewAction.NoButtonTapped)
+                ReferringSitesPage.TapStoreRatingRequestNoButton();
+            else
+                throw new NotSupportedException();
         }
     }
 }

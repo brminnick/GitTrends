@@ -135,10 +135,6 @@ namespace GitTrends
         void OnReviewRequestCompleted(ReviewRequest reviewRequested) => _reviewCompletedEventManager.HandleEvent(this, reviewRequested, nameof(ReviewCompleted));
     }
 
-    enum ReviewState { Greeting, RequestFeedback, RequestReview }
-    enum ReviewAction { NoButtonTapped, YesButtonTapped }
-    enum ReviewRequest { None, AppStore, Email }
-
     public interface ISKStoreReviewController
     {
         Task RequestReview();

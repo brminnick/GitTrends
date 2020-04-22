@@ -65,12 +65,13 @@ namespace GitTrends
 
                 var closeButton = new Button
                 {
-                    AutomationId = ReferringSitesPageAutomationIds.CloseButton,
                     Text = "Close",
+                    FontFamily = FontFamilyConstants.RobotoRegular,
+                    HeightRequest = titleRowHeight * 3 / 5,
                     HorizontalOptions = LayoutOptions.End,
                     VerticalOptions = LayoutOptions.Center,
-                    HeightRequest = titleRowHeight * 3 / 5,
-                    Padding = new Thickness(5, 0)
+                    AutomationId = ReferringSitesPageAutomationIds.CloseButton,
+                    Padding = new Thickness(5, 0),
                 };
                 closeButton.Clicked += HandleCloseButtonClicked;
                 closeButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.NavigationBarTextColor));
@@ -84,8 +85,8 @@ namespace GitTrends
                 var titleLabel = new Label
                 {
                     FontSize = 30,
-                    FontAttributes = FontAttributes.Bold,
                     Text = PageTitles.ReferringSitesPage,
+                    FontFamily = FontFamilyConstants.RobotoMedium,
                 };
                 titleLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
 

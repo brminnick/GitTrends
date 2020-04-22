@@ -27,7 +27,12 @@ namespace GitTrends.UITests
         }
 
         public bool IsActivityIndicatorRunning => App.Query(_activityIndicator).Any();
+
         public string StoreRatingRequestTitleLabelText => GetText(_storeRatingRequestTitleLabel);
+
+        public string StoreRatingRequestNoButtonText => GetText(_storeRatingRequestNoButton);
+
+        public string StoreRatingRequestYesButtonText => GetText(_storeRatingRequestYesButton);
 
         public override async Task WaitForPageToLoad(TimeSpan? timeout = null)
         {
@@ -66,6 +71,18 @@ namespace GitTrends.UITests
         {
             App.WaitForElement(ReferringSitesConstants.NoReferringSitesTitle);
             App.Screenshot("No Referring Sites Dialog Appeared");
+        }
+
+        public void WaitForReviewRequest()
+        {
+            App.WaitForElement(_storeRatingRequestTitleLabel);
+            App.Screenshot("Review Request Appeared");
+        }
+
+        public void WaitForNoReviewRequest()
+        {
+            App.WaitForNoElement(_storeRatingRequestTitleLabel);
+            App.Screenshot("Review Request Disappeared");
         }
 
         public void ClosePage()

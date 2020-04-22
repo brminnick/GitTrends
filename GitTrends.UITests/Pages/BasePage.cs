@@ -9,7 +9,7 @@ namespace GitTrends.UITests
 {
     abstract class BasePage
     {
-        Query _iOSSafariView;
+        Query _iOSSafariView, _iOSEmailView;
         const string _syncfusionLicenseWarningTitle = "Syncfusion License";
 
         protected BasePage(IApp app, string pageTitle = "")
@@ -18,7 +18,14 @@ namespace GitTrends.UITests
             PageTitle = pageTitle;
 
             _iOSSafariView = x => x.Class("SFSafariView");
+            _iOSEmailView = GenerateMarkedQuery("RemoteViewBridge");
         }
+
+        public bool IsEmailOpen => App switch
+        {
+            iOSApp iOSApp => iOSApp.Query(_iOSEmailView).Any(),
+            _ => throw new NotSupportedException("Browser Can Only Be Verified on iOS")
+        };
 
         public bool IsBrowserOpen => App switch
         {
@@ -28,6 +35,16 @@ namespace GitTrends.UITests
 
         public string PageTitle { get; }
         protected IApp App { get; }
+
+        public void WaitForEmailToOpen()
+        {
+            if (App is iOSApp iOSApp)
+                iOSApp.WaitForElement(_iOSEmailView);
+            else
+                throw new NotSupportedException("Email Can Only Be Verified on iOS");
+
+            App.Screenshot("Browser Opened");
+        }
 
         public void WaitForBrowserToOpen()
         {

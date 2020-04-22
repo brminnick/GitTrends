@@ -12,7 +12,7 @@ namespace GitTrends.Mobile.Shared
         public const string NoButton_NoThanks = "No Thanks";
         public const string NoButton_NotReally = "Not Really";
 
-        public const string YesButton_OkSure = "Ok Sure!";
+        public const string YesButton_OkSure = "Ok, Sure!";
         public const string YesButton_Yes = "Yes!";
 
         const string _appStoreRatingRequest_iOS = "How about a rating on the App Store, then?";
@@ -66,4 +66,8 @@ namespace GitTrends.Mobile.Shared
             }
         }
     }
+
+    enum ReviewState { Greeting, RequestFeedback, RequestReview }
+    enum ReviewAction { NoButtonTapped, YesButtonTapped }
+    enum ReviewRequest { None, AppStore, Email }
 }

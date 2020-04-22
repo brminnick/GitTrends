@@ -26,13 +26,18 @@ namespace GitTrends
         string _reviewRequestView_NoButtonText = string.Empty;
         string _reviewRequestView_YesButtonText = string.Empty;
         string _reviewRequestView_TitleLabel = string.Empty;
+#if DEBUG
+        bool _isStoreRatingRequestVisible = true;
+#else
         bool _isStoreRatingRequestVisible = false;
+#endif
+
         public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service,
                                         DeepLinkingService deepLinkingService,
                                         AnalyticsService analyticsService,
                                         ReviewService reviewService) : base(analyticsService)
         {
-            reviewService.ReviewRequested += HandleReviewPromptRequested;
+            reviewService.ReviewRequested += HandleReviewRequested;
             reviewService.ReviewCompleted += HandleReviewCompleted;
 
             _reviewService = reviewService;
@@ -192,6 +197,6 @@ namespace GitTrends
             }
         }
 
-        void HandleReviewPromptRequested(object sender, EventArgs e) => IsStoreRatingRequestVisible = true;
+        void HandleReviewRequested(object sender, EventArgs e) => IsStoreRatingRequestVisible = true;
     }
 }
