@@ -111,6 +111,7 @@
     <Compile Include="CustomRenderers\LowerCaseButtonRenderer.cs" />
     <Compile Include="MainApplication.BackdoorMethods.cs" />
     <Compile Include="CustomRenderers\PickerCustomRenderer.cs" />
+    <Compile Include="Services\EmailService_Android.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

@@ -107,6 +107,7 @@
     <Compile Include="Services\SKStoreReviewController.cs" />
     <Compile Include="CustomRenderers\PickerCustomRenderer.cs" />
     <Compile Include="AppDelegate.BackdoorMethods.cs" />
+    <Compile Include="Services\EmailService_iOS.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
