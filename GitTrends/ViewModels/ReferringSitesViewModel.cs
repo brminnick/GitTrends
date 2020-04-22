@@ -19,18 +19,14 @@ namespace GitTrends
         readonly DeepLinkingService _deepLinkingService;
         readonly ReviewService _reviewService;
 
-        IReadOnlyList<MobileReferringSiteModel> _mobileReferringSiteList = Enumerable.Empty<MobileReferringSiteModel>().ToList();
+        IReadOnlyList<MobileReferringSiteModel>? _mobileReferringSiteList;
 
         bool _isRefreshing;
 
         string _reviewRequestView_NoButtonText = string.Empty;
         string _reviewRequestView_YesButtonText = string.Empty;
         string _reviewRequestView_TitleLabel = string.Empty;
-#if DEBUG
-        bool _isStoreRatingRequestVisible = true;
-#else
         bool _isStoreRatingRequestVisible = false;
-#endif
 
         public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service,
                                         DeepLinkingService deepLinkingService,
@@ -87,7 +83,7 @@ namespace GitTrends
 
         public IReadOnlyList<MobileReferringSiteModel> MobileReferringSitesList
         {
-            get => _mobileReferringSiteList;
+            get => _mobileReferringSiteList ??= Enumerable.Empty<MobileReferringSiteModel>().ToList();
             set => SetProperty(ref _mobileReferringSiteList, value);
         }
 
@@ -180,7 +176,7 @@ namespace GitTrends
             switch (request)
             {
                 case ReviewRequest.AppStore:
-                    await _deepLinkingService.OpenApp(ReviewServiceConstants.AppStoreAppLink, ReviewServiceConstants.AppStoreUrl).ConfigureAwait(false);
+                    await _deepLinkingService.OpenApp(AppStoreConstants.AppLink, AppStoreConstants.Url).ConfigureAwait(false);
                     break;
 
                 case ReviewRequest.Email:

@@ -119,7 +119,7 @@ namespace GitTrends.UITests
             if (firstAction is ReviewAction.NoButtonTapped)
                 Assert.AreEqual(ReviewServiceConstants.TitleLabel_Feedback, secondTitleText);
             else
-                Assert.AreEqual(ReviewServiceConstants.TitleLabel_AppStoreRatingRequest, secondTitleText);
+                Assert.AreEqual(ReferringSitesPage.ExpectedAppStoreRequestTitle, secondTitleText);
 
             if (App is iOSApp && secondAction is ReviewAction.YesButtonTapped)
             {

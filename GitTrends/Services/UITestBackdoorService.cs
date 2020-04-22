@@ -52,6 +52,8 @@ namespace GitTrends
             referringSitesViewModel.IsStoreRatingRequestVisible = true;
         }
 
+        public string GetReviewRequestAppStoreTitle() => AppStoreConstants.RatingRequest;
+
         public PreferredTheme GetPreferredTheme() => _themeService.Preference;
 
         public bool ShouldSendNotifications() => _notificationService.ShouldSendNotifications;

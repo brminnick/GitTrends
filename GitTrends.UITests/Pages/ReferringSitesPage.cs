@@ -28,6 +28,8 @@ namespace GitTrends.UITests
 
         public bool IsActivityIndicatorRunning => App.Query(_activityIndicator).Any();
 
+        public string ExpectedAppStoreRequestTitle => App.InvokeBackdoorMethod<string>(BackdoorMethodConstants.GetReviewRequestAppStoreTitle);
+
         public string StoreRatingRequestTitleLabelText => GetText(_storeRatingRequestTitleLabel);
 
         public string StoreRatingRequestNoButtonText => GetText(_storeRatingRequestNoButton);

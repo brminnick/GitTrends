@@ -127,13 +127,13 @@ namespace GitTrends
 
         public List<DailyViewsModel> DailyViewsList
         {
-            get => _dailyViewsList ?? Enumerable.Empty<DailyViewsModel>().ToList();
+            get => _dailyViewsList ??= Enumerable.Empty<DailyViewsModel>().ToList();
             set => SetProperty(ref _dailyViewsList, value, UpdateDailyViewsListPropertiesChanged);
         }
 
         public List<DailyClonesModel> DailyClonesList
         {
-            get => _dailyClonesList ?? Enumerable.Empty<DailyClonesModel>().ToList();
+            get => _dailyClonesList ??= Enumerable.Empty<DailyClonesModel>().ToList();
             set => SetProperty(ref _dailyClonesList, value, UpdateDailyClonesListPropertiesChanged);
         }
 

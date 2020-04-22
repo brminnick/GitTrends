@@ -51,6 +51,10 @@ namespace GitTrends.iOS
         [Preserve, Export(BackdoorMethodConstants.TriggerReviewRequest + ":")]
         public void TriggerReviewRequest(NSString noValue) => UITestBackdoorService.TriggerReviewRequest();
 
+        [Preserve, Export(BackdoorMethodConstants.GetReviewRequestAppStoreTitle + ":")]
+        public NSString GetReviewRequestAppStoreTitle(NSString noValue) =>
+           SerializeObject(UITestBackdoorService.GetReviewRequestAppStoreTitle());
+
         static NSString SerializeObject<T>(T value) => new NSString(Newtonsoft.Json.JsonConvert.SerializeObject(value));
     }
 }

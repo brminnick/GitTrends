@@ -63,6 +63,7 @@
       <Folder Include="Resources\SVGs\" />
       <Folder Include="Resources\Fonts\" />
       <Folder Include="Views\Trends\" />
+      <Folder Include="Constants\" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="repo_forked.svg" />

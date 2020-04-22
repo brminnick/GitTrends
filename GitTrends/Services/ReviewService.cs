@@ -38,7 +38,7 @@ namespace GitTrends
         {
             ReviewState.Greeting => string.IsNullOrWhiteSpace(MostRecentReviewedBuildString) ? ReviewServiceConstants.TitleLabel_EnjoyingGitTrends : ReviewServiceConstants.TitleLabel_EnjoyingNewVersionOfGitTrends,
             ReviewState.RequestFeedback => ReviewServiceConstants.TitleLabel_Feedback,
-            ReviewState.RequestReview => ReviewServiceConstants.TitleLabel_AppStoreRatingRequest,
+            ReviewState.RequestReview => AppStoreConstants.RatingRequest,
             _ => throw new NotSupportedException()
         };
 
