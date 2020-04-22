@@ -14,7 +14,6 @@ namespace GitTrends
     class TrendsViewModel : BaseViewModel
     {
         readonly GitHubApiV3Service _gitHubApiV3Service;
-        readonly ReviewService _reviewService;
 
         bool _isFetchingData = true;
         bool _isViewsSeriesVisible, _isUniqueViewsSeriesVisible, _isClonesSeriesVisible, _isUniqueClonesSeriesVisible;
@@ -24,15 +23,13 @@ namespace GitTrends
         string _clonesStatisticsText = string.Empty;
         string _uniqueClonesStatisticsText = string.Empty;
 
-        List<DailyViewsModel> _dailyViewsList = new List<DailyViewsModel>();
-        List<DailyClonesModel> _dailyClonesList = new List<DailyClonesModel>();
+        List<DailyViewsModel>? _dailyViewsList;
+        List<DailyClonesModel>? _dailyClonesList;
 
         public TrendsViewModel(GitHubApiV3Service gitHubApiV3Service,
                                 AnalyticsService analyticsService,
-                                TrendsChartSettingsService trendsChartSettingsService,
-                                ReviewService reviewService) : base(analyticsService)
+                                TrendsChartSettingsService trendsChartSettingsService) : base(analyticsService)
         {
-            _reviewService = reviewService;
             _gitHubApiV3Service = gitHubApiV3Service;
 
             IsViewsSeriesVisible = trendsChartSettingsService.ShouldShowViewsByDefault;
@@ -130,20 +127,18 @@ namespace GitTrends
 
         public List<DailyViewsModel> DailyViewsList
         {
-            get => _dailyViewsList;
+            get => _dailyViewsList ??= Enumerable.Empty<DailyViewsModel>().ToList();
             set => SetProperty(ref _dailyViewsList, value, UpdateDailyViewsListPropertiesChanged);
         }
 
         public List<DailyClonesModel> DailyClonesList
         {
-            get => _dailyClonesList;
+            get => _dailyClonesList ??= Enumerable.Empty<DailyClonesModel>().ToList();
             set => SetProperty(ref _dailyClonesList, value, UpdateDailyClonesListPropertiesChanged);
         }
 
         async Task ExecuteFetchDataCommand(Repository repository)
         {
-            _reviewService.TryRequestReview();
-
             IReadOnlyList<DailyViewsModel> repositoryViews;
             IReadOnlyList<DailyClonesModel> repositoryClones;
 
@@ -176,7 +171,6 @@ namespace GitTrends
             }
             catch (Exception e)
             {
-                //ToDo Add note reporting to the user that the statistics are unavailable due to internet connectivity
                 repositoryViews = Enumerable.Empty<DailyViewsModel>().ToList();
                 repositoryClones = Enumerable.Empty<DailyClonesModel>().ToList();
 

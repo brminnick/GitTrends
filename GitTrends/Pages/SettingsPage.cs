@@ -114,7 +114,7 @@ namespace GitTrends
             }
         }
 
-        class LoginLabel : SettingsTitleLabel, ILoginRowView
+        class LoginLabel : TitleLabel, ILoginRowView
         {
             public LoginLabel()
             {
@@ -130,12 +130,12 @@ namespace GitTrends
             }
         }
 
-        class RegisterForNotificationsLabel : SettingsTitleLabel
+        class RegisterForNotificationsLabel : TitleLabel
         {
             public RegisterForNotificationsLabel() => Text = "Register for Notifications";
         }
 
-        class ThemeLabel : SettingsTitleLabel
+        class ThemeLabel : TitleLabel
         {
             public ThemeLabel() => Text = "Theme";
         }

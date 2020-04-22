@@ -23,7 +23,7 @@ namespace GitTrends.iOS
 
             if (Control != null)
             {
-                var borderColor = (Color)Xamarin.Forms.Application.Current.Resources[nameof(BaseTheme.SettingsButtonBorderColor)];
+                var borderColor = (Color)Xamarin.Forms.Application.Current.Resources[nameof(BaseTheme.BorderButtonBorderColor)];
                 Control.Layer.BorderColor = borderColor.ToCGColor();
             }
         }

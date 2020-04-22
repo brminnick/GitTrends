@@ -44,6 +44,16 @@ namespace GitTrends
             GitHubAuthenticationService.Name = name;
         }
 
+        public void TriggerReviewRequest()
+        {
+            var referringSitesPage = (ReferringSitesPage)GetVisibleContentPage();
+            var referringSitesViewModel = (ReferringSitesViewModel)referringSitesPage.BindingContext;
+
+            referringSitesViewModel.IsStoreRatingRequestVisible = true;
+        }
+
+        public string GetReviewRequestAppStoreTitle() => AppStoreConstants.RatingRequest;
+
         public PreferredTheme GetPreferredTheme() => _themeService.Preference;
 
         public bool ShouldSendNotifications() => _notificationService.ShouldSendNotifications;

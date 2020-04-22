@@ -53,6 +53,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\TrendingService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\DateTimeService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Base\BaseTotalCountModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\RepositoryService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Services\ImageService.cs" />

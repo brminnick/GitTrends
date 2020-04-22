@@ -35,6 +35,7 @@ namespace GitTrends
         public override Color NavigationBarTextColor { get; } = Color.FromHex(_toolbarTextHex);
 
         public override Color PageBackgroundColor { get; } = Color.FromHex(_backgroundSurfaceHex);
+        public override Color PageBackgroundColor_75Opactity { get; } = Color.FromHex(_backgroundSurfaceHex).MultiplyAlpha(0.75);
 
         //Text
         public override Color PrimaryTextColor { get; } = Color.FromHex(_primaryTextHex);
@@ -91,8 +92,8 @@ namespace GitTrends
 
         //Settings Components
         public override Color SettingsLabelTextColor { get; } = Color.FromHex(_primaryTextHex);
-        public override Color SettingsButtonBorderColor { get; } = Color.FromHex(_black12PercentBlend);
-        public override Color SettingsButtonFontColor { get; } = Color.FromHex(_primaryTextHex);
+        public override Color BorderButtonBorderColor { get; } = Color.FromHex(_black12PercentBlend);
+        public override Color BorderButtonFontColor { get; } = Color.FromHex(_primaryTextHex);
         public override Color TrendsChartSettingsSelectionIndicatorColor { get; } = Color.FromHex(_primaryTealHex);
 
         public override Color GitTrendsImageBackgroundColor { get; } = Color.White;
@@ -100,7 +101,7 @@ namespace GitTrends
         public override Color GitHubButtonSurfaceColor { get; } = Color.FromHex(_githubButtonSurfaceHex);
 
         public override Color GitHubHandleColor { get; } = Color.FromHex(_textHex);
-        
+
         public override Color PrimaryColor { get; } = Color.FromHex(_primaryTealHex);
 
         public override string GitTrendsImageSource { get; } = "GitTrendsGreen";

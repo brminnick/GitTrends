@@ -2,9 +2,9 @@
 
 namespace GitTrends
 {
-    abstract class SettingsTitleLabel : Label
+    abstract class TitleLabel : Label
     {
-        protected SettingsTitleLabel()
+        protected TitleLabel()
         {
             FontSize = 14;
 

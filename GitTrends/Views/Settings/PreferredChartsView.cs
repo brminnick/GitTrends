@@ -26,7 +26,7 @@ namespace GitTrends
 
         enum Row { Label, Control }
 
-        class TrendsChartSettingsLabel : SettingsTitleLabel
+        class TrendsChartSettingsLabel :  TitleLabel
         {
             public TrendsChartSettingsLabel()
             {
@@ -54,8 +54,8 @@ namespace GitTrends
                 FontFamily = FontFamilyConstants.RobotoMedium;
                 FontSize = 12;
 
-                SetDynamicResource(FontColorProperty, nameof(BaseTheme.SettingsButtonFontColor));
-                SetDynamicResource(BorderColorProperty, nameof(BaseTheme.SettingsButtonBorderColor));
+                SetDynamicResource(FontColorProperty, nameof(BaseTheme.BorderButtonFontColor));
+                SetDynamicResource(BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor));
                 SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
 
                 SelectionChanged += HandleSelectionChanged;

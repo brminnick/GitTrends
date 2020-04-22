@@ -34,11 +34,14 @@ namespace GitTrends
             remove => _resumedEventManager.RemoveEventHandler(value);
         }
 
-        protected override void OnStart()
+        protected override async void OnStart()
         {
             base.OnStart();
 
             _analyticsService.Track("App Started");
+
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            await scope.Resolve<BackgroundFetchService>().NotifyTrendingRepositories();
 
             ClearBageNotifications().SafeFireAndForget(ex => _analyticsService.Report(ex));
         }

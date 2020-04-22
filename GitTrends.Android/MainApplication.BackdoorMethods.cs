@@ -46,6 +46,12 @@ namespace GitTrends.Droid
         public string GetPreferredTheme() =>
             SerializeObject(UITestBackdoorService.GetPreferredTheme());
 
+        [Preserve, Export(BackdoorMethodConstants.TriggerReviewRequest)]
+        public void TriggerReviewRequest() => UITestBackdoorService.TriggerReviewRequest();
+
+        [Preserve, Export(BackdoorMethodConstants.GetReviewRequestAppStoreTitle)]
+        public string GetReviewRequestAppStoreTitle() => UITestBackdoorService.GetReviewRequestAppStoreTitle();
+
         static string SerializeObject<T>(T value) => Newtonsoft.Json.JsonConvert.SerializeObject(value);
     }
 }

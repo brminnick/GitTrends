@@ -13,6 +13,7 @@ namespace GitTrends
             Add(nameof(NavigationBarTextColor), NavigationBarTextColor);
 
             Add(nameof(PageBackgroundColor), PageBackgroundColor);
+            Add(nameof(PageBackgroundColor_75Opactity), PageBackgroundColor_75Opactity);
 
             Add(nameof(PrimaryTextColor), PrimaryTextColor);
             Add(nameof(TextColor), TextColor);
@@ -58,8 +59,8 @@ namespace GitTrends
             Add(nameof(CardTrendingStatsColor), CardTrendingStatsColor);
 
             Add(nameof(SettingsLabelTextColor), SettingsLabelTextColor);
-            Add(nameof(SettingsButtonBorderColor), SettingsButtonBorderColor);
-            Add(nameof(SettingsButtonFontColor), SettingsButtonFontColor);
+            Add(nameof(BorderButtonBorderColor), BorderButtonBorderColor);
+            Add(nameof(BorderButtonFontColor), BorderButtonFontColor);
             Add(nameof(TrendsChartSettingsSelectionIndicatorColor), TrendsChartSettingsSelectionIndicatorColor);
 
             Add(nameof(GitTrendsImageBackgroundColor), GitTrendsImageBackgroundColor);
@@ -82,6 +83,7 @@ namespace GitTrends
         public abstract Color NavigationBarTextColor { get; }
 
         public abstract Color PageBackgroundColor { get; }
+        public abstract Color PageBackgroundColor_75Opactity { get; }
 
         public abstract Color PrimaryTextColor { get; }
         public abstract Color TextColor { get; }
@@ -134,8 +136,8 @@ namespace GitTrends
 
         //Settings Components
         public abstract Color SettingsLabelTextColor { get; }
-        public abstract Color SettingsButtonBorderColor { get; }
-        public abstract Color SettingsButtonFontColor { get; }
+        public abstract Color BorderButtonBorderColor { get; }
+        public abstract Color BorderButtonFontColor { get; }
         public abstract Color TrendsChartSettingsSelectionIndicatorColor { get; }
 
         public abstract Color GitTrendsImageBackgroundColor { get; }
