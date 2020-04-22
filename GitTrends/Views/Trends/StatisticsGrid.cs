@@ -8,7 +8,7 @@ namespace GitTrends
 {
     class StatisticsGrid : Grid
     {
-        public const int StatisticsViewHeight = _rowSpacing + _rowHeight * 2;
+        public const int StatisticsGridHeight = _rowSpacing + _rowHeight * 2;
 
         const int _rowSpacing = 8;
         const int _columnSpacing = 8;
@@ -29,13 +29,13 @@ namespace GitTrends
                 (Column.Total, StarGridLength(1)),
                 (Column.Unique, StarGridLength(1)));
 
-            Children.Add(new StatisticsCard("Views", "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor), nameof(TrendsViewModel.ViewsStatisticsText), nameof(TrendsViewModel.ViewsCardTappedCommand), TrendsPageAutomationIds.ViewsCard, TrendsPageAutomationIds.ViewsStatisticsLabel)
+            Children.Add(new StatisticsCard("Views", "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor), nameof(TrendsViewModel.ViewsStatisticsText), nameof(TrendsViewModel.ViewsCardTappedCommand), TrendsPageAutomationIds.ViewsCard, TrendsPageAutomationIds.ViewsStatisticsLabel, nameof(TrendsViewModel.IsViewsSeriesVisible))
                 .Row(Row.ViewsStats).Column(Column.Total));
-            Children.Add(new StatisticsCard("Unique Views", "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor), nameof(TrendsViewModel.UniqueViewsStatisticsText), nameof(TrendsViewModel.UniqueViewsCardTappedCommand), TrendsPageAutomationIds.UniqueViewsCard, TrendsPageAutomationIds.UniqueViewsStatisticsLabel)
+            Children.Add(new StatisticsCard("Unique Views", "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor), nameof(TrendsViewModel.UniqueViewsStatisticsText), nameof(TrendsViewModel.UniqueViewsCardTappedCommand), TrendsPageAutomationIds.UniqueViewsCard, TrendsPageAutomationIds.UniqueViewsStatisticsLabel, nameof(TrendsViewModel.IsUniqueViewsSeriesVisible))
                 .Row(Row.ViewsStats).Column(Column.Unique)); ;
-            Children.Add(new StatisticsCard("Clones", "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor), nameof(TrendsViewModel.ClonesStatisticsText), nameof(TrendsViewModel.ClonesCardTappedCommand), TrendsPageAutomationIds.ClonesCard, TrendsPageAutomationIds.ClonesStatisticsLabel)
+            Children.Add(new StatisticsCard("Clones", "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor), nameof(TrendsViewModel.ClonesStatisticsText), nameof(TrendsViewModel.ClonesCardTappedCommand), TrendsPageAutomationIds.ClonesCard, TrendsPageAutomationIds.ClonesStatisticsLabel, nameof(TrendsViewModel.IsClonesSeriesVisible))
                 .Row(Row.ClonesStats).Column(Column.Total));
-            Children.Add(new StatisticsCard("Unique Clones", "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor), nameof(TrendsViewModel.UniqueClonesStatisticsText), nameof(TrendsViewModel.UniqueClonesCardTappedCommand), TrendsPageAutomationIds.UniqueClonesCard, TrendsPageAutomationIds.UniqueClonesStatisticsLabel)
+            Children.Add(new StatisticsCard("Unique Clones", "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor), nameof(TrendsViewModel.UniqueClonesStatisticsText), nameof(TrendsViewModel.UniqueClonesCardTappedCommand), TrendsPageAutomationIds.UniqueClonesCard, TrendsPageAutomationIds.UniqueClonesStatisticsLabel, nameof(TrendsViewModel.IsUniqueClonesSeriesVisible))
                 .Row(Row.ClonesStats).Column(Column.Unique));
         }
 
