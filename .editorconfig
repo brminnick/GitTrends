@@ -33,6 +33,8 @@ indent_size = 2
 
 # Dotnet code style settings:
 [*.{cs,vb}]
+# IDE0005: Remove unnecessary imports
+dotnet_diagnostic.IDE0005.severity = suggestion
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
 # Avoid "this." and "Me." if not necessary
