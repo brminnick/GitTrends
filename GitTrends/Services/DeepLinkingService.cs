@@ -75,15 +75,11 @@ namespace GitTrends
 
                 try
                 {
-                    //Workaround for https://github.com/xamarin/Essentials/commit/099e98743b99c9bfb1f11aba9db8cf45bbe8a282
-                    if (Device.RuntimePlatform is Device.Android)
-                        await DependencyService.Get<IEmailService>().Compose(message).ConfigureAwait(false);
-                    else
-                        await Email.ComposeAsync(message).ConfigureAwait(false);
+                    await Email.ComposeAsync(message).ConfigureAwait(false);
                 }
                 catch (FeatureNotSupportedException)
                 {
-                    await DisplayAlert("No Email Client Found", "We'd love to hear your fedback!\nsupport@GitTrends.com", "OK");
+                    await DisplayAlert("No Email Client Found", "We'd love to hear your fedback!\nsupport@GitTrends.com", "OK").ConfigureAwait(false);
                 }
             });
         }

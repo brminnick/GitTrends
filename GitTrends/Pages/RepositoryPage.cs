@@ -50,7 +50,6 @@ namespace GitTrends
             var settingsToolbarItem = new ToolbarItem
             {
                 Text = "Settings",
-                Priority = 1,
                 IconImageSource = Device.RuntimePlatform is Device.iOS ? "Settings" : null,
                 Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
                 AutomationId = RepositoryPageAutomationIds.SettingsButton,
@@ -61,6 +60,7 @@ namespace GitTrends
             var sortToolbarItem = new ToolbarItem
             {
                 Text = "Sort",
+                Priority = 1,
                 IconImageSource = Device.RuntimePlatform is Device.iOS ? "Sort" : null,
                 Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
                 AutomationId = RepositoryPageAutomationIds.SortButton,
