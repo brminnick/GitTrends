@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using AsyncAwaitBestPractices.MVVM;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
@@ -49,10 +50,12 @@ namespace GitTrends
             var settingsToolbarItem = new ToolbarItem
             {
                 Text = "Settings",
+                Priority = 1,
+                IconImageSource = Device.RuntimePlatform is Device.iOS ? "Settings" : null,
                 Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
                 AutomationId = RepositoryPageAutomationIds.SettingsButton,
+                Command = new AsyncCommand(ExecuteSetttingsToolbarItemCommand)
             };
-            settingsToolbarItem.Clicked += HandleSettingsToolbarItemCliked;
             ToolbarItems.Add(settingsToolbarItem);
 
             var sortToolbarItem = new ToolbarItem
@@ -61,8 +64,8 @@ namespace GitTrends
                 IconImageSource = Device.RuntimePlatform is Device.iOS ? "Sort" : null,
                 Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
                 AutomationId = RepositoryPageAutomationIds.SortButton,
+                Command = new AsyncCommand(ExecuteSortToolbarItemCommand)
             };
-            sortToolbarItem.Clicked += HandleSortToolbarItemCliked;
             ToolbarItems.Add(sortToolbarItem);
 
             //Work-around to prevent LargeNavigationBar from collapsing when CollectionView is scrolled; prevents janky animation when LargeNavigationBar collapses
@@ -157,11 +160,21 @@ namespace GitTrends
             return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
         }
 
-        async void HandleSettingsToolbarItemCliked(object sender, EventArgs e)
+        Task ExecuteSetttingsToolbarItemCommand()
         {
             AnalyticsService.Track("Settings Button Tapped");
 
-            await NavigateToSettingsPage();
+            return NavigateToSettingsPage();
+        }
+
+        async Task ExecuteSortToolbarItemCommand()
+        {
+            var sortingOptions = SortingConstants.SortingOptionsDictionary.Values;
+
+            string? selection = await DisplayActionSheet("Sort By", SortingConstants.CancelText, null, sortingOptions.ToArray());
+
+            if (!string.IsNullOrWhiteSpace(selection) && selection != SortingConstants.CancelText)
+                ViewModel.SortRepositoriesCommand.Execute(SortingConstants.SortingOptionsDictionary.First(x => x.Value == selection).Key);
         }
 
         void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)
@@ -174,16 +187,6 @@ namespace GitTrends
                     await DisplayAlert(e.ErrorTitle, e.ErrorMessage, "OK");
                 }
             });
-        }
-
-        async void HandleSortToolbarItemCliked(object sender, EventArgs e)
-        {
-            var sortingOptions = SortingConstants.SortingOptionsDictionary.Values;
-
-            string? selection = await DisplayActionSheet("Sort By", SortingConstants.CancelText, null, sortingOptions.ToArray());
-
-            if (!string.IsNullOrWhiteSpace(selection) && selection != SortingConstants.CancelText)
-                ViewModel.SortRepositoriesCommand.Execute(SortingConstants.SortingOptionsDictionary.First(x => x.Value == selection).Key);
         }
 
         void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand.Execute(searchBarText);
