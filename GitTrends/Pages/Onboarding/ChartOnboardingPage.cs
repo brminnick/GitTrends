@@ -17,7 +17,8 @@ namespace GitTrends
 
         protected override View CreateImageView() => new MediaElement
         {
-            Source = MediaService.GetMediaSource("SampleVideo.MP4"),
+            Source = MediaElementService.OnboardingChartUrl,
+            Volume = 0,
             IsLooping = true,
             ShowsPlaybackControls = false,
             HorizontalOptions = LayoutOptions.Center,
