@@ -37,10 +37,10 @@ namespace GitTrends
                 var intializeOnboardingChartValueTask = mediaElementService.InitializeOnboardingChart(CancellationToken.None);
 #if DEBUG
                 initializeSyncfusionTask.SafeFireAndForget(ex => AnalyticsService.Report(ex));
-                await intializeOnboardingChartValueTask.ConfigureAwait(false);
 #else
-                await Task.WhenAll(initializeSyncfusionTask, intializeOnboardingChartValueTask).ConfigureAwait(false);
+                await initializeSyncfusionTask.ConfigureAwait(false);
 #endif
+                await intializeOnboardingChartValueTask.ConfigureAwait(false);
 
                 isInitializationSuccessful = true;
             }
