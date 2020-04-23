@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
@@ -13,6 +14,7 @@ namespace GitTrends
     class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>
     {
         readonly StoreRatingRequestView _storeRatingRequestView = new StoreRatingRequestView();
+        readonly CancellationTokenSource _refreshViewCancelltionTokenSource = new CancellationTokenSource();
 
         readonly ReviewService _reviewService;
         readonly RefreshView _refreshView;
@@ -49,7 +51,7 @@ namespace GitTrends
             _refreshView = new RefreshView
             {
                 AutomationId = ReferringSitesPageAutomationIds.RefreshView,
-                CommandParameter = (repository.OwnerLogin, repository.Name),
+                CommandParameter = (repository.OwnerLogin, repository.Name, _refreshViewCancelltionTokenSource.Token),
                 Content = collectionView
             };
             _refreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor));
@@ -147,6 +149,7 @@ namespace GitTrends
         {
             base.OnDisappearing();
 
+            _refreshViewCancelltionTokenSource.Cancel();
             _storeRatingRequestView.IsVisible = false;
         }
 

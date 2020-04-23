@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using HtmlAgilityPack;
@@ -19,24 +20,24 @@ namespace GitTrends
         public static string DefaultFavIcon => BaseTheme.GetDefaultReferringSiteImageSource();
         static HttpClient Client => _clientHolder.Value;
 
-        public static async Task<ImageSource> GetFavIconImageSource(Uri site)
+        public static async Task<ImageSource> GetFavIconImageSource(Uri site, CancellationToken cancellationToken)
         {
             string baseUrl = string.Empty;
 
             try
             {
                 baseUrl = $"{site.Scheme}://{GetRootDomain(site.Host)}/";
-                var response = await Client.GetAsync(baseUrl).ConfigureAwait(false);
+                var response = await Client.GetAsync(baseUrl, cancellationToken).ConfigureAwait(false);
 
                 var html = await GetHtml(response).ConfigureAwait(false);
 
                 var htmlDocument = new HtmlDocument();
                 htmlDocument.LoadHtml(html);
 
-                var appleTouchIconTask = GetAppleTouchIcon(htmlDocument, baseUrl);
-                var shortcutIconTask = GetShortcutIcon(htmlDocument, baseUrl);
-                var iconTask = GetIcon(htmlDocument, baseUrl);
-                var favIconTask = GetFavIcon(baseUrl);
+                var appleTouchIconTask = GetAppleTouchIcon(htmlDocument, baseUrl, cancellationToken);
+                var shortcutIconTask = GetShortcutIcon(htmlDocument, baseUrl, cancellationToken);
+                var iconTask = GetIcon(htmlDocument, baseUrl, cancellationToken);
+                var favIconTask = GetFavIcon(baseUrl, cancellationToken);
 
                 var (appleTouchIconUrl, _) = await appleTouchIconTask.ConfigureAwait(false);
                 if (!string.IsNullOrWhiteSpace(appleTouchIconUrl))
@@ -104,13 +105,13 @@ namespace GitTrends
             }
         }
 
-        static async Task<(string? FavIconUrl, long? ContentSize)> GetFavIcon(string url)
+        static async Task<(string? FavIconUrl, long? ContentSize)> GetFavIcon(string url, CancellationToken cancellationToken)
         {
             try
             {
                 var faviconUrl = $"{url}favicon.ico";
 
-                var (isUrlValid, size) = await GetUrlData(faviconUrl).ConfigureAwait(false);
+                var (isUrlValid, size) = await GetUrlData(faviconUrl, cancellationToken).ConfigureAwait(false);
 
                 if (isUrlValid)
                 {
@@ -128,7 +129,7 @@ namespace GitTrends
             }
         }
 
-        static async Task<(string? ShortcutIconUrl, long? ContentSize)> GetShortcutIcon(HtmlDocument htmlDoc, string url)
+        static async Task<(string? ShortcutIconUrl, long? ContentSize)> GetShortcutIcon(HtmlDocument htmlDoc, string url, CancellationToken cancellationToken)
         {
             try
             {
@@ -137,7 +138,7 @@ namespace GitTrends
 
                 var shortcutIconUrl = hrefValue.Contains("http") ? hrefValue : url.Trim('/') + hrefValue;
 
-                var (isUrlValid, size) = await GetUrlData(shortcutIconUrl).ConfigureAwait(false);
+                var (isUrlValid, size) = await GetUrlData(shortcutIconUrl, cancellationToken).ConfigureAwait(false);
 
                 if (isUrlValid)
                 {
@@ -155,7 +156,7 @@ namespace GitTrends
             }
         }
 
-        static async Task<(string? AppleTouchIconUrl, long? ContentSize)> GetAppleTouchIcon(HtmlDocument htmlDoc, string url)
+        static async Task<(string? AppleTouchIconUrl, long? ContentSize)> GetAppleTouchIcon(HtmlDocument htmlDoc, string url, CancellationToken cancellationToken)
         {
             try
             {
@@ -164,7 +165,7 @@ namespace GitTrends
 
                 var appleTouchIconUrl = hrefValue.Contains("http") ? hrefValue : url.Trim('/') + hrefValue;
 
-                var (isUrlValid, size) = await GetUrlData(appleTouchIconUrl).ConfigureAwait(false);
+                var (isUrlValid, size) = await GetUrlData(appleTouchIconUrl, cancellationToken).ConfigureAwait(false);
 
                 if (isUrlValid)
                 {
@@ -182,7 +183,7 @@ namespace GitTrends
             }
         }
 
-        static async Task<(string? IconUrl, long? ContentSize)> GetIcon(HtmlDocument htmlDoc, string url)
+        static async Task<(string? IconUrl, long? ContentSize)> GetIcon(HtmlDocument htmlDoc, string url, CancellationToken cancellationToken)
         {
             try
             {
@@ -191,7 +192,7 @@ namespace GitTrends
 
                 var iconUrl = hrefValue.Contains("http") ? hrefValue : url.Trim('/') + hrefValue;
 
-                var (isUrlValid, size) = await GetUrlData(iconUrl).ConfigureAwait(false);
+                var (isUrlValid, size) = await GetUrlData(iconUrl, cancellationToken).ConfigureAwait(false);
 
                 if (isUrlValid)
                 {
@@ -209,14 +210,14 @@ namespace GitTrends
             }
         }
 
-        static async ValueTask<(bool IsUrlValid, long? ContentSize)> GetUrlData(string? url)
+        static async ValueTask<(bool IsUrlValid, long? ContentSize)> GetUrlData(string? url, CancellationToken cancellationToken)
         {
             try
             {
                 if (url is null || url.EndsWith(".svg"))
                     return (false, null);
 
-                var response = await Client.GetAsync(url).ConfigureAwait(false);
+                var response = await Client.GetAsync(url, cancellationToken).ConfigureAwait(false);
 
                 return (response.IsSuccessStatusCode, response.Content.Headers.ContentLength);
             }

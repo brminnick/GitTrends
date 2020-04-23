@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
@@ -42,7 +43,7 @@ namespace GitTrends
             ClonesCardTappedCommand = new Command(() => IsClonesSeriesVisible = !IsClonesSeriesVisible);
             UniqueClonesCardTappedCommand = new Command(() => IsUniqueClonesSeriesVisible = !IsUniqueClonesSeriesVisible);
 
-            FetchDataCommand = new AsyncCommand<Repository>(repo => ExecuteFetchDataCommand(repo));
+            FetchDataCommand = new AsyncCommand<(Repository Repository, CancellationToken CancellationToken)>(tuple => ExecuteFetchDataCommand(tuple.Repository, tuple.CancellationToken));
         }
 
         public ICommand ViewsCardTappedCommand { get; }
@@ -137,7 +138,7 @@ namespace GitTrends
             set => SetProperty(ref _dailyClonesList, value, UpdateDailyClonesListPropertiesChanged);
         }
 
-        async Task ExecuteFetchDataCommand(Repository repository)
+        async Task ExecuteFetchDataCommand(Repository repository, CancellationToken cancellationToken)
         {
             IReadOnlyList<DailyViewsModel> repositoryViews;
             IReadOnlyList<DailyClonesModel> repositoryClones;
@@ -157,8 +158,8 @@ namespace GitTrends
                 {
                     IsFetchingData = true;
 
-                    var getRepositoryViewStatisticsTask = _gitHubApiV3Service.GetRepositoryViewStatistics(repository.OwnerLogin, repository.Name);
-                    var getRepositoryCloneStatisticsTask = _gitHubApiV3Service.GetRepositoryCloneStatistics(repository.OwnerLogin, repository.Name);
+                    var getRepositoryViewStatisticsTask = _gitHubApiV3Service.GetRepositoryViewStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
+                    var getRepositoryCloneStatisticsTask = _gitHubApiV3Service.GetRepositoryCloneStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
 
                     await Task.WhenAll(getRepositoryViewStatisticsTask, getRepositoryCloneStatisticsTask).ConfigureAwait(false);
 

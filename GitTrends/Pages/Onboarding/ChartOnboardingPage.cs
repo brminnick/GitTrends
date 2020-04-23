@@ -15,12 +15,11 @@ namespace GitTrends
         enum Row { Title, Zoom, LongPress }
         enum Column { Image, Description }
 
-        protected override View CreateImageView() => new Image
+        protected override View CreateImageView() => new MediaElement
         {
-#if AppStore
-#error Missing Chart GIF
-#endif
-            Source = "Chart",
+            Source = MediaService.GetMediaSource("SampleVideo.MP4"),
+            IsLooping = true,
+            ShowsPlaybackControls = false,
             HorizontalOptions = LayoutOptions.Center,
             VerticalOptions = LayoutOptions.Center
         };

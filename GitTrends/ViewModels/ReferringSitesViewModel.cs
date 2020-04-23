@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
@@ -40,7 +42,7 @@ namespace GitTrends
             _gitHubApiV3Service = gitHubApiV3Service;
             _deepLinkingService = deepLinkingService;
 
-            RefreshCommand = new AsyncCommand<(string Owner, string Repository)>(repo => ExecuteRefreshCommand(repo.Owner, repo.Repository));
+            RefreshCommand = new AsyncCommand<(string Owner, string Repository, CancellationToken Token)>(tuple => ExecuteRefreshCommand(tuple.Owner, tuple.Repository, tuple.Token));
             NoButtonCommand = new Command(() => HandleReviewRequestButtonTapped(ReviewAction.NoButtonTapped));
             YesButtonCommand = new Command(() => HandleReviewRequestButtonTapped(ReviewAction.YesButtonTapped));
 
@@ -106,11 +108,11 @@ namespace GitTrends
             ReviewRequestView_YesButtonText = _reviewService.YesButtonText;
         }
 
-        async Task ExecuteRefreshCommand(string owner, string repository)
+        async Task ExecuteRefreshCommand(string owner, string repository, CancellationToken cancellationToken)
         {
             try
             {
-                var referringSitesList = await _gitHubApiV3Service.GetReferringSites(owner, repository).ConfigureAwait(false);
+                var referringSitesList = await _gitHubApiV3Service.GetReferringSites(owner, repository, cancellationToken).ConfigureAwait(false);
 
                 if (!referringSitesList.Any())
                 {
@@ -120,7 +122,7 @@ namespace GitTrends
                 {
                     MobileReferringSitesList = SortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
 
-                    await foreach (var mobileReferringSite in GetMobileReferringSiteWithFavIconList(referringSitesList).ConfigureAwait(false))
+                    await foreach (var mobileReferringSite in GetMobileReferringSiteWithFavIconList(referringSitesList, cancellationToken).ConfigureAwait(false))
                     {
                         var referringSite = MobileReferringSitesList.Single(x => x.Referrer == mobileReferringSite.Referrer);
                         referringSite.FavIcon = mobileReferringSite.FavIcon;
@@ -142,9 +144,9 @@ namespace GitTrends
             }
         }
 
-        async IAsyncEnumerable<MobileReferringSiteModel> GetMobileReferringSiteWithFavIconList(IEnumerable<ReferringSiteModel> referringSites)
+        async IAsyncEnumerable<MobileReferringSiteModel> GetMobileReferringSiteWithFavIconList(IEnumerable<ReferringSiteModel> referringSites, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var favIconTaskList = referringSites.Select(x => setFavIcon(x)).ToList();
+            var favIconTaskList = referringSites.Select(x => setFavIcon(x, cancellationToken)).ToList();
 
             while (favIconTaskList.Any())
             {
@@ -155,11 +157,11 @@ namespace GitTrends
                 yield return mobileReferringSiteModel;
             }
 
-            static async Task<MobileReferringSiteModel> setFavIcon(ReferringSiteModel referringSiteModel)
+            static async Task<MobileReferringSiteModel> setFavIcon(ReferringSiteModel referringSiteModel, CancellationToken cancellationToken)
             {
                 if (referringSiteModel.ReferrerUri != null)
                 {
-                    var favIcon = await FavIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri).ConfigureAwait(false);
+                    var favIcon = await FavIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri, cancellationToken).ConfigureAwait(false);
                     return new MobileReferringSiteModel(referringSiteModel, favIcon);
                 }
                 else

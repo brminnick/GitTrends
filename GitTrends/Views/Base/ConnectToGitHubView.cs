@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using System.Threading;
+using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
 
@@ -6,7 +7,7 @@ namespace GitTrends
 {
     class ConnectToGitHubView : PancakeView
     {
-        public ConnectToGitHubView(in string automationId)
+        public ConnectToGitHubView(in string automationId, CancellationToken cancellationToken)
         {
             AutomationId = automationId;
             HorizontalOptions = LayoutOptions.CenterAndExpand;
@@ -27,7 +28,8 @@ namespace GitTrends
 
             BackgroundColor = Color.FromHex("#231F20");
 
-            this.BindTapGesture(nameof(OnboardingViewModel.ConnectToGitHubButtonCommand));
+            GestureRecognizers.Add(new TapGestureRecognizer { CommandParameter = cancellationToken }
+                                    .Bind(TapGestureRecognizer.CommandProperty, nameof(OnboardingViewModel.ConnectToGitHubButtonCommand)));
         }
 
         class GitHubSvgImage : SvgImage

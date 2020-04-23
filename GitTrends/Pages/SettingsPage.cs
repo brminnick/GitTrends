@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using Xamarin.Forms;
@@ -11,6 +12,8 @@ namespace GitTrends
 {
     public class SettingsPage : BaseContentPage<SettingsViewModel>
     {
+        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new CancellationTokenSource();
+
         public SettingsPage(SettingsViewModel settingsViewModel,
                             TrendsChartSettingsService trendsChartSettingsService,
                             AnalyticsService analyticsService) : base(settingsViewModel, analyticsService, PageTitles.SettingsPage, true)
@@ -85,6 +88,13 @@ namespace GitTrends
         enum Row { GitHubUser, GitHubUserSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, PreferredCharts, Copyright }
         enum Column { Icon, Title, Button }
 
+        protected override void OnDisappearing()
+        {
+            _connectToGitHubCancellationTokenSource.Cancel();
+
+            base.OnDisappearing();
+        }
+
         async void HandleLoginRowTapped(object sender, EventArgs e)
         {
             if (ViewModel.IsNotAuthenticating)
@@ -94,7 +104,7 @@ namespace GitTrends
 
                 await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(0.3, 75)));
 
-                ViewModel.ConnectToGitHubButtonCommand.Execute(null);
+                ViewModel.ConnectToGitHubButtonCommand.Execute(_connectToGitHubCancellationTokenSource.Token);
 
                 await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(1, 350, Easing.CubicOut)));
             }

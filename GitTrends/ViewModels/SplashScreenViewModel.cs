@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices;
@@ -35,9 +36,9 @@ namespace GitTrends
             try
             {
 #if DEBUG
-                _syncFusionService.Initialize().SafeFireAndForget(ex => AnalyticsService.Report(ex));
+                _syncFusionService.Initialize(CancellationToken.None).SafeFireAndForget(ex => AnalyticsService.Report(ex));
 #else
-                await _syncFusionService.Initialize().ConfigureAwait(false);
+                await _syncFusionService.Initialize(CancellationToken.None).ConfigureAwait(false);
 #endif
                 isInitializationSuccessful = true;
             }

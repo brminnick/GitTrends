@@ -64,13 +64,13 @@ namespace GitTrends
             }
         });
 
-        public async Task<bool> NotifyTrendingRepositories()
+        public async Task<bool> NotifyTrendingRepositories(CancellationToken cancellationToken)
         {
             try
             {
                 using var timedEvent = _analyticsService.TrackTime("Notify Trending Repository Background Job Triggered");
 
-                var trendingRepositories = await GetTrendingRepositories().ConfigureAwait(false);
+                var trendingRepositories = await GetTrendingRepositories(cancellationToken).ConfigureAwait(false);
                 await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
 
                 return true;
@@ -82,7 +82,7 @@ namespace GitTrends
             }
         }
 
-        async Task<List<Repository>> GetTrendingRepositories()
+        async Task<List<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
         {
 #if AppStore
             if (!GitHubAuthenticationService.IsDemoUser && !string.IsNullOrEmpty(GitHubAuthenticationService.Alias))
@@ -91,7 +91,7 @@ namespace GitTrends
 #endif
             {
                 var retrievedRepositoryList = new List<Repository>();
-                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(GitHubAuthenticationService.Alias).ConfigureAwait(false))
+                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(GitHubAuthenticationService.Alias, cancellationToken).ConfigureAwait(false))
                 {
                     retrievedRepositoryList.AddRange(retrievedRepositories);
                 }
@@ -99,7 +99,7 @@ namespace GitTrends
                 var retrievedRepositoryList_NoForksOrDuplicates = RepositoryService.RemoveForksAndDuplicates(retrievedRepositoryList).ToList();
 
                 var trendingRepositories = new List<Repository>();
-                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(retrievedRepositoryList_NoForksOrDuplicates).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(retrievedRepositoryList_NoForksOrDuplicates, cancellationToken).ConfigureAwait(false))
                 {
                     _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).SafeFireAndForget();
 
@@ -124,12 +124,12 @@ namespace GitTrends
     {
         public const string Identifier = nameof(TrendingRepositoryNotificationJob);
 
-        public Task<bool> Run(JobInfo jobInfo, CancellationToken cancelToken)
+        public Task<bool> Run(JobInfo jobInfo, CancellationToken cancellationToken)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
 
             var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
-            return backgroundFetchService.NotifyTrendingRepositories();
+            return backgroundFetchService.NotifyTrendingRepositories(cancellationToken);
         }
     }
 }

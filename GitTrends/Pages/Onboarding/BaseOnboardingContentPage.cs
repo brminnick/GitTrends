@@ -1,4 +1,5 @@
 ﻿using GitTrends.Mobile.Shared;
+using Shiny;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -79,9 +80,8 @@ namespace GitTrends
 
                 AutomationId = OnboardingAutomationIds.NextButon;
 
-                var tapGestureRecognizer = new TapGestureRecognizer { CommandParameter = text };
-                tapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandProperty, nameof(OnboardingViewModel.DemoButtonCommand));
-                GestureRecognizers.Add(tapGestureRecognizer);
+                GestureRecognizers.Add(new TapGestureRecognizer { CommandParameter = text }
+                                        .Bind(TapGestureRecognizer.CommandProperty, nameof(OnboardingViewModel.DemoButtonCommand))); 
 
                 this.SetBinding(IsVisibleProperty, nameof(OnboardingViewModel.IsDemoButtonVisible));
             }
