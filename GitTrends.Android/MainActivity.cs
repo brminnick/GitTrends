@@ -7,6 +7,7 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Autofac;
+using MediaManager;
 using Newtonsoft.Json;
 using Shiny;
 using Xamarin.Forms;
@@ -35,6 +36,7 @@ namespace GitTrends.Droid
 
             Forms.Init(this, savedInstanceState);
             FormsMaterial.Init(this, savedInstanceState);
+            CrossMediaManager.Current.Init(this);
 
             LoadApplication(new App());
 

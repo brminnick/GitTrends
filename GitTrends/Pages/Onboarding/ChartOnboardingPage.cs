@@ -1,4 +1,5 @@
 ﻿using GitTrends.Mobile.Shared;
+using MediaManager.Forms;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -15,12 +16,13 @@ namespace GitTrends
         enum Row { Title, Zoom, LongPress }
         enum Column { Image, Description }
 
-        protected override View CreateImageView() => new MediaElement
+        protected override View CreateImageView() => new VideoView
         {
             Source = MediaElementService.OnboardingChartUrl,
+            AutoPlay = true,
             Volume = 0,
-            IsLooping = true,
-            ShowsPlaybackControls = false,
+            Repeat = MediaManager.Playback.RepeatMode.All,
+            VideoAspect = MediaManager.Video.VideoAspectMode.AspectFit,
             HorizontalOptions = LayoutOptions.Center,
             VerticalOptions = LayoutOptions.Center
         };

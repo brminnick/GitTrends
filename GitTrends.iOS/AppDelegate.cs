@@ -22,6 +22,7 @@ namespace GitTrends.iOS
             Xamarin.Forms.FormsMaterial.Init();
             Syncfusion.SfChart.XForms.iOS.Renderers.SfChartRenderer.Init();
             Syncfusion.XForms.iOS.Buttons.SfSegmentedControlRenderer.Init();
+            MediaManager.CrossMediaManager.Current.Init();
 
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init();
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageSourceHandler();
