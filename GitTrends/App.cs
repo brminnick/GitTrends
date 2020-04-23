@@ -16,7 +16,7 @@ namespace GitTrends
 
         public App()
         {
-            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental", "MediaElement_Experimental" });
+            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental" });
 
             InitializeEssentialServices();
 
