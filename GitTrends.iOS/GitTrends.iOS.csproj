@@ -123,90 +123,258 @@
     <ImageAsset Include="Assets.xcassets\GitTrendsBackgroundColor.colorset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%401x_light.png" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%402x_light.png" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%403x_light-1.png" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%401x_dark.png" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%402x_dark.png" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%403x_dark.png" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%401x_light-1.png" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%402x_light-1.png" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%403x_light.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light-1.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x-1.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x-1.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTreands_Dark-1.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark%402x.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark%403x.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light-2.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x-2.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_20pt%402x-2.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_20pt%403x-1.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_29pt%402x-2.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_29pt%403x-1.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_40pt%402x-2.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_40pt%403x-1.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_60pt%402x-1.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_60pt%403x-1.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_20pt-1.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_20pt%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_29pt%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_29pt-1.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_40pt-1.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_40pt%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_76pt-1.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_76pt%402x-1.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_83.5%402x-1.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\App Store Icon-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageLight-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageLight%402x-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageLight%403x-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark%402x-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark%403x-1.png" />
-    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding.png" />
-    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding%402x.png" />
-    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding%403x.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\GitTreands_Dark-1.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\GitTrends_Dark%402x.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\GitTrends_Dark%403x.png" />
-    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding-1.png" />
-    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding%402x-1.png" />
-    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding%403x-1.png" />
-    <ImageAsset Include="Assets.xcassets\ReferringSitesIcon.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\ReferringSitesIcon.imageset\RefferingSitesIcon%402x-1.png" />
-    <ImageAsset Include="Assets.xcassets\ReferringSitesIcon.imageset\RefferingSitesIcon%403x-1.png" />
-    <ImageAsset Include="Assets.xcassets\ReferringSitesIcon.imageset\RefferingSitesIcon-1.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrendsGreen.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\GitTrendsGreen.imageset\GitTrends_Light.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrendsGreen.imageset\GitTrends_Light%402x.png" />
-    <ImageAsset Include="Assets.xcassets\GitTrendsGreen.imageset\GitTrends_Light%403x.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageDark%402x-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageDark%403x-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageDark-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight%402x-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight%403x-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight-1-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight%402x-1-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight%403x-1-1.png" />
-    <ImageAsset Include="Assets.xcassets\WelcomeImage.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\WelcomeImage.imageset\WelcomeImage.png" />
-    <ImageAsset Include="Assets.xcassets\WelcomeImage.imageset\WelcomeImage%402x.png" />
-    <ImageAsset Include="Assets.xcassets\WelcomeImage.imageset\WelcomeImage%403x.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImageWhite.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImageWhite.imageset\DefaultProfileImageDark-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImageWhite.imageset\DefaultProfileImageDark%402x-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImageWhite.imageset\DefaultProfileImageDark%403x-1.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultReferringSiteImage.imageset\DefaultReferringSiteImage%403x.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultReferringSiteImage.imageset\DefaultReferringSiteImage%402x.png" />
-    <ImageAsset Include="Assets.xcassets\DefaultReferringSiteImage.imageset\DefaultReferringSiteImage.png" />
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%401x_light.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%402x_light.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%403x_light-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%401x_dark.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%402x_dark.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%403x_dark.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%401x_light-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%402x_light-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%403x_light.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTreands_Dark-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Dark%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light-2.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x-2.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_20pt%402x-2.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_20pt%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_29pt%402x-2.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_29pt%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_40pt%402x-2.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_40pt%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_60pt%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_60pt%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_20pt-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_20pt%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_29pt%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_29pt-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_40pt-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_40pt%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_76pt-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_76pt%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_83.5%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\App Store Icon-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageLight-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageLight%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageLight%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\GitTreands_Dark-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\GitTrends_Dark%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrendsWhite.imageset\GitTrends_Dark%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ReferringSitesIcon.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ReferringSitesIcon.imageset\RefferingSitesIcon%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ReferringSitesIcon.imageset\RefferingSitesIcon%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ReferringSitesIcon.imageset\RefferingSitesIcon-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrendsGreen.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrendsGreen.imageset\GitTrends_Light.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrendsGreen.imageset\GitTrends_Light%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\GitTrendsGreen.imageset\GitTrends_Light%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageDark%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageDark%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageDark-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight-1-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight%402x-1-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight%403x-1-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\WelcomeImage.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\WelcomeImage.imageset\WelcomeImage.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\WelcomeImage.imageset\WelcomeImage%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\WelcomeImage.imageset\WelcomeImage%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImageWhite.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImageWhite.imageset\DefaultProfileImageDark-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImageWhite.imageset\DefaultProfileImageDark%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImageWhite.imageset\DefaultProfileImageDark%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultReferringSiteImage.imageset\DefaultReferringSiteImage%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultReferringSiteImage.imageset\DefaultReferringSiteImage%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultReferringSiteImage.imageset\DefaultReferringSiteImage.png">
+      <Visible>false</Visible>
+    </ImageAsset>
     <ImageAsset Include="Assets.xcassets\DefaultReferringSiteImage.imageset\Contents.json">
       <Visible>False</Visible>
     </ImageAsset>
