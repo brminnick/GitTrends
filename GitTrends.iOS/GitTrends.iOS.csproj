@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -110,28 +110,14 @@
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\Contents.json">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\Contents.json">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\GitTrendsBackgroundColor.colorset\Contents.json">
-      <Visible>false</Visible>
-    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\DefaultProfileImage.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\GitTrends.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\GitTrendsBackgroundColor.colorset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\Sort.imageset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%401x_light.png" />
     <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%402x_light.png" />
     <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%403x_light-1.png" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%401x_dark.png" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%402x_dark.png" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%403x_dark.png" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%401x_light-1.png" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%402x_light-1.png" />
-    <ImageAsset Include="Assets.xcassets\Sort.imageset\sort%403x_light.png" />
     <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light-1.png" />
     <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x-1.png" />
     <ImageAsset Include="Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x-1.png" />
@@ -227,6 +213,11 @@
     <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\Contents.json">
       <Visible>False</Visible>
     </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\DefaultReferringSiteImage.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\Settings.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\Settings.imageset\Settings.png" />
+    <ImageAsset Include="Assets.xcassets\Settings.imageset\Settings%402x.png" />
+    <ImageAsset Include="Assets.xcassets\Settings.imageset\Settings%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -238,7 +229,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="4.6.0.616-pre4" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.5.2" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.5.3.1" />
     <PackageReference Include="Refit" Version="5.1.67" />
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.1-pre1" />
     <PackageReference Include="Polly" Version="7.2.0" />
@@ -275,6 +266,7 @@
     <Folder Include="Assets.xcassets\DefaultProfileImageGreen.imageset\" />
     <Folder Include="Assets.xcassets\WelcomeImage.imageset\" />
     <Folder Include="Assets.xcassets\DefaultProfileImageWhite.imageset\" />
+    <Folder Include="Assets.xcassets\Settings.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets.xcassets\NotificationsOnboarding.imageset\" />

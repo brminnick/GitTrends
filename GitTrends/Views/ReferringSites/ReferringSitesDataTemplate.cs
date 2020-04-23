@@ -1,7 +1,6 @@
 ﻿using System;
 using GitTrends.Mobile.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;

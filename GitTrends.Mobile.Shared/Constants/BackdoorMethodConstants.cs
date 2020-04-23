@@ -12,6 +12,8 @@ namespace GitTrends.Mobile.Shared
         public const string PopPage = nameof(PopPage);
         public const string ShouldSendNotifications = nameof(ShouldSendNotifications);
         public const string GetPreferredTheme = nameof(GetPreferredTheme);
+        public const string TriggerReviewRequest = nameof(TriggerReviewRequest);
+        public const string GetReviewRequestAppStoreTitle = nameof(GetReviewRequestAppStoreTitle);
     }
 }
 #endif

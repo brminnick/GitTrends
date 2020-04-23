@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using GitTrends.Shared;
@@ -61,18 +62,25 @@ namespace GitTrends
             });
         }
 
-        public Task SendEmail(string subject, string body, List<string> recipients)
+        public Task SendEmail(string subject, string body, IEnumerable<string> recipients)
         {
-            return MainThread.InvokeOnMainThreadAsync(() =>
+            return MainThread.InvokeOnMainThreadAsync(async () =>
             {
                 var message = new EmailMessage
                 {
                     Subject = subject,
                     Body = body,
-                    To = recipients
+                    To = recipients.ToList()
                 };
 
-                return Email.ComposeAsync(message);
+                try
+                {
+                    await Email.ComposeAsync(message).ConfigureAwait(false);
+                }
+                catch (FeatureNotSupportedException)
+                {
+                    await DisplayAlert("No Email Client Found", "We'd love to hear your fedback!\nsupport@GitTrends.com", "OK").ConfigureAwait(false);
+                }
             });
         }
 

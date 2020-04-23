@@ -56,6 +56,7 @@ namespace GitTrends
         public override Color NavigationBarTextColor { get; } = Color.FromHex(_toolbarTextHex);
 
         public override Color PageBackgroundColor { get; } = Color.FromHex(_backgroundSurfaceHex);
+        public override Color PageBackgroundColor_75Opactity { get; } = Color.FromHex(_backgroundSurfaceHex).MultiplyAlpha(0.75);
 
         //Text
         public override Color PrimaryTextColor { get; } = Color.FromHex(_primaryTextHex);
@@ -111,8 +112,8 @@ namespace GitTrends
 
         //Settings Components
         public override Color SettingsLabelTextColor { get; } = Color.FromHex(_textHex);
-        public override Color SettingsButtonBorderColor { get; } = Color.FromHex(_white12PercentBlend);
-        public override Color SettingsButtonFontColor { get; } = Color.FromHex(_textHex);
+        public override Color BorderButtonBorderColor { get; } = Color.FromHex(_white12PercentBlend);
+        public override Color BorderButtonFontColor { get; } = Color.FromHex(_textHex);
         public override Color TrendsChartSettingsSelectionIndicatorColor { get; } = Color.FromHex(_lightPrimaryTealHex);
 
         public override Color GitTrendsImageBackgroundColor { get; } = Color.FromHex("4CADA2");

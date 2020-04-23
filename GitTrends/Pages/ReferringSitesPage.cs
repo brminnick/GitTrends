@@ -1,27 +1,36 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using GitTrends.Views.Base;
+using Xamarin.Essentials;
 using Xamarin.Forms;
-
 namespace GitTrends
 {
     class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>
     {
+        readonly StoreRatingRequestView _storeRatingRequestView = new StoreRatingRequestView();
+
+        readonly ReviewService _reviewService;
         readonly RefreshView _refreshView;
         readonly DeepLinkingService _deepLinkingService;
 
         public ReferringSitesPage(DeepLinkingService deepLinkingService,
                                     ReferringSitesViewModel referringSitesViewModel,
                                     Repository repository,
-                                    AnalyticsService analyticsService) : base(referringSitesViewModel, analyticsService, PageTitles.ReferringSitesPage)
+                                    AnalyticsService analyticsService,
+                                    ReviewService reviewService) : base(referringSitesViewModel, analyticsService, PageTitles.ReferringSitesPage)
         {
             const int titleRowHeight = 50;
             const int titleTopMargin = 15;
+
             _deepLinkingService = deepLinkingService;
+            _reviewService = reviewService;
+
+            reviewService.ReviewCompleted += HandleReviewCompleted;
 
             var collectionView = new CollectionView
             {
@@ -48,21 +57,26 @@ namespace GitTrends
             _refreshView.SetBinding(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.RefreshCommand));
             _refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing));
 
+            var relativeLayout = new RelativeLayout();
+
             //Add Title and Close Button to UIModalPresentationStyle.FormSheet 
             if (Device.RuntimePlatform is Device.iOS)
             {
+                const int refreshViewTopPadding = titleRowHeight + 5;
+
                 var closeButton = new Button
                 {
-                    AutomationId = ReferringSitesPageAutomationIds.CloseButton,
                     Text = "Close",
+                    FontFamily = FontFamilyConstants.RobotoRegular,
+                    HeightRequest = titleRowHeight * 3 / 5,
                     HorizontalOptions = LayoutOptions.End,
                     VerticalOptions = LayoutOptions.Center,
-                    HeightRequest = titleRowHeight * 3 / 5,
-                    Padding = new Thickness(5, 0)
+                    AutomationId = ReferringSitesPageAutomationIds.CloseButton,
+                    Padding = new Thickness(5, 0),
                 };
                 closeButton.Clicked += HandleCloseButtonClicked;
                 closeButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.NavigationBarTextColor));
-                closeButton.SetDynamicResource(Button.BorderColorProperty, nameof(BaseTheme.SettingsButtonBorderColor));
+                closeButton.SetDynamicResource(Button.BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor));
                 closeButton.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
 
 
@@ -72,20 +86,18 @@ namespace GitTrends
                 var titleLabel = new Label
                 {
                     FontSize = 30,
-                    FontAttributes = FontAttributes.Bold,
                     Text = PageTitles.ReferringSitesPage,
+                    FontFamily = FontFamilyConstants.RobotoMedium,
                 };
                 titleLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
 
                 closeButton.Margin = titleLabel.Margin = new Thickness(0, titleTopMargin, 0, 0);
 
-                var relativeLayout = new RelativeLayout();
-
                 relativeLayout.Children.Add(_refreshView,
                                              Constraint.Constant(0),
-                                             Constraint.Constant(titleRowHeight + 5), ////Set to `0` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
+                                             Constraint.Constant(refreshViewTopPadding), //Set to `0` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
                                              Constraint.RelativeToParent(parent => parent.Width),
-                                             Constraint.RelativeToParent(parent => parent.Height));
+                                             Constraint.RelativeToParent(parent => parent.Height - refreshViewTopPadding)); //Set to `parent => parent.Height` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
 
                 relativeLayout.Children.Add(titleRowBlurView,
                                             Constraint.Constant(0),
@@ -101,13 +113,22 @@ namespace GitTrends
                                             Constraint.RelativeToParent(parent => parent.Width - GetWidth(parent, closeButton) - 10),
                                             Constraint.Constant(0),
                                             Constraint.RelativeToParent(parent => GetWidth(parent, closeButton)));
-
-                Content = relativeLayout;
             }
             else
             {
-                Content = _refreshView;
+                relativeLayout.Children.Add(_refreshView,
+                                            Constraint.Constant(0),
+                                            Constraint.Constant(0),
+                                            Constraint.RelativeToParent(parent => parent.Width),
+                                            Constraint.RelativeToParent(parent => parent.Height));
             }
+
+            relativeLayout.Children.Add(_storeRatingRequestView,
+                                            Constraint.Constant(0),
+                                            Constraint.RelativeToParent(parent => parent.Height - GetHeight(parent, _storeRatingRequestView)),
+                                            Constraint.RelativeToParent(parent => parent.Width));
+
+            Content = relativeLayout;
         }
 
         protected override void OnAppearing()
@@ -115,9 +136,19 @@ namespace GitTrends
             base.OnAppearing();
 
             if (_refreshView.Content is CollectionView collectionView && IsNullOrEmpty(collectionView.ItemsSource))
+            {
                 _refreshView.IsRefreshing = true;
+                _reviewService.TryRequestReviewPrompt();
+            }
 
             static bool IsNullOrEmpty(in IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            _storeRatingRequestView.IsVisible = false;
         }
 
         async void HandleCollectionViewSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -138,6 +169,18 @@ namespace GitTrends
                 await _deepLinkingService.OpenBrowser(referingSite.ReferrerUri);
             }
         }
+
+        void HandleReviewCompleted(object sender, ReviewRequest e) => MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            const int animationDuration = 300;
+
+            await Task.WhenAll(_storeRatingRequestView.TranslateTo(0, _storeRatingRequestView.Height, animationDuration),
+                                _storeRatingRequestView.ScaleTo(0, animationDuration));
+
+            _storeRatingRequestView.IsVisible = false;
+            _storeRatingRequestView.Scale = 1;
+            _storeRatingRequestView.TranslationY = 0;
+        });
 
         async void HandleCloseButtonClicked(object sender, EventArgs e) => await Navigation.PopModalAsync();
     }

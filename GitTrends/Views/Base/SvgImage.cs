@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using FFImageLoading.Svg.Forms;
 using GitTrends.Mobile.Shared;
-using Shiny;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
