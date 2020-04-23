@@ -1,4 +1,5 @@
 ﻿#if !AppStore
+using System.Threading;
 using Android.Runtime;
 using Autofac;
 using GitTrends.Mobile.Shared;
@@ -13,7 +14,7 @@ namespace GitTrends.Droid
 
         [Preserve, Export(BackdoorMethodConstants.SetGitHubUser)]
         public async void SetGitHubUser(string accessToken) =>
-            await UITestBackdoorService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
+            await UITestBackdoorService.SetGitHubUser(accessToken.ToString(), CancellationToken.None).ConfigureAwait(false);
 
         [Preserve, Export(BackdoorMethodConstants.TriggerPullToRefresh)]
         public async void TriggerRepositoriesPullToRefresh() =>

@@ -86,7 +86,7 @@ namespace GitTrends
 
             try
             {
-                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
+                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     //Only display the first update to avoid unncessary work on the UIThread
                     var shouldUpdateVisibleRepositoryList = !VisibleRepositoryList.Any();
@@ -94,7 +94,7 @@ namespace GitTrends
                 }
 
                 var completedRepoitories = new List<Repository>();
-                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.ToList()).WithCancellation(cancellationTokenSource.Token).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.ToList(), cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).SafeFireAndForget();
                     completedRepoitories.Add(retrievedRepositoryWithViewsAndClonesData);

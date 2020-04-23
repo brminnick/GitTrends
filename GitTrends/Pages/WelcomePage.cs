@@ -8,12 +8,14 @@ using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 using static GitTrends.XamarinFormsService;
+using System.Threading;
 
 namespace GitTrends
 {
     public class WelcomePage : BaseContentPage<WelcomeViewModel>
     {
         const int _demoLabelFontSize = 16;
+        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new CancellationTokenSource();
 
         public WelcomePage(GitHubAuthenticationService gitHubAuthenticationService, AnalyticsService analyticsService, WelcomeViewModel welcomeViewModel)
             : base(welcomeViewModel, analyticsService, shouldUseSafeArea: true)
@@ -43,7 +45,7 @@ namespace GitTrends
                         .Row(Row.WelcomeLabel),
                     new Image { Source = "WelcomeImage" }.Center()
                         .Row(Row.Image),
-                    new ConnectToGitHubButton()
+                    new ConnectToGitHubButton(_connectToGitHubCancellationTokenSource.Token)
                         .Row(Row.GitHubButton),
                     new DemoLabel()
                         .Row(Row.DemoButton),
@@ -56,6 +58,13 @@ namespace GitTrends
         }
 
         enum Row { WelcomeLabel, Image, GitHubButton, DemoButton, VersionLabel }
+
+        protected override void OnDisappearing()
+        {
+            _connectToGitHubCancellationTokenSource.Cancel();
+
+            base.OnDisappearing();
+        }
 
         async void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
         {
@@ -93,7 +102,7 @@ namespace GitTrends
 
         class ConnectToGitHubButton : ConnectToGitHubView
         {
-            public ConnectToGitHubButton() : base(WelcomePageAutomationIds.ConnectToGitHubButton)
+            public ConnectToGitHubButton(CancellationToken cancellationToken) : base(WelcomePageAutomationIds.ConnectToGitHubButton, cancellationToken)
             {
                 HorizontalOptions = LayoutOptions.Center;
                 VerticalOptions = LayoutOptions.End;

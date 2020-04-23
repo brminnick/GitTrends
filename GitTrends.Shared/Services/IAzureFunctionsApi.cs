@@ -9,13 +9,16 @@ namespace GitTrends.Shared
         [Get("/GetGitHubClientId")]
         Task<GetGitHubClientIdDTO> GetGitTrendsClientId();
 
-        [Post("/GenerateGitHubOAuthToken")]
+        [Get("/GenerateGitHubOAuthToken")]
         Task<GitHubToken> GenerateGitTrendsOAuthToken([Body] GenerateTokenDTO generateTokenDTO);
 
-        [Get("/GetSyncfusionInformation/{licenseVersion}")]
+        [Get("/GetSyncfusionInformation")]
         Task<SyncFusionDTO> GetSyncfusionInformation(long licenseVersion, [AliasAs("code")] string functionKey = AzureConstants.GetSyncFusionInformationApiKey);
 
         [Get("/GetUITestToken")]
         Task<GitHubToken> GetUITestToken([AliasAs("code")] string functionKey = AzureConstants.GetUITestTokenApiKey);
+
+        [Get("/GetChartVideoUrl")]
+        Task<GetChartVideoDTO> GetChartVideoUrl();
     }
 }

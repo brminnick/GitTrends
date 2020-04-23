@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
-using Autofac;
 using GitTrends.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -11,26 +11,22 @@ namespace GitTrends
 {
     public abstract class BaseMobileApiService : BaseApiService
     {
-        readonly static AnalyticsService _analyticsService;
-
         static int _networkIndicatorCount;
 
-        static BaseMobileApiService()
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            _analyticsService = scope.Resolve<AnalyticsService>();
-        }
+        protected BaseMobileApiService(AnalyticsService analyticsService) => AnalyticsService = analyticsService;
 
-        protected static string GetGitHubBearerTokenHeader(GitHubToken token) => $"{token.TokenType} {token.AccessToken}";
+        protected AnalyticsService AnalyticsService { get; }
 
-        protected static async Task<T> AttemptAndRetry_Mobile<T>(Func<Task<T>> action, int numRetries = 3, IDictionary<string, string>? properties = null, [CallerMemberName] string callerName = "")
+        protected string GetGitHubBearerTokenHeader(GitHubToken token) => $"{token.TokenType} {token.AccessToken}";
+
+        protected async Task<T> AttemptAndRetry_Mobile<T>(Func<Task<T>> action, CancellationToken cancellationToken, int numRetries = 3, IDictionary<string, string>? properties = null, [CallerMemberName] string callerName = "")
         {
             await UpdateActivityIndicatorStatus(true).ConfigureAwait(false);
 
             try
             {
-                using var timedEvent = _analyticsService.TrackTime(callerName, properties);
-                return await AttemptAndRetry(action, numRetries).ConfigureAwait(false);
+                using var timedEvent = AnalyticsService.TrackTime(callerName, properties);
+                return await AttemptAndRetry(action, cancellationToken, numRetries).ConfigureAwait(false);
             }
             finally
             {

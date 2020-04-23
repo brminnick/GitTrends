@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
@@ -58,7 +59,7 @@ namespace GitTrends.iOS
                 using var scope = ContainerService.Container.BeginLifetimeScope();
 
                 var gitHubAuthenticationService = scope.Resolve<GitHubAuthenticationService>();
-                await gitHubAuthenticationService.AuthorizeSession(callbackUri).ConfigureAwait(false);
+                await gitHubAuthenticationService.AuthorizeSession(callbackUri, CancellationToken.None).ConfigureAwait(false);
             }
 
             static void onException(Exception e)

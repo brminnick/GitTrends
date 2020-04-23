@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
@@ -33,11 +34,11 @@ namespace GitTrends
             _themeService = themeService;
         }
 
-        public async Task SetGitHubUser(string token)
+        public async Task SetGitHubUser(string token, CancellationToken cancellationToken)
         {
             await _gitHubAuthenticationService.SaveGitHubToken(new GitHubToken(token, string.Empty, "Bearer")).ConfigureAwait(false);
 
-            var (alias, name, avatarUri) = await _gitHubGraphQLApiService.GetCurrentUserInfo().ConfigureAwait(false);
+            var (alias, name, avatarUri) = await _gitHubGraphQLApiService.GetCurrentUserInfo(cancellationToken).ConfigureAwait(false);
 
             GitHubAuthenticationService.Alias = alias;
             GitHubAuthenticationService.AvatarUrl = avatarUri.ToString();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
@@ -61,7 +62,7 @@ namespace GitTrends.Droid
             {
                 var gitHubAuthenticationService = containerScope.Resolve<GitHubAuthenticationService>();
 
-                await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString())).ConfigureAwait(false);
+                await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString()), CancellationToken.None).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
