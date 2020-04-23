@@ -49,19 +49,12 @@ namespace GitTrends
             {
                 var referringSitesList = await _gitHubApiV3Service.GetReferringSites(owner, repository).ConfigureAwait(false);
 
-                if (!referringSitesList.Any())
-                {
-                    await _deepLinkingService.DisplayAlert(ReferringSitesConstants.NoReferringSitesTitle, ReferringSitesConstants.NoReferringSitesDescription, ReferringSitesConstants.NoReferringSitesOK).ConfigureAwait(false);
-                }
-                else
-                {
-                    MobileReferringSitesList = SortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
+                MobileReferringSitesList = SortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
 
-                    await foreach (var mobileReferringSite in GetMobileReferringSiteWithFavIconList(referringSitesList).ConfigureAwait(false))
-                    {
-                        var referringSite = MobileReferringSitesList.Single(x => x.Referrer == mobileReferringSite.Referrer);
-                        referringSite.FavIcon = mobileReferringSite.FavIcon;
-                    }
+                await foreach (var mobileReferringSite in GetMobileReferringSiteWithFavIconList(referringSitesList).ConfigureAwait(false))
+                {
+                    var referringSite = MobileReferringSitesList.Single(x => x.Referrer == mobileReferringSite.Referrer);
+                    referringSite.FavIcon = mobileReferringSite.FavIcon;
                 }
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)

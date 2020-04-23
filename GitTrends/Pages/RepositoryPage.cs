@@ -7,6 +7,7 @@ using AsyncAwaitBestPractices;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
+using GitTrends.Views.Base;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -32,7 +33,8 @@ namespace GitTrends
                 AutomationId = RepositoryPageAutomationIds.CollectionView,
                 //Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
                 Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
-                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null
+                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
+                EmptyView = new ListEmptyState("EmptyRepositoriesList", 250, 250, "Your repositories list is\nempty.")
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));

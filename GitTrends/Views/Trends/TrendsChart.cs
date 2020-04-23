@@ -32,7 +32,7 @@ namespace GitTrends
             TotalUniqueClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyClonesList));
             TotalUniqueClonesSeries.SetBinding(ChartSeries.IsVisibleProperty, nameof(TrendsViewModel.IsUniqueClonesSeriesVisible));
 
-            this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.AreStatisticsVisible));
+            this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsChartVisible), BindingMode.OneWay);
 
             ChartBehaviors = new ChartBehaviorCollection
             {

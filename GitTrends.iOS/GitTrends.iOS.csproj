@@ -209,6 +209,24 @@
     <ImageAsset Include="Assets.xcassets\DefaultReferringSiteImage.imageset\Contents.json">
       <Visible>False</Visible>
     </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyRepositoriesList.imageset\EmptyRepositoriesList%403x.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyRepositoriesList.imageset\EmptyRepositoriesList%402x.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyRepositoriesList.imageset\EmptyRepositoriesList.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyRepositoriesList.imageset\Contents.json">
+      <Visible>False</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%403x.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%402x.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\Contents.json">
+      <Visible>False</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\EmptyInsightsChart%403x.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\EmptyInsightsChart%402x.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\EmptyInsightsChart.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\Contents.json">
+      <Visible>False</Visible>
+    </ImageAsset>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
