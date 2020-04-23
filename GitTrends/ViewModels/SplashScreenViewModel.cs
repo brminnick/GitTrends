@@ -26,7 +26,6 @@ namespace GitTrends
 
         public ICommand InitializeAppCommand { get; }
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         async Task ExecuteInitializeAppCommand(SyncFusionService syncFusionService, MediaElementService mediaElementService)
         {
             bool isInitializationSuccessful = false;
@@ -54,7 +53,6 @@ namespace GitTrends
                 OnInitializationComplete(isInitializationSuccessful);
             }
         }
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
         void OnInitializationComplete(bool isInitializationSuccessful) =>
             _initializationCompleteEventManager.HandleEvent(this, new InitializationCompleteEventArgs(isInitializationSuccessful), nameof(InitializationComplete));
