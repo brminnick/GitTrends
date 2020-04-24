@@ -6,25 +6,41 @@ using Android.Views.Animations;
 using Com.Google.Android.Exoplayer2;
 using Com.Google.Android.Exoplayer2.Source;
 using Com.Google.Android.Exoplayer2.Source.Smoothstreaming;
-using Com.Google.Android.Exoplayer2.Trackselection;
 using Com.Google.Android.Exoplayer2.UI;
 using Com.Google.Android.Exoplayer2.Upstream;
+using Com.Google.Android.Exoplayer2.Util;
 using GitTrends;
 using GitTrends.Droid;
 using Java.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
-[assembly: ExportRenderer(typeof(AndroidExoPlayerView), typeof(VideoPlayerRenderer))]
+[assembly: ExportRenderer(typeof(AndroidExoPlayerView), typeof(AndroidExoPlayerCustomRenderer))]
 namespace GitTrends.Droid
 {
-    public class VideoPlayerRenderer : ViewRenderer<AndroidExoPlayerView, SimpleExoPlayerView>, IAdaptiveMediaSourceEventListener
+    public class AndroidExoPlayerCustomRenderer : ViewRenderer<AndroidExoPlayerView, PlayerView>, IMediaSourceEventListener
     {
-        SimpleExoPlayerView? _playerView;
-        SimpleExoPlayer? _player;
+        readonly PlayerView _playerView;
+        readonly SimpleExoPlayer _player;
 
-        public VideoPlayerRenderer(Context context) : base(context)
+        public AndroidExoPlayerCustomRenderer(Context context) : base(context)
         {
+            _player = new SimpleExoPlayer.Builder(Context).Build();
+
+            _player.PlayWhenReady = true;
+            _player.RepeatMode = (int)RepeatMode.Restart;
+
+            _playerView = new PlayerView(Context)
+            {
+                UseController = false,
+                Player = _player,
+                ControllerAutoShow = false
+            };
+        }
+
+        public AndroidExoPlayerCustomRenderer(System.IntPtr ptr, Android.Runtime.JniHandleOwnership jni) 
+        {
+
         }
 
         public void OnDownstreamFormatChanged(int windowIndex, MediaSourceMediaPeriodId mediaPeriodId, MediaSourceEventListenerMediaLoadData mediaLoadData)
@@ -72,12 +88,16 @@ namespace GitTrends.Droid
 
         }
 
+        protected override void Dispose(bool disposing)
+        {
+        }
+
         protected override void OnElementChanged(ElementChangedEventArgs<AndroidExoPlayerView> e)
         {
             base.OnElementChanged(e);
 
-            if (_player is null)
-                InitializePlayer();
+            if (Control is null)
+                SetNativeControl(_playerView);
 
             if (e.NewElement.SourceUrl != null)
                 Play(e.NewElement.SourceUrl);
@@ -91,22 +111,6 @@ namespace GitTrends.Droid
                 Play(Element.SourceUrl);
         }
 
-        void InitializePlayer()
-        {
-            _player = ExoPlayerFactory.NewSimpleInstance(Context, new DefaultTrackSelector());
-            _player.PlayWhenReady = true;
-            _player.RepeatMode = (int)RepeatMode.Restart;
-
-            _playerView = new SimpleExoPlayerView(Context)
-            {
-                UseController = false,
-                Player = _player,
-                ControllerAutoShow = false
-            };
-
-            SetNativeControl(_playerView);
-        }
-
         void Play(string url)
         {
             var httpDataSourceFactory = new DefaultHttpDataSourceFactory("1");
@@ -114,7 +118,7 @@ namespace GitTrends.Droid
 
             var ssMediaSource = new SsMediaSource(Uri.Parse(url), httpDataSourceFactory, ssChunkFactory, new Handler(), this);
 
-            _player?.Prepare(ssMediaSource);
+            _player.Prepare(ssMediaSource);
         }
     }
 }
