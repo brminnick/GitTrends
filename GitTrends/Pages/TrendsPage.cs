@@ -3,6 +3,7 @@ using System.Threading;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
+using GitTrends.Views.Base;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -46,7 +47,8 @@ namespace GitTrends
                 {
                     new StatisticsGrid().Row(Row.Statistics),
                     new TrendsChartActivityIndicator().Row(Row.Chart),
-                    new TrendsChart().Row(Row.Chart)
+                    new TrendsChart().Row(Row.Chart),
+                    new ListEmptyState("EmptyInsightsChart", 250, 250, "No insights yet.", true).Row(Row.Chart)
                 }
             };
         }
