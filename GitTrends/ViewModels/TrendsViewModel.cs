@@ -17,7 +17,6 @@ namespace GitTrends
         readonly GitHubApiV3Service _gitHubApiV3Service;
 
         bool _isFetchingData = true;
-        bool _isChartEmpty = true;
         bool _isViewsSeriesVisible, _isUniqueViewsSeriesVisible, _isClonesSeriesVisible, _isUniqueClonesSeriesVisible;
 
         string _viewsStatisticsText = string.Empty;
@@ -56,9 +55,8 @@ namespace GitTrends
 
         public double DailyViewsClonesMinValue { get; } = 0;
 
-        public bool AreStatisticsVisible => !IsFetchingData;
-        public bool IsChartVisible => !IsFetchingData && !IsChartEmpty;
-        public bool IsEmptyStateVisible => !IsFetchingData && IsChartEmpty;
+        public bool IsEmptyDataViewVisible => !IsChartVisible && !IsFetchingData;
+        public bool IsChartVisible => DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
         public DateTime MinDateValue => DateTimeService.GetMinimumLocalDateTime(DailyViewsList, DailyClonesList);
         public DateTime MaxDateValue => DateTimeService.GetMaximumLocalDateTime(DailyViewsList, DailyClonesList);
 
@@ -73,16 +71,6 @@ namespace GitTrends
 
                 return Math.Max(Math.Max(dailyViewMaxValue, dailyClonesMaxValue), minimumValue);
             }
-        }
-
-        public bool IsChartEmpty
-        {
-            get => _isChartEmpty;
-            set => SetProperty(ref _isChartEmpty, value, () =>
-            {
-                OnPropertyChanged(nameof(IsEmptyStateVisible));
-                OnPropertyChanged(nameof(IsChartVisible));
-            });
         }
 
         public string ViewsStatisticsText
@@ -138,9 +126,8 @@ namespace GitTrends
             get => _isFetchingData;
             set => SetProperty(ref _isFetchingData, value, () =>
             {
-                OnPropertyChanged(nameof(AreStatisticsVisible));
+                OnPropertyChanged(nameof(IsEmptyDataViewVisible));
                 OnPropertyChanged(nameof(IsChartVisible));
-                OnPropertyChanged(nameof(IsEmptyStateVisible));
             });
         }
 
@@ -205,38 +192,35 @@ namespace GitTrends
             DailyViewsList = repositoryViews.OrderBy(x => x.Day).ToList();
             DailyClonesList = repositoryClones.OrderBy(x => x.Day).ToList();
 
-            var viewsTotal = repositoryViews.Sum(x => x.TotalViews);
-            var uniqueViewsTotal = repositoryViews.Sum(x => x.TotalUniqueViews);
-            var clonesTotal = repositoryClones.Sum(x => x.TotalClones);
-            var uniqueClonesTotal = repositoryClones.Sum(x => x.TotalUniqueClones);
-
             ViewsStatisticsText = repositoryViews.Sum(x => x.TotalViews).ConvertToAbbreviatedText();
             UniqueViewsStatisticsText = repositoryViews.Sum(x => x.TotalUniqueViews).ConvertToAbbreviatedText();
 
             ClonesStatisticsText = repositoryClones.Sum(x => x.TotalClones).ConvertToAbbreviatedText();
             UniqueClonesStatisticsText = repositoryClones.Sum(x => x.TotalUniqueClones).ConvertToAbbreviatedText();
 
-            //Validate that there are insights to plot in the chart
-            var sum = (viewsTotal + uniqueViewsTotal + clonesTotal + uniqueClonesTotal);
-            IsChartEmpty = sum < 1;
-
-            Debug.WriteLine($"Chart is Empty? {IsChartEmpty}, Is Fetching Data {IsFetchingData} Sum: {sum}");
-
             PrintDays();
         }
 
         void UpdateDailyClonesListPropertiesChanged()
         {
+            OnPropertyChanged(nameof(IsEmptyDataViewVisible));
+            OnPropertyChanged(nameof(IsChartVisible));
+
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
             OnPropertyChanged(nameof(DailyViewsClonesMinValue));
+
             OnPropertyChanged(nameof(MinDateValue));
             OnPropertyChanged(nameof(MaxDateValue));
         }
 
         void UpdateDailyViewsListPropertiesChanged()
         {
+            OnPropertyChanged(nameof(IsEmptyDataViewVisible));
+            OnPropertyChanged(nameof(IsChartVisible));
+
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
+
             OnPropertyChanged(nameof(MinDateValue));
             OnPropertyChanged(nameof(MaxDateValue));
         }

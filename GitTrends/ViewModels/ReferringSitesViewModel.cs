@@ -23,7 +23,7 @@ namespace GitTrends
 
         IReadOnlyList<MobileReferringSiteModel>? _mobileReferringSiteList;
 
-        bool _isRefreshing;
+        bool _isRefreshing = true;
 
         string _reviewRequestView_NoButtonText = string.Empty;
         string _reviewRequestView_YesButtonText = string.Empty;
@@ -116,7 +116,7 @@ namespace GitTrends
 
                 MobileReferringSitesList = SortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
 
-                await foreach (var mobileReferringSite in GetMobileReferringSiteWithFavIconList(referringSitesList).ConfigureAwait(false))
+                await foreach (var mobileReferringSite in GetMobileReferringSiteWithFavIconList(referringSitesList, cancellationToken).ConfigureAwait(false))
                 {
                     var referringSite = MobileReferringSitesList.Single(x => x.Referrer == mobileReferringSite.Referrer);
                     referringSite.FavIcon = mobileReferringSite.FavIcon;

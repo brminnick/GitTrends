@@ -88,8 +88,8 @@ namespace GitTrends
 
                 AutomationId = automationId;
 
-                this.SetBinding(TextProperty, textBinding);
-                this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.AreStatisticsVisible));
+                this.Bind(TextProperty, textBinding);
+                this.Bind<TrendsStatisticsLabel, bool, bool>(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData), convert: isFetchingData => !isFetchingData);
 
                 SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
             }

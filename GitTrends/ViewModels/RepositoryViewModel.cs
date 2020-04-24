@@ -62,8 +62,6 @@ namespace GitTrends
         public ICommand FilterRepositoriesCommand { get; }
         public ICommand SortRepositoriesCommand { get; }
 
-        public bool IsNotRefreshing => !IsRefreshing;
-
         public IReadOnlyList<Repository> VisibleRepositoryList
         {
             get => _visibleRepositoryList;
@@ -73,7 +71,7 @@ namespace GitTrends
         public bool IsRefreshing
         {
             get => _isRefreshing;
-            set => SetProperty(ref _isRefreshing, value, () => OnPropertyChanged(nameof(IsNotRefreshing)));
+            set => SetProperty(ref _isRefreshing, value);
         }
 
         async Task ExecutePullToRefreshCommand(string repositoryOwner)

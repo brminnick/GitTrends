@@ -48,7 +48,8 @@ namespace GitTrends
                     new StatisticsGrid().Row(Row.Statistics),
                     new TrendsChartActivityIndicator().Row(Row.Chart),
                     new TrendsChart().Row(Row.Chart),
-                    new ListEmptyState("EmptyInsightsChart", 250, 250, "No insights yet.", true).Row(Row.Chart)
+                    new EmptyDataView("EmptyInsightsChart", "No traffic yet", 48).Row(Row.Chart)
+                        .Bind(IsVisibleProperty,nameof(TrendsViewModel.IsEmptyDataViewVisible))
                 }
             };
         }

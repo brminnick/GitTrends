@@ -9,11 +9,7 @@ using GitTrends.Shared;
 using GitTrends.Views.Base;
 using Xamarin.Essentials;
 using Xamarin.Forms;
-namespace GitTrends
-{
-    class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>
-    {
-        readonly StoreRatingRequestView _storeRatingRequestView = new StoreRatingRequestView();
+using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {
@@ -49,8 +45,9 @@ namespace GitTrends
                 ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical),
                 //Set iOS Header to `new BoxView { HeightRequest = titleRowHeight + titleTopMargin }` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
                 Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
-                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null
-                EmptyView = new ListEmptyState("EmptyReferringSitesList", 250, 250, "Your referring sites list is\nempty.")
+                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
+                EmptyView = new EmptyDataView("EmptyReferringSitesList", "No referrals yet")
+                                .Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(ReferringSitesViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.MobileReferringSitesList));
