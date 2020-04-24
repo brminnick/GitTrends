@@ -64,7 +64,6 @@
       <Folder Include="Resources\Fonts\" />
       <Folder Include="Views\Trends\" />
       <Folder Include="Constants\" />
-      <Folder Include="Resources\Videos\" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="repo_forked.svg" />
@@ -92,7 +91,6 @@
       <None Remove="Resources\SVGs\darkmode.svg" />
       <None Remove="Resources\SVGs\logout.svg" />
       <None Remove="Resources\SVGs\right_arrow.svg" />
-      <None Remove="Resources\Videos\SampleVideo.MP4" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="Resources\SVGs\chart.svg" />
@@ -119,7 +117,6 @@
       <EmbeddedResource Include="Resources\SVGs\theme.svg" />
       <EmbeddedResource Include="Resources\SVGs\logout.svg" />
       <EmbeddedResource Include="Resources\SVGs\right_arrow.svg" />
-      <EmbeddedResource Include="Resources\Videos\SampleVideo.MP4" />
     </ItemGroup>
     <Import Project="..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems')" />
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />

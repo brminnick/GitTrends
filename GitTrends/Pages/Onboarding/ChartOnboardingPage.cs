@@ -15,11 +15,10 @@ namespace GitTrends
         enum Row { Title, Zoom, LongPress }
         enum Column { Image, Description }
 
-        protected override View CreateImageView() => new MediaElement
+        protected override View CreateImageView() => new Image
         {
-            Source = MediaService.GetMediaSource("SampleVideo.MP4"),
-            IsLooping = true,
-            ShowsPlaybackControls = false,
+            Source = "Chart.gif",
+            IsAnimationPlaying = true,
             HorizontalOptions = LayoutOptions.Center,
             VerticalOptions = LayoutOptions.Center
         };
