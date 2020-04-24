@@ -1,5 +1,5 @@
-﻿using GitTrends.Mobile.Shared;
-using MediaManager.Forms;
+﻿using System;
+using GitTrends.Mobile.Shared;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -16,15 +16,25 @@ namespace GitTrends
         enum Row { Title, Zoom, LongPress }
         enum Column { Image, Description }
 
-        protected override View CreateImageView() => new VideoView
+        protected override View CreateImageView() => Device.RuntimePlatform switch
         {
-            Source = MediaElementService.OnboardingChartUrl,
-            AutoPlay = true,
-            Volume = 0,
-            Repeat = MediaManager.Playback.RepeatMode.All,
-            VideoAspect = MediaManager.Video.VideoAspectMode.AspectFit,
-            HorizontalOptions = LayoutOptions.Center,
-            VerticalOptions = LayoutOptions.Center
+            Device.iOS => new MediaElement
+            {
+                Source = MediaElementService.OnboardingChart?.HlsUrl,
+                BackgroundColor = Color.Transparent,
+                Volume = 0,
+                IsLooping = true,
+                AutoPlay = true,
+                Aspect = Aspect.AspectFit,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
+            },
+            //Work-around because Xamarin.Forms.MediaElement uses Android.VideoView instead of ExoPlayer
+            Device.Android => new AndroidExoPlayerView
+            {
+                SourceUrl = MediaElementService.OnboardingChart?.ManifestUrl
+            },
+            _ => throw new NotSupportedException()
         };
 
         protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ChartPageTitle);

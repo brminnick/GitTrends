@@ -47,6 +47,7 @@
 	<string>18</string>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>processing</string>
 		<string>fetch</string>
 	</array>
 	<key>CFBundleShortVersionString</key>

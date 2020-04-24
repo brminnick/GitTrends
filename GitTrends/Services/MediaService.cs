@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using GitTrends.Shared;
+using Newtonsoft.Json;
 using Xamarin.Essentials;
 
 namespace GitTrends
@@ -14,21 +16,38 @@ namespace GitTrends
         public MediaElementService(AzureFunctionsApiService azureFunctionsApiService, AnalyticsService analyticsService) =>
             (_azureFunctionsApiService, _analyticsService) = (azureFunctionsApiService, analyticsService);
 
-        public static string OnboardingChartUrl => Preferences.Get(nameof(OnboardingChartUrl), string.Empty);
+        public static StreamingUrl? OnboardingChart
+        {
+            get
+            {
+                try
+                {
+                    return JsonConvert.DeserializeObject<StreamingUrl?>(Preferences.Get(nameof(OnboardingChart), null));
+                }
+                catch (ArgumentNullException)
+                {
+                    return null;
+                }
+                catch (JsonReaderException)
+                {
+                    return null;
+                }
+            }
+        }
 
         public async ValueTask InitializeOnboardingChart(CancellationToken cancellationToken)
         {
-            if (!string.IsNullOrWhiteSpace(OnboardingChartUrl))
-                initializeOnboardingChart(cancellationToken).SafeFireAndForget();
+            if (OnboardingChart is null)
+                await initializeOnboardingChart(cancellationToken).ConfigureAwait(false);
 
-            await initializeOnboardingChart(cancellationToken).ConfigureAwait(false);
+            initializeOnboardingChart(cancellationToken).SafeFireAndForget();
 
             async Task initializeOnboardingChart(CancellationToken cancellationToken)
             {
                 try
                 {
-                    var chartVideo = await _azureFunctionsApiService.GetChartVideoUrl(cancellationToken).ConfigureAwait(false);
-                    Preferences.Set(nameof(OnboardingChartUrl), chartVideo.Url);
+                    var chartVideoStreamingUrl = await _azureFunctionsApiService.GetChartVideoUrl(cancellationToken).ConfigureAwait(false);
+                    Preferences.Set(nameof(OnboardingChart), JsonConvert.SerializeObject(chartVideoStreamingUrl));
                 }
                 catch (Exception e)
                 {
