@@ -20,6 +20,6 @@ namespace GitTrends
         public Task<GetGitHubClientIdDTO> GetGitHubClientId(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => AzureFunctionsApiClient.GetGitTrendsClientId(), cancellationToken);
         public Task<GitHubToken> GenerateGitTrendsOAuthToken(GenerateTokenDTO generateTokenDTO, CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => AzureFunctionsApiClient.GenerateGitTrendsOAuthToken(generateTokenDTO), cancellationToken);
         public Task<SyncFusionDTO> GetSyncfusionInformation(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => AzureFunctionsApiClient.GetSyncfusionInformation(SyncFusionService.AssemblyVersionNumber), cancellationToken);
-        public Task<StreamingUrl> GetChartVideoUrl(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => AzureFunctionsApiClient.GetChartVideoUrl(), cancellationToken);
+        public Task<StreamingUrl> GetChartStreamingUrl(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => AzureFunctionsApiClient.GetChartStreamingUrl(), cancellationToken);
     }
 }

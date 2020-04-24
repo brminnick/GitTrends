@@ -8,19 +8,19 @@ using Microsoft.Extensions.Logging;
 
 namespace GitTrends.Functions
 {
-    public static class GetChartVideoUrl
+    public static class GetChartStreamingUrl
     {
-        readonly static string _chartVideoUrl = Environment.GetEnvironmentVariable("ChartVideoUrl") ?? string.Empty;
+        readonly static string _chartVideoManifestUrl = Environment.GetEnvironmentVariable("ChartVideoManifestUrl") ?? string.Empty;
 
-        [FunctionName(nameof(GetChartVideoUrl))]
+        [FunctionName(nameof(GetChartStreamingUrl))]
         public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest httpRequest, ILogger log)
         {
             log.LogInformation("Retrieving Chart Video");
 
-            if (string.IsNullOrWhiteSpace(_chartVideoUrl))
+            if (string.IsNullOrWhiteSpace(_chartVideoManifestUrl))
                 return new NotFoundObjectResult($"Chart Video Url not found");
 
-            return new OkObjectResult(new StreamingUrl(_chartVideoUrl));
+            return new OkObjectResult(new StreamingUrl(_chartVideoManifestUrl));
         }
     }
 }

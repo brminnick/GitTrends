@@ -46,7 +46,7 @@ namespace GitTrends
             {
                 try
                 {
-                    var chartVideoStreamingUrl = await _azureFunctionsApiService.GetChartVideoUrl(cancellationToken).ConfigureAwait(false);
+                    var chartVideoStreamingUrl = await _azureFunctionsApiService.GetChartStreamingUrl(cancellationToken).ConfigureAwait(false);
                     Preferences.Set(nameof(OnboardingChart), JsonConvert.SerializeObject(chartVideoStreamingUrl));
                 }
                 catch (Exception e)
