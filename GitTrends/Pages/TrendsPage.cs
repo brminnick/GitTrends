@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
@@ -12,6 +13,7 @@ namespace GitTrends
 {
     class TrendsPage : BaseContentPage<TrendsViewModel>
     {
+        readonly CancellationTokenSource _fetchDataCancellationTokenSource = new CancellationTokenSource();
         readonly Repository _repository;
 
         public TrendsPage(TrendsViewModel trendsViewModel,
@@ -20,7 +22,7 @@ namespace GitTrends
         {
             _repository = repository;
 
-            ViewModel.FetchDataCommand.Execute(repository);
+            ViewModel.FetchDataCommand.Execute((repository, _fetchDataCancellationTokenSource.Token));
 
             var referringSitesToolbarItem = new ToolbarItem
             {
@@ -52,6 +54,13 @@ namespace GitTrends
         }
 
         enum Row { Statistics, Chart }
+
+        protected override void OnDisappearing()
+        {
+            _fetchDataCancellationTokenSource.Cancel();
+
+            base.OnDisappearing();
+        }
 
         async void HandleReferringSitesToolbarItemClicked(object sender, EventArgs e)
         {

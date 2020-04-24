@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices;
@@ -159,7 +160,7 @@ namespace GitTrends
             OnPropertyChanged(nameof(IsAliasLabelVisible));
         }
 
-        protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService)
+        protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, CancellationToken cancellationToken)
         {
             AnalyticsService.Track("Login Button Tapped", nameof(GitHubAuthenticationService.IsAuthenticated), gitHubAuthenticationService.IsAuthenticated.ToString());
 
@@ -171,7 +172,7 @@ namespace GitTrends
             }
             else
             {
-                await base.ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService).ConfigureAwait(false);
+                await base.ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, cancellationToken).ConfigureAwait(false);
             }
         }
 

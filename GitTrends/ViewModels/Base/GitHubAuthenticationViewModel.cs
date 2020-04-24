@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
@@ -19,12 +20,12 @@ namespace GitTrends
             gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
-            ConnectToGitHubButtonCommand = new AsyncCommand(() => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService), _ => IsNotAuthenticating);
+            ConnectToGitHubButtonCommand = new AsyncCommand<CancellationToken>(cancellationToken => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, cancellationToken), _ => IsNotAuthenticating);
             DemoButtonCommand = new AsyncCommand<string>(text => ExecuteDemoButtonCommand(text), _ => IsNotAuthenticating);
             GitHubAuthenticationService = gitHubAuthenticationService;
         }
 
-        public IAsyncCommand ConnectToGitHubButtonCommand { get; }
+        public IAsyncCommand<CancellationToken> ConnectToGitHubButtonCommand { get; }
         public IAsyncCommand<string> DemoButtonCommand { get; }
 
         public bool IsNotAuthenticating => !IsAuthenticating;
@@ -55,13 +56,13 @@ namespace GitTrends
             return Task.CompletedTask;
         }
 
-        protected async virtual Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService)
+        protected async virtual Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, CancellationToken cancellationToken)
         {
             IsAuthenticating = true;
 
             try
             {
-                var loginUrl = await gitHubAuthenticationService.GetGitHubLoginUrl().ConfigureAwait(false);
+                var loginUrl = await gitHubAuthenticationService.GetGitHubLoginUrl(cancellationToken).ConfigureAwait(false);
 
                 if (!string.IsNullOrWhiteSpace(loginUrl))
                 {

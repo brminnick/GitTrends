@@ -34,14 +34,11 @@ namespace GitTrends
             remove => _resumedEventManager.RemoveEventHandler(value);
         }
 
-        protected override async void OnStart()
+        protected override void OnStart()
         {
             base.OnStart();
 
             _analyticsService.Track("App Started");
-
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            await scope.Resolve<BackgroundFetchService>().NotifyTrendingRepositories();
 
             ClearBageNotifications().SafeFireAndForget(ex => _analyticsService.Report(ex));
         }
@@ -69,7 +66,6 @@ namespace GitTrends
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var notificationService = scope.Resolve<NotificationService>();
 
-
             return notificationService.SetAppBadgeCount(0);
         }
 
@@ -77,8 +73,10 @@ namespace GitTrends
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
 
-            scope.Resolve<ThemeService>();
-            scope.Resolve<BackgroundFetchService>();
+            var themeService = scope.Resolve<ThemeService>();
+            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
+
+            backgroundFetchService.Register();
         }
 
         void OnResumed() => _resumedEventManager.HandleEvent(this, EventArgs.Empty, nameof(Resumed));

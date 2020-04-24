@@ -1,4 +1,5 @@
-﻿using GitTrends.Mobile.Shared;
+﻿using System.Threading;
+using GitTrends.Mobile.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -39,7 +40,7 @@ namespace GitTrends
             Children =
             {
                 new BodyLabel("Get started by connecting your GitHub account, or try demo mode to tour GitTrends!").Row(Row.Description),
-                new ConnectToGitHubView(OnboardingAutomationIds.ConnectToGitHubButton).Row(Row.Button),
+                new ConnectToGitHubView(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None).Row(Row.Button),
                 new IsAuthenticatingIndicator().Row(Row.ActivityIndicator)
             }
         };

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using AsyncAwaitBestPractices;
@@ -119,16 +119,16 @@ namespace GitTrends
             OnDemoUserActivated();
         }
 
-        public async Task<string> GetGitHubLoginUrl()
+        public async Task<string> GetGitHubLoginUrl(CancellationToken cancellationToken)
         {
             MostRecentSessionId = Guid.NewGuid().ToString();
 
-            var clientIdDTO = await _azureFunctionsApiService.GetGitHubClientId().ConfigureAwait(false);
+            var clientIdDTO = await _azureFunctionsApiService.GetGitHubClientId(cancellationToken).ConfigureAwait(false);
 
             return $"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id={clientIdDTO.ClientId}&scope=public_repo%20read:user&state={MostRecentSessionId}";
         }
 
-        public async Task AuthorizeSession(Uri callbackUri)
+        public async Task AuthorizeSession(Uri callbackUri, CancellationToken cancellationToken)
         {
             OnAuthorizeSessionStarted();
 
@@ -146,11 +146,11 @@ namespace GitTrends
                     MostRecentSessionId = string.Empty;
 
                 var generateTokenDTO = new GenerateTokenDTO(code, state);
-                var token = await _azureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO).ConfigureAwait(false);
+                var token = await _azureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO, cancellationToken).ConfigureAwait(false);
 
                 await SaveGitHubToken(token).ConfigureAwait(false);
 
-                var (login, name, avatarUri) = await _gitHubGraphQLApiService.GetCurrentUserInfo().ConfigureAwait(false);
+                var (login, name, avatarUri) = await _gitHubGraphQLApiService.GetCurrentUserInfo(cancellationToken).ConfigureAwait(false);
 
                 Alias = login;
                 Name = name;

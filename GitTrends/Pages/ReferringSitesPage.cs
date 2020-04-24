@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
@@ -13,6 +14,13 @@ namespace GitTrends
     class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>
     {
         readonly StoreRatingRequestView _storeRatingRequestView = new StoreRatingRequestView();
+
+namespace GitTrends
+{
+    class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>
+    {
+        readonly StoreRatingRequestView _storeRatingRequestView = new StoreRatingRequestView();
+        readonly CancellationTokenSource _refreshViewCancelltionTokenSource = new CancellationTokenSource();
 
         readonly ReviewService _reviewService;
         readonly RefreshView _refreshView;
@@ -41,7 +49,7 @@ namespace GitTrends
                 ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical),
                 //Set iOS Header to `new BoxView { HeightRequest = titleRowHeight + titleTopMargin }` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
                 Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
-                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
+                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null
                 EmptyView = new ListEmptyState("EmptyReferringSitesList", 250, 250, "Your referring sites list is\nempty.")
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
@@ -50,7 +58,7 @@ namespace GitTrends
             _refreshView = new RefreshView
             {
                 AutomationId = ReferringSitesPageAutomationIds.RefreshView,
-                CommandParameter = (repository.OwnerLogin, repository.Name),
+                CommandParameter = (repository.OwnerLogin, repository.Name, _refreshViewCancelltionTokenSource.Token),
                 Content = collectionView
             };
             _refreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor));
@@ -148,6 +156,7 @@ namespace GitTrends
         {
             base.OnDisappearing();
 
+            _refreshViewCancelltionTokenSource.Cancel();
             _storeRatingRequestView.IsVisible = false;
         }
 

@@ -15,6 +15,8 @@ namespace GitTrends.Functions
         [FunctionName(nameof(GetGitHubClientId))]
         public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest request, ILogger log)
         {
+            log.LogInformation("Retrieving Client Id");
+
             if (string.IsNullOrWhiteSpace(_clientId))
                 return new NotFoundObjectResult("Client ID Not Found");
 
