@@ -9,7 +9,7 @@ namespace GitTrends.Shared
         [Get("/GetGitHubClientId")]
         Task<GetGitHubClientIdDTO> GetGitTrendsClientId();
 
-        [Get("/GenerateGitHubOAuthToken")]
+        [Post("/GenerateGitHubOAuthToken")]
         Task<GitHubToken> GenerateGitTrendsOAuthToken([Body] GenerateTokenDTO generateTokenDTO);
 
         [Get("/GetSyncfusionInformation")]
