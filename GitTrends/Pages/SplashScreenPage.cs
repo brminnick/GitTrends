@@ -84,9 +84,7 @@ namespace GitTrends
 
             ViewModel.InitializeAppCommand.Execute(null);
 
-#if !DEBUG
             Animate(_animationCancellationToken.Token);
-#endif
         }
 
         async void Animate(CancellationToken pulseCancellationToken)

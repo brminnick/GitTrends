@@ -17,5 +17,8 @@ namespace GitTrends.Shared
 
         [Get("/GetUITestToken")]
         Task<GitHubToken> GetUITestToken([AliasAs("code")] string functionKey = AzureConstants.GetUITestTokenApiKey);
+
+        [Get("/GetChartStreamingUrl")]
+        Task<StreamingManifest> GetChartStreamingUrl();
     }
 }

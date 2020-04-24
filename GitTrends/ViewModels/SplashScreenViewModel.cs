@@ -11,13 +11,11 @@ namespace GitTrends
     {
         readonly WeakEventManager<InitializationCompleteEventArgs> _initializationCompleteEventManager = new WeakEventManager<InitializationCompleteEventArgs>();
 
-        readonly SyncFusionService _syncFusionService;
-
-        public SplashScreenViewModel(SyncFusionService syncfusionService, AnalyticsService analyticsService) : base(analyticsService)
+        public SplashScreenViewModel(SyncFusionService syncfusionService,
+                                        MediaElementService mediaElementService,
+                                        AnalyticsService analyticsService) : base(analyticsService)
         {
-            _syncFusionService = syncfusionService;
-
-            InitializeAppCommand = new AsyncCommand(ExecuteInitializeAppCommand);
+            InitializeAppCommand = new AsyncCommand(() => ExecuteInitializeAppCommand(syncfusionService, mediaElementService));
         }
 
         public event EventHandler<InitializationCompleteEventArgs> InitializationComplete
@@ -28,18 +26,22 @@ namespace GitTrends
 
         public ICommand InitializeAppCommand { get; }
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        async Task ExecuteInitializeAppCommand()
+        async Task ExecuteInitializeAppCommand(SyncFusionService syncFusionService, MediaElementService mediaElementService)
         {
             bool isInitializationSuccessful = false;
 
+
             try
             {
+                var initializeSyncfusionTask = syncFusionService.Initialize(CancellationToken.None);
+                var intializeOnboardingChartValueTask = mediaElementService.InitializeOnboardingChart(CancellationToken.None);
 #if DEBUG
-                _syncFusionService.Initialize(CancellationToken.None).SafeFireAndForget(ex => AnalyticsService.Report(ex));
+                initializeSyncfusionTask.SafeFireAndForget(ex => AnalyticsService.Report(ex));
 #else
-                await _syncFusionService.Initialize(CancellationToken.None).ConfigureAwait(false);
+                await initializeSyncfusionTask.ConfigureAwait(false);
 #endif
+                await intializeOnboardingChartValueTask.ConfigureAwait(false);
+
                 isInitializationSuccessful = true;
             }
             catch (Exception e)
@@ -51,7 +53,6 @@ namespace GitTrends
                 OnInitializationComplete(isInitializationSuccessful);
             }
         }
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
         void OnInitializationComplete(bool isInitializationSuccessful) =>
             _initializationCompleteEventManager.HandleEvent(this, new InitializationCompleteEventArgs(isInitializationSuccessful), nameof(InitializationComplete));
