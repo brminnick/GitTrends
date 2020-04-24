@@ -13,7 +13,8 @@ namespace GitTrends.UITests
     class ReferringSitesPage : BaseCollectionPage<ReferringSiteModel>
     {
         readonly Query _collectionView, _refreshView, _closeButton, _activityIndicator,
-            _storeRatingRequestTitleLabel, _storeRatingRequestNoButton, _storeRatingRequestYesButton;
+            _storeRatingRequestTitleLabel, _storeRatingRequestNoButton, _storeRatingRequestYesButton,
+            _emptyDataView;
 
         public ReferringSitesPage(IApp app) : base(app, PageTitles.ReferringSitesPage)
         {
@@ -24,7 +25,10 @@ namespace GitTrends.UITests
             _storeRatingRequestTitleLabel = GenerateMarkedQuery(ReferringSitesPageAutomationIds.StoreRatingRequestTitleLabel);
             _storeRatingRequestNoButton = GenerateMarkedQuery(ReferringSitesPageAutomationIds.StoreRatingRequestNoButton);
             _storeRatingRequestYesButton = GenerateMarkedQuery(ReferringSitesPageAutomationIds.StoreRatingRequestYesButton);
+            _emptyDataView = GenerateMarkedQuery(ReferringSitesPageAutomationIds.EmptyDataView);
         }
+
+        public bool IsEmptyDataViewVisible => App.Query(_emptyDataView).Any();
 
         public bool IsActivityIndicatorRunning => App.Query(_activityIndicator).Any();
 
@@ -35,6 +39,12 @@ namespace GitTrends.UITests
         public string StoreRatingRequestNoButtonText => GetText(_storeRatingRequestNoButton);
 
         public string StoreRatingRequestYesButtonText => GetText(_storeRatingRequestYesButton);
+
+        public void WaitForEmptyDataView()
+        {
+            App.WaitForElement(_emptyDataView);
+            App.Screenshot("Empty Data View Appeared");
+        }
 
         public override async Task WaitForPageToLoad(TimeSpan? timeout = null)
         {
@@ -61,18 +71,6 @@ namespace GitTrends.UITests
         {
             App.Tap(_storeRatingRequestNoButton);
             App.Screenshot("No Button Tapped");
-        }
-
-        public void DismissNoReferringSitesDialog()
-        {
-            App.Tap(ReferringSitesConstants.NoReferringSitesOK);
-            App.Screenshot("No Referring Sites Dialog Dismissed");
-        }
-
-        public void WaitForTheNoReferringSitesDialog()
-        {
-            App.WaitForElement(ReferringSitesConstants.NoReferringSitesTitle);
-            App.Screenshot("No Referring Sites Dialog Appeared");
         }
 
         public void WaitForReviewRequest()

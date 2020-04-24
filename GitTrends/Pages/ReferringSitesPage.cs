@@ -46,7 +46,7 @@ namespace GitTrends
                 //Set iOS Header to `new BoxView { HeightRequest = titleRowHeight + titleTopMargin }` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
                 Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
                 Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
-                EmptyView = new EmptyDataView("EmptyReferringSitesList", "No referrals yet")
+                EmptyView = new EmptyDataView("EmptyReferringSitesList", "No referrals yet", ReferringSitesPageAutomationIds.EmptyDataView)
                                 .Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(ReferringSitesViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;

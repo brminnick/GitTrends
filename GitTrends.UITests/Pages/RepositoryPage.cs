@@ -12,7 +12,7 @@ namespace GitTrends.UITests
     class RepositoryPage : BaseCollectionPage<Repository>
     {
         readonly Query _searchBar, _settingsButton, _collectionView, _refreshView,
-            _androidContextMenuOverflowButton, _androidSearchBarButton, _sortButton;
+            _androidContextMenuOverflowButton, _androidSearchBarButton, _sortButton, _emptyDataView;
 
         public RepositoryPage(IApp app) : base(app, PageTitles.RepositoryPage)
         {
@@ -23,6 +23,15 @@ namespace GitTrends.UITests
             _refreshView = GenerateMarkedQuery(RepositoryPageAutomationIds.RefreshView);
             _androidContextMenuOverflowButton = x => x.Class("androidx.appcompat.widget.ActionMenuPresenter$OverflowMenuButton");
             _androidSearchBarButton = x => x.Id("ActionSearch");
+            _emptyDataView = GenerateMarkedQuery(RepositoryPageAutomationIds.EmptyDataView);
+        }
+
+        public bool IsEmptyDataViewVisible => App.Query(_emptyDataView).Any();
+
+        public void WaitForEmptyDataView()
+        {
+            App.WaitForElement(_emptyDataView);
+            App.Screenshot("Empty Data View Appeared");
         }
 
         public Task DismissSortingMenu()

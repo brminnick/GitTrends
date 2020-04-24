@@ -2,10 +2,11 @@
 {
     static class RepositoryPageAutomationIds
     {
-        public const string SearchBar = nameof(SearchBar);
-        public const string SettingsButton = nameof(SettingsButton);
-        public const string SortButton = nameof(SortButton);
-        public const string CollectionView = nameof(CollectionView);
-        public const string RefreshView = nameof(RefreshView);
+        public const string SearchBar = nameof(RepositoryPageAutomationIds) + nameof(SearchBar);
+        public const string SettingsButton = nameof(RepositoryPageAutomationIds) + nameof(SettingsButton);
+        public const string SortButton = nameof(RepositoryPageAutomationIds) + nameof(SortButton);
+        public const string CollectionView = nameof(RepositoryPageAutomationIds) + nameof(CollectionView);
+        public const string RefreshView = nameof(RepositoryPageAutomationIds) + nameof(RefreshView);
+        public const string EmptyDataView = nameof(RepositoryPageAutomationIds) + nameof(EmptyDataView);
     }
 }

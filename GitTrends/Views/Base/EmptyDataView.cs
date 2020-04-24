@@ -7,8 +7,10 @@ namespace GitTrends.Views.Base
 {
     class EmptyDataView : Grid
     {
-        public EmptyDataView(in string imageSource, in string text, in double rowSpacing = 72)
+        public EmptyDataView(in string imageSource, in string text, in string automationId, in double rowSpacing = 72)
         {
+            AutomationId = automationId;
+
             HorizontalOptions = LayoutOptions.Center;
             VerticalOptions = LayoutOptions.Start;
 

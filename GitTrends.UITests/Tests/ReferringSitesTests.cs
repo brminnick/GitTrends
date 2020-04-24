@@ -45,8 +45,8 @@ namespace GitTrends.UITests
 
                 if (!referringSites.Any())
                 {
-                    ReferringSitesPage.WaitForTheNoReferringSitesDialog();
-                    ReferringSitesPage.DismissNoReferringSitesDialog();
+                    Assert.IsTrue(ReferringSitesPage.IsEmptyDataViewVisible);
+
                     ReferringSitesPage.ClosePage();
 
                     await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);

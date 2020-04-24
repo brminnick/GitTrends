@@ -14,7 +14,7 @@ namespace GitTrends.UITests
         readonly Query _trendsChart, _trendsChartLegend, _trendsChartPrimaryAxis, _trendsChartSecondaryAxis,
             _activityIndicator, _androidContextMenuOverflowButton, _referringSiteButton, _viewsCard,
             _uniqueViewsCard, _clonesCard, _uniqueClonesCard, _viewsStatisticsLabel, _uniqueViewsStatisticsLabel,
-            _clonesStatisticsLabel, _uniqueClonesStatisticsLabel;
+            _clonesStatisticsLabel, _uniqueClonesStatisticsLabel, _emptyDataView;
 
         public TrendsPage(IApp app) : base(app)
         {
@@ -37,12 +37,16 @@ namespace GitTrends.UITests
             _uniqueViewsStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.UniqueViewsStatisticsLabel);
             _clonesStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.ClonesStatisticsLabel);
             _uniqueClonesStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.UniqueClonesStatisticsLabel);
+
+            _emptyDataView = GenerateMarkedQuery(TrendsPageAutomationIds.EmptyDataView);
         }
 
         public string ViewsStatisticsLabelText => GetText(_viewsStatisticsLabel);
         public string UniqueViewsStatisticsLabelText => GetText(_uniqueViewsStatisticsLabel);
         public string ClonesStatisticsLabelText => GetText(_clonesStatisticsLabel);
         public string UniqueClonesStatisticsLabelText => GetText(_uniqueClonesStatisticsLabel);
+
+        public bool IsEmptyDataViewVisible => App.Query(_emptyDataView).Any();
 
         AppResult ViewsLegendIcon => App.Query(GenerateMarkedQuery(TrendsChartConstants.TotalViewsTitle)).Last();
         AppResult UniqueViewsLegendIcon => App.Query(GenerateMarkedQuery(TrendsChartConstants.UniqueViewsTitle)).Last();
@@ -64,6 +68,12 @@ namespace GitTrends.UITests
             App.WaitForElement(_trendsChart, timeout: timespan);
 
             return Task.CompletedTask;
+        }
+
+        public void WaitForEmptyDataView()
+        {
+            App.WaitForElement(_emptyDataView);
+            App.Screenshot("Empty Data View Appeared");
         }
 
         public bool IsSeriesVisible(string seriesName)

@@ -2,8 +2,8 @@
 {
     static class WelcomePageAutomationIds
     {
-        public const string ConnectToGitHubButton = nameof(ConnectToGitHubButton);
-        public const string DemoModeButton = nameof(DemoModeButton);
-        public const string IsAuthenticatingActivityIndicator = nameof(IsAuthenticatingActivityIndicator);
+        public const string ConnectToGitHubButton = nameof(WelcomePageAutomationIds) + nameof(ConnectToGitHubButton);
+        public const string DemoModeButton = nameof(WelcomePageAutomationIds) + nameof(DemoModeButton);
+        public const string IsAuthenticatingActivityIndicator = nameof(WelcomePageAutomationIds) + nameof(IsAuthenticatingActivityIndicator);
     }
 }

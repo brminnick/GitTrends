@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using Refit;
@@ -11,6 +12,6 @@ namespace GitTrends.UITests
 
         static IAzureFunctionsApi AzureFunctionsApiClient => _azureFunctionsApiClientHolder.Value;
 
-        public static Task<GitHubToken> GenerateGitTrendsOAuthToken() => AttemptAndRetry(() => AzureFunctionsApiClient.GetUITestToken());
+        public static Task<GitHubToken> GenerateGitTrendsOAuthToken() => AttemptAndRetry(() => AzureFunctionsApiClient.GetUITestToken(), CancellationToken.None);
     }
 }

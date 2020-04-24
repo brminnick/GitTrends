@@ -36,7 +36,7 @@ namespace GitTrends
                 //Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
                 Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
                 Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
-                EmptyView = new EmptyDataView("EmptyRepositoriesList", "Your repositories list is\nempty.")
+                EmptyView = new EmptyDataView("EmptyRepositoriesList", "Your repositories list is\nempty.", RepositoryPageAutomationIds.EmptyDataView)
                             .Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
