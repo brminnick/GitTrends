@@ -30,7 +30,6 @@ namespace GitTrends
         {
             bool isInitializationSuccessful = false;
 
-
             try
             {
                 var initializeSyncfusionTask = syncFusionService.Initialize(CancellationToken.None);

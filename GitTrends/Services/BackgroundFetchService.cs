@@ -31,38 +31,23 @@ namespace GitTrends
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _repositoryDatabase = repositoryDatabase;
             _notificationService = notificationService;
-
-            _notificationService.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
         }
 
         static IJobManager JobManager => ShinyHost.Resolve<IJobManager>();
 
-        public Task Register() => MainThread.InvokeOnMainThreadAsync(async () =>
+        public void Register()
         {
-            var periodicTimeSpan = TimeSpan.FromHours(12);
-
-            var isRegistered = await isTrendingRepositoryNotificationJobRegistered();
-
-            if (!isRegistered)
+            var backgroundFetchJob = new JobInfo(typeof(TrendingRepositoryNotificationJob), TrendingRepositoryNotificationJob.Identifier)
             {
-                var backgroundFetchJob = new JobInfo(typeof(TrendingRepositoryNotificationJob), TrendingRepositoryNotificationJob.Identifier)
-                {
-                    BatteryNotLow = true,
-                    PeriodicTime = periodicTimeSpan,
-                    Repeat = true,
-                    RequiredInternetAccess = InternetAccess.Any,
-                    RunOnForeground = false
-                };
+                BatteryNotLow = true,
+                PeriodicTime = TimeSpan.FromHours(12),
+                Repeat = true,
+                RequiredInternetAccess = InternetAccess.Any,
+                RunOnForeground = false
+            };
 
-                await JobManager.Schedule(backgroundFetchJob).ConfigureAwait(false);
-            }
-
-            static async Task<bool> isTrendingRepositoryNotificationJobRegistered()
-            {
-                var registeredJobs = await JobManager.GetJobs().ConfigureAwait(false);
-                return registeredJobs.Any(x => x.Identifier is TrendingRepositoryNotificationJob.Identifier);
-            }
-        });
+            JobManager.Schedule(backgroundFetchJob).SafeFireAndForget(ex => _analyticsService.Report(ex));
+        }
 
         public async Task<bool> NotifyTrendingRepositories(CancellationToken cancellationToken)
         {
@@ -111,12 +96,6 @@ namespace GitTrends
             }
 
             return Enumerable.Empty<Repository>().ToList();
-        }
-
-        async void HandleRegisterForNotificationsCompleted(object sender, (bool isSuccessful, string errorMessage) e)
-        {
-            if (e.isSuccessful)
-                await Register().ConfigureAwait(false);
         }
     }
 

@@ -183,18 +183,15 @@ namespace GitTrends
         async void HandleInitializationComplete(object sender, InitializationCompleteEventArgs e)
         {
             _animationCancellationToken?.Cancel();
-#if DEBUG
-            await ChangeLabelText("Preview Mode", "Certain license warnings may appear");
-
-            //Display Text
-            await Task.Delay(500);
-
-            await NavigateToNextPage();
-#else
             if (e.IsInitializationSuccessful)
             {
+#if DEBUG
+                await ChangeLabelText("Preview Mode", "Certain license warnings may appear");
+                //Display Text
+                await Task.Delay(500);
+#else
                 await ChangeLabelText("Let's go!");
-
+#endif
                 await NavigateToNextPage();
             }
             else
@@ -203,7 +200,6 @@ namespace GitTrends
 
                 AnalyticsService.Track("Initialization Failed");
             }
-#endif
 
             Task NavigateToNextPage()
             {
