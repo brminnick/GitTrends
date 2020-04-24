@@ -1,5 +1,6 @@
 ﻿using System;
 using GitTrends.Mobile.Shared;
+using MediaManager.Forms;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -18,16 +19,14 @@ namespace GitTrends
 
         protected override View CreateImageView() => Device.RuntimePlatform switch
         {
-            Device.iOS => new MediaElement
+            //Use MediaManager.Forms.VideoView until MediaElement.Dispose bug is fixed: https://github.com/xamarin/Xamarin.Forms/issues/9525#issuecomment-619156536
+            Device.iOS => new VideoView
             {
                 Source = MediaElementService.OnboardingChart?.HlsUrl,
                 BackgroundColor = Color.Transparent,
                 Volume = 0,
-                IsLooping = true,
-                AutoPlay = true,
-                Aspect = Aspect.AspectFit,
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center
+                Repeat = MediaManager.Playback.RepeatMode.All,
+                VideoAspect = MediaManager.Video.VideoAspectMode.AspectFit,
             },
             //Work-around because Xamarin.Forms.MediaElement uses Android.VideoView instead of ExoPlayer
             Device.Android => new AndroidExoPlayerView
@@ -54,7 +53,7 @@ namespace GitTrends
 
             Children =
             {
-                new BodyLabel("You get cool charts which show all traffic related to your repo:").Row(Row.Title).ColumnSpan(All<Column>()),
+                new BodyLabel("Charts show all traffic related to your repo:").Row(Row.Title).ColumnSpan(All<Column>()),
 
                 new BodySvg("zoom_gesture.svg").Row(Row.Zoom).Column(Column.Image),
                 new BodyLabel("Zoom in/out to see accurately what you need to know").Row(Row.Zoom).Column(Column.Description),
