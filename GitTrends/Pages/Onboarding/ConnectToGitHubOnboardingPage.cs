@@ -10,8 +10,6 @@ namespace GitTrends
 {
     public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
     {
-        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new CancellationTokenSource();
-
         public ConnectToGitHubOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService, AnalyticsService analyticsService)
                 : base(analyticsService, BaseTheme.CoralColorHex, OnboardingConstants.TryDemoText, 3)
         {
@@ -42,17 +40,10 @@ namespace GitTrends
             Children =
             {
                 new BodyLabel("Get started by connecting your GitHub account, or try demo mode to tour GitTrends!").Row(Row.Description),
-                new ConnectToGitHubView(OnboardingAutomationIds.ConnectToGitHubButton,_connectToGitHubCancellationTokenSource.Token).Row(Row.Button),
+                new ConnectToGitHubView(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None).Row(Row.Button),
                 new IsAuthenticatingIndicator().Row(Row.ActivityIndicator)
             }
         };
-
-        protected override void OnDisappearing()
-        {
-            _connectToGitHubCancellationTokenSource.Cancel();
-
-            base.OnDisappearing();
-        }
 
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
         {
