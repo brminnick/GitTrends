@@ -18,19 +18,19 @@ using Xamarin.Forms.Platform.Android;
 [assembly: ExportRenderer(typeof(AndroidExoPlayerView), typeof(AndroidExoPlayerCustomRenderer))]
 namespace GitTrends.Droid
 {
-    public class AndroidExoPlayerCustomRenderer : ViewRenderer<AndroidExoPlayerView, PlayerView>, IMediaSourceEventListener
+    public class AndroidExoPlayerCustomRenderer : ViewRenderer<AndroidExoPlayerView, PlayerView>
     {
         readonly PlayerView _playerView;
         readonly SimpleExoPlayer _player;
 
         public AndroidExoPlayerCustomRenderer(Context context) : base(context)
         {
-            _player = new SimpleExoPlayer.Builder(Context).Build();
+            _player = new SimpleExoPlayer.Builder(context).Build();
 
             _player.PlayWhenReady = true;
             _player.RepeatMode = (int)RepeatMode.Restart;
 
-            _playerView = new PlayerView(Context)
+            _playerView = new PlayerView(context)
             {
                 UseController = false,
                 Player = _player,
@@ -38,58 +38,10 @@ namespace GitTrends.Droid
             };
         }
 
+        //Fixes no constructor found exception
         public AndroidExoPlayerCustomRenderer(System.IntPtr ptr, Android.Runtime.JniHandleOwnership jni) 
         {
 
-        }
-
-        public void OnDownstreamFormatChanged(int windowIndex, MediaSourceMediaPeriodId mediaPeriodId, MediaSourceEventListenerMediaLoadData mediaLoadData)
-        {
-
-        }
-
-        public void OnLoadCanceled(int windowIndex, MediaSourceMediaPeriodId mediaPeriodId, MediaSourceEventListenerLoadEventInfo loadEventInfo, MediaSourceEventListenerMediaLoadData mediaLoadData)
-        {
-
-        }
-
-        public void OnLoadCompleted(int windowIndex, MediaSourceMediaPeriodId mediaPeriodId, MediaSourceEventListenerLoadEventInfo loadEventInfo, MediaSourceEventListenerMediaLoadData mediaLoadData)
-        {
-
-        }
-
-        public void OnLoadError(int windowIndex, MediaSourceMediaPeriodId mediaPeriodId, MediaSourceEventListenerLoadEventInfo loadEventInfo, MediaSourceEventListenerMediaLoadData mediaLoadData, IOException error, bool wasCanceled)
-        {
-
-        }
-
-        public void OnLoadStarted(int windowIndex, MediaSourceMediaPeriodId mediaPeriodId, MediaSourceEventListenerLoadEventInfo loadEventInfo, MediaSourceEventListenerMediaLoadData mediaLoadData)
-        {
-
-        }
-
-        public void OnMediaPeriodCreated(int windowIndex, MediaSourceMediaPeriodId mediaPeriodId)
-        {
-
-        }
-
-        public void OnMediaPeriodReleased(int windowIndex, MediaSourceMediaPeriodId mediaPeriodId)
-        {
-
-        }
-
-        public void OnReadingStarted(int windowIndex, MediaSourceMediaPeriodId mediaPeriodId)
-        {
-
-        }
-
-        public void OnUpstreamDiscarded(int windowIndex, MediaSourceMediaPeriodId mediaPeriodId, MediaSourceEventListenerMediaLoadData mediaLoadData)
-        {
-
-        }
-
-        protected override void Dispose(bool disposing)
-        {
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<AndroidExoPlayerView> e)
@@ -113,12 +65,12 @@ namespace GitTrends.Droid
 
         void Play(string url)
         {
-            var httpDataSourceFactory = new DefaultHttpDataSourceFactory("1");
+            var httpDataSourceFactory = new DefaultHttpDataSourceFactory(nameof(GitTrends));
             var ssChunkFactory = new DefaultSsChunkSource.Factory(httpDataSourceFactory);
 
-            var ssMediaSource = new SsMediaSource(Uri.Parse(url), httpDataSourceFactory, ssChunkFactory, new Handler(), this);
+            var ssMediaSourceFactory = new SsMediaSource.Factory(ssChunkFactory, httpDataSourceFactory);
 
-            _player.Prepare(ssMediaSource);
+            _player.Prepare(ssMediaSourceFactory.CreateMediaSource(Uri.Parse(url)));
         }
     }
 }
