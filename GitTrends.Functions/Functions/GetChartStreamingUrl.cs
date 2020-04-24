@@ -20,7 +20,7 @@ namespace GitTrends.Functions
             if (string.IsNullOrWhiteSpace(_chartVideoManifestUrl))
                 return new NotFoundObjectResult($"Chart Video Url not found");
 
-            return new OkObjectResult(new StreamingUrl(_chartVideoManifestUrl));
+            return new OkObjectResult(new StreamingManifest(_chartVideoManifestUrl));
         }
     }
 }

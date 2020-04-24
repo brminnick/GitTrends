@@ -16,13 +16,13 @@ namespace GitTrends
         public MediaElementService(AzureFunctionsApiService azureFunctionsApiService, AnalyticsService analyticsService) =>
             (_azureFunctionsApiService, _analyticsService) = (azureFunctionsApiService, analyticsService);
 
-        public static StreamingUrl? OnboardingChart
+        public static StreamingManifest? OnboardingChart
         {
             get
             {
                 try
                 {
-                    return JsonConvert.DeserializeObject<StreamingUrl?>(Preferences.Get(nameof(OnboardingChart), null));
+                    return JsonConvert.DeserializeObject<StreamingManifest?>(Preferences.Get(nameof(OnboardingChart), null));
                 }
                 catch (ArgumentNullException)
                 {
