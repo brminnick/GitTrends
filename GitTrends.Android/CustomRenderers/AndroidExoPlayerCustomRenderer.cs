@@ -1,4 +1,5 @@
-﻿using Android.Content;
+﻿using System.ComponentModel;
+using Android.Content;
 using Android.Net;
 using Android.OS;
 using Android.Views.Animations;
@@ -29,26 +30,32 @@ namespace GitTrends.Droid
 
         public void OnDownstreamFormatChanged(int p0, Format p1, int p2, Object p3, long p4)
         {
+
         }
 
         public void OnLoadCanceled(DataSpec p0, int p1, int p2, Format p3, int p4, Object p5, long p6, long p7, long p8, long p9, long p10)
         {
+
         }
 
         public void OnLoadCompleted(DataSpec p0, int p1, int p2, Format p3, int p4, Object p5, long p6, long p7, long p8, long p9, long p10)
         {
+
         }
 
         public void OnLoadError(DataSpec p0, int p1, int p2, Format p3, int p4, Object p5, long p6, long p7, long p8, long p9, long p10, IOException p11, bool p12)
         {
+
         }
 
         public void OnLoadStarted(DataSpec p0, int p1, int p2, Format p3, int p4, Object p5, long p6, long p7, long p8)
         {
+
         }
 
         public void OnUpstreamDiscarded(int p0, long p1, long p2)
         {
+
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<AndroidExoPlayerView> e)
@@ -60,6 +67,14 @@ namespace GitTrends.Droid
 
             if (e.NewElement.SourceUrl != null)
                 Play(e.NewElement.SourceUrl);
+        }
+
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(sender, e);
+
+            if (e.PropertyName is nameof(AndroidExoPlayerView.SourceUrl) && Element.SourceUrl != null)
+                Play(Element.SourceUrl);
         }
 
         void InitializePlayer()
@@ -80,12 +95,11 @@ namespace GitTrends.Droid
 
         void Play(string url)
         {
-            var sourceUri = Uri.Parse(url);
-
             var httpDataSourceFactory = new DefaultHttpDataSourceFactory("1");
             var ssChunkFactory = new DefaultSsChunkSource.Factory(httpDataSourceFactory);
 
-            var ssMediaSource = new SsMediaSource(sourceUri, httpDataSourceFactory, ssChunkFactory, new Handler(), this);
+            var ssMediaSource = new SsMediaSource(Uri.Parse(url), httpDataSourceFactory, ssChunkFactory, new Handler(), this);
+
             _player?.Prepare(ssMediaSource);
         }
     }

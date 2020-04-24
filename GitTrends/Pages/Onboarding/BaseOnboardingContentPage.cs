@@ -1,5 +1,4 @@
 ﻿using GitTrends.Mobile.Shared;
-using Shiny;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
