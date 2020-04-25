@@ -23,7 +23,7 @@ namespace GitTrends.UITests
 
             RepositoryPage.TapSettingsButton();
 
-            SettingsPage.DismissSyncfusionLicensePopup();
+            await SettingsPage.WaitForPageToLoad();
             SettingsPage.WaitForGitHubLoginToComplete();
 
             //Assert

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using GitTrends.Mobile.Shared;
 using Xamarin.UITest;
 using Xamarin.UITest.iOS;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
@@ -20,6 +21,8 @@ namespace GitTrends.UITests
             _iOSSafariView = x => x.Class("SFSafariView");
             _iOSEmailView = GenerateMarkedQuery("RemoteViewBridge");
         }
+
+        public bool AreNotificationsEnabled => App.InvokeBackdoorMethod<bool>(BackdoorMethodConstants.AreNotificationsEnabled);
 
         public bool IsEmailOpen => App switch
         {

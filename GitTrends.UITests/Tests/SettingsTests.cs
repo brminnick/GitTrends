@@ -59,14 +59,19 @@ namespace GitTrends.UITests
         {
             //Arrange
             bool areNotificationsEnabled_Initial = SettingsPage.AreNotificationsEnabled;
-            bool areNotificationsEnabled_Final;
+            bool shouldSendNotifications_Initial = SettingsPage.ShouldSendNotifications;
+            bool shouldSendNotifications_Final, areNotificationsEnabled_Final;
 
             //Act
             SettingsPage.ToggleRegisterForNotificationsSwitch();
+            shouldSendNotifications_Final = SettingsPage.ShouldSendNotifications;
             areNotificationsEnabled_Final = SettingsPage.AreNotificationsEnabled;
 
             //Assert
+            Assert.IsFalse(shouldSendNotifications_Initial);
             Assert.IsFalse(areNotificationsEnabled_Initial);
+
+            Assert.IsTrue(shouldSendNotifications_Final);
             Assert.IsTrue(areNotificationsEnabled_Final);
         }
 

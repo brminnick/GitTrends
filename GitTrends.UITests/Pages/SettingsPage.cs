@@ -40,7 +40,7 @@ namespace GitTrends.UITests
 
         public bool IsActivityIndicatorRunning => App.Query(_gitHubSettingsViewActivityIndicator).Any();
 
-        public bool AreNotificationsEnabled => App.InvokeBackdoorMethod<bool>(BackdoorMethodConstants.ShouldSendNotifications);
+        public bool ShouldSendNotifications => App.InvokeBackdoorMethod<bool>(BackdoorMethodConstants.ShouldSendNotifications);
 
         public string GitHubAliasNameText => GetText(_gitHubNameLabel);
 
@@ -53,6 +53,13 @@ namespace GitTrends.UITests
         public PreferredTheme PreferredTheme => App.InvokeBackdoorMethod<PreferredTheme>(BackdoorMethodConstants.GetPreferredTheme);
 
         public TrendsChartOption CurrentTrendsChartOption => App.InvokeBackdoorMethod<TrendsChartOption>(BackdoorMethodConstants.GetCurrentTrendsChartOption);
+
+        public override async Task WaitForPageToLoad(TimeSpan? timeout = null)
+        {
+            await base.WaitForPageToLoad(timeout).ConfigureAwait(false);
+
+            DismissSyncfusionLicensePopup();
+        }
 
         public void SelectTheme(PreferredTheme preferredTheme)
         {

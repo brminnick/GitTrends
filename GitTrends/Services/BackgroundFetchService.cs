@@ -8,7 +8,6 @@ using Autofac;
 using GitTrends.Shared;
 using Shiny;
 using Shiny.Jobs;
-using Xamarin.Essentials;
 
 namespace GitTrends
 {

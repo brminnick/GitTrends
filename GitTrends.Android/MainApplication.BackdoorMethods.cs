@@ -51,7 +51,10 @@ namespace GitTrends.Droid
         public void TriggerReviewRequest() => UITestBackdoorService.TriggerReviewRequest();
 
         [Preserve, Export(BackdoorMethodConstants.GetReviewRequestAppStoreTitle)]
-        public string GetReviewRequestAppStoreTitle() => UITestBackdoorService.GetReviewRequestAppStoreTitle();
+        public string GetReviewRequestAppStoreTitle() => SerializeObject(UITestBackdoorService.GetReviewRequestAppStoreTitle());
+
+        [Preserve, Export(BackdoorMethodConstants.AreNotificationsEnabled)]
+        public bool AreNotificationsEnabled() => UITestBackdoorService.AreNotificationsEnabled().GetAwaiter().GetResult();
 
         static string SerializeObject<T>(T value) => Newtonsoft.Json.JsonConvert.SerializeObject(value);
     }

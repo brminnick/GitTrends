@@ -67,6 +67,8 @@ namespace GitTrends.UITests
             App.WaitForNoElement(_activityIndicator, timeout: timespan);
             App.WaitForElement(_trendsChart, timeout: timespan);
 
+            DismissSyncfusionLicensePopup();
+
             return Task.CompletedTask;
         }
 

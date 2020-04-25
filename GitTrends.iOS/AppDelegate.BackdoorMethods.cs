@@ -56,6 +56,10 @@ namespace GitTrends.iOS
         public NSString GetReviewRequestAppStoreTitle(NSString noValue) =>
            SerializeObject(UITestBackdoorService.GetReviewRequestAppStoreTitle());
 
+        [Preserve, Export(BackdoorMethodConstants.AreNotificationsEnabled + ":")]
+        public NSString AreNotificationsEnabled(NSString noValue) =>
+           SerializeObject(UITestBackdoorService.AreNotificationsEnabled().GetAwaiter().GetResult());
+
         static NSString SerializeObject<T>(T value) => new NSString(Newtonsoft.Json.JsonConvert.SerializeObject(value));
     }
 }

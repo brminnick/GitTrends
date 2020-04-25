@@ -98,6 +98,8 @@ namespace GitTrends
             return onboardingCarouselPage.Children.IndexOf(currentPage);
         }
 
+        public Task<bool> AreNotificationsEnabled() => _notificationService.AreNotificationsEnabled();
+
         RefreshView GetVisibleRefreshView()
         {
             var visibleContentPage = GetVisibleContentPage();
