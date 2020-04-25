@@ -9,7 +9,7 @@ namespace GitTrends
 {
     public class NotificationsOnboardingPage : BaseOnboardingContentPage
     {
-        public NotificationsOnboardingPage(AnalyticsService analyticsService) : base(analyticsService, BaseTheme.LightTealColorHex, OnboardingConstants.SkipText, 2)
+        public NotificationsOnboardingPage(AnalyticsService analyticsService) : base(analyticsService, Color.FromHex(BaseTheme.LightTealColorHex), OnboardingConstants.SkipText, 2)
         {
 
         }

@@ -4,7 +4,7 @@ VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.Android", "GitTrends.Android\GitTrends.Android.csproj", "{E5785129-AB94-4359-9947-B600D33A9958}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends", "GitTrends\GitTrends.csproj", "{E9E411F7-7BB9-4176-8950-3A2D1C27FF33}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends", "GitTrends\GitTrends.csproj", "{E9E411F7-7BB9-4176-8950-3A2D1C27FF33}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mobile", "Mobile", "{BA9E6A61-3143-42DF-9669-97F7F557B7A2}"
 EndProject

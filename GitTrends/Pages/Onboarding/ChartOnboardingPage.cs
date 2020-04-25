@@ -3,6 +3,7 @@ using GitTrends.Mobile.Shared;
 using MediaManager.Forms;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using Xamarin.Forms.PancakeView;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
@@ -10,30 +11,39 @@ namespace GitTrends
 {
     public class ChartOnboardingPage : BaseOnboardingContentPage
     {
-        public ChartOnboardingPage(AnalyticsService analyticsService) : base(analyticsService, BaseTheme.CoralColorHex, OnboardingConstants.SkipText, 1)
+        public ChartOnboardingPage(AnalyticsService analyticsService) : base(analyticsService, Color.FromHex(BaseTheme.CoralColorHex), OnboardingConstants.SkipText, 1)
         {
         }
 
         enum Row { Title, Zoom, LongPress }
         enum Column { Image, Description }
 
-        protected override View CreateImageView() => Device.RuntimePlatform switch
+        protected override View CreateImageView() => new PancakeView
         {
-            //Use MediaManager.Forms.VideoView until MediaElement.Dispose bug is fixed: https://github.com/xamarin/Xamarin.Forms/issues/9525#issuecomment-619156536
-            Device.iOS => new VideoView
+            BorderColor = Color.FromHex("E0E0E0"),
+            BorderThickness = 1,
+            BackgroundColor = Color.White,
+            HasShadow = true,
+            Padding = new Thickness(5),
+
+            Content = Device.RuntimePlatform switch
             {
-                Source = MediaElementService.OnboardingChart?.HlsUrl,
-                BackgroundColor = Color.Transparent,
-                Volume = 0,
-                Repeat = MediaManager.Playback.RepeatMode.All,
-                VideoAspect = MediaManager.Video.VideoAspectMode.AspectFit,
-            },
-            //Work-around because Xamarin.Forms.MediaElement uses Android.VideoView instead of ExoPlayer
-            Device.Android => new AndroidExoPlayerView
-            {
-                SourceUrl = MediaElementService.OnboardingChart?.ManifestUrl
-            },
-            _ => throw new NotSupportedException()
+                //Use MediaManager.Forms.VideoView until MediaElement.Dispose bug is fixed: https://github.com/xamarin/Xamarin.Forms/issues/9525#issuecomment-619156536
+                Device.iOS => new VideoView
+                {
+                    Source = MediaElementService.OnboardingChart?.HlsUrl,
+                    BackgroundColor = Color.Transparent,
+                    Volume = 0,
+                    Repeat = MediaManager.Playback.RepeatMode.All,
+                    VideoAspect = MediaManager.Video.VideoAspectMode.AspectFit,
+                },
+                //Work-around because Xamarin.Forms.MediaElement uses Android.VideoView instead of ExoPlayer
+                Device.Android => new AndroidExoPlayerView
+                {
+                    SourceUrl = MediaElementService.OnboardingChart?.ManifestUrl
+                },
+                _ => throw new NotSupportedException()
+            }
         };
 
         protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ChartPageTitle);

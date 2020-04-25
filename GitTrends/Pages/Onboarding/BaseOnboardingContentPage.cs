@@ -8,15 +8,12 @@ namespace GitTrends
 {
     public abstract class BaseOnboardingContentPage : BaseContentPage
     {
-        protected BaseOnboardingContentPage(AnalyticsService analyticsService, in string backgroundColorHex, in string nextButtonText, in int carouselPositionIndex) : base(analyticsService)
+        protected BaseOnboardingContentPage(AnalyticsService analyticsService, in Color backgroundColor, in string nextButtonText, in int carouselPositionIndex) : base(analyticsService)
         {
             //Don't Use BaseTheme.PageBackgroundColor
             RemoveDynamicResource(BackgroundColorProperty);
 
-            BackgroundColor = Color.FromHex(backgroundColorHex);
-
-            var imageView = CreateImageView();
-            imageView.Margin = new Thickness(32);
+            BackgroundColor = backgroundColor;
 
             var descriptionLayout = new StackLayout
             {
@@ -43,7 +40,7 @@ namespace GitTrends
                 Children =
                 {
                     new OpacityOverlay().Row(Row.Image).ColumnSpan(All<Column>()),
-                    imageView.Row(Row.Image).ColumnSpan(All<Column>()),
+                    CreateImageView().Row(Row.Image).ColumnSpan(All<Column>()).Margin(Device.RuntimePlatform is Device.iOS ? new Thickness(32, 44 + 32, 32, 32) : new Thickness(32)),
                     descriptionLayout.Row(Row.Description).ColumnSpan(All<Column>()),
                     new OnboardingIndicatorView(carouselPositionIndex).Row(Row.Indicator).Column(Column.Indicator),
                     new NextLabel(nextButtonText).Row(Row.Indicator).Column(Column.Button),
@@ -80,7 +77,7 @@ namespace GitTrends
                 AutomationId = OnboardingAutomationIds.NextButon;
 
                 GestureRecognizers.Add(new TapGestureRecognizer { CommandParameter = text }
-                                        .Bind(TapGestureRecognizer.CommandProperty, nameof(OnboardingViewModel.DemoButtonCommand))); 
+                                        .Bind(TapGestureRecognizer.CommandProperty, nameof(OnboardingViewModel.DemoButtonCommand)));
 
                 this.SetBinding(IsVisibleProperty, nameof(OnboardingViewModel.IsDemoButtonVisible));
             }
