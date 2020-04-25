@@ -26,4 +26,4 @@ jobs:
       - name: iOS
         run: |
           nuget restore
-          msbuild GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Platform=iPhoneSimulator /p:Configuration=AppStore
+          msbuild GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Platform=iPhone /p:Configuration=AppStore
