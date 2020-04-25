@@ -2,27 +2,29 @@ name: .NET Core
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - "*"
   pull_request:
-    branches: [ master ]
+    branches: 
+      - "*"
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.101
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration AppStore --no-restore
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
-    - name: App Center
-      uses: wzieba/AppCenter-Github-Action@v1.0.0
-
+  
+    Android:
+      runs-on: macos-latest
+      steps:
+      - uses: actions/checkout@v1
+      - name: Android
+        run: |
+          nuget restore
+          cd Blank.Android
+          msbuild GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=AppStore
+        
+    iOS:
+      runs-on: macos-latest
+      steps:
+      - uses: actions/checkout@v1
+      - name: iOS
+        run: |
+          nuget restore
+          msbuild GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Platform=iPhoneSimulator /p:Configuration=AppStore:
