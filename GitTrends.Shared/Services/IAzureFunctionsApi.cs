@@ -12,7 +12,7 @@ namespace GitTrends.Shared
         [Post("/GenerateGitHubOAuthToken")]
         Task<GitHubToken> GenerateGitTrendsOAuthToken([Body] GenerateTokenDTO generateTokenDTO);
 
-        [Get("/GetSyncfusionInformation")]
+        [Get("/GetSyncfusionInformation/{licenseVersion}")]
         Task<SyncFusionDTO> GetSyncfusionInformation(long licenseVersion, [AliasAs("code")] string functionKey = AzureConstants.GetSyncFusionInformationApiKey);
 
         [Get("/GetUITestToken")]
