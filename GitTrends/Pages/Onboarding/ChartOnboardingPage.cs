@@ -20,10 +20,10 @@ namespace GitTrends
 
         protected override View CreateImageView() => new PancakeView
         {
+            CornerRadius = 4,
             BorderColor = Color.FromHex("E0E0E0"),
             BorderThickness = 1,
             BackgroundColor = Color.White,
-            HasShadow = true,
             Padding = new Thickness(5),
 
             Content = Device.RuntimePlatform switch
