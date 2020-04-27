@@ -8,7 +8,7 @@ using Xamarin.Essentials;
 
 namespace GitTrends
 {
-    class MediaElementService
+    public class MediaElementService
     {
         readonly AzureFunctionsApiService _azureFunctionsApiService;
         readonly AnalyticsService _analyticsService;
