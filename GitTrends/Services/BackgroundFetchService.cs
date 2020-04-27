@@ -34,28 +34,11 @@ namespace GitTrends
 
         public static string NotifyTrendingRepositoriesIdentifier { get; } = $"{Xamarin.Essentials.AppInfo.PackageName}.{nameof(NotifyTrendingRepositories)}";
 
-        public async Task<bool> Run(CancellationToken cancellationToken)
-        {
-            try
-            {
-                using var scope = ContainerService.Container.BeginLifetimeScope();
-                using var timedEvent = scope.Resolve<AnalyticsService>().TrackTime($"{nameof(NotifyTrendingRepositories)} Triggered");
-
-                var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
-                return await backgroundFetchService.NotifyTrendingRepositories(cancellationToken).ConfigureAwait(false);
-            }
-            catch(Exception e)
-            {
-                _analyticsService.Report(e);
-                return false;
-            }
-        }
-
         public async Task<bool> NotifyTrendingRepositories(CancellationToken cancellationToken)
         {
             try
             {
-                using var timedEvent = _analyticsService.TrackTime("Notify Trending Repository Background Job Triggered");
+                using var timedEvent = _analyticsService.TrackTime($"{nameof(NotifyTrendingRepositories)} Triggered");
 
                 var trendingRepositories = await GetTrendingRepositories(cancellationToken).ConfigureAwait(false);
                 await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
@@ -97,5 +80,10 @@ namespace GitTrends
 
             return Enumerable.Empty<Repository>().ToList();
         }
+    }
+
+    public interface IBackgroundFetchService
+    {
+        public void Register();
     }
 }

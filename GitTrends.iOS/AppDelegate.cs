@@ -35,8 +35,6 @@ namespace GitTrends.iOS
                 HttpClient = new HttpClient(new NSUrlSessionHandler())
             });
 
-            RegisterBackgroundTasks();
-
             PrintFontNamesToConsole();
 
             LoadApplication(new App());
@@ -46,14 +44,6 @@ namespace GitTrends.iOS
 
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
-
-        public override void DidEnterBackground(UIApplication uiApplication)
-        {
-            base.DidEnterBackground(uiApplication);
-
-            SechduleAppRefresh();
-        }
-
 
         public override bool OpenUrl(UIApplication app, NSUrl url, NSDictionary options)
         {
@@ -89,41 +79,6 @@ namespace GitTrends.iOS
             var notificationService = scope.Resolve<NotificationService>();
 
             return notificationService.HandleReceivedLocalNotification(notification.AlertTitle, notification.AlertBody, (int)notification.ApplicationIconBadgeNumber);
-        }
-
-        void RegisterBackgroundTasks()
-        {
-            var refreshSuccessNotificationName = new NSString(BackgroundFetchService.NotifyTrendingRepositoriesIdentifier);
-            BGTaskScheduler.Shared.Register(BackgroundFetchService.NotifyTrendingRepositoriesIdentifier, null, RunBackgroundTask);
-        }
-
-        async void RunBackgroundTask(BGTask task)
-        {
-            var backgroudTaskCancellationTokenSource = new CancellationTokenSource();
-            task.ExpirationHandler = backgroudTaskCancellationTokenSource.Cancel;
-
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var isSuccessful = await scope.Resolve<BackgroundFetchService>().Run(backgroudTaskCancellationTokenSource.Token);
-
-            task.SetTaskCompleted(isSuccessful);
-            SechduleAppRefresh();
-        }
-
-        void SechduleAppRefresh()
-        {
-            var request = new BGProcessingTaskRequest(BackgroundFetchService.NotifyTrendingRepositoriesIdentifier)
-            {
-                RequiresNetworkConnectivity = true,
-                RequiresExternalPower = true
-            };
-
-            var isSuccessful = BGTaskScheduler.Shared.Submit(request, out var error);
-
-            if (!isSuccessful)
-            {
-                using var scope = ContainerService.Container.BeginLifetimeScope();
-                scope.Resolve<AnalyticsService>().Report(new ArgumentException(error.LocalizedDescription));
-            }
         }
 
         [Conditional("DEBUG")]

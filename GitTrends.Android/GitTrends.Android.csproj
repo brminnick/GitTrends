@@ -91,7 +91,7 @@
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.1.0.42" />
     <PackageReference Include="sqlite-net-pcl" Version="1.6.292" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
-    <PackageReference Include="Autofac" Version="5.1.3" />
+    <PackageReference Include="Autofac" Version="5.1.4" />
     <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="18.1.0.42" />
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.3" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.2.1" />
@@ -113,6 +113,7 @@
     <Compile Include="MainApplication.BackdoorMethods.cs" />
     <Compile Include="CustomRenderers\PickerCustomRenderer.cs" />
     <Compile Include="CustomRenderers\AndroidExoPlayerCustomRenderer.cs" />
+    <Compile Include="Services\BackgroundFetchService_Android.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
