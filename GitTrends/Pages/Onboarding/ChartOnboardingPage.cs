@@ -1,6 +1,4 @@
-﻿using System;
-using GitTrends.Mobile.Shared;
-using MediaManager.Forms;
+﻿using GitTrends.Mobile.Shared;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
@@ -26,24 +24,9 @@ namespace GitTrends
             BackgroundColor = Color.White,
             Padding = new Thickness(5),
 
-            Content = Device.RuntimePlatform switch
-            {
-                //Use MediaManager.Forms.VideoView until MediaElement.Dispose bug is fixed: https://github.com/xamarin/Xamarin.Forms/issues/9525#issuecomment-619156536
-                Device.iOS => new VideoView
-                {
-                    Source = MediaElementService.OnboardingChart?.HlsUrl,
-                    BackgroundColor = Color.Transparent,
-                    Volume = 0,
-                    Repeat = MediaManager.Playback.RepeatMode.All,
-                    VideoAspect = MediaManager.Video.VideoAspectMode.AspectFit,
-                },
-                //Work-around because Xamarin.Forms.MediaElement uses Android.VideoView instead of ExoPlayer
-                Device.Android => new AndroidExoPlayerView
-                {
-                    SourceUrl = MediaElementService.OnboardingChart?.ManifestUrl
-                },
-                _ => throw new NotSupportedException()
-            }
+            //On iOS, use custom renderer for MediaElement until MediaElement.Dispose bug is fixed: https://github.com/xamarin/Xamarin.Forms/issues/9525#issuecomment-619156536
+            //On Android, use Custom Renderer for ExoPlayer because Xamarin.Forms.MediaElement uses Android.VideoView
+            Content = new VideoPlayerView()
         };
 
         protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ChartPageTitle);

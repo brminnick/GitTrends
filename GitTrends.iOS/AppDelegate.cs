@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
+using BackgroundTasks;
 using Foundation;
 using Shiny;
 using UIKit;
@@ -44,7 +45,6 @@ namespace GitTrends.iOS
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
 
-
         public override bool OpenUrl(UIApplication app, NSUrl url, NSDictionary options)
         {
             var callbackUri = new Uri(url.AbsoluteString);
@@ -72,9 +72,6 @@ namespace GitTrends.iOS
 
         public override async void ReceivedLocalNotification(UIApplication application, UILocalNotification notification) =>
             await HandleLocalNotification(notification).ConfigureAwait(false);
-
-        public override void PerformFetch(UIApplication application, Action<UIBackgroundFetchResult> completionHandler) =>
-            Shiny.Jobs.JobManager.OnBackgroundFetch(completionHandler);
 
         Task HandleLocalNotification(UILocalNotification notification)
         {

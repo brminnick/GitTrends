@@ -54,10 +54,7 @@
 	<string>1.0.0</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>com.shiny.job</string>
-		<string>com.shiny.jobpower</string>
-		<string>com.shiny.jobnet</string>
-		<string>com.shiny.jobpowernet</string>
+		<string>com.minnick.GitTrends.NotifyTrendingRepositories</string>
 	</array>
 </dict>
 </plist>
