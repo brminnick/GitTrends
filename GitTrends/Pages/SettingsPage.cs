@@ -13,6 +13,7 @@ namespace GitTrends
     public class SettingsPage : BaseContentPage<SettingsViewModel>
     {
         readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new CancellationTokenSource();
+        readonly Grid _contentGrid;
 
         public SettingsPage(SettingsViewModel settingsViewModel,
                             TrendsChartSettingsService trendsChartSettingsService,
@@ -26,7 +27,7 @@ namespace GitTrends
 
             Content = new ScrollView
             {
-                Content = new Grid
+                Content = _contentGrid = new Grid
                 {
                     RowSpacing = 8,
                     ColumnSpacing = 16.5,
@@ -99,8 +100,7 @@ namespace GitTrends
         {
             if (ViewModel.IsNotAuthenticating)
             {
-                var contentLayout = (Layout)Content;
-                var loginRowViews = contentLayout.Children.OfType<ILoginRowView>().Cast<View>();
+                var loginRowViews = _contentGrid.Children.OfType<ILoginRowView>().Cast<View>();
 
                 await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(0.3, 75)));
 
