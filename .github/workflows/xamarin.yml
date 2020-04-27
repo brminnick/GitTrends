@@ -1,0 +1,29 @@
+name: Xamarin
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches: 
+      - "*"
+
+jobs:
+  
+    Android:
+      runs-on: macos-latest
+      steps:
+      - uses: actions/checkout@v1
+      - name: Android
+        run: |
+          nuget restore
+          msbuild GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=AppStore
+        
+    iOS:
+      runs-on: macos-latest
+      steps:
+      - uses: actions/checkout@v1
+      - name: iOS
+        run: |
+          nuget restore
+          msbuild GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Platform=iPhone /p:Configuration=AppStore
