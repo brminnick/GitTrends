@@ -138,7 +138,7 @@ namespace GitTrends
             }
         }
 
-        public async ValueTask TrySendTrendingNotificaiton(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
+        public async ValueTask TrySendTrendingNotificaiton(IReadOnlyList<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
         {
             if (!ShouldSendNotifications)
                 return;
@@ -199,7 +199,7 @@ namespace GitTrends
             }
         }
 
-        async ValueTask SendTrendingNotification(List<Repository> trendingRepositories, DateTimeOffset? notificationDateTime)
+        async ValueTask SendTrendingNotification(IReadOnlyList<Repository> trendingRepositories, DateTimeOffset? notificationDateTime)
         {
             if (trendingRepositories.Count is 1)
             {

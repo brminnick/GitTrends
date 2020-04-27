@@ -32,20 +32,15 @@ namespace GitTrends
             _notificationService = notificationService;
         }
 
-        static IJobManager JobManager => ShinyHost.Resolve<IJobManager>();
+        public static string NotifyTrendingRepositoriesIdentifier { get; } = $"{Xamarin.Essentials.AppInfo.PackageName}.{nameof(NotifyTrendingRepositories)}";
 
-        public void Register()
+        public async Task<bool> Run(CancellationToken cancellationToken)
         {
-            var backgroundFetchJob = new JobInfo(typeof(TrendingRepositoryNotificationJob), TrendingRepositoryNotificationJob.Identifier)
-            {
-                BatteryNotLow = true,
-                PeriodicTime = TimeSpan.FromHours(12),
-                Repeat = true,
-                RequiredInternetAccess = InternetAccess.Any,
-                RunOnForeground = false
-            };
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            using var timedEvent = scope.Resolve<AnalyticsService>().TrackTime($"{nameof(NotifyTrendingRepositories)} Triggered");
 
-            JobManager.Schedule(backgroundFetchJob).SafeFireAndForget(ex => _analyticsService.Report(ex));
+            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
+            return await backgroundFetchService.NotifyTrendingRepositories(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<bool> NotifyTrendingRepositories(CancellationToken cancellationToken)
@@ -66,7 +61,7 @@ namespace GitTrends
             }
         }
 
-        async Task<List<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
+        async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
         {
 #if AppStore
             if (!GitHubAuthenticationService.IsDemoUser && !string.IsNullOrEmpty(GitHubAuthenticationService.Alias))
@@ -80,10 +75,8 @@ namespace GitTrends
                     retrievedRepositoryList.AddRange(retrievedRepositories);
                 }
 
-                var retrievedRepositoryList_NoForksOrDuplicates = RepositoryService.RemoveForksAndDuplicates(retrievedRepositoryList).ToList();
-
                 var trendingRepositories = new List<Repository>();
-                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(retrievedRepositoryList_NoForksOrDuplicates, cancellationToken).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(retrievedRepositoryList, cancellationToken ).ConfigureAwait(false))
                 {
                     _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).SafeFireAndForget();
 
@@ -95,19 +88,6 @@ namespace GitTrends
             }
 
             return Enumerable.Empty<Repository>().ToList();
-        }
-    }
-
-    public class TrendingRepositoryNotificationJob : IJob
-    {
-        public const string Identifier = nameof(TrendingRepositoryNotificationJob);
-
-        public Task<bool> Run(JobInfo jobInfo, CancellationToken cancellationToken)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-
-            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
-            return backgroundFetchService.NotifyTrendingRepositories(cancellationToken);
         }
     }
 }

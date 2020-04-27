@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
+using BackgroundTasks;
 using Foundation;
 using Shiny;
 using UIKit;
@@ -34,6 +35,8 @@ namespace GitTrends.iOS
                 HttpClient = new HttpClient(new NSUrlSessionHandler())
             });
 
+            RegisterBackgroundTasks();
+
             PrintFontNamesToConsole();
 
             LoadApplication(new App());
@@ -42,6 +45,13 @@ namespace GitTrends.iOS
                 HandleLocalNotification((UILocalNotification)launchOptions[UIApplication.LaunchOptionsLocalNotificationKey]).SafeFireAndForget(ex => ContainerService.Container.Resolve<AnalyticsService>().Report(ex));
 
             return base.FinishedLaunching(uiApplication, launchOptions);
+        }
+
+        public override void DidEnterBackground(UIApplication uiApplication)
+        {
+            base.DidEnterBackground(uiApplication);
+
+            SechduleAppRefresh();
         }
 
 
@@ -73,15 +83,48 @@ namespace GitTrends.iOS
         public override async void ReceivedLocalNotification(UIApplication application, UILocalNotification notification) =>
             await HandleLocalNotification(notification).ConfigureAwait(false);
 
-        public override void PerformFetch(UIApplication application, Action<UIBackgroundFetchResult> completionHandler) =>
-            Shiny.Jobs.JobManager.OnBackgroundFetch(completionHandler);
-
         Task HandleLocalNotification(UILocalNotification notification)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var notificationService = scope.Resolve<NotificationService>();
 
             return notificationService.HandleReceivedLocalNotification(notification.AlertTitle, notification.AlertBody, (int)notification.ApplicationIconBadgeNumber);
+        }
+
+        void RegisterBackgroundTasks()
+        {
+            var refreshSuccessNotificationName = new NSString(BackgroundFetchService.NotifyTrendingRepositoriesIdentifier);
+            BGTaskScheduler.Shared.Register(BackgroundFetchService.NotifyTrendingRepositoriesIdentifier, null, RunBackgroundTask);
+        }
+
+        async void RunBackgroundTask(BGTask task)
+        {
+            var backgroudTaskCancellationTokenSource = new CancellationTokenSource();
+            task.ExpirationHandler = backgroudTaskCancellationTokenSource.Cancel;
+
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var isSuccessful = await scope.Resolve<BackgroundFetchService>().Run(backgroudTaskCancellationTokenSource.Token);
+
+            task.SetTaskCompleted(isSuccessful);
+
+            SechduleAppRefresh();
+        }
+
+        void SechduleAppRefresh()
+        {
+            var request = new BGProcessingTaskRequest(BackgroundFetchService.NotifyTrendingRepositoriesIdentifier)
+            {
+                RequiresNetworkConnectivity = true,
+                RequiresExternalPower = true
+            };
+
+            BGTaskScheduler.Shared.Submit(request, out var error);
+
+            if (error != null)
+            {
+                using var scope = ContainerService.Container.BeginLifetimeScope();
+                scope.Resolve<AnalyticsService>().Track("BGTaskScheduler Error", "Error", error.ToString());
+            }
         }
 
         [Conditional("DEBUG")]
