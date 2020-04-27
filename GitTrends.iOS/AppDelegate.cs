@@ -106,7 +106,6 @@ namespace GitTrends.iOS
             var isSuccessful = await scope.Resolve<BackgroundFetchService>().Run(backgroudTaskCancellationTokenSource.Token);
 
             task.SetTaskCompleted(isSuccessful);
-
             SechduleAppRefresh();
         }
 
@@ -118,12 +117,12 @@ namespace GitTrends.iOS
                 RequiresExternalPower = true
             };
 
-            BGTaskScheduler.Shared.Submit(request, out var error);
+            var isSuccessful = BGTaskScheduler.Shared.Submit(request, out var error);
 
-            if (error != null)
+            if (!isSuccessful)
             {
                 using var scope = ContainerService.Container.BeginLifetimeScope();
-                scope.Resolve<AnalyticsService>().Track("BGTaskScheduler Error", "Error", error.ToString());
+                scope.Resolve<AnalyticsService>().Report(new ArgumentException(error.LocalizedDescription));
             }
         }
 

@@ -36,11 +36,19 @@ namespace GitTrends
 
         public async Task<bool> Run(CancellationToken cancellationToken)
         {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            using var timedEvent = scope.Resolve<AnalyticsService>().TrackTime($"{nameof(NotifyTrendingRepositories)} Triggered");
+            try
+            {
+                using var scope = ContainerService.Container.BeginLifetimeScope();
+                using var timedEvent = scope.Resolve<AnalyticsService>().TrackTime($"{nameof(NotifyTrendingRepositories)} Triggered");
 
-            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
-            return await backgroundFetchService.NotifyTrendingRepositories(cancellationToken).ConfigureAwait(false);
+                var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
+                return await backgroundFetchService.NotifyTrendingRepositories(cancellationToken).ConfigureAwait(false);
+            }
+            catch(Exception e)
+            {
+                _analyticsService.Report(e);
+                return false;
+            }
         }
 
         public async Task<bool> NotifyTrendingRepositories(CancellationToken cancellationToken)
