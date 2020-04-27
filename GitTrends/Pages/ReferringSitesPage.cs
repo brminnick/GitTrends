@@ -47,7 +47,7 @@ namespace GitTrends
                 Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
                 Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
                 EmptyView = new EmptyDataView("EmptyReferringSitesList", "No referrals yet", ReferringSitesPageAutomationIds.EmptyDataView)
-                                .Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(ReferringSitesViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
+                                .Bind(IsVisibleProperty, nameof(ReferringSitesViewModel.IsEmptyDataViewEnabled))
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.MobileReferringSitesList));

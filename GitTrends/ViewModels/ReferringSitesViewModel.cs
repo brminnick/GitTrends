@@ -23,12 +23,11 @@ namespace GitTrends
 
         IReadOnlyList<MobileReferringSiteModel>? _mobileReferringSiteList;
 
-        bool _isRefreshing = true;
-
         string _reviewRequestView_NoButtonText = string.Empty;
         string _reviewRequestView_YesButtonText = string.Empty;
         string _reviewRequestView_TitleLabel = string.Empty;
-        bool _isStoreRatingRequestVisible = false;
+
+        bool _isRefreshing, _isStoreRatingRequestVisible, _isEmptyDataViewEnabled;
 
         public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service,
                                         DeepLinkingService deepLinkingService,
@@ -52,6 +51,12 @@ namespace GitTrends
         public ICommand NoButtonCommand { get; }
         public ICommand YesButtonCommand { get; }
         public ICommand RefreshCommand { get; }
+
+        public bool IsEmptyDataViewEnabled
+        {
+            get => _isEmptyDataViewEnabled;
+            set => SetProperty(ref _isEmptyDataViewEnabled, value);
+        }
 
         public string ReviewRequestView_TitleLabel
         {
@@ -133,6 +138,7 @@ namespace GitTrends
             }
             finally
             {
+                IsEmptyDataViewEnabled = true;
                 IsRefreshing = false;
             }
         }
