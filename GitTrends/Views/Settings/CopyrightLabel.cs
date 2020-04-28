@@ -28,12 +28,12 @@ namespace GitTrends
 
             Opacity = 0.85;
 
-#if AppStore
-                var versionNumberText = $"Version {VersionTracking.CurrentVersion}";
-#elif RELEASE
-                var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Release)";
-#elif DEBUG
+#if DEBUG
             var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Debug)";
+#elif RELEASE
+            var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Release)";
+#else
+            var versionNumberText = $"Version {VersionTracking.CurrentVersion}";
 #endif
 
             Text = $"{versionNumberText}\nCreated by Code Traveler LLC";
