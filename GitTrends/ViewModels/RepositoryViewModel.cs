@@ -111,6 +111,8 @@ namespace GitTrends
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
             {
+                var loginExpiredEventArgs = new LoginExpiredPullToRefreshEventArgs();
+
                 OnPullToRefreshFailed(new LoginExpiredPullToRefreshEventArgs());
 
                 await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
@@ -118,8 +120,18 @@ namespace GitTrends
 
                 VisibleRepositoryList = Enumerable.Empty<Repository>().ToList();
             }
-            catch (ApiException)
+            catch (ApiException e) when (GitHubApiService.HasReachedMaximimApiCallLimit(e))
             {
+                var maximimApiRequestsReachedEventArgs = new MaximimApiRequestsReachedEventArgs(GitHubApiService.GetRateLimitResetDateTime(e));
+
+                OnPullToRefreshFailed(maximimApiRequestsReachedEventArgs);
+
+                VisibleRepositoryList = Enumerable.Empty<Repository>().ToList();
+            }
+            catch (ApiException e)
+            {
+                AnalyticsService.Report(e);
+
                 var repositoryList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
 
                 SetRepositoriesCollection(repositoryList, _searchBarText);

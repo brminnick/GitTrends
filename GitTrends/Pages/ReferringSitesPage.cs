@@ -34,6 +34,7 @@ namespace GitTrends
             _deepLinkingService = deepLinkingService;
             _reviewService = reviewService;
 
+            ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             reviewService.ReviewCompleted += HandleReviewCompleted;
 
             var collectionView = new CollectionView
@@ -174,6 +175,17 @@ namespace GitTrends
 
                 await _deepLinkingService.OpenBrowser(referingSite.ReferrerUri);
             }
+        }
+
+        void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                if (Application.Current.MainPage.Navigation.ModalStack.Last() is ReferringSitesPage)
+                {
+                    await DisplayAlert(e.Title, e.Message, e.DismissText);
+                }
+            });
         }
 
         void HandleReviewCompleted(object sender, ReviewRequest e) => MainThread.BeginInvokeOnMainThread(async () =>

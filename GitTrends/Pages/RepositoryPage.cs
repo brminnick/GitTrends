@@ -188,7 +188,7 @@ namespace GitTrends
                 if (!Application.Current.MainPage.Navigation.ModalStack.Any()
                     && Application.Current.MainPage.Navigation.NavigationStack.Last() is RepositoryPage)
                 {
-                    await DisplayAlert(e.ErrorTitle, e.ErrorMessage, e.DismissText);
+                    await DisplayAlert(e.Title, e.Message, e.DismissText);
                 }
             });
         }

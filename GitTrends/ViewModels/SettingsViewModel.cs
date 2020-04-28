@@ -7,7 +7,6 @@ using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -256,9 +255,7 @@ namespace GitTrends
             string alias = GitHubAuthenticationService.Alias is DemoDataConstants.Alias ? nameof(GitTrends) : GitHubAuthenticationService.Alias;
             AnalyticsService.Track("Alias Label Tapped", "Alias", alias);
 
-            var gitHubAliasUrl = $"{GitHubConstants.GitHubBaseUrl}/{alias}";
-
-            return _deepLinkingService.OpenApp(gitHubAliasUrl, gitHubAliasUrl);
+            return _deepLinkingService.OpenApp($"{GitHubConstants.GitHubBaseUrl}/{alias}");
         }
     }
 }

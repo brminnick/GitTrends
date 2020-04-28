@@ -49,6 +49,8 @@ namespace GitTrends
             });
         }
 
+        public Task OpenApp(string url) => OpenApp(url, url);
+
         public Task OpenApp(string deepLinkingUrl, string browserUrl)
         {
             return MainThread.InvokeOnMainThreadAsync(async () =>

@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
@@ -17,6 +18,8 @@ namespace GitTrends
 {
     class ReferringSitesViewModel : BaseViewModel
     {
+        readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
+
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly DeepLinkingService _deepLinkingService;
         readonly ReviewService _reviewService;
@@ -49,6 +52,12 @@ namespace GitTrends
             YesButtonCommand = new Command(() => HandleReviewRequestButtonTapped(ReviewAction.YesButtonTapped));
 
             UpdateStoreRatingRequestView();
+        }
+
+        public event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
+        {
+            add => _pullToRefreshFailedEventManager.AddEventHandler(value);
+            remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
         }
 
         public ICommand NoButtonCommand { get; }
@@ -128,8 +137,13 @@ namespace GitTrends
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
             {
-                await _deepLinkingService.DisplayAlert("Login Expired", "Please login again", "OK").ConfigureAwait(false);
+                OnPullToRefreshFailed(new LoginExpiredPullToRefreshEventArgs());
+
                 await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
+            }
+            catch (ApiException e) when (GitHubApiService.HasReachedMaximimApiCallLimit(e))
+            {
+                OnPullToRefreshFailed(new MaximimApiRequestsReachedEventArgs(GitHubApiService.GetRateLimitResetDateTime(e)));
             }
             catch (Exception e)
             {
@@ -214,5 +228,8 @@ namespace GitTrends
         }
 
         void HandleReviewRequested(object sender, EventArgs e) => IsStoreRatingRequestVisible = true;
+
+        void OnPullToRefreshFailed(PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs) =>
+            _pullToRefreshFailedEventManager.HandleEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
     }
 }

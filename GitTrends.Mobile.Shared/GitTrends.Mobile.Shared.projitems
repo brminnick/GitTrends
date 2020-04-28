@@ -35,5 +35,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\ErrorPullToRefreshEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\LoginExpiredPullToRefreshEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\PullToRefreshFailedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\MaximimApiRequestsReachedEventArgs.cs" />
   </ItemGroup>
 </Project>

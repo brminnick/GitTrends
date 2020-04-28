@@ -56,7 +56,7 @@ namespace GitTrends.UITests
             try
             {
                 var expectedErrorEventArgs = new ErrorPullToRefreshEventArgs(string.Empty);
-                App.WaitForElement(expectedErrorEventArgs.ErrorTitle, timeout: timeout);
+                App.WaitForElement(expectedErrorEventArgs.Title, timeout: timeout);
 
                 App.Screenshot("Error Popup Appeared");
 
@@ -64,12 +64,24 @@ namespace GitTrends.UITests
             }
             catch
             {
-                var expectedLoginExpiredEventArgs = new LoginExpiredPullToRefreshEventArgs();
-                App.WaitForElement(expectedLoginExpiredEventArgs.ErrorTitle, timeout: timeout);
+                try
+                {
+                    var expectedLoginExpiredEventArgs = new LoginExpiredPullToRefreshEventArgs();
+                    App.WaitForElement(expectedLoginExpiredEventArgs.Title, timeout: timeout);
 
-                App.Screenshot("Login Expired Popup Appeared");
+                    App.Screenshot("Login Expired Popup Appeared");
 
-                return expectedLoginExpiredEventArgs.DismissText;
+                    return expectedLoginExpiredEventArgs.DismissText;
+                }
+                catch
+                {
+                    var maximimApiRequestsReachedEventArgs = new MaximimApiRequestsReachedEventArgs(0);
+                    App.WaitForElement(maximimApiRequestsReachedEventArgs.Title, timeout: timeout);
+
+                    App.Screenshot("Maximum API Requests Popup Appeared");
+
+                    return maximimApiRequestsReachedEventArgs.DismissText;
+                }
             }
         }
 
