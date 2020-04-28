@@ -45,6 +45,11 @@
 	<false/>
 	<key>CFBundleVersion</key>
 	<string>18</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>github</string>
+		<string>twitter</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

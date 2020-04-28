@@ -251,14 +251,14 @@ namespace GitTrends
             GitHubAvatarImageSource = _gitHubAuthenticationService.IsAuthenticated ? GitHubAuthenticationService.AvatarUrl : BaseTheme.GetDefaultProfileImageSource();
         }
 
-        void HandleNotificationsEnabledChanged(object sender, bool e) => IsRegisterForNotificationsSwitchToggled = e;
-
         Task ExecuteGitHubUserViewTappedCommand()
         {
             string alias = GitHubAuthenticationService.Alias is DemoDataConstants.Alias ? nameof(GitTrends) : GitHubAuthenticationService.Alias;
             AnalyticsService.Track("Alias Label Tapped", "Alias", alias);
 
-            return _deepLinkingService.OpenBrowser($"{GitHubConstants.GitHubBaseUrl}/{alias}");
+            var gitHubAliasUrl = $"{GitHubConstants.GitHubBaseUrl}/{alias}";
+
+            return _deepLinkingService.OpenApp(gitHubAliasUrl, gitHubAliasUrl);
         }
     }
 }
