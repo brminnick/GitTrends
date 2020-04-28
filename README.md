@@ -1,4 +1,4 @@
-![Xamarin](https://github.com/brminnick/GitTrends/workflows/Xamarin/badge.svg) ![Azure Functions](https://github.com/brminnick/GitTrends/workflows/Azure%20Functions/badge.svg)
+[![Xamarin](https://github.com/brminnick/GitTrends/workflows/Xamarin/badge.svg)](https://github.com/brminnick/GitTrends/actions?query=workflow%3AXamarin) [![Azure Functions](https://github.com/brminnick/GitTrends/workflows/Azure%20Functions/badge.svg)](https://github.com/brminnick/GitTrends/actions?query=workflow%3A%22Azure+Functions%22)  [![Build status](https://build.appcenter.ms/v0.1/apps/b7393f98-7966-4e0f-b7b9-4e8eafea5a27/branches/master/badge)](https://appcenter.ms/orgs/CDA-Global-Beta/apps/GitTrends-Android-Debug/build) [![Build status](https://build.appcenter.ms/v0.1/apps/c63bf4d1-5d86-4fc4-97dc-69f111beea2c/branches/master/badge)](https://appcenter.ms/orgs/CDA-Global-Beta/apps/GitTrends-iOS-Debug/build)
 
 <div class="header" align="center">
   <h1 align="center">GitTrends: GitHub Insights</h1>
