@@ -31,22 +31,22 @@ namespace GitTrends.UITests
 
         public override Task WaitForPageToLoad(TimeSpan? timeout = null)
         {
-            App.WaitForElement(_pageIndicator);
-            App.WaitForNoElement(_activityIndicator);
+            App.WaitForElement(_pageIndicator, timeout:timeout);
+            App.WaitForNoElement(_activityIndicator, timeout: timeout);
 
             switch (CurrentPageNumber)
             {
                 case 0:
-                    App.WaitForElement(x => x.Text(OnboardingConstants.GitTrendsPageTitle));
+                    App.WaitForElement(x => x.Text(OnboardingConstants.GitTrendsPageTitle), timeout: timeout);
                     break;
                 case 1:
-                    App.WaitForElement(x => x.Text(OnboardingConstants.ChartPageTitle));
+                    App.WaitForElement(x => x.Text(OnboardingConstants.ChartPageTitle), timeout: timeout);
                     break;
                 case 2:
-                    App.WaitForElement(x => x.Text(OnboardingConstants.NotificationsPageTitle));
+                    App.WaitForElement(x => x.Text(OnboardingConstants.NotificationsPageTitle), timeout: timeout);
                     break;
                 case 3:
-                    App.WaitForElement(x => x.Text(OnboardingConstants.ConnectToGitHubPageTitle));
+                    App.WaitForElement(x => x.Text(OnboardingConstants.ConnectToGitHubPageTitle), timeout: timeout);
                     break;
 
                 default:

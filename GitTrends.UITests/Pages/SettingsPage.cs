@@ -57,7 +57,6 @@ namespace GitTrends.UITests
         public override async Task WaitForPageToLoad(TimeSpan? timeout = null)
         {
             await base.WaitForPageToLoad(timeout).ConfigureAwait(false);
-
             DismissSyncfusionLicensePopup();
         }
 

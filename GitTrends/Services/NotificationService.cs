@@ -185,7 +185,7 @@ namespace GitTrends
 
                 if (!_sortingService.IsReversed)
                 {
-                    await _deepLinkingService.DisplayAlert(message, $"Tap the repositories tagged \"Trending\" to learn more!", "Thanks").ConfigureAwait(false);
+                    await _deepLinkingService.DisplayAlert(message, $"Tap the repositories tagged \"Trending\" to see more details!", "Thanks").ConfigureAwait(false);
                 }
                 else
                 {

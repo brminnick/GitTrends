@@ -12,7 +12,7 @@ namespace GitTrends.UITests
 {
     class ReferringSitesPage : BaseCollectionPage<ReferringSiteModel>
     {
-        readonly Query _collectionView, _refreshView, _closeButton, _activityIndicator,
+        readonly Query _collectionView, _refreshView, _closeButton,
             _storeRatingRequestTitleLabel, _storeRatingRequestNoButton, _storeRatingRequestYesButton,
             _emptyDataView;
 
@@ -21,7 +21,6 @@ namespace GitTrends.UITests
             _collectionView = GenerateMarkedQuery(ReferringSitesPageAutomationIds.CollectionView);
             _refreshView = GenerateMarkedQuery(ReferringSitesPageAutomationIds.RefreshView);
             _closeButton = GenerateMarkedQuery(ReferringSitesPageAutomationIds.CloseButton);
-            _activityIndicator = GenerateMarkedQuery(ReferringSitesPageAutomationIds.ActivityIndicator);
             _storeRatingRequestTitleLabel = GenerateMarkedQuery(ReferringSitesPageAutomationIds.StoreRatingRequestTitleLabel);
             _storeRatingRequestNoButton = GenerateMarkedQuery(ReferringSitesPageAutomationIds.StoreRatingRequestNoButton);
             _storeRatingRequestYesButton = GenerateMarkedQuery(ReferringSitesPageAutomationIds.StoreRatingRequestYesButton);
@@ -29,8 +28,6 @@ namespace GitTrends.UITests
         }
 
         public bool IsEmptyDataViewVisible => App.Query(_emptyDataView).Any();
-
-        public bool IsActivityIndicatorRunning => App.Query(_activityIndicator).Any();
 
         public string ExpectedAppStoreRequestTitle => App.InvokeBackdoorMethod<string>(BackdoorMethodConstants.GetReviewRequestAppStoreTitle);
 
@@ -46,14 +43,7 @@ namespace GitTrends.UITests
             App.Screenshot("Empty Data View Appeared");
         }
 
-        public override async Task WaitForPageToLoad(TimeSpan? timeout = null)
-        {
-            await base.WaitForPageToLoad(timeout).ConfigureAwait(false);
-
-            WaitForNoActivityIndicator();
-
-            await WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
-        }
+        public override Task WaitForPageToLoad(TimeSpan? timeout = null) => base.WaitForPageToLoad(timeout ?? TimeSpan.FromSeconds(60));
 
         public void TriggerReviewRequest()
         {
@@ -98,18 +88,6 @@ namespace GitTrends.UITests
                 default:
                     throw new NotSupportedException();
             }
-        }
-
-        public void WaitForActivityIndicator()
-        {
-            App.WaitForElement(_activityIndicator);
-            App.Screenshot("Activity Indicator Appeared");
-        }
-
-        public void WaitForNoActivityIndicator()
-        {
-            App.WaitForNoElement(_activityIndicator);
-            App.Screenshot("Activity Indicator Disappeared");
         }
     }
 }

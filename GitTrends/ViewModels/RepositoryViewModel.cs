@@ -8,6 +8,7 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using Autofac;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Forms;
@@ -110,7 +111,7 @@ namespace GitTrends
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
             {
-                OnPullToRefreshFailed("Login Expired", "Please login again");
+                OnPullToRefreshFailed(new LoginExpiredPullToRefreshEventArgs());
 
                 await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
                 await _repositoryDatabase.DeleteAllData().ConfigureAwait(false);
@@ -126,7 +127,7 @@ namespace GitTrends
             catch (Exception e)
             {
                 AnalyticsService.Report(e);
-                OnPullToRefreshFailed("Error", e.Message);
+                OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs(e.Message));
             }
             finally
             {
@@ -218,7 +219,7 @@ namespace GitTrends
 
         void HandleSortingOptionRequested(object sender, SortingOption sortingOption) => SortRepositoriesCommand.Execute(sortingOption);
 
-        void OnPullToRefreshFailed(in string title, in string message) =>
-            _pullToRefreshFailedEventManager.HandleEvent(this, new PullToRefreshFailedEventArgs(message, title), nameof(PullToRefreshFailed));
+        void OnPullToRefreshFailed(PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs) =>
+            _pullToRefreshFailedEventManager.HandleEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
     }
 }

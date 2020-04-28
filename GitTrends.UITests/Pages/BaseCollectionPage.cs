@@ -24,29 +24,80 @@ namespace GitTrends.UITests
             _ => throw new NotSupportedException("Xamarin.UITest only supports Android and iOS"),
         };
 
+        public override async Task WaitForPageToLoad(TimeSpan? timeout = null)
+        {
+            await base.WaitForPageToLoad(timeout).ConfigureAwait(false);
+
+            await WaitForPullToRefreshIndicator(timeout).ConfigureAwait(false);
+            await WaitForNoPullToRefreshIndicator(timeout).ConfigureAwait(false);
+
+            TryDismissErrorPopup();
+        }
+
         public void TriggerPullToRefresh() => App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerPullToRefresh);
 
-        public async Task WaitForPullToRefreshIndicator(int timeoutInSeconds = 25)
+        public void TryDismissErrorPopup()
         {
+            try
+            {
+                var dismissText = WaitForErrorPopup(TimeSpan.FromSeconds(1));
+                App.Tap(dismissText);
+
+                App.Screenshot("Error Popup Dismissed");
+            }
+            catch
+            {
+
+            }
+        }
+
+        public string WaitForErrorPopup(TimeSpan? timeout = null)
+        {
+            try
+            {
+                var expectedErrorEventArgs = new ErrorPullToRefreshEventArgs(string.Empty);
+                App.WaitForElement(expectedErrorEventArgs.ErrorTitle, timeout: timeout);
+
+                App.Screenshot("Error Popup Appeared");
+
+                return expectedErrorEventArgs.DismissText;
+            }
+            catch
+            {
+                var expectedLoginExpiredEventArgs = new LoginExpiredPullToRefreshEventArgs();
+                App.WaitForElement(expectedLoginExpiredEventArgs.ErrorTitle, timeout: timeout);
+
+                App.Screenshot("Login Expired Popup Appeared");
+
+                return expectedLoginExpiredEventArgs.DismissText;
+            }
+        }
+
+        public async Task WaitForPullToRefreshIndicator(TimeSpan? timeSpan = null)
+        {
+            timeSpan ??= TimeSpan.FromSeconds(25);
+
             int counter = 0;
             while (!IsRefreshViewRefreshIndicatorDisplayed)
             {
                 await Task.Delay(1000).ConfigureAwait(false);
 
-                if (counter++ >= timeoutInSeconds)
-                    throw new Exception($"Loading the list took longer than {timeoutInSeconds} seconds");
+                if (counter++ >= timeSpan.Value.Seconds)
+                    throw new Exception($"Loading the list took longer than {timeSpan.Value.Seconds} seconds");
             }
         }
 
-        public async Task WaitForNoPullToRefreshIndicator(int timeoutInSeconds = 25)
+        public async Task WaitForNoPullToRefreshIndicator(TimeSpan? timeSpan = null)
         {
+            timeSpan ??= TimeSpan.FromSeconds(25);
+
             int counter = 0;
             while (IsRefreshViewRefreshIndicatorDisplayed)
             {
                 await Task.Delay(1000).ConfigureAwait(false);
 
-                if (counter++ >= timeoutInSeconds)
-                    throw new Exception($"Loading the list took longer than {timeoutInSeconds} seconds");
+                if (counter++ >= timeSpan.Value.Seconds)
+                    throw new Exception($"Loading the list took longer than {timeSpan.Value.Seconds} seconds");
             }
         }
     }

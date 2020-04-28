@@ -96,15 +96,15 @@ namespace GitTrends
             {
                 var token = JsonConvert.DeserializeObject<GitHubToken?>(serializedToken);
 
-                return token ?? new GitHubToken(string.Empty, string.Empty, string.Empty);
+                return token ?? GitHubToken.Empty;
             }
             catch (ArgumentNullException)
             {
-                return new GitHubToken(string.Empty, string.Empty, string.Empty);
+                return GitHubToken.Empty;
             }
             catch (JsonReaderException)
             {
-                return new GitHubToken(string.Empty, string.Empty, string.Empty);
+                return GitHubToken.Empty;
             }
         }
 

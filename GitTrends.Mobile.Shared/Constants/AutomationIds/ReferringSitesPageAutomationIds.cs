@@ -5,7 +5,6 @@
         public const string CollectionView = nameof(ReferringSitesPageAutomationIds) + nameof(CollectionView);
         public const string RefreshView = nameof(ReferringSitesPageAutomationIds) + nameof(RefreshView);
         public const string CloseButton = nameof(ReferringSitesPageAutomationIds) + nameof(CloseButton);
-        public const string ActivityIndicator = nameof(ReferringSitesPageAutomationIds) + nameof(ActivityIndicator);
         public const string EmptyDataView = nameof(ReferringSitesPageAutomationIds) + nameof(EmptyDataView);
 
         #region StoreRatingRequest

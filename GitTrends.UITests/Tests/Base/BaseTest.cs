@@ -73,12 +73,14 @@ namespace GitTrends.UITests
 
             try
             {
-                await RepositoryPage.WaitForPullToRefreshIndicator(5).ConfigureAwait(false);
+                await RepositoryPage.WaitForPullToRefreshIndicator(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
             }
             catch
             {
                 if (!RepositoryPage.VisibleCollection.Any())
                     RepositoryPage.TriggerPullToRefresh();
+
+                await RepositoryPage.WaitForPullToRefreshIndicator(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
             }
 
             await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
@@ -108,12 +110,14 @@ namespace GitTrends.UITests
 
             try
             {
-                await RepositoryPage.WaitForPullToRefreshIndicator(5).ConfigureAwait(false);
+                await RepositoryPage.WaitForPullToRefreshIndicator(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
             }
             catch
             {
                 if (!RepositoryPage.VisibleCollection.Any())
                     RepositoryPage.TriggerPullToRefresh();
+
+                await RepositoryPage.WaitForPullToRefreshIndicator(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
             }
 
             await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);

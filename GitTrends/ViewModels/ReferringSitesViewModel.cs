@@ -20,6 +20,7 @@ namespace GitTrends
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly DeepLinkingService _deepLinkingService;
         readonly ReviewService _reviewService;
+        readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
         IReadOnlyList<MobileReferringSiteModel>? _mobileReferringSiteList;
 
@@ -32,6 +33,7 @@ namespace GitTrends
         public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service,
                                         DeepLinkingService deepLinkingService,
                                         AnalyticsService analyticsService,
+                                        GitHubAuthenticationService gitHubAuthenticationService,
                                         ReviewService reviewService) : base(analyticsService)
         {
             reviewService.ReviewRequested += HandleReviewRequested;
@@ -40,6 +42,7 @@ namespace GitTrends
             _reviewService = reviewService;
             _gitHubApiV3Service = gitHubApiV3Service;
             _deepLinkingService = deepLinkingService;
+            _gitHubAuthenticationService = gitHubAuthenticationService;
 
             RefreshCommand = new AsyncCommand<(string Owner, string Repository, CancellationToken Token)>(tuple => ExecuteRefreshCommand(tuple.Owner, tuple.Repository, tuple.Token));
             NoButtonCommand = new Command(() => HandleReviewRequestButtonTapped(ReviewAction.NoButtonTapped));
@@ -115,21 +118,18 @@ namespace GitTrends
 
         async Task ExecuteRefreshCommand(string owner, string repository, CancellationToken cancellationToken)
         {
+            IReadOnlyList<ReferringSiteModel> referringSitesList = Enumerable.Empty<ReferringSiteModel>().ToList();
+
             try
             {
-                var referringSitesList = await _gitHubApiV3Service.GetReferringSites(owner, repository, cancellationToken).ConfigureAwait(false);
+                referringSitesList = await _gitHubApiV3Service.GetReferringSites(owner, repository, cancellationToken).ConfigureAwait(false);
 
                 MobileReferringSitesList = SortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
-
-                await foreach (var mobileReferringSite in GetMobileReferringSiteWithFavIconList(referringSitesList, cancellationToken).ConfigureAwait(false))
-                {
-                    var referringSite = MobileReferringSitesList.Single(x => x.Referrer == mobileReferringSite.Referrer);
-                    referringSite.FavIcon = mobileReferringSite.FavIcon;
-                }
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
             {
                 await _deepLinkingService.DisplayAlert("Login Expired", "Please login again", "OK").ConfigureAwait(false);
+                await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -139,6 +139,25 @@ namespace GitTrends
             finally
             {
                 IsEmptyDataViewEnabled = true;
+            }
+
+            try
+            {
+                var threeSecondCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+
+                await foreach (var mobileReferringSite in GetMobileReferringSiteWithFavIconList(referringSitesList, threeSecondCancellationTokenSource.Token).ConfigureAwait(false))
+                {
+                    var referringSite = MobileReferringSitesList.Single(x => x.Referrer == mobileReferringSite.Referrer);
+                    referringSite.FavIcon = mobileReferringSite.FavIcon;
+                }
+            }
+            catch (Exception e)
+            {
+                //Let's track the exception, but we don't need to do anything with it because the data still appears, just withoutthe icons
+                AnalyticsService.Report(e);
+            }
+            finally
+            {
                 IsRefreshing = false;
             }
         }
@@ -158,7 +177,7 @@ namespace GitTrends
 
             static async Task<MobileReferringSiteModel> setFavIcon(ReferringSiteModel referringSiteModel, CancellationToken cancellationToken)
             {
-                if (referringSiteModel.ReferrerUri != null)
+                if (referringSiteModel.ReferrerUri != null && referringSiteModel.IsReferrerUriValid)
                 {
                     var favIcon = await FavIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri, cancellationToken).ConfigureAwait(false);
                     return new MobileReferringSiteModel(referringSiteModel, favIcon);

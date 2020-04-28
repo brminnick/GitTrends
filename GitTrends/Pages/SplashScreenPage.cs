@@ -196,7 +196,7 @@ namespace GitTrends
             }
             else
             {
-                await ChangeLabelText("Initialization Failed", "Ensure Internet Connection Is Available\n + \nUpdate App to the Latest Version");
+                await ChangeLabelText("Initialization Failed", "\nEnsure Internet Connection Is Available and Update GitTrends to the Latest Version");
 
                 AnalyticsService.Track("Initialization Failed");
             }

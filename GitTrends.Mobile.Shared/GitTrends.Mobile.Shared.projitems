@@ -11,6 +11,7 @@
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Constants\" />
     <Folder Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\" />
+    <Folder Include="$(MSBuildThisFileDirectory)EventArgs\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Constants\PageTitles.cs" />
@@ -31,5 +32,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\WelcomePageAutomationIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PreferredTheme.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\ReviewServiceConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\ErrorPullToRefreshEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\LoginExpiredPullToRefreshEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\PullToRefreshFailedEventArgs.cs" />
   </ItemGroup>
 </Project>
