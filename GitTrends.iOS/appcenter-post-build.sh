@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-if [ "$APPCENTER_XAMARIN_CONFIGURATION" == "UnitTest" ];then
+if [ "$APPCENTER_XAMARIN_CONFIGURATION" == "Release" ];then
 
     echo "Post Build Script Started"
     

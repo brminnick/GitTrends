@@ -1,3 +1,5 @@
+![Xamarin](https://github.com/brminnick/GitTrends/workflows/Xamarin/badge.svg) ![Azure Functions](https://github.com/brminnick/GitTrends/workflows/Azure%20Functions/badge.svg)
+
 <div class="header" align="center">
   <h1 align="center">GitTrends: GitHub Insights</h1>
 </div>
