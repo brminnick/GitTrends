@@ -33,11 +33,14 @@ namespace GitTrends.Droid
             };
         }
 
-        //Fixes no constructor found exception
+#pragma warning disable CS0618 // Type or member is obsolete
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public VideoPlayerViewCustomRenderer(System.IntPtr ptr, Android.Runtime.JniHandleOwnership jni)
         {
-
+            //Fixes no constructor found exception
         }
+#pragma warning restore CS0618 // Type or member is obsolete
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayerView> e)
         {
@@ -46,7 +49,7 @@ namespace GitTrends.Droid
             if (Control is null)
                 SetNativeControl(_playerView);
 
-            Play(MediaElementService.OnboardingChart?.ManifestUrl);
+            Play(MediaElementService.OnboardingChart?.ManifestUrl ?? throw new System.NullReferenceException());
         }
 
         void Play(string url)
