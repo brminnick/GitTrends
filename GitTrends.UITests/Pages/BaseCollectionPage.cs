@@ -28,7 +28,15 @@ namespace GitTrends.UITests
         {
             await base.WaitForPageToLoad(timeout).ConfigureAwait(false);
 
-            await WaitForPullToRefreshIndicator(timeout).ConfigureAwait(false);
+            try
+            {
+                await WaitForPullToRefreshIndicator(timeout).ConfigureAwait(false);
+            }
+            catch
+            {
+
+            }
+
             await WaitForNoPullToRefreshIndicator(timeout).ConfigureAwait(false);
 
             TryDismissErrorPopup();
@@ -87,7 +95,7 @@ namespace GitTrends.UITests
 
         public async Task WaitForPullToRefreshIndicator(TimeSpan? timeSpan = null)
         {
-            timeSpan ??= TimeSpan.FromSeconds(25);
+            timeSpan ??= TimeSpan.FromSeconds(3);
 
             int counter = 0;
             while (!IsRefreshViewRefreshIndicatorDisplayed)
@@ -101,7 +109,7 @@ namespace GitTrends.UITests
 
         public async Task WaitForNoPullToRefreshIndicator(TimeSpan? timeSpan = null)
         {
-            timeSpan ??= TimeSpan.FromSeconds(25);
+            timeSpan ??= TimeSpan.FromSeconds(60);
 
             int counter = 0;
             while (IsRefreshViewRefreshIndicatorDisplayed)
