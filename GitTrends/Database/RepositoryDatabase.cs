@@ -21,7 +21,7 @@ namespace GitTrends
         {
             var databaseConnection = await GetDatabaseConnection<RepositoryDatabaseModel>().ConfigureAwait(false);
 
-            return await AttemptAndRetry(() => databaseConnection.InsertOrReplaceAsync(repository)).ConfigureAwait(false);
+            return await AttemptAndRetry(() => databaseConnection.InsertOrReplaceAsync((RepositoryDatabaseModel)repository)).ConfigureAwait(false);
         }
 
         public async Task<int> SaveRepositories(IEnumerable<Repository> repositories)
