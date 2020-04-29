@@ -43,7 +43,7 @@ namespace GitTrends
             {
                 PreferredTheme.Dark => new DarkTheme(),
                 PreferredTheme.Light => new LightTheme(),
-                PreferredTheme.Default => Application.Current.RequestedTheme is Xamarin.Forms.AppTheme.Dark ? new DarkTheme() : (BaseTheme)new LightTheme(),
+                PreferredTheme.Default => Application.Current.RequestedTheme is OSAppTheme.Dark ? new DarkTheme() : (BaseTheme)new LightTheme(),
                 _ => throw new NotSupportedException()
             };
 
