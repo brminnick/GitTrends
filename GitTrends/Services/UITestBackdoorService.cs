@@ -45,6 +45,8 @@ namespace GitTrends
             GitHubAuthenticationService.Name = name;
         }
 
+        public Task<GitHubToken> GetGitHubToken() => GitHubAuthenticationService.GetGitHubToken();
+
         public void TriggerReviewRequest()
         {
             var referringSitesPage = (ReferringSitesPage)GetVisibleContentPage();

@@ -65,6 +65,9 @@ namespace GitTrends.UITests
             var referringSite = referringSiteList.First();
             bool isUrlValid = referringSite.IsReferrerUriValid;
 
+            //Assert
+            Assert.IsTrue(App.Query(referringSite.Referrer).Any());
+
             //Act
             if (isUrlValid)
             {
@@ -78,8 +81,6 @@ namespace GitTrends.UITests
                 SettingsPage.WaitForBrowserToOpen();
                 Assert.IsTrue(ReferringSitesPage.IsBrowserOpen);
             }
-
-            Assert.IsTrue(App.Query(referringSite.Referrer).Any());
         }
 
         [TestCase(ReviewAction.NoButtonTapped, ReviewAction.NoButtonTapped)]

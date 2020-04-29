@@ -56,6 +56,9 @@ namespace GitTrends.Droid
         [Preserve, Export(BackdoorMethodConstants.AreNotificationsEnabled)]
         public bool AreNotificationsEnabled() => UITestBackdoorService.AreNotificationsEnabled().GetAwaiter().GetResult();
 
+        [Preserve, Export(BackdoorMethodConstants.GetGitHubToken)]
+        public string GetGitHubToken() => SerializeObject(UITestBackdoorService.GetGitHubToken().GetAwaiter().GetResult());
+
         static string SerializeObject<T>(T value) => Newtonsoft.Json.JsonConvert.SerializeObject(value);
     }
 }

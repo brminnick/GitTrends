@@ -157,9 +157,7 @@ namespace GitTrends
 
             try
             {
-                var threeSecondCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(2));
-
-                await foreach (var mobileReferringSite in GetMobileReferringSiteWithFavIconList(referringSitesList, threeSecondCancellationTokenSource.Token).ConfigureAwait(false))
+                await foreach (var mobileReferringSite in GetMobileReferringSiteWithFavIconList(referringSitesList, cancellationToken).ConfigureAwait(false))
                 {
                     var referringSite = MobileReferringSitesList.Single(x => x.Referrer == mobileReferringSite.Referrer);
                     referringSite.FavIcon = mobileReferringSite.FavIcon;

@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
 using NUnit.Framework;
 
 using Xamarin.UITest;
@@ -70,20 +70,6 @@ namespace GitTrends.UITests
             OnboardingPage.TapNextButton();
 
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
-
-            try
-            {
-                await RepositoryPage.WaitForPullToRefreshIndicator(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
-            }
-            catch
-            {
-                if (!RepositoryPage.VisibleCollection.Any())
-                    RepositoryPage.TriggerPullToRefresh();
-
-                await RepositoryPage.WaitForPullToRefreshIndicator(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
-            }
-
-            await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
         }
 
         async Task SetupLoggedInUser()
@@ -92,12 +78,9 @@ namespace GitTrends.UITests
 
             await LoginToGitHub().ConfigureAwait(false);
 
-            await Task.Delay(1000).ConfigureAwait(false);
-
             OnboardingPage.PopPage();
 
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
-            RepositoryPage.TriggerPullToRefresh();
             RepositoryPage.TapSettingsButton();
 
             await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
@@ -107,27 +90,21 @@ namespace GitTrends.UITests
             SettingsPage.TapBackButton();
 
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
-
-            try
-            {
-                await RepositoryPage.WaitForPullToRefreshIndicator(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
-            }
-            catch
-            {
-                if (!RepositoryPage.VisibleCollection.Any())
-                    RepositoryPage.TriggerPullToRefresh();
-
-                await RepositoryPage.WaitForPullToRefreshIndicator(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
-            }
-
-            await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
         }
 
         protected async Task LoginToGitHub()
         {
-            var gitHubToken = await AzureFunctionsApiService.GenerateGitTrendsOAuthToken().ConfigureAwait(false);
+            var uiTestToken = await AzureFunctionsApiService.GetUITestToken().ConfigureAwait(false);
 
-            App.InvokeBackdoorMethod(BackdoorMethodConstants.SetGitHubUser, gitHubToken.AccessToken);
+            App.InvokeBackdoorMethod(BackdoorMethodConstants.SetGitHubUser, uiTestToken.AccessToken);
+
+            GitHubToken? appGitHubToken = null;
+
+            while(appGitHubToken is null)
+            {
+                await Task.Delay(1000).ConfigureAwait(false);
+                appGitHubToken = App.InvokeBackdoorMethod<GitHubToken>(BackdoorMethodConstants.GetGitHubToken);
+            }
         }
     }
 }

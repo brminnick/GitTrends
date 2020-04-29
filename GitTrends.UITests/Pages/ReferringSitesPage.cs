@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Xamarin.UITest;
@@ -42,8 +41,6 @@ namespace GitTrends.UITests
             App.WaitForElement(_emptyDataView);
             App.Screenshot("Empty Data View Appeared");
         }
-
-        public override Task WaitForPageToLoad(TimeSpan? timeout = null) => base.WaitForPageToLoad(timeout ?? TimeSpan.FromSeconds(60));
 
         public void TriggerReviewRequest()
         {

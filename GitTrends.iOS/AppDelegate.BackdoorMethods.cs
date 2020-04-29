@@ -60,6 +60,10 @@ namespace GitTrends.iOS
         public NSString AreNotificationsEnabled(NSString noValue) =>
            SerializeObject(UITestBackdoorService.AreNotificationsEnabled().GetAwaiter().GetResult());
 
+        [Preserve, Export(BackdoorMethodConstants.GetGitHubToken + ":")]
+        public NSString GetGitHubToken(NSString noValue) =>
+            SerializeObject(UITestBackdoorService.GetGitHubToken().GetAwaiter().GetResult());
+
         static NSString SerializeObject<T>(T value) => new NSString(Newtonsoft.Json.JsonConvert.SerializeObject(value));
     }
 }

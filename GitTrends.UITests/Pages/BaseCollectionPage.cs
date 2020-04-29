@@ -48,7 +48,7 @@ namespace GitTrends.UITests
         {
             try
             {
-                var dismissText = WaitForErrorPopup(TimeSpan.FromSeconds(1));
+                var dismissText = WaitForErrorPopup(TimeSpan.FromMilliseconds(250));
                 App.Tap(dismissText);
 
                 App.Screenshot("Error Popup Dismissed");
@@ -102,8 +102,8 @@ namespace GitTrends.UITests
             {
                 await Task.Delay(1000).ConfigureAwait(false);
 
-                if (counter++ >= timeSpan.Value.Seconds)
-                    throw new Exception($"Loading the list took longer than {timeSpan.Value.Seconds} seconds");
+                if (counter++ >= timeSpan.Value.TotalSeconds)
+                    throw new Exception($"Waiting for the Pull To Refresh Indicator took longer than {timeSpan.Value.TotalSeconds} seconds");
             }
         }
 
@@ -116,8 +116,8 @@ namespace GitTrends.UITests
             {
                 await Task.Delay(1000).ConfigureAwait(false);
 
-                if (counter++ >= timeSpan.Value.Seconds)
-                    throw new Exception($"Loading the list took longer than {timeSpan.Value.Seconds} seconds");
+                if (counter++ >= timeSpan.Value.TotalSeconds)
+                    throw new Exception($"Loading the list took longer than {timeSpan.Value.TotalSeconds} seconds");
             }
         }
     }
