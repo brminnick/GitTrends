@@ -255,7 +255,7 @@ namespace GitTrends
             string alias = GitHubAuthenticationService.Alias is DemoDataConstants.Alias ? nameof(GitTrends) : GitHubAuthenticationService.Alias;
             AnalyticsService.Track("Alias Label Tapped", "Alias", alias);
 
-            return _deepLinkingService.OpenApp($"{GitHubConstants.GitHubBaseUrl}/{alias}");
+            return _deepLinkingService.OpenApp($"github://", $"{GitHubConstants.GitHubBaseUrl}/{alias}", $"{GitHubConstants.GitHubBaseUrl}/{alias}");
         }
     }
 }

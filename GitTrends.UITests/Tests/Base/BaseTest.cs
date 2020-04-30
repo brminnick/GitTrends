@@ -81,15 +81,6 @@ namespace GitTrends.UITests
             OnboardingPage.PopPage();
 
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
-            RepositoryPage.TapSettingsButton();
-
-            await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
-            SettingsPage.DismissSyncfusionLicensePopup();
-
-            SettingsPage.WaitForGitHubLoginToComplete();
-            SettingsPage.TapBackButton();
-
-            await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
         }
 
         protected async Task LoginToGitHub()
@@ -98,12 +89,12 @@ namespace GitTrends.UITests
 
             App.InvokeBackdoorMethod(BackdoorMethodConstants.SetGitHubUser, uiTestToken.AccessToken);
 
-            GitHubToken? appGitHubToken = null;
+            GitHubToken? currentUserToken = null;
 
-            while(appGitHubToken is null)
+            while (currentUserToken is null)
             {
                 await Task.Delay(1000).ConfigureAwait(false);
-                appGitHubToken = App.InvokeBackdoorMethod<GitHubToken>(BackdoorMethodConstants.GetGitHubToken);
+                currentUserToken = App.InvokeBackdoorMethod<GitHubToken?>(BackdoorMethodConstants.GetGitHubToken);
             }
         }
     }

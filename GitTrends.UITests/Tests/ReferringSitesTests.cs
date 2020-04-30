@@ -106,10 +106,6 @@ namespace GitTrends.UITests
             secondNoButtonText = ReferringSitesPage.StoreRatingRequestNoButtonText;
             secondYesButtonText = ReferringSitesPage.StoreRatingRequestYesButtonText;
 
-            PerformReviewAction(secondAction);
-
-            ReferringSitesPage.WaitForNoReviewRequest();
-
             //Assert
             Assert.AreEqual(ReviewServiceConstants.TitleLabel_EnjoyingGitTrends, firstTitleText);
             Assert.AreEqual(ReviewServiceConstants.NoButton_NotReally, firstNoButtonText);
@@ -122,19 +118,11 @@ namespace GitTrends.UITests
             else
                 Assert.AreEqual(ReferringSitesPage.ExpectedAppStoreRequestTitle, secondTitleText);
 
-            if (App is iOSApp && secondAction is ReviewAction.YesButtonTapped)
-            {
-                if (firstAction is ReviewAction.NoButtonTapped)
-                {
-                    ReferringSitesPage.WaitForEmailToOpen();
-                    Assert.IsTrue(ReferringSitesPage.IsEmailOpen);
-                }
-                else
-                {
-                    ReferringSitesPage.WaitForBrowserToOpen();
-                    Assert.IsTrue(ReferringSitesPage.IsBrowserOpen);
-                }
-            }
+            //Act
+            PerformReviewAction(secondAction);
+
+            if (secondAction is ReviewAction.NoButtonTapped)
+                ReferringSitesPage.WaitForNoReviewRequest();
         }
 
         void PerformReviewAction(in ReviewAction reviewAction)

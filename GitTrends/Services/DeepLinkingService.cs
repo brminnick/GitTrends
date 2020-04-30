@@ -28,7 +28,8 @@ namespace GitTrends
                 var browserLaunchOptions = new BrowserLaunchOptions
                 {
                     PreferredControlColor = currentTheme.NavigationBarTextColor,
-                    PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor
+                    PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor,
+                    Flags = BrowserLaunchFlags.PresentAsFormSheet
                 };
 
                 return Browser.OpenAsync(url, browserLaunchOptions);
@@ -49,13 +50,13 @@ namespace GitTrends
             });
         }
 
-        public Task OpenApp(string url) => OpenApp(url, url);
+        public Task OpenApp(string deepLinkingUrl, string browserUrl) => OpenApp(deepLinkingUrl, deepLinkingUrl, browserUrl);
 
-        public Task OpenApp(string deepLinkingUrl, string browserUrl)
+        public Task OpenApp(string appScheme, string deepLinkingUrl, string browserUrl)
         {
             return MainThread.InvokeOnMainThreadAsync(async () =>
             {
-                var supportsUri = await Launcher.CanOpenAsync(deepLinkingUrl);
+                var supportsUri = await Launcher.CanOpenAsync(appScheme);
 
                 if (supportsUri)
                     await Launcher.OpenAsync(deepLinkingUrl);
