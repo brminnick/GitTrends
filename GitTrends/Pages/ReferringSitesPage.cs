@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
-using GitTrends.Views.Base;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -47,8 +46,9 @@ namespace GitTrends
                 //Set iOS Header to `new BoxView { HeightRequest = titleRowHeight + titleTopMargin }` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
                 Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
                 Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
-                EmptyView = new EmptyDataView("EmptyReferringSitesList", "No referrals yet", ReferringSitesPageAutomationIds.EmptyDataView)
+                EmptyView = new EmptyDataView("EmptyReferringSitesList", ReferringSitesPageAutomationIds.EmptyDataView)
                                 .Bind(IsVisibleProperty, nameof(ReferringSitesViewModel.IsEmptyDataViewEnabled))
+                                .Bind(EmptyDataView.TextProperty, nameof(ReferringSitesViewModel.EmptyDataViewText))
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.MobileReferringSitesList));
@@ -181,7 +181,8 @@ namespace GitTrends
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                if (Application.Current.MainPage.Navigation.ModalStack.Last() is ReferringSitesPage)
+                if (Application.Current.MainPage.Navigation.ModalStack.LastOrDefault() is ReferringSitesPage
+                    || Application.Current.MainPage.Navigation.NavigationStack.Last() is ReferringSitesPage)
                 {
                     await DisplayAlert(e.Title, e.Message, e.DismissText);
                 }

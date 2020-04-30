@@ -17,6 +17,8 @@ namespace GitTrends
 {
     public class RepositoryViewModel : BaseViewModel
     {
+        const string _emptyDataViewText_EmptyList = "Your repositories list is\nempty";
+
         readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
         readonly RepositoryDatabase _repositoryDatabase;
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
@@ -25,7 +27,8 @@ namespace GitTrends
         readonly GitHubApiV3Service _gitHubApiV3Service;
 
         bool _isRefreshing;
-        string _searchBarText = "";
+        string _searchBarText = string.Empty;
+        string _emptyDataViewText = string.Empty;
         IReadOnlyList<Repository> _repositoryList = Enumerable.Empty<Repository>().ToList();
         IReadOnlyList<Repository> _visibleRepositoryList = Enumerable.Empty<Repository>().ToList();
 
@@ -69,6 +72,12 @@ namespace GitTrends
             set => SetProperty(ref _visibleRepositoryList, value);
         }
 
+        public string EmptyDataViewText
+        {
+            get => _emptyDataViewText;
+            set => SetProperty(ref _emptyDataViewText, value);
+        }
+
         public bool IsRefreshing
         {
             get => _isRefreshing;
@@ -108,6 +117,8 @@ namespace GitTrends
 
                 //Add Remaining Repositories to VisibleRepositoryList
                 AddRepositoriesToCollection(completedRepoitories, _searchBarText);
+
+                EmptyDataViewText = _emptyDataViewText_EmptyList;
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
             {
@@ -119,6 +130,8 @@ namespace GitTrends
                 await _repositoryDatabase.DeleteAllData().ConfigureAwait(false);
 
                 VisibleRepositoryList = Enumerable.Empty<Repository>().ToList();
+
+                EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
             }
             catch (ApiException e) when (GitHubApiService.HasReachedMaximimApiCallLimit(e))
             {
@@ -127,6 +140,8 @@ namespace GitTrends
                 OnPullToRefreshFailed(maximimApiRequestsReachedEventArgs);
 
                 VisibleRepositoryList = Enumerable.Empty<Repository>().ToList();
+
+                EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
             }
             catch (ApiException e)
             {
@@ -135,11 +150,15 @@ namespace GitTrends
                 var repositoryList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
 
                 SetRepositoriesCollection(repositoryList, _searchBarText);
+
+                EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
             }
             catch (Exception e)
             {
                 AnalyticsService.Report(e);
-                OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs(e.Message));
+                OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs("Unable to retrieve repositories. Check your internet connection and try again."));
+
+                EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
             }
             finally
             {

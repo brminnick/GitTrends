@@ -18,6 +18,8 @@ namespace GitTrends
 {
     class ReferringSitesViewModel : BaseViewModel
     {
+        const string _emptyDataViewText_EmptyList = "No referrals yet";
+
         readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
 
         readonly GitHubApiV3Service _gitHubApiV3Service;
@@ -30,6 +32,7 @@ namespace GitTrends
         string _reviewRequestView_NoButtonText = string.Empty;
         string _reviewRequestView_YesButtonText = string.Empty;
         string _reviewRequestView_TitleLabel = string.Empty;
+        string _emptyDataViewText = string.Empty;
 
         bool _isRefreshing, _isStoreRatingRequestVisible, _isEmptyDataViewEnabled;
 
@@ -63,6 +66,12 @@ namespace GitTrends
         public ICommand NoButtonCommand { get; }
         public ICommand YesButtonCommand { get; }
         public ICommand RefreshCommand { get; }
+
+        public string EmptyDataViewText
+        {
+            get => _emptyDataViewText;
+            set => SetProperty(ref _emptyDataViewText, value);
+        }
 
         public bool IsEmptyDataViewEnabled
         {
@@ -134,21 +143,30 @@ namespace GitTrends
                 referringSitesList = await _gitHubApiV3Service.GetReferringSites(owner, repository, cancellationToken).ConfigureAwait(false);
 
                 MobileReferringSitesList = SortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
+
+                EmptyDataViewText = _emptyDataViewText_EmptyList;
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
             {
                 OnPullToRefreshFailed(new LoginExpiredPullToRefreshEventArgs());
 
                 await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
+
+                EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
             }
             catch (ApiException e) when (GitHubApiService.HasReachedMaximimApiCallLimit(e))
             {
                 OnPullToRefreshFailed(new MaximimApiRequestsReachedEventArgs(GitHubApiService.GetRateLimitResetDateTime(e)));
+
+                EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
             }
             catch (Exception e)
             {
+                OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs("Unable to retrieve referring sites. Check your internet connection and try again."));
+
                 AnalyticsService.Report(e);
-                await _deepLinkingService.DisplayAlert("Error", "Unable to retrieve referring sites. Check your internet connection and try again.", "OK").ConfigureAwait(false);
+
+                EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
             }
             finally
             {
@@ -165,7 +183,7 @@ namespace GitTrends
             }
             catch (Exception e)
             {
-                //Let's track the exception, but we don't need to do anything with it because the data still appears, just withoutthe icons
+                //Let's track the exception, but we don't need to do anything with it because the data still appears, just without the icons
                 AnalyticsService.Report(e);
             }
             finally
