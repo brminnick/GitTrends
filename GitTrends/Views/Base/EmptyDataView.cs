@@ -1,11 +1,9 @@
 ﻿using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using static GitTrends.XamarinFormsService;
-using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    class EmptyDataView : StackLayout
+    class EmptyDataView : RelativeLayout
     {
         public const string UnableToRetrieveDataText = "Unable to retrieve data";
         public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(string), typeof(EmptyDataView), string.Empty);
@@ -14,12 +12,22 @@ namespace GitTrends
         {
             AutomationId = automationId;
 
-            this.Center();
+            var stackLayout = new StackLayout
+            {
+                Children =
+                {
+                    new TitleLabel(Text).Bind(Label.TextProperty, nameof(Text), source: this),
+                    new EmptyStateImage(imageSource),
+                }
+            };
 
-            BackgroundColor = Color.Green;
+            Children.Add(stackLayout,
+                        Constraint.RelativeToParent(parent => parent.Width / 2 - GetWidth(parent, stackLayout) / 2),
+                        Constraint.RelativeToParent(parent => parent.Height / 2 - GetHeight(parent, stackLayout) / 2));
 
-            Children.Add(new TitleLabel(Text).Bind(Label.TextProperty, nameof(Text), source: this));
-            Children.Add(new EmptyStateImage(imageSource));
+
+            static double GetWidth(in RelativeLayout parent, in View view) => view.Measure(parent.Width, parent.Height).Request.Width;
+            static double GetHeight(in RelativeLayout parent, in View view) => view.Measure(parent.Width, parent.Height).Request.Height;
         }
 
         public string Text
@@ -51,8 +59,6 @@ namespace GitTrends
         {
             public EmptyStateImage(in string source)
             {
-                BackgroundColor = Color.Pink;
-
                 Source = source;
 
                 HorizontalOptions = LayoutOptions.Center;
