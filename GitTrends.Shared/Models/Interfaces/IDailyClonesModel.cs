@@ -4,7 +4,7 @@ namespace GitTrends.Shared
 {
     interface IDailyClonesModel
     {
-        public DateTime LocalDay => Day.LocalDateTime;
+        public DateTime LocalDay { get; }
 
         public DateTimeOffset Day { get; }
 

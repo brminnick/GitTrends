@@ -3,7 +3,7 @@ namespace GitTrends.Shared
 {
     interface IDailyViewsModel
     {
-        public DateTime LocalDay => Day.LocalDateTime;
+        public DateTime LocalDay { get; }
 
         public DateTimeOffset Day { get; }
 
