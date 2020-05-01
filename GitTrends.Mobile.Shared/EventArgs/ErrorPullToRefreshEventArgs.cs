@@ -2,7 +2,7 @@
 {
     public class ErrorPullToRefreshEventArgs : PullToRefreshFailedEventArgs
     {
-        public ErrorPullToRefreshEventArgs(string message) : base("Error", message)
+        public ErrorPullToRefreshEventArgs(string message) : base("Unable To Connect To GitHub", message)
         {
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -18,6 +19,7 @@ namespace GitTrends
     public class RepositoryViewModel : BaseViewModel
     {
         const string _emptyDataViewText_EmptyList = "Your repositories list is\nempty";
+        const string _emptyDataViewText_LoginExpired = "GitHub Login Expired\nPlease login again";
 
         readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
         readonly RepositoryDatabase _repositoryDatabase;
@@ -104,7 +106,6 @@ namespace GitTrends
                 var completedRepoitories = new List<Repository>();
                 await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.ToList(), cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).SafeFireAndForget();
                     completedRepoitories.Add(retrievedRepositoryWithViewsAndClonesData);
 
                     //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
@@ -131,32 +132,33 @@ namespace GitTrends
 
                 VisibleRepositoryList = Enumerable.Empty<Repository>().ToList();
 
-                EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
+                EmptyDataViewText = _emptyDataViewText_LoginExpired;
             }
             catch (ApiException e) when (GitHubApiService.HasReachedMaximimApiCallLimit(e))
             {
                 var maximimApiRequestsReachedEventArgs = new MaximimApiRequestsReachedEventArgs(GitHubApiService.GetRateLimitResetDateTime(e));
-
                 OnPullToRefreshFailed(maximimApiRequestsReachedEventArgs);
 
                 VisibleRepositoryList = Enumerable.Empty<Repository>().ToList();
 
                 EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
             }
-            catch (ApiException e)
+            catch (Exception e)
             {
                 AnalyticsService.Report(e);
 
                 var repositoryList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
-
                 SetRepositoriesCollection(repositoryList, _searchBarText);
 
-                EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
-            }
-            catch (Exception e)
-            {
-                AnalyticsService.Report(e);
-                OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs("Unable to retrieve repositories. Check your internet connection and try again."));
+                if (repositoryList.Any())
+                {
+                    var dataDownloadedAt = repositoryList.Max(x => x.DataDownloadedAt);
+                    OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"Displaying data from {dataDownloadedAt.ToLocalTime():dd MMMM @ HH:mm}\n\nCheck your internet connection and try again."));
+                }
+                else
+                {
+                    OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"Check your internet connection and try again"));
+                }
 
                 EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
             }
@@ -169,10 +171,27 @@ namespace GitTrends
                     UpdateListForLoggedOutUser();
 
                 IsRefreshing = false;
+
+                SaveRepositoriesToDatabase(_repositoryList).SafeFireAndForget();
             }
 
             void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
             void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();
+        }
+
+        async Task SaveRepositoriesToDatabase(IEnumerable<Repository> repositories)
+        {
+            foreach (var repository in repositories)
+            {
+                try
+                {
+                    await _repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
+                }
+                catch (Exception e)
+                {
+                    AnalyticsService.Report(e);
+                }
+            }
         }
 
         void ExecuteSortRepositoriesCommand(SortingOption option)

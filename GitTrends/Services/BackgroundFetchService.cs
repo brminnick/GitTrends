@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AsyncAwaitBestPractices;
-using Autofac;
 using GitTrends.Shared;
-using Shiny;
-using Shiny.Jobs;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -36,6 +33,9 @@ namespace GitTrends
 
         public async Task<bool> NotifyTrendingRepositories(CancellationToken cancellationToken)
         {
+            if (isAppRunning())
+                return false;
+
             try
             {
                 using var timedEvent = _analyticsService.TrackTime($"{nameof(NotifyTrendingRepositories)} Triggered");
@@ -50,6 +50,8 @@ namespace GitTrends
                 _analyticsService.Report(e);
                 return false;
             }
+
+            static bool isAppRunning() => Application.Current?.MainPage != null;
         }
 
         async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
@@ -71,7 +73,14 @@ namespace GitTrends
                 var trendingRepositories = new List<Repository>();
                 await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(retrievedRepositoryList_NoDuplicatesNoForks, cancellationToken ).ConfigureAwait(false))
                 {
-                    _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).SafeFireAndForget();
+                    try
+                    {
+                        await _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).ConfigureAwait(false);
+                    }
+                    catch(Exception e)
+                    {
+                        _analyticsService.Report(e);
+                    }
 
                     if (retrievedRepositoryWithViewsAndClonesData.IsTrending)
                         trendingRepositories.Add(retrievedRepositoryWithViewsAndClonesData);

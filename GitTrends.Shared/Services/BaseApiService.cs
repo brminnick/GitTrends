@@ -29,6 +29,7 @@ namespace GitTrends.Shared
                 client = new HttpClient(new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate });
             }
 
+            client.Timeout = TimeSpan.FromSeconds(5);
             client.BaseAddress = new Uri(url);
 
             return client;
