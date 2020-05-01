@@ -98,6 +98,8 @@ namespace GitTrends
 
         class DailyClonesDatabaseModel : IDailyClonesModel
         {
+            public DateTime LocalDay => Day.LocalDateTime;
+
             public DateTimeOffset Day { get; set; }
 
             public string RepositoryUrl { get; set; } = string.Empty;
@@ -126,6 +128,8 @@ namespace GitTrends
 
         class DailyViewsDatabaseModel : IDailyViewsModel
         {
+            public DateTime LocalDay => Day.LocalDateTime;
+
             public DateTimeOffset Day { get; set; }
 
             public string RepositoryUrl { get; set; } = string.Empty;
