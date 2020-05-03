@@ -12,8 +12,8 @@ namespace GitTrends.iOS
     {
         public void Register()
         {
-            var isNotfyTrendingRepositoriesSuccessful = BGTaskScheduler.Shared.Register(BackgroundFetchService.NotifyTrendingRepositoriesIdentifier, null, NotifyTrendingRepositoriesBackgroundTask);
-            var isCleanupDatabaseSuccessful = BGTaskScheduler.Shared.Register(BackgroundFetchService.CleanUpDatabaseIdentifier, null, CleanUpDatabaseBackgroundTask);
+            var isNotfyTrendingRepositoriesSuccessful = BGTaskScheduler.Shared.Register(BackgroundFetchService.NotifyTrendingRepositoriesIdentifier, null, task => NotifyTrendingRepositoriesBackgroundTask(task));
+            var isCleanupDatabaseSuccessful = BGTaskScheduler.Shared.Register(BackgroundFetchService.CleanUpDatabaseIdentifier, null, task => CleanUpDatabaseBackgroundTask(task));
 
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var analyticsService = scope.Resolve<AnalyticsService>();
@@ -71,7 +71,7 @@ namespace GitTrends.iOS
                 await scope.Resolve<BackgroundFetchService>().CleanUpDatabase().ConfigureAwait(false);
                 task.SetTaskCompleted(true);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 scope.Resolve<AnalyticsService>().Report(e);
                 task.SetTaskCompleted(false);

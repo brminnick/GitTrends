@@ -19,13 +19,13 @@ namespace GitTrends
 
         public Task OpenBrowser(Uri uri) => OpenBrowser(uri.ToString());
 
-        public Task OpenBrowser(string url)
+        public Task OpenBrowser(string url, BrowserLaunchOptions? browserLaunchOptions = null)
         {
             return MainThread.InvokeOnMainThreadAsync(() =>
             {
                 var currentTheme = (BaseTheme)Application.Current.Resources;
 
-                var browserLaunchOptions = new BrowserLaunchOptions
+                browserLaunchOptions ??= new BrowserLaunchOptions
                 {
                     PreferredControlColor = currentTheme.NavigationBarTextColor,
                     PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor,

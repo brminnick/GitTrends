@@ -23,10 +23,18 @@ namespace GitTrends
             RemoveDynamicResource(BackgroundColorProperty);
             On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.OverFullScreen);
 
-            BackgroundColor = Color.FromHex(BaseTheme.LightTealColorHex);
+            var pageBackgroundColor = Color.FromHex(BaseTheme.LightTealColorHex);
+            BackgroundColor = pageBackgroundColor;
 
             gitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+
+            var browserLaunchOptions = new BrowserLaunchOptions
+            {
+                PreferredToolbarColor = pageBackgroundColor.MultiplyAlpha(0.75),
+                PreferredControlColor = Color.White,
+                Flags = BrowserLaunchFlags.PresentAsFormSheet
+            };
 
             Content = new Grid
             {
@@ -45,7 +53,7 @@ namespace GitTrends
                         .Row(Row.WelcomeLabel),
                     new Image { Source = "WelcomeImage" }.Center()
                         .Row(Row.Image),
-                    new ConnectToGitHubButton(_connectToGitHubCancellationTokenSource.Token)
+                    new ConnectToGitHubButton(_connectToGitHubCancellationTokenSource.Token, browserLaunchOptions)
                         .Row(Row.GitHubButton),
                     new DemoLabel()
                         .Row(Row.DemoButton),
@@ -102,7 +110,7 @@ namespace GitTrends
 
         class ConnectToGitHubButton : ConnectToGitHubView
         {
-            public ConnectToGitHubButton(CancellationToken cancellationToken) : base(WelcomePageAutomationIds.ConnectToGitHubButton, cancellationToken)
+            public ConnectToGitHubButton(CancellationToken cancellationToken, BrowserLaunchOptions browserLaunchOptions) : base(WelcomePageAutomationIds.ConnectToGitHubButton, cancellationToken, browserLaunchOptions)
             {
                 HorizontalOptions = LayoutOptions.Center;
                 VerticalOptions = LayoutOptions.End;

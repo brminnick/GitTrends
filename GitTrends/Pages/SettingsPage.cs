@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -104,7 +105,7 @@ namespace GitTrends
 
                 await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(0.3, 75)));
 
-                ViewModel.ConnectToGitHubButtonCommand.Execute(_connectToGitHubCancellationTokenSource.Token);
+                ViewModel.ConnectToGitHubButtonCommand.Execute((_connectToGitHubCancellationTokenSource.Token, (BrowserLaunchOptions?)null));
 
                 await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(1, 350, Easing.CubicOut)));
             }

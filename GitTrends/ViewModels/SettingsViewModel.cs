@@ -7,6 +7,7 @@ using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -159,7 +160,7 @@ namespace GitTrends
             OnPropertyChanged(nameof(IsAliasLabelVisible));
         }
 
-        protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, CancellationToken cancellationToken)
+        protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, CancellationToken cancellationToken, BrowserLaunchOptions? browserLaunchOptions)
         {
             AnalyticsService.Track("Login Button Tapped", nameof(GitHubAuthenticationService.IsAuthenticated), gitHubAuthenticationService.IsAuthenticated.ToString());
 
@@ -171,7 +172,7 @@ namespace GitTrends
             }
             else
             {
-                await base.ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, cancellationToken).ConfigureAwait(false);
+                await base.ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, cancellationToken, browserLaunchOptions).ConfigureAwait(false);
             }
         }
 
