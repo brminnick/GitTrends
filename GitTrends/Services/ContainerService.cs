@@ -24,6 +24,7 @@ namespace GitTrends
             builder.RegisterType<GitHubGraphQLApiService>().AsSelf().SingleInstance();
             builder.RegisterType<MediaElementService>().AsSelf().SingleInstance();
             builder.RegisterType<NotificationService>().AsSelf().SingleInstance();
+            builder.RegisterType<ReferringSitesDatabase>().AsSelf().SingleInstance();
             builder.RegisterType<RepositoryDatabase>().AsSelf().SingleInstance();
             builder.RegisterType<ReviewService>().AsSelf().SingleInstance();
             builder.RegisterType<SortingService>().AsSelf().SingleInstance();

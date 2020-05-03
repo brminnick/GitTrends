@@ -97,11 +97,12 @@ namespace GitTrends
 
         class DailyClonesDatabaseModel : IDailyClonesModel
         {
+            [Indexed]
+            public string RepositoryUrl { get; set; } = string.Empty;
+
             public DateTime LocalDay => Day.LocalDateTime;
 
             public DateTimeOffset Day { get; set; }
-
-            public string RepositoryUrl { get; set; } = string.Empty;
 
             public DateTimeOffset DataDownloadedAt { get; set; } = DateTimeOffset.UtcNow;
 
@@ -127,11 +128,12 @@ namespace GitTrends
 
         class DailyViewsDatabaseModel : IDailyViewsModel
         {
+            [Indexed]
+            public string RepositoryUrl { get; set; } = string.Empty;
+
             public DateTime LocalDay => Day.LocalDateTime;
 
             public DateTimeOffset Day { get; set; }
-
-            public string RepositoryUrl { get; set; } = string.Empty;
 
             public DateTimeOffset DataDownloadedAt { get; set; } = DateTimeOffset.UtcNow;
 

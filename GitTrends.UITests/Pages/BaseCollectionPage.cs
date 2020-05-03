@@ -68,7 +68,7 @@ namespace GitTrends.UITests
 
                 App.Screenshot("Error Popup Appeared");
 
-                return expectedErrorEventArgs.DismissText;
+                return expectedErrorEventArgs.Cancel;
             }
             catch
             {
@@ -79,7 +79,7 @@ namespace GitTrends.UITests
 
                     App.Screenshot("Login Expired Popup Appeared");
 
-                    return expectedLoginExpiredEventArgs.DismissText;
+                    return expectedLoginExpiredEventArgs.Cancel;
                 }
                 catch
                 {
@@ -88,7 +88,7 @@ namespace GitTrends.UITests
 
                     App.Screenshot("Maximum API Requests Popup Appeared");
 
-                    return maximimApiRequestsReachedEventArgs.DismissText;
+                    return maximimApiRequestsReachedEventArgs.Cancel;
                 }
             }
         }

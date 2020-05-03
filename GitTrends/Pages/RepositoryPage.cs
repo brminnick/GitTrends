@@ -18,11 +18,15 @@ namespace GitTrends
     {
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
         readonly RefreshView _refreshView;
+        readonly DeepLinkingService _deepLinkingService;
 
         public RepositoryPage(RepositoryViewModel repositoryViewModel,
                                 AnalyticsService analyticsService,
-                                SortingService sortingService) : base(repositoryViewModel, analyticsService, PageTitles.RepositoryPage)
+                                SortingService sortingService,
+                                DeepLinkingService deepLinkingService) : base(repositoryViewModel, analyticsService, PageTitles.RepositoryPage)
         {
+            _deepLinkingService = deepLinkingService;
+
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
 
@@ -189,7 +193,16 @@ namespace GitTrends
                 if (!Application.Current.MainPage.Navigation.ModalStack.Any()
                     && Application.Current.MainPage.Navigation.NavigationStack.Last() is RepositoryPage)
                 {
-                    await DisplayAlert(e.Title, e.Message, e.DismissText);
+                    if (e.Accept is null)
+                    {
+                        await DisplayAlert(e.Title, e.Message, e.Cancel);
+                    }
+                    else
+                    {
+                        var isAccepted = await DisplayAlert(e.Title, e.Message, e.Accept, e.Cancel);
+                        if (isAccepted)
+                            await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs);
+                    }
                 }
             });
         }

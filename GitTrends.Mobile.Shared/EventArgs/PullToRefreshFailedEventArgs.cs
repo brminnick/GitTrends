@@ -2,11 +2,12 @@
 {
     public abstract class PullToRefreshFailedEventArgs : System.EventArgs
     {
-        protected PullToRefreshFailedEventArgs(string title, string message, string dismissText = "OK") =>
-            (Message, Title, DismissText) = (message, title, dismissText);
+        protected PullToRefreshFailedEventArgs(string title, string message, string cancel = "OK", string? accept = null) =>
+            (Message, Title, Cancel, Accept) = (message, title, cancel, accept);
 
         public string Message { get; }
         public string Title { get; }
-        public string DismissText { get; }
+        public string Cancel { get; }
+        public string? Accept { get; }
     }
 }

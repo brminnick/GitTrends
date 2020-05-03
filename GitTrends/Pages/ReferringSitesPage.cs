@@ -56,7 +56,7 @@ namespace GitTrends
             _refreshView = new RefreshView
             {
                 AutomationId = ReferringSitesPageAutomationIds.RefreshView,
-                CommandParameter = (repository.OwnerLogin, repository.Name, _refreshViewCancelltionTokenSource.Token),
+                CommandParameter = (repository.OwnerLogin, repository.Name, repository.Url, _refreshViewCancelltionTokenSource.Token),
                 Content = collectionView
             };
             _refreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor));
@@ -184,7 +184,16 @@ namespace GitTrends
                 if (Application.Current.MainPage.Navigation.ModalStack.LastOrDefault() is ReferringSitesPage
                     || Application.Current.MainPage.Navigation.NavigationStack.Last() is ReferringSitesPage)
                 {
-                    await DisplayAlert(e.Title, e.Message, e.DismissText);
+                    if (e.Accept is null)
+                    {
+                        await DisplayAlert(e.Title, e.Message, e.Cancel);
+                    }
+                    else
+                    {
+                        var isAccepted = await DisplayAlert(e.Title, e.Message, e.Accept, e.Cancel);
+                        if (isAccepted)
+                            await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs);
+                    }
                 }
             });
         }

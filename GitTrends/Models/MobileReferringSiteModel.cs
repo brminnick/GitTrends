@@ -8,7 +8,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class MobileReferringSiteModel : ReferringSiteModel, INotifyPropertyChanged
+    public class MobileReferringSiteModel : ReferringSiteModel, INotifyPropertyChanged, IMobileReferringSiteModel
     {
         public const int FavIconSize = 32;
 
@@ -28,6 +28,12 @@ namespace GitTrends
             remove => _propertyChangedEventManager.RemoveEventHandler(value);
         }
 
+        public string FavIconImageUrl => FavIcon switch
+        {
+            UriImageSource uriImageSource => uriImageSource.Uri.ToString(),
+            _ => string.Empty
+        };
+
         [JsonIgnore]
         public ImageSource? FavIcon
         {
@@ -35,14 +41,12 @@ namespace GitTrends
             set => SetProperty(ref _favIcon, value);
         }
 
-        protected void SetProperty<T>(ref T backingStore, in T value, in System.Action? onChanged = null, [CallerMemberName] in string propertyName = "")
+        protected void SetProperty<T>(ref T backingStore, in T value, [CallerMemberName] in string propertyName = "")
         {
             if (EqualityComparer<T>.Default.Equals(backingStore, value))
                 return;
 
             backingStore = value;
-
-            onChanged?.Invoke();
 
             _propertyChangedEventManager.HandleEvent(this, new PropertyChangedEventArgs(propertyName), nameof(INotifyPropertyChanged.PropertyChanged));
         }

@@ -4,7 +4,7 @@ namespace GitTrends.Mobile.Shared
 {
     public class MaximimApiRequestsReachedEventArgs : PullToRefreshFailedEventArgs
     {
-        public MaximimApiRequestsReachedEventArgs(DateTimeOffset resetDateTime) : base("Usage Limit Exceeded", $"Please try again in {GetMinutesRemaining(resetDateTime)} minutes")
+        public MaximimApiRequestsReachedEventArgs(DateTimeOffset resetDateTime) : base("Usage Limit Exceeded", $"Please try again in {GetMinutesRemaining(resetDateTime)} minutes", "OK", "Learn More")
         {
 
         }
