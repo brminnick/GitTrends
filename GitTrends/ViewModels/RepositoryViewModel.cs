@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -18,9 +17,6 @@ namespace GitTrends
 {
     public class RepositoryViewModel : BaseViewModel
     {
-        const string _emptyDataViewText_EmptyList = "Your repositories list is\nempty";
-        const string _emptyDataViewText_LoginExpired = "GitHub Login Expired\nPlease login again";
-
         readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
         readonly RepositoryDatabase _repositoryDatabase;
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
@@ -33,6 +29,8 @@ namespace GitTrends
         string _emptyDataViewText = string.Empty;
         IReadOnlyList<Repository> _repositoryList = Enumerable.Empty<Repository>().ToList();
         IReadOnlyList<Repository> _visibleRepositoryList = Enumerable.Empty<Repository>().ToList();
+
+        RefreshState _currentRefreshState;
 
         public RepositoryViewModel(RepositoryDatabase repositoryDatabase,
                                     GitHubAuthenticationService gitHubAuthenticationService,
@@ -47,6 +45,8 @@ namespace GitTrends
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _sortingService = sortingService;
             _gitHubApiV3Service = gitHubApiV3Service;
+
+            CurrentRefreshState = RefreshState.Uninitialized;
 
             PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(GitHubAuthenticationService.Alias));
             FilterRepositoriesCommand = new Command<string>(SetSearchBarText);
@@ -63,6 +63,8 @@ namespace GitTrends
             add => _pullToRefreshFailedEventManager.AddEventHandler(value);
             remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
         }
+
+        enum RefreshState { Uninitialized, Succeeded, LoginExpired, MaximumApiLimit, Error }
 
         public ICommand PullToRefreshCommand { get; }
         public ICommand FilterRepositoriesCommand { get; }
@@ -84,6 +86,32 @@ namespace GitTrends
         {
             get => _isRefreshing;
             set => SetProperty(ref _isRefreshing, value);
+        }
+
+        RefreshState CurrentRefreshState
+        {
+            get => _currentRefreshState;
+            set
+            {
+                const string noFilterMatch = "No Matching Repository Found\nClear search bar and try again";
+                const string emptyList = "Your repositories list is\nempty";
+                const string loginExpired = "GitHub Login Expired\nPlease login again";
+                const string unitialized = "Data not gathered\nSwipe down to retrieve repositories";
+
+                _currentRefreshState = value;
+
+                EmptyDataViewText = value switch
+                {
+                    RefreshState.Uninitialized => unitialized,
+                    RefreshState.Succeeded when _repositoryList.Any() => noFilterMatch,
+                    RefreshState.Succeeded => emptyList,
+                    RefreshState.LoginExpired => loginExpired,
+                    RefreshState.Error when _repositoryList.Any() => noFilterMatch,
+                    RefreshState.Error => EmptyDataView.UnableToRetrieveDataText,
+                    RefreshState.MaximumApiLimit => EmptyDataView.UnableToRetrieveDataText,
+                    _ => throw new NotSupportedException()
+                };
+            }
         }
 
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
@@ -119,7 +147,7 @@ namespace GitTrends
                 //Add Remaining Repositories to VisibleRepositoryList
                 AddRepositoriesToCollection(completedRepoitories, _searchBarText);
 
-                EmptyDataViewText = _emptyDataViewText_EmptyList;
+                CurrentRefreshState = RefreshState.Succeeded;
             }
             catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
             {
@@ -132,7 +160,7 @@ namespace GitTrends
 
                 VisibleRepositoryList = Enumerable.Empty<Repository>().ToList();
 
-                EmptyDataViewText = _emptyDataViewText_LoginExpired;
+                CurrentRefreshState = RefreshState.LoginExpired;
             }
             catch (ApiException e) when (GitHubApiService.HasReachedMaximimApiCallLimit(e))
             {
@@ -141,7 +169,7 @@ namespace GitTrends
 
                 VisibleRepositoryList = Enumerable.Empty<Repository>().ToList();
 
-                EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
+                CurrentRefreshState = RefreshState.MaximumApiLimit;
             }
             catch (Exception e)
             {
@@ -160,7 +188,7 @@ namespace GitTrends
                     OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"Check your internet connection and try again"));
                 }
 
-                EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
+                CurrentRefreshState = RefreshState.Error;
             }
             finally
             {
@@ -269,7 +297,17 @@ namespace GitTrends
 
         void HandleSortingOptionRequested(object sender, SortingOption sortingOption) => SortRepositoriesCommand.Execute(sortingOption);
 
-        void OnPullToRefreshFailed(PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs) =>
+        void OnPullToRefreshFailed(PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs)
+        {
+            CurrentRefreshState = pullToRefreshFailedEventArgs switch
+            {
+                ErrorPullToRefreshEventArgs _ => RefreshState.Error,
+                MaximimApiRequestsReachedEventArgs _ => RefreshState.MaximumApiLimit,
+                LoginExpiredPullToRefreshEventArgs _ => RefreshState.LoginExpired,
+                _ => throw new NotSupportedException()
+            };
+
             _pullToRefreshFailedEventManager.HandleEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
+        }
     }
 }

@@ -3,7 +3,7 @@ using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {
-    class EmptyDataView : RelativeLayout
+    class EmptyDataView : AbsoluteLayout
     {
         public const string UnableToRetrieveDataText = "Unable to retrieve data";
         public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(string), typeof(EmptyDataView), string.Empty);
@@ -21,13 +21,7 @@ namespace GitTrends
                 }
             };
 
-            Children.Add(stackLayout,
-                        Constraint.RelativeToParent(parent => parent.Width / 2 - GetWidth(parent, stackLayout) / 2),
-                        Constraint.RelativeToParent(parent => parent.Height / 2 - GetHeight(parent, stackLayout) / 2));
-
-
-            static double GetWidth(in RelativeLayout parent, in View view) => view.Measure(parent.Width, parent.Height).Request.Width;
-            static double GetHeight(in RelativeLayout parent, in View view) => view.Measure(parent.Width, parent.Height).Request.Height;
+            Children.Add(stackLayout, new Rectangle(.5, .5, -1, -1), AbsoluteLayoutFlags.PositionProportional);
         }
 
         public string Text

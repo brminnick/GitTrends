@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using SQLite;
-using Xamarin.Forms.Xaml;
 
 namespace GitTrends
 {
@@ -42,8 +41,8 @@ namespace GitTrends
             var sortedRecentDailyClonesDatabaseModels = dailyClonesDatabaseModels.OrderByDescending(x => x.DataDownloadedAt).ToList();
             var sortedRecentDailyViewsDatabaseModels = dailyViewsDatabaseModels.OrderByDescending(x => x.DataDownloadedAt).ToList();
 
-            var mostRecentCloneDay = sortedRecentDailyClonesDatabaseModels.Max(x => x.Day);
-            var mostRecentViewDay = sortedRecentDailyViewsDatabaseModels.Max(x => x.Day);
+            var mostRecentCloneDay = sortedRecentDailyClonesDatabaseModels.Any() ? sortedRecentDailyClonesDatabaseModels.Max(x => x.Day) : default;
+            var mostRecentViewDay = sortedRecentDailyClonesDatabaseModels.Any() ? sortedRecentDailyViewsDatabaseModels.Max(x => x.Day) : default;
 
             var mostRecentDate = mostRecentCloneDay.CompareTo(mostRecentViewDay) > 0 ? mostRecentCloneDay : mostRecentViewDay;
 
