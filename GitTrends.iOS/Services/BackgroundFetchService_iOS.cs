@@ -2,7 +2,6 @@
 using System.Threading;
 using Autofac;
 using BackgroundTasks;
-using Foundation;
 using GitTrends.iOS;
 using Xamarin.Forms;
 
@@ -13,42 +12,69 @@ namespace GitTrends.iOS
     {
         public void Register()
         {
-            var refreshSuccessNotificationName = new NSString(BackgroundFetchService.NotifyTrendingRepositoriesIdentifier);
-            var isSuccessful = BGTaskScheduler.Shared.Register(BackgroundFetchService.NotifyTrendingRepositoriesIdentifier, null, RunBackgroundTask);
-
-            if (!isSuccessful)
-            {
-                using var scope = ContainerService.Container.BeginLifetimeScope();
-                scope.Resolve<AnalyticsService>().Track($"{nameof(Register)} Failed");
-            }
-        }
-
-        async void RunBackgroundTask(BGTask task)
-        {
-            var backgroudTaskCancellationTokenSource = new CancellationTokenSource();
-            task.ExpirationHandler = backgroudTaskCancellationTokenSource.Cancel;
+            var isNotfyTrendingRepositoriesSuccessful = BGTaskScheduler.Shared.Register(BackgroundFetchService.NotifyTrendingRepositoriesIdentifier, null, NotifyTrendingRepositoriesBackgroundTask);
+            var isCleanupDatabaseSuccessful = BGTaskScheduler.Shared.Register(BackgroundFetchService.CleanUpDatabaseIdentifier, null, CleanUpDatabaseBackgroundTask);
 
             using var scope = ContainerService.Container.BeginLifetimeScope();
-            var isSuccessful = await scope.Resolve<BackgroundFetchService>().NotifyTrendingRepositories(backgroudTaskCancellationTokenSource.Token);
+            var analyticsService = scope.Resolve<AnalyticsService>();
 
-            task.SetTaskCompleted(isSuccessful);
-            SechduleAppRefresh();
+            if (!isNotfyTrendingRepositoriesSuccessful)
+                analyticsService.Track($"Register Notify Trending Repositories Failed");
+
+            if (!isCleanupDatabaseSuccessful)
+                analyticsService.Track($"Register Cleanup Database Failed");
         }
 
-        void SechduleAppRefresh()
+        public void Scehdule()
         {
-            var request = new BGProcessingTaskRequest(BackgroundFetchService.NotifyTrendingRepositoriesIdentifier)
+            var notifyTrendingRepositoriesRequest = new BGProcessingTaskRequest(BackgroundFetchService.NotifyTrendingRepositoriesIdentifier)
             {
                 RequiresNetworkConnectivity = true,
                 RequiresExternalPower = true
             };
 
-            var isSuccessful = BGTaskScheduler.Shared.Submit(request, out var error);
+            var cleanupDatabaseRequest = new BGProcessingTaskRequest(BackgroundFetchService.CleanUpDatabaseIdentifier);
 
-            if (!isSuccessful)
+            var isNotifyTrendingRepositoriesSuccessful = BGTaskScheduler.Shared.Submit(notifyTrendingRepositoriesRequest, out var notifyTrendingRepositoriesError);
+            var isCleanupDatabaseSuccessful = BGTaskScheduler.Shared.Submit(cleanupDatabaseRequest, out var cleanUpDataBaseError);
+
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var anayticsService = scope.Resolve<AnalyticsService>();
+
+            if (!isNotifyTrendingRepositoriesSuccessful)
+                anayticsService.Report(new ArgumentException(notifyTrendingRepositoriesError.LocalizedDescription));
+
+            if (!isCleanupDatabaseSuccessful)
+                anayticsService.Report(new ArgumentException(cleanUpDataBaseError.LocalizedDescription));
+        }
+
+        async void NotifyTrendingRepositoriesBackgroundTask(BGTask task)
+        {
+            var backgroudTaskCancellationTokenSource = new CancellationTokenSource();
+            task.ExpirationHandler = backgroudTaskCancellationTokenSource.Cancel;
+
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var isSuccessful = await scope.Resolve<BackgroundFetchService>().NotifyTrendingRepositories(backgroudTaskCancellationTokenSource.Token).ConfigureAwait(false);
+
+            task.SetTaskCompleted(isSuccessful);
+        }
+
+        async void CleanUpDatabaseBackgroundTask(BGTask task)
+        {
+            var backgroudTaskCancellationTokenSource = new CancellationTokenSource();
+            task.ExpirationHandler = backgroudTaskCancellationTokenSource.Cancel;
+
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+
+            try
             {
-                using var scope = ContainerService.Container.BeginLifetimeScope();
-                scope.Resolve<AnalyticsService>().Report(new ArgumentException(error.LocalizedDescription));
+                await scope.Resolve<BackgroundFetchService>().CleanUpDatabase().ConfigureAwait(false);
+                task.SetTaskCompleted(true);
+            }
+            catch(Exception e)
+            {
+                scope.Resolve<AnalyticsService>().Report(e);
+                task.SetTaskCompleted(false);
             }
         }
     }

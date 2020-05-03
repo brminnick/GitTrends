@@ -10,6 +10,18 @@ namespace GitTrends
 {
     public class ReferringSitesDatabase : BaseDatabase
     {
+        protected override TimeSpan Expiration { get; } = TimeSpan.FromDays(30);
+
+        public async Task DeleteExpiredData()
+        {
+            var databaseConnection = await GetDatabaseConnection<MobileReferringSitesDatabaseModel>().ConfigureAwait(false);
+
+            var expiredReferringSites = await databaseConnection.Table<MobileReferringSitesDatabaseModel>().Where(x => IsExpired(x.DownloadedAt)).ToListAsync();
+
+            foreach (var expiredReferringSite in expiredReferringSites)
+                await databaseConnection.DeleteAsync(expiredReferringSite).ConfigureAwait(false);
+        }
+
         public async Task<MobileReferringSiteModel?> GetReferringSite(string repositoryUrl, Uri? referrerUri)
         {
             var databaseConnection = await GetDatabaseConnection<MobileReferringSitesDatabaseModel>().ConfigureAwait(false);

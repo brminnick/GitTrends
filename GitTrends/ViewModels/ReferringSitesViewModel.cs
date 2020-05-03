@@ -35,8 +35,6 @@ namespace GitTrends
 
         bool _isRefreshing, _isStoreRatingRequestVisible, _isEmptyDataViewEnabled;
 
-        RefreshState _refreshState;
-
         public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service,
                                         DeepLinkingService deepLinkingService,
                                         AnalyticsService analyticsService,
@@ -122,14 +120,11 @@ namespace GitTrends
 
         RefreshState RefreshState
         {
-            get => _refreshState;
             set
             {
                 const string emptyList = "No referrals yet";
                 const string loginExpired = "GitHub Login Expired\nPlease login again";
                 const string uninitialized = "Data not gathered\nSwipe down to retrieve repositories";
-
-                _refreshState = value;
 
                 EmptyDataViewText = value switch
                 {

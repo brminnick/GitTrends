@@ -9,6 +9,8 @@ namespace GitTrends
 {
     public class RepositoryDatabase : BaseDatabase
     {
+        protected override TimeSpan Expiration { get; } = TimeSpan.FromDays(90);
+
         public async Task DeleteAllData()
         {
             var (repositoryDatabaseConnection, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection) = await GetDatabaseConnections().ConfigureAwait(false);
@@ -16,6 +18,20 @@ namespace GitTrends
             await AttemptAndRetry(() => repositoryDatabaseConnection.DeleteAllAsync<RepositoryDatabaseModel>()).ConfigureAwait(false);
             await AttemptAndRetry(() => dailyViewsDatabaseConnection.DeleteAllAsync<DailyViewsDatabaseModel>()).ConfigureAwait(false);
             await AttemptAndRetry(() => dailyClonesDatabaseConnection.DeleteAllAsync<DailyClonesDatabaseModel>()).ConfigureAwait(false);
+        }
+
+        public async Task DeleteExpiredData()
+        {
+            var (_, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection) = await GetDatabaseConnections().ConfigureAwait(false);
+
+            var expiredDailyClones = await dailyClonesDatabaseConnection.Table<DailyClonesDatabaseModel>().Where(x => IsExpired(x.DownloadedAt)).ToListAsync();
+            var expiredDailyViews = await dailyViewsDatabaseConnection.Table<DailyViewsDatabaseModel>().Where(x => IsExpired(x.DataDownloadedAt)).ToListAsync();
+
+            foreach (var expiredDailyClone in expiredDailyClones)
+                await dailyClonesDatabaseConnection.DeleteAsync(expiredDailyClone).ConfigureAwait(false);
+
+            foreach (var expiredDailyView in expiredDailyViews)
+                await dailyViewsDatabaseConnection.DeleteAsync(expiredDailyView).ConfigureAwait(false);
         }
 
         public async Task SaveRepository(Repository repository)
@@ -38,7 +54,7 @@ namespace GitTrends
             var dailyClonesDatabaseModels = await AttemptAndRetry(() => dailyClonesDatabaseConnection.Table<DailyClonesDatabaseModel>().ToListAsync()).ConfigureAwait(false);
             var dailyViewsDatabaseModels = await AttemptAndRetry(() => dailyViewsDatabaseConnection.Table<DailyViewsDatabaseModel>().ToListAsync()).ConfigureAwait(false);
 
-            var sortedRecentDailyClonesDatabaseModels = dailyClonesDatabaseModels.OrderByDescending(x => x.DataDownloadedAt).ToList();
+            var sortedRecentDailyClonesDatabaseModels = dailyClonesDatabaseModels.OrderByDescending(x => x.DownloadedAt).ToList();
             var sortedRecentDailyViewsDatabaseModels = dailyViewsDatabaseModels.OrderByDescending(x => x.DataDownloadedAt).ToList();
 
             var mostRecentCloneDay = sortedRecentDailyClonesDatabaseModels.Any() ? sortedRecentDailyClonesDatabaseModels.Max(x => x.Day) : default;
@@ -97,14 +113,14 @@ namespace GitTrends
 
         class DailyClonesDatabaseModel : IDailyClonesModel
         {
+            public DateTime LocalDay => Day.LocalDateTime;
+
             [Indexed]
             public string RepositoryUrl { get; set; } = string.Empty;
 
-            public DateTime LocalDay => Day.LocalDateTime;
-
             public DateTimeOffset Day { get; set; }
 
-            public DateTimeOffset DataDownloadedAt { get; set; } = DateTimeOffset.UtcNow;
+            public DateTimeOffset DownloadedAt { get; set; } = DateTimeOffset.UtcNow;
 
             public long TotalClones { get; set; }
 
@@ -117,7 +133,7 @@ namespace GitTrends
             {
                 return new DailyClonesDatabaseModel
                 {
-                    DataDownloadedAt = repository.DataDownloadedAt,
+                    DownloadedAt = repository.DataDownloadedAt,
                     RepositoryUrl = repository.Url,
                     Day = dailyClonesModel.Day,
                     TotalClones = dailyClonesModel.TotalClones,
@@ -128,10 +144,10 @@ namespace GitTrends
 
         class DailyViewsDatabaseModel : IDailyViewsModel
         {
+            public DateTime LocalDay => Day.LocalDateTime;
+
             [Indexed]
             public string RepositoryUrl { get; set; } = string.Empty;
-
-            public DateTime LocalDay => Day.LocalDateTime;
 
             public DateTimeOffset Day { get; set; }
 

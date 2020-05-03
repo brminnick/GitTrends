@@ -15,11 +15,13 @@ namespace GitTrends
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly RepositoryDatabase _repositoryDatabase;
         readonly NotificationService _notificationService;
+        readonly ReferringSitesDatabase _referringSitesDatabase;
 
         public BackgroundFetchService(AnalyticsService analyticsService,
                                         GitHubApiV3Service gitHubApiV3Service,
                                         GitHubGraphQLApiService gitHubGraphQLApiService,
                                         RepositoryDatabase repositoryDatabase,
+                                        ReferringSitesDatabase referringSitesDatabase,
                                         NotificationService notificationService)
         {
             _analyticsService = analyticsService;
@@ -27,15 +29,21 @@ namespace GitTrends
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _repositoryDatabase = repositoryDatabase;
             _notificationService = notificationService;
+            _referringSitesDatabase = referringSitesDatabase;
         }
 
         public static string NotifyTrendingRepositoriesIdentifier { get; } = $"{Xamarin.Essentials.AppInfo.PackageName}.{nameof(NotifyTrendingRepositories)}";
+        public static string CleanUpDatabaseIdentifier { get; } = $"{Xamarin.Essentials.AppInfo.PackageName}.{nameof(CleanUpDatabase)}";
+
+        public async Task CleanUpDatabase()
+        {
+            using var timedEvent = _analyticsService.TrackTime($"{nameof(CleanUpDatabase)} Triggered");
+
+            await Task.WhenAll(_referringSitesDatabase.DeleteExpiredData(), _repositoryDatabase.DeleteExpiredData()).ConfigureAwait(false);
+        }
 
         public async Task<bool> NotifyTrendingRepositories(CancellationToken cancellationToken)
         {
-            if (isAppRunning())
-                return false;
-
             try
             {
                 using var timedEvent = _analyticsService.TrackTime($"{nameof(NotifyTrendingRepositories)} Triggered");
@@ -50,8 +58,6 @@ namespace GitTrends
                 _analyticsService.Report(e);
                 return false;
             }
-
-            static bool isAppRunning() => Application.Current?.MainPage != null;
         }
 
         async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
@@ -71,13 +77,13 @@ namespace GitTrends
                 var retrievedRepositoryList_NoDuplicatesNoForks = RepositoryService.RemoveForksAndDuplicates(retrievedRepositoryList).ToList();
 
                 var trendingRepositories = new List<Repository>();
-                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(retrievedRepositoryList_NoDuplicatesNoForks, cancellationToken ).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(retrievedRepositoryList_NoDuplicatesNoForks, cancellationToken).ConfigureAwait(false))
                 {
                     try
                     {
                         await _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).ConfigureAwait(false);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         _analyticsService.Report(e);
                     }
@@ -96,5 +102,6 @@ namespace GitTrends
     public interface IBackgroundFetchService
     {
         public void Register();
+        public void Scehdule();
     }
 }

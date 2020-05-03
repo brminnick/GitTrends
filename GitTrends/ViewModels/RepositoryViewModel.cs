@@ -30,8 +30,6 @@ namespace GitTrends
         IReadOnlyList<Repository> _repositoryList = Enumerable.Empty<Repository>().ToList();
         IReadOnlyList<Repository> _visibleRepositoryList = Enumerable.Empty<Repository>().ToList();
 
-        RefreshState _refreshState;
-
         public RepositoryViewModel(RepositoryDatabase repositoryDatabase,
                                     GitHubAuthenticationService gitHubAuthenticationService,
                                     GitHubGraphQLApiService gitHubGraphQLApiService,
@@ -88,15 +86,12 @@ namespace GitTrends
 
         RefreshState RefreshState
         {
-            get => _refreshState;
             set
             {
                 const string noFilterMatch = "No Matching Repository Found\nClear search bar and try again";
                 const string emptyList = "Your repositories list is\nempty";
                 const string loginExpired = "GitHub Login Expired\nPlease login again";
                 const string uninitialized = "Data not gathered\nSwipe down to retrieve repositories";
-
-                _refreshState = value;
 
                 EmptyDataViewText = value switch
                 {
