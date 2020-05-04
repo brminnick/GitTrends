@@ -204,8 +204,11 @@ namespace GitTrends
                     referringSite.FavIcon = mobileReferringSite.FavIcon;
                 }
 
-                foreach (var referringSite in MobileReferringSitesList)
-                    await _referringSitesDatabase.SaveReferringSite(referringSite, repositoryUrl).ConfigureAwait(false);
+                if (!GitHubAuthenticationService.IsDemoUser)
+                {
+                    foreach (var referringSite in MobileReferringSitesList)
+                        await _referringSitesDatabase.SaveReferringSite(referringSite, repositoryUrl).ConfigureAwait(false);
+                }
             }
             catch (Exception e)
             {

@@ -200,8 +200,11 @@ namespace GitTrends
             void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();
         }
 
-        async Task SaveRepositoriesToDatabase(IEnumerable<Repository> repositories)
+        async ValueTask SaveRepositoriesToDatabase(IEnumerable<Repository> repositories)
         {
+            if (GitHubAuthenticationService.IsDemoUser)
+                return;
+
             foreach (var repository in repositories)
             {
                 try
