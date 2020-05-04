@@ -46,4 +46,4 @@ if [ "$APPCENTER_XAMARIN_CONFIGURATION" == "Release" ];then
     appcenter test run uitest --app "CDA-Global-Beta/GitTrends-iOS-Debug" --devices "CDA-Global-Beta/latest-ios" --app-path $IPAFile --test-series "master" --locale "en_US" --build-dir $UITestBuildDir --dsym-dir $DSYMFile --uitest-tools-dir $TestCloudExeDirectory --async
 fi
 
-#appcenter test run uitest --app "CDA-Global-Beta/GitTrends-iOS-Debug" --devices "CDA-Global-Beta/current-ios-minus-1" --app-path ~/GitHub/GitTrends/Src/GitTrends.iOS/bin/iPhone/Release/GitTrends.ipa --test-series "master" --locale "en_US" --build-dir ~/GitHub/GitTrends/Src/GitTrends.UITests/bin/Debug/ --uitest-tools-dir /Users/bramin/.nuget/packages/xamarin.uitest/3.0.3/tools --async
+#appcenter test run uitest --app "CDA-Global-Beta/GitTrends-iOS-Debug" --devices "CDA-Global-Beta/latest-ios" --app-path ~/GitHub/GitTrends/GitTrends.iOS/bin/iPhone/Release/GitTrends.ipa --test-series "master" --locale "en_US" --build-dir ~/GitHub/GitTrends/GitTrends.UITests/bin/Debug/ --uitest-tools-dir /Users/bramin/.nuget/packages/xamarin.uitest/3.0.8-dev1/tools --async

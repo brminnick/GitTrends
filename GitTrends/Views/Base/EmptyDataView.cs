@@ -21,6 +21,7 @@ namespace GitTrends
                 }
             };
 
+            //Workaround for https://github.com/xamarin/Xamarin.Forms/issues/10551
             Children.Add(stackLayout, new Rectangle(.5, .5, -1, -1), AbsoluteLayoutFlags.PositionProportional);
         }
 
