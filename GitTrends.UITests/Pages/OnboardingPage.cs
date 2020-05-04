@@ -68,12 +68,15 @@ namespace GitTrends.UITests
             App.Screenshot("Activity Indicator Disappeared");
         }
 
-        public void MoveToNextPage()
+        public async Task MoveToNextPage()
         {
             var initialPageNumber = CurrentPageNumber;
 
             var screenSize = App.Query().First().Rect;
             App.DragCoordinates(screenSize.Width * 9 / 10, screenSize.CenterY, screenSize.Width * 1 / 10, screenSize.CenterY);
+
+            while(CurrentPageNumber == initialPageNumber)
+                await Task.Delay(10).ConfigureAwait(false);
 
             var finalPageNumber = CurrentPageNumber;
 
@@ -82,12 +85,15 @@ namespace GitTrends.UITests
             Assert.GreaterOrEqual(finalPageNumber, initialPageNumber);
         }
 
-        public void MoveToPreviousPage()
+        public async Task MoveToPreviousPage()
         {
             var initialPageNumber = CurrentPageNumber;
 
             var screenSize = App.Query().First().Rect;
             App.DragCoordinates(screenSize.Width * 1 / 10, screenSize.CenterY, screenSize.Width * 9 / 10, screenSize.CenterY);
+
+            while (CurrentPageNumber == initialPageNumber)
+                await Task.Delay(10).ConfigureAwait(false);
 
             var finalPageNumber = CurrentPageNumber;
 

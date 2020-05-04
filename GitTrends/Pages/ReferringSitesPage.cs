@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
-using GitTrends.Views.Base;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -34,6 +33,7 @@ namespace GitTrends
             _deepLinkingService = deepLinkingService;
             _reviewService = reviewService;
 
+            ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             reviewService.ReviewCompleted += HandleReviewCompleted;
 
             var collectionView = new CollectionView
@@ -46,8 +46,9 @@ namespace GitTrends
                 //Set iOS Header to `new BoxView { HeightRequest = titleRowHeight + titleTopMargin }` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
                 Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
                 Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
-                EmptyView = new EmptyDataView("EmptyReferringSitesList", "No referrals yet", ReferringSitesPageAutomationIds.EmptyDataView)
+                EmptyView = new EmptyDataView("EmptyReferringSitesList", ReferringSitesPageAutomationIds.EmptyDataView)
                                 .Bind(IsVisibleProperty, nameof(ReferringSitesViewModel.IsEmptyDataViewEnabled))
+                                .Bind(EmptyDataView.TextProperty, nameof(ReferringSitesViewModel.EmptyDataViewText))
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.MobileReferringSitesList));
@@ -55,7 +56,7 @@ namespace GitTrends
             _refreshView = new RefreshView
             {
                 AutomationId = ReferringSitesPageAutomationIds.RefreshView,
-                CommandParameter = (repository.OwnerLogin, repository.Name, _refreshViewCancelltionTokenSource.Token),
+                CommandParameter = (repository.OwnerLogin, repository.Name, repository.Url, _refreshViewCancelltionTokenSource.Token),
                 Content = collectionView
             };
             _refreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor));
@@ -174,6 +175,27 @@ namespace GitTrends
 
                 await _deepLinkingService.OpenBrowser(referingSite.ReferrerUri);
             }
+        }
+
+        void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                if (Application.Current.MainPage.Navigation.ModalStack.LastOrDefault() is ReferringSitesPage
+                    || Application.Current.MainPage.Navigation.NavigationStack.Last() is ReferringSitesPage)
+                {
+                    if (e.Accept is null)
+                    {
+                        await DisplayAlert(e.Title, e.Message, e.Cancel);
+                    }
+                    else
+                    {
+                        var isAccepted = await DisplayAlert(e.Title, e.Message, e.Accept, e.Cancel);
+                        if (isAccepted)
+                            await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs);
+                    }
+                }
+            });
         }
 
         void HandleReviewCompleted(object sender, ReviewRequest e) => MainThread.BeginInvokeOnMainThread(async () =>

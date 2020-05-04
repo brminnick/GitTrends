@@ -40,7 +40,12 @@ namespace GitTrends
             Children =
             {
                 new BodyLabel("Get started by connecting your GitHub account, or try demo mode to tour GitTrends!").Row(Row.Description),
-                new ConnectToGitHubView(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None).Row(Row.Button),
+                new ConnectToGitHubView(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None, new BrowserLaunchOptions
+                {
+                    PreferredControlColor = Color.White,
+                    PreferredToolbarColor = Color.FromHex(BaseTheme.CoralColorHex).MultiplyAlpha(0.75),
+                    Flags = BrowserLaunchFlags.PresentAsFormSheet,
+                }).Row(Row.Button),
                 new IsAuthenticatingIndicator().Row(Row.ActivityIndicator)
             }
         };

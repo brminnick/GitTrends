@@ -32,7 +32,7 @@ namespace GitTrends.UITests
             Assert.AreEqual(OnboardingConstants.GitTrendsPageTitle, OnboardingPage.TitleLabelText);
 
             //Act
-            OnboardingPage.MoveToNextPage();
+            await OnboardingPage.MoveToNextPage().ConfigureAwait(false);
             await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
 
             //Assert
@@ -40,7 +40,7 @@ namespace GitTrends.UITests
             Assert.AreEqual(OnboardingConstants.ChartPageTitle, OnboardingPage.TitleLabelText);
 
             //Act
-            OnboardingPage.MoveToNextPage();
+            await OnboardingPage.MoveToNextPage().ConfigureAwait(false);
             await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
             OnboardingPage.TapEnableNotificationsButton();
 
@@ -54,7 +54,7 @@ namespace GitTrends.UITests
             Assert.IsFalse(areNotificationsEnabled_Initial);
 
             //Act
-            OnboardingPage.MoveToNextPage();
+            await OnboardingPage.MoveToNextPage().ConfigureAwait(false);
             await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
 
             //Assert

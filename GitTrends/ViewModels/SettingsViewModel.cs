@@ -160,7 +160,7 @@ namespace GitTrends
             OnPropertyChanged(nameof(IsAliasLabelVisible));
         }
 
-        protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, CancellationToken cancellationToken)
+        protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, CancellationToken cancellationToken, BrowserLaunchOptions? browserLaunchOptions)
         {
             AnalyticsService.Track("Login Button Tapped", nameof(GitHubAuthenticationService.IsAuthenticated), gitHubAuthenticationService.IsAuthenticated.ToString());
 
@@ -172,7 +172,7 @@ namespace GitTrends
             }
             else
             {
-                await base.ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, cancellationToken).ConfigureAwait(false);
+                await base.ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, cancellationToken, browserLaunchOptions).ConfigureAwait(false);
             }
         }
 
@@ -256,9 +256,7 @@ namespace GitTrends
             string alias = GitHubAuthenticationService.Alias is DemoDataConstants.Alias ? nameof(GitTrends) : GitHubAuthenticationService.Alias;
             AnalyticsService.Track("Alias Label Tapped", "Alias", alias);
 
-            var gitHubAliasUrl = $"{GitHubConstants.GitHubBaseUrl}/{alias}";
-
-            return _deepLinkingService.OpenApp(gitHubAliasUrl, gitHubAliasUrl);
+            return _deepLinkingService.OpenApp($"github://", $"{GitHubConstants.GitHubBaseUrl}/{alias}", $"{GitHubConstants.GitHubBaseUrl}/{alias}");
         }
     }
 }

@@ -38,6 +38,6 @@ if [ "$APPCENTER_XAMARIN_CONFIGURATION" == "Release" ];then
 
     appcenter login --token $AppCenterAPIToken
 
-    appcenter test run uitest --app "CDA-Global-Beta/GitTrends-Android-Debug" --devices "CDA-Global-Beta/android-os-v5-10" --app-path $APKFile --test-series "master" --locale "en_US" --build-dir $UITestBuildDir --uitest-tools-dir $TestCloudExeDirectory --async
+    #appcenter test run uitest --app "CDA-Global-Beta/GitTrends-Android-Debug" --devices "CDA-Global-Beta/latest-androidos" --app-path $APKFile --test-series "master" --locale "en_US" --build-dir $UITestBuildDir --uitest-tools-dir $TestCloudExeDirectory --async
 fi
 #appcenter test run uitest --app "CDA-Global-Beta/GitTrends-Android-Debug" --devices "CDA-Global-Beta/android-os-v5-10" --app-path ~/GitHub/GitTrends/Src/GitTrends.Droid/bin/Release/com.minnick.gittrends.apk --test-series "master" --locale "en_US" --build-dir ~/GitHub/GitTrends/Src/GitTrends.UITests/bin/Debug/ --uitest-tools-dir /Users/bramin/.nuget/packages/xamarin.uitest/3.0.3/tools --async

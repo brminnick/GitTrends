@@ -15,7 +15,11 @@ namespace GitTrends
         static readonly Lazy<SQLiteAsyncConnection> _databaseConnectionHolder =
             new Lazy<SQLiteAsyncConnection>(() => new SQLiteAsyncConnection(_databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache));
 
+        protected abstract TimeSpan Expiration { get; }
+
         static SQLiteAsyncConnection DatabaseConnection => _databaseConnectionHolder.Value;
+
+        protected bool IsExpired(DateTimeOffset downloadedAt) => downloadedAt.CompareTo(DateTimeOffset.UtcNow.Subtract(Expiration)) < 0;
 
         protected static async ValueTask<SQLiteAsyncConnection> GetDatabaseConnection<T>()
         {

@@ -59,6 +59,8 @@ namespace GitTrends
             base.OnSleep();
 
             _analyticsService.Track("App Backgrounded");
+
+            DependencyService.Get<IBackgroundFetchService>().Scehdule();
         }
 
         ValueTask ClearBageNotifications()

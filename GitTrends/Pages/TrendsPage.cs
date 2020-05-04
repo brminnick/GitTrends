@@ -3,7 +3,6 @@ using System.Threading;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
-using GitTrends.Views.Base;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -45,11 +44,16 @@ namespace GitTrends
 
                 Children =
                 {
-                    new StatisticsGrid().Row(Row.Statistics),
-                    new TrendsChartActivityIndicator().Row(Row.Chart),
-                    new TrendsChart().Row(Row.Chart),
-                    new EmptyDataView("EmptyInsightsChart", "No traffic yet", TrendsPageAutomationIds.EmptyDataView, 48).Row(Row.Chart)
+                    new StatisticsGrid()
+                        .Row(Row.Statistics),
+                    new TrendsChartActivityIndicator()
+                        .Row(Row.Chart),
+                    new TrendsChart()
+                        .Row(Row.Chart),
+                    new EmptyDataView("EmptyInsightsChart", TrendsPageAutomationIds.EmptyDataView)
+                        .Row(Row.Chart)
                         .Bind(IsVisibleProperty,nameof(TrendsViewModel.IsEmptyDataViewVisible))
+                        .Bind(EmptyDataView.TextProperty, nameof(RepositoryViewModel.EmptyDataViewText))
                 }
             };
         }

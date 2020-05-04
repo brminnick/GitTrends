@@ -60,6 +60,7 @@
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.minnick.GitTrends.NotifyTrendingRepositories</string>
+		<string>com.minnick.GitTrends.CleanUpDatabase</string>
 	</array>
 </dict>
 </plist>

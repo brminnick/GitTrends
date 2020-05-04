@@ -1,38 +1,48 @@
 ﻿using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using static GitTrends.XamarinFormsService;
-using static Xamarin.Forms.Markup.GridRowsColumns;
 
-namespace GitTrends.Views.Base
+namespace GitTrends
 {
-    class EmptyDataView : Grid
+    class EmptyDataView : AbsoluteLayout
     {
-        public EmptyDataView(in string imageSource, in string text, in string automationId, in double rowSpacing = 72)
+        public const string UnableToRetrieveDataText = "Unable to retrieve data";
+        public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(string), typeof(EmptyDataView), string.Empty);
+
+        public EmptyDataView(in string imageSource, in string automationId)
         {
             AutomationId = automationId;
 
-            HorizontalOptions = LayoutOptions.Center;
-            VerticalOptions = LayoutOptions.Start;
+            var stackLayout = new StackLayout
+            {
+                Children =
+                {
+                    new TitleLabel(Text).Bind(Label.TextProperty, nameof(Text), source: this),
+                    new EmptyStateImage(imageSource),
+                }
+            };
 
-            RowSpacing = rowSpacing;
-
-            RowDefinitions = Rows.Define(
-                (Row.Title, StarGridLength(3)),
-                (Row.Image, StarGridLength(7)));
-
-            Children.Add(new TitleLabel(text).Row(Row.Title));
-            Children.Add(new EmptyStateImage(imageSource, 250, 250).Row(Row.Image));
+            //Workaround for https://github.com/xamarin/Xamarin.Forms/issues/10551
+            Children.Add(stackLayout, new Rectangle(.5, .5, -1, -1), AbsoluteLayoutFlags.PositionProportional);
         }
 
-        enum Row { Title, Image }
+        public string Text
+        {
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
+        }
 
         class TitleLabel : Label
         {
             public TitleLabel(in string text)
             {
                 Text = text;
+
                 FontSize = 24;
                 FontFamily = FontFamilyConstants.RobotoMedium;
+
+                HorizontalOptions = LayoutOptions.Center;
+                VerticalOptions = LayoutOptions.End;
+
                 HorizontalTextAlignment = TextAlignment.Center;
                 VerticalTextAlignment = TextAlignment.End;
 
@@ -42,13 +52,14 @@ namespace GitTrends.Views.Base
 
         class EmptyStateImage : Image
         {
-            public EmptyStateImage(in string source, in double width, in double height)
+            public EmptyStateImage(in string source)
             {
                 Source = source;
-                HorizontalOptions = LayoutOptions.FillAndExpand;
-                VerticalOptions = LayoutOptions.StartAndExpand;
-                WidthRequest = width;
-                HeightRequest = height;
+
+                HorizontalOptions = LayoutOptions.Center;
+                VerticalOptions = LayoutOptions.Start;
+
+                WidthRequest = HeightRequest = 250;
             }
         }
     }

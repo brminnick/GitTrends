@@ -28,7 +28,15 @@ namespace GitTrends.UITests
         {
             await base.WaitForPageToLoad(timeout).ConfigureAwait(false);
 
-            await WaitForPullToRefreshIndicator(timeout).ConfigureAwait(false);
+            try
+            {
+                await WaitForPullToRefreshIndicator(timeout).ConfigureAwait(false);
+            }
+            catch
+            {
+
+            }
+
             await WaitForNoPullToRefreshIndicator(timeout).ConfigureAwait(false);
 
             TryDismissErrorPopup();
@@ -40,7 +48,7 @@ namespace GitTrends.UITests
         {
             try
             {
-                var dismissText = WaitForErrorPopup(TimeSpan.FromSeconds(1));
+                var dismissText = WaitForErrorPopup(TimeSpan.FromMilliseconds(250));
                 App.Tap(dismissText);
 
                 App.Screenshot("Error Popup Dismissed");
@@ -56,48 +64,60 @@ namespace GitTrends.UITests
             try
             {
                 var expectedErrorEventArgs = new ErrorPullToRefreshEventArgs(string.Empty);
-                App.WaitForElement(expectedErrorEventArgs.ErrorTitle, timeout: timeout);
+                App.WaitForElement(expectedErrorEventArgs.Title, timeout: timeout);
 
                 App.Screenshot("Error Popup Appeared");
 
-                return expectedErrorEventArgs.DismissText;
+                return expectedErrorEventArgs.Cancel;
             }
             catch
             {
-                var expectedLoginExpiredEventArgs = new LoginExpiredPullToRefreshEventArgs();
-                App.WaitForElement(expectedLoginExpiredEventArgs.ErrorTitle, timeout: timeout);
+                try
+                {
+                    var expectedLoginExpiredEventArgs = new LoginExpiredPullToRefreshEventArgs();
+                    App.WaitForElement(expectedLoginExpiredEventArgs.Title, timeout: timeout);
 
-                App.Screenshot("Login Expired Popup Appeared");
+                    App.Screenshot("Login Expired Popup Appeared");
 
-                return expectedLoginExpiredEventArgs.DismissText;
+                    return expectedLoginExpiredEventArgs.Cancel;
+                }
+                catch
+                {
+                    var maximimApiRequestsReachedEventArgs = new MaximimApiRequestsReachedEventArgs(0);
+                    App.WaitForElement(maximimApiRequestsReachedEventArgs.Title, timeout: timeout);
+
+                    App.Screenshot("Maximum API Requests Popup Appeared");
+
+                    return maximimApiRequestsReachedEventArgs.Cancel;
+                }
             }
         }
 
         public async Task WaitForPullToRefreshIndicator(TimeSpan? timeSpan = null)
         {
-            timeSpan ??= TimeSpan.FromSeconds(25);
+            timeSpan ??= TimeSpan.FromSeconds(3);
 
             int counter = 0;
             while (!IsRefreshViewRefreshIndicatorDisplayed)
             {
                 await Task.Delay(1000).ConfigureAwait(false);
 
-                if (counter++ >= timeSpan.Value.Seconds)
-                    throw new Exception($"Loading the list took longer than {timeSpan.Value.Seconds} seconds");
+                if (counter++ >= timeSpan.Value.TotalSeconds)
+                    throw new Exception($"Waiting for the Pull To Refresh Indicator took longer than {timeSpan.Value.TotalSeconds} seconds");
             }
         }
 
         public async Task WaitForNoPullToRefreshIndicator(TimeSpan? timeSpan = null)
         {
-            timeSpan ??= TimeSpan.FromSeconds(25);
+            timeSpan ??= TimeSpan.FromSeconds(60);
 
             int counter = 0;
             while (IsRefreshViewRefreshIndicatorDisplayed)
             {
                 await Task.Delay(1000).ConfigureAwait(false);
 
-                if (counter++ >= timeSpan.Value.Seconds)
-                    throw new Exception($"Loading the list took longer than {timeSpan.Value.Seconds} seconds");
+                if (counter++ >= timeSpan.Value.TotalSeconds)
+                    throw new Exception($"Loading the list took longer than {timeSpan.Value.TotalSeconds} seconds");
             }
         }
     }

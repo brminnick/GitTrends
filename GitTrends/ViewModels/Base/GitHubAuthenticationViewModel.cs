@@ -20,12 +20,12 @@ namespace GitTrends
             gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
-            ConnectToGitHubButtonCommand = new AsyncCommand<CancellationToken>(cancellationToken => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, cancellationToken), _ => IsNotAuthenticating);
+            ConnectToGitHubButtonCommand = new AsyncCommand<(CancellationToken CancellationToken, BrowserLaunchOptions? BrowserLaunchOptions)>(tuple => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, tuple.CancellationToken, tuple.BrowserLaunchOptions), _ => IsNotAuthenticating);
             DemoButtonCommand = new AsyncCommand<string>(text => ExecuteDemoButtonCommand(text), _ => IsNotAuthenticating);
             GitHubAuthenticationService = gitHubAuthenticationService;
         }
 
-        public IAsyncCommand<CancellationToken> ConnectToGitHubButtonCommand { get; }
+        public IAsyncCommand<(CancellationToken CancellationToken, BrowserLaunchOptions? BrowserLaunchOptions)> ConnectToGitHubButtonCommand { get; }
         public IAsyncCommand<string> DemoButtonCommand { get; }
 
         public bool IsNotAuthenticating => !IsAuthenticating;
@@ -56,7 +56,7 @@ namespace GitTrends
             return Task.CompletedTask;
         }
 
-        protected async virtual Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, CancellationToken cancellationToken)
+        protected async virtual Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, CancellationToken cancellationToken, BrowserLaunchOptions? browserLaunchOptions = null)
         {
             IsAuthenticating = true;
 
@@ -66,7 +66,7 @@ namespace GitTrends
 
                 if (!string.IsNullOrWhiteSpace(loginUrl))
                 {
-                    await deepLinkingService.OpenBrowser(loginUrl).ConfigureAwait(false);
+                    await deepLinkingService.OpenBrowser(loginUrl, browserLaunchOptions).ConfigureAwait(false);
                 }
                 else
                 {

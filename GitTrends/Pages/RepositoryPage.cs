@@ -8,7 +8,6 @@ using AsyncAwaitBestPractices.MVVM;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
-using GitTrends.Views.Base;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -19,11 +18,15 @@ namespace GitTrends
     {
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
         readonly RefreshView _refreshView;
+        readonly DeepLinkingService _deepLinkingService;
 
         public RepositoryPage(RepositoryViewModel repositoryViewModel,
                                 AnalyticsService analyticsService,
-                                SortingService sortingService) : base(repositoryViewModel, analyticsService, PageTitles.RepositoryPage)
+                                SortingService sortingService,
+                                DeepLinkingService deepLinkingService) : base(repositoryViewModel, analyticsService, PageTitles.RepositoryPage)
         {
+            _deepLinkingService = deepLinkingService;
+
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
 
@@ -36,8 +39,10 @@ namespace GitTrends
                 //Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
                 Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
                 Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
-                EmptyView = new EmptyDataView("EmptyRepositoriesList", "Your repositories list is\nempty.", RepositoryPageAutomationIds.EmptyDataView)
+                EmptyView = new EmptyDataView("EmptyRepositoriesList", RepositoryPageAutomationIds.EmptyDataView)
                             .Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
+                            .Bind(EmptyDataView.TextProperty, nameof(RepositoryViewModel.EmptyDataViewText))
+
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));
@@ -188,7 +193,16 @@ namespace GitTrends
                 if (!Application.Current.MainPage.Navigation.ModalStack.Any()
                     && Application.Current.MainPage.Navigation.NavigationStack.Last() is RepositoryPage)
                 {
-                    await DisplayAlert(e.ErrorTitle, e.ErrorMessage, e.DismissText);
+                    if (e.Accept is null)
+                    {
+                        await DisplayAlert(e.Title, e.Message, e.Cancel);
+                    }
+                    else
+                    {
+                        var isAccepted = await DisplayAlert(e.Title, e.Message, e.Accept, e.Cancel);
+                        if (isAccepted)
+                            await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs);
+                    }
                 }
             });
         }

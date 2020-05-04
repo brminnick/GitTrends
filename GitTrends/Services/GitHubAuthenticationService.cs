@@ -13,6 +13,7 @@ namespace GitTrends
     public class GitHubAuthenticationService
     {
         const string _oauthTokenKey = "OAuthToken";
+
         readonly WeakEventManager<AuthorizeSessionCompletedEventArgs> _authorizeSessionCompletedEventManager = new WeakEventManager<AuthorizeSessionCompletedEventArgs>();
         readonly WeakEventManager _authorizeSessionStartedEventManager = new WeakEventManager();
         readonly WeakEventManager _loggedOuteventManager = new WeakEventManager();

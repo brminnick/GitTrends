@@ -14,6 +14,8 @@ namespace GitTrends
 {
     class TrendsViewModel : BaseViewModel
     {
+        const string _emptyDataViewText_NoTrafficYet = "No traffic yet";
+
         readonly GitHubApiV3Service _gitHubApiV3Service;
 
         bool _isFetchingData = true;
@@ -23,6 +25,7 @@ namespace GitTrends
         string _uniqueViewsStatisticsText = string.Empty;
         string _clonesStatisticsText = string.Empty;
         string _uniqueClonesStatisticsText = string.Empty;
+        string _emptyDataViewText = string.Empty;
 
         List<DailyViewsModel>? _dailyViewsList;
         List<DailyClonesModel>? _dailyClonesList;
@@ -71,6 +74,12 @@ namespace GitTrends
 
                 return Math.Max(Math.Max(dailyViewMaxValue, dailyClonesMaxValue), minimumValue);
             }
+        }
+
+        public string EmptyDataViewText
+        {
+            get => _emptyDataViewText;
+            set => SetProperty(ref _emptyDataViewText, value);
         }
 
         public string ViewsStatisticsText
@@ -174,11 +183,15 @@ namespace GitTrends
                     repositoryViews = repositoryViewsResponse.DailyViewsList;
                     repositoryClones = repositoryClonesResponse.DailyClonesList;
                 }
+
+                EmptyDataViewText = _emptyDataViewText_NoTrafficYet;
             }
             catch (Exception e)
             {
                 repositoryViews = Enumerable.Empty<DailyViewsModel>().ToList();
                 repositoryClones = Enumerable.Empty<DailyClonesModel>().ToList();
+
+                EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
 
                 AnalyticsService.Report(e);
             }
