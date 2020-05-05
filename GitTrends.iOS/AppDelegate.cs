@@ -5,10 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
-using BackgroundTasks;
 using Foundation;
 using Shiny;
 using UIKit;
+using WindowsAzure.Messaging;
 
 namespace GitTrends.iOS
 {
@@ -70,8 +70,27 @@ namespace GitTrends.iOS
             }
         }
 
+        public override async void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
+
+            await Task.WhenAll(backgroundFetchService.CleanUpDatabase(), backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None)).ConfigureAwait(false);
+        }
+
         public override async void ReceivedLocalNotification(UIApplication application, UILocalNotification notification) =>
             await HandleLocalNotification(notification).ConfigureAwait(false);
+
+        public override async void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var analyticsService = scope.Resolve<AnalyticsService>();
+
+            var hub = new SBNotificationHub(NotificationHubConstants.Name, NotificationHubConstants.ListenConnectionString);
+
+            await hub.UnregisterAllAsync(deviceToken).ConfigureAwait(false);
+            await hub.RegisterNativeAsync(deviceToken, null).ConfigureAwait(false);
+        }
 
         Task HandleLocalNotification(UILocalNotification notification)
         {

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "993020995038",
+    "firebase_url": "https://gittrends-26790.firebaseio.com",
+    "project_id": "gittrends-26790",
+    "storage_bucket": "gittrends-26790.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:993020995038:android:6099ac453bf42ccaca694f",
+        "android_client_info": {
+          "package_name": "com.minnick.gittrends"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "993020995038-gb6ou11584o3rickuqsfa8he8ljoq512.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALz_NvToF8ra-xCL-SHPT40jFzE0tiK34"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "993020995038-gb6ou11584o3rickuqsfa8he8ljoq512.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

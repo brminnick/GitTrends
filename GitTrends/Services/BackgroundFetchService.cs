@@ -37,7 +37,7 @@ namespace GitTrends
 
         public async Task CleanUpDatabase()
         {
-            using var timedEvent = _analyticsService.TrackTime($"{nameof(CleanUpDatabase)} Triggered");
+            using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(CleanUpDatabase)} Triggered");
 
             await Task.WhenAll(_referringSitesDatabase.DeleteExpiredData(), _repositoryDatabase.DeleteExpiredData()).ConfigureAwait(false);
         }
@@ -46,7 +46,7 @@ namespace GitTrends
         {
             try
             {
-                using var timedEvent = _analyticsService.TrackTime($"{nameof(NotifyTrendingRepositories)} Triggered");
+                using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(NotifyTrendingRepositories)} Triggered");
 
                 var trendingRepositories = await GetTrendingRepositories(cancellationToken).ConfigureAwait(false);
                 await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
@@ -97,11 +97,5 @@ namespace GitTrends
 
             return Enumerable.Empty<Repository>().ToList();
         }
-    }
-
-    public interface IBackgroundFetchService
-    {
-        public void Register();
-        public void Scehdule();
     }
 }
