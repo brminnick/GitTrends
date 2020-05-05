@@ -87,8 +87,10 @@ namespace GitTrends.iOS
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var analyticsService = scope.Resolve<AnalyticsService>();
 
+            var tokenAsString = deviceToken.GetBase64EncodedString(NSDataBase64EncodingOptions.None);
+
             var hubClient = NotificationHubClient.CreateClientFromConnectionString(NotificationHubConstants.Name, NotificationHubConstants.ListenConnectionString);
-            await hubClient.CreateAppleNativeRegistrationAsync(deviceToken.ToString()).ConfigureAwait(false);
+            await hubClient.CreateAppleNativeRegistrationAsync(tokenAsString).ConfigureAwait(false);
         }
 
         Task HandleLocalNotification(UILocalNotification notification)
