@@ -5,7 +5,7 @@ using Android.Content;
 using Autofac;
 using Autofac.Core;
 using Firebase.Messaging;
-using WindowsAzure.Messaging;
+using Microsoft.Azure.NotificationHubs;
 
 namespace GitTrends.Droid
 {
@@ -13,10 +13,10 @@ namespace GitTrends.Droid
     [IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
     public class FirebaseService : FirebaseMessagingService
     {
-        public override void OnNewToken(string token)
+        public override async void OnNewToken(string token)
         {
-            var hub = new NotificationHub(NotificationHubConstants.Name, NotificationHubConstants.ListenConnectionString, this);
-            hub.Register(token);
+            var hubClient = NotificationHubClient.CreateClientFromConnectionString(NotificationHubConstants.Name, NotificationHubConstants.ListenConnectionString);
+            await hubClient.CreateFcmNativeRegistrationAsync(token).ConfigureAwait(false);
         }
 
         public override async void OnMessageReceived(RemoteMessage message)

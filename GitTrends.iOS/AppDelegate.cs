@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
 using Foundation;
+using Microsoft.Azure.NotificationHubs;
 using Shiny;
 using UIKit;
 using WindowsAzure.Messaging;
@@ -86,10 +87,8 @@ namespace GitTrends.iOS
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var analyticsService = scope.Resolve<AnalyticsService>();
 
-            var hub = new SBNotificationHub(NotificationHubConstants.Name, NotificationHubConstants.ListenConnectionString);
-
-            await hub.UnregisterAllAsync(deviceToken).ConfigureAwait(false);
-            await hub.RegisterNativeAsync(deviceToken, null).ConfigureAwait(false);
+            var hubClient = NotificationHubClient.CreateClientFromConnectionString(NotificationHubConstants.Name, NotificationHubConstants.ListenConnectionString);
+            await hubClient.CreateAppleNativeRegistrationAsync(deviceToken.ToString()).ConfigureAwait(false);
         }
 
         Task HandleLocalNotification(UILocalNotification notification)
