@@ -9,25 +9,39 @@ namespace GitTrends.Functions
 {
     public class SendSilentPushNotification
     {
-#if DEBUG
-        readonly static Lazy<NotificationHubClient> _clientHolder = new Lazy<NotificationHubClient>(NotificationHubClient.CreateClientFromConnectionString(GetNotificationHubInformation.NotificationHubConnectionString_Debug, GetNotificationHubInformation.NotificationHubName_Debug));
-#else
-        readonly static Lazy<NotificationHubClient> _clientHolder = new Lazy<NotificationHubClient>(NotificationHubClient.CreateClientFromConnectionString(GetNotificationHubInformation.NotificationHubConnectionString, GetNotificationHubInformation.NotificationHubName));
-#endif
+        const string _runEveryTwelveHoursCron = "0 0 0/12 * * *";
+
+        readonly static string _notificationHubFullConnectionString_Debug = Environment.GetEnvironmentVariable("NotificationHubFullConnectionString_Debug") ?? string.Empty;
+        readonly static string _notificationHubFullConnectionString = Environment.GetEnvironmentVariable("NotificationHubFullConnectionString") ?? string.Empty;
+
+        readonly static Lazy<NotificationHubClient> _clientHolder = new Lazy<NotificationHubClient>(NotificationHubClient.CreateClientFromConnectionString(_notificationHubFullConnectionString, GetNotificationHubInformation.NotificationHubName));
+        readonly static Lazy<NotificationHubClient> _debugClientHolder = new Lazy<NotificationHubClient>(NotificationHubClient.CreateClientFromConnectionString(_notificationHubFullConnectionString_Debug, GetNotificationHubInformation.NotificationHubName_Debug));
 
         static NotificationHubClient Client => _clientHolder.Value;
+        static NotificationHubClient DebugClient => _debugClientHolder.Value;
 
         [FunctionName(nameof(SendSilentPushNotification))]
-        public static Task Run([TimerTrigger("0 0 0/12 * * *")] TimerInfo myTimer, ILogger log) => Task.WhenAll(TrySendAppleSilentNotification(log), TrySendFcmSilentNotification(log));
+        public static Task Run([TimerTrigger(_runEveryTwelveHoursCron)] TimerInfo myTimer, ILogger log) => Task.WhenAll(TrySendAppleSilentNotification(Client, log), TrySendFcmSilentNotification(Client, log));
 
-        static async Task TrySendAppleSilentNotification(ILogger log)
+        [FunctionName(nameof(SendSilentPushNotification) + "Debug")]
+        public static async Task RunDebug([TimerTrigger(_runEveryTwelveHoursCron, RunOnStartup = true)] TimerInfo myTimer, ILogger log)
+        {
+            log.LogInformation(_notificationHubFullConnectionString);
+            log.LogInformation(_notificationHubFullConnectionString_Debug);
+            log.LogInformation(GetNotificationHubInformation.NotificationHubName);
+            log.LogInformation(GetNotificationHubInformation.NotificationHubName_Debug);
+
+            await Task.WhenAll(TrySendAppleSilentNotification(DebugClient, log), TrySendFcmSilentNotification(DebugClient, log)).ConfigureAwait(false);
+        }
+
+        static async Task TrySendAppleSilentNotification(NotificationHubClient client, ILogger log)
         {
             try
             {
                 log.LogInformation("Sending Silent Apple Push Notifications");
 
                 var jsonPayload = JsonConvert.SerializeObject(new ApplePushNotification());
-                var appleNotificationResult = await Client.SendAppleNativeNotificationAsync(jsonPayload).ConfigureAwait(false);
+                var appleNotificationResult = await client.SendAppleNativeNotificationAsync(jsonPayload).ConfigureAwait(false);
 
                 log.LogInformation("Apple Notifications Sent");
             }
@@ -37,14 +51,14 @@ namespace GitTrends.Functions
             }
         }
 
-        static async Task TrySendFcmSilentNotification(ILogger log)
+        static async Task TrySendFcmSilentNotification(NotificationHubClient client, ILogger log)
         {
             try
             {
                 log.LogInformation("Sending Silent FCM Push Notifications");
 
                 var jsonPayload = JsonConvert.SerializeObject(new FcmPushNotification());
-                var fcmNotificationResult = await Client.SendFcmNativeNotificationAsync(jsonPayload).ConfigureAwait(false);
+                var fcmNotificationResult = await client.SendFcmNativeNotificationAsync(jsonPayload).ConfigureAwait(false);
 
                 log.LogInformation("FCM Notifications Sent");
             }
