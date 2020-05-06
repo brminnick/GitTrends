@@ -58,6 +58,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\GitHubApiService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IDailyClonesModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IDailyViewsModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\NotificationHubDTO.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Services\ImageService.cs" />
