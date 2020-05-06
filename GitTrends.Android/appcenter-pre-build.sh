@@ -6,4 +6,6 @@ sed -i '' "s/GetUITestTokenApiKey = \"\"/GetUITestTokenApiKey = \"$UITestTokenAp
 
 sed -i '' "s/GetSyncFusionInformationApiKey = \"\"/GetSyncFusionInformationApiKey = \"$GetSyncFusionInformationApiKey\"/g" "$AzureConstantsFile"
 
+sed -i '' "s/GetNotificationHubInformationApiKey = \"\"/GetNotificationHubInformationApiKey = \"$GetNotificationHubInformationApiKey\"/g" "$AzureConstantsFile"
+
 echo "Finished Injecting API Keys"
