@@ -61,6 +61,7 @@
         <Compile Include="Pages\WelcomePage.cs" />
         <Compile Include="Tests\WelcomeTests.cs" />
         <Compile Include="Constants\LoggedInUserConstants.cs" />
+        <Compile Include="Tests\AppStoreScreenShots.cs" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Pages\" />
