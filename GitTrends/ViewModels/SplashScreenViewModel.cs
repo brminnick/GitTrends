@@ -13,9 +13,10 @@ namespace GitTrends
 
         public SplashScreenViewModel(SyncFusionService syncfusionService,
                                         MediaElementService mediaElementService,
-                                        AnalyticsService analyticsService) : base(analyticsService)
+                                        AnalyticsService analyticsService,
+                                        NotificationService notificationService) : base(analyticsService)
         {
-            InitializeAppCommand = new AsyncCommand(() => ExecuteInitializeAppCommand(syncfusionService, mediaElementService));
+            InitializeAppCommand = new AsyncCommand(() => ExecuteInitializeAppCommand(syncfusionService, mediaElementService, notificationService));
         }
 
         public event EventHandler<InitializationCompleteEventArgs> InitializationComplete
@@ -26,7 +27,7 @@ namespace GitTrends
 
         public ICommand InitializeAppCommand { get; }
 
-        async Task ExecuteInitializeAppCommand(SyncFusionService syncFusionService, MediaElementService mediaElementService)
+        async Task ExecuteInitializeAppCommand(SyncFusionService syncFusionService, MediaElementService mediaElementService, NotificationService notificationService)
         {
             bool isInitializationSuccessful = false;
 
@@ -34,10 +35,12 @@ namespace GitTrends
             {
                 var initializeSyncfusionTask = syncFusionService.Initialize(CancellationToken.None);
                 var intializeOnboardingChartValueTask = mediaElementService.InitializeOnboardingChart(CancellationToken.None);
+                var initializeNotificationServiceTask = notificationService.Initialize(CancellationToken.None);
 #if DEBUG
                 initializeSyncfusionTask.SafeFireAndForget(ex => AnalyticsService.Report(ex));
+                initializeNotificationServiceTask.SafeFireAndForget(ex => AnalyticsService.Report(ex));
 #else
-                await initializeSyncfusionTask.ConfigureAwait(false);
+                await Task.WhenAll(initializeNotificationServiceTask, initializeSyncfusionTask).ConfigureAwait(false);
 #endif
                 await intializeOnboardingChartValueTask.ConfigureAwait(false);
 

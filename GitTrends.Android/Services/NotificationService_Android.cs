@@ -8,6 +8,7 @@ using AndroidX.Core.App;
 using Autofac;
 using Firebase.Messaging;
 using GitTrends.Droid;
+using GitTrends.Shared;
 using Microsoft.Azure.NotificationHubs;
 using Xamarin.Forms;
 
@@ -43,8 +44,24 @@ namespace GitTrends.Droid
     {
         public override async void OnNewToken(string token)
         {
-            var hubClient = NotificationHubClient.CreateClientFromConnectionString(NotificationHubConstants.ListenConnectionString, NotificationHubConstants.Name);
-            await hubClient.CreateFcmNativeRegistrationAsync(token).ConfigureAwait(false);
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var notificationService = scope.Resolve<NotificationService>();
+
+            notificationService.InitializationCompleted += HandleInitializationCompleted;
+
+            var notificationHubInformation = await notificationService.GetNotificationHubInformation().ConfigureAwait(false);
+
+            if (!notificationHubInformation.IsEmpty())
+            {
+                notificationService.InitializationCompleted -= HandleInitializationCompleted;
+                await RegisterWithNotificationHub(notificationHubInformation, token).ConfigureAwait(false);
+            }
+
+            async void HandleInitializationCompleted(object sender, NotificationHubInformation e)
+            {
+                notificationService.InitializationCompleted -= HandleInitializationCompleted;
+                await RegisterWithNotificationHub(e, token).ConfigureAwait(false);
+            }
         }
 
         public override async void OnMessageReceived(RemoteMessage message)
@@ -55,6 +72,19 @@ namespace GitTrends.Droid
             var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
 
             await Task.WhenAll(backgroundFetchService.CleanUpDatabase(), backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None));
+        }
+
+        Task RegisterWithNotificationHub(NotificationHubInformation notificationHubInformation, string token)
+        {
+#if AppStore
+            var hubClient = NotificationHubClient.CreateClientFromConnectionString(notificationHubInformation.ConnectionString, notificationHubInformation.Name);
+#else
+            if (notificationHubInformation.IsEmpty())
+                return Task.CompletedTask;
+
+            var hubClient = NotificationHubClient.CreateClientFromConnectionString(notificationHubInformation.ConnectionString_Debug, notificationHubInformation.Name_Debug);
+#endif
+            return hubClient.CreateFcmNativeRegistrationAsync(token);
         }
     }
 }

@@ -18,6 +18,6 @@ namespace GitTrends.Functions
 
         [FunctionName(nameof(GetNotificationHubInformation))]
         public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request, ILogger log) =>
-           new OkObjectResult(new NotificationHubDTO(NotificationHubName, NotificationHubConnectionString, NotificationHubName_Debug, NotificationHubConnectionString_Debug));
+           new OkObjectResult(new NotificationHubInformation(NotificationHubName, NotificationHubConnectionString, NotificationHubName_Debug, NotificationHubConnectionString_Debug));
     }
 }

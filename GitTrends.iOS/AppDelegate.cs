@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
 using Foundation;
+using GitTrends.Shared;
 using Microsoft.Azure.NotificationHubs;
 using Shiny;
 using UIKit;
@@ -85,10 +86,20 @@ namespace GitTrends.iOS
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var analyticsService = scope.Resolve<AnalyticsService>();
+            var notificationService = scope.Resolve<NotificationService>();
+
+            var notificationHubInformation = await notificationService.GetNotificationHubInformation().ConfigureAwait(false);
 
             var tokenAsString = BitConverter.ToString(deviceToken.ToArray()).Replace("-", "").Replace("\"", "");
 
-            var hubClient = NotificationHubClient.CreateClientFromConnectionString(NotificationHubConstants.ListenConnectionString, NotificationHubConstants.Name);
+#if AppStore
+            var hubClient = NotificationHubClient.CreateClientFromConnectionString(notificationHubInformation.ConnectionString, notificationHubInformation.Name);
+#else
+            if (notificationHubInformation.IsEmpty())
+                return;
+
+            var hubClient = NotificationHubClient.CreateClientFromConnectionString(notificationHubInformation.ConnectionString_Debug, notificationHubInformation.Name_Debug);
+#endif
             await hubClient.CreateAppleNativeRegistrationAsync(tokenAsString).ConfigureAwait(false);
         }
 

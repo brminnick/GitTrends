@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using GitTrends.Shared;
+using Newtonsoft.Json;
 using Shiny;
 using Shiny.Notifications;
 using Xamarin.Essentials;
@@ -14,23 +16,28 @@ namespace GitTrends
     public class NotificationService
     {
         const string _trendingRepositoriesNotificationTitle = "Your Repos Are Trending";
+        const string _getNotificationHubInformationKey = "GetNotificationHubInformation";
 
-        readonly WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new WeakEventManager<SortingOption>();
         readonly WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new WeakEventManager<(bool isSuccessful, string errorMessage)>();
+        readonly WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new WeakEventManager<SortingOption>();
+        readonly WeakEventManager<NotificationHubInformation> _initializationCompletedEventManager = new WeakEventManager<NotificationHubInformation>();
 
         readonly AnalyticsService _analyticsService;
         readonly DeepLinkingService _deepLinkingService;
         readonly SortingService _sortingService;
+        readonly AzureFunctionsApiService _azureFunctionsApiService;
 
         TaskCompletionSource<AccessState>? _settingsResultCompletionSource;
 
         public NotificationService(AnalyticsService analyticsService,
                                     DeepLinkingService deepLinkingService,
-                                    SortingService sortingService)
+                                    SortingService sortingService,
+                                    AzureFunctionsApiService azureFunctionsApiService)
         {
             _analyticsService = analyticsService;
             _deepLinkingService = deepLinkingService;
             _sortingService = sortingService;
+            _azureFunctionsApiService = azureFunctionsApiService;
 
             var app = (App)Application.Current;
             app.Resumed += HandleAppResumed;
@@ -40,6 +47,12 @@ namespace GitTrends
         {
             add => _sortingOptionRequestedEventManager.AddEventHandler(value);
             remove => _sortingOptionRequestedEventManager.RemoveEventHandler(value);
+        }
+
+        public event EventHandler<NotificationHubInformation> InitializationCompleted
+        {
+            add => _initializationCompletedEventManager.AddEventHandler(value);
+            remove => _initializationCompletedEventManager.RemoveEventHandler(value);
         }
 
         public event EventHandler<(bool isSuccessful, string errorMessage)> RegisterForNotificationsCompleted
@@ -66,6 +79,48 @@ namespace GitTrends
         {
             bool? areNotificationsEnabled = await DependencyService.Get<INotificationService>().AreNotificationEnabled().ConfigureAwait(false);
             return areNotificationsEnabled ?? false;
+        }
+
+        public async Task Initialize(CancellationToken cancellationToken)
+        {
+            var notificationHubInformation = await GetNotificationHubInformation().ConfigureAwait(false);
+
+            if (notificationHubInformation.IsEmpty())
+            {
+                await UpdateNotificationHubInformation(_azureFunctionsApiService, cancellationToken).ConfigureAwait(false);
+            }
+            else
+            {
+                UpdateNotificationHubInformation(_azureFunctionsApiService, cancellationToken).SafeFireAndForget();
+            }
+
+            OnInitializationCompelted(notificationHubInformation);
+
+            static async Task UpdateNotificationHubInformation(AzureFunctionsApiService azureFunctionsApiService, CancellationToken cancellationToken)
+            {
+                var notificationHubDTO = await azureFunctionsApiService.GetNotificationHubInformation(cancellationToken).ConfigureAwait(false);
+                await SecureStorage.SetAsync(_getNotificationHubInformationKey, JsonConvert.SerializeObject(notificationHubDTO)).ConfigureAwait(false);
+            }
+        }
+
+        public async Task<NotificationHubInformation> GetNotificationHubInformation()
+        {
+            var serializedToken = await SecureStorage.GetAsync(_getNotificationHubInformationKey).ConfigureAwait(false);
+
+            try
+            {
+                var token = JsonConvert.DeserializeObject<NotificationHubInformation?>(serializedToken);
+
+                return token ?? NotificationHubInformation.Empty;
+            }
+            catch (ArgumentNullException)
+            {
+                return NotificationHubInformation.Empty;
+            }
+            catch (JsonReaderException)
+            {
+                return NotificationHubInformation.Empty;
+            }
         }
 
         public void UnRegister() => ShouldSendNotifications = false;
@@ -270,6 +325,8 @@ namespace GitTrends
                 _settingsResultCompletionSource.SetResult(finalResult);
             }
         }
+
+        void OnInitializationCompelted(NotificationHubInformation notificationHubInformation) => _initializationCompletedEventManager.HandleEvent(this, notificationHubInformation, nameof(InitializationCompleted));
 
         void OnSortingOptionRequestion(SortingOption sortingOption) => _sortingOptionRequestedEventManager.HandleEvent(this, sortingOption, nameof(SortingOptionRequested));
 
