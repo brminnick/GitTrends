@@ -42,8 +42,11 @@ namespace GitTrends.Droid
     [Service, IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
     public class FirebaseService : FirebaseMessagingService
     {
+        readonly static TaskCompletionSource<NotificationHubInformation> _notificationHubInformationTCS = new TaskCompletionSource<NotificationHubInformation>();
+
         public override async void OnNewToken(string token)
         {
+
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var notificationService = scope.Resolve<NotificationService>();
 
@@ -51,17 +54,11 @@ namespace GitTrends.Droid
 
             var notificationHubInformation = await notificationService.GetNotificationHubInformation().ConfigureAwait(false);
 
-            if (!notificationHubInformation.IsEmpty())
-            {
-                notificationService.InitializationCompleted -= HandleInitializationCompleted;
-                await RegisterWithNotificationHub(notificationHubInformation, token).ConfigureAwait(false);
-            }
+            if (notificationHubInformation.IsEmpty())
+                notificationHubInformation = await _notificationHubInformationTCS.Task.ConfigureAwait(false);
 
-            async void HandleInitializationCompleted(object sender, NotificationHubInformation e)
-            {
-                notificationService.InitializationCompleted -= HandleInitializationCompleted;
-                await RegisterWithNotificationHub(e, token).ConfigureAwait(false);
-            }
+            notificationService.InitializationCompleted -= HandleInitializationCompleted;
+            await RegisterWithNotificationHub(notificationHubInformation, token).ConfigureAwait(false);
         }
 
         public override async void OnMessageReceived(RemoteMessage message)
@@ -74,7 +71,7 @@ namespace GitTrends.Droid
             await Task.WhenAll(backgroundFetchService.CleanUpDatabase(), backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None));
         }
 
-        Task RegisterWithNotificationHub(NotificationHubInformation notificationHubInformation, string token)
+        Task RegisterWithNotificationHub(in NotificationHubInformation notificationHubInformation, in string token)
         {
 #if AppStore
             var hubClient = NotificationHubClient.CreateClientFromConnectionString(notificationHubInformation.ConnectionString, notificationHubInformation.Name);
@@ -86,5 +83,7 @@ namespace GitTrends.Droid
 #endif
             return hubClient.CreateFcmNativeRegistrationAsync(token);
         }
+
+        static void HandleInitializationCompleted(object sender, NotificationHubInformation e) => _notificationHubInformationTCS.SetResult(e);
     }
 }

@@ -19,8 +19,8 @@ namespace GitTrends
         const string _getNotificationHubInformationKey = "GetNotificationHubInformation";
 
         readonly WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new WeakEventManager<(bool isSuccessful, string errorMessage)>();
-        readonly WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new WeakEventManager<SortingOption>();
         readonly WeakEventManager<NotificationHubInformation> _initializationCompletedEventManager = new WeakEventManager<NotificationHubInformation>();
+        readonly WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new WeakEventManager<SortingOption>();
 
         readonly AnalyticsService _analyticsService;
         readonly DeepLinkingService _deepLinkingService;
@@ -43,16 +43,16 @@ namespace GitTrends
             app.Resumed += HandleAppResumed;
         }
 
-        public event EventHandler<SortingOption> SortingOptionRequested
-        {
-            add => _sortingOptionRequestedEventManager.AddEventHandler(value);
-            remove => _sortingOptionRequestedEventManager.RemoveEventHandler(value);
-        }
-
         public event EventHandler<NotificationHubInformation> InitializationCompleted
         {
             add => _initializationCompletedEventManager.AddEventHandler(value);
             remove => _initializationCompletedEventManager.RemoveEventHandler(value);
+        }
+
+        public event EventHandler<SortingOption> SortingOptionRequested
+        {
+            add => _sortingOptionRequestedEventManager.AddEventHandler(value);
+            remove => _sortingOptionRequestedEventManager.RemoveEventHandler(value);
         }
 
         public event EventHandler<(bool isSuccessful, string errorMessage)> RegisterForNotificationsCompleted
@@ -87,19 +87,28 @@ namespace GitTrends
 
             if (notificationHubInformation.IsEmpty())
             {
-                await UpdateNotificationHubInformation(_azureFunctionsApiService, cancellationToken).ConfigureAwait(false);
+                await initalize().ConfigureAwait(false);
             }
             else
             {
-                UpdateNotificationHubInformation(_azureFunctionsApiService, cancellationToken).SafeFireAndForget();
+                initalize().SafeFireAndForget();
             }
 
-            OnInitializationCompelted(notificationHubInformation);
-
-            static async Task UpdateNotificationHubInformation(AzureFunctionsApiService azureFunctionsApiService, CancellationToken cancellationToken)
+            async Task initalize()
             {
-                var notificationHubDTO = await azureFunctionsApiService.GetNotificationHubInformation(cancellationToken).ConfigureAwait(false);
-                await SecureStorage.SetAsync(_getNotificationHubInformationKey, JsonConvert.SerializeObject(notificationHubDTO)).ConfigureAwait(false);
+                try
+                {
+                    notificationHubInformation = await _azureFunctionsApiService.GetNotificationHubInformation(cancellationToken).ConfigureAwait(false);
+                    await SecureStorage.SetAsync(_getNotificationHubInformationKey, JsonConvert.SerializeObject(notificationHubInformation)).ConfigureAwait(false);
+                }
+                catch (Exception e)
+                {
+                    _analyticsService.Report(e);
+                }
+                finally
+                {
+                    OnInitializationCompleted(notificationHubInformation);
+                }
             }
         }
 
@@ -326,7 +335,7 @@ namespace GitTrends
             }
         }
 
-        void OnInitializationCompelted(NotificationHubInformation notificationHubInformation) => _initializationCompletedEventManager.HandleEvent(this, notificationHubInformation, nameof(InitializationCompleted));
+        void OnInitializationCompleted(NotificationHubInformation notificationHubInformation) => _initializationCompletedEventManager.HandleEvent(this, notificationHubInformation, nameof(InitializationCompleted));
 
         void OnSortingOptionRequestion(SortingOption sortingOption) => _sortingOptionRequestedEventManager.HandleEvent(this, sortingOption, nameof(SortingOptionRequested));
 
