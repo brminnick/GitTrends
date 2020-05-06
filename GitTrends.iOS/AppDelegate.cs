@@ -100,7 +100,10 @@ namespace GitTrends.iOS
 
             var hubClient = NotificationHubClient.CreateClientFromConnectionString(notificationHubInformation.ConnectionString_Debug, notificationHubInformation.Name_Debug);
 #endif
-            await hubClient.CreateAppleNativeRegistrationAsync(tokenAsString).ConfigureAwait(false);
+            var doesRegistrationExist = await hubClient.RegistrationExistsAsync(tokenAsString).ConfigureAwait(false);
+
+            if (!doesRegistrationExist)
+                await hubClient.CreateAppleNativeRegistrationAsync(tokenAsString).ConfigureAwait(false);
         }
 
         Task HandleLocalNotification(in UILocalNotification notification)

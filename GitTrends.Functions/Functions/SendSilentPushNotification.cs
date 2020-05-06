@@ -42,7 +42,13 @@ namespace GitTrends.Functions
                 log.LogInformation("Sending Silent Apple Push Notifications");
 
                 var jsonPayload = JsonConvert.SerializeObject(new ApplePushNotification());
-                var appleNotificationResult = await client.SendAppleNativeNotificationAsync(jsonPayload).ConfigureAwait(false);
+                var notification = new AppleNotification(jsonPayload, new Dictionary<string, string>
+                {
+                    { "apns-push-type", "background" },
+                    { "apns-priority", "5" }
+                });
+
+                var appleNotificationResult = await client.SendNotificationAsync(notification).ConfigureAwait(false);
 
                 log.LogInformation("Apple Notifications Sent");
             }
