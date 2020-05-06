@@ -14,6 +14,7 @@ namespace GitTrends
 
             var stackLayout = new StackLayout
             {
+                Spacing = 12,
                 Children =
                 {
                     new TitleLabel(Text).Bind(Label.TextProperty, nameof(Text), source: this),
