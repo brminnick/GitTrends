@@ -5,8 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
-using BackgroundTasks;
 using Foundation;
+using GitTrends.Shared;
+using Microsoft.Azure.NotificationHubs;
 using Shiny;
 using UIKit;
 
@@ -70,10 +71,39 @@ namespace GitTrends.iOS
             }
         }
 
+        public override async void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
+
+            await Task.WhenAll(backgroundFetchService.CleanUpDatabase(), backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None)).ConfigureAwait(false);
+        }
+
         public override async void ReceivedLocalNotification(UIApplication application, UILocalNotification notification) =>
             await HandleLocalNotification(notification).ConfigureAwait(false);
 
-        Task HandleLocalNotification(UILocalNotification notification)
+        public override async void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var analyticsService = scope.Resolve<AnalyticsService>();
+            var notificationService = scope.Resolve<NotificationService>();
+
+            var notificationHubInformation = await notificationService.GetNotificationHubInformation().ConfigureAwait(false);
+
+            var tokenAsString = BitConverter.ToString(deviceToken.ToArray()).Replace("-", "").Replace("\"", "");
+
+#if AppStore
+            var hubClient = NotificationHubClient.CreateClientFromConnectionString(notificationHubInformation.ConnectionString, notificationHubInformation.Name);
+#else
+            if (notificationHubInformation.IsEmpty())
+                return;
+
+            var hubClient = NotificationHubClient.CreateClientFromConnectionString(notificationHubInformation.ConnectionString_Debug, notificationHubInformation.Name_Debug);
+#endif
+            await hubClient.CreateAppleNativeRegistrationAsync(tokenAsString).ConfigureAwait(false);
+        }
+
+        Task HandleLocalNotification(in UILocalNotification notification)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var notificationService = scope.Resolve<NotificationService>();

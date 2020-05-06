@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Autofac;
 using GitTrends.iOS;
 using UIKit;
 using UserNotifications;
@@ -10,6 +11,12 @@ namespace GitTrends.iOS
 {
     public class NotificationService_iOS : INotificationService
     {
+        public NotificationService_iOS()
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            scope.Resolve<NotificationService>().RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
+        }
+
         public Task<bool?> AreNotificationEnabled() => MainThread.InvokeOnMainThreadAsync(() =>
         {
             var tcs = new TaskCompletionSource<bool?>();
@@ -36,5 +43,11 @@ namespace GitTrends.iOS
         });
 
         public Task SetiOSBadgeCount(int count) => MainThread.InvokeOnMainThreadAsync(() => UIApplication.SharedApplication.ApplicationIconBadgeNumber = count);
+
+        async void HandleRegisterForNotificationsCompleted(object sender, (bool isSuccessful, string errorMessage) e)
+        {
+            if (e.isSuccessful)
+                await MainThread.InvokeOnMainThreadAsync(UIApplication.SharedApplication.RegisterForRemoteNotifications).ConfigureAwait(false);
+        }
     }
 }

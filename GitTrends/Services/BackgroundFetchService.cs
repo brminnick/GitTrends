@@ -37,7 +37,7 @@ namespace GitTrends
 
         public async Task CleanUpDatabase()
         {
-            using var timedEvent = _analyticsService.TrackTime($"{nameof(CleanUpDatabase)} Triggered");
+            using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(CleanUpDatabase)} Triggered");
 
             await Task.WhenAll(_referringSitesDatabase.DeleteExpiredData(), _repositoryDatabase.DeleteExpiredData()).ConfigureAwait(false);
         }
@@ -46,7 +46,7 @@ namespace GitTrends
         {
             try
             {
-                using var timedEvent = _analyticsService.TrackTime($"{nameof(NotifyTrendingRepositories)} Triggered");
+                using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(NotifyTrendingRepositories)} Triggered");
 
                 var trendingRepositories = await GetTrendingRepositories(cancellationToken).ConfigureAwait(false);
                 await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
@@ -62,11 +62,7 @@ namespace GitTrends
 
         async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
         {
-#if AppStore
             if (!GitHubAuthenticationService.IsDemoUser && !string.IsNullOrEmpty(GitHubAuthenticationService.Alias))
-#else
-            if (!string.IsNullOrEmpty(GitHubAuthenticationService.Alias))
-#endif
             {
                 var retrievedRepositoryList = new List<Repository>();
                 await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(GitHubAuthenticationService.Alias, cancellationToken).ConfigureAwait(false))
@@ -97,11 +93,5 @@ namespace GitTrends
 
             return Enumerable.Empty<Repository>().ToList();
         }
-    }
-
-    public interface IBackgroundFetchService
-    {
-        public void Register();
-        public void Scehdule();
     }
 }

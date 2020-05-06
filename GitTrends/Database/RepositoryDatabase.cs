@@ -24,8 +24,11 @@ namespace GitTrends
         {
             var (_, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection) = await GetDatabaseConnections().ConfigureAwait(false);
 
-            var expiredDailyClones = await dailyClonesDatabaseConnection.Table<DailyClonesDatabaseModel>().Where(x => IsExpired(x.DownloadedAt)).ToListAsync();
-            var expiredDailyViews = await dailyViewsDatabaseConnection.Table<DailyViewsDatabaseModel>().Where(x => IsExpired(x.DataDownloadedAt)).ToListAsync();
+            var dailyClones = await dailyClonesDatabaseConnection.Table<DailyClonesDatabaseModel>().ToListAsync();
+            var dailyViews = await dailyViewsDatabaseConnection.Table<DailyViewsDatabaseModel>().ToListAsync();
+
+            var expiredDailyClones = dailyClones.Where(x => IsExpired(x.DownloadedAt));
+            var expiredDailyViews = dailyViews.Where(x => IsExpired(x.DownloadedAt));
 
             foreach (var expiredDailyClone in expiredDailyClones)
                 await dailyClonesDatabaseConnection.DeleteAsync(expiredDailyClone).ConfigureAwait(false);
@@ -55,7 +58,7 @@ namespace GitTrends
             var dailyViewsDatabaseModels = await AttemptAndRetry(() => dailyViewsDatabaseConnection.Table<DailyViewsDatabaseModel>().ToListAsync()).ConfigureAwait(false);
 
             var sortedRecentDailyClonesDatabaseModels = dailyClonesDatabaseModels.OrderByDescending(x => x.DownloadedAt).ToList();
-            var sortedRecentDailyViewsDatabaseModels = dailyViewsDatabaseModels.OrderByDescending(x => x.DataDownloadedAt).ToList();
+            var sortedRecentDailyViewsDatabaseModels = dailyViewsDatabaseModels.OrderByDescending(x => x.DownloadedAt).ToList();
 
             var mostRecentCloneDay = sortedRecentDailyClonesDatabaseModels.Any() ? sortedRecentDailyClonesDatabaseModels.Max(x => x.Day) : default;
             var mostRecentViewDay = sortedRecentDailyClonesDatabaseModels.Any() ? sortedRecentDailyViewsDatabaseModels.Max(x => x.Day) : default;
@@ -151,7 +154,7 @@ namespace GitTrends
 
             public DateTimeOffset Day { get; set; }
 
-            public DateTimeOffset DataDownloadedAt { get; set; } = DateTimeOffset.UtcNow;
+            public DateTimeOffset DownloadedAt { get; set; } = DateTimeOffset.UtcNow;
 
             public long TotalViews { get; set; }
 
@@ -164,7 +167,7 @@ namespace GitTrends
             {
                 return new DailyViewsDatabaseModel
                 {
-                    DataDownloadedAt = repository.DataDownloadedAt,
+                    DownloadedAt = repository.DataDownloadedAt,
                     RepositoryUrl = repository.Url,
                     Day = dailyViewsModel.Day,
                     TotalViews = dailyViewsModel.TotalViews,

@@ -64,6 +64,7 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchFastDev>true</MtouchFastDev>
     <MtouchProfiling>true</MtouchProfiling>
+    <CodesignProvision>GitTrends Development Profile</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -78,6 +79,7 @@
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchExtraArgs>--optimize=experimental-xforms-product-type</MtouchExtraArgs>
+    <CodesignProvision>GitTrends Development Profile</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <Optimize>true</Optimize>
@@ -107,7 +109,6 @@
     <Compile Include="Services\SKStoreReviewController.cs" />
     <Compile Include="CustomRenderers\PickerCustomRenderer.cs" />
     <Compile Include="AppDelegate.BackdoorMethods.cs" />
-    <Compile Include="Services\BackgroundFetchService_iOS.cs" />
     <Compile Include="CustomRenderers\VideoPlayerViewCustomRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -418,6 +419,7 @@
     <PackageReference Include="Shiny.Notifications" Version="1.1.0.1473" />
     <PackageReference Include="Xamarin.Forms.Visual.Material" Version="4.6.0.726" />
     <PackageReference Include="Xamarin.Forms.PancakeView" Version="1.3.7" />
+    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="3.3.0" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

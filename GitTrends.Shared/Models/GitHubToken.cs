@@ -18,4 +18,14 @@ namespace GitTrends.Shared
         [JsonProperty("token_type")]
         public string TokenType { get; }
     }
+
+    public static class GitHubTokenExtensions
+    {
+        public static bool IsEmpty(this GitHubToken gitHubToken)
+        {
+            return gitHubToken.AccessToken == string.Empty
+                    && gitHubToken.Scope == string.Empty
+                    && gitHubToken.TokenType == string.Empty;
+        }
+    }
 }
