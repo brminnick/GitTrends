@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Azure.NotificationHubs;
 using Microsoft.Azure.WebJobs;
@@ -82,11 +83,14 @@ namespace GitTrends.Functions
 
         class FcmPushNotification
         {
-            [JsonProperty("priority")]
-            public string Priority { get; } = "high";
+            [JsonProperty("message")]
+            public FcmPushNotificationBody Message { get; } = new FcmPushNotificationBody();
+        }
 
-            [JsonProperty("content_available")]
-            public bool ContentAvailable { get; } = true;
+        class FcmPushNotificationBody
+        {
+            [JsonProperty("data")]
+            public Dictionary<string, string> Data { get; } = new Dictionary<string, string>();
         }
     }
 }
