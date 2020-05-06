@@ -74,6 +74,7 @@ namespace GitTrends
             using var scope = ContainerService.Container.BeginLifetimeScope();
 
             var themeService = scope.Resolve<ThemeService>();
+            var notificationService = DependencyService.Resolve<INotificationService>();
         }
 
         void OnResumed() => _resumedEventManager.HandleEvent(this, EventArgs.Empty, nameof(Resumed));

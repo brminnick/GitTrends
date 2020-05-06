@@ -62,11 +62,7 @@ namespace GitTrends
 
         async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
         {
-#if AppStore
             if (!GitHubAuthenticationService.IsDemoUser && !string.IsNullOrEmpty(GitHubAuthenticationService.Alias))
-#else
-            if (!string.IsNullOrEmpty(GitHubAuthenticationService.Alias))
-#endif
             {
                 var retrievedRepositoryList = new List<Repository>();
                 await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(GitHubAuthenticationService.Alias, cancellationToken).ConfigureAwait(false))

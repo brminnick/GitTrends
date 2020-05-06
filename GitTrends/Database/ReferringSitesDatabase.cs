@@ -16,7 +16,8 @@ namespace GitTrends
         {
             var databaseConnection = await GetDatabaseConnection<MobileReferringSitesDatabaseModel>().ConfigureAwait(false);
 
-            var expiredReferringSites = await databaseConnection.Table<MobileReferringSitesDatabaseModel>().Where(x => IsExpired(x.DownloadedAt)).ToListAsync();
+            var referringSites = await databaseConnection.Table<MobileReferringSitesDatabaseModel>().ToListAsync();
+            var expiredReferringSites = referringSites.Where(x => IsExpired(x.DownloadedAt));
 
             foreach (var expiredReferringSite in expiredReferringSites)
                 await databaseConnection.DeleteAsync(expiredReferringSite).ConfigureAwait(false);

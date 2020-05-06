@@ -73,6 +73,8 @@ namespace GitTrends
         public async Task<AccessState> Register(bool shouldShowSettingsUI)
         {
             AccessState? finalNotificationRequestResult = null;
+            string errorMessage = string.Empty;
+
             HaveNotificationsBeenRequested = ShouldSendNotifications = true;
 
             var initialNotificationRequestResult = await NotificationManager.RequestAccess().ConfigureAwait(false);
@@ -90,12 +92,7 @@ namespace GitTrends
 
                     case AccessState.Denied:
                     case AccessState.Disabled:
-                        OnRegisterForNotificationsCompleted(false, "Notifications Disabled");
-                        break;
-
-                    case AccessState.Available:
-                    case AccessState.Restricted:
-                        OnRegisterForNotificationsCompleted(true, string.Empty);
+                        errorMessage = "Notifications Disabled";
                         break;
 
                     case AccessState.NotSetup:
@@ -103,19 +100,26 @@ namespace GitTrends
                         break;
 
                     case AccessState.NotSupported:
-                        OnRegisterForNotificationsCompleted(false, "Notifications Are Not Supported");
+                        errorMessage = "Notifications Are Not Supported";
                         break;
                 }
 
-                return finalNotificationRequestResult ?? initialNotificationRequestResult;
+                return finalNotificationRequestResult ??= initialNotificationRequestResult;
             }
             catch (Exception e)
             {
                 _analyticsService.Report(e);
+                errorMessage = e.Message;
+
                 return initialNotificationRequestResult;
             }
             finally
             {
+                if (finalNotificationRequestResult is AccessState.Available || finalNotificationRequestResult is AccessState.Restricted)
+                    OnRegisterForNotificationsCompleted(true, string.Empty);
+                else
+                    OnRegisterForNotificationsCompleted(false, errorMessage);
+
                 _settingsResultCompletionSource = null;
 
                 _analyticsService.Track("Register For Notifications", new Dictionary<string, string>

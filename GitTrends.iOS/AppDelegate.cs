@@ -9,7 +9,6 @@ using Foundation;
 using Microsoft.Azure.NotificationHubs;
 using Shiny;
 using UIKit;
-using WindowsAzure.Messaging;
 
 namespace GitTrends.iOS
 {
@@ -87,13 +86,13 @@ namespace GitTrends.iOS
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var analyticsService = scope.Resolve<AnalyticsService>();
 
-            var tokenAsString = deviceToken.GetBase64EncodedString(NSDataBase64EncodingOptions.None);
+            var tokenAsString = BitConverter.ToString(deviceToken.ToArray()).Replace("-", "").Replace("\"", "");
 
-            var hubClient = NotificationHubClient.CreateClientFromConnectionString(NotificationHubConstants.Name, NotificationHubConstants.ListenConnectionString);
+            var hubClient = NotificationHubClient.CreateClientFromConnectionString(NotificationHubConstants.ListenConnectionString, NotificationHubConstants.Name);
             await hubClient.CreateAppleNativeRegistrationAsync(tokenAsString).ConfigureAwait(false);
         }
 
-        Task HandleLocalNotification(UILocalNotification notification)
+        Task HandleLocalNotification(in UILocalNotification notification)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var notificationService = scope.Resolve<NotificationService>();
