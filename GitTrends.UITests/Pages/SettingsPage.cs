@@ -60,7 +60,7 @@ namespace GitTrends.UITests
             DismissSyncfusionLicensePopup();
         }
 
-        public void SelectTheme(PreferredTheme preferredTheme)
+        public Task SelectTheme(PreferredTheme preferredTheme)
         {
             var isQueryEnabled = App.Query(_themePicker).First().Enabled;
             if (!isQueryEnabled)
@@ -71,8 +71,8 @@ namespace GitTrends.UITests
 
             var rowOffset = App switch
             {
-                iOSApp ios => rowNumber.Equals(totalRows - 1) ? -1 : 1,
-                AndroidApp android => 0,
+                iOSApp _ => rowNumber.Equals(totalRows - 1) ? -1 : 1,
+                AndroidApp _ => 0,
                 _ => throw new NotSupportedException()
             };
 
@@ -87,6 +87,8 @@ namespace GitTrends.UITests
 
 
             App.Screenshot($"Selected Row From Picker: {preferredTheme}");
+
+            return WaitForPageToLoad();
 
             void scrollToRow(int offset)
             {

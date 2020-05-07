@@ -96,6 +96,8 @@ namespace GitTrends.UITests
                 await Task.Delay(1000).ConfigureAwait(false);
                 currentUserToken = App.InvokeBackdoorMethod<GitHubToken?>(BackdoorMethodConstants.GetGitHubToken);
             }
+
+            await Task.Delay(1000).ConfigureAwait(false);
         }
     }
 }

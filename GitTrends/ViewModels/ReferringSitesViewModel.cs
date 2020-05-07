@@ -122,17 +122,18 @@ namespace GitTrends
         {
             set
             {
+                const string swipeDownToRefresh = "\nSwipe down to retrieve referring sites";
                 const string emptyList = "No referrals yet";
                 const string loginExpired = "GitHub Login Expired\nPlease login again";
-                const string uninitialized = "Data not gathered\nSwipe down to retrieve repositories";
+                const string uninitialized = "Data not gathered" + swipeDownToRefresh;
 
                 EmptyDataViewText = value switch
                 {
                     RefreshState.Uninitialized => uninitialized,
                     RefreshState.Succeeded => emptyList,
                     RefreshState.LoginExpired => loginExpired,
-                    RefreshState.Error => EmptyDataView.UnableToRetrieveDataText,
-                    RefreshState.MaximumApiLimit => EmptyDataView.UnableToRetrieveDataText,
+                    RefreshState.Error => EmptyDataView.UnableToRetrieveDataText + swipeDownToRefresh,
+                    RefreshState.MaximumApiLimit => EmptyDataView.UnableToRetrieveDataText + swipeDownToRefresh,
                     _ => throw new NotSupportedException()
                 };
             }

@@ -88,10 +88,11 @@ namespace GitTrends
         {
             set
             {
+                const string swipeDownToRefresh = "\nSwipe down to retrieve repositories";
                 const string noFilterMatch = "No Matching Repository Found\nClear search bar and try again";
                 const string emptyList = "Your repositories list is\nempty";
                 const string loginExpired = "GitHub Login Expired\nPlease login again";
-                const string uninitialized = "Data not gathered\nSwipe down to retrieve repositories";
+                const string uninitialized = "Data not gathered" + swipeDownToRefresh;
 
                 EmptyDataViewText = value switch
                 {
@@ -100,8 +101,8 @@ namespace GitTrends
                     RefreshState.Succeeded => emptyList,
                     RefreshState.LoginExpired => loginExpired,
                     RefreshState.Error when _repositoryList.Any() => noFilterMatch,
-                    RefreshState.Error => EmptyDataView.UnableToRetrieveDataText,
-                    RefreshState.MaximumApiLimit => EmptyDataView.UnableToRetrieveDataText,
+                    RefreshState.Error => EmptyDataView.UnableToRetrieveDataText + swipeDownToRefresh,
+                    RefreshState.MaximumApiLimit => EmptyDataView.UnableToRetrieveDataText + swipeDownToRefresh,
                     _ => throw new NotSupportedException()
                 };
             }

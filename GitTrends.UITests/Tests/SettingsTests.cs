@@ -79,17 +79,17 @@ namespace GitTrends.UITests
         }
 
         [Test]
-        public void VerifyThemePicker()
+        public async Task VerifyThemePicker()
         {
             //Arrange
             PreferredTheme preferredTheme_Initial = SettingsPage.PreferredTheme;
             PreferredTheme preferredTheme_Light, preferredTheme_Dark;
 
             //Act
-            SettingsPage.SelectTheme(PreferredTheme.Light);
+            await SettingsPage.SelectTheme(PreferredTheme.Light).ConfigureAwait(false);
             preferredTheme_Light = SettingsPage.PreferredTheme;
 
-            SettingsPage.SelectTheme(PreferredTheme.Dark);
+            await SettingsPage.SelectTheme(PreferredTheme.Dark).ConfigureAwait(false);
             preferredTheme_Dark = SettingsPage.PreferredTheme;
 
             //Assert
