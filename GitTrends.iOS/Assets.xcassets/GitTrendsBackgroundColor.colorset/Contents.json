@@ -77,9 +77,9 @@
       "color": {
         "color-space": "srgb",
         "components": {
-          "red": 0.9411765,
-          "green": 0.9372549,
-          "blue": 0.9372549,
+          "red": 0.298039228,
+          "green": 0.6784314,
+          "blue": 0.635294139,
           "alpha": 1.0
         }
       },
@@ -95,9 +95,9 @@
       "color": {
         "color-space": "srgb",
         "components": {
-          "red": 0.9411765,
-          "green": 0.9372549,
-          "blue": 0.9372549,
+          "red": 0.298039228,
+          "green": 0.6784314,
+          "blue": 0.635294139,
           "alpha": 1.0
         }
       },
@@ -113,9 +113,9 @@
       "color": {
         "color-space": "srgb",
         "components": {
-          "red": 0.9411765,
-          "green": 0.9372549,
-          "blue": 0.9372549,
+          "red": 0.298039228,
+          "green": 0.6784314,
+          "blue": 0.635294139,
           "alpha": 1.0
         }
       },
@@ -131,9 +131,9 @@
       "color": {
         "color-space": "srgb",
         "components": {
-          "red": 0.9411765,
-          "green": 0.9372549,
-          "blue": 0.9372549,
+          "red": 0.298039228,
+          "green": 0.6784314,
+          "blue": 0.635294139,
           "alpha": 1.0
         }
       },
@@ -149,9 +149,9 @@
       "color": {
         "color-space": "srgb",
         "components": {
-          "red": 0.9411765,
-          "green": 0.9372549,
-          "blue": 0.9372549,
+          "red": 0.298039228,
+          "green": 0.6784314,
+          "blue": 0.635294139,
           "alpha": 1.0
         }
       },
@@ -167,9 +167,9 @@
       "color": {
         "color-space": "srgb",
         "components": {
-          "red": 0.9411765,
-          "green": 0.9372549,
-          "blue": 0.9372549,
+          "red": 0.298039228,
+          "green": 0.6784314,
+          "blue": 0.635294139,
           "alpha": 1.0
         }
       },

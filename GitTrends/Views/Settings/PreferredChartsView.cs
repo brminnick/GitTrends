@@ -38,7 +38,7 @@ namespace GitTrends
 
         class TrendsCharSettingsControl : SfSegmentedControl
         {
-            const double cornerRadius = 5;
+            const double cornerRadius = 4;
             readonly TrendsChartSettingsService _trendsChartSettingsService;
 
             public TrendsCharSettingsControl(in TrendsChartSettingsService trendsChartSettingsService)
@@ -51,6 +51,8 @@ namespace GitTrends
                 VisibleSegmentsCount = TrendsChartConstants.TrendsChartTitles.Values.Count;
                 SelectedIndex = (int)trendsChartSettingsService.CurrentTrendsChartOption;
                 SelectionIndicatorSettings = new TrendsChartSettingsSelectionIndicatorSettings();
+                FontFamily = FontFamilyConstants.RobotoMedium;
+                FontSize = 12;
 
                 SetDynamicResource(FontColorProperty, nameof(BaseTheme.BorderButtonFontColor));
                 SetDynamicResource(BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor));

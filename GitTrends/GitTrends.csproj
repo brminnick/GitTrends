@@ -33,12 +33,12 @@
         <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.1-pre1" />
         <PackageReference Include="Polly" Version="7.2.1" />
         <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.1.1.1-beta" />
-        <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="17.4.0.55" />
+        <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.1.0.42" />
         <PackageReference Include="sqlite-net-pcl" Version="1.6.292" />
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
         <PackageReference Include="Autofac" Version="5.1.4" />
         <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.1.4" />
-        <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="17.4.0.55" />
+        <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="18.1.0.42" />
         <PackageReference Include="HtmlAgilityPack" Version="1.11.23" />
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.2.1" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.2.1" />
@@ -68,13 +68,30 @@
     </ItemGroup>
     <ItemGroup>
       <None Remove="repo_forked.svg" />
-      <None Remove="Resources\repo_forked.svg" />
-      <None Remove="Resources\star.svg" />
-      <None Remove="Resources\issue_opened.svg" />
-      <None Remove="Resources\unique_clones.svg" />
-      <None Remove="Resources\total_clones.svg" />
-      <None Remove="Resources\unique_views.svg" />
-      <None Remove="Resources\total_views.svg" />
+      <None Remove="Resources\SVGs\chart.svg" />
+      <None Remove="Resources\SVGs\issue_opened.svg" />
+      <None Remove="Resources\SVGs\megaphone.svg" />
+      <None Remove="Resources\SVGs\repo_forked.svg" />
+      <None Remove="Resources\SVGs\star.svg" />
+      <None Remove="Resources\SVGs\total_clones.svg" />
+      <None Remove="Resources\SVGs\total_views.svg" />
+      <None Remove="Resources\SVGs\trending_tag.svg" />
+      <None Remove="Resources\SVGs\unique_clones.svg" />
+      <None Remove="Resources\SVGs\unique_views.svg" />
+      <None Remove="Resources\Fonts\FontAwesomeBrands.ttf" />
+      <None Remove="Resources\Fonts\Roboto-Bold.ttf" />
+      <None Remove="Resources\Fonts\Roboto-Medium.ttf" />
+      <None Remove="Resources\Fonts\Roboto-Regular.ttf" />
+      <None Remove="Resources\SVGs\zoom_gesture.svg" />
+      <None Remove="Resources\SVGs\longpress_gesture.svg" />
+      <None Remove="Resources\Fonts\Font Awesome 5 Free-Solid-900.otf" />
+      <None Remove="Resources\SVGs\bell.svg" />
+      <None Remove="Resources\SVGs\check.svg" />
+      <None Remove="Resources\SVGs\error.svg" />
+      <None Remove="Resources\SVGs\github.svg" />
+      <None Remove="Resources\SVGs\darkmode.svg" />
+      <None Remove="Resources\SVGs\logout.svg" />
+      <None Remove="Resources\SVGs\right_arrow.svg" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="Resources\SVGs\chart.svg" />

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
-using Newtonsoft.Json;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
 using Xamarin.UITest.iOS;
@@ -49,7 +48,7 @@ namespace GitTrends.UITests
 
         public string GitHubButtonText => GetText(_loginButton);
 
-        public string TrendsChartLabelText => App.Query(_trendsChartSettingsLabel).First().Text;
+        public string TrendsChartLabelText => GetText(_trendsChartSettingsLabel);
 
         public PreferredTheme PreferredTheme => App.InvokeBackdoorMethod<PreferredTheme>(BackdoorMethodConstants.GetPreferredTheme);
 
@@ -222,12 +221,6 @@ namespace GitTrends.UITests
             App.WaitForElement(GitHubLoginButtonConstants.ConnectToGitHub);
 
             App.Screenshot("GitHub Logout Completed");
-        }
-
-        TrendsChartOption GetCurrentTrendsChartOption()
-        {
-            var serializedCurrentTrendsChartOption = App.InvokeBackdoorMethod(BackdoorMethodConstants.GetCurrentTrendsChartOption).ToString();
-            return JsonConvert.DeserializeObject<TrendsChartOption>(serializedCurrentTrendsChartOption);
         }
     }
 }

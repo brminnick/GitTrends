@@ -8,6 +8,8 @@ using Xamarin.UITest;
 
 namespace GitTrends.UITests
 {
+    enum UserType { Demo, LoggedIn, Neither }
+
     abstract class BaseTest
     {
         readonly Platform _platform;
@@ -53,12 +55,12 @@ namespace GitTrends.UITests
             {
                 UserType.Demo => SetupDemoUser(),
                 UserType.LoggedIn => SetupLoggedInUser(),
-                UserType.Neither => SetupNeitherUser(),
+                UserType.Neither => SetupNeither(),
                 _ => throw new NotSupportedException()
             };
         }
 
-        protected Task SetupNeitherUser() => Task.CompletedTask;
+        protected Task SetupNeither() => OnboardingPage.WaitForPageToLoad();
 
         protected async Task SetupDemoUser()
         {
@@ -72,6 +74,8 @@ namespace GitTrends.UITests
 
         async Task SetupLoggedInUser()
         {
+            await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
+
             await LoginToGitHub().ConfigureAwait(false);
 
             OnboardingPage.PopPage();
@@ -94,7 +98,5 @@ namespace GitTrends.UITests
             }
         }
     }
-
-    enum UserType { Demo, LoggedIn, Neither }
 }
 

@@ -63,7 +63,7 @@ namespace GitTrends.UITests
         {
             try
             {
-                App.WaitForElement(_syncfusionLicenseWarningTitle);
+                App.WaitForElement(_syncfusionLicenseWarningTitle, timeout: TimeSpan.FromSeconds(1));
                 App.Tap("Ok");
 
                 App.Screenshot("Syncfusion License Popup Dismissed");
@@ -93,6 +93,8 @@ namespace GitTrends.UITests
             if (shouldDismissKeyboard)
                 App.DismissKeyboard();
         }
+
+        protected string GetText(Query query) => App.Query(query).First().Text ?? App.Query(query).First().Label;
     }
 }
 

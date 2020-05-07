@@ -95,6 +95,7 @@
       "idiom": "universal"
     },
     {
+      "filename": "DefaultProfileImageDark-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -105,7 +106,7 @@
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImage@2x-1.png",
+      "filename": "DefaultProfileImageDark@2x-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -116,7 +117,7 @@
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImage@3x-1.png",
+      "filename": "DefaultProfileImageDark@3x-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -314,6 +315,7 @@
       "idiom": "universal"
     },
     {
+      "filename": "DefaultProfileImageLight-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -324,7 +326,7 @@
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImage@2x-2.png",
+      "filename": "DefaultProfileImageLight@2x-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -335,7 +337,7 @@
       "idiom": "universal"
     },
     {
-      "filename": "DefaultProfileImage@3x-2.png",
+      "filename": "DefaultProfileImageLight@3x-1.png",
       "appearances": [
         {
           "appearance": "luminosity",

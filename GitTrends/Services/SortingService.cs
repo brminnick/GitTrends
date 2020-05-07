@@ -16,7 +16,7 @@ namespace GitTrends
 
         public SortingOption CurrentOption
         {
-            get => (SortingOption)Preferences.Get(nameof(CurrentOption), (int)SortingConstants.DefaultSortingOption);
+            get => GetCurrentOption();
             set => Preferences.Set(nameof(CurrentOption), (int)value);
         }
 

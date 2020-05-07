@@ -130,7 +130,7 @@ namespace GitTrends.UITests
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
             await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
 
-            var visibleRepositories = RepositoryPage.GetVisibleRepositoryList();
+            var visibleRepositories = RepositoryPage.VisibleCollection;
             RepositoryPage.TapRepository(visibleRepositories.First().Name);
 
             await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);

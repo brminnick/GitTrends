@@ -9,7 +9,7 @@ using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {
-    class SvgImage : SvgCachedImage
+    public class SvgImage : SvgCachedImage
     {
         public static readonly BindableProperty GetTextColorProperty =
             BindableProperty.Create(nameof(GetTextColorProperty), typeof(Func<Color>), typeof(SvgImage), (Func<Color>)(() => Color.Default), propertyChanged: HandleGetTextColorPropertyChanged);

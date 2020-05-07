@@ -50,8 +50,10 @@ namespace GitTrends
             FilterRepositoriesCommand = new Command<string>(SetSearchBarText);
             SortRepositoriesCommand = new Command<SortingOption>(ExecuteSortRepositoriesCommand);
 
-            _gitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
             notificationService.SortingOptionRequested += HandleSortingOptionRequested;
+            gitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
+            gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+            gitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
         }
 
         public event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
