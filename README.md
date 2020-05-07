@@ -1,4 +1,4 @@
-[![Xamarin](https://github.com/brminnick/GitTrends/workflows/Xamarin/badge.svg)](https://github.com/brminnick/GitTrends/actions?query=workflow%3AXamarin) [![Azure Functions](https://github.com/brminnick/GitTrends/workflows/Azure%20Functions/badge.svg)](https://github.com/brminnick/GitTrends/actions?query=workflow%3A%22Azure+Functions%22)  [![Build status](https://build.appcenter.ms/v0.1/apps/b7393f98-7966-4e0f-b7b9-4e8eafea5a27/branches/master/badge)](https://appcenter.ms/orgs/CDA-Global-Beta/apps/GitTrends-Android-Debug/build) [![Build status](https://build.appcenter.ms/v0.1/apps/c63bf4d1-5d86-4fc4-97dc-69f111beea2c/branches/master/badge)](https://appcenter.ms/orgs/CDA-Global-Beta/apps/GitTrends-iOS-Debug/build)
+[![Xamarin](https://github.com/brminnick/GitTrends/workflows/Xamarin/badge.svg)](https://github.com/brminnick/GitTrends/actions?query=workflow%3AXamarin) [![Azure Functions](https://github.com/brminnick/GitTrends/workflows/Azure%20Functions/badge.svg)](https://github.com/brminnick/GitTrends/actions?query=workflow%3A%22Azure+Functions%22)  [![Build status](https://build.appcenter.ms/v0.1/apps/c1dc82e1-fffd-4236-8a17-45d992913793/branches/master/badge)](https://appcenter.ms) [![Build status](https://build.appcenter.ms/v0.1/apps/90353386-21d8-4a81-a1a3-7e5df4cbf8d3/branches/master/badge)](https://appcenter.ms)
 
 <div class="header" align="center">
   <h1 align="center">GitTrends: GitHub Insights</h1>
@@ -32,8 +32,8 @@ Monitor the traffic to your GitHub Repos!<br/>
 
 | GitHub Login | Repo Traffic | Referring Sites |
 | -- | -- | -- |
-| ![View Repositories](https://user-images.githubusercontent.com/13558917/75208427-77500100-5730-11ea-9654-7255ed051536.gif) | ![View Repo](https://user-images.githubusercontent.com/13558917/75208368-5091ca80-5730-11ea-8602-8c63244bf229.gif) | ![Referring Site](https://user-images.githubusercontent.com/13558917/75208328-30faa200-5730-11ea-92c7-d316f6cb39e6.gif) | 
-| ![View Repositories](https://user-images.githubusercontent.com/13558917/74350902-43a5cc00-4d6b-11ea-8c9f-c1bafbfcb415.gif) | ![View Repo](https://user-images.githubusercontent.com/13558917/74351618-363d1180-4d6c-11ea-8244-dc2e1c6cdfe4.gif) | ![Referring Site](https://user-images.githubusercontent.com/13558917/74351991-b9f6fe00-4d6c-11ea-9eb5-57260493256b.gif) | 
+| ![Repositories Light](https://user-images.githubusercontent.com/13558917/81245656-6d693a80-8fca-11ea-9e8f-e5e712f9141a.gif) | ![Trends Light](https://user-images.githubusercontent.com/13558917/81245673-7b1ec000-8fca-11ea-9cab-89ab424ecf91.gif) | ![Referring Sites Light](https://user-images.githubusercontent.com/13558917/81245723-9ab5e880-8fca-11ea-9baa-d8a482e0fc47.gif) | 
+| ![Repositories Dark](https://user-images.githubusercontent.com/13558917/81244925-8670ec00-8fc8-11ea-93bb-4f7c4a69911f.gif) | ![Trends Dark](https://user-images.githubusercontent.com/13558917/81245127-12831380-8fc9-11ea-84be-bfe3b8b05d48.gif) | ![Referring Sites Dark](https://user-images.githubusercontent.com/13558917/81245371-a523b280-8fc9-11ea-8b48-1a08414e5920.gif) | 
 
 ## Resources
 
