@@ -4,7 +4,7 @@ using GitTrends.Droid;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
-[assembly: ExportRenderer(typeof(SettingsButton), typeof(LowerCaseButtonRenderer))]
+[assembly: ExportRenderer(typeof(Button), typeof(LowerCaseButtonRenderer))]
 namespace GitTrends.Droid
 {
     public class LowerCaseButtonRenderer : ButtonRenderer
@@ -19,7 +19,10 @@ namespace GitTrends.Droid
             base.OnElementChanged(e);
 
             if (Control != null)
+            {
                 Control.SetAllCaps(false);
+                Control.VerticalScrollBarEnabled = false;
+            }
         }
     }
 }

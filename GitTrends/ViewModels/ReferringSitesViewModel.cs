@@ -1,32 +1,109 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
+using Refit;
+using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
     class ReferringSitesViewModel : BaseViewModel
     {
+        readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
+
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly DeepLinkingService _deepLinkingService;
+        readonly ReviewService _reviewService;
+        readonly GitHubAuthenticationService _gitHubAuthenticationService;
+        readonly ReferringSitesDatabase _referringSitesDatabase;
 
-        bool _isRefreshing;
-        bool _isActivityIndicatorVisible;
-        IReadOnlyList<MobileReferringSiteModel> _mobileReferringSiteList = Enumerable.Empty<MobileReferringSiteModel>().ToList();
+        IReadOnlyList<MobileReferringSiteModel>? _mobileReferringSiteList;
 
-        public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service, AnalyticsService analyticsService) : base(analyticsService)
+        string _reviewRequestView_NoButtonText = string.Empty;
+        string _reviewRequestView_YesButtonText = string.Empty;
+        string _reviewRequestView_TitleLabel = string.Empty;
+        string _emptyDataViewText = string.Empty;
+
+        bool _isRefreshing, _isStoreRatingRequestVisible, _isEmptyDataViewEnabled;
+
+        public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service,
+                                        DeepLinkingService deepLinkingService,
+                                        AnalyticsService analyticsService,
+                                        ReferringSitesDatabase referringSitesDatabase,
+                                        GitHubAuthenticationService gitHubAuthenticationService,
+                                        ReviewService reviewService) : base(analyticsService)
         {
+            reviewService.ReviewRequested += HandleReviewRequested;
+            reviewService.ReviewCompleted += HandleReviewCompleted;
+
+            _reviewService = reviewService;
             _gitHubApiV3Service = gitHubApiV3Service;
-            RefreshCommand = new AsyncCommand<(string Owner, string Repository)>(repo => ExecuteRefreshCommand(repo.Owner, repo.Repository));
+            _deepLinkingService = deepLinkingService;
+            _referringSitesDatabase = referringSitesDatabase;
+            _gitHubAuthenticationService = gitHubAuthenticationService;
+
+            RefreshState = RefreshState.Uninitialized;
+
+            RefreshCommand = new AsyncCommand<(string Owner, string Repository, string RepositoryUrl, CancellationToken Token)>(tuple => ExecuteRefreshCommand(tuple.Owner, tuple.Repository, tuple.RepositoryUrl, tuple.Token));
+            NoButtonCommand = new Command(() => HandleReviewRequestButtonTapped(ReviewAction.NoButtonTapped));
+            YesButtonCommand = new Command(() => HandleReviewRequestButtonTapped(ReviewAction.YesButtonTapped));
+
+            UpdateStoreRatingRequestView();
         }
 
+        public event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
+        {
+            add => _pullToRefreshFailedEventManager.AddEventHandler(value);
+            remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
+        }
+
+        public ICommand NoButtonCommand { get; }
+        public ICommand YesButtonCommand { get; }
         public ICommand RefreshCommand { get; }
 
-        public bool IsActivityIndicatorVisible
+        public string EmptyDataViewText
         {
-            get => _isActivityIndicatorVisible;
-            set => SetProperty(ref _isActivityIndicatorVisible, value);
+            get => _emptyDataViewText;
+            set => SetProperty(ref _emptyDataViewText, value);
+        }
+
+        public bool IsEmptyDataViewEnabled
+        {
+            get => _isEmptyDataViewEnabled;
+            set => SetProperty(ref _isEmptyDataViewEnabled, value);
+        }
+
+        public string ReviewRequestView_TitleLabel
+        {
+            get => _reviewRequestView_TitleLabel;
+            set => SetProperty(ref _reviewRequestView_TitleLabel, value);
+        }
+
+        public string ReviewRequestView_NoButtonText
+        {
+            get => _reviewRequestView_NoButtonText;
+            set => SetProperty(ref _reviewRequestView_NoButtonText, value);
+        }
+
+        public string ReviewRequestView_YesButtonText
+        {
+            get => _reviewRequestView_YesButtonText;
+            set => SetProperty(ref _reviewRequestView_YesButtonText, value);
+        }
+
+        public bool IsStoreRatingRequestVisible
+        {
+            get => _isStoreRatingRequestVisible;
+            set => SetProperty(ref _isStoreRatingRequestVisible, value);
         }
 
         public bool IsRefreshing
@@ -37,45 +114,117 @@ namespace GitTrends
 
         public IReadOnlyList<MobileReferringSiteModel> MobileReferringSitesList
         {
-            get => _mobileReferringSiteList;
+            get => _mobileReferringSiteList ??= Enumerable.Empty<MobileReferringSiteModel>().ToList();
             set => SetProperty(ref _mobileReferringSiteList, value);
         }
 
-        async Task ExecuteRefreshCommand(string owner, string repository)
+        RefreshState RefreshState
         {
-            //Only show the Activity Indicator when the page is first loaded
-            if (!MobileReferringSitesList.Any())
+            set
             {
-                IsActivityIndicatorVisible = true;
+                const string swipeDownToRefresh = "\nSwipe down to retrieve referring sites";
+                const string emptyList = "No referrals yet";
+                const string loginExpired = "GitHub Login Expired\nPlease login again";
+                const string uninitialized = "Data not gathered" + swipeDownToRefresh;
+
+                EmptyDataViewText = value switch
+                {
+                    RefreshState.Uninitialized => uninitialized,
+                    RefreshState.Succeeded => emptyList,
+                    RefreshState.LoginExpired => loginExpired,
+                    RefreshState.Error => EmptyDataView.UnableToRetrieveDataText + swipeDownToRefresh,
+                    RefreshState.MaximumApiLimit => EmptyDataView.UnableToRetrieveDataText + swipeDownToRefresh,
+                    _ => throw new NotSupportedException()
+                };
+            }
+        }
+
+        void HandleReviewRequestButtonTapped(in ReviewAction action)
+        {
+            AnalyticsService.Track("Review Request Button Tapped", new Dictionary<string, string>
+            {
+                { nameof(ReviewAction), action.ToString() },
+                { nameof(ReviewService.CurrentState),  _reviewService.CurrentState.ToString() }
+            });
+
+            _reviewService.UpdateState(action);
+            UpdateStoreRatingRequestView();
+        }
+
+        void UpdateStoreRatingRequestView()
+        {
+            ReviewRequestView_TitleLabel = _reviewService.StoreRatingRequestViewTitle;
+            ReviewRequestView_NoButtonText = _reviewService.NoButtonText;
+            ReviewRequestView_YesButtonText = _reviewService.YesButtonText;
+        }
+
+        async Task ExecuteRefreshCommand(string owner, string repository, string repositoryUrl, CancellationToken cancellationToken)
+        {
+            IReadOnlyList<ReferringSiteModel> referringSitesList = Enumerable.Empty<ReferringSiteModel>().ToList();
+
+            try
+            {
+                referringSitesList = await _gitHubApiV3Service.GetReferringSites(owner, repository, cancellationToken).ConfigureAwait(false);
+
+                MobileReferringSitesList = SortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
+
+                RefreshState = RefreshState.Succeeded;
+            }
+            catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
+            {
+                OnPullToRefreshFailed(new LoginExpiredPullToRefreshEventArgs());
+
+                await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
+
+                RefreshState = RefreshState.LoginExpired;
+            }
+            catch (ApiException e) when (GitHubApiService.HasReachedMaximimApiCallLimit(e))
+            {
+                OnPullToRefreshFailed(new MaximimApiRequestsReachedEventArgs(GitHubApiService.GetRateLimitResetDateTime(e)));
+
+                RefreshState = RefreshState.MaximumApiLimit;
+            }
+            catch (Exception e)
+            {
+                OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs("Unable to retrieve referring sites. Check your internet connection and try again."));
+
+                AnalyticsService.Report(e);
+
+                RefreshState = RefreshState.Error;
+            }
+            finally
+            {
+                IsEmptyDataViewEnabled = true;
             }
 
             try
             {
-                var referringSitesList = await _gitHubApiV3Service.GetReferringSites(owner, repository).ConfigureAwait(false);
-                var mobileReferringSitesList_NoFavIcon = referringSitesList.Select(x => new MobileReferringSiteModel(x));
+                await foreach (var mobileReferringSite in GetMobileReferringSiteWithFavIconList(referringSitesList, repositoryUrl, cancellationToken).ConfigureAwait(false))
+                {
+                    var referringSite = MobileReferringSitesList.Single(x => x.Referrer == mobileReferringSite.Referrer);
+                    referringSite.FavIcon = mobileReferringSite.FavIcon;
+                }
 
-                //Display the Referring Sites and hide the activity indicators while FavIcons are still being retreived
-                IsActivityIndicatorVisible = false;
-                displayMobileReferringSites(mobileReferringSitesList_NoFavIcon);
-
-                var mobileReferringSitesList_WithFavIcon = await GetMobileReferringSiteWithFavIconList(referringSitesList).ConfigureAwait(false);
-
-                //Display the Final Referring Sites with FavIcons
-                displayMobileReferringSites(mobileReferringSitesList_WithFavIcon);
+                if (!GitHubAuthenticationService.IsDemoUser)
+                {
+                    foreach (var referringSite in MobileReferringSitesList)
+                        await _referringSitesDatabase.SaveReferringSite(referringSite, repositoryUrl).ConfigureAwait(false);
+                }
+            }
+            catch (Exception e)
+            {
+                //Let's track the exception, but we don't need to do anything with it because the data still appears, just without the icons
+                AnalyticsService.Report(e);
             }
             finally
             {
-                IsActivityIndicatorVisible = IsRefreshing = false;
+                IsRefreshing = false;
             }
-
-            void displayMobileReferringSites(in IEnumerable<MobileReferringSiteModel> mobileReferringSiteList) => MobileReferringSitesList = mobileReferringSiteList.OrderByDescending(x => x.TotalCount).ThenByDescending(x => x.TotalUniqueCount).ToList();
         }
 
-        async Task<List<MobileReferringSiteModel>> GetMobileReferringSiteWithFavIconList(List<ReferringSiteModel> referringSites)
+        async IAsyncEnumerable<MobileReferringSiteModel> GetMobileReferringSiteWithFavIconList(IEnumerable<ReferringSiteModel> referringSites, string repositoryUrl, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var mobileReferringSiteList = new List<MobileReferringSiteModel>();
-
-            var favIconTaskList = referringSites.Select(x => setFavIcon(x)).ToList();
+            var favIconTaskList = referringSites.Select(x => setFavIcon(_referringSitesDatabase, x, repositoryUrl, cancellationToken)).ToList();
 
             while (favIconTaskList.Any())
             {
@@ -83,21 +232,57 @@ namespace GitTrends
                 favIconTaskList.Remove(completedFavIconTask);
 
                 var mobileReferringSiteModel = await completedFavIconTask.ConfigureAwait(false);
-                mobileReferringSiteList.Add(mobileReferringSiteModel);
+                yield return mobileReferringSiteModel;
             }
 
-            return mobileReferringSiteList;
-
-            static async Task<MobileReferringSiteModel> setFavIcon(ReferringSiteModel referringSiteModel)
+            static async Task<MobileReferringSiteModel> setFavIcon(ReferringSitesDatabase referringSitesDatabase, ReferringSiteModel referringSiteModel, string repositoryUrl, CancellationToken cancellationToken)
             {
-                if (referringSiteModel.ReferrerUri != null)
+                var mobileReferringSiteFromDatabase = await referringSitesDatabase.GetReferringSite(repositoryUrl, referringSiteModel.ReferrerUri).ConfigureAwait(false);
+
+                if (mobileReferringSiteFromDatabase != null && isFavIconValid(mobileReferringSiteFromDatabase))
+                    return mobileReferringSiteFromDatabase;
+
+                if (referringSiteModel.ReferrerUri != null && referringSiteModel.IsReferrerUriValid)
                 {
-                    var favIcon = await FavIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri.ToString()).ConfigureAwait(false);
+                    var favIcon = await FavIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri, cancellationToken).ConfigureAwait(false);
                     return new MobileReferringSiteModel(referringSiteModel, favIcon);
                 }
+                else
+                {
+                    return new MobileReferringSiteModel(referringSiteModel, FavIconService.DefaultFavIcon);
+                }
 
-                return new MobileReferringSiteModel(referringSiteModel);
+                static bool isFavIconValid(MobileReferringSiteModel mobileReferringSiteModel) => !string.IsNullOrWhiteSpace(mobileReferringSiteModel.FavIconImageUrl) && mobileReferringSiteModel.DownloadedAt.CompareTo(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(30))) > 0;
             }
         }
+
+        async void HandleReviewCompleted(object sender, ReviewRequest request)
+        {
+            AnalyticsService.Track("Review Completed", nameof(ReviewRequest), request.ToString());
+
+            switch (request)
+            {
+                case ReviewRequest.AppStore:
+                    await _deepLinkingService.OpenApp(AppStoreConstants.AppLink, AppStoreConstants.Url).ConfigureAwait(false);
+                    break;
+
+                case ReviewRequest.Email:
+                    await _deepLinkingService.SendEmail($"GitTrends App Feedback, Version {VersionTracking.CurrentVersion}",
+                                                        "Here's my feedback on how to make the app great!",
+                                                        new[] { "support@gittrends.com" }).ConfigureAwait(false);
+                    break;
+
+                case ReviewRequest.None:
+                    break;
+
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        void HandleReviewRequested(object sender, EventArgs e) => IsStoreRatingRequestVisible = true;
+
+        void OnPullToRefreshFailed(PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs) =>
+            _pullToRefreshFailedEventManager.HandleEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
     }
 }

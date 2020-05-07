@@ -1,71 +1,70 @@
 ﻿using System;
+using System.Threading;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
-using Syncfusion.SfChart.XForms;
-using Xamarin.Essentials;
 using Xamarin.Forms;
+using Xamarin.Forms.Markup;
+using static GitTrends.XamarinFormsService;
+using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
     class TrendsPage : BaseContentPage<TrendsViewModel>
     {
-        static readonly Lazy<GitHubTrendsChart> _trendsChartHolder = new Lazy<GitHubTrendsChart>(() => new GitHubTrendsChart());
+        readonly CancellationTokenSource _fetchDataCancellationTokenSource = new CancellationTokenSource();
         readonly Repository _repository;
 
         public TrendsPage(TrendsViewModel trendsViewModel,
-                            TrendsChartSettingsService trendsChartSettingsService,
                             Repository repository,
-                            AnalyticsService analyticsService) : base(repository.Name, trendsViewModel, analyticsService)
+                            AnalyticsService analyticsService) : base(trendsViewModel, analyticsService, repository.Name)
         {
             _repository = repository;
+
+            ViewModel.FetchDataCommand.Execute((repository, _fetchDataCancellationTokenSource.Token));
 
             var referringSitesToolbarItem = new ToolbarItem
             {
                 Text = "Referring Sites",
+                IconImageSource = "ReferringSitesIcon",
                 AutomationId = TrendsPageAutomationIds.ReferringSitesButton
             };
             referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked;
             ToolbarItems.Add(referringSitesToolbarItem);
 
-            TrendsChart.TotalViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowViewsByDefault;
-            TrendsChart.TotalUniqueViewsSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueViewsByDefault;
-            TrendsChart.TotalClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowClonesByDefault;
-            TrendsChart.TotalUniqueClonesSeries.IsVisible = trendsChartSettingsService.ShouldShowUniqueClonesByDefault;
-
-            var activityIndicator = new ActivityIndicator
+            Content = new Grid
             {
-                AutomationId = TrendsPageAutomationIds.ActivityIndicator
+                ColumnSpacing = 8,
+                RowSpacing = 16,
+                Padding = new Thickness(0, 16),
+
+                RowDefinitions = Rows.Define(
+                    (Row.Statistics, AbsoluteGridLength(StatisticsGrid.StatisticsGridHeight)),
+                    (Row.Chart, StarGridLength(1))),
+
+                Children =
+                {
+                    new StatisticsGrid()
+                        .Row(Row.Statistics),
+                    new TrendsChartActivityIndicator()
+                        .Row(Row.Chart),
+                    new TrendsChart()
+                        .Row(Row.Chart),
+                    new EmptyDataView("EmptyInsightsChart", TrendsPageAutomationIds.EmptyDataView)
+                        .Row(Row.Chart)
+                        .Bind(IsVisibleProperty,nameof(TrendsViewModel.IsEmptyDataViewVisible))
+                        .Bind(EmptyDataView.TextProperty, nameof(RepositoryViewModel.EmptyDataViewText))
+                }
             };
-            activityIndicator.SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.RefreshControlColor));
-            activityIndicator.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData));
-            activityIndicator.SetBinding(ActivityIndicator.IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
-
-            var absoluteLayout = new AbsoluteLayout();
-            absoluteLayout.Children.Add(activityIndicator, new Rectangle(.5, .5, -1, -1), AbsoluteLayoutFlags.PositionProportional);
-            absoluteLayout.Children.Add(TrendsChart, new Rectangle(0, 0, 1, 1), AbsoluteLayoutFlags.All);
-
-            Content = absoluteLayout;
-
-            ViewModel.FetchDataCommand.Execute(_repository);
         }
 
-        static GitHubTrendsChart TrendsChart => _trendsChartHolder.Value;
+        enum Row { Statistics, Chart }
 
-        protected override void HandlePageSizeChanged(object sender, EventArgs e)
+        protected override void OnDisappearing()
         {
-            Padding = GetPadding();
+            _fetchDataCancellationTokenSource.Cancel();
 
-            base.HandlePageSizeChanged(sender, e);
-        }
-
-        Thickness GetPadding()
-        {
-            //Check if Device is in Landscape
-            if (DeviceDisplay.MainDisplayInfo.Width > DeviceDisplay.MainDisplayInfo.Height)
-                return new Thickness(0, 5, 0, 0);
-            else
-                return Device.RuntimePlatform is Device.iOS ? new Thickness(0, 5, 0, 15) : new Thickness(0, 5, 0, 0);
+            base.OnDisappearing();
         }
 
         async void HandleReferringSitesToolbarItemClicked(object sender, EventArgs e)
@@ -81,112 +80,18 @@ namespace GitTrends
                 await Navigation.PushAsync(referringSitesPage);
         }
 
-        class GitHubTrendsChart : SfChart
+        class TrendsChartActivityIndicator : ActivityIndicator
         {
-            public GitHubTrendsChart()
+            public TrendsChartActivityIndicator()
             {
-                AutomationId = TrendsPageAutomationIds.TrendsChart;
+                AutomationId = TrendsPageAutomationIds.ActivityIndicator;
+                HorizontalOptions = LayoutOptions.Center;
+                VerticalOptions = LayoutOptions.Center;
 
-                TotalViewsSeries = new TrendsAreaSeries(TrendsChartConstants.TotalViewsTitle, nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalViews), nameof(BaseTheme.TotalViewsColor));
-                TotalViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList));
+                SetDynamicResource(ColorProperty, nameof(BaseTheme.PullToRefreshColor));
 
-                TotalUniqueViewsSeries = new TrendsAreaSeries(TrendsChartConstants.UniqueViewsTitle, nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalUniqueViews), nameof(BaseTheme.TotalUniqueViewsColor));
-                TotalUniqueViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList));
-
-                TotalClonesSeries = new TrendsAreaSeries(TrendsChartConstants.TotalClonesTitle, nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalClones), nameof(BaseTheme.TotalClonesColor));
-                TotalClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyClonesList));
-
-                TotalUniqueClonesSeries = new TrendsAreaSeries(TrendsChartConstants.UniqueClonesTitle, nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalUniqueClones), nameof(BaseTheme.TotalUniqueClonesColor));
-                TotalUniqueClonesSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyClonesList));
-
-                this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsChartVisible));
-
-                ChartBehaviors = new ChartBehaviorCollection
-                {
-                    new ChartZoomPanBehavior(),
-                    new ChartTrackballBehavior()
-                };
-
-                Series = new ChartSeriesCollection
-                {
-                    TotalViewsSeries,
-                    TotalUniqueViewsSeries,
-                    TotalClonesSeries,
-                    TotalUniqueClonesSeries
-                };
-
-                var chartLegendLabelStyle = new ChartLegendLabelStyle();
-                chartLegendLabelStyle.SetDynamicResource(ChartLegendLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
-
-                Legend = new ChartLegend
-                {
-                    AutomationId = TrendsPageAutomationIds.TrendsChartLegend,
-                    DockPosition = LegendPlacement.Bottom,
-                    ToggleSeriesVisibility = true,
-                    IconWidth = 20,
-                    IconHeight = 20,
-                    LabelStyle = chartLegendLabelStyle
-                };
-
-                var axisLabelStyle = new ChartAxisLabelStyle
-                {
-                    FontSize = 14
-                };
-                axisLabelStyle.SetDynamicResource(ChartAxisLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
-
-                var axisLineStyle = new ChartLineStyle();
-                axisLineStyle.SetDynamicResource(ChartLineStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
-
-                PrimaryAxis = new DateTimeAxis
-                {
-                    AutomationId = TrendsPageAutomationIds.TrendsChartPrimaryAxis,
-                    IntervalType = DateTimeIntervalType.Days,
-                    Interval = 1,
-                    RangePadding = DateTimeRangePadding.Round,
-                    LabelStyle = axisLabelStyle,
-                    AxisLineStyle = axisLineStyle,
-                    MajorTickStyle = new ChartAxisTickStyle { StrokeColor = Color.Transparent },
-                    ShowMajorGridLines = false
-                };
-                PrimaryAxis.SetBinding(DateTimeAxis.MinimumProperty, nameof(TrendsViewModel.MinDateValue));
-                PrimaryAxis.SetBinding(DateTimeAxis.MaximumProperty, nameof(TrendsViewModel.MaxDateValue));
-
-                var secondaryAxisMajorTickStyle = new ChartAxisTickStyle();
-                secondaryAxisMajorTickStyle.SetDynamicResource(ChartAxisTickStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
-
-                SecondaryAxis = new NumericalAxis
-                {
-                    AutomationId = TrendsPageAutomationIds.TrendsChartSecondaryAxis,
-                    LabelStyle = axisLabelStyle,
-                    AxisLineStyle = axisLineStyle,
-                    MajorTickStyle = secondaryAxisMajorTickStyle,
-                    ShowMajorGridLines = false
-                };
-                SecondaryAxis.SetBinding(NumericalAxis.MinimumProperty, nameof(TrendsViewModel.DailyViewsClonesMinValue));
-                SecondaryAxis.SetBinding(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.DailyViewsClonesMaxValue));
-
-                BackgroundColor = Color.Transparent;
-
-                ChartPadding = new Thickness(0, 5, 0, 0);
-            }
-
-            public AreaSeries TotalViewsSeries { get; }
-            public AreaSeries TotalUniqueViewsSeries { get; }
-            public AreaSeries TotalClonesSeries { get; }
-            public AreaSeries TotalUniqueClonesSeries { get; }
-
-            class TrendsAreaSeries : AreaSeries
-            {
-                public TrendsAreaSeries(in string title, in string xDataTitle, in string yDataTitle, in string colorResource)
-                {
-                    Opacity = 0.9;
-                    Label = title;
-                    XBindingPath = xDataTitle;
-                    YBindingPath = yDataTitle;
-                    LegendIcon = ChartLegendIcon.SeriesType;
-
-                    SetDynamicResource(ColorProperty, colorResource);
-                }
+                this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData));
+                this.SetBinding(IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
             }
         }
     }

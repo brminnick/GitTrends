@@ -11,6 +11,7 @@
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Constants\" />
     <Folder Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\" />
+    <Folder Include="$(MSBuildThisFileDirectory)EventArgs\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Constants\PageTitles.cs" />
@@ -19,10 +20,21 @@
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\ReferringSitesPageAutomationIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\SplashScreenPageAutomationIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\TrendsPageAutomationIds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\GitHubUserNotFoundConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\GitHubLoginButtonConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\BackdoorMethodConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\DemoDataConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\TrendsChartConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\OnboardingConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\FontAwesomeBrandsConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\OnboardingAutomationIds.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\FontAwesomeConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StatisticsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\WelcomePageAutomationIds.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PreferredTheme.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\ReviewServiceConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\ErrorPullToRefreshEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\LoginExpiredPullToRefreshEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\PullToRefreshFailedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\MaximimApiRequestsReachedEventArgs.cs" />
   </ItemGroup>
 </Project>

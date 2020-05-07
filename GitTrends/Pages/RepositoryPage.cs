@@ -4,22 +4,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using AsyncAwaitBestPractices.MVVM;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {
     public class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISearchPage
     {
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
+        readonly RefreshView _refreshView;
+        readonly DeepLinkingService _deepLinkingService;
 
         public RepositoryPage(RepositoryViewModel repositoryViewModel,
                                 AnalyticsService analyticsService,
-                                SortingService sortingService) : base(PageTitles.RepositoryPage, repositoryViewModel, analyticsService)
+                                SortingService sortingService,
+                                DeepLinkingService deepLinkingService) : base(repositoryViewModel, analyticsService, PageTitles.RepositoryPage)
         {
+            _deepLinkingService = deepLinkingService;
+
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
 
@@ -28,40 +35,64 @@ namespace GitTrends
                 ItemTemplate = new RepositoryDataTemplateSelector(sortingService),
                 BackgroundColor = Color.Transparent,
                 SelectionMode = SelectionMode.Single,
-                AutomationId = RepositoryPageAutomationIds.CollectionView
+                AutomationId = RepositoryPageAutomationIds.CollectionView,
+                //Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
+                Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
+                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
+                EmptyView = new EmptyDataView("EmptyRepositoriesList", RepositoryPageAutomationIds.EmptyDataView)
+                            .Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
+                            .Bind(EmptyDataView.TextProperty, nameof(RepositoryViewModel.EmptyDataViewText))
+
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));
 
-            var repositoriesListRefreshView = new RefreshView
+            _refreshView = new RefreshView
             {
                 AutomationId = RepositoryPageAutomationIds.RefreshView,
                 Content = collectionView
             };
-            repositoriesListRefreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.RefreshControlColor));
-            repositoriesListRefreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
-            repositoriesListRefreshView.SetBinding(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
+            _refreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor));
+            _refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
+            _refreshView.SetBinding(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
 
             var settingsToolbarItem = new ToolbarItem
             {
                 Text = "Settings",
+                IconImageSource = Device.RuntimePlatform is Device.iOS ? "Settings" : null,
                 Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
                 AutomationId = RepositoryPageAutomationIds.SettingsButton,
+                Command = new AsyncCommand(ExecuteSetttingsToolbarItemCommand)
             };
-            settingsToolbarItem.Clicked += HandleSettingsToolbarItemCliked;
             ToolbarItems.Add(settingsToolbarItem);
 
             var sortToolbarItem = new ToolbarItem
             {
                 Text = "Sort",
+                Priority = 1,
                 IconImageSource = Device.RuntimePlatform is Device.iOS ? "Sort" : null,
                 Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
                 AutomationId = RepositoryPageAutomationIds.SortButton,
+                Command = new AsyncCommand(ExecuteSortToolbarItemCommand)
             };
-            sortToolbarItem.Clicked += HandleSortToolbarItemCliked;
             ToolbarItems.Add(sortToolbarItem);
 
-            Content = repositoriesListRefreshView;
+            //Work-around to prevent LargeNavigationBar from collapsing when CollectionView is scrolled; prevents janky animation when LargeNavigationBar collapses
+            if (Device.RuntimePlatform is Device.iOS)
+            {
+                Content = new Grid
+                {
+                    Children =
+                    {
+                        new BoxView { HeightRequest = 0 },
+                        _refreshView
+                    }
+                };
+            }
+            else
+            {
+                Content = _refreshView;
+            }
         }
 
         public event EventHandler<string> SearchBarTextChanged
@@ -74,25 +105,33 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            if (Content is RefreshView refreshView
-                        && refreshView.Content is CollectionView collectionView
+            var token = await GitHubAuthenticationService.GetGitHubToken();
+
+            if (!FirstRunService.IsFirstRun && shouldShowWelcomePage(Navigation, token.AccessToken))
+            {
+                using var scope = ContainerService.Container.BeginLifetimeScope();
+                var welcomePage = scope.Resolve<WelcomePage>();
+
+                //Allow RepositoryPage to appear briefly before loading 
+                await Task.Delay(250);
+                await Navigation.PushModalAsync(welcomePage);
+            }
+            else if (!FirstRunService.IsFirstRun
+                        && isUserValid(token.AccessToken)
+                        && _refreshView.Content is CollectionView collectionView
                         && IsNullOrEmpty(collectionView.ItemsSource))
             {
-                var token = await GitHubAuthenticationService.GetGitHubToken();
-
-                if (GitHubAuthenticationService.Alias != DemoDataConstants.Alias
-                    && (string.IsNullOrWhiteSpace(token.AccessToken) || string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias)))
-                {
-                    var shouldNavigateToSettingsPage = await DisplayAlert(GitHubUserNotFoundConstants.Title, GitHubUserNotFoundConstants.Description, GitHubUserNotFoundConstants.Accept, GitHubUserNotFoundConstants.Decline);
-
-                    if (shouldNavigateToSettingsPage)
-                        await NavigateToSettingsPage();
-                }
-                else
-                {
-                    refreshView.IsRefreshing = true;
-                }
+                _refreshView.IsRefreshing = true;
             }
+
+            static bool shouldShowWelcomePage(in INavigation navigation, in string accessToken)
+            {
+                return !navigation.ModalStack.Any()
+                        && GitHubAuthenticationService.Alias != DemoDataConstants.Alias
+                        && !isUserValid(accessToken);
+            }
+
+            static bool isUserValid(in string accessToken) => !string.IsNullOrWhiteSpace(accessToken) || !string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias);
 
             static bool IsNullOrEmpty(in IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
         }
@@ -130,11 +169,21 @@ namespace GitTrends
             return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
         }
 
-        async void HandleSettingsToolbarItemCliked(object sender, EventArgs e)
+        Task ExecuteSetttingsToolbarItemCommand()
         {
             AnalyticsService.Track("Settings Button Tapped");
 
-            await NavigateToSettingsPage();
+            return NavigateToSettingsPage();
+        }
+
+        async Task ExecuteSortToolbarItemCommand()
+        {
+            var sortingOptions = SortingConstants.SortingOptionsDictionary.Values;
+
+            string? selection = await DisplayActionSheet("Sort By", SortingConstants.CancelText, null, sortingOptions.ToArray());
+
+            if (!string.IsNullOrWhiteSpace(selection) && selection != SortingConstants.CancelText)
+                ViewModel.SortRepositoriesCommand.Execute(SortingConstants.SortingOptionsDictionary.First(x => x.Value == selection).Key);
         }
 
         void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)
@@ -144,19 +193,18 @@ namespace GitTrends
                 if (!Application.Current.MainPage.Navigation.ModalStack.Any()
                     && Application.Current.MainPage.Navigation.NavigationStack.Last() is RepositoryPage)
                 {
-                    await DisplayAlert(e.ErrorTitle, e.ErrorMessage, "OK");
+                    if (e.Accept is null)
+                    {
+                        await DisplayAlert(e.Title, e.Message, e.Cancel);
+                    }
+                    else
+                    {
+                        var isAccepted = await DisplayAlert(e.Title, e.Message, e.Accept, e.Cancel);
+                        if (isAccepted)
+                            await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs);
+                    }
                 }
             });
-        }
-
-        async void HandleSortToolbarItemCliked(object sender, EventArgs e)
-        {
-            var sortingOptions = SortingConstants.SortingOptionsDictionary.Values;
-
-            string? selection = await DisplayActionSheet("Sort By", SortingConstants.CancelText, null, sortingOptions.ToArray());
-
-            if (!string.IsNullOrWhiteSpace(selection) && selection != SortingConstants.CancelText)
-                ViewModel.SortRepositoriesCommand.Execute(SortingConstants.SortingOptionsDictionary.First(x => x.Value == selection).Key);
         }
 
         void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand.Execute(searchBarText);

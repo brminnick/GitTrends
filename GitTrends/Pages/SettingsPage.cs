@@ -1,129 +1,197 @@
 ﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using static GitTrends.XamarinFormsService;
+using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
     public class SettingsPage : BaseContentPage<SettingsViewModel>
     {
-        readonly TrendsChartSettingsService _trendsChartSettingsService;
+        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new CancellationTokenSource();
+        readonly Grid _contentGrid;
 
         public SettingsPage(SettingsViewModel settingsViewModel,
                             TrendsChartSettingsService trendsChartSettingsService,
-                            AnalyticsService analyticsService) : base(PageTitles.SettingsPage, settingsViewModel, analyticsService)
+                            AnalyticsService analyticsService) : base(settingsViewModel, analyticsService, PageTitles.SettingsPage, true)
         {
-            _trendsChartSettingsService = trendsChartSettingsService;
+            const int separatorRowHeight = 1;
+            const int settingsRowHeight = 38;
 
-            ViewModel.GitHubLoginUrlRetrieved += HandleGitHubLoginUrlRetrieved;
-            ViewModel.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
+            var loginRowTapGesture = new TapGestureRecognizer();
+            loginRowTapGesture.Tapped += HandleLoginRowTapped;
+
+            Content = new ScrollView
+            {
+                Content = _contentGrid = new Grid
+                {
+                    RowSpacing = 8,
+                    ColumnSpacing = 16.5,
+
+                    Margin = new Thickness(30, 0, 30, 5),
+
+                    RowDefinitions = Rows.Define(
+                        (Row.GitHubUser, AbsoluteGridLength(GitHubUserView.TotalHeight)),
+                        (Row.GitHubUserSeparator, AbsoluteGridLength(separatorRowHeight)),
+                        (Row.Login, AbsoluteGridLength(settingsRowHeight)),
+                        (Row.LoginSeparator, AbsoluteGridLength(separatorRowHeight)),
+                        (Row.Notifications, AbsoluteGridLength(settingsRowHeight)),
+                        (Row.NotificationsSeparator, AbsoluteGridLength(separatorRowHeight)),
+                        (Row.Theme, AbsoluteGridLength(settingsRowHeight)),
+                        (Row.ThemeSeparator, AbsoluteGridLength(separatorRowHeight)),
+                        (Row.PreferredCharts, AbsoluteGridLength(80)),
+                        (Row.Copyright, Star)),
+
+                    ColumnDefinitions = Columns.Define(
+                        (Column.Icon, AbsoluteGridLength(24)),
+                        (Column.Title, StarGridLength(3)),
+                        (Column.Button, StarGridLength(1))),
+
+                    Children =
+                    {
+                        new GitHubUserView().Row(Row.GitHubUser).ColumnSpan(All<Column>()),
+
+                        new Separator().Row(Row.GitHubUserSeparator).ColumnSpan(All<Column>()),
+
+                        new LoginRowTappableView(loginRowTapGesture).Row(Row.Login).ColumnSpan(All<Column>()),
+                        new LoginRowSvg("logout.svg", getSVGIconColor).Row(Row.Login).Column(Column.Icon),
+                        new LoginLabel().Row(Row.Login).Column(Column.Title),
+                        new LoginRowSvg("right_arrow.svg", getSVGIconColor).End().Row(Row.Login).Column(Column.Button),
+
+                        new Separator().Row(Row.LoginSeparator).ColumnSpan(All<Column>()),
+
+                        new SvgImage("bell.svg", getSVGIconColor).Row(Row.Notifications).Column(Column.Icon),
+                        new RegisterForNotificationsLabel().Row(Row.Notifications).Column(Column.Title),
+                        new EnableNotificationsSwitch().Row(Row.Notifications).Column(Column.Button),
+
+                        new Separator().Row(Row.NotificationsSeparator).ColumnSpan(All<Column>()),
+
+                        new SvgImage("theme.svg", getSVGIconColor).Row(Row.Theme).Column(Column.Icon),
+                        new ThemeLabel().Row(Row.Theme).Column(Column.Title),
+                        new ThemePicker().Row(Row.Theme).Column(Column.Button),
+
+                        new Separator().Row(Row.ThemeSeparator).ColumnSpan(All<Column>()),
+
+                        new PreferredChartsView(trendsChartSettingsService).Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
+
+                        new CopyrightLabel().Row(Row.Copyright).ColumnSpan(All<Column>())
+                    }
+                }
+            };
+
+            static Color getSVGIconColor() => (Color)Application.Current.Resources[nameof(BaseTheme.IconColor)];
         }
+
+        enum Row { GitHubUser, GitHubUserSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, PreferredCharts, Copyright }
+        enum Column { Icon, Title, Button }
 
         protected override void OnDisappearing()
         {
+            _connectToGitHubCancellationTokenSource.Cancel();
+
             base.OnDisappearing();
-
-            ViewModel.IsAuthenticating = false;
         }
 
-        protected override void HandlePageSizeChanged(object sender, EventArgs e)
+        async void HandleLoginRowTapped(object sender, EventArgs e)
         {
-            base.HandlePageSizeChanged(sender, e);
-
-            Content = CreateLayout(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width);
-        }
-
-        void HandleRegisterForNotificationsCompleted(object sender, (bool IsSuccessful, string ErrorMessage) result)
-        {
-            MainThread.BeginInvokeOnMainThread(async () =>
+            if (ViewModel.IsNotAuthenticating)
             {
-                if (result.IsSuccessful)
-                    await DisplayAlert("Success", "Device Registered for Notificaitons", "OK");
-                else
-                    await DisplayAlert("Registration Failed", result.ErrorMessage, "OK");
-            });
+                var loginRowViews = _contentGrid.Children.OfType<ILoginRowView>().Cast<View>();
+
+                await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(0.3, 75)));
+
+                ViewModel.ConnectToGitHubButtonCommand.Execute((_connectToGitHubCancellationTokenSource.Token, (BrowserLaunchOptions?)null));
+
+                await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(1, 350, Easing.CubicOut)));
+            }
         }
 
-        RelativeLayout CreateLayout(bool isPortraitOrientation)
+        class LoginRowTappableView : View, ILoginRowView
         {
-            var gitHubSettingsView = new GitHubSettingsView();
-            var trendsSettingsView = new TrendsChartSettingsView(_trendsChartSettingsService);
-            var registerforNotificationsView = new RegisterForNotificationsView();
-
-#if AppStore
-            var versionNumberText = $"Version {VersionTracking.CurrentVersion}";
-#elif RELEASE
-            var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Release)";
-#elif DEBUG
-            var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Debug)";
-#endif
-
-            var createdByLabel = new Label
-            {
-                AutomationId = SettingsPageAutomationIds.CreatedByLabel,
-                Margin = new Thickness(0, 5),
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                HorizontalTextAlignment = TextAlignment.Center,
-                VerticalTextAlignment = TextAlignment.End,
-                Text = $"{versionNumberText}\nMobile App Created by Code Traveler LLC",
-                FontSize = 12,
-            };
-            createdByLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
-            createdByLabel.BindTapGesture(nameof(SettingsViewModel.CreatedByLabelTappedCommand));
-
-            var relativeLayout = new RelativeLayout
-            {
-                Margin = isPortraitOrientation ? new Thickness(20, 20, 20, 30) : new Thickness(20, 20, 20, 0)
-            };
-
-            relativeLayout.Children.Add(createdByLabel,
-                xConstraint: Constraint.RelativeToParent(parent => parent.Width / 2 - GetWidth(parent, createdByLabel) / 2),
-                yConstraint: Constraint.RelativeToParent(parent => parent.Height - GetHeight(parent, createdByLabel) - 10));
-
-            relativeLayout.Children.Add(gitHubSettingsView,
-                //Keep at left of the screen
-                xConstraint: Constraint.Constant(0),
-                //Keep at top of the screen
-                yConstraint: Constraint.Constant(0),
-                //Portrait: Full width; Landscape: Half of the screen
-                widthConstraint: isPortraitOrientation
-                                    ? Constraint.RelativeToParent(parent => parent.Width)
-                                    : Constraint.RelativeToParent(parent => parent.Width / 2),
-                //Portrait: Half height; Landscape: Full height
-                heightConstraint: isPortraitOrientation
-                                    ? Constraint.RelativeToParent(parent => parent.Height / 2)
-                                    : Constraint.RelativeToParent(parent => parent.Height));
-
-            relativeLayout.Children.Add(trendsSettingsView,
-                //Portrait: Place under GitHubSettingsView; Landscape: Place to the right of GitHubSettingsView
-                xConstraint: isPortraitOrientation
-                                ? Constraint.Constant(0)
-                                : Constraint.RelativeToParent(parent => parent.Width / 2),
-                //Portrait: Place under GitHubSettingsView; Landscape: Place on the top
-                yConstraint: isPortraitOrientation
-                                ? Constraint.RelativeToView(gitHubSettingsView, (parent, view) => view.Y + view.Height + 10)
-                                : Constraint.Constant(0),
-                //Portrait: Full width; Landscape: Half of the screen
-                widthConstraint: isPortraitOrientation
-                                    ? Constraint.RelativeToParent(parent => parent.Width)
-                                    : Constraint.RelativeToParent(parent => parent.Width / 2));
-
-            relativeLayout.Children.Add(registerforNotificationsView,
-                xConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.X),
-                yConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Y + view.Height + 20),
-                widthConstraint: Constraint.RelativeToView(trendsSettingsView, (parent, view) => view.Width));
-
-            return relativeLayout;
+            public LoginRowTappableView(TapGestureRecognizer tapGestureRecognizer) => GestureRecognizers.Add(tapGestureRecognizer);
         }
 
-        async void HandleGitHubLoginUrlRetrieved(object sender, string? loginUrl)
+        class LoginRowSvg : SvgImage, ILoginRowView
         {
-            if (!string.IsNullOrWhiteSpace(loginUrl))
-                await OpenBrowser(loginUrl);
-            else
-                await DisplayAlert("Error", "Couldn't connect to GitHub Login. Check your internet connection and try again", "OK");
+            public LoginRowSvg(in string svgFileName, in Func<Color> getTextColor) : base(svgFileName, getTextColor)
+            {
+                //Allow LoginRowTappableView to handle taps
+                InputTransparent = true;
+            }
+        }
+
+        class LoginLabel : TitleLabel, ILoginRowView
+        {
+            public LoginLabel()
+            {
+                this.FillExpand();
+                HorizontalTextAlignment = TextAlignment.Start;
+
+                AutomationId = SettingsPageAutomationIds.GitHubLoginLabel;
+
+                //Allow LoginRowTappableView to handle taps
+                InputTransparent = true;
+
+                this.SetBinding(TextProperty, nameof(SettingsViewModel.LoginLabelText));
+            }
+        }
+
+        class RegisterForNotificationsLabel : TitleLabel
+        {
+            public RegisterForNotificationsLabel() => Text = "Register for Notifications";
+        }
+
+        class ThemeLabel : TitleLabel
+        {
+            public ThemeLabel() => Text = "Theme";
+        }
+
+        class Separator : BoxView
+        {
+            public Separator() => SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
+        }
+
+        class EnableNotificationsSwitch : SettingsSwitch
+        {
+            public EnableNotificationsSwitch()
+            {
+                AutomationId = SettingsPageAutomationIds.RegisterForNotificationsSwitch;
+
+                this.SetBinding(IsToggledProperty, nameof(SettingsViewModel.IsRegisterForNotificationsSwitchToggled));
+                this.SetBinding(IsEnabledProperty, nameof(SettingsViewModel.IsRegisterForNotificationsSwitchEnabled));
+            }
+        }
+
+        class ThemePicker : Picker
+        {
+            public ThemePicker()
+            {
+                FontSize = 12;
+                FontFamily = FontFamilyConstants.RobotoMedium;
+
+                WidthRequest = 70;
+
+                HorizontalOptions = LayoutOptions.EndAndExpand;
+                VerticalOptions = LayoutOptions.EndAndExpand;
+
+                AutomationId = SettingsPageAutomationIds.ThemePicker;
+
+                SetDynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
+                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+
+                this.SetBinding(ItemsSourceProperty, nameof(SettingsViewModel.ThemePickerItemsSource));
+                this.SetBinding(SelectedIndexProperty, nameof(SettingsViewModel.ThemePickerSelectedThemeIndex));
+            }
+        }
+
+        interface ILoginRowView
+        {
+
         }
     }
 }

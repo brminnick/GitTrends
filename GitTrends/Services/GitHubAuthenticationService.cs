@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using AsyncAwaitBestPractices;
@@ -12,9 +13,11 @@ namespace GitTrends
     public class GitHubAuthenticationService
     {
         const string _oauthTokenKey = "OAuthToken";
+
         readonly WeakEventManager<AuthorizeSessionCompletedEventArgs> _authorizeSessionCompletedEventManager = new WeakEventManager<AuthorizeSessionCompletedEventArgs>();
         readonly WeakEventManager _authorizeSessionStartedEventManager = new WeakEventManager();
         readonly WeakEventManager _loggedOuteventManager = new WeakEventManager();
+        readonly WeakEventManager _demoUserActivatedEventManager = new WeakEventManager();
 
         readonly AzureFunctionsApiService _azureFunctionsApiService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
@@ -30,6 +33,8 @@ namespace GitTrends
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _repositoryDatabase = repositoryDatabase;
             _analyticsService = analyticsService;
+
+            ThemeService.PreferenceChanged += HandlePreferenceChanged;
         }
 
         public event EventHandler AuthorizeSessionStarted
@@ -42,6 +47,12 @@ namespace GitTrends
         {
             add => _authorizeSessionCompletedEventManager.AddEventHandler(value);
             remove => _authorizeSessionCompletedEventManager.RemoveEventHandler(value);
+        }
+
+        public event EventHandler DemoUserActivated
+        {
+            add => _demoUserActivatedEventManager.AddEventHandler(value);
+            remove => _demoUserActivatedEventManager.RemoveEventHandler(value);
         }
 
         public event EventHandler LoggedOut
@@ -84,33 +95,41 @@ namespace GitTrends
 
             try
             {
-                var token = JsonConvert.DeserializeObject<GitHubToken>(serializedToken);
+                var token = JsonConvert.DeserializeObject<GitHubToken?>(serializedToken);
 
-                if (token is null)
-                    return new GitHubToken(string.Empty, string.Empty, string.Empty);
-
-                return token;
+                return token ?? GitHubToken.Empty;
             }
             catch (ArgumentNullException)
             {
-                return new GitHubToken(string.Empty, string.Empty, string.Empty);
+                return GitHubToken.Empty;
             }
             catch (JsonReaderException)
             {
-                return new GitHubToken(string.Empty, string.Empty, string.Empty);
+                return GitHubToken.Empty;
             }
         }
 
-        public async Task<string> GetGitHubLoginUrl()
+        public async Task ActivateDemoUser()
+        {
+            await LogOut().ConfigureAwait(false);
+
+            Name = DemoDataConstants.Name;
+            Alias = DemoDataConstants.Alias;
+            AvatarUrl = BaseTheme.GetGitTrendsImageSource();
+
+            OnDemoUserActivated();
+        }
+
+        public async Task<string> GetGitHubLoginUrl(CancellationToken cancellationToken)
         {
             MostRecentSessionId = Guid.NewGuid().ToString();
 
-            var clientIdDTO = await _azureFunctionsApiService.GetGitHubClientId().ConfigureAwait(false);
+            var clientIdDTO = await _azureFunctionsApiService.GetGitHubClientId(cancellationToken).ConfigureAwait(false);
 
-            return $"{GitHubConstants.GitHubAuthBaseUrl}/login/oauth/authorize?client_id={clientIdDTO.ClientId}&scope=public_repo%20read:user&state={MostRecentSessionId}";
+            return $"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id={clientIdDTO.ClientId}&scope=public_repo%20read:user&state={MostRecentSessionId}";
         }
 
-        public async Task AuthorizeSession(Uri callbackUri)
+        public async Task AuthorizeSession(Uri callbackUri, CancellationToken cancellationToken)
         {
             OnAuthorizeSessionStarted();
 
@@ -124,15 +143,15 @@ namespace GitTrends
 
                 if (state != MostRecentSessionId)
                     throw new InvalidOperationException("Invalid SessionId");
-
-                MostRecentSessionId = string.Empty;
+                else
+                    MostRecentSessionId = string.Empty;
 
                 var generateTokenDTO = new GenerateTokenDTO(code, state);
-                var token = await _azureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO).ConfigureAwait(false);
+                var token = await _azureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO, cancellationToken).ConfigureAwait(false);
 
                 await SaveGitHubToken(token).ConfigureAwait(false);
 
-                var (login, name, avatarUri) = await _gitHubGraphQLApiService.GetCurrentUserInfo().ConfigureAwait(false);
+                var (login, name, avatarUri) = await _gitHubGraphQLApiService.GetCurrentUserInfo(cancellationToken).ConfigureAwait(false);
 
                 Alias = login;
                 Name = name;
@@ -174,6 +193,15 @@ namespace GitTrends
 
         Task InvalidateToken() => SecureStorage.SetAsync(_oauthTokenKey, string.Empty);
 
+        async void HandlePreferenceChanged(object sender, PreferredTheme e)
+        {
+            //Ensure the Demo User Alias matches the PreferredTheme
+            if (Alias is DemoDataConstants.Alias)
+            {
+                await ActivateDemoUser();
+            }
+        }
+
         void OnAuthorizeSessionCompleted(bool isSessionAuthorized) =>
            _authorizeSessionCompletedEventManager.HandleEvent(this, new AuthorizeSessionCompletedEventArgs(isSessionAuthorized), nameof(AuthorizeSessionCompleted));
 
@@ -181,5 +209,7 @@ namespace GitTrends
            _authorizeSessionStartedEventManager.HandleEvent(this, EventArgs.Empty, nameof(AuthorizeSessionStarted));
 
         void OnLoggedOut() => _loggedOuteventManager.HandleEvent(this, EventArgs.Empty, nameof(LoggedOut));
+
+        void OnDemoUserActivated() => _demoUserActivatedEventManager.HandleEvent(this, EventArgs.Empty, nameof(DemoUserActivated));
     }
 }

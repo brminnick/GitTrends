@@ -16,7 +16,9 @@ namespace GitTrends
 
         CancellationTokenSource? _animationCancellationToken;
 
-        public SplashScreenPage(AnalyticsService analyticsService, SplashScreenViewModel splashScreenViewModel) : base("", splashScreenViewModel, analyticsService, false)
+        public SplashScreenPage(AnalyticsService analyticsService,
+                                SplashScreenViewModel splashScreenViewModel)
+            : base(splashScreenViewModel, analyticsService, shouldUseSafeArea: false)
         {
             //Remove BaseContentPageBackground
             RemoveDynamicResource(BackgroundColorProperty);
@@ -31,24 +33,22 @@ namespace GitTrends
             _gitTrendsImage = new Image
             {
                 AutomationId = SplashScreenPageAutomationIds.GitTrendsImage,
-                Source = "GitTrends",
                 Opacity = 0,
                 HorizontalOptions = LayoutOptions.CenterAndExpand,
                 VerticalOptions = LayoutOptions.CenterAndExpand,
                 Aspect = Aspect.AspectFit
             };
+            _gitTrendsImage.SetDynamicResource(Image.SourceProperty, nameof(BaseTheme.GitTrendsImageSource));
 
             _statusLabel = new Label
             {
-                Margin = new Thickness(10, 0),
-                AutomationId = SplashScreenPageAutomationIds.StatusLabel,
-                Text = _statusMessageEnumerator.Current,
-                HorizontalTextAlignment = TextAlignment.Center,
                 //Begin with Label off of the screen
                 TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2,
+                Margin = new Thickness(10, 0),
+                AutomationId = SplashScreenPageAutomationIds.StatusLabel,
+                HorizontalTextAlignment = TextAlignment.Center,
             };
-            _statusLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TotalClonesColor));
-
+            _statusLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.SplashScreenStatusColor));
 
             var relativeLayout = new RelativeLayout();
 
@@ -67,6 +67,8 @@ namespace GitTrends
         {
             base.OnAppearing();
 
+            await ChangeLabelText(_statusMessageEnumerator.Current);
+
             _animationCancellationToken = new CancellationTokenSource();
 
             //Fade the Image Opacity to 1. Work around for https://github.com/xamarin/Xamarin.Forms/issues/8073
@@ -82,9 +84,7 @@ namespace GitTrends
 
             ViewModel.InitializeAppCommand.Execute(null);
 
-#if !DEBUG
             Animate(_animationCancellationToken.Token);
-#endif
         }
 
         async void Animate(CancellationToken pulseCancellationToken)
@@ -137,7 +137,35 @@ namespace GitTrends
             });
         }
 
-        Task ChangeLabelText(string text) => ChangeLabelText(new FormattedString { Spans = { new Span { Text = text } } });
+        Task ChangeLabelText(string text) => ChangeLabelText(new FormattedString
+        {
+            Spans =
+            {
+                new Span
+                {
+                    Text = text,
+                    FontFamily = FontFamilyConstants.RobotoRegular
+                }
+            }
+        });
+
+        Task ChangeLabelText(string title, string body) => ChangeLabelText(new FormattedString
+        {
+            Spans =
+            {
+                new Span
+                {
+                    Text = title,
+                    FontSize = 16,
+                    FontFamily = FontFamilyConstants.RobotoBold
+                },
+                new Span
+                {
+                    Text = "\n" + body,
+                    FontFamily = FontFamilyConstants.RobotoRegular
+                }
+            }
+        });
 
         Task ChangeLabelText(FormattedString formattedString)
         {
@@ -155,57 +183,25 @@ namespace GitTrends
         async void HandleInitializationComplete(object sender, InitializationCompleteEventArgs e)
         {
             _animationCancellationToken?.Cancel();
-#if DEBUG
-            await ChangeLabelText(new FormattedString
-            {
-                Spans =
-                {
-                    new Span
-                    {
-                        FontAttributes = FontAttributes.Bold,
-                        Text = "Preview Mode"
-                    },
-                    new Span
-                    {
-                        Text = "\nCertain license warnings may appear"
-                    }
-                }
-            });
-
-            //Display Text
-            await Task.Delay(500);
-
-            await NavigateToRepositoryPage();
-#else
             if (e.IsInitializationSuccessful)
             {
+#if DEBUG
+                await ChangeLabelText("Preview Mode", "Certain license warnings may appear");
+                //Display Text
+                await Task.Delay(500);
+#else
                 await ChangeLabelText("Let's go!");
-
-                await NavigateToRepositoryPage();
+#endif
+                await NavigateToNextPage();
             }
             else
             {
-                await ChangeLabelText(new FormattedString
-                {
-                    Spans =
-                    {
-                        new Span
-                        {
-                            FontAttributes = FontAttributes.Bold,
-                            Text = "Initialization Failed\n"
-                        },
-                        new Span
-                        {
-                            Text = "Ensure Internet Connection Is Available\n + \nUpdate App to the Latest Version"
-                        }
-                    }
-                });
+                await ChangeLabelText("Initialization Failed", "\nEnsure Internet Connection Is Available and Update GitTrends to the Latest Version");
 
                 AnalyticsService.Track("Initialization Failed");
             }
-#endif
 
-            Task NavigateToRepositoryPage()
+            Task NavigateToNextPage()
             {
                 return MainThread.InvokeOnMainThreadAsync(async () =>
                 {
@@ -213,10 +209,21 @@ namespace GitTrends
                     var explodeImageTask = Task.WhenAll(Content.ScaleTo(100, 250, Easing.CubicOut), Content.FadeTo(0, 250, Easing.CubicIn));
                     BackgroundColor = (Color)Application.Current.Resources[nameof(BaseTheme.PageBackgroundColor)];
 
+                    using var scope = ContainerService.Container.BeginLifetimeScope();
+                    var repositoryPage = scope.Resolve<RepositoryPage>();
+
                     await explodeImageTask;
 
-                    using var scope = ContainerService.Container.BeginLifetimeScope();
-                    Application.Current.MainPage = new BaseNavigationPage(scope.Resolve<RepositoryPage>());
+                    Application.Current.MainPage = new BaseNavigationPage(repositoryPage);
+
+                    if (FirstRunService.IsFirstRun)
+                    {
+                        //Yield the UI thread to allow MainPage to be set
+                        await Task.Delay(250);
+
+                        var onboardingCarouselPage = scope.Resolve<OnboardingCarouselPage>();
+                        await repositoryPage.Navigation.PushModalAsync(onboardingCarouselPage);
+                    }
                 });
             }
         }

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
@@ -17,30 +18,62 @@ namespace GitTrends
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly TrendsChartSettingsService _trendsChartSettingsService;
+        readonly NotificationService _notificationService;
+        readonly ThemeService _themeService;
 
         public UITestBackdoorService(GitHubAuthenticationService gitHubAuthenticationService,
+                                        NotificationService notificationService,
                                         GitHubGraphQLApiService gitHubGraphQLApiService,
-                                        TrendsChartSettingsService trendsChartSettingsService)
+                                        TrendsChartSettingsService trendsChartSettingsService,
+                                        ThemeService themeService)
         {
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _trendsChartSettingsService = trendsChartSettingsService;
+            _notificationService = notificationService;
+            _themeService = themeService;
         }
 
-        public async Task SetGitHubUser(string token)
+        public async Task SetGitHubUser(string token, CancellationToken cancellationToken)
         {
             await _gitHubAuthenticationService.SaveGitHubToken(new GitHubToken(token, string.Empty, "Bearer")).ConfigureAwait(false);
 
-            var (alias, name, avatarUri) = await _gitHubGraphQLApiService.GetCurrentUserInfo().ConfigureAwait(false);
+            var (alias, name, avatarUri) = await _gitHubGraphQLApiService.GetCurrentUserInfo(cancellationToken).ConfigureAwait(false);
 
             GitHubAuthenticationService.Alias = alias;
             GitHubAuthenticationService.AvatarUrl = avatarUri.ToString();
             GitHubAuthenticationService.Name = name;
         }
 
+        public Task<GitHubToken> GetGitHubToken() => GitHubAuthenticationService.GetGitHubToken();
+
+        public void TriggerReviewRequest()
+        {
+            var referringSitesPage = (ReferringSitesPage)GetVisibleContentPage();
+            var referringSitesViewModel = (ReferringSitesViewModel)referringSitesPage.BindingContext;
+
+            referringSitesViewModel.IsStoreRatingRequestVisible = true;
+        }
+
+        public string GetReviewRequestAppStoreTitle() => AppStoreConstants.RatingRequest;
+
+        public PreferredTheme GetPreferredTheme() => _themeService.Preference;
+
+        public bool ShouldSendNotifications() => _notificationService.ShouldSendNotifications;
+
         public Task TriggerPullToRefresh() => MainThread.InvokeOnMainThreadAsync(() => GetVisibleRefreshView().IsRefreshing = true);
 
         public IReadOnlyList<T> GetVisibleCollection<T>() => GetVisibleCollection().Cast<T>().ToList();
+
+        public Task PopPage()
+        {
+            FirstRunService.IsFirstRun = false;
+
+            if (GetVisiblePageFromModalStack() is Page page)
+                return page.Navigation.PopModalAsync();
+
+            return GetVisiblePageFromNavigationStack().Navigation.PopAsync();
+        }
 
         public IEnumerable GetVisibleCollection()
         {
@@ -59,6 +92,16 @@ namespace GitTrends
             return trendsChart.Series.First(x => x.Label.Equals(seriesTitle)).IsVisible;
         }
 
+        public int GetCurrentOnboardingPageNumber()
+        {
+            var onboardingCarouselPage = (OnboardingCarouselPage)Application.Current.MainPage.Navigation.ModalStack.Last();
+            var currentPage = onboardingCarouselPage.CurrentPage;
+
+            return onboardingCarouselPage.Children.IndexOf(currentPage);
+        }
+
+        public Task<bool> AreNotificationsEnabled() => _notificationService.AreNotificationsEnabled();
+
         RefreshView GetVisibleRefreshView()
         {
             var visibleContentPage = GetVisibleContentPage();
@@ -71,11 +114,11 @@ namespace GitTrends
                 throw new NotSupportedException($"{visibleContentPage.GetType()} Does Not Contain a RefreshView");
         }
 
-        ContentPage GetVisibleContentPage()
-        {
-            return (ContentPage)Application.Current.MainPage.Navigation.ModalStack.LastOrDefault()
-                    ?? (ContentPage)Application.Current.MainPage.Navigation.NavigationStack.Last();
-        }
+        ContentPage GetVisibleContentPage() => (ContentPage)(GetVisiblePageFromModalStack() ?? GetVisiblePageFromNavigationStack());
+
+        Page? GetVisiblePageFromModalStack() => Application.Current.MainPage.Navigation.ModalStack.LastOrDefault();
+
+        Page GetVisiblePageFromNavigationStack() => Application.Current.MainPage.Navigation.NavigationStack.Last();
     }
 }
 #endif

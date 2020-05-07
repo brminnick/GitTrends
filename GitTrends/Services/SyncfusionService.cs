@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using Xamarin.Essentials;
@@ -20,7 +21,7 @@ namespace GitTrends
 
         string SyncfusionLicenseKey => _syncfusionLicenseKeyHolder.Value;
 
-        public async Task Initialize()
+        public async Task Initialize(CancellationToken cancellationToken)
         {
             var syncFusionLicense = await GetLicense().ConfigureAwait(false);
 
@@ -28,7 +29,7 @@ namespace GitTrends
             {
                 try
                 {
-                    var syncusionDto = await _azureFunctionsApiService.GetSyncfusionInformation().ConfigureAwait(false);
+                    var syncusionDto = await _azureFunctionsApiService.GetSyncfusionInformation(cancellationToken).ConfigureAwait(false);
 
                     syncFusionLicense = syncusionDto.LicenseKey;
 

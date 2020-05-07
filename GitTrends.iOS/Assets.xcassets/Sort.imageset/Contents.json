@@ -98,7 +98,6 @@
       "idiom": "universal"
     },
     {
-      "filename": "sort@1x_dark.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -109,7 +108,6 @@
       "idiom": "universal"
     },
     {
-      "filename": "sort@2x_dark.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -120,7 +118,6 @@
       "idiom": "universal"
     },
     {
-      "filename": "sort@3x_dark.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -318,7 +315,6 @@
       "idiom": "universal"
     },
     {
-      "filename": "sort@1x_light-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -329,7 +325,6 @@
       "idiom": "universal"
     },
     {
-      "filename": "sort@2x_light-1.png",
       "appearances": [
         {
           "appearance": "luminosity",
@@ -340,7 +335,6 @@
       "idiom": "universal"
     },
     {
-      "filename": "sort@3x_light.png",
       "appearances": [
         {
           "appearance": "luminosity",

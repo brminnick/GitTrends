@@ -9,8 +9,17 @@ namespace GitTrends.Shared
 {
     public class Repository : IRepository
     {
+        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork, DateTimeOffset dataDownloadedAt, IList<DailyViewsModel>? views = null, IList<DailyClonesModel>? clones = null)
+            : this(name, description, forkCount, owner, issues, url, stargazers, isFork, views, clones)
+        {
+            DataDownloadedAt = dataDownloadedAt;
+        }
+
+        [JsonConstructor]
         public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork, IList<DailyViewsModel>? views = null, IList<DailyClonesModel>? clones = null)
         {
+            DataDownloadedAt = DateTimeOffset.UtcNow;
+
             Name = name;
             Description = description;
             ForkCount = forkCount;
@@ -27,19 +36,26 @@ namespace GitTrends.Shared
             DailyViewsList = (views ?? Enumerable.Empty<DailyViewsModel>()).ToList();
             DailyClonesList = (clones ?? Enumerable.Empty<DailyClonesModel>()).ToList();
 
+            TotalViews = DailyViewsList.Sum(x => x.TotalViews);
+            TotalUniqueViews = DailyViewsList.Sum(x => x.TotalUniqueViews);
+            TotalClones = DailyClonesList.Sum(x => x.TotalClones);
+            TotalUniqueClones = DailyClonesList.Sum(x => x.TotalUniqueClones);
+
             var (isViewsTrending, isClonesTrending) = TrendingService.IsTrending(this);
             IsTrending = (isViewsTrending ?? false) || (isClonesTrending ?? false);
         }
 
-        public long TotalViews => DailyViewsList.Sum(x => x.TotalViews);
-        public long TotalUniqueViews => DailyViewsList.Sum(x => x.TotalUniqueViews);
-        public long TotalClones => DailyClonesList.Sum(x => x.TotalClones);
-        public long TotalUniqueClones => DailyClonesList.Sum(x => x.TotalUniqueClones);
+        public DateTimeOffset DataDownloadedAt { get; }
+
+        public long TotalViews { get; }
+        public long TotalUniqueViews { get; }
+        public long TotalClones { get; }
+        public long TotalUniqueClones { get; }
 
         public string OwnerLogin { get; }
         public string OwnerAvatarUrl { get; }
-        public int StarCount { get; }
-        public int IssuesCount { get; }
+        public long StarCount { get; }
+        public long IssuesCount { get; }
         public string Name { get; }
         public string Description { get; }
         public long ForkCount { get; }
@@ -63,6 +79,7 @@ namespace GitTrends.Shared
             stringBuilder.AppendLine($"{nameof(Description)}: {Description}");
             stringBuilder.AppendLine($"{nameof(ForkCount)}: {ForkCount}");
             stringBuilder.AppendLine($"{nameof(IssuesCount)}: {IssuesCount}");
+            stringBuilder.AppendLine($"{nameof(DataDownloadedAt)}: {DataDownloadedAt}");
 
             return stringBuilder.ToString();
         }
@@ -103,9 +120,9 @@ namespace GitTrends.Shared
 
     public class StarGazers
     {
-        public StarGazers(int totalCount) => TotalCount = totalCount;
+        public StarGazers(long totalCount) => TotalCount = totalCount;
 
         [JsonProperty("totalCount")]
-        public int TotalCount { get; }
+        public long TotalCount { get; }
     }
 }

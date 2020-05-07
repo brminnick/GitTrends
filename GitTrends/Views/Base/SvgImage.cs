@@ -1,27 +1,61 @@
 ﻿using System;
+using System.Threading.Tasks;
+using AsyncAwaitBestPractices;
 using FFImageLoading.Svg.Forms;
+using GitTrends.Mobile.Shared;
+using Xamarin.Essentials;
 using Xamarin.Forms;
+using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {
-    class SvgImage : SvgCachedImage
+    public class SvgImage : SvgCachedImage
     {
-        readonly Func<Color> _getTextColor;
+        public static readonly BindableProperty GetTextColorProperty =
+            BindableProperty.Create(nameof(GetTextColorProperty), typeof(Func<Color>), typeof(SvgImage), (Func<Color>)(() => Color.Default), propertyChanged: HandleGetTextColorPropertyChanged);
 
-        public SvgImage(in string svgFileName, in Func<Color> getTextColor)
+        public SvgImage(in string svgFileName, in Func<Color> getTextColor, double widthRequest = 24, double heightRequest = 24)
         {
-            _getTextColor = getTextColor;
+            if (!svgFileName.EndsWith(".svg"))
+                throw new ArgumentException($"{nameof(svgFileName)} must end with .svg", nameof(svgFileName));
 
-            var app = (App)Application.Current;
-            app.ThemeChanged += HandleThemeChanged;
+            ThemeService.PreferenceChanged += HandlePreferenceChanged;
 
-            UpdateSVGColor();
+            this.FillExpand();
+
+            GetTextColor = getTextColor;
 
             Source = SvgService.GetFullPath(svgFileName);
+
+            WidthRequest = widthRequest;
+            HeightRequest = heightRequest;
         }
 
-        void HandleThemeChanged(object sender, Theme e) => UpdateSVGColor();
+        public Func<Color> GetTextColor
+        {
+            get => (Func<Color>)GetValue(GetTextColorProperty);
+            set
+            {
+                SetSvgColorAsync().SafeFireAndForget();
 
-        void UpdateSVGColor() => ReplaceStringMap = SvgService.GetColorStringMap(_getTextColor());
+                if (value() != GetTextColor())
+                {
+                    SetValue(GetTextColorProperty, value);
+                    OnPropertyChanged(nameof(GetTextColor));
+                }
+            }
+        }
+
+        static void HandleGetTextColorPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            var svgImage = (SvgImage)bindable;
+            svgImage.GetTextColor = (Func<Color>)newValue;
+        }
+
+        void HandlePreferenceChanged(object sender, PreferredTheme e) => SetSvgColor();
+
+        Task SetSvgColorAsync() => MainThread.InvokeOnMainThreadAsync(SetSvgColor);
+
+        void SetSvgColor() => ReplaceStringMap = SvgService.GetColorStringMap(GetTextColor());
     }
 }

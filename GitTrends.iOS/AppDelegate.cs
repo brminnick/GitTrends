@@ -1,22 +1,28 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
 using Foundation;
+using GitTrends.Shared;
+using Microsoft.Azure.NotificationHubs;
 using Shiny;
 using UIKit;
 
 namespace GitTrends.iOS
 {
     [Register(nameof(AppDelegate))]
-    public class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
+    public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             iOSShinyHost.Init(platformBuild: services => services.UseNotifications());
 
             global::Xamarin.Forms.Forms.Init();
+            Xamarin.Forms.FormsMaterial.Init();
+
             Syncfusion.SfChart.XForms.iOS.Renderers.SfChartRenderer.Init();
             Syncfusion.XForms.iOS.Buttons.SfSegmentedControlRenderer.Init();
 
@@ -24,9 +30,11 @@ namespace GitTrends.iOS
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageSourceHandler();
             var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
 
-#if !AppStore
-            Xamarin.Calabash.Start();
-#endif
+            FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration
+            {
+                HttpHeadersTimeout = 60,
+                HttpClient = new HttpClient(new NSUrlSessionHandler())
+            });
 
             PrintFontNamesToConsole();
 
@@ -37,7 +45,6 @@ namespace GitTrends.iOS
 
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
-
 
         public override bool OpenUrl(UIApplication app, NSUrl url, NSDictionary options)
         {
@@ -54,7 +61,7 @@ namespace GitTrends.iOS
                 using var scope = ContainerService.Container.BeginLifetimeScope();
 
                 var gitHubAuthenticationService = scope.Resolve<GitHubAuthenticationService>();
-                await gitHubAuthenticationService.AuthorizeSession(callbackUri).ConfigureAwait(false);
+                await gitHubAuthenticationService.AuthorizeSession(callbackUri, CancellationToken.None).ConfigureAwait(false);
             }
 
             static void onException(Exception e)
@@ -64,69 +71,42 @@ namespace GitTrends.iOS
             }
         }
 
-        public override async void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
+        public override async void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
         {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
+
+            await Task.WhenAll(backgroundFetchService.CleanUpDatabase(), backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None)).ConfigureAwait(false);
+        }
+
+        public override async void ReceivedLocalNotification(UIApplication application, UILocalNotification notification) =>
             await HandleLocalNotification(notification).ConfigureAwait(false);
-        }
 
-        public override void PerformFetch(UIApplication application, Action<UIBackgroundFetchResult> completionHandler)
-        {
-            Shiny.Jobs.JobManager.OnBackgroundFetch(completionHandler);
-        }
-
-#if !AppStore
-        #region UI Test Back Door Methods
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.SetGitHubUser + ":")]
-        public async void SetGitHubUser(NSString accessToken)
+        public override async void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
+            var analyticsService = scope.Resolve<AnalyticsService>();
+            var notificationService = scope.Resolve<NotificationService>();
 
-            await backdoorService.SetGitHubUser(accessToken.ToString()).ConfigureAwait(false);
-        }
+            var notificationHubInformation = await notificationService.GetNotificationHubInformation().ConfigureAwait(false);
 
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.TriggerPullToRefresh + ":")]
-        public async void TriggerRepositoriesPullToRefresh(NSString noValue)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
+            var tokenAsString = BitConverter.ToString(deviceToken.ToArray()).Replace("-", "").Replace("\"", "");
 
-            await backdoorService.TriggerPullToRefresh().ConfigureAwait(false);
-        }
+#if AppStore
+            var hubClient = NotificationHubClient.CreateClientFromConnectionString(notificationHubInformation.ConnectionString, notificationHubInformation.Name);
+#else
+            if (notificationHubInformation.IsEmpty())
+                return;
 
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.GetVisibleCollection + ":")]
-        public NSString GetVisibleRepositoryList(NSString noValue)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            var serializedCollection = Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetVisibleCollection());
-            return new NSString(serializedCollection);
-        }
-
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.GetCurrentTrendsChartOption + ":")]
-        public NSString GetCurrentTrendsChartOption(NSString noValue)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            var serializedTrendChartOption = Newtonsoft.Json.JsonConvert.SerializeObject(backdoorService.GetCurrentTrendsChartOption());
-            return new NSString(serializedTrendChartOption);
-        }
-
-        [Preserve, Export(Mobile.Shared.BackdoorMethodConstants.IsTrendsSeriesVisible + ":")]
-        public NSString IsTrendsSeriesVisible(NSString seriesLabel)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backdoorService = scope.Resolve<UITestBackdoorService>();
-
-            var isSeriesVisible = backdoorService.IsTrendsSeriesVisible(seriesLabel.ToString());
-            return new NSString(Newtonsoft.Json.JsonConvert.SerializeObject(isSeriesVisible));
-        }
-        #endregion
+            var hubClient = NotificationHubClient.CreateClientFromConnectionString(notificationHubInformation.ConnectionString_Debug, notificationHubInformation.Name_Debug);
 #endif
+            var doesRegistrationExist = await hubClient.RegistrationExistsAsync(tokenAsString).ConfigureAwait(false);
 
-        Task HandleLocalNotification(UILocalNotification notification)
+            if (!doesRegistrationExist)
+                await hubClient.CreateAppleNativeRegistrationAsync(tokenAsString).ConfigureAwait(false);
+        }
+
+        Task HandleLocalNotification(in UILocalNotification notification)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var notificationService = scope.Resolve<NotificationService>();

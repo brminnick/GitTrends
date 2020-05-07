@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using GitTrends.Mobile.Shared;
 using Xamarin.UITest;
-using Xamarin.UITest.Android;
 using Xamarin.UITest.iOS;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
@@ -10,53 +10,60 @@ namespace GitTrends.UITests
 {
     abstract class BasePage
     {
+        Query _iOSSafariView, _iOSEmailView;
         const string _syncfusionLicenseWarningTitle = "Syncfusion License";
 
         protected BasePage(IApp app, string pageTitle = "")
         {
             App = app;
             PageTitle = pageTitle;
+
+            _iOSSafariView = x => x.Class("SFSafariView");
+            _iOSEmailView = GenerateMarkedQuery("RemoteViewBridge");
         }
+
+        public bool AreNotificationsEnabled => App.InvokeBackdoorMethod<bool>(BackdoorMethodConstants.AreNotificationsEnabled);
+
+        public bool IsEmailOpen => App switch
+        {
+            iOSApp iOSApp => iOSApp.Query(_iOSEmailView).Any(),
+            _ => throw new NotSupportedException("Browser Can Only Be Verified on iOS")
+        };
+
+        public bool IsBrowserOpen => App switch
+        {
+            iOSApp iOSApp => iOSApp.Query(_iOSSafariView).Any(),
+            _ => throw new NotSupportedException("Browser Can Only Be Verified on iOS")
+        };
 
         public string PageTitle { get; }
         protected IApp App { get; }
 
-        bool IsRefreshViewRefreshIndicatorDisplayed => App switch
+        public void WaitForEmailToOpen()
         {
-            AndroidApp androidApp => (bool)androidApp.Query(x => x.Class("RefreshViewRenderer").Invoke("isRefreshing")).First(),
-            iOSApp iOSApp => iOSApp.Query(x => x.Class("UIRefreshControl")).Any(),
-            _ => throw new NotSupportedException("Xamarin.UITest only supports Android and iOS"),
-        };
+            if (App is iOSApp iOSApp)
+                iOSApp.WaitForElement(_iOSEmailView);
+            else
+                throw new NotSupportedException("Email Can Only Be Verified on iOS");
 
-        public async Task WaitForPullToRefreshIndicator(int timeoutInSeconds = 25)
-        {
-            int counter = 0;
-            while (!IsRefreshViewRefreshIndicatorDisplayed)
-            {
-                await Task.Delay(1000).ConfigureAwait(false);
-
-                if (counter++ >= timeoutInSeconds)
-                    throw new Exception($"Loading the list took longer than {timeoutInSeconds} seconds");
-            }
+            App.Screenshot("Browser Opened");
         }
 
-        public async Task WaitForNoPullToRefreshIndicator(int timeoutInSeconds = 25)
+        public void WaitForBrowserToOpen()
         {
-            int counter = 0;
-            while (IsRefreshViewRefreshIndicatorDisplayed)
-            {
-                await Task.Delay(1000).ConfigureAwait(false);
+            if (App is iOSApp iOSApp)
+                iOSApp.WaitForElement(_iOSSafariView);
+            else
+                throw new NotSupportedException("Browser Can Only Be Verified on iOS");
 
-                if (counter++ >= timeoutInSeconds)
-                    throw new Exception($"Loading the list took longer than {timeoutInSeconds} seconds");
-            }
+            App.Screenshot("Browser Opened");
         }
 
         public void DismissSyncfusionLicensePopup()
         {
             try
             {
-                App.WaitForElement(_syncfusionLicenseWarningTitle);
+                App.WaitForElement(_syncfusionLicenseWarningTitle, timeout: TimeSpan.FromSeconds(1));
                 App.Tap("Ok");
 
                 App.Screenshot("Syncfusion License Popup Dismissed");
@@ -86,6 +93,8 @@ namespace GitTrends.UITests
             if (shouldDismissKeyboard)
                 App.DismissKeyboard();
         }
+
+        protected string GetText(Query query) => App.Query(query).First().Text ?? App.Query(query).First().Label;
     }
 }
 

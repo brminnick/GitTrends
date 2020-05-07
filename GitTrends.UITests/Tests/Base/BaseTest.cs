@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
 using NUnit.Framework;
 
 using Xamarin.UITest;
 
 namespace GitTrends.UITests
 {
+    enum UserType { Demo, LoggedIn, Neither }
+
     abstract class BaseTest
     {
         readonly Platform _platform;
-        readonly UserType _userType;
 
         IApp? _app;
         ReferringSitesPage? _referringSitesPage;
@@ -18,8 +20,12 @@ namespace GitTrends.UITests
         SettingsPage? _settingsPage;
         TrendsPage? _trendsPage;
         SplashScreenPage? _splashScreenPage;
+        OnboardingPage? _onboardingPage;
+        WelcomePage? _welcomePage;
 
-        protected BaseTest(Platform platform, UserType userType) => (_platform, _userType) = (platform, userType);
+        protected BaseTest(Platform platform, UserType userType) => (_platform, UserType) = (platform, userType);
+
+        protected UserType UserType { get; }
 
         protected IApp App => _app ?? throw new NullReferenceException();
         protected ReferringSitesPage ReferringSitesPage => _referringSitesPage ?? throw new NullReferenceException();
@@ -27,6 +33,8 @@ namespace GitTrends.UITests
         protected SettingsPage SettingsPage => _settingsPage ?? throw new NullReferenceException();
         protected TrendsPage TrendsPage => _trendsPage ?? throw new NullReferenceException();
         protected SplashScreenPage SplashScreenPage => _splashScreenPage ?? throw new NullReferenceException();
+        protected OnboardingPage OnboardingPage => _onboardingPage ?? throw new NullReferenceException();
+        protected WelcomePage WelcomePage => _welcomePage ?? throw new NullReferenceException();
 
         [SetUp]
         public virtual Task BeforeEachTest()
@@ -38,80 +46,59 @@ namespace GitTrends.UITests
             _repositoryPage = new RepositoryPage(App);
             _settingsPage = new SettingsPage(App);
             _trendsPage = new TrendsPage(App);
+            _onboardingPage = new OnboardingPage(App);
+            _welcomePage = new WelcomePage(App);
 
             App.Screenshot("App Initialized");
 
-            return _userType switch
+            return UserType switch
             {
                 UserType.Demo => SetupDemoUser(),
                 UserType.LoggedIn => SetupLoggedInUser(),
-                UserType.Neither => SetupNeitherUser(),
+                UserType.Neither => SetupNeither(),
                 _ => throw new NotSupportedException()
             };
         }
 
-        protected Task SetupNeitherUser() => Task.CompletedTask;
+        protected Task SetupNeither() => OnboardingPage.WaitForPageToLoad();
 
         protected async Task SetupDemoUser()
         {
-            await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
+            await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
 
-            try
-            {
-                RepositoryPage.WaitForGitHubUserNotFoundPopup();
-                RepositoryPage.AcceptGitHubUserNotFoundPopup();
-            }
-            catch
-            {
-                RepositoryPage.TapSettingsButton();
-            }
-
-            await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
-            SettingsPage.DismissSyncfusionLicensePopup();
-
-            SettingsPage.TapDemoModeButton();
-            SettingsPage.WaitForGitHubLoginToComplete();
-
-            SettingsPage.TapBackButton();
+            OnboardingPage.TapNextButton();
+            OnboardingPage.TapNextButton();
 
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
-            await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
         }
 
         async Task SetupLoggedInUser()
         {
+            await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
+
             await LoginToGitHub().ConfigureAwait(false);
 
-            await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
-
-            try
-            {
-                RepositoryPage.WaitForGitHubUserNotFoundPopup();
-                RepositoryPage.AcceptGitHubUserNotFoundPopup();
-            }
-            catch
-            {
-                RepositoryPage.TapSettingsButton();
-            }
-
-            await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
-            SettingsPage.DismissSyncfusionLicensePopup();
-
-            SettingsPage.WaitForGitHubLoginToComplete();
-            SettingsPage.TapBackButton();
+            OnboardingPage.PopPage();
 
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
-            await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
         }
 
         protected async Task LoginToGitHub()
         {
-            var gitHubToken = await AzureFunctionsApiService.GenerateGitTrendsOAuthToken().ConfigureAwait(false);
+            var uiTestToken = await AzureFunctionsApiService.GetUITestToken().ConfigureAwait(false);
 
-            App.InvokeBackdoorMethod(BackdoorMethodConstants.SetGitHubUser, gitHubToken.AccessToken);
+            App.InvokeBackdoorMethod(BackdoorMethodConstants.SetGitHubUser, uiTestToken.AccessToken);
+
+            GitHubToken? currentUserToken = null;
+
+            while (currentUserToken is null)
+            {
+                await Task.Delay(1000).ConfigureAwait(false);
+                currentUserToken = App.InvokeBackdoorMethod<GitHubToken?>(BackdoorMethodConstants.GetGitHubToken);
+            }
+
+            await Task.Delay(1000).ConfigureAwait(false);
         }
     }
-
-    enum UserType { Demo, LoggedIn, Neither }
 }
 

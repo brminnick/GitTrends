@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using GitTrends.Shared;
@@ -9,15 +11,30 @@ namespace GitTrends
 {
     public class DeepLinkingService
     {
-        readonly AnalyticsService _analyticsService;
-
-        public DeepLinkingService(AnalyticsService analyticsService) => _analyticsService = analyticsService;
-
         public Task ShowSettingsUI() => MainThread.InvokeOnMainThreadAsync(AppInfo.ShowSettingsUI);
 
         public Task DisplayAlert(string title, string message, string cancel) => MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, cancel));
 
         public Task<bool> DisplayAlert(string title, string message, string accept, string decline) => MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, accept, decline));
+
+        public Task OpenBrowser(Uri uri) => OpenBrowser(uri.ToString());
+
+        public Task OpenBrowser(string url, BrowserLaunchOptions? browserLaunchOptions = null)
+        {
+            return MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                var currentTheme = (BaseTheme)Application.Current.Resources;
+
+                browserLaunchOptions ??= new BrowserLaunchOptions
+                {
+                    PreferredControlColor = currentTheme.NavigationBarTextColor,
+                    PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor,
+                    Flags = BrowserLaunchFlags.PresentAsFormSheet
+                };
+
+                return Browser.OpenAsync(url, browserLaunchOptions);
+            });
+        }
 
         public Task NavigateToTrendsPage(Repository repository)
         {
@@ -33,43 +50,40 @@ namespace GitTrends
             });
         }
 
-        public Task OpenApp(string deepLinkingUrl, string browserUrl)
+        public Task OpenApp(string deepLinkingUrl, string browserUrl) => OpenApp(deepLinkingUrl, deepLinkingUrl, browserUrl);
+
+        public Task OpenApp(string appScheme, string deepLinkingUrl, string browserUrl)
         {
             return MainThread.InvokeOnMainThreadAsync(async () =>
             {
-                var supportsUri = await Launcher.CanOpenAsync(deepLinkingUrl);
+                var supportsUri = await Launcher.CanOpenAsync(appScheme);
 
                 if (supportsUri)
-                {
                     await Launcher.OpenAsync(deepLinkingUrl);
-                }
                 else
-                {
-                    var currentTheme = (BaseTheme)Application.Current.Resources;
-
-                    var browserLaunchOptions = new BrowserLaunchOptions
-                    {
-                        PreferredControlColor = currentTheme.NavigationBarTextColor,
-                        PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor,
-                    };
-
-                    await Browser.OpenAsync(browserUrl, browserLaunchOptions);
-                }
+                    await OpenBrowser(browserUrl);
             });
         }
 
-        public Task SendEmail(string subject, string body, List<string> recipients)
+        public Task SendEmail(string subject, string body, IEnumerable<string> recipients)
         {
-            return MainThread.InvokeOnMainThreadAsync(() =>
+            return MainThread.InvokeOnMainThreadAsync(async () =>
             {
                 var message = new EmailMessage
                 {
                     Subject = subject,
                     Body = body,
-                    To = recipients
+                    To = recipients.ToList()
                 };
 
-                return Email.ComposeAsync(message);
+                try
+                {
+                    await Email.ComposeAsync(message).ConfigureAwait(false);
+                }
+                catch (FeatureNotSupportedException)
+                {
+                    await DisplayAlert("No Email Client Found", "We'd love to hear your fedback!\nsupport@GitTrends.com", "OK").ConfigureAwait(false);
+                }
             });
         }
 

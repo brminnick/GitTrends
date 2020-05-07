@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AsyncAwaitBestPractices;
-using Autofac;
 using GitTrends.Shared;
-using Shiny;
-using Shiny.Jobs;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -19,11 +15,13 @@ namespace GitTrends
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly RepositoryDatabase _repositoryDatabase;
         readonly NotificationService _notificationService;
+        readonly ReferringSitesDatabase _referringSitesDatabase;
 
         public BackgroundFetchService(AnalyticsService analyticsService,
                                         GitHubApiV3Service gitHubApiV3Service,
                                         GitHubGraphQLApiService gitHubGraphQLApiService,
                                         RepositoryDatabase repositoryDatabase,
+                                        ReferringSitesDatabase referringSitesDatabase,
                                         NotificationService notificationService)
         {
             _analyticsService = analyticsService;
@@ -31,49 +29,26 @@ namespace GitTrends
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _repositoryDatabase = repositoryDatabase;
             _notificationService = notificationService;
+            _referringSitesDatabase = referringSitesDatabase;
         }
 
-        static IJobManager JobManager => ShinyHost.Resolve<IJobManager>();
+        public static string NotifyTrendingRepositoriesIdentifier { get; } = $"{Xamarin.Essentials.AppInfo.PackageName}.{nameof(NotifyTrendingRepositories)}";
+        public static string CleanUpDatabaseIdentifier { get; } = $"{Xamarin.Essentials.AppInfo.PackageName}.{nameof(CleanUpDatabase)}";
 
-        public async Task Register()
+        public async Task CleanUpDatabase()
         {
-            var periodicTimeSpan = TimeSpan.FromHours(12);
+            using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(CleanUpDatabase)} Triggered");
 
-            var isRegistered = await isTrendingRepositoryNotificationJobRegistered().ConfigureAwait(false);
-
-            //Shiny.Jobs.IJobManager.Schedule always schedules background jobs for TimeSpan.FromMinutes(15) https://github.com/shinyorg/shiny/blob/c53a31732c57c4cc78f8bccba54b543e024425ee/src/Shiny.Core/Jobs/Platforms/Android/JobManager.cs#L95
-            if (Device.RuntimePlatform is Device.Android)
-            {
-                DependencyService.Get<IEnvironment>().EnqueueAndroidWorkRequest(periodicTimeSpan);
-            }
-            else if (!isRegistered)
-            {
-                var backgroundFetchJob = new JobInfo(typeof(TrendingRepositoryNotificationJob), TrendingRepositoryNotificationJob.Identifier)
-                {
-                    BatteryNotLow = true,
-                    PeriodicTime = periodicTimeSpan,
-                    Repeat = true,
-                    RequiredInternetAccess = InternetAccess.Any,
-                    RunOnForeground = false
-                };
-
-                await JobManager.Schedule(backgroundFetchJob).ConfigureAwait(false);
-            }
-
-            static async Task<bool> isTrendingRepositoryNotificationJobRegistered()
-            {
-                var registeredJobs = await JobManager.GetJobs().ConfigureAwait(false);
-                return registeredJobs.Any(x => x.Identifier is TrendingRepositoryNotificationJob.Identifier);
-            }
+            await Task.WhenAll(_referringSitesDatabase.DeleteExpiredData(), _repositoryDatabase.DeleteExpiredData()).ConfigureAwait(false);
         }
 
-        public async Task<bool> NotifyTrendingRepositories()
+        public async Task<bool> NotifyTrendingRepositories(CancellationToken cancellationToken)
         {
             try
             {
-                using var timedEvent = _analyticsService.TrackTime("Notify Trending Repository Background Job Triggered");
+                using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(NotifyTrendingRepositories)} Triggered");
 
-                var trendingRepositories = await GetTrendingRepositories().ConfigureAwait(false);
+                var trendingRepositories = await GetTrendingRepositories(cancellationToken).ConfigureAwait(false);
                 await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
 
                 return true;
@@ -85,24 +60,29 @@ namespace GitTrends
             }
         }
 
-        async Task<List<Repository>> GetTrendingRepositories()
+        async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
         {
-#if AppStore
             if (!GitHubAuthenticationService.IsDemoUser && !string.IsNullOrEmpty(GitHubAuthenticationService.Alias))
-#else
-            if (!string.IsNullOrEmpty(GitHubAuthenticationService.Alias))
-#endif
             {
                 var retrievedRepositoryList = new List<Repository>();
-                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(GitHubAuthenticationService.Alias).ConfigureAwait(false))
+                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(GitHubAuthenticationService.Alias, cancellationToken).ConfigureAwait(false))
                 {
                     retrievedRepositoryList.AddRange(retrievedRepositories);
                 }
 
+                var retrievedRepositoryList_NoDuplicatesNoForks = RepositoryService.RemoveForksAndDuplicates(retrievedRepositoryList).ToList();
+
                 var trendingRepositories = new List<Repository>();
-                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(retrievedRepositoryList).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(retrievedRepositoryList_NoDuplicatesNoForks, cancellationToken).ConfigureAwait(false))
                 {
-                    _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).SafeFireAndForget();
+                    try
+                    {
+                        await _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).ConfigureAwait(false);
+                    }
+                    catch (Exception e)
+                    {
+                        _analyticsService.Report(e);
+                    }
 
                     if (retrievedRepositoryWithViewsAndClonesData.IsTrending)
                         trendingRepositories.Add(retrievedRepositoryWithViewsAndClonesData);
@@ -112,19 +92,6 @@ namespace GitTrends
             }
 
             return Enumerable.Empty<Repository>().ToList();
-        }
-    }
-
-    public class TrendingRepositoryNotificationJob : IJob
-    {
-        public const string Identifier = nameof(TrendingRepositoryNotificationJob);
-
-        public Task<bool> Run(JobInfo jobInfo, CancellationToken cancelToken)
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-
-            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
-            return backgroundFetchService.NotifyTrendingRepositories();
         }
     }
 }

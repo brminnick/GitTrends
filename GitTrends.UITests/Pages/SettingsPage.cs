@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
-using Newtonsoft.Json;
 using Xamarin.UITest;
+using Xamarin.UITest.Android;
 using Xamarin.UITest.iOS;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
@@ -11,47 +11,124 @@ namespace GitTrends.UITests
 {
     class SettingsPage : BasePage
     {
-        readonly Query _gitHubAvatarImage, _gitHubAliasLabel, _gitHubLoginButton,
+        readonly Query _gitHubAvatarImage, _gitHubAliasLabel, _gitHubNameLabel, _loginButton,
             _gitHubSettingsViewActivityIndicator, _trendsChartSettingsLabel,
             _trendsChartSettingsControl, _demoModeButton, _createdByLabel,
-            _registerForNotificationsLabel, _registerForNotificationsButton;
+            _registerForNotiicationsSwitch, _gitHubUserView, _themePicker;
 
         public SettingsPage(IApp app) : base(app, PageTitles.SettingsPage)
         {
+            _gitHubUserView = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubUserView);
+            _gitHubNameLabel = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubNameLabel);
             _gitHubAvatarImage = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubAvatarImage);
             _gitHubAliasLabel = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubAliasLabel);
-            _gitHubLoginButton = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubLoginButton);
+            _loginButton = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubLoginLabel);
             _demoModeButton = GenerateMarkedQuery(SettingsPageAutomationIds.DemoModeButton);
             _gitHubSettingsViewActivityIndicator = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubSettingsViewActivityIndicator);
 
             _trendsChartSettingsLabel = GenerateMarkedQuery(SettingsPageAutomationIds.TrendsChartSettingsLabel);
             _trendsChartSettingsControl = GenerateMarkedQuery(SettingsPageAutomationIds.TrendsChartSettingsControl);
 
-            _createdByLabel = GenerateMarkedQuery(SettingsPageAutomationIds.CreatedByLabel);
+            _createdByLabel = GenerateMarkedQuery(SettingsPageAutomationIds.CopyrightLabel);
 
-            _registerForNotificationsLabel = GenerateMarkedQuery(SettingsPageAutomationIds.RegisterForNotificationsLabel);
-            _registerForNotificationsButton = GenerateMarkedQuery(SettingsPageAutomationIds.RegisterForNotificationsButton);
+            _registerForNotiicationsSwitch = GenerateMarkedQuery(SettingsPageAutomationIds.RegisterForNotificationsSwitch);
+
+            _themePicker = GenerateMarkedQuery(SettingsPageAutomationIds.ThemePicker);
         }
 
         public bool IsLoggedIn => App.Query(GitHubLoginButtonConstants.Disconnect).Any();
 
         public bool IsActivityIndicatorRunning => App.Query(_gitHubSettingsViewActivityIndicator).Any();
 
-        public string GitHubAliasLabelText => App.Query(_gitHubAliasLabel).First().Text;
+        public bool ShouldSendNotifications => App.InvokeBackdoorMethod<bool>(BackdoorMethodConstants.ShouldSendNotifications);
 
-        public string RegisterForNotificationsLabelText => App.Query(_registerForNotificationsLabel).First().Text;
+        public string GitHubAliasNameText => GetText(_gitHubNameLabel);
 
-        public string GitHubButtonText => App.Query(_gitHubLoginButton).First().Text ?? App.Query(_gitHubLoginButton).First().Label;
+        public string GitHubAliasLabelText => GetText(_gitHubAliasLabel);
 
-        public string TrendsChartLabelText => App.Query(_trendsChartSettingsLabel).First().Text;
+        public string GitHubButtonText => GetText(_loginButton);
 
-        public TrendsChartOption CurrentTrendsChartOption => GetCurrentTrendsChartOption();
+        public string TrendsChartLabelText => GetText(_trendsChartSettingsLabel);
 
-        public bool IsBrowserOpen => App switch
+        public PreferredTheme PreferredTheme => App.InvokeBackdoorMethod<PreferredTheme>(BackdoorMethodConstants.GetPreferredTheme);
+
+        public TrendsChartOption CurrentTrendsChartOption => App.InvokeBackdoorMethod<TrendsChartOption>(BackdoorMethodConstants.GetCurrentTrendsChartOption);
+
+        public override async Task WaitForPageToLoad(TimeSpan? timeout = null)
         {
-            iOSApp iOSApp => iOSApp.Query(x => x.Class("SFSafariView")).Any(),
-            _ => throw new NotSupportedException("Browser Can Only Be Verified on iOS")
-        };
+            await base.WaitForPageToLoad(timeout).ConfigureAwait(false);
+            DismissSyncfusionLicensePopup();
+        }
+
+        public Task SelectTheme(PreferredTheme preferredTheme)
+        {
+            var isQueryEnabled = App.Query(_themePicker).First().Enabled;
+            if (!isQueryEnabled)
+                throw new Exception("Theme Picker Disabled");
+
+            var rowNumber = (int)preferredTheme;
+            var totalRows = Enum.GetNames(typeof(PreferredTheme)).Count();
+
+            var rowOffset = App switch
+            {
+                iOSApp _ => rowNumber.Equals(totalRows - 1) ? -1 : 1,
+                AndroidApp _ => 0,
+                _ => throw new NotSupportedException()
+            };
+
+            App.Tap(_themePicker);
+
+            scrollToRow(rowOffset);
+
+            if (App is iOSApp)
+                App.Tap(x => x.Marked("Done"));
+            else if (App is AndroidApp)
+                App.Tap(x => x.Marked("OK"));
+
+
+            App.Screenshot($"Selected Row From Picker: {preferredTheme}");
+
+            return WaitForPageToLoad();
+
+            void scrollToRow(int offset)
+            {
+                switch (App)
+                {
+                    case iOSApp iosApp:
+                        iosApp.WaitForElement(x => x.Class("UIPickerView"));
+                        iosApp.Query(x => x.Class("UIPickerView").Invoke("selectRow", rowNumber + offset, "inComponent", 0, "animated", true));
+
+                        App.Tap(preferredTheme.ToString());
+                        break;
+
+                    case AndroidApp androidApp:
+                        androidApp.WaitForElement(x => x.Class("android.widget.ScrollView"));
+
+                        while (rowNumber + offset != getCurrentPickerRow(androidApp) && totalRows - 1 != getCurrentPickerRow(androidApp))
+                        {
+                            androidApp.Query(x => x.Class("android.widget.NumberPicker").Invoke("scrollBy", 0, -50));
+                        }
+
+                        while (getCurrentPickerRow(androidApp) != rowNumber)
+                        {
+                            androidApp.Query(x => x.Class("android.widget.NumberPicker").Invoke("scrollBy", 0, 50));
+                        }
+
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"{App.GetType()} Not Supported");
+                }
+
+                App.Screenshot($"Scrolled To Row: {preferredTheme}");
+
+                static int getCurrentPickerRow(AndroidApp app)
+                {
+                    var currentPickerRow = app.Query(x => x.Class("android.widget.NumberPicker").Invoke("getValue")).First().ToString();
+                    return int.Parse(currentPickerRow);
+                }
+            }
+        }
 
         public async Task SetTrendsChartOption(TrendsChartOption trendsChartOption)
         {
@@ -84,20 +161,16 @@ namespace GitTrends.UITests
             static Task waitForSettingsToUpdate() => Task.Delay(1000);
         }
 
-        public void TapRegisterForNotificationsButton()
+        public void TapGitHubUserView()
         {
-            App.Tap(_registerForNotificationsButton);
-            App.Screenshot("Register For Notifiations Button Tapped");
+            App.Tap(_gitHubUserView);
+            App.Screenshot("GitHubUserView Tapped");
         }
 
-        public void WaitForBrowserToOpen()
+        public void ToggleRegisterForNotificationsSwitch()
         {
-            if (App is iOSApp iOSApp)
-                iOSApp.WaitForElement(x => x.Class("SFSafariView"));
-            else
-                throw new NotSupportedException("Browser Can Only Be Verified on iOS");
-
-            App.Screenshot("Browser Opened");
+            App.Tap(_registerForNotiicationsSwitch);
+            App.Screenshot("Register For Notifiations Button Tapped");
         }
 
         public void TapDemoModeButton()
@@ -112,10 +185,10 @@ namespace GitTrends.UITests
             App.Screenshot("Created By Label Tapped");
         }
 
-        public void TapGitHubButton()
+        public void TapLoginButton()
         {
-            App.Tap(_gitHubLoginButton);
-            App.Screenshot("GitHub Button Tapped");
+            App.Tap(_loginButton);
+            App.Screenshot("Login Button Tapped");
         }
 
         public void WaitForActivityIndicator()
@@ -147,15 +220,9 @@ namespace GitTrends.UITests
         public void WaitForGitHubLogoutToComplete()
         {
             App.WaitForNoElement(_gitHubSettingsViewActivityIndicator);
-            App.WaitForElement(GitHubLoginButtonConstants.ConnectWithGitHub);
+            App.WaitForElement(GitHubLoginButtonConstants.ConnectToGitHub);
 
             App.Screenshot("GitHub Logout Completed");
-        }
-
-        TrendsChartOption GetCurrentTrendsChartOption()
-        {
-            var serializedCurrentTrendsChartOption = App.InvokeBackdoorMethod(BackdoorMethodConstants.GetCurrentTrendsChartOption).ToString();
-            return JsonConvert.DeserializeObject<TrendsChartOption>(serializedCurrentTrendsChartOption);
         }
     }
 }

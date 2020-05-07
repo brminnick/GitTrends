@@ -5,7 +5,6 @@ using Android.Views.InputMethods;
 using AndroidX.AppCompat.Widget;
 using GitTrends;
 using GitTrends.Droid;
-using Plugin.CurrentActivity;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
@@ -76,6 +75,6 @@ namespace GitTrends.Droid
                 searchPage.OnSearchBarTextChanged(e.NewText);
         }
 
-        Toolbar GetToolbar() => CrossCurrentActivity.Current.Activity.FindViewById<Toolbar>(Resource.Id.toolbar);
+        Toolbar GetToolbar() => Xamarin.Essentials.Platform.CurrentActivity.FindViewById<Toolbar>(Resource.Id.toolbar);
     }
 }

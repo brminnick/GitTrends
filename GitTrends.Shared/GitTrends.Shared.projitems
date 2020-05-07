@@ -52,5 +52,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Constants\SortingConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\TrendingService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\DateTimeService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Base\BaseTotalCountModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\RepositoryService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\StreamingUrl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\GitHubApiService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IDailyClonesModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IDailyViewsModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\NotificationHubInformation.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Services\ImageService.cs" />
   </ItemGroup>
 </Project>

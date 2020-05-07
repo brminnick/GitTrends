@@ -4,7 +4,6 @@ using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
 //workaround for this issue: https://github.com/xamarin/Xamarin.Forms/issues/8626 and https://github.com/xamarin/Xamarin.Forms/issues/8986
-
 [assembly: ExportRenderer(typeof(Label), typeof(LabelCustomRenderer))]
 namespace GitTrends.Droid
 {
@@ -19,10 +18,10 @@ namespace GitTrends.Droid
         {
             base.OnElementChanged(e);
 
-            if (Control is null || e.NewElement is null)
-                return;
-
-            Control.VerticalScrollBarEnabled = false;
+            if (Control != null)
+            {
+                Control.VerticalScrollBarEnabled = false;
+            }
         }
     }
 }

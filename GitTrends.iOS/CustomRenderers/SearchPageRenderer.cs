@@ -1,4 +1,8 @@
-﻿using GitTrends;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using GitTrends;
 using GitTrends.iOS;
 using UIKit;
 using Xamarin.Forms;
@@ -23,7 +27,7 @@ namespace GitTrends.iOS
             _searchController.SearchBar.Placeholder = string.Empty;
         }
 
-        public override void ViewDidAppear(bool animated)
+        public override async void ViewWillAppear(bool animated)
         {
             base.ViewDidAppear(animated);
 
@@ -36,6 +40,8 @@ namespace GitTrends.iOS
                 ParentViewController.NavigationItem.SearchController.Active = true;
                 ParentViewController.NavigationItem.SearchController.Active = false;
             }
+
+            await UpdateBarButtonItems();
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -50,5 +56,70 @@ namespace GitTrends.iOS
             if (Element is ISearchPage searchPage)
                 searchPage.OnSearchBarTextChanged(searchController.SearchBar.Text);
         }
+
+        async Task UpdateBarButtonItems()
+        {
+            var contentPage = (ContentPage)Element;
+
+            var (leftBarButtonItem, rightBarButtonItems) = await GetToolbarItems(contentPage.ToolbarItems);
+
+            if (leftBarButtonItem != null)
+                ParentViewController.NavigationItem.LeftBarButtonItems = new UIBarButtonItem[] { leftBarButtonItem };
+            else
+                ParentViewController.NavigationItem.LeftBarButtonItems = Enumerable.Empty<UIBarButtonItem>().ToArray();
+
+            if (rightBarButtonItems.Any())
+                ParentViewController.NavigationItem.RightBarButtonItems = rightBarButtonItems.ToArray();
+            else
+                ParentViewController.NavigationItem.RightBarButtonItems = Enumerable.Empty<UIBarButtonItem>().ToArray();
+        }
+
+        async Task<(UIBarButtonItem? LeftBarButtonItem, List<UIBarButtonItem> RightBarButtonItems)> GetToolbarItems(IEnumerable<ToolbarItem> items)
+        {
+            UIBarButtonItem? leftBarButtonItem = null;
+
+            var leftToolbarItem = items.SingleOrDefault(x => x.Priority is 1);
+
+            if (leftToolbarItem != null)
+                leftBarButtonItem = await GetUIBarButtonItem(leftToolbarItem);
+
+            var rightBarButtonItems = new List<UIBarButtonItem>();
+
+            foreach (var item in items.Where(x => x.Priority != 1))
+            {
+                var barButtonItem = await GetUIBarButtonItem(item);
+                rightBarButtonItems.Add(barButtonItem);
+            }
+
+            return (leftBarButtonItem, rightBarButtonItems);
+        }
+
+        static async Task<UIBarButtonItem> GetUIBarButtonItem(ToolbarItem toolbarItem)
+        {
+            var image = await GetUIImage(toolbarItem.IconImageSource);
+
+            if (image is null)
+            {
+                return new UIBarButtonItem(toolbarItem.Text, UIBarButtonItemStyle.Plain, (object sender, EventArgs e) => toolbarItem.Command?.Execute(toolbarItem.CommandParameter))
+                {
+                    AccessibilityIdentifier = toolbarItem.AutomationId
+                };
+            }
+            else
+            {
+                return new UIBarButtonItem(image, UIBarButtonItemStyle.Plain, (object sender, EventArgs e) => toolbarItem.Command?.Execute(toolbarItem.CommandParameter))
+                {
+                    AccessibilityIdentifier = toolbarItem.AutomationId
+                };
+            }
+        }
+
+        static Task<UIImage?> GetUIImage(ImageSource source) => source switch
+        {
+            FileImageSource _ => new FileImageSourceHandler().LoadImageAsync(source),
+            UriImageSource _ => new ImageLoaderSourceHandler().LoadImageAsync(source),
+            StreamImageSource _ => new StreamImagesourceHandler().LoadImageAsync(source),
+            _ => Task.FromResult<UIImage?>(null)
+        };
     }
 }

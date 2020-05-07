@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
 using Shiny;
-using Shiny.Notifications;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
@@ -13,17 +11,14 @@ namespace GitTrends
 {
     public class App : Xamarin.Forms.Application
     {
-        readonly WeakEventManager<Theme> _themeChangedEventManager = new WeakEventManager<Theme>();
+        readonly WeakEventManager _resumedEventManager = new WeakEventManager();
         readonly AnalyticsService _analyticsService;
 
         public App()
         {
-            Device.SetFlags(new[] { "Markup_Experimental" });
+            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental" });
 
-            FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration
-            {
-                HttpHeadersTimeout = 60
-            });
+            InitializeEssentialServices();
 
             using var scope = ContainerService.Container.BeginLifetimeScope();
             _analyticsService = scope.Resolve<AnalyticsService>();
@@ -33,10 +28,10 @@ namespace GitTrends
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
         }
 
-        public event EventHandler<Theme> ThemeChanged
+        public event EventHandler Resumed
         {
-            add => _themeChangedEventManager.AddEventHandler(value);
-            remove => _themeChangedEventManager.RemoveEventHandler(value);
+            add => _resumedEventManager.AddEventHandler(value);
+            remove => _resumedEventManager.RemoveEventHandler(value);
         }
 
         protected override void OnStart()
@@ -45,22 +40,16 @@ namespace GitTrends
 
             _analyticsService.Track("App Started");
 
-            SetTheme();
-
             ClearBageNotifications().SafeFireAndForget(ex => _analyticsService.Report(ex));
-
-#if !DEBUG
-            RegisterBackgroundFetch().SafeFireAndForget(ex => _analyticsService.Report(ex));
-#endif
         }
 
         protected override void OnResume()
         {
             base.OnResume();
 
-            _analyticsService.Track("App Resumed");
+            OnResumed();
 
-            SetTheme();
+            _analyticsService.Track("App Resumed");
 
             ClearBageNotifications().SafeFireAndForget(ex => _analyticsService.Report(ex));
         }
@@ -72,52 +61,7 @@ namespace GitTrends
             _analyticsService.Track("App Backgrounded");
         }
 
-        void SetTheme()
-        {
-            var operatingSystemTheme = DependencyService.Get<IEnvironment>().GetOperatingSystemTheme();
-
-            BaseTheme preferedTheme = operatingSystemTheme switch
-            {
-                Theme.Light => new LightTheme(),
-                Theme.Dark => new DarkTheme(),
-                _ => throw new NotSupportedException()
-            };
-
-            if (Resources.GetType() != preferedTheme.GetType())
-            {
-                Resources = preferedTheme;
-
-                EnableDebugRainbows(false);
-
-                OnThemeChanged(operatingSystemTheme);
-            }
-        }
-
-        [Conditional("DEBUG")]
-        void EnableDebugRainbows(bool shouldUseDebugRainbows)
-        {
-            Resources.Add(new Style(typeof(ContentPage))
-            {
-                ApplyToDerivedTypes = true,
-                Setters = {
-                    new Setter
-                    {
-                        Property = Xamarin.Forms.DebugRainbows.DebugRainbow.ShowColorsProperty,
-                        Value = shouldUseDebugRainbows
-                    }
-                }
-            });
-        }
-
-        async Task RegisterBackgroundFetch()
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
-
-            await backgroundFetchService.Register().ConfigureAwait(false);
-        }
-
-        Task ClearBageNotifications()
+        ValueTask ClearBageNotifications()
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var notificationService = scope.Resolve<NotificationService>();
@@ -125,6 +69,14 @@ namespace GitTrends
             return notificationService.SetAppBadgeCount(0);
         }
 
-        void OnThemeChanged(Theme newTheme) => _themeChangedEventManager.HandleEvent(this, newTheme, nameof(ThemeChanged));
+        void InitializeEssentialServices()
+        {
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+
+            var themeService = scope.Resolve<ThemeService>();
+            var notificationService = DependencyService.Resolve<INotificationService>();
+        }
+
+        void OnResumed() => _resumedEventManager.HandleEvent(this, EventArgs.Empty, nameof(Resumed));
     }
 }
