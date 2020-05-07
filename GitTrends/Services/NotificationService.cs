@@ -211,10 +211,10 @@ namespace GitTrends
             if (!ShouldSendNotifications)
                 return;
 #if DEBUG
-            await SendTrendingNotification(trendingRepositories, notificationDateTime).ConfigureAwait(false);
+            return SendTrendingNotification(trendingRepositories, notificationDateTime);
 #else
             var repositoriesToNotify = trendingRepositories.Where(shouldSendNotification).ToList();
-            await SendTrendingNotification(repositoriesToNotify, notificationDateTime).ConfigureAwait(false);
+            return SendTrendingNotification(repositoriesToNotify, notificationDateTime);
 
             static bool shouldSendNotification(Repository trendingRepository)
             {
@@ -251,17 +251,17 @@ namespace GitTrends
             {
                 bool? shouldSortByTrending = null;
 
-                if (!_sortingService.IsReversed)
+                if (_sortingService.CurrentOption is SortingOption.Trending && !_sortingService.IsReversed)
                 {
                     await _deepLinkingService.DisplayAlert(message, $"Tap the repositories tagged \"Trending\" to see more details!", "Thanks").ConfigureAwait(false);
                 }
                 else
                 {
-                    shouldSortByTrending = await _deepLinkingService.DisplayAlert(message, "Reverse The Sorting Order To Discover Which Ones", "Reverse Sorting", "Not Now").ConfigureAwait(false);
+                    shouldSortByTrending = await _deepLinkingService.DisplayAlert(message, "Sort By \"Trending\" To Discover Which Ones", "Sort by Trending", "Not Now").ConfigureAwait(false);
                 }
 
                 if (shouldSortByTrending is true)
-                    OnSortingOptionRequestion(_sortingService.CurrentOption);
+                    OnSortingOptionRequestion(SortingOption.Trending);
 
                 _analyticsService.Track("Multiple Trending Repository Prompt Displayed", nameof(shouldSortByTrending), shouldSortByTrending?.ToString() ?? "null");
             }
@@ -338,8 +338,5 @@ namespace GitTrends
         void OnInitializationCompleted(NotificationHubInformation notificationHubInformation) => _initializationCompletedEventManager.HandleEvent(this, notificationHubInformation, nameof(InitializationCompleted));
 
         void OnSortingOptionRequestion(SortingOption sortingOption) => _sortingOptionRequestedEventManager.HandleEvent(this, sortingOption, nameof(SortingOptionRequested));
-
-        void OnRegisterForNotificationsCompleted(bool isSuccessful, string errorMessage) =>
-            _registerForNotificationCompletedEventHandler.HandleEvent(this, (isSuccessful, errorMessage), nameof(RegisterForNotificationsCompleted));
     }
 }

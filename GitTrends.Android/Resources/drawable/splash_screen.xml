@@ -1,5 +1,5 @@
 ﻿<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
-    <item android:drawable="@color/splash_screen_background"/>
+    <item android:drawable="@color/launcher_background"/>
 
     <item
         android:width="384dp"

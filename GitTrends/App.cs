@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
 using Shiny;
+using Shiny.Notifications;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
@@ -46,8 +47,6 @@ namespace GitTrends
         protected override void OnResume()
         {
             base.OnResume();
-
-            OnResumed();
 
             _analyticsService.Track("App Resumed");
 

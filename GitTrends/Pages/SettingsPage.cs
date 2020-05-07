@@ -6,8 +6,6 @@ using GitTrends.Mobile.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using static GitTrends.XamarinFormsService;
-using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {

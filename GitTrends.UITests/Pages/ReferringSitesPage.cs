@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
+using Newtonsoft.Json;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
 using Xamarin.UITest.iOS;
@@ -9,7 +11,7 @@ using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Querie
 
 namespace GitTrends.UITests
 {
-    class ReferringSitesPage : BaseCollectionPage<ReferringSiteModel>
+    class ReferringSitesPage : BasePage
     {
         readonly Query _collectionView, _refreshView, _closeButton,
             _storeRatingRequestTitleLabel, _storeRatingRequestNoButton, _storeRatingRequestYesButton,
@@ -71,6 +73,8 @@ namespace GitTrends.UITests
             App.WaitForNoElement(_storeRatingRequestTitleLabel);
             App.Screenshot("Review Request Disappeared");
         }
+
+        public void TriggerPullToRefresh() => App.InvokeBackdoorMethod(BackdoorMethodConstants.TriggerPullToRefresh);
 
         public void ClosePage()
         {

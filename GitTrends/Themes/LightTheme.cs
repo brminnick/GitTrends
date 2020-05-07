@@ -21,39 +21,31 @@ namespace GitTrends
         const string _circleImageBackgroundHex = "#FFFFFF";
         const string _githubButtonSurfaceHex = "#231F20";
 
-        //Graph Palette
-        const string _saturatedLightBlueHex = "#2BC3BE";
-        const string _saturatedIndigoHex = "#5D6AB1";
-        const string _saturatedYellowHex = "#FFC534";
-        const string _saturatedPinkHex = "#F2726F";
+        const string _darkNavyBlueHex = "#1C2B39";
+        const string _lightNavyBlueHex = "#365271";
 
-        //Blended Colors
-        const string _black12PercentBlend = "#E0E0E0";
+        const string _gitHubColorHex = "#333333";
 
-        //Surfaces
-        public override Color NavigationBarBackgroundColor { get; } = Color.FromHex(_toolbarSurfaceHex);
-        public override Color NavigationBarTextColor { get; } = Color.FromHex(_toolbarTextHex);
+        public override Color NavigationBarBackgroundColor { get; } = Color.FromHex(_mediumBlueHex);
+        public override Color NavigationBarTextColor { get; } = Color.White;
 
         public override Color PageBackgroundColor { get; } = Color.FromHex(_backgroundSurfaceHex);
         public override Color PageBackgroundColor_75Opactity { get; } = Color.FromHex(_backgroundSurfaceHex).MultiplyAlpha(0.75);
 
-        //Text
-        public override Color PrimaryTextColor { get; } = Color.FromHex(_primaryTextHex);
-        public override Color TextColor { get; } = Color.FromHex(_textHex);
+        public override Color TextColor { get; } = Color.FromHex(_darkBlueHex);
 
+        public override Color RefreshControlColor { get; } = Color.FromHex(_darkBlueHex);
 
-        //Chart
-        public override Color TotalViewsColor { get; } = Color.FromHex(_saturatedLightBlueHex);
-        public override Color TotalUniqueViewsColor { get; } = Color.FromHex(_saturatedIndigoHex);
-        public override Color TotalClonesColor { get; } = Color.FromHex(_saturatedYellowHex);
-        public override Color TotalUniqueClonesColor { get; } = Color.FromHex(_saturatedPinkHex);
+        public override Color TotalViewsColor { get; } = Color.FromHex(_darkestBlueHex);
+        public override Color TotalUniqueViewsColor { get; } = Color.FromHex(_mediumBlueHex);
+        public override Color TotalClonesColor { get; } = Color.FromHex(_darkNavyBlueHex);
+        public override Color TotalUniqueClonesColor { get; } = Color.FromHex(_lightNavyBlueHex);
 
-        public override Color ChartAxisTextColor { get; } = Color.FromHex(_primaryTextHex);
-        public override Color ChartAxisLineColor { get; } = Color.FromHex(_primaryTextHex);
+        public override Color ChartAxisTextColor { get; } = Color.FromHex(_darkNavyBlueHex);
+        public override Color ChartAxisLineColor { get; } = Color.FromHex(_lightNavyBlueHex);
 
-        //Components
-        //Splash
-        public override Color SplashScreenStatusColor { get; } = Color.FromHex(_primaryTextHex);
+        public override Color ButtonTextColor { get; } = Color.White;
+        public override Color ButtonBackgroundColor { get; } = Color.FromHex(_darkNavyBlueHex);
 
         //Icons
         public override Color IconColor { get; } = Color.FromHex(_iconColor);

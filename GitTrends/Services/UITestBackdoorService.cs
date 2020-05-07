@@ -65,16 +65,6 @@ namespace GitTrends
 
         public IReadOnlyList<T> GetVisibleCollection<T>() => GetVisibleCollection().Cast<T>().ToList();
 
-        public Task PopPage()
-        {
-            FirstRunService.IsFirstRun = false;
-
-            if (GetVisiblePageFromModalStack() is Page page)
-                return page.Navigation.PopModalAsync();
-
-            return GetVisiblePageFromNavigationStack().Navigation.PopAsync();
-        }
-
         public IEnumerable GetVisibleCollection()
         {
             var collectionView = (CollectionView)GetVisibleRefreshView().Content;
@@ -114,11 +104,11 @@ namespace GitTrends
                 throw new NotSupportedException($"{visibleContentPage.GetType()} Does Not Contain a RefreshView");
         }
 
-        ContentPage GetVisibleContentPage() => (ContentPage)(GetVisiblePageFromModalStack() ?? GetVisiblePageFromNavigationStack());
-
-        Page? GetVisiblePageFromModalStack() => Application.Current.MainPage.Navigation.ModalStack.LastOrDefault();
-
-        Page GetVisiblePageFromNavigationStack() => Application.Current.MainPage.Navigation.NavigationStack.Last();
+        ContentPage GetVisibleContentPage()
+        {
+            return (ContentPage)Application.Current.MainPage.Navigation.ModalStack.LastOrDefault()
+                    ?? (ContentPage)Application.Current.MainPage.Navigation.NavigationStack.Last();
+        }
     }
 }
 #endif

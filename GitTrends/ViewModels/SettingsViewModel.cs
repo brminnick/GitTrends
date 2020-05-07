@@ -12,8 +12,11 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class SettingsViewModel : GitHubAuthenticationViewModel
+    public class SettingsViewModel : BaseViewModel
     {
+        readonly WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new WeakEventManager<(bool isSuccessful, string errorMessage)>();
+        readonly WeakEventManager<string?> _gitHubLoginUrlRetrievedEventManager = new WeakEventManager<string?>();
+
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly TrendsChartSettingsService _trendsChartSettingsService;
         readonly DeepLinkingService _deepLinkingService;
@@ -22,7 +25,6 @@ namespace GitTrends
 
         string _gitHubUserImageSource = string.Empty;
         string _gitHubUserNameLabelText = string.Empty;
-        string _gitHubNameLabelText = string.Empty;
         string _gitHubButtonText = string.Empty;
         bool _isRegisterForNotificationsSwitchEnabled = true;
         bool _isRegisterForNotificationsSwitchToggled;
@@ -34,8 +36,7 @@ namespace GitTrends
                                     TrendsChartSettingsService trendsChartSettingsService,
                                     AnalyticsService analyticsService,
                                     DeepLinkingService deepLinkingService,
-                                    NotificationService notificationService)
-                : base(gitHubAuthenticationService, deepLinkingService, analyticsService)
+                                    NotificationService notificationService) : base(analyticsService)
         {
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _trendsChartSettingsService = trendsChartSettingsService;
@@ -130,10 +131,14 @@ namespace GitTrends
             set => SetProperty(ref _gitHubUserNameLabelText, value);
         }
 
-        public string GitHubNameLabelText
+        public bool IsAuthenticating
         {
-            get => _gitHubNameLabelText;
-            set => SetProperty(ref _gitHubNameLabelText, value);
+            get => _isAuthenticating;
+            set => SetProperty(ref _isAuthenticating, value, () =>
+            {
+                OnPropertyChanged(nameof(IsDemoButtonVisible));
+                MainThread.InvokeOnMainThreadAsync(LoginButtonCommand.RaiseCanExecuteChanged).SafeFireAndForget(ex => Debug.WriteLine(ex));
+            });
         }
 
         public int ThemePickerSelectedThemeIndex
@@ -164,9 +169,9 @@ namespace GitTrends
         {
             AnalyticsService.Track("Login Button Tapped", nameof(GitHubAuthenticationService.IsAuthenticated), gitHubAuthenticationService.IsAuthenticated.ToString());
 
-            if (gitHubAuthenticationService.IsAuthenticated)
+            if (_gitHubAuthenticationService.IsAuthenticated)
             {
-                await gitHubAuthenticationService.LogOut().ConfigureAwait(false);
+                await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
 
                 SetGitHubValues();
             }
@@ -176,7 +181,7 @@ namespace GitTrends
             }
         }
 
-        protected override async Task ExecuteDemoButtonCommand(string buttonText)
+        void ExecuteDemoButtonCommand()
         {
             try
             {
@@ -195,6 +200,8 @@ namespace GitTrends
         async Task SetNotificationsPreference(bool isNotificationsEnabled)
         {
             IsRegisterForNotificationsSwitchEnabled = false;
+
+            var initialNotificationRequestResult = await _notificationService.Register().ConfigureAwait(false);
 
             try
             {

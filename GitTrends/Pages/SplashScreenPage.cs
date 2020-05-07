@@ -42,13 +42,15 @@ namespace GitTrends
 
             _statusLabel = new Label
             {
-                //Begin with Label off of the screen
-                TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2,
                 Margin = new Thickness(10, 0),
                 AutomationId = SplashScreenPageAutomationIds.StatusLabel,
+                Text = _statusMessageEnumerator.Current,
                 HorizontalTextAlignment = TextAlignment.Center,
+                //Begin with Label off of the screen
+                TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2,
             };
-            _statusLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.SplashScreenStatusColor));
+            _statusLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TotalClonesColor));
+
 
             var relativeLayout = new RelativeLayout();
 
@@ -66,8 +68,6 @@ namespace GitTrends
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-
-            await ChangeLabelText(_statusMessageEnumerator.Current);
 
             _animationCancellationToken = new CancellationTokenSource();
 
@@ -208,9 +208,6 @@ namespace GitTrends
                     //Explode & Fade Everything
                     var explodeImageTask = Task.WhenAll(Content.ScaleTo(100, 250, Easing.CubicOut), Content.FadeTo(0, 250, Easing.CubicIn));
                     BackgroundColor = (Color)Application.Current.Resources[nameof(BaseTheme.PageBackgroundColor)];
-
-                    using var scope = ContainerService.Container.BeginLifetimeScope();
-                    var repositoryPage = scope.Resolve<RepositoryPage>();
 
                     await explodeImageTask;
 

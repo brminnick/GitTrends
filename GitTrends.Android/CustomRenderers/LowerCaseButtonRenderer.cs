@@ -4,7 +4,7 @@ using GitTrends.Droid;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
-[assembly: ExportRenderer(typeof(Button), typeof(LowerCaseButtonRenderer))]
+[assembly: ExportRenderer(typeof(SettingsButton), typeof(LowerCaseButtonRenderer))]
 namespace GitTrends.Droid
 {
     public class LowerCaseButtonRenderer : ButtonRenderer
