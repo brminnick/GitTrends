@@ -63,5 +63,7 @@
 		<string>com.minnick.GitTrends.NotifyTrendingRepositories</string>
 		<string>com.minnick.GitTrends.CleanUpDatabase</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>GitTrends Doesn&apos;t Use Your Location</string>
 </dict>
 </plist>
