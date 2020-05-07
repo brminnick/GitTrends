@@ -37,7 +37,7 @@ namespace GitTrends
                                 .Bind(Button.CommandProperty, nameof(ReferringSitesViewModel.YesButtonCommand)));
 
             this.SetBinding(IsVisibleProperty, nameof(ReferringSitesViewModel.IsStoreRatingRequestVisible));
-            SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor_75Opactity));
+            SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor_85Opactity));
         }
 
         enum Row { Title, Buttons }
@@ -54,7 +54,7 @@ namespace GitTrends
                 SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
 
                 RemoveDynamicResource(BackgroundColorProperty);
-                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor_75Opactity));
+                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor_85Opactity));
             }
         }
 

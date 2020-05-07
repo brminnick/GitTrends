@@ -56,7 +56,7 @@ namespace GitTrends
         public override Color NavigationBarTextColor { get; } = Color.FromHex(_toolbarTextHex);
 
         public override Color PageBackgroundColor { get; } = Color.FromHex(_backgroundSurfaceHex);
-        public override Color PageBackgroundColor_75Opactity { get; } = Color.FromHex(_backgroundSurfaceHex).MultiplyAlpha(0.75);
+        public override Color PageBackgroundColor_85Opactity { get; } = Color.FromHex(_backgroundSurfaceHex).MultiplyAlpha(0.85);
 
         //Text
         public override Color PrimaryTextColor { get; } = Color.FromHex(_primaryTextHex);

@@ -13,7 +13,7 @@ namespace GitTrends
             Add(nameof(NavigationBarTextColor), NavigationBarTextColor);
 
             Add(nameof(PageBackgroundColor), PageBackgroundColor);
-            Add(nameof(PageBackgroundColor_75Opactity), PageBackgroundColor_75Opactity);
+            Add(nameof(PageBackgroundColor_85Opactity), PageBackgroundColor_85Opactity);
 
             Add(nameof(PrimaryTextColor), PrimaryTextColor);
             Add(nameof(TextColor), TextColor);
@@ -83,7 +83,7 @@ namespace GitTrends
         public abstract Color NavigationBarTextColor { get; }
 
         public abstract Color PageBackgroundColor { get; }
-        public abstract Color PageBackgroundColor_75Opactity { get; }
+        public abstract Color PageBackgroundColor_85Opactity { get; }
 
         public abstract Color PrimaryTextColor { get; }
         public abstract Color TextColor { get; }
