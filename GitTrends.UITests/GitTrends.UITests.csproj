@@ -44,22 +44,14 @@
         <Compile Include="Pages\SettingsPage.cs" />
         <Compile Include="Pages\TrendsPage.cs" />
         <Compile Include="AppInitializer.cs" />
-        <Compile Include="Tests\LaunchTests.cs" />
         <Compile Include="Pages\SplashScreenPage.cs" />
         <Compile Include="Services\BackdoorServices.cs" />
         <Compile Include="Services\AzureFunctionsApiService.cs" />
-        <Compile Include="Tests\ReplTests.cs" />
         <Compile Include="Models\Repository.cs" />
         <Compile Include="Tests\Base\BaseTest.cs" />
-        <Compile Include="Tests\RepositoriesTests.cs" />
-        <Compile Include="Tests\ReferringSitesTests.cs" />
-        <Compile Include="Tests\SettingsTests.cs" />
-        <Compile Include="Tests\TrendsTests.cs" />
         <Compile Include="Pages\OnboardingPage.cs" />
         <Compile Include="Pages\BaseCollectionPage.cs" />
-        <Compile Include="Tests\OnboardingTests.cs" />
         <Compile Include="Pages\WelcomePage.cs" />
-        <Compile Include="Tests\WelcomeTests.cs" />
         <Compile Include="Constants\LoggedInUserConstants.cs" />
         <Compile Include="Tests\AppStoreScreenShotsTests.cs" />
     </ItemGroup>
@@ -74,6 +66,16 @@
     <ItemGroup>
       <Reference Include="System" />
       <Reference Include="System.Net.Http" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="Tests\LaunchTests.cs" />
+      <None Include="Tests\ReplTests.cs" />
+      <None Include="Tests\RepositoriesTests.cs" />
+      <None Include="Tests\ReferringSitesTests.cs" />
+      <None Include="Tests\SettingsTests.cs" />
+      <None Include="Tests\TrendsTests.cs" />
+      <None Include="Tests\OnboardingTests.cs" />
+      <None Include="Tests\WelcomeTests.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
