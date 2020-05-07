@@ -22,7 +22,7 @@ namespace GitTrends.UITests
             //Act
             App.Screenshot("Repository Page Light");
 
-            RepositoryPage.TapRepository(RepositoryPage.VisibleCollection.Skip(2).First().Name);
+            RepositoryPage.TapRepository(RepositoryPage.VisibleCollection.First().Name);
 
             await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
 
