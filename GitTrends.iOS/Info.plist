@@ -43,8 +43,6 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CFBundleVersion</key>
-	<string>19</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>github</string>
@@ -57,11 +55,13 @@
 		<string>processing</string>
 	</array>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.1</string>
+	<string>1.0.2</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.minnick.GitTrends.NotifyTrendingRepositories</string>
 		<string>com.minnick.GitTrends.CleanUpDatabase</string>
 	</array>
+	<key>CFBundleVersion</key>
+	<string>20</string>
 </dict>
 </plist>
