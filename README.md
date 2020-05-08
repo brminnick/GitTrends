@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://apps.apple.com/us/app/gittrends-github-insights/id1500300399">
+  <a href="https://apps.apple.com/app/gittrends-github-insights/id1500300399">
     <img src="https://user-images.githubusercontent.com/13558917/75712535-ed96bb00-5c7c-11ea-8bd4-e9bd36365bb2.png" height="50"/> 
   </a>
   <a href="https://play.google.com/store/apps/details?id=com.minnick.gittrends"> 
