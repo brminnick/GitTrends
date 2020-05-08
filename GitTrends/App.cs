@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
 using Shiny;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
@@ -74,7 +75,10 @@ namespace GitTrends
             using var scope = ContainerService.Container.BeginLifetimeScope();
 
             var themeService = scope.Resolve<ThemeService>();
+            themeService.Initialize();
+
             var notificationService = DependencyService.Resolve<INotificationService>();
+            notificationService.Initialize();
         }
 
         void OnResumed() => _resumedEventManager.HandleEvent(this, EventArgs.Empty, nameof(Resumed));

@@ -12,12 +12,17 @@ using GitTrends.Shared;
 using Microsoft.Azure.NotificationHubs;
 using Xamarin.Forms;
 
-[assembly: Dependency(typeof(BadgeService_Android))]
+[assembly: Dependency(typeof(NotificationService_Android))]
 namespace GitTrends.Droid
 {
-    public class BadgeService_Android : INotificationService
+    public class NotificationService_Android : INotificationService
     {
         Context CurrentContext => Xamarin.Essentials.Platform.AppContext;
+
+        public void Initialize()
+        {
+
+        }
 
         public Task<bool?> AreNotificationEnabled()
         {

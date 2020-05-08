@@ -11,7 +11,7 @@ namespace GitTrends.iOS
 {
     public class NotificationService_iOS : INotificationService
     {
-        public NotificationService_iOS()
+        public void Initialize()
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             scope.Resolve<NotificationService>().RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
