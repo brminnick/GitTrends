@@ -6,5 +6,6 @@ namespace GitTrends
     {
         Task SetiOSBadgeCount(int count);
         Task<bool?> AreNotificationEnabled();
+        void Initialize();
     }
 }
