@@ -44,8 +44,8 @@ namespace GitTrends
                 SelectionMode = SelectionMode.Single,
                 ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical),
                 //Set iOS Header to `new BoxView { HeightRequest = titleRowHeight + titleTopMargin }` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
-                Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
-                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
+                Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = ReferringSitesDataTemplate.BottomPadding } : null,
+                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = ReferringSitesDataTemplate.TopPadding } : null,
                 EmptyView = new EmptyDataView("EmptyReferringSitesList", ReferringSitesPageAutomationIds.EmptyDataView)
                                 .Bind(IsVisibleProperty, nameof(ReferringSitesViewModel.IsEmptyDataViewEnabled))
                                 .Bind(EmptyDataView.TextProperty, nameof(ReferringSitesViewModel.EmptyDataViewText))

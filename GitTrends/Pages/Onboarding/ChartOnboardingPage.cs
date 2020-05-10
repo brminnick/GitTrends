@@ -1,7 +1,7 @@
 ﻿using GitTrends.Mobile.Shared;
-using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using Xamarin.Forms.PancakeView;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
@@ -16,26 +16,18 @@ namespace GitTrends
         enum Row { Title, Zoom, LongPress }
         enum Column { Image, Description }
 
-        protected override View CreateImageView()
+        protected override View CreateImageView() => new PancakeView
         {
-            var materialFrame = new MaterialFrame
-            {
-                CornerRadius = 4,
-                BorderColor = Color.FromHex("E0E0E0"),
-                Elevation = 4,
-                BackgroundColor = Color.White,
-                Padding = new Thickness(5),
+            CornerRadius = 4,
+            BorderColor = Color.FromHex("E0E0E0"),
+            BackgroundColor = Color.White,
+            Padding = new Thickness(5),
 
-                //On iOS, use custom renderer for MediaElement until MediaElement.Dispose bug is fixed: https://github.com/xamarin/Xamarin.Forms/issues/9525#issuecomment-619156536
-                //On Android, use Custom Renderer for ExoPlayer because Xamarin.Forms.MediaElement uses Android.VideoView
-                Content = new VideoPlayerView(),
+            //On iOS, use custom renderer for MediaElement until MediaElement.Dispose bug is fixed: https://github.com/xamarin/Xamarin.Forms/issues/9525#issuecomment-619156536
+            //On Android, use Custom Renderer for ExoPlayer because Xamarin.Forms.MediaElement uses Android.VideoView
+            Content = new VideoPlayerView(),
 
-            };
-            materialFrame.SetDynamicResource(MaterialFrame.MaterialThemeProperty, nameof(BaseTheme.CardMaterialFrameTheme));
-
-            return materialFrame;
-        }
-
+        };
 
         protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ChartPageTitle);
 

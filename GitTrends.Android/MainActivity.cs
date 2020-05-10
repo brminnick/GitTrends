@@ -34,7 +34,6 @@ namespace GitTrends.Droid
             base.OnCreate(savedInstanceState);
 
             Forms.Init(this, savedInstanceState);
-            FormsMaterial.Init(this, savedInstanceState);
 
             LoadApplication(new App());
 

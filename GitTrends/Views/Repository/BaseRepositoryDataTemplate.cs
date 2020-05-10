@@ -26,15 +26,18 @@ namespace GitTrends
         protected enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
         protected enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3 }
 
+        public static int TopPadding { get; } = Device.RuntimePlatform is Device.Android ? 4 : 8;
+        public static int BottomPadding { get; } = Device.RuntimePlatform is Device.Android ? 12 : 16;
+
         class CardView : Grid
         {
             public CardView(in IEnumerable<View> parentDataTemplateChildren)
             {
                 RowSpacing = 0;
                 RowDefinitions = Rows.Define(
-                    (CardViewRow.TopPadding, AbsoluteGridLength(12)),
+                    (CardViewRow.TopPadding, AbsoluteGridLength(TopPadding)),
                     (CardViewRow.Card, StarGridLength(1)),
-                    (CardViewRow.BottomPadding, AbsoluteGridLength(12)));
+                    (CardViewRow.BottomPadding, AbsoluteGridLength(BottomPadding)));
 
                 ColumnDefinitions = Columns.Define(
                     (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
@@ -60,7 +63,7 @@ namespace GitTrends
 
                     Content = new ContentGrid(parentDataTemplateChildren);
 
-                    SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.CardMaterialFrameTheme));
+                    SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
                 }
 
                 class ContentGrid : Grid

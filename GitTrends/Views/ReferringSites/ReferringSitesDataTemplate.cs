@@ -16,15 +16,18 @@ namespace GitTrends
         {
         }
 
+        public static int TopPadding { get; } = 4;
+        public static int BottomPadding { get; } = Device.RuntimePlatform is Device.Android ? 12 : 16;
+
         class CardView : Grid
         {
             public CardView()
             {
                 RowSpacing = 0;
                 RowDefinitions = Rows.Define(
-                    (Row.TopPadding, AbsoluteGridLength(8)),
+                    (Row.TopPadding, AbsoluteGridLength(TopPadding)),
                     (Row.Card, StarGridLength(1)),
-                    (Row.BottomPadding, AbsoluteGridLength(8)));
+                    (Row.BottomPadding, AbsoluteGridLength(BottomPadding)));
 
                 ColumnDefinitions = Columns.Define(
                     (Column.LeftPadding, AbsoluteGridLength(16)),
@@ -49,7 +52,7 @@ namespace GitTrends
                     Elevation = 4;
                     Content = new ContentGrid();
 
-                    SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.CardMaterialFrameTheme));
+                    SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
                 }
             }
 

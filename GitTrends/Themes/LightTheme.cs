@@ -109,6 +109,6 @@ namespace GitTrends
         public override string DefaultProfileImageSource { get; } = "DefaultProfileImageGreen";
         public override string DefaultReferringSiteImageSource { get; } = "DefaultReferringSiteImage";
 
-        public override MaterialFrame.Theme CardMaterialFrameTheme { get; } = MaterialFrame.Theme.Acrylic;
+        public override MaterialFrame.Theme MaterialFrameTheme { get; } = MaterialFrame.Theme.Acrylic;
     }
 }

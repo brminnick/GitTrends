@@ -417,7 +417,6 @@
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.2.1" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.2.1" />
     <PackageReference Include="Shiny.Notifications" Version="1.1.0.1570" />
-    <PackageReference Include="Xamarin.Forms.Visual.Material" Version="4.6.0.726" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="3.3.0" />
     <PackageReference Include="Sharpnado.Presentation.Forms" Version="1.6.0" />
     <PackageReference Include="Xamarin.Forms.PancakeView" Version="1.4.2" />

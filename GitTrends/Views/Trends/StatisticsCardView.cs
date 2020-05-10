@@ -14,14 +14,20 @@ namespace GitTrends
 
         public StatisticsCard(in string title, in string svgImage, in string svgColorTheme, in string cardAutomationId, in string statisticsTextAutomationId)
         {
+            Elevation = 4;
+
             Padding = new Thickness(16, 12);
             Content = new StatisticsCardContent(title, svgImage, svgColorTheme, statisticsTextAutomationId, this);
             CornerRadius = 4;
             AutomationId = cardAutomationId;
 
             SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
-            SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.CardMaterialFrameTheme));
+            SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
+
         }
+
+        enum Row { Title, Number }
+        enum Column { Stats, Icon }
 
         public bool IsSeriesVisible
         {
@@ -34,9 +40,6 @@ namespace GitTrends
             get => (string)GetValue(TextProperty);
             set => SetValue(TextProperty, value);
         }
-
-        enum Row { Title, Number }
-        enum Column { Stats, Icon }
 
         class StatisticsCardContent : Grid
         {

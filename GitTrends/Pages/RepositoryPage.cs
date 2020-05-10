@@ -37,8 +37,8 @@ namespace GitTrends
                 SelectionMode = SelectionMode.Single,
                 AutomationId = RepositoryPageAutomationIds.CollectionView,
                 //Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
-                Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
-                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = 8 } : null,
+                Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.BottomPadding } : null,
+                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.TopPadding } : null,
                 EmptyView = new EmptyDataView("EmptyRepositoriesList", RepositoryPageAutomationIds.EmptyDataView)
                             .Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
                             .Bind(EmptyDataView.TextProperty, nameof(RepositoryViewModel.EmptyDataViewText))
