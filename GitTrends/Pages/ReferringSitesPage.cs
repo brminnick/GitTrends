@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
+using Sharpnado.MaterialFrame;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -116,9 +117,9 @@ namespace GitTrends
                                             Constraint.Constant(0));
 
                 relativeLayout.Children.Add(closeButton,
-                                            Constraint.RelativeToParent(parent => parent.Width - GetWidth(parent, closeButton) - 10),
+                                            Constraint.RelativeToParent(parent => parent.Width - closeButton.GetWidth(parent) - 10),
                                             Constraint.Constant(0),
-                                            Constraint.RelativeToParent(parent => GetWidth(parent, closeButton)));
+                                            Constraint.RelativeToParent(parent => closeButton.GetWidth(parent)));
             }
             else
             {
@@ -131,7 +132,7 @@ namespace GitTrends
 
             relativeLayout.Children.Add(_storeRatingRequestView,
                                             Constraint.Constant(0),
-                                            Constraint.RelativeToParent(parent => parent.Height - GetHeight(parent, _storeRatingRequestView)),
+                                            Constraint.RelativeToParent(parent => parent.Height - _storeRatingRequestView.GetHeight(parent)),
                                             Constraint.RelativeToParent(parent => parent.Width));
 
             Content = relativeLayout;

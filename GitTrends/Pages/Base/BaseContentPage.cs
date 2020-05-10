@@ -19,9 +19,6 @@ namespace GitTrends
 
         protected AnalyticsService AnalyticsService { get; }
 
-        protected static double GetWidth(in RelativeLayout parent, in View view) => view.Measure(parent.Width, parent.Height).Request.Width;
-        protected static double GetHeight(in RelativeLayout parent, in View view) => view.Measure(parent.Width, parent.Height).Request.Height;
-
         protected override void OnAppearing()
         {
             base.OnAppearing();

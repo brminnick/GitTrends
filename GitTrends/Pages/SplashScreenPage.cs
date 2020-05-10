@@ -53,12 +53,12 @@ namespace GitTrends
             var relativeLayout = new RelativeLayout();
 
             relativeLayout.Children.Add(_statusLabel,
-                Constraint.RelativeToParent(parent => parent.Width / 2 - GetWidth(parent, _statusLabel) / 2),
-                Constraint.RelativeToParent(parent => parent.Height - GetHeight(parent, _statusLabel) - (DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Landscape ? 25 : 50)));
+                Constraint.RelativeToParent(parent => parent.Width / 2 - _statusLabel.GetWidth(parent) / 2),
+                Constraint.RelativeToParent(parent => parent.Height - _statusLabel.GetHeight(parent) - (DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Landscape ? 25 : 50)));
 
             relativeLayout.Children.Add(_gitTrendsImage,
-                Constraint.RelativeToParent(parent => parent.Width / 2 - GetWidth(parent, _gitTrendsImage) / 2),
-                Constraint.RelativeToParent(parent => parent.Height / 2 - GetHeight(parent, _gitTrendsImage) / 2));
+                Constraint.RelativeToParent(parent => parent.Width / 2 - _gitTrendsImage.GetWidth(parent) / 2),
+                Constraint.RelativeToParent(parent => parent.Height / 2 - _gitTrendsImage.GetHeight(parent) / 2));
 
             Content = relativeLayout;
         }
