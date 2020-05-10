@@ -44,7 +44,7 @@ namespace GitTrends
             _themeService = themeService;
 
             CopyrightLabelTappedCommand = new AsyncCommand(ExecuteCopyrightLabelTappedCommand);
-            GitHubUserViewTappedCommand = new AsyncCommand(ExecuteGitHubUserViewTappedCommand, _ => GitHubAuthenticationService.IsAuthenticated || GitHubAuthenticationService.IsDemoUser);
+            GitHubUserViewTappedCommand = new AsyncCommand(ExecuteGitHubUserViewTappedCommand, _ => IsNotAuthenticating);
 
             _gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
             ThemeService.PreferenceChanged += HandlePreferenceChanged;
@@ -62,7 +62,7 @@ namespace GitTrends
         }
 
         public ICommand CopyrightLabelTappedCommand { get; }
-        public ICommand GitHubUserViewTappedCommand { get; }
+        public IAsyncCommand GitHubUserViewTappedCommand { get; }
         public IReadOnlyList<string> ThemePickerItemsSource { get; } = Enum.GetNames(typeof(PreferredTheme));
 
         public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText is GitHubLoginButtonConstants.Disconnect;
@@ -154,10 +154,11 @@ namespace GitTrends
             set => SetProperty(ref _isRegisterForNotificationsSwitchToggled, value, async () => await SetNotificationsPreference(value).ConfigureAwait(false));
         }
 
-        protected override void NotifyIsAuthenticatingPropertyChanged()
+        protected override async void NotifyIsAuthenticatingPropertyChanged()
         {
             base.NotifyIsAuthenticatingPropertyChanged();
             OnPropertyChanged(nameof(IsAliasLabelVisible));
+            await MainThread.InvokeOnMainThreadAsync(GitHubUserViewTappedCommand.RaiseCanExecuteChanged).ConfigureAwait(false);
         }
 
         protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, CancellationToken cancellationToken, BrowserLaunchOptions? browserLaunchOptions)
@@ -210,7 +211,7 @@ namespace GitTrends
                 else
                 {
                     _notificationService.UnRegister();
-                    AnalyticsService.Track("Settings Notification Button Tapped", nameof(isNotificationsEnabled), isNotificationsEnabled.ToString());
+                    AnalyticsService.Track("Register for Notifications Switch Toggled", nameof(isNotificationsEnabled), isNotificationsEnabled.ToString());
                 }
             }
             finally
@@ -235,7 +236,9 @@ namespace GitTrends
             IsRegisterForNotificationsSwitchEnabled = true;
         }
 
-        void HandlePreferenceChanged(object sender, PreferredTheme e)
+        void HandlePreferenceChanged(object sender, PreferredTheme e) => UpdateGitHubAvatarImage();
+
+        void UpdateGitHubAvatarImage()
         {
             if (!_gitHubAuthenticationService.IsAuthenticated)
                 GitHubAvatarImageSource = BaseTheme.GetDefaultProfileImageSource();
@@ -253,10 +256,18 @@ namespace GitTrends
 
         Task ExecuteGitHubUserViewTappedCommand()
         {
-            string alias = GitHubAuthenticationService.Alias is DemoDataConstants.Alias ? nameof(GitTrends) : GitHubAuthenticationService.Alias;
-            AnalyticsService.Track("Alias Label Tapped", "Alias", alias);
+            if (GitHubAuthenticationService.IsAuthenticated || GitHubAuthenticationService.IsDemoUser)
+            {
+                string alias = GitHubAuthenticationService.Alias is DemoDataConstants.Alias ? nameof(GitTrends) : GitHubAuthenticationService.Alias;
+                AnalyticsService.Track("Alias Label Tapped", "Alias", alias);
 
-            return _deepLinkingService.OpenApp($"github://", $"{GitHubConstants.GitHubBaseUrl}/{alias}", $"{GitHubConstants.GitHubBaseUrl}/{alias}");
+                return _deepLinkingService.OpenApp($"github://", $"{GitHubConstants.GitHubBaseUrl}/{alias}", $"{GitHubConstants.GitHubBaseUrl}/{alias}");
+            }
+            else
+            {
+                var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                return ExecuteConnectToGitHubButtonCommand(_gitHubAuthenticationService, _deepLinkingService, cancellationTokenSource.Token, null);
+            }
         }
     }
 }
