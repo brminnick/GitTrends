@@ -1,6 +1,7 @@
 ﻿using System;
 using GitTrends.Mobile.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
+using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
@@ -38,18 +39,17 @@ namespace GitTrends
             enum Row { TopPadding, Card, BottomPadding }
             enum Column { LeftPadding, Card, RightPadding }
 
-            class CardViewFrame : PancakeView
+            class CardViewFrame : MaterialFrame
             {
                 public CardViewFrame()
                 {
                     CornerRadius = 4;
                     HasShadow = false;
                     Padding = new Thickness(16);
-                    BorderThickness = 2;
+                    Elevation = 4;
                     Content = new ContentGrid();
 
-                    SetDynamicResource(BorderColorProperty, nameof(BaseTheme.CardBorderColor));
-                    SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
+                    SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.CardMaterialFrameTheme));
                 }
             }
 

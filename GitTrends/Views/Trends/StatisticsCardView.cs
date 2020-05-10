@@ -1,13 +1,13 @@
 ﻿using System;
+using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using Xamarin.Forms.PancakeView;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    class StatisticsCard : PancakeView
+    class StatisticsCard : MaterialFrame
     {
         public StatisticsCard(in string title, in string svgImage, in string svgColorTheme, in string textBinding, in string tapGestureBinding, in string cardAutomationId, in string statisticsTextAutomationId, in string isSeriesVisibleBinding)
         {
@@ -15,13 +15,13 @@ namespace GitTrends
             Content = new StatisticsCardContent(title, textBinding, svgImage, svgColorTheme, statisticsTextAutomationId, isSeriesVisibleBinding);
             HasShadow = false;
             CornerRadius = 4;
-            BorderThickness = 2;
+            Elevation = 4;
             AutomationId = cardAutomationId;
 
             this.BindTapGesture(tapGestureBinding);
 
-            SetDynamicResource(BorderColorProperty, nameof(BaseTheme.CardBorderColor));
             SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
+            SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.CardMaterialFrameTheme));
         }
 
         enum Row { Title, Number }

@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using Sharpnado.MaterialFrame;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -73,6 +74,8 @@ namespace GitTrends
             Add(nameof(GitTrendsImageSource), GitTrendsImageSource);
             Add(nameof(DefaultProfileImageSource), DefaultProfileImageSource);
             Add(nameof(DefaultReferringSiteImageSource), DefaultReferringSiteImageSource);
+
+            Add(nameof(CardMaterialFrameTheme), CardMaterialFrameTheme);
         }
 
         public static string GetGitTrendsImageSource() => (string)(Application.Current?.Resources?[nameof(GitTrendsImageSource)] ?? "GitTrends");
@@ -150,5 +153,7 @@ namespace GitTrends
         public abstract string GitTrendsImageSource { get; }
         public abstract string DefaultProfileImageSource { get; }
         public abstract string DefaultReferringSiteImageSource { get; }
+
+        public abstract MaterialFrame.Theme CardMaterialFrameTheme { get; }
     }
 }

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using GitTrends.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
+using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using Xamarin.Forms.PancakeView;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
@@ -32,9 +32,9 @@ namespace GitTrends
             {
                 RowSpacing = 0;
                 RowDefinitions = Rows.Define(
-                    (CardViewRow.TopPadding, AbsoluteGridLength(8)),
+                    (CardViewRow.TopPadding, AbsoluteGridLength(12)),
                     (CardViewRow.Card, StarGridLength(1)),
-                    (CardViewRow.BottomPadding, AbsoluteGridLength(8)));
+                    (CardViewRow.BottomPadding, AbsoluteGridLength(12)));
 
                 ColumnDefinitions = Columns.Define(
                     (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
@@ -49,18 +49,18 @@ namespace GitTrends
             enum CardViewRow { TopPadding, Card, BottomPadding }
             enum CardViewColumn { LeftPadding, Card, RightPadding }
 
-            class CardViewFrame : PancakeView
+            class CardViewFrame : MaterialFrame
             {
                 public CardViewFrame(in IEnumerable<View> parentDataTemplateChildren)
                 {
                     Padding = new Thickness(16, 16, 12, 8);
                     CornerRadius = 4;
                     HasShadow = false;
-                    BorderThickness = 2;
+                    Elevation = 4;
+
                     Content = new ContentGrid(parentDataTemplateChildren);
 
-                    SetDynamicResource(BorderColorProperty, nameof(BaseTheme.CardBorderColor));
-                    SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
+                    SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.CardMaterialFrameTheme));
                 }
 
                 class ContentGrid : Grid

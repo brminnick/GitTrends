@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using Sharpnado.MaterialFrame;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -107,5 +108,7 @@ namespace GitTrends
         public override string GitTrendsImageSource { get; } = "GitTrendsGreen";
         public override string DefaultProfileImageSource { get; } = "DefaultProfileImageGreen";
         public override string DefaultReferringSiteImageSource { get; } = "DefaultReferringSiteImage";
+
+        public override MaterialFrame.Theme CardMaterialFrameTheme { get; } = MaterialFrame.Theme.Acrylic;
     }
 }

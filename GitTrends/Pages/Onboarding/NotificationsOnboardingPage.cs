@@ -1,4 +1,5 @@
 ﻿using GitTrends.Mobile.Shared;
+using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
@@ -41,7 +42,7 @@ namespace GitTrends
             }
         };
 
-        class EnableNotificationsView : PancakeView
+        class EnableNotificationsView : MaterialFrame
         {
             public EnableNotificationsView()
             {
@@ -52,6 +53,8 @@ namespace GitTrends
                 BackgroundColor = Color.FromHex(BaseTheme.CoralColorHex);
                 CornerRadius = 5;
                 Padding = new Thickness(16, 10);
+
+                Elevation = 4;
 
                 Content = new StackLayout
                 {
@@ -65,6 +68,8 @@ namespace GitTrends
                 };
 
                 this.BindTapGesture(nameof(OnboardingViewModel.EnableNotificationsButtonTapped));
+
+                SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.CardMaterialFrameTheme));
             }
 
             class NotificationStatusSvgImage : SvgImage
