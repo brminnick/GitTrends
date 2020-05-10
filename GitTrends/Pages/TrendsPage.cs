@@ -35,7 +35,7 @@ namespace GitTrends
             Content = new Grid
             {
                 ColumnSpacing = 8,
-                RowSpacing = 16,
+                RowSpacing = 12,
                 Padding = new Thickness(0, 16),
 
                 RowDefinitions = Rows.Define(

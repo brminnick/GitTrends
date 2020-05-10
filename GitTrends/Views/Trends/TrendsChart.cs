@@ -9,8 +9,6 @@ namespace GitTrends
 {
     class TrendsChart : MaterialFrame
     {
-        const int _topPadding = 16;
-
         public TrendsChart()
         {
             CornerRadius = 4;
@@ -18,7 +16,7 @@ namespace GitTrends
             Content = new Chart().Bind(IsVisibleProperty, nameof(TrendsViewModel.IsChartVisible), BindingMode.OneWay);
 
             Margin = new Thickness(16, 0);
-            Padding = new Thickness(4, _topPadding, 0, 4);
+            Padding = new Thickness(4, 8, 4, 4);
 
             SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
         }
@@ -28,7 +26,7 @@ namespace GitTrends
             public Chart()
             {
                 Margin = 0;
-                ChartPadding = new Thickness(0, _topPadding, 0, 4);
+                ChartPadding = new Thickness(0, 24, 0, 4);
 
                 BackgroundColor = Color.Transparent;
 
@@ -64,32 +62,13 @@ namespace GitTrends
                     TotalUniqueClonesSeries,
                 };
 
-                var chartLegendLabelStyle = new ChartLegendLabelStyle()
+                var primaryAxisLabelStyle = new ChartAxisLabelStyle
                 {
-                    FontSize = 11,
-                    FontFamily = FontFamilyConstants.RobotoRegular,
-                };
-                chartLegendLabelStyle.SetDynamicResource(ChartLegendLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
-
-                Legend = new ChartLegend
-                {
-                    AutomationId = TrendsPageAutomationIds.TrendsChartLegend,
-                    DockPosition = LegendPlacement.Bottom,
-                    ToggleSeriesVisibility = true,
-                    Margin = new Thickness(4, 8, 0, 4),
-                    IconWidth = 20,
-                    IconHeight = 20,
-                    LabelStyle = chartLegendLabelStyle,
-                    ItemMargin = new Thickness(2, 0)
-                };
-
-                var axisLabelStyle = new ChartAxisLabelStyle
-                {
-                    FontSize = 12,
+                    FontSize = 9,
                     FontFamily = FontFamilyConstants.RobotoRegular,
                     Margin = new Thickness(2, 4, 2, 0)
                 };
-                axisLabelStyle.SetDynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
+                primaryAxisLabelStyle.SetDynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
 
                 var axisLineStyle = new ChartLineStyle()
                 {
@@ -103,7 +82,7 @@ namespace GitTrends
                     IntervalType = DateTimeIntervalType.Days,
                     Interval = 1,
                     RangePadding = DateTimeRangePadding.Round,
-                    LabelStyle = axisLabelStyle,
+                    LabelStyle = primaryAxisLabelStyle,
                     AxisLineStyle = axisLineStyle,
                     MajorTickStyle = new ChartAxisTickStyle { StrokeColor = Color.Transparent },
                     ShowMajorGridLines = false,
@@ -114,10 +93,16 @@ namespace GitTrends
                 var secondaryAxisMajorTickStyle = new ChartAxisTickStyle();
                 secondaryAxisMajorTickStyle.SetDynamicResource(ChartAxisTickStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
 
+                var secondaryAxisLabelStyle = new ChartAxisLabelStyle
+                {
+                    FontSize = 12,
+                    FontFamily = FontFamilyConstants.RobotoRegular,
+                };
+
                 SecondaryAxis = new NumericalAxis
                 {
                     AutomationId = TrendsPageAutomationIds.TrendsChartSecondaryAxis,
-                    LabelStyle = axisLabelStyle,
+                    LabelStyle = secondaryAxisLabelStyle,
                     AxisLineStyle = axisLineStyle,
                     MajorTickStyle = secondaryAxisMajorTickStyle,
                     ShowMajorGridLines = false

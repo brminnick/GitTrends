@@ -59,7 +59,7 @@ namespace GitTrends
         public double DailyViewsClonesMinValue { get; } = 0;
 
         public bool IsEmptyDataViewVisible => !IsChartVisible && !IsFetchingData;
-        public bool IsChartVisible => DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
+        public bool IsChartVisible => !IsFetchingData && DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
         public DateTime MinDateValue => DateTimeService.GetMinimumLocalDateTime(DailyViewsList, DailyClonesList);
         public DateTime MaxDateValue => DateTimeService.GetMaximumLocalDateTime(DailyViewsList, DailyClonesList);
 
@@ -214,8 +214,8 @@ namespace GitTrends
 
         void UpdateDailyClonesListPropertiesChanged()
         {
-            OnPropertyChanged(nameof(IsEmptyDataViewVisible));
             OnPropertyChanged(nameof(IsChartVisible));
+            OnPropertyChanged(nameof(IsEmptyDataViewVisible));
 
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
             OnPropertyChanged(nameof(DailyViewsClonesMinValue));
@@ -226,8 +226,8 @@ namespace GitTrends
 
         void UpdateDailyViewsListPropertiesChanged()
         {
-            OnPropertyChanged(nameof(IsEmptyDataViewVisible));
             OnPropertyChanged(nameof(IsChartVisible));
+            OnPropertyChanged(nameof(IsEmptyDataViewVisible));
 
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
