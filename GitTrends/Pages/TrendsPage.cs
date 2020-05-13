@@ -17,7 +17,7 @@ namespace GitTrends
 
         public TrendsPage(TrendsViewModel trendsViewModel,
                             Repository repository,
-                            AnalyticsService analyticsService) : base(trendsViewModel, analyticsService, repository.Name)
+                            AnalyticsService analyticsService) : base(trendsViewModel, analyticsService, repository.Name, true)
         {
             _repository = repository;
 
@@ -35,7 +35,7 @@ namespace GitTrends
             Content = new Grid
             {
                 ColumnSpacing = 8,
-                RowSpacing = 16,
+                RowSpacing = 12,
                 Padding = new Thickness(0, 16),
 
                 RowDefinitions = Rows.Define(
@@ -46,14 +46,14 @@ namespace GitTrends
                 {
                     new StatisticsGrid()
                         .Row(Row.Statistics),
-                    new TrendsChartActivityIndicator()
-                        .Row(Row.Chart),
                     new TrendsChart()
                         .Row(Row.Chart),
                     new EmptyDataView("EmptyInsightsChart", TrendsPageAutomationIds.EmptyDataView)
                         .Row(Row.Chart)
                         .Bind(IsVisibleProperty,nameof(TrendsViewModel.IsEmptyDataViewVisible))
-                        .Bind(EmptyDataView.TextProperty, nameof(RepositoryViewModel.EmptyDataViewText))
+                        .Bind(EmptyDataView.TextProperty, nameof(RepositoryViewModel.EmptyDataViewText)),
+                    new TrendsChartActivityIndicator()
+                        .Row(Row.Chart),
                 }
             };
         }
@@ -88,7 +88,7 @@ namespace GitTrends
                 HorizontalOptions = LayoutOptions.Center;
                 VerticalOptions = LayoutOptions.Center;
 
-                SetDynamicResource(ColorProperty, nameof(BaseTheme.PullToRefreshColor));
+                SetDynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor));
 
                 this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData));
                 this.SetBinding(IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));

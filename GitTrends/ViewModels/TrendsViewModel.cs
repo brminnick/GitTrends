@@ -59,7 +59,7 @@ namespace GitTrends
         public double DailyViewsClonesMinValue { get; } = 0;
 
         public bool IsEmptyDataViewVisible => !IsChartVisible && !IsFetchingData;
-        public bool IsChartVisible => DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
+        public bool IsChartVisible => !IsFetchingData && DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
         public DateTime MinDateValue => DateTimeService.GetMinimumLocalDateTime(DailyViewsList, DailyClonesList);
         public DateTime MaxDateValue => DateTimeService.GetMaximumLocalDateTime(DailyViewsList, DailyClonesList);
 
@@ -135,8 +135,8 @@ namespace GitTrends
             get => _isFetchingData;
             set => SetProperty(ref _isFetchingData, value, () =>
             {
-                OnPropertyChanged(nameof(IsEmptyDataViewVisible));
                 OnPropertyChanged(nameof(IsChartVisible));
+                OnPropertyChanged(nameof(IsEmptyDataViewVisible));
             });
         }
 
@@ -154,8 +154,8 @@ namespace GitTrends
 
         async Task ExecuteFetchDataCommand(Repository repository, CancellationToken cancellationToken)
         {
-            IReadOnlyList<DailyViewsModel> repositoryViews;
-            IReadOnlyList<DailyClonesModel> repositoryClones;
+            IReadOnlyList<DailyViewsModel> repositoryViews = Enumerable.Empty<DailyViewsModel>().ToList();
+            IReadOnlyList<DailyClonesModel> repositoryClones = Enumerable.Empty<DailyClonesModel>().ToList();
 
             var minimumTimeTask = Task.Delay(2000);
 
@@ -165,8 +165,6 @@ namespace GitTrends
                 {
                     repositoryViews = repository.DailyViewsList;
                     repositoryClones = repository.DailyClonesList;
-
-                    await minimumTimeTask.ConfigureAwait(false);
                 }
                 else
                 {
@@ -197,27 +195,27 @@ namespace GitTrends
             }
             finally
             {
-                //Display the Activity Indicator for a minimum time to ensure consistant UX 
+                DailyViewsList = repositoryViews.OrderBy(x => x.Day).ToList();
+                DailyClonesList = repositoryClones.OrderBy(x => x.Day).ToList();
+
+                ViewsStatisticsText = repositoryViews.Sum(x => x.TotalViews).ConvertToAbbreviatedText();
+                UniqueViewsStatisticsText = repositoryViews.Sum(x => x.TotalUniqueViews).ConvertToAbbreviatedText();
+
+                ClonesStatisticsText = repositoryClones.Sum(x => x.TotalClones).ConvertToAbbreviatedText();
+                UniqueClonesStatisticsText = repositoryClones.Sum(x => x.TotalUniqueClones).ConvertToAbbreviatedText();
+
+                //Display the Activity Indicator for a minimum time to ensure consistant UX
                 await minimumTimeTask.ConfigureAwait(false);
                 IsFetchingData = false;
             }
-
-            DailyViewsList = repositoryViews.OrderBy(x => x.Day).ToList();
-            DailyClonesList = repositoryClones.OrderBy(x => x.Day).ToList();
-
-            ViewsStatisticsText = repositoryViews.Sum(x => x.TotalViews).ConvertToAbbreviatedText();
-            UniqueViewsStatisticsText = repositoryViews.Sum(x => x.TotalUniqueViews).ConvertToAbbreviatedText();
-
-            ClonesStatisticsText = repositoryClones.Sum(x => x.TotalClones).ConvertToAbbreviatedText();
-            UniqueClonesStatisticsText = repositoryClones.Sum(x => x.TotalUniqueClones).ConvertToAbbreviatedText();
 
             PrintDays();
         }
 
         void UpdateDailyClonesListPropertiesChanged()
         {
-            OnPropertyChanged(nameof(IsEmptyDataViewVisible));
             OnPropertyChanged(nameof(IsChartVisible));
+            OnPropertyChanged(nameof(IsEmptyDataViewVisible));
 
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
             OnPropertyChanged(nameof(DailyViewsClonesMinValue));
@@ -228,8 +226,8 @@ namespace GitTrends
 
         void UpdateDailyViewsListPropertiesChanged()
         {
-            OnPropertyChanged(nameof(IsEmptyDataViewVisible));
             OnPropertyChanged(nameof(IsChartVisible));
+            OnPropertyChanged(nameof(IsEmptyDataViewVisible));
 
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));

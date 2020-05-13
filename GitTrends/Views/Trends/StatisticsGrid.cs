@@ -1,4 +1,6 @@
-﻿using GitTrends.Mobile.Shared;
+﻿using System;
+using GitTrends.Mobile.Shared;
+using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -29,14 +31,36 @@ namespace GitTrends
                 (Column.Total, StarGridLength(1)),
                 (Column.Unique, StarGridLength(1)));
 
-            Children.Add(new StatisticsCard("Views", "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor), nameof(TrendsViewModel.ViewsStatisticsText), nameof(TrendsViewModel.ViewsCardTappedCommand), TrendsPageAutomationIds.ViewsCard, TrendsPageAutomationIds.ViewsStatisticsLabel, nameof(TrendsViewModel.IsViewsSeriesVisible))
-                .Row(Row.ViewsStats).Column(Column.Total));
-            Children.Add(new StatisticsCard("Unique Views", "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor), nameof(TrendsViewModel.UniqueViewsStatisticsText), nameof(TrendsViewModel.UniqueViewsCardTappedCommand), TrendsPageAutomationIds.UniqueViewsCard, TrendsPageAutomationIds.UniqueViewsStatisticsLabel, nameof(TrendsViewModel.IsUniqueViewsSeriesVisible))
-                .Row(Row.ViewsStats).Column(Column.Unique)); ;
-            Children.Add(new StatisticsCard("Clones", "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor), nameof(TrendsViewModel.ClonesStatisticsText), nameof(TrendsViewModel.ClonesCardTappedCommand), TrendsPageAutomationIds.ClonesCard, TrendsPageAutomationIds.ClonesStatisticsLabel, nameof(TrendsViewModel.IsClonesSeriesVisible))
-                .Row(Row.ClonesStats).Column(Column.Total));
-            Children.Add(new StatisticsCard("Unique Clones", "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor), nameof(TrendsViewModel.UniqueClonesStatisticsText), nameof(TrendsViewModel.UniqueClonesCardTappedCommand), TrendsPageAutomationIds.UniqueClonesCard, TrendsPageAutomationIds.UniqueClonesStatisticsLabel, nameof(TrendsViewModel.IsUniqueClonesSeriesVisible))
-                .Row(Row.ClonesStats).Column(Column.Unique));
+            Children.Add(new StatisticsCard("Views", "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor), TrendsPageAutomationIds.ViewsCard, TrendsPageAutomationIds.ViewsStatisticsLabel)
+                .Row(Row.ViewsStats).Column(Column.Total)
+                // MaterialFrame.ElevationProperty doesn't dynamically update the background color to match the elevation
+                //.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsViewsSeriesVisible), convert: convertElevation) 
+                .Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsViewsSeriesVisible))
+                .Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.ViewsStatisticsText))
+                .BindTapGesture(nameof(TrendsViewModel.ViewsCardTappedCommand)));
+            Children.Add(new StatisticsCard("Unique Views", "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor), TrendsPageAutomationIds.UniqueViewsCard, TrendsPageAutomationIds.UniqueViewsStatisticsLabel)
+                .Row(Row.ViewsStats).Column(Column.Unique)
+                // MaterialFrame.ElevationProperty doesn't dynamically update the background color to match the elevation
+                //.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsUniqueViewsSeriesVisible), convert: convertElevation)
+                .Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsUniqueViewsSeriesVisible))
+                .Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.UniqueViewsStatisticsText))
+                .BindTapGesture(nameof(TrendsViewModel.UniqueViewsCardTappedCommand)));
+            Children.Add(new StatisticsCard("Clones", "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor), TrendsPageAutomationIds.ClonesCard, TrendsPageAutomationIds.ClonesStatisticsLabel)
+                .Row(Row.ClonesStats).Column(Column.Total)
+                // MaterialFrame.ElevationProperty doesn't dynamically update the background color to match the elevation
+                //.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsClonesSeriesVisible), convert: convertElevation)
+                .Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsClonesSeriesVisible))
+                .Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.ClonesStatisticsText))
+                .BindTapGesture(nameof(TrendsViewModel.ClonesCardTappedCommand)));
+            Children.Add(new StatisticsCard("Unique Clones", "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor), TrendsPageAutomationIds.UniqueClonesCard, TrendsPageAutomationIds.UniqueClonesStatisticsLabel)
+                .Row(Row.ClonesStats).Column(Column.Unique)
+                // MaterialFrame.ElevationProperty doesn't dynamically update the background color to match the elevation
+                //.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsUniqueClonesSeriesVisible), convert: convertElevation)
+                .Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsUniqueClonesSeriesVisible))
+                .Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.UniqueClonesStatisticsText))
+                .BindTapGesture(nameof(TrendsViewModel.UniqueClonesCardTappedCommand)));
+
+            static double convertElevation(bool isEnabled) => isEnabled ? 4 : 0;
         }
 
         enum Row { ViewsStats, ClonesStats, Chart }

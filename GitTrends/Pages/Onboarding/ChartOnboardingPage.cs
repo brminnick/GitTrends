@@ -20,13 +20,13 @@ namespace GitTrends
         {
             CornerRadius = 4,
             BorderColor = Color.FromHex("E0E0E0"),
-            BorderThickness = 1,
             BackgroundColor = Color.White,
             Padding = new Thickness(5),
 
             //On iOS, use custom renderer for MediaElement until MediaElement.Dispose bug is fixed: https://github.com/xamarin/Xamarin.Forms/issues/9525#issuecomment-619156536
             //On Android, use Custom Renderer for ExoPlayer because Xamarin.Forms.MediaElement uses Android.VideoView
-            Content = new VideoPlayerView()
+            Content = new VideoPlayerView(),
+
         };
 
         protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ChartPageTitle);

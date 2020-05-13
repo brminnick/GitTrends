@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using GitTrends.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
+using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using Xamarin.Forms.PancakeView;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
@@ -26,15 +26,18 @@ namespace GitTrends
         protected enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
         protected enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3 }
 
+        public static int TopPadding { get; } = Device.RuntimePlatform is Device.Android ? 4 : 8;
+        public static int BottomPadding { get; } = Device.RuntimePlatform is Device.Android ? 12 : 16;
+
         class CardView : Grid
         {
             public CardView(in IEnumerable<View> parentDataTemplateChildren)
             {
                 RowSpacing = 0;
                 RowDefinitions = Rows.Define(
-                    (CardViewRow.TopPadding, AbsoluteGridLength(8)),
+                    (CardViewRow.TopPadding, AbsoluteGridLength(TopPadding)),
                     (CardViewRow.Card, StarGridLength(1)),
-                    (CardViewRow.BottomPadding, AbsoluteGridLength(8)));
+                    (CardViewRow.BottomPadding, AbsoluteGridLength(BottomPadding)));
 
                 ColumnDefinitions = Columns.Define(
                     (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
@@ -49,18 +52,18 @@ namespace GitTrends
             enum CardViewRow { TopPadding, Card, BottomPadding }
             enum CardViewColumn { LeftPadding, Card, RightPadding }
 
-            class CardViewFrame : PancakeView
+            class CardViewFrame : MaterialFrame
             {
                 public CardViewFrame(in IEnumerable<View> parentDataTemplateChildren)
                 {
                     Padding = new Thickness(16, 16, 12, 8);
                     CornerRadius = 4;
                     HasShadow = false;
-                    BorderThickness = 2;
+                    Elevation = 4;
+
                     Content = new ContentGrid(parentDataTemplateChildren);
 
-                    SetDynamicResource(BorderColorProperty, nameof(BaseTheme.CardBorderColor));
-                    SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
+                    SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
                 }
 
                 class ContentGrid : Grid

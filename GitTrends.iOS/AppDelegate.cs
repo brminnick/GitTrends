@@ -21,7 +21,7 @@ namespace GitTrends.iOS
             iOSShinyHost.Init(platformBuild: services => services.UseNotifications());
 
             global::Xamarin.Forms.Forms.Init();
-            Xamarin.Forms.FormsMaterial.Init();
+            Sharpnado.MaterialFrame.iOS.iOSMaterialFrameRenderer.Init();
 
             Syncfusion.SfChart.XForms.iOS.Renderers.SfChartRenderer.Init();
             Syncfusion.XForms.iOS.Buttons.SfSegmentedControlRenderer.Init();
