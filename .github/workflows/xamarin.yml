@@ -19,7 +19,7 @@ jobs:
       - name: Android
         run: |
           nuget restore
-          msbuild GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=AppStore     
+          msbuild GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release     
 
 # Ignore iOS until GitHub Actions adds iOS Certificates & Provisioning Profiles
 #    iOS:
@@ -29,4 +29,4 @@ jobs:
 #      - name: iOS
 #        run: |
 #          nuget restore
-#          msbuild GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Platform=iPhone /p:Configuration=AppStore
+#          msbuild GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Platform=iPhone /p:Configuration=Release
