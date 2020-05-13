@@ -65,6 +65,7 @@ namespace GitTrends.Droid
                     searchView.ImeOptions = (int)ImeAction.Search;
                     searchView.InputType = (int)InputTypes.TextVariationFilter;
                     searchView.MaxWidth = int.MaxValue; //Set to full width - http://stackoverflow.com/questions/31456102/searchview-doesnt-expand-full-width
+                    searchView.Elevation = Resources.GetDimension(Resource.Dimension.toolbar_elevation);
                 }
             }
         }
