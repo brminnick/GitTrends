@@ -16,7 +16,7 @@ namespace GitTrends
         {
         }
 
-        public static int TopPadding { get; } = 4;
+        public static int TopPadding { get; } = 8;
         public static int BottomPadding { get; } = Device.RuntimePlatform is Device.Android ? 12 : 16;
 
         class CardView : Grid

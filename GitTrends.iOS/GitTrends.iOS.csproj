@@ -110,6 +110,7 @@
     <Compile Include="CustomRenderers\PickerCustomRenderer.cs" />
     <Compile Include="AppDelegate.BackdoorMethods.cs" />
     <Compile Include="CustomRenderers\VideoPlayerViewCustomRenderer.cs" />
+    <Compile Include="CustomRenderers\NavigationPageCustomRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -403,7 +404,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="4.6.0.726" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.5.3.1" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
     <PackageReference Include="Refit" Version="5.1.67" />
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.1-pre1" />
     <PackageReference Include="Polly" Version="7.2.1" />
@@ -411,7 +412,7 @@
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.1.0.42" />
     <PackageReference Include="sqlite-net-pcl" Version="1.6.292" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
-    <PackageReference Include="Autofac" Version="5.1.4" />
+    <PackageReference Include="Autofac" Version="5.2.0" />
     <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="18.1.0.42" />
     <PackageReference Include="Xamarin.TestCloud.Agent" Version="0.21.9" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.2.1" />

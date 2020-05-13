@@ -6,10 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
-using Sharpnado.MaterialFrame;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using Xamarin.Forms.PlatformConfiguration;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends
 {
@@ -26,11 +27,9 @@ namespace GitTrends
                                     ReferringSitesViewModel referringSitesViewModel,
                                     Repository repository,
                                     AnalyticsService analyticsService,
+                                    ThemeService themeService,
                                     ReviewService reviewService) : base(referringSitesViewModel, analyticsService, PageTitles.ReferringSitesPage)
         {
-            const int titleRowHeight = 50;
-            const int titleTopMargin = 15;
-
             _deepLinkingService = deepLinkingService;
             _reviewService = reviewService;
 
@@ -69,7 +68,8 @@ namespace GitTrends
             //Add Title and Close Button to UIModalPresentationStyle.FormSheet 
             if (Device.RuntimePlatform is Device.iOS)
             {
-                const int refreshViewTopPadding = titleRowHeight + 5;
+                const int titleTopMargin = 10;
+                const int titleRowHeight = 50;
 
                 var closeButton = new Button
                 {
@@ -86,27 +86,36 @@ namespace GitTrends
                 closeButton.SetDynamicResource(Button.BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor));
                 closeButton.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
 
-
-                var titleRowBlurView = new BoxView { Opacity = 0.5 };
-                titleRowBlurView.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
-
                 var titleLabel = new Label
                 {
                     FontSize = 30,
                     Text = PageTitles.ReferringSitesPage,
                     FontFamily = FontFamilyConstants.RobotoMedium,
-                };
+                }.Center().TextCenterVertical();
                 titleLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
 
                 closeButton.Margin = titleLabel.Margin = new Thickness(0, titleTopMargin, 0, 0);
 
+                var titleShadow = new BoxView();
+                titleShadow.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+
+                if (isLightTheme(themeService.Preference))
+                {
+                    titleShadow.On<iOS>().SetIsShadowEnabled(true)
+                                           .SetShadowColor(Color.Gray)
+                                           .SetShadowOffset(new Size(0, 1))
+                                           .SetShadowOpacity(0.5)
+                                           .SetShadowRadius(4);
+                }
+
+
                 relativeLayout.Children.Add(_refreshView,
                                              Constraint.Constant(0),
-                                             Constraint.Constant(refreshViewTopPadding), //Set to `0` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
+                                             Constraint.Constant(titleRowHeight), //Set to `0` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
                                              Constraint.RelativeToParent(parent => parent.Width),
-                                             Constraint.RelativeToParent(parent => parent.Height - refreshViewTopPadding)); //Set to `parent => parent.Height` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
+                                             Constraint.RelativeToParent(parent => parent.Height - titleRowHeight)); //Set to `parent => parent.Height` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
 
-                relativeLayout.Children.Add(titleRowBlurView,
+                relativeLayout.Children.Add(titleShadow,
                                             Constraint.Constant(0),
                                             Constraint.Constant(0),
                                             Constraint.RelativeToParent(parent => parent.Width),
@@ -136,6 +145,8 @@ namespace GitTrends
                                             Constraint.RelativeToParent(parent => parent.Width));
 
             Content = relativeLayout;
+
+            static bool isLightTheme(PreferredTheme preferredTheme) => preferredTheme is PreferredTheme.Light || preferredTheme is PreferredTheme.Default && Xamarin.Forms.Application.Current.RequestedTheme is OSAppTheme.Light;
         }
 
         protected override void OnAppearing()
@@ -182,8 +193,8 @@ namespace GitTrends
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                if (Application.Current.MainPage.Navigation.ModalStack.LastOrDefault() is ReferringSitesPage
-                    || Application.Current.MainPage.Navigation.NavigationStack.Last() is ReferringSitesPage)
+                if (Xamarin.Forms.Application.Current.MainPage.Navigation.ModalStack.LastOrDefault() is ReferringSitesPage
+                    || Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack.Last() is ReferringSitesPage)
                 {
                     if (e.Accept is null)
                     {
