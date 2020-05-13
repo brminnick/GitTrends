@@ -8,4 +8,6 @@ sed -i '' "s/GetSyncFusionInformationApiKey = \"\"/GetSyncFusionInformationApiKe
 
 sed -i '' "s/GetNotificationHubInformationApiKey = \"\"/GetNotificationHubInformationApiKey = \"$GetNotificationHubInformationApiKey\"/g" "$AzureConstantsFile"
 
+sed -i '' "s/#error Missing API Keys/\/\/#error Missing API Keys/g" "$AzureConstantsFile"
+
 echo "Finished Injecting API Keys"

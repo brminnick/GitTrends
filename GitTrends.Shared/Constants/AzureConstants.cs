@@ -2,6 +2,9 @@
 {
     public static class AzureConstants
     {
+#if AppStore
+#error Missing API Keys
+#endif
         public const string GetUITestTokenApiKey = "";
         public const string GetSyncFusionInformationApiKey = "";
         public const string GetNotificationHubInformationApiKey = "";
