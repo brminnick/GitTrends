@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using NUnit.Framework;
 using Xamarin.UITest;
+using Xamarin.UITest.Android;
 using Xamarin.UITest.iOS;
 
 namespace GitTrends.UITests
@@ -72,7 +73,11 @@ namespace GitTrends.UITests
 
             //Assert
             Assert.IsFalse(shouldSendNotifications_Initial);
-            Assert.IsFalse(areNotificationsEnabled_Initial);
+
+            if (App is AndroidApp)
+                Assert.IsTrue(areNotificationsEnabled_Initial);
+            else
+                Assert.IsFalse(areNotificationsEnabled_Initial);
 
             Assert.IsTrue(shouldSendNotifications_Final);
             Assert.IsTrue(areNotificationsEnabled_Final);

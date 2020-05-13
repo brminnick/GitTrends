@@ -87,7 +87,8 @@ namespace GitTrends
         {
             var trendsPageLayout = (Layout<View>)GetVisibleContentPage().Content;
 
-            var trendsChart = trendsPageLayout.Children.OfType<SfChart>().First();
+            var trendsFrame = trendsPageLayout.Children.OfType<TrendsChart>().First();
+            var trendsChart = (SfChart)trendsFrame.Content;
 
             return trendsChart.Series.First(x => x.Label.Equals(seriesTitle)).IsVisible;
         }
@@ -111,7 +112,7 @@ namespace GitTrends
             else if (visibleContentPage.Content is Layout<View> layout && layout.Children.OfType<RefreshView>().FirstOrDefault() is RefreshView layoutRefreshView)
                 return layoutRefreshView;
             else
-                throw new NotSupportedException($"{visibleContentPage.GetType()} Does Not Contain a RefreshView");
+                throw new Exception($"{visibleContentPage.GetType()} Does Not Contain a RefreshView");
         }
 
         ContentPage GetVisibleContentPage() => (ContentPage)(GetVisiblePageFromModalStack() ?? GetVisiblePageFromNavigationStack());
