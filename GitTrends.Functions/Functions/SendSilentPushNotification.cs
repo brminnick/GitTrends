@@ -10,7 +10,7 @@ namespace GitTrends.Functions
 {
     public class SendSilentPushNotification
     {
-        const string _runEveryTwelveHoursCron = "0 0 0/12 * * *";
+        const string _runEveryTwelveHoursCron = "0 0 * * * *";
 
         readonly static string _notificationHubFullConnectionString_Debug = Environment.GetEnvironmentVariable("NotificationHubFullConnectionString_Debug") ?? string.Empty;
         readonly static string _notificationHubFullConnectionString = Environment.GetEnvironmentVariable("NotificationHubFullConnectionString") ?? string.Empty;
