@@ -53,7 +53,7 @@ namespace GitTrends.UITests
 
             App.Screenshot("Repository Page Dark");
 
-            RepositoryPage.TapRepository(RepositoryPage.VisibleCollection.First().Name);
+            RepositoryPage.TapRepository(nameof(GitTrends));
 
             await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
 
