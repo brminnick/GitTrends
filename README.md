@@ -50,6 +50,8 @@ Mobile App
 - [Refit](https://github.com/reactiveui/refit) - Refit is a REST library for .NET that converts REST APIs into live interfaces
 - [Sqlite-net](https://github.com/praeclarum/sqlite-net) - an open source, minimal library to allow .NET, .NET Core, and Mono applications to store data in SQLite 3 databases
 - [Syncfusion](https://syncfusion.com) - a UI Component Suite for Building Powerful Web, Desktop, and Mobile Apps
+- [Sharpnado.MaterialFrame](https://github.com/roubachof/Sharpnado.MaterialFrame) - A modern Xamarin.Forms Frame component supporting blur, acrylic, dark mode. Implemented with RealtimeBlurView on Android (custom blurview) and UIVisualEffectView on iOS.
+- [PancakeView](https://github.com/sthewissen/Xamarin.Forms.PancakeView) - An extended ContentView for Xamarin.Forms with rounded corners, borders, shadows and more!
 
 Cloud Backend
 - [.NET Core](https://docs.microsoft.com/dotnet/core/?WT.mc_id=gittrends-github-bramin) - an [open-source](https://github.com/dotnet/core), general-purpose development platform maintained by Microsoft and the .NET community on [GitHub](https://github.com/dotnet/core)
