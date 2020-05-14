@@ -32,8 +32,8 @@ Monitor the traffic to your GitHub Repos!<br/>
 
 | GitHub Login | Repo Traffic | Referring Sites |
 | -- | -- | -- |
-| ![Repositories Light](https://user-images.githubusercontent.com/13558917/81245656-6d693a80-8fca-11ea-9e8f-e5e712f9141a.gif) | ![Trends Light](https://user-images.githubusercontent.com/13558917/81245673-7b1ec000-8fca-11ea-9cab-89ab424ecf91.gif) | ![Referring Sites Light](https://user-images.githubusercontent.com/13558917/81245723-9ab5e880-8fca-11ea-9baa-d8a482e0fc47.gif) | 
-| ![Repositories Dark](https://user-images.githubusercontent.com/13558917/81244925-8670ec00-8fc8-11ea-93bb-4f7c4a69911f.gif) | ![Trends Dark](https://user-images.githubusercontent.com/13558917/81245127-12831380-8fc9-11ea-84be-bfe3b8b05d48.gif) | ![Referring Sites Dark](https://user-images.githubusercontent.com/13558917/81245371-a523b280-8fc9-11ea-8b48-1a08414e5920.gif) | 
+| ![Repositories Light](https://user-images.githubusercontent.com/13558917/81881433-02c57b00-9545-11ea-920c-27b5b54f19c1.gif) | ![Trends Light](https://user-images.githubusercontent.com/13558917/81881263-921e5e80-9544-11ea-9bf8-a85ae9b59191.gif) | ![Referring Sites Light](https://user-images.githubusercontent.com/13558917/81881331-c6921a80-9544-11ea-93cc-0dbe222de0f9.gif) | 
+| ![Repositories Dark](https://user-images.githubusercontent.com/13558917/81881552-5041e800-9545-11ea-8100-7b28731e32cb.gif) | ![Trends Dark](https://user-images.githubusercontent.com/13558917/81882124-c561ed00-9546-11ea-902f-c77f42e78f18.gif) | ![Referring Sites Dark](https://user-images.githubusercontent.com/13558917/81881769-dfe79680-9545-11ea-8047-a1aac99bebdc.gif) | 
 
 ## Resources
 
