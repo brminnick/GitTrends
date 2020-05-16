@@ -173,21 +173,6 @@ namespace GitTrends.UITests
             string nameLabelText, aliasLabelText;
 
             //Act
-            if (SettingsPage.GitHubButtonText is GitHubLoginButtonConstants.Disconnect)
-            {
-                SettingsPage.TapLoginButton();
-            }
-
-            SettingsPage.TapGitHubUserView();
-
-            //Assert
-            if (App is iOSApp)
-            {
-                Assert.IsFalse(SettingsPage.IsBrowserOpen);
-            }
-
-            //Act
-            SettingsPage.TapDemoModeButton();
             SettingsPage.WaitForGitHubLoginToComplete();
 
             aliasLabelText = SettingsPage.GitHubAliasLabelText;
