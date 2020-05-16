@@ -76,7 +76,7 @@ namespace GitTrends.UITests
             App.DragCoordinates(screenSize.Width * 9 / 10, screenSize.CenterY, screenSize.Width * 1 / 10, screenSize.CenterY);
 
             while(CurrentPageNumber == initialPageNumber)
-                await Task.Delay(10).ConfigureAwait(false);
+                await Task.Delay(TimeSpan.FromMilliseconds(10)).ConfigureAwait(false);
 
             var finalPageNumber = CurrentPageNumber;
 
@@ -93,7 +93,7 @@ namespace GitTrends.UITests
             App.DragCoordinates(screenSize.Width * 1 / 10, screenSize.CenterY, screenSize.Width * 9 / 10, screenSize.CenterY);
 
             while (CurrentPageNumber == initialPageNumber)
-                await Task.Delay(10).ConfigureAwait(false);
+                await Task.Delay(TimeSpan.FromMilliseconds(10)).ConfigureAwait(false);
 
             var finalPageNumber = CurrentPageNumber;
 

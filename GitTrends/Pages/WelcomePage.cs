@@ -82,7 +82,7 @@ namespace GitTrends
 
         async void HandleDemoUserActivated(object sender, EventArgs e)
         {
-            var minimumActivityIndicatorTime = Task.Delay(1500);
+            var minimumActivityIndicatorTime = Task.Delay(TimeSpan.FromMilliseconds(1500));
 
             await minimumActivityIndicatorTime;
             await PopPage();

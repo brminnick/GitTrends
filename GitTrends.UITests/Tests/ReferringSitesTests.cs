@@ -72,7 +72,7 @@ namespace GitTrends.UITests
             if (isUrlValid)
             {
                 App.Tap(referringSite.Referrer);
-                await Task.Delay(1000).ConfigureAwait(false);
+                await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
             }
 
             //Assert

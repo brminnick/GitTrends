@@ -157,7 +157,7 @@ namespace GitTrends
             IReadOnlyList<DailyViewsModel> repositoryViews = Enumerable.Empty<DailyViewsModel>().ToList();
             IReadOnlyList<DailyClonesModel> repositoryClones = Enumerable.Empty<DailyClonesModel>().ToList();
 
-            var minimumTimeTask = Task.Delay(2000);
+            var minimumTimeTask = Task.Delay(TimeSpan.FromSeconds(2));
 
             try
             {

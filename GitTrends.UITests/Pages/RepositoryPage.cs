@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
@@ -12,7 +13,8 @@ namespace GitTrends.UITests
     class RepositoryPage : BaseCollectionPage<Repository>
     {
         readonly Query _searchBar, _settingsButton, _collectionView, _refreshView,
-            _androidContextMenuOverflowButton, _androidSearchBarButton, _sortButton, _emptyDataView;
+            _androidContextMenuOverflowButton, _androidSearchBarButton, _sortButton, _emptyDataView,
+            _smallScreenTrendingImage, _largeScreenTrendingImage;
 
         public RepositoryPage(IApp app) : base(app, PageTitles.RepositoryPage)
         {
@@ -24,9 +26,14 @@ namespace GitTrends.UITests
             _androidContextMenuOverflowButton = x => x.Class("androidx.appcompat.widget.ActionMenuPresenter$OverflowMenuButton");
             _androidSearchBarButton = x => x.Id("ActionSearch");
             _emptyDataView = GenerateMarkedQuery(RepositoryPageAutomationIds.EmptyDataView);
+            _smallScreenTrendingImage = GenerateMarkedQuery(RepositoryPageAutomationIds.SmallScreenTrendingImage);
+            _largeScreenTrendingImage = GenerateMarkedQuery(RepositoryPageAutomationIds.LargeScreenTrendingImage);
         }
 
         public bool IsEmptyDataViewVisible => App.Query(_emptyDataView).Any();
+
+        public int SmallScreenTrendingImageCount => App.Query(_smallScreenTrendingImage).Count();
+        public int LargeScreenTrendingImageCount => App.Query(_largeScreenTrendingImage).Count();
 
         public void WaitForEmptyDataView()
         {
@@ -131,6 +138,6 @@ namespace GitTrends.UITests
             App.Screenshot("Settings Button Tapped");
         }
 
-        Task WaitForRepositoriesToFinishSorting() => Task.Delay(1000);
+        Task WaitForRepositoriesToFinishSorting() => Task.Delay(TimeSpan.FromSeconds(1));
     }
 }

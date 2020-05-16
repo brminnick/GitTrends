@@ -65,8 +65,8 @@ namespace GitTrends
 
                     AnalyticsService.Track("Onboarding Demo Button Tapped");
 
-                    //Allow Activity Indicator to run for a minum of 1500ms
-                    await Task.WhenAll(GitHubAuthenticationService.ActivateDemoUser(), Task.Delay(1500)).ConfigureAwait(false);
+                    //Allow Activity Indicator to run for a minimum of 1500ms
+                    await Task.WhenAll(GitHubAuthenticationService.ActivateDemoUser(), Task.Delay(TimeSpan.FromMilliseconds(1500))).ConfigureAwait(false);
                 }
                 else
                 {

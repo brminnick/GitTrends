@@ -179,14 +179,29 @@ namespace GitTrends.UITests
         {
             //Arrange
             IReadOnlyList<Repository> visibleRepositoryList;
+            int smallScreenTrendingImageCount;
+            int largeScreenTrendingImageCount;
 
             //Act
             RepositoryPage.TriggerPullToRefresh();
             await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
 
+            smallScreenTrendingImageCount = RepositoryPage.SmallScreenTrendingImageCount;
+            largeScreenTrendingImageCount = RepositoryPage.LargeScreenTrendingImageCount;
+
             //Assert
             visibleRepositoryList = RepositoryPage.VisibleCollection;
             Assert.IsTrue(visibleRepositoryList.Any());
+
+            if (visibleRepositoryList.Count(x => x.IsTrending) > 0)
+            {
+                Assert.AreNotEqual(smallScreenTrendingImageCount, largeScreenTrendingImageCount);
+                if (smallScreenTrendingImageCount > 0)
+                    Assert.AreEqual(0, largeScreenTrendingImageCount);
+
+                if (largeScreenTrendingImageCount > 0)
+                    Assert.AreEqual(0, smallScreenTrendingImageCount);
+            }
         }
 
         [Test]

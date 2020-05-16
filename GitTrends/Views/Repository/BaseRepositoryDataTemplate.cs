@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Sharpnado.MaterialFrame;
@@ -91,8 +94,6 @@ namespace GitTrends
                             (Column.Emoji3, AbsoluteGridLength(_emojiColumnSize)),
                             (Column.Statistic3, AbsoluteGridLength(_statsColumnSize)));
 
-                        var largeScreenTrendingImage = new LargeScreenTrendingImage();
-
                         Children.Add(new AvatarImage()
                                         .Row(Row.Title).Column(Column.Avatar).RowSpan(2)
                                         .Bind(Image.SourceProperty, nameof(Repository.OwnerAvatarUrl)));
@@ -108,29 +109,17 @@ namespace GitTrends
                         Children.Add(new Separator()
                                         .Row(Row.Separator).Column(Column.Trending).ColumnSpan(7));
 
-                        //On smaller screens, display TrendingImage under the Avatar
-                        Children.Add(new TrendingImage()
-                                        .Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3)
-                                        .Bind(IsVisibleProperty, nameof(Repository.IsTrending))
-                                        .Bind<TrendingImage, double, Func<Color>>(SvgImage.GetTextColorProperty, nameof(Width), source: largeScreenTrendingImage, convert: largeScreenTrendingImageTextColorConverter));
-
                         //On large screens, display TrendingImage in the same column as the repository name
-                        Children.Add(largeScreenTrendingImage
-                                        .Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2)
-                                        .Bind(IsVisibleProperty, nameof(Repository.IsTrending)));
+                        Children.Add(new LargeScreenTrendingImage().Assign(out LargeScreenTrendingImage largeScreenTrendingImage)
+                                        .Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2));
+
+                        //On smaller screens, display TrendingImage under the Avatar
+                        Children.Add(new SmallScreenTrendingImage(largeScreenTrendingImage)
+                                        .Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3));
 
                         foreach (var child in parentDataTemplateChildren)
                         {
                             Children.Add(child);
-                        }
-
-                        //Reveal the tag if the LargeScreenTrendingImage is not shown by changing its color from matching the CardSurfaceColor
-                        static Func<Color> largeScreenTrendingImageTextColorConverter(double largeTrendingImageWidth)
-                        {
-                            if (largeTrendingImageWidth >= 0 && largeTrendingImageWidth < TrendingImage.SvgWidthRequest)
-                                return () => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)];
-                            else
-                                return () => (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)];
                         }
                     }
 
@@ -146,6 +135,8 @@ namespace GitTrends
                             BorderThickness = 1;
 
                             SetDynamicResource(BorderColorProperty, nameof(BaseTheme.SeparatorColor));
+                            SetDynamicResource(ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource));
+                            SetDynamicResource(LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource));
                         }
                     }
 
@@ -189,30 +180,77 @@ namespace GitTrends
 
                     class LargeScreenTrendingImage : TrendingImage
                     {
-                        protected override void OnSizeAllocated(double width, double height)
+                        public LargeScreenTrendingImage() : base(RepositoryPageAutomationIds.LargeScreenTrendingImage)
                         {
-                            base.OnSizeAllocated(width, height);
-
-                            //Reveal the tag `if (width >= SvgWidthRequest)` by changing its color to CardTrendingStatsColor from the default color which matches the CardSurfaceColor
-                            if (!IsVisible)
-                                return;
-                            else if (width >= SvgWidthRequest)
-                                GetTextColor = () => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)];
-                            else
-                                GetTextColor = () => (Color)Application.Current.Resources[nameof(BaseTheme.CardSurfaceColor)];
+                            SetBinding(IsVisibleProperty, new MultiBinding
+                            {
+                                Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth >= SvgWidthRequest),
+                                Bindings =
+                                {
+                                    new Binding(nameof(Repository.IsTrending)),
+                                    new Binding(nameof(Width), source: this)
+                                }
+                            });
                         }
                     }
 
-                    class TrendingImage : StatisticsSvgImage
+                    class SmallScreenTrendingImage : TrendingImage
+                    {
+                        public SmallScreenTrendingImage(LargeScreenTrendingImage largeScreenTrendingImage) : base(RepositoryPageAutomationIds.SmallScreenTrendingImage)
+                        {
+                            SetBinding(IsVisibleProperty, new MultiBinding
+                            {
+                                Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth < SvgWidthRequest),
+                                Bindings =
+                                {
+                                    new Binding(nameof(Repository.IsTrending)),
+                                    new Binding(nameof(Width), source: largeScreenTrendingImage)
+                                }
+                            });
+                        }
+                    }
+
+                    abstract class TrendingImage : StatisticsSvgImage
                     {
                         public const double SvgWidthRequest = 62;
                         public const double SvgHeightRequest = 16;
 
-                        //Set default color to match the Card Surface Color to "hide" the tag
-                        public TrendingImage() : base("trending_tag.svg", nameof(BaseTheme.CardSurfaceColor), SvgWidthRequest, SvgHeightRequest)
+                        public TrendingImage(string automationId) : base("trending_tag.svg", nameof(BaseTheme.CardTrendingStatsColor), SvgWidthRequest, SvgHeightRequest)
                         {
+                            AutomationId = automationId;
                             HorizontalOptions = LayoutOptions.Start;
                             VerticalOptions = LayoutOptions.End;
+                        }
+
+                        protected class IsVisibleConverter : IMultiValueConverter
+                        {
+                            readonly Func<double, bool> _isWidthValid;
+
+                            public IsVisibleConverter(Func<double, bool> isWidthValid) => _isWidthValid = isWidthValid;
+
+                            public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+                            {
+                                if (values is null || !values.Any())
+                                    return false;
+
+                                if (values[0] is bool isTrending && isTrending is true
+                                    && values[1] is double width)
+                                {
+                                    // When `Width is -1`, Xamarin.Forms hasn't inflated the View
+                                    // Allow Xamarin.Forms to inflate the view, then validate its Width
+                                    if (width is -1 || _isWidthValid(width))
+                                        return true;
+
+                                    return false;
+                                }
+
+                                return false;
+                            }
+
+                            public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+                            {
+                                throw new NotImplementedException();
+                            }
                         }
                     }
                 }

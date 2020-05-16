@@ -158,7 +158,7 @@ namespace GitTrends.UITests
 
             App.Screenshot($"Trends Chart Option Changed to {trendsChartOption}");
 
-            static Task waitForSettingsToUpdate() => Task.Delay(1000);
+            static Task waitForSettingsToUpdate() => Task.Delay(TimeSpan.FromSeconds(1));
         }
 
         public void TapGitHubUserView()

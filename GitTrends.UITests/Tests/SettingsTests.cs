@@ -66,7 +66,7 @@ namespace GitTrends.UITests
             //Act
             SettingsPage.ToggleRegisterForNotificationsSwitch();
 
-            await Task.Delay(5000).ConfigureAwait(false);
+            await Task.Delay(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
 
             shouldSendNotifications_Final = SettingsPage.ShouldSendNotifications;
             areNotificationsEnabled_Final = SettingsPage.AreNotificationsEnabled;

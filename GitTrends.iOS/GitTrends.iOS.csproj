@@ -404,14 +404,14 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="4.6.0.726" />
+    <PackageReference Include="Xamarin.Forms" Version="4.7.0.773-pre1" />
     <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
     <PackageReference Include="Refit" Version="5.1.67" />
-    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.1-pre1" />
+    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.1" />
     <PackageReference Include="Polly" Version="7.2.1" />
     <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.1.1.1-beta" />
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.1.0.42" />
-    <PackageReference Include="sqlite-net-pcl" Version="1.6.292" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
     <PackageReference Include="Autofac" Version="5.2.0" />
     <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="18.1.0.42" />
