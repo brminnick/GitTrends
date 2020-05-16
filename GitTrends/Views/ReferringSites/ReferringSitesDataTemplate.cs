@@ -192,24 +192,26 @@ namespace GitTrends
                 {
                     public FavIconImage()
                     {
+                        this.Start();
+
                         const int padding = 1;
 
-                        HeightRequest = _favIconHeight;
-                        WidthRequest = _favIconWidth;
-                        CornerRadius = Math.Max(_favIconHeight, _favIconWidth) / 2;
-                        HorizontalOptions = VerticalOptions = LayoutOptions.Start;
+                        var circleDiameter = Math.Min(_favIconHeight, _favIconWidth);
+
+                        HeightRequest = WidthRequest = circleDiameter;
+                        CornerRadius = circleDiameter / 2;
                         BackgroundColor = Color.White;
 
                         Padding = new Thickness(padding);
 
                         var circleImage = new CircleImage
                         {
-                            Aspect = Aspect.AspectFit,
-                            HorizontalOptions = LayoutOptions.Center,
-                            VerticalOptions = LayoutOptions.Center,
-                            HeightRequest = _favIconHeight - padding * 2,
-                            WidthRequest = _favIconWidth - padding * 2,
-                        };
+                            ErrorPlaceholder = FavIconService.DefaultFavIcon,
+                            LoadingPlaceholder = FavIconService.DefaultFavIcon,
+                            Aspect = Aspect.Fill,
+                            HeightRequest = circleDiameter - padding * 2,
+                            WidthRequest = circleDiameter - padding * 2,
+                        }.Center();
                         circleImage.SetBinding(CircleImage.SourceProperty, nameof(MobileReferringSiteModel.FavIcon));
 
                         Content = circleImage;
