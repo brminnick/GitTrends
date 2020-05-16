@@ -113,7 +113,7 @@ namespace GitTrends
                 var welcomePage = scope.Resolve<WelcomePage>();
 
                 //Allow RepositoryPage to appear briefly before loading 
-                await Task.Delay(250);
+                await Task.Delay(TimeSpan.FromMilliseconds(250));
                 await Navigation.PushModalAsync(welcomePage);
             }
             else if (!FirstRunService.IsFirstRun

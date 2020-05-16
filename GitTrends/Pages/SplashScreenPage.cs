@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
@@ -94,7 +95,7 @@ namespace GitTrends
                 while (!pulseCancellationToken.IsCancellationRequested)
                 {
                     var pulseImageTask = PulseImage();
-                    await Task.Delay(400);
+                    await Task.Delay(TimeSpan.FromMilliseconds(400));
 
                     //Label leaves the screen
                     await _statusLabel.TranslateTo(10, 0, 100, Easing.CubicInOut);
@@ -116,7 +117,7 @@ namespace GitTrends
                     await _statusLabel.TranslateTo(0, 0, 250, Easing.CubicOut);
 
                     await pulseImageTask;
-                    await Task.Delay(250);
+                    await Task.Delay(TimeSpan.FromMilliseconds(250));
                 }
             });
         }
@@ -127,7 +128,7 @@ namespace GitTrends
             {
                 //Image crouches down
                 await _gitTrendsImage.ScaleTo(0.95, 100, Easing.CubicInOut);
-                await Task.Delay(50);
+                await Task.Delay(TimeSpan.FromMilliseconds(50));
 
                 //Image jumps
                 await _gitTrendsImage.ScaleTo(1.25, 250, Easing.CubicOut);
@@ -188,7 +189,7 @@ namespace GitTrends
 #if DEBUG
                 await ChangeLabelText("Preview Mode", "Certain license warnings may appear");
                 //Display Text
-                await Task.Delay(500);
+                await Task.Delay(TimeSpan.FromMilliseconds(500));
 #else
                 await ChangeLabelText("Let's go!");
 #endif
@@ -219,7 +220,7 @@ namespace GitTrends
                     if (FirstRunService.IsFirstRun)
                     {
                         //Yield the UI thread to allow MainPage to be set
-                        await Task.Delay(250);
+                        await Task.Delay(TimeSpan.FromMilliseconds(250));
 
                         var onboardingCarouselPage = scope.Resolve<OnboardingCarouselPage>();
                         await repositoryPage.Navigation.PushModalAsync(onboardingCarouselPage);

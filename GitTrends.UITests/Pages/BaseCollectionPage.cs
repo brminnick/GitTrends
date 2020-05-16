@@ -100,7 +100,7 @@ namespace GitTrends.UITests
             int counter = 0;
             while (!IsRefreshViewRefreshIndicatorDisplayed)
             {
-                await Task.Delay(1000).ConfigureAwait(false);
+                await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
 
                 if (counter++ >= timeSpan.Value.TotalSeconds)
                     throw new Exception($"Waiting for the Pull To Refresh Indicator took longer than {timeSpan.Value.TotalSeconds} seconds");
@@ -114,7 +114,7 @@ namespace GitTrends.UITests
             int counter = 0;
             while (IsRefreshViewRefreshIndicatorDisplayed)
             {
-                await Task.Delay(1000).ConfigureAwait(false);
+                await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
 
                 if (counter++ >= timeSpan.Value.TotalSeconds)
                     throw new Exception($"Loading the list took longer than {timeSpan.Value.TotalSeconds} seconds");

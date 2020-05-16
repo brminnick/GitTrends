@@ -93,11 +93,11 @@ namespace GitTrends.UITests
 
             while (currentUserToken is null)
             {
-                await Task.Delay(1000).ConfigureAwait(false);
+                await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
                 currentUserToken = App.InvokeBackdoorMethod<GitHubToken?>(BackdoorMethodConstants.GetGitHubToken);
             }
 
-            await Task.Delay(1000).ConfigureAwait(false);
+            await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
         }
     }
 }

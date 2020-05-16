@@ -242,7 +242,13 @@ namespace GitTrends
                 if (mobileReferringSiteFromDatabase != null && isFavIconValid(mobileReferringSiteFromDatabase))
                     return mobileReferringSiteFromDatabase;
 
-                if (referringSiteModel.ReferrerUri != null && referringSiteModel.IsReferrerUriValid)
+                if(GitHubAuthenticationService.IsDemoUser)
+                {
+                    //Display the Activity Indicator to ensure consistent UX
+                    await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
+                    return new MobileReferringSiteModel(referringSiteModel, FavIconService.DefaultFavIcon);
+                }
+                else if (referringSiteModel.ReferrerUri != null && referringSiteModel.IsReferrerUriValid)
                 {
                     var favIcon = await FavIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri, cancellationToken).ConfigureAwait(false);
                     return new MobileReferringSiteModel(referringSiteModel, favIcon);
