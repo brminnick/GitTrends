@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Sharpnado.MaterialFrame;
@@ -179,7 +180,7 @@ namespace GitTrends
 
                     class LargeScreenTrendingImage : TrendingImage
                     {
-                        public LargeScreenTrendingImage()
+                        public LargeScreenTrendingImage() : base(RepositoryPageAutomationIds.LargeScreenTrendingImage)
                         {
                             SetBinding(IsVisibleProperty, new MultiBinding
                             {
@@ -195,7 +196,7 @@ namespace GitTrends
 
                     class SmallScreenTrendingImage : TrendingImage
                     {
-                        public SmallScreenTrendingImage(LargeScreenTrendingImage largeScreenTrendingImage)
+                        public SmallScreenTrendingImage(LargeScreenTrendingImage largeScreenTrendingImage) : base(RepositoryPageAutomationIds.SmallScreenTrendingImage)
                         {
                             SetBinding(IsVisibleProperty, new MultiBinding
                             {
@@ -214,11 +215,11 @@ namespace GitTrends
                         public const double SvgWidthRequest = 62;
                         public const double SvgHeightRequest = 16;
 
-                        public TrendingImage() : base("trending_tag.svg", nameof(BaseTheme.CardTrendingStatsColor), SvgWidthRequest, SvgHeightRequest)
+                        public TrendingImage(string automationId) : base("trending_tag.svg", nameof(BaseTheme.CardTrendingStatsColor), SvgWidthRequest, SvgHeightRequest)
                         {
+                            AutomationId = automationId;
                             HorizontalOptions = LayoutOptions.Start;
                             VerticalOptions = LayoutOptions.End;
-
                         }
 
                         protected class IsVisibleConverter : IMultiValueConverter
