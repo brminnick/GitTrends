@@ -66,7 +66,7 @@ namespace GitTrends
                 yield return demoDataList;
 
                 //Allow UI to update
-                await Task.Delay(1000).ConfigureAwait(false);
+                await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
             }
             else
             {

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
@@ -131,6 +132,6 @@ namespace GitTrends.UITests
             App.Screenshot("Settings Button Tapped");
         }
 
-        Task WaitForRepositoriesToFinishSorting() => Task.Delay(1000);
+        Task WaitForRepositoriesToFinishSorting() => Task.Delay(TimeSpan.FromSeconds(1));
     }
 }
