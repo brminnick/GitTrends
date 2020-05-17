@@ -60,7 +60,7 @@ namespace GitTrends
             }
         }
 
-        internal Task SaveGitHubToken(GitHubToken token)
+        public Task SaveGitHubToken(GitHubToken token)
         {
             if (token is null)
                 throw new ArgumentNullException(nameof(token));
@@ -72,6 +72,6 @@ namespace GitTrends
             return _secureStorage.SetAsync(_oauthTokenKey, serializedToken);
         }
 
-        internal void InvalidateToken() => _secureStorage.Remove(_oauthTokenKey);
+        public void InvalidateToken() => _secureStorage.Remove(_oauthTokenKey);
     }
 }

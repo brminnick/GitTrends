@@ -63,7 +63,6 @@
         <Compile Include="Tests\WelcomeTests.cs" />
         <Compile Include="Constants\LoggedInUserConstants.cs" />
         <Compile Include="Tests\AppStoreScreenShotsTests.cs" />
-        <Compile Include="Services\AzureFunctionsApiService.cs" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Pages\" />

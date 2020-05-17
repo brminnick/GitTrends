@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using GitTrends.Shared;
 using Refit;
 
-namespace GitTrends.UITests
+namespace GitTrends.Mobile.Shared
 {
     public abstract class AzureFunctionsApiService : BaseApiService
     {

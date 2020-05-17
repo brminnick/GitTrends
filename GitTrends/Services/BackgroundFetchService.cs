@@ -50,6 +50,9 @@ namespace GitTrends
             {
                 using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(NotifyTrendingRepositories)} Triggered");
 
+                if (!_gitHubUserService.IsAuthenticated || _gitHubUserService.IsDemoUser)
+                    return false;
+
                 var trendingRepositories = await GetTrendingRepositories(cancellationToken).ConfigureAwait(false);
                 await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
 

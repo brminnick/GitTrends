@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Autofac.Core;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
@@ -88,6 +90,57 @@ namespace GitTrends.UnitTests
                 }
                 return referringSitesCount;
             }
+        }
+
+        [Test]
+        public async Task NotifyTrendingRepositoriesTest_NotLoggedIn()
+        {
+            //Arrange
+            var backgroundFetchService = ContainerService.Container.GetService<BackgroundFetchService>();
+
+            //Act
+            var result = await backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
+
+            //Assert
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public async Task NotifyTrendingRepositoriesTest_DemoUser()
+        {
+            //Arrange
+            var gitHubAuthenticationService = ContainerService.Container.GetService<GitHubAuthenticationService>();
+            await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
+
+            var gitHubUserService = ContainerService.Container.GetService<GitHubUserService>();
+            var backgroundFetchService = ContainerService.Container.GetService<BackgroundFetchService>();
+
+            //Act
+            var result = await backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
+
+            //Assert
+            Assert.IsTrue(gitHubUserService.IsDemoUser);
+            Assert.IsTrue(gitHubUserService.IsAuthenticated);
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public async Task NotifyTrendingRepositoriesTest_AuthenticatedUser()
+        {
+            //Arrange
+            var gitHubUserService = ContainerService.Container.GetService<GitHubUserService>();
+            var backgroundFetchService = ContainerService.Container.GetService<BackgroundFetchService>();
+            var gitHubGraphQLApiService = ContainerService.Container.GetService<GitHubGraphQLApiService>();
+
+            await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+            //Act
+            var result = await backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
+
+            //Assert
+            Assert.IsFalse(gitHubUserService.IsDemoUser);
+            Assert.IsTrue(gitHubUserService.IsAuthenticated);
+            Assert.IsTrue(result);
         }
 
         static Repository CreateExpiredRepository(DateTimeOffset downloadedAt, string repositoryUrl)
