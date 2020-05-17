@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PlatformConfiguration;
@@ -26,9 +27,10 @@ namespace GitTrends
         public ReferringSitesPage(DeepLinkingService deepLinkingService,
                                     ReferringSitesViewModel referringSitesViewModel,
                                     Repository repository,
-                                    AnalyticsService analyticsService,
+                                    IAnalyticsService analyticsService,
                                     ThemeService themeService,
-                                    ReviewService reviewService) : base(referringSitesViewModel, analyticsService, PageTitles.ReferringSitesPage)
+                                    ReviewService reviewService,
+                                    IMainThread mainThread) : base(referringSitesViewModel, analyticsService, mainThread, PageTitles.ReferringSitesPage)
         {
             _deepLinkingService = deepLinkingService;
             _reviewService = reviewService;

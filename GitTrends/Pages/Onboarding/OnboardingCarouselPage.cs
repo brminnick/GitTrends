@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using GitTrends.Shared;
 using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
@@ -9,7 +11,8 @@ namespace GitTrends
 {
     public class OnboardingCarouselPage : CarouselPage
     {
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
+        readonly IMainThread _mainThread;
 
         public OnboardingCarouselPage(GitTrendsOnboardingPage welcomeOnboardingPage,
                                         ChartOnboardingPage chartOnboardingPage,
@@ -17,7 +20,8 @@ namespace GitTrends
                                         ConnectToGitHubOnboardingPage connectToGitHubOnboardingPage,
                                         OnboardingViewModel onboardingViewModel,
                                         GitHubAuthenticationService gitHubAuthenticationService,
-                                        AnalyticsService analyticsService)
+                                        IAnalyticsService analyticsService,
+                                        IMainThread mainThread)
         {
             On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.OverFullScreen);
 
@@ -26,6 +30,7 @@ namespace GitTrends
 
             BindingContext = onboardingViewModel;
             _analyticsService = analyticsService;
+            _mainThread = mainThread;
 
             onboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
             gitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
@@ -59,7 +64,7 @@ namespace GitTrends
         {
             _analyticsService.Track("Skip Button Tapped");
 
-            MainThread.BeginInvokeOnMainThread(() => CurrentPage = Children.Last());
+            _mainThread.BeginInvokeOnMainThread(() => CurrentPage = Children.Last());
         }
 
         void HandleDemoUserActivated(object sender, EventArgs e) => MainThread.BeginInvokeOnMainThread(() => Navigation.PopModalAsync());

@@ -10,7 +10,7 @@ namespace GitTrends.Functions
 {
     public class SendSilentPushNotification
     {
-        const string _runEveryTwelveHoursCron = "0 0 * * * *";
+        const string _runEveryHourCron = "0 0 * * * *";
 
         readonly static string _notificationHubFullConnectionString_Debug = Environment.GetEnvironmentVariable("NotificationHubFullConnectionString_Debug") ?? string.Empty;
         readonly static string _notificationHubFullConnectionString = Environment.GetEnvironmentVariable("NotificationHubFullConnectionString") ?? string.Empty;
@@ -22,10 +22,10 @@ namespace GitTrends.Functions
         static NotificationHubClient DebugClient => _debugClientHolder.Value;
 
         [FunctionName(nameof(SendSilentPushNotification))]
-        public static Task Run([TimerTrigger(_runEveryTwelveHoursCron)] TimerInfo myTimer, ILogger log) => Task.WhenAll(TrySendAppleSilentNotification(Client, log), TrySendFcmSilentNotification(Client, log));
+        public static Task Run([TimerTrigger(_runEveryHourCron)] TimerInfo myTimer, ILogger log) => Task.WhenAll(TrySendAppleSilentNotification(Client, log), TrySendFcmSilentNotification(Client, log));
 
         [FunctionName(nameof(SendSilentPushNotification) + "Debug")]
-        public static async Task RunDebug([TimerTrigger(_runEveryTwelveHoursCron, RunOnStartup = true)] TimerInfo myTimer, ILogger log)
+        public static async Task RunDebug([TimerTrigger(_runEveryHourCron, RunOnStartup = true)] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation(_notificationHubFullConnectionString);
             log.LogInformation(_notificationHubFullConnectionString_Debug);

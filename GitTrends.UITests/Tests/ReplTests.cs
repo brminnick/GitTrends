@@ -9,7 +9,7 @@ namespace GitTrends.UITests
     [TestFixture(Platform.iOS, UserType.Demo)]
     [TestFixture(Platform.iOS, UserType.LoggedIn)]
     [TestFixture(Platform.iOS, UserType.Neither)]
-    class ReplTests : BaseTest
+    class ReplTests : BaseUITest
     {
         public ReplTests(Platform platform, UserType userType) : base(platform, userType)
         {

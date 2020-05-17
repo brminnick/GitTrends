@@ -11,9 +11,9 @@ namespace GitTrends
     public class MediaElementService
     {
         readonly AzureFunctionsApiService _azureFunctionsApiService;
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
 
-        public MediaElementService(AzureFunctionsApiService azureFunctionsApiService, AnalyticsService analyticsService) =>
+        public MediaElementService(AzureFunctionsApiService azureFunctionsApiService, IAnalyticsService analyticsService) =>
             (_azureFunctionsApiService, _analyticsService) = (azureFunctionsApiService, analyticsService);
 
         public static StreamingManifest? OnboardingChart

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -12,9 +13,9 @@ namespace GitTrends
         readonly WeakEventManager<ReviewRequest> _reviewCompletedEventManager = new WeakEventManager<ReviewRequest>();
         readonly WeakEventManager _reviewPromptRequestedEventManager = new WeakEventManager();
 
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
 
-        public ReviewService(AnalyticsService analyticsService)
+        public ReviewService(IAnalyticsService analyticsService)
         {
             _analyticsService = analyticsService;
 

@@ -7,7 +7,7 @@ using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
-using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -32,10 +32,11 @@ namespace GitTrends
         public SettingsViewModel(GitHubAuthenticationService gitHubAuthenticationService,
                                     ThemeService themeService,
                                     TrendsChartSettingsService trendsChartSettingsService,
-                                    AnalyticsService analyticsService,
+                                    IAnalyticsService analyticsService,
                                     DeepLinkingService deepLinkingService,
-                                    NotificationService notificationService)
-                : base(gitHubAuthenticationService, deepLinkingService, analyticsService)
+                                    NotificationService notificationService,
+                                    IMainThread mainThread)
+                : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread)
         {
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _trendsChartSettingsService = trendsChartSettingsService;
@@ -161,7 +162,7 @@ namespace GitTrends
             await MainThread.InvokeOnMainThreadAsync(GitHubUserViewTappedCommand.RaiseCanExecuteChanged).ConfigureAwait(false);
         }
 
-        protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, CancellationToken cancellationToken, BrowserLaunchOptions? browserLaunchOptions)
+        protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions)
         {
             AnalyticsService.Track("Login Button Tapped", nameof(GitHubAuthenticationService.IsAuthenticated), gitHubAuthenticationService.IsAuthenticated.ToString());
 

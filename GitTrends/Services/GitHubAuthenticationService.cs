@@ -22,12 +22,12 @@ namespace GitTrends
         readonly AzureFunctionsApiService _azureFunctionsApiService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly RepositoryDatabase _repositoryDatabase;
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
 
         public GitHubAuthenticationService(AzureFunctionsApiService azureFunctionsApiService,
                                             GitHubGraphQLApiService gitHubGraphQLApiService,
                                             RepositoryDatabase repositoryDatabase,
-                                            AnalyticsService analyticsService)
+                                            IAnalyticsService analyticsService)
         {
             _azureFunctionsApiService = azureFunctionsApiService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;

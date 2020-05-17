@@ -2,6 +2,8 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using AsyncAwaitBestPractices;
+using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
@@ -9,7 +11,7 @@ namespace GitTrends
     {
         readonly WeakEventManager _propertyChangedEventManager = new WeakEventManager();
 
-        public BaseViewModel(AnalyticsService analyticsService) => AnalyticsService = analyticsService;
+        public BaseViewModel(IAnalyticsService analyticsService, IMainThread mainThread) => (AnalyticsService, MainThread) = (analyticsService, mainThread);
 
         event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
         {
@@ -17,7 +19,8 @@ namespace GitTrends
             remove => _propertyChangedEventManager.RemoveEventHandler(value);
         }
 
-        protected AnalyticsService AnalyticsService { get; }
+        protected IAnalyticsService AnalyticsService { get; }
+        protected IMainThread MainThread { get; }
 
         protected void SetProperty<T>(ref T backingStore, in T value, in System.Action? onChanged = null, [CallerMemberName] in string propertyname = "")
         {

@@ -10,7 +10,7 @@ namespace GitTrends.UITests
     [TestFixture(Platform.Android, UserType.LoggedIn)]
     [TestFixture(Platform.iOS, UserType.LoggedIn)]
     [TestFixture(Platform.iOS, UserType.Demo)]
-    class TrendsTests : BaseTest
+    class TrendsTests : BaseUITest
     {
         public TrendsTests(Platform platform, UserType userType) : base(platform, userType)
         {

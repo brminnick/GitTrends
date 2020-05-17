@@ -1,4 +1,6 @@
 ﻿using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -8,7 +10,7 @@ namespace GitTrends
 {
     public class GitTrendsOnboardingPage : BaseOnboardingContentPage
     {
-        public GitTrendsOnboardingPage(AnalyticsService analyticsService) : base(analyticsService, Color.FromHex(BaseTheme.LightTealColorHex), OnboardingConstants.SkipText, 0)
+        public GitTrendsOnboardingPage(IAnalyticsService analyticsService, IMainThread mainThread) : base(analyticsService, mainThread, Color.FromHex(BaseTheme.LightTealColorHex), OnboardingConstants.SkipText, 0)
         {
         }
 

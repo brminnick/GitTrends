@@ -3,6 +3,7 @@ using System.Threading;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -17,7 +18,8 @@ namespace GitTrends
 
         public TrendsPage(TrendsViewModel trendsViewModel,
                             Repository repository,
-                            AnalyticsService analyticsService) : base(trendsViewModel, analyticsService, repository.Name, true)
+                            IAnalyticsService analyticsService,
+                            IMainThread mainThread) : base(trendsViewModel, analyticsService, mainThread, repository.Name, true)
         {
             _repository = repository;
 

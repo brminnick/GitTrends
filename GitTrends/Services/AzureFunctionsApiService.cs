@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using Refit;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
@@ -10,7 +11,7 @@ namespace GitTrends
     {
         readonly static Lazy<IAzureFunctionsApi> _azureFunctionsApiClientHolder = new Lazy<IAzureFunctionsApi>(() => RestService.For<IAzureFunctionsApi>(CreateHttpClient(AzureConstants.AzureFunctionsApiUrl)));
 
-        public AzureFunctionsApiService(AnalyticsService analyticsService) : base(analyticsService)
+        public AzureFunctionsApiService(IAnalyticsService analyticsService, IMainThread mainThread) : base(analyticsService, mainThread)
         {
 
         }

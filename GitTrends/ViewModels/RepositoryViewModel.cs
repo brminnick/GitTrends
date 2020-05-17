@@ -11,6 +11,7 @@ using Autofac;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Refit;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -33,10 +34,11 @@ namespace GitTrends
         public RepositoryViewModel(RepositoryDatabase repositoryDatabase,
                                     GitHubAuthenticationService gitHubAuthenticationService,
                                     GitHubGraphQLApiService gitHubGraphQLApiService,
-                                    AnalyticsService analyticsService,
+                                    IAnalyticsService analyticsService,
                                     SortingService sortingService,
                                     GitHubApiV3Service gitHubApiV3Service,
-                                    NotificationService notificationService) : base(analyticsService)
+                                    NotificationService notificationService,
+                                    IMainThread mainThread) : base(analyticsService, mainThread)
         {
             _repositoryDatabase = repositoryDatabase;
             _gitHubAuthenticationService = gitHubAuthenticationService;

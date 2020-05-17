@@ -11,7 +11,7 @@ using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Refit;
-using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -25,6 +25,8 @@ namespace GitTrends
         readonly ReviewService _reviewService;
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly ReferringSitesDatabase _referringSitesDatabase;
+        readonly FavIconService _favIconService;
+        readonly IVersionTracking _versionTracking;
 
         IReadOnlyList<MobileReferringSiteModel>? _mobileReferringSiteList;
 
@@ -37,15 +39,20 @@ namespace GitTrends
 
         public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service,
                                         DeepLinkingService deepLinkingService,
-                                        AnalyticsService analyticsService,
+                                        IAnalyticsService analyticsService,
                                         ReferringSitesDatabase referringSitesDatabase,
                                         GitHubAuthenticationService gitHubAuthenticationService,
-                                        ReviewService reviewService) : base(analyticsService)
+                                        ReviewService reviewService,
+                                        FavIconService favIconService,
+                                        IMainThread mainThread,
+                                        IVersionTracking versionTracking) : base(analyticsService, mainThread)
         {
             reviewService.ReviewRequested += HandleReviewRequested;
             reviewService.ReviewCompleted += HandleReviewCompleted;
 
             _reviewService = reviewService;
+            _favIconService = favIconService;
+            _versionTracking = versionTracking;
             _gitHubApiV3Service = gitHubApiV3Service;
             _deepLinkingService = deepLinkingService;
             _referringSitesDatabase = referringSitesDatabase;
@@ -235,7 +242,7 @@ namespace GitTrends
                 yield return mobileReferringSiteModel;
             }
 
-            static async Task<MobileReferringSiteModel> setFavIcon(ReferringSitesDatabase referringSitesDatabase, ReferringSiteModel referringSiteModel, string repositoryUrl, CancellationToken cancellationToken)
+            async Task<MobileReferringSiteModel> setFavIcon(ReferringSitesDatabase referringSitesDatabase, ReferringSiteModel referringSiteModel, string repositoryUrl, CancellationToken cancellationToken)
             {
                 var mobileReferringSiteFromDatabase = await referringSitesDatabase.GetReferringSite(repositoryUrl, referringSiteModel.ReferrerUri).ConfigureAwait(false);
 
@@ -250,7 +257,7 @@ namespace GitTrends
                 }
                 else if (referringSiteModel.ReferrerUri != null && referringSiteModel.IsReferrerUriValid)
                 {
-                    var favIcon = await FavIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri, cancellationToken).ConfigureAwait(false);
+                    var favIcon = await _favIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri, cancellationToken).ConfigureAwait(false);
                     return new MobileReferringSiteModel(referringSiteModel, favIcon);
                 }
                 else
@@ -273,7 +280,7 @@ namespace GitTrends
                     break;
 
                 case ReviewRequest.Email:
-                    await _deepLinkingService.SendEmail($"GitTrends App Feedback, Version {VersionTracking.CurrentVersion}",
+                    await _deepLinkingService.SendEmail($"GitTrends App Feedback, Version {_versionTracking.CurrentVersion}",
                                                         "Here's my feedback on how to make the app great!",
                                                         new[] { "support@gittrends.com" }).ConfigureAwait(false);
                     break;

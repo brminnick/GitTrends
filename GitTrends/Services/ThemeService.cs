@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -10,9 +11,9 @@ namespace GitTrends
     public class ThemeService
     {
         readonly static WeakEventManager<PreferredTheme> _preferenceChangedEventManager = new WeakEventManager<PreferredTheme>();
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
 
-        public ThemeService(AnalyticsService analyticsService)
+        public ThemeService(IAnalyticsService analyticsService)
         {
             _analyticsService = analyticsService;
 

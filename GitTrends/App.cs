@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
+using GitTrends.Shared;
 using Shiny;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
@@ -13,7 +13,7 @@ namespace GitTrends
     public class App : Xamarin.Forms.Application
     {
         readonly WeakEventManager _resumedEventManager = new WeakEventManager();
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
 
         public App()
         {
@@ -22,7 +22,7 @@ namespace GitTrends
             InitializeEssentialServices();
 
             using var scope = ContainerService.Container.BeginLifetimeScope();
-            _analyticsService = scope.Resolve<AnalyticsService>();
+            _analyticsService = scope.Resolve<IAnalyticsService>();
 
             MainPage = scope.Resolve<SplashScreenPage>();
 

@@ -1,14 +1,15 @@
 ﻿using System;
 using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
 using Xamarin.Essentials;
 
 namespace GitTrends
 {
     public class TrendsChartSettingsService
     {
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
 
-        public TrendsChartSettingsService(AnalyticsService analyticsService) => _analyticsService = analyticsService;
+        public TrendsChartSettingsService(IAnalyticsService analyticsService) => _analyticsService = analyticsService;
 
         public TrendsChartOption CurrentTrendsChartOption
         {

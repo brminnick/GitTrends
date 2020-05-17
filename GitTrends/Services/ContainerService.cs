@@ -1,6 +1,8 @@
 ﻿using System;
 using Autofac;
 using GitTrends.Shared;
+using Xamarin.Essentials.Implementation;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
@@ -14,11 +16,20 @@ namespace GitTrends
         {
             var builder = new ContainerBuilder();
 
+            //Register Xamarin.Essentials
+            builder.RegisterType<MainThreadImplementation>().As<IMainThread>().SingleInstance();
+            builder.RegisterType<AppInfoImplementation>().As<IAppInfo>().SingleInstance();
+            builder.RegisterType<EmailImplementation>().As<IEmail>().SingleInstance();
+            builder.RegisterType<BrowserImplementation>().As<IBrowser>().SingleInstance();
+            builder.RegisterType<LauncherImplementation>().As<ILauncher>().SingleInstance();
+            builder.RegisterType<VersionTrackingImplementation>().As<IVersionTracking>().SingleInstance();
+
             //Register Services
-            builder.RegisterType<AnalyticsService>().AsSelf().SingleInstance();
+            builder.RegisterType<AnalyticsService>().As<IAnalyticsService>().SingleInstance();
             builder.RegisterType<AzureFunctionsApiService>().AsSelf().SingleInstance();
             builder.RegisterType<BackgroundFetchService>().AsSelf().SingleInstance();
             builder.RegisterType<DeepLinkingService>().AsSelf().SingleInstance();
+            builder.RegisterType<FavIconService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubAuthenticationService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubGraphQLApiService>().AsSelf().SingleInstance();

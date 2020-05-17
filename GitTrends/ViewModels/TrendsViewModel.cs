@@ -8,6 +8,7 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -31,8 +32,9 @@ namespace GitTrends
         List<DailyClonesModel>? _dailyClonesList;
 
         public TrendsViewModel(GitHubApiV3Service gitHubApiV3Service,
-                                AnalyticsService analyticsService,
-                                TrendsChartSettingsService trendsChartSettingsService) : base(analyticsService)
+                                IAnalyticsService analyticsService,
+                                TrendsChartSettingsService trendsChartSettingsService,
+                                IMainThread mainThread) : base(analyticsService, mainThread)
         {
             _gitHubApiV3Service = gitHubApiV3Service;
 

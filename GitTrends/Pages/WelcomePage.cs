@@ -1,25 +1,34 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
-using Xamarin.Essentials;
+using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
-using static Xamarin.Forms.Markup.GridRowsColumns;
 using static GitTrends.XamarinFormsService;
-using System.Threading;
+using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
     public class WelcomePage : BaseContentPage<WelcomeViewModel>
     {
         const int _demoLabelFontSize = 16;
-        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new CancellationTokenSource();
 
-        public WelcomePage(GitHubAuthenticationService gitHubAuthenticationService, AnalyticsService analyticsService, WelcomeViewModel welcomeViewModel)
-            : base(welcomeViewModel, analyticsService, shouldUseSafeArea: true)
+        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new CancellationTokenSource();
+        readonly IAppInfo _appInfo;
+
+        public WelcomePage(GitHubAuthenticationService gitHubAuthenticationService,
+                            IAnalyticsService analyticsService,
+                            WelcomeViewModel welcomeViewModel,
+                            IMainThread mainThread,
+                            IAppInfo appInfo)
+            : base(welcomeViewModel, analyticsService, mainThread, shouldUseSafeArea: true)
         {
+            _appInfo = appInfo;
+
             RemoveDynamicResource(BackgroundColorProperty);
             On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.OverFullScreen);
 
@@ -29,11 +38,11 @@ namespace GitTrends
             gitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
-            var browserLaunchOptions = new BrowserLaunchOptions
+            var browserLaunchOptions = new Xamarin.Essentials.BrowserLaunchOptions
             {
                 PreferredToolbarColor = pageBackgroundColor.MultiplyAlpha(0.75),
                 PreferredControlColor = Color.White,
-                Flags = BrowserLaunchFlags.PresentAsFormSheet
+                Flags = Xamarin.Essentials.BrowserLaunchFlags.PresentAsFormSheet
             };
 
             Content = new Grid
@@ -59,7 +68,7 @@ namespace GitTrends
                         .Row(Row.DemoButton),
                     new ConnectToGitHubActivityIndicator()
                         .Row(Row.DemoButton),
-                    new VersionNumberLabel()
+                    new VersionNumberLabel(_appInfo)
                         .Row(Row.VersionLabel)
                 }
             };
@@ -110,7 +119,7 @@ namespace GitTrends
 
         class ConnectToGitHubButton : ConnectToGitHubView
         {
-            public ConnectToGitHubButton(CancellationToken cancellationToken, BrowserLaunchOptions browserLaunchOptions) : base(WelcomePageAutomationIds.ConnectToGitHubButton, cancellationToken, browserLaunchOptions)
+            public ConnectToGitHubButton(CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions browserLaunchOptions) : base(WelcomePageAutomationIds.ConnectToGitHubButton, cancellationToken, browserLaunchOptions)
             {
                 HorizontalOptions = LayoutOptions.Center;
                 VerticalOptions = LayoutOptions.End;
@@ -119,9 +128,9 @@ namespace GitTrends
 
         class VersionNumberLabel : Label
         {
-            public VersionNumberLabel()
+            public VersionNumberLabel(IAppInfo appInfo)
             {
-                Text = $"v{AppInfo.Version}";
+                Text = $"v{appInfo.Version}";
                 TextColor = Color.White;
 
                 FontSize = 12;

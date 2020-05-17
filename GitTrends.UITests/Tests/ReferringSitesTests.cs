@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using NUnit.Framework;
 using Xamarin.UITest;
-using Xamarin.UITest.Android;
 using Xamarin.UITest.iOS;
 
 namespace GitTrends.UITests
@@ -16,7 +14,7 @@ namespace GitTrends.UITests
     [TestFixture(Platform.Android, UserType.LoggedIn)]
     [TestFixture(Platform.iOS, UserType.LoggedIn)]
     [TestFixture(Platform.iOS, UserType.Demo)]
-    class ReferringSitesTests : BaseTest
+    class ReferringSitesTests : BaseUITest
     {
         public ReferringSitesTests(Platform platform, UserType userType) : base(platform, userType)
         {

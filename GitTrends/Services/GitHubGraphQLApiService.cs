@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Refit;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
@@ -14,7 +15,7 @@ namespace GitTrends
     {
         readonly static Lazy<IGitHubGraphQLApi> _githubApiClientHolder = new Lazy<IGitHubGraphQLApi>(() => RestService.For<IGitHubGraphQLApi>(CreateHttpClient(Shared.GitHubConstants.GitHubGraphQLApi)));
 
-        public GitHubGraphQLApiService(AnalyticsService analyticsService) : base(analyticsService)
+        public GitHubGraphQLApiService(IAnalyticsService analyticsService, IMainThread mainThread) : base(analyticsService, mainThread)
         {
 
         }

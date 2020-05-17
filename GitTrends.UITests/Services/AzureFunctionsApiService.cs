@@ -6,7 +6,7 @@ using Refit;
 
 namespace GitTrends.UITests
 {
-    abstract class AzureFunctionsApiService : BaseApiService
+    public abstract class AzureFunctionsApiService : BaseApiService
     {
         readonly static Lazy<IAzureFunctionsApi> _azureFunctionsApiClientHolder = new Lazy<IAzureFunctionsApi>(() => RestService.For<IAzureFunctionsApi>(CreateHttpClient(AzureConstants.AzureFunctionsApiUrl)));
 

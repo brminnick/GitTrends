@@ -1,4 +1,6 @@
 ﻿using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -8,7 +10,11 @@ namespace GitTrends
 {
     public abstract class BaseOnboardingContentPage : BaseContentPage
     {
-        protected BaseOnboardingContentPage(AnalyticsService analyticsService, in Color backgroundColor, in string nextButtonText, in int carouselPositionIndex) : base(analyticsService)
+        protected BaseOnboardingContentPage(in IAnalyticsService analyticsService,
+                                            in IMainThread mainThread,
+                                            in Color backgroundColor,
+                                            in string nextButtonText,
+                                            in int carouselPositionIndex) : base(analyticsService, mainThread)
         {
             //Don't Use BaseTheme.PageBackgroundColor
             RemoveDynamicResource(BackgroundColorProperty);

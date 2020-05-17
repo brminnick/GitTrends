@@ -4,20 +4,19 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
     public class BackgroundFetchService
     {
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly RepositoryDatabase _repositoryDatabase;
         readonly NotificationService _notificationService;
         readonly ReferringSitesDatabase _referringSitesDatabase;
 
-        public BackgroundFetchService(AnalyticsService analyticsService,
+        public BackgroundFetchService(IAnalyticsService analyticsService,
                                         GitHubApiV3Service gitHubApiV3Service,
                                         GitHubGraphQLApiService gitHubGraphQLApiService,
                                         RepositoryDatabase repositoryDatabase,

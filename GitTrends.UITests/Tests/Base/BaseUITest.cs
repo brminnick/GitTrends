@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
+using GitTrends.Tests.Shared;
 using NUnit.Framework;
 
 using Xamarin.UITest;
@@ -10,7 +11,7 @@ namespace GitTrends.UITests
 {
     enum UserType { Demo, LoggedIn, Neither }
 
-    abstract class BaseTest
+    abstract class BaseUITest
     {
         readonly Platform _platform;
 
@@ -23,7 +24,7 @@ namespace GitTrends.UITests
         OnboardingPage? _onboardingPage;
         WelcomePage? _welcomePage;
 
-        protected BaseTest(Platform platform, UserType userType) => (_platform, UserType) = (platform, userType);
+        protected BaseUITest(Platform platform, UserType userType) => (_platform, UserType) = (platform, userType);
 
         protected UserType UserType { get; }
 
@@ -72,17 +73,6 @@ namespace GitTrends.UITests
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
         }
 
-        async Task SetupLoggedInUser()
-        {
-            await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
-
-            await LoginToGitHub().ConfigureAwait(false);
-
-            OnboardingPage.PopPage();
-
-            await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
-        }
-
         protected async Task LoginToGitHub()
         {
             var uiTestToken = await AzureFunctionsApiService.GetUITestToken().ConfigureAwait(false);
@@ -98,6 +88,17 @@ namespace GitTrends.UITests
             }
 
             await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
+        }
+
+        async Task SetupLoggedInUser()
+        {
+            await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
+
+            await LoginToGitHub().ConfigureAwait(false);
+
+            OnboardingPage.PopPage();
+
+            await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
         }
     }
 }

@@ -4,7 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
 using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -17,9 +19,10 @@ namespace GitTrends
 
         CancellationTokenSource? _animationCancellationToken;
 
-        public SplashScreenPage(AnalyticsService analyticsService,
-                                SplashScreenViewModel splashScreenViewModel)
-            : base(splashScreenViewModel, analyticsService, shouldUseSafeArea: false)
+        public SplashScreenPage(IAnalyticsService analyticsService,
+                                SplashScreenViewModel splashScreenViewModel,
+                                IMainThread mainThread)
+            : base(splashScreenViewModel, analyticsService, mainThread, shouldUseSafeArea: false)
         {
             //Remove BaseContentPageBackground
             RemoveDynamicResource(BackgroundColorProperty);

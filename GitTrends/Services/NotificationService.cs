@@ -22,14 +22,14 @@ namespace GitTrends
         readonly WeakEventManager<NotificationHubInformation> _initializationCompletedEventManager = new WeakEventManager<NotificationHubInformation>();
         readonly WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new WeakEventManager<SortingOption>();
 
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
         readonly DeepLinkingService _deepLinkingService;
         readonly SortingService _sortingService;
         readonly AzureFunctionsApiService _azureFunctionsApiService;
 
         TaskCompletionSource<AccessState>? _settingsResultCompletionSource;
 
-        public NotificationService(AnalyticsService analyticsService,
+        public NotificationService(IAnalyticsService analyticsService,
                                     DeepLinkingService deepLinkingService,
                                     SortingService sortingService,
                                     AzureFunctionsApiService azureFunctionsApiService)

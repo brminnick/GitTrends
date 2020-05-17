@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
@@ -6,8 +8,9 @@ namespace GitTrends
     {
         public WelcomeViewModel(GitHubAuthenticationService gitHubAuthenticationService,
                                     DeepLinkingService deepLinkingService,
-                                    AnalyticsService analyticsService)
-            : base(gitHubAuthenticationService, deepLinkingService, analyticsService)
+                                    IAnalyticsService analyticsService,
+                                    IMainThread mainThread)
+            : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread)
         {
         }
 

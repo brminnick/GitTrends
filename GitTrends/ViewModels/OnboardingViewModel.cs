@@ -4,7 +4,9 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
 using Shiny;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
@@ -12,7 +14,7 @@ namespace GitTrends
     {
         readonly WeakEventManager _skipButtonTappedEventManager = new WeakEventManager();
 
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
         readonly NotificationService _notificationService;
 
         string _notificationStatusSvgImageSource = "";
@@ -20,8 +22,9 @@ namespace GitTrends
         public OnboardingViewModel(DeepLinkingService deepLinkingService,
                                     GitHubAuthenticationService gitHubAuthenticationService,
                                     NotificationService notificationService,
-                                    AnalyticsService analyticsService)
-                : base(gitHubAuthenticationService, deepLinkingService, analyticsService)
+                                    IAnalyticsService analyticsService,
+                                    IMainThread mainThread)
+                : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread)
         {
             const string defaultNotificationSvg = "bell.svg";
 
