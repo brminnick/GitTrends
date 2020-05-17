@@ -46,23 +46,25 @@ namespace GitTrends
         public async Task<List<MobileReferringSiteModel>> GetReferringSites(string repositoryUrl)
         {
             var databaseConnection = await GetDatabaseConnection<MobileReferringSitesDatabaseModel>().ConfigureAwait(false);
+
             var referringSitesDatabaseModelList = await databaseConnection.Table<MobileReferringSitesDatabaseModel>().Where(x => x.RepositoryUrl == repositoryUrl).ToListAsync().ConfigureAwait(false);
 
             return referringSitesDatabaseModelList.Select(x => MobileReferringSitesDatabaseModel.ToReferringSitesModel(x)).ToList();
         }
 
-        public async Task<int> SaveReferringSite(MobileReferringSiteModel referringSiteModel, string repositorUrl)
+        public async Task<int> SaveReferringSite(MobileReferringSiteModel referringSiteModel, string repositoryUrl)
         {
             var databaseConnection = await GetDatabaseConnection<MobileReferringSitesDatabaseModel>().ConfigureAwait(false);
-            var referringSitesDatabaseModel = MobileReferringSitesDatabaseModel.ToReferringSitesDatabaseModel(referringSiteModel, repositorUrl);
+            var referringSitesDatabaseModel = MobileReferringSitesDatabaseModel.ToReferringSitesDatabaseModel(referringSiteModel, repositoryUrl);
 
             return await databaseConnection.InsertOrReplaceAsync(referringSitesDatabaseModel).ConfigureAwait(false);
         }
 
         class MobileReferringSitesDatabaseModel : IMobileReferringSiteModel
         {
+            //PrimaryKey must be nullable https://github.com/praeclarum/sqlite-net/issues/327
             [PrimaryKey]
-            public int Id { get; set; }
+            public int? Id { get; set; }
 
             [Indexed]
             public string RepositoryUrl { get; set; } = string.Empty;

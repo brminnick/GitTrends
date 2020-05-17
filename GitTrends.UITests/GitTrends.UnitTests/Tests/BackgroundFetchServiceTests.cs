@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,59 +11,66 @@ namespace GitTrends.UnitTests
 {
     class BackgroundFetchServiceTests : BaseTest
     {
-        public override async Task Setup()
-        {
-            await base.Setup().ConfigureAwait(false);
-
-            var referringSitesDatabase = ContainerService.Container.GetService<ReferringSitesDatabase>();
-            await referringSitesDatabase.DeleteAllData().ConfigureAwait(false);
-
-            var repositoryDatabase = ContainerService.Container.GetService<RepositoryDatabase>();
-            await repositoryDatabase.DeleteAllData().ConfigureAwait(false);
-
-            var githubAuthenticationService = ContainerService.Container.GetService<GitHubAuthenticationService>();
-            await githubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-        }
 
         [Test]
         public async Task CleanUpDatabaseTest()
         {
             //Arrange
             int repositoryDatabaseCount_Initial, repositoryDatabaseCount_Final, referringSitesDatabaseCount_Initial, referringSitesDatabaseCount_Final;
-            Repository repository_Final;
-
-            var repository_Initial = CreateExpiredRepository();
-            var referringSite = CreateExpiredMobileReferringSite();
+            MobileReferringSiteModel expiredReferringSite_Initial, unexpiredReferringSite_Initial;
+            Repository expiredRepository_Initial, unexpiredRepository_Initial, expiredRepository_Final, unexpiredRepository_Final;
 
             var backgroundFetchService = ContainerService.Container.GetService<BackgroundFetchService>();
             var referringSitesDatabase = ContainerService.Container.GetService<ReferringSitesDatabase>();
             var repositoryDatabase = ContainerService.Container.GetService<RepositoryDatabase>();
 
-            await repositoryDatabase.SaveRepository(repository_Initial).ConfigureAwait(false);
-            await referringSitesDatabase.SaveReferringSite(referringSite, repository_Initial.Url).ConfigureAwait(false);
+            expiredRepository_Initial = CreateExpiredRepository(DateTimeOffset.UtcNow.Subtract(referringSitesDatabase.ExpiresAt), "https://github.com/brminnick/gittrends");
+            unexpiredRepository_Initial = CreateExpiredRepository(DateTimeOffset.UtcNow, "https://github.com/brminnick/gitstatus");
+
+            expiredReferringSite_Initial = CreateExpiredMobileReferringSite(DateTimeOffset.UtcNow.Subtract(referringSitesDatabase.ExpiresAt), "Google");
+            unexpiredReferringSite_Initial = CreateExpiredMobileReferringSite(DateTimeOffset.UtcNow, "codetraveler.io");
+
+            await repositoryDatabase.SaveRepository(expiredRepository_Initial).ConfigureAwait(false);
+            await repositoryDatabase.SaveRepository(unexpiredRepository_Initial).ConfigureAwait(false);
+
+            await referringSitesDatabase.SaveReferringSite(expiredReferringSite_Initial, expiredRepository_Initial.Url).ConfigureAwait(false);
+            await referringSitesDatabase.SaveReferringSite(unexpiredReferringSite_Initial, unexpiredRepository_Initial.Url).ConfigureAwait(false);
 
             //Act
             repositoryDatabaseCount_Initial = await getRepositoryDatabaseCount(repositoryDatabase).ConfigureAwait(false);
-            referringSitesDatabaseCount_Initial = await getReferringSitesDatabaseCount(referringSitesDatabase, repository_Initial.Url).ConfigureAwait(false);
+            referringSitesDatabaseCount_Initial = await getReferringSitesDatabaseCount(referringSitesDatabase, expiredRepository_Initial.Url, unexpiredRepository_Initial.Url).ConfigureAwait(false);
 
             await backgroundFetchService.CleanUpDatabase().ConfigureAwait(false);
 
             repositoryDatabaseCount_Final = await getRepositoryDatabaseCount(repositoryDatabase).ConfigureAwait(false);
-            referringSitesDatabaseCount_Final = await getReferringSitesDatabaseCount(referringSitesDatabase, repository_Initial.Url).ConfigureAwait(false);
+            referringSitesDatabaseCount_Final = await getReferringSitesDatabaseCount(referringSitesDatabase, expiredRepository_Initial.Url, unexpiredRepository_Initial.Url).ConfigureAwait(false);
 
             var finalRepositories = await repositoryDatabase.GetRepositories().ConfigureAwait(false);
-            repository_Final = finalRepositories.First();
+            expiredRepository_Final = finalRepositories.First(x => x.DataDownloadedAt == expiredRepository_Initial.DataDownloadedAt);
+            unexpiredRepository_Final = finalRepositories.First(x => x.DataDownloadedAt == unexpiredRepository_Initial.DataDownloadedAt);
 
             //Assert
-            Assert.AreEqual(1, repositoryDatabaseCount_Initial);
-            Assert.AreEqual(1, referringSitesDatabaseCount_Initial);
+            Assert.AreEqual(2, repositoryDatabaseCount_Initial);
+            Assert.AreEqual(2, referringSitesDatabaseCount_Initial);
 
             Assert.AreEqual(repositoryDatabaseCount_Initial, repositoryDatabaseCount_Final);
-            Assert.AreNotEqual(repository_Final.DailyClonesList.Count, repository_Initial.DailyClonesList.Count);
-            Assert.AreNotEqual(repository_Final.DailyViewsList.Count, repository_Initial.DailyViewsList.Count);
 
-            Assert.AreEqual(0, referringSitesDatabaseCount_Final);
+            Assert.Greater(expiredRepository_Initial.DailyClonesList.Sum(x => x.TotalClones), 1);
+            Assert.Greater(expiredRepository_Initial.DailyClonesList.Sum(x => x.TotalUniqueClones), 1);
+            Assert.Greater(expiredRepository_Initial.DailyViewsList.Sum(x => x.TotalViews), 1);
+            Assert.Greater(expiredRepository_Initial.DailyViewsList.Sum(x => x.TotalUniqueViews), 1);
 
+            Assert.AreEqual(0, expiredRepository_Final.DailyClonesList.Sum(x => x.TotalClones));
+            Assert.AreEqual(0, expiredRepository_Final.DailyClonesList.Sum(x => x.TotalUniqueClones));
+            Assert.AreEqual(0, expiredRepository_Final.DailyViewsList.Sum(x => x.TotalViews));
+            Assert.AreEqual(0, expiredRepository_Final.DailyViewsList.Sum(x => x.TotalUniqueViews));
+
+            Assert.AreEqual(unexpiredRepository_Initial.DailyClonesList.Sum(x => x.TotalClones), unexpiredRepository_Final.DailyClonesList.Sum(x => x.TotalClones));
+            Assert.AreEqual(unexpiredRepository_Initial.DailyClonesList.Sum(x => x.TotalUniqueClones), unexpiredRepository_Final.DailyClonesList.Sum(x => x.TotalUniqueClones));
+            Assert.AreEqual(unexpiredRepository_Initial.DailyViewsList.Sum(x => x.TotalViews), unexpiredRepository_Final.DailyViewsList.Sum(x => x.TotalViews));
+            Assert.AreEqual(unexpiredRepository_Initial.DailyViewsList.Sum(x => x.TotalUniqueViews), unexpiredRepository_Final.DailyViewsList.Sum(x => x.TotalUniqueViews));
+
+            Assert.AreEqual(1, referringSitesDatabaseCount_Final);
 
             static async Task<int> getRepositoryDatabaseCount(RepositoryDatabase repositoryDatabase)
             {
@@ -71,29 +78,46 @@ namespace GitTrends.UnitTests
                 return repositories.Count();
             }
 
-            static async Task<int> getReferringSitesDatabaseCount(ReferringSitesDatabase referringSitesDatabase, string repositoryUrl)
+            static async Task<int> getReferringSitesDatabaseCount(ReferringSitesDatabase referringSitesDatabase, params string[] repositoryUrl)
             {
-                var referringSites = await referringSitesDatabase.GetReferringSites(repositoryUrl).ConfigureAwait(false);
-                return referringSites.Count();
+                var referringSitesCount = 0;
+
+                foreach (var url in repositoryUrl)
+                {
+                    var referringSites = await referringSitesDatabase.GetReferringSites(url).ConfigureAwait(false);
+                    referringSitesCount += referringSites.Count();
+                }
+                return referringSitesCount;
             }
         }
 
-        static Repository CreateExpiredRepository()
+        static Repository CreateExpiredRepository(DateTimeOffset downloadedAt, string repositoryUrl)
         {
             const string gitTrendsAvatarUrl = "https://avatars3.githubusercontent.com/u/61480020?s=400&u=b1a900b5fa1ede22af9d2d9bfd6c49a072e659ba&v=4";
-            const string gitTrendsRepositoryUrl = "https://github.com/brminnick/GitTrends";
+
+            var dailyViewsList = new List<DailyViewsModel>();
+            var dailyClonesList = new List<DailyClonesModel>();
+
+            for (int i = 0; i < 14; i++)
+            {
+                var count = DemoDataConstants.GetRandomNumber();
+                var uniqeCount = count / 2; //Ensures uniqueCount is always less than count
+
+                dailyViewsList.Add(new DailyViewsModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
+                dailyClonesList.Add(new DailyClonesModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
+            }
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
                                                         new RepositoryOwner(DemoDataConstants.Alias, gitTrendsAvatarUrl),
                                                         new IssuesConnection(DemoDataConstants.GetRandomNumber(), Enumerable.Empty<Issue>()),
-                                                        gitTrendsRepositoryUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false, DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(100)));
+                                                        repositoryUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false, downloadedAt, dailyViewsList, dailyClonesList);
         }
 
-        static MobileReferringSiteModel CreateExpiredMobileReferringSite()
+        static MobileReferringSiteModel CreateExpiredMobileReferringSite(DateTimeOffset downloadedAt, string referrer)
         {
             return new MobileReferringSiteModel(new ReferringSiteModel(DemoDataConstants.GetRandomNumber(),
                                                 DemoDataConstants.GetRandomNumber(),
-                                                "Google", DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(100))));
+                                                referrer, downloadedAt));
         }
     }
 }

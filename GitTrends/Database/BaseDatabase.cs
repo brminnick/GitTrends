@@ -10,15 +10,15 @@ namespace GitTrends
 {
     public abstract class BaseDatabase
     {
-        readonly TimeSpan _expiresAt;
-
         protected BaseDatabase(IFileSystem fileSystem, TimeSpan expiresAt)
         {
-            _expiresAt = expiresAt;
+            ExpiresAt = expiresAt;
 
             var databasePath = Path.Combine(fileSystem.AppDataDirectory, $"{nameof(GitTrends)}.db3");
             DatabaseConnection = new SQLiteAsyncConnection(databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache);
         }
+
+        public TimeSpan ExpiresAt { get; }
 
         SQLiteAsyncConnection DatabaseConnection { get; }
 
@@ -31,7 +31,7 @@ namespace GitTrends
             static TimeSpan pollyRetryAttempt(int attemptNumber) => TimeSpan.FromMilliseconds(Math.Pow(2, attemptNumber));
         }
 
-        protected bool IsExpired(in DateTimeOffset downloadedAt) => downloadedAt.CompareTo(DateTimeOffset.UtcNow.Subtract(_expiresAt)) < 0;
+        protected bool IsExpired(in DateTimeOffset downloadedAt) => downloadedAt.CompareTo(DateTimeOffset.UtcNow.Subtract(ExpiresAt)) < 0;
 
         protected async ValueTask<SQLiteAsyncConnection> GetDatabaseConnection<T>()
         {
