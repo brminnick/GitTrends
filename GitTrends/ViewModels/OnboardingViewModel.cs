@@ -16,6 +16,7 @@ namespace GitTrends
 
         readonly IAnalyticsService _analyticsService;
         readonly NotificationService _notificationService;
+        readonly FirstRunService _firstRunService;
 
         string _notificationStatusSvgImageSource = "";
 
@@ -23,13 +24,16 @@ namespace GitTrends
                                     GitHubAuthenticationService gitHubAuthenticationService,
                                     NotificationService notificationService,
                                     IAnalyticsService analyticsService,
-                                    IMainThread mainThread)
-                : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread)
+                                    IMainThread mainThread,
+                                    FirstRunService firstRunService,
+                                    GitHubUserService gitHubUserService)
+                : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread, gitHubUserService)
         {
             const string defaultNotificationSvg = "bell.svg";
 
             _notificationService = notificationService;
             _analyticsService = analyticsService;
+            _firstRunService = firstRunService;
 
             NotificationStatusSvgImageSource = defaultNotificationSvg;
 
@@ -64,8 +68,6 @@ namespace GitTrends
                 }
                 else if (buttonText is OnboardingConstants.TryDemoText)
                 {
-                    FirstRunService.IsFirstRun = false;
-
                     AnalyticsService.Track("Onboarding Demo Button Tapped");
 
                     //Allow Activity Indicator to run for a minimum of 1500ms

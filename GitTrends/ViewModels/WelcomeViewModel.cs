@@ -9,8 +9,9 @@ namespace GitTrends
         public WelcomeViewModel(GitHubAuthenticationService gitHubAuthenticationService,
                                     DeepLinkingService deepLinkingService,
                                     IAnalyticsService analyticsService,
-                                    IMainThread mainThread)
-            : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread)
+                                    IMainThread mainThread,
+                                    GitHubUserService gitHubUserService)
+            : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread, gitHubUserService)
         {
         }
 

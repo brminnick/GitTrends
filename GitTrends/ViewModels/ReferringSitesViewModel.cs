@@ -27,6 +27,7 @@ namespace GitTrends
         readonly ReferringSitesDatabase _referringSitesDatabase;
         readonly FavIconService _favIconService;
         readonly IVersionTracking _versionTracking;
+        readonly GitHubUserService _gitHubUserService;
 
         IReadOnlyList<MobileReferringSiteModel>? _mobileReferringSiteList;
 
@@ -45,7 +46,8 @@ namespace GitTrends
                                         ReviewService reviewService,
                                         FavIconService favIconService,
                                         IMainThread mainThread,
-                                        IVersionTracking versionTracking) : base(analyticsService, mainThread)
+                                        IVersionTracking versionTracking,
+                                        GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
         {
             reviewService.ReviewRequested += HandleReviewRequested;
             reviewService.ReviewCompleted += HandleReviewCompleted;
@@ -53,6 +55,7 @@ namespace GitTrends
             _reviewService = reviewService;
             _favIconService = favIconService;
             _versionTracking = versionTracking;
+            _gitHubUserService = gitHubUserService;
             _gitHubApiV3Service = gitHubApiV3Service;
             _deepLinkingService = deepLinkingService;
             _referringSitesDatabase = referringSitesDatabase;
@@ -212,7 +215,7 @@ namespace GitTrends
                     referringSite.FavIcon = mobileReferringSite.FavIcon;
                 }
 
-                if (!GitHubAuthenticationService.IsDemoUser)
+                if (!_gitHubUserService.IsDemoUser)
                 {
                     foreach (var referringSite in MobileReferringSitesList)
                         await _referringSitesDatabase.SaveReferringSite(referringSite, repositoryUrl).ConfigureAwait(false);
@@ -249,7 +252,7 @@ namespace GitTrends
                 if (mobileReferringSiteFromDatabase != null && isFavIconValid(mobileReferringSiteFromDatabase))
                     return mobileReferringSiteFromDatabase;
 
-                if(GitHubAuthenticationService.IsDemoUser)
+                if(_gitHubUserService.IsDemoUser)
                 {
                     //Display the Activity Indicator to ensure consistent UX
                     await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);

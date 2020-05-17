@@ -21,7 +21,8 @@ namespace GitTrends
         public SettingsPage(SettingsViewModel settingsViewModel,
                             TrendsChartSettingsService trendsChartSettingsService,
                             IAnalyticsService analyticsService,
-                            IMainThread mainThread) : base(settingsViewModel, analyticsService, mainThread, PageTitles.SettingsPage, true)
+                            IMainThread mainThread,
+                            IVersionTracking versionTracking) : base(settingsViewModel, analyticsService, mainThread, PageTitles.SettingsPage, true)
         {
             const int separatorRowHeight = 1;
             const int settingsRowHeight = 38;
@@ -82,7 +83,7 @@ namespace GitTrends
 
                         new PreferredChartsView(trendsChartSettingsService).Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
 
-                        new CopyrightLabel().Row(Row.Copyright).ColumnSpan(All<Column>())
+                        new CopyrightLabel(versionTracking).Row(Row.Copyright).ColumnSpan(All<Column>())
                     }
                 }
             };

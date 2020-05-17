@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using NUnit.Framework;
-using Xamarin.Essentials.Implementation;
 
 namespace GitTrends.UnitTests
 {
@@ -13,7 +12,7 @@ namespace GitTrends.UnitTests
         public async Task GetGitHubClientId()
         {
             //Arrange
-            GetGitHubClientIdDTO? tokenDTO = null;
+            GetGitHubClientIdDTO? tokenDTO;
             var azureFunctionsApiService = new AzureFunctionsApiService(new MockAnalyticsService(), new MockMainThread());
 
             //Act
@@ -26,7 +25,7 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public async Task GenerateGitTrendsOAuthToken()
+        public Task GenerateGitTrendsOAuthToken()
         {
             throw new NotImplementedException();
         }

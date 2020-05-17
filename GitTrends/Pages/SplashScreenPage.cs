@@ -14,6 +14,7 @@ namespace GitTrends
     class SplashScreenPage : BaseContentPage<SplashScreenViewModel>
     {
         readonly IEnumerator<string> _statusMessageEnumerator;
+        readonly FirstRunService _firstRunService;
         readonly Image _gitTrendsImage;
         readonly Label _statusLabel;
 
@@ -21,12 +22,15 @@ namespace GitTrends
 
         public SplashScreenPage(IAnalyticsService analyticsService,
                                 SplashScreenViewModel splashScreenViewModel,
-                                IMainThread mainThread)
+                                IMainThread mainThread,
+                                FirstRunService firstRunService)
             : base(splashScreenViewModel, analyticsService, mainThread, shouldUseSafeArea: false)
         {
             //Remove BaseContentPageBackground
             RemoveDynamicResource(BackgroundColorProperty);
             SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.GitTrendsImageBackgroundColor));
+
+            _firstRunService = firstRunService;
 
             ViewModel.InitializationComplete += HandleInitializationComplete;
 
@@ -220,7 +224,7 @@ namespace GitTrends
 
                     Application.Current.MainPage = new BaseNavigationPage(repositoryPage);
 
-                    if (FirstRunService.IsFirstRun)
+                    if (_firstRunService.IsFirstRun)
                     {
                         //Yield the UI thread to allow MainPage to be set
                         await Task.Delay(TimeSpan.FromMilliseconds(250));

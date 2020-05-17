@@ -17,11 +17,13 @@ namespace GitTrends
             var builder = new ContainerBuilder();
 
             //Register Xamarin.Essentials
-            builder.RegisterType<MainThreadImplementation>().As<IMainThread>().SingleInstance();
             builder.RegisterType<AppInfoImplementation>().As<IAppInfo>().SingleInstance();
-            builder.RegisterType<EmailImplementation>().As<IEmail>().SingleInstance();
             builder.RegisterType<BrowserImplementation>().As<IBrowser>().SingleInstance();
+            builder.RegisterType<EmailImplementation>().As<IEmail>().SingleInstance();
             builder.RegisterType<LauncherImplementation>().As<ILauncher>().SingleInstance();
+            builder.RegisterType<MainThreadImplementation>().As<IMainThread>().SingleInstance();
+            builder.RegisterType<PreferencesImplementation>().As<IPreferences>().SingleInstance();
+            builder.RegisterType<SecureStorageImplementation>().As<ISecureStorage>().SingleInstance();
             builder.RegisterType<VersionTrackingImplementation>().As<IVersionTracking>().SingleInstance();
 
             //Register Services
@@ -30,8 +32,10 @@ namespace GitTrends
             builder.RegisterType<BackgroundFetchService>().AsSelf().SingleInstance();
             builder.RegisterType<DeepLinkingService>().AsSelf().SingleInstance();
             builder.RegisterType<FavIconService>().AsSelf().SingleInstance();
+            builder.RegisterType<FirstRunService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubAuthenticationService>().AsSelf().SingleInstance();
+            builder.RegisterType<GitHubUserService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubGraphQLApiService>().AsSelf().SingleInstance();
             builder.RegisterType<MediaElementService>().AsSelf().SingleInstance();
             builder.RegisterType<NotificationService>().AsSelf().SingleInstance();

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
-using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -11,10 +11,13 @@ namespace GitTrends
     public class ThemeService
     {
         readonly static WeakEventManager<PreferredTheme> _preferenceChangedEventManager = new WeakEventManager<PreferredTheme>();
+
+        readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;
 
-        public ThemeService(IAnalyticsService analyticsService)
+        public ThemeService(IAnalyticsService analyticsService, IPreferences preferences)
         {
+            _preferences = preferences;
             _analyticsService = analyticsService;
 
             Application.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
@@ -28,10 +31,10 @@ namespace GitTrends
 
         public PreferredTheme Preference
         {
-            get => (PreferredTheme)Preferences.Get(nameof(Preference), (int)PreferredTheme.Default);
+            get => (PreferredTheme)_preferences.Get(nameof(Preference), (int)PreferredTheme.Default);
             set
             {
-                Preferences.Set(nameof(Preference), (int)value);
+                _preferences.Set(nameof(Preference), (int)value);
                 SetAppTheme(value);
             }
         }

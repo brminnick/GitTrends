@@ -4,20 +4,30 @@ using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using SQLite;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
 {
     public class ReferringSitesDatabase : BaseDatabase
     {
-        protected override TimeSpan Expiration { get; } = TimeSpan.FromDays(30);
+        public ReferringSitesDatabase(IFileSystem fileSystem) : base(fileSystem, TimeSpan.FromDays(30))
+        {
+
+        }
+
+        public override async Task<int> DeleteAllData()
+        {
+            var databaseConnection = await GetDatabaseConnection<MobileReferringSitesDatabaseModel>().ConfigureAwait(false);
+            return await databaseConnection.DeleteAllAsync<MobileReferringSitesDatabaseModel>().ConfigureAwait(false);
+        }
 
         public async Task DeleteExpiredData()
         {
             var databaseConnection = await GetDatabaseConnection<MobileReferringSitesDatabaseModel>().ConfigureAwait(false);
 
             var referringSites = await databaseConnection.Table<MobileReferringSitesDatabaseModel>().ToListAsync();
-            var expiredReferringSites = referringSites.Where(x => IsExpired(x.DownloadedAt));
+            var expiredReferringSites = referringSites.Where(x => IsExpired(x.DownloadedAt)).ToList();
 
             foreach (var expiredReferringSite in expiredReferringSites)
                 await databaseConnection.DeleteAsync(expiredReferringSite).ConfigureAwait(false);
@@ -51,6 +61,9 @@ namespace GitTrends
 
         class MobileReferringSitesDatabaseModel : IMobileReferringSiteModel
         {
+            [PrimaryKey]
+            public int Id { get; set; }
+
             [Indexed]
             public string RepositoryUrl { get; set; } = string.Empty;
 
@@ -72,7 +85,7 @@ namespace GitTrends
             {
                 var referringSiteModel = new ReferringSiteModel(referringSitesDatabaseModel.TotalCount, referringSitesDatabaseModel.TotalUniqueCount, referringSitesDatabaseModel.Referrer, referringSitesDatabaseModel.DownloadedAt);
 
-                return new MobileReferringSiteModel(referringSiteModel, referringSitesDatabaseModel.FavIconImageUrl is null ? null : ImageSource.FromUri(new Uri(referringSitesDatabaseModel.FavIconImageUrl)));
+                return new MobileReferringSiteModel(referringSiteModel, string.IsNullOrWhiteSpace(referringSitesDatabaseModel.FavIconImageUrl) ? null : ImageSource.FromUri(new Uri(referringSitesDatabaseModel.FavIconImageUrl)));
             }
 
             public static MobileReferringSitesDatabaseModel ToReferringSitesDatabaseModel(MobileReferringSiteModel referringSiteModel, string repositoryUrl)

@@ -14,7 +14,6 @@ namespace GitTrends
 {
     public class SettingsViewModel : GitHubAuthenticationViewModel
     {
-        readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly TrendsChartSettingsService _trendsChartSettingsService;
         readonly DeepLinkingService _deepLinkingService;
         readonly NotificationService _notificationService;
@@ -35,10 +34,10 @@ namespace GitTrends
                                     IAnalyticsService analyticsService,
                                     DeepLinkingService deepLinkingService,
                                     NotificationService notificationService,
-                                    IMainThread mainThread)
-                : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread)
+                                    IMainThread mainThread,
+                                    GitHubUserService gitHubUserService)
+                : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread, gitHubUserService)
         {
-            _gitHubAuthenticationService = gitHubAuthenticationService;
             _trendsChartSettingsService = trendsChartSettingsService;
             _deepLinkingService = deepLinkingService;
             _notificationService = notificationService;
@@ -47,7 +46,7 @@ namespace GitTrends
             CopyrightLabelTappedCommand = new AsyncCommand(ExecuteCopyrightLabelTappedCommand);
             GitHubUserViewTappedCommand = new AsyncCommand(ExecuteGitHubUserViewTappedCommand, _ => IsNotAuthenticating);
 
-            _gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+            gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
             ThemeService.PreferenceChanged += HandlePreferenceChanged;
 
             ThemePickerSelectedThemeIndex = (int)themeService.Preference;
@@ -162,11 +161,11 @@ namespace GitTrends
             await MainThread.InvokeOnMainThreadAsync(GitHubUserViewTappedCommand.RaiseCanExecuteChanged).ConfigureAwait(false);
         }
 
-        protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions)
+        protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, GitHubUserService gitHubUserService, CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions)
         {
-            AnalyticsService.Track("Login Button Tapped", nameof(GitHubAuthenticationService.IsAuthenticated), gitHubAuthenticationService.IsAuthenticated.ToString());
+            AnalyticsService.Track("Login Button Tapped", nameof(gitHubUserService.IsAuthenticated), gitHubUserService.IsAuthenticated.ToString());
 
-            if (gitHubAuthenticationService.IsAuthenticated)
+            if (gitHubUserService.IsAuthenticated)
             {
                 await gitHubAuthenticationService.LogOut().ConfigureAwait(false);
 
@@ -174,7 +173,7 @@ namespace GitTrends
             }
             else
             {
-                await base.ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, cancellationToken, browserLaunchOptions).ConfigureAwait(false);
+                await base.ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, gitHubUserService, cancellationToken, browserLaunchOptions).ConfigureAwait(false);
             }
         }
 
@@ -185,7 +184,7 @@ namespace GitTrends
                 await base.ExecuteDemoButtonCommand(buttonText).ConfigureAwait(false);
 
                 AnalyticsService.Track("Settings Try Demo Button Tapped");
-                await _gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
+                await GitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
                 SetGitHubValues();
             }
             finally
@@ -241,25 +240,25 @@ namespace GitTrends
 
         void UpdateGitHubAvatarImage()
         {
-            if (!_gitHubAuthenticationService.IsAuthenticated)
+            if (!GitHubUserService.IsAuthenticated)
                 GitHubAvatarImageSource = BaseTheme.GetDefaultProfileImageSource();
-            else if (GitHubAuthenticationService.Alias is DemoDataConstants.Alias)
+            else if (GitHubUserService.Alias is DemoDataConstants.Alias)
                 GitHubAvatarImageSource = BaseTheme.GetGitTrendsImageSource();
         }
 
         void SetGitHubValues()
         {
-            GitHubAliasLabelText = _gitHubAuthenticationService.IsAuthenticated ? $"@{GitHubAuthenticationService.Alias}" : string.Empty;
-            GitHubNameLabelText = _gitHubAuthenticationService.IsAuthenticated ? GitHubAuthenticationService.Name : GitHubLoginButtonConstants.NotLoggedIn;
-            LoginLabelText = _gitHubAuthenticationService.IsAuthenticated ? $"{GitHubLoginButtonConstants.Disconnect}" : $"{GitHubLoginButtonConstants.ConnectToGitHub}";
-            GitHubAvatarImageSource = _gitHubAuthenticationService.IsAuthenticated ? GitHubAuthenticationService.AvatarUrl : BaseTheme.GetDefaultProfileImageSource();
+            GitHubAliasLabelText = GitHubUserService.IsAuthenticated ? $"@{GitHubUserService.Alias}" : string.Empty;
+            GitHubNameLabelText = GitHubUserService.IsAuthenticated ? GitHubUserService.Name : GitHubLoginButtonConstants.NotLoggedIn;
+            LoginLabelText = GitHubUserService.IsAuthenticated ? $"{GitHubLoginButtonConstants.Disconnect}" : $"{GitHubLoginButtonConstants.ConnectToGitHub}";
+            GitHubAvatarImageSource = GitHubUserService.IsAuthenticated ? GitHubUserService.AvatarUrl : BaseTheme.GetDefaultProfileImageSource();
         }
 
         Task ExecuteGitHubUserViewTappedCommand()
         {
-            if (GitHubAuthenticationService.IsAuthenticated || GitHubAuthenticationService.IsDemoUser)
+            if (GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser)
             {
-                string alias = GitHubAuthenticationService.Alias is DemoDataConstants.Alias ? nameof(GitTrends) : GitHubAuthenticationService.Alias;
+                string alias = GitHubUserService.Alias is DemoDataConstants.Alias ? nameof(GitTrends) : GitHubUserService.Alias;
                 AnalyticsService.Track("Alias Label Tapped", "Alias", alias);
 
                 return _deepLinkingService.OpenApp($"github://", $"{GitHubConstants.GitHubBaseUrl}/{alias}", $"{GitHubConstants.GitHubBaseUrl}/{alias}");
@@ -267,7 +266,7 @@ namespace GitTrends
             else
             {
                 var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-                return ExecuteConnectToGitHubButtonCommand(_gitHubAuthenticationService, _deepLinkingService, cancellationTokenSource.Token, null);
+                return ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService, _deepLinkingService, GitHubUserService, cancellationTokenSource.Token, null);
             }
         }
     }

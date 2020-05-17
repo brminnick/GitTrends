@@ -24,6 +24,7 @@ namespace GitTrends
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly SortingService _sortingService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly GitHubUserService _gitHubUserService;
 
         bool _isRefreshing;
         string _searchBarText = string.Empty;
@@ -38,17 +39,19 @@ namespace GitTrends
                                     SortingService sortingService,
                                     GitHubApiV3Service gitHubApiV3Service,
                                     NotificationService notificationService,
-                                    IMainThread mainThread) : base(analyticsService, mainThread)
+                                    IMainThread mainThread,
+                                    GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
         {
             _repositoryDatabase = repositoryDatabase;
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _sortingService = sortingService;
             _gitHubApiV3Service = gitHubApiV3Service;
+            _gitHubUserService = gitHubUserService;
 
             RefreshState = RefreshState.Uninitialized;
 
-            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(GitHubAuthenticationService.Alias));
+            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(gitHubUserService.Alias));
             FilterRepositoriesCommand = new Command<string>(SetSearchBarText);
             SortRepositoriesCommand = new Command<SortingOption>(ExecuteSortRepositoriesCommand);
 
@@ -133,7 +136,7 @@ namespace GitTrends
                     completedRepoitories.Add(retrievedRepositoryWithViewsAndClonesData);
 
                     //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
-                    if (!GitHubAuthenticationService.IsDemoUser && completedRepoitories.Count > 20)
+                    if (!_gitHubUserService.IsDemoUser && completedRepoitories.Count > 20)
                     {
                         AddRepositoriesToCollection(completedRepoitories, _searchBarText);
                         completedRepoitories.Clear();
@@ -205,7 +208,7 @@ namespace GitTrends
 
         async ValueTask SaveRepositoriesToDatabase(IEnumerable<Repository> repositories)
         {
-            if (GitHubAuthenticationService.IsDemoUser)
+            if (_gitHubUserService.IsDemoUser)
                 return;
 
             foreach (var repository in repositories)

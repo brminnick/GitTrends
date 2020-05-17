@@ -15,13 +15,15 @@ namespace GitTrends
         readonly RepositoryDatabase _repositoryDatabase;
         readonly NotificationService _notificationService;
         readonly ReferringSitesDatabase _referringSitesDatabase;
+        readonly GitHubUserService _gitHubUserService;
 
         public BackgroundFetchService(IAnalyticsService analyticsService,
                                         GitHubApiV3Service gitHubApiV3Service,
                                         GitHubGraphQLApiService gitHubGraphQLApiService,
                                         RepositoryDatabase repositoryDatabase,
                                         ReferringSitesDatabase referringSitesDatabase,
-                                        NotificationService notificationService)
+                                        NotificationService notificationService,
+                                        GitHubUserService gitHubUserService)
         {
             _analyticsService = analyticsService;
             _gitHubApiV3Service = gitHubApiV3Service;
@@ -29,6 +31,7 @@ namespace GitTrends
             _repositoryDatabase = repositoryDatabase;
             _notificationService = notificationService;
             _referringSitesDatabase = referringSitesDatabase;
+            _gitHubUserService = gitHubUserService;
         }
 
         public static string NotifyTrendingRepositoriesIdentifier { get; } = $"{Xamarin.Essentials.AppInfo.PackageName}.{nameof(NotifyTrendingRepositories)}";
@@ -61,10 +64,10 @@ namespace GitTrends
 
         async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
         {
-            if (!GitHubAuthenticationService.IsDemoUser && !string.IsNullOrEmpty(GitHubAuthenticationService.Alias))
+            if (!_gitHubUserService.IsDemoUser && !string.IsNullOrEmpty(_gitHubUserService.Alias))
             {
                 var retrievedRepositoryList = new List<Repository>();
-                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(GitHubAuthenticationService.Alias, cancellationToken).ConfigureAwait(false))
+                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(_gitHubUserService.Alias, cancellationToken).ConfigureAwait(false))
                 {
                     retrievedRepositoryList.AddRange(retrievedRepositories);
                 }

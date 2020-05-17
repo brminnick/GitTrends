@@ -8,7 +8,7 @@ using GitTrends.Shared;
 using Newtonsoft.Json;
 using Shiny;
 using Shiny.Notifications;
-using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -22,9 +22,11 @@ namespace GitTrends
         readonly WeakEventManager<NotificationHubInformation> _initializationCompletedEventManager = new WeakEventManager<NotificationHubInformation>();
         readonly WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new WeakEventManager<SortingOption>();
 
+        readonly IPreferences _preferences;
+        readonly ISecureStorage _secureStorage;
+        readonly SortingService _sortingService;
         readonly IAnalyticsService _analyticsService;
         readonly DeepLinkingService _deepLinkingService;
-        readonly SortingService _sortingService;
         readonly AzureFunctionsApiService _azureFunctionsApiService;
 
         TaskCompletionSource<AccessState>? _settingsResultCompletionSource;
@@ -32,15 +34,19 @@ namespace GitTrends
         public NotificationService(IAnalyticsService analyticsService,
                                     DeepLinkingService deepLinkingService,
                                     SortingService sortingService,
-                                    AzureFunctionsApiService azureFunctionsApiService)
+                                    AzureFunctionsApiService azureFunctionsApiService,
+                                    IPreferences preferences,
+                                    ISecureStorage secureStorage)
         {
+            _preferences = preferences;
+            _secureStorage = secureStorage;
+            _sortingService = sortingService;
             _analyticsService = analyticsService;
             _deepLinkingService = deepLinkingService;
-            _sortingService = sortingService;
             _azureFunctionsApiService = azureFunctionsApiService;
 
-            var app = (App)Application.Current;
-            app.Resumed += HandleAppResumed;
+            if (Application.Current is App app)
+                app.Resumed += HandleAppResumed;
         }
 
         public event EventHandler<NotificationHubInformation> InitializationCompleted
@@ -63,16 +69,16 @@ namespace GitTrends
 
         public bool ShouldSendNotifications
         {
-            get => Preferences.Get(nameof(ShouldSendNotifications), false);
-            private set => Preferences.Set(nameof(ShouldSendNotifications), value);
+            get => _preferences.Get(nameof(ShouldSendNotifications), false);
+            private set => _preferences.Set(nameof(ShouldSendNotifications), value);
         }
 
         static INotificationManager NotificationManager => ShinyHost.Resolve<INotificationManager>();
 
         bool HaveNotificationsBeenRequested
         {
-            get => Preferences.Get(nameof(HaveNotificationsBeenRequested), false);
-            set => Preferences.Set(nameof(HaveNotificationsBeenRequested), value);
+            get => _preferences.Get(nameof(HaveNotificationsBeenRequested), false);
+            set => _preferences.Set(nameof(HaveNotificationsBeenRequested), value);
         }
 
         public async Task<bool> AreNotificationsEnabled()
@@ -99,7 +105,7 @@ namespace GitTrends
                 try
                 {
                     notificationHubInformation = await _azureFunctionsApiService.GetNotificationHubInformation(cancellationToken).ConfigureAwait(false);
-                    await SecureStorage.SetAsync(_getNotificationHubInformationKey, JsonConvert.SerializeObject(notificationHubInformation)).ConfigureAwait(false);
+                    await _secureStorage.SetAsync(_getNotificationHubInformationKey, JsonConvert.SerializeObject(notificationHubInformation)).ConfigureAwait(false);
                 }
                 catch (Exception e)
                 {
@@ -114,7 +120,7 @@ namespace GitTrends
 
         public async Task<NotificationHubInformation> GetNotificationHubInformation()
         {
-            var serializedToken = await SecureStorage.GetAsync(_getNotificationHubInformationKey).ConfigureAwait(false);
+            var serializedToken = await _secureStorage.GetAsync(_getNotificationHubInformationKey).ConfigureAwait(false);
 
             try
             {
@@ -311,7 +317,7 @@ namespace GitTrends
                 _analyticsService.Track("Multiple Trending Repositories Notification Sent", "Count", trendingRepositories.Count.ToString());
             }
 
-            static void setMostRecentNotificationDate(Repository repository) => Preferences.Set(repository.Name, DateTime.UtcNow);
+            void setMostRecentNotificationDate(Repository repository) => _preferences.Set(repository.Name, DateTime.UtcNow);
         }
 
         string CreateSingleRepositoryNotificationMessage(in string repositoryName, in string repositoryOwner) => $"{repositoryName} by {repositoryOwner} is Trending";
