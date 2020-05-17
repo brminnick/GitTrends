@@ -11,7 +11,6 @@ namespace GitTrends.UnitTests
 {
     class BackgroundFetchServiceTests : BaseTest
     {
-
         [Test]
         public async Task CleanUpDatabaseTest()
         {
@@ -24,7 +23,7 @@ namespace GitTrends.UnitTests
             var referringSitesDatabase = ContainerService.Container.GetService<ReferringSitesDatabase>();
             var repositoryDatabase = ContainerService.Container.GetService<RepositoryDatabase>();
 
-            expiredRepository_Initial = CreateExpiredRepository(DateTimeOffset.UtcNow.Subtract(referringSitesDatabase.ExpiresAt), "https://github.com/brminnick/gittrends");
+            expiredRepository_Initial = CreateExpiredRepository(DateTimeOffset.UtcNow.Subtract(repositoryDatabase.ExpiresAt), "https://github.com/brminnick/gittrends");
             unexpiredRepository_Initial = CreateExpiredRepository(DateTimeOffset.UtcNow, "https://github.com/brminnick/gitstatus");
 
             expiredReferringSite_Initial = CreateExpiredMobileReferringSite(DateTimeOffset.UtcNow.Subtract(referringSitesDatabase.ExpiresAt), "Google");

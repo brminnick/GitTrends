@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.UnitTests", "GitTrends.UITests\GitTrends.UnitTests\GitTrends.UnitTests.csproj", "{2580D2D2-95A3-4952-B94D-4703FD1F3571}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.UnitTests", "GitTrends.UnitTests\GitTrends.UnitTests.csproj", "{2580D2D2-95A3-4952-B94D-4703FD1F3571}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

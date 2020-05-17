@@ -122,6 +122,10 @@ namespace GitTrends
         {
             public DateTime LocalDay => Day.LocalDateTime;
 
+            //PrimaryKey must be nullable https://github.com/praeclarum/sqlite-net/issues/327
+            [PrimaryKey]
+            public int? Id { get; set; }
+
             [Indexed]
             public string RepositoryUrl { get; set; } = string.Empty;
 
@@ -152,6 +156,10 @@ namespace GitTrends
         class DailyViewsDatabaseModel : IDailyViewsModel
         {
             public DateTime LocalDay => Day.LocalDateTime;
+
+            //PrimaryKey must be nullable https://github.com/praeclarum/sqlite-net/issues/327
+            [PrimaryKey]
+            public int? Id { get; set; }
 
             [Indexed]
             public string RepositoryUrl { get; set; } = string.Empty;

@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\GitTrends\GitTrends.csproj" />
+    <ProjectReference Include="..\GitTrends\GitTrends.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />
