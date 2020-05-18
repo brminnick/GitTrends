@@ -13,7 +13,7 @@ namespace GitTrends.UnitTests
         public async Task GetFavIconImageSourceTest_InvalidUri()
         {
             //Arrange
-            Uri invalidUri = new Uri("https://google.com/abc123");
+            Uri invalidUri = new Uri("https://abc123456789.com/");
             var favIconService = ContainerService.Container.GetService<FavIconService>();
 
             //Act
@@ -24,7 +24,8 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(fileImageSource.File, FavIconService.DefaultFavIcon);
         }
 
-        [TestCase("https://chrissainty.com/", "https://chrissainty.com/favicon.png")] //
+        [TestCase("http://codetraveler.io", "https://codetraveler.io/favicon.ico")] //Clear Text Uri
+        [TestCase("https://chrissainty.com/", "https://chrissainty.com/favicon.png")] //Icon Url
         [TestCase("https://duckduckgo.com/", "https://duckduckgo.com/assets/icons/meta/DDG-iOS-icon_60x60.png")] //Apple Touch Icon Url
         [TestCase("https://codetraveler.io", "https://codetraveler.io/favicon.ico")] //FavIcon Url
         public async Task GetFavIconImageSourceTest_ValidUrl(string url, string expectedFavIconUrl)

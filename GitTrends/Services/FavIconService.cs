@@ -27,11 +27,13 @@ namespace GitTrends
 
         public async Task<ImageSource> GetFavIconImageSource(Uri site, CancellationToken cancellationToken)
         {
+            var scheme = site.Scheme is "http" ? "https" : site.Scheme;
+
             string baseUrl = string.Empty;
 
             try
             {
-                baseUrl = $"{site.Scheme}://{GetRootDomain(site.Host)}/";
+                baseUrl = $"{scheme}://{GetRootDomain(site.Host)}/";
                 var response = await Client.GetAsync(baseUrl, cancellationToken).ConfigureAwait(false);
 
                 var html = await GetHtml(response).ConfigureAwait(false);
