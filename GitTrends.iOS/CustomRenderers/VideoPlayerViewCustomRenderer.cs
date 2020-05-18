@@ -1,4 +1,5 @@
-﻿using AVFoundation;
+﻿using Autofac;
+using AVFoundation;
 using AVKit;
 using CoreMedia;
 using Foundation;
@@ -32,7 +33,10 @@ namespace GitTrends.iOS
                 _avPlayerViewController.ShowsPlaybackControls = false;
                 _avPlayerViewController.VideoGravity = AVLayerVideoGravity.ResizeAspect;
 
-                var asset = AVUrlAsset.Create(NSUrl.FromString(MediaElementService.OnboardingChart?.HlsUrl));
+                using var scope = ContainerService.Container.BeginLifetimeScope();
+                var mediaElementService = scope.Resolve<MediaElementService>();
+
+                var asset = AVUrlAsset.Create(NSUrl.FromString(mediaElementService.OnboardingChart?.HlsUrl));
 
                 var item = new AVPlayerItem(asset);
 

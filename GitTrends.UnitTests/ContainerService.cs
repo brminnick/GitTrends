@@ -23,6 +23,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<GitHubAuthenticationService>();
             services.AddSingleton<GitHubGraphQLApiService>();
             services.AddSingleton<GitHubUserService>();
+            services.AddSingleton<FavIconService>();
             services.AddSingleton<NotificationService>();
             services.AddSingleton<ReferringSitesDatabase>();
             services.AddSingleton<RepositoryDatabase>();

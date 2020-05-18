@@ -222,12 +222,12 @@ namespace GitTrends
             var repositoriesToNotify = trendingRepositories.Where(shouldSendNotification).ToList();
             await SendTrendingNotification(repositoriesToNotify, notificationDateTime).ConfigureAwait(false);
 
-            static bool shouldSendNotification(Repository trendingRepository)
+            bool shouldSendNotification(Repository trendingRepository)
             {
                 var nextNotificationDate = getMostRecentNotificationDate(trendingRepository).AddDays(3);
                 return DateTime.Compare(nextNotificationDate, DateTime.UtcNow) < 1;
 
-                static DateTime getMostRecentNotificationDate(Repository repository) => Preferences.Get(repository.Name, default(DateTime));
+                DateTime getMostRecentNotificationDate(Repository repository) => _preferences.Get(repository.Name, default(DateTime));
             }
 #endif
         }

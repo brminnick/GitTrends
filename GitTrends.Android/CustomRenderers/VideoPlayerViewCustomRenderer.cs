@@ -1,6 +1,7 @@
 ﻿using Android.Content;
 using Android.Net;
 using Android.Views.Animations;
+using Autofac;
 using Com.Google.Android.Exoplayer2;
 using Com.Google.Android.Exoplayer2.Source.Smoothstreaming;
 using Com.Google.Android.Exoplayer2.UI;
@@ -49,7 +50,10 @@ namespace GitTrends.Droid
             if (Control is null)
                 SetNativeControl(_playerView);
 
-            Play(MediaElementService.OnboardingChart?.ManifestUrl ?? throw new System.NullReferenceException());
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var mediaElementService = scope.Resolve<MediaElementService>();
+
+            Play(mediaElementService.OnboardingChart?.ManifestUrl ?? throw new System.NullReferenceException());
         }
 
         void Play(string url)

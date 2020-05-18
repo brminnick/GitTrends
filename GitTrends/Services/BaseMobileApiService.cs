@@ -12,9 +12,11 @@ namespace GitTrends
     public abstract class BaseMobileApiService : BaseApiService
     {
         readonly IMainThread _mainThread;
+
         static int _networkIndicatorCount;
 
-        protected BaseMobileApiService(IAnalyticsService analyticsService, IMainThread mainThread) => (AnalyticsService, _mainThread) = (analyticsService, mainThread);
+        protected BaseMobileApiService(IAnalyticsService analyticsService, IMainThread mainThread) =>
+            (AnalyticsService, _mainThread) = (analyticsService, mainThread);
 
         protected IAnalyticsService AnalyticsService { get; }
 

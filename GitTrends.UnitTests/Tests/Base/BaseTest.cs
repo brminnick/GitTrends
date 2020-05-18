@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using Xamarin.Forms;
 
 namespace GitTrends.UnitTests
 {
@@ -10,6 +11,9 @@ namespace GitTrends.UnitTests
         [SetUp]
         public virtual async Task Setup()
         {
+            Device.Info = new MockDeviceInfo();
+            Device.PlatformServices = new MockPlatformServices();
+
             var referringSitesDatabase = ContainerService.Container.GetService<ReferringSitesDatabase>();
             await referringSitesDatabase.DeleteAllData().ConfigureAwait(false);
 

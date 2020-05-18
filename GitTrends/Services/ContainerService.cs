@@ -20,6 +20,7 @@ namespace GitTrends
             builder.RegisterType<AppInfoImplementation>().As<IAppInfo>().SingleInstance();
             builder.RegisterType<BrowserImplementation>().As<IBrowser>().SingleInstance();
             builder.RegisterType<EmailImplementation>().As<IEmail>().SingleInstance();
+            builder.RegisterType<FileSystemImplementation>().As<IFileSystem>().SingleInstance();
             builder.RegisterType<LauncherImplementation>().As<ILauncher>().SingleInstance();
             builder.RegisterType<MainThreadImplementation>().As<IMainThread>().SingleInstance();
             builder.RegisterType<PreferencesImplementation>().As<IPreferences>().SingleInstance();
