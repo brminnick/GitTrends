@@ -1,6 +1,5 @@
 ﻿using System;
 using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -30,7 +29,7 @@ namespace GitTrends
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsFirstRun = false;
 
 #if !AppStore
-        void HandlePagePopped(object sender, Page e) => IsFirstRun = false;
+        void HandlePagePopped(object sender, Xamarin.Forms.Page e) => IsFirstRun = false;
 #endif
     }
 }

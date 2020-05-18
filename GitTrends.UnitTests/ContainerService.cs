@@ -24,6 +24,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<GitHubGraphQLApiService>();
             services.AddSingleton<GitHubUserService>();
             services.AddSingleton<FavIconService>();
+            services.AddSingleton<FirstRunService>();
             services.AddSingleton<NotificationService>();
             services.AddSingleton<ReferringSitesDatabase>();
             services.AddSingleton<RepositoryDatabase>();
