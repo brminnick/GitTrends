@@ -1,6 +1,7 @@
 ﻿using System;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends.UnitTests
@@ -29,6 +30,8 @@ namespace GitTrends.UnitTests
             services.AddSingleton<ReferringSitesDatabase>();
             services.AddSingleton<RepositoryDatabase>();
             services.AddSingleton<SortingService>();
+            services.AddSingleton<ThemeService>();
+            services.AddSingleton<TrendsChartSettingsService>();
 
             //Mocks
             services.AddSingleton<IAnalyticsService, MockAnalyticsService>();

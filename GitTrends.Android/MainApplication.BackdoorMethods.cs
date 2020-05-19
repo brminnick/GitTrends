@@ -9,8 +9,8 @@ namespace GitTrends.Droid
 {
     public partial class MainApplication
     {
-        UITestBackdoorService? _uiTestBackdoorService;
-        UITestBackdoorService UITestBackdoorService => _uiTestBackdoorService ??= ContainerService.Container.BeginLifetimeScope().Resolve<UITestBackdoorService>();
+        TestsBackdoorService? _uiTestBackdoorService;
+        TestsBackdoorService UITestBackdoorService => _uiTestBackdoorService ??= ContainerService.Container.BeginLifetimeScope().Resolve<TestsBackdoorService>();
 
         [Preserve, Export(BackdoorMethodConstants.SetGitHubUser)]
         public async void SetGitHubUser(string accessToken) =>

@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace GitTrends.UnitTests
 {
-    public class AzureFunctionsApiServiceTests
+    class AzureFunctionsApiServiceTests : BaseTest
     {
         [Test]
         public async Task GetGitHubClientId()
@@ -25,9 +25,21 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public Task GenerateGitTrendsOAuthToken()
+        public async Task GenerateGitTrendsOAuthToken_InvalidDTO()
         {
-            throw new NotImplementedException();
+            //Arrange
+            GitHubToken? gitHubToken;
+            var generateTokenDTO = new GenerateTokenDTO(string.Empty, string.Empty);
+            var azureFunctionsApiService = new AzureFunctionsApiService(new MockAnalyticsService(), new MockMainThread());
+
+            //Act
+            gitHubToken = await azureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO, CancellationToken.None).ConfigureAwait(false);
+
+            //Assert
+            Assert.IsNotNull(gitHubToken);
+            Assert.IsEmpty(GitHubToken.Empty.AccessToken);
+            Assert.IsEmpty(GitHubToken.Empty.Scope);
+            Assert.IsEmpty(GitHubToken.Empty.TokenType);
         }
 
         [Test]

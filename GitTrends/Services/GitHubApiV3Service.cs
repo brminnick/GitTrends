@@ -23,7 +23,7 @@ namespace GitTrends
 
         static IGitHubApiV3 GithubApiClient => _githubApiClient.Value;
 
-        public async IAsyncEnumerable<Repository> UpdateRepositoriesWithViewsAndClonesData(List<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
+        public async IAsyncEnumerable<Repository> UpdateRepositoriesWithViewsAndClonesData(IReadOnlyList<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsResponseModel, RepositoryClonesResponseModel)>>(repositories.Select(x => getRepositoryStatistics(x)));
 

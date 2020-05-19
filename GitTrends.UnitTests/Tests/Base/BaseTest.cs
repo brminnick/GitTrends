@@ -8,6 +8,9 @@ namespace GitTrends.UnitTests
 {
     abstract class BaseTest
     {
+        protected const string AuthenticatedGitHubUserLogin = "brminnick";
+        protected const string ValidGitHubRepo = "gittrends";
+
         [SetUp]
         public virtual async Task Setup()
         {
@@ -32,5 +35,7 @@ namespace GitTrends.UnitTests
             gitHubUserService.Name = name;
             gitHubUserService.AvatarUrl = avatarUri.ToString();
         }
+
+        protected static void InvalidateUser(in GitHubUserService gitHubUserService) => gitHubUserService.InvalidateToken();
     }
 }

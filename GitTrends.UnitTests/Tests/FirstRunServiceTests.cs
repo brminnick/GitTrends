@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
 namespace GitTrends.UnitTests
 {
-    class FirstRunServiceTests
+    class FirstRunServiceTests : BaseTest
     {
-        [Test]
+        //[Test]
         public async Task FirstRunServiceTest_AuthorizeSessionCompleted()
         {
             throw new NotImplementedException();
@@ -34,7 +35,7 @@ namespace GitTrends.UnitTests
             await activateDemoUserTCS.Task.ConfigureAwait(false);
 
             //Assert
-            isFirstRun_Final= firstRunService.IsFirstRun;
+            isFirstRun_Final = firstRunService.IsFirstRun;
 
             Assert.IsTrue(isFirstRun_Initial);
             Assert.IsFalse(isFirstRun_Final);

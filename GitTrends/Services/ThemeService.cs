@@ -24,7 +24,8 @@ namespace GitTrends
             _preferences = preferences;
             _analyticsService = analyticsService;
 
-            Application.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
+            if (Application.Current != null)
+                Application.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
         }
 
         public static event EventHandler<PreferredTheme> PreferenceChanged
@@ -43,7 +44,7 @@ namespace GitTrends
             }
         }
 
-        public void Initialize() => SetAppTheme(Preference);
+        public Task Initialize() => SetAppTheme(Preference);
 
         Task SetAppTheme(PreferredTheme preferredTheme) => _mainThread.InvokeOnMainThreadAsync(() =>
         {

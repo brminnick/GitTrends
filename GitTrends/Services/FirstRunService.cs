@@ -10,7 +10,7 @@ namespace GitTrends
         public FirstRunService(IPreferences preferences, GitHubAuthenticationService gitHubAuthenticationService)
         {
 #if !AppStore
-            UITestBackdoorService.PagePopped += HandlePagePopped;
+            TestsBackdoorService.PagePopped += HandlePagePopped;
 #endif
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
             gitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;

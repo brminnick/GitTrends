@@ -9,12 +9,12 @@ using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Syncfusion.SfChart.XForms;
-using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class UITestBackdoorService
+    public class TestsBackdoorService
     {
         readonly static WeakEventManager<Page> _pagePoppedEventManager = new WeakEventManager<Page>();
 
@@ -24,23 +24,23 @@ namespace GitTrends
         readonly NotificationService _notificationService;
         readonly ThemeService _themeService;
         readonly GitHubUserService _gitHubUserService;
-        readonly FirstRunService _firstRunService;
+        readonly IMainThread _mainThread;
 
-        public UITestBackdoorService(GitHubAuthenticationService gitHubAuthenticationService,
+        public TestsBackdoorService(GitHubAuthenticationService gitHubAuthenticationService,
                                         NotificationService notificationService,
                                         GitHubGraphQLApiService gitHubGraphQLApiService,
                                         TrendsChartSettingsService trendsChartSettingsService,
                                         ThemeService themeService,
                                         GitHubUserService gitHubUserService,
-                                        FirstRunService firstRunService)
+                                        IMainThread mainThread)
         {
-            _gitHubAuthenticationService = gitHubAuthenticationService;
-            _gitHubGraphQLApiService = gitHubGraphQLApiService;
-            _trendsChartSettingsService = trendsChartSettingsService;
-            _notificationService = notificationService;
+            _mainThread = mainThread;
             _themeService = themeService;
             _gitHubUserService = gitHubUserService;
-            _firstRunService = firstRunService;
+            _notificationService = notificationService;
+            _gitHubGraphQLApiService = gitHubGraphQLApiService;
+            _trendsChartSettingsService = trendsChartSettingsService;
+            _gitHubAuthenticationService = gitHubAuthenticationService;
         }
 
         public static event EventHandler<Page> PagePopped
@@ -76,7 +76,7 @@ namespace GitTrends
 
         public bool ShouldSendNotifications() => _notificationService.ShouldSendNotifications;
 
-        public Task TriggerPullToRefresh() => MainThread.InvokeOnMainThreadAsync(() => GetVisibleRefreshView().IsRefreshing = true);
+        public Task TriggerPullToRefresh() => _mainThread.InvokeOnMainThreadAsync(() => GetVisibleRefreshView().IsRefreshing = true);
 
         public IReadOnlyList<T> GetVisibleCollection<T>() => GetVisibleCollection().Cast<T>().ToList();
 

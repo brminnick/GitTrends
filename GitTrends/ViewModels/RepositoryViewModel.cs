@@ -131,7 +131,7 @@ namespace GitTrends
                 }
 
                 var completedRepoitories = new List<Repository>();
-                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.ToList(), cancellationTokenSource.Token).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     completedRepoitories.Add(retrievedRepositoryWithViewsAndClonesData);
 

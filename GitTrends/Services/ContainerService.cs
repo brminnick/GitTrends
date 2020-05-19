@@ -48,7 +48,7 @@ namespace GitTrends
             builder.RegisterType<ThemeService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
 #if !AppStore
-            builder.RegisterType<UITestBackdoorService>().AsSelf().SingleInstance();
+            builder.RegisterType<TestsBackdoorService>().AsSelf().SingleInstance();
 #endif
 
             //Register ViewModels

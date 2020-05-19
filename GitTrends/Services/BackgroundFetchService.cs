@@ -75,10 +75,10 @@ namespace GitTrends
                     retrievedRepositoryList.AddRange(retrievedRepositories);
                 }
 
-                var retrievedRepositoryList_NoDuplicatesNoForks = RepositoryService.RemoveForksAndDuplicates(retrievedRepositoryList).ToList();
+                var retrievedRepositoryList_NoDuplicatesNoForks = RepositoryService.RemoveForksAndDuplicates(retrievedRepositoryList);
 
                 var trendingRepositories = new List<Repository>();
-                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(retrievedRepositoryList_NoDuplicatesNoForks, cancellationToken).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(retrievedRepositoryList_NoDuplicatesNoForks.ToList(), cancellationToken).ConfigureAwait(false))
                 {
                     try
                     {
