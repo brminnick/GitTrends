@@ -26,8 +26,6 @@ jobs:
           chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
           ./GitTrends.Android/appcenter-pre-build.sh
           
-          dotnet test ./GitTrends.UnitTests
-          
           msbuild ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release     
 
 # Ignore iOS until GitHub Actions adds iOS Certificates & Provisioning Profiles
