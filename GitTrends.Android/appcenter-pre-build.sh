@@ -19,6 +19,9 @@ echo "Finished Injecting API Keys"
 echo "Running Unit Tests"
 
 UnitTestProject=`find "$APPCENTER_SOURCE_DIRECTORY" -name GitTrends.UnitTests.csproj`
-UnitTestDirectory=`dirname $UnitTestProject`
+echo $UnitTestProject
 
-dotnet test  -c "Release" UnitTestDirectory
+UnitTestDirectory=`dirname $UnitTestProject`
+echo $UnitTestDirectory
+
+dotnet test  -c "Release" $UnitTestDirectory
