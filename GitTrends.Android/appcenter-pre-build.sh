@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -e
+
 AzureConstantsFile=`find "$APPCENTER_SOURCE_DIRECTORY" -name AzureConstants.cs | head -1`
 echo CognitiveServicesConstantsFile = $AzureConstantsFile
 
