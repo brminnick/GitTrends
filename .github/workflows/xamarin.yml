@@ -23,6 +23,7 @@ jobs:
         run: |
           nuget restore
           
+          chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
           ./GitTrends.Android/appcenter-pre-build.sh
           
           dotnet test ./GitTrends.UnitTests
