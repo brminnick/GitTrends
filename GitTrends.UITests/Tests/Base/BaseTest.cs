@@ -72,7 +72,7 @@ namespace GitTrends.UITests
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
         }
 
-        async Task SetupLoggedInUser()
+        protected async Task SetupLoggedInUser()
         {
             await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
 

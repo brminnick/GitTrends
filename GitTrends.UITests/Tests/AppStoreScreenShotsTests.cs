@@ -5,8 +5,8 @@ using Xamarin.UITest;
 
 namespace GitTrends.UITests
 {
-    [TestFixture(Platform.Android, UserType.LoggedIn)]
-    [TestFixture(Platform.iOS, UserType.LoggedIn)]
+    [TestFixture(Platform.Android, UserType.Neither)]
+    [TestFixture(Platform.iOS, UserType.Neither)]
     class AppStoreScreenShotsTests : BaseTest
     {
         public AppStoreScreenShotsTests(Platform platform, UserType userType) : base(platform, userType)
@@ -20,6 +20,20 @@ namespace GitTrends.UITests
             var screenRect = App.Query().First().Rect;
 
             //Act
+            await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
+            App.Screenshot("GitTrends Onboarding Page");
+
+            await OnboardingPage.MoveToNextPage().ConfigureAwait(false);
+            App.Screenshot("Charts Onboarding Page");
+
+            await OnboardingPage.MoveToNextPage().ConfigureAwait(false);
+            App.Screenshot("Notifications Onboarding Page");
+
+            await OnboardingPage.MoveToNextPage().ConfigureAwait(false);
+            App.Screenshot("Connect to GitHub Onboarding Page");
+
+            await SetupLoggedInUser().ConfigureAwait(false);
+
             App.Screenshot("Repository Page Light");
 
             RepositoryPage.TapRepository(nameof(GitTrends));
