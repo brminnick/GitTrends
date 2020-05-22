@@ -109,7 +109,7 @@ namespace GitTrends
             public BodyLabel(in string text)
             {
                 Text = text;
-                FontSize = 16;
+                FontSize = 15;
                 TextColor = Color.White;
                 LineHeight = 1.021;
                 LineBreakMode = LineBreakMode.WordWrap;
