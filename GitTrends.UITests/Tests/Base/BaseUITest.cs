@@ -72,6 +72,17 @@ namespace GitTrends.UITests
             await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
         }
 
+        protected async Task SetupLoggedInUser()
+        {
+            await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
+
+            await LoginToGitHub().ConfigureAwait(false);
+
+            OnboardingPage.PopPage();
+
+            await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
+        }
+
         protected async Task LoginToGitHub()
         {
             var uiTestToken = await AzureFunctionsApiService.GetUITestToken().ConfigureAwait(false);
