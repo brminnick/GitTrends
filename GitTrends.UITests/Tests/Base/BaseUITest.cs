@@ -99,17 +99,6 @@ namespace GitTrends.UITests
 
             await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
         }
-
-        async Task SetupLoggedInUser()
-        {
-            await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
-
-            await LoginToGitHub().ConfigureAwait(false);
-
-            OnboardingPage.PopPage();
-
-            await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
-        }
     }
 }
 

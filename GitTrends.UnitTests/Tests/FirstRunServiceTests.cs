@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -8,8 +7,8 @@ namespace GitTrends.UnitTests
 {
     class FirstRunServiceTests : BaseTest
     {
-        //[Test]
-        public async Task FirstRunServiceTest_AuthorizeSessionCompleted()
+        //[Test] ToDo
+        public Task FirstRunServiceTest_AuthorizeSessionCompleted()
         {
             throw new NotImplementedException();
         }

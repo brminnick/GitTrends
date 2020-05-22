@@ -87,7 +87,7 @@ namespace GitTrends
 
             var clientIdDTO = await _azureFunctionsApiService.GetGitHubClientId(cancellationToken).ConfigureAwait(false);
 
-            return $"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id={clientIdDTO.ClientId}&scope=public_repo%20read:user&state={MostRecentSessionId}";
+            return $"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id={clientIdDTO.ClientId}&scope={GitHubConstants.OAuthScope}&state={MostRecentSessionId}";
         }
 
         public async Task AuthorizeSession(Uri callbackUri, CancellationToken cancellationToken)

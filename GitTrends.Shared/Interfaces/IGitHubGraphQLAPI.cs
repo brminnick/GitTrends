@@ -7,9 +7,6 @@ namespace GitTrends.Shared
     interface IGitHubGraphQLApi
     {
         [Post("")]
-        Task<GraphQLResponse<GitHubUserResponse>> UserQuery([Body] UserQueryContent request, [Header("Authorization")] string authorization);
-
-        [Post("")]
         Task<GraphQLResponse<RepositoryResponse>> RepositoryQuery([Body] RepositoryQueryContent request, [Header("Authorization")] string authorization);
 
         [Post("")]
@@ -22,14 +19,6 @@ namespace GitTrends.Shared
     class ViewerLoginQueryContent : GraphQLRequest
     {
         public ViewerLoginQueryContent() : base("query { viewer{ login, name, avatarUrl }}")
-        {
-
-        }
-    }
-
-    class UserQueryContent : GraphQLRequest
-    {
-        public UserQueryContent(string username) : base("query { user(login: \"" + username + "\" ){ name, company, createdAt, followers{ totalCount }}}")
         {
 
         }

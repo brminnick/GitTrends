@@ -9,7 +9,9 @@ namespace GitTrends.UnitTests
     abstract class BaseTest
     {
         protected const string AuthenticatedGitHubUserLogin = "brminnick";
-        protected const string ValidGitHubRepo = "gittrends";
+        protected const string AuthenticatedGitHubUserName = "Brandon Minnick";
+        protected const string AuthenticatedGitHubUserAvatarUrl = "https://avatars0.githubusercontent.com/u/13558917?u=f1392f8aefe2d52a87c4d371981cb7153199fa27&v=4";
+        protected const string ValidGitHubRepo = "GitTrends";
 
         [SetUp]
         public virtual async Task Setup()
@@ -22,6 +24,9 @@ namespace GitTrends.UnitTests
 
             var repositoryDatabase = ContainerService.Container.GetService<RepositoryDatabase>();
             await repositoryDatabase.DeleteAllData().ConfigureAwait(false);
+
+            var gitHubAuthenticationService = ContainerService.Container.GetService<GitHubAuthenticationService>();
+            await gitHubAuthenticationService.LogOut().ConfigureAwait(false);
         }
 
         protected static async Task AuthenticateUser(GitHubUserService gitHubUserService, GitHubGraphQLApiService gitHubGraphQLApiService)

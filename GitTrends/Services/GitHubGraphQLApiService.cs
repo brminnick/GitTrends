@@ -32,14 +32,6 @@ namespace GitTrends
             return (data.Viewer.Alias, data.Viewer.Name, data.Viewer.AvatarUri);
         }
 
-        public async Task<User> GetUser(string username, CancellationToken cancellationToken)
-        {
-            var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-            var data = await ExecuteGraphQLRequest(() => GitHubApiClient.UserQuery(new UserQueryContent(username), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
-
-            return data.User;
-        }
-
         public async Task<Repository> GetRepository(string repositoryOwner, string repositoryName, CancellationToken cancellationToken, int numberOfIssuesPerRequest = 100)
         {
             var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);

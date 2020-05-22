@@ -7,7 +7,7 @@ namespace GitTrends.UITests
 {
     [TestFixture(Platform.Android, UserType.Neither)]
     [TestFixture(Platform.iOS, UserType.Neither)]
-    class AppStoreScreenShotsTests : BaseTest
+    class AppStoreScreenShotsTests : BaseUITest
     {
         public AppStoreScreenShotsTests(Platform platform, UserType userType) : base(platform, userType)
         {
