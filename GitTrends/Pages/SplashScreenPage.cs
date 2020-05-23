@@ -217,17 +217,22 @@ namespace GitTrends
                     var explodeImageTask = Task.WhenAll(Content.ScaleTo(100, 250, Easing.CubicOut), Content.FadeTo(0, 250, Easing.CubicIn));
                     BackgroundColor = (Color)Application.Current.Resources[nameof(BaseTheme.PageBackgroundColor)];
 
-                    using var scope = ContainerService.Container.BeginLifetimeScope();
+                    var scope = ContainerService.Container.BeginLifetimeScope();
                     var repositoryPage = scope.Resolve<RepositoryPage>();
+
+                    if (_firstRunService.IsFirstRun)
+                        repositoryPage.Appearing += HandleRepositoryPageAppearing;
 
                     await explodeImageTask;
 
-                    Application.Current.MainPage = new BaseNavigationPage(repositoryPage);
+                    Application.Current.MainPage = new BaseNavigationPage(repositoryPage);                    
 
-                    if (_firstRunService.IsFirstRun)
+                    async void HandleRepositoryPageAppearing(object sender, EventArgs e)
                     {
+                        repositoryPage.Appearing -= HandleRepositoryPageAppearing;
+
                         //Yield the UI thread to allow MainPage to be set
-                        await Task.Delay(TimeSpan.FromMilliseconds(250));
+                        await Task.Delay(TimeSpan.FromMilliseconds(500));
 
                         var onboardingCarouselPage = scope.Resolve<OnboardingCarouselPage>();
                         await repositoryPage.Navigation.PushModalAsync(onboardingCarouselPage);
