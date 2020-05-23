@@ -28,9 +28,21 @@ namespace GitTrends
 
         public Task ShowSettingsUI() => _mainThread.InvokeOnMainThreadAsync(_appInfo.ShowSettingsUI);
 
-        public Task DisplayAlert(string title, string message, string cancel) => _mainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, cancel));
+        public Task DisplayAlert(string title, string message, string cancel)
+        {
+            if (Application.Current is null)
+                return Task.CompletedTask;
 
-        public Task<bool> DisplayAlert(string title, string message, string accept, string decline) => _mainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, accept, decline));
+            return _mainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, cancel));
+        }
+
+        public Task<bool> DisplayAlert(string title, string message, string accept, string decline)
+        {
+            if (Application.Current is null)
+                return Task.FromResult(true);
+
+            return _mainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, accept, decline));
+        }
 
         public Task OpenBrowser(Uri uri) => OpenBrowser(uri.ToString());
 

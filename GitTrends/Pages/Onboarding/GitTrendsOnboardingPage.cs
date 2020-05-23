@@ -34,7 +34,7 @@ namespace GitTrends
                 (Row.Title, AbsoluteGridLength(20)),
                 (Row.Connect, AbsoluteGridLength(24)),
                 (Row.MonitorImage, AbsoluteGridLength(24)),
-                (Row.MonitorDescription, AbsoluteGridLength(0)),
+                (Row.MonitorDescription, AbsoluteGridLength(2)),
                 (Row.Discover, AbsoluteGridLength(24))),
 
             ColumnDefinitions = Columns.Define(

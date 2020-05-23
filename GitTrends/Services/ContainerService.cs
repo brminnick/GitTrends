@@ -1,6 +1,8 @@
 ﻿using System;
 using Autofac;
 using GitTrends.Shared;
+using Shiny;
+using Shiny.Notifications;
 using Xamarin.Essentials.Implementation;
 using Xamarin.Essentials.Interfaces;
 
@@ -47,6 +49,7 @@ namespace GitTrends
             builder.RegisterType<SyncFusionService>().AsSelf().SingleInstance();
             builder.RegisterType<ThemeService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
+            builder.RegisterInstance(ShinyHost.Resolve<INotificationManager>()).As<INotificationManager>().SingleInstance();
 #if !AppStore
             builder.RegisterType<TestsBackdoorService>().AsSelf().SingleInstance();
 #endif

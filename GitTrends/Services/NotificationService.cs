@@ -27,6 +27,7 @@ namespace GitTrends
         readonly SortingService _sortingService;
         readonly IAnalyticsService _analyticsService;
         readonly DeepLinkingService _deepLinkingService;
+        readonly INotificationManager _notificationManager;
         readonly AzureFunctionsApiService _azureFunctionsApiService;
 
         TaskCompletionSource<AccessState>? _settingsResultCompletionSource;
@@ -36,7 +37,8 @@ namespace GitTrends
                                     SortingService sortingService,
                                     AzureFunctionsApiService azureFunctionsApiService,
                                     IPreferences preferences,
-                                    ISecureStorage secureStorage)
+                                    ISecureStorage secureStorage,
+                                    INotificationManager notificationManager)
         {
             _preferences = preferences;
             _secureStorage = secureStorage;
@@ -44,6 +46,7 @@ namespace GitTrends
             _analyticsService = analyticsService;
             _deepLinkingService = deepLinkingService;
             _azureFunctionsApiService = azureFunctionsApiService;
+            _notificationManager = notificationManager;
 
             if (Application.Current is App app)
                 app.Resumed += HandleAppResumed;
@@ -72,8 +75,6 @@ namespace GitTrends
             get => _preferences.Get(nameof(ShouldSendNotifications), false);
             private set => _preferences.Set(nameof(ShouldSendNotifications), value);
         }
-
-        static INotificationManager NotificationManager => ShinyHost.Resolve<INotificationManager>();
 
         bool HaveNotificationsBeenRequested
         {
@@ -147,7 +148,7 @@ namespace GitTrends
 
             HaveNotificationsBeenRequested = ShouldSendNotifications = true;
 
-            var initialNotificationRequestResult = await NotificationManager.RequestAccess().ConfigureAwait(false);
+            var initialNotificationRequestResult = await _notificationManager.RequestAccess().ConfigureAwait(false);
 
             try
             {
@@ -166,7 +167,7 @@ namespace GitTrends
                         break;
 
                     case AccessState.NotSetup:
-                        finalNotificationRequestResult = await NotificationManager.RequestAccess().ConfigureAwait(false);
+                        finalNotificationRequestResult = await _notificationManager.RequestAccess().ConfigureAwait(false);
                         break;
 
                     case AccessState.NotSupported:
@@ -208,7 +209,7 @@ namespace GitTrends
                 if (Device.RuntimePlatform is Device.iOS)
                     await DependencyService.Get<INotificationService>().SetiOSBadgeCount(count).ConfigureAwait(false);
                 else
-                    NotificationManager.Badge = count;
+                    _notificationManager.Badge = count;
             }
         }
 
@@ -291,7 +292,7 @@ namespace GitTrends
 
                 setMostRecentNotificationDate(trendingRepository);
 
-                await NotificationManager.Send(notification).ConfigureAwait(false);
+                await _notificationManager.Send(notification).ConfigureAwait(false);
 
                 _analyticsService.Track("Single Trending Repository Notification Sent");
             }
@@ -312,7 +313,7 @@ namespace GitTrends
                     BadgeCount = trendingRepositories.Count
                 };
 
-                await NotificationManager.Send(notification).ConfigureAwait(false);
+                await _notificationManager.Send(notification).ConfigureAwait(false);
 
                 _analyticsService.Track("Multiple Trending Repositories Notification Sent", "Count", trendingRepositories.Count.ToString());
             }
@@ -336,7 +337,7 @@ namespace GitTrends
         {
             if (_settingsResultCompletionSource != null)
             {
-                var finalResult = await NotificationManager.RequestAccess().ConfigureAwait(false);
+                var finalResult = await _notificationManager.RequestAccess().ConfigureAwait(false);
                 _settingsResultCompletionSource.SetResult(finalResult);
             }
         }

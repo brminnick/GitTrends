@@ -1,6 +1,8 @@
 ﻿using System;
+using Autofac.Core;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using Shiny.Notifications;
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends.UnitTests
@@ -41,6 +43,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<IEmail, MockEmail>();
             services.AddSingleton<ILauncher, MockLauncher>();
             services.AddSingleton<IMainThread, MockMainThread>();
+            services.AddSingleton<INotificationManager, MockNotificationManager>();
             services.AddSingleton<ISecureStorage, MockSecureStorage>();
             services.AddSingleton<IPreferences, MockPreferences>();
 

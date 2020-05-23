@@ -11,7 +11,7 @@ using Xamarin.Essentials.Interfaces;
 namespace GitTrends.UnitTests
 {
     class GitHubAuthenticationServiceTests : BaseTest
-    { 
+    {
         [Test]
         public async Task AuthorizeSessionStartedTest()
         {
@@ -29,10 +29,10 @@ namespace GitTrends.UnitTests
             //Assert
             Assert.IsTrue(didAuthorizeSessionStartedFire);
 
-            gitHubAuthorizationServce.AuthorizeSessionStarted -= HandleAuthorizeSessionStarted;
 
             void HandleAuthorizeSessionStarted(object? sender, EventArgs e)
             {
+                gitHubAuthorizationServce.AuthorizeSessionStarted -= HandleAuthorizeSessionStarted;
                 didAuthorizeSessionStartedFire = true;
                 authorizeSessionStartedTCS.SetResult(null);
             }
@@ -58,10 +58,10 @@ namespace GitTrends.UnitTests
             Assert.IsTrue(didAuthorizeSessionCompletedFire);
             Assert.IsFalse(isAuthorizationSuccessful);
 
-            gitHubAuthorizationServce.AuthorizeSessionCompleted -= HandleAuthorizeSessionCompleted;
 
             void HandleAuthorizeSessionCompleted(object? sender, AuthorizeSessionCompletedEventArgs e)
             {
+                gitHubAuthorizationServce.AuthorizeSessionCompleted -= HandleAuthorizeSessionCompleted;
                 didAuthorizeSessionCompletedFire = true;
                 authorizeSessionCompletedTCS.SetResult(e.IsSessionAuthorized);
             }
@@ -88,10 +88,10 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(DemoDataConstants.Alias, gitHubUserService.Alias);
             Assert.AreEqual(DemoDataConstants.Name, gitHubUserService.Name);
 
-            gitHubAuthorizationServce.DemoUserActivated -= HandleDemoUserActivated;
 
             void HandleDemoUserActivated(object? sender, EventArgs e)
             {
+                gitHubAuthorizationServce.DemoUserActivated -= HandleDemoUserActivated;
                 didDemoUserActivatedFire = true;
                 demoUserActivatedTCS.SetResult(null);
             }
@@ -123,7 +123,6 @@ namespace GitTrends.UnitTests
             gitHubUserAlias_Final = gitHubUserService.Alias;
             gitHubUserName_Final = gitHubUserService.Name;
 
-            gitHubAuthorizationServce.LoggedOut -= HandleLoggedOut;
 
             //Assert
             Assert.IsTrue(didDLoggedOutFire);
@@ -132,6 +131,7 @@ namespace GitTrends.UnitTests
 
             void HandleLoggedOut(object? sender, EventArgs e)
             {
+                gitHubAuthorizationServce.LoggedOut -= HandleLoggedOut;
                 didDLoggedOutFire = true;
                 loggedOutTCS.SetResult(null);
             }
