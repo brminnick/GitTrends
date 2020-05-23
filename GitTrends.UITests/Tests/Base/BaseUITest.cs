@@ -10,7 +10,7 @@ namespace GitTrends.UITests
 {
     enum UserType { Demo, LoggedIn, Neither }
 
-    abstract class BaseTest
+    abstract class BaseUITest
     {
         readonly Platform _platform;
 
@@ -23,7 +23,7 @@ namespace GitTrends.UITests
         OnboardingPage? _onboardingPage;
         WelcomePage? _welcomePage;
 
-        protected BaseTest(Platform platform, UserType userType) => (_platform, UserType) = (platform, userType);
+        protected BaseUITest(Platform platform, UserType userType) => (_platform, UserType) = (platform, userType);
 
         protected UserType UserType { get; }
 

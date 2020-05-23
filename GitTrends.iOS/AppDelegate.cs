@@ -41,7 +41,7 @@ namespace GitTrends.iOS
             LoadApplication(new App());
 
             if (launchOptions?.ContainsKey(UIApplication.LaunchOptionsLocalNotificationKey) is true)
-                HandleLocalNotification((UILocalNotification)launchOptions[UIApplication.LaunchOptionsLocalNotificationKey]).SafeFireAndForget(ex => ContainerService.Container.Resolve<AnalyticsService>().Report(ex));
+                HandleLocalNotification((UILocalNotification)launchOptions[UIApplication.LaunchOptionsLocalNotificationKey]).SafeFireAndForget(ex => ContainerService.Container.Resolve<IAnalyticsService>().Report(ex));
 
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
@@ -67,7 +67,7 @@ namespace GitTrends.iOS
             static void onException(Exception e)
             {
                 using var containerScope = ContainerService.Container.BeginLifetimeScope();
-                containerScope.Resolve<AnalyticsService>().Report(e);
+                containerScope.Resolve<IAnalyticsService>().Report(e);
             }
         }
 
@@ -85,7 +85,7 @@ namespace GitTrends.iOS
         public override async void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
-            var analyticsService = scope.Resolve<AnalyticsService>();
+            var analyticsService = scope.Resolve<IAnalyticsService>();
             var notificationService = scope.Resolve<NotificationService>();
 
             var notificationHubInformation = await notificationService.GetNotificationHubInformation().ConfigureAwait(false);
@@ -100,16 +100,26 @@ namespace GitTrends.iOS
 
             var hubClient = NotificationHubClient.CreateClientFromConnectionString(notificationHubInformation.ConnectionString_Debug, notificationHubInformation.Name_Debug);
 #endif
-            var doesRegistrationExist = await hubClient.RegistrationExistsAsync(tokenAsString).ConfigureAwait(false);
+            try
+            {
+                var doesRegistrationExist = await hubClient.RegistrationExistsAsync(tokenAsString).ConfigureAwait(false);
 
-            if (!doesRegistrationExist)
-                await hubClient.CreateAppleNativeRegistrationAsync(tokenAsString).ConfigureAwait(false);
+                if (!doesRegistrationExist)
+                    await hubClient.CreateAppleNativeRegistrationAsync(tokenAsString).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                analyticsService.Report(e);
+            }
         }
 
         Task HandleLocalNotification(in UILocalNotification notification)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var notificationService = scope.Resolve<NotificationService>();
+
+            if (notification is null || notification.AlertTitle is null || notification.AlertBody is null)
+                return Task.CompletedTask;
 
             return notificationService.HandleReceivedLocalNotification(notification.AlertTitle, notification.AlertBody, (int)notification.ApplicationIconBadgeNumber);
         }

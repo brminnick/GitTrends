@@ -4,35 +4,62 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using GitTrends.Shared;
-using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
 {
     public class DeepLinkingService
     {
-        public Task ShowSettingsUI() => MainThread.InvokeOnMainThreadAsync(AppInfo.ShowSettingsUI);
+        readonly IAppInfo _appInfo;
+        readonly IEmail _email;
+        readonly IBrowser _browser;
+        readonly IMainThread _mainThread;
+        readonly ILauncher _launcher;
 
-        public Task DisplayAlert(string title, string message, string cancel) => MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, cancel));
+        public DeepLinkingService(IMainThread mainThread, IBrowser browser, IEmail email, IAppInfo appInfo, ILauncher launcher)
+        {
+            _appInfo = appInfo;
+            _email = email;
+            _browser = browser;
+            _mainThread = mainThread;
+            _launcher = launcher;
+        }
 
-        public Task<bool> DisplayAlert(string title, string message, string accept, string decline) => MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, accept, decline));
+        public Task ShowSettingsUI() => _mainThread.InvokeOnMainThreadAsync(_appInfo.ShowSettingsUI);
+
+        public Task DisplayAlert(string title, string message, string cancel)
+        {
+            if (Application.Current is null)
+                return Task.CompletedTask;
+
+            return _mainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, cancel));
+        }
+
+        public Task<bool> DisplayAlert(string title, string message, string accept, string decline)
+        {
+            if (Application.Current is null)
+                return Task.FromResult(true);
+
+            return _mainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, accept, decline));
+        }
 
         public Task OpenBrowser(Uri uri) => OpenBrowser(uri.ToString());
 
-        public Task OpenBrowser(string url, BrowserLaunchOptions? browserLaunchOptions = null)
+        public Task OpenBrowser(string url, Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions = null)
         {
-            return MainThread.InvokeOnMainThreadAsync(() =>
+            return _mainThread.InvokeOnMainThreadAsync(() =>
             {
                 var currentTheme = (BaseTheme)Application.Current.Resources;
 
-                browserLaunchOptions ??= new BrowserLaunchOptions
+                browserLaunchOptions ??= new Xamarin.Essentials.BrowserLaunchOptions
                 {
                     PreferredControlColor = currentTheme.NavigationBarTextColor,
                     PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor,
-                    Flags = BrowserLaunchFlags.PresentAsFormSheet
+                    Flags = Xamarin.Essentials.BrowserLaunchFlags.PresentAsFormSheet
                 };
 
-                return Browser.OpenAsync(url, browserLaunchOptions);
+                return _browser.OpenAsync(url, browserLaunchOptions);
             });
         }
 
@@ -41,7 +68,7 @@ namespace GitTrends
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var trendsPage = scope.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
 
-            return MainThread.InvokeOnMainThreadAsync(async () =>
+            return _mainThread.InvokeOnMainThreadAsync(async () =>
             {
                 var baseNavigationPage = await GetBaseNavigationPage();
 
@@ -54,12 +81,12 @@ namespace GitTrends
 
         public Task OpenApp(string appScheme, string deepLinkingUrl, string browserUrl)
         {
-            return MainThread.InvokeOnMainThreadAsync(async () =>
+            return _mainThread.InvokeOnMainThreadAsync(async () =>
             {
-                var supportsUri = await Launcher.CanOpenAsync(appScheme);
+                var supportsUri = await _launcher.CanOpenAsync(appScheme);
 
                 if (supportsUri)
-                    await Launcher.OpenAsync(deepLinkingUrl);
+                    await _launcher.OpenAsync(deepLinkingUrl);
                 else
                     await OpenBrowser(browserUrl);
             });
@@ -67,9 +94,9 @@ namespace GitTrends
 
         public Task SendEmail(string subject, string body, IEnumerable<string> recipients)
         {
-            return MainThread.InvokeOnMainThreadAsync(async () =>
+            return _mainThread.InvokeOnMainThreadAsync(async () =>
             {
-                var message = new EmailMessage
+                var message = new Xamarin.Essentials.EmailMessage
                 {
                     Subject = subject,
                     Body = body,
@@ -78,9 +105,9 @@ namespace GitTrends
 
                 try
                 {
-                    await Email.ComposeAsync(message).ConfigureAwait(false);
+                    await _email.ComposeAsync(message).ConfigureAwait(false);
                 }
-                catch (FeatureNotSupportedException)
+                catch (Xamarin.Essentials.FeatureNotSupportedException)
                 {
                     await DisplayAlert("No Email Client Found", "We'd love to hear your fedback!\nsupport@GitTrends.com", "OK").ConfigureAwait(false);
                 }

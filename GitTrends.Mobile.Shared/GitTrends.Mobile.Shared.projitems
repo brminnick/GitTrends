@@ -36,5 +36,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\LoginExpiredPullToRefreshEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\PullToRefreshFailedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\MaximimApiRequestsReachedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AzureFunctionsApiService.cs" />
   </ItemGroup>
 </Project>

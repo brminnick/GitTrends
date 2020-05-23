@@ -15,14 +15,12 @@
     <Folder Include="$(MSBuildThisFileDirectory)Models\Base\GraphQLModels\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\DTOs\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\Interfaces\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AzureConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\GithubConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\BaseApiService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\IAzureFunctionsApi.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubApiV3.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubAuthApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DailyClonesModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DailyViewsModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GitHubToken.cs" />
@@ -48,7 +46,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GetGitHubClientIdDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\SyncFusionDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IRepository.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\IGitHubGraphQLAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\SortingConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\TrendingService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\DateTimeService.cs" />
@@ -59,6 +56,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IDailyClonesModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IDailyViewsModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\NotificationHubInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IAzureFunctionsApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGitHubApiV3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGitHubAuthApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGitHubGraphQLAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IAnalyticsService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Services\ImageService.cs" />

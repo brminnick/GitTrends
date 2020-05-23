@@ -1,6 +1,10 @@
 ﻿using System;
 using Autofac;
 using GitTrends.Shared;
+using Shiny;
+using Shiny.Notifications;
+using Xamarin.Essentials.Implementation;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
@@ -14,13 +18,27 @@ namespace GitTrends
         {
             var builder = new ContainerBuilder();
 
+            //Register Xamarin.Essentials
+            builder.RegisterType<AppInfoImplementation>().As<IAppInfo>().SingleInstance();
+            builder.RegisterType<BrowserImplementation>().As<IBrowser>().SingleInstance();
+            builder.RegisterType<EmailImplementation>().As<IEmail>().SingleInstance();
+            builder.RegisterType<FileSystemImplementation>().As<IFileSystem>().SingleInstance();
+            builder.RegisterType<LauncherImplementation>().As<ILauncher>().SingleInstance();
+            builder.RegisterType<MainThreadImplementation>().As<IMainThread>().SingleInstance();
+            builder.RegisterType<PreferencesImplementation>().As<IPreferences>().SingleInstance();
+            builder.RegisterType<SecureStorageImplementation>().As<ISecureStorage>().SingleInstance();
+            builder.RegisterType<VersionTrackingImplementation>().As<IVersionTracking>().SingleInstance();
+
             //Register Services
-            builder.RegisterType<AnalyticsService>().AsSelf().SingleInstance();
+            builder.RegisterType<AnalyticsService>().As<IAnalyticsService>().SingleInstance();
             builder.RegisterType<AzureFunctionsApiService>().AsSelf().SingleInstance();
             builder.RegisterType<BackgroundFetchService>().AsSelf().SingleInstance();
             builder.RegisterType<DeepLinkingService>().AsSelf().SingleInstance();
+            builder.RegisterType<FavIconService>().AsSelf().SingleInstance();
+            builder.RegisterType<FirstRunService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubAuthenticationService>().AsSelf().SingleInstance();
+            builder.RegisterType<GitHubUserService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubGraphQLApiService>().AsSelf().SingleInstance();
             builder.RegisterType<MediaElementService>().AsSelf().SingleInstance();
             builder.RegisterType<NotificationService>().AsSelf().SingleInstance();
@@ -31,8 +49,9 @@ namespace GitTrends
             builder.RegisterType<SyncFusionService>().AsSelf().SingleInstance();
             builder.RegisterType<ThemeService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
+            builder.RegisterInstance(ShinyHost.Resolve<INotificationManager>()).As<INotificationManager>().SingleInstance();
 #if !AppStore
-            builder.RegisterType<UITestBackdoorService>().AsSelf().SingleInstance();
+            builder.RegisterType<TestsBackdoorService>().AsSelf().SingleInstance();
 #endif
 
             //Register ViewModels

@@ -17,7 +17,7 @@ namespace GitTrends
         ImageSource? _favIcon;
 
         public MobileReferringSiteModel(in ReferringSiteModel referringSiteModel, in ImageSource? favIcon = null)
-            : base(referringSiteModel.TotalCount, referringSiteModel.TotalUniqueCount, referringSiteModel.Referrer)
+            : base(referringSiteModel.TotalCount, referringSiteModel.TotalUniqueCount, referringSiteModel.Referrer, referringSiteModel.DownloadedAt)
         {
             FavIcon = favIcon;
         }

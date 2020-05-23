@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
+using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
@@ -13,8 +15,9 @@ namespace GitTrends
 
         public SplashScreenViewModel(SyncFusionService syncfusionService,
                                         MediaElementService mediaElementService,
-                                        AnalyticsService analyticsService,
-                                        NotificationService notificationService) : base(analyticsService)
+                                        IAnalyticsService analyticsService,
+                                        NotificationService notificationService,
+                                        IMainThread mainThread) : base(analyticsService, mainThread)
         {
             InitializeAppCommand = new AsyncCommand(() => ExecuteInitializeAppCommand(syncfusionService, mediaElementService, notificationService));
         }

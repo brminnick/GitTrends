@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
+using GitTrends.Shared;
 using Shiny;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
@@ -13,7 +13,7 @@ namespace GitTrends
     public class App : Xamarin.Forms.Application
     {
         readonly WeakEventManager _resumedEventManager = new WeakEventManager();
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
 
         public App()
         {
@@ -22,7 +22,7 @@ namespace GitTrends
             InitializeEssentialServices();
 
             using var scope = ContainerService.Container.BeginLifetimeScope();
-            _analyticsService = scope.Resolve<AnalyticsService>();
+            _analyticsService = scope.Resolve<IAnalyticsService>();
 
             MainPage = scope.Resolve<SplashScreenPage>();
 
@@ -35,16 +35,16 @@ namespace GitTrends
             remove => _resumedEventManager.RemoveEventHandler(value);
         }
 
-        protected override void OnStart()
+        protected override async void OnStart()
         {
             base.OnStart();
 
             _analyticsService.Track("App Started");
 
-            ClearBageNotifications().SafeFireAndForget(ex => _analyticsService.Report(ex));
+            await ClearBageNotifications();
         }
 
-        protected override void OnResume()
+        protected override async void OnResume()
         {
             base.OnResume();
 
@@ -52,7 +52,7 @@ namespace GitTrends
 
             _analyticsService.Track("App Resumed");
 
-            ClearBageNotifications().SafeFireAndForget(ex => _analyticsService.Report(ex));
+            await ClearBageNotifications();
         }
 
         protected override void OnSleep()
@@ -70,12 +70,12 @@ namespace GitTrends
             return notificationService.SetAppBadgeCount(0);
         }
 
-        void InitializeEssentialServices()
+        async void InitializeEssentialServices()
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
 
             var themeService = scope.Resolve<ThemeService>();
-            themeService.Initialize();
+            await themeService.Initialize().ConfigureAwait(false);
 
             var notificationService = DependencyService.Resolve<INotificationService>();
             notificationService.Initialize();

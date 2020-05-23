@@ -1,5 +1,5 @@
 ﻿using GitTrends.Mobile.Shared;
-using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 
@@ -7,7 +7,7 @@ namespace GitTrends
 {
     class CopyrightLabel : Label
     {
-        public CopyrightLabel()
+        public CopyrightLabel(IVersionTracking versionTracking)
         {
             this.BindTapGesture(nameof(SettingsViewModel.CopyrightLabelTappedCommand));
 
@@ -29,11 +29,11 @@ namespace GitTrends
             Opacity = 0.85;
 
 #if DEBUG
-            var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Debug)";
+            var versionNumberText = $"Version {versionTracking.CurrentVersion} (Debug)";
 #elif RELEASE
-            var versionNumberText = $"Version {VersionTracking.CurrentVersion} (Release)";
+            var versionNumberText = $"Version {versionTracking.CurrentVersion} (Release)";
 #else
-            var versionNumberText = $"Version {VersionTracking.CurrentVersion}";
+            var versionNumberText = $"Version {versionTracking.CurrentVersion}";
 #endif
 
             Text = $"{versionNumberText}\nCreated by Code Traveler LLC";

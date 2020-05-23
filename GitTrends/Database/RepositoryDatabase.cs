@@ -4,20 +4,24 @@ using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using SQLite;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
     public class RepositoryDatabase : BaseDatabase
     {
-        protected override TimeSpan Expiration { get; } = TimeSpan.FromDays(90);
+        public RepositoryDatabase(IFileSystem fileSystem) : base(fileSystem, TimeSpan.FromDays(90))
+        {
 
-        public async Task DeleteAllData()
+        }
+
+        public override async Task<int> DeleteAllData()
         {
             var (repositoryDatabaseConnection, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection) = await GetDatabaseConnections().ConfigureAwait(false);
 
-            await AttemptAndRetry(() => repositoryDatabaseConnection.DeleteAllAsync<RepositoryDatabaseModel>()).ConfigureAwait(false);
             await AttemptAndRetry(() => dailyViewsDatabaseConnection.DeleteAllAsync<DailyViewsDatabaseModel>()).ConfigureAwait(false);
             await AttemptAndRetry(() => dailyClonesDatabaseConnection.DeleteAllAsync<DailyClonesDatabaseModel>()).ConfigureAwait(false);
+            return await AttemptAndRetry(() => repositoryDatabaseConnection.DeleteAllAsync<RepositoryDatabaseModel>()).ConfigureAwait(false);
         }
 
         public async Task DeleteExpiredData()
@@ -27,8 +31,8 @@ namespace GitTrends
             var dailyClones = await dailyClonesDatabaseConnection.Table<DailyClonesDatabaseModel>().ToListAsync();
             var dailyViews = await dailyViewsDatabaseConnection.Table<DailyViewsDatabaseModel>().ToListAsync();
 
-            var expiredDailyClones = dailyClones.Where(x => IsExpired(x.DownloadedAt));
-            var expiredDailyViews = dailyViews.Where(x => IsExpired(x.DownloadedAt));
+            var expiredDailyClones = dailyClones.Where(x => IsExpired(x.DownloadedAt)).ToList();
+            var expiredDailyViews = dailyViews.Where(x => IsExpired(x.DownloadedAt)).ToList();
 
             foreach (var expiredDailyClone in expiredDailyClones)
                 await dailyClonesDatabaseConnection.DeleteAsync(expiredDailyClone).ConfigureAwait(false);
@@ -81,7 +85,7 @@ namespace GitTrends
         }
 
 
-        static async Task<(SQLiteAsyncConnection RepositoryDatabaseConnection,
+        async Task<(SQLiteAsyncConnection RepositoryDatabaseConnection,
                         SQLiteAsyncConnection DailyClonesDatabaseConnection,
                         SQLiteAsyncConnection DailyViewsDatabaseConnection)> GetDatabaseConnections()
         {
@@ -92,7 +96,7 @@ namespace GitTrends
             return (repositoryDatabaseConnection, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection);
         }
 
-        static async Task SaveDailyClones(Repository repository)
+        async Task SaveDailyClones(Repository repository)
         {
             var dailyClonesDatabaseConnection = await GetDatabaseConnection<DailyClonesDatabaseModel>().ConfigureAwait(false);
 
@@ -103,7 +107,7 @@ namespace GitTrends
             }
         }
 
-        static async Task SaveDailyViews(Repository repository)
+        async Task SaveDailyViews(Repository repository)
         {
             var dailyViewsDatabaseConnection = await GetDatabaseConnection<DailyViewsDatabaseModel>().ConfigureAwait(false);
 
@@ -117,6 +121,10 @@ namespace GitTrends
         class DailyClonesDatabaseModel : IDailyClonesModel
         {
             public DateTime LocalDay => Day.LocalDateTime;
+
+            //PrimaryKey must be nullable https://github.com/praeclarum/sqlite-net/issues/327
+            [PrimaryKey]
+            public int? Id { get; set; }
 
             [Indexed]
             public string RepositoryUrl { get; set; } = string.Empty;
@@ -148,6 +156,10 @@ namespace GitTrends
         class DailyViewsDatabaseModel : IDailyViewsModel
         {
             public DateTime LocalDay => Day.LocalDateTime;
+
+            //PrimaryKey must be nullable https://github.com/praeclarum/sqlite-net/issues/327
+            [PrimaryKey]
+            public int? Id { get; set; }
 
             [Indexed]
             public string RepositoryUrl { get; set; } = string.Empty;

@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Shared;
-using Xamarin.Essentials;
+using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -10,13 +13,19 @@ namespace GitTrends
     public class ThemeService
     {
         readonly static WeakEventManager<PreferredTheme> _preferenceChangedEventManager = new WeakEventManager<PreferredTheme>();
-        readonly AnalyticsService _analyticsService;
 
-        public ThemeService(AnalyticsService analyticsService)
+        readonly IPreferences _preferences;
+        readonly IAnalyticsService _analyticsService;
+        readonly IMainThread _mainThread;
+
+        public ThemeService(IAnalyticsService analyticsService, IPreferences preferences, IMainThread mainThread)
         {
+            _mainThread = mainThread;
+            _preferences = preferences;
             _analyticsService = analyticsService;
 
-            Application.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
+            if (Application.Current != null)
+                Application.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
         }
 
         public static event EventHandler<PreferredTheme> PreferenceChanged
@@ -27,19 +36,19 @@ namespace GitTrends
 
         public PreferredTheme Preference
         {
-            get => (PreferredTheme)Preferences.Get(nameof(Preference), (int)PreferredTheme.Default);
+            get => (PreferredTheme)_preferences.Get(nameof(Preference), (int)PreferredTheme.Default);
             set
             {
-                Preferences.Set(nameof(Preference), (int)value);
-                SetAppTheme(value);
+                _preferences.Set(nameof(Preference), (int)value);
+                SetAppTheme(value).SafeFireAndForget();
             }
         }
 
-        public void Initialize() => SetAppTheme(Preference);
+        public Task Initialize() => SetAppTheme(Preference);
 
-        void SetAppTheme(PreferredTheme preferredTheme)
+        Task SetAppTheme(PreferredTheme preferredTheme) => _mainThread.InvokeOnMainThreadAsync(() =>
         {
-            BaseTheme theme = preferredTheme switch
+            var theme = preferredTheme switch
             {
                 PreferredTheme.Dark => new DarkTheme(),
                 PreferredTheme.Light => new LightTheme(),
@@ -49,15 +58,19 @@ namespace GitTrends
 
             if (Application.Current.Resources.GetType() != theme.GetType())
             {
-                _analyticsService.Track("Theme Changed", nameof(PreferredTheme), preferredTheme.ToString());
-
                 Application.Current.Resources = theme;
+
+                _analyticsService.Track("Theme Changed", new Dictionary<string, string>
+                {
+                    { nameof(PreferredTheme), preferredTheme.ToString() },
+                    { nameof(Application.Current.RequestedTheme), Application.Current.RequestedTheme.ToString() }
+                });
 
                 OnPreferenceChanged(preferredTheme);
 
                 EnableDebugRainbows(false);
             }
-        }
+        });
 
         [Conditional("DEBUG")]
         void EnableDebugRainbows(bool shouldUseDebugRainbows)
@@ -80,12 +93,12 @@ namespace GitTrends
             });
         }
 
-        void HandleRequestedThemeChanged(object sender, AppThemeChangedEventArgs e)
+        async void HandleRequestedThemeChanged(object sender, AppThemeChangedEventArgs e)
         {
             if (Preference is PreferredTheme.Default)
-                SetAppTheme(PreferredTheme.Default);
+                await SetAppTheme(PreferredTheme.Default);
         }
 
-        void OnPreferenceChanged(PreferredTheme theme) => _preferenceChangedEventManager.HandleEvent(this, theme, nameof(PreferenceChanged));
+        void OnPreferenceChanged(PreferredTheme theme) => _mainThread.InvokeOnMainThreadAsync(() => _preferenceChangedEventManager.HandleEvent(this, theme, nameof(PreferenceChanged)));
     }
 }

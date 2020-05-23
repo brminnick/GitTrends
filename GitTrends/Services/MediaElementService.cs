@@ -4,25 +4,32 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using GitTrends.Shared;
 using Newtonsoft.Json;
-using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
     public class MediaElementService
     {
         readonly AzureFunctionsApiService _azureFunctionsApiService;
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
+        readonly IPreferences _preferences;
 
-        public MediaElementService(AzureFunctionsApiService azureFunctionsApiService, AnalyticsService analyticsService) =>
-            (_azureFunctionsApiService, _analyticsService) = (azureFunctionsApiService, analyticsService);
+        public MediaElementService(AzureFunctionsApiService azureFunctionsApiService,
+                                    IAnalyticsService analyticsService,
+                                    IPreferences preferences)
+        {
+            _azureFunctionsApiService = azureFunctionsApiService;
+            _analyticsService = analyticsService;
+            _preferences = preferences;
+        }
 
-        public static StreamingManifest? OnboardingChart
+        public StreamingManifest? OnboardingChart
         {
             get
             {
                 try
                 {
-                    return JsonConvert.DeserializeObject<StreamingManifest?>(Preferences.Get(nameof(OnboardingChart), null));
+                    return JsonConvert.DeserializeObject<StreamingManifest?>(_preferences.Get(nameof(OnboardingChart), null));
                 }
                 catch (ArgumentNullException)
                 {
@@ -47,7 +54,7 @@ namespace GitTrends
                 try
                 {
                     var chartVideoStreamingUrl = await _azureFunctionsApiService.GetChartStreamingUrl(cancellationToken).ConfigureAwait(false);
-                    Preferences.Set(nameof(OnboardingChart), JsonConvert.SerializeObject(chartVideoStreamingUrl));
+                    _preferences.Set(nameof(OnboardingChart), JsonConvert.SerializeObject(chartVideoStreamingUrl));
                 }
                 catch (Exception e)
                 {

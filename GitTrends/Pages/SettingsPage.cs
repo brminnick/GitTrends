@@ -3,7 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
 using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -18,7 +20,9 @@ namespace GitTrends
 
         public SettingsPage(SettingsViewModel settingsViewModel,
                             TrendsChartSettingsService trendsChartSettingsService,
-                            AnalyticsService analyticsService) : base(settingsViewModel, analyticsService, PageTitles.SettingsPage, true)
+                            IAnalyticsService analyticsService,
+                            IMainThread mainThread,
+                            IVersionTracking versionTracking) : base(settingsViewModel, analyticsService, mainThread, PageTitles.SettingsPage, true)
         {
             const int separatorRowHeight = 1;
             const int settingsRowHeight = 38;
@@ -79,7 +83,7 @@ namespace GitTrends
 
                         new PreferredChartsView(trendsChartSettingsService).Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
 
-                        new CopyrightLabel().Row(Row.Copyright).ColumnSpan(All<Column>())
+                        new CopyrightLabel(versionTracking).Row(Row.Copyright).ColumnSpan(All<Column>())
                     }
                 }
             };

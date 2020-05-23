@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
+using GitTrends.Shared;
 using HtmlAgilityPack;
 using Xamarin.Forms;
 
@@ -16,18 +17,23 @@ namespace GitTrends
     public class FavIconService
     {
         static readonly Lazy<HttpClient> _clientHolder = new Lazy<HttpClient>(new HttpClient { Timeout = TimeSpan.FromSeconds(10) });
+        readonly IAnalyticsService _analyticsService;
+
+        public FavIconService(IAnalyticsService analyticsService) => _analyticsService = analyticsService;
 
         public static string DefaultFavIcon => BaseTheme.GetDefaultReferringSiteImageSource();
 
         static HttpClient Client => _clientHolder.Value;
 
-        public static async Task<ImageSource> GetFavIconImageSource(Uri site, CancellationToken cancellationToken)
+        public async Task<ImageSource> GetFavIconImageSource(Uri site, CancellationToken cancellationToken)
         {
+            var scheme = site.Scheme is "http" ? "https" : site.Scheme;
+
             string baseUrl = string.Empty;
 
             try
             {
-                baseUrl = $"{site.Scheme}://{GetRootDomain(site.Host)}/";
+                baseUrl = $"{scheme}://{GetRootDomain(site.Host)}/";
                 var response = await Client.GetAsync(baseUrl, cancellationToken).ConfigureAwait(false);
 
                 var html = await GetHtml(response).ConfigureAwait(false);
@@ -60,8 +66,7 @@ namespace GitTrends
             }
             catch (Exception e)
             {
-                using var scope = ContainerService.Container.BeginLifetimeScope();
-                scope.Resolve<AnalyticsService>().Report(e, new Dictionary<string, string>
+                _analyticsService.Report(e, new Dictionary<string, string>
                 {
                     { nameof(baseUrl), baseUrl },
                     { nameof(site), site.ToString() }

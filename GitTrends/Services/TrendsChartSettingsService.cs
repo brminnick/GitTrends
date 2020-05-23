@@ -1,14 +1,17 @@
 ﻿using System;
 using GitTrends.Mobile.Shared;
-using Xamarin.Essentials;
+using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
     public class TrendsChartSettingsService
     {
-        readonly AnalyticsService _analyticsService;
+        readonly IPreferences _preferences;
+        readonly IAnalyticsService _analyticsService;
 
-        public TrendsChartSettingsService(AnalyticsService analyticsService) => _analyticsService = analyticsService;
+        public TrendsChartSettingsService(IAnalyticsService analyticsService, IPreferences preferences) =>
+            (_analyticsService, _preferences) = (analyticsService, preferences);
 
         public TrendsChartOption CurrentTrendsChartOption
         {
@@ -18,26 +21,26 @@ namespace GitTrends
 
         public bool ShouldShowClonesByDefault
         {
-            get => Preferences.Get(nameof(ShouldShowClonesByDefault), true);
-            set => Preferences.Set(nameof(ShouldShowClonesByDefault), value);
+            get => _preferences.Get(nameof(ShouldShowClonesByDefault), true);
+            set => _preferences.Set(nameof(ShouldShowClonesByDefault), value);
         }
 
         public bool ShouldShowUniqueClonesByDefault
         {
-            get => Preferences.Get(nameof(ShouldShowUniqueClonesByDefault), true);
-            set => Preferences.Set(nameof(ShouldShowUniqueClonesByDefault), value);
+            get => _preferences.Get(nameof(ShouldShowUniqueClonesByDefault), true);
+            set => _preferences.Set(nameof(ShouldShowUniqueClonesByDefault), value);
         }
 
         public bool ShouldShowViewsByDefault
         {
-            get => Preferences.Get(nameof(ShouldShowViewsByDefault), true);
-            set => Preferences.Set(nameof(ShouldShowViewsByDefault), value);
+            get => _preferences.Get(nameof(ShouldShowViewsByDefault), true);
+            set => _preferences.Set(nameof(ShouldShowViewsByDefault), value);
         }
 
         public bool ShouldShowUniqueViewsByDefault
         {
-            get => Preferences.Get(nameof(ShouldShowUniqueViewsByDefault), true);
-            set => Preferences.Set(nameof(ShouldShowUniqueViewsByDefault), value);
+            get => _preferences.Get(nameof(ShouldShowUniqueViewsByDefault), true);
+            set => _preferences.Set(nameof(ShouldShowUniqueViewsByDefault), value);
         }
 
         TrendsChartOption GetCurrentTrendsChartOption()

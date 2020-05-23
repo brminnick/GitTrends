@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using GitTrends.Mobile.Shared;
-using Xamarin.Essentials;
+using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -10,8 +11,10 @@ namespace GitTrends
 {
     public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
     {
-        public ConnectToGitHubOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService, AnalyticsService analyticsService)
-                : base(analyticsService, Color.FromHex(BaseTheme.CoralColorHex), OnboardingConstants.TryDemoText, 3)
+        public ConnectToGitHubOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService,
+                                                IAnalyticsService analyticsService,
+                                                IMainThread mainthread)
+                : base(analyticsService, mainthread, Color.FromHex(BaseTheme.CoralColorHex), OnboardingConstants.TryDemoText, 3)
         {
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
         }
@@ -40,11 +43,11 @@ namespace GitTrends
             Children =
             {
                 new BodyLabel("Get started by connecting your GitHub account, or try demo mode to tour GitTrends!").Row(Row.Description),
-                new ConnectToGitHubView(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None, new BrowserLaunchOptions
+                new ConnectToGitHubView(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None, new Xamarin.Essentials.BrowserLaunchOptions
                 {
                     PreferredControlColor = Color.White,
                     PreferredToolbarColor = Color.FromHex(BaseTheme.CoralColorHex).MultiplyAlpha(0.75),
-                    Flags = BrowserLaunchFlags.PresentAsFormSheet,
+                    Flags = Xamarin.Essentials.BrowserLaunchFlags.PresentAsFormSheet,
                 }).Row(Row.Button),
                 new IsAuthenticatingIndicator().Row(Row.ActivityIndicator)
             }

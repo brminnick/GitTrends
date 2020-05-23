@@ -12,9 +12,9 @@ namespace GitTrends
         readonly static Lazy<string> _syncfusionLicenseKeyHolder = new Lazy<string>(() => $"{nameof(SyncFusionDTO.LicenseKey)}{_assemblyVersionNumberHolder.Value}");
 
         readonly AzureFunctionsApiService _azureFunctionsApiService;
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
 
-        public SyncFusionService(AzureFunctionsApiService azureFunctionsApiService, AnalyticsService analyticsService) =>
+        public SyncFusionService(AzureFunctionsApiService azureFunctionsApiService, IAnalyticsService analyticsService) =>
            (_azureFunctionsApiService, _analyticsService) = (azureFunctionsApiService, analyticsService);
 
         public static long AssemblyVersionNumber => _assemblyVersionNumberHolder.Value;

@@ -1,5 +1,4 @@
 ﻿using System.Threading;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
@@ -8,7 +7,7 @@ namespace GitTrends
 {
     class ConnectToGitHubView : PancakeView
     {
-        public ConnectToGitHubView(in string automationId, CancellationToken cancellationToken, BrowserLaunchOptions? browserLaunchOptions = null)
+        public ConnectToGitHubView(in string automationId, CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions = null)
         {
             AutomationId = automationId;
             HorizontalOptions = LayoutOptions.CenterAndExpand;

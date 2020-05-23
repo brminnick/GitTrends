@@ -7,6 +7,7 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Autofac;
+using GitTrends.Shared;
 using Newtonsoft.Json;
 using Shiny;
 using Xamarin.Forms;
@@ -65,7 +66,7 @@ namespace GitTrends.Droid
             }
             catch (Exception ex)
             {
-                containerScope.Resolve<AnalyticsService>().Report(ex);
+                containerScope.Resolve<IAnalyticsService>().Report(ex);
             }
         }
 
@@ -78,7 +79,7 @@ namespace GitTrends.Droid
                     var notification = JsonConvert.DeserializeObject<Shiny.Notifications.Notification>(notificationString);
 
                     using var scope = ContainerService.Container.BeginLifetimeScope();
-                    var analyticsService = scope.Resolve<AnalyticsService>();
+                    var analyticsService = scope.Resolve<IAnalyticsService>();
 
                     var notificationService = scope.Resolve<NotificationService>();
 

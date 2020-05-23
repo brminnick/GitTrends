@@ -4,25 +4,26 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
     public class BackgroundFetchService
     {
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly RepositoryDatabase _repositoryDatabase;
         readonly NotificationService _notificationService;
         readonly ReferringSitesDatabase _referringSitesDatabase;
+        readonly GitHubUserService _gitHubUserService;
 
-        public BackgroundFetchService(AnalyticsService analyticsService,
+        public BackgroundFetchService(IAnalyticsService analyticsService,
                                         GitHubApiV3Service gitHubApiV3Service,
                                         GitHubGraphQLApiService gitHubGraphQLApiService,
                                         RepositoryDatabase repositoryDatabase,
                                         ReferringSitesDatabase referringSitesDatabase,
-                                        NotificationService notificationService)
+                                        NotificationService notificationService,
+                                        GitHubUserService gitHubUserService)
         {
             _analyticsService = analyticsService;
             _gitHubApiV3Service = gitHubApiV3Service;
@@ -30,6 +31,7 @@ namespace GitTrends
             _repositoryDatabase = repositoryDatabase;
             _notificationService = notificationService;
             _referringSitesDatabase = referringSitesDatabase;
+            _gitHubUserService = gitHubUserService;
         }
 
         public static string NotifyTrendingRepositoriesIdentifier { get; } = $"{Xamarin.Essentials.AppInfo.PackageName}.{nameof(NotifyTrendingRepositories)}";
@@ -48,6 +50,9 @@ namespace GitTrends
             {
                 using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(NotifyTrendingRepositories)} Triggered");
 
+                if (!_gitHubUserService.IsAuthenticated || _gitHubUserService.IsDemoUser)
+                    return false;
+
                 var trendingRepositories = await GetTrendingRepositories(cancellationToken).ConfigureAwait(false);
                 await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
 
@@ -62,18 +67,18 @@ namespace GitTrends
 
         async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
         {
-            if (!GitHubAuthenticationService.IsDemoUser && !string.IsNullOrEmpty(GitHubAuthenticationService.Alias))
+            if (!_gitHubUserService.IsDemoUser && !string.IsNullOrEmpty(_gitHubUserService.Alias))
             {
                 var retrievedRepositoryList = new List<Repository>();
-                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(GitHubAuthenticationService.Alias, cancellationToken).ConfigureAwait(false))
+                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(_gitHubUserService.Alias, cancellationToken).ConfigureAwait(false))
                 {
                     retrievedRepositoryList.AddRange(retrievedRepositories);
                 }
 
-                var retrievedRepositoryList_NoDuplicatesNoForks = RepositoryService.RemoveForksAndDuplicates(retrievedRepositoryList).ToList();
+                var retrievedRepositoryList_NoDuplicatesNoForks = RepositoryService.RemoveForksAndDuplicates(retrievedRepositoryList);
 
                 var trendingRepositories = new List<Repository>();
-                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(retrievedRepositoryList_NoDuplicatesNoForks, cancellationToken).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(retrievedRepositoryList_NoDuplicatesNoForks.ToList(), cancellationToken).ConfigureAwait(false))
                 {
                     try
                     {

@@ -4,18 +4,21 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
-using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
 {
     public abstract class BaseMobileApiService : BaseApiService
     {
+        readonly IMainThread _mainThread;
+
         static int _networkIndicatorCount;
 
-        protected BaseMobileApiService(AnalyticsService analyticsService) => AnalyticsService = analyticsService;
+        protected BaseMobileApiService(IAnalyticsService analyticsService, IMainThread mainThread) =>
+            (AnalyticsService, _mainThread) = (analyticsService, mainThread);
 
-        protected AnalyticsService AnalyticsService { get; }
+        protected IAnalyticsService AnalyticsService { get; }
 
         protected string GetGitHubBearerTokenHeader(GitHubToken token) => $"{token.TokenType} {token.AccessToken}";
 
@@ -34,19 +37,19 @@ namespace GitTrends
             }
         }
 
-        static async ValueTask UpdateActivityIndicatorStatus(bool isActivityIndicatorDisplayed)
+        async ValueTask UpdateActivityIndicatorStatus(bool isActivityIndicatorDisplayed)
         {
             if (isActivityIndicatorDisplayed)
             {
                 _networkIndicatorCount++;
 
-                await MainThread.InvokeOnMainThreadAsync(() => setIsBusy(true)).ConfigureAwait(false);
+                await _mainThread.InvokeOnMainThreadAsync(() => setIsBusy(true)).ConfigureAwait(false);
             }
             else if (--_networkIndicatorCount <= 0)
             {
                 _networkIndicatorCount = 0;
 
-                await MainThread.InvokeOnMainThreadAsync(() => setIsBusy(false)).ConfigureAwait(false);
+                await _mainThread.InvokeOnMainThreadAsync(() => setIsBusy(false)).ConfigureAwait(false);
             }
 
             static void setIsBusy(bool isBusy)

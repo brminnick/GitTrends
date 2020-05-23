@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using GitTrends.Shared;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 
 namespace GitTrends
 {
-    public class AnalyticsService
+    public class AnalyticsService : IAnalyticsService
     {
 #if AppStore
         const string _iOSKey = "7baad29b-66fa-4c52-8533-217c11595714";
@@ -101,11 +102,6 @@ namespace GitTrends
                 Data.Add("Timed Event", $"{_stopwatch.Elapsed:ss\\.fff}s");
                 Analytics.TrackEvent($"{_trackIdentifier} [Timed Event]", Data);
             }
-        }
-
-        public interface ITimedEvent : IDisposable
-        {
-            IDictionary<string, string> Data { get; }
         }
     }
 }

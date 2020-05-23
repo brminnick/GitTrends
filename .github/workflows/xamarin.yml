@@ -13,13 +13,20 @@ jobs:
     Android:
       runs-on: macos-latest
       env:
-        AppCenterApiToken: ${{ secrets.AppCenterApiToken }}
+        UITestTokenApiKey: ${{ secrets.UITestTokenApiKey }}
+        GetSyncFusionInformationApiKey: ${{ secrets.GetSyncFusionInformationApiKey }}
+        GetNotificationHubInformationApiKey: ${{ secrets.GetNotificationHubInformationApiKey }}
+        APPCENTER_SOURCE_DIRECTORY: "./"
       steps:
       - uses: actions/checkout@v1
       - name: Android
         run: |
           nuget restore
-          msbuild GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release     
+          
+          chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
+          ./GitTrends.Android/appcenter-pre-build.sh
+          
+          msbuild ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release     
 
 # Ignore iOS until GitHub Actions adds iOS Certificates & Provisioning Profiles
 #    iOS:

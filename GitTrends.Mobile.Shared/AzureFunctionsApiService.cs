@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using GitTrends.Shared;
 using Refit;
 
-namespace GitTrends.UITests
+namespace GitTrends.Mobile.Shared
 {
-    abstract class AzureFunctionsApiService : BaseApiService
+    public abstract class AzureFunctionsApiService : BaseApiService
     {
         readonly static Lazy<IAzureFunctionsApi> _azureFunctionsApiClientHolder = new Lazy<IAzureFunctionsApi>(() => RestService.For<IAzureFunctionsApi>(CreateHttpClient(AzureConstants.AzureFunctionsApiUrl)));
 

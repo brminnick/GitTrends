@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Shared;
-using Xamarin.Essentials;
+using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -12,14 +13,20 @@ namespace GitTrends
         readonly WeakEventManager<ReviewRequest> _reviewCompletedEventManager = new WeakEventManager<ReviewRequest>();
         readonly WeakEventManager _reviewPromptRequestedEventManager = new WeakEventManager();
 
-        readonly AnalyticsService _analyticsService;
+        readonly IAppInfo _appInfo;
+        readonly IPreferences _preferences;
+        readonly IAnalyticsService _analyticsService;
 
-        public ReviewService(AnalyticsService analyticsService)
+        public ReviewService(IAnalyticsService analyticsService,
+                                IPreferences preferences,
+                                IAppInfo appInfo)
         {
+            _appInfo = appInfo;
+            _preferences = preferences;
             _analyticsService = analyticsService;
 
             if (AppInstallDate == default)
-                Preferences.Set(nameof(AppInstallDate), DateTime.UtcNow);
+                preferences.Set(nameof(AppInstallDate), DateTime.UtcNow);
         }
 
         public event EventHandler ReviewRequested
@@ -60,24 +67,24 @@ namespace GitTrends
 
         public ReviewState CurrentState { get; private set; } = ReviewState.Greeting;
 
-        DateTime AppInstallDate => Preferences.Get(nameof(AppInstallDate), default(DateTime));
+        DateTime AppInstallDate => _preferences.Get(nameof(AppInstallDate), default(DateTime));
 
         int ReviewRequests
         {
-            get => Preferences.Get(nameof(ReviewRequests), 0);
-            set => Preferences.Set(nameof(ReviewRequests), value);
+            get => _preferences.Get(nameof(ReviewRequests), 0);
+            set => _preferences.Set(nameof(ReviewRequests), value);
         }
 
         DateTime MostRecentRequestDate
         {
-            get => Preferences.Get(nameof(MostRecentRequestDate), default(DateTime));
-            set => Preferences.Set(nameof(MostRecentRequestDate), value);
+            get => _preferences.Get(nameof(MostRecentRequestDate), default(DateTime));
+            set => _preferences.Set(nameof(MostRecentRequestDate), value);
         }
 
         string MostRecentReviewedBuildString
         {
-            get => Preferences.Get(nameof(MostRecentReviewedBuildString), string.Empty);
-            set => Preferences.Set(nameof(MostRecentReviewedBuildString), value);
+            get => _preferences.Get(nameof(MostRecentReviewedBuildString), string.Empty);
+            set => _preferences.Set(nameof(MostRecentReviewedBuildString), value);
         }
 
         public void UpdateState(in ReviewAction action)
@@ -114,7 +121,7 @@ namespace GitTrends
                 else
                     OnReviewRequested();
 
-                MostRecentReviewedBuildString = AppInfo.BuildString;
+                MostRecentReviewedBuildString = _appInfo.BuildString;
                 MostRecentRequestDate = DateTime.UtcNow;
             }
             else
@@ -126,7 +133,7 @@ namespace GitTrends
         bool ShouldDisplayReviewRequest()
         {
             return ReviewRequests > 20
-                    && MostRecentReviewedBuildString != AppInfo.BuildString
+                    && MostRecentReviewedBuildString != _appInfo.BuildString
                     && DateTime.Compare(AppInstallDate.Add(TimeSpan.FromDays(14)), DateTime.UtcNow) < 1
                     && DateTime.Compare(MostRecentRequestDate.Add(TimeSpan.FromDays(90)), DateTime.UtcNow) < 1;
         }

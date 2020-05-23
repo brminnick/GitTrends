@@ -2,7 +2,7 @@
 
 namespace GitTrends.Mobile.Shared
 {
-    static class DemoDataConstants
+    public static class DemoDataConstants
     {
         public const string Alias = "Demo";
         public const string Name = "Demo User";

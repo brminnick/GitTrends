@@ -8,7 +8,7 @@ using AsyncAwaitBestPractices.MVVM;
 using Autofac;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
-using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 
@@ -19,12 +19,19 @@ namespace GitTrends
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
         readonly RefreshView _refreshView;
         readonly DeepLinkingService _deepLinkingService;
+        readonly FirstRunService _firstRunService;
+        readonly GitHubUserService _gitHubUserService;
 
         public RepositoryPage(RepositoryViewModel repositoryViewModel,
-                                AnalyticsService analyticsService,
+                                IAnalyticsService analyticsService,
                                 SortingService sortingService,
-                                DeepLinkingService deepLinkingService) : base(repositoryViewModel, analyticsService, PageTitles.RepositoryPage)
+                                DeepLinkingService deepLinkingService,
+                                IMainThread mainThread,
+                                FirstRunService firstRunService,
+                                GitHubUserService gitHubUserService) : base(repositoryViewModel, analyticsService, mainThread, PageTitles.RepositoryPage)
         {
+            _firstRunService = firstRunService;
+            _gitHubUserService = gitHubUserService;
             _deepLinkingService = deepLinkingService;
 
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
@@ -105,9 +112,9 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            var token = await GitHubAuthenticationService.GetGitHubToken();
+            var token = await _gitHubUserService.GetGitHubToken();
 
-            if (!FirstRunService.IsFirstRun && shouldShowWelcomePage(Navigation, token.AccessToken))
+            if (!_firstRunService.IsFirstRun && shouldShowWelcomePage(Navigation, token.AccessToken))
             {
                 using var scope = ContainerService.Container.BeginLifetimeScope();
                 var welcomePage = scope.Resolve<WelcomePage>();
@@ -116,7 +123,7 @@ namespace GitTrends
                 await Task.Delay(TimeSpan.FromMilliseconds(250));
                 await Navigation.PushModalAsync(welcomePage);
             }
-            else if (!FirstRunService.IsFirstRun
+            else if (!_firstRunService.IsFirstRun
                         && isUserValid(token.AccessToken)
                         && _refreshView.Content is CollectionView collectionView
                         && IsNullOrEmpty(collectionView.ItemsSource))
@@ -124,14 +131,14 @@ namespace GitTrends
                 _refreshView.IsRefreshing = true;
             }
 
-            static bool shouldShowWelcomePage(in INavigation navigation, in string accessToken)
+            bool shouldShowWelcomePage(in INavigation navigation, in string accessToken)
             {
                 return !navigation.ModalStack.Any()
-                        && GitHubAuthenticationService.Alias != DemoDataConstants.Alias
+                        && _gitHubUserService.Alias != DemoDataConstants.Alias
                         && !isUserValid(accessToken);
             }
 
-            static bool isUserValid(in string accessToken) => !string.IsNullOrWhiteSpace(accessToken) || !string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias);
+            bool isUserValid(in string accessToken) => !string.IsNullOrWhiteSpace(accessToken) || !string.IsNullOrWhiteSpace(_gitHubUserService.Alias);
 
             static bool IsNullOrEmpty(in IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
         }

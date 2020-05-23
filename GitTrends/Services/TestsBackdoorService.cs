@@ -5,47 +5,62 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Syncfusion.SfChart.XForms;
-using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class UITestBackdoorService
+    public class TestsBackdoorService
     {
+        readonly static WeakEventManager<Page> _pagePoppedEventManager = new WeakEventManager<Page>();
+
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly TrendsChartSettingsService _trendsChartSettingsService;
         readonly NotificationService _notificationService;
         readonly ThemeService _themeService;
+        readonly GitHubUserService _gitHubUserService;
+        readonly IMainThread _mainThread;
 
-        public UITestBackdoorService(GitHubAuthenticationService gitHubAuthenticationService,
+        public TestsBackdoorService(GitHubAuthenticationService gitHubAuthenticationService,
                                         NotificationService notificationService,
                                         GitHubGraphQLApiService gitHubGraphQLApiService,
                                         TrendsChartSettingsService trendsChartSettingsService,
-                                        ThemeService themeService)
+                                        ThemeService themeService,
+                                        GitHubUserService gitHubUserService,
+                                        IMainThread mainThread)
         {
-            _gitHubAuthenticationService = gitHubAuthenticationService;
+            _mainThread = mainThread;
+            _themeService = themeService;
+            _gitHubUserService = gitHubUserService;
+            _notificationService = notificationService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _trendsChartSettingsService = trendsChartSettingsService;
-            _notificationService = notificationService;
-            _themeService = themeService;
+            _gitHubAuthenticationService = gitHubAuthenticationService;
+        }
+
+        public static event EventHandler<Page> PagePopped
+        {
+            add => _pagePoppedEventManager.AddEventHandler(value);
+            remove => _pagePoppedEventManager.RemoveEventHandler(value);
         }
 
         public async Task SetGitHubUser(string token, CancellationToken cancellationToken)
         {
-            await _gitHubAuthenticationService.SaveGitHubToken(new GitHubToken(token, string.Empty, "Bearer")).ConfigureAwait(false);
+            await _gitHubUserService.SaveGitHubToken(new GitHubToken(token, string.Empty, "Bearer")).ConfigureAwait(false);
 
             var (alias, name, avatarUri) = await _gitHubGraphQLApiService.GetCurrentUserInfo(cancellationToken).ConfigureAwait(false);
 
-            GitHubAuthenticationService.Alias = alias;
-            GitHubAuthenticationService.AvatarUrl = avatarUri.ToString();
-            GitHubAuthenticationService.Name = name;
+            _gitHubUserService.Alias = alias;
+            _gitHubUserService.AvatarUrl = avatarUri.ToString();
+            _gitHubUserService.Name = name;
         }
 
-        public Task<GitHubToken> GetGitHubToken() => GitHubAuthenticationService.GetGitHubToken();
+        public Task<GitHubToken> GetGitHubToken() => _gitHubUserService.GetGitHubToken();
 
         public void TriggerReviewRequest()
         {
@@ -61,18 +76,20 @@ namespace GitTrends
 
         public bool ShouldSendNotifications() => _notificationService.ShouldSendNotifications;
 
-        public Task TriggerPullToRefresh() => MainThread.InvokeOnMainThreadAsync(() => GetVisibleRefreshView().IsRefreshing = true);
+        public Task TriggerPullToRefresh() => _mainThread.InvokeOnMainThreadAsync(() => GetVisibleRefreshView().IsRefreshing = true);
 
         public IReadOnlyList<T> GetVisibleCollection<T>() => GetVisibleCollection().Cast<T>().ToList();
 
-        public Task PopPage()
+        public async Task PopPage()
         {
-            FirstRunService.IsFirstRun = false;
+            Page pagePopped;
 
             if (GetVisiblePageFromModalStack() is Page page)
-                return page.Navigation.PopModalAsync();
+                pagePopped = await page.Navigation.PopModalAsync();
+            else
+                pagePopped = await GetVisiblePageFromNavigationStack().Navigation.PopAsync();
 
-            return GetVisiblePageFromNavigationStack().Navigation.PopAsync();
+            OnPagePopped(pagePopped);
         }
 
         public IEnumerable GetVisibleCollection()
@@ -120,6 +137,8 @@ namespace GitTrends
         Page? GetVisiblePageFromModalStack() => Application.Current.MainPage.Navigation.ModalStack.LastOrDefault();
 
         Page GetVisiblePageFromNavigationStack() => Application.Current.MainPage.Navigation.NavigationStack.Last();
+
+        void OnPagePopped(Page page) => _pagePoppedEventManager.HandleEvent(this, page, nameof(PagePopped));
     }
 }
 #endif

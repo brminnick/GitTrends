@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
-using Xamarin.Essentials;
+using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
@@ -15,24 +16,29 @@ namespace GitTrends
 
         protected GitHubAuthenticationViewModel(GitHubAuthenticationService gitHubAuthenticationService,
                                                     DeepLinkingService deepLinkingService,
-                                                    AnalyticsService analyticsService) : base(analyticsService)
+                                                    IAnalyticsService analyticsService,
+                                                    IMainThread mainThread,
+                                                    GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
         {
             gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
-            ConnectToGitHubButtonCommand = new AsyncCommand<(CancellationToken CancellationToken, BrowserLaunchOptions? BrowserLaunchOptions)>(tuple => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, tuple.CancellationToken, tuple.BrowserLaunchOptions), _ => IsNotAuthenticating);
+            ConnectToGitHubButtonCommand = new AsyncCommand<(CancellationToken CancellationToken, Xamarin.Essentials.BrowserLaunchOptions? BrowserLaunchOptions)>(tuple => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, gitHubUserService, tuple.CancellationToken, tuple.BrowserLaunchOptions), _ => IsNotAuthenticating);
             DemoButtonCommand = new AsyncCommand<string>(text => ExecuteDemoButtonCommand(text), _ => IsNotAuthenticating);
+
             GitHubAuthenticationService = gitHubAuthenticationService;
+            GitHubUserService = gitHubUserService;
         }
 
-        public IAsyncCommand<(CancellationToken CancellationToken, BrowserLaunchOptions? BrowserLaunchOptions)> ConnectToGitHubButtonCommand { get; }
+        public IAsyncCommand<(CancellationToken CancellationToken, Xamarin.Essentials.BrowserLaunchOptions? BrowserLaunchOptions)> ConnectToGitHubButtonCommand { get; }
         public IAsyncCommand<string> DemoButtonCommand { get; }
 
         public bool IsNotAuthenticating => !IsAuthenticating;
 
-        public virtual bool IsDemoButtonVisible => !IsAuthenticating && GitHubAuthenticationService.Alias != DemoDataConstants.Alias;
+        public virtual bool IsDemoButtonVisible => !IsAuthenticating && GitHubUserService.Alias != DemoDataConstants.Alias;
 
         protected GitHubAuthenticationService GitHubAuthenticationService { get; }
+        protected GitHubUserService GitHubUserService { get; }
 
         public bool IsAuthenticating
         {
@@ -56,7 +62,7 @@ namespace GitTrends
             return Task.CompletedTask;
         }
 
-        protected async virtual Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, CancellationToken cancellationToken, BrowserLaunchOptions? browserLaunchOptions = null)
+        protected async virtual Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, GitHubUserService gitHubUserService, CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions = null)
         {
             IsAuthenticating = true;
 
@@ -84,10 +90,6 @@ namespace GitTrends
         }
 
         void HandleAuthorizeSessionStarted(object sender, EventArgs e) => IsAuthenticating = true;
-        void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
-        {
-            FirstRunService.IsFirstRun = false;
-            IsAuthenticating = false;
-        }
+        void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsAuthenticating = false;
     }
 }

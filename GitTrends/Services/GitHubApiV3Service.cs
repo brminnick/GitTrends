@@ -7,21 +7,23 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Refit;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
     public class GitHubApiV3Service : BaseMobileApiService
     {
         readonly static Lazy<IGitHubApiV3> _githubApiClient = new Lazy<IGitHubApiV3>(() => RestService.For<IGitHubApiV3>(CreateHttpClient(GitHubConstants.GitHubRestApiUrl)));
+        readonly GitHubUserService _gitHubUserService;
 
-        public GitHubApiV3Service(AnalyticsService analyticsService) : base(analyticsService)
+        public GitHubApiV3Service(IAnalyticsService analyticsService, IMainThread mainThread, GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
         {
-
+            _gitHubUserService = gitHubUserService;
         }
 
         static IGitHubApiV3 GithubApiClient => _githubApiClient.Value;
 
-        public async IAsyncEnumerable<Repository> UpdateRepositoriesWithViewsAndClonesData(List<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
+        public async IAsyncEnumerable<Repository> UpdateRepositoriesWithViewsAndClonesData(IReadOnlyList<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsResponseModel, RepositoryClonesResponseModel)>>(repositories.Select(x => getRepositoryStatistics(x)));
 
@@ -59,7 +61,7 @@ namespace GitTrends
 
         public async Task<RepositoryViewsResponseModel> GetRepositoryViewStatistics(string owner, string repo, CancellationToken cancellationToken)
         {
-            if (GitHubAuthenticationService.IsDemoUser)
+            if (_gitHubUserService.IsDemoUser)
             {
                 //Yield off of the main thread to generate dailyViewsModelList
                 await Task.Yield();
@@ -81,7 +83,7 @@ namespace GitTrends
             }
             else
             {
-                var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
+                var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
                 var response = await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryViewStatistics(owner, repo, GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
                 return new RepositoryViewsResponseModel(response.TotalCount, response.TotalUniqueCount, response.DailyViewsList, repo, owner);
@@ -90,7 +92,7 @@ namespace GitTrends
 
         public async Task<RepositoryClonesResponseModel> GetRepositoryCloneStatistics(string owner, string repo, CancellationToken cancellationToken)
         {
-            if (GitHubAuthenticationService.IsDemoUser)
+            if (_gitHubUserService.IsDemoUser)
             {
                 //Yield off of the main thread to generate dailyViewsModelList
                 await Task.Yield();
@@ -109,7 +111,7 @@ namespace GitTrends
             }
             else
             {
-                var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
+                var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
                 var response = await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryCloneStatistics(owner, repo, GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
                 return new RepositoryClonesResponseModel(response.TotalCount, response.TotalUniqueCount, response.DailyClonesList, repo, owner);
@@ -118,7 +120,7 @@ namespace GitTrends
 
         public async Task<IReadOnlyList<ReferringSiteModel>> GetReferringSites(string owner, string repo, CancellationToken cancellationToken)
         {
-            if (GitHubAuthenticationService.IsDemoUser)
+            if (_gitHubUserService.IsDemoUser)
             {
                 //Yield off of main thread to generate MobileReferringSiteModels
                 await Task.Yield();
@@ -134,7 +136,7 @@ namespace GitTrends
             }
             else
             {
-                var token = await GitHubAuthenticationService.GetGitHubToken().ConfigureAwait(false);
+                var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
                 var referringSites = await AttemptAndRetry_Mobile(() => GithubApiClient.GetReferingSites(owner, repo, GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
                 return referringSites;

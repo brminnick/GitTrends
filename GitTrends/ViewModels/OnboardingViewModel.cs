@@ -4,7 +4,9 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
 using Shiny;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
@@ -12,21 +14,26 @@ namespace GitTrends
     {
         readonly WeakEventManager _skipButtonTappedEventManager = new WeakEventManager();
 
-        readonly AnalyticsService _analyticsService;
+        readonly IAnalyticsService _analyticsService;
         readonly NotificationService _notificationService;
+        readonly FirstRunService _firstRunService;
 
         string _notificationStatusSvgImageSource = "";
 
         public OnboardingViewModel(DeepLinkingService deepLinkingService,
                                     GitHubAuthenticationService gitHubAuthenticationService,
                                     NotificationService notificationService,
-                                    AnalyticsService analyticsService)
-                : base(gitHubAuthenticationService, deepLinkingService, analyticsService)
+                                    IAnalyticsService analyticsService,
+                                    IMainThread mainThread,
+                                    FirstRunService firstRunService,
+                                    GitHubUserService gitHubUserService)
+                : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread, gitHubUserService)
         {
             const string defaultNotificationSvg = "bell.svg";
 
             _notificationService = notificationService;
             _analyticsService = analyticsService;
+            _firstRunService = firstRunService;
 
             NotificationStatusSvgImageSource = defaultNotificationSvg;
 
@@ -61,8 +68,6 @@ namespace GitTrends
                 }
                 else if (buttonText is OnboardingConstants.TryDemoText)
                 {
-                    FirstRunService.IsFirstRun = false;
-
                     AnalyticsService.Track("Onboarding Demo Button Tapped");
 
                     //Allow Activity Indicator to run for a minimum of 1500ms
