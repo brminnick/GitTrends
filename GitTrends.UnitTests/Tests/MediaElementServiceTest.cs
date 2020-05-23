@@ -12,8 +12,7 @@ namespace GitTrends.UnitTests
         public async Task InitializeOnboardingChartTest()
         {
             //Arrange
-            StreamingManifest? streamingManifest_BeforeInitialization;
-            StreamingManifest streamingManifest_AfterInitialization;
+            StreamingManifest? streamingManifest_BeforeInitialization, streamingManifest_AfterInitialization;
 
             var mediaElementService = ContainerService.Container.GetService<MediaElementService>();
 
@@ -28,9 +27,9 @@ namespace GitTrends.UnitTests
             Assert.IsNull(streamingManifest_BeforeInitialization);
             Assert.IsNotNull(streamingManifest_AfterInitialization);
 
-            Assert.IsFalse(string.IsNullOrWhiteSpace(streamingManifest_AfterInitialization.HlsUrl));
-            Assert.IsFalse(string.IsNullOrWhiteSpace(streamingManifest_AfterInitialization.ManifestUrl));
-            Assert.IsTrue(streamingManifest_AfterInitialization.HlsUrl.Contains(streamingManifest_AfterInitialization.ManifestUrl));
+            Assert.IsFalse(string.IsNullOrWhiteSpace(streamingManifest_AfterInitialization?.HlsUrl));
+            Assert.IsFalse(string.IsNullOrWhiteSpace(streamingManifest_AfterInitialization?.ManifestUrl));
+            Assert.IsTrue(streamingManifest_AfterInitialization?.HlsUrl.Contains(streamingManifest_AfterInitialization.ManifestUrl));
         }
     }
 }

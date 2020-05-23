@@ -127,24 +127,19 @@ namespace GitTrends.UnitTests
         public async Task NotifyTrendingRepositoriesTest_AuthenticatedUser()
         {
             //Arrange
-            IReadOnlyList<Repository> repositories;
-
             var gitHubUserService = ContainerService.Container.GetService<GitHubUserService>();
             var backgroundFetchService = ContainerService.Container.GetService<BackgroundFetchService>();
             var gitHubGraphQLApiService = ContainerService.Container.GetService<GitHubGraphQLApiService>();
-            var repositoryDatabase = ContainerService.Container.GetService<RepositoryDatabase>();
 
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
             //Act
             var result = await backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
 
-            repositories = new List<Repository>(await repositoryDatabase.GetRepositories().ConfigureAwait(false));
-
             //Assert
             Assert.IsFalse(gitHubUserService.IsDemoUser);
             Assert.IsTrue(gitHubUserService.IsAuthenticated);
-            Assert.AreEqual(repositories.Any(x => x.IsTrending), result);
+            Assert.IsTrue(result);
         }
 
         static Repository CreateExpiredRepository(DateTimeOffset downloadedAt, string repositoryUrl)

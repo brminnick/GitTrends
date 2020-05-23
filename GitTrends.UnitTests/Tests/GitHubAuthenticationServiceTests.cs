@@ -165,7 +165,7 @@ namespace GitTrends.UnitTests
         }
 
         //[Test] Todo
-        public async Task AuthorizeSessionTest()
+        public void AuthorizeSessionTest()
         {
             throw new NotImplementedException();
         }
