@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using AVFoundation;
 using AVKit;
+using CoreGraphics;
 using CoreMedia;
 using Foundation;
 using GitTrends;
@@ -14,11 +15,15 @@ namespace GitTrends.iOS
 {
     public class MediaElementCustomRenderer : ViewRenderer<VideoPlayerView, UIView>
     {
-        readonly AVPlayerViewController _avPlayerViewController = new AVPlayerViewController();
-        NSObject? _playedToEndObserver;
+        readonly static AVQueuePlayer _queuePlayer = new AVQueuePlayer
+        {
+            Volume = 0,
+        };
 
-        public MediaElementCustomRenderer() =>
-            _playedToEndObserver = NSNotificationCenter.DefaultCenter.AddObserver(AVPlayerItem.DidPlayToEndTimeNotification, PlayedToEnd);
+        readonly static AVPlayerItem _onboardingChartItem = CreateOnboardingChartItem();
+
+        readonly AVPlayerViewController _avPlayerViewController = new AVPlayerViewController();
+        readonly AVPlayerLooper _avPlayerLooper = CreateAVPlayerLooper();
 
         protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayerView> e)
         {
@@ -33,42 +38,29 @@ namespace GitTrends.iOS
                 _avPlayerViewController.ShowsPlaybackControls = false;
                 _avPlayerViewController.VideoGravity = AVLayerVideoGravity.ResizeAspect;
 
-                using var scope = ContainerService.Container.BeginLifetimeScope();
-                var mediaElementService = scope.Resolve<MediaElementService>();
-
-                var asset = AVUrlAsset.Create(NSUrl.FromString(mediaElementService.OnboardingChart?.HlsUrl));
-
-                var item = new AVPlayerItem(asset);
-
-                _avPlayerViewController.Player = new AVPlayer(item)
-                {
-                    Volume = 0
-                };
-
                 var audioSession = AVAudioSession.SharedInstance();
                 audioSession.SetCategory(AVAudioSession.CategoryPlayback);
                 audioSession.SetMode(AVAudioSession.ModeMoviePlayback, out _);
                 audioSession.SetActive(false);
 
+                _avPlayerViewController.Player = _queuePlayer;
                 _avPlayerViewController.Player.Play();
             }
         }
 
-        protected override void Dispose(bool disposing)
+        static AVPlayerLooper CreateAVPlayerLooper() => new AVPlayerLooper(_queuePlayer, _onboardingChartItem, CMTimeRange.InvalidRange);
+
+        static AVPlayerItem CreateOnboardingChartItem()
         {
-            if (_playedToEndObserver != null)
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var mediaElementService = scope.Resolve<MediaElementService>();
+
+            var asset = AVUrlAsset.Create(NSUrl.FromString(mediaElementService.OnboardingChart?.HlsUrl));
+
+            return new AVPlayerItem(asset)
             {
-                NSNotificationCenter.DefaultCenter.RemoveObserver(_playedToEndObserver);
-                _playedToEndObserver = null;
-            }
-
-            base.Dispose(disposing);
-        }
-
-        void PlayedToEnd(NSNotification notification)
-        {
-            _avPlayerViewController.Player.Seek(CMTime.Zero);
-            _avPlayerViewController.Player.Play();
+                PreferredForwardBufferDuration = 1,
+            };
         }
     }
 }
