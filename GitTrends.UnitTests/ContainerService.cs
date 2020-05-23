@@ -1,7 +1,6 @@
 ﻿using System;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends.UnitTests
@@ -26,6 +25,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<GitHubUserService>();
             services.AddSingleton<FavIconService>();
             services.AddSingleton<FirstRunService>();
+            services.AddSingleton<MediaElementService>();
             services.AddSingleton<NotificationService>();
             services.AddSingleton<ReferringSitesDatabase>();
             services.AddSingleton<RepositoryDatabase>();

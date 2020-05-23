@@ -10,6 +10,7 @@ namespace GitTrends.UnitTests
     {
         const string _scope = GitHubConstants.OAuthScope;
         const string _tokenType = "Bearer";
+
         readonly string _token = Guid.NewGuid().ToString();
 
         [Test]
