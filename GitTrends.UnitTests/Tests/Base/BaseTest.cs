@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Xamarin.Forms;
@@ -40,7 +41,5 @@ namespace GitTrends.UnitTests
             gitHubUserService.Name = name;
             gitHubUserService.AvatarUrl = avatarUri.ToString();
         }
-
-        protected static void InvalidateUser(in GitHubUserService gitHubUserService) => gitHubUserService.InvalidateToken();
     }
 }

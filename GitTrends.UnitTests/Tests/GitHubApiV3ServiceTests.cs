@@ -44,7 +44,7 @@ namespace GitTrends.UnitTests
             var gitHubApiV3Service = ContainerService.Container.GetService<GitHubApiV3Service>();
             var gitHubUserService = ContainerService.Container.GetService<GitHubUserService>();
 
-            InvalidateUser(gitHubUserService);
+            gitHubUserService.InvalidateToken();
 
             //Act
             var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetReferringSites(AuthenticatedGitHubUserLogin, ValidGitHubRepo, CancellationToken.None).ConfigureAwait(false));
@@ -103,7 +103,7 @@ namespace GitTrends.UnitTests
             var gitHubApiV3Service = ContainerService.Container.GetService<GitHubApiV3Service>();
             var gitHubUserService = ContainerService.Container.GetService<GitHubUserService>();
 
-            InvalidateUser(gitHubUserService);
+            gitHubUserService.InvalidateToken();
 
             //Act
             var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryCloneStatistics(AuthenticatedGitHubUserLogin, ValidGitHubRepo, CancellationToken.None).ConfigureAwait(false));
@@ -149,7 +149,7 @@ namespace GitTrends.UnitTests
             var gitHubApiV3Service = ContainerService.Container.GetService<GitHubApiV3Service>();
             var gitHubUserService = ContainerService.Container.GetService<GitHubUserService>();
 
-            InvalidateUser(gitHubUserService);
+            gitHubUserService.InvalidateToken();
 
             //Act
             var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryViewStatistics(AuthenticatedGitHubUserLogin, ValidGitHubRepo, CancellationToken.None).ConfigureAwait(false));
@@ -266,7 +266,7 @@ namespace GitTrends.UnitTests
 
             repositories_NoViewsClonesData_Filtered = RepositoryService.RemoveForksAndDuplicates(repositories_NoViewsClonesData).ToList();
 
-            InvalidateUser(gitHubUserService);
+            gitHubUserService.InvalidateToken();
 
             var exception = Assert.ThrowsAsync<ApiException>(async () =>
             {
