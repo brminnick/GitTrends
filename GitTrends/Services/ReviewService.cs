@@ -19,8 +19,7 @@ namespace GitTrends
 
         public ReviewService(IAnalyticsService analyticsService,
                                 IPreferences preferences,
-                                IAppInfo appInfo,
-                                ISKStoreReviewController skStoreReviewController)
+                                IAppInfo appInfo)
         {
             _appInfo = appInfo;
             _preferences = preferences;

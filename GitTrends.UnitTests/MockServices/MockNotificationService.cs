@@ -16,5 +16,7 @@ namespace GitTrends.UnitTests
             _badgeCount = count;
             return Task.CompletedTask;
         }
+
+        public void Reset() => _areNotificationsEnabled = false;
     }
 }

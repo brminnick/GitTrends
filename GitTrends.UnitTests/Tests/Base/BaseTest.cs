@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using Shiny.Notifications;
 using Xamarin.Forms;
 
 namespace GitTrends.UnitTests
@@ -27,6 +28,13 @@ namespace GitTrends.UnitTests
 
             var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
             await gitHubAuthenticationService.LogOut().ConfigureAwait(false);
+
+            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
+            await notificationService.SetAppBadgeCount(0).ConfigureAwait(false);
+            notificationService.UnRegister();
+
+            var mockNotificationService = (MockNotificationService)ServiceCollection.ServiceProvider.GetService<INotificationService>();
+            mockNotificationService.Reset();
         }
 
         protected static async Task AuthenticateUser(GitHubUserService gitHubUserService, GitHubGraphQLApiService gitHubGraphQLApiService)

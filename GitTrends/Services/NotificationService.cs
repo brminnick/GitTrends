@@ -79,7 +79,7 @@ namespace GitTrends
             private set => _preferences.Set(nameof(ShouldSendNotifications), value);
         }
 
-        bool HaveNotificationsBeenRequested
+        protected bool HaveNotificationsBeenRequested
         {
             get => _preferences.Get(nameof(HaveNotificationsBeenRequested), false);
             set => _preferences.Set(nameof(HaveNotificationsBeenRequested), value);
@@ -142,7 +142,7 @@ namespace GitTrends
             }
         }
 
-        public void UnRegister() => ShouldSendNotifications = false;
+        public virtual void UnRegister() => ShouldSendNotifications = false;
 
         public async Task<AccessState> Register(bool shouldShowSettingsUI)
         {

@@ -20,6 +20,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<AzureFunctionsApiService>();
             services.AddSingleton<BackgroundFetchService>();
             services.AddSingleton<DeepLinkingService>();
+            services.AddSingleton<NotificationService, ExtendedNotificationService>();
             services.AddSingleton<GitHubApiV3Service>();
             services.AddSingleton<GitHubAuthenticationService>();
             services.AddSingleton<GitHubGraphQLApiService>();
@@ -27,7 +28,6 @@ namespace GitTrends.UnitTests
             services.AddSingleton<FavIconService>();
             services.AddSingleton<FirstRunService>();
             services.AddSingleton<MediaElementService>();
-            services.AddSingleton<NotificationService>();
             services.AddSingleton<ReferringSitesDatabase>();
             services.AddSingleton<RepositoryDatabase>();
             services.AddSingleton<SortingService>();
