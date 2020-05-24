@@ -184,6 +184,7 @@ namespace GitTrends.UITests
 
             //Act
             RepositoryPage.TriggerPullToRefresh();
+            await RepositoryPage.WaitForPullToRefreshIndicator().ConfigureAwait(false);
             await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
 
             smallScreenTrendingImageCount = RepositoryPage.SmallScreenTrendingImageCount;

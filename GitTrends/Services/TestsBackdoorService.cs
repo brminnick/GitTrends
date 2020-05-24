@@ -16,7 +16,8 @@ namespace GitTrends
 {
     public class TestsBackdoorService
     {
-        readonly static WeakEventManager<Page> _pagePoppedEventManager = new WeakEventManager<Page>();
+        readonly static WeakEventManager _popPageStartedEventManager = new WeakEventManager();
+        readonly static WeakEventManager<Page> _popPageCompletedEventManager = new WeakEventManager<Page>();
 
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
@@ -43,10 +44,16 @@ namespace GitTrends
             _gitHubAuthenticationService = gitHubAuthenticationService;
         }
 
-        public static event EventHandler<Page> PagePopped
+        public static event EventHandler PopPageStarted
         {
-            add => _pagePoppedEventManager.AddEventHandler(value);
-            remove => _pagePoppedEventManager.RemoveEventHandler(value);
+            add => _popPageStartedEventManager.AddEventHandler(value);
+            remove => _popPageStartedEventManager.RemoveEventHandler(value);
+        }
+
+        public static event EventHandler<Page> PopPageCompleted
+        {
+            add => _popPageCompletedEventManager.AddEventHandler(value);
+            remove => _popPageCompletedEventManager.RemoveEventHandler(value);
         }
 
         public async Task SetGitHubUser(string token, CancellationToken cancellationToken)
@@ -82,6 +89,8 @@ namespace GitTrends
 
         public async Task PopPage()
         {
+            OnPopPageStarted();
+
             Page pagePopped;
 
             if (GetVisiblePageFromModalStack() is Page page)
@@ -89,7 +98,7 @@ namespace GitTrends
             else
                 pagePopped = await GetVisiblePageFromNavigationStack().Navigation.PopAsync();
 
-            OnPagePopped(pagePopped);
+            OnPopPageCompleted(pagePopped);
         }
 
         public IEnumerable GetVisibleCollection()
@@ -138,7 +147,8 @@ namespace GitTrends
 
         Page GetVisiblePageFromNavigationStack() => Application.Current.MainPage.Navigation.NavigationStack.Last();
 
-        void OnPagePopped(Page page) => _pagePoppedEventManager.HandleEvent(this, page, nameof(PagePopped));
+        void OnPopPageStarted() => _popPageStartedEventManager.HandleEvent(this, EventArgs.Empty, nameof(PopPageStarted));
+        void OnPopPageCompleted(Page page) => _popPageCompletedEventManager.HandleEvent(this, page, nameof(PopPageCompleted));
     }
 }
 #endif

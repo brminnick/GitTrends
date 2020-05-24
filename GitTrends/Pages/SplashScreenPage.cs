@@ -24,7 +24,7 @@ namespace GitTrends
                                 SplashScreenViewModel splashScreenViewModel,
                                 IMainThread mainThread,
                                 FirstRunService firstRunService)
-            : base(splashScreenViewModel, analyticsService, mainThread, shouldUseSafeArea: false)
+            : base(splashScreenViewModel, analyticsService, mainThread)
         {
             //Remove BaseContentPageBackground
             RemoveDynamicResource(BackgroundColorProperty);

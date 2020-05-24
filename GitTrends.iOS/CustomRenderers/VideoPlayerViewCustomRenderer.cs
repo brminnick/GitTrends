@@ -21,9 +21,8 @@ namespace GitTrends.iOS
         };
 
         readonly static AVPlayerItem _onboardingChartItem = CreateOnboardingChartItem();
-
-        readonly AVPlayerViewController _avPlayerViewController = new AVPlayerViewController();
-        readonly AVPlayerLooper _avPlayerLooper = CreateAVPlayerLooper();
+        readonly static AVPlayerViewController _avPlayerViewController = new AVPlayerViewController();
+        readonly static AVPlayerLooper _avPlayerLooper = CreateAVPlayerLooper();
 
         protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayerView> e)
         {

@@ -10,7 +10,7 @@ namespace GitTrends
         public FirstRunService(IPreferences preferences, GitHubAuthenticationService gitHubAuthenticationService)
         {
 #if !AppStore
-            TestsBackdoorService.PagePopped += HandlePagePopped;
+            TestsBackdoorService.PopPageStarted += HandlePagePopped;
 #endif
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
             gitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
@@ -29,7 +29,7 @@ namespace GitTrends
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsFirstRun = false;
 
 #if !AppStore
-        void HandlePagePopped(object sender, Xamarin.Forms.Page e) => IsFirstRun = false;
+        void HandlePagePopped(object sender, EventArgs e) => IsFirstRun = false;
 #endif
     }
 }
