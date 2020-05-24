@@ -30,6 +30,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<MediaElementService>();
             services.AddSingleton<ReferringSitesDatabase>();
             services.AddSingleton<RepositoryDatabase>();
+            services.AddSingleton<ReviewService>();
             services.AddSingleton<SortingService>();
             services.AddSingleton<ThemeService>();
             services.AddSingleton<TrendsChartSettingsService>();
