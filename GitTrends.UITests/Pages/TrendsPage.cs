@@ -48,11 +48,6 @@ namespace GitTrends.UITests
 
         public bool IsEmptyDataViewVisible => App.Query(_emptyDataView).Any();
 
-        AppResult ViewsLegendIcon => App.Query(GenerateMarkedQuery(TrendsChartConstants.TotalViewsTitle)).Last();
-        AppResult UniqueViewsLegendIcon => App.Query(GenerateMarkedQuery(TrendsChartConstants.UniqueViewsTitle)).Last();
-        AppResult ClonesLegendIcon => App.Query(GenerateMarkedQuery(TrendsChartConstants.TotalClonesTitle)).Last();
-        AppResult UniqueClonesLegendIcon => App.Query(GenerateMarkedQuery(TrendsChartConstants.UniqueClonesTitle)).Last();
-
         public override Task WaitForPageToLoad(TimeSpan? timespan = null)
         {
             try
@@ -112,38 +107,6 @@ namespace GitTrends.UITests
         {
             App.Tap(_uniqueClonesCard);
             App.Screenshot("Unique Clones Card Tapped");
-        }
-
-        public void TapViewsLegendIcon()
-        {
-            var rect = ViewsLegendIcon.Rect;
-
-            App.TapCoordinates(rect.CenterX, rect.CenterY);
-            App.Screenshot("Views Legend Icon Tapped");
-        }
-
-        public void TapUniqueViewsLegendIcon()
-        {
-            var rect = UniqueViewsLegendIcon.Rect;
-
-            App.TapCoordinates(rect.CenterX, rect.CenterY);
-            App.Screenshot("Unique Views Legend Icon Tapped");
-        }
-
-        public void TapClonesLegendIcon()
-        {
-            var rect = ClonesLegendIcon.Rect;
-
-            App.TapCoordinates(rect.CenterX, rect.CenterY);
-            App.Screenshot("Clones Legend Icon Tapped");
-        }
-
-        public void TapUniqueClonesLegendIcon()
-        {
-            var rect = UniqueClonesLegendIcon.Rect;
-
-            App.TapCoordinates(rect.CenterX, rect.CenterY);
-            App.Screenshot("Unique Clones Legend Icon Tapped");
         }
 
         public void TapReferringSitesButton()

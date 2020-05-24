@@ -67,39 +67,5 @@ namespace GitTrends.UITests
             //Assert
             Assert.AreNotEqual(isUniqueClonesSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueClonesTitle));
         }
-
-        [Test]
-        public void EnsureLegendIsInteractive()
-        {
-            //Arrange
-            bool isViewsSeriesVisible_Initial = TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalViewsTitle);
-            bool isUniqueViewsSeriesVisible_Initial = TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueViewsTitle);
-            bool isClonesSeriesVisible_Initial = TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalClonesTitle);
-            bool isUniqueClonesSeriesVisible_Initial = TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueClonesTitle);
-
-            //Act
-            TrendsPage.TapViewsLegendIcon();
-
-            //Assert
-            Assert.AreNotEqual(isViewsSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalViewsTitle));
-
-            //Act
-            TrendsPage.TapUniqueViewsLegendIcon();
-
-            //Assert
-            Assert.AreNotEqual(isUniqueViewsSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueViewsTitle));
-
-            //Act
-            TrendsPage.TapClonesLegendIcon();
-
-            //Assert
-            Assert.AreNotEqual(isClonesSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalClonesTitle));
-
-            //Act
-            TrendsPage.TapUniqueClonesLegendIcon();
-
-            //Assert
-            Assert.AreNotEqual(isUniqueClonesSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueClonesTitle));
-        }
     }
 }

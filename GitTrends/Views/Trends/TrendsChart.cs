@@ -98,6 +98,7 @@ namespace GitTrends
                     FontSize = 12,
                     FontFamily = FontFamilyConstants.RobotoRegular,
                 };
+                secondaryAxisLabelStyle.SetDynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
 
                 SecondaryAxis = new NumericalAxis
                 {
