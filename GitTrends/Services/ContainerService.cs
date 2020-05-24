@@ -5,6 +5,7 @@ using Shiny;
 using Shiny.Notifications;
 using Xamarin.Essentials.Implementation;
 using Xamarin.Essentials.Interfaces;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -50,6 +51,7 @@ namespace GitTrends
             builder.RegisterType<ThemeService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
             builder.RegisterInstance(ShinyHost.Resolve<INotificationManager>()).As<INotificationManager>().SingleInstance();
+            builder.RegisterInstance(DependencyService.Resolve<INotificationService>()).As<INotificationService>().SingleInstance();
 #if !AppStore
             builder.RegisterType<TestsBackdoorService>().AsSelf().SingleInstance();
 #endif

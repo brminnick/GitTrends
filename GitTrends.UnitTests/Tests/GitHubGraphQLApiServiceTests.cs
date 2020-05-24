@@ -18,7 +18,7 @@ namespace GitTrends.UnitTests
         public void GetCurrentUserInfoTest_Unauthenticated()
         {
             //Arrange
-            var githubGraphQLApiService = ContainerService.Container.GetService<GitHubGraphQLApiService>();
+            var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
 
             //Act
             var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false));
@@ -31,8 +31,8 @@ namespace GitTrends.UnitTests
         public void GetCurrentUserInfoTest_DemoUser()
         {
             //Arrange
-            var githubGraphQLApiService = ContainerService.Container.GetService<GitHubGraphQLApiService>();
-            var gitHubAuthenticationService = ContainerService.Container.GetService<GitHubAuthenticationService>();
+            var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
 
             //Act
             var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false));
@@ -45,8 +45,8 @@ namespace GitTrends.UnitTests
         public async Task GetCurrentUserInfoTest_AuthenticatedUser()
         {
             //Arrange
-            var githubGraphQLApiService = ContainerService.Container.GetService<GitHubGraphQLApiService>();
-            var gitHubUserService = ContainerService.Container.GetService<GitHubUserService>();
+            var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
 
             //Act
             await AuthenticateUser(gitHubUserService, githubGraphQLApiService).ConfigureAwait(false);
@@ -63,7 +63,7 @@ namespace GitTrends.UnitTests
         public void GetRepositoriesTest_Unauthenticated()
         {
             //Arrange
-            var githubGraphQLApiService = ContainerService.Container.GetService<GitHubGraphQLApiService>();
+            var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
 
             //Act
             var exception = Assert.ThrowsAsync<ApiException>(async () =>
@@ -83,8 +83,8 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             List<Repository> repositories = new List<Repository>();
-            var githubGraphQLApiService = ContainerService.Container.GetService<GitHubGraphQLApiService>();
-            var gitHubAuthenticationService = ContainerService.Container.GetService<GitHubAuthenticationService>();
+            var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
 
             //Act
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
@@ -117,8 +117,8 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             List<Repository> repositories = new List<Repository>();
-            var githubGraphQLApiService = ContainerService.Container.GetService<GitHubGraphQLApiService>();
-            var gitHubUserService = ContainerService.Container.GetService<GitHubUserService>();
+            var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
 
             //Act
             await AuthenticateUser(gitHubUserService, githubGraphQLApiService).ConfigureAwait(false);
@@ -143,7 +143,7 @@ namespace GitTrends.UnitTests
         public void GetRepositoryTest_Unauthenticated()
         {
             //Arrange
-            var githubGraphQLApiService = ContainerService.Container.GetService<GitHubGraphQLApiService>();
+            var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
 
             //Act
             var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetRepository(AuthenticatedGitHubUserName, ValidGitHubRepo, CancellationToken.None).ConfigureAwait(false));
@@ -156,8 +156,8 @@ namespace GitTrends.UnitTests
         public async Task GetRepositoryTest_Demo()
         {
             //Arrange
-            var githubGraphQLApiService = ContainerService.Container.GetService<GitHubGraphQLApiService>();
-            var gitHubAuthenticationService = ContainerService.Container.GetService<GitHubAuthenticationService>();
+            var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
 
             //Act
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
@@ -174,8 +174,8 @@ namespace GitTrends.UnitTests
             Repository repository;
             DateTimeOffset beforeDownload, afterDownload;
 
-            var githubGraphQLApiService = ContainerService.Container.GetService<GitHubGraphQLApiService>();
-            var gitHubUserService = ContainerService.Container.GetService<GitHubUserService>();
+            var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
 
             await AuthenticateUser(gitHubUserService, githubGraphQLApiService).ConfigureAwait(false);
 

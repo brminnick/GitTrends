@@ -28,6 +28,7 @@ namespace GitTrends
         readonly IAnalyticsService _analyticsService;
         readonly DeepLinkingService _deepLinkingService;
         readonly INotificationManager _notificationManager;
+        readonly INotificationService _notificationService;
         readonly AzureFunctionsApiService _azureFunctionsApiService;
 
         TaskCompletionSource<AccessState>? _settingsResultCompletionSource;
@@ -38,15 +39,17 @@ namespace GitTrends
                                     AzureFunctionsApiService azureFunctionsApiService,
                                     IPreferences preferences,
                                     ISecureStorage secureStorage,
-                                    INotificationManager notificationManager)
+                                    INotificationManager notificationManager,
+                                    INotificationService notificationService)
         {
             _preferences = preferences;
             _secureStorage = secureStorage;
             _sortingService = sortingService;
             _analyticsService = analyticsService;
             _deepLinkingService = deepLinkingService;
-            _azureFunctionsApiService = azureFunctionsApiService;
             _notificationManager = notificationManager;
+            _notificationService = notificationService;
+            _azureFunctionsApiService = azureFunctionsApiService;
 
             if (Application.Current is App app)
                 app.Resumed += HandleAppResumed;
@@ -84,7 +87,7 @@ namespace GitTrends
 
         public async Task<bool> AreNotificationsEnabled()
         {
-            bool? areNotificationsEnabled = await DependencyService.Get<INotificationService>().AreNotificationEnabled().ConfigureAwait(false);
+            bool? areNotificationsEnabled = await _notificationService.AreNotificationEnabled().ConfigureAwait(false);
             return areNotificationsEnabled ?? false;
         }
 
@@ -207,7 +210,7 @@ namespace GitTrends
             {
                 //INotificationManager.Badge Crashes on iOS
                 if (Device.RuntimePlatform is Device.iOS)
-                    await DependencyService.Get<INotificationService>().SetiOSBadgeCount(count).ConfigureAwait(false);
+                    await _notificationService.SetiOSBadgeCount(count).ConfigureAwait(false);
                 else
                     _notificationManager.Badge = count;
             }

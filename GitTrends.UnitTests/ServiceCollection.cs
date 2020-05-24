@@ -1,5 +1,4 @@
 ﻿using System;
-using Autofac.Core;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Shiny.Notifications;
@@ -7,15 +6,15 @@ using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends.UnitTests
 {
-    public class ContainerService
+    public class ServiceCollection
     {
-        readonly static Lazy<ServiceProvider> _serviceProviderHolder = new Lazy<ServiceProvider>(CreateContainer);
+        readonly static Lazy<IServiceProvider> _serviceProviderHolder = new Lazy<IServiceProvider>(CreateContainer);
 
-        public static ServiceProvider Container => _serviceProviderHolder.Value;
+        public static IServiceProvider ServiceProvider => _serviceProviderHolder.Value;
 
-        static ServiceProvider CreateContainer()
+        static IServiceProvider CreateContainer()
         {
-            var services = new ServiceCollection();
+            var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
 
             //GitTrends Services
             services.AddSingleton<AzureFunctionsApiService>();
@@ -43,6 +42,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<IEmail, MockEmail>();
             services.AddSingleton<ILauncher, MockLauncher>();
             services.AddSingleton<IMainThread, MockMainThread>();
+            services.AddSingleton<INotificationService, MockNotificationService>();
             services.AddSingleton<INotificationManager, MockNotificationManager>();
             services.AddSingleton<ISecureStorage, MockSecureStorage>();
             services.AddSingleton<IPreferences, MockPreferences>();

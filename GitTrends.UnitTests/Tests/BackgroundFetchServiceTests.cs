@@ -20,9 +20,9 @@ namespace GitTrends.UnitTests
             MobileReferringSiteModel expiredReferringSite_Initial, unexpiredReferringSite_Initial;
             Repository expiredRepository_Initial, unexpiredRepository_Initial, expiredRepository_Final, unexpiredRepository_Final;
 
-            var backgroundFetchService = ContainerService.Container.GetService<BackgroundFetchService>();
-            var referringSitesDatabase = ContainerService.Container.GetService<ReferringSitesDatabase>();
-            var repositoryDatabase = ContainerService.Container.GetService<RepositoryDatabase>();
+            var backgroundFetchService = ServiceCollection.ServiceProvider.GetService<BackgroundFetchService>();
+            var referringSitesDatabase = ServiceCollection.ServiceProvider.GetService<ReferringSitesDatabase>();
+            var repositoryDatabase = ServiceCollection.ServiceProvider.GetService<RepositoryDatabase>();
 
             expiredRepository_Initial = CreateExpiredRepository(DateTimeOffset.UtcNow.Subtract(repositoryDatabase.ExpiresAt), "https://github.com/brminnick/gittrends");
             unexpiredRepository_Initial = CreateExpiredRepository(DateTimeOffset.UtcNow, "https://github.com/brminnick/gitstatus");
@@ -95,7 +95,7 @@ namespace GitTrends.UnitTests
         public async Task NotifyTrendingRepositoriesTest_NotLoggedIn()
         {
             //Arrange
-            var backgroundFetchService = ContainerService.Container.GetService<BackgroundFetchService>();
+            var backgroundFetchService = ServiceCollection.ServiceProvider.GetService<BackgroundFetchService>();
 
             //Act
             var result = await backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
@@ -108,11 +108,11 @@ namespace GitTrends.UnitTests
         public async Task NotifyTrendingRepositoriesTest_DemoUser()
         {
             //Arrange
-            var gitHubAuthenticationService = ContainerService.Container.GetService<GitHubAuthenticationService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
-            var gitHubUserService = ContainerService.Container.GetService<GitHubUserService>();
-            var backgroundFetchService = ContainerService.Container.GetService<BackgroundFetchService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var backgroundFetchService = ServiceCollection.ServiceProvider.GetService<BackgroundFetchService>();
 
             //Act
             var result = await backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
@@ -127,9 +127,9 @@ namespace GitTrends.UnitTests
         public async Task NotifyTrendingRepositoriesTest_AuthenticatedUser()
         {
             //Arrange
-            var gitHubUserService = ContainerService.Container.GetService<GitHubUserService>();
-            var backgroundFetchService = ContainerService.Container.GetService<BackgroundFetchService>();
-            var gitHubGraphQLApiService = ContainerService.Container.GetService<GitHubGraphQLApiService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var backgroundFetchService = ServiceCollection.ServiceProvider.GetService<BackgroundFetchService>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
 
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 

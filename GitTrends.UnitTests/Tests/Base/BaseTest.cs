@@ -19,13 +19,13 @@ namespace GitTrends.UnitTests
             Device.Info = new MockDeviceInfo();
             Device.PlatformServices = new MockPlatformServices();
 
-            var referringSitesDatabase = ContainerService.Container.GetService<ReferringSitesDatabase>();
+            var referringSitesDatabase = ServiceCollection.ServiceProvider.GetService<ReferringSitesDatabase>();
             await referringSitesDatabase.DeleteAllData().ConfigureAwait(false);
 
-            var repositoryDatabase = ContainerService.Container.GetService<RepositoryDatabase>();
+            var repositoryDatabase = ServiceCollection.ServiceProvider.GetService<RepositoryDatabase>();
             await repositoryDatabase.DeleteAllData().ConfigureAwait(false);
 
-            var gitHubAuthenticationService = ContainerService.Container.GetService<GitHubAuthenticationService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
             await gitHubAuthenticationService.LogOut().ConfigureAwait(false);
         }
 
