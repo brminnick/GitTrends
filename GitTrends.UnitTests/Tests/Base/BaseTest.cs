@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Shiny.Notifications;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends.UnitTests
@@ -19,6 +20,12 @@ namespace GitTrends.UnitTests
         {
             Device.Info = new MockDeviceInfo();
             Device.PlatformServices = new MockPlatformServices();
+
+            var preferences  = ServiceCollection.ServiceProvider.GetService<IPreferences>();
+            preferences.Clear();
+
+            var secureStorage = ServiceCollection.ServiceProvider.GetService<ISecureStorage>();
+            secureStorage.RemoveAll();
 
             var referringSitesDatabase = ServiceCollection.ServiceProvider.GetService<ReferringSitesDatabase>();
             await referringSitesDatabase.DeleteAllData().ConfigureAwait(false);

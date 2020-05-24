@@ -36,9 +36,15 @@ namespace GitTrends.Droid
 
             Forms.Init(this, savedInstanceState);
 
-            LoadApplication(new App());
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var notificationService = scope.Resolve<INotificationService>();
+            var analyticsService = scope.Resolve<IAnalyticsService>();
+            var themeService = scope.Resolve<ThemeService>();
+            var splashScreenPage = scope.Resolve<SplashScreenPage>();
 
-            TryHandleOpenedFromUri(Intent.Data);
+            LoadApplication(new App(analyticsService, notificationService, themeService, splashScreenPage));
+
+            TryHandleOpenedFromUri(Intent?.Data);
             TryHandleOpenedFromNotification(Intent);
         }
 
@@ -83,9 +89,13 @@ namespace GitTrends.Droid
 
                     var notificationService = scope.Resolve<NotificationService>();
 
-                    await notificationService.HandleReceivedLocalNotification(notification.Title ?? string.Empty,
-                                                                                notification.Message ?? string.Empty,
-                                                                                notification.BadgeCount ?? 0).ConfigureAwait(false);
+                    if (notification.Title is string notificationTitle
+                        && notification.Message is string notificationMessage
+                        && notification.BadgeCount is int badgeCount
+                        && badgeCount > 0)
+                    {
+                        await notificationService.HandleNotification(notificationTitle, notificationMessage, badgeCount).ConfigureAwait(false);
+                    }
                 }
             }
             catch (ObjectDisposedException)

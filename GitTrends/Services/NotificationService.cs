@@ -15,7 +15,8 @@ namespace GitTrends
 {
     public class NotificationService
     {
-        const string _trendingRepositoriesNotificationTitle = "Your Repos Are Trending";
+        public const string TrendingRepositoriesNotificationTitle = "Your Repos Are Trending";
+
         const string _getNotificationHubInformationKey = "GetNotificationHubInformation";
 
         readonly WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new WeakEventManager<(bool isSuccessful, string errorMessage)>();
@@ -236,7 +237,7 @@ namespace GitTrends
 #endif
         }
 
-        public async Task HandleReceivedLocalNotification(string title, string message, int badgeCount)
+        public async Task HandleNotification(string title, string message, int badgeCount)
         {
             if (badgeCount is 1)
             {
@@ -257,7 +258,7 @@ namespace GitTrends
                     await _deepLinkingService.NavigateToTrendsPage(repository).ConfigureAwait(false);
                 }
             }
-            else
+            else if (badgeCount > 1)
             {
                 bool? shouldSortByTrending = null;
 
@@ -275,7 +276,14 @@ namespace GitTrends
 
                 _analyticsService.Track("Multiple Trending Repository Prompt Displayed", nameof(shouldSortByTrending), shouldSortByTrending?.ToString() ?? "null");
             }
+            else
+            {
+                throw new ArgumentOutOfRangeException(nameof(badgeCount), $"{badgeCount} must be greater than zero");
+            }
         }
+
+        public static string CreateSingleRepositoryNotificationMessage(in string repositoryName, in string repositoryOwner) => $"{repositoryName} by {repositoryOwner} is Trending";
+        public static string CreateMultipleRepositoryNotificationMessage(in int count) => $"You Have {count} Trending Repositories";
 
         async ValueTask SendTrendingNotification(IReadOnlyList<Repository> trendingRepositories, DateTimeOffset? notificationDateTime)
         {
@@ -287,7 +295,7 @@ namespace GitTrends
                 {
                     //iOS crashes when ID is not set
                     Id = Device.RuntimePlatform is Device.iOS ? 1 : 0,
-                    Title = _trendingRepositoriesNotificationTitle,
+                    Title = TrendingRepositoriesNotificationTitle,
                     Message = CreateSingleRepositoryNotificationMessage(trendingRepository.Name, trendingRepository.OwnerLogin),
                     ScheduleDate = notificationDateTime,
                     BadgeCount = 1
@@ -310,8 +318,8 @@ namespace GitTrends
                 {
                     //iOS crashes when ID is not set
                     Id = Device.RuntimePlatform is Device.iOS ? 1 : 0,
-                    Title = _trendingRepositoriesNotificationTitle,
-                    Message = $"You Have {trendingRepositories.Count} Trending Repositories",
+                    Title = TrendingRepositoriesNotificationTitle,
+                    Message = CreateMultipleRepositoryNotificationMessage(trendingRepositories.Count),
                     ScheduleDate = notificationDateTime,
                     BadgeCount = trendingRepositories.Count
                 };
@@ -324,13 +332,9 @@ namespace GitTrends
             void setMostRecentNotificationDate(Repository repository) => _preferences.Set(repository.Name, DateTime.UtcNow);
         }
 
-        string CreateSingleRepositoryNotificationMessage(in string repositoryName, in string repositoryOwner) => $"{repositoryName} by {repositoryOwner} is Trending";
-        string ParseRepositoryName(in string? singleRepositoryNotificationMessage) => singleRepositoryNotificationMessage?.Substring(0, singleRepositoryNotificationMessage.IndexOf(" by ")) ?? string.Empty;
-        string ParseOwnerName(in string? singleRepositoryNotificationMessage)
+        string ParseRepositoryName(in string singleRepositoryNotificationMessage) => singleRepositoryNotificationMessage.Substring(0, singleRepositoryNotificationMessage.IndexOf(" by "));
+        string ParseOwnerName(in string singleRepositoryNotificationMessage)
         {
-            if (string.IsNullOrWhiteSpace(singleRepositoryNotificationMessage))
-                return string.Empty;
-
             var ownerNameIndex = singleRepositoryNotificationMessage.IndexOf(" by ") + " by ".Length;
             var ownerNameLength = singleRepositoryNotificationMessage.IndexOf(" is Trending", ownerNameIndex) - ownerNameIndex;
             return singleRepositoryNotificationMessage.Substring(ownerNameIndex, ownerNameLength);

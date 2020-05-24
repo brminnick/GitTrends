@@ -30,18 +30,18 @@ namespace GitTrends
 
         public Task DisplayAlert(string title, string message, string cancel)
         {
-            if (Application.Current is null)
+            if (Application.Current is App app)
+                return _mainThread.InvokeOnMainThreadAsync(() => app.MainPage.DisplayAlert(title, message, cancel));
+            else
                 return Task.CompletedTask;
-
-            return _mainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, cancel));
         }
 
         public Task<bool> DisplayAlert(string title, string message, string accept, string decline)
         {
-            if (Application.Current is null)
+            if (Application.Current is App app)
+                return _mainThread.InvokeOnMainThreadAsync(() => app.MainPage.DisplayAlert(title, message, accept, decline));
+            else
                 return Task.FromResult(true);
-
-            return _mainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.DisplayAlert(title, message, accept, decline));
         }
 
         public Task OpenBrowser(Uri uri) => OpenBrowser(uri.ToString());
@@ -65,16 +65,24 @@ namespace GitTrends
 
         public Task NavigateToTrendsPage(Repository repository)
         {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var trendsPage = scope.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
-
-            return _mainThread.InvokeOnMainThreadAsync(async () =>
+            if (Application.Current is App)
             {
-                var baseNavigationPage = await GetBaseNavigationPage();
+                using var scope = ContainerService.Container.BeginLifetimeScope();
+                var trendsPage = scope.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
 
-                await baseNavigationPage.PopToRootAsync();
-                await baseNavigationPage.Navigation.PushAsync(trendsPage);
-            });
+                return _mainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    var baseNavigationPage = await GetBaseNavigationPage();
+
+                    if (baseNavigationPage != null)
+                    {
+                        await baseNavigationPage.PopToRootAsync();
+                        await baseNavigationPage.Navigation.PushAsync(trendsPage);
+                    }
+                });
+            }
+
+            return Task.CompletedTask;
         }
 
         public Task OpenApp(string deepLinkingUrl, string browserUrl) => OpenApp(deepLinkingUrl, deepLinkingUrl, browserUrl);
@@ -116,6 +124,9 @@ namespace GitTrends
 
         async ValueTask<BaseNavigationPage> GetBaseNavigationPage()
         {
+            if (Application.Current.MainPage is null)
+                throw new InvalidNavigationException("Application.Current Cannot Be Null");
+
             if (Application.Current.MainPage is BaseNavigationPage baseNavigationPage)
                 return baseNavigationPage;
 

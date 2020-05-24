@@ -20,8 +20,8 @@ namespace GitTrends
         readonly StoreRatingRequestView _storeRatingRequestView = new StoreRatingRequestView();
         readonly CancellationTokenSource _refreshViewCancelltionTokenSource = new CancellationTokenSource();
 
-        readonly ReviewService _reviewService;
         readonly RefreshView _refreshView;
+        readonly ReviewService _reviewService;
         readonly DeepLinkingService _deepLinkingService;
 
         public ReferringSitesPage(DeepLinkingService deepLinkingService,
@@ -32,8 +32,8 @@ namespace GitTrends
                                     ReviewService reviewService,
                                     IMainThread mainThread) : base(referringSitesViewModel, analyticsService, mainThread, PageTitles.ReferringSitesPage)
         {
-            _deepLinkingService = deepLinkingService;
             _reviewService = reviewService;
+            _deepLinkingService = deepLinkingService;
 
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             reviewService.ReviewCompleted += HandleReviewCompleted;

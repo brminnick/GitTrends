@@ -14,22 +14,115 @@ namespace GitTrends.UnitTests
 {
     class NotificationServiceTests : BaseTest
     {
-        //            public async Task HandleReceivedLocalNotification(string title, string message, int badgeCount)
-        //            public event EventHandler<SortingOption> SortingOptionHandleReceivedLocalNotificationRequested
+        [Test]
+        public void HandleNotificationTest_InvalidSingleNotificationMessage()
+        {
+            //Arrange
+            const int badgeCount = 1;
+            const string message = "Invalid Message";
+
+            var title = NotificationService.TrendingRepositoriesNotificationTitle;
+            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
+
+            //Act //Assert
+            Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await notificationService.HandleNotification(title, message, badgeCount).ConfigureAwait(false));
+        }
+
+        [Test]
+        public async Task HandleNotificationTest_InvalidMultipleNotificationMessage()
+        {
+            //Arrange
+            const int badgeCount = 2;
+            const string message = "Invalid Message";
+
+            var title = NotificationService.TrendingRepositoriesNotificationTitle;
+            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
+
+            //Act
+            await notificationService.HandleNotification(title, message, badgeCount).ConfigureAwait(false);
+
+            //Assert
+        }
+
+        [TestCase(0)]
+        [TestCase(int.MinValue)]
+        public void HandleNotificationTest_InvalidBadgeCount(int badgeCount)
+        {
+            //Arrange
+            var title = NotificationService.TrendingRepositoriesNotificationTitle;
+            var message = NotificationService.CreateSingleRepositoryNotificationMessage(ValidGitHubRepo, AuthenticatedGitHubUserLogin);
+
+            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
+
+            //Act //Assert
+            Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await notificationService.HandleNotification(title, message, badgeCount).ConfigureAwait(false));
+        }
+
+
+        [Test]
+        public async Task HandleNotificationTest_ValidSingleNotification()
+        {
+            //Arrange
+            const int badgeCount = 1;
+            var title = NotificationService.TrendingRepositoriesNotificationTitle;
+            var message = NotificationService.CreateSingleRepositoryNotificationMessage(ValidGitHubRepo, AuthenticatedGitHubUserLogin);
+
+            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
+
+            //Act
+            await notificationService.HandleNotification(title, message, badgeCount).ConfigureAwait(false);
+
+            //Assert
+
+        }
+
+        [Test]
+        public async Task HandleNotificationTest_ValidMultipleNotification()
+        {
+            //Arrange
+            const int badgeCount = 2;
+
+            SortingOption sortingOption;
+            var title = NotificationService.TrendingRepositoriesNotificationTitle;
+            var message = NotificationService.CreateMultipleRepositoryNotificationMessage(badgeCount);
+
+            bool didSortingOptionRequestedFire = false;
+            var sortingOptionRequestedTCS = new TaskCompletionSource<SortingOption>();
+
+            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
+            notificationService.SortingOptionRequested += HandleSortingOptionRequested;
+
+            var sortingService = ServiceCollection.ServiceProvider.GetService<SortingService>();
+            sortingService.IsReversed = true;
+
+            //Act
+            await notificationService.HandleNotification(title, message, badgeCount).ConfigureAwait(false);
+            sortingOption = await sortingOptionRequestedTCS.Task.ConfigureAwait(false);
+
+            //Assert
+            Assert.IsTrue(didSortingOptionRequestedFire);
+            Assert.AreEqual(SortingOption.Views, sortingOption);
+
+            void HandleSortingOptionRequested(object? sender, SortingOption e)
+            {
+                notificationService.SortingOptionRequested -= HandleSortingOptionRequested;
+
+                didSortingOptionRequestedFire = true;
+                sortingOptionRequestedTCS.SetResult(e);
+            }
+        }
 
         [Test]
         public async Task TrySendTrendingNotificationTest()
         {
             //Arrange
-            int pendingNotificationsCount_Initial, pendingNotificationsCount_BeforeRegistration, pendingNotificationsCount_AfterEmptyRepositoryList,
-                pendingNotificationsCount_AfterTrendingRepositoryList, pendingNotificationsCount_AfterDuplicateTrendingRepositoryList;
+            int pendingNotificationsCount_Initial, pendingNotificationsCount_BeforeRegistration, pendingNotificationsCount_AfterEmptyRepositoryList, pendingNotificationsCount_AfterTrendingRepositoryList;
 
             IReadOnlyList<Repository> emptyTrendingRepositoryList = Enumerable.Empty<Repository>().ToList();
             IReadOnlyList<Repository> trendingRepositoryList = new List<Repository> { CreateRepository() };
 
             var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
             var notificationManager = ServiceCollection.ServiceProvider.GetService<INotificationManager>();
-
 
             //Act
             pendingNotificationsCount_Initial = await getPendingNotificationCount(notificationManager).ConfigureAwait(false);
@@ -47,7 +140,8 @@ namespace GitTrends.UnitTests
 
 #if !DEBUG
             await notificationService.TrySendTrendingNotificaiton(trendingRepositoryList).ConfigureAwait(false);
-            pendingNotificationsCount_AfterDuplicateTrendingRepositoryList = await getPendingNotificationCount(notificationManager).ConfigureAwait(false);
+            var pendingNotificationsCount_AfterDuplicateTrendingRepositoryList = await getPendingNotificationCount(notificationManager).ConfigureAwait(false);
+            Assert.AreEqual(trendingRepositoryList.Count, pendingNotificationsCount_AfterDuplicateTrendingRepositoryList);
 #endif
 
             //Assert
@@ -55,9 +149,6 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(0, pendingNotificationsCount_BeforeRegistration);
             Assert.AreEqual(0, pendingNotificationsCount_AfterEmptyRepositoryList);
             Assert.AreEqual(trendingRepositoryList.Count, pendingNotificationsCount_AfterTrendingRepositoryList);
-#if !DEBUG
-            Assert.AreEqual(trendingRepositoryList.Count, pendingNotificationsCount_AfterDuplicateTrendingRepositoryList);
-#endif
 
             static async Task<int> getPendingNotificationCount(INotificationManager notificationManager)
             {
