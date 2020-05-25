@@ -25,7 +25,7 @@ namespace GitTrends
         }
 
         public static IEnumerable<MobileReferringSiteModel> SortReferringSites(in IEnumerable<MobileReferringSiteModel> referringSites) =>
-            referringSites.OrderByDescending(x => x.TotalCount).ThenByDescending(x => x.TotalUniqueCount).ThenByDescending(x => x.Referrer);
+            referringSites.OrderByDescending(x => x.TotalCount).ThenByDescending(x => x.TotalUniqueCount).ThenBy(x => x.Referrer);
 
         //SortingCategory.IssuesForks Priority: Trending > Stars > Name > Forks > Issues 
         //SortingCategory.Views Priority: Trending > Views > Name > Unique Views > Stars
