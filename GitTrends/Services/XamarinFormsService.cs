@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -15,6 +16,8 @@ namespace GitTrends
 
         public static double GetWidth(this View view, in RelativeLayout parent) => view.Measure(parent.Width, parent.Height).Request.Width;
         public static double GetHeight(this View view, in RelativeLayout parent) => view.Measure(parent.Width, parent.Height).Request.Height;
+
+        public static bool IsNullOrEmpty(this IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
 
         // **** Example Screen Sizes ****
         // iPhone SE 2nd Gen (aka iPhone 8), Width 750, Density 2, Width/Density 375

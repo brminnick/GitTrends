@@ -155,13 +155,12 @@ namespace GitTrends
         {
             base.OnAppearing();
 
-            if (_refreshView.Content is CollectionView collectionView && IsNullOrEmpty(collectionView.ItemsSource))
+            if (_refreshView.Content is CollectionView collectionView
+                && collectionView.ItemsSource.IsNullOrEmpty())
             {
                 _refreshView.IsRefreshing = true;
                 _reviewService.TryRequestReviewPrompt();
             }
-
-            static bool IsNullOrEmpty(in IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
         }
 
         protected override void OnDisappearing()
