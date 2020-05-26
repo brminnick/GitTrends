@@ -268,16 +268,14 @@ namespace GitTrends.UnitTests
 
             gitHubUserService.InvalidateToken();
 
-            var exception = Assert.ThrowsAsync<ApiException>(async () =>
+            await foreach (var repository in gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesData_Filtered, CancellationToken.None).ConfigureAwait(false))
             {
-                await foreach (var repository in gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesData_Filtered, CancellationToken.None).ConfigureAwait(false))
-                {
-                    repositories.Add(repository);
-                }
-            });
+                repositories.Add(repository);
+            };
 
             //Assert
-            Assert.AreEqual(exception.StatusCode, HttpStatusCode.Forbidden);
+            Assert.IsEmpty(repositories.SelectMany(x => x.DailyClonesList));
+            Assert.IsEmpty(repositories.SelectMany(x => x.DailyViewsList));
         }
     }
 }
