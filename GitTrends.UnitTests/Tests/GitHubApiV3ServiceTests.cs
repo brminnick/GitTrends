@@ -186,17 +186,11 @@ namespace GitTrends.UnitTests
             Assert.IsNotEmpty(repositories);
             Assert.IsNotEmpty(repositories_NoViewsClonesData);
 
-            foreach (var repo in repositories_NoViewsClonesData)
-            {
-                Assert.IsEmpty(repo.DailyClonesList);
-                Assert.IsEmpty(repo.DailyViewsList);
-            }
+            Assert.IsEmpty(repositories_NoViewsClonesData.SelectMany(x => x.DailyClonesList));
+            Assert.IsEmpty(repositories_NoViewsClonesData.SelectMany(x => x.DailyViewsList));
 
-            foreach (var repo in repositories)
-            {
-                Assert.IsNotEmpty(repo.DailyClonesList);
-                Assert.IsNotEmpty(repo.DailyViewsList);
-            }
+            Assert.IsNotEmpty(repositories.SelectMany(x => x.DailyClonesList));
+            Assert.IsNotEmpty(repositories.SelectMany(x => x.DailyViewsList));
         }
 
         [Test]
