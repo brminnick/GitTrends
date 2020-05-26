@@ -150,8 +150,8 @@ namespace GitTrends
             {
                 AnalyticsService.Track("Repository Tapped", new Dictionary<string, string>
                 {
-                    { nameof(Repository.OwnerLogin), repository.OwnerLogin },
-                    { nameof(Repository.Name), repository.Name }
+                    { nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin },
+                    { nameof(Repository) + nameof(Repository.Name), repository.Name }
                 });
 
                 await NavigateToTrendsPage(repository);

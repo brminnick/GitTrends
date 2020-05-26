@@ -25,7 +25,7 @@ namespace GitTrends
 
         public async IAsyncEnumerable<Repository> UpdateRepositoriesWithViewsAndClonesData(IReadOnlyList<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsResponseModel, RepositoryClonesResponseModel)>>(repositories.Select(x => getRepositoryStatistics(x)));
+            var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsResponseModel?, RepositoryClonesResponseModel?)>>(repositories.Select(x => getRepositoryStatistics(x)));
 
             while (getRepositoryStatisticsTaskList.Any())
             {
@@ -34,28 +34,45 @@ namespace GitTrends
 
                 var (viewsResponse, clonesResponse) = await completedStatisticsTask.ConfigureAwait(false);
 
-                var matchingRepository = repositories.Single(x => x.Name == viewsResponse.RepositoryName);
+                if (viewsResponse != null && clonesResponse != null)
+                {
+                    var matchingRepository = repositories.Single(x => x.Name == viewsResponse.RepositoryName);
 
-
-                yield return new Repository(matchingRepository.Name, matchingRepository.Description, matchingRepository.ForkCount,
-                                            new RepositoryOwner(matchingRepository.OwnerLogin, matchingRepository.OwnerAvatarUrl),
-                                            new IssuesConnection(matchingRepository.IssuesCount, null),
-                                            matchingRepository.Url,
-                                            new StarGazers(matchingRepository.StarCount),
-                                            matchingRepository.IsFork,
-                                            viewsResponse.DailyViewsList,
-                                            clonesResponse.DailyClonesList);
+                    yield return new Repository(matchingRepository.Name, matchingRepository.Description, matchingRepository.ForkCount,
+                                                new RepositoryOwner(matchingRepository.OwnerLogin, matchingRepository.OwnerAvatarUrl),
+                                                new IssuesConnection(matchingRepository.IssuesCount, null),
+                                                matchingRepository.Url,
+                                                new StarGazers(matchingRepository.StarCount),
+                                                matchingRepository.IsFork,
+                                                viewsResponse.DailyViewsList,
+                                                clonesResponse.DailyClonesList);
+                }
             }
 
-            async Task<(RepositoryViewsResponseModel ViewsResponse, RepositoryClonesResponseModel ClonesResponse)> getRepositoryStatistics(Repository repository)
+            async Task<(RepositoryViewsResponseModel? ViewsResponse, RepositoryClonesResponseModel? ClonesResponse)> getRepositoryStatistics(Repository repository)
             {
                 var getViewStatisticsTask = GetRepositoryViewStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
                 var getCloneStatisticsTask = GetRepositoryCloneStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
 
-                await Task.WhenAll(getViewStatisticsTask, getCloneStatisticsTask).ConfigureAwait(false);
+                try
+                {
+                    await Task.WhenAll(getViewStatisticsTask, getCloneStatisticsTask).ConfigureAwait(false);
 
-                return (await getViewStatisticsTask.ConfigureAwait(false),
-                        await getCloneStatisticsTask.ConfigureAwait(false));
+                    return (await getViewStatisticsTask.ConfigureAwait(false),
+                            await getCloneStatisticsTask.ConfigureAwait(false));
+                }
+                catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.Forbidden)
+                {
+                    AnalyticsService.Report(e, new Dictionary<string, string>
+                    {
+                        { nameof(Repository)+ nameof(Repository.Name), repository.Name },
+                        { nameof(Repository)+ nameof(Repository.OwnerLogin), repository.OwnerLogin },
+                        { nameof(GitHubUserService) + nameof(GitHubUserService.Alias), _gitHubUserService.Alias },
+                        { nameof(GitHubUserService) + nameof(GitHubUserService.Name), _gitHubUserService.Name },
+                    });
+
+                    return (null, null);
+                }
             }
         }
 
