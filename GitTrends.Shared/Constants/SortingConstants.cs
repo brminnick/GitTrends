@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GitTrends.Shared
 {
-    class SortingConstants
+    public class SortingConstants
     {
         public const string CancelText = "Cancel";
         public const SortingOption DefaultSortingOption = SortingOption.Views;

@@ -126,7 +126,7 @@ namespace GitTrends
             else if (!_firstRunService.IsFirstRun
                         && isUserValid(token.AccessToken)
                         && _refreshView.Content is CollectionView collectionView
-                        && IsNullOrEmpty(collectionView.ItemsSource))
+                        && collectionView.ItemsSource.IsNullOrEmpty())
             {
                 _refreshView.IsRefreshing = true;
             }
@@ -139,8 +139,6 @@ namespace GitTrends
             }
 
             bool isUserValid(in string accessToken) => !string.IsNullOrWhiteSpace(accessToken) || !string.IsNullOrWhiteSpace(_gitHubUserService.Alias);
-
-            static bool IsNullOrEmpty(in IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
         }
 
         async void HandleCollectionViewSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -152,8 +150,8 @@ namespace GitTrends
             {
                 AnalyticsService.Track("Repository Tapped", new Dictionary<string, string>
                 {
-                    { nameof(Repository.OwnerLogin), repository.OwnerLogin },
-                    { nameof(Repository.Name), repository.Name }
+                    { nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin },
+                    { nameof(Repository) + nameof(Repository.Name), repository.Name }
                 });
 
                 await NavigateToTrendsPage(repository);

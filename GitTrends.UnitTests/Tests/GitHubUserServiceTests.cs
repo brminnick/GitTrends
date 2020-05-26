@@ -18,7 +18,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             var gitHubToken = new GitHubToken(_token, _scope, _tokenType);
-            var gitHubUserService = ContainerService.Container.GetService<GitHubUserService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
 
             //Act
             await gitHubUserService.SaveGitHubToken(gitHubToken).ConfigureAwait(false);
@@ -39,7 +39,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             GitHubToken? token_BeforeInvalidation, token_AfterInvalidation;
-            var gitHubUserService = ContainerService.Container.GetService<GitHubUserService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
 
             //Act
             await SaveGitHubTokenTest().ConfigureAwait(false);

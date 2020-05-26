@@ -38,10 +38,16 @@ namespace GitTrends.iOS
 
             PrintFontNamesToConsole();
 
-            LoadApplication(new App());
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var notificationService = scope.Resolve<INotificationService>();
+            var analyticsService = scope.Resolve<IAnalyticsService>();
+            var themeService = scope.Resolve<ThemeService>();
+            var splashScreenPage = scope.Resolve<SplashScreenPage>();
+
+            LoadApplication(new App(analyticsService, notificationService, themeService, splashScreenPage));
 
             if (launchOptions?.ContainsKey(UIApplication.LaunchOptionsLocalNotificationKey) is true)
-                HandleLocalNotification((UILocalNotification)launchOptions[UIApplication.LaunchOptionsLocalNotificationKey]).SafeFireAndForget(ex => ContainerService.Container.Resolve<IAnalyticsService>().Report(ex));
+                HandleLocalNotification((UILocalNotification)launchOptions[UIApplication.LaunchOptionsLocalNotificationKey]).SafeFireAndForget(ex => scope.Resolve<IAnalyticsService>().Report(ex));
 
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
@@ -121,7 +127,7 @@ namespace GitTrends.iOS
             if (notification is null || notification.AlertTitle is null || notification.AlertBody is null)
                 return Task.CompletedTask;
 
-            return notificationService.HandleReceivedLocalNotification(notification.AlertTitle, notification.AlertBody, (int)notification.ApplicationIconBadgeNumber);
+            return notificationService.HandleNotification(notification.AlertTitle, notification.AlertBody, (int)notification.ApplicationIconBadgeNumber);
         }
 
         [Conditional("DEBUG")]

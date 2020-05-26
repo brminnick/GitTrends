@@ -8,10 +8,14 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    class ReviewService
+    public class ReviewService
     {
-        readonly WeakEventManager<ReviewRequest> _reviewCompletedEventManager = new WeakEventManager<ReviewRequest>();
+        public const int MinimumReviewRequests = 20;
+        public const int MinimumAppInstallDays = 14;
+        public const int MinimumMostRecentRequestDays = 90;
+
         readonly WeakEventManager _reviewPromptRequestedEventManager = new WeakEventManager();
+        readonly WeakEventManager<ReviewRequest> _reviewCompletedEventManager = new WeakEventManager<ReviewRequest>();
 
         readonly IAppInfo _appInfo;
         readonly IPreferences _preferences;
@@ -132,10 +136,10 @@ namespace GitTrends
 
         bool ShouldDisplayReviewRequest()
         {
-            return ReviewRequests > 20
+            return ReviewRequests >= MinimumReviewRequests
                     && MostRecentReviewedBuildString != _appInfo.BuildString
-                    && DateTime.Compare(AppInstallDate.Add(TimeSpan.FromDays(14)), DateTime.UtcNow) < 1
-                    && DateTime.Compare(MostRecentRequestDate.Add(TimeSpan.FromDays(90)), DateTime.UtcNow) < 1;
+                    && DateTime.Compare(AppInstallDate.Add(TimeSpan.FromDays(MinimumAppInstallDays)), DateTime.UtcNow) < 1
+                    && DateTime.Compare(MostRecentRequestDate.Add(TimeSpan.FromDays(MinimumMostRecentRequestDays)), DateTime.UtcNow) < 1;
         }
 
         void OnReviewRequested() => _reviewPromptRequestedEventManager.HandleEvent(this, EventArgs.Empty, nameof(ReviewRequested));

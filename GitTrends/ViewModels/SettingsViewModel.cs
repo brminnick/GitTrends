@@ -51,8 +51,8 @@ namespace GitTrends
 
             ThemePickerSelectedThemeIndex = (int)themeService.Preference;
 
-            var app = (App)Application.Current;
-            app.Resumed += HandleResumed;
+            if(Application.Current is App app)
+                app.Resumed += HandleResumed;
 
             initializeIsRegisterForNotificationsSwitch().SafeFireAndForget();
 

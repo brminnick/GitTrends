@@ -1,9 +1,6 @@
-﻿using System;
-using Xamarin.Essentials;
-
-namespace GitTrends.Mobile.Shared
+﻿namespace GitTrends.Mobile.Shared
 {
-    static class ReviewServiceConstants
+    public static class ReviewServiceConstants
     {
         public const string TitleLabel_EnjoyingGitTrends = "Enjoying GitTrends?";
         public const string TitleLabel_EnjoyingNewVersionOfGitTrends = "Enjoing the New Version of GitTrends?";
@@ -16,7 +13,7 @@ namespace GitTrends.Mobile.Shared
         public const string YesButton_Yes = "Yes!";
     }
 
-    enum ReviewState { Greeting, RequestFeedback, RequestReview }
-    enum ReviewAction { NoButtonTapped, YesButtonTapped }
-    enum ReviewRequest { None, AppStore, Email }
+    public enum ReviewState { Greeting, RequestFeedback, RequestReview }
+    public enum ReviewAction { NoButtonTapped, YesButtonTapped }
+    public enum ReviewRequest { None, AppStore, Email }
 }

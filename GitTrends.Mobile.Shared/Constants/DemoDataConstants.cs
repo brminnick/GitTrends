@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using GitTrends.Shared;
 
 namespace GitTrends.Mobile.Shared
 {

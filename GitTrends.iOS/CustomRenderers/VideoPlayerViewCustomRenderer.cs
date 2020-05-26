@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using AVFoundation;
 using AVKit;
 using CoreGraphics;
@@ -28,7 +29,7 @@ namespace GitTrends.iOS
         {
             base.OnElementChanged(e);
 
-            if (e.NewElement != null)
+            if (e.NewElement != null && _avPlayerViewController.View != null)
             {
                 _avPlayerViewController.View.BackgroundColor = Color.White.ToUIColor();
 
@@ -54,7 +55,10 @@ namespace GitTrends.iOS
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var mediaElementService = scope.Resolve<MediaElementService>();
 
-            var asset = AVUrlAsset.Create(NSUrl.FromString(mediaElementService.OnboardingChart?.HlsUrl));
+            if (mediaElementService.OnboardingChart?.HlsUrl is null)
+                throw new NullReferenceException();
+
+            var asset = AVUrlAsset.Create(NSUrl.FromString(mediaElementService.OnboardingChart.HlsUrl));
 
             return new AVPlayerItem(asset)
             {

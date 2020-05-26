@@ -21,9 +21,9 @@ namespace GitTrends.UnitTests
 
             var activateDemoUserTCS = new TaskCompletionSource<object?>();
 
-            var firstRunService = ContainerService.Container.GetService<FirstRunService>();
+            var firstRunService = ServiceCollection.ServiceProvider.GetService<FirstRunService>();
 
-            var githubAuthorizationService = ContainerService.Container.GetService<GitHubAuthenticationService>();
+            var githubAuthorizationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
             githubAuthorizationService.DemoUserActivated += HandleDemoUserActivated;
 
 

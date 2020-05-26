@@ -14,7 +14,7 @@ namespace GitTrends.UnitTests
             //Arrange
             StreamingManifest? streamingManifest_BeforeInitialization, streamingManifest_AfterInitialization;
 
-            var mediaElementService = ContainerService.Container.GetService<MediaElementService>();
+            var mediaElementService = ServiceCollection.ServiceProvider.GetService<MediaElementService>();
 
             //Act
             streamingManifest_BeforeInitialization = mediaElementService.OnboardingChart;

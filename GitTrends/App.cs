@@ -15,16 +15,18 @@ namespace GitTrends
         readonly WeakEventManager _resumedEventManager = new WeakEventManager();
         readonly IAnalyticsService _analyticsService;
 
-        public App()
+        public App(IAnalyticsService analyticsService,
+                    INotificationService notificationService,
+                    ThemeService themeService,
+                    SplashScreenPage splashScreenPage)
         {
             Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental" });
 
-            InitializeEssentialServices();
+            InitializeEssentialServices(themeService, notificationService);
 
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            _analyticsService = scope.Resolve<IAnalyticsService>();
+            _analyticsService = analyticsService;
 
-            MainPage = scope.Resolve<SplashScreenPage>();
+            MainPage = splashScreenPage;
 
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
         }
@@ -70,14 +72,9 @@ namespace GitTrends
             return notificationService.SetAppBadgeCount(0);
         }
 
-        async void InitializeEssentialServices()
+        async void InitializeEssentialServices(ThemeService themeService, INotificationService notificationService)
         {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-
-            var themeService = scope.Resolve<ThemeService>();
             await themeService.Initialize().ConfigureAwait(false);
-
-            var notificationService = DependencyService.Resolve<INotificationService>();
             notificationService.Initialize();
         }
 

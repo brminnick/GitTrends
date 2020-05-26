@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Shiny;
@@ -10,8 +9,21 @@ namespace GitTrends.UnitTests
     public class MockNotificationManager : INotificationManager
     {
         readonly Dictionary<int, Notification> _pendingNotificationsDitcionary = new Dictionary<int, Notification>();
+        readonly INotificationService _notificationService;
 
-        public int Badge { get; set; }
+        int _badge;
+
+        public MockNotificationManager(INotificationService notificationService) => _notificationService = notificationService;
+
+        public int Badge
+        {
+            get => _badge;
+            set
+            {
+                _badge = value;
+                _notificationService.SetiOSBadgeCount(value);
+            }
+        }
 
         public Task Cancel(int id)
         {
@@ -29,10 +41,14 @@ namespace GitTrends.UnitTests
 
         public void RegisterCategory(NotificationCategory category)
         {
-            
+
         }
 
-        public Task<AccessState> RequestAccess() => Task.FromResult(AccessState.Available);
+        public Task<AccessState> RequestAccess()
+        {
+            _notificationService.Initialize();
+            return Task.FromResult(AccessState.Available);
+        }
 
         public Task Send(Notification notification)
         {

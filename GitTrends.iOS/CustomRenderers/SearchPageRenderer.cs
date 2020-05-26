@@ -31,47 +31,49 @@ namespace GitTrends.iOS
         {
             base.ViewDidAppear(animated);
 
-            if (ParentViewController.NavigationItem.SearchController is null)
+            if (ParentViewController is UIViewController parentViewController)
             {
-                ParentViewController.NavigationItem.SearchController = _searchController;
-                DefinesPresentationContext = true;
+                if (parentViewController.NavigationItem.SearchController is null)
+                {
+                    ParentViewController.NavigationItem.SearchController = _searchController;
+                    DefinesPresentationContext = true;
 
-                //Work-around to ensure the SearchController appears when the page first appears https://stackoverflow.com/a/46313164/5953643
-                ParentViewController.NavigationItem.SearchController.Active = true;
-                ParentViewController.NavigationItem.SearchController.Active = false;
+                    //Work-around to ensure the SearchController appears when the page first appears https://stackoverflow.com/a/46313164/5953643
+                    ParentViewController.NavigationItem.SearchController.Active = true;
+                    ParentViewController.NavigationItem.SearchController.Active = false;
+                }
+
+                await UpdateBarButtonItems(parentViewController, (Page)Element);
             }
-
-            await UpdateBarButtonItems();
         }
 
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
 
-            ParentViewController.NavigationItem.SearchController = null;
+            if (ParentViewController != null)
+                ParentViewController.NavigationItem.SearchController = null;
         }
 
         public void UpdateSearchResultsForSearchController(UISearchController searchController)
         {
             if (Element is ISearchPage searchPage)
-                searchPage.OnSearchBarTextChanged(searchController.SearchBar.Text);
+                searchPage.OnSearchBarTextChanged(searchController.SearchBar.Text ?? string.Empty);
         }
 
-        async Task UpdateBarButtonItems()
+        async Task UpdateBarButtonItems(UIViewController parentViewController, Page page)
         {
-            var contentPage = (ContentPage)Element;
-
-            var (leftBarButtonItem, rightBarButtonItems) = await GetToolbarItems(contentPage.ToolbarItems);
+            var (leftBarButtonItem, rightBarButtonItems) = await GetToolbarItems(page.ToolbarItems);
 
             if (leftBarButtonItem != null)
-                ParentViewController.NavigationItem.LeftBarButtonItems = new UIBarButtonItem[] { leftBarButtonItem };
+                parentViewController.NavigationItem.LeftBarButtonItems = new UIBarButtonItem[] { leftBarButtonItem };
             else
-                ParentViewController.NavigationItem.LeftBarButtonItems = Enumerable.Empty<UIBarButtonItem>().ToArray();
+                parentViewController.NavigationItem.LeftBarButtonItems = Enumerable.Empty<UIBarButtonItem>().ToArray();
 
             if (rightBarButtonItems.Any())
-                ParentViewController.NavigationItem.RightBarButtonItems = rightBarButtonItems.ToArray();
+                parentViewController.NavigationItem.RightBarButtonItems = rightBarButtonItems.ToArray();
             else
-                ParentViewController.NavigationItem.RightBarButtonItems = Enumerable.Empty<UIBarButtonItem>().ToArray();
+                parentViewController.NavigationItem.RightBarButtonItems = Enumerable.Empty<UIBarButtonItem>().ToArray();
         }
 
         async Task<(UIBarButtonItem? LeftBarButtonItem, List<UIBarButtonItem> RightBarButtonItems)> GetToolbarItems(IEnumerable<ToolbarItem> items)

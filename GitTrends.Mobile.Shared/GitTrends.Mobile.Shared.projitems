@@ -12,6 +12,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)Constants\" />
     <Folder Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\" />
     <Folder Include="$(MSBuildThisFileDirectory)EventArgs\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Models\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Constants\PageTitles.cs" />
@@ -37,5 +38,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\PullToRefreshFailedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\MaximimApiRequestsReachedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AzureFunctionsApiService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\TimedEvent.cs" />
   </ItemGroup>
 </Project>

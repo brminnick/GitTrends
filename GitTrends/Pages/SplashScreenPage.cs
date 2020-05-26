@@ -11,7 +11,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    class SplashScreenPage : BaseContentPage<SplashScreenViewModel>
+    public class SplashScreenPage : BaseContentPage<SplashScreenViewModel>
     {
         readonly IEnumerator<string> _statusMessageEnumerator;
         readonly FirstRunService _firstRunService;

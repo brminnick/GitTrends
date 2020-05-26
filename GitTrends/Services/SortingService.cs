@@ -2,26 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using GitTrends.Shared;
-using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
     public class SortingService
     {
+        readonly IPreferences _preferences;
+
+        public SortingService(IPreferences preferences) => _preferences = preferences;
+
         public bool IsReversed
         {
-            get => Preferences.Get(nameof(IsReversed), false);
-            set => Preferences.Set(nameof(IsReversed), value);
+            get => _preferences.Get(nameof(IsReversed), false);
+            set => _preferences.Set(nameof(IsReversed), value);
         }
 
         public SortingOption CurrentOption
         {
             get => GetCurrentOption();
-            set => Preferences.Set(nameof(CurrentOption), (int)value);
+            set => _preferences.Set(nameof(CurrentOption), (int)value);
         }
 
         public static IEnumerable<MobileReferringSiteModel> SortReferringSites(in IEnumerable<MobileReferringSiteModel> referringSites) =>
-            referringSites.OrderByDescending(x => x.TotalCount).ThenByDescending(x => x.TotalUniqueCount).ThenByDescending(x => x.Referrer);
+            referringSites.OrderByDescending(x => x.TotalCount).ThenByDescending(x => x.TotalUniqueCount).ThenBy(x => x.Referrer);
 
         //SortingCategory.IssuesForks Priority: Trending > Stars > Name > Forks > Issues 
         //SortingCategory.Views Priority: Trending > Views > Name > Unique Views > Stars
@@ -63,11 +67,11 @@ namespace GitTrends
             }
             else
             {
-                Preferences.Remove(nameof(CurrentOption));
+                _preferences.Remove(nameof(CurrentOption));
                 return getCurrentSortingOption();
             }
 
-            static SortingOption getCurrentSortingOption() => (SortingOption)Preferences.Get(nameof(CurrentOption), (int)SortingConstants.DefaultSortingOption);
+            SortingOption getCurrentSortingOption() => (SortingOption)_preferences.Get(nameof(CurrentOption), (int)SortingConstants.DefaultSortingOption);
         }
     }
 }

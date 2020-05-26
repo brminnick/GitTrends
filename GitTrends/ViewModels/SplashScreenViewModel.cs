@@ -9,7 +9,7 @@ using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
-    class SplashScreenViewModel : BaseViewModel
+    public class SplashScreenViewModel : BaseViewModel
     {
         readonly WeakEventManager<InitializationCompleteEventArgs> _initializationCompleteEventManager = new WeakEventManager<InitializationCompleteEventArgs>();
 
