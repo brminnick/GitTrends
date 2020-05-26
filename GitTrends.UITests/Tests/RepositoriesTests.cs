@@ -203,6 +203,8 @@ namespace GitTrends.UITests
                 if (largeScreenTrendingImageCount > 0)
                     Assert.AreEqual(0, smallScreenTrendingImageCount);
             }
+
+            Assert.IsFalse(visibleRepositoryList.Any(x => x.DailyClonesList.Count <= 0 || x.DailyViewsList.Count <= 0));
         }
 
         [Test]

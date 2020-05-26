@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using GitTrends.Shared;
 
 namespace GitTrends.UITests
@@ -32,5 +34,9 @@ namespace GitTrends.UITests
         public long TotalUniqueClones { get; set; }
 
         public bool IsTrending { get; set; }
+
+        public IReadOnlyList<DailyViewsModel> DailyViewsList { get; set; } = Enumerable.Empty<DailyViewsModel>().ToList();
+
+        public IReadOnlyList<DailyClonesModel> DailyClonesList { get; set; } = Enumerable.Empty<DailyClonesModel>().ToList();
     }
 }

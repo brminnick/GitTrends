@@ -182,8 +182,8 @@ namespace GitTrends
             {
                 AnalyticsService.Track("Referring Site Tapped", new Dictionary<string, string>
                 {
-                    { nameof(ReferringSiteModel.Referrer), referingSite.Referrer },
-                    { nameof(ReferringSiteModel.ReferrerUri), referingSite.ReferrerUri.ToString() }
+                    { nameof(ReferringSiteModel) + nameof(ReferringSiteModel.Referrer), referingSite.Referrer },
+                    { nameof(ReferringSiteModel) + nameof(ReferringSiteModel.ReferrerUri), referingSite.ReferrerUri.ToString() }
                 });
 
                 await _deepLinkingService.OpenBrowser(referingSite.ReferrerUri);

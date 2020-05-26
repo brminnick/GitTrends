@@ -144,7 +144,7 @@ namespace GitTrends
                 }
 
                 //Add Remaining Repositories to VisibleRepositoryList
-                AddRepositoriesToCollection(completedRepoitories, _searchBarText);
+                AddRepositoriesToCollection(completedRepoitories, _searchBarText, shouldRemoveRepoisitoriesWithoutViewsClonesData: true);
 
                 RefreshState = RefreshState.Succeeded;
             }
@@ -235,8 +235,8 @@ namespace GitTrends
 
             AnalyticsService.Track("SortingOption Changed", new Dictionary<string, string>
             {
-                { nameof(SortingService.CurrentOption), _sortingService.CurrentOption.ToString() },
-                { nameof(SortingService.IsReversed), _sortingService.IsReversed.ToString() }
+                { nameof(SortingService) + nameof(SortingService.CurrentOption), _sortingService.CurrentOption.ToString() },
+                { nameof(SortingService) + nameof(SortingService.IsReversed), _sortingService.IsReversed.ToString() }
             });
 
             UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
@@ -249,10 +249,14 @@ namespace GitTrends
             UpdateVisibleRepositoryList(searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
         }
 
-        void AddRepositoriesToCollection(IEnumerable<Repository> repositories, string searchBarText, bool shouldUpdateVisibleRepositoryList = true)
+        void AddRepositoriesToCollection(IEnumerable<Repository> repositories, string searchBarText, bool shouldUpdateVisibleRepositoryList = true, bool shouldRemoveRepoisitoriesWithoutViewsClonesData = false)
         {
             var updatedRepositoryList = _repositoryList.Concat(repositories);
-            _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
+
+            if (shouldRemoveRepoisitoriesWithoutViewsClonesData)
+                _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).Where(x => x.DailyClonesList.Count > 1 || x.DailyViewsList.Count > 1).ToList();
+            else
+                _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
             if (shouldUpdateVisibleRepositoryList)
                 UpdateVisibleRepositoryList(searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
