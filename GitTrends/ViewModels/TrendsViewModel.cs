@@ -78,7 +78,7 @@ namespace GitTrends
             }
         }
 
-        public string EmptyDataViewText
+        public string EmptyDataViewTitle
         {
             get => _emptyDataViewText;
             set => SetProperty(ref _emptyDataViewText, value);
@@ -184,14 +184,14 @@ namespace GitTrends
                     repositoryClones = repositoryClonesResponse.DailyClonesList;
                 }
 
-                EmptyDataViewText = _emptyDataViewText_NoTrafficYet;
+                EmptyDataViewTitle = _emptyDataViewText_NoTrafficYet;
             }
             catch (Exception e)
             {
                 repositoryViews = Enumerable.Empty<DailyViewsModel>().ToList();
                 repositoryClones = Enumerable.Empty<DailyClonesModel>().ToList();
 
-                EmptyDataViewText = EmptyDataView.UnableToRetrieveDataText;
+                EmptyDataViewTitle = EmptyDataView.UnableToRetrieveDataText;
 
                 AnalyticsService.Report(e);
             }

@@ -28,7 +28,8 @@ namespace GitTrends
 
         bool _isRefreshing;
         string _searchBarText = string.Empty;
-        string _emptyDataViewText = string.Empty;
+        string _emptyDataViewTitle = string.Empty;
+        string _emptyDataViewDescription = string.Empty;
         IReadOnlyList<Repository> _repositoryList = Enumerable.Empty<Repository>().ToList();
         IReadOnlyList<Repository> _visibleRepositoryList = Enumerable.Empty<Repository>().ToList();
 
@@ -77,10 +78,16 @@ namespace GitTrends
             set => SetProperty(ref _visibleRepositoryList, value);
         }
 
-        public string EmptyDataViewText
+        public string EmptyDataViewTitle
         {
-            get => _emptyDataViewText;
-            set => SetProperty(ref _emptyDataViewText, value);
+            get => _emptyDataViewTitle;
+            set => SetProperty(ref _emptyDataViewTitle, value);
+        }
+
+        public string EmptyDataViewDescription
+        {
+            get => _emptyDataViewDescription;
+            set => SetProperty(ref _emptyDataViewDescription, value);
         }
 
         public bool IsRefreshing
@@ -93,21 +100,36 @@ namespace GitTrends
         {
             set
             {
-                const string swipeDownToRefresh = "\nSwipe down to retrieve repositories";
-                const string noFilterMatch = "No Matching Repository Found\nClear search bar and try again";
-                const string emptyList = "Your repositories list is\nempty";
-                const string loginExpired = "GitHub Login Expired\nPlease login again";
-                const string uninitialized = "Data not gathered" + swipeDownToRefresh;
+                const string pleaseLoginAgain = "Please login again";
+                const string clearSearchBarTryAgain = "Clear search bar and try again";
+                const string swipeDownToRefresh = "Swipe down to retrieve repositories";
 
-                EmptyDataViewText = value switch
+                const string noFilterMatch = "No Matching Repository Found";
+                const string emptyList = "Your repositories list is empty";
+                const string loginExpired = "GitHub Login Expired";
+                const string uninitialized = "Data not gathered";
+
+                EmptyDataViewTitle = value switch
                 {
                     RefreshState.Uninitialized => uninitialized,
                     RefreshState.Succeeded when _repositoryList.Any() => noFilterMatch,
                     RefreshState.Succeeded => emptyList,
                     RefreshState.LoginExpired => loginExpired,
                     RefreshState.Error when _repositoryList.Any() => noFilterMatch,
-                    RefreshState.Error => EmptyDataView.UnableToRetrieveDataText + swipeDownToRefresh,
-                    RefreshState.MaximumApiLimit => EmptyDataView.UnableToRetrieveDataText + swipeDownToRefresh,
+                    RefreshState.Error => EmptyDataView.UnableToRetrieveDataText,
+                    RefreshState.MaximumApiLimit => EmptyDataView.UnableToRetrieveDataText,
+                    _ => throw new NotSupportedException()
+                };
+
+                EmptyDataViewDescription = value switch
+                {
+                    RefreshState.Uninitialized => swipeDownToRefresh,
+                    RefreshState.Succeeded when _repositoryList.Any() => clearSearchBarTryAgain,
+                    RefreshState.Succeeded => string.Empty,
+                    RefreshState.LoginExpired => pleaseLoginAgain,
+                    RefreshState.Error when _repositoryList.Any() => clearSearchBarTryAgain,
+                    RefreshState.Error => swipeDownToRefresh,
+                    RefreshState.MaximumApiLimit => swipeDownToRefresh,
                     _ => throw new NotSupportedException()
                 };
             }

@@ -52,8 +52,8 @@ namespace GitTrends
                         .Row(Row.Chart),
                     new EmptyDataView("EmptyInsightsChart", TrendsPageAutomationIds.EmptyDataView)
                         .Row(Row.Chart)
-                        .Bind(IsVisibleProperty,nameof(TrendsViewModel.IsEmptyDataViewVisible))
-                        .Bind(EmptyDataView.TextProperty, nameof(RepositoryViewModel.EmptyDataViewText)),
+                        .Bind(IsVisibleProperty, nameof(TrendsViewModel.IsEmptyDataViewVisible))
+                        .Bind(EmptyDataView.TitleProperty, nameof(TrendsViewModel.EmptyDataViewTitle)),
                     new TrendsChartActivityIndicator()
                         .Row(Row.Chart),
                 }

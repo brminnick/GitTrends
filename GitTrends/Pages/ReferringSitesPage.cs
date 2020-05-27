@@ -50,7 +50,8 @@ namespace GitTrends
                 Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = ReferringSitesDataTemplate.TopPadding } : null,
                 EmptyView = new EmptyDataView("EmptyReferringSitesList", ReferringSitesPageAutomationIds.EmptyDataView)
                                 .Bind(IsVisibleProperty, nameof(ReferringSitesViewModel.IsEmptyDataViewEnabled))
-                                .Bind(EmptyDataView.TextProperty, nameof(ReferringSitesViewModel.EmptyDataViewText))
+                                .Bind(EmptyDataView.TitleProperty, nameof(ReferringSitesViewModel.EmptyDataViewTitle))
+                                .Bind(EmptyDataView.DescriptionProperty, nameof(ReferringSitesViewModel.EmptyDataViewDescription))
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.MobileReferringSitesList));

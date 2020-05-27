@@ -35,6 +35,7 @@ namespace GitTrends
         string _reviewRequestView_YesButtonText = string.Empty;
         string _reviewRequestView_TitleLabel = string.Empty;
         string _emptyDataViewText = string.Empty;
+        string _emptyDataViewDescription = string.Empty;
 
         bool _isRefreshing, _isStoreRatingRequestVisible, _isEmptyDataViewEnabled;
 
@@ -80,10 +81,16 @@ namespace GitTrends
         public ICommand YesButtonCommand { get; }
         public ICommand RefreshCommand { get; }
 
-        public string EmptyDataViewText
+        public string EmptyDataViewTitle
         {
             get => _emptyDataViewText;
             set => SetProperty(ref _emptyDataViewText, value);
+        }
+
+        public string EmptyDataViewDescription
+        {
+            get => _emptyDataViewDescription;
+            set => SetProperty(ref _emptyDataViewDescription, value);
         }
 
         public bool IsEmptyDataViewEnabled
@@ -132,18 +139,30 @@ namespace GitTrends
         {
             set
             {
-                const string swipeDownToRefresh = "\nSwipe down to retrieve referring sites";
-                const string emptyList = "No referrals yet";
-                const string loginExpired = "GitHub Login Expired\nPlease login again";
-                const string uninitialized = "Data not gathered" + swipeDownToRefresh;
+                const string pleaseLoginAgain = "Please login again";
+                const string swipeDownToRefresh = "Swipe down to retrieve referring sites";
 
-                EmptyDataViewText = value switch
+                const string emptyList = "No referrals yet";
+                const string loginExpired = "GitHub Login Expired";
+                const string uninitialized = "Data not gathered";
+
+                EmptyDataViewTitle = value switch
                 {
                     RefreshState.Uninitialized => uninitialized,
                     RefreshState.Succeeded => emptyList,
                     RefreshState.LoginExpired => loginExpired,
-                    RefreshState.Error => EmptyDataView.UnableToRetrieveDataText + swipeDownToRefresh,
-                    RefreshState.MaximumApiLimit => EmptyDataView.UnableToRetrieveDataText + swipeDownToRefresh,
+                    RefreshState.Error => EmptyDataView.UnableToRetrieveDataText,
+                    RefreshState.MaximumApiLimit => EmptyDataView.UnableToRetrieveDataText,
+                    _ => throw new NotSupportedException()
+                };
+
+                EmptyDataViewDescription = value switch
+                {
+                    RefreshState.Uninitialized => swipeDownToRefresh,
+                    RefreshState.Succeeded => string.Empty,
+                    RefreshState.LoginExpired => pleaseLoginAgain,
+                    RefreshState.Error => swipeDownToRefresh,
+                    RefreshState.MaximumApiLimit => swipeDownToRefresh,
                     _ => throw new NotSupportedException()
                 };
             }
@@ -252,7 +271,7 @@ namespace GitTrends
                 if (mobileReferringSiteFromDatabase != null && isFavIconValid(mobileReferringSiteFromDatabase))
                     return mobileReferringSiteFromDatabase;
 
-                if(_gitHubUserService.IsDemoUser)
+                if (_gitHubUserService.IsDemoUser)
                 {
                     //Display the Activity Indicator to ensure consistent UX
                     await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);

@@ -6,9 +6,16 @@ namespace GitTrends
     class EmptyDataView : AbsoluteLayout
     {
         public const string UnableToRetrieveDataText = "Unable to retrieve data";
-        public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(string), typeof(EmptyDataView), string.Empty);
+        public static readonly BindableProperty TitleProperty = BindableProperty.Create(nameof(Title), typeof(string), typeof(EmptyDataView), string.Empty);
+        public static readonly BindableProperty DescriptionProperty = BindableProperty.Create(nameof(Description), typeof(string), typeof(EmptyDataView), string.Empty);
+        public static readonly BindableProperty ImageSourceProperty = BindableProperty.Create(nameof(ImageSource), typeof(string), typeof(EmptyDataView), string.Empty);
 
-        public EmptyDataView(in string imageSource, in string automationId)
+        public EmptyDataView(in string imageSource, in string automationId) : this(automationId)
+        {
+            ImageSource = imageSource;
+        }
+
+        public EmptyDataView(in string automationId)
         {
             AutomationId = automationId;
 
@@ -17,8 +24,12 @@ namespace GitTrends
                 Spacing = 24,
                 Children =
                 {
-                    new TitleLabel(Text).Bind(Label.TextProperty, nameof(Text), source: this),
-                    new EmptyStateImage(imageSource),
+                    new TextLabel
+                    (
+                        new Span().Bind(Span.TextProperty, nameof(Title), source: this),
+                        new Span().Bind(Span.TextProperty, nameof(Description), source: this)
+                    ),
+                    new EmptyStateImage(ImageSource).Bind(Image.SourceProperty, nameof(ImageSource), source: this)
                 }
             };
 
@@ -26,20 +37,43 @@ namespace GitTrends
             Children.Add(stackLayout, new Rectangle(.5, .5, -1, -1), AbsoluteLayoutFlags.PositionProportional);
         }
 
-        public string Text
+        public string Title
         {
-            get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
+            get => (string)GetValue(TitleProperty);
+            set => SetValue(TitleProperty, value);
         }
 
-        class TitleLabel : Label
+        public string Description
         {
-            public TitleLabel(in string text)
-            {
-                Text = text;
+            get => (string)GetValue(DescriptionProperty);
+            set => SetValue(DescriptionProperty, value);
+        }
 
-                FontSize = 24;
-                FontFamily = FontFamilyConstants.RobotoMedium;
+        public string ImageSource
+        {
+            get => (string)GetValue(ImageSourceProperty);
+            set => SetValue(ImageSourceProperty, value);
+        }
+
+        class TextLabel : Label
+        {
+            public TextLabel(Span title, Span description)
+            {
+                title.FontSize = 24;
+                title.FontFamily = FontFamilyConstants.RobotoMedium;
+
+                description.FontSize = 20;
+                description.FontFamily = FontFamilyConstants.RobotoMedium;
+
+                FormattedText = new FormattedString
+                {
+                    Spans =
+                    {
+                        title,
+                        new Span { Text = "\n" },
+                        description
+                    }
+                };
 
                 HorizontalOptions = LayoutOptions.Center;
                 VerticalOptions = LayoutOptions.End;
