@@ -10,7 +10,7 @@ namespace GitTrends
 {
     public class RepositoryDatabase : BaseDatabase
     {
-        public RepositoryDatabase(IFileSystem fileSystem) : base(fileSystem, TimeSpan.FromDays(90))
+        public RepositoryDatabase(IFileSystem fileSystem, IAnalyticsService analyticsService) : base(fileSystem, analyticsService, TimeSpan.FromDays(90))
         {
 
         }

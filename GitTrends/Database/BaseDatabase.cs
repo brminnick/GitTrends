@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using GitTrends.Shared;
 using Polly;
 using SQLite;
 using Xamarin.Essentials.Interfaces;
@@ -10,15 +11,17 @@ namespace GitTrends
 {
     public abstract class BaseDatabase
     {
-        protected BaseDatabase(IFileSystem fileSystem, TimeSpan expiresAt)
+        protected BaseDatabase(IFileSystem fileSystem, IAnalyticsService analyticsService, TimeSpan expiresAt)
         {
             ExpiresAt = expiresAt;
+            AnalyticsService = analyticsService;
 
             var databasePath = Path.Combine(fileSystem.AppDataDirectory, $"{nameof(GitTrends)}.db3");
             DatabaseConnection = new SQLiteAsyncConnection(databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache);
         }
 
         public TimeSpan ExpiresAt { get; }
+        protected IAnalyticsService AnalyticsService { get; }
 
         SQLiteAsyncConnection DatabaseConnection { get; }
 

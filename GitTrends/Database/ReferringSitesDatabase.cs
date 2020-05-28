@@ -11,7 +11,7 @@ namespace GitTrends
 {
     public class ReferringSitesDatabase : BaseDatabase
     {
-        public ReferringSitesDatabase(IFileSystem fileSystem) : base(fileSystem, TimeSpan.FromDays(30))
+        public ReferringSitesDatabase(IFileSystem fileSystem, IAnalyticsService analyticsService) : base(fileSystem, analyticsService, TimeSpan.FromDays(30))
         {
 
         }
@@ -40,7 +40,15 @@ namespace GitTrends
 
             var newestReferringSiteModel = referringSitesDatabaseModelList.OrderByDescending(x => x.DownloadedAt).FirstOrDefault();
 
-            return newestReferringSiteModel is null ? null : MobileReferringSitesDatabaseModel.ToReferringSitesModel(newestReferringSiteModel);
+            try
+            {
+                return newestReferringSiteModel is null ? null : MobileReferringSitesDatabaseModel.ToReferringSitesModel(newestReferringSiteModel);
+            }
+            catch (UriFormatException)
+            {
+                await databaseConnection.DeleteAsync(newestReferringSiteModel).ConfigureAwait(false);
+                return null;
+            }
         }
 
         public async Task<List<MobileReferringSiteModel>> GetReferringSites(string repositoryUrl)
@@ -87,7 +95,14 @@ namespace GitTrends
             {
                 var referringSiteModel = new ReferringSiteModel(referringSitesDatabaseModel.TotalCount, referringSitesDatabaseModel.TotalUniqueCount, referringSitesDatabaseModel.Referrer, referringSitesDatabaseModel.DownloadedAt);
 
-                return new MobileReferringSiteModel(referringSiteModel, string.IsNullOrWhiteSpace(referringSitesDatabaseModel.FavIconImageUrl) ? null : ImageSource.FromUri(new Uri(referringSitesDatabaseModel.FavIconImageUrl)));
+                try
+                {
+                    return new MobileReferringSiteModel(referringSiteModel, string.IsNullOrWhiteSpace(referringSitesDatabaseModel.FavIconImageUrl) ? null : ImageSource.FromUri(new Uri(referringSitesDatabaseModel.FavIconImageUrl)));
+                }
+                catch (UriFormatException)
+                {
+                    return new MobileReferringSiteModel(referringSiteModel, ImageSource.FromFile(referringSitesDatabaseModel.FavIconImageUrl));
+                }
             }
 
             public static MobileReferringSitesDatabaseModel ToReferringSitesDatabaseModel(MobileReferringSiteModel referringSiteModel, string repositoryUrl)
