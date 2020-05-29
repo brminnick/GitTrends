@@ -94,8 +94,8 @@
     <PackageReference Include="Autofac" Version="5.2.0" />
     <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="18.1.0.42" />
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.3" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.2.1" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.2.1" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.2.2" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.2.2" />
     <PackageReference Include="Shiny.Notifications" Version="1.1.0.1570" />
     <PackageReference Include="Xam.Plugins.Android.ExoPlayer" Version="2.11.4" />
     <PackageReference Include="Xamarin.Firebase.Messaging" Version="119.0.1-preview02" />

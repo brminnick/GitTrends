@@ -51,7 +51,6 @@ namespace GitTrends.Droid
 
         public override async void OnNewToken(string token)
         {
-
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var notificationService = scope.Resolve<NotificationService>();
 
