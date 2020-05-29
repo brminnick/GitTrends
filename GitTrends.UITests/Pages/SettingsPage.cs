@@ -14,7 +14,7 @@ namespace GitTrends.UITests
         readonly Query _gitHubAvatarImage, _gitHubAliasLabel, _gitHubNameLabel, _loginButton,
             _gitHubSettingsViewActivityIndicator, _trendsChartSettingsLabel,
             _trendsChartSettingsControl, _demoModeButton, _createdByLabel,
-            _registerForNotiicationsSwitch, _gitHubUserView, _themePicker;
+            _registerForNotiicationsSwitch, _gitHubUserView, _themePicker, _themePickerContainer;
 
         public SettingsPage(IApp app) : base(app, PageTitles.SettingsPage)
         {
@@ -34,6 +34,7 @@ namespace GitTrends.UITests
             _registerForNotiicationsSwitch = GenerateMarkedQuery(SettingsPageAutomationIds.RegisterForNotificationsSwitch);
 
             _themePicker = GenerateMarkedQuery(SettingsPageAutomationIds.ThemePicker);
+            _themePickerContainer = GenerateMarkedQuery(SettingsPageAutomationIds.ThemePicker + "_Container");
         }
 
         public bool IsLoggedIn => App.Query(GitHubLoginButtonConstants.Disconnect).Any();
@@ -62,10 +63,6 @@ namespace GitTrends.UITests
 
         public Task SelectTheme(PreferredTheme preferredTheme)
         {
-            var isQueryEnabled = App.Query(_themePicker).First().Enabled;
-            if (!isQueryEnabled)
-                throw new Exception("Theme Picker Disabled");
-
             var rowNumber = (int)preferredTheme;
             var totalRows = Enum.GetNames(typeof(PreferredTheme)).Count();
 
@@ -76,35 +73,44 @@ namespace GitTrends.UITests
                 _ => throw new NotSupportedException()
             };
 
-            App.Tap(_themePicker);
+            try
+            {
+                App.Tap(_themePicker);
+            }
+            catch
+            {
+                App.Tap(_themePickerContainer);
+            }
 
-            scrollToRow(rowOffset);
+            scrollToRow(App, rowNumber, rowOffset, totalRows, preferredTheme);
 
             if (App is iOSApp)
                 App.Tap(x => x.Marked("Done"));
             else if (App is AndroidApp)
                 App.Tap(x => x.Marked("OK"));
+            else
+                throw new NotSupportedException();
 
 
             App.Screenshot($"Selected Row From Picker: {preferredTheme}");
 
             return WaitForPageToLoad();
 
-            void scrollToRow(int offset)
+            static void scrollToRow(in IApp app, int rowNumber, int rowOffset, int totalRows, in PreferredTheme preferredTheme)
             {
-                switch (App)
+                switch (app)
                 {
                     case iOSApp iosApp:
                         iosApp.WaitForElement(x => x.Class("UIPickerView"));
-                        iosApp.Query(x => x.Class("UIPickerView").Invoke("selectRow", rowNumber + offset, "inComponent", 0, "animated", true));
+                        iosApp.Query(x => x.Class("UIPickerView").Invoke("selectRow", rowNumber + rowOffset, "inComponent", 0, "animated", true));
 
-                        App.Tap(preferredTheme.ToString());
+                        iosApp.Tap(preferredTheme.ToString());
                         break;
 
                     case AndroidApp androidApp:
                         androidApp.WaitForElement(x => x.Class("android.widget.ScrollView"));
 
-                        while (rowNumber + offset != getCurrentPickerRow(androidApp) && totalRows - 1 != getCurrentPickerRow(androidApp))
+                        while (rowNumber + rowOffset != getCurrentPickerRow(androidApp) && totalRows - 1 != getCurrentPickerRow(androidApp))
                         {
                             androidApp.Query(x => x.Class("android.widget.NumberPicker").Invoke("scrollBy", 0, -50));
                         }
@@ -117,10 +123,10 @@ namespace GitTrends.UITests
                         break;
 
                     default:
-                        throw new NotSupportedException($"{App.GetType()} Not Supported");
+                        throw new NotSupportedException($"{app.GetType()} Not Supported");
                 }
 
-                App.Screenshot($"Scrolled To Row: {preferredTheme}");
+                app.Screenshot($"Scrolled To Row: {preferredTheme}");
 
                 static int getCurrentPickerRow(AndroidApp app)
                 {

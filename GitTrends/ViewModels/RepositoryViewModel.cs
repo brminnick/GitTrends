@@ -179,7 +179,7 @@ namespace GitTrends
                 await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
                 await _repositoryDatabase.DeleteAllData().ConfigureAwait(false);
 
-                VisibleRepositoryList = Enumerable.Empty<Repository>().ToList();
+                SetRepositoriesCollection(Enumerable.Empty<Repository>(), _searchBarText);
 
                 RefreshState = RefreshState.LoginExpired;
             }
@@ -188,7 +188,7 @@ namespace GitTrends
                 var maximimApiRequestsReachedEventArgs = new MaximimApiRequestsReachedEventArgs(GitHubApiService.GetRateLimitResetDateTime(e));
                 OnPullToRefreshFailed(maximimApiRequestsReachedEventArgs);
 
-                VisibleRepositoryList = Enumerable.Empty<Repository>().ToList();
+                SetRepositoriesCollection(Enumerable.Empty<Repository>(), _searchBarText);
 
                 RefreshState = RefreshState.MaximumApiLimit;
             }
