@@ -18,12 +18,12 @@ namespace GitTrends.Shared
             return remainingApiRequests <= 0;
         }
 
-        public static bool HasReachedMaximimApiCallLimit(in ApiException exception)
+        public static bool HasReachedMaximimApiCallLimit(in Exception exception)
         {
-            if (exception.StatusCode != HttpStatusCode.Forbidden)
-                return false;
+            if (exception is ApiException apiException && apiException.StatusCode is HttpStatusCode.Forbidden)
+                return HasReachedMaximimApiCallLimit(apiException.Headers);
 
-            return HasReachedMaximimApiCallLimit(exception.Headers);
+            return false;
         }
 
         public static DateTimeOffset GetRateLimitResetDateTime(in HttpResponseHeaders httpResponseHeaders) =>

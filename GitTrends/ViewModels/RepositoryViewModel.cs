@@ -172,13 +172,14 @@ namespace GitTrends
                 //Add Remaining Repositories to VisibleRepositoryList
                 AddRepositoriesToCollection(completedRepoitories, _searchBarText, shouldRemoveRepoisitoriesWithoutViewsClonesData: true);
 
-                //Call EnsureSuccessStatus to confirm the above API calls  executed successfully
+                //Call EnsureSuccessStatusCode to confirm the above API calls executed successfully
                 finalResponse = await _gitHubApiV3Service.GetGitHubApiResponse(cancellationTokenSource.Token).ConfigureAwait(false);
                 finalResponse.EnsureSuccessStatusCode();
 
                 RefreshState = RefreshState.Succeeded;
             }
-            catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
+            catch (Exception e) when ((e is ApiException exception && exception.StatusCode is HttpStatusCode.Unauthorized)
+                                        || (e is HttpRequestException && finalResponse != null && finalResponse.StatusCode is HttpStatusCode.Unauthorized))
             {
                 var loginExpiredEventArgs = new LoginExpiredPullToRefreshEventArgs();
 
@@ -191,7 +192,7 @@ namespace GitTrends
 
                 RefreshState = RefreshState.LoginExpired;
             }
-            catch (Exception e) when ((e is ApiException apiException && GitHubApiService.HasReachedMaximimApiCallLimit(apiException))
+            catch (Exception e) when (GitHubApiService.HasReachedMaximimApiCallLimit(e)
                                         || (e is HttpRequestException && finalResponse != null && GitHubApiService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
             {
                 var responseHeaders = e switch

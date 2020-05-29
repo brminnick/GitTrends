@@ -191,7 +191,6 @@ namespace GitTrends
         async Task ExecuteRefreshCommand(string owner, string repository, string repositoryUrl, CancellationToken cancellationToken)
         {
             HttpResponseMessage? finalResponse = null;
-
             IReadOnlyList<ReferringSiteModel> referringSitesList = Enumerable.Empty<ReferringSiteModel>().ToList();
 
             try
@@ -200,13 +199,14 @@ namespace GitTrends
 
                 MobileReferringSitesList = SortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
 
-                //EnnureSuccessStatus to confirm the above code executed successfully
+                //Call EnsureSuccessStatusCode to confirm the above API calls executed successfully
                 finalResponse = await _gitHubApiV3Service.GetGitHubApiResponse(cancellationToken).ConfigureAwait(false);
                 finalResponse.EnsureSuccessStatusCode();
 
                 RefreshState = RefreshState.Succeeded;
             }
-            catch (ApiException e) when (e.StatusCode is HttpStatusCode.Unauthorized)
+            catch (Exception e) when ((e is ApiException exception && exception.StatusCode is HttpStatusCode.Unauthorized)
+                                        || (e is HttpRequestException && finalResponse != null && finalResponse.StatusCode is HttpStatusCode.Unauthorized))
             {
                 OnPullToRefreshFailed(new LoginExpiredPullToRefreshEventArgs());
 
@@ -214,7 +214,7 @@ namespace GitTrends
 
                 RefreshState = RefreshState.LoginExpired;
             }
-            catch (Exception e) when ((e is ApiException apiException && GitHubApiService.HasReachedMaximimApiCallLimit(apiException))
+            catch (Exception e) when (GitHubApiService.HasReachedMaximimApiCallLimit(e)
                                         || (e is HttpRequestException && finalResponse != null && GitHubApiService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
             {
                 var responseHeaders = e switch
