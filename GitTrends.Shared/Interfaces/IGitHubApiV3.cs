@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Refit;
 
@@ -15,5 +16,8 @@ namespace GitTrends.Shared
 
         [Get("/repos/{owner}/{repo}/traffic/popular/referrers")]
         Task<List<ReferringSiteModel>> GetReferingSites(string owner, string repo, [Header("Authorization")] string authorization);
+
+        [Get("/repos/xamarin/xamarin.forms")]
+        Task<HttpResponseMessage> GetGitHubApiResponse([Header("Authorization")] string authorization);
     }
 }

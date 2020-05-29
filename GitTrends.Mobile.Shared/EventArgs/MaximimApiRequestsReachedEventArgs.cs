@@ -4,7 +4,7 @@ namespace GitTrends.Mobile.Shared
 {
     public class MaximimApiRequestsReachedEventArgs : PullToRefreshFailedEventArgs
     {
-        public MaximimApiRequestsReachedEventArgs(DateTimeOffset resetDateTime) : base("Usage Limit Exceeded", $"Please try again in {GetMinutesRemaining(resetDateTime)} minutes", "OK", "Learn More")
+        public MaximimApiRequestsReachedEventArgs(DateTimeOffset resetDateTime) : base("Usage Limit Exceeded", $"The GitHub API limits our API requests to 5,000 requests per user per hour.\n\nThe current limit is scheduled to reset in {GetMinutesRemaining(resetDateTime)} minutes.", "OK", "Learn More")
         {
 
         }

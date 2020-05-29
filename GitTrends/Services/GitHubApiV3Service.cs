@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -133,6 +134,12 @@ namespace GitTrends
 
                 return new RepositoryClonesResponseModel(response.TotalCount, response.TotalUniqueCount, response.DailyClonesList, repo, owner);
             }
+        }
+
+        public async Task<HttpResponseMessage> GetGitHubApiResponse(CancellationToken cancellationToken)
+        {
+            var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
+            return await AttemptAndRetry_Mobile(() => GithubApiClient.GetGitHubApiResponse(GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<IReadOnlyList<ReferringSiteModel>> GetReferringSites(string owner, string repo, CancellationToken cancellationToken)

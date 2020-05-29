@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -189,6 +190,8 @@ namespace GitTrends
 
         async Task ExecuteRefreshCommand(string owner, string repository, string repositoryUrl, CancellationToken cancellationToken)
         {
+            HttpResponseMessage? finalResponse = null;
+
             IReadOnlyList<ReferringSiteModel> referringSitesList = Enumerable.Empty<ReferringSiteModel>().ToList();
 
             try
@@ -196,6 +199,10 @@ namespace GitTrends
                 referringSitesList = await _gitHubApiV3Service.GetReferringSites(owner, repository, cancellationToken).ConfigureAwait(false);
 
                 MobileReferringSitesList = SortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
+
+                //EnnureSuccessStatus to confirm the above code executed successfully
+                finalResponse = await _gitHubApiV3Service.GetGitHubApiResponse(cancellationToken).ConfigureAwait(false);
+                finalResponse.EnsureSuccessStatusCode();
 
                 RefreshState = RefreshState.Succeeded;
             }
@@ -207,9 +214,17 @@ namespace GitTrends
 
                 RefreshState = RefreshState.LoginExpired;
             }
-            catch (ApiException e) when (GitHubApiService.HasReachedMaximimApiCallLimit(e))
+            catch (Exception e) when ((e is ApiException apiException && GitHubApiService.HasReachedMaximimApiCallLimit(apiException))
+                                        || (e is HttpRequestException && finalResponse != null && GitHubApiService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
             {
-                OnPullToRefreshFailed(new MaximimApiRequestsReachedEventArgs(GitHubApiService.GetRateLimitResetDateTime(e)));
+                var responseHeaders = e switch
+                {
+                    ApiException exception => exception.Headers,
+                    HttpRequestException _ when finalResponse != null => finalResponse.Headers,
+                    _ => throw new NotSupportedException()
+                };
+
+                OnPullToRefreshFailed(new MaximimApiRequestsReachedEventArgs(GitHubApiService.GetRateLimitResetDateTime(responseHeaders)));
 
                 RefreshState = RefreshState.MaximumApiLimit;
             }
