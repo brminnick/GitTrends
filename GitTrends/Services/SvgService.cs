@@ -22,9 +22,6 @@ namespace GitTrends
             if (!hex.StartsWith("#"))
                 throw new ArgumentException($"{nameof(hex)} must begin with `#`");
 
-            if (hex.Length != 9)
-                throw new ArgumentException($"{nameof(hex)} must contain 9 characters, e.g. `#FF00FF00`");
-
             return new Dictionary<string, string> { { "#000000", hex } };
         }
     }

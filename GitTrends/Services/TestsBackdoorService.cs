@@ -56,6 +56,10 @@ namespace GitTrends
             remove => _popPageCompletedEventManager.RemoveEventHandler(value);
         }
 
+        public string GetLoggedInUserAlias() => _gitHubUserService.Alias;
+        public string GetLoggedInUserName() => _gitHubUserService.Name;
+        public string GetLoggedInUserAvatarUrl() => _gitHubUserService.AvatarUrl;
+
         public async Task SetGitHubUser(string token, CancellationToken cancellationToken)
         {
             await _gitHubUserService.SaveGitHubToken(new GitHubToken(token, string.Empty, "Bearer")).ConfigureAwait(false);

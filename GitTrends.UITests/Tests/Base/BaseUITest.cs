@@ -36,6 +36,10 @@ namespace GitTrends.UITests
         protected OnboardingPage OnboardingPage => _onboardingPage ?? throw new NullReferenceException();
         protected WelcomePage WelcomePage => _welcomePage ?? throw new NullReferenceException();
 
+        protected string LoggedInUserAlias => App.InvokeBackdoorMethod<string>(BackdoorMethodConstants.GetLoggedInUserAlias);
+        protected string LoggedInUserName => App.InvokeBackdoorMethod<string>(BackdoorMethodConstants.GetLoggedInUserName);
+        protected string LoggedInUserAvatarUrl => App.InvokeBackdoorMethod<string>(BackdoorMethodConstants.GetLoggedInUserAvatarUrl);
+
         [SetUp]
         public virtual Task BeforeEachTest()
         {

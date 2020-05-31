@@ -64,6 +64,18 @@ namespace GitTrends.iOS
         public NSString GetGitHubToken(NSString noValue) =>
             SerializeObject(UITestBackdoorService.GetGitHubToken().GetAwaiter().GetResult());
 
+        [Preserve, Export(BackdoorMethodConstants.GetLoggedInUserAlias + ":")]
+        public NSString GetLoggedInUserAlias(NSString noValue) =>
+            SerializeObject(UITestBackdoorService.GetLoggedInUserAlias());
+
+        [Preserve, Export(BackdoorMethodConstants.GetLoggedInUserName + ":")]
+        public NSString GetLoggedInUserName(NSString noValue) =>
+            SerializeObject(UITestBackdoorService.GetLoggedInUserName());
+
+        [Preserve, Export(BackdoorMethodConstants.GetLoggedInUserAvatarUrl + ":")]
+        public NSString GetLoggedInUserAvatarUrl(NSString noValue) =>
+            SerializeObject(UITestBackdoorService.GetLoggedInUserAvatarUrl());
+
         static NSString SerializeObject<T>(T value) => new NSString(Newtonsoft.Json.JsonConvert.SerializeObject(value));
     }
 }

@@ -16,6 +16,9 @@ namespace GitTrends.Mobile.Shared
         public const string TriggerReviewRequest = nameof(TriggerReviewRequest);
         public const string GetReviewRequestAppStoreTitle = nameof(GetReviewRequestAppStoreTitle);
         public const string AreNotificationsEnabled = nameof(AreNotificationsEnabled);
+        public const string GetLoggedInUserAlias = nameof(GetLoggedInUserAlias);
+        public const string GetLoggedInUserName = nameof(GetLoggedInUserName);
+        public const string GetLoggedInUserAvatarUrl = nameof(GetLoggedInUserAvatarUrl);
     }
 }
 #endif

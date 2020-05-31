@@ -7,7 +7,6 @@ namespace GitTrends.UnitTests
     class SvgServiceTests : BaseTest
     {
         [TestCase("AABBCCDD")]
-        [TestCase("#AABBCC")]
         public void GetColorStringMap_InalidHex(string hex)
         {
             //Arrange
