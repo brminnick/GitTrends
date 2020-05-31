@@ -8,13 +8,17 @@ namespace GitTrends.Shared
 {
     static class GitHubApiService
     {
+        public static int GetNumberOfApiRequestsRemaining(in HttpResponseHeaders httpResponseHeaders)
+        {
+            var rateLimitRemainingHeader = httpResponseHeaders.Single(x => x.Key is "X-RateLimit-Remaining");
+            var remainingApiRequests = int.Parse(rateLimitRemainingHeader.Value.First());
+
+            return remainingApiRequests;
+        }
+
         public static bool HasReachedMaximimApiCallLimit(in HttpResponseHeaders httpResponseHeaders)
         {
-            var rateLimitRemainingHeader = httpResponseHeaders.SingleOrDefault(x => x.Key is "X-RateLimit-Remaining");
-            if (rateLimitRemainingHeader.Key == default && rateLimitRemainingHeader.Value == default)
-                return false;
-
-            var remainingApiRequests = int.Parse(rateLimitRemainingHeader.Value.First());
+            var remainingApiRequests = GetNumberOfApiRequestsRemaining(httpResponseHeaders);
             return remainingApiRequests <= 0;
         }
 

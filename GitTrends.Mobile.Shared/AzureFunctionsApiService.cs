@@ -12,6 +12,6 @@ namespace GitTrends.Mobile.Shared
 
         static IAzureFunctionsApi AzureFunctionsApiClient => _azureFunctionsApiClientHolder.Value;
 
-        public static Task<GitHubToken> GetUITestToken() => AttemptAndRetry(() => AzureFunctionsApiClient.GetUITestToken(), CancellationToken.None);
+        public static Task<GitHubToken> GetTestToken() => AttemptAndRetry(() => AzureFunctionsApiClient.GetTestToken(), CancellationToken.None);
     }
 }

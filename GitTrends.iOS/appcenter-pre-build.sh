@@ -6,7 +6,7 @@ echo CognitiveServicesConstantsFile = $AzureConstantsFile
 
 echo "Injecting API Keys"
 
-sed -i '' "s/GetUITestTokenApiKey = \"\"/GetUITestTokenApiKey = \"$UITestTokenApiKey\"/g" "$AzureConstantsFile"
+sed -i '' "s/GetTestTokenApiKey = \"\"/GetTestTokenApiKey = \"$TestTokenApiKey\"/g" "$AzureConstantsFile"
 
 sed -i '' "s/GetSyncFusionInformationApiKey = \"\"/GetSyncFusionInformationApiKey = \"$GetSyncFusionInformationApiKey\"/g" "$AzureConstantsFile"
 
