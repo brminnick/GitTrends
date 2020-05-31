@@ -81,6 +81,7 @@
     <Reference Include="System" />
     <Reference Include="Mono.Android.Export" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="4.7.0.813-pre2" />

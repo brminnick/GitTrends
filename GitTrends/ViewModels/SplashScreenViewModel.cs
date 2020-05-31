@@ -13,7 +13,7 @@ namespace GitTrends
     {
         readonly WeakEventManager<InitializationCompleteEventArgs> _initializationCompleteEventManager = new WeakEventManager<InitializationCompleteEventArgs>();
 
-        public SplashScreenViewModel(SyncFusionService syncfusionService,
+        public SplashScreenViewModel(SyncfusionService syncfusionService,
                                         MediaElementService mediaElementService,
                                         IAnalyticsService analyticsService,
                                         NotificationService notificationService,
@@ -30,7 +30,7 @@ namespace GitTrends
 
         public ICommand InitializeAppCommand { get; }
 
-        async Task ExecuteInitializeAppCommand(SyncFusionService syncFusionService, MediaElementService mediaElementService, NotificationService notificationService)
+        async Task ExecuteInitializeAppCommand(SyncfusionService syncFusionService, MediaElementService mediaElementService, NotificationService notificationService)
         {
             bool isInitializationSuccessful = false;
 

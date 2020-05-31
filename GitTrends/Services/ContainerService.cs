@@ -47,7 +47,7 @@ namespace GitTrends
             builder.RegisterType<RepositoryDatabase>().AsSelf().SingleInstance();
             builder.RegisterType<ReviewService>().AsSelf().SingleInstance();
             builder.RegisterType<SortingService>().AsSelf().SingleInstance();
-            builder.RegisterType<SyncFusionService>().AsSelf().SingleInstance();
+            builder.RegisterType<SyncfusionService>().AsSelf().SingleInstance();
             builder.RegisterType<ThemeService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
             builder.RegisterInstance(ShinyHost.Resolve<INotificationManager>()).As<INotificationManager>().SingleInstance();
