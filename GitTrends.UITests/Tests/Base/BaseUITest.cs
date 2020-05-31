@@ -85,9 +85,9 @@ namespace GitTrends.UITests
 
         protected async Task LoginToGitHub()
         {
-            var uiTestToken = await AzureFunctionsApiService.GetUITestToken().ConfigureAwait(false);
+            var token = await AzureFunctionsApiService.GetTestToken().ConfigureAwait(false);
 
-            App.InvokeBackdoorMethod(BackdoorMethodConstants.SetGitHubUser, uiTestToken.AccessToken);
+            App.InvokeBackdoorMethod(BackdoorMethodConstants.SetGitHubUser, token.AccessToken);
 
             GitHubToken? currentUserToken = null;
 

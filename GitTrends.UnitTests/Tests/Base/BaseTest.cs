@@ -51,8 +51,8 @@ namespace GitTrends.UnitTests
 
         protected static async Task AuthenticateUser(GitHubUserService gitHubUserService, GitHubGraphQLApiService gitHubGraphQLApiService)
         {
-            var uiTestToken = await Mobile.Shared.AzureFunctionsApiService.GetUITestToken().ConfigureAwait(false);
-            await gitHubUserService.SaveGitHubToken(uiTestToken).ConfigureAwait(false);
+            var token = await Mobile.Shared.AzureFunctionsApiService.GetTestToken().ConfigureAwait(false);
+            await gitHubUserService.SaveGitHubToken(token).ConfigureAwait(false);
 
             var (login, name, avatarUri) = await gitHubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false);
 
