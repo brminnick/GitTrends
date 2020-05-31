@@ -16,7 +16,7 @@ namespace GitTrends.Shared
         Task<SyncFusionDTO> GetSyncfusionInformation(long licenseVersion, [AliasAs("code")] string functionKey = AzureConstants.GetSyncFusionInformationApiKey);
 
         [Get("/GetTestToken")]
-        Task<GitHubToken> GetTestToken([AliasAs("code")] string functionKey = AzureConstants.GetUITestTokenApiKey);
+        Task<GitHubToken> GetTestToken([AliasAs("code")] string functionKey = AzureConstants.GetTestTokenApiKey);
 
         [Get("/GetChartStreamingUrl")]
         Task<StreamingManifest> GetChartStreamingUrl();
