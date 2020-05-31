@@ -13,7 +13,7 @@ jobs:
     Android:
       runs-on: macos-latest
       env:
-        TestTokenApiKey: ${{ secrets.TestTokenApiKey }}
+        GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}
         GetSyncFusionInformationApiKey: ${{ secrets.GetSyncFusionInformationApiKey }}
         GetNotificationHubInformationApiKey: ${{ secrets.GetNotificationHubInformationApiKey }}
         APPCENTER_SOURCE_DIRECTORY: "./"
