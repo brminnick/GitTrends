@@ -32,6 +32,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<RepositoryDatabase>();
             services.AddSingleton<ReviewService>();
             services.AddSingleton<SortingService>();
+            services.AddSingleton<SyncfusionService>();
             services.AddSingleton<ThemeService>();
             services.AddSingleton<TrendsChartSettingsService>();
 

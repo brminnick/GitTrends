@@ -41,7 +41,7 @@ namespace GitTrends
             }
         }
 
-        public Task Initialize()
+        internal Task Initialize()
         {
             if (Application.Current != null)
                 Application.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
@@ -49,31 +49,37 @@ namespace GitTrends
             return SetAppTheme(Preference);
         }
 
-        Task SetAppTheme(PreferredTheme preferredTheme) => _mainThread.InvokeOnMainThreadAsync(() =>
+        Task SetAppTheme(PreferredTheme preferredTheme)
         {
-            var theme = preferredTheme switch
-            {
-                PreferredTheme.Dark => new DarkTheme(),
-                PreferredTheme.Light => new LightTheme(),
-                PreferredTheme.Default => Application.Current.RequestedTheme is OSAppTheme.Dark ? new DarkTheme() : (BaseTheme)new LightTheme(),
-                _ => throw new NotSupportedException()
-            };
+            if (Application.Current is null)
+                return Task.CompletedTask;
 
-            if (Application.Current.Resources.GetType() != theme.GetType())
+            return _mainThread.InvokeOnMainThreadAsync(() =>
             {
-                Application.Current.Resources = theme;
-
-                _analyticsService.Track("Theme Changed", new Dictionary<string, string>
+                var theme = preferredTheme switch
                 {
-                    { nameof(PreferredTheme), preferredTheme.ToString() },
-                    { nameof(Application.Current.RequestedTheme), Application.Current.RequestedTheme.ToString() }
-                });
+                    PreferredTheme.Dark => new DarkTheme(),
+                    PreferredTheme.Light => new LightTheme(),
+                    PreferredTheme.Default => Application.Current.RequestedTheme is OSAppTheme.Dark ? new DarkTheme() : (BaseTheme)new LightTheme(),
+                    _ => throw new NotSupportedException()
+                };
 
-                OnPreferenceChanged(preferredTheme);
+                if (Application.Current.Resources.GetType() != theme.GetType())
+                {
+                    Application.Current.Resources = theme;
 
-                EnableDebugRainbows(false);
-            }
-        });
+                    _analyticsService.Track("Theme Changed", new Dictionary<string, string>
+            {
+                                { nameof(PreferredTheme), preferredTheme.ToString() },
+                                { nameof(Application.Current.RequestedTheme), Application.Current.RequestedTheme.ToString() }
+            });
+
+                    OnPreferenceChanged(preferredTheme);
+
+                    EnableDebugRainbows(false);
+                }
+            });
+        }
 
         [Conditional("DEBUG")]
         void EnableDebugRainbows(bool shouldUseDebugRainbows)

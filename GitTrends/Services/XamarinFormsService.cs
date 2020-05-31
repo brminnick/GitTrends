@@ -6,7 +6,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public static class XamarinFormsService
+    static class XamarinFormsService
     {
         public static GridLength StarGridLength(double value) => new GridLength(value, GridUnitType.Star);
         public static GridLength StarGridLength(int value) => StarGridLength((double)value);
