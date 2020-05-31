@@ -30,7 +30,7 @@ namespace GitTrends.UnitTests
             var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
 
             //Act
-            var referringSites = await gitHubApiV3Service.GetReferringSites(AuthenticatedGitHubUserLogin, ValidGitHubRepo, CancellationToken.None).ConfigureAwait(false);
+            var referringSites = await gitHubApiV3Service.GetReferringSites(GitTrendsRepoOwner, GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 
             //Assert
             Assert.IsNotNull(referringSites);
@@ -47,7 +47,7 @@ namespace GitTrends.UnitTests
             gitHubUserService.InvalidateToken();
 
             //Act
-            var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetReferringSites(AuthenticatedGitHubUserLogin, ValidGitHubRepo, CancellationToken.None).ConfigureAwait(false));
+            var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetReferringSites(GitTrendsRepoOwner, GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
             //Assert
             Assert.AreEqual(exception.StatusCode, HttpStatusCode.Forbidden);
@@ -60,7 +60,7 @@ namespace GitTrends.UnitTests
             var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
 
             //Act
-            var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetReferringSites("xamarin", ValidGitHubRepo, CancellationToken.None).ConfigureAwait(false));
+            var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetReferringSites("xamarin", GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
             //Assert
             Assert.AreEqual(exception.StatusCode, HttpStatusCode.NotFound);
@@ -73,14 +73,14 @@ namespace GitTrends.UnitTests
             var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
 
             //Act
-            var clones = await gitHubApiV3Service.GetRepositoryCloneStatistics(AuthenticatedGitHubUserLogin, ValidGitHubRepo, CancellationToken.None).ConfigureAwait(false);
+            var clones = await gitHubApiV3Service.GetRepositoryCloneStatistics(GitTrendsRepoOwner, GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 
             //Assert
             Assert.IsNotNull(clones);
             Assert.IsNotNull(clones.DailyClonesList);
             Assert.IsNotEmpty(clones.DailyClonesList);
-            Assert.AreEqual(ValidGitHubRepo, clones.RepositoryName);
-            Assert.AreEqual(AuthenticatedGitHubUserLogin, clones.RepositoryOwner);
+            Assert.AreEqual(GitTrendsRepoName, clones.RepositoryName);
+            Assert.AreEqual(GitTrendsRepoOwner, clones.RepositoryOwner);
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace GitTrends.UnitTests
             var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
 
             //Act
-            var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryCloneStatistics("xamarin", ValidGitHubRepo, CancellationToken.None).ConfigureAwait(false));
+            var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryCloneStatistics("xamarin", GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
             //Assert
             Assert.AreEqual(exception.StatusCode, HttpStatusCode.NotFound);
@@ -106,7 +106,7 @@ namespace GitTrends.UnitTests
             gitHubUserService.InvalidateToken();
 
             //Act
-            var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryCloneStatistics(AuthenticatedGitHubUserLogin, ValidGitHubRepo, CancellationToken.None).ConfigureAwait(false));
+            var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryCloneStatistics(gitHubUserService.Alias, GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
             //Assert
             Assert.AreEqual(exception.StatusCode, HttpStatusCode.Forbidden);
@@ -117,16 +117,17 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
 
             //Act
-            var views = await gitHubApiV3Service.GetRepositoryViewStatistics(AuthenticatedGitHubUserLogin, ValidGitHubRepo, CancellationToken.None).ConfigureAwait(false);
+            var views = await gitHubApiV3Service.GetRepositoryViewStatistics(GitTrendsRepoOwner, GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 
             //Assert
             Assert.IsNotNull(views);
             Assert.IsNotNull(views.DailyViewsList);
             Assert.IsNotEmpty(views.DailyViewsList);
-            Assert.AreEqual(ValidGitHubRepo, views.RepositoryName);
-            Assert.AreEqual(AuthenticatedGitHubUserLogin, views.RepositoryOwner);
+            Assert.AreEqual(GitTrendsRepoName, views.RepositoryName);
+            Assert.AreEqual(GitTrendsRepoOwner, views.RepositoryOwner);
         }
 
         [Test]
@@ -136,7 +137,7 @@ namespace GitTrends.UnitTests
             var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
 
             //Act
-            var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryViewStatistics("xamarin", ValidGitHubRepo, CancellationToken.None).ConfigureAwait(false));
+            var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryViewStatistics("xamarin", GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
             //Assert
             Assert.AreEqual(exception.StatusCode, HttpStatusCode.NotFound);
@@ -152,7 +153,7 @@ namespace GitTrends.UnitTests
             gitHubUserService.InvalidateToken();
 
             //Act
-            var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryViewStatistics(AuthenticatedGitHubUserLogin, ValidGitHubRepo, CancellationToken.None).ConfigureAwait(false));
+            var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryViewStatistics(GitTrendsRepoOwner, GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
             //Assert
             Assert.AreEqual(exception.StatusCode, HttpStatusCode.Forbidden);
@@ -166,11 +167,12 @@ namespace GitTrends.UnitTests
             var repositories = new List<Repository>();
             var repositories_NoViewsClonesData = new List<Repository>();
 
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
             var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
 
             //Act
-            await foreach (var retrievedRepositories in gitHubGraphQLApiService.GetRepositories(AuthenticatedGitHubUserLogin, CancellationToken.None).ConfigureAwait(false))
+            await foreach (var retrievedRepositories in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
             {
                 repositories_NoViewsClonesData.AddRange(retrievedRepositories);
             }
@@ -200,11 +202,12 @@ namespace GitTrends.UnitTests
             var repositories = new List<Repository>();
             var repositories_NoViewsClonesData = new List<Repository>();
 
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
             var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
 
             //Act
-            await foreach (var retrievedRepositories in gitHubGraphQLApiService.GetRepositories(AuthenticatedGitHubUserLogin, CancellationToken.None).ConfigureAwait(false))
+            await foreach (var retrievedRepositories in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
             {
                 repositories_NoViewsClonesData.AddRange(retrievedRepositories);
             }
@@ -253,7 +256,7 @@ namespace GitTrends.UnitTests
 
 
             //Act
-            await foreach (var retrievedRepositories in gitHubGraphQLApiService.GetRepositories(AuthenticatedGitHubUserLogin, CancellationToken.None).ConfigureAwait(false))
+            await foreach (var retrievedRepositories in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
             {
                 repositories_NoViewsClonesData.AddRange(retrievedRepositories);
             }

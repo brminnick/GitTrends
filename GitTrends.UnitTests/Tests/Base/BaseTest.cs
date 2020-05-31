@@ -7,7 +7,6 @@ using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using Shiny.Notifications;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
@@ -15,10 +14,9 @@ namespace GitTrends.UnitTests
 {
     abstract class BaseTest
     {
-        protected const string AuthenticatedGitHubUserLogin = "brminnick";
-        protected const string AuthenticatedGitHubUserName = "Brandon Minnick";
         protected const string AuthenticatedGitHubUserAvatarUrl = "https://avatars0.githubusercontent.com/u/13558917?u=f1392f8aefe2d52a87c4d371981cb7153199fa27&v=4";
-        protected const string ValidGitHubRepo = "GitTrends";
+        protected const string GitTrendsRepoName = "GitTrends";
+        protected const string GitTrendsRepoOwner = "brminnick";
 
         [SetUp]
         public virtual async Task Setup()
@@ -26,7 +24,7 @@ namespace GitTrends.UnitTests
             Device.Info = new MockDeviceInfo();
             Device.PlatformServices = new MockPlatformServices();
 
-            var preferences  = ServiceCollection.ServiceProvider.GetService<IPreferences>();
+            var preferences = ServiceCollection.ServiceProvider.GetService<IPreferences>();
             preferences.Clear();
 
             var secureStorage = ServiceCollection.ServiceProvider.GetService<ISecureStorage>();

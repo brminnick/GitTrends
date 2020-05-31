@@ -49,7 +49,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             var title = NotificationService.TrendingRepositoriesNotificationTitle;
-            var message = NotificationService.CreateSingleRepositoryNotificationMessage(ValidGitHubRepo, AuthenticatedGitHubUserLogin);
+            var message = NotificationService.CreateSingleRepositoryNotificationMessage(GitTrendsRepoName, GitTrendsRepoOwner);
 
             var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
 
@@ -64,7 +64,7 @@ namespace GitTrends.UnitTests
             //Arrange
             const int badgeCount = 1;
             var title = NotificationService.TrendingRepositoriesNotificationTitle;
-            var message = NotificationService.CreateSingleRepositoryNotificationMessage(ValidGitHubRepo, AuthenticatedGitHubUserLogin);
+            var message = NotificationService.CreateSingleRepositoryNotificationMessage(GitTrendsRepoName, GitTrendsRepoOwner);
 
             var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
 
