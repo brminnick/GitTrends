@@ -22,7 +22,9 @@ jobs:
       - name: UnitTests
         run: |
           nuget restore
+          
           chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
+          ./GitTrends.Android/appcenter-pre-build.sh
   
     Android:
       runs-on: macos-latest
@@ -30,9 +32,7 @@ jobs:
       - uses: actions/checkout@v1
       - name: Android
         run: |
-          nuget restore
-          ./GitTrends.Android/appcenter-pre-build.sh
-          
+          nuget restore          
           msbuild ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release     
 
 # Ignore iOS until GitHub Actions adds iOS Certificates & Provisioning Profiles
