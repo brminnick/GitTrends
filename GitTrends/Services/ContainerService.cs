@@ -53,7 +53,7 @@ namespace GitTrends
             builder.RegisterInstance(ShinyHost.Resolve<INotificationManager>()).As<INotificationManager>().SingleInstance();
             builder.RegisterInstance(DependencyService.Resolve<INotificationService>()).As<INotificationService>().SingleInstance();
 #if !AppStore
-            builder.RegisterType<TestsBackdoorService>().AsSelf().SingleInstance();
+            builder.RegisterType<UITestsBackdoorService>().AsSelf().SingleInstance();
 #endif
 
             //Register ViewModels

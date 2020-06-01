@@ -5,7 +5,6 @@ namespace GitTrends
 {
     class EmptyDataView : AbsoluteLayout
     {
-        public const string UnableToRetrieveDataText = "Unable to retrieve data";
         public static readonly BindableProperty TitleProperty = BindableProperty.Create(nameof(Title), typeof(string), typeof(EmptyDataView), string.Empty);
         public static readonly BindableProperty DescriptionProperty = BindableProperty.Create(nameof(Description), typeof(string), typeof(EmptyDataView), string.Empty);
         public static readonly BindableProperty ImageSourceProperty = BindableProperty.Create(nameof(ImageSource), typeof(string), typeof(EmptyDataView), string.Empty);

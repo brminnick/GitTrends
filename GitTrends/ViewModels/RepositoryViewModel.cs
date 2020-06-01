@@ -102,38 +102,8 @@ namespace GitTrends
         {
             set
             {
-                const string pleaseLoginAgain = "Please login again";
-                const string clearSearchBarTryAgain = "Clear search bar and try again";
-                const string swipeDownToRefresh = "Swipe down to retrieve repositories";
-
-                const string noFilterMatch = "No Matching Repository Found";
-                const string emptyList = "Your repositories list is empty";
-                const string loginExpired = "GitHub Login Expired";
-                const string uninitialized = "Data not gathered";
-
-                EmptyDataViewTitle = value switch
-                {
-                    RefreshState.Uninitialized => uninitialized,
-                    RefreshState.Succeeded when _repositoryList.Any() => noFilterMatch,
-                    RefreshState.Succeeded => emptyList,
-                    RefreshState.LoginExpired => loginExpired,
-                    RefreshState.Error when _repositoryList.Any() => noFilterMatch,
-                    RefreshState.Error => EmptyDataView.UnableToRetrieveDataText,
-                    RefreshState.MaximumApiLimit => EmptyDataView.UnableToRetrieveDataText,
-                    _ => throw new NotSupportedException()
-                };
-
-                EmptyDataViewDescription = value switch
-                {
-                    RefreshState.Uninitialized => swipeDownToRefresh,
-                    RefreshState.Succeeded when _repositoryList.Any() => clearSearchBarTryAgain,
-                    RefreshState.Succeeded => string.Empty,
-                    RefreshState.LoginExpired => pleaseLoginAgain,
-                    RefreshState.Error when _repositoryList.Any() => clearSearchBarTryAgain,
-                    RefreshState.Error => swipeDownToRefresh,
-                    RefreshState.MaximumApiLimit => swipeDownToRefresh,
-                    _ => throw new NotSupportedException()
-                };
+                EmptyDataViewTitle = EmptyDataViewConstants.GetRepositoryTitleText(value, _repositoryList.Any());
+                EmptyDataViewDescription = EmptyDataViewConstants.GetRepositoryDescriptionText(value, _repositoryList.Any());
             }
         }
 

@@ -80,7 +80,7 @@ namespace GitTrends
 
         public ICommand NoButtonCommand { get; }
         public ICommand YesButtonCommand { get; }
-        public ICommand RefreshCommand { get; }
+        public IAsyncCommand<(string Owner, string Repository, string RepositoryUrl, CancellationToken Token)> RefreshCommand { get; }
 
         public string EmptyDataViewTitle
         {
@@ -140,32 +140,8 @@ namespace GitTrends
         {
             set
             {
-                const string pleaseLoginAgain = "Please login again";
-                const string swipeDownToRefresh = "Swipe down to retrieve referring sites";
-
-                const string emptyList = "No referrals yet";
-                const string loginExpired = "GitHub Login Expired";
-                const string uninitialized = "Data not gathered";
-
-                EmptyDataViewTitle = value switch
-                {
-                    RefreshState.Uninitialized => uninitialized,
-                    RefreshState.Succeeded => emptyList,
-                    RefreshState.LoginExpired => loginExpired,
-                    RefreshState.Error => EmptyDataView.UnableToRetrieveDataText,
-                    RefreshState.MaximumApiLimit => EmptyDataView.UnableToRetrieveDataText,
-                    _ => throw new NotSupportedException()
-                };
-
-                EmptyDataViewDescription = value switch
-                {
-                    RefreshState.Uninitialized => swipeDownToRefresh,
-                    RefreshState.Succeeded => string.Empty,
-                    RefreshState.LoginExpired => pleaseLoginAgain,
-                    RefreshState.Error => swipeDownToRefresh,
-                    RefreshState.MaximumApiLimit => swipeDownToRefresh,
-                    _ => throw new NotSupportedException()
-                };
+                EmptyDataViewTitle = EmptyDataViewConstants.GetReferringSitesTitleText(value);
+                EmptyDataViewDescription = EmptyDataViewConstants.GetReferringSitesDescriptionText(value);
             }
         }
 
