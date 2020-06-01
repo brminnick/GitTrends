@@ -28,7 +28,7 @@ namespace GitTrends
             remove => _initializationCompleteEventManager.RemoveEventHandler(value);
         }
 
-        public ICommand InitializeAppCommand { get; }
+        public IAsyncCommand InitializeAppCommand { get; }
 
         async Task ExecuteInitializeAppCommand(SyncfusionService syncFusionService, MediaElementService mediaElementService, NotificationService notificationService)
         {

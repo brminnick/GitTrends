@@ -36,6 +36,11 @@ namespace GitTrends.UnitTests
             services.AddSingleton<ThemeService>();
             services.AddSingleton<TrendsChartSettingsService>();
 
+            //GitTrends ViewModels
+            services.AddTransient<OnboardingViewModel>();
+            services.AddTransient<ReferringSitesViewModel>();
+            services.AddTransient<SplashScreenViewModel>();
+
             //Mocks
             services.AddSingleton<IAnalyticsService, MockAnalyticsService>();
             services.AddSingleton<IAppInfo, MockAppInfo>();
@@ -48,6 +53,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<INotificationManager, MockNotificationManager>();
             services.AddSingleton<ISecureStorage, MockSecureStorage>();
             services.AddSingleton<IPreferences, MockPreferences>();
+            services.AddSingleton<IVersionTracking, MockVersionTracking>();
 
             return services.BuildServiceProvider();
         }
