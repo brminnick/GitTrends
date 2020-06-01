@@ -1,11 +1,10 @@
-﻿using System;
-using GitTrends.Mobile.Shared;
+﻿using GitTrends.Mobile.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
 namespace GitTrends.UnitTests
 {
-    public class TrendsChartSettingsServiceTests
+    class TrendsChartSettingsServiceTests : BaseTest
     {
         [Test]
         public void CurrentTrendsChartOptionTest()

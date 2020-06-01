@@ -17,7 +17,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    class ReferringSitesViewModel : BaseViewModel
+    public class ReferringSitesViewModel : BaseViewModel
     {
         readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
 

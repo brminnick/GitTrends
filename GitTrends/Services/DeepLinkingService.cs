@@ -50,14 +50,17 @@ namespace GitTrends
         {
             return _mainThread.InvokeOnMainThreadAsync(() =>
             {
-                var currentTheme = (BaseTheme)Application.Current.Resources;
+                var currentTheme = (BaseTheme?)Application.Current?.Resources;
 
-                browserLaunchOptions ??= new Xamarin.Essentials.BrowserLaunchOptions
+                if (currentTheme != null)
                 {
-                    PreferredControlColor = currentTheme.NavigationBarTextColor,
-                    PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor,
-                    Flags = Xamarin.Essentials.BrowserLaunchFlags.PresentAsFormSheet
-                };
+                    browserLaunchOptions ??= new Xamarin.Essentials.BrowserLaunchOptions
+                    {
+                        PreferredControlColor = currentTheme.NavigationBarTextColor,
+                        PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor,
+                        Flags = Xamarin.Essentials.BrowserLaunchFlags.PresentAsFormSheet
+                    };
+                }
 
                 return _browser.OpenAsync(url, browserLaunchOptions);
             });
