@@ -46,7 +46,7 @@ namespace GitTrends.UnitTests
 
             //Assert
             Assert.IsTrue(didPullToRefreshFailedFire);
-            Assert.IsInstanceOf(typeof(ErrorPullToRefreshEventArgs), pullToRefreshFailedEventArgs);
+            Assert.IsTrue(pullToRefreshFailedEventArgs is MaximimApiRequestsReachedEventArgs || pullToRefreshFailedEventArgs is ErrorPullToRefreshEventArgs);
 
             Assert.IsFalse(isEmptyDataViewEnabled_Initial);
             Assert.IsFalse(isEmptyDataViewEnabled_DuringRefresh);
