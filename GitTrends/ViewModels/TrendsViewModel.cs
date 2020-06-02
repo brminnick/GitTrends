@@ -15,8 +15,6 @@ namespace GitTrends
 {
     class TrendsViewModel : BaseViewModel
     {
-        const string _emptyDataViewText_NoTrafficYet = "No traffic yet";
-
         readonly GitHubApiV3Service _gitHubApiV3Service;
 
         bool _isFetchingData = true;
@@ -184,14 +182,14 @@ namespace GitTrends
                     repositoryClones = repositoryClonesResponse.DailyClonesList;
                 }
 
-                EmptyDataViewTitle = _emptyDataViewText_NoTrafficYet;
+                EmptyDataViewTitle = "No traffic yet";
             }
             catch (Exception e)
             {
                 repositoryViews = Enumerable.Empty<DailyViewsModel>().ToList();
                 repositoryClones = Enumerable.Empty<DailyClonesModel>().ToList();
 
-                EmptyDataViewTitle = EmptyDataView.UnableToRetrieveDataText;
+                EmptyDataViewTitle = EmptyDataViewConstants.UnableToRetrieveData;
 
                 AnalyticsService.Report(e);
             }

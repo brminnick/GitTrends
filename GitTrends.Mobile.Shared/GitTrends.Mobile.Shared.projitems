@@ -39,5 +39,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\MaximimApiRequestsReachedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AzureFunctionsApiService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\TimedEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\EmptyDataViewConstants.cs" />
   </ItemGroup>
 </Project>

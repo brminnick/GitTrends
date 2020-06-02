@@ -30,6 +30,8 @@ namespace GitTrends.Shared
             return false;
         }
 
+        public static bool IsUserAuthenticated(HttpResponseHeaders httpResponseHeaders) => httpResponseHeaders.Vary.Any(x => x is "Authorization");
+
         public static DateTimeOffset GetRateLimitResetDateTime(in HttpResponseHeaders httpResponseHeaders) =>
             DateTimeOffset.FromUnixTimeSeconds(GetRateLimitResetDateTime_UnixEpochSeconds(httpResponseHeaders));
 

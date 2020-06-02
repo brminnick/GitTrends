@@ -14,7 +14,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class TestsBackdoorService
+    public class UITestsBackdoorService
     {
         readonly static WeakEventManager _popPageStartedEventManager = new WeakEventManager();
         readonly static WeakEventManager<Page> _popPageCompletedEventManager = new WeakEventManager<Page>();
@@ -27,7 +27,7 @@ namespace GitTrends
         readonly GitHubUserService _gitHubUserService;
         readonly IMainThread _mainThread;
 
-        public TestsBackdoorService(GitHubAuthenticationService gitHubAuthenticationService,
+        public UITestsBackdoorService(GitHubAuthenticationService gitHubAuthenticationService,
                                         NotificationService notificationService,
                                         GitHubGraphQLApiService gitHubGraphQLApiService,
                                         TrendsChartSettingsService trendsChartSettingsService,

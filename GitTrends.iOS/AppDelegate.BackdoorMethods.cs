@@ -10,8 +10,8 @@ namespace GitTrends.iOS
     {
         public AppDelegate() => Xamarin.Calabash.Start();
 
-        TestsBackdoorService? _uiTestBackdoorService;
-        TestsBackdoorService UITestBackdoorService => _uiTestBackdoorService ??= ContainerService.Container.BeginLifetimeScope().Resolve<TestsBackdoorService>();
+        UITestsBackdoorService? _uiTestBackdoorService;
+        UITestsBackdoorService UITestBackdoorService => _uiTestBackdoorService ??= ContainerService.Container.BeginLifetimeScope().Resolve<UITestsBackdoorService>();
 
         [Preserve, Export(BackdoorMethodConstants.SetGitHubUser + ":")]
         public async void SetGitHubUser(NSString accessToken) =>

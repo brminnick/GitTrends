@@ -17,11 +17,17 @@ namespace GitTrends
         const string _appleAppStoreUrl = "https://apps.apple.com/app/gittrends-github-insights/id1500300399?action=write-review";
         const string _googlePlayStoreUrl = "https://play.google.com/store/apps/details?id=com.minnick.gittrends";
 
+        const string _placeHolderUrl = "https://gittrends.com";
+
         public static string RatingRequest { get; } = Device.RuntimePlatform switch
         {
             Device.iOS => _appStoreRatingRequest_iOS,
             Device.Android => _appStoreRatingRequest_Android,
             Device.UWP => _appStoreRatingRequest_Windows,
+            Device.GTK => throw new NotImplementedException(),
+            Device.macOS => throw new NotImplementedException(),
+            Device.WPF => throw new NotImplementedException(),
+            Device.Tizen => throw new NotImplementedException(),
             _ => _appStoreRatingRequest_Other
         };
 
@@ -29,14 +35,24 @@ namespace GitTrends
         {
             Device.iOS => _appStoreLink,
             Device.Android => _googlePlayStoreLink,
-            _ => ""
+            Device.UWP => throw new NotImplementedException(),
+            Device.GTK => throw new NotImplementedException(),
+            Device.macOS => throw new NotImplementedException(),
+            Device.WPF => throw new NotImplementedException(),
+            Device.Tizen => throw new NotImplementedException(),
+            _ => _placeHolderUrl
         };
 
         public static string Url { get; } = Device.RuntimePlatform switch
         {
             Device.iOS => _appleAppStoreUrl,
             Device.Android => _googlePlayStoreUrl,
-            _ => ""
+            Device.UWP => throw new NotImplementedException(),
+            Device.GTK => throw new NotImplementedException(),
+            Device.macOS => throw new NotImplementedException(),
+            Device.WPF => throw new NotImplementedException(),
+            Device.Tizen => throw new NotImplementedException(),
+            _ => _placeHolderUrl
         };
     }
 }

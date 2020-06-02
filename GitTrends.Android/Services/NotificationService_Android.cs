@@ -47,22 +47,33 @@ namespace GitTrends.Droid
     [Service, IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
     public class FirebaseService : FirebaseMessagingService
     {
-        readonly static TaskCompletionSource<NotificationHubInformation> _notificationHubInformationTCS = new TaskCompletionSource<NotificationHubInformation>();
+        static TaskCompletionSource<NotificationHubInformation>? _notificationHubInformationTCS;
 
         public override async void OnNewToken(string token)
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var notificationService = scope.Resolve<NotificationService>();
 
+            _notificationHubInformationTCS = new TaskCompletionSource<NotificationHubInformation>();
             notificationService.InitializationCompleted += HandleInitializationCompleted;
 
-            var notificationHubInformation = await notificationService.GetNotificationHubInformation().ConfigureAwait(false);
+            try
+            {
+                var notificationHubInformation = await notificationService.GetNotificationHubInformation().ConfigureAwait(false);
 
-            if (notificationHubInformation.IsEmpty())
-                notificationHubInformation = await _notificationHubInformationTCS.Task.ConfigureAwait(false);
+                if (notificationHubInformation.IsEmpty())
+                    notificationHubInformation = await _notificationHubInformationTCS.Task.ConfigureAwait(false);
 
-            notificationService.InitializationCompleted -= HandleInitializationCompleted;
-            await RegisterWithNotificationHub(notificationHubInformation, token).ConfigureAwait(false);
+                await RegisterWithNotificationHub(notificationHubInformation, token).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                scope.Resolve<IAnalyticsService>().Report(e);
+            }
+            finally
+            {
+                notificationService.InitializationCompleted -= HandleInitializationCompleted;
+            }
         }
 
         public override async void OnMessageReceived(RemoteMessage message)
@@ -88,6 +99,6 @@ namespace GitTrends.Droid
             return hubClient.CreateFcmNativeRegistrationAsync(token);
         }
 
-        static void HandleInitializationCompleted(object sender, NotificationHubInformation e) => _notificationHubInformationTCS.SetResult(e);
+        static void HandleInitializationCompleted(object sender, NotificationHubInformation e) => _notificationHubInformationTCS?.TrySetResult(e);
     }
 }
