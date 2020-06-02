@@ -139,7 +139,7 @@ namespace GitTrends.UnitTests
 
 
             //Act
-            for (int i = 0; i <= ReviewService.MinimumReviewRequests; i++)
+            for (int i = 0; i < ReviewService.MinimumReviewRequests; i++)
             {
                 reviewService.TryRequestReviewPrompt();
                 Assert.IsFalse(didReviewRequestedFire);
