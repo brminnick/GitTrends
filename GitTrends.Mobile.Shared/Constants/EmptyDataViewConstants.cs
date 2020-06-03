@@ -40,10 +40,10 @@ namespace GitTrends.Mobile.Shared
         public static string GetRepositoryTitleText(in RefreshState refreshState, in bool isRepositoryListEmpty) => refreshState switch
         {
             RefreshState.Uninitialized => _uninitialized,
-            RefreshState.Succeeded when isRepositoryListEmpty => _noFilterMatch,
+            RefreshState.Succeeded when !isRepositoryListEmpty => _noFilterMatch,
             RefreshState.Succeeded => _noRepositoriesFound,
             RefreshState.LoginExpired => _loginExpired,
-            RefreshState.Error when isRepositoryListEmpty => _noFilterMatch,
+            RefreshState.Error when !isRepositoryListEmpty => _noFilterMatch,
             RefreshState.Error => UnableToRetrieveData,
             RefreshState.MaximumApiLimit => UnableToRetrieveData,
             _ => throw new NotSupportedException()
@@ -52,10 +52,10 @@ namespace GitTrends.Mobile.Shared
         public static string GetRepositoryDescriptionText(in RefreshState refreshState, in bool isRepositoryListEmpty) => refreshState switch
         {
             RefreshState.Uninitialized => _swipeDownToRefresh,
-            RefreshState.Succeeded when isRepositoryListEmpty => _clearSearchBarTryAgain,
+            RefreshState.Succeeded when !isRepositoryListEmpty => _clearSearchBarTryAgain,
             RefreshState.Succeeded => string.Empty,
             RefreshState.LoginExpired => _pleaseLoginAgain,
-            RefreshState.Error when isRepositoryListEmpty => _clearSearchBarTryAgain,
+            RefreshState.Error when !isRepositoryListEmpty => _clearSearchBarTryAgain,
             RefreshState.Error => _swipeDownToRefresh,
             RefreshState.MaximumApiLimit => _swipeDownToRefresh,
             _ => throw new NotSupportedException()

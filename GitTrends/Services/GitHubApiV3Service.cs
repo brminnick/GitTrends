@@ -139,7 +139,11 @@ namespace GitTrends
         public async Task<HttpResponseMessage> GetGitHubApiResponse(CancellationToken cancellationToken)
         {
             var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-            return await AttemptAndRetry_Mobile(() => GithubApiClient.GetGitHubApiResponse(GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+
+            if (_gitHubUserService.IsDemoUser)
+                return await AttemptAndRetry_Mobile(() => GithubApiClient.GetGitHubApiResponse_Unauthenticated(), cancellationToken).ConfigureAwait(false);
+
+            return await AttemptAndRetry_Mobile(() => GithubApiClient.GetGitHubApiResponse_Authenticated(GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<IReadOnlyList<ReferringSiteModel>> GetReferringSites(string owner, string repo, CancellationToken cancellationToken)

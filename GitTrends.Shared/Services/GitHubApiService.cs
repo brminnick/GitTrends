@@ -10,7 +10,7 @@ namespace GitTrends.Shared
     {
         public static int GetNumberOfApiRequestsRemaining(in HttpResponseHeaders httpResponseHeaders)
         {
-            var rateLimitRemainingHeader = httpResponseHeaders.Single(x => x.Key is "X-RateLimit-Remaining");
+            var rateLimitRemainingHeader = httpResponseHeaders.First(x => x.Key.Equals("X-RateLimit-Remaining", StringComparison.OrdinalIgnoreCase));
             var remainingApiRequests = int.Parse(rateLimitRemainingHeader.Value.First());
 
             return remainingApiRequests;
@@ -40,7 +40,7 @@ namespace GitTrends.Shared
             if (!HasReachedMaximimApiCallLimit(httpResponseHeaders))
                 throw new ArgumentException("Maximum API Call Limit Has Not Been Reached");
 
-            var rateLimitResetHeader = httpResponseHeaders.Single(x => x.Key is "X-RateLimit-Reset");
+            var rateLimitResetHeader = httpResponseHeaders.First(x => x.Key.Equals("X-RateLimit-Reset", StringComparison.OrdinalIgnoreCase));
             return long.Parse(rateLimitResetHeader.Value.First());
         }
     }

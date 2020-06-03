@@ -175,9 +175,12 @@ namespace GitTrends
 
                 MobileReferringSitesList = SortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
 
-                //Call EnsureSuccessStatusCode to confirm the above API calls executed successfully
-                finalResponse = await _gitHubApiV3Service.GetGitHubApiResponse(cancellationToken).ConfigureAwait(false);
-                finalResponse.EnsureSuccessStatusCode();
+                if (!_gitHubUserService.IsDemoUser)
+                {
+                    //Call EnsureSuccessStatusCode to confirm the above API calls executed successfully
+                    finalResponse = await _gitHubApiV3Service.GetGitHubApiResponse(cancellationToken).ConfigureAwait(false);
+                    finalResponse.EnsureSuccessStatusCode();
+                }
 
                 RefreshState = RefreshState.Succeeded;
             }
