@@ -53,7 +53,8 @@ namespace GitTrends.Droid
             using var scope = ContainerService.Container.BeginLifetimeScope();
             var mediaElementService = scope.Resolve<MediaElementService>();
 
-            Play(mediaElementService.OnboardingChart?.ManifestUrl ?? throw new System.NullReferenceException());
+            if (mediaElementService.OnboardingChart?.ManifestUrl != null)
+                Play(mediaElementService.OnboardingChart.ManifestUrl);
         }
 
         void Play(string url)
