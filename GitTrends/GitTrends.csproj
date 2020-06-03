@@ -64,7 +64,6 @@
       <Folder Include="Resources\Fonts\" />
       <Folder Include="Views\Trends\" />
       <Folder Include="Constants\" />
-      <Folder Include="Enums\" />
       <Folder Include="Interfaces\" />
     </ItemGroup>
     <ItemGroup>

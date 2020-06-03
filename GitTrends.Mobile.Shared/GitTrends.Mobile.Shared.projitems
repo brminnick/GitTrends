@@ -13,6 +13,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\" />
     <Folder Include="$(MSBuildThisFileDirectory)EventArgs\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Enums\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Constants\PageTitles.cs" />
@@ -40,5 +41,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)AzureFunctionsApiService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\TimedEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\EmptyDataViewConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Enums\RefreshState.cs" />
   </ItemGroup>
 </Project>
