@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
@@ -21,7 +22,13 @@ namespace GitTrends
         public SortingOption CurrentOption
         {
             get => GetCurrentOption();
-            set => _preferences.Set(nameof(CurrentOption), (int)value);
+            set
+            {
+                if (!Enum.IsDefined(typeof(SortingOption), value))
+                    throw new InvalidEnumArgumentException();
+
+                _preferences.Set(nameof(CurrentOption), (int)value);
+            }
         }
 
         public static IEnumerable<MobileReferringSiteModel> SortReferringSites(in IEnumerable<MobileReferringSiteModel> referringSites) =>

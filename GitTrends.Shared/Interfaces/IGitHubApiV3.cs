@@ -18,6 +18,9 @@ namespace GitTrends.Shared
         Task<List<ReferringSiteModel>> GetReferingSites(string owner, string repo, [Header("Authorization")] string authorization);
 
         [Get("/repos/xamarin/xamarin.forms")]
-        Task<HttpResponseMessage> GetGitHubApiResponse([Header("Authorization")] string authorization);
+        Task<HttpResponseMessage> GetGitHubApiResponse_Authenticated([Header("Authorization")] string authorization);
+
+        [Get("/repos/xamarin/xamarin.forms")]
+        Task<HttpResponseMessage> GetGitHubApiResponse_Unauthenticated();
     }
 }

@@ -70,7 +70,7 @@ namespace GitTrends
             remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
         }
 
-        public ICommand PullToRefreshCommand { get; }
+        public IAsyncCommand PullToRefreshCommand { get; }
         public ICommand FilterRepositoriesCommand { get; }
         public ICommand SortRepositoriesCommand { get; }
 
@@ -102,8 +102,8 @@ namespace GitTrends
         {
             set
             {
-                EmptyDataViewTitle = EmptyDataViewConstants.GetRepositoryTitleText(value, _repositoryList.Any());
-                EmptyDataViewDescription = EmptyDataViewConstants.GetRepositoryDescriptionText(value, _repositoryList.Any());
+                EmptyDataViewTitle = EmptyDataViewConstants.GetRepositoryTitleText(value, !_repositoryList.Any());
+                EmptyDataViewDescription = EmptyDataViewConstants.GetRepositoryDescriptionText(value, !_repositoryList.Any());
             }
         }
 
@@ -142,9 +142,12 @@ namespace GitTrends
                 //Add Remaining Repositories to VisibleRepositoryList
                 AddRepositoriesToCollection(completedRepoitories, _searchBarText, shouldRemoveRepoisitoriesWithoutViewsClonesData: true);
 
-                //Call EnsureSuccessStatusCode to confirm the above API calls executed successfully
-                finalResponse = await _gitHubApiV3Service.GetGitHubApiResponse(cancellationTokenSource.Token).ConfigureAwait(false);
-                finalResponse.EnsureSuccessStatusCode();
+                if (!_gitHubUserService.IsDemoUser)
+                {
+                    //Call EnsureSuccessStatusCode to confirm the above API calls executed successfully
+                    finalResponse = await _gitHubApiV3Service.GetGitHubApiResponse(cancellationTokenSource.Token).ConfigureAwait(false);
+                    finalResponse.EnsureSuccessStatusCode();
+                }
 
                 RefreshState = RefreshState.Succeeded;
             }
