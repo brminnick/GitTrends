@@ -25,6 +25,14 @@ jobs:
           
           chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
           ./GitTrends.Android/appcenter-pre-build.sh
+
+          UnitTestProject=`find "$APPCENTER_SOURCE_DIRECTORY" -name GitTrends.UnitTests.csproj`
+          echo $UnitTestProject
+
+          UnitTestDirectory=`dirname $UnitTestProject`
+          echo $UnitTestDirectory
+
+          dotnet test  -c "Release" $UnitTestDirectory
   
     Android:
       runs-on: macos-latest
