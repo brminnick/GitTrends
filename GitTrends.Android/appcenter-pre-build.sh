@@ -15,13 +15,3 @@ sed -i '' "s/GetNotificationHubInformationApiKey = \"\"/GetNotificationHubInform
 sed -i '' "s/#error Missing API Keys/\/\/#error Missing API Keys/g" "$AzureConstantsFile"
 
 echo "Finished Injecting API Keys"
-
-echo "Running Unit Tests"
-
-UnitTestProject=`find "$APPCENTER_SOURCE_DIRECTORY" -name GitTrends.UnitTests.csproj`
-echo $UnitTestProject
-
-UnitTestDirectory=`dirname $UnitTestProject`
-echo $UnitTestDirectory
-
-dotnet test  -c "Release" $UnitTestDirectory
