@@ -1,6 +1,6 @@
 ﻿namespace GitTrends.Mobile.Shared
 {
-    static class StatisticsService
+    public static class StatisticsService
     {
         public static string ConvertToAbbreviatedText(this long number)
         {

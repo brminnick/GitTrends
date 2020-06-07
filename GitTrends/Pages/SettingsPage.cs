@@ -81,7 +81,7 @@ namespace GitTrends
 
                         new Separator().Row(Row.ThemeSeparator).ColumnSpan(All<Column>()),
 
-                        new PreferredChartsView(trendsChartSettingsService).Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
+                        new PreferredChartsView(settingsViewModel).Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
 
                         new CopyrightLabel(versionTracking).Row(Row.Copyright).ColumnSpan(All<Column>())
                     }

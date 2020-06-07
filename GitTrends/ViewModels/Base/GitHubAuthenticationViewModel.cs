@@ -24,14 +24,14 @@ namespace GitTrends
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
             ConnectToGitHubButtonCommand = new AsyncCommand<(CancellationToken CancellationToken, Xamarin.Essentials.BrowserLaunchOptions? BrowserLaunchOptions)>(tuple => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, gitHubUserService, tuple.CancellationToken, tuple.BrowserLaunchOptions), _ => IsNotAuthenticating);
-            DemoButtonCommand = new AsyncCommand<string>(text => ExecuteDemoButtonCommand(text), _ => IsNotAuthenticating);
+            DemoButtonCommand = new AsyncCommand<string?>(text => ExecuteDemoButtonCommand(text), _ => IsNotAuthenticating);
 
             GitHubAuthenticationService = gitHubAuthenticationService;
             GitHubUserService = gitHubUserService;
         }
 
         public IAsyncCommand<(CancellationToken CancellationToken, Xamarin.Essentials.BrowserLaunchOptions? BrowserLaunchOptions)> ConnectToGitHubButtonCommand { get; }
-        public IAsyncCommand<string> DemoButtonCommand { get; }
+        public IAsyncCommand<string?> DemoButtonCommand { get; }
 
         public bool IsNotAuthenticating => !IsAuthenticating;
 
@@ -56,7 +56,7 @@ namespace GitTrends
             OnPropertyChanged(nameof(IsDemoButtonVisible));
         }
 
-        protected virtual Task ExecuteDemoButtonCommand(string buttonText)
+        protected virtual Task ExecuteDemoButtonCommand(string? buttonText)
         {
             IsAuthenticating = true;
             return Task.CompletedTask;

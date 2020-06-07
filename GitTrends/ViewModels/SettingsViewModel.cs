@@ -7,6 +7,7 @@ using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
+using Shiny;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
@@ -14,10 +15,12 @@ namespace GitTrends
 {
     public class SettingsViewModel : GitHubAuthenticationViewModel
     {
-        readonly TrendsChartSettingsService _trendsChartSettingsService;
+        readonly WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new WeakEventManager<AccessState?>();
+
+        readonly ThemeService _themeService;
         readonly DeepLinkingService _deepLinkingService;
         readonly NotificationService _notificationService;
-        readonly ThemeService _themeService;
+        readonly TrendsChartSettingsService _trendsChartSettingsService;
 
         string _gitHubUserImageSource = string.Empty;
         string _gitHubUserNameLabelText = string.Empty;
@@ -26,6 +29,7 @@ namespace GitTrends
         bool _isRegisterForNotificationsSwitchEnabled = true;
         bool _isRegisterForNotificationsSwitchToggled;
 
+        int _preferredChartsSelectedIndex;
         int _themePickerSelectedThemeIndex;
 
         public SettingsViewModel(GitHubAuthenticationService gitHubAuthenticationService,
@@ -50,8 +54,9 @@ namespace GitTrends
             ThemeService.PreferenceChanged += HandlePreferenceChanged;
 
             ThemePickerSelectedThemeIndex = (int)themeService.Preference;
+            PreferredChartsSelectedIndex = (int)trendsChartSettingsService.CurrentTrendsChartOption;
 
-            if(Application.Current is App app)
+            if (Application.Current is App app)
                 app.Resumed += HandleResumed;
 
             initializeIsRegisterForNotificationsSwitch().SafeFireAndForget();
@@ -59,6 +64,12 @@ namespace GitTrends
             SetGitHubValues();
 
             async Task initializeIsRegisterForNotificationsSwitch() => IsRegisterForNotificationsSwitchToggled = notificationService.ShouldSendNotifications && await notificationService.AreNotificationsEnabled().ConfigureAwait(false);
+        }
+
+        public event EventHandler<AccessState?> SetNotificationsPreferenceCompleted
+        {
+            add => _setNotificationsPreferenceCompletedEventManager.AddEventHandler(value);
+            remove => _setNotificationsPreferenceCompletedEventManager.RemoveEventHandler(value);
         }
 
         public ICommand CopyrightLabelTappedCommand { get; }
@@ -154,6 +165,16 @@ namespace GitTrends
             set => SetProperty(ref _isRegisterForNotificationsSwitchToggled, value, async () => await SetNotificationsPreference(value).ConfigureAwait(false));
         }
 
+        public int PreferredChartsSelectedIndex
+        {
+            get => _preferredChartsSelectedIndex;
+            set
+            {
+                _trendsChartSettingsService.CurrentTrendsChartOption = (TrendsChartOption)value;
+                SetProperty(ref _preferredChartsSelectedIndex, value);
+            }
+        }
+
         protected override async void NotifyIsAuthenticatingPropertyChanged()
         {
             base.NotifyIsAuthenticatingPropertyChanged();
@@ -177,7 +198,7 @@ namespace GitTrends
             }
         }
 
-        protected override async Task ExecuteDemoButtonCommand(string buttonText)
+        protected override async Task ExecuteDemoButtonCommand(string? buttonText)
         {
             try
             {
@@ -193,15 +214,22 @@ namespace GitTrends
             }
         }
 
+        void ExecutePreferredChartsChangedCommand(TrendsChartOption trendsChartOption)
+        {
+            _trendsChartSettingsService.CurrentTrendsChartOption = trendsChartOption;
+            PreferredChartsSelectedIndex = (int)trendsChartOption;
+        }
+
         async Task SetNotificationsPreference(bool isNotificationsEnabled)
         {
+            AccessState? result = null;
             IsRegisterForNotificationsSwitchEnabled = false;
 
             try
             {
                 if (isNotificationsEnabled)
                 {
-                    var result = await _notificationService.Register(true).ConfigureAwait(false);
+                    result = await _notificationService.Register(true).ConfigureAwait(false);
                     AnalyticsService.Track("Settings Notification Changed", new Dictionary<string, string>
                     {
                         { nameof(isNotificationsEnabled), isNotificationsEnabled.ToString() },
@@ -217,6 +245,7 @@ namespace GitTrends
             finally
             {
                 IsRegisterForNotificationsSwitchEnabled = true;
+                OnSetNotificationsCompleted(result);
             }
         }
 
@@ -250,7 +279,7 @@ namespace GitTrends
         {
             GitHubAliasLabelText = GitHubUserService.IsAuthenticated ? $"@{GitHubUserService.Alias}" : string.Empty;
             GitHubNameLabelText = GitHubUserService.IsAuthenticated ? GitHubUserService.Name : GitHubLoginButtonConstants.NotLoggedIn;
-            LoginLabelText = GitHubUserService.IsAuthenticated ? $"{GitHubLoginButtonConstants.Disconnect}" : $"{GitHubLoginButtonConstants.ConnectToGitHub}";
+            LoginLabelText = GitHubUserService.IsAuthenticated ? GitHubLoginButtonConstants.Disconnect : GitHubLoginButtonConstants.ConnectToGitHub;
             GitHubAvatarImageSource = GitHubUserService.IsAuthenticated ? GitHubUserService.AvatarUrl : BaseTheme.GetDefaultProfileImageSource();
         }
 
@@ -269,5 +298,7 @@ namespace GitTrends
                 return ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService, _deepLinkingService, GitHubUserService, cancellationTokenSource.Token, null);
             }
         }
+
+        void OnSetNotificationsCompleted(AccessState? accessState) => _setNotificationsPreferenceCompletedEventManager.HandleEvent(this, accessState, nameof(SetNotificationsPreferenceCompleted));
     }
 }

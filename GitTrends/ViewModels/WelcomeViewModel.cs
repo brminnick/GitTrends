@@ -15,7 +15,7 @@ namespace GitTrends
         {
         }
 
-        protected override async Task ExecuteDemoButtonCommand(string buttonText)
+        protected override async Task ExecuteDemoButtonCommand(string? buttonText)
         {
             await base.ExecuteDemoButtonCommand(buttonText).ConfigureAwait(false);
 
