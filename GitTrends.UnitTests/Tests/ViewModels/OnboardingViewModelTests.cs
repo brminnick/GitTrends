@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
+using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Xamarin.Essentials.Interfaces;
@@ -54,11 +55,12 @@ namespace GitTrends.UnitTests
         public async Task ConnectToGitHubButtonCommandTest()
         {
             //Arrange
+            string openedUrl;
             bool isAuthenticating_BeforeCommand, isAuthenticating_DuringCommand, isAuthenticating_AfterCommand;
             bool isDemoButtonVisible_BeforeCommand, isDemoButtonVisible_DuringCommand, isDemoButtonVisible_AfterCommand;
 
             bool didOpenAsyncFire = false;
-            var openAsyncExecutedTCS = new TaskCompletionSource<object?>();
+            var openAsyncExecutedTCS = new TaskCompletionSource<Uri>();
 
             var mockBrowser = (MockBrowser)ServiceCollection.ServiceProvider.GetService<IBrowser>();
             mockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
@@ -74,7 +76,8 @@ namespace GitTrends.UnitTests
             isDemoButtonVisible_DuringCommand = onboardingViewModel.IsDemoButtonVisible;
 
             await connectToGitHubButtonCommandTask.ConfigureAwait(false);
-            await openAsyncExecutedTCS.Task.ConfigureAwait(false);
+            var openedUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
+            openedUrl = openedUri.AbsoluteUri;
 
             isAuthenticating_AfterCommand = onboardingViewModel.IsAuthenticating;
             isDemoButtonVisible_AfterCommand = onboardingViewModel.IsDemoButtonVisible;
@@ -91,12 +94,15 @@ namespace GitTrends.UnitTests
             Assert.IsFalse(isAuthenticating_AfterCommand);
             Assert.True(isDemoButtonVisible_AfterCommand);
 
-            void HandleOpenAsyncExecuted(object? sender, EventArgs e)
+            Assert.IsTrue(openedUrl.Contains($"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id="));
+            Assert.IsTrue(openedUrl.Contains($"&scope={GitHubConstants.OAuthScope}&state="));
+
+            void HandleOpenAsyncExecuted(object? sender, Uri e)
             {
                 mockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
                 didOpenAsyncFire = true;
 
-                openAsyncExecutedTCS.SetResult(null);
+                openAsyncExecutedTCS.SetResult(e);
             }
         }
 

@@ -10,7 +10,7 @@ namespace GitTrends
 {
     class PreferredChartsView : Grid
     {
-        public PreferredChartsView(in TrendsChartSettingsService trendsChartSettingsService)
+        public PreferredChartsView(SettingsViewModel settingsViewModel)
         {
             RowSpacing = 2;
 
@@ -21,12 +21,12 @@ namespace GitTrends
                 (Row.Control, StarGridLength(2)));
 
             Children.Add(new TrendsChartSettingsLabel().Row(Row.Label));
-            Children.Add(new TrendsCharSettingsControl(trendsChartSettingsService).Row(Row.Control));
+            Children.Add(new TrendsChartSettingsControl(settingsViewModel).Row(Row.Control));
         }
 
         enum Row { Label, Control }
 
-        class TrendsChartSettingsLabel :  TitleLabel
+        class TrendsChartSettingsLabel : TitleLabel
         {
             public TrendsChartSettingsLabel()
             {
@@ -36,20 +36,20 @@ namespace GitTrends
             }
         }
 
-        class TrendsCharSettingsControl : SfSegmentedControl
+        class TrendsChartSettingsControl : SfSegmentedControl
         {
             const double cornerRadius = 4;
-            readonly TrendsChartSettingsService _trendsChartSettingsService;
+            readonly SettingsViewModel _settingsViewModel;
 
-            public TrendsCharSettingsControl(in TrendsChartSettingsService trendsChartSettingsService)
+            public TrendsChartSettingsControl(in SettingsViewModel settingsViewModel)
             {
-                _trendsChartSettingsService = trendsChartSettingsService;
+                _settingsViewModel = settingsViewModel;
 
                 CornerRadius = cornerRadius;
                 AutomationId = SettingsPageAutomationIds.TrendsChartSettingsControl;
                 ItemsSource = TrendsChartConstants.TrendsChartTitles.Values.ToList();
                 VisibleSegmentsCount = TrendsChartConstants.TrendsChartTitles.Values.Count;
-                SelectedIndex = (int)trendsChartSettingsService.CurrentTrendsChartOption;
+                SelectedIndex = (int)_settingsViewModel.PreferredChartsSelectedIndex;
                 SelectionIndicatorSettings = new TrendsChartSettingsSelectionIndicatorSettings();
                 FontFamily = FontFamilyConstants.RobotoMedium;
                 FontSize = 12;
@@ -58,11 +58,8 @@ namespace GitTrends
                 SetDynamicResource(BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor));
                 SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
 
-                SelectionChanged += HandleSelectionChanged;
+                this.SetBinding(SelectedIndexProperty, nameof(SettingsViewModel.PreferredChartsSelectedIndex));
             }
-
-            void HandleSelectionChanged(object sender, Syncfusion.XForms.Buttons.SelectionChangedEventArgs e) =>
-                _trendsChartSettingsService.CurrentTrendsChartOption = (TrendsChartOption)e.Index;
 
             class TrendsChartSettingsSelectionIndicatorSettings : SelectionIndicatorSettings
             {
