@@ -40,6 +40,7 @@ namespace GitTrends.UnitTests
             services.AddTransient<OnboardingViewModel>();
             services.AddTransient<ReferringSitesViewModel>();
             services.AddTransient<RepositoryViewModel>();
+            services.AddTransient<SettingsViewModel>();
             services.AddTransient<SplashScreenViewModel>();
 
             //Mocks
