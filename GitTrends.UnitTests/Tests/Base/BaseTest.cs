@@ -59,7 +59,7 @@ namespace GitTrends.UnitTests
             gitHubUserService.AvatarUrl = avatarUri.ToString();
         }
 
-        protected static Repository CreateRepository()
+        protected static Repository CreateRepository(bool createViewsAndClones = true)
         {
             const string gitTrendsAvatarUrl = "https://avatars3.githubusercontent.com/u/61480020?s=400&u=b1a900b5fa1ede22af9d2d9bfd6c49a072e659ba&v=4";
             var downloadedAt = DateTimeOffset.UtcNow;
@@ -67,7 +67,7 @@ namespace GitTrends.UnitTests
             var dailyViewsList = new List<DailyViewsModel>();
             var dailyClonesList = new List<DailyClonesModel>();
 
-            for (int i = 0; i < 14; i++)
+            for (int i = 0; i < 14 && createViewsAndClones; i++)
             {
                 var count = DemoDataConstants.GetRandomNumber();
                 var uniqeCount = count / 2; //Ensures uniqueCount is always less than count

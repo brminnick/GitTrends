@@ -55,7 +55,7 @@ namespace GitTrends
             set => SetProperty(ref _notificationStatusSvgImageSource, SvgService.GetFullPath(value));
         }
 
-        protected override async Task ExecuteDemoButtonCommand(string buttonText)
+        protected override async Task ExecuteDemoButtonCommand(string? buttonText)
         {
             try
             {

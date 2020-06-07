@@ -42,6 +42,8 @@ namespace GitTrends.UnitTests
             services.AddTransient<RepositoryViewModel>();
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<SplashScreenViewModel>();
+            services.AddTransient<TrendsViewModel>();
+            services.AddTransient<WelcomeViewModel>();
 
             //Mocks
             services.AddSingleton<IAnalyticsService, MockAnalyticsService>();

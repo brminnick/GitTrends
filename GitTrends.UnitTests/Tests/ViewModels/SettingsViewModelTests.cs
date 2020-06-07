@@ -11,7 +11,7 @@ using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends.UnitTests
 {
-    public class SettingsViewModelTests
+    class SettingsViewModelTests : BaseTest
     {
         [Test]
         public async Task RegisterForNotificationsTest()
