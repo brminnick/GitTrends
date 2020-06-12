@@ -61,6 +61,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGitHubAuthApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGitHubGraphQLAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IAnalyticsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IReferringSiteModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Services\ImageService.cs" />

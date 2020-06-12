@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using GitTrends.Mobile.Shared;
-using GitTrends.Shared;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
 using Xamarin.UITest.iOS;
