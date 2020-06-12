@@ -1,12 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Shared;
 using GitTrends.Shared;
-using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -82,12 +80,11 @@ namespace GitTrends
                     HorizontalOptions = LayoutOptions.End,
                     VerticalOptions = LayoutOptions.Center,
                     AutomationId = ReferringSitesPageAutomationIds.CloseButton,
-                    Padding = new Thickness(5, 0),
+                    Padding = new Thickness(5, 0)
                 };
                 closeButton.Clicked += HandleCloseButtonClicked;
-                closeButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.NavigationBarTextColor));
-                closeButton.SetDynamicResource(Button.BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor));
-                closeButton.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
+                closeButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.CloseButtonTextColor));
+                closeButton.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CloseButtonBackgroundColor));
 
                 var titleLabel = new Label
                 {
@@ -100,7 +97,7 @@ namespace GitTrends
                 closeButton.Margin = titleLabel.Margin = new Thickness(0, titleTopMargin, 0, 0);
 
                 var titleShadow = new BoxView();
-                titleShadow.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+                titleShadow.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
 
                 if (isLightTheme(themeService.Preference))
                 {

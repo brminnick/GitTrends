@@ -71,6 +71,9 @@ namespace GitTrends
 
             Add(nameof(PrimaryColor), PrimaryColor);
 
+            Add(nameof(CloseButtonTextColor), CloseButtonTextColor);
+            Add(nameof(CloseButtonBackgroundColor), CloseButtonBackgroundColor);
+
             Add(nameof(GitTrendsImageSource), GitTrendsImageSource);
             Add(nameof(DefaultProfileImageSource), DefaultProfileImageSource);
             Add(nameof(DefaultReferringSiteImageSource), DefaultReferringSiteImageSource);
@@ -149,6 +152,9 @@ namespace GitTrends
         public abstract Color GitHubHandleColor { get; }
 
         public abstract Color PrimaryColor { get; }
+
+        public abstract Color CloseButtonTextColor { get; }
+        public abstract Color CloseButtonBackgroundColor { get; }
 
         public abstract string GitTrendsImageSource { get; }
         public abstract string DefaultProfileImageSource { get; }

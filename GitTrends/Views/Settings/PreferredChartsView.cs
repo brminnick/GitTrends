@@ -49,14 +49,14 @@ namespace GitTrends
                 AutomationId = SettingsPageAutomationIds.TrendsChartSettingsControl;
                 ItemsSource = TrendsChartConstants.TrendsChartTitles.Values.ToList();
                 VisibleSegmentsCount = TrendsChartConstants.TrendsChartTitles.Values.Count;
-                SelectedIndex = (int)_settingsViewModel.PreferredChartsSelectedIndex;
+                SelectedIndex = _settingsViewModel.PreferredChartsSelectedIndex;
                 SelectionIndicatorSettings = new TrendsChartSettingsSelectionIndicatorSettings();
                 FontFamily = FontFamilyConstants.RobotoMedium;
                 FontSize = 12;
 
                 SetDynamicResource(FontColorProperty, nameof(BaseTheme.BorderButtonFontColor));
                 SetDynamicResource(BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor));
-                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
+                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 
                 this.SetBinding(SelectedIndexProperty, nameof(SettingsViewModel.PreferredChartsSelectedIndex));
             }

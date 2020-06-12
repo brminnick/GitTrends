@@ -16,7 +16,7 @@ namespace GitTrends
         const string _buttonTextColor = "#FFFFFF";
         const string _accentLightBlueHex = "#66A7FC";
         const string _accentPurpleHex = "#8F3795";
-        const string _backgroundSurfaceHex = "#FFFFFF";
+        const string _pageBackgroundColorHex = "#F1F1F1";
         const string _cardSurfaceHex = "#FFFFFF";
         const string _toolbarSurfaceHex = LightTealColorHex;
         const string _circleImageBackgroundHex = "#FFFFFF";
@@ -35,8 +35,8 @@ namespace GitTrends
         public override Color NavigationBarBackgroundColor { get; } = Color.FromHex(_toolbarSurfaceHex);
         public override Color NavigationBarTextColor { get; } = Color.FromHex(_toolbarTextHex);
 
-        public override Color PageBackgroundColor { get; } = Color.FromHex(_backgroundSurfaceHex);
-        public override Color PageBackgroundColor_85Opactity { get; } = Color.FromHex(_backgroundSurfaceHex).MultiplyAlpha(0.85);
+        public override Color PageBackgroundColor { get; } = Color.FromHex(_pageBackgroundColorHex);
+        public override Color PageBackgroundColor_85Opactity { get; } = Color.FromHex(_pageBackgroundColorHex).MultiplyAlpha(0.85);
 
         //Text
         public override Color PrimaryTextColor { get; } = Color.FromHex(_primaryTextHex);
@@ -104,6 +104,9 @@ namespace GitTrends
         public override Color GitHubHandleColor { get; } = Color.FromHex(_textHex);
 
         public override Color PrimaryColor { get; } = Color.FromHex(_primaryTealHex);
+
+        public override Color CloseButtonTextColor { get; } = Color.FromHex(_toolbarTextHex);
+        public override Color CloseButtonBackgroundColor { get; } = Color.FromHex(_toolbarSurfaceHex);
 
         public override string GitTrendsImageSource { get; } = "GitTrendsGreen";
         public override string DefaultProfileImageSource { get; } = "DefaultProfileImageGreen";

@@ -124,6 +124,9 @@ namespace GitTrends
 
         public override Color PrimaryColor { get; } = Color.FromHex(_primaryTealHex);
 
+        public override Color CloseButtonTextColor { get; } = Color.FromHex(_toolbarTextHex);
+        public override Color CloseButtonBackgroundColor { get; } = Color.FromHex(_cardSurfaceHex);
+
         public override string GitTrendsImageSource { get; } = "GitTrendsWhite";
         public override string DefaultProfileImageSource { get; } = "DefaultProfileImageWhite";
         public override string DefaultReferringSiteImageSource { get; } = "DefaultReferringSiteImage";
