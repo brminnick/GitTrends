@@ -60,6 +60,7 @@
         <Compile Include="Tests\SettingsTests.cs" />
         <Compile Include="Tests\TrendsTests.cs" />
         <Compile Include="Tests\WelcomeTests.cs" />
+        <Compile Include="Models\ReferringSiteModel.cs" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Pages\" />
