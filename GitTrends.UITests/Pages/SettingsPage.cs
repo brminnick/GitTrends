@@ -61,6 +61,14 @@ namespace GitTrends.UITests
             DismissSyncfusionLicensePopup();
         }
 
+        public void WaitForNoOperatingSystemNotificationDiaglog(TimeSpan? timeout = null)
+        {
+            timeout ??= TimeSpan.FromSeconds(5);
+
+            App.WaitForNoElement("Send You Notifications", timeout: timeout);
+            App.Screenshot("Operating System Push Notification Dialog Disappeared");
+        }
+
         public Task SelectTheme(PreferredTheme preferredTheme)
         {
             var rowNumber = (int)preferredTheme;
