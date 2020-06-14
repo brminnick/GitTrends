@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Shiny;
 using Xamarin.Essentials.Interfaces;
@@ -61,11 +62,11 @@ namespace GitTrends
             {
                 await base.ExecuteDemoButtonCommand(buttonText).ConfigureAwait(false);
 
-                if (buttonText is OnboardingConstants.SkipText)
+                if (buttonText == OnboardingConstants.SkipText)
                 {
                     OnSkipButtonTapped();
                 }
-                else if (buttonText is OnboardingConstants.TryDemoText)
+                else if (buttonText == OnboardingConstants.TryDemoText)
                 {
                     AnalyticsService.Track("Onboarding Demo Button Tapped");
 

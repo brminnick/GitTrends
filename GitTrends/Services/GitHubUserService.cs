@@ -17,7 +17,7 @@ namespace GitTrends
         public GitHubUserService(IPreferences preferences, ISecureStorage secureStorage) =>
             (_preferences, _secureStorage) = (preferences, secureStorage);
 
-        public bool IsDemoUser => Alias == DemoUser.Alias;
+        public bool IsDemoUser => Alias == DemoUserConstants.Alias;
 
         public bool IsAuthenticated => !string.IsNullOrWhiteSpace(Alias);
 

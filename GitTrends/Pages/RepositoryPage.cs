@@ -135,7 +135,7 @@ namespace GitTrends
             bool shouldShowWelcomePage(in INavigation navigation, in string accessToken)
             {
                 return !navigation.ModalStack.Any()
-                        && _gitHubUserService.Alias != DemoUser.Alias
+                        && _gitHubUserService.Alias != DemoUserConstants.Alias
                         && !isUserValid(accessToken);
             }
 

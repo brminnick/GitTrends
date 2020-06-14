@@ -145,11 +145,11 @@ namespace GitTrends.UnitTests
             Assert.IsFalse(isDemoButtonVisible_Final);
 
             Assert.AreEqual(string.Empty, gitHubAliasLabelText_Initial);
-            Assert.AreEqual("@" + DemoUser.Alias, gitHubAliasLabelText_Final);
+            Assert.AreEqual("@" + DemoUserConstants.Alias, gitHubAliasLabelText_Final);
             Assert.AreEqual(gitHubAliasLabelText_Final, "@" + gitHubUserService.Alias);
 
             Assert.AreEqual(GitHubLoginButtonConstants.NotLoggedIn, gitHubNameLabelText_Initial);
-            Assert.AreEqual(DemoUser.Name, gitHubNameLabelText_Final);
+            Assert.AreEqual(DemoUserConstants.Name, gitHubNameLabelText_Final);
             Assert.AreEqual(gitHubNameLabelText_Final, gitHubUserService.Name);
 
             Assert.AreEqual("DefaultProfileImage", gitHubAvatarImageSource_Initial);

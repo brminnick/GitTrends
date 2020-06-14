@@ -57,7 +57,7 @@ namespace GitTrends.UITests
             //Assert
             demoUserRepository = RepositoryPage.VisibleCollection.First();
 
-            Assert.AreEqual(DemoUser.Alias, demoUserRepository.OwnerLogin);
+            Assert.AreEqual(DemoUserConstants.Alias, demoUserRepository.OwnerLogin);
         }
 
         [Test]

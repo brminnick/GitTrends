@@ -86,8 +86,8 @@ namespace GitTrends.UnitTests
 
             //Assert
             Assert.IsTrue(didDemoUserActivatedFire);
-            Assert.AreEqual(DemoUser.Alias, gitHubUserService.Alias);
-            Assert.AreEqual(DemoUser.Name, gitHubUserService.Name);
+            Assert.AreEqual(DemoUserConstants.Alias, gitHubUserService.Alias);
+            Assert.AreEqual(DemoUserConstants.Name, gitHubUserService.Name);
 
 
             void HandleDemoUserActivated(object? sender, EventArgs e)
@@ -127,8 +127,8 @@ namespace GitTrends.UnitTests
 
             //Assert
             Assert.IsTrue(didDLoggedOutFire);
-            Assert.AreEqual(DemoUser.Name, gitHubUserName_Initial);
-            Assert.AreEqual(DemoUser.Alias, gitHubUserAlias_Initial);
+            Assert.AreEqual(DemoUserConstants.Name, gitHubUserName_Initial);
+            Assert.AreEqual(DemoUserConstants.Alias, gitHubUserAlias_Initial);
 
             void HandleLoggedOut(object? sender, EventArgs e)
             {

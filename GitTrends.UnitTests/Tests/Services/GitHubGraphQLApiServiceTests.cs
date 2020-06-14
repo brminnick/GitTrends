@@ -105,7 +105,7 @@ namespace GitTrends.UnitTests
             {
                 Assert.GreaterOrEqual(DemoDataConstants.MaximumRandomNumber, repository.IssuesCount);
                 Assert.GreaterOrEqual(DemoDataConstants.MaximumRandomNumber, repository.ForkCount);
-                Assert.AreEqual(DemoUser.Alias, repository.OwnerLogin);
+                Assert.AreEqual(DemoUserConstants.Alias, repository.OwnerLogin);
                 Assert.IsEmpty(repository.DailyClonesList);
                 Assert.IsEmpty(repository.DailyViewsList);
                 Assert.AreEqual(repository.TotalClones, 0);

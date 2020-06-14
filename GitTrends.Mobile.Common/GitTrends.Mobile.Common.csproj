@@ -37,6 +37,14 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>EmptyDataViewConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>GitHubLoginButtonConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\OnboardingConstants.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>OnboardingConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Constants\DemoUser.Designer.cs">
@@ -50,6 +58,12 @@
     </Compile>
     <Compile Update="Constants\EmptyDataView.Designer.cs">
       <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\GitHubLoginButtonConstants.Designer.cs">
+      <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\OnboardingConstants.Designer.cs">
+      <DependentUpon>OnboardingConstants.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

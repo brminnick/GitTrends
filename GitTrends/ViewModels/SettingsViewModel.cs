@@ -77,8 +77,8 @@ namespace GitTrends
         public IAsyncCommand GitHubUserViewTappedCommand { get; }
         public IReadOnlyList<string> ThemePickerItemsSource { get; } = Enum.GetNames(typeof(PreferredTheme));
 
-        public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText is GitHubLoginButtonConstants.Disconnect;
-        public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginLabelText is GitHubLoginButtonConstants.ConnectToGitHub;
+        public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText == GitHubLoginButtonConstants.Disconnect;
+        public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginLabelText == GitHubLoginButtonConstants.ConnectToGitHub;
 
         public bool ShouldShowClonesByDefaultSwitchValue
         {
@@ -270,7 +270,7 @@ namespace GitTrends
         {
             if (!GitHubUserService.IsAuthenticated)
                 GitHubAvatarImageSource = BaseTheme.GetDefaultProfileImageSource();
-            else if (GitHubUserService.Alias == DemoUser.Alias)
+            else if (GitHubUserService.Alias == DemoUserConstants.Alias)
                 GitHubAvatarImageSource = BaseTheme.GetGitTrendsImageSource();
         }
 
@@ -286,7 +286,7 @@ namespace GitTrends
         {
             if (GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser)
             {
-                string alias = GitHubUserService.Alias == DemoUser.Alias ? nameof(GitTrends) : GitHubUserService.Alias;
+                string alias = GitHubUserService.Alias == DemoUserConstants.Alias ? nameof(GitTrends) : GitHubUserService.Alias;
                 AnalyticsService.Track("Alias Label Tapped", "Alias", alias);
 
                 return _deepLinkingService.OpenApp($"github://", $"{GitHubConstants.GitHubBaseUrl}/{alias}", $"{GitHubConstants.GitHubBaseUrl}/{alias}");

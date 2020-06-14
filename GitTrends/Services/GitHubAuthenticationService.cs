@@ -75,8 +75,8 @@ namespace GitTrends
         {
             await LogOut().ConfigureAwait(false);
 
-            _gitHubUserService.Name = DemoUser.Name;
-            _gitHubUserService.Alias = DemoUser.Alias;
+            _gitHubUserService.Name = DemoUserConstants.Name;
+            _gitHubUserService.Alias = DemoUserConstants.Alias;
             _gitHubUserService.AvatarUrl = BaseTheme.GetGitTrendsImageSource();
 
             OnDemoUserActivated();
@@ -145,7 +145,7 @@ namespace GitTrends
         async void HandlePreferenceChanged(object sender, PreferredTheme e)
         {
             //Ensure the Demo User Alias matches the PreferredTheme
-            if (_gitHubUserService.Alias == DemoUser.Alias)
+            if (_gitHubUserService.Alias == DemoUserConstants.Alias)
             {
                 await ActivateDemoUser();
             }

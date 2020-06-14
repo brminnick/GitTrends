@@ -36,7 +36,7 @@ namespace GitTrends
 
         public bool IsNotAuthenticating => !IsAuthenticating;
 
-        public virtual bool IsDemoButtonVisible => !IsAuthenticating && GitHubUserService.Alias != DemoUser.Alias;
+        public virtual bool IsDemoButtonVisible => !IsAuthenticating && GitHubUserService.Alias != DemoUserConstants.Alias;
 
         protected GitHubAuthenticationService GitHubAuthenticationService { get; }
         protected GitHubUserService GitHubUserService { get; }

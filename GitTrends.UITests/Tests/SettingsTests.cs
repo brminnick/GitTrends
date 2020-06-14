@@ -183,8 +183,8 @@ namespace GitTrends.UITests
             SettingsPage.TapGitHubUserView();
 
             //Assert
-            Assert.AreEqual("@" + DemoUser.Alias, aliasLabelText);
-            Assert.AreEqual(DemoUser.Name, nameLabelText);
+            Assert.AreEqual("@" + DemoUserConstants.Alias, aliasLabelText);
+            Assert.AreEqual(DemoUserConstants.Name, nameLabelText);
 
             if (App is iOSApp)
             {
