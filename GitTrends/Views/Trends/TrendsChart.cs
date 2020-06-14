@@ -1,4 +1,4 @@
-﻿using GitTrends.Mobile.Shared;
+﻿using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Sharpnado.MaterialFrame;
 using Syncfusion.SfChart.XForms;

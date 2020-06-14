@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Shiny;
 using Xamarin.Essentials.Interfaces;

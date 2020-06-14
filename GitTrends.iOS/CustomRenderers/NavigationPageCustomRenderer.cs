@@ -2,7 +2,7 @@
 using Autofac;
 using CoreGraphics;
 using GitTrends.iOS;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;

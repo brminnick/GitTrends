@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Shiny;
 using Xamarin.Essentials.Interfaces;
@@ -249,13 +250,11 @@ namespace GitTrends
             }
         }
 
-
         Task ExecuteCopyrightLabelTappedCommand()
         {
             AnalyticsService.Track("CreatedBy Label Tapped");
             return _deepLinkingService.OpenApp("twitter://user?id=3418408341", "https://twitter.com/intent/user?user_id=3418408341");
         }
-
 
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => SetGitHubValues();
 
@@ -271,7 +270,7 @@ namespace GitTrends
         {
             if (!GitHubUserService.IsAuthenticated)
                 GitHubAvatarImageSource = BaseTheme.GetDefaultProfileImageSource();
-            else if (GitHubUserService.Alias is DemoDataConstants.Alias)
+            else if (GitHubUserService.Alias == DemoUser.Alias)
                 GitHubAvatarImageSource = BaseTheme.GetGitTrendsImageSource();
         }
 
@@ -287,7 +286,7 @@ namespace GitTrends
         {
             if (GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser)
             {
-                string alias = GitHubUserService.Alias is DemoDataConstants.Alias ? nameof(GitTrends) : GitHubUserService.Alias;
+                string alias = GitHubUserService.Alias == DemoUser.Alias ? nameof(GitTrends) : GitHubUserService.Alias;
                 AnalyticsService.Track("Alias Label Tapped", "Alias", alias);
 
                 return _deepLinkingService.OpenApp($"github://", $"{GitHubConstants.GitHubBaseUrl}/{alias}", $"{GitHubConstants.GitHubBaseUrl}/{alias}");

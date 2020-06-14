@@ -2,7 +2,7 @@
 
 namespace GitTrends.Shared
 {
-    class GraphQLResponse<T>
+    public class GraphQLResponse<T>
     {
         public GraphQLResponse(T data, GraphQLError[] errors) => (Data, Errors) = (data, errors);
 

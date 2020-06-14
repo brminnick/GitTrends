@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Essentials.Interfaces;

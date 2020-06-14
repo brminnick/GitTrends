@@ -1,4 +1,4 @@
-﻿using GitTrends.Mobile.Shared;
+﻿using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;

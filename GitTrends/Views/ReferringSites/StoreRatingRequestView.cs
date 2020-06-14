@@ -1,4 +1,4 @@
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static Xamarin.Forms.Markup.GridRowsColumns;

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using NUnit.Framework;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
@@ -182,8 +183,8 @@ namespace GitTrends.UITests
             SettingsPage.TapGitHubUserView();
 
             //Assert
-            Assert.AreEqual("@" + DemoDataConstants.Alias, aliasLabelText);
-            Assert.AreEqual(DemoDataConstants.Name, nameLabelText);
+            Assert.AreEqual("@" + DemoUser.Alias, aliasLabelText);
+            Assert.AreEqual(DemoUser.Name, nameLabelText);
 
             if (App is iOSApp)
             {

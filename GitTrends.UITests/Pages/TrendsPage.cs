@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
 using Newtonsoft.Json;
 using Xamarin.UITest;
 using Xamarin.UITest.Queries;

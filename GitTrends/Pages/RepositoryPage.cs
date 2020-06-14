@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using Autofac;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -134,7 +135,7 @@ namespace GitTrends
             bool shouldShowWelcomePage(in INavigation navigation, in string accessToken)
             {
                 return !navigation.ModalStack.Any()
-                        && _gitHubUserService.Alias != DemoDataConstants.Alias
+                        && _gitHubUserService.Alias != DemoUser.Alias
                         && !isUserValid(accessToken);
             }
 

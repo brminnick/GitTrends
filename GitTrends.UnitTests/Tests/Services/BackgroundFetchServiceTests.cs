@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -159,7 +160,7 @@ namespace GitTrends.UnitTests
             }
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-                                                        new RepositoryOwner(DemoDataConstants.Alias, gitTrendsAvatarUrl),
+                                                        new RepositoryOwner(DemoUser.Alias, gitTrendsAvatarUrl),
                                                         new IssuesConnection(DemoDataConstants.GetRandomNumber(), Enumerable.Empty<Issue>()),
                                                         repositoryUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false, downloadedAt, dailyViewsList, dailyClonesList);
         }

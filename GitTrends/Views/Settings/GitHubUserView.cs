@@ -1,4 +1,4 @@
-﻿using GitTrends.Mobile.Shared;
+﻿using GitTrends.Mobile.Common;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;

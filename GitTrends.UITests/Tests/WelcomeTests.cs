@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using NUnit.Framework;
 using Xamarin.UITest;
 using Xamarin.UITest.iOS;
@@ -56,7 +57,7 @@ namespace GitTrends.UITests
             //Assert
             demoUserRepository = RepositoryPage.VisibleCollection.First();
 
-            Assert.AreEqual(DemoDataConstants.Alias, demoUserRepository.OwnerLogin);
+            Assert.AreEqual(DemoUser.Alias, demoUserRepository.OwnerLogin);
         }
 
         [Test]

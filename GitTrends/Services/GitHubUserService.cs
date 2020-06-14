@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.Essentials.Interfaces;
@@ -17,7 +17,7 @@ namespace GitTrends
         public GitHubUserService(IPreferences preferences, ISecureStorage secureStorage) =>
             (_preferences, _secureStorage) = (preferences, secureStorage);
 
-        public bool IsDemoUser => Alias is DemoDataConstants.Alias;
+        public bool IsDemoUser => Alias == DemoUser.Alias;
 
         public bool IsAuthenticated => !string.IsNullOrWhiteSpace(Alias);
 

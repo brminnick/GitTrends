@@ -3,7 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using AsyncAwaitBestPractices;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 
@@ -74,8 +75,8 @@ namespace GitTrends
         {
             await LogOut().ConfigureAwait(false);
 
-            _gitHubUserService.Name = DemoDataConstants.Name;
-            _gitHubUserService.Alias = DemoDataConstants.Alias;
+            _gitHubUserService.Name = DemoUser.Name;
+            _gitHubUserService.Alias = DemoUser.Alias;
             _gitHubUserService.AvatarUrl = BaseTheme.GetGitTrendsImageSource();
 
             OnDemoUserActivated();
@@ -144,7 +145,7 @@ namespace GitTrends
         async void HandlePreferenceChanged(object sender, PreferredTheme e)
         {
             //Ensure the Demo User Alias matches the PreferredTheme
-            if (_gitHubUserService.Alias is DemoDataConstants.Alias)
+            if (_gitHubUserService.Alias == DemoUser.Alias)
             {
                 await ActivateDemoUser();
             }

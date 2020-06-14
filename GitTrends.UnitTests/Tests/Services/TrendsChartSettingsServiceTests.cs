@@ -1,4 +1,4 @@
-﻿using GitTrends.Mobile.Shared;
+﻿using GitTrends.Mobile.Common;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 

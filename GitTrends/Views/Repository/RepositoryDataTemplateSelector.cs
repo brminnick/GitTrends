@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;

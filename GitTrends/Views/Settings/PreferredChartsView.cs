@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
 using Syncfusion.XForms.Buttons;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;

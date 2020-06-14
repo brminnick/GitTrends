@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using NUnit.Framework;
 

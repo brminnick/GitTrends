@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 
 namespace GitTrends.Shared
 {
-    class GraphQLError
+    public class GraphQLError
     {
         public GraphQLError(string message, GraphQLLocation[] locations) => (Message, Locations) = (message, locations);
 
@@ -18,7 +18,7 @@ namespace GitTrends.Shared
         public IDictionary<string, JToken>? AdditonalEntries { get; set; }
     }
 
-    class GraphQLLocation
+    public class GraphQLLocation
     {
         [JsonProperty("line")]
         public long Line { get; }

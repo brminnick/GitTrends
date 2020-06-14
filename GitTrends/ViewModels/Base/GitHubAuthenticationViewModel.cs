@@ -4,7 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 
@@ -35,7 +36,7 @@ namespace GitTrends
 
         public bool IsNotAuthenticating => !IsAuthenticating;
 
-        public virtual bool IsDemoButtonVisible => !IsAuthenticating && GitHubUserService.Alias != DemoDataConstants.Alias;
+        public virtual bool IsDemoButtonVisible => !IsAuthenticating && GitHubUserService.Alias != DemoUser.Alias;
 
         protected GitHubAuthenticationService GitHubAuthenticationService { get; }
         protected GitHubUserService GitHubUserService { get; }
