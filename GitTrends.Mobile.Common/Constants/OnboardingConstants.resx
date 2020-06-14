@@ -19,15 +19,19 @@
         <value>TRY DEMO</value>
     </data>
     <data name="ChartPageTitle" xml:space="preserve">
-        <value>Get an overview of\nyour repos</value>
+        <value>Get an overview of
+your repos</value>
     </data>
     <data name="ConnectToGitHubPageTitle" xml:space="preserve">
-        <value>Connect to\nGitHub</value>
+        <value>Connect to
+GitHub</value>
     </data>
     <data name="GitTrendsPageTitle" xml:space="preserve">
-        <value>Welcome to\nGitTrends</value>
+        <value>Welcome to
+GitTrends</value>
     </data>
     <data name="NotificationsPageTitle" xml:space="preserve">
-        <value>Be notified when\nrepos are trending</value>
+        <value>Be notified when
+repos are trending</value>
     </data>
 </root>
