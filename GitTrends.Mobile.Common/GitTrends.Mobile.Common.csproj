@@ -45,6 +45,14 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>OnboardingConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\ReviewServiceConstants.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ReviewServiceConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\TrendsChartConstants.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TrendsChartTitleConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Constants\DemoUser.Designer.cs">
@@ -64,6 +72,12 @@
     </Compile>
     <Compile Update="Constants\OnboardingConstants.Designer.cs">
       <DependentUpon>OnboardingConstants.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\ReviewServiceConstants.Designer.cs">
+      <DependentUpon>ReviewServiceConstants.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\TrendsChartConstants.Designer.cs">
+      <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

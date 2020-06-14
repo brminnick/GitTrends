@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using NUnit.Framework;
 using Xamarin.UITest;
 using Xamarin.UITest.iOS;

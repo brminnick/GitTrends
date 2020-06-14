@@ -143,10 +143,10 @@ namespace GitTrends.UITests
             await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
 
             //Assert
-            Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalViewsTitle));
-            Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalClonesTitle));
-            Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueViewsTitle));
-            Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueClonesTitle));
+            Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.TotalViewsTitle));
+            Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.TotalClonesTitle));
+            Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.UniqueViewsTitle));
+            Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.UniqueClonesTitle));
         }
 
         void EnsureGitHubUserViewOpensBrowser_LoggedIn()
