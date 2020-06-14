@@ -14,9 +14,10 @@
     <Folder Include="$(MSBuildThisFileDirectory)EventArgs\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />
     <Folder Include="$(MSBuildThisFileDirectory)Enums\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Constants\PageTitles\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Constants\DemoData\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\PageTitles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\RepositoryPageAutomationIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\SettingsPageAutomationIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\ReferringSitesPageAutomationIds.cs" />
@@ -24,7 +25,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\TrendsPageAutomationIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\GitHubLoginButtonConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\BackdoorMethodConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\DemoDataConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\TrendsChartConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\OnboardingConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\FontAwesomeBrandsConstants.cs" />
@@ -42,5 +42,22 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\TimedEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\EmptyDataViewConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Enums\RefreshState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\PageTitles\PageTitles.Designer.cs">
+      <DependentUpon>PageTitles.resx</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\DemoData\DemoData.Designer.cs">
+      <DependentUpon>DemoData.resx</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\DemoData\DemoDataConstants.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Constants\PageTitles\PageTitles.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PageTitles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Constants\DemoData\DemoData.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>DemoData.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

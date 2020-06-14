@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using GitTrends.Shared;
 
 namespace GitTrends.Mobile.Shared
 {
     public static class DemoDataConstants
     {
-        public const string Alias = "Demo";
-        public const string Name = "Demo User";
         public const int RepoCount = 50;
         public const int ReferringSitesCount = 11;
 
