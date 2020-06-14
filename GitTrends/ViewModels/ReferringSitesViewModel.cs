@@ -140,8 +140,8 @@ namespace GitTrends
         {
             set
             {
-                EmptyDataViewTitle = EmptyDataViewConstants.GetReferringSitesTitleText(value);
-                EmptyDataViewDescription = EmptyDataViewConstants.GetReferringSitesDescriptionText(value);
+                EmptyDataViewTitle = EmptyDataViewService.GetReferringSitesTitleText(value);
+                EmptyDataViewDescription = EmptyDataViewService.GetReferringSitesDescriptionText(value);
             }
         }
 

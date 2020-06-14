@@ -24,7 +24,6 @@
   <ItemGroup>
     <Folder Include="Tests\" />
     <Folder Include="Tests\Base\" />
-    <Folder Include="Constants\" />
     <Folder Include="MockServices\" />
     <Folder Include="Tests\ViewModels\" />
     <Folder Include="Tests\Services\" />

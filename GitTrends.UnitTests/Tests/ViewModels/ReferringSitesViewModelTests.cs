@@ -52,11 +52,11 @@ namespace GitTrends.UnitTests
             Assert.IsFalse(isEmptyDataViewEnabled_DuringRefresh);
             Assert.IsTrue(isEmptyDataViewEnabled_Final);
 
-            Assert.AreEqual(EmptyDataViewConstants.GetReferringSitesTitleText(RefreshState.Uninitialized), emptyDataViewTitle_Initial);
-            Assert.AreEqual(EmptyDataViewConstants.GetReferringSitesTitleText(RefreshState.Error), emptyDataViewTitle_Final);
+            Assert.AreEqual(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Uninitialized), emptyDataViewTitle_Initial);
+            Assert.AreEqual(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Error), emptyDataViewTitle_Final);
 
-            Assert.AreEqual(EmptyDataViewConstants.GetReferringSitesDescriptionText(RefreshState.Uninitialized), emptyDataViewDescription_Initial);
-            Assert.AreEqual(EmptyDataViewConstants.GetReferringSitesDescriptionText(RefreshState.Error), emptyDataViewDescription_Final);
+            Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Uninitialized), emptyDataViewDescription_Initial);
+            Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Error), emptyDataViewDescription_Final);
 
             Assert.IsEmpty(mobileReferringSites_Initial);
             Assert.IsEmpty(mobileReferringSites_DuringRefresh);
@@ -118,11 +118,11 @@ namespace GitTrends.UnitTests
             Assert.IsEmpty(mobileReferringSites_DuringRefresh);
             Assert.IsNotEmpty(mobileReferringSites_Final);
 
-            Assert.AreEqual(EmptyDataViewConstants.GetReferringSitesTitleText(RefreshState.Succeeded), emptyDataViewTitle_Final);
-            Assert.AreEqual(EmptyDataViewConstants.GetReferringSitesTitleText(RefreshState.Uninitialized), emptyDataViewTitle_Initial);
+            Assert.AreEqual(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Succeeded), emptyDataViewTitle_Final);
+            Assert.AreEqual(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Uninitialized), emptyDataViewTitle_Initial);
 
-            Assert.AreEqual(EmptyDataViewConstants.GetReferringSitesDescriptionText(RefreshState.Succeeded), emptyDataViewDescription_Final);
-            Assert.AreEqual(EmptyDataViewConstants.GetReferringSitesDescriptionText(RefreshState.Uninitialized), emptyDataViewDescription_Initial);
+            Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Succeeded), emptyDataViewDescription_Final);
+            Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Uninitialized), emptyDataViewDescription_Initial);
 
             foreach (var referringSite in mobileReferringSites_Final)
             {

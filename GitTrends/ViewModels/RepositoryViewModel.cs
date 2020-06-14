@@ -102,8 +102,8 @@ namespace GitTrends
         {
             set
             {
-                EmptyDataViewTitle = EmptyDataViewConstants.GetRepositoryTitleText(value, !_repositoryList.Any());
-                EmptyDataViewDescription = EmptyDataViewConstants.GetRepositoryDescriptionText(value, !_repositoryList.Any());
+                EmptyDataViewTitle = EmptyDataViewService.GetRepositoryTitleText(value, !_repositoryList.Any());
+                EmptyDataViewDescription = EmptyDataViewService.GetRepositoryDescriptionText(value, !_repositoryList.Any());
             }
         }
 
