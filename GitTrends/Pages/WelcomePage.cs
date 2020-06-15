@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -147,7 +148,7 @@ namespace GitTrends
         {
             public DemoLabel()
             {
-                Text = "Try Demo";
+                Text = WelcomePageConstants.TryDemo;
                 TextColor = Color.White;
 
                 FontSize = _demoLabelFontSize;
@@ -184,13 +185,17 @@ namespace GitTrends
                         {
                             FontSize = 32,
                             FontFamily = FontFamilyConstants.RobotoBold,
-                            Text = "Welcome to GitTrends\n",
+                            Text = WelcomePageConstants.WelcomeToGitTrends,
+                        },
+                        new Span
+                        {
+                            Text = "\n"
                         },
                         new Span
                         {
                             FontSize = 16,
                             FontFamily = FontFamilyConstants.RobotoRegular,
-                            Text = "Monitor your GitHub repos with ease"
+                            Text = WelcomePageConstants.MonitorYourRepos
                         }
                     }
                 };
