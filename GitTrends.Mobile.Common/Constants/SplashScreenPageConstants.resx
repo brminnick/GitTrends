@@ -18,9 +18,6 @@
     <data name="ConnectingToServers" xml:space="preserve">
         <value>Connecting to servers</value>
     </data>
-    <data name="Initializing" xml:space="preserve">
-        <value>Initializing</value>
-    </data>
     <data name="StillWorkingOnIt" xml:space="preserve">
         <value>Still working on it</value>
     </data>
