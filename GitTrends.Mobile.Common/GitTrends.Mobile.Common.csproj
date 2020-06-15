@@ -53,6 +53,10 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>TrendsChartTitleConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\SortingConstants.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SortingConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Constants\DemoUser.Designer.cs">
@@ -78,6 +82,9 @@
     </Compile>
     <Compile Update="Constants\TrendsChartConstants.Designer.cs">
       <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\SortingConstants.Designer.cs">
+      <DependentUpon>SortingConstants.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

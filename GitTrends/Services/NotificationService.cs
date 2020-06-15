@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using Shiny;
@@ -25,7 +26,7 @@ namespace GitTrends
 
         readonly IPreferences _preferences;
         readonly ISecureStorage _secureStorage;
-        readonly SortingService _sortingService;
+        readonly MobileSortingService _sortingService;
         readonly IAnalyticsService _analyticsService;
         readonly DeepLinkingService _deepLinkingService;
         readonly INotificationManager _notificationManager;
@@ -36,7 +37,7 @@ namespace GitTrends
 
         public NotificationService(IAnalyticsService analyticsService,
                                     DeepLinkingService deepLinkingService,
-                                    SortingService sortingService,
+                                    MobileSortingService sortingService,
                                     AzureFunctionsApiService azureFunctionsApiService,
                                     IPreferences preferences,
                                     ISecureStorage secureStorage,

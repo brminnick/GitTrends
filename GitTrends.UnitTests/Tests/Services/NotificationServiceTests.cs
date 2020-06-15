@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -91,7 +92,7 @@ namespace GitTrends.UnitTests
             var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
             notificationService.SortingOptionRequested += HandleSortingOptionRequested;
 
-            var sortingService = ServiceCollection.ServiceProvider.GetService<SortingService>();
+            var sortingService = ServiceCollection.ServiceProvider.GetService<MobileSortingService>();
             sortingService.IsReversed = true;
 
             //Act

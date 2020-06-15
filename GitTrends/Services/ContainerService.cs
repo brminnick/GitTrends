@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Shiny;
 using Shiny.Notifications;
@@ -46,7 +47,7 @@ namespace GitTrends
             builder.RegisterType<ReferringSitesDatabase>().AsSelf().SingleInstance();
             builder.RegisterType<RepositoryDatabase>().AsSelf().SingleInstance();
             builder.RegisterType<ReviewService>().AsSelf().SingleInstance();
-            builder.RegisterType<SortingService>().AsSelf().SingleInstance();
+            builder.RegisterType<MobileSortingService>().AsSelf().SingleInstance();
             builder.RegisterType<SyncfusionService>().AsSelf().SingleInstance();
             builder.RegisterType<ThemeService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();

@@ -24,7 +24,7 @@ namespace GitTrends
 
         public RepositoryPage(RepositoryViewModel repositoryViewModel,
                                 IAnalyticsService analyticsService,
-                                SortingService sortingService,
+                                MobileSortingService sortingService,
                                 DeepLinkingService deepLinkingService,
                                 IMainThread mainThread,
                                 FirstRunService firstRunService,
@@ -184,12 +184,12 @@ namespace GitTrends
 
         async Task ExecuteSortToolbarItemCommand()
         {
-            var sortingOptions = SortingConstants.SortingOptionsDictionary.Values;
+            var sortingOptions = MobileSortingService.SortingOptionsDictionary.Values;
 
-            string? selection = await DisplayActionSheet("Sort By", SortingConstants.CancelText, null, sortingOptions.ToArray());
+            string? selection = await DisplayActionSheet(SortingConstants.ActionSheetTitle, SortingConstants.CancelText, null, sortingOptions.ToArray());
 
             if (!string.IsNullOrWhiteSpace(selection) && selection != SortingConstants.CancelText)
-                ViewModel.SortRepositoriesCommand.Execute(SortingConstants.SortingOptionsDictionary.First(x => x.Value == selection).Key);
+                ViewModel.SortRepositoriesCommand.Execute(MobileSortingService.SortingOptionsDictionary.First(x => x.Value == selection).Key);
         }
 
         void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)

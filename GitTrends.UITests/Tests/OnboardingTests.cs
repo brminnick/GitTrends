@@ -30,7 +30,7 @@ namespace GitTrends.UITests
 
             //Assert
             Assert.AreEqual(0, OnboardingPage.CurrentPageNumber);
-            Assert.AreEqual(OnboardingConstants.GitTrendsPageTitle, OnboardingPage.TitleLabelText);
+            Assert.AreEqual(OnboardingConstants.GitTrendsPage_Title, OnboardingPage.TitleLabelText);
 
             //Act
             await OnboardingPage.MoveToNextPage().ConfigureAwait(false);
@@ -38,7 +38,7 @@ namespace GitTrends.UITests
 
             //Assert
             Assert.AreEqual(1, OnboardingPage.CurrentPageNumber);
-            Assert.AreEqual(OnboardingConstants.ChartPageTitle, OnboardingPage.TitleLabelText);
+            Assert.AreEqual(OnboardingConstants.ChartPage_Title, OnboardingPage.TitleLabelText);
 
             //Act
             await OnboardingPage.MoveToNextPage().ConfigureAwait(false);
@@ -49,7 +49,7 @@ namespace GitTrends.UITests
             areNotificationsEnabled_Final = OnboardingPage.AreNotificationsEnabeld;
 
             Assert.AreEqual(2, OnboardingPage.CurrentPageNumber);
-            Assert.AreEqual(OnboardingConstants.NotificationsPageTitle, OnboardingPage.TitleLabelText);
+            Assert.AreEqual(OnboardingConstants.NotificationsPage_Title, OnboardingPage.TitleLabelText);
 
             Assert.IsTrue(areNotificationsEnabled_Final);
             Assert.IsFalse(areNotificationsEnabled_Initial);
@@ -60,7 +60,7 @@ namespace GitTrends.UITests
 
             //Assert
             Assert.AreEqual(3, OnboardingPage.CurrentPageNumber);
-            Assert.AreEqual(OnboardingConstants.ConnectToGitHubPageTitle, OnboardingPage.TitleLabelText);
+            Assert.AreEqual(OnboardingConstants.ConnectToGitHubPage_Title, OnboardingPage.TitleLabelText);
         }
     }
 }

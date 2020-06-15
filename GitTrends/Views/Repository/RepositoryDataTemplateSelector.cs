@@ -10,13 +10,13 @@ namespace GitTrends
 {
     class RepositoryDataTemplateSelector : DataTemplateSelector
     {
-        readonly SortingService _sortingService;
+        readonly MobileSortingService _sortingService;
 
-        public RepositoryDataTemplateSelector(SortingService sortingService) => _sortingService = sortingService;
+        public RepositoryDataTemplateSelector(MobileSortingService sortingService) => _sortingService = sortingService;
 
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
-            var sortingCategory = SortingConstants.GetSortingCategory(_sortingService.CurrentOption);
+            var sortingCategory = MobileSortingService.GetSortingCategory(_sortingService.CurrentOption);
 
             return sortingCategory switch
             {

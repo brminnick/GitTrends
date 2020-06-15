@@ -30,7 +30,7 @@ namespace GitTrends.UnitTests
             };
 
             //Act
-            var sortedReferringSitesList = SortingService.SortReferringSites(referringSitesList);
+            var sortedReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList);
 
             //Assert
             Assert.IsTrue(sortedReferringSitesList.First().TotalCount is largestTotalCount);
@@ -38,7 +38,7 @@ namespace GitTrends.UnitTests
             Assert.IsTrue(sortedReferringSitesList.Last().Referrer is lastReferer);
         }
 
-        [TestCase(SortingConstants.DefaultSortingOption, true)]
+        [TestCase(MobileSortingService.DefaultSortingOption, true)]
         [TestCase(SortingOption.Clones, true)]
         [TestCase(SortingOption.Forks, true)]
         [TestCase(SortingOption.Issues, true)]
@@ -46,7 +46,7 @@ namespace GitTrends.UnitTests
         [TestCase(SortingOption.UniqueClones, true)]
         [TestCase(SortingOption.UniqueViews, true)]
         [TestCase(SortingOption.Views, true)]
-        [TestCase(SortingConstants.DefaultSortingOption, false)]
+        [TestCase(MobileSortingService.DefaultSortingOption, false)]
         [TestCase(SortingOption.Clones, false)]
         [TestCase(SortingOption.Forks, false)]
         [TestCase(SortingOption.Issues, false)]
@@ -66,7 +66,7 @@ namespace GitTrends.UnitTests
             }
 
             //Act
-            var sortedRepositoryList = SortingService.SortRepositories(repositoryList, sortingOption, isReversed);
+            var sortedRepositoryList = MobileSortingService.SortRepositories(repositoryList, sortingOption, isReversed);
             topRepository = sortedRepositoryList.First();
             bottomRepository = sortedRepositoryList.Last();
 
@@ -125,7 +125,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             bool isReversed_Initial, isReversed_AfterTrue, isReversed_AfterFalse;
-            var sortingService = ServiceCollection.ServiceProvider.GetService<SortingService>();
+            var sortingService = ServiceCollection.ServiceProvider.GetService<MobileSortingService>();
 
             //Act
             isReversed_Initial = sortingService.IsReversed;
@@ -154,7 +154,7 @@ namespace GitTrends.UnitTests
             //Arrange
             SortingOption currentOption_Initial, currentOption_Final;
 
-            var sortingService = ServiceCollection.ServiceProvider.GetService<SortingService>();
+            var sortingService = ServiceCollection.ServiceProvider.GetService<MobileSortingService>();
 
             //Act
             currentOption_Initial = sortingService.CurrentOption;
@@ -163,7 +163,7 @@ namespace GitTrends.UnitTests
             currentOption_Final = sortingService.CurrentOption;
 
             //Assert
-            Assert.AreEqual(SortingConstants.DefaultSortingOption, currentOption_Initial);
+            Assert.AreEqual(MobileSortingService.DefaultSortingOption, currentOption_Initial);
             Assert.AreEqual(sortingOption, currentOption_Final);
         }
 
@@ -172,7 +172,7 @@ namespace GitTrends.UnitTests
             //Arrange
             SortingOption currentOption_Initial, currentOption_PlusOne, currentOption_NegativeOne;
 
-            var sortingService = ServiceCollection.ServiceProvider.GetService<SortingService>();
+            var sortingService = ServiceCollection.ServiceProvider.GetService<MobileSortingService>();
 
             //Act
             currentOption_Initial = sortingService.CurrentOption;
@@ -184,9 +184,9 @@ namespace GitTrends.UnitTests
             currentOption_NegativeOne = sortingService.CurrentOption;
 
             //Assert
-            Assert.AreEqual(SortingConstants.DefaultSortingOption, currentOption_Initial);
-            Assert.AreEqual(SortingConstants.DefaultSortingOption, currentOption_PlusOne);
-            Assert.AreEqual(SortingConstants.DefaultSortingOption, currentOption_NegativeOne);
+            Assert.AreEqual(MobileSortingService.DefaultSortingOption, currentOption_Initial);
+            Assert.AreEqual(MobileSortingService.DefaultSortingOption, currentOption_PlusOne);
+            Assert.AreEqual(MobileSortingService.DefaultSortingOption, currentOption_NegativeOne);
         }
     }
 }

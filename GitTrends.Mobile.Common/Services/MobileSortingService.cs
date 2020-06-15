@@ -2,16 +2,32 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 
-namespace GitTrends
+namespace GitTrends.Mobile.Common
 {
-    public class SortingService
+    public class MobileSortingService
     {
+        public const SortingOption DefaultSortingOption = SortingOption.Views;
+
+        readonly static Lazy<Dictionary<SortingOption, string>> _sortingOptionsDictionaryHolder = new Lazy<Dictionary<SortingOption, string>>(() => new Dictionary<SortingOption, string>
+        {
+            { SortingOption.Stars,  SortingConstants.Stars },
+            { SortingOption.Forks,  SortingConstants.Forks },
+            { SortingOption.Issues,  SortingConstants.Issues },
+            { SortingOption.Views,  SortingConstants.Views },
+            { SortingOption.Clones,  SortingConstants.Clones },
+            { SortingOption.UniqueViews,  SortingConstants.UniqueViews },
+            { SortingOption.UniqueClones,  SortingConstants.UniqueClones },
+        });
+
         readonly IPreferences _preferences;
 
-        public SortingService(IPreferences preferences) => _preferences = preferences;
+        public MobileSortingService(IPreferences preferences) => _preferences = preferences;
+
+        public static Dictionary<SortingOption, string> SortingOptionsDictionary => _sortingOptionsDictionaryHolder.Value;
 
         public bool IsReversed
         {
@@ -31,7 +47,7 @@ namespace GitTrends
             }
         }
 
-        public static IEnumerable<MobileReferringSiteModel> SortReferringSites(in IEnumerable<MobileReferringSiteModel> referringSites) =>
+        public static IEnumerable<TReferringSiteModel> SortReferringSites<TReferringSiteModel>(in IEnumerable<TReferringSiteModel> referringSites) where TReferringSiteModel : IReferringSiteModel =>
             referringSites.OrderByDescending(x => x.TotalCount).ThenByDescending(x => x.TotalUniqueCount).ThenBy(x => x.Referrer);
 
         //SortingCategory.IssuesForks Priority: Trending > Stars > Name > Forks > Issues 
@@ -63,6 +79,18 @@ namespace GitTrends
             _ => throw new NotSupportedException()
         };
 
+        public static SortingCategory GetSortingCategory(in SortingOption sortingOption) => sortingOption switch
+        {
+            SortingOption.Stars => SortingCategory.Views,
+            SortingOption.Forks => SortingCategory.IssuesForks,
+            SortingOption.Issues => SortingCategory.IssuesForks,
+            SortingOption.Views => SortingCategory.Views,
+            SortingOption.Clones => SortingCategory.Clones,
+            SortingOption.UniqueViews => SortingCategory.Views,
+            SortingOption.UniqueClones => SortingCategory.Clones,
+            _ => throw new NotSupportedException()
+        };
+
         //Bug Fix caused by removing SortingConstants.Trending between v0.12.0 and v1.0
         SortingOption GetCurrentOption()
         {
@@ -78,7 +106,11 @@ namespace GitTrends
                 return getCurrentSortingOption();
             }
 
-            SortingOption getCurrentSortingOption() => (SortingOption)_preferences.Get(nameof(CurrentOption), (int)SortingConstants.DefaultSortingOption);
+            SortingOption getCurrentSortingOption() => (SortingOption)_preferences.Get(nameof(CurrentOption), (int)DefaultSortingOption);
         }
     }
+
+    public enum SortingOption { Stars, Issues, Forks, Views, UniqueViews, Clones, UniqueClones }
+
+    public enum SortingCategory { IssuesForks, Views, Clones }
 }

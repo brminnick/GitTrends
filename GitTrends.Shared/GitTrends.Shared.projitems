@@ -46,7 +46,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GetGitHubClientIdDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\SyncFusionDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IRepository.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\SortingConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\TrendingService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\DateTimeService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Base\BaseTotalCountModel.cs" />

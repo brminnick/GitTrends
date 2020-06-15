@@ -88,7 +88,7 @@ namespace GitTrends.UITests
             App.Tap(_sortButton);
             App.Screenshot("Sort Button Tapped");
 
-            var sortingOptionDescription = SortingConstants.SortingOptionsDictionary[sortingOption];
+            var sortingOptionDescription = MobileSortingService.SortingOptionsDictionary[sortingOption];
 
             if (App is iOSApp)
             {

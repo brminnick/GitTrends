@@ -24,7 +24,7 @@ namespace GitTrends
         readonly RepositoryDatabase _repositoryDatabase;
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
-        readonly SortingService _sortingService;
+        readonly MobileSortingService _sortingService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly GitHubUserService _gitHubUserService;
 
@@ -39,7 +39,7 @@ namespace GitTrends
                                     GitHubAuthenticationService gitHubAuthenticationService,
                                     GitHubGraphQLApiService gitHubGraphQLApiService,
                                     IAnalyticsService analyticsService,
-                                    SortingService sortingService,
+                                    MobileSortingService sortingService,
                                     GitHubApiV3Service gitHubApiV3Service,
                                     NotificationService notificationService,
                                     IMainThread mainThread,
@@ -247,8 +247,8 @@ namespace GitTrends
 
             AnalyticsService.Track("SortingOption Changed", new Dictionary<string, string>
             {
-                { nameof(SortingService) + nameof(SortingService.CurrentOption), _sortingService.CurrentOption.ToString() },
-                { nameof(SortingService) + nameof(SortingService.IsReversed), _sortingService.IsReversed.ToString() }
+                { nameof(MobileSortingService) + nameof(MobileSortingService.CurrentOption), _sortingService.CurrentOption.ToString() },
+                { nameof(MobileSortingService) + nameof(MobileSortingService.IsReversed), _sortingService.IsReversed.ToString() }
             });
 
             UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
@@ -278,7 +278,7 @@ namespace GitTrends
         {
             var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
 
-            VisibleRepositoryList = SortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
+            VisibleRepositoryList = MobileSortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
         }
 
         void UpdateListForLoggedOutUser()

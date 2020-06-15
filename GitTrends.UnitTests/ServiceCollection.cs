@@ -1,4 +1,5 @@
 ﻿using System;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Shiny.Notifications;
@@ -31,7 +32,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<ReferringSitesDatabase>();
             services.AddSingleton<RepositoryDatabase>();
             services.AddSingleton<ReviewService>();
-            services.AddSingleton<SortingService>();
+            services.AddSingleton<MobileSortingService>();
             services.AddSingleton<SyncfusionService>();
             services.AddSingleton<ThemeService>();
             services.AddSingleton<TrendsChartSettingsService>();

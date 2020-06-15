@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using AsyncAwaitBestPractices;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.Forms;
