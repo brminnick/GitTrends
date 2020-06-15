@@ -57,6 +57,10 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SortingConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\ReferringSitesPageConstants.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ReferringSitesPageConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Constants\DemoUser.Designer.cs">
@@ -85,6 +89,9 @@
     </Compile>
     <Compile Update="Constants\SortingConstants.Designer.cs">
       <DependentUpon>SortingConstants.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\ReferringSitesPageConstants.Designer.cs">
+      <DependentUpon>ReferringSitesPageConstants.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

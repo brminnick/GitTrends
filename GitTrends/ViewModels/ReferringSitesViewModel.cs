@@ -10,6 +10,7 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Essentials.Interfaces;
@@ -209,7 +210,7 @@ namespace GitTrends
             }
             catch (Exception e)
             {
-                OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs("Unable to retrieve referring sites. Check your internet connection and try again."));
+                OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs(ReferringSitesPageConstants.ErrorPullToRefreshEventArgs));
 
                 AnalyticsService.Report(e);
 

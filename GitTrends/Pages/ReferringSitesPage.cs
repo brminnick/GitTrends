@@ -75,7 +75,7 @@ namespace GitTrends
 
                 var closeButton = new Button
                 {
-                    Text = "Close",
+                    Text = ReferringSitesPageConstants.CloseButtonText,
                     FontFamily = FontFamilyConstants.RobotoRegular,
                     HeightRequest = titleRowHeight * 3 / 5,
                     HorizontalOptions = LayoutOptions.End,
