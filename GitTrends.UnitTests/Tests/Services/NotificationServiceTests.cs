@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -14,42 +15,12 @@ namespace GitTrends.UnitTests
 {
     class NotificationServiceTests : BaseTest
     {
-        [Test]
-        public void HandleNotificationTest_InvalidSingleNotificationMessage()
-        {
-            //Arrange
-            const int badgeCount = 1;
-            const string message = "Invalid Message";
-
-            var title = NotificationService.TrendingRepositoriesNotificationTitle;
-            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
-
-            //Act //Assert
-            Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await notificationService.HandleNotification(title, message, badgeCount).ConfigureAwait(false));
-        }
-
-        [Test]
-        public async Task HandleNotificationTest_InvalidMultipleNotificationMessage()
-        {
-            //Arrange
-            const int badgeCount = 2;
-            const string message = "Invalid Message";
-
-            var title = NotificationService.TrendingRepositoriesNotificationTitle;
-            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
-
-            //Act
-            await notificationService.HandleNotification(title, message, badgeCount).ConfigureAwait(false);
-
-            //Assert
-        }
-
         [TestCase(0)]
         [TestCase(int.MinValue)]
         public void HandleNotificationTest_InvalidBadgeCount(int badgeCount)
         {
             //Arrange
-            var title = NotificationService.TrendingRepositoriesNotificationTitle;
+            var title = NotificationConstants.TrendingRepositoriesNotificationTitle;
             var message = NotificationService.CreateSingleRepositoryNotificationMessage(GitTrendsRepoName, GitTrendsRepoOwner);
 
             var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
@@ -64,7 +35,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             const int badgeCount = 1;
-            var title = NotificationService.TrendingRepositoriesNotificationTitle;
+            var title = NotificationConstants.TrendingRepositoriesNotificationTitle;
             var message = NotificationService.CreateSingleRepositoryNotificationMessage(GitTrendsRepoName, GitTrendsRepoOwner);
 
             var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
@@ -83,7 +54,7 @@ namespace GitTrends.UnitTests
             const int badgeCount = 2;
 
             SortingOption sortingOption;
-            var title = NotificationService.TrendingRepositoriesNotificationTitle;
+            var title = NotificationConstants.TrendingRepositoriesNotificationTitle;
             var message = NotificationService.CreateMultipleRepositoryNotificationMessage(badgeCount);
 
             bool didSortingOptionRequestedFire = false;
