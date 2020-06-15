@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +8,7 @@ using NUnit.Framework;
 
 namespace GitTrends.UnitTests
 {
-    class SortingServiceTests : BaseTest
+    class MobileSortingServiceTests : BaseTest
     {
         [Test]
         public void SortReferringSitesTests()
@@ -140,6 +139,37 @@ namespace GitTrends.UnitTests
             Assert.IsFalse(isReversed_Initial);
             Assert.IsTrue(isReversed_AfterTrue);
             Assert.IsFalse(isReversed_AfterFalse);
+        }
+
+        [TestCase(SortingOption.Clones, SortingCategory.Clones)]
+        [TestCase(SortingOption.Forks, SortingCategory.IssuesForks)]
+        [TestCase(SortingOption.Issues, SortingCategory.IssuesForks)]
+        [TestCase(SortingOption.Stars, SortingCategory.Views)]
+        [TestCase(SortingOption.UniqueClones, SortingCategory.Clones)]
+        [TestCase(SortingOption.UniqueViews, SortingCategory.Views)]
+        [TestCase(SortingOption.Views, SortingCategory.Views)]
+        public void GetSortingCategoryTest_ValidOption(SortingOption sortingOption, SortingCategory expectedSortingCategory)
+        {
+            //Arrange
+            SortingCategory actualSortingCategory;
+
+            //Act
+            actualSortingCategory = MobileSortingService.GetSortingCategory(sortingOption);
+
+            //Assert
+            Assert.AreEqual(expectedSortingCategory, actualSortingCategory);
+        }
+
+        [TestCase(int.MinValue)]
+        [TestCase(-1)]
+        [TestCase(7)]
+        [TestCase(int.MaxValue)]
+        public void GetSortingCategoryTest_InvalidOption(SortingOption sortingOption)
+        {
+            //Arrange
+
+            //Act //Assert
+            Assert.Throws<NotSupportedException>(() => MobileSortingService.GetSortingCategory(sortingOption));
         }
 
         [TestCase(SortingOption.Clones)]
