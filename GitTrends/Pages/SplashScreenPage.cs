@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
@@ -34,7 +35,7 @@ namespace GitTrends
 
             ViewModel.InitializationComplete += HandleInitializationComplete;
 
-            IEnumerable<string> statusMessageList = new[] { "Initializing", "Connecting to servers", "Initializing", "Connecting to servers", "Initializing", "Connecting to servers", "Still working on it", "Let's try it like this", "Maybe this", "Another try", "Hmmm, it shouldn't take this long", "Are you sure the internet connection is good?" };
+            IEnumerable<string> statusMessageList = new[] { SplashScreenPageConstants.Initializing, SplashScreenPageConstants.ConnectingToServers, SplashScreenPageConstants.Initializing, SplashScreenPageConstants.ConnectingToServers, SplashScreenPageConstants.Initializing, SplashScreenPageConstants.ConnectingToServers, SplashScreenPageConstants.StillWorkingOnIt, SplashScreenPageConstants.LetsTryItLikeThis, SplashScreenPageConstants.MaybeThis, SplashScreenPageConstants.AnotherTry, SplashScreenPageConstants.ItShouldntTakeThisLong, SplashScreenPageConstants.AreYouSureInternetConnectionIsGood };
             _statusMessageEnumerator = statusMessageList.GetEnumerator();
             _statusMessageEnumerator.MoveNext();
 
@@ -194,7 +195,7 @@ namespace GitTrends
             if (e.IsInitializationSuccessful)
             {
 #if DEBUG
-                await ChangeLabelText("Preview Mode", "Certain license warnings may appear");
+                await ChangeLabelText(SplashScreenPageConstants.PreviewMode, SplashScreenPageConstants.WarningsMayAppear);
                 //Display Text
                 await Task.Delay(TimeSpan.FromMilliseconds(500));
 #else
@@ -204,7 +205,7 @@ namespace GitTrends
             }
             else
             {
-                await ChangeLabelText("Initialization Failed", "\nEnsure Internet Connection Is Available and Update GitTrends to the Latest Version");
+                await ChangeLabelText(SplashScreenPageConstants.InitializationFailed, $"\n{SplashScreenPageConstants.EnsureInternetConnectionAndLatestVersion}");
 
                 AnalyticsService.Track("Initialization Failed");
             }
@@ -225,7 +226,7 @@ namespace GitTrends
 
                     await explodeImageTask;
 
-                    Application.Current.MainPage = new BaseNavigationPage(repositoryPage);                    
+                    Application.Current.MainPage = new BaseNavigationPage(repositoryPage);
 
                     async void HandleRepositoryPageAppearing(object sender, EventArgs e)
                     {

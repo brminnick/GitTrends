@@ -52,5 +52,11 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("UnableToRetrieveData", resourceCulture);
             }
         }
+        
+        public static string NoTrafficYet {
+            get {
+                return ResourceManager.GetString("NoTrafficYet", resourceCulture);
+            }
+        }
     }
 }

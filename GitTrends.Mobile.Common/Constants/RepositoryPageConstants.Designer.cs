@@ -47,12 +47,6 @@ namespace GitTrends.Mobile.Common.Constants {
             }
         }
         
-        public static string SettingsToolbarItemText {
-            get {
-                return ResourceManager.GetString("SettingsToolbarItemText", resourceCulture);
-            }
-        }
-        
         public static string SortToolbarItemText {
             get {
                 return ResourceManager.GetString("SortToolbarItemText", resourceCulture);

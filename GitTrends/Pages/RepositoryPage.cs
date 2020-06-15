@@ -66,7 +66,7 @@ namespace GitTrends
 
             var settingsToolbarItem = new ToolbarItem
             {
-                Text = RepositoryPageConstants.SettingsToolbarItemText,
+                Text = PageTitles.SettingsPage,
                 IconImageSource = Device.RuntimePlatform is Device.iOS ? "Settings" : null,
                 Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
                 AutomationId = RepositoryPageAutomationIds.SettingsButton,

@@ -15,4 +15,7 @@
     <data name="UnableToRetrieveData" xml:space="preserve">
         <value>Unable to retrieve data</value>
     </data>
+    <data name="NoTrafficYet" xml:space="preserve">
+        <value>No traffic yet</value>
+    </data>
 </root>

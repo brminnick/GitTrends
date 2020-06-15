@@ -2,6 +2,7 @@
 using System.Threading;
 using Autofac;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -27,7 +28,7 @@ namespace GitTrends
 
             var referringSitesToolbarItem = new ToolbarItem
             {
-                Text = "Referring Sites",
+                Text = PageTitles.ReferringSitesPage,
                 IconImageSource = "ReferringSitesIcon",
                 AutomationId = TrendsPageAutomationIds.ReferringSitesButton
             };
