@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using GitTrends.Mobile.Common.Constants;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
@@ -49,7 +50,7 @@ namespace GitTrends
                 TextColor = Color.White;
                 FontSize = 18;
                 FontFamily = FontFamilyConstants.RobotoRegular;
-                Text = "Connect to GitHub";
+                Text = GitHubLoginButtonConstants.ConnectToGitHub;
             }
         }
     }
