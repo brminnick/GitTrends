@@ -53,9 +53,15 @@ namespace GitTrends.Mobile.Common.Constants {
             }
         }
         
-        internal static string SwipeDownToRefresh {
+        internal static string SwipeDownToRefresh_Repositories {
             get {
-                return ResourceManager.GetString("SwipeDownToRefresh", resourceCulture);
+                return ResourceManager.GetString("SwipeDownToRefresh_Repositories", resourceCulture);
+            }
+        }
+        
+        internal static string SwipeDownToRefresh_ReferringSites {
+            get {
+                return ResourceManager.GetString("SwipeDownToRefresh_ReferringSites", resourceCulture);
             }
         }
         

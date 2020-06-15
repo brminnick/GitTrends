@@ -17,11 +17,11 @@ namespace GitTrends.Mobile.Common
 
         public static string GetReferringSitesDescriptionText(in RefreshState refreshState) => refreshState switch
         {
-            RefreshState.Uninitialized => EmptyDataViewConstantsInternal.SwipeDownToRefresh,
+            RefreshState.Uninitialized => EmptyDataViewConstantsInternal.SwipeDownToRefresh_ReferringSites,
             RefreshState.Succeeded => string.Empty,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.PleaseLoginAgain,
-            RefreshState.Error => EmptyDataViewConstantsInternal.SwipeDownToRefresh,
-            RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.SwipeDownToRefresh,
+            RefreshState.Error => EmptyDataViewConstantsInternal.SwipeDownToRefresh_ReferringSites,
+            RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.SwipeDownToRefresh_ReferringSites,
             _ => throw new NotSupportedException()
         };
 
@@ -39,13 +39,13 @@ namespace GitTrends.Mobile.Common
 
         public static string GetRepositoryDescriptionText(in RefreshState refreshState, in bool isRepositoryListEmpty) => refreshState switch
         {
-            RefreshState.Uninitialized => EmptyDataViewConstantsInternal.SwipeDownToRefresh,
+            RefreshState.Uninitialized => EmptyDataViewConstantsInternal.SwipeDownToRefresh_Repositories,
             RefreshState.Succeeded when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.ClearSearchBarTryAgain,
             RefreshState.Succeeded => string.Empty,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.PleaseLoginAgain,
             RefreshState.Error when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.ClearSearchBarTryAgain,
-            RefreshState.Error => EmptyDataViewConstantsInternal.SwipeDownToRefresh,
-            RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.SwipeDownToRefresh,
+            RefreshState.Error => EmptyDataViewConstantsInternal.SwipeDownToRefresh_Repositories,
+            RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.SwipeDownToRefresh_Repositories,
             _ => throw new NotSupportedException()
         };
     }

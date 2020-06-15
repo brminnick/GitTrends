@@ -15,14 +15,17 @@
     <data name="PleaseLoginAgain" xml:space="preserve">
         <value>Please login again</value>
     </data>
-    <data name="SwipeDownToRefresh" xml:space="preserve">
+    <data name="SwipeDownToRefresh_Repositories" xml:space="preserve">
+        <value>Swipe down to retrieve repositories</value>
+    </data>
+    <data name="SwipeDownToRefresh_ReferringSites" xml:space="preserve">
         <value>Swipe down to retrieve referring sites</value>
     </data>
     <data name="LoginExpired" xml:space="preserve">
         <value>GitHub Login Expired</value>
     </data>
     <data name="NoFilterMatch" xml:space="preserve">
-        <value>Data not gathered</value>
+        <value>No Matching Repository Found</value>
     </data>
     <data name="NoRepositoriesFound" xml:space="preserve">
         <value>Your repositories list is empty</value>
