@@ -88,8 +88,8 @@ namespace GitTrends
             public TrendsChartActivityIndicator()
             {
                 AutomationId = TrendsPageAutomationIds.ActivityIndicator;
-                HorizontalOptions = LayoutOptions.Center;
-                VerticalOptions = LayoutOptions.Center;
+
+                this.Center();
 
                 SetDynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor));
 

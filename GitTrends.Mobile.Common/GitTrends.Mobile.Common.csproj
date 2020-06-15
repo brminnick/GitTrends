@@ -97,6 +97,10 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>AppStoreRatingRequestConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\NotificationConstants.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>NotificationConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Constants\DemoUser.Designer.cs">
@@ -155,6 +159,9 @@
     </Compile>
     <Compile Update="Constants\AppStoreConstants.Designer.cs">
       <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\NotificationConstants.Designer.cs">
+      <DependentUpon>NotificationConstants.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
