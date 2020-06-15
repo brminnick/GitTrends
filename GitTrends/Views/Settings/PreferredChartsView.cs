@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using Syncfusion.XForms.Buttons;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -20,28 +21,28 @@ namespace GitTrends
                 (Row.Label, StarGridLength(1)),
                 (Row.Control, StarGridLength(2)));
 
-            Children.Add(new TrendsChartSettingsLabel().Row(Row.Label));
-            Children.Add(new TrendsChartSettingsControl(settingsViewModel).Row(Row.Control));
+            Children.Add(new PreferredChartSettingsLabel().Row(Row.Label));
+            Children.Add(new PreferredChartSettingsControl(settingsViewModel).Row(Row.Control));
         }
 
         enum Row { Label, Control }
 
-        class TrendsChartSettingsLabel : TitleLabel
+        class PreferredChartSettingsLabel : TitleLabel
         {
-            public TrendsChartSettingsLabel()
+            public PreferredChartSettingsLabel()
             {
-                Text = "Preferred Charts";
+                Text = SettingsPageConstants.PreferredChartSettingsLabelText;
                 AutomationId = SettingsPageAutomationIds.TrendsChartSettingsLabel;
                 VerticalTextAlignment = TextAlignment.Start;
             }
         }
 
-        class TrendsChartSettingsControl : SfSegmentedControl
+        class PreferredChartSettingsControl : SfSegmentedControl
         {
             const double cornerRadius = 4;
             readonly SettingsViewModel _settingsViewModel;
 
-            public TrendsChartSettingsControl(in SettingsViewModel settingsViewModel)
+            public PreferredChartSettingsControl(in SettingsViewModel settingsViewModel)
             {
                 _settingsViewModel = settingsViewModel;
 

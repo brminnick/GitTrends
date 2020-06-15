@@ -11,6 +11,7 @@ using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using Autofac;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Essentials.Interfaces;
@@ -192,11 +193,11 @@ namespace GitTrends
                 if (repositoryList.Any())
                 {
                     var dataDownloadedAt = repositoryList.Max(x => x.DataDownloadedAt);
-                    OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"Displaying data from {dataDownloadedAt.ToLocalTime():dd MMMM @ HH:mm}\n\nCheck your internet connection and try again."));
+                    OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"{RepositoryPageConstants.DisplayingDataFrom} {dataDownloadedAt.ToLocalTime():dd MMMM @ HH:mm}\n\n{RepositoryPageConstants.CheckInternetConnectionTryAgain}."));
                 }
                 else
                 {
-                    OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"Check your internet connection and try again"));
+                    OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs(RepositoryPageConstants.CheckInternetConnectionTryAgain));
                 }
 
                 RefreshState = RefreshState.Error;

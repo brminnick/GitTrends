@@ -12,25 +12,13 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="TotalViewsTitle" xml:space="preserve">
-        <value>Views</value>
+    <data name="RegisterForNotifications" xml:space="preserve">
+        <value>Register for Notifications</value>
     </data>
-    <data name="UniqueViewsTitle" xml:space="preserve">
-        <value>Unique Views</value>
+    <data name="Theme" xml:space="preserve">
+        <value>Theme</value>
     </data>
-    <data name="TotalClonesTitle" xml:space="preserve">
-        <value>Clones</value>
-    </data>
-    <data name="UniqueClonesTitle" xml:space="preserve">
-        <value>Unique Clones</value>
-    </data>
-    <data name="All" xml:space="preserve">
-        <value>All</value>
-    </data>
-    <data name="NoUniques" xml:space="preserve">
-        <value>No Uniques</value>
-    </data>
-    <data name="JustUniques" xml:space="preserve">
-        <value>Just Uniques</value>
+    <data name="PreferredChartSettingsLabelText" xml:space="preserve">
+        <value>Preferred Charts</value>
     </data>
 </root>

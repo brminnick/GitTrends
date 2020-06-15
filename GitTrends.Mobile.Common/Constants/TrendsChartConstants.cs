@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GitTrends.Mobile.Common.Constants;
 
 namespace GitTrends.Mobile.Common
 {
@@ -6,9 +7,9 @@ namespace GitTrends.Mobile.Common
     {
         public static Dictionary<TrendsChartOption, string> TrendsChartTitles { get; } = new Dictionary<TrendsChartOption, string>
         {
-            { TrendsChartOption.All, "All" },
-            { TrendsChartOption.NoUniques, "No Uniques" },
-            { TrendsChartOption.JustUniques, "Just Uniques" }
+            { TrendsChartOption.All, TrendsChartTitleConstants.All },
+            { TrendsChartOption.NoUniques, TrendsChartTitleConstants.NoUniques },
+            { TrendsChartOption.JustUniques, TrendsChartTitleConstants.JustUniques }
         };
     }
 }

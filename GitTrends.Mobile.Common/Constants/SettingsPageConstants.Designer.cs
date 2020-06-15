@@ -16,21 +16,21 @@ namespace GitTrends.Mobile.Common.Constants {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class TrendsChartTitleConstants {
+    public class SettingsPageConstants {
         
         private static System.Resources.ResourceManager resourceMan;
         
         private static System.Globalization.CultureInfo resourceCulture;
         
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal TrendsChartTitleConstants() {
+        internal SettingsPageConstants() {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         public static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("GitTrends.Mobile.Common.Constants.TrendsChartTitleConstants", typeof(TrendsChartTitleConstants).Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("GitTrends.Mobile.Common.Constants.SettingsPageConstants", typeof(SettingsPageConstants).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -47,45 +47,21 @@ namespace GitTrends.Mobile.Common.Constants {
             }
         }
         
-        public static string TotalViewsTitle {
+        public static string RegisterForNotifications {
             get {
-                return ResourceManager.GetString("TotalViewsTitle", resourceCulture);
+                return ResourceManager.GetString("RegisterForNotifications", resourceCulture);
             }
         }
         
-        public static string UniqueViewsTitle {
+        public static string Theme {
             get {
-                return ResourceManager.GetString("UniqueViewsTitle", resourceCulture);
+                return ResourceManager.GetString("Theme", resourceCulture);
             }
         }
         
-        public static string TotalClonesTitle {
+        public static string PreferredChartSettingsLabelText {
             get {
-                return ResourceManager.GetString("TotalClonesTitle", resourceCulture);
-            }
-        }
-        
-        public static string UniqueClonesTitle {
-            get {
-                return ResourceManager.GetString("UniqueClonesTitle", resourceCulture);
-            }
-        }
-        
-        public static string All {
-            get {
-                return ResourceManager.GetString("All", resourceCulture);
-            }
-        }
-        
-        public static string NoUniques {
-            get {
-                return ResourceManager.GetString("NoUniques", resourceCulture);
-            }
-        }
-        
-        public static string JustUniques {
-            get {
-                return ResourceManager.GetString("JustUniques", resourceCulture);
+                return ResourceManager.GetString("PreferredChartSettingsLabelText", resourceCulture);
             }
         }
     }
