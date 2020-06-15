@@ -25,7 +25,7 @@ namespace GitTrends
             VerticalOptions = LayoutOptions.Center
         };
 
-        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.GitTrendsPageTitle);
+        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.GitTrendsPage_Title);
 
         protected override View CreateDescriptionBodyView() => new Grid
         {
@@ -44,16 +44,16 @@ namespace GitTrends
 
             Children =
             {
-                new BodyLabel("GitTrends helps monitor your GitHub repos:").Row(Row.Title).ColumnSpan(All<Column>()),
+                new BodyLabel(OnboardingConstants.GitTrendsPage_Body_MonitorGitHubRepos).Row(Row.Title).ColumnSpan(All<Column>()),
 
                 new GitHubLogoLabel().Row(Row.Connect).Column(Column.Image),
-                new BodyLabel("Connect to Github").Row(Row.Connect).Column(Column.Description),
+                new BodyLabel(GitHubLoginButtonConstants.ConnectToGitHub).Row(Row.Connect).Column(Column.Description),
 
                 new BodySvg("chart.svg").Row(Row.MonitorImage).Column(Column.Image).Center().RowSpan(2),
-                new BodyLabel("Monitor Github Repo Views, Clones, Forks, Stars and Issues"){ VerticalTextAlignment = TextAlignment.Start }.Row(Row.MonitorImage).RowSpan(2).Column(Column.Description),
+                new BodyLabel(OnboardingConstants.GitTrendsPage_Body_MonitorGitHubRepos).TextTop().Row(Row.MonitorImage).RowSpan(2).Column(Column.Description),
 
                 new BodySvg("megaphone.svg").Row(Row.Discover).Column(Column.Image),
-                new BodyLabel("Discover Referring Sites").Row(Row.Discover).Column(Column.Description),
+                new BodyLabel(OnboardingConstants.GitTrendsPage_Body_DiscoverReferringSites).Row(Row.Discover).Column(Column.Description),
             }
         };
 

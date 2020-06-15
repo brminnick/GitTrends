@@ -59,27 +59,75 @@ namespace GitTrends.Mobile.Common.Constants {
             }
         }
         
-        public static string ChartPageTitle {
+        public static string ChartPage_Title {
             get {
-                return ResourceManager.GetString("ChartPageTitle", resourceCulture);
+                return ResourceManager.GetString("ChartPage_Title", resourceCulture);
             }
         }
         
-        public static string ConnectToGitHubPageTitle {
+        public static string ChartPage_Body_ShowAllTraffic {
             get {
-                return ResourceManager.GetString("ConnectToGitHubPageTitle", resourceCulture);
+                return ResourceManager.GetString("ChartPage_Body_ShowAllTraffic", resourceCulture);
             }
         }
         
-        public static string GitTrendsPageTitle {
+        public static string ChartPage_Body_ZoomInOut {
             get {
-                return ResourceManager.GetString("GitTrendsPageTitle", resourceCulture);
+                return ResourceManager.GetString("ChartPage_Body_ZoomInOut", resourceCulture);
             }
         }
         
-        public static string NotificationsPageTitle {
+        public static string ChartPage_Body_LongPress {
             get {
-                return ResourceManager.GetString("NotificationsPageTitle", resourceCulture);
+                return ResourceManager.GetString("ChartPage_Body_LongPress", resourceCulture);
+            }
+        }
+        
+        public static string ConnectToGitHubPage_Title {
+            get {
+                return ResourceManager.GetString("ConnectToGitHubPage_Title", resourceCulture);
+            }
+        }
+        
+        public static string ConnectToGitHubPage_Body_GetStarted {
+            get {
+                return ResourceManager.GetString("ConnectToGitHubPage_Body_GetStarted", resourceCulture);
+            }
+        }
+        
+        public static string GitTrendsPage_Title {
+            get {
+                return ResourceManager.GetString("GitTrendsPage_Title", resourceCulture);
+            }
+        }
+        
+        public static string GitTrendsPage_Body_GitTrendsHelps {
+            get {
+                return ResourceManager.GetString("GitTrendsPage_Body_GitTrendsHelps", resourceCulture);
+            }
+        }
+        
+        public static string GitTrendsPage_Body_MonitorGitHubRepos {
+            get {
+                return ResourceManager.GetString("GitTrendsPage_Body_MonitorGitHubRepos", resourceCulture);
+            }
+        }
+        
+        public static string GitTrendsPage_Body_DiscoverReferringSites {
+            get {
+                return ResourceManager.GetString("GitTrendsPage_Body_DiscoverReferringSites", resourceCulture);
+            }
+        }
+        
+        public static string NotificationsPage_Title {
+            get {
+                return ResourceManager.GetString("NotificationsPage_Title", resourceCulture);
+            }
+        }
+        
+        public static string NotificationsPage_Body_MoreTrafficThanUsual {
+            get {
+                return ResourceManager.GetString("NotificationsPage_Body_MoreTrafficThanUsual", resourceCulture);
             }
         }
     }

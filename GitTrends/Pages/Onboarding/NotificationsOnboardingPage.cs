@@ -27,7 +27,7 @@ namespace GitTrends
             Aspect = Aspect.AspectFit
         };
 
-        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.NotificationsPageTitle);
+        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.NotificationsPage_Title);
 
         protected override View CreateDescriptionBodyView() => new Grid
         {
@@ -39,7 +39,7 @@ namespace GitTrends
 
             Children =
             {
-                new BodyLabel("GitTrends will notify you when your GitHub repositories are receiving more traffic than usual.").Row(Row.Description),
+                new BodyLabel(OnboardingConstants.NotificationsPage_Body_MoreTrafficThanUsual).Row(Row.Description),
                 new EnableNotificationsView().Row(Row.Button)
             }
         };

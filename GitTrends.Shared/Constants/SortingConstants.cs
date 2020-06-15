@@ -5,7 +5,6 @@ namespace GitTrends.Shared
 {
     public class SortingConstants
     {
-        public const string CancelText = "Cancel";
         public const SortingOption DefaultSortingOption = SortingOption.Views;
 
         readonly static Lazy<Dictionary<SortingOption, string>> _sortingOptionsDictionaryHolder = new Lazy<Dictionary<SortingOption, string>>(CreateSortingDictionary);
