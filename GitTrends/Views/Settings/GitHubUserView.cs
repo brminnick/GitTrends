@@ -56,6 +56,8 @@ namespace GitTrends
                 AutomationId = SettingsPageAutomationIds.GitHubAvatarImage;
 
                 this.SetBinding(SourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource));
+                SetDynamicResource(ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource));
+                SetDynamicResource(LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource));
             }
         }
 
