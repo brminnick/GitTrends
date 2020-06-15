@@ -4,7 +4,7 @@ using Refit;
 namespace GitTrends.Shared
 {
     [Headers("Accept-Encoding: gzip", "Accept: application/json")]
-    interface IAzureFunctionsApi
+    public interface IAzureFunctionsApi
     {
         [Get("/GetGitHubClientId")]
         Task<GetGitHubClientIdDTO> GetGitTrendsClientId();

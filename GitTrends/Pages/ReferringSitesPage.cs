@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -74,7 +75,7 @@ namespace GitTrends
 
                 var closeButton = new Button
                 {
-                    Text = "Close",
+                    Text = ReferringSitesPageConstants.CloseButtonText,
                     FontFamily = FontFamilyConstants.RobotoRegular,
                     HeightRequest = titleRowHeight * 3 / 5,
                     HorizontalOptions = LayoutOptions.End,

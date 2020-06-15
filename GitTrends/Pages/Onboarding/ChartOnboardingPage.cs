@@ -1,4 +1,4 @@
-﻿using GitTrends.Mobile.Shared;
+﻿using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -31,7 +31,7 @@ namespace GitTrends
 
         };
 
-        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ChartPageTitle);
+        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ChartPage_Title);
 
         protected override View CreateDescriptionBodyView() => new Grid
         {
@@ -48,13 +48,13 @@ namespace GitTrends
 
             Children =
             {
-                new BodyLabel("Charts show all traffic related to your repo:").Row(Row.Title).ColumnSpan(All<Column>()),
+                new BodyLabel(OnboardingConstants.ChartPage_Body_ShowAllTraffic).Row(Row.Title).ColumnSpan(All<Column>()),
 
                 new BodySvg("zoom_gesture.svg").Row(Row.Zoom).Column(Column.Image),
-                new BodyLabel("Zoom in/out to see accurately what you need to know").Row(Row.Zoom).Column(Column.Description),
+                new BodyLabel(OnboardingConstants.ChartPage_Body_ZoomInOut).Row(Row.Zoom).Column(Column.Description),
 
                 new BodySvg("longpress_gesture.svg").Row(Row.LongPress).Column(Column.Image),
-                new BodyLabel("Long press on the chart to see precise numeric values").Row(Row.LongPress).Column(Column.Description),
+                new BodyLabel(OnboardingConstants.ChartPage_Body_LongPress).Row(Row.LongPress).Column(Column.Description),
             }
         };
     }

@@ -10,7 +10,8 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using Autofac;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Essentials.Interfaces;
@@ -24,7 +25,7 @@ namespace GitTrends
         readonly RepositoryDatabase _repositoryDatabase;
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
-        readonly SortingService _sortingService;
+        readonly MobileSortingService _sortingService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly GitHubUserService _gitHubUserService;
 
@@ -39,7 +40,7 @@ namespace GitTrends
                                     GitHubAuthenticationService gitHubAuthenticationService,
                                     GitHubGraphQLApiService gitHubGraphQLApiService,
                                     IAnalyticsService analyticsService,
-                                    SortingService sortingService,
+                                    MobileSortingService sortingService,
                                     GitHubApiV3Service gitHubApiV3Service,
                                     NotificationService notificationService,
                                     IMainThread mainThread,
@@ -102,8 +103,8 @@ namespace GitTrends
         {
             set
             {
-                EmptyDataViewTitle = EmptyDataViewConstants.GetRepositoryTitleText(value, !_repositoryList.Any());
-                EmptyDataViewDescription = EmptyDataViewConstants.GetRepositoryDescriptionText(value, !_repositoryList.Any());
+                EmptyDataViewTitle = EmptyDataViewService.GetRepositoryTitleText(value, !_repositoryList.Any());
+                EmptyDataViewDescription = EmptyDataViewService.GetRepositoryDescriptionText(value, !_repositoryList.Any());
             }
         }
 
@@ -192,11 +193,11 @@ namespace GitTrends
                 if (repositoryList.Any())
                 {
                     var dataDownloadedAt = repositoryList.Max(x => x.DataDownloadedAt);
-                    OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"Displaying data from {dataDownloadedAt.ToLocalTime():dd MMMM @ HH:mm}\n\nCheck your internet connection and try again."));
+                    OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"{RepositoryPageConstants.DisplayingDataFrom} {dataDownloadedAt.ToLocalTime():dd MMMM @ HH:mm}\n\n{RepositoryPageConstants.CheckInternetConnectionTryAgain}."));
                 }
                 else
                 {
-                    OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"Check your internet connection and try again"));
+                    OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs(RepositoryPageConstants.CheckInternetConnectionTryAgain));
                 }
 
                 RefreshState = RefreshState.Error;
@@ -247,8 +248,8 @@ namespace GitTrends
 
             AnalyticsService.Track("SortingOption Changed", new Dictionary<string, string>
             {
-                { nameof(SortingService) + nameof(SortingService.CurrentOption), _sortingService.CurrentOption.ToString() },
-                { nameof(SortingService) + nameof(SortingService.IsReversed), _sortingService.IsReversed.ToString() }
+                { nameof(MobileSortingService) + nameof(MobileSortingService.CurrentOption), _sortingService.CurrentOption.ToString() },
+                { nameof(MobileSortingService) + nameof(MobileSortingService.IsReversed), _sortingService.IsReversed.ToString() }
             });
 
             UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
@@ -278,7 +279,7 @@ namespace GitTrends
         {
             var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
 
-            VisibleRepositoryList = SortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
+            VisibleRepositoryList = MobileSortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
         }
 
         void UpdateListForLoggedOutUser()

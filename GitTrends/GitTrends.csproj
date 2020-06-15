@@ -65,6 +65,7 @@
       <Folder Include="Views\Trends\" />
       <Folder Include="Constants\" />
       <Folder Include="Interfaces\" />
+      <Folder Include="Resources\Resx\" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="repo_forked.svg" />
@@ -119,6 +120,7 @@
       <EmbeddedResource Include="Resources\SVGs\logout.svg" />
       <EmbeddedResource Include="Resources\SVGs\right_arrow.svg" />
     </ItemGroup>
-    <Import Project="..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Mobile.Shared\GitTrends.Mobile.Shared.projitems')" />
-    <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
+    <ItemGroup>
+      <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj" />
+    </ItemGroup>
 </Project>

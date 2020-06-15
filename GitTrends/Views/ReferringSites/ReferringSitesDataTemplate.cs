@@ -1,5 +1,5 @@
 ﻿using System;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Sharpnado.MaterialFrame;
 using Xamarin.Forms;

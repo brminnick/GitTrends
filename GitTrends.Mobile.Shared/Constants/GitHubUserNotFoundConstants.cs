@@ -1,4 +1,4 @@
-﻿namespace GitTrends.Mobile.Shared
+﻿namespace GitTrends.Mobile.Common
 {
     public static class GitHubUserNotFoundConstants
     {

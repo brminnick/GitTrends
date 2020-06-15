@@ -2,7 +2,7 @@
 
 namespace GitTrends.Shared
 {
-    interface IRepository
+    public interface IRepository
     {
         DateTimeOffset DataDownloadedAt { get; }
         string OwnerLogin { get; }

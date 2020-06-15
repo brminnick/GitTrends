@@ -2,7 +2,7 @@
 
 namespace GitTrends.Shared
 {
-    interface IDailyClonesModel
+    public interface IDailyClonesModel
     {
         public DateTime LocalDay { get; }
 

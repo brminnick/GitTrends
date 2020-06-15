@@ -2,7 +2,7 @@
 using System.Threading;
 using Android.Runtime;
 using Autofac;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
 using Java.Interop;
 
 namespace GitTrends.Droid

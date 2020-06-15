@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Xamarin.Essentials.Interfaces;

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Shiny.Notifications;
 using Xamarin.Essentials.Interfaces;
@@ -9,7 +9,7 @@ namespace GitTrends.UnitTests
     {
         public ExtendedNotificationService(IAnalyticsService analyticsService,
                                             DeepLinkingService deepLinkingService,
-                                            SortingService sortingService,
+                                            MobileSortingService sortingService,
                                             AzureFunctionsApiService azureFunctionsApiService,
                                             IPreferences preferences,
                                             ISecureStorage secureStorage,

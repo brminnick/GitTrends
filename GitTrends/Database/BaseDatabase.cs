@@ -54,8 +54,6 @@ namespace GitTrends
             }
 
             return DatabaseConnection;
-
-
         }
     }
 }

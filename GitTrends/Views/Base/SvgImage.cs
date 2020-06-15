@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using FFImageLoading.Svg.Forms;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;

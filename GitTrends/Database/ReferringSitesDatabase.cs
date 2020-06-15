@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using SQLite;
 using Xamarin.Essentials.Interfaces;

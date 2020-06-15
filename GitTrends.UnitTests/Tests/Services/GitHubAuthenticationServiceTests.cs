@@ -2,7 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -85,8 +86,8 @@ namespace GitTrends.UnitTests
 
             //Assert
             Assert.IsTrue(didDemoUserActivatedFire);
-            Assert.AreEqual(DemoDataConstants.Alias, gitHubUserService.Alias);
-            Assert.AreEqual(DemoDataConstants.Name, gitHubUserService.Name);
+            Assert.AreEqual(DemoUserConstants.Alias, gitHubUserService.Alias);
+            Assert.AreEqual(DemoUserConstants.Name, gitHubUserService.Name);
 
 
             void HandleDemoUserActivated(object? sender, EventArgs e)
@@ -126,8 +127,8 @@ namespace GitTrends.UnitTests
 
             //Assert
             Assert.IsTrue(didDLoggedOutFire);
-            Assert.AreEqual(DemoDataConstants.Name, gitHubUserName_Initial);
-            Assert.AreEqual(DemoDataConstants.Alias, gitHubUserAlias_Initial);
+            Assert.AreEqual(DemoUserConstants.Name, gitHubUserName_Initial);
+            Assert.AreEqual(DemoUserConstants.Alias, gitHubUserAlias_Initial);
 
             void HandleLoggedOut(object? sender, EventArgs e)
             {

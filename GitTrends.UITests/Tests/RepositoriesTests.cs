@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
-using GitTrends.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using NUnit.Framework;
 using Xamarin.UITest;
 
@@ -23,7 +23,7 @@ namespace GitTrends.UITests
         public async Task CancelSortingMenu()
         {
             //Fail all tests if the DefaultSortingOption has changed
-            Assert.AreEqual(SortingConstants.DefaultSortingOption, SortingOption.Views);
+            Assert.AreEqual(MobileSortingService.DefaultSortingOption, SortingOption.Views);
 
             //Arrange
             Repository finalTopRepository;
@@ -59,7 +59,7 @@ namespace GitTrends.UITests
         public async Task DismissSortingMenu()
         {
             //Fail all tests if the DefaultSortingOption has changed
-            Assert.AreEqual(SortingConstants.DefaultSortingOption, SortingOption.Views);
+            Assert.AreEqual(MobileSortingService.DefaultSortingOption, SortingOption.Views);
 
             //Arrange
             Repository finalTopRepository;
@@ -91,7 +91,7 @@ namespace GitTrends.UITests
                 Assert.GreaterOrEqual(finalSecondTopRepository.TotalViews, finalLastRepository.TotalViews);
         }
 
-        [TestCase(SortingConstants.DefaultSortingOption)]
+        [TestCase(MobileSortingService.DefaultSortingOption)]
         [TestCase(SortingOption.Clones)]
         [TestCase(SortingOption.Forks)]
         [TestCase(SortingOption.Issues)]
@@ -102,7 +102,7 @@ namespace GitTrends.UITests
         public async Task VerifySortingOptions(SortingOption sortingOption)
         {
             //Fail all tests if the DefaultSortingOption has changed
-            Assert.AreEqual(SortingConstants.DefaultSortingOption, SortingOption.Views);
+            Assert.AreEqual(MobileSortingService.DefaultSortingOption, SortingOption.Views);
 
             //Arrange
             Repository finalFirstRepository;

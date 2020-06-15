@@ -6,7 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -15,7 +16,6 @@ namespace GitTrends
 {
     public class TrendsViewModel : BaseViewModel
     {
-        public const string NoTrafficYetText = "No traffic yet";
         public const int MinumumChartHeight = 20;
 
         readonly GitHubApiV3Service _gitHubApiV3Service;
@@ -183,7 +183,7 @@ namespace GitTrends
                     repositoryClones = repositoryClonesResponse.DailyClonesList;
                 }
 
-                EmptyDataViewTitle = NoTrafficYetText;
+                EmptyDataViewTitle = EmptyDataViewConstants.NoTrafficYet;
             }
             catch (Exception e)
             {

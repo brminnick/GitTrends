@@ -6,7 +6,7 @@ using Refit;
 
 namespace GitTrends.Shared
 {
-    static class GitHubApiService
+    public static class GitHubApiService
     {
         public static int GetNumberOfApiRequestsRemaining(in HttpResponseHeaders httpResponseHeaders)
         {

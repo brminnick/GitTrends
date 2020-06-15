@@ -6,7 +6,7 @@ using Refit;
 namespace GitTrends.Shared
 {
     [Headers("User-Agent: " + nameof(GitTrends), "Accept-Encoding: gzip", "Accept: application/json")]
-    interface IGitHubApiV3
+    public interface IGitHubApiV3
     {
         [Get("/repos/{owner}/{repo}/traffic/views")]
         Task<RepositoryViewsResponseModel> GetRepositoryViewStatistics(string owner, string repo, [Header("Authorization")] string authorization);

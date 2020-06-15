@@ -4,7 +4,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Essentials.Interfaces;
@@ -52,7 +53,7 @@ namespace GitTrends
                 for (int i = 0; i < DemoDataConstants.RepoCount; i++)
                 {
                     var demoRepo = new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-                                                new RepositoryOwner(DemoDataConstants.Alias, _gitHubUserService.AvatarUrl),
+                                                new RepositoryOwner(DemoUserConstants.Alias, _gitHubUserService.AvatarUrl),
                                                 new IssuesConnection(DemoDataConstants.GetRandomNumber(), Enumerable.Empty<Issue>()),
                                                 _gitHubUserService.AvatarUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false);
                     demoDataList.Add(demoRepo);

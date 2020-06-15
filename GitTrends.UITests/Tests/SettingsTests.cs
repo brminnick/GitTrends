@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using NUnit.Framework;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
@@ -142,10 +143,10 @@ namespace GitTrends.UITests
             await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
 
             //Assert
-            Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalViewsTitle));
-            Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartConstants.TotalClonesTitle));
-            Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueViewsTitle));
-            Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartConstants.UniqueClonesTitle));
+            Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.TotalViewsTitle));
+            Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.TotalClonesTitle));
+            Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.UniqueViewsTitle));
+            Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.UniqueClonesTitle));
         }
 
         void EnsureGitHubUserViewOpensBrowser_LoggedIn()
@@ -182,8 +183,8 @@ namespace GitTrends.UITests
             SettingsPage.TapGitHubUserView();
 
             //Assert
-            Assert.AreEqual("@" + DemoDataConstants.Alias, aliasLabelText);
-            Assert.AreEqual(DemoDataConstants.Name, nameLabelText);
+            Assert.AreEqual("@" + DemoUserConstants.Alias, aliasLabelText);
+            Assert.AreEqual(DemoUserConstants.Name, nameLabelText);
 
             if (App is iOSApp)
             {

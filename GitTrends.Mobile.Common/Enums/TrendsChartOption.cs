@@ -1,0 +1,1 @@
+﻿public enum TrendsChartOption  { All, NoUniques, JustUniques }

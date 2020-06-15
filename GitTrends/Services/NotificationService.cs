@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using Shiny;
@@ -15,8 +17,6 @@ namespace GitTrends
 {
     public class NotificationService
     {
-        public const string TrendingRepositoriesNotificationTitle = "Your Repos Are Trending";
-
         const string _getNotificationHubInformationKey = "GetNotificationHubInformation";
 
         readonly WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new WeakEventManager<(bool isSuccessful, string errorMessage)>();
@@ -25,7 +25,7 @@ namespace GitTrends
 
         readonly IPreferences _preferences;
         readonly ISecureStorage _secureStorage;
-        readonly SortingService _sortingService;
+        readonly MobileSortingService _sortingService;
         readonly IAnalyticsService _analyticsService;
         readonly DeepLinkingService _deepLinkingService;
         readonly INotificationManager _notificationManager;
@@ -36,7 +36,7 @@ namespace GitTrends
 
         public NotificationService(IAnalyticsService analyticsService,
                                     DeepLinkingService deepLinkingService,
-                                    SortingService sortingService,
+                                    MobileSortingService sortingService,
                                     AzureFunctionsApiService azureFunctionsApiService,
                                     IPreferences preferences,
                                     ISecureStorage secureStorage,
@@ -84,6 +84,18 @@ namespace GitTrends
         {
             get => _preferences.Get(nameof(HaveNotificationsBeenRequested), false);
             set => _preferences.Set(nameof(HaveNotificationsBeenRequested), value);
+        }
+
+        string MostRecentTrendingRepositoryOwner
+        {
+            get => _preferences.Get(nameof(MostRecentTrendingRepositoryOwner), string.Empty);
+            set => _preferences.Set(nameof(MostRecentTrendingRepositoryOwner), value);
+        }
+
+        string MostRecentTrendingRepositoryName
+        {
+            get => _preferences.Get(nameof(MostRecentTrendingRepositoryName), string.Empty);
+            set => _preferences.Set(nameof(MostRecentTrendingRepositoryName), value);
         }
 
         public async Task<bool> AreNotificationsEnabled()
@@ -167,7 +179,7 @@ namespace GitTrends
 
                     case AccessState.Denied:
                     case AccessState.Disabled:
-                        errorMessage = "Notifications Disabled";
+                        errorMessage = NotificationConstants.NotificationsDisabled;
                         break;
 
                     case AccessState.NotSetup:
@@ -175,7 +187,7 @@ namespace GitTrends
                         break;
 
                     case AccessState.NotSupported:
-                        errorMessage = "Notifications Are Not Supported";
+                        errorMessage = NotificationConstants.NotificationsNotSupported;
                         break;
                 }
 
@@ -241,18 +253,19 @@ namespace GitTrends
         {
             if (badgeCount is 1)
             {
-                var repositoryName = ParseRepositoryName(message);
-                var ownerName = ParseOwnerName(message);
-
-                var shouldNavigateToChart = await _deepLinkingService.DisplayAlert($"{repositoryName} is Trending", "Let's check out its chart", "Let's Go", "Not Right Now").ConfigureAwait(false);
+                var alertTitle = string.Format(NotificationConstants.HandleNotification_SingleTrendingRepository_Title, MostRecentTrendingRepositoryName);
+                var shouldNavigateToChart = await _deepLinkingService.DisplayAlert(alertTitle,
+                                                                                    NotificationConstants.HandleNotification_SingleTrendingRepository_Message,
+                                                                                    NotificationConstants.HandleNotification_SingleTrendingRepository_Accept,
+                                                                                    NotificationConstants.HandleNotification_SingleTrendingRepository_Decline).ConfigureAwait(false);
 
                 _analyticsService.Track("Single Trending Repository Prompt Displayed", nameof(shouldNavigateToChart), shouldNavigateToChart.ToString());
 
                 if (shouldNavigateToChart)
                 {
                     //Create repository with only Name & Owner, because those are the only metrics that TrendsPage needs to fetch the chart data
-                    var repository = new Repository(repositoryName, string.Empty, 0,
-                                                    new RepositoryOwner(ownerName, string.Empty),
+                    var repository = new Repository(MostRecentTrendingRepositoryName, string.Empty, 0,
+                                                    new RepositoryOwner(MostRecentTrendingRepositoryOwner, string.Empty),
                                                     null, string.Empty, new StarGazers(0), false);
 
                     await _deepLinkingService.NavigateToTrendsPage(repository).ConfigureAwait(false);
@@ -264,11 +277,16 @@ namespace GitTrends
 
                 if (!_sortingService.IsReversed)
                 {
-                    await _deepLinkingService.DisplayAlert(message, $"Tap the repositories tagged \"Trending\" to see more details!", "Thanks").ConfigureAwait(false);
+                    await _deepLinkingService.DisplayAlert(message,
+                                                            NotificationConstants.HandleNotification_MultipleTrendingRepository_Sorted_Message,
+                                                            NotificationConstants.HandleNotification_MultipleTrendingRepository_Cancel).ConfigureAwait(false);
                 }
                 else
                 {
-                    shouldSortByTrending = await _deepLinkingService.DisplayAlert(message, "Reverse The Sorting Order To Discover Which Ones", "Reverse Sorting", "Not Now").ConfigureAwait(false);
+                    shouldSortByTrending = await _deepLinkingService.DisplayAlert(message,
+                                                                                    NotificationConstants.HandleNotification_MultipleTrendingRepositor_Unsorted_Message,
+                                                                                    NotificationConstants.HandleNotification_MultipleTrendingRepositor_Unsorted_Accept,
+                                                                                    NotificationConstants.HandleNotification_MultipleTrendingRepositor_Unsorted_Decline).ConfigureAwait(false);
                 }
 
                 if (shouldSortByTrending is true)
@@ -282,8 +300,8 @@ namespace GitTrends
             }
         }
 
-        public static string CreateSingleRepositoryNotificationMessage(in string repositoryName, in string repositoryOwner) => $"{repositoryName} by {repositoryOwner} is Trending";
-        public static string CreateMultipleRepositoryNotificationMessage(in int count) => $"You Have {count} Trending Repositories";
+        public static string CreateSingleRepositoryNotificationMessage(in string repositoryName, in string repositoryOwner) => string.Format(NotificationConstants.SingleRepositoryNotificationMessage, repositoryName, repositoryOwner);
+        public static string CreateMultipleRepositoryNotificationMessage(in int count) => string.Format(NotificationConstants.MultipleRepositoryNotificationMessage, count);
 
         async ValueTask SendTrendingNotification(IReadOnlyList<Repository> trendingRepositories, DateTimeOffset? notificationDateTime)
         {
@@ -295,13 +313,14 @@ namespace GitTrends
                 {
                     //iOS crashes when ID is not set
                     Id = Device.RuntimePlatform is Device.iOS ? 1 : 0,
-                    Title = TrendingRepositoriesNotificationTitle,
+                    Title = NotificationConstants.TrendingRepositoriesNotificationTitle,
                     Message = CreateSingleRepositoryNotificationMessage(trendingRepository.Name, trendingRepository.OwnerLogin),
                     ScheduleDate = notificationDateTime,
                     BadgeCount = 1
                 };
 
-                setMostRecentNotificationDate(trendingRepository);
+                MostRecentTrendingRepositoryName = trendingRepository.Name;
+                MostRecentTrendingRepositoryOwner = trendingRepository.OwnerLogin;
 
                 await _notificationManager.Send(notification).ConfigureAwait(false);
 
@@ -309,16 +328,11 @@ namespace GitTrends
             }
             else if (trendingRepositories.Count > 1)
             {
-                foreach (var repository in trendingRepositories)
-                {
-                    setMostRecentNotificationDate(repository);
-                }
-
                 var notification = new Notification
                 {
                     //iOS crashes when ID is not set
                     Id = Device.RuntimePlatform is Device.iOS ? 1 : 0,
-                    Title = TrendingRepositoriesNotificationTitle,
+                    Title = NotificationConstants.TrendingRepositoriesNotificationTitle,
                     Message = CreateMultipleRepositoryNotificationMessage(trendingRepositories.Count),
                     ScheduleDate = notificationDateTime,
                     BadgeCount = trendingRepositories.Count
@@ -329,15 +343,12 @@ namespace GitTrends
                 _analyticsService.Track("Multiple Trending Repositories Notification Sent", "Count", trendingRepositories.Count.ToString());
             }
 
-            void setMostRecentNotificationDate(Repository repository) => _preferences.Set(repository.Name, DateTime.UtcNow);
-        }
+            foreach (var repository in trendingRepositories)
+            {
+                setMostRecentNotificationDate(repository);
+            }
 
-        string ParseRepositoryName(in string singleRepositoryNotificationMessage) => singleRepositoryNotificationMessage.Substring(0, singleRepositoryNotificationMessage.IndexOf(" by "));
-        string ParseOwnerName(in string singleRepositoryNotificationMessage)
-        {
-            var ownerNameIndex = singleRepositoryNotificationMessage.IndexOf(" by ") + " by ".Length;
-            var ownerNameLength = singleRepositoryNotificationMessage.IndexOf(" is Trending", ownerNameIndex) - ownerNameIndex;
-            return singleRepositoryNotificationMessage.Substring(ownerNameIndex, ownerNameLength);
+            void setMostRecentNotificationDate(Repository repository) => _preferences.Set(repository.Name, DateTime.UtcNow);
         }
 
         async void HandleAppResumed(object sender, EventArgs e)

@@ -6,41 +6,6 @@
     <SharedGUID>{16224020-A5FB-41CB-AD1D-A411B4C7B75B}</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>GitTrends.Mobile.Shared</Import_RootNamespace>
+    <Import_RootNamespace>GitTrends.Mobile.Common</Import_RootNamespace>
   </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Constants\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\" />
-    <Folder Include="$(MSBuildThisFileDirectory)EventArgs\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Models\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Enums\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\PageTitles.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\RepositoryPageAutomationIds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\SettingsPageAutomationIds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\ReferringSitesPageAutomationIds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\SplashScreenPageAutomationIds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\TrendsPageAutomationIds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\GitHubLoginButtonConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\BackdoorMethodConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\DemoDataConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\TrendsChartConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\OnboardingConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\FontAwesomeBrandsConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\OnboardingAutomationIds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\FontAwesomeConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)StatisticsService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\AutomationIds\WelcomePageAutomationIds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PreferredTheme.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\ReviewServiceConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\ErrorPullToRefreshEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\LoginExpiredPullToRefreshEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\PullToRefreshFailedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\MaximimApiRequestsReachedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AzureFunctionsApiService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\TimedEvent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants\EmptyDataViewConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Enums\RefreshState.cs" />
-  </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -45,11 +45,11 @@ namespace GitTrends.UnitTests
             Assert.IsEmpty(visibleRepositoryList_Initial);
             Assert.IsNotEmpty(visibleRepositoryList_Final);
 
-            Assert.AreEqual(EmptyDataViewConstants.GetRepositoryTitleText(RefreshState.Uninitialized, true), emptyDataViewTitle_Initial);
-            Assert.AreEqual(EmptyDataViewConstants.GetRepositoryTitleText(RefreshState.Succeeded, false), emptyDataViewTitle_Final);
+            Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true), emptyDataViewTitle_Initial);
+            Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Succeeded, false), emptyDataViewTitle_Final);
 
-            Assert.AreEqual(EmptyDataViewConstants.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
-            Assert.AreEqual(EmptyDataViewConstants.GetRepositoryDescriptionText(RefreshState.Succeeded, false), emptyDataViewDescription_Final);
+            Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
+            Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Succeeded, false), emptyDataViewDescription_Final);
 
             Assert.IsTrue(visibleRepositoryList_Final.Any(x => x.OwnerLogin is GitTrendsRepoOwner && x.Name is GitTrendsRepoName));
 
@@ -95,11 +95,11 @@ namespace GitTrends.UnitTests
             Assert.IsEmpty(visibleRepositoryList_Initial);
             Assert.IsEmpty(visibleRepositoryList_Final);
 
-            Assert.AreEqual(EmptyDataViewConstants.GetRepositoryTitleText(RefreshState.Uninitialized, true), emptyDataViewTitle_Initial);
-            Assert.AreEqual(EmptyDataViewConstants.GetRepositoryTitleText(RefreshState.LoginExpired, true), emptyDataViewTitle_Final);
+            Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true), emptyDataViewTitle_Initial);
+            Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.LoginExpired, true), emptyDataViewTitle_Final);
 
-            Assert.AreEqual(EmptyDataViewConstants.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
-            Assert.AreEqual(EmptyDataViewConstants.GetRepositoryDescriptionText(RefreshState.LoginExpired, true), emptyDataViewDescription_Final);
+            Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
+            Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.LoginExpired, true), emptyDataViewDescription_Final);
 
             void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
             {

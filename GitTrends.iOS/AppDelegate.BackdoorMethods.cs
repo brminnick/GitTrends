@@ -2,7 +2,7 @@
 using System.Threading;
 using Autofac;
 using Foundation;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
 
 namespace GitTrends.iOS
 {

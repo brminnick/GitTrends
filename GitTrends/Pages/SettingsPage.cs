@@ -2,7 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
@@ -147,12 +148,12 @@ namespace GitTrends
 
         class RegisterForNotificationsLabel : TitleLabel
         {
-            public RegisterForNotificationsLabel() => Text = "Register for Notifications";
+            public RegisterForNotificationsLabel() => Text = SettingsPageConstants.RegisterForNotifications;
         }
 
         class ThemeLabel : TitleLabel
         {
-            public ThemeLabel() => Text = "Theme";
+            public ThemeLabel() => Text = SettingsPageConstants.Theme;
         }
 
         class Separator : BoxView
@@ -180,8 +181,7 @@ namespace GitTrends
 
                 WidthRequest = 70;
 
-                HorizontalOptions = LayoutOptions.EndAndExpand;
-                VerticalOptions = LayoutOptions.EndAndExpand;
+                this.EndExpand();
 
                 AutomationId = SettingsPageAutomationIds.ThemePicker;
 

@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using Autofac;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -23,7 +24,7 @@ namespace GitTrends
 
         public RepositoryPage(RepositoryViewModel repositoryViewModel,
                                 IAnalyticsService analyticsService,
-                                SortingService sortingService,
+                                MobileSortingService sortingService,
                                 DeepLinkingService deepLinkingService,
                                 IMainThread mainThread,
                                 FirstRunService firstRunService,
@@ -65,7 +66,7 @@ namespace GitTrends
 
             var settingsToolbarItem = new ToolbarItem
             {
-                Text = "Settings",
+                Text = PageTitles.SettingsPage,
                 IconImageSource = Device.RuntimePlatform is Device.iOS ? "Settings" : null,
                 Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
                 AutomationId = RepositoryPageAutomationIds.SettingsButton,
@@ -75,7 +76,7 @@ namespace GitTrends
 
             var sortToolbarItem = new ToolbarItem
             {
-                Text = "Sort",
+                Text = RepositoryPageConstants.SortToolbarItemText,
                 Priority = 1,
                 IconImageSource = Device.RuntimePlatform is Device.iOS ? "Sort" : null,
                 Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
@@ -134,7 +135,7 @@ namespace GitTrends
             bool shouldShowWelcomePage(in INavigation navigation, in string accessToken)
             {
                 return !navigation.ModalStack.Any()
-                        && _gitHubUserService.Alias != DemoDataConstants.Alias
+                        && _gitHubUserService.Alias != DemoUserConstants.Alias
                         && !isUserValid(accessToken);
             }
 
@@ -183,12 +184,12 @@ namespace GitTrends
 
         async Task ExecuteSortToolbarItemCommand()
         {
-            var sortingOptions = SortingConstants.SortingOptionsDictionary.Values;
+            var sortingOptions = MobileSortingService.SortingOptionsDictionary.Values;
 
-            string? selection = await DisplayActionSheet("Sort By", SortingConstants.CancelText, null, sortingOptions.ToArray());
+            string? selection = await DisplayActionSheet(SortingConstants.ActionSheetTitle, SortingConstants.CancelText, null, sortingOptions.ToArray());
 
             if (!string.IsNullOrWhiteSpace(selection) && selection != SortingConstants.CancelText)
-                ViewModel.SortRepositoriesCommand.Execute(SortingConstants.SortingOptionsDictionary.First(x => x.Value == selection).Key);
+                ViewModel.SortRepositoriesCommand.Execute(MobileSortingService.SortingOptionsDictionary.First(x => x.Value == selection).Key);
         }
 
         void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -114,7 +115,7 @@ namespace GitTrends.UnitTests
             Assert.LessOrEqual(maxDateValue_Final.ToLocalTime().Date, maxDateValue_Initial.ToLocalTime().Date);
 
             Assert.AreEqual(string.Empty, emptyDataViewTitle_Initial);
-            Assert.AreEqual(TrendsViewModel.NoTrafficYetText, emptyDataViewTitle_Final);
+            Assert.AreEqual(EmptyDataViewConstants.NoTrafficYet, emptyDataViewTitle_Final);
         }
 
         [TestCase(true)]

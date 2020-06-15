@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using GitTrends.Mobile.Common;
 using NUnit.Framework;
 using Xamarin.UITest;
 
@@ -59,7 +60,7 @@ namespace GitTrends.UITests
 
             App.Screenshot("Settings Page Light");
 
-            await SettingsPage.SelectTheme(Mobile.Shared.PreferredTheme.Dark).ConfigureAwait(false);
+            await SettingsPage.SelectTheme(PreferredTheme.Dark).ConfigureAwait(false);
             App.Screenshot("Settings Page Dark");
 
             SettingsPage.TapBackButton();

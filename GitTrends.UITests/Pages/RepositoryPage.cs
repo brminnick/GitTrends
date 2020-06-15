@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
@@ -87,7 +88,7 @@ namespace GitTrends.UITests
             App.Tap(_sortButton);
             App.Screenshot("Sort Button Tapped");
 
-            var sortingOptionDescription = SortingConstants.SortingOptionsDictionary[sortingOption];
+            var sortingOptionDescription = MobileSortingService.SortingOptionsDictionary[sortingOption];
 
             if (App is iOSApp)
             {
