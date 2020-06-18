@@ -24,10 +24,12 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(fileImageSource.File, FavIconService.DefaultFavIcon);
         }
 
-        [TestCase("http://codetraveler.io", "https://codetraveler.io/favicon.ico")] //Clear Text Uri
-        [TestCase("https://chrissainty.com/", "https://chrissainty.com/favicon.png")] //Icon Url
-        [TestCase("https://duckduckgo.com/", "https://duckduckgo.com/assets/icons/meta/DDG-iOS-icon_60x60.png")] //Apple Touch Icon Url
-        [TestCase("https://codetraveler.io", "https://codetraveler.io/favicon.ico")] //FavIcon Url
+        [TestCase("http://codetraveler.io", "https://favicons.githubusercontent.com/codetraveler.io")] //Clear Text Uri
+        [TestCase("https://codetraveler.io", "https://favicons.githubusercontent.com/codetraveler.io")] //Cached Google FavIcon
+        [TestCase("https://contiva.atlassian.net/", "https://wac-cdn.atlassian.com/assets/img/favicons/atlassian/favicon.png")] //Icon Url
+        [TestCase("https://chrissainty.com/", "https://chrissainty.com/favicon.png")] //Shortcut icon Url
+        [TestCase("https://forums.xamarin.com/", "https://xamarin.com/static/images/tiles/apple-touch-icon.png")] //Apple Touch Icon Url
+        [TestCase("https://javiersuarezruiz.wordpress.com/", "https://wordpress.com/favicon.ico")] //FavIcon Url
         public async Task GetFavIconImageSourceTest_ValidUrl(string url, string expectedFavIconUrl)
         {
             //Arrange
@@ -41,7 +43,7 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(uriImageSource.Uri, new Uri(expectedFavIconUrl));
         }
 
-        [TestCase("https://www.google.co.uk", "https://google.co.uk/favicon.ico")]
+        [TestCase("https://www.abbotslangley-pc.gov.uk", "https://www.abbotslangley-pc.gov.uk/wp-content/uploads/2017/09/favicon-1.png")]
         public async Task GetFavIconImageSourceTest_CountryCodeTopLevelDomains(string url, string expectedFavIconUrl)
         {
             //Arrange
@@ -52,7 +54,8 @@ namespace GitTrends.UnitTests
 
             //Assert
             Assert.IsNotNull(uriImageSource);
-            Assert.AreEqual(uriImageSource.Uri, new Uri(expectedFavIconUrl));
+            Assert.AreEqual(new Uri(expectedFavIconUrl), uriImageSource.Uri);
+            Assert.IsFalse(uriImageSource.Uri.ToString().Contains("https://favicons.githubusercontent.com"));
         }
     }
 }
