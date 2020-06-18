@@ -271,7 +271,7 @@ namespace GitTrends
 
                 return (response.IsSuccessStatusCode, response.Content.Headers.ContentLength);
             }
-            catch(Exception e)
+            catch
             {
                 return (false, null);
             }
