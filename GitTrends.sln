@@ -4,7 +4,7 @@ VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.Android", "GitTrends.Android\GitTrends.Android.csproj", "{E5785129-AB94-4359-9947-B600D33A9958}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends", "GitTrends\GitTrends.csproj", "{E9E411F7-7BB9-4176-8950-3A2D1C27FF33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends", "GitTrends\GitTrends.csproj", "{E9E411F7-7BB9-4176-8950-3A2D1C27FF33}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mobile", "Mobile", "{BA9E6A61-3143-42DF-9669-97F7F557B7A2}"
 EndProject
@@ -25,19 +25,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.UnitTests", "GitTrends.UnitTests\GitTrends.UnitTests.csproj", "{A01F9AE2-16EE-4590-9B39-17E4C6B7DCFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends.UnitTests", "GitTrends.UnitTests\GitTrends.UnitTests.csproj", "{A01F9AE2-16EE-4590-9B39-17E4C6B7DCFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.Mobile.Common", "GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj", "{4DBE9DBB-C96C-4B71-BB12-B7887949FF09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends.Mobile.Common", "GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj", "{4DBE9DBB-C96C-4B71-BB12-B7887949FF09}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		GitTrends.Shared\GitTrends.Shared.projitems*{09224c6b-d0e4-4cc8-9ccb-936d6a22d57b}*SharedItemsImports = 5
-		GitTrends.Mobile.Common\GitTrends.Mobile.Common.projitems*{16224020-a5fb-41cb-ad1d-a411b4c7b75b}*SharedItemsImports = 13
+		GitTrends.Shared\GitTrends.Shared.projitems*{4dbe9dbb-c96c-4b71-bb12-b7887949ff09}*SharedItemsImports = 5
 		GitTrends.Shared\GitTrends.Shared.projitems*{d14f8262-1d13-493f-b78b-5c34f282ef07}*SharedItemsImports = 13
-		GitTrends.Mobile.Common\GitTrends.Mobile.Common.projitems*{e9e411f7-7bb9-4176-8950-3a2d1c27ff33}*SharedItemsImports = 5
-		GitTrends.Shared\GitTrends.Shared.projitems*{e9e411f7-7bb9-4176-8950-3a2d1c27ff33}*SharedItemsImports = 5
-		GitTrends.Mobile.Common\GitTrends.Mobile.Common.projitems*{f8f450dd-09c2-4bdd-b46b-a81bdaec25be}*SharedItemsImports = 4
-		GitTrends.Shared\GitTrends.Shared.projitems*{f8f450dd-09c2-4bdd-b46b-a81bdaec25be}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		AppStore|Any CPU = AppStore|Any CPU
@@ -86,11 +82,13 @@ Global
 		{E1C47721-EF16-4F21-AA2F-78951DB0D715}.Debug|iPhone.Build.0 = Debug|iPhone
 		{E1C47721-EF16-4F21-AA2F-78951DB0D715}.Debug|iPhone.Deploy.0 = Debug|iPhone
 		{E1C47721-EF16-4F21-AA2F-78951DB0D715}.Release|Any CPU.ActiveCfg = Release|iPhoneSimulator
+		{E1C47721-EF16-4F21-AA2F-78951DB0D715}.Release|Any CPU.Build.0 = Release|iPhoneSimulator
 		{E1C47721-EF16-4F21-AA2F-78951DB0D715}.Release|iPhone.ActiveCfg = Release|iPhone
 		{E1C47721-EF16-4F21-AA2F-78951DB0D715}.Release|iPhone.Build.0 = Release|iPhone
-		{E1C47721-EF16-4F21-AA2F-78951DB0D715}.Release|Any CPU.Build.0 = Release|iPhoneSimulator
-		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.AppStore|Any CPU.ActiveCfg = AppStore|Any CPU
-		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.AppStore|iPhone.ActiveCfg = AppStore|Any CPU
+		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.AppStore|Any CPU.Build.0 = Release|Any CPU
+		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.AppStore|iPhone.Build.0 = Release|Any CPU
 		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.Debug|iPhone.ActiveCfg = Debug|Any CPU
@@ -119,10 +117,10 @@ Global
 		{A01F9AE2-16EE-4590-9B39-17E4C6B7DCFD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A01F9AE2-16EE-4590-9B39-17E4C6B7DCFD}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{A01F9AE2-16EE-4590-9B39-17E4C6B7DCFD}.Release|iPhone.Build.0 = Release|Any CPU
-		{4DBE9DBB-C96C-4B71-BB12-B7887949FF09}.AppStore|Any CPU.ActiveCfg = AppStore|Any CPU
-		{4DBE9DBB-C96C-4B71-BB12-B7887949FF09}.AppStore|Any CPU.Build.0 = AppStore|Any CPU
-		{4DBE9DBB-C96C-4B71-BB12-B7887949FF09}.AppStore|iPhone.ActiveCfg = AppStore|Any CPU
-		{4DBE9DBB-C96C-4B71-BB12-B7887949FF09}.AppStore|iPhone.Build.0 = AppStore|Any CPU
+		{4DBE9DBB-C96C-4B71-BB12-B7887949FF09}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{4DBE9DBB-C96C-4B71-BB12-B7887949FF09}.AppStore|Any CPU.Build.0 = Release|Any CPU
+		{4DBE9DBB-C96C-4B71-BB12-B7887949FF09}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{4DBE9DBB-C96C-4B71-BB12-B7887949FF09}.AppStore|iPhone.Build.0 = Release|Any CPU
 		{4DBE9DBB-C96C-4B71-BB12-B7887949FF09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4DBE9DBB-C96C-4B71-BB12-B7887949FF09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DBE9DBB-C96C-4B71-BB12-B7887949FF09}.Debug|iPhone.ActiveCfg = Debug|Any CPU

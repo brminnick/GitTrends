@@ -25,6 +25,26 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>DemoUser.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\DemoUserConstants.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>DemoUserConstants.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\EmptyDataViewConstants.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>EmptyDataViewConstants.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.ru.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>EmptyDataViewConstantsInternal.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>GitHubLoginButtonConstants.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\NotificationConstants.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>NotificationConstants.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Constants\PageTitles.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>PageTitles.Designer.cs</LastGenOutput>
@@ -106,6 +126,31 @@
     <Compile Update="Constants\DemoUser.Designer.cs">
       <DependentUpon>DemoUser.resx</DependentUpon>
     </Compile>
+    <Compile Update="Constants\DemoUserConstants.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DemoUserConstants.ru.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\EmptyDataViewConstants.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EmptyDataViewConstants.ru.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\EmptyDataViewConstantsInternal.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EmptyDataViewConstantsInternal.ru.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\GitHubLoginButtonConstants.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GitHubLoginButtonConstants.ru.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\NotificationConstants.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NotificationConstants.ru.resx</DependentUpon>
+    </Compile>
     <Compile Update="Constants\PageTitles.Designer.cs">
       <DependentUpon>PageTitles.resx</DependentUpon>
     </Compile>
@@ -150,6 +195,8 @@
     </Compile>
     <Compile Update="Constants\EmptyDataViewConstantsInternal.Designer.cs">
       <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Constants\DemoUserConstants.Designer.cs">
       <DependentUpon>DemoUserConstants.resx</DependentUpon>
@@ -165,7 +212,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Constants\" />
     <Folder Include="Enums\" />
     <Folder Include="EventArgs\" />
     <Folder Include="Models\" />
