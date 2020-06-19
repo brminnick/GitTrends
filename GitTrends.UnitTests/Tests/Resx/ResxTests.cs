@@ -12,6 +12,39 @@ namespace GitTrends.UnitTests
 {
     class ResxTests : BaseTest
     {
+        [TestCase("de")]
+        [TestCase("ru")]
+        [TestCase("nl")]
+        public void ConfirmCultureExists(string culture)
+        {
+            //Arrange
+            var resxCultureInfoList = new List<CultureInfo[]>
+            {
+                { GetAvailableResxCultureInfos(typeof(AppStoreRatingRequestConstants).Assembly) },
+                { GetAvailableResxCultureInfos(typeof(DemoUserConstants).Assembly) },
+                { GetAvailableResxCultureInfos(typeof(EmptyDataViewConstants).Assembly) },
+                { GetAvailableResxCultureInfos(typeof(GitHubLoginButtonConstants).Assembly) },
+                { GetAvailableResxCultureInfos(typeof(NotificationConstants).Assembly) },
+                { GetAvailableResxCultureInfos(typeof(OnboardingConstants).Assembly) },
+                { GetAvailableResxCultureInfos(typeof(PageTitles).Assembly) },
+                { GetAvailableResxCultureInfos(typeof(ReferringSitesPageConstants).Assembly) },
+                { GetAvailableResxCultureInfos(typeof(RepositoryPageConstants).Assembly) },
+                { GetAvailableResxCultureInfos(typeof(ReviewServiceConstants).Assembly) },
+                { GetAvailableResxCultureInfos(typeof(SettingsPageConstants).Assembly) },
+                { GetAvailableResxCultureInfos(typeof(SortingConstants).Assembly) },
+                { GetAvailableResxCultureInfos(typeof(SplashScreenPageConstants).Assembly) },
+                { GetAvailableResxCultureInfos(typeof(TrendsChartTitleConstants).Assembly) },
+                { GetAvailableResxCultureInfos(typeof(WelcomePageConstants).Assembly) },
+            };
+
+            //Act
+            foreach (var cultureInfo in resxCultureInfoList)
+            {
+                //Assert
+                Assert.IsTrue(cultureInfo.Any(x => x.Name == culture));
+            }
+        }
+
         [Test]
         public void ConfirmCulturesMatchDefaultLanguage()
         {

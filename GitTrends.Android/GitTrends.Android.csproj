@@ -564,11 +564,11 @@
   <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\GitTrends\GitTrends.csproj">
-      <Project>{E9E411F7-7BB9-4176-8950-3A2D1C27FF33}</Project>
+      <Project>{4E7B0399-BAD2-48AF-B7FA-02EC17338FAE}</Project>
       <Name>GitTrends</Name>
     </ProjectReference>
     <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj">
-      <Project>{67673BCD-36A0-4B4D-99D0-A91B576AB585}</Project>
+      <Project>{936AEAD4-A683-44AD-A903-F3196454C244}</Project>
       <Name>GitTrends.Mobile.Common</Name>
     </ProjectReference>
   </ItemGroup>

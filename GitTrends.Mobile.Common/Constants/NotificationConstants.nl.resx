@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="TrendingRepositoriesNotificationTitle" xml:space="preserve">
+        <value>Je Repos Zijn Trending</value>
+    </data>
+    <data name="By" xml:space="preserve">
+        <value>door</value>
+    </data>
+    <data name="IsTrending" xml:space="preserve">
+        <value>is Trending</value>
+    </data>
+    <data name="SingleRepositoryNotificationMessage" xml:space="preserve">
+        <value>{0} door {1} is trending</value>
+    </data>
+    <data name="MultipleRepositoryNotificationMessage" xml:space="preserve">
+        <value>Je hebt {0} Trending Repositories</value>
+    </data>
+    <data name="NotificationsDisabled" xml:space="preserve">
+        <value>Notificaties Uitgeschakeld</value>
+    </data>
+    <data name="NotificationsNotSupported" xml:space="preserve">
+        <value>Notificaties Zijn Niet Ondersteund</value>
+    </data>
+    <data name="HandleNotification_SingleTrendingRepository_Title" xml:space="preserve">
+        <value>{0} is Trending</value>
+    </data>
+    <data name="HandleNotification_SingleTrendingRepository_Message" xml:space="preserve">
+        <value>Laten we naar de grafiek kijken</value>
+    </data>
+    <data name="HandleNotification_SingleTrendingRepository_Accept" xml:space="preserve">
+        <value>Naar Grafiek</value>
+    </data>
+    <data name="HandleNotification_SingleTrendingRepository_Decline" xml:space="preserve">
+        <value>Niet Nu</value>
+    </data>
+    <data name="HandleNotification_MultipleTrendingRepository_Sorted_Message" xml:space="preserve">
+        <value>Tap op de gemarkeerd met "Trending" voor meer details!</value>
+    </data>
+    <data name="HandleNotification_MultipleTrendingRepository_Cancel" xml:space="preserve">
+        <value>Bedankt</value>
+    </data>
+    <data name="HandleNotification_MultipleTrendingRepositor_Unsorted_Message" xml:space="preserve">
+        <value>Sortering Omkeren om te Ontdekken Welke</value>
+    </data>
+      <data name="HandleNotification_MultipleTrendingRepositor_Unsorted_Accept" xml:space="preserve">
+        <value>Sortering Omkeren</value>
+    </data>
+      <data name="HandleNotification_MultipleTrendingRepositor_Unsorted_Decline" xml:space="preserve">
+        <value>Niet Nu</value>
+    </data>
+</root>

@@ -163,4 +163,7 @@ wenn Repos trenden</value>
   <data name="TryDemoText" xml:space="preserve">
     <value>VERSUCHE DEMO</value>
   </data>
+  <data name="EnableNotifications" xml:space="preserve">
+    <value>Benachrichtigungen einschalten</value>
+  </data>
 </root>
