@@ -130,5 +130,11 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("NotificationsPage_Body_MoreTrafficThanUsual", resourceCulture);
             }
         }
+        
+        public static string EnableNotifications_Title {
+            get {
+                return ResourceManager.GetString("EnableNotifications_Title", resourceCulture);
+            }
+        }
     }
 }

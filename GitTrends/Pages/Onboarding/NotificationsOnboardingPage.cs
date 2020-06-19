@@ -87,7 +87,7 @@ namespace GitTrends
                     TextColor = Color.White;
                     FontSize = 18;
                     FontFamily = FontFamilyConstants.RobotoRegular;
-                    Text = "Enable Notifications";
+                    Text = OnboardingConstants.EnableNotifications_Title;
                 }
             }
         }
