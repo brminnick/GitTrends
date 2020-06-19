@@ -82,12 +82,11 @@ namespace GitTrends
             {
                 public EnableNotificationsLabel()
                 {
-                    HorizontalTextAlignment = TextAlignment.Center;
-                    VerticalTextAlignment = TextAlignment.Center;
+                    this.TextCenter();
                     TextColor = Color.White;
                     FontSize = 18;
                     FontFamily = FontFamilyConstants.RobotoRegular;
-                    Text = OnboardingConstants.EnableNotifications_Title;
+                    Text = OnboardingConstants.EnableNotifications;
                 }
             }
         }

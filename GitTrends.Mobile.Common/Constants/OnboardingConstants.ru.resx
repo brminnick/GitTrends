@@ -159,4 +159,7 @@
   <data name="TryDemoText" xml:space="preserve">
     <value>ПОПРОБУЙ ДЕМО</value>
   </data>
+  <data name="EnableNotifications" xml:space="preserve">
+    <value>Включить уведомления</value>
+  </data>
 </root>

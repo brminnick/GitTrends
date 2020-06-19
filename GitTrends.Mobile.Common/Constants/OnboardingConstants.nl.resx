@@ -58,7 +58,7 @@ repos trending zijn</value>
     <data name="NotificationsPage_Body_MoreTrafficThanUsual" xml:space="preserve">
         <value>GitTrends stuurt je een notificatie wanneer je GitHub repositories meer verkeer hebben dan normaal.</value>
     </data>
-    <data name="EnableNotifications_Title" xml:space="preserve">
+    <data name="EnableNotifications" xml:space="preserve">
         <value>Notificaties Inschakelen</value>
     </data>
 </root>
