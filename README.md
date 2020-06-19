@@ -9,6 +9,14 @@
   </a>
 </p>
 
+<p align="center" >
+  <a href="https://twitter.com/buhakmeh/status/1273974920649805825?s=20">
+    <img src="https://user-images.githubusercontent.com/13558917/85167001-fc4db180-b21c-11ea-9055-bddb158542a7.gif" height="250"/> 
+    </br>
+    Motion Graphic Created by Khalid Abuhakmeh 🙌
+  </a>
+</p>
+
 <p align="center">
   <a href="https://apps.apple.com/app/gittrends-github-insights/id1500300399">
     <img src="https://user-images.githubusercontent.com/13558917/75712535-ed96bb00-5c7c-11ea-8bd4-e9bd36365bb2.png" height="50"/> 

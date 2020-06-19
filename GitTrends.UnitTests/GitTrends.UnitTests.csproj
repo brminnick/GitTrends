@@ -27,5 +27,6 @@
     <Folder Include="MockServices\" />
     <Folder Include="Tests\ViewModels\" />
     <Folder Include="Tests\Services\" />
+    <Folder Include="Tests\Resx\" />
   </ItemGroup>
 </Project>

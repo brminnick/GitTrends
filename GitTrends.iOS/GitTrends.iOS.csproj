@@ -376,21 +376,39 @@
     <ImageAsset Include="Assets.xcassets\Settings.imageset\Settings%403x.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\EmptyRepositoriesList.imageset\EmptyRepositoriesList%403x.png" />
-    <ImageAsset Include="Assets.xcassets\EmptyRepositoriesList.imageset\EmptyRepositoriesList%402x.png" />
-    <ImageAsset Include="Assets.xcassets\EmptyRepositoriesList.imageset\EmptyRepositoriesList.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyRepositoriesList.imageset\EmptyRepositoriesList%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyRepositoriesList.imageset\EmptyRepositoriesList%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyRepositoriesList.imageset\EmptyRepositoriesList.png">
+      <Visible>false</Visible>
+    </ImageAsset>
     <ImageAsset Include="Assets.xcassets\EmptyRepositoriesList.imageset\Contents.json">
       <Visible>False</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%403x.png" />
-    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%402x.png" />
-    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList.png">
+      <Visible>false</Visible>
+    </ImageAsset>
     <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\Contents.json">
       <Visible>False</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\EmptyInsightsChart%403x.png" />
-    <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\EmptyInsightsChart%402x.png" />
-    <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\EmptyInsightsChart.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\EmptyInsightsChart%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\EmptyInsightsChart%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\EmptyInsightsChart.png">
+      <Visible>false</Visible>
+    </ImageAsset>
     <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\Contents.json">
       <Visible>False</Visible>
     </ImageAsset>
@@ -418,7 +436,7 @@
     <PackageReference Include="Xamarin.TestCloud.Agent" Version="0.21.9" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.2.2" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.2.2" />
-    <PackageReference Include="Shiny.Notifications" Version="1.2.0.1686" />
+    <PackageReference Include="Shiny.Notifications" Version="1.2.0.1755" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="3.3.0" />
     <PackageReference Include="Xamarin.Forms.PancakeView" Version="1.4.2" />
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.5.3.2" />

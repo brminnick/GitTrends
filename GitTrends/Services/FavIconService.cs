@@ -133,8 +133,6 @@ namespace GitTrends
         {
             try
             {
-                var temp = await GetUrlData("https://favicons.githubusercontent.com/google", cancellationToken).ConfigureAwait(false);
-
                 var gitHubCacheFavIconUrl = $"https://favicons.githubusercontent.com/{uri.Host}";
                 var (isUrlValid, size) = await GetUrlData(gitHubCacheFavIconUrl, cancellationToken).ConfigureAwait(false);
 
