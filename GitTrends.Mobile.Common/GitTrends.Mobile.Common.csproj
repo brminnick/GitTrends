@@ -21,6 +21,14 @@
     <NoStdLib>false</NoStdLib>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>AppStoreRatingRequestConstants.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>AppStoreRatingRequestConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Constants\DemoUser.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>DemoUser.Designer.cs</LastGenOutput>
@@ -45,6 +53,14 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>NotificationConstants.ru.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\OnboardingConstants.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>OnboardingConstants.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\PageTitles.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PageTitles.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Constants\PageTitles.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>PageTitles.Designer.cs</LastGenOutput>
@@ -65,9 +81,33 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>OnboardingConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\ReferringSitesPageConstants.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ReferringSitesPageConstants.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\RepositoryPageConstants.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>RepositoryPageConstants.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\ReviewServiceConstants.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ReviewServiceConstants.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Constants\ReviewServiceConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ReviewServiceConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\SettingsPageConstants.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SettingsPageConstants.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\SortingConstants.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SortingConstants.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\SplashScreenPageConstants.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SplashScreenPageConstants.ru.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Constants\TrendsChartConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -89,6 +129,10 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SettingsPageConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\TrendsChartTitleConstants.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TrendsChartTitleConstants.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Constants\TrendsChartTitleConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>TrendsChartTitleConstants.Designer.cs</LastGenOutput>
@@ -109,6 +153,10 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>DemoUserConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\WelcomePageConstants.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>WelcomePageConstants.ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Constants\WelcomePageConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>WelcomePageConstants.Designer.cs</LastGenOutput>
@@ -123,6 +171,16 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Constants\AppStoreRatingRequestConstants.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AppStoreRatingRequestConstants.ru.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
+    </Compile>
     <Compile Update="Constants\DemoUser.Designer.cs">
       <DependentUpon>DemoUser.resx</DependentUpon>
     </Compile>
@@ -151,6 +209,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>NotificationConstants.ru.resx</DependentUpon>
     </Compile>
+    <Compile Update="Constants\OnboardingConstants.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>OnboardingConstants.ru.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\PageTitles.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PageTitles.ru.resx</DependentUpon>
+    </Compile>
     <Compile Update="Constants\PageTitles.Designer.cs">
       <DependentUpon>PageTitles.resx</DependentUpon>
     </Compile>
@@ -166,8 +234,38 @@
     <Compile Update="Constants\OnboardingConstants.Designer.cs">
       <DependentUpon>OnboardingConstants.resx</DependentUpon>
     </Compile>
+    <Compile Update="Constants\ReferringSitesPageConstants.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ReferringSitesPageConstants.ru.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\RepositoryPageConstants.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RepositoryPageConstants.ru.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\ReviewServiceConstants.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ReviewServiceConstants.ru.resx</DependentUpon>
+    </Compile>
     <Compile Update="Constants\ReviewServiceConstants.Designer.cs">
       <DependentUpon>ReviewServiceConstants.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\SettingsPageConstants.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SettingsPageConstants.ru.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\SortingConstants.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SortingConstants.ru.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\SplashScreenPageConstants.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SplashScreenPageConstants.ru.resx</DependentUpon>
     </Compile>
     <Compile Update="Constants\TrendsChartConstants.Designer.cs">
       <DependentUpon>TrendsChartConstants.resx</DependentUpon>
@@ -183,6 +281,11 @@
     </Compile>
     <Compile Update="Constants\SettingsPageConstants.Designer.cs">
       <DependentUpon>SettingsPageConstants.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\TrendsChartTitleConstants.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TrendsChartTitleConstants.ru.resx</DependentUpon>
     </Compile>
     <Compile Update="Constants\TrendsChartTitleConstants.Designer.cs">
       <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
@@ -200,6 +303,11 @@
     </Compile>
     <Compile Update="Constants\DemoUserConstants.Designer.cs">
       <DependentUpon>DemoUserConstants.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Constants\WelcomePageConstants.ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>WelcomePageConstants.ru.resx</DependentUpon>
     </Compile>
     <Compile Update="Constants\WelcomePageConstants.Designer.cs">
       <DependentUpon>WelcomePageConstants.resx</DependentUpon>
