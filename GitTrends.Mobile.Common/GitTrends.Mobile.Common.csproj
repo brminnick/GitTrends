@@ -21,85 +21,117 @@
     <NoStdLib>false</NoStdLib>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Constants\DemoUser.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>DemoUser.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Update="Constants\PageTitles.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>PageTitles.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Constants\EmptyDataView.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>EmptyDataViewConstantsInternal.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Constants\EmptyDataView.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>EmptyDataViewConstants.Designer.cs</LastGenOutput>
+    <EmbeddedResource Update="Constants\PageTitles.de.resx">
+      <DependentUpon>PageTitles.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>GitHubLoginButtonConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.de.resx">
+      <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="Constants\OnboardingConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>OnboardingConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\OnboardingConstants.de.resx">
+      <DependentUpon>OnboardingConstants.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Constants\ReviewServiceConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ReviewServiceConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Constants\TrendsChartConstants.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>TrendsChartTitleConstants.Designer.cs</LastGenOutput>
+    <EmbeddedResource Update="Constants\ReviewServiceConstants.de.resx">
+      <DependentUpon>ReviewServiceConstants.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Constants\SortingConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SortingConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\SortingConstants.de.resx">
+      <DependentUpon>SortingConstants.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="Constants\ReferringSitesPageConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ReferringSitesPageConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\ReferringSitesPageConstants.de.resx">
+      <DependentUpon>ReferringSitesPageConstants.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Constants\RepositoryPageConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>RepositoryPageConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\RepositoryPageConstants.de.resx">
+      <DependentUpon>RepositoryPageConstants.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="Constants\SettingsPageConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SettingsPageConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\SettingsPageConstants.de.resx">
+      <DependentUpon>SettingsPageConstants.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Constants\TrendsChartTitleConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>TrendsChartTitleConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\TrendsChartTitleConstants.de.resx">
+      <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="Constants\SplashScreenPageConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SplashScreenPageConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\SplashScreenPageConstants.de.resx">
+      <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Constants\EmptyDataViewConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>EmptyDataViewConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\EmptyDataViewConstants.de.resx">
+      <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>EmptyDataViewConstantsInternal.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.de.resx">
+      <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Constants\DemoUserConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>DemoUserConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\DemoUserConstants.de.resx">
+      <DependentUpon>DemoUserConstants.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="Constants\WelcomePageConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>WelcomePageConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\WelcomePageConstants.de.resx">
+      <DependentUpon>WelcomePageConstants.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Constants\NotificationConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>NotificationConstants.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\NotificationConstants.de.resx">
+      <DependentUpon>NotificationConstants.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>AppStoreRatingRequestConstants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.de.resx">
+      <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -109,12 +141,6 @@
     <Compile Update="Constants\PageTitles.Designer.cs">
       <DependentUpon>PageTitles.resx</DependentUpon>
     </Compile>
-    <Compile Update="Constants\EmptyDataView.Designer.cs">
-      <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Constants\EmptyDataView.Designer.cs">
-      <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
-    </Compile>
     <Compile Update="Constants\GitHubLoginButtonConstants.Designer.cs">
       <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
     </Compile>
@@ -123,9 +149,6 @@
     </Compile>
     <Compile Update="Constants\ReviewServiceConstants.Designer.cs">
       <DependentUpon>ReviewServiceConstants.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Constants\TrendsChartConstants.Designer.cs">
-      <DependentUpon>TrendsChartConstants.resx</DependentUpon>
     </Compile>
     <Compile Update="Constants\SortingConstants.Designer.cs">
       <DependentUpon>SortingConstants.resx</DependentUpon>
@@ -165,7 +188,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Constants\" />
     <Folder Include="Enums\" />
     <Folder Include="EventArgs\" />
     <Folder Include="Models\" />

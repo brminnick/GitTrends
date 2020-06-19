@@ -46,7 +46,7 @@ GitTrends</value>
         <value>GitTrends helps monitor your GitHub repos:</value>
     </data>
     <data name="GitTrendsPage_Body_MonitorGitHubRepos" xml:space="preserve">
-        <value>Monitor Github Repo Views, Clones, Forks, Stars and Issues</value>
+        <value>Monitor GitHub Repo Views, Clones, Forks, Stars and Issues</value>
     </data>
     <data name="GitTrendsPage_Body_DiscoverReferringSites" xml:space="preserve">
         <value>Discover Referring Sites</value>
