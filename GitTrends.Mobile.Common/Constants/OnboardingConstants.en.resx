@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="SkipText" xml:space="preserve">
+        <value>SKIP</value>
+    </data>
+    <data name="TryDemoText" xml:space="preserve">
+        <value>TRY DEMO</value>
+    </data>
+    <data name="ChartPage_Title" xml:space="preserve">
+        <value>Get an overview of
+your repos</value>
+    </data>
+    <data name="ChartPage_Body_ShowAllTraffic" xml:space="preserve">
+        <value>Charts show all traffic related to your repo:</value>
+    </data>
+    <data name="ChartPage_Body_ZoomInOut" xml:space="preserve">
+        <value>Zoom in/out to see accurately what you need to know</value>
+    </data>
+    <data name="ChartPage_Body_LongPress" xml:space="preserve">
+        <value>Long press on the chart to see precise numeric values</value>
+    </data>
+    <data name="ConnectToGitHubPage_Title" xml:space="preserve">
+        <value>Connect to
+GitHub</value>
+    </data>
+    <data name="ConnectToGitHubPage_Body_GetStarted" xml:space="preserve">
+        <value>Get started by connecting your GitHub account, or try demo mode to tour GitTrends!</value>
+    </data>
+    <data name="GitTrendsPage_Title" xml:space="preserve">
+        <value>Welcome to
+GitTrends</value>
+    </data>
+    <data name="GitTrendsPage_Body_GitTrendsHelps" xml:space="preserve">
+        <value>GitTrends helps monitor your GitHub repos:</value>
+    </data>
+    <data name="GitTrendsPage_Body_MonitorGitHubRepos" xml:space="preserve">
+        <value>Monitor GitHub Repo Views, Clones, Forks, Stars and Issues</value>
+    </data>
+    <data name="GitTrendsPage_Body_DiscoverReferringSites" xml:space="preserve">
+        <value>Discover Referring Sites</value>
+    </data>
+    <data name="NotificationsPage_Title" xml:space="preserve">
+        <value>Be notified when
+repos are trending</value>
+    </data>
+    <data name="NotificationsPage_Body_MoreTrafficThanUsual" xml:space="preserve">
+        <value>GitTrends will notify you when your GitHub repositories are receiving more traffic than usual.</value>
+    </data>
+    <data name="EnableNotifications" xml:space="preserve">
+        <value>Enable Notifications</value>
+    </data>
+</root>

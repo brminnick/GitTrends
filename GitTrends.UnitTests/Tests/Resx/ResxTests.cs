@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
+using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using NUnit.Framework;
 
@@ -31,19 +32,21 @@ namespace GitTrends.UnitTests
             typeof(WelcomePageConstants)
         };
 
-        [TestCase("de")]
-        [TestCase("ru")]
-        [TestCase("nl")]
-        public void ConfirmCultureExists(string culture)
+        [Test]
+        public void ConfirmCulturesExists()
         {
             //Arrange
+            var cultures = CultureConstants.CulturePickerOptions.Keys;
             var resxCultureInfoList = new List<CultureInfo[]>(_resxTypeList.Select(x => GetAvailableResxCultureInfos(x.Assembly)));
 
             //Act
             foreach (var cultureInfo in resxCultureInfoList)
             {
-                //Assert
-                Assert.IsTrue(cultureInfo.Any(x => x.Name == culture));
+                foreach (var culture in cultures)
+                {
+                    //Assert
+                    Assert.IsTrue(cultureInfo.Any(x => x.Name == culture));
+                }
             }
         }
 

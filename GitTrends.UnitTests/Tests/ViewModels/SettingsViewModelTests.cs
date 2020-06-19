@@ -233,16 +233,16 @@ namespace GitTrends.UnitTests
 
             //Act
             themePickerItemSource_Initial = settingsViewModel.ThemePickerItemsSource;
-            themePickerIndex_Initial = settingsViewModel.ThemePickerSelectedThemeIndex;
+            themePickerIndex_Initial = settingsViewModel.ThemePickerSelectedIndex;
 
-            settingsViewModel.ThemePickerSelectedThemeIndex = (int)PreferredTheme.Dark;
-            themePickerIndex_AfterDarkTheme = settingsViewModel.ThemePickerSelectedThemeIndex;
+            settingsViewModel.ThemePickerSelectedIndex = (int)PreferredTheme.Dark;
+            themePickerIndex_AfterDarkTheme = settingsViewModel.ThemePickerSelectedIndex;
 
-            settingsViewModel.ThemePickerSelectedThemeIndex = (int)PreferredTheme.Light;
-            themePickerIndex_AfterLightTheme = settingsViewModel.ThemePickerSelectedThemeIndex;
+            settingsViewModel.ThemePickerSelectedIndex = (int)PreferredTheme.Light;
+            themePickerIndex_AfterLightTheme = settingsViewModel.ThemePickerSelectedIndex;
 
-            settingsViewModel.ThemePickerSelectedThemeIndex = (int)PreferredTheme.Default;
-            themePickerIndex_AfterDefaultTheme = settingsViewModel.ThemePickerSelectedThemeIndex;
+            settingsViewModel.ThemePickerSelectedIndex = (int)PreferredTheme.Default;
+            themePickerIndex_AfterDefaultTheme = settingsViewModel.ThemePickerSelectedIndex;
             themePickerItemSource_Final = settingsViewModel.ThemePickerItemsSource;
 
             //Assert

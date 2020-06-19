@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -19,6 +20,7 @@ namespace GitTrends
         readonly WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new WeakEventManager<AccessState?>();
 
         readonly ThemeService _themeService;
+        readonly LanguageService _languageService;
         readonly DeepLinkingService _deepLinkingService;
         readonly NotificationService _notificationService;
         readonly TrendsChartSettingsService _trendsChartSettingsService;
@@ -31,7 +33,8 @@ namespace GitTrends
         bool _isRegisterForNotificationsSwitchToggled;
 
         int _preferredChartsSelectedIndex;
-        int _themePickerSelectedThemeIndex;
+        int _themePickerSelectedIndex;
+        int _languagePickerSelectedIndex;
 
         public SettingsViewModel(GitHubAuthenticationService gitHubAuthenticationService,
                                     ThemeService themeService,
@@ -40,13 +43,15 @@ namespace GitTrends
                                     DeepLinkingService deepLinkingService,
                                     NotificationService notificationService,
                                     IMainThread mainThread,
-                                    GitHubUserService gitHubUserService)
+                                    GitHubUserService gitHubUserService,
+                                    LanguageService languageService)
                 : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread, gitHubUserService)
         {
-            _trendsChartSettingsService = trendsChartSettingsService;
+            _themeService = themeService;
+            _languageService = languageService;
             _deepLinkingService = deepLinkingService;
             _notificationService = notificationService;
-            _themeService = themeService;
+            _trendsChartSettingsService = trendsChartSettingsService;
 
             CopyrightLabelTappedCommand = new AsyncCommand(ExecuteCopyrightLabelTappedCommand);
             GitHubUserViewTappedCommand = new AsyncCommand(ExecuteGitHubUserViewTappedCommand, _ => IsNotAuthenticating);
@@ -54,8 +59,9 @@ namespace GitTrends
             gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
             ThemeService.PreferenceChanged += HandlePreferenceChanged;
 
-            ThemePickerSelectedThemeIndex = (int)themeService.Preference;
+            ThemePickerSelectedIndex = (int)themeService.Preference;
             PreferredChartsSelectedIndex = (int)trendsChartSettingsService.CurrentTrendsChartOption;
+            LanguagePickerSelectedIndex = CultureConstants.CulturePickerOptions.Keys.ToList().IndexOf(languageService.PreferedLanguage);
 
             if (Application.Current is App app)
                 app.Resumed += HandleResumed;
@@ -76,6 +82,7 @@ namespace GitTrends
         public ICommand CopyrightLabelTappedCommand { get; }
         public IAsyncCommand GitHubUserViewTappedCommand { get; }
         public IReadOnlyList<string> ThemePickerItemsSource { get; } = Enum.GetNames(typeof(PreferredTheme));
+        public IReadOnlyList<string> LanguagePickerItemsSource { get; } = CultureConstants.CulturePickerOptions.Values.ToList();
 
         public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText == GitHubLoginButtonConstants.Disconnect;
         public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginLabelText == GitHubLoginButtonConstants.ConnectToGitHub;
@@ -148,10 +155,16 @@ namespace GitTrends
             set => SetProperty(ref _gitHubNameLabelText, value);
         }
 
-        public int ThemePickerSelectedThemeIndex
+        public int LanguagePickerSelectedIndex
         {
-            get => _themePickerSelectedThemeIndex;
-            set => SetProperty(ref _themePickerSelectedThemeIndex, value, () => _themeService.Preference = (PreferredTheme)value);
+            get => _languagePickerSelectedIndex;
+            set => SetProperty(ref _languagePickerSelectedIndex, value, () => _languageService.PreferedLanguage = CultureConstants.CulturePickerOptions.Skip(value).First().Key);
+        }
+
+        public int ThemePickerSelectedIndex
+        {
+            get => _themePickerSelectedIndex;
+            set => SetProperty(ref _themePickerSelectedIndex, value, () => _themeService.Preference = (PreferredTheme)value);
         }
 
         public bool IsRegisterForNotificationsSwitchEnabled

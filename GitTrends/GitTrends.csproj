@@ -65,7 +65,6 @@
       <Folder Include="Views\Trends\" />
       <Folder Include="Constants\" />
       <Folder Include="Interfaces\" />
-      <Folder Include="Resources\Resx\" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="repo_forked.svg" />
@@ -93,6 +92,7 @@
       <None Remove="Resources\SVGs\darkmode.svg" />
       <None Remove="Resources\SVGs\logout.svg" />
       <None Remove="Resources\SVGs\right_arrow.svg" />
+      <None Remove="Resources\SVGs\language.svg" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="Resources\SVGs\chart.svg" />
@@ -119,6 +119,7 @@
       <EmbeddedResource Include="Resources\SVGs\theme.svg" />
       <EmbeddedResource Include="Resources\SVGs\logout.svg" />
       <EmbeddedResource Include="Resources\SVGs\right_arrow.svg" />
+      <EmbeddedResource Include="Resources\SVGs\language.svg" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj" />

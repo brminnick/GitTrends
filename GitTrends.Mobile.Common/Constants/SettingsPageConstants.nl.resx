@@ -21,4 +21,7 @@
     <data name="PreferredChartSettingsLabelText" xml:space="preserve">
         <value>Voorkeurs Grafieken</value>
     </data>
+    <data name="Language" xml:space="preserve">
+        <value>Taal</value>
+    </data>
 </root>
