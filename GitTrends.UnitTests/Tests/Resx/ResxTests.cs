@@ -12,30 +12,32 @@ namespace GitTrends.UnitTests
 {
     class ResxTests : BaseTest
     {
+        static readonly List<Type> _resxTypeList = new List<Type>
+        {
+            typeof(AppStoreRatingRequestConstants),
+            typeof(DemoUserConstants),
+            typeof(EmptyDataViewConstants),
+            typeof(GitHubLoginButtonConstants),
+            typeof(NotificationConstants),
+            typeof(OnboardingConstants),
+            typeof(PageTitles),
+            typeof(ReferringSitesPageConstants),
+            typeof(RepositoryPageConstants),
+            typeof(ReviewServiceConstants),
+            typeof(SettingsPageConstants),
+            typeof(SortingConstants),
+            typeof(SplashScreenPageConstants),
+            typeof(TrendsChartTitleConstants),
+            typeof(WelcomePageConstants)
+        };
+
         [TestCase("de")]
         [TestCase("ru")]
         [TestCase("nl")]
         public void ConfirmCultureExists(string culture)
         {
             //Arrange
-            var resxCultureInfoList = new List<CultureInfo[]>
-            {
-                { GetAvailableResxCultureInfos(typeof(AppStoreRatingRequestConstants).Assembly) },
-                { GetAvailableResxCultureInfos(typeof(DemoUserConstants).Assembly) },
-                { GetAvailableResxCultureInfos(typeof(EmptyDataViewConstants).Assembly) },
-                { GetAvailableResxCultureInfos(typeof(GitHubLoginButtonConstants).Assembly) },
-                { GetAvailableResxCultureInfos(typeof(NotificationConstants).Assembly) },
-                { GetAvailableResxCultureInfos(typeof(OnboardingConstants).Assembly) },
-                { GetAvailableResxCultureInfos(typeof(PageTitles).Assembly) },
-                { GetAvailableResxCultureInfos(typeof(ReferringSitesPageConstants).Assembly) },
-                { GetAvailableResxCultureInfos(typeof(RepositoryPageConstants).Assembly) },
-                { GetAvailableResxCultureInfos(typeof(ReviewServiceConstants).Assembly) },
-                { GetAvailableResxCultureInfos(typeof(SettingsPageConstants).Assembly) },
-                { GetAvailableResxCultureInfos(typeof(SortingConstants).Assembly) },
-                { GetAvailableResxCultureInfos(typeof(SplashScreenPageConstants).Assembly) },
-                { GetAvailableResxCultureInfos(typeof(TrendsChartTitleConstants).Assembly) },
-                { GetAvailableResxCultureInfos(typeof(WelcomePageConstants).Assembly) },
-            };
+            var resxCultureInfoList = new List<CultureInfo[]>(_resxTypeList.Select(x => GetAvailableResxCultureInfos(x.Assembly)));
 
             //Act
             foreach (var cultureInfo in resxCultureInfoList)
@@ -46,27 +48,10 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public void ConfirmCulturesMatchDefaultLanguage()
+        public void ConfirmTranslationsAreComplete()
         {
             //Arrange
-            var resxDictionaries = new List<Dictionary<string, Dictionary<string, object>>>
-            {
-                { GetResxDictionaries(typeof(AppStoreRatingRequestConstants)) },
-                { GetResxDictionaries(typeof(DemoUserConstants)) },
-                { GetResxDictionaries(typeof(EmptyDataViewConstants)) },
-                { GetResxDictionaries(typeof(GitHubLoginButtonConstants)) },
-                { GetResxDictionaries(typeof(NotificationConstants)) },
-                { GetResxDictionaries(typeof(OnboardingConstants)) },
-                { GetResxDictionaries(typeof(PageTitles)) },
-                { GetResxDictionaries(typeof(ReferringSitesPageConstants)) },
-                { GetResxDictionaries(typeof(RepositoryPageConstants)) },
-                { GetResxDictionaries(typeof(ReviewServiceConstants)) },
-                { GetResxDictionaries(typeof(SettingsPageConstants)) },
-                { GetResxDictionaries(typeof(SortingConstants)) },
-                { GetResxDictionaries(typeof(SplashScreenPageConstants)) },
-                { GetResxDictionaries(typeof(TrendsChartTitleConstants)) },
-                { GetResxDictionaries(typeof(WelcomePageConstants)) },
-            };
+            var resxDictionaries = new List<Dictionary<string, Dictionary<string, object>>>(_resxTypeList.Select(x => GetResxDictionaries(x)));
 
             //Act
             foreach (var resxDictionary in resxDictionaries)
