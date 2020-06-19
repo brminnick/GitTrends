@@ -34,33 +34,32 @@ namespace GitTrends
             try
             {
                 baseUrl = $"{scheme}://{GetRootDomain(site.Host)}/";
-                var response = await Client.GetAsync(baseUrl, cancellationToken).ConfigureAwait(false);
 
-                var html = await GetHtml(response).ConfigureAwait(false);
+                //Begin fetching the favicons from the website in the background
+                var getFavIconsTask = GetFavIcons(baseUrl, cancellationToken);
 
-                var htmlDocument = new HtmlDocument();
-                htmlDocument.LoadHtml(html);
+                //Prioritize GitHub's cached FavIcon
+                var gitHubCachedFavIcon = await GetFavIconFromGitHubCache(new Uri(baseUrl), cancellationToken).ConfigureAwait(false);
+                if (gitHubCachedFavIcon != null)
+                    return gitHubCachedFavIcon.Url;
 
-                var appleTouchIconTask = GetAppleTouchIcon(htmlDocument, baseUrl, cancellationToken);
-                var shortcutIconTask = GetShortcutIcon(htmlDocument, baseUrl, cancellationToken);
-                var iconTask = GetIcon(htmlDocument, baseUrl, cancellationToken);
-                var favIconTask = GetFavIcon(baseUrl, cancellationToken);
+                var (getAppleTouchIconTask, getShortcutIconTask, getIconTask, getFavIconTask) = await getFavIconsTask.ConfigureAwait(false);
 
-                var (appleTouchIconUrl, _) = await appleTouchIconTask.ConfigureAwait(false);
-                if (!string.IsNullOrWhiteSpace(appleTouchIconUrl))
-                    return appleTouchIconUrl;
+                var appleTouchIconRespnse = await getAppleTouchIconTask.ConfigureAwait(false);
+                if (appleTouchIconRespnse != null)
+                    return appleTouchIconRespnse.Url;
 
-                var (shortcutIconUrl, _) = await shortcutIconTask.ConfigureAwait(false);
-                if (shortcutIconUrl != null)
-                    return shortcutIconUrl;
+                var shortcutIconResponse = await getShortcutIconTask.ConfigureAwait(false);
+                if (shortcutIconResponse != null)
+                    return shortcutIconResponse.Url;
 
-                var (iconUrl, _) = await iconTask.ConfigureAwait(false);
-                if (iconUrl != null)
-                    return iconUrl;
+                var iconUrlResponse = await getIconTask.ConfigureAwait(false);
+                if (iconUrlResponse != null)
+                    return iconUrlResponse.Url;
 
-                var (favIconUrl, _) = await favIconTask.ConfigureAwait(false);
-                if (favIconUrl != null)
-                    return favIconUrl;
+                var favIconUrlResponse = await getFavIconTask.ConfigureAwait(false);
+                if (favIconUrlResponse != null)
+                    return favIconUrlResponse.Url;
 
                 return DefaultFavIcon;
             }
@@ -111,7 +110,50 @@ namespace GitTrends
             }
         }
 
-        static async Task<(string? FavIconUrl, long? ContentSize)> GetFavIcon(string url, CancellationToken cancellationToken)
+        static async Task<(Task<FavIconResponseModel?> GetAppleTouchIconTask,
+                            Task<FavIconResponseModel?> GetShortcutIconTask,
+                            Task<FavIconResponseModel?> GetIconTask,
+                            Task<FavIconResponseModel?> GetFavIconTask)> GetFavIcons(string baseUrl, CancellationToken cancellationToken)
+        {
+            var response = await Client.GetAsync(baseUrl, cancellationToken).ConfigureAwait(false);
+            var html = await GetHtml(response).ConfigureAwait(false);
+
+            var htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(html);
+
+            var appleTouchIconTask = GetAppleTouchIcon(htmlDocument, baseUrl, cancellationToken);
+            var shortcutIconTask = GetShortcutIcon(htmlDocument, baseUrl, cancellationToken);
+            var iconTask = GetIcon(htmlDocument, baseUrl, cancellationToken);
+            var favIconTask = GetFavIcon(baseUrl, cancellationToken);
+
+            return (appleTouchIconTask, shortcutIconTask, iconTask, favIconTask);
+        }
+
+        static async Task<FavIconResponseModel?> GetFavIconFromGitHubCache(Uri uri, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var gitHubCacheFavIconUrl = $"https://favicons.githubusercontent.com/{uri.Host}";
+                var (isUrlValid, size) = await GetUrlData(gitHubCacheFavIconUrl, cancellationToken).ConfigureAwait(false);
+
+                //The default cahced favicon on GitHub is 874, e.g. https://favicons.githubusercontent.com/google
+                if (isUrlValid && size != 874)
+                {
+                    Debug.WriteLine($"{nameof(GetFavIconFromGitHubCache)}: {gitHubCacheFavIconUrl}, {size}");
+                    return new FavIconResponseModel(gitHubCacheFavIconUrl, size);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        static async Task<FavIconResponseModel?> GetFavIcon(string url, CancellationToken cancellationToken)
         {
             try
             {
@@ -122,20 +164,20 @@ namespace GitTrends
                 if (isUrlValid)
                 {
                     Debug.WriteLine($"{nameof(GetFavIcon)}: {faviconUrl}, {size}");
-                    return (faviconUrl, size);
+                    return new FavIconResponseModel(faviconUrl, size);
                 }
                 else
                 {
-                    return (null, null);
+                    return null;
                 }
             }
             catch
             {
-                return (null, null);
+                return null;
             }
         }
 
-        static async Task<(string? ShortcutIconUrl, long? ContentSize)> GetShortcutIcon(HtmlDocument htmlDoc, string url, CancellationToken cancellationToken)
+        static async Task<FavIconResponseModel?> GetShortcutIcon(HtmlDocument htmlDoc, string url, CancellationToken cancellationToken)
         {
             try
             {
@@ -149,20 +191,20 @@ namespace GitTrends
                 if (isUrlValid)
                 {
                     Debug.WriteLine($"{nameof(GetIcon)}: {shortcutIconUrl}, {size}");
-                    return (shortcutIconUrl, size);
+                    return new FavIconResponseModel(shortcutIconUrl, size);
                 }
                 else
                 {
-                    return (null, null);
+                    return null;
                 }
             }
             catch
             {
-                return (null, null);
+                return null;
             }
         }
 
-        static async Task<(string? AppleTouchIconUrl, long? ContentSize)> GetAppleTouchIcon(HtmlDocument htmlDoc, string url, CancellationToken cancellationToken)
+        static async Task<FavIconResponseModel?> GetAppleTouchIcon(HtmlDocument htmlDoc, string url, CancellationToken cancellationToken)
         {
             try
             {
@@ -176,20 +218,20 @@ namespace GitTrends
                 if (isUrlValid)
                 {
                     Debug.WriteLine($"{nameof(GetAppleTouchIcon)}: {appleTouchIconUrl}, {size}");
-                    return (appleTouchIconUrl, size);
+                    return new FavIconResponseModel(appleTouchIconUrl, size);
                 }
                 else
                 {
-                    return (null, null);
+                    return null;
                 }
             }
             catch
             {
-                return (null, null);
+                return null;
             }
         }
 
-        static async Task<(string? IconUrl, long? ContentSize)> GetIcon(HtmlDocument htmlDoc, string url, CancellationToken cancellationToken)
+        static async Task<FavIconResponseModel?> GetIcon(HtmlDocument htmlDoc, string url, CancellationToken cancellationToken)
         {
             try
             {
@@ -203,16 +245,16 @@ namespace GitTrends
                 if (isUrlValid)
                 {
                     Debug.WriteLine($"{nameof(GetIcon)}: {iconUrl}, {size}");
-                    return (iconUrl, size);
+                    return new FavIconResponseModel(iconUrl, size);
                 }
                 else
                 {
-                    return (null, null);
+                    return null;
                 }
             }
             catch
             {
-                return (null, null);
+                return null;
             }
         }
 
@@ -231,6 +273,15 @@ namespace GitTrends
             {
                 return (false, null);
             }
+        }
+
+        class FavIconResponseModel
+        {
+            public FavIconResponseModel(string url, long? contentSize) =>
+                (Url, ContentSize) = (url, contentSize);
+
+            public string Url { get; }
+            public long? ContentSize { get; }
         }
     }
 }
