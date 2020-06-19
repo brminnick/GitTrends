@@ -9,8 +9,12 @@
   </a>
 </p>
 
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/13558917/85166088-a4627b00-b21b-11ea-95ab-5224b48df6bb.gif" height="250"/> 
+<p align="center" >
+  <a href="https://twitter.com/buhakmeh/status/1273974920649805825?s=20">
+    <img src="https://user-images.githubusercontent.com/13558917/85167001-fc4db180-b21c-11ea-9055-bddb158542a7.gif" height="250"/> 
+    </br>
+    Motion Graphic Created by Khalid Abuhakmeh 🙌
+  </a>
 </p>
 
 <p align="center">
