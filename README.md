@@ -10,6 +10,10 @@
 </p>
 
 <p align="center">
+  <img src="https://user-images.githubusercontent.com/13558917/85166088-a4627b00-b21b-11ea-95ab-5224b48df6bb.gif" height="250"/> 
+</p>
+
+<p align="center">
   <a href="https://apps.apple.com/app/gittrends-github-insights/id1500300399">
     <img src="https://user-images.githubusercontent.com/13558917/75712535-ed96bb00-5c7c-11ea-8bd4-e9bd36365bb2.png" height="50"/> 
   </a>
