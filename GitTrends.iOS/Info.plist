@@ -63,5 +63,10 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>30</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>nl</string>
+	</array>
 </dict>
 </plist>
