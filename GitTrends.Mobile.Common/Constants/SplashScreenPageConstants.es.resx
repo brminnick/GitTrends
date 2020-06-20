@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Initializing" xml:space="preserve">
+        <value>Inicializando</value>
+    </data>
+    <data name="ConnectingToServers" xml:space="preserve">
+        <value>Conectando a servidores</value>
+    </data>
+    <data name="StillWorkingOnIt" xml:space="preserve">
+        <value>Sigo trabajando en eso</value>
+    </data>
+    <data name="LetsTryItLikeThis" xml:space="preserve">
+        <value>Probémoslo así</value>
+    </data>
+    <data name="MaybeThis" xml:space="preserve">
+        <value>Tal vez esto</value>
+    </data>
+    <data name="AnotherTry" xml:space="preserve">
+        <value>Otro intento</value>
+    </data>
+    <data name="ItShouldntTakeThisLong" xml:space="preserve">
+        <value>Hmmm, no debería tomar tanto tiempo</value>
+    </data>
+    <data name="AreYouSureInternetConnectionIsGood" xml:space="preserve">
+        <value>¿Estás seguro de que la conexión a internet es buena?</value>
+    </data>
+    <data name="PreviewMode" xml:space="preserve">
+        <value>Modo de Vista Previa</value>
+    </data>
+    <data name="WarningsMayAppear" xml:space="preserve">
+        <value>Ciertas advertencias de licencia pueden aparecer</value>
+    </data>
+    <data name="InitializationFailed" xml:space="preserve">
+        <value>Inicialización falló</value>
+    </data>
+    <data name="EnsureInternetConnectionAndLatestVersion" xml:space="preserve">
+        <value>Asegúrese de que la conexión a Internet esté disponible y actualice GitTrends a la última versión</value>
+    </data>
+</root>

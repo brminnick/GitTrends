@@ -44,7 +44,7 @@ namespace GitTrends
 
             Children =
             {
-                new BodyLabel(OnboardingConstants.GitTrendsPage_Body_MonitorGitHubRepos).Row(Row.Title).ColumnSpan(All<Column>()),
+                new BodyLabel(OnboardingConstants.GitTrendsPage_Body_GitTrendsHelps).Row(Row.Title).ColumnSpan(All<Column>()),
 
                 new GitHubLogoLabel().Row(Row.Connect).Column(Column.Image),
                 new BodyLabel(GitHubLoginButtonConstants.ConnectToGitHub).Row(Row.Connect).Column(Column.Description),
