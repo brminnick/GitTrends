@@ -251,6 +251,21 @@
         <EmbeddedResource Update="Constants\NotificationConstants.nl.resx">
           <DependentUpon>NotificationConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.es.resx">
+          <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\DemoUserConstants.es.resx">
+          <DependentUpon>DemoUserConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\EmptyDataViewConstants.es.resx">
+          <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.es.resx">
+          <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.es.resx">
+          <DependentUpon> GitHubLoginButtonConstants.resx </DependentUpon>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
