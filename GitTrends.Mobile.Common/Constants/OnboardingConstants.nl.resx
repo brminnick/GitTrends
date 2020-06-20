@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="SkipText" xml:space="preserve">
+        <value>OVERSLAAN</value>
+    </data>
+    <data name="TryDemoText" xml:space="preserve">
+        <value>PROBEER DEMO</value>
+    </data>
+    <data name="ChartPage_Title" xml:space="preserve">
+        <value>Krijg een overzicht van
+je repos</value>
+    </data>
+    <data name="ChartPage_Body_ShowAllTraffic" xml:space="preserve">
+        <value>Grafieken tonen je al het verkeer met betrekking tot je repo:</value>
+    </data>
+    <data name="ChartPage_Body_ZoomInOut" xml:space="preserve">
+        <value>Zoom in/out om precies te zien wat je wilt weten</value>
+    </data>
+    <data name="ChartPage_Body_LongPress" xml:space="preserve">
+        <value>Tap en houd vast om de numerieke waardes te zien</value>
+    </data>
+    <data name="ConnectToGitHubPage_Title" xml:space="preserve">
+        <value>Verbind met
+GitHub</value>
+    </data>
+    <data name="ConnectToGitHubPage_Body_GetStarted" xml:space="preserve">
+        <value>Begin direct door het verbinden van je GitHub account, of probeer de demo om GitTrends te ontdekken!</value>
+    </data>
+    <data name="GitTrendsPage_Title" xml:space="preserve">
+        <value>Welkom bij
+GitTrends</value>
+    </data>
+    <data name="GitTrendsPage_Body_GitTrendsHelps" xml:space="preserve">
+        <value>GitTrends helpt je bij het monitoren van je GitHub repos:</value>
+    </data>
+    <data name="GitTrendsPage_Body_MonitorGitHubRepos" xml:space="preserve">
+        <value>Monitor je Github Repo Views, Clones, Forks, Stars en Issues</value>
+    </data>
+    <data name="GitTrendsPage_Body_DiscoverReferringSites" xml:space="preserve">
+        <value>Ontdek Refererende Sites</value>
+    </data>
+    <data name="NotificationsPage_Title" xml:space="preserve">
+        <value>Krijg notificaties wanneer
+repos trending zijn</value>
+    </data>
+    <data name="NotificationsPage_Body_MoreTrafficThanUsual" xml:space="preserve">
+        <value>GitTrends stuurt je een notificatie wanneer je GitHub repositories meer verkeer hebben dan normaal.</value>
+    </data>
+    <data name="EnableNotifications" xml:space="preserve">
+        <value>Notificaties Inschakelen</value>
+    </data>
+</root>

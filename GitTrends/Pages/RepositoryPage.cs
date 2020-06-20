@@ -1,60 +1,106 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using AsyncAwaitBestPractices.MVVM;
 using Autofac;
-using GitTrends.Mobile.Shared;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
-using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
+using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {
     public class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISearchPage
     {
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
-        readonly GitHubAuthenticationService _gitHubAuthenticationService;
+        readonly RefreshView _refreshView;
+        readonly DeepLinkingService _deepLinkingService;
+        readonly FirstRunService _firstRunService;
+        readonly GitHubUserService _gitHubUserService;
 
         public RepositoryPage(RepositoryViewModel repositoryViewModel,
-                                GitHubAuthenticationService gitHubAuthenticationService,
-                                AnalyticsService analyticsService) : base(PageTitles.RepositoryPage, repositoryViewModel, analyticsService)
+                                IAnalyticsService analyticsService,
+                                MobileSortingService sortingService,
+                                DeepLinkingService deepLinkingService,
+                                IMainThread mainThread,
+                                FirstRunService firstRunService,
+                                GitHubUserService gitHubUserService) : base(repositoryViewModel, analyticsService, mainThread, PageTitles.RepositoryPage)
         {
-            _gitHubAuthenticationService = gitHubAuthenticationService;
+            _firstRunService = firstRunService;
+            _gitHubUserService = gitHubUserService;
+            _deepLinkingService = deepLinkingService;
 
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
 
             var collectionView = new CollectionView
             {
-                ItemTemplate = new RepositoryDataTemplate(),
+                ItemTemplate = new RepositoryDataTemplateSelector(sortingService),
                 BackgroundColor = Color.Transparent,
                 SelectionMode = SelectionMode.Single,
-                AutomationId = RepositoryPageAutomationIds.CollectionView
+                AutomationId = RepositoryPageAutomationIds.CollectionView,
+                //Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
+                Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.BottomPadding } : null,
+                Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.TopPadding } : null,
+                EmptyView = new EmptyDataView("EmptyRepositoriesList", RepositoryPageAutomationIds.EmptyDataView)
+                            .Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
+                            .Bind(EmptyDataView.TitleProperty, nameof(RepositoryViewModel.EmptyDataViewTitle))
+                            .Bind(EmptyDataView.DescriptionProperty, nameof(RepositoryViewModel.EmptyDataViewDescription))
+
             };
             collectionView.SelectionChanged += HandleCollectionViewSelectionChanged;
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList));
 
-            var repositoriesListRefreshView = new RefreshView
+            _refreshView = new RefreshView
             {
                 AutomationId = RepositoryPageAutomationIds.RefreshView,
                 Content = collectionView
             };
-            repositoriesListRefreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.RefreshControlColor));
-            repositoriesListRefreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
-            repositoriesListRefreshView.SetBinding(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
+            _refreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor));
+            _refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
+            _refreshView.SetBinding(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
 
             var settingsToolbarItem = new ToolbarItem
             {
-                Text = "Settings",
+                Text = PageTitles.SettingsPage,
+                IconImageSource = Device.RuntimePlatform is Device.iOS ? "Settings" : null,
                 Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
-                AutomationId = RepositoryPageAutomationIds.SettingsButton
+                AutomationId = RepositoryPageAutomationIds.SettingsButton,
+                Command = new AsyncCommand(ExecuteSetttingsToolbarItemCommand)
             };
-            settingsToolbarItem.Clicked += HandleSettingsToolbarItem;
             ToolbarItems.Add(settingsToolbarItem);
 
-            Content = repositoriesListRefreshView;
+            var sortToolbarItem = new ToolbarItem
+            {
+                Text = RepositoryPageConstants.SortToolbarItemText,
+                Priority = 1,
+                IconImageSource = Device.RuntimePlatform is Device.iOS ? "Sort" : null,
+                Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
+                AutomationId = RepositoryPageAutomationIds.SortButton,
+                Command = new AsyncCommand(ExecuteSortToolbarItemCommand)
+            };
+            ToolbarItems.Add(sortToolbarItem);
+
+            //Work-around to prevent LargeNavigationBar from collapsing when CollectionView is scrolled; prevents janky animation when LargeNavigationBar collapses
+            if (Device.RuntimePlatform is Device.iOS)
+            {
+                Content = new Grid
+                {
+                    Children =
+                    {
+                        new BoxView { HeightRequest = 0 },
+                        _refreshView
+                    }
+                };
+            }
+            else
+            {
+                Content = _refreshView;
+            }
         }
 
         public event EventHandler<string> SearchBarTextChanged
@@ -63,33 +109,37 @@ namespace GitTrends
             remove => _searchTextChangedEventManager.RemoveEventHandler(value);
         }
 
-        public void OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.HandleEvent(this, text, nameof(SearchBarTextChanged));
-
         protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            if (Content is RefreshView refreshView
-                        && refreshView.Content is CollectionView collectionView
-                        && IsNullOrEmpty(collectionView.ItemsSource))
+            var token = await _gitHubUserService.GetGitHubToken();
+
+            if (!_firstRunService.IsFirstRun && shouldShowWelcomePage(Navigation, token.AccessToken))
             {
-                var token = await GitHubAuthenticationService.GetGitHubToken();
+                using var scope = ContainerService.Container.BeginLifetimeScope();
+                var welcomePage = scope.Resolve<WelcomePage>();
 
-                if (GitHubAuthenticationService.Alias != DemoDataConstants.Alias
-                    && (string.IsNullOrWhiteSpace(token.AccessToken) || string.IsNullOrWhiteSpace(GitHubAuthenticationService.Alias)))
-                {
-                    var shouldNavigateToSettingsPage = await DisplayAlert(GitHubUserNotFoundConstants.Title, GitHubUserNotFoundConstants.Description, GitHubUserNotFoundConstants.Accept, GitHubUserNotFoundConstants.Decline);
-
-                    if (shouldNavigateToSettingsPage)
-                        await NavigateToSettingsPage();
-                }
-                else
-                {
-                    refreshView.IsRefreshing = true;
-                }
+                //Allow RepositoryPage to appear briefly before loading 
+                await Task.Delay(TimeSpan.FromMilliseconds(250));
+                await Navigation.PushModalAsync(welcomePage);
+            }
+            else if (!_firstRunService.IsFirstRun
+                        && isUserValid(token.AccessToken)
+                        && _refreshView.Content is CollectionView collectionView
+                        && collectionView.ItemsSource.IsNullOrEmpty())
+            {
+                _refreshView.IsRefreshing = true;
             }
 
-            static bool IsNullOrEmpty(in IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
+            bool shouldShowWelcomePage(in INavigation navigation, in string accessToken)
+            {
+                return !navigation.ModalStack.Any()
+                        && _gitHubUserService.Alias != DemoUserConstants.Alias
+                        && !isUserValid(accessToken);
+            }
+
+            bool isUserValid(in string accessToken) => !string.IsNullOrWhiteSpace(accessToken) || !string.IsNullOrWhiteSpace(_gitHubUserService.Alias);
         }
 
         async void HandleCollectionViewSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -101,8 +151,8 @@ namespace GitTrends
             {
                 AnalyticsService.Track("Repository Tapped", new Dictionary<string, string>
                 {
-                    { nameof(Repository.OwnerLogin), repository.OwnerLogin },
-                    { nameof(Repository.Name), repository.Name }
+                    { nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin },
+                    { nameof(Repository) + nameof(Repository.Name), repository.Name }
                 });
 
                 await NavigateToTrendsPage(repository);
@@ -125,11 +175,21 @@ namespace GitTrends
             return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
         }
 
-        async void HandleSettingsToolbarItem(object sender, EventArgs e)
+        Task ExecuteSetttingsToolbarItemCommand()
         {
             AnalyticsService.Track("Settings Button Tapped");
 
-            await NavigateToSettingsPage();
+            return NavigateToSettingsPage();
+        }
+
+        async Task ExecuteSortToolbarItemCommand()
+        {
+            var sortingOptions = MobileSortingService.SortingOptionsDictionary.Values;
+
+            string? selection = await DisplayActionSheet(SortingConstants.ActionSheetTitle, SortingConstants.CancelText, null, sortingOptions.ToArray());
+
+            if (!string.IsNullOrWhiteSpace(selection) && selection != SortingConstants.CancelText)
+                ViewModel.SortRepositoriesCommand.Execute(MobileSortingService.SortingOptionsDictionary.First(x => x.Value == selection).Key);
         }
 
         void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)
@@ -139,11 +199,22 @@ namespace GitTrends
                 if (!Application.Current.MainPage.Navigation.ModalStack.Any()
                     && Application.Current.MainPage.Navigation.NavigationStack.Last() is RepositoryPage)
                 {
-                    await DisplayAlert(e.ErrorTitle, e.ErrorMessage, "OK");
+                    if (e.Accept is null)
+                    {
+                        await DisplayAlert(e.Title, e.Message, e.Cancel);
+                    }
+                    else
+                    {
+                        var isAccepted = await DisplayAlert(e.Title, e.Message, e.Accept, e.Cancel);
+                        if (isAccepted)
+                            await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs);
+                    }
                 }
             });
         }
 
         void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand.Execute(searchBarText);
+
+        void ISearchPage.OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.HandleEvent(this, text, nameof(SearchBarTextChanged));
     }
 }

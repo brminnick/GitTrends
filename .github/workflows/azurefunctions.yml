@@ -1,0 +1,26 @@
+name: Azure Functions
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches: 
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: |
+        cd GitTrends.Functions
+        dotnet build --configuration Release --no-restore

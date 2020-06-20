@@ -1,3 +1,5 @@
+[![Xamarin](https://github.com/brminnick/GitTrends/workflows/Xamarin/badge.svg)](https://github.com/brminnick/GitTrends/actions?query=workflow%3AXamarin) [![Azure Functions](https://github.com/brminnick/GitTrends/workflows/Azure%20Functions/badge.svg)](https://github.com/brminnick/GitTrends/actions?query=workflow%3A%22Azure+Functions%22) [![Build status](https://build.appcenter.ms/v0.1/apps/90353386-21d8-4a81-a1a3-7e5df4cbf8d3/branches/master/badge)](https://appcenter.ms?WT.mc_id=gittrends-github-bramin) [![Build status](https://build.appcenter.ms/v0.1/apps/c1dc82e1-fffd-4236-8a17-45d992913793/branches/master/badge)](https://appcenter.ms?WT.mc_id=gittrends-github-bramin)
+
 <div class="header" align="center">
   <h1 align="center">GitTrends: GitHub Insights</h1>
 </div>
@@ -7,14 +9,26 @@
   </a>
 </p>
 
+<p align="center" >
+  <a href="https://twitter.com/buhakmeh/status/1273974920649805825?s=20">
+    <img src="https://user-images.githubusercontent.com/13558917/85167001-fc4db180-b21c-11ea-9055-bddb158542a7.gif" height="250"/> 
+    </br>
+    Motion Graphic Created by Khalid Abuhakmeh 🙌
+  </a>
+</p>
+
 <p align="center">
-  <a href="https://apps.apple.com/us/app/gittrends-github-insights/id1500300399">
+  <a href="https://apps.apple.com/app/gittrends-github-insights/id1500300399">
     <img src="https://user-images.githubusercontent.com/13558917/75712535-ed96bb00-5c7c-11ea-8bd4-e9bd36365bb2.png" height="50"/> 
   </a>
   <a href="https://play.google.com/store/apps/details?id=com.minnick.gittrends"> 
     <img src="https://user-images.githubusercontent.com/13558917/75712286-8d077e00-5c7c-11ea-86f0-cd693630eee0.png" height="50" />
   </a>
 </p>
+
+I created GitTrends because I love contributing to open source libraries, but I had trouble keeping track of which repos were receiving traffic and which ones were not. For example, I recently discovered that a repo I hadn't updated in +2 years was still getting 10-20 views per week. 
+
+With GitTrends, I can now stay on top of which repos are trending and ensure its code doesn't go stale!
 
 ## Features
 
@@ -26,8 +40,8 @@ Monitor the traffic to your GitHub Repos!<br/>
 
 | GitHub Login | Repo Traffic | Referring Sites |
 | -- | -- | -- |
-| ![View Repositories](https://user-images.githubusercontent.com/13558917/75208427-77500100-5730-11ea-9654-7255ed051536.gif) | ![View Repo](https://user-images.githubusercontent.com/13558917/75208368-5091ca80-5730-11ea-8602-8c63244bf229.gif) | ![Referring Site](https://user-images.githubusercontent.com/13558917/75208328-30faa200-5730-11ea-92c7-d316f6cb39e6.gif) | 
-| ![View Repositories](https://user-images.githubusercontent.com/13558917/74350902-43a5cc00-4d6b-11ea-8c9f-c1bafbfcb415.gif) | ![View Repo](https://user-images.githubusercontent.com/13558917/74351618-363d1180-4d6c-11ea-8244-dc2e1c6cdfe4.gif) | ![Referring Site](https://user-images.githubusercontent.com/13558917/74351991-b9f6fe00-4d6c-11ea-9eb5-57260493256b.gif) | 
+| ![Repositories Light](https://user-images.githubusercontent.com/13558917/81881433-02c57b00-9545-11ea-920c-27b5b54f19c1.gif) | ![Trends Light](https://user-images.githubusercontent.com/13558917/81881263-921e5e80-9544-11ea-9bf8-a85ae9b59191.gif) | ![Referring Sites Light](https://user-images.githubusercontent.com/13558917/81881331-c6921a80-9544-11ea-93cc-0dbe222de0f9.gif) | 
+| ![Repositories Dark](https://user-images.githubusercontent.com/13558917/81881552-5041e800-9545-11ea-8100-7b28731e32cb.gif) | ![Trends Dark](https://user-images.githubusercontent.com/13558917/81882124-c561ed00-9546-11ea-902f-c77f42e78f18.gif) | ![Referring Sites Dark](https://user-images.githubusercontent.com/13558917/81881769-dfe79680-9545-11ea-8047-a1aac99bebdc.gif) | 
 
 ## Resources
 
@@ -44,6 +58,8 @@ Mobile App
 - [Refit](https://github.com/reactiveui/refit) - Refit is a REST library for .NET that converts REST APIs into live interfaces
 - [Sqlite-net](https://github.com/praeclarum/sqlite-net) - an open source, minimal library to allow .NET, .NET Core, and Mono applications to store data in SQLite 3 databases
 - [Syncfusion](https://syncfusion.com) - a UI Component Suite for Building Powerful Web, Desktop, and Mobile Apps
+- [Sharpnado.MaterialFrame](https://github.com/roubachof/Sharpnado.MaterialFrame) - A modern Xamarin.Forms Frame component supporting blur, acrylic, dark mode. Implemented with RealtimeBlurView on Android (custom blurview) and UIVisualEffectView on iOS.
+- [PancakeView](https://github.com/sthewissen/Xamarin.Forms.PancakeView) - An extended ContentView for Xamarin.Forms with rounded corners, borders, shadows and more!
 
 Cloud Backend
 - [.NET Core](https://docs.microsoft.com/dotnet/core/?WT.mc_id=gittrends-github-bramin) - an [open-source](https://github.com/dotnet/core), general-purpose development platform maintained by Microsoft and the .NET community on [GitHub](https://github.com/dotnet/core)

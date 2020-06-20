@@ -1,7 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
+using GitTrends.Shared;
+using Shiny;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
@@ -10,46 +12,49 @@ namespace GitTrends
 {
     public class App : Xamarin.Forms.Application
     {
-        readonly WeakEventManager<Theme> _themeChangedEventManager = new WeakEventManager<Theme>();
-        readonly AnalyticsService _analyticsService;
+        readonly WeakEventManager _resumedEventManager = new WeakEventManager();
+        readonly IAnalyticsService _analyticsService;
 
-        public App()
+        public App(IAnalyticsService analyticsService,
+                    INotificationService notificationService,
+                    ThemeService themeService,
+                    SplashScreenPage splashScreenPage)
         {
-            FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration
-            {
-                HttpHeadersTimeout = 60
-            });
+            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental" });
 
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            _analyticsService = scope.Resolve<AnalyticsService>();
+            InitializeEssentialServices(themeService, notificationService);
 
-            MainPage = scope.Resolve<SplashScreenPage>();
+            _analyticsService = analyticsService;
 
-            On<iOS>().SetHandleControlUpdatesOnMainThread(true);            
+            MainPage = splashScreenPage;
+
+            On<iOS>().SetHandleControlUpdatesOnMainThread(true);
         }
 
-        public event EventHandler<Theme> ThemeChanged
+        public event EventHandler Resumed
         {
-            add => _themeChangedEventManager.AddEventHandler(value);
-            remove => _themeChangedEventManager.RemoveEventHandler(value);
+            add => _resumedEventManager.AddEventHandler(value);
+            remove => _resumedEventManager.RemoveEventHandler(value);
         }
 
-        protected override void OnStart()
-        {   
+        protected override async void OnStart()
+        {
             base.OnStart();
 
             _analyticsService.Track("App Started");
 
-            SetTheme();
+            await ClearBageNotifications();
         }
 
-        protected override void OnResume()
+        protected override async void OnResume()
         {
             base.OnResume();
 
+            OnResumed();
+
             _analyticsService.Track("App Resumed");
 
-            SetTheme();
+            await ClearBageNotifications();
         }
 
         protected override void OnSleep()
@@ -59,43 +64,20 @@ namespace GitTrends
             _analyticsService.Track("App Backgrounded");
         }
 
-        void SetTheme()
+        ValueTask ClearBageNotifications()
         {
-            var operatingSystemTheme = DependencyService.Get<IEnvironment>().GetOperatingSystemTheme();
+            using var scope = ContainerService.Container.BeginLifetimeScope();
+            var notificationService = scope.Resolve<NotificationService>();
 
-            BaseTheme preferedTheme = operatingSystemTheme switch
-            {
-                Theme.Light => new LightTheme(),
-                Theme.Dark => new DarkTheme(),
-                _ => throw new NotSupportedException()
-            };
-
-            if (Resources.GetType() != preferedTheme.GetType())
-            {
-                Resources = preferedTheme;
-
-                EnableDebugRainbows(false);
-
-                OnThemeChanged(operatingSystemTheme);
-            }
+            return notificationService.SetAppBadgeCount(0);
         }
 
-        [Conditional("DEBUG")]
-        void EnableDebugRainbows(bool shouldUseDebugRainbows)
+        async void InitializeEssentialServices(ThemeService themeService, INotificationService notificationService)
         {
-            Resources.Add(new Style(typeof(ContentPage))
-            {
-                ApplyToDerivedTypes = true,
-                Setters = {
-                    new Setter
-                    {
-                        Property = Xamarin.Forms.DebugRainbows.DebugRainbow.ShowColorsProperty,
-                        Value = shouldUseDebugRainbows
-                    }
-                }
-            });
+            await themeService.Initialize().ConfigureAwait(false);
+            notificationService.Initialize();
         }
 
-        void OnThemeChanged(Theme newTheme) => _themeChangedEventManager.HandleEvent(this, newTheme, nameof(ThemeChanged));
+        void OnResumed() => _resumedEventManager.HandleEvent(this, EventArgs.Empty, nameof(Resumed));
     }
 }

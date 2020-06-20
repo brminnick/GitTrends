@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
-using GitTrends.Mobile.Shared;
+using System.Threading.Tasks;
+using GitTrends.Mobile.Common;
 using Xamarin.UITest;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
@@ -16,8 +16,12 @@ namespace GitTrends.UITests
             _statusLabel = GenerateMarkedQuery(SplashScreenPageAutomationIds.StatusLabel);
         }
 
-        public string StatusLabelText => App.Query(_statusLabel).First().Text;
+        public string StatusLabelText => GetText(_statusLabel);
 
-        public override void WaitForPageToLoad(TimeSpan? timespan = null) => App.WaitForElement(_gitTrendsImage);
+        public override Task WaitForPageToLoad(TimeSpan? timespan = null)
+        {
+            App.WaitForElement(_gitTrendsImage);
+            return Task.CompletedTask;
+        }
     }
 }

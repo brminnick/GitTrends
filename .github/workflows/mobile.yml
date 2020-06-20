@@ -1,0 +1,54 @@
+name: Xamarin
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches: 
+      - "*"
+
+jobs:
+  
+    UnitTests:
+      runs-on: macos-latest
+      env:
+        GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}
+        GetSyncFusionInformationApiKey: ${{ secrets.GetSyncFusionInformationApiKey }}
+        GetNotificationHubInformationApiKey: ${{ secrets.GetNotificationHubInformationApiKey }}
+        APPCENTER_SOURCE_DIRECTORY: "./"
+      steps:
+      - uses: actions/checkout@v1
+      - name: UnitTests
+        run: |
+          nuget restore
+          
+          chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
+          ./GitTrends.Android/appcenter-pre-build.sh
+
+          UnitTestProject=`find "$APPCENTER_SOURCE_DIRECTORY" -name GitTrends.UnitTests.csproj`
+          echo $UnitTestProject
+
+          UnitTestDirectory=`dirname $UnitTestProject`
+          echo $UnitTestDirectory
+
+          dotnet test  -c "Release" $UnitTestDirectory
+  
+    Android:
+      runs-on: macos-latest
+      steps:
+      - uses: actions/checkout@v1
+      - name: Android
+        run: |
+          nuget restore          
+          msbuild ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release     
+
+# Ignore iOS until GitHub Actions adds iOS Certificates & Provisioning Profiles
+#    iOS:
+#      runs-on: macos-latest
+#      steps:
+#      - uses: actions/checkout@v1
+#      - name: iOS
+#        run: |
+#          nuget restore
+#          msbuild GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Platform=iPhone /p:Configuration=Release

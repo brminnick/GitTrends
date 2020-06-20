@@ -1,26 +1,34 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
-using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
-    public class SyncFusionService
+    public class SyncfusionService
     {
         readonly static Lazy<long> _assemblyVersionNumberHolder = new Lazy<long>(() => long.Parse(System.Reflection.Assembly.GetAssembly(typeof(Syncfusion.CoreAssembly)).GetName().Version.ToString().Replace(".", "")));
         readonly static Lazy<string> _syncfusionLicenseKeyHolder = new Lazy<string>(() => $"{nameof(SyncFusionDTO.LicenseKey)}{_assemblyVersionNumberHolder.Value}");
 
+        readonly IAnalyticsService _analyticsService;
+        readonly ISecureStorage _secureStorage;
         readonly AzureFunctionsApiService _azureFunctionsApiService;
-        readonly AnalyticsService _analyticsService;
 
-        public SyncFusionService(AzureFunctionsApiService azureFunctionsApiService, AnalyticsService analyticsService) =>
-           (_azureFunctionsApiService, _analyticsService) = (azureFunctionsApiService, analyticsService);
+        public SyncfusionService(AzureFunctionsApiService azureFunctionsApiService,
+                                    IAnalyticsService analyticsService,
+                                    ISecureStorage secureStorage)
+        {
+            _secureStorage = secureStorage;
+            _analyticsService = analyticsService;
+            _azureFunctionsApiService = azureFunctionsApiService;
+        }
 
         public static long AssemblyVersionNumber => _assemblyVersionNumberHolder.Value;
 
         string SyncfusionLicenseKey => _syncfusionLicenseKeyHolder.Value;
 
-        public async Task Initialize()
+        public async Task Initialize(CancellationToken cancellationToken)
         {
             var syncFusionLicense = await GetLicense().ConfigureAwait(false);
 
@@ -28,7 +36,7 @@ namespace GitTrends
             {
                 try
                 {
-                    var syncusionDto = await _azureFunctionsApiService.GetSyncfusionInformation().ConfigureAwait(false);
+                    var syncusionDto = await _azureFunctionsApiService.GetSyncfusionInformation(cancellationToken).ConfigureAwait(false);
 
                     syncFusionLicense = syncusionDto.LicenseKey;
 
@@ -46,9 +54,9 @@ namespace GitTrends
                 throw new SyncFusionLicenseException($"{nameof(syncFusionLicense)} is empty");
         }
 
-        public Task<string?> GetLicense() => SecureStorage.GetAsync(SyncfusionLicenseKey);
+        public Task<string?> GetLicense() => _secureStorage.GetAsync(SyncfusionLicenseKey);
 
-        Task SaveLicense(in string license) => SecureStorage.SetAsync(SyncfusionLicenseKey, license);
+        Task SaveLicense(in string license) => _secureStorage.SetAsync(SyncfusionLicenseKey, license);
 
         class SyncFusionLicenseException : Exception
         {

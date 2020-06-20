@@ -1,36 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
-using Autofac;
 using GitTrends.Shared;
-using Xamarin.Essentials;
-using Xamarin.Forms;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
     public abstract class BaseMobileApiService : BaseApiService
     {
-        readonly static AnalyticsService _analyticsService;
+        readonly IMainThread _mainThread;
 
         static int _networkIndicatorCount;
 
-        static BaseMobileApiService()
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            _analyticsService = scope.Resolve<AnalyticsService>();
-        }
+        protected BaseMobileApiService(IAnalyticsService analyticsService, IMainThread mainThread) =>
+            (AnalyticsService, _mainThread) = (analyticsService, mainThread);
 
-        protected static string GetGitHubBearerTokenHeader(GitHubToken token) => $"{token.TokenType} {token.AccessToken}";
+        protected IAnalyticsService AnalyticsService { get; }
 
-        protected static async Task<T> AttemptAndRetry_Mobile<T>(Func<Task<T>> action, int numRetries = 3, IDictionary<string, string>? properties = null, [CallerMemberName] string callerName = "")
+        protected string GetGitHubBearerTokenHeader(GitHubToken token) => $"{token.TokenType} {token.AccessToken}";
+
+        protected async Task<T> AttemptAndRetry_Mobile<T>(Func<Task<T>> action, CancellationToken cancellationToken, int numRetries = 3, IDictionary<string, string>? properties = null, [CallerMemberName] string callerName = "")
         {
             await UpdateActivityIndicatorStatus(true).ConfigureAwait(false);
 
             try
             {
-                using var timedEvent = _analyticsService.TrackTime(callerName, properties);
-                return await AttemptAndRetry(action, numRetries).ConfigureAwait(false);
+                using var timedEvent = AnalyticsService.TrackTime(callerName, properties);
+                return await AttemptAndRetry(action, cancellationToken, numRetries).ConfigureAwait(false);
             }
             finally
             {
@@ -38,25 +36,27 @@ namespace GitTrends
             }
         }
 
-        static async ValueTask UpdateActivityIndicatorStatus(bool isActivityIndicatorDisplayed)
+        async ValueTask UpdateActivityIndicatorStatus(bool isActivityIndicatorDisplayed)
         {
             if (isActivityIndicatorDisplayed)
             {
                 _networkIndicatorCount++;
 
-                await MainThread.InvokeOnMainThreadAsync(() => setIsBusy(true)).ConfigureAwait(false);
+                await setIsBusy(true).ConfigureAwait(false);
             }
             else if (--_networkIndicatorCount <= 0)
             {
                 _networkIndicatorCount = 0;
 
-                await MainThread.InvokeOnMainThreadAsync(() => setIsBusy(false)).ConfigureAwait(false);
+                await setIsBusy(false).ConfigureAwait(false);
             }
 
-            static void setIsBusy(bool isBusy)
+            Task setIsBusy(bool isBusy)
             {
-                if (Application.Current?.MainPage != null)
-                    Application.Current.MainPage.IsBusy = isBusy;
+                if (Xamarin.Forms.Application.Current?.MainPage is Xamarin.Forms.Page mainPage)
+                    return _mainThread.InvokeOnMainThreadAsync(() => mainPage.IsBusy = isBusy);
+
+                return Task.CompletedTask;
             }
         }
     }

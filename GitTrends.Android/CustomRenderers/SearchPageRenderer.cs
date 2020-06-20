@@ -5,7 +5,6 @@ using Android.Views.InputMethods;
 using AndroidX.AppCompat.Widget;
 using GitTrends;
 using GitTrends.Droid;
-using Plugin.CurrentActivity;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
@@ -55,7 +54,7 @@ namespace GitTrends.Droid
         void AddSearchToToolbar(in string pageTitle)
         {
             if (GetToolbar() is Toolbar toolBar
-                && toolBar.Menu?.FindItem(Resource.Id.ActionSearch)?.ActionView?.JavaCast<SearchView>().GetType() != typeof(SearchView))
+                && toolBar.Menu?.FindItem(Resource.Id.ActionSearch)?.ActionView?.JavaCast<SearchView>()?.GetType() != typeof(SearchView))
             {
                 toolBar.Title = pageTitle;
                 toolBar.InflateMenu(Resource.Menu.MainMenu);
@@ -66,6 +65,7 @@ namespace GitTrends.Droid
                     searchView.ImeOptions = (int)ImeAction.Search;
                     searchView.InputType = (int)InputTypes.TextVariationFilter;
                     searchView.MaxWidth = int.MaxValue; //Set to full width - http://stackoverflow.com/questions/31456102/searchview-doesnt-expand-full-width
+                    searchView.Elevation = Resources?.GetDimension(Resource.Dimension.toolbar_elevation) ?? 6;
                 }
             }
         }
@@ -76,6 +76,6 @@ namespace GitTrends.Droid
                 searchPage.OnSearchBarTextChanged(e.NewText);
         }
 
-        Toolbar GetToolbar() => CrossCurrentActivity.Current.Activity.FindViewById<Toolbar>(Resource.Id.toolbar);
+        Toolbar? GetToolbar() => Xamarin.Essentials.Platform.CurrentActivity.FindViewById<Toolbar>(Resource.Id.toolbar);
     }
 }

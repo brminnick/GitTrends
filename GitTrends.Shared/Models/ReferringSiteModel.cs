@@ -3,31 +3,33 @@ using Newtonsoft.Json;
 
 namespace GitTrends.Shared
 {
-    public class ReferringSiteModel : BaseRepositoryModel
+    public class ReferringSiteModel : BaseTotalCountModel
     {
-        public const int FavIconSize = 32;
-
-        public ReferringSiteModel(long count, long uniques, string referrer) : base(count, uniques)
+        public ReferringSiteModel(in long count, in long uniques, in string referrer, in DateTimeOffset? downloadedAt = null) : base(count, uniques)
         {
+            DownloadedAt = downloadedAt ?? DateTimeOffset.UtcNow;
+
             Referrer = referrer;
             Uri.TryCreate("https://" + referrer, UriKind.Absolute, out var referringUri);
 
-            if (referringUri != null && !referringUri.ToString().Contains("."))
-            {
-                ReferrerUri = new Uri(referringUri.ToString().TrimEnd('/') + ".com/");
-                IsReferrerUriValid = true;
-            }
-            else if (referringUri != null)
-            {
-                ReferrerUri = referringUri;
-                IsReferrerUriValid = true;
-            }
-            else
+            if (referringUri is null)
             {
                 ReferrerUri = null;
                 IsReferrerUriValid = false;
             }
+            else if (!referringUri.ToString().Contains("."))
+            {
+                ReferrerUri = new Uri(referringUri.ToString().TrimEnd('/') + ".com/");
+                IsReferrerUriValid = true;
+            }
+            else
+            {
+                ReferrerUri = referringUri;
+                IsReferrerUriValid = true;
+            }
         }
+
+        public DateTimeOffset DownloadedAt { get; }
 
         [JsonProperty("referrer")]
         public string Referrer { get; }

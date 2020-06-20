@@ -4,11 +4,13 @@ using Xamarin.UITest;
 
 namespace GitTrends.UITests
 {
-    class LaunchTests : BaseTest
+    [TestFixture(Platform.Android, UserType.Neither)]
+    [TestFixture(Platform.iOS, UserType.Neither)]
+    class LaunchTests : BaseUITest
     {
-        public LaunchTests(Platform platform) : base(platform)
+        public LaunchTests(Platform platform, UserType userType) : base(platform, userType)
         {
-        
+
         }
 
         [Test]
@@ -20,7 +22,7 @@ namespace GitTrends.UITests
             }
             catch
             {
-                RepositoryPage.WaitForPageToLoad();
+                OnboardingPage.WaitForPageToLoad(TimeSpan.FromSeconds(10));
             }
         }
     }

@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Initializing" xml:space="preserve">
+        <value>Initialiseren</value>
+    </data>
+    <data name="ConnectingToServers" xml:space="preserve">
+        <value>Verbinden met servers</value>
+    </data>
+    <data name="StillWorkingOnIt" xml:space="preserve">
+        <value>Nog steeds bezig</value>
+    </data>
+    <data name="LetsTryItLikeThis" xml:space="preserve">
+        <value>Laten we het eens zo proberen</value>
+    </data>
+    <data name="MaybeThis" xml:space="preserve">
+        <value>Misschien dit</value>
+    </data>
+    <data name="AnotherTry" xml:space="preserve">
+        <value>Of misschien zo</value>
+    </data>
+    <data name="ItShouldntTakeThisLong" xml:space="preserve">
+        <value>Hmm, dit zou niet zo lang moeten duren</value>
+    </data>
+    <data name="AreYouSureInternetConnectionIsGood" xml:space="preserve">
+        <value>Weet je zeker dat je internet werkt?</value>
+    </data>
+    <data name="PreviewMode" xml:space="preserve">
+        <value>Preview Modus</value>
+    </data>
+    <data name="WarningsMayAppear" xml:space="preserve">
+        <value>Licentie waarschuwingen zouden getoond kunnen worden</value>
+    </data>
+    <data name="InitializationFailed" xml:space="preserve">
+        <value>Initialisatie Mislukt</value>
+    </data>
+    <data name="EnsureInternetConnectionAndLatestVersion" xml:space="preserve">
+        <value>Wees Er Zeker Van Dat Je Een Werkende Internet Verbinding Hebt Dat je De Laatste Versie van GitTrends Gebruikt</value>
+    </data>
+</root>
