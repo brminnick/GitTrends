@@ -270,6 +270,9 @@
         <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.fr.resx">
           <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.fr.resx">
+          <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
