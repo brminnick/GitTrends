@@ -288,6 +288,9 @@
         <EmbeddedResource Update="Constants\RepositoryPageConstants.fr.resx">
           <DependentUpon>RepositoryPageConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ReviewServiceConstants.fr.resx">
+          <DependentUpon>ReviewServiceConstants.resx</DependentUpon>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
