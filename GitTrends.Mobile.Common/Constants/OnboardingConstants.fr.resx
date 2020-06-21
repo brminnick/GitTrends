@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ChartPage_Body_LongPress" xml:space="preserve">
-    <value>Maintenez appuyé sur le graphique pour voir les valeur numérique précises</value>
+    <value>Maintenez appuyé sur le graphique pour voir les valeurs numériques précises</value>
   </data>
   <data name="ChartPage_Body_ShowAllTraffic" xml:space="preserve">
     <value>Les graphiques montre tout le traffique lié a votre dépôt</value>
@@ -133,7 +133,7 @@
     <value>Commencez par vous connecter a votre compte Github, ou essayez le mode demo pour voir toutes les fonctionnalités de GitTrends!</value>
   </data>
   <data name="ConnectToGitHubPage_Title" xml:space="preserve">
-    <value>Se connetez a Github</value>
+    <value>Se conneter à Github</value>
   </data>
   <data name="EnableNotifications" xml:space="preserve">
     <value>Activer les notifications</value>
@@ -151,10 +151,10 @@
     <value>Bienvenu sur GitTrends</value>
   </data>
   <data name="NotificationsPage_Body_MoreTrafficThanUsual" xml:space="preserve">
-    <value>GitTrends va vous notifier dans vos dépots Github on plus de trafique que la normale</value>
+    <value>GitTrends va vous notifier quand vos dépots Github on plus de trafique que la normale</value>
   </data>
   <data name="NotificationsPage_Title" xml:space="preserve">
-    <value>Etre notifier quand les repos sont en tendances</value>
+    <value>Etre notifié quand les repos sont en tendances</value>
   </data>
   <data name="SkipText" xml:space="preserve">
     <value>Passer</value>

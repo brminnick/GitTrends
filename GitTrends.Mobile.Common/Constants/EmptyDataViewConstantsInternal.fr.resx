@@ -134,7 +134,7 @@
     <value>Votre liste de dépôt est vide</value>
   </data>
   <data name="PleaseLoginAgain" xml:space="preserve">
-    <value>Balayer vers le bas pour récuperer les sites référant</value>
+    <value>Balayer vers le bas pour récuperer les sites référents</value>
   </data>
   <data name="SwipeDownToRefresh_ReferringSites" xml:space="preserve">
     <value>Balayer vers le bas pour récuperer les dépôts</value>

@@ -121,12 +121,12 @@
     <value>Se connecter à Github</value>
   </data>
   <data name="Disconnect" xml:space="preserve">
-    <value>Se deconnecter</value>
+    <value>Se déconnecter</value>
   </data>
   <data name="NotLoggedIn" xml:space="preserve">
     <value>Pas connecté</value>
   </data>
   <data name="TryDemo" xml:space="preserve">
-    <value>Essayer en Demo</value>
+    <value>Essayer en mode Demo</value>
   </data>
 </root>
