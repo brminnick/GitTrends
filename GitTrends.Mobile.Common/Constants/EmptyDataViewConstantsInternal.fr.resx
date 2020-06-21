@@ -117,16 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Android" xml:space="preserve">
-    <value>Как насчет ревью в Google Play Store?</value>
+  <data name="ClearSearchBarTryAgain" xml:space="preserve">
+    <value>Videz la bar de recherche et essayez à nouveau</value>
   </data>
-  <data name="iOS" xml:space="preserve">
-    <value>Как насчет ревью в App Store?</value>
+  <data name="LoginExpired" xml:space="preserve">
+    <value>Le login GitHub a expiré </value>
   </data>
-  <data name="Other" xml:space="preserve">
-    <value>Как насчет публикации ревью?</value>
+  <data name="NoFilterMatch" xml:space="preserve">
+    <value>Aucun dépôt convenant à ces filtres n'a été trouvé</value>
   </data>
-  <data name="Windows" xml:space="preserve">
-    <value>Как насчет ревью в Microsoft  Store?</value>
+  <data name="NoReferralsYet" xml:space="preserve">
+    <value>Il n'y a aucun référant pour le moment </value>
+    <comment>I feel that there is a better term that "référant" to say "referral"</comment>
+  </data>
+  <data name="NoRepositoriesFound" xml:space="preserve">
+    <value>Votre liste de dépôt est vide</value>
+  </data>
+  <data name="PleaseLoginAgain" xml:space="preserve">
+    <value>Balayer vers le bas pour récuperer les sites référents</value>
+  </data>
+  <data name="SwipeDownToRefresh_ReferringSites" xml:space="preserve">
+    <value>Balayer vers le bas pour récuperer les dépôts</value>
+  </data>
+  <data name="Uninitialized" xml:space="preserve">
+    <value>Les données n'ont pas été récuperé</value>
   </data>
 </root>

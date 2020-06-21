@@ -117,16 +117,52 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Android" xml:space="preserve">
-    <value>Как насчет ревью в Google Play Store?</value>
+  <data name="By" xml:space="preserve">
+    <value>par</value>
   </data>
-  <data name="iOS" xml:space="preserve">
-    <value>Как насчет ревью в App Store?</value>
+  <data name="HandleNotification_MultipleTrendingRepository_Cancel" xml:space="preserve">
+    <value>Merci</value>
   </data>
-  <data name="Other" xml:space="preserve">
-    <value>Как насчет публикации ревью?</value>
+  <data name="HandleNotification_MultipleTrendingRepository_Sorted_Message" xml:space="preserve">
+    <value>Tappez sur les dépôts marqué "Tendance" pour en savoir plus! </value>
   </data>
-  <data name="Windows" xml:space="preserve">
-    <value>Как насчет ревью в Microsoft  Store?</value>
+  <data name="HandleNotification_MultipleTrendingRepositor_Unsorted_Accept" xml:space="preserve">
+    <value>tri inversé</value>
+  </data>
+  <data name="HandleNotification_MultipleTrendingRepositor_Unsorted_Decline" xml:space="preserve">
+    <value>Pas maintenant</value>
+  </data>
+  <data name="HandleNotification_MultipleTrendingRepositor_Unsorted_Message" xml:space="preserve">
+    <value>Inverser L'ordre De Tri Pour Découvrir Lequel </value>
+  </data>
+  <data name="HandleNotification_SingleTrendingRepository_Accept" xml:space="preserve">
+    <value>C'est Parti </value>
+  </data>
+  <data name="HandleNotification_SingleTrendingRepository_Decline" xml:space="preserve">
+    <value>Pas de suite</value>
+  </data>
+  <data name="HandleNotification_SingleTrendingRepository_Message" xml:space="preserve">
+    <value>Regardons son graphique</value>
+  </data>
+  <data name="HandleNotification_SingleTrendingRepository_Title" xml:space="preserve">
+    <value>{0} est en Tendance</value>
+  </data>
+  <data name="IsTrending" xml:space="preserve">
+    <value>est en tendance</value>
+  </data>
+  <data name="MultipleRepositoryNotificationMessage" xml:space="preserve">
+    <value>Vous avez {0} dépôts en tendance</value>
+  </data>
+  <data name="NotificationsDisabled" xml:space="preserve">
+    <value>Notifications désactivés</value>
+  </data>
+  <data name="NotificationsNotSupported" xml:space="preserve">
+    <value>Les notifications sont pas supporté</value>
+  </data>
+  <data name="SingleRepositoryNotificationMessage" xml:space="preserve">
+    <value>{0} par {1} est en tendance</value>
+  </data>
+  <data name="TrendingRepositoriesNotificationTitle" xml:space="preserve">
+    <value>Vos dépôts sont en tendance </value>
   </data>
 </root>

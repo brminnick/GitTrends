@@ -117,16 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Android" xml:space="preserve">
-    <value>Как насчет ревью в Google Play Store?</value>
+  <data name="All" xml:space="preserve">
+    <value>Tous</value>
   </data>
-  <data name="iOS" xml:space="preserve">
-    <value>Как насчет ревью в App Store?</value>
+  <data name="JustUniques" xml:space="preserve">
+    <value>Juste uniques</value>
   </data>
-  <data name="Other" xml:space="preserve">
-    <value>Как насчет публикации ревью?</value>
+  <data name="NoUniques" xml:space="preserve">
+    <value>Pas uniques</value>
   </data>
-  <data name="Windows" xml:space="preserve">
-    <value>Как насчет ревью в Microsoft  Store?</value>
+  <data name="TotalClonesTitle" xml:space="preserve">
+    <value>Clones</value>
+  </data>
+  <data name="TotalViewsTitle" xml:space="preserve">
+    <value>Vues</value>
+  </data>
+  <data name="UniqueClonesTitle" xml:space="preserve">
+    <value>Clones uniques</value>
+  </data>
+  <data name="UniqueViewsTitle" xml:space="preserve">
+    <value>Vue uniques</value>
   </data>
 </root>
