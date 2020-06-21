@@ -264,6 +264,9 @@
         <EmbeddedResource Update="Constants\DemoUserConstants.fr.resx">
           <DependentUpon>DemoUserConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\EmptyDataViewConstants.fr.resx">
+          <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
