@@ -302,6 +302,7 @@
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\ReferringSitesPageConstants.fr.resx">
           <DependentUpon>ReferringSitesPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.es.resx">
           <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
         </EmbeddedResource>
