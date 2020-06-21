@@ -170,6 +170,9 @@
         <EmbeddedResource Update="Constants\WelcomePageConstants.ru.resx">
             <DependentUpon>WelcomePageConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\WelcomePageConstants.fr.resx">
+          <DependentUpon>WelcomePageConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\DemoUserConstants.de.resx">
             <DependentUpon>DemoUserConstants.resx</DependentUpon>
         </EmbeddedResource>
