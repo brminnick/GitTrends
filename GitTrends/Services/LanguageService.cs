@@ -49,6 +49,8 @@ namespace GitTrends
             if(currentCulture != culture)
             {
                 CultureInfo.CurrentCulture = new CultureInfo(culture, false);
+                CultureInfo.CurrentUICulture = new CultureInfo(culture, false);
+
                 OnPreferredLanguageChanged(culture);
             }
         }
