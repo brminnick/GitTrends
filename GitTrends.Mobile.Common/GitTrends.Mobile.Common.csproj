@@ -279,6 +279,9 @@
         <EmbeddedResource Update="Constants\NotificationConstants.fr.resx">
           <DependentUpon>NotificationConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\PageTitles.fr.resx">
+          <DependentUpon>PageTitles.resx</DependentUpon>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
