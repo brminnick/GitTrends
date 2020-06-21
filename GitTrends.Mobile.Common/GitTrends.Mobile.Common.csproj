@@ -170,9 +170,6 @@
         <EmbeddedResource Update="Constants\WelcomePageConstants.ru.resx">
             <DependentUpon>WelcomePageConstants.resx</DependentUpon>
         </EmbeddedResource>
-        <EmbeddedResource Update="Constants\WelcomePageConstants.fr.resx">
-          <DependentUpon>WelcomePageConstants.resx</DependentUpon>
-        </EmbeddedResource>
         <EmbeddedResource Update="Constants\DemoUserConstants.de.resx">
             <DependentUpon>DemoUserConstants.resx</DependentUpon>
         </EmbeddedResource>
@@ -242,6 +239,7 @@
         <EmbeddedResource Update="Constants\SplashScreenPageConstants.nl.resx">
           <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
         </EmbeddedResource>
+      
         <EmbeddedResource Update="Constants\EmptyDataViewConstants.nl.resx">
           <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
         </EmbeddedResource>
@@ -253,6 +251,12 @@
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\NotificationConstants.nl.resx">
           <DependentUpon>NotificationConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\SplashScreenPageConstants.fr.resx">
+          <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\WelcomePageConstants.fr.resx">
+          <DependentUpon>WelcomePageConstants.resx</DependentUpon>
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
