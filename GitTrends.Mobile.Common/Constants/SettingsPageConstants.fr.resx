@@ -126,4 +126,7 @@
   <data name="Theme" xml:space="preserve">
     <value>Thème</value>
   </data>
+  <data name="Language" xml:space="preserve">
+    <value>Langue</value>
+  </data>
 </root>
