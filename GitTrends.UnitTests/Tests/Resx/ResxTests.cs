@@ -34,6 +34,7 @@ namespace GitTrends.UnitTests
         [TestCase("de")]
         [TestCase("ru")]
         [TestCase("nl")]
+        [TestCase("es")]
         public void ConfirmCultureExists(string culture)
         {
             //Arrange
