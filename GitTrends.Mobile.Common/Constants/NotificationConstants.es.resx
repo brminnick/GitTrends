@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="TrendingRepositoriesNotificationTitle" xml:space="preserve">
+        <value>Tus Repositorios Son Tendencia</value>
+    </data>
+    <data name="By" xml:space="preserve">
+        <value>por</value>
+    </data>
+    <data name="IsTrending" xml:space="preserve">
+        <value>es Tendencia</value>
+    </data>
+    <data name="SingleRepositoryNotificationMessage" xml:space="preserve">
+        <value>{0} por {1} es tendencia</value>
+    </data>
+    <data name="MultipleRepositoryNotificationMessage" xml:space="preserve">
+        <value>Tienes {0} Repositorios en Tendencia</value>
+    </data>
+    <data name="NotificationsDisabled" xml:space="preserve">
+        <value>Notificaciones Deshabilitadas</value>
+    </data>
+    <data name="NotificationsNotSupported" xml:space="preserve">
+        <value>Las Notificaciones No Son Compatibles</value>
+    </data>
+    <data name="HandleNotification_SingleTrendingRepository_Title" xml:space="preserve">
+        <value>{0} es Tendencia</value>
+    </data>
+    <data name="HandleNotification_SingleTrendingRepository_Message" xml:space="preserve">
+        <value>Veamos su grafica</value>
+    </data>
+    <data name="HandleNotification_SingleTrendingRepository_Accept" xml:space="preserve">
+        <value>De Acuerdo</value>
+    </data>
+    <data name="HandleNotification_SingleTrendingRepository_Decline" xml:space="preserve">
+        <value>No Ahora</value>
+    </data>
+    <data name="HandleNotification_MultipleTrendingRepository_Sorted_Message" xml:space="preserve">
+        <value>¡Toque los repositorios etiquetados como "Tendencia" para ver más detalles!</value>
+    </data>
+    <data name="HandleNotification_MultipleTrendingRepository_Cancel" xml:space="preserve">
+        <value>Gracias</value>
+    </data>
+    <data name="HandleNotification_MultipleTrendingRepositor_Unsorted_Message" xml:space="preserve">
+        <value>Invierta El Orden De Clasificación Para Descubrir Cuáles</value>
+    </data>
+      <data name="HandleNotification_MultipleTrendingRepositor_Unsorted_Accept" xml:space="preserve">
+        <value>Orden Inverso</value>
+    </data>
+      <data name="HandleNotification_MultipleTrendingRepositor_Unsorted_Decline" xml:space="preserve">
+        <value>Ahora No</value>
+    </data>
+</root>
