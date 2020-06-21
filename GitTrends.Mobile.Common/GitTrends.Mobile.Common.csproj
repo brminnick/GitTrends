@@ -282,6 +282,9 @@
         <EmbeddedResource Update="Constants\PageTitles.fr.resx">
           <DependentUpon>PageTitles.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ErrorPullToRefreshEventArgs.fr.resx">
+          <DependentUpon>ErrorPullToRefreshEventArgs.resx</DependentUpon>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
