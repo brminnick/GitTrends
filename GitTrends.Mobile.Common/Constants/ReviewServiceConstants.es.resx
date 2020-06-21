@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="TitleLabel_EnjoyingGitTrends" xml:space="preserve">
+        <value>¿Disfrutas de GitTrends?</value>
+    </data>
+    <data name="TitleLabel_EnjoyingNewVersionOfGitTrends" xml:space="preserve">
+        <value>¿Disfrutas de la nueva versión de GitTrends?</value>
+    </data>
+    <data name="TitleLabel_Feedback" xml:space="preserve">
+        <value>¿Te importaría darnos una recomendación?</value>
+    </data>
+    <data name="NoButton_NoThanks" xml:space="preserve">
+        <value>No Gracias</value>
+    </data>
+    <data name="NoButton_NotReally" xml:space="preserve">
+        <value>Realmente No</value>
+    </data>
+    <data name="YesButton_OkSure" xml:space="preserve">
+        <value>Claro!</value>
+    </data>
+    <data name="YesButton_Yes" xml:space="preserve">
+        <value>Si!</value>
+    </data>
+</root>
