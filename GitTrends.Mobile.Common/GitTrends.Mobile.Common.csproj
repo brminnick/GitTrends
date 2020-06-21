@@ -239,6 +239,7 @@
         <EmbeddedResource Update="Constants\SplashScreenPageConstants.nl.resx">
           <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
         </EmbeddedResource>
+      
         <EmbeddedResource Update="Constants\EmptyDataViewConstants.nl.resx">
           <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
         </EmbeddedResource>
@@ -251,6 +252,56 @@
         <EmbeddedResource Update="Constants\NotificationConstants.nl.resx">
           <DependentUpon>NotificationConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\SplashScreenPageConstants.fr.resx">
+          <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\WelcomePageConstants.fr.resx">
+          <DependentUpon>WelcomePageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.fr.resx">
+          <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\DemoUserConstants.fr.resx">
+          <DependentUpon>DemoUserConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\EmptyDataViewConstants.fr.resx">
+          <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.fr.resx">
+          <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.fr.resx">
+          <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\OnboardingConstants.fr.resx">
+          <DependentUpon>OnboardingConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\NotificationConstants.fr.resx">
+          <DependentUpon>NotificationConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\PageTitles.fr.resx">
+          <DependentUpon>PageTitles.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ErrorPullToRefreshEventArgs.fr.resx">
+          <DependentUpon>ErrorPullToRefreshEventArgs.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\RepositoryPageConstants.fr.resx">
+          <DependentUpon>RepositoryPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ReviewServiceConstants.fr.resx">
+          <DependentUpon>ReviewServiceConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\SettingsPageConstants.fr.resx">
+          <DependentUpon>SettingsPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\SortingConstants.fr.resx">
+          <DependentUpon>SortingConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\TrendsChartTitleConstants.fr.resx">
+          <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ReferringSitesPageConstants.fr.resx">
+          <DependentUpon>ReferringSitesPageConstants.resx</DependentUpon>
         <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.es.resx">
           <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
         </EmbeddedResource>
@@ -357,6 +408,8 @@
         </Compile>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
         </Compile>
     </ItemGroup>
     <ItemGroup>

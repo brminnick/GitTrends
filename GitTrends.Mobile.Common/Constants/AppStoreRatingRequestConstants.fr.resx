@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Android" xml:space="preserve">
-    <value>Как насчет ревью в Google Play Store?</value>
+    <value>Et si vous laissiez un petit avis sur le Google Play Store? </value>
   </data>
   <data name="iOS" xml:space="preserve">
-    <value>Как насчет ревью в App Store?</value>
+    <value>Et si vous laissiez un petit avis sur le App Store?</value>
   </data>
   <data name="Other" xml:space="preserve">
-    <value>Как насчет публикации ревью?</value>
+    <value>Et si vous postiez un petit avis?</value>
   </data>
   <data name="Windows" xml:space="preserve">
-    <value>Как насчет ревью в Microsoft  Store?</value>
+    <value>Et si vous laissiez un petit avis sur le Microsoft Store?</value>
   </data>
 </root>

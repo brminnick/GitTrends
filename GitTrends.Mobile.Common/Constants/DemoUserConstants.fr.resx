@@ -117,16 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Android" xml:space="preserve">
-    <value>Как насчет ревью в Google Play Store?</value>
+  <data name="Alias" xml:space="preserve">
+    <value>Demo</value>
   </data>
-  <data name="iOS" xml:space="preserve">
-    <value>Как насчет ревью в App Store?</value>
-  </data>
-  <data name="Other" xml:space="preserve">
-    <value>Как насчет публикации ревью?</value>
-  </data>
-  <data name="Windows" xml:space="preserve">
-    <value>Как насчет ревью в Microsoft  Store?</value>
+  <data name="Name" xml:space="preserve">
+    <value>Demo utilisateur</value>
   </data>
 </root>

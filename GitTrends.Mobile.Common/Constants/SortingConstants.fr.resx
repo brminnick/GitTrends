@@ -117,16 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Android" xml:space="preserve">
-    <value>Как насчет ревью в Google Play Store?</value>
+  <data name="ActionSheetTitle" xml:space="preserve">
+    <value>Trier par</value>
   </data>
-  <data name="iOS" xml:space="preserve">
-    <value>Как насчет ревью в App Store?</value>
+  <data name="CancelText" xml:space="preserve">
+    <value>Annuler</value>
   </data>
-  <data name="Other" xml:space="preserve">
-    <value>Как насчет публикации ревью?</value>
+  <data name="Clones" xml:space="preserve">
+    <value>Clones</value>
   </data>
-  <data name="Windows" xml:space="preserve">
-    <value>Как насчет ревью в Microsoft  Store?</value>
+  <data name="Forks" xml:space="preserve">
+    <value>Forks</value>
+  </data>
+  <data name="Issues" xml:space="preserve">
+    <value>Issues</value>
+  </data>
+  <data name="Stars" xml:space="preserve">
+    <value>Stars</value>
+  </data>
+  <data name="UniqueClones" xml:space="preserve">
+    <value>Clones unique</value>
+  </data>
+  <data name="UniqueViews" xml:space="preserve">
+    <value>Vues unique</value>
+  </data>
+  <data name="Views" xml:space="preserve">
+    <value>Vues</value>
   </data>
 </root>

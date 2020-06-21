@@ -117,16 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Android" xml:space="preserve">
-    <value>Как насчет ревью в Google Play Store?</value>
+  <data name="NoButton_NoThanks" xml:space="preserve">
+    <value>Non merci</value>
   </data>
-  <data name="iOS" xml:space="preserve">
-    <value>Как насчет ревью в App Store?</value>
+  <data name="NoButton_NotReally" xml:space="preserve">
+    <value>Pas vraiment</value>
   </data>
-  <data name="Other" xml:space="preserve">
-    <value>Как насчет публикации ревью?</value>
+  <data name="TitleLabel_EnjoyingGitTrends" xml:space="preserve">
+    <value>Vous aimez GitTrends?</value>
   </data>
-  <data name="Windows" xml:space="preserve">
-    <value>Как насчет ревью в Microsoft  Store?</value>
+  <data name="TitleLabel_EnjoyingNewVersionOfGitTrends" xml:space="preserve">
+    <value>Vous aimez la nouvelle version de  GitTrends?</value>
+  </data>
+  <data name="TitleLabel_Feedback" xml:space="preserve">
+    <value>Cela vous dérangerez de nous fournir un retour d'expérience  </value>
+  </data>
+  <data name="YesButton_OkSure" xml:space="preserve">
+    <value>Oui, bien sûr!</value>
+  </data>
+  <data name="YesButton_Yes" xml:space="preserve">
+    <value>Oui!</value>
   </data>
 </root>
