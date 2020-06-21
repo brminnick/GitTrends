@@ -294,6 +294,9 @@
         <EmbeddedResource Update="Constants\SettingsPageConstants.fr.resx">
           <DependentUpon>SettingsPageConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\SortingConstants.fr.resx">
+          <DependentUpon>SortingConstants.resx</DependentUpon>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
