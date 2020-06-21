@@ -7,10 +7,11 @@ namespace GitTrends.Mobile.Common
         public static Dictionary<string, string> CulturePickerOptions = new Dictionary<string, string>
         {
             {"", "Default" },
-            {"en", "🇺🇸 English" },
-            {"ru", "🇷🇺 русский" },
             {"de", "🇩🇪 Deutsch" },
+            {"en", "🇺🇸 English" },
+            {"es", "🇪🇸 Español" },
             {"nl", "🇳🇱 Nederlands" },
+            {"ru", "🇷🇺 русский" },
         };
     }
 }

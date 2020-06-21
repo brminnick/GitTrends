@@ -21,4 +21,7 @@
     <data name="PreferredChartSettingsLabelText" xml:space="preserve">
         <value>Gráficas preferidas</value>
     </data>
+    <data name="Language" xml:space="preserve">
+        <value>Idioma</value>
+    </data>
 </root>
