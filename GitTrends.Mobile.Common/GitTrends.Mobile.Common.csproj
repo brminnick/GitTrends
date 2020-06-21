@@ -361,6 +361,8 @@
         </Compile>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
         </Compile>
     </ItemGroup>
     <ItemGroup>
