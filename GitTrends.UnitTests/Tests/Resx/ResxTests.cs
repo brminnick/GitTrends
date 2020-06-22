@@ -160,14 +160,20 @@ namespace GitTrends.UnitTests
             {
                 var cultureInfo = availableResxsCultureInfos[i];
 
-                var resourceSet = resourceManager.GetResourceSet(cultureInfo, true, false) ?? throw new MultipleAssertException(string.Format("The language \"{0}\" is not specified in \"{1}\".", cultureInfo.Name, type));
+                var resourceSet = resourceManager.GetResourceSet(cultureInfo, true, false) ?? throw new MultipleAssertException($"The language \"{cultureInfo.Name}\" is not specified in \"{type}\".");
 
                 var dict = new Dictionary<string, object>();
 
-                foreach (DictionaryEntry item in resourceSet)
+                foreach (DictionaryEntry? item in resourceSet)
                 {
-                    var key = item.Key.ToString();
-                    var value = item.Value;
+                    if (item is null)
+                        continue;
+
+                    var key = item.Value.Key.ToString();
+                    var value = item.Value.Value;
+
+                    if (key is null || value is null)
+                        continue;
 
                     dict.Add(key, value);
                 }
