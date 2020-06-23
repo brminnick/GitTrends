@@ -35,6 +35,9 @@
         <EmbeddedResource Update="Constants\DemoUserConstants.ru.resx">
             <DependentUpon>DemoUserConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\DemoUserConstants.pt.resx">
+            <DependentUpon>DemoUserConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.pt.resx">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
         </EmbeddedResource>
@@ -168,6 +171,9 @@
             <LastGenOutput>SettingsPageConstants.Designer.cs</LastGenOutput>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\TrendsChartTitleConstants.ru.resx">
+            <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\TrendsChartTitleConstants.pt.resx">
             <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\SplashScreenPageConstants.pt.resx">
