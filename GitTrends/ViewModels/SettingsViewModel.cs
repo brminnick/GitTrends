@@ -73,7 +73,7 @@ namespace GitTrends
 
             ThemePickerSelectedIndex = (int)themeService.Preference;
             PreferredChartsSelectedIndex = (int)trendsChartSettingsService.CurrentTrendsChartOption;
-            LanguagePickerSelectedIndex = CultureConstants.CulturePickerOptions.Keys.ToList().IndexOf(languageService.PreferedLanguage);
+            LanguagePickerSelectedIndex = CultureConstants.CulturePickerOptions.Keys.ToList().IndexOf(languageService.PreferredLanguage);
 
             if (Application.Current is App app)
                 app.Resumed += HandleResumed;
@@ -200,7 +200,7 @@ namespace GitTrends
         public int LanguagePickerSelectedIndex
         {
             get => _languagePickerSelectedIndex;
-            set => SetProperty(ref _languagePickerSelectedIndex, value, () => _languageService.PreferedLanguage = CultureConstants.CulturePickerOptions.Skip(value).First().Key);
+            set => SetProperty(ref _languagePickerSelectedIndex, value, () => _languageService.PreferredLanguage = CultureConstants.CulturePickerOptions.Skip(value).First().Key);
         }
 
         public string TitleText

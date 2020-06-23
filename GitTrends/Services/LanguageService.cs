@@ -29,24 +29,24 @@ namespace GitTrends
             remove => _preferredLanguageChangedEventManager.RemoveEventHandler(value);
         }
 
-        public string PreferedLanguage
+        public string PreferredLanguage
         {
-            get => _preferences.Get(nameof(PreferedLanguage), string.Empty);
+            get => _preferences.Get(nameof(PreferredLanguage), string.Empty);
             set
             {
                 if (!CultureConstants.CulturePickerOptions.Keys.Contains(value))
                     throw new ArgumentException($"{nameof(CultureConstants)}.{nameof(CultureConstants.CulturePickerOptions)} does not contain a key for {value}");
 
-                _preferences.Set(nameof(PreferedLanguage), value);
+                _preferences.Set(nameof(PreferredLanguage), value);
                 SetLanguage(value);
             }
         }
 
-        public void Initialize() => SetLanguage(PreferedLanguage);
+        public void Initialize() => SetLanguage(PreferredLanguage);
 
         void SetLanguage(in string culture)
         {
-            var currentCulture = CultureInfo.DefaultThreadCurrentUICulture?.Name;
+            var currentCulture = CultureInfo.DefaultThreadCurrentUICulture?.Name ?? CultureInfo.DefaultThreadCurrentCulture?.Name;
 
             if (currentCulture != culture)
             {
