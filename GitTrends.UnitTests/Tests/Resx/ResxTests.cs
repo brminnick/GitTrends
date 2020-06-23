@@ -45,10 +45,10 @@ namespace GitTrends.UnitTests
             //Act
             foreach (var cultureInfo in resxCultureInfoList)
             {
-                foreach (var culture in cultures)
+                foreach (var _culture in cultures)
                 {
                     //Assert
-                    Assert.IsTrue(cultureInfo.Any(x => x.Name == culture));
+                    Assert.IsTrue(cultureInfo.Any(x => x.Name == _culture));
                 }
             }
         }
