@@ -148,7 +148,7 @@ namespace GitTrends
                 SetDemoUserUserValues();
         }
 
-        void HandlePreferredLanguageChanged(object sender, string e)
+        void HandlePreferredLanguageChanged(object sender, string? e)
         {
             //Update Demo User Translations
             if (_gitHubUserService.IsDemoUser)

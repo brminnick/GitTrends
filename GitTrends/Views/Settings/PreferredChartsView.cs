@@ -72,7 +72,7 @@ namespace GitTrends
                 this.SetBinding(SelectedIndexProperty, nameof(SettingsViewModel.PreferredChartsSelectedIndex));
             }
 
-            void HandlePreferredLanguageChanged(object sender, string e) => _mainThread.BeginInvokeOnMainThread(SetItemSource);
+            void HandlePreferredLanguageChanged(object sender, string? e) => _mainThread.BeginInvokeOnMainThread(SetItemSource);
 
             void SetItemSource() => ItemsSource = TrendsChartConstants.TrendsChartTitles.Values.ToList();
 

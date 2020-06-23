@@ -10,7 +10,7 @@ namespace GitTrends
 {
     public class LanguageService
     {
-        readonly static WeakEventManager<string> _preferredLanguageChangedEventManager = new WeakEventManager<string>();
+        readonly static WeakEventManager<string?> _preferredLanguageChangedEventManager = new WeakEventManager<string?>();
 
         readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;
@@ -23,19 +23,21 @@ namespace GitTrends
             _analyticsService = analyticsService;
         }
 
-        public static event EventHandler<string> PreferredLanguageChanged
+        public static event EventHandler<string?> PreferredLanguageChanged
         {
             add => _preferredLanguageChangedEventManager.AddEventHandler(value);
             remove => _preferredLanguageChangedEventManager.RemoveEventHandler(value);
         }
 
-        public string PreferredLanguage
+        public string? PreferredLanguage
         {
-            get => _preferences.Get(nameof(PreferredLanguage), string.Empty);
+            get => _preferences.Get(nameof(PreferredLanguage), null);
             set
             {
-                if (!CultureConstants.CulturePickerOptions.Keys.Contains(value))
-                    throw new ArgumentException($"{nameof(CultureConstants)}.{nameof(CultureConstants.CulturePickerOptions)} does not contain a key for {value}");
+                if (string.IsNullOrWhiteSpace(value))
+                    value = null;
+                else if (!CultureConstants.CulturePickerOptions.Keys.Contains(value))
+                    throw new ArgumentException($"{nameof(CultureConstants)}.{nameof(CultureConstants.CulturePickerOptions)} does not contain a key for {value ?? "null"}");
 
                 _preferences.Set(nameof(PreferredLanguage), value);
                 SetLanguage(value);
@@ -44,19 +46,25 @@ namespace GitTrends
 
         public void Initialize() => SetLanguage(PreferredLanguage);
 
-        void SetLanguage(in string culture)
+        void SetLanguage(in string? culture)
         {
             var currentCulture = CultureInfo.DefaultThreadCurrentUICulture?.Name ?? CultureInfo.DefaultThreadCurrentCulture?.Name;
 
             if (currentCulture != culture)
             {
-                CultureInfo.DefaultThreadCurrentCulture= new CultureInfo(culture, false);
-                CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(culture, false);
+                CultureInfo.DefaultThreadCurrentCulture = getCultureInfo(culture);
+                CultureInfo.DefaultThreadCurrentUICulture = getCultureInfo(culture);
 
                 OnPreferredLanguageChanged(culture);
             }
+
+            static CultureInfo? getCultureInfo(in string? culture) => culture switch
+            {
+                null => null,
+                _ => new CultureInfo(culture, false)
+            };
         }
 
-        void OnPreferredLanguageChanged(string culture) => _preferredLanguageChangedEventManager.HandleEvent(this, culture, nameof(PreferredLanguageChanged));
+        void OnPreferredLanguageChanged(in string? culture) => _preferredLanguageChangedEventManager.HandleEvent(this, culture, nameof(PreferredLanguageChanged));
     }
 }

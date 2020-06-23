@@ -318,7 +318,7 @@ namespace GitTrends
                 UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
         }
 
-        void HandlePreferredLanguageChanged(object sender, string e) => SetTitleText();
+        void HandlePreferredLanguageChanged(object sender, string? e) => SetTitleText();
 
         void SetTitleText() => TitleText = PageTitles.RepositoryPage;
 

@@ -73,7 +73,7 @@ namespace GitTrends
 
             ThemePickerSelectedIndex = (int)themeService.Preference;
             PreferredChartsSelectedIndex = (int)trendsChartSettingsService.CurrentTrendsChartOption;
-            LanguagePickerSelectedIndex = CultureConstants.CulturePickerOptions.Keys.ToList().IndexOf(languageService.PreferredLanguage);
+            LanguagePickerSelectedIndex = CultureConstants.CulturePickerOptions.Keys.ToList().IndexOf(languageService.PreferredLanguage ?? string.Empty);
 
             if (Application.Current is App app)
                 app.Resumed += HandleResumed;
@@ -324,7 +324,7 @@ namespace GitTrends
         }
 
         void HandlePreferenceChanged(object sender, PreferredTheme e) => UpdateGitHubAvatarImage();
-        void HandlePreferredLanguageChanged(object sender, string e) => InitializeText();
+        void HandlePreferredLanguageChanged(object sender, string? e) => InitializeText();
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => SetGitHubValues();
 
         async void HandleResumed(object sender, EventArgs e)
