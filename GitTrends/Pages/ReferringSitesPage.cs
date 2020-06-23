@@ -29,8 +29,10 @@ namespace GitTrends
                                     IAnalyticsService analyticsService,
                                     ThemeService themeService,
                                     ReviewService reviewService,
-                                    IMainThread mainThread) : base(referringSitesViewModel, analyticsService, mainThread, PageTitles.ReferringSitesPage)
+                                    IMainThread mainThread) : base(referringSitesViewModel, analyticsService, mainThread)
         {
+            Title = PageTitles.ReferringSitesPage;
+
             _reviewService = reviewService;
             _deepLinkingService = deepLinkingService;
 

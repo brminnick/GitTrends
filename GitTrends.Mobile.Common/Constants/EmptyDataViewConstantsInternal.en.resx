@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="PleaseLoginAgain" xml:space="preserve">
+        <value>Please login again</value>
+    </data>
+    <data name="SwipeDownToRefresh_Repositories" xml:space="preserve">
+        <value>Swipe down to retrieve repositories</value>
+    </data>
+    <data name="SwipeDownToRefresh_ReferringSites" xml:space="preserve">
+        <value>Swipe down to retrieve referring sites</value>
+    </data>
+    <data name="LoginExpired" xml:space="preserve">
+        <value>GitHub Login Expired</value>
+    </data>
+    <data name="NoFilterMatch" xml:space="preserve">
+        <value>No Matching Repository Found</value>
+    </data>
+    <data name="NoRepositoriesFound" xml:space="preserve">
+        <value>Your repositories list is empty</value>
+    </data>
+    <data name="ClearSearchBarTryAgain" xml:space="preserve">
+        <value>Clear search bar and try again</value>
+    </data>
+    <data name="NoReferralsYet" xml:space="preserve">
+        <value>No referrals yet</value>
+    </data>
+    <data name="Uninitialized" xml:space="preserve">
+        <value>Data not gathered</value>
+    </data>
+</root>

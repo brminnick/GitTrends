@@ -41,8 +41,9 @@ namespace GitTrends.Droid
             var analyticsService = scope.Resolve<IAnalyticsService>();
             var themeService = scope.Resolve<ThemeService>();
             var splashScreenPage = scope.Resolve<SplashScreenPage>();
+            var languageService = scope.Resolve<LanguageService>();
 
-            LoadApplication(new App(analyticsService, notificationService, themeService, splashScreenPage));
+            LoadApplication(new App(analyticsService, notificationService, themeService, splashScreenPage, languageService));
 
             TryHandleOpenedFromUri(Intent?.Data);
             TryHandleOpenedFromNotification(Intent);

@@ -109,7 +109,6 @@ namespace GitTrends
 
                 FontSize = _aliasLabelHeight - 4;
                 FontFamily = FontFamilyConstants.RobotoRegular;
-                Text = GitHubLoginButtonConstants.TryDemo;
 
                 this.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsDemoButtonVisible));
                 this.SetBinding(CommandProperty, nameof(SettingsViewModel.DemoButtonCommand));

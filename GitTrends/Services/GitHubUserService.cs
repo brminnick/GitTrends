@@ -17,7 +17,7 @@ namespace GitTrends
         public GitHubUserService(IPreferences preferences, ISecureStorage secureStorage) =>
             (_preferences, _secureStorage) = (preferences, secureStorage);
 
-        public bool IsDemoUser => Alias == DemoUserConstants.Alias;
+        public bool IsDemoUser => AvatarUrl == BaseTheme.GetGitTrendsImageSource();
 
         public bool IsAuthenticated => !string.IsNullOrWhiteSpace(Alias);
 
@@ -38,7 +38,6 @@ namespace GitTrends
             get => _preferences.Get(nameof(AvatarUrl), string.Empty);
             set => _preferences.Set(nameof(AvatarUrl), value);
         }
-
 
         public async Task<GitHubToken> GetGitHubToken()
         {

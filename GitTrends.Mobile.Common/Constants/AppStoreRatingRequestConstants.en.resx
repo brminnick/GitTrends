@@ -12,19 +12,16 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="RegisterForNotifications" xml:space="preserve">
-        <value>Register for Notifications</value>
+    <data name="iOS" xml:space="preserve">
+        <value>How about a review on the App Store, then?</value>
     </data>
-    <data name="Theme" xml:space="preserve">
-        <value>Theme</value>
+    <data name="Android" xml:space="preserve">
+        <value>How about a review on the Google Play Store, then?</value>
     </data>
-    <data name="PreferredChartSettingsLabelText" xml:space="preserve">
-        <value>Preferred Charts</value>
+    <data name="Windows" xml:space="preserve">
+        <value>How about a review on the Windows Store, then?</value>
     </data>
-    <data name="Language" xml:space="preserve">
-        <value>Language</value>
-    </data>
-    <data name="CreatedBy" xml:space="preserve">
-        <value>Created by Code Traveler LLC</value>
+    <data name="Other" xml:space="preserve">
+        <value>How about a posting a review, then?</value>
     </data>
 </root>

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
@@ -20,10 +19,8 @@ namespace GitTrends
         readonly Grid _contentGrid;
 
         public SettingsPage(SettingsViewModel settingsViewModel,
-                            TrendsChartSettingsService trendsChartSettingsService,
                             IAnalyticsService analyticsService,
-                            IMainThread mainThread,
-                            IVersionTracking versionTracking) : base(settingsViewModel, analyticsService, mainThread, PageTitles.SettingsPage, true)
+                            IMainThread mainThread) : base(settingsViewModel, analyticsService, mainThread, true)
         {
             const int separatorRowHeight = 1;
             const int settingsRowHeight = 38;
@@ -49,13 +46,15 @@ namespace GitTrends
                         (Row.NotificationsSeparator, AbsoluteGridLength(separatorRowHeight)),
                         (Row.Theme, AbsoluteGridLength(settingsRowHeight)),
                         (Row.ThemeSeparator, AbsoluteGridLength(separatorRowHeight)),
+                        (Row.Language, AbsoluteGridLength(settingsRowHeight)),
+                        (Row.LanguageSeparator, AbsoluteGridLength(separatorRowHeight)),
                         (Row.PreferredCharts, AbsoluteGridLength(80)),
                         (Row.Copyright, Star)),
 
                     ColumnDefinitions = Columns.Define(
                         (Column.Icon, AbsoluteGridLength(24)),
-                        (Column.Title, StarGridLength(3)),
-                        (Column.Button, StarGridLength(1))),
+                        (Column.Title, StarGridLength(5)),
+                        (Column.Button, StarGridLength(3))),
 
                     Children =
                     {
@@ -78,21 +77,33 @@ namespace GitTrends
 
                         new SvgImage("theme.svg", getSVGIconColor).Row(Row.Theme).Column(Column.Icon),
                         new ThemeLabel().Row(Row.Theme).Column(Column.Title),
-                        new ThemePicker().Row(Row.Theme).Column(Column.Button),
+                        new SettingsPicker(SettingsPageAutomationIds.ThemePicker, 70).Row(Row.Theme).Column(Column.Button)
+                            .Bind(Picker.ItemsSourceProperty, nameof(SettingsViewModel.ThemePickerItemsSource))
+                            .Bind(Picker.SelectedIndexProperty, nameof(SettingsViewModel.ThemePickerSelectedIndex)),
 
                         new Separator().Row(Row.ThemeSeparator).ColumnSpan(All<Column>()),
 
-                        new PreferredChartsView(settingsViewModel).Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
+                        new SvgImage("language.svg", getSVGIconColor).Row(Row.Language).Column(Column.Icon),
+                        new LanguageLabel().Row(Row.Language).Column(Column.Title),
+                        new SettingsPicker(SettingsPageAutomationIds.ThemePicker, 100).Row(Row.Language).Column(Column.Button)
+                            .Bind(Picker.ItemsSourceProperty, nameof(SettingsViewModel.LanguagePickerItemsSource))
+                            .Bind(Picker.SelectedIndexProperty, nameof(SettingsViewModel.LanguagePickerSelectedIndex)),
 
-                        new CopyrightLabel(versionTracking).Row(Row.Copyright).ColumnSpan(All<Column>())
+                        new Separator().Row(Row.LanguageSeparator).ColumnSpan(All<Column>()),
+
+                        new PreferredChartsView(settingsViewModel, mainThread).Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
+
+                        new CopyrightLabel().Row(Row.Copyright).ColumnSpan(All<Column>())
                     }
                 }
             };
 
+            this.SetBinding(TitleProperty, nameof(SettingsViewModel.TitleText));
+
             static Color getSVGIconColor() => (Color)Application.Current.Resources[nameof(BaseTheme.IconColor)];
         }
 
-        enum Row { GitHubUser, GitHubUserSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, PreferredCharts, Copyright }
+        enum Row { GitHubUser, GitHubUserSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, Language, LanguageSeparator, PreferredCharts, Copyright }
         enum Column { Icon, Title, Button }
 
         protected override void OnDisappearing()
@@ -148,12 +159,17 @@ namespace GitTrends
 
         class RegisterForNotificationsLabel : TitleLabel
         {
-            public RegisterForNotificationsLabel() => Text = SettingsPageConstants.RegisterForNotifications;
+            public RegisterForNotificationsLabel() => this.SetBinding(TextProperty, nameof(SettingsViewModel.RegisterForNotificationsLabelText));
+        }
+
+        class LanguageLabel : TitleLabel
+        {
+            public LanguageLabel() => this.SetBinding(TextProperty, nameof(SettingsViewModel.LanguageLabelText));
         }
 
         class ThemeLabel : TitleLabel
         {
-            public ThemeLabel() => Text = SettingsPageConstants.Theme;
+            public ThemeLabel() => this.SetBinding(TextProperty, nameof(SettingsViewModel.ThemeLabelText));
         }
 
         class Separator : BoxView
@@ -172,24 +188,19 @@ namespace GitTrends
             }
         }
 
-        class ThemePicker : Picker
+        class SettingsPicker : Picker
         {
-            public ThemePicker()
+            public SettingsPicker(in string automationId, in int widthRequest)
             {
                 FontSize = 12;
+                WidthRequest = widthRequest;
+                AutomationId = automationId;
                 FontFamily = FontFamilyConstants.RobotoMedium;
-
-                WidthRequest = 70;
 
                 this.EndExpand();
 
-                AutomationId = SettingsPageAutomationIds.ThemePicker;
-
                 SetDynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
                 SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
-
-                this.SetBinding(ItemsSourceProperty, nameof(SettingsViewModel.ThemePickerItemsSource));
-                this.SetBinding(SelectedIndexProperty, nameof(SettingsViewModel.ThemePickerSelectedThemeIndex));
             }
         }
 
