@@ -12,19 +12,10 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="RegisterForNotifications" xml:space="preserve">
-        <value>Register for Notifications</value>
+    <data name="CloseButtonText" xml:space="preserve">
+        <value>Close</value>
     </data>
-    <data name="Theme" xml:space="preserve">
-        <value>Theme</value>
-    </data>
-    <data name="PreferredChartSettingsLabelText" xml:space="preserve">
-        <value>Preferred Charts</value>
-    </data>
-    <data name="Language" xml:space="preserve">
-        <value>Language</value>
-    </data>
-    <data name="CreatedBy" xml:space="preserve">
-        <value>Created by Code Traveler LLC</value>
+    <data name="ErrorPullToRefreshEventArgs" xml:space="preserve">
+        <value>Unable to retrieve referring sites. Check your internet connection and try again.</value>
     </data>
 </root>

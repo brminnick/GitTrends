@@ -28,7 +28,7 @@ namespace GitTrends
                                 DeepLinkingService deepLinkingService,
                                 IMainThread mainThread,
                                 FirstRunService firstRunService,
-                                GitHubUserService gitHubUserService) : base(repositoryViewModel, analyticsService, mainThread, PageTitles.RepositoryPage)
+                                GitHubUserService gitHubUserService) : base(repositoryViewModel, analyticsService, mainThread)
         {
             _firstRunService = firstRunService;
             _gitHubUserService = gitHubUserService;
@@ -101,6 +101,8 @@ namespace GitTrends
             {
                 Content = _refreshView;
             }
+
+            this.SetBinding(TitleProperty, nameof(RepositoryViewModel.TitleText));
         }
 
         public event EventHandler<string> SearchBarTextChanged

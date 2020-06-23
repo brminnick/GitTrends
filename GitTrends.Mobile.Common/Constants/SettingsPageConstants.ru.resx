@@ -126,4 +126,10 @@
   <data name="Theme" xml:space="preserve">
     <value>Тема</value>
   </data>
+  <data name="Language" xml:space="preserve">
+    <value>язык</value>
+  </data>
+  <data name="CreatedBy" xml:space="preserve">
+    <value>Создано Code Traveler LLC</value>
+  </data>
 </root>
