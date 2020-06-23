@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
@@ -20,10 +19,8 @@ namespace GitTrends
         readonly Grid _contentGrid;
 
         public SettingsPage(SettingsViewModel settingsViewModel,
-                            TrendsChartSettingsService trendsChartSettingsService,
                             IAnalyticsService analyticsService,
-                            IMainThread mainThread,
-                            IVersionTracking versionTracking) : base(settingsViewModel, analyticsService, mainThread, PageTitles.SettingsPage, true)
+                            IMainThread mainThread) : base(settingsViewModel, analyticsService, mainThread, true)
         {
             const int separatorRowHeight = 1;
             const int settingsRowHeight = 38;
@@ -94,12 +91,14 @@ namespace GitTrends
 
                         new Separator().Row(Row.LanguageSeparator).ColumnSpan(All<Column>()),
 
-                        new PreferredChartsView(settingsViewModel).Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
+                        new PreferredChartsView(settingsViewModel, mainThread).Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
 
-                        new CopyrightLabel(versionTracking).Row(Row.Copyright).ColumnSpan(All<Column>())
+                        new CopyrightLabel().Row(Row.Copyright).ColumnSpan(All<Column>())
                     }
                 }
             };
+
+            this.SetBinding(TitleProperty, nameof(SettingsViewModel.TitleText));
 
             static Color getSVGIconColor() => (Color)Application.Current.Resources[nameof(BaseTheme.IconColor)];
         }
@@ -160,17 +159,17 @@ namespace GitTrends
 
         class RegisterForNotificationsLabel : TitleLabel
         {
-            public RegisterForNotificationsLabel() => Text = SettingsPageConstants.RegisterForNotifications;
+            public RegisterForNotificationsLabel() => this.SetBinding(TextProperty, nameof(SettingsViewModel.RegisterForNotificationsLabelText));
         }
 
         class LanguageLabel : TitleLabel
         {
-            public LanguageLabel() => Text = SettingsPageConstants.Language;
+            public LanguageLabel() => this.SetBinding(TextProperty, nameof(SettingsViewModel.LanguageLabelText));
         }
 
         class ThemeLabel : TitleLabel
         {
-            public ThemeLabel() => Text = SettingsPageConstants.Theme;
+            public ThemeLabel() => this.SetBinding(TextProperty, nameof(SettingsViewModel.ThemeLabelText));
         }
 
         class Separator : BoxView

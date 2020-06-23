@@ -42,14 +42,16 @@ namespace GitTrends
             }
         }
 
+        public void Initialize() => SetLanguage(PreferedLanguage);
+
         void SetLanguage(in string culture)
         {
-            var currentCulture = CultureInfo.CurrentCulture.Name;
+            var currentCulture = CultureInfo.DefaultThreadCurrentUICulture?.Name;
 
-            if(currentCulture != culture)
+            if (currentCulture != culture)
             {
-                CultureInfo.CurrentCulture = new CultureInfo(culture, false);
-                CultureInfo.CurrentUICulture = new CultureInfo(culture, false);
+                CultureInfo.DefaultThreadCurrentCulture= new CultureInfo(culture, false);
+                CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(culture, false);
 
                 OnPreferredLanguageChanged(culture);
             }

@@ -20,8 +20,9 @@ namespace GitTrends
         public TrendsPage(TrendsViewModel trendsViewModel,
                             Repository repository,
                             IAnalyticsService analyticsService,
-                            IMainThread mainThread) : base(trendsViewModel, analyticsService, mainThread, repository.Name, true)
+                            IMainThread mainThread) : base(trendsViewModel, analyticsService, mainThread, true)
         {
+            Title = repository.Name;
             _repository = repository;
 
             ViewModel.FetchDataCommand.Execute((repository, _fetchDataCancellationTokenSource.Token));

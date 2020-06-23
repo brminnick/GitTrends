@@ -129,4 +129,7 @@
     <data name="Language" xml:space="preserve">
       <value>Sprache</value>
     </data>
+    <data name="CreatedBy" xml:space="preserve">
+        <value>Erstellt von Code Traveler LLC</value>
+    </data>
 </root>

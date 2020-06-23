@@ -24,4 +24,7 @@
     <data name="Language" xml:space="preserve">
         <value>Language</value>
     </data>
+    <data name="CreatedBy" xml:space="preserve">
+        <value>Created by Code Traveler LLC</value>
+    </data>
 </root>

@@ -43,8 +43,9 @@ namespace GitTrends.iOS
             var analyticsService = scope.Resolve<IAnalyticsService>();
             var themeService = scope.Resolve<ThemeService>();
             var splashScreenPage = scope.Resolve<SplashScreenPage>();
+            var languageService = scope.Resolve<LanguageService>();
 
-            LoadApplication(new App(analyticsService, notificationService, themeService, splashScreenPage));
+            LoadApplication(new App(analyticsService, notificationService, themeService, splashScreenPage, languageService));
 
             if (launchOptions?.ContainsKey(UIApplication.LaunchOptionsLocalNotificationKey) is true)
                 HandleLocalNotification((UILocalNotification)launchOptions[UIApplication.LaunchOptionsLocalNotificationKey]).SafeFireAndForget(ex => scope.Resolve<IAnalyticsService>().Report(ex));

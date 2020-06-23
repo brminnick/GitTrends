@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using Syncfusion.XForms.Buttons;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -11,7 +13,7 @@ namespace GitTrends
 {
     class PreferredChartsView : Grid
     {
-        public PreferredChartsView(SettingsViewModel settingsViewModel)
+        public PreferredChartsView(SettingsViewModel settingsViewModel, IMainThread mainThread)
         {
             RowSpacing = 2;
 
@@ -22,7 +24,7 @@ namespace GitTrends
                 (Row.Control, StarGridLength(2)));
 
             Children.Add(new PreferredChartSettingsLabel().Row(Row.Label));
-            Children.Add(new PreferredChartSettingsControl(settingsViewModel).Row(Row.Control));
+            Children.Add(new PreferredChartSettingsControl(settingsViewModel, mainThread).Row(Row.Control));
         }
 
         enum Row { Label, Control }
@@ -31,9 +33,9 @@ namespace GitTrends
         {
             public PreferredChartSettingsLabel()
             {
-                Text = SettingsPageConstants.PreferredChartSettingsLabelText;
-                AutomationId = SettingsPageAutomationIds.TrendsChartSettingsLabel;
                 VerticalTextAlignment = TextAlignment.Start;
+                AutomationId = SettingsPageAutomationIds.TrendsChartSettingsLabel;
+                this.SetBinding(TextProperty, nameof(SettingsViewModel.PreferredChartsLabelText));
             }
         }
 
@@ -41,19 +43,27 @@ namespace GitTrends
         {
             const double cornerRadius = 4;
             readonly SettingsViewModel _settingsViewModel;
+            readonly IMainThread _mainThread;
 
-            public PreferredChartSettingsControl(in SettingsViewModel settingsViewModel)
+            public PreferredChartSettingsControl(in SettingsViewModel settingsViewModel, in IMainThread mainThread)
             {
+                LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
+
+                _mainThread = mainThread;
                 _settingsViewModel = settingsViewModel;
+
+                FontSize = 12;
+                FontFamily = FontFamilyConstants.RobotoMedium;
 
                 CornerRadius = cornerRadius;
                 AutomationId = SettingsPageAutomationIds.TrendsChartSettingsControl;
-                ItemsSource = TrendsChartConstants.TrendsChartTitles.Values.ToList();
+
                 VisibleSegmentsCount = TrendsChartConstants.TrendsChartTitles.Values.Count;
+
                 SelectedIndex = _settingsViewModel.PreferredChartsSelectedIndex;
                 SelectionIndicatorSettings = new TrendsChartSettingsSelectionIndicatorSettings();
-                FontFamily = FontFamilyConstants.RobotoMedium;
-                FontSize = 12;
+
+                SetItemSource();
 
                 SetDynamicResource(FontColorProperty, nameof(BaseTheme.BorderButtonFontColor));
                 SetDynamicResource(BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor));
@@ -61,6 +71,10 @@ namespace GitTrends
 
                 this.SetBinding(SelectedIndexProperty, nameof(SettingsViewModel.PreferredChartsSelectedIndex));
             }
+
+            void HandlePreferredLanguageChanged(object sender, string e) => _mainThread.BeginInvokeOnMainThread(SetItemSource);
+
+            void SetItemSource() => ItemsSource = TrendsChartConstants.TrendsChartTitles.Values.ToList();
 
             class TrendsChartSettingsSelectionIndicatorSettings : SelectionIndicatorSettings
             {

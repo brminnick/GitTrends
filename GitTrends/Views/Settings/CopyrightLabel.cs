@@ -1,5 +1,4 @@
 ﻿using GitTrends.Mobile.Common;
-using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 
@@ -7,36 +6,26 @@ namespace GitTrends
 {
     class CopyrightLabel : Label
     {
-        public CopyrightLabel(IVersionTracking versionTracking)
+        public CopyrightLabel()
         {
-            this.BindTapGesture(nameof(SettingsViewModel.CopyrightLabelTappedCommand));
+            Opacity = 0.85;
 
-            AutomationId = SettingsPageAutomationIds.CopyrightLabel;
-
+            FontSize = 12;
+            LineHeight = 1.82;
+            FontFamily = FontFamilyConstants.RobotoMedium;
             LineBreakMode = LineBreakMode.WordWrap;
 
             VerticalOptions = LayoutOptions.EndAndExpand;
             HorizontalOptions = LayoutOptions.CenterAndExpand;
 
             VerticalTextAlignment = TextAlignment.End;
-            HorizontalTextAlignment = TextAlignment.Center;
+            HorizontalTextAlignment = TextAlignment.Center;            
 
-            FontSize = 12;
-            FontFamily = FontFamilyConstants.RobotoMedium;
+            AutomationId = SettingsPageAutomationIds.CopyrightLabel;
 
-            LineHeight = 1.82;
+            this.SetBinding(TextProperty, nameof(SettingsViewModel.CopyrightLabelText));
 
-            Opacity = 0.85;
-
-#if DEBUG
-            var versionNumberText = $"Version {versionTracking.CurrentVersion} (Debug)";
-#elif RELEASE
-            var versionNumberText = $"Version {versionTracking.CurrentVersion} (Release)";
-#else
-            var versionNumberText = $"Version {versionTracking.CurrentVersion}";
-#endif
-
-            Text = $"{versionNumberText}\nCreated by Code Traveler LLC";
+            this.BindTapGesture(nameof(SettingsViewModel.CopyrightLabelTappedCommand));
 
             SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
         }
