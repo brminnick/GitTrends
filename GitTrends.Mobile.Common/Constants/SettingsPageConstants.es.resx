@@ -21,4 +21,10 @@
     <data name="PreferredChartSettingsLabelText" xml:space="preserve">
         <value>Gráficas preferidas</value>
     </data>
+    <data name="Language" xml:space="preserve">
+        <value>Idioma</value>
+    </data>
+    <data name="CreatedBy" xml:space="preserve">
+        <value>Creado por Code Traveler LLC</value>
+    </data>
 </root>

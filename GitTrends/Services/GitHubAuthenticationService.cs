@@ -39,6 +39,7 @@ namespace GitTrends
             _preferences = preferences;
 
             ThemeService.PreferenceChanged += HandlePreferenceChanged;
+            LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
         }
 
         public event EventHandler AuthorizeSessionStarted
@@ -75,9 +76,7 @@ namespace GitTrends
         {
             await LogOut().ConfigureAwait(false);
 
-            _gitHubUserService.Name = DemoUserConstants.Name;
-            _gitHubUserService.Alias = DemoUserConstants.Alias;
-            _gitHubUserService.AvatarUrl = BaseTheme.GetGitTrendsImageSource();
+            SetDemoUserUserValues();
 
             OnDemoUserActivated();
         }
@@ -142,13 +141,25 @@ namespace GitTrends
             OnLoggedOut();
         }
 
-        async void HandlePreferenceChanged(object sender, PreferredTheme e)
+        void HandlePreferenceChanged(object sender, PreferredTheme e)
         {
-            //Ensure the Demo User Alias matches the PreferredTheme
-            if (_gitHubUserService.Alias == DemoUserConstants.Alias)
-            {
-                await ActivateDemoUser();
-            }
+            //Ensure the Demo User Avatar matches the PreferredTheme
+            if (_gitHubUserService.IsDemoUser)
+                SetDemoUserUserValues();
+        }
+
+        void HandlePreferredLanguageChanged(object sender, string e)
+        {
+            //Update Demo User Translations
+            if (_gitHubUserService.IsDemoUser)
+                SetDemoUserUserValues();
+        }
+
+        void SetDemoUserUserValues()
+        {
+            _gitHubUserService.Name = DemoUserConstants.Name;
+            _gitHubUserService.Alias = DemoUserConstants.Alias;
+            _gitHubUserService.AvatarUrl = BaseTheme.GetGitTrendsImageSource();
         }
 
         void OnAuthorizeSessionCompleted(bool isSessionAuthorized) =>

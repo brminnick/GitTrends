@@ -12,19 +12,13 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="RegisterForNotifications" xml:space="preserve">
-        <value>Register for Notifications</value>
+    <data name="TryDemo" xml:space="preserve">
+        <value>Try Demo</value>
     </data>
-    <data name="Theme" xml:space="preserve">
-        <value>Theme</value>
+    <data name="WelcomeToGitTrends" xml:space="preserve">
+        <value>Welcome to GitTrends</value>
     </data>
-    <data name="PreferredChartSettingsLabelText" xml:space="preserve">
-        <value>Preferred Charts</value>
-    </data>
-    <data name="Language" xml:space="preserve">
-        <value>Language</value>
-    </data>
-    <data name="CreatedBy" xml:space="preserve">
-        <value>Created by Code Traveler LLC</value>
+    <data name="MonitorYourRepos" xml:space="preserve">
+        <value>Monitor your GitHub repos with ease</value>
     </data>
 </root>

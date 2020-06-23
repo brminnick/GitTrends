@@ -23,5 +23,6 @@
 
         public const string RegisterForNotificationsSwitch = nameof(SettingsPageAutomationIds) + nameof(RegisterForNotificationsSwitch);
         public const string ThemePicker = nameof(SettingsPageAutomationIds) + nameof(ThemePicker);
+        public const string LanguagePicker = nameof(SettingsPageAutomationIds) + nameof(LanguagePicker);
     }
 }

@@ -11,12 +11,10 @@ namespace GitTrends
 
         protected BaseContentPage(in IAnalyticsService analyticsService,
                                     IMainThread mainThread,
-                                    in string title = "",
                                     bool shouldUseSafeArea = false)
         {
             MainThread = mainThread;
             AnalyticsService = analyticsService;
-            Title = title;
 
             SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 
@@ -44,8 +42,8 @@ namespace GitTrends
 
     public abstract class BaseContentPage<T> : BaseContentPage where T : BaseViewModel
     {
-        protected BaseContentPage(in T viewModel, IAnalyticsService analyticsService, IMainThread mainThread, in string title = "", bool shouldUseSafeArea = false)
-            : base(analyticsService, mainThread, title, shouldUseSafeArea)
+        protected BaseContentPage(in T viewModel, IAnalyticsService analyticsService, IMainThread mainThread, bool shouldUseSafeArea = false)
+            : base(analyticsService, mainThread, shouldUseSafeArea)
         {
             BindingContext = ViewModel = viewModel;
         }
