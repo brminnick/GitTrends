@@ -120,4 +120,10 @@
   <data name="PreferredChartSettingsLabelText" xml:space="preserve">
     <value>Gráficos Preferidos</value>
   </data>
+  <data name="RegisterForNotifications" xml:space="preserve">
+    <value>Aceitar Notificações</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Tema</value>
+  </data>
 </root>
