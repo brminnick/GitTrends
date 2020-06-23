@@ -36,16 +36,16 @@ namespace GitTrends.UnitTests
         public void ConfirmCulturesExists()
         {
             //Arrange
-            var cultures = CultureConstants.CulturePickerOptions.Keys;
+            var cultureNames = CultureConstants.CulturePickerOptions.Keys;
             var resxCultureInfoList = new List<CultureInfo[]>(_resxTypeList.Select(x => GetAvailableResxCultureInfos(x.Assembly)));
 
             //Act
             foreach (var cultureInfo in resxCultureInfoList)
             {
-                foreach (var culture in cultures)
+                foreach (var cultureName in cultureNames)
                 {
                     //Assert
-                    Assert.IsTrue(cultureInfo.Any(x => x.Name == culture));
+                    Assert.IsTrue(cultureInfo.Any(x => x.Name == cultureName));
                 }
             }
         }
