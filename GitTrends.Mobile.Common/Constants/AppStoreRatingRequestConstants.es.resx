@@ -19,7 +19,7 @@
         <value>¿Qué tal una recomendación en la Google Play Store, entonces?</value>
     </data>
     <data name="Windows" xml:space="preserve">
-        <value>¿Qué tal una recomendación en la Windows Store, entonces?</value>
+        <value>¿Qué tal una recomendación en la Microsoft Store, entonces?</value>
     </data>
     <data name="Other" xml:space="preserve">
         <value>¿Qué tal si publicas una recomendación, entonces?</value>
