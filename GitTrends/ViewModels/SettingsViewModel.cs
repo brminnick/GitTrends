@@ -356,7 +356,7 @@ namespace GitTrends
 #elif RELEASE
                 return $"v{versionTracking.CurrentVersion} (Release)";
 #else
-                return = $"v{versionTracking.CurrentVersion}";
+                return $"v{versionTracking.CurrentVersion}";
 #endif
             }
         }
