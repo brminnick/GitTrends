@@ -32,23 +32,20 @@ namespace GitTrends.UnitTests
             typeof(WelcomePageConstants)
         };
 
-        [TestCase("de")]
-        [TestCase("ru")]
-        [TestCase("nl")]
-        [TestCase("pt")]
-        public void ConfirmCultureExists(string culture)
+        [Test]
+        public void ConfirmCulturesExists()
         {
             //Arrange
-            var cultures = CultureConstants.CulturePickerOptions.Keys;
+            var cultureNames = CultureConstants.CulturePickerOptions.Keys;
             var resxCultureInfoList = new List<CultureInfo[]>(_resxTypeList.Select(x => GetAvailableResxCultureInfos(x.Assembly)));
 
             //Act
             foreach (var cultureInfo in resxCultureInfoList)
             {
-                foreach (var _culture in cultures)
+                foreach (var cultureName in cultureNames)
                 {
                     //Assert
-                    Assert.IsTrue(cultureInfo.Any(x => x.Name == _culture));
+                    Assert.IsTrue(cultureInfo.Any(x => x.Name == cultureName));
                 }
             }
         }
