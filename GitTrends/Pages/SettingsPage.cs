@@ -85,7 +85,7 @@ namespace GitTrends
 
                         new SvgImage("language.svg", getSVGIconColor).Row(Row.Language).Column(Column.Icon),
                         new LanguageLabel().Row(Row.Language).Column(Column.Title),
-                        new SettingsPicker(SettingsPageAutomationIds.ThemePicker, 100).Row(Row.Language).Column(Column.Button)
+                        new SettingsPicker(SettingsPageAutomationIds.LanguagePicker, 100).Row(Row.Language).Column(Column.Button)
                             .Bind(Picker.ItemsSourceProperty, nameof(SettingsViewModel.LanguagePickerItemsSource))
                             .Bind(Picker.SelectedIndexProperty, nameof(SettingsViewModel.LanguagePickerSelectedIndex)),
 
