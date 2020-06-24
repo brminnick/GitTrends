@@ -15,7 +15,7 @@ namespace GitTrends.UITests
             _storeRatingRequestTitleLabel, _storeRatingRequestNoButton, _storeRatingRequestYesButton,
             _emptyDataView;
 
-        public ReferringSitesPage(IApp app) : base(app, PageTitles.ReferringSitesPage)
+        public ReferringSitesPage(IApp app) : base(app, () => PageTitles.ReferringSitesPage)
         {
             _collectionView = GenerateMarkedQuery(ReferringSitesPageAutomationIds.CollectionView);
             _refreshView = GenerateMarkedQuery(ReferringSitesPageAutomationIds.RefreshView);

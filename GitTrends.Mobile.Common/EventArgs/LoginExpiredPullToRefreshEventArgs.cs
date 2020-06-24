@@ -1,8 +1,10 @@
-﻿namespace GitTrends.Mobile.Common
+﻿using GitTrends.Mobile.Common.Constants;
+
+namespace GitTrends.Mobile.Common
 {
     public class LoginExpiredPullToRefreshEventArgs : PullToRefreshFailedEventArgs
     {
-        public LoginExpiredPullToRefreshEventArgs() : base("Login Expired", "Please login again")
+        public LoginExpiredPullToRefreshEventArgs() : base(EmptyDataViewConstantsInternal.LoginExpired, EmptyDataViewConstantsInternal.PleaseLoginAgain)
         {
         }
     }

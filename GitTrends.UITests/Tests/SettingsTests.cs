@@ -106,6 +106,25 @@ namespace GitTrends.UITests
         }
 
         [Test]
+        public async Task VerifyLanguagePicker()
+        {
+            //Arange
+            string? preferredLanguage_Initial, preferredLanguage_Final;
+            var preferredLanguage = CultureConstants.CulturePickerOptions.Values.Skip(1).First();
+
+            //Act
+            preferredLanguage_Initial = SettingsPage.PreferredLanguage;
+
+            await SettingsPage.SelectLanguage(preferredLanguage);
+
+            preferredLanguage_Final = SettingsPage.PreferredLanguage;
+
+            //Assert
+            Assert.AreEqual(preferredLanguage_Final, preferredLanguage);
+            Assert.AreNotEqual(preferredLanguage_Final, preferredLanguage_Initial);
+        }
+
+        [Test]
         public async Task VerifyChartSettingsOptions()
         {
             //Arrange

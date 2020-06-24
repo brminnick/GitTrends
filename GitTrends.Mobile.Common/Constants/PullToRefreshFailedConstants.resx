@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="UnableToConnectToGitHub" xml:space="preserve">
+        <value>Unable To Connect To GitHub</value>
+    </data>
+    <data name="UsageLimitExceeded" space="preserve">
+        <value>Usage Limit Exceeded</value>
+    </data>
+    <data name="GitHubApiLimit" space="preserve">
+        <value>The GitHub API limits our API requests to 5,000 requests per user per hour</value>
+    </data>
+    <data name="MinutesReset" space="preserve">
+        <value>The current limit is scheduled to reset in {0} minutes</value>
+    </data>
+    <data name="LearnMore" space="preserve">
+        <value>Learn more</value>
+    </data>
+</root>

@@ -49,6 +49,7 @@ namespace GitTrends
                         (Row.Language, AbsoluteGridLength(settingsRowHeight)),
                         (Row.LanguageSeparator, AbsoluteGridLength(separatorRowHeight)),
                         (Row.PreferredCharts, AbsoluteGridLength(80)),
+                        (Row.CopyrightPadding, AbsoluteGridLength(20)),
                         (Row.Copyright, Star)),
 
                     ColumnDefinitions = Columns.Define(
@@ -103,7 +104,7 @@ namespace GitTrends
             static Color getSVGIconColor() => (Color)Application.Current.Resources[nameof(BaseTheme.IconColor)];
         }
 
-        enum Row { GitHubUser, GitHubUserSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, Language, LanguageSeparator, PreferredCharts, Copyright }
+        enum Row { GitHubUser, GitHubUserSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, Language, LanguageSeparator, PreferredCharts, CopyrightPadding, Copyright }
         enum Column { Icon, Title, Button }
 
         protected override void OnDisappearing()

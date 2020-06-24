@@ -19,13 +19,14 @@ namespace GitTrends
         readonly static WeakEventManager _popPageStartedEventManager = new WeakEventManager();
         readonly static WeakEventManager<Page> _popPageCompletedEventManager = new WeakEventManager<Page>();
 
-        readonly GitHubAuthenticationService _gitHubAuthenticationService;
+        readonly IMainThread _mainThread;
+        readonly ThemeService _themeService;
+        readonly LanguageService _languageService;
+        readonly GitHubUserService _gitHubUserService;
+        readonly NotificationService _notificationService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly TrendsChartSettingsService _trendsChartSettingsService;
-        readonly NotificationService _notificationService;
-        readonly ThemeService _themeService;
-        readonly GitHubUserService _gitHubUserService;
-        readonly IMainThread _mainThread;
+        readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
         public UITestsBackdoorService(GitHubAuthenticationService gitHubAuthenticationService,
                                         NotificationService notificationService,
@@ -33,10 +34,12 @@ namespace GitTrends
                                         TrendsChartSettingsService trendsChartSettingsService,
                                         ThemeService themeService,
                                         GitHubUserService gitHubUserService,
-                                        IMainThread mainThread)
+                                        IMainThread mainThread,
+                                        LanguageService languageService)
         {
             _mainThread = mainThread;
             _themeService = themeService;
+            _languageService = languageService;
             _gitHubUserService = gitHubUserService;
             _notificationService = notificationService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
@@ -55,6 +58,8 @@ namespace GitTrends
             add => _popPageCompletedEventManager.AddEventHandler(value);
             remove => _popPageCompletedEventManager.RemoveEventHandler(value);
         }
+
+        public string? GetPreferredLanguage() => _languageService.PreferredLanguage;
 
         public string GetLoggedInUserAlias() => _gitHubUserService.Alias;
         public string GetLoggedInUserName() => _gitHubUserService.Name;

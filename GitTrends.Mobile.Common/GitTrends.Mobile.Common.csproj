@@ -445,6 +445,10 @@
         <EmbeddedResource Update="Constants\WelcomePageConstants.es.resx">
             <DependentUpon> WelcomePageConstants.resx </DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\PullToRefreshFailedConstants.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>PullToRefreshFailedConstants.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
@@ -502,6 +506,9 @@
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
+        </Compile>
+        <Compile Update="Constants\PullToRefreshFailedConstants.Designer.cs">
+          <DependentUpon>PullToRefreshFailedConstants.resx</DependentUpon>
         </Compile>
     </ItemGroup>
     <ItemGroup>

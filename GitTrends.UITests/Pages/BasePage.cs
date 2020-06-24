@@ -10,13 +10,14 @@ namespace GitTrends.UITests
 {
     abstract class BasePage
     {
-        Query _iOSSafariView, _iOSEmailView;
+        readonly Query _iOSSafariView, _iOSEmailView;
+        readonly Func<string>? _getPageTitle;
         const string _syncfusionLicenseWarningTitle = "Syncfusion License";
 
-        protected BasePage(IApp app, string pageTitle = "")
+        protected BasePage(IApp app, Func<string>? getPageTitle = null)
         {
             App = app;
-            PageTitle = pageTitle;
+            _getPageTitle = getPageTitle;
 
             _iOSSafariView = x => x.Class("SFSafariView");
             _iOSEmailView = GenerateMarkedQuery("RemoteViewBridge");
@@ -36,7 +37,7 @@ namespace GitTrends.UITests
             _ => throw new NotSupportedException("Browser Can Only Be Verified on iOS")
         };
 
-        public string PageTitle { get; }
+        public string PageTitle => _getPageTitle?.Invoke() ?? string.Empty;
         protected IApp App { get; }
 
         public void WaitForEmailToOpen()

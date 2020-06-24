@@ -19,6 +19,7 @@ namespace GitTrends.Mobile.Common
         public const string GetLoggedInUserAlias = nameof(GetLoggedInUserAlias);
         public const string GetLoggedInUserName = nameof(GetLoggedInUserName);
         public const string GetLoggedInUserAvatarUrl = nameof(GetLoggedInUserAvatarUrl);
+        public const string GetPreferredLanguage = nameof(GetPreferredLanguage);
     }
 }
 #endif
