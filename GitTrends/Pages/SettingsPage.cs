@@ -142,7 +142,6 @@ namespace GitTrends
             {
                 //Allow LoginRowTappableView to handle taps
                 InputTransparent = true;
-                AutomationId = SettingsPageAutomationIds.LoginButton;
             }
         }
 

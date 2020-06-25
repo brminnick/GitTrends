@@ -22,7 +22,6 @@
 
         #region Login Row
         public const string LoginTitleLabel = nameof(SettingsPageAutomationIds) + nameof(LoginTitleLabel);
-        public const string LoginButton = nameof(SettingsPageAutomationIds) + nameof(LoginButton);
         #endregion
 
         #region RegisterForNotifications Row

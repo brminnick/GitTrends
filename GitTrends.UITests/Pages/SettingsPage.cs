@@ -14,11 +14,12 @@ namespace GitTrends.UITests
 {
     class SettingsPage : BasePage
     {
-        readonly Query _gitHubAvatarImage, _gitHubAliasLabel, _gitHubNameLabel, _loginButton,
+        readonly Query _gitHubAvatarImage, _gitHubAliasLabel, _gitHubNameLabel,
             _gitHubSettingsViewActivityIndicator, _preferredChartSettingsLabel,
             _preferredChartSettingsControl, _tryDemoButton, _copyrightLabel,
             _registerForNotiicationsSwitch, _gitHubUserView, _themePicker, _themePickerContainer,
-            _languagePicker, _languagePickerContainer, _registerForNotificationsTitleLabel, _themeTitleLabel, _loginTitleLabel, _languageTitleLabel;
+            _languagePicker, _languagePickerContainer, _registerForNotificationsTitleLabel, _themeTitleLabel,
+            _loginTitleLabel, _languageTitleLabel;
 
         public SettingsPage(IApp app) : base(app, () => PageTitles.SettingsPage)
         {
@@ -30,7 +31,6 @@ namespace GitTrends.UITests
             _gitHubSettingsViewActivityIndicator = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubSettingsViewActivityIndicator);
 
             _loginTitleLabel = GenerateMarkedQuery(SettingsPageAutomationIds.LoginTitleLabel);
-            _loginButton = GenerateMarkedQuery(SettingsPageAutomationIds.LoginButton);
 
             _registerForNotificationsTitleLabel = GenerateMarkedQuery(SettingsPageAutomationIds.RegisterForNotificationsTitleLabel);
             _registerForNotiicationsSwitch = GenerateMarkedQuery(SettingsPageAutomationIds.RegisterForNotificationsSwitch);
@@ -60,7 +60,6 @@ namespace GitTrends.UITests
         public string GitHubNameLabelText => GetText(_gitHubNameLabel);
         public string GitHubAliasLabelText => GetText(_gitHubAliasLabel);
 
-        public string LoginButtonText => GetText(_loginButton);
         public string LoginTitleText => GetText(_loginTitleLabel);
 
         public string TryDemoButtonText => GetText(_tryDemoButton);
@@ -145,7 +144,7 @@ namespace GitTrends.UITests
 
         public void TapLoginButton()
         {
-            App.Tap(_loginButton);
+            App.Tap(_loginTitleLabel);
             App.Screenshot("Login Button Tapped");
         }
 

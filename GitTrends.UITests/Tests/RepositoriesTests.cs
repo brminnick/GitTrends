@@ -217,14 +217,14 @@ namespace GitTrends.UITests
             await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
 
             //Assert
-            Assert.AreEqual(GitHubLoginButtonConstants.Disconnect, SettingsPage.LoginButtonText);
+            Assert.AreEqual(GitHubLoginButtonConstants.Disconnect, SettingsPage.LoginTitleText);
 
             //Act
             SettingsPage.TapLoginButton();
             SettingsPage.WaitForGitHubLogoutToComplete();
 
             //Assert
-            Assert.AreEqual(GitHubLoginButtonConstants.ConnectToGitHub, SettingsPage.LoginButtonText);
+            Assert.AreEqual(GitHubLoginButtonConstants.ConnectToGitHub, SettingsPage.LoginTitleText);
 
             //Act
             SettingsPage.TapBackButton();

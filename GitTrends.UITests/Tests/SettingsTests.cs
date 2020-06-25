@@ -174,7 +174,6 @@ namespace GitTrends.UITests
 
                 if (UserType is UserType.Demo)
                 {
-                    Assert.AreNotEqual(gitHubAliasText_Final, gitHubAliasText_Initial);
                     Assert.AreNotEqual(gitHubNameText_Final, gitHubNameText_Initial);
                 }
                 else
