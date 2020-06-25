@@ -16,8 +16,6 @@ namespace GitTrends.UITests
     [TestFixture(Platform.Android, UserType.LoggedIn)]
     class SettingsTests : BaseUITest
     {
-        string _repositoryPageTitle_BeforeEachTest = string.Empty;
-
         public SettingsTests(Platform platform, UserType userType) : base(platform, userType)
         {
         }
@@ -25,8 +23,6 @@ namespace GitTrends.UITests
         public override async Task BeforeEachTest()
         {
             await base.BeforeEachTest().ConfigureAwait(false);
-
-            _repositoryPageTitle_BeforeEachTest = RepositoryPage.PageTitle;
 
             RepositoryPage.TapSettingsButton();
             await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
@@ -113,94 +109,88 @@ namespace GitTrends.UITests
         {
             //Arrange
             string? preferredLanguage_Initial, preferredLanguage_Final;
-            string themeTitleLabelText_Initial, themeTitleLabelText_Final, languageTitleLabelText_Initial, languageTitleLabelText_Final,
-                settingsPageTitle_Initial, settingsPageTitle_Final, copyrightLabelTitleLabelText_Initial, copyrightLabelTitleLabelText_Final,
-                gitHubNameText_Initial, gitHubNameText_Final, gitHubAliasText_Initial, gitHubAliasText_Final, tryDemoButtonText_Initial, tryDemoButtonText_Final,
-                loginTitleLabelText_Initial, loginTitleLabelText_Final, registerForNotificationsTitleLabelText_Initial, registerForNotificationsTitleLabelText_Final,
-                preferredChartsTitleTitleLabelText_Initial, preferredChartsTitleTitleLabelText_Final, preferredChartsAllTitleLabelText_Initial, preferredChartsAllTitleLabelText_Final,
-                preferredChartsNoUniquesTitleLabelText_Initial, preferredChartsNoUniquesTitleLabelText_Final, preferredChartsOnlyUniquesTitleLabelText_Initial, preferredChartsOnlyUniquesTitleLabelText_Final;
+            string gitHubNameText, gitHubAliasText, tryDemoButtonText, loginTitleLabelText_Disconnect, loginTitleLabelText_Connect,
+                themeTitleLabelText, languageTitleLabelText, settingsPageTitle, copyrightLabelTitleLabelText, registerForNotificationsTitleLabelText,
+                preferredChartsTitleTitleLabelText, preferredChartsAllTitleLabelText, preferredChartsNoUniquesTitleLabelText, preferredChartsOnlyUniquesTitleLabelText;
 
-            var previousLanguageRepositoryPageTitle = _repositoryPageTitle_BeforeEachTest;
 
-            //Act
             foreach (var preferredLanguageKeyValuePair in CultureConstants.CulturePickerOptions.Reverse())
             {
-                settingsPageTitle_Initial = SettingsPage.PageTitle;
-                gitHubNameText_Initial = SettingsPage.GitHubNameLabelText;
-                gitHubAliasText_Initial = SettingsPage.GitHubAliasLabelText;
-                loginTitleLabelText_Initial = SettingsPage.LoginTitleText;
+                //Act
                 preferredLanguage_Initial = SettingsPage.PreferredLanguage;
-                themeTitleLabelText_Initial = SettingsPage.ThemeTitleLabelText;
-                languageTitleLabelText_Initial = SettingsPage.LangageTitleLabelText;
-                copyrightLabelTitleLabelText_Initial = SettingsPage.CopyrightLabelText;
-                preferredChartsTitleTitleLabelText_Initial = SettingsPage.PreferredChartLabelText;
-                registerForNotificationsTitleLabelText_Initial = SettingsPage.RegisterForNotificationsTitleLabelText;
-
-                preferredChartsAllTitleLabelText_Initial = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.All];
-                preferredChartsNoUniquesTitleLabelText_Initial = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.NoUniques];
-                preferredChartsOnlyUniquesTitleLabelText_Initial = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.JustUniques];
-
-                SettingsPage.TapLoginButton();
-                tryDemoButtonText_Initial = SettingsPage.TryDemoButtonText;
-                SettingsPage.TapTryDemoButton();
 
                 await SettingsPage.SelectLanguage(preferredLanguageKeyValuePair.Value).ConfigureAwait(false);
 
-                settingsPageTitle_Final = SettingsPage.PageTitle;
-                gitHubNameText_Final = SettingsPage.GitHubNameLabelText;
-                gitHubAliasText_Final = SettingsPage.GitHubAliasLabelText;
-                loginTitleLabelText_Final = SettingsPage.LoginTitleText;
                 preferredLanguage_Final = SettingsPage.PreferredLanguage;
-                themeTitleLabelText_Final = SettingsPage.ThemeTitleLabelText;
-                languageTitleLabelText_Final = SettingsPage.LangageTitleLabelText;
-                copyrightLabelTitleLabelText_Final = SettingsPage.CopyrightLabelText;
-                preferredChartsTitleTitleLabelText_Final = SettingsPage.PreferredChartLabelText;
-                registerForNotificationsTitleLabelText_Final = SettingsPage.RegisterForNotificationsTitleLabelText;
 
-                preferredChartsAllTitleLabelText_Final = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.All];
-                preferredChartsNoUniquesTitleLabelText_Final = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.NoUniques];
-                preferredChartsOnlyUniquesTitleLabelText_Final = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.JustUniques];
+                settingsPageTitle = SettingsPage.PageTitle;
+                gitHubNameText = SettingsPage.GitHubNameLabelText;
+                gitHubAliasText = SettingsPage.GitHubAliasLabelText;
+                themeTitleLabelText = SettingsPage.ThemeTitleLabelText;
+                languageTitleLabelText = SettingsPage.LangageTitleLabelText;
+                loginTitleLabelText_Disconnect = SettingsPage.LoginTitleText;
+                copyrightLabelTitleLabelText = SettingsPage.CopyrightLabelText;
+                preferredChartsTitleTitleLabelText = SettingsPage.PreferredChartLabelText;
+                registerForNotificationsTitleLabelText = SettingsPage.RegisterForNotificationsTitleLabelText;
+
+                preferredChartsAllTitleLabelText = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.All];
+                preferredChartsNoUniquesTitleLabelText = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.NoUniques];
+                preferredChartsOnlyUniquesTitleLabelText = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.JustUniques];
 
                 SettingsPage.TapLoginButton();
-                tryDemoButtonText_Final = SettingsPage.TryDemoButtonText;
-                SettingsPage.TapTryDemoButton();
+                tryDemoButtonText = SettingsPage.TryDemoButtonText;
+                loginTitleLabelText_Connect = SettingsPage.LoginTitleText;
+
+                await login().ConfigureAwait(false);
 
                 SettingsPage.TapBackButton();
 
                 //Assert
-                Assert.AreNotEqual(RepositoryPage.PageTitle, previousLanguageRepositoryPageTitle);
+                Assert.AreEqual(PageTitles.RepositoryPage, RepositoryPage.PageTitle);
 
+                Assert.AreNotEqual(preferredLanguage_Final, preferredLanguage_Initial);
                 Assert.AreEqual(preferredLanguage_Final, string.IsNullOrWhiteSpace(preferredLanguageKeyValuePair.Key) ? null : preferredLanguageKeyValuePair.Key);
+
+                Assert.AreEqual(PageTitles.SettingsPage, settingsPageTitle);
+                Assert.AreEqual(SettingsPageConstants.Theme, themeTitleLabelText);
+                Assert.AreEqual(GitHubLoginButtonConstants.TryDemo, tryDemoButtonText);
+                Assert.AreEqual(SettingsPageConstants.Language, languageTitleLabelText);
+                Assert.AreEqual(GitHubLoginButtonConstants.Disconnect, loginTitleLabelText_Disconnect);
+                Assert.AreEqual(GitHubLoginButtonConstants.ConnectToGitHub, loginTitleLabelText_Connect);
+                Assert.AreEqual(SettingsPageConstants.RegisterForNotifications, registerForNotificationsTitleLabelText);
+                Assert.AreEqual(SettingsPageConstants.PreferredChartSettingsLabelText, preferredChartsTitleTitleLabelText);
+
+                Assert.IsTrue(copyrightLabelTitleLabelText.Contains(SettingsPageConstants.CreatedBy));
+
+                Assert.AreEqual(TrendsChartTitleConstants.All, preferredChartsAllTitleLabelText);
+                Assert.AreEqual(TrendsChartTitleConstants.NoUniques, preferredChartsNoUniquesTitleLabelText);
+                Assert.AreEqual(TrendsChartTitleConstants.JustUniques, preferredChartsOnlyUniquesTitleLabelText);
 
                 if (UserType is UserType.Demo)
                 {
-                    Assert.AreNotEqual(gitHubNameText_Final, gitHubNameText_Initial);
-                }
-                else
-                {
-                    Assert.AreEqual(gitHubAliasText_Final, gitHubAliasText_Initial);
-                    Assert.AreEqual(gitHubNameText_Final, gitHubNameText_Initial);
+                    Assert.AreNotEqual(gitHubNameText, DemoUserConstants.Name);
+                    Assert.AreNotEqual(gitHubAliasText, DemoUserConstants.Alias);
                 }
 
-                Assert.AreNotEqual(settingsPageTitle_Final, settingsPageTitle_Initial);
-                Assert.AreNotEqual(preferredLanguage_Final, preferredLanguage_Initial);
-                Assert.AreNotEqual(tryDemoButtonText_Final, tryDemoButtonText_Initial);
-                Assert.AreNotEqual(loginTitleLabelText_Final, loginTitleLabelText_Initial);
-                Assert.AreNotEqual(themeTitleLabelText_Final, themeTitleLabelText_Initial);
-                Assert.AreNotEqual(languageTitleLabelText_Final, languageTitleLabelText_Initial);
-                Assert.AreNotEqual(copyrightLabelTitleLabelText_Final, copyrightLabelTitleLabelText_Initial);
-                Assert.AreNotEqual(preferredChartsTitleTitleLabelText_Final, preferredChartsTitleTitleLabelText_Initial);
-                Assert.AreNotEqual(registerForNotificationsTitleLabelText_Final, registerForNotificationsTitleLabelText_Initial);
-
-                Assert.AreNotEqual(preferredChartsAllTitleLabelText_Final, registerForNotificationsTitleLabelText_Initial);
-                Assert.AreNotEqual(preferredChartsNoUniquesTitleLabelText_Final, preferredChartsNoUniquesTitleLabelText_Initial);
-                Assert.AreNotEqual(preferredChartsOnlyUniquesTitleLabelText_Final, preferredChartsOnlyUniquesTitleLabelText_Initial);
+                Assert.AreEqual(gitHubAliasText, LoggedInUserAlias);
+                Assert.AreEqual(gitHubNameText, LoggedInUserName);
 
                 //Act
-                previousLanguageRepositoryPageTitle = RepositoryPage.PageTitle;
-
                 RepositoryPage.TapSettingsButton();
                 await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
+            };
+
+            async Task login()
+            {
+                if (UserType is UserType.Demo)
+                {
+                    SettingsPage.TapTryDemoButton();
+                }
+                else if (UserType is UserType.LoggedIn)
+                {
+                    await LoginToGitHub().ConfigureAwait(false);
+                    SettingsPage.WaitForGitHubLoginToComplete();
+                }
             }
         }
 
