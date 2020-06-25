@@ -322,6 +322,9 @@
         <EmbeddedResource Update="Constants\PageTitles.en.resx">
             <DependentUpon>PageTitles.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\PullToRefreshFailedConstants.en.resx">
+            <DependentUpon>PullToRefreshFailedConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\ReferringSitesPageConstants.en.resx">
             <DependentUpon>ReferringSitesPageConstants.resx</DependentUpon>
         </EmbeddedResource>

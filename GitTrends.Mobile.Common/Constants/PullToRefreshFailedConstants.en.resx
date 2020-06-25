@@ -12,22 +12,19 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="CloseButtonText" xml:space="preserve">
-        <value>Close</value>
+    <data name="UnableToConnectToGitHub" xml:space="preserve">
+        <value>Unable To Connect To GitHub</value>
     </data>
-    <data name="ErrorPullToRefreshEventArgs" xml:space="preserve">
-        <value>Unable to retrieve referring sites. Check your internet connection and try again.</value>
+    <data name="UsageLimitExceeded" space="preserve">
+        <value>Usage Limit Exceeded</value>
     </data>
-    <data name="Site" xml:space="preserve">
-        <value>SITE</value>
+    <data name="GitHubApiLimit" space="preserve">
+        <value>The GitHub API limits our API requests to 5,000 requests per user per hour</value>
     </data>
-    <data name="Site" xml:space="preserve">
-        <value>SITE</value>
+    <data name="MinutesReset" space="preserve">
+        <value>The current limit is scheduled to reset in {0} minutes</value>
     </data>
-    <data name="Referrals" xml:space="preserve">
-        <value>REFERRALS</value>
-    </data>
-    <data name="Unique" xml:space="preserve">
-        <value>UNIQUE</value>
+    <data name="LearnMore" space="preserve">
+        <value>Learn more</value>
     </data>
 </root>

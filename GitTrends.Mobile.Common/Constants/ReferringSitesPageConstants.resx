@@ -18,4 +18,16 @@
     <data name="ErrorPullToRefreshEventArgs" xml:space="preserve">
         <value>Unable to retrieve referring sites. Check your internet connection and try again.</value>
     </data>
+    <data name="Site" xml:space="preserve">
+        <value>SITE</value>
+    </data>
+    <data name="Site" xml:space="preserve">
+        <value>SITE</value>
+    </data>
+    <data name="Referrals" xml:space="preserve">
+        <value>REFERRALS</value>
+    </data>
+    <data name="Unique" xml:space="preserve">
+        <value>UNIQUE</value>
+    </data>
 </root>

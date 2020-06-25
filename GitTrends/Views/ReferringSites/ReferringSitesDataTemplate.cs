@@ -1,5 +1,6 @@
 ﻿using System;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
@@ -90,14 +91,14 @@ namespace GitTrends
                     Children.Add(new FavIconImage()
                                         .Row(Row.Title).Column(Column.FavIcon).RowSpan(2));
 
-                    Children.Add(new TitleLabel("SITE", TextAlignment.Start, LayoutOptions.Start)
+                    Children.Add(new TitleLabel(ReferringSitesPageConstants.Site, TextAlignment.Start, LayoutOptions.Start)
                                         .Row(Row.Title).Column(Column.Site));
 
                     Children.Add(new DescriptionLabel()
                                         .Row(Row.Description).Column(Column.Site)
                                         .Bind(Label.TextProperty, nameof(MobileReferringSiteModel.Referrer)));
 
-                    Children.Add(new TitleLabel("REFERRALS", TextAlignment.End, LayoutOptions.End).Assign(out TitleLabel referralsTitleLabel)
+                    Children.Add(new TitleLabel(ReferringSitesPageConstants.Referrals, TextAlignment.End, LayoutOptions.End).Assign(out TitleLabel referralsTitleLabel)
                                         .Row(Row.Title).Column(Column.Referrals));
 
                     Children.Add(new StatisticsLabel(referralsTitleLabel)
@@ -107,7 +108,7 @@ namespace GitTrends
                     Children.Add(new Separator()
                                         .Row(Row.Title).Column(Column.Separator).RowSpan(2));
 
-                    Children.Add(new TitleLabel("UNIQUE", TextAlignment.Start, LayoutOptions.Start).Assign(out TitleLabel uniqueTitleLabel)
+                    Children.Add(new TitleLabel(ReferringSitesPageConstants.Unique, TextAlignment.Start, LayoutOptions.Start).Assign(out TitleLabel uniqueTitleLabel)
                                         .Row(Row.Title).Column(Column.Uniques));
 
                     Children.Add(new StatisticsLabel(uniqueTitleLabel)
