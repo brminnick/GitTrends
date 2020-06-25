@@ -71,13 +71,15 @@ namespace GitTrends
                         new Separator().Row(Row.LoginSeparator).ColumnSpan(All<Column>()),
 
                         new SvgImage("bell.svg", getSVGIconColor).Row(Row.Notifications).Column(Column.Icon),
-                        new RegisterForNotificationsLabel().Row(Row.Notifications).Column(Column.Title),
+                        new SettingsTitleLabel(SettingsPageAutomationIds.RegisterForNotificationsTitleLabel).Row(Row.Notifications).Column(Column.Title)
+                            .Bind(Label.TextProperty, nameof(SettingsViewModel.RegisterForNotificationsLabelText)),
                         new EnableNotificationsSwitch().Row(Row.Notifications).Column(Column.Button),
 
                         new Separator().Row(Row.NotificationsSeparator).ColumnSpan(All<Column>()),
 
                         new SvgImage("theme.svg", getSVGIconColor).Row(Row.Theme).Column(Column.Icon),
-                        new ThemeLabel().Row(Row.Theme).Column(Column.Title),
+                        new SettingsTitleLabel(SettingsPageAutomationIds.ThemeTitleLabel).Row(Row.Theme).Column(Column.Title)
+                            .Bind(Label.TextProperty, nameof(SettingsViewModel.ThemeLabelText)),
                         new SettingsPicker(SettingsPageAutomationIds.ThemePicker, 70).Row(Row.Theme).Column(Column.Button)
                             .Bind(Picker.ItemsSourceProperty, nameof(SettingsViewModel.ThemePickerItemsSource))
                             .Bind(Picker.SelectedIndexProperty, nameof(SettingsViewModel.ThemePickerSelectedIndex)),
@@ -85,7 +87,8 @@ namespace GitTrends
                         new Separator().Row(Row.ThemeSeparator).ColumnSpan(All<Column>()),
 
                         new SvgImage("language.svg", getSVGIconColor).Row(Row.Language).Column(Column.Icon),
-                        new LanguageLabel().Row(Row.Language).Column(Column.Title),
+                        new SettingsTitleLabel(SettingsPageAutomationIds.LanguageTitleLabel).Row(Row.Language).Column(Column.Title)
+                            .Bind(Label.TextProperty, nameof(SettingsViewModel.LanguageLabelText)),
                         new SettingsPicker(SettingsPageAutomationIds.LanguagePicker, 100).Row(Row.Language).Column(Column.Button)
                             .Bind(Picker.ItemsSourceProperty, nameof(SettingsViewModel.LanguagePickerItemsSource))
                             .Bind(Picker.SelectedIndexProperty, nameof(SettingsViewModel.LanguagePickerSelectedIndex)),
@@ -139,6 +142,7 @@ namespace GitTrends
             {
                 //Allow LoginRowTappableView to handle taps
                 InputTransparent = true;
+                AutomationId = SettingsPageAutomationIds.LoginButton;
             }
         }
 
@@ -149,7 +153,7 @@ namespace GitTrends
                 this.FillExpand();
                 HorizontalTextAlignment = TextAlignment.Start;
 
-                AutomationId = SettingsPageAutomationIds.GitHubLoginLabel;
+                AutomationId = SettingsPageAutomationIds.LoginTitleLabel;
 
                 //Allow LoginRowTappableView to handle taps
                 InputTransparent = true;
@@ -158,19 +162,9 @@ namespace GitTrends
             }
         }
 
-        class RegisterForNotificationsLabel : TitleLabel
+        class SettingsTitleLabel : TitleLabel
         {
-            public RegisterForNotificationsLabel() => this.SetBinding(TextProperty, nameof(SettingsViewModel.RegisterForNotificationsLabelText));
-        }
-
-        class LanguageLabel : TitleLabel
-        {
-            public LanguageLabel() => this.SetBinding(TextProperty, nameof(SettingsViewModel.LanguageLabelText));
-        }
-
-        class ThemeLabel : TitleLabel
-        {
-            public ThemeLabel() => this.SetBinding(TextProperty, nameof(SettingsViewModel.ThemeLabelText));
+            public SettingsTitleLabel(in string automationId)=> AutomationId = automationId;
         }
 
         class Separator : BoxView

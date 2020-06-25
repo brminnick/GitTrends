@@ -15,10 +15,10 @@ namespace GitTrends.UITests
     class SettingsPage : BasePage
     {
         readonly Query _gitHubAvatarImage, _gitHubAliasLabel, _gitHubNameLabel, _loginButton,
-            _gitHubSettingsViewActivityIndicator, _trendsChartSettingsLabel,
-            _trendsChartSettingsControl, _demoModeButton, _createdByLabel,
+            _gitHubSettingsViewActivityIndicator, _preferredChartSettingsLabel,
+            _preferredChartSettingsControl, _tryDemoButton, _copyrightLabel,
             _registerForNotiicationsSwitch, _gitHubUserView, _themePicker, _themePickerContainer,
-            _languagePicker, _languagePickerContainer;
+            _languagePicker, _languagePickerContainer, _registerForNotificationsTitleLabel, _themeTitleLabel, _loginTitleLabel, _languageTitleLabel;
 
         public SettingsPage(IApp app) : base(app, () => PageTitles.SettingsPage)
         {
@@ -26,22 +26,27 @@ namespace GitTrends.UITests
             _gitHubNameLabel = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubNameLabel);
             _gitHubAvatarImage = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubAvatarImage);
             _gitHubAliasLabel = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubAliasLabel);
-            _loginButton = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubLoginLabel);
-            _demoModeButton = GenerateMarkedQuery(SettingsPageAutomationIds.DemoModeButton);
+            _tryDemoButton = GenerateMarkedQuery(SettingsPageAutomationIds.TryDemoButton);
             _gitHubSettingsViewActivityIndicator = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubSettingsViewActivityIndicator);
 
-            _trendsChartSettingsLabel = GenerateMarkedQuery(SettingsPageAutomationIds.TrendsChartSettingsLabel);
-            _trendsChartSettingsControl = GenerateMarkedQuery(SettingsPageAutomationIds.TrendsChartSettingsControl);
+            _loginTitleLabel = GenerateMarkedQuery(SettingsPageAutomationIds.LoginTitleLabel);
+            _loginButton = GenerateMarkedQuery(SettingsPageAutomationIds.LoginButton);
 
-            _createdByLabel = GenerateMarkedQuery(SettingsPageAutomationIds.CopyrightLabel);
-
+            _registerForNotificationsTitleLabel = GenerateMarkedQuery(SettingsPageAutomationIds.RegisterForNotificationsTitleLabel);
             _registerForNotiicationsSwitch = GenerateMarkedQuery(SettingsPageAutomationIds.RegisterForNotificationsSwitch);
 
+            _themeTitleLabel = GenerateMarkedQuery(SettingsPageAutomationIds.ThemeTitleLabel);
             _themePicker = GenerateMarkedQuery(SettingsPageAutomationIds.ThemePicker);
             _themePickerContainer = GenerateMarkedQuery(SettingsPageAutomationIds.ThemePicker + "_Container");
 
+            _languageTitleLabel = GenerateMarkedQuery(SettingsPageAutomationIds.LanguageTitleLabel);
             _languagePicker = GenerateMarkedQuery(SettingsPageAutomationIds.LanguagePicker);
             _languagePickerContainer = GenerateMarkedQuery(SettingsPageAutomationIds.LanguagePicker + "_Container");
+
+            _preferredChartSettingsLabel = GenerateMarkedQuery(SettingsPageAutomationIds.PreferredChartSettingsLabel);
+            _preferredChartSettingsControl = GenerateMarkedQuery(SettingsPageAutomationIds.PreferredChartSettingsControl);
+
+            _copyrightLabel = GenerateMarkedQuery(SettingsPageAutomationIds.CopyrightLabel);
         }
 
         public string? PreferredLanguage => App.InvokeBackdoorMethod<string>(BackdoorMethodConstants.GetPreferredLanguage);
@@ -52,13 +57,18 @@ namespace GitTrends.UITests
 
         public bool ShouldSendNotifications => App.InvokeBackdoorMethod<bool>(BackdoorMethodConstants.ShouldSendNotifications);
 
-        public string GitHubAliasNameText => GetText(_gitHubNameLabel);
-
+        public string GitHubNameLabelText => GetText(_gitHubNameLabel);
         public string GitHubAliasLabelText => GetText(_gitHubAliasLabel);
 
-        public string GitHubButtonText => GetText(_loginButton);
+        public string LoginButtonText => GetText(_loginButton);
+        public string LoginTitleText => GetText(_loginTitleLabel);
 
-        public string TrendsChartLabelText => GetText(_trendsChartSettingsLabel);
+        public string TryDemoButtonText => GetText(_tryDemoButton);
+        public string CopyrightLabelText => GetText(_copyrightLabel);
+        public string ThemeTitleLabelText => GetText(_themeTitleLabel);
+        public string LangageTitleLabelText => GetText(_languageTitleLabel);
+        public string PreferredChartLabelText => GetText(_preferredChartSettingsLabel);
+        public string RegisterForNotificationsTitleLabelText => GetText(_registerForNotificationsTitleLabel);
 
         public PreferredTheme PreferredTheme => App.InvokeBackdoorMethod<PreferredTheme>(BackdoorMethodConstants.GetPreferredTheme);
 
@@ -82,7 +92,7 @@ namespace GitTrends.UITests
         {
             const int margin = 10;
 
-            var trendsChartQuery = App.Query(_trendsChartSettingsControl).First();
+            var trendsChartQuery = App.Query(_preferredChartSettingsControl).First();
 
             switch (trendsChartOption)
             {
@@ -121,15 +131,15 @@ namespace GitTrends.UITests
             App.Screenshot("Register For Notifiations Button Tapped");
         }
 
-        public void TapDemoModeButton()
+        public void TapTryDemoButton()
         {
-            App.Tap(_demoModeButton);
+            App.Tap(_tryDemoButton);
             App.Screenshot("Demo Mode Button Tapped");
         }
 
-        public void TapCreatedByLabel()
+        public void TapCopyrightLabel()
         {
-            App.Tap(_createdByLabel);
+            App.Tap(_copyrightLabel);
             App.Screenshot("Created By Label Tapped");
         }
 

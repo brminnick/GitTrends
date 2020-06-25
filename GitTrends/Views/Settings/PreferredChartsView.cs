@@ -34,7 +34,7 @@ namespace GitTrends
             public PreferredChartSettingsLabel()
             {
                 VerticalTextAlignment = TextAlignment.Start;
-                AutomationId = SettingsPageAutomationIds.TrendsChartSettingsLabel;
+                AutomationId = SettingsPageAutomationIds.PreferredChartSettingsLabel;
                 this.SetBinding(TextProperty, nameof(SettingsViewModel.PreferredChartsLabelText));
             }
         }
@@ -56,7 +56,7 @@ namespace GitTrends
                 FontFamily = FontFamilyConstants.RobotoMedium;
 
                 CornerRadius = cornerRadius;
-                AutomationId = SettingsPageAutomationIds.TrendsChartSettingsControl;
+                AutomationId = SettingsPageAutomationIds.PreferredChartSettingsControl;
 
                 VisibleSegmentsCount = TrendsChartConstants.TrendsChartTitles.Values.Count;
 
