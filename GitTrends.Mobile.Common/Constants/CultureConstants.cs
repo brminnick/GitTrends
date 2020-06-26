@@ -10,10 +10,10 @@ namespace GitTrends.Mobile.Common
             {"de", "🇩🇪 Deutsch" },
             {"en", "🇺🇸 English" },
             {"es", "🇪🇸 Español" },
-            {"fr", "🇫🇷 French" },
+            {"fr", "🇫🇷 Français" },
             {"nl", "🇳🇱 Nederlands" },
+            {"pt", "🇵🇹 Português" },
             {"ru", "🇷🇺 русский" },
-            {"pt", "🇵🇹 Portuguese" }
         };
     }
 }

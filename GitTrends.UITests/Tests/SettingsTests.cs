@@ -168,8 +168,8 @@ namespace GitTrends.UITests
 
                 if (UserType is UserType.Demo)
                 {
-                    Assert.AreNotEqual(gitHubNameText, DemoUserConstants.Name);
-                    Assert.AreNotEqual(gitHubAliasText, DemoUserConstants.Alias);
+                    Assert.AreEqual(gitHubNameText, DemoUserConstants.Name);
+                    Assert.AreEqual(gitHubAliasText, DemoUserConstants.Alias);
                 }
 
                 Assert.AreEqual(gitHubAliasText, LoggedInUserAlias);
