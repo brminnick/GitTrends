@@ -168,12 +168,12 @@ namespace GitTrends.UITests
 
                 if (UserType is UserType.Demo)
                 {
-                    Assert.AreEqual(gitHubNameText, DemoUserConstants.Name);
-                    Assert.AreEqual(gitHubAliasText, DemoUserConstants.Alias);
+                    Assert.AreEqual(DemoUserConstants.Name, gitHubNameText);
+                    Assert.AreEqual("@" + DemoUserConstants.Alias, gitHubAliasText);
                 }
 
-                Assert.AreEqual(gitHubAliasText, LoggedInUserAlias);
-                Assert.AreEqual(gitHubNameText, LoggedInUserName);
+                Assert.AreEqual(DemoUserConstants.Name, gitHubNameText);
+                Assert.AreEqual("@" + LoggedInUserAlias, gitHubAliasText);
 
                 //Act
                 RepositoryPage.TapSettingsButton();
