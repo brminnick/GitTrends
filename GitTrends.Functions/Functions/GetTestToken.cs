@@ -32,7 +32,7 @@ namespace GitTrends.Functions
             var gitHubApiResponse_brminnick = await _gitHubApiV3Service.GetGitHubApiResponse(_uiTestToken_brminnick, cancellationTokenSource.Token).ConfigureAwait(false);
             var brminnickApiRequestsRemaining = GitHubApiService.GetNumberOfApiRequestsRemaining(gitHubApiResponse_brminnick.Headers);
 
-            if (brminnickApiRequestsRemaining > 100)
+            if (brminnickApiRequestsRemaining > 1000)
             {
                 gitHubToken = new GitHubToken(_uiTestToken_brminnick, string.Empty, "Bearer");
             }

@@ -183,14 +183,9 @@ namespace GitTrends.UITests
             async Task login()
             {
                 if (UserType is UserType.Demo)
-                {
                     SettingsPage.TapTryDemoButton();
-                }
                 else if (UserType is UserType.LoggedIn)
-                {
                     await LoginToGitHub().ConfigureAwait(false);
-                    SettingsPage.WaitForGitHubLoginToComplete();
-                }
             }
         }
 
