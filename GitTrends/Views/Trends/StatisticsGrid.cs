@@ -34,34 +34,30 @@ namespace GitTrends
 
             Children.Add(new StatisticsCard(SortingConstants.Views, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor), TrendsPageAutomationIds.ViewsCard, TrendsPageAutomationIds.ViewsStatisticsLabel)
                 .Row(Row.ViewsStats).Column(Column.Total)
-                // MaterialFrame.ElevationProperty doesn't dynamically update the background color to match the elevation
-                //.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsViewsSeriesVisible), convert: convertElevation) 
+                .Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsViewsSeriesVisible), convert: convertElevation)
                 .Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsViewsSeriesVisible))
                 .Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.ViewsStatisticsText))
                 .BindTapGesture(nameof(TrendsViewModel.ViewsCardTappedCommand)));
             Children.Add(new StatisticsCard(SortingConstants.UniqueViews, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor), TrendsPageAutomationIds.UniqueViewsCard, TrendsPageAutomationIds.UniqueViewsStatisticsLabel)
                 .Row(Row.ViewsStats).Column(Column.Unique)
-                // MaterialFrame.ElevationProperty doesn't dynamically update the background color to match the elevation
-                //.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsUniqueViewsSeriesVisible), convert: convertElevation)
+                .Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsUniqueViewsSeriesVisible), convert: convertElevation)
                 .Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsUniqueViewsSeriesVisible))
                 .Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.UniqueViewsStatisticsText))
                 .BindTapGesture(nameof(TrendsViewModel.UniqueViewsCardTappedCommand)));
             Children.Add(new StatisticsCard(SortingConstants.Clones, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor), TrendsPageAutomationIds.ClonesCard, TrendsPageAutomationIds.ClonesStatisticsLabel)
                 .Row(Row.ClonesStats).Column(Column.Total)
-                // MaterialFrame.ElevationProperty doesn't dynamically update the background color to match the elevation
-                //.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsClonesSeriesVisible), convert: convertElevation)
+                .Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsClonesSeriesVisible), convert: convertElevation)
                 .Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsClonesSeriesVisible))
                 .Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.ClonesStatisticsText))
                 .BindTapGesture(nameof(TrendsViewModel.ClonesCardTappedCommand)));
             Children.Add(new StatisticsCard(SortingConstants.UniqueClones, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor), TrendsPageAutomationIds.UniqueClonesCard, TrendsPageAutomationIds.UniqueClonesStatisticsLabel)
                 .Row(Row.ClonesStats).Column(Column.Unique)
-                // MaterialFrame.ElevationProperty doesn't dynamically update the background color to match the elevation
-                //.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsUniqueClonesSeriesVisible), convert: convertElevation)
+                .Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsUniqueClonesSeriesVisible), convert: convertElevation)
                 .Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsUniqueClonesSeriesVisible))
                 .Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.UniqueClonesStatisticsText))
                 .BindTapGesture(nameof(TrendsViewModel.UniqueClonesCardTappedCommand)));
 
-            static double convertElevation(bool isEnabled) => isEnabled ? 4 : 0;
+            static double convertElevation(bool isEnabled) => isEnabled ? 4 : 1;
         }
 
         enum Row { ViewsStats, ClonesStats, Chart }

@@ -53,7 +53,7 @@ namespace GitTrends
                     Elevation = 4;
                     Content = new ContentGrid();
 
-                    SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
+                    SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.DefaultMaterialFrameTheme));
                 }
             }
 

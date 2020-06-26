@@ -22,7 +22,7 @@ namespace GitTrends
             AutomationId = cardAutomationId;
 
             SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
-            SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
+            SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.TrendsCardMaterialFrameTheme));
 
         }
 

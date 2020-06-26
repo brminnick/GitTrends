@@ -19,7 +19,7 @@ namespace GitTrends
             Margin = new Thickness(16, 0);
             Padding = new Thickness(4, 8, 4, 4);
 
-            SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
+            SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.TrendsCardMaterialFrameTheme));
         }
 
         class Chart : SfChart
