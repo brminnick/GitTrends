@@ -33,28 +33,31 @@ namespace GitTrends
 
         protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ChartPage_Title);
 
-        protected override View CreateDescriptionBodyView() => new Grid
+        protected override View CreateDescriptionBodyView() => new ScrollView
         {
-            RowSpacing = 14,
-
-            RowDefinitions = Rows.Define(
-                (Row.Title, AbsoluteGridLength(20)),
-                (Row.Zoom, AbsoluteGridLength(48)),
-                (Row.LongPress, AbsoluteGridLength(48))),
-
-            ColumnDefinitions = Columns.Define(
-                (Column.Image, AbsoluteGridLength(56)),
-                (Column.Description, Star)),
-
-            Children =
+            Content = new Grid
             {
-                new BodyLabel(OnboardingConstants.ChartPage_Body_ShowAllTraffic).Row(Row.Title).ColumnSpan(All<Column>()),
+                RowSpacing = 14,
 
-                new BodySvg("zoom_gesture.svg").Row(Row.Zoom).Column(Column.Image),
-                new BodyLabel(OnboardingConstants.ChartPage_Body_ZoomInOut).Row(Row.Zoom).Column(Column.Description),
+                RowDefinitions = Rows.Define(
+                    (Row.Title, Auto),
+                    (Row.Zoom, AbsoluteGridLength(48)),
+                    (Row.LongPress, AbsoluteGridLength(48))),
 
-                new BodySvg("longpress_gesture.svg").Row(Row.LongPress).Column(Column.Image),
-                new BodyLabel(OnboardingConstants.ChartPage_Body_LongPress).Row(Row.LongPress).Column(Column.Description),
+                ColumnDefinitions = Columns.Define(
+                    (Column.Image, AbsoluteGridLength(56)),
+                    (Column.Description, Star)),
+
+                Children =
+                {
+                    new BodyLabel(OnboardingConstants.ChartPage_Body_ShowAllTraffic).Row(Row.Title).ColumnSpan(All<Column>()),
+
+                    new BodySvg("zoom_gesture.svg").Row(Row.Zoom).Column(Column.Image),
+                    new BodyLabel(OnboardingConstants.ChartPage_Body_ZoomInOut).Row(Row.Zoom).Column(Column.Description),
+
+                    new BodySvg("longpress_gesture.svg").Row(Row.LongPress).Column(Column.Image),
+                    new BodyLabel(OnboardingConstants.ChartPage_Body_LongPress).Row(Row.LongPress).Column(Column.Description),
+                }
             }
         };
     }
