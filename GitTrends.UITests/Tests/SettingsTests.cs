@@ -172,7 +172,7 @@ namespace GitTrends.UITests
                     Assert.AreEqual("@" + DemoUserConstants.Alias, gitHubAliasText);
                 }
 
-                Assert.AreEqual(DemoUserConstants.Name, gitHubNameText);
+                Assert.AreEqual(LoggedInUserName, gitHubNameText);
                 Assert.AreEqual("@" + LoggedInUserAlias, gitHubAliasText);
 
                 //Act
