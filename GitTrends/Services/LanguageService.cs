@@ -55,6 +55,8 @@ namespace GitTrends
                 CultureInfo.DefaultThreadCurrentCulture = getCultureInfo(culture);
                 CultureInfo.DefaultThreadCurrentUICulture = getCultureInfo(culture);
 
+                _analyticsService.Track("Preferred Language Changed", nameof(culture), culture ?? "null");
+
                 OnPreferredLanguageChanged(culture);
             }
 

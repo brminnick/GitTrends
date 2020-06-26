@@ -14,6 +14,7 @@ namespace GitTrends
     {
         readonly WeakEventManager _resumedEventManager = new WeakEventManager();
         readonly IAnalyticsService _analyticsService;
+        readonly LanguageService _languageService;
 
         public App(IAnalyticsService analyticsService,
                     INotificationService notificationService,
@@ -26,6 +27,7 @@ namespace GitTrends
             InitializeEssentialServices(themeService, notificationService, languageService);
 
             _analyticsService = analyticsService;
+            _languageService = languageService;
 
             MainPage = splashScreenPage;
 
@@ -42,7 +44,7 @@ namespace GitTrends
         {
             base.OnStart();
 
-            _analyticsService.Track("App Started");
+            _analyticsService.Track("App Started", nameof(LanguageService.PreferredLanguage), _languageService.PreferredLanguage ?? "null");
 
             await ClearBageNotifications();
         }
@@ -53,7 +55,7 @@ namespace GitTrends
 
             OnResumed();
 
-            _analyticsService.Track("App Resumed");
+            _analyticsService.Track("App Resumed", nameof(LanguageService.PreferredLanguage), _languageService.PreferredLanguage ?? "null");
 
             await ClearBageNotifications();
         }
