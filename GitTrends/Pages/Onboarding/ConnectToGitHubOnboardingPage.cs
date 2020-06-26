@@ -44,16 +44,16 @@ namespace GitTrends
                         (Row.ActivityIndicator, AbsoluteGridLength(42))),
 
                 Children =
+                {
+                    new BodyLabel(OnboardingConstants.ConnectToGitHubPage_Body_GetStarted).Row(Row.Description),
+                    new ConnectToGitHubView(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None, new Xamarin.Essentials.BrowserLaunchOptions
                     {
-                        new BodyLabel(OnboardingConstants.ConnectToGitHubPage_Body_GetStarted).Row(Row.Description),
-                        new ConnectToGitHubView(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None, new Xamarin.Essentials.BrowserLaunchOptions
-                        {
-                            PreferredControlColor = Color.White,
-                            PreferredToolbarColor = Color.FromHex(BaseTheme.CoralColorHex).MultiplyAlpha(0.75),
-                            Flags = Xamarin.Essentials.BrowserLaunchFlags.PresentAsFormSheet,
-                        }).Row(Row.Button),
-                        new IsAuthenticatingIndicator().Row(Row.ActivityIndicator)
-                    }
+                        PreferredControlColor = Color.White,
+                        PreferredToolbarColor = Color.FromHex(BaseTheme.CoralColorHex).MultiplyAlpha(0.75),
+                        Flags = Xamarin.Essentials.BrowserLaunchFlags.PresentAsFormSheet,
+                    }).Row(Row.Button),
+                    new IsAuthenticatingIndicator().Row(Row.ActivityIndicator)
+                }
             }
         };
 

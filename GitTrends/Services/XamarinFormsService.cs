@@ -26,6 +26,7 @@ namespace GitTrends
         // Galaxy S5, Width 1080, Density 3, Width/Density 360
         // Galaxy Nexus, Width 720, Density 2, Width/Density 360
         public static double ScreenWidth { get; } = DeviceDisplay.MainDisplayInfo.Width / DeviceDisplay.MainDisplayInfo.Density;
+        public static double ScreenHeight { get; } = DeviceDisplay.MainDisplayInfo.Height / DeviceDisplay.MainDisplayInfo.Density;
 
         public static void SetSelectedStateBackgroundColor(this VisualElement visualElement, Color color)
         {
