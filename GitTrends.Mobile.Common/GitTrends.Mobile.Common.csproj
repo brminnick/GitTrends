@@ -22,6 +22,9 @@
         <NoStdLib>false</NoStdLib>
     </PropertyGroup>
     <ItemGroup>
+        <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.bs.resx">
+          <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.ru.resx">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
         </EmbeddedResource>
@@ -32,6 +35,9 @@
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>AppStoreRatingRequestConstants.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\DemoUserConstants.bs.resx">
+          <DependentUpon>DemoUserConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\DemoUserConstants.ru.resx">
             <DependentUpon>DemoUserConstants.resx</DependentUpon>
         </EmbeddedResource>
@@ -41,11 +47,17 @@
         <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.pt.resx">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\EmptyDataViewConstants.bs.resx">
+          <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\EmptyDataViewConstants.ru.resx">
             <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\EmptyDataViewConstants.pt.resx">
             <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.bs.resx">
+          <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.ru.resx">
             <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
@@ -53,11 +65,17 @@
         <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.pt.resx">
             <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.bs.resx">
+          <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.ru.resx">
             <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.pt.resx">
             <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\NotificationConstants.bs.resx">
+          <DependentUpon>NotificationConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\NotificationConstants.ru.resx">
             <DependentUpon>NotificationConstants.resx</DependentUpon>
@@ -65,11 +83,17 @@
         <EmbeddedResource Update="Constants\NotificationConstants.pt.resx">
             <DependentUpon>NotificationConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\OnboardingConstants.bs.resx">
+          <DependentUpon>OnboardingConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\OnboardingConstants.ru.resx">
             <DependentUpon>OnboardingConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\OnboardingConstants.pt.resx">
             <DependentUpon>OnboardingConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\PageTitles.bs.resx">
+          <DependentUpon>PageTitles.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\PageTitles.ru.resx">
             <DependentUpon>PageTitles.resx</DependentUpon>
@@ -95,17 +119,29 @@
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>OnboardingConstants.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\PullToRefreshFailedConstants.bs.resx">
+          <DependentUpon>PullToRefreshFailedConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ReferringSitesPageConstants.bs.resx">
+          <DependentUpon>ReferringSitesPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\ReferringSitesPageConstants.ru.resx">
             <DependentUpon>ReferringSitesPageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\ReferringSitesPageConstants.pt.resx">
             <DependentUpon>ReferringSitesPageConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\RepositoryPageConstants.bs.resx">
+          <DependentUpon>RepositoryPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\RepositoryPageConstants.ru.resx">
             <DependentUpon>RepositoryPageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\RepositoryPageConstants.pt.resx">
             <DependentUpon>RepositoryPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ReviewServiceConstants.bs.resx">
+          <DependentUpon>ReviewServiceConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\ReviewServiceConstants.ru.resx">
             <DependentUpon>ReviewServiceConstants.resx</DependentUpon>
@@ -120,17 +156,26 @@
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>ReviewServiceConstants.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\SettingsPageConstants.bs.resx">
+          <DependentUpon>SettingsPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\SettingsPageConstants.ru.resx">
             <DependentUpon>SettingsPageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\SettingsPageConstants.pt.resx">
             <DependentUpon>SettingsPageConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\SortingConstants.bs.resx">
+          <DependentUpon>SortingConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\SortingConstants.ru.resx">
             <DependentUpon>SortingConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\SortingConstants.pt.resx">
             <DependentUpon>SortingConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\SplashScreenPageConstants.bs.resx">
+          <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\SplashScreenPageConstants.ru.resx">
             <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
@@ -169,6 +214,9 @@
         <EmbeddedResource Update="Constants\SettingsPageConstants.resx">
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>SettingsPageConstants.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\TrendsChartTitleConstants.bs.resx">
+          <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\TrendsChartTitleConstants.ru.resx">
             <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
@@ -213,6 +261,9 @@
         <EmbeddedResource Update="Constants\DemoUserConstants.resx">
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>DemoUserConstants.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\WelcomePageConstants.bs.resx">
+          <DependentUpon>WelcomePageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\WelcomePageConstants.ru.resx">
             <DependentUpon>WelcomePageConstants.resx</DependentUpon>
