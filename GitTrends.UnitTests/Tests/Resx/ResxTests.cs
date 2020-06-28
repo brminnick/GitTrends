@@ -61,10 +61,14 @@ namespace GitTrends.UnitTests
             {
                 var defaultResx = GetDefaultResx(resxDictionary);
 
+                var missingEntriesList = GetMissingEntries(resxDictionary, defaultResx);
+                var extraEntriesList = GetExtraEntries(resxDictionary, defaultResx);
+                var emptyResxFilesList = GetEmptyResxFiles(resxDictionary);
+
                 //Assert
-                Assert.IsEmpty(GetMissingEntries(resxDictionary, defaultResx));
-                Assert.IsEmpty(GetDispensable(resxDictionary, defaultResx));
-                Assert.IsEmpty(GetEmpty(resxDictionary));
+                Assert.IsEmpty(missingEntriesList, "Missing Translations Found", missingEntriesList);
+                Assert.IsEmpty(extraEntriesList, "Extra Translations Found", extraEntriesList);
+                Assert.IsEmpty(emptyResxFilesList, "Empty Resx Files Found", emptyResxFilesList);
             }
         }
 
@@ -185,9 +189,9 @@ namespace GitTrends.UnitTests
         }
 
         //https://stackoverflow.com/a/41760659/5953643
-        static Dictionary<string, List<string>> GetDispensable(Dictionary<string, Dictionary<string, object>> resxDictionaries, Dictionary<string, object> neutralLanguage)
+        static Dictionary<string, List<string>> GetExtraEntries(Dictionary<string, Dictionary<string, object>> resxDictionaries, Dictionary<string, object> neutralLanguage)
         {
-            var dispensable = new Dictionary<string, List<string>>();
+            var extraEntryList = new Dictionary<string, List<string>>();
 
             foreach (var pair in resxDictionaries)
             {
@@ -205,15 +209,15 @@ namespace GitTrends.UnitTests
 
                 if (list.Count > 0)
                 {
-                    dispensable.Add(pair.Key, list);
+                    extraEntryList.Add(pair.Key, list);
                 }
             }
-            return dispensable;
+            return extraEntryList;
         }
 
-        static Dictionary<string, List<string>> GetEmpty(Dictionary<string, Dictionary<string, object>> resxDictionaries)
+        static Dictionary<string, List<string>> GetEmptyResxFiles(Dictionary<string, Dictionary<string, object>> resxDictionaries)
         {
-            var empty = new Dictionary<string, List<string>>();
+            var emptyResxFiles = new Dictionary<string, List<string>>();
 
             foreach (var pair in resxDictionaries)
             {
@@ -221,32 +225,32 @@ namespace GitTrends.UnitTests
 
                 var list = new List<string>();
 
-                foreach (var entrie in resxs)
+                foreach (var entry in resxs)
                 {
-                    if (entrie.Value is null)
+                    if (entry.Value is null)
                     {
-                        list.Add(entrie.Key);
+                        list.Add(entry.Key);
                         continue;
                     }
 
-                    var stringValue = entrie.Value as string;
+                    var stringValue = entry.Value as string;
                     if (string.IsNullOrWhiteSpace(stringValue))
                     {
-                        list.Add(entrie.Key);
+                        list.Add(entry.Key);
                     }
                 }
 
                 if (list.Count > 0)
                 {
-                    empty.Add(pair.Key, list);
+                    emptyResxFiles.Add(pair.Key, list);
                 }
             }
-            return empty;
+            return emptyResxFiles;
         }
 
         static Dictionary<string, List<string>> GetMissingEntries(Dictionary<string, Dictionary<string, object>> resxDictionaries, Dictionary<string, object> neutralLanguage)
         {
-            var missing = new Dictionary<string, List<string>>();
+            var missingEntryList = new Dictionary<string, List<string>>();
 
             foreach (var pair in resxDictionaries)
             {
@@ -264,11 +268,11 @@ namespace GitTrends.UnitTests
 
                 if (list.Count > 0)
                 {
-                    missing.Add(pair.Key, list);
+                    missingEntryList.Add(pair.Key, list);
                 }
             }
 
-            return missing;
+            return missingEntryList;
         }
     }
 }
