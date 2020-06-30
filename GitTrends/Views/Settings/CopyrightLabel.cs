@@ -23,11 +23,9 @@ namespace GitTrends
 
             AutomationId = SettingsPageAutomationIds.CopyrightLabel;
 
-            this.SetBinding(TextProperty, nameof(SettingsViewModel.CopyrightLabelText));
-
-            this.BindTapGesture(nameof(SettingsViewModel.CopyrightLabelTappedCommand));
-
-            SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+            this.Bind(nameof(SettingsViewModel.CopyrightLabelText))
+                .BindTapGesture(nameof(SettingsViewModel.CopyrightLabelTappedCommand))
+                .DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
         }
     }
 }

@@ -168,7 +168,7 @@ namespace GitTrends
 
         class Separator : BoxView
         {
-            public Separator() => SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
+            public Separator() => this.DynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
         }
 
         class EnableNotificationsSwitch : SettingsSwitch
@@ -193,8 +193,8 @@ namespace GitTrends
 
                 this.EndExpand();
 
-                SetDynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
-                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+                this.DynamicResource((TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor)), 
+                                     (BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)));
             }
         }
 

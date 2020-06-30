@@ -63,7 +63,7 @@ namespace GitTrends
                 CommandParameter = (repository.OwnerLogin, repository.Name, repository.Url, _refreshViewCancelltionTokenSource.Token),
                 Content = collectionView
             };
-            _refreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor));
+            _refreshView.DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor));
             _refreshView.SetBinding(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.RefreshCommand));
             _refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing));
 
@@ -86,8 +86,8 @@ namespace GitTrends
                     Padding = new Thickness(5, 0)
                 };
                 closeButton.Clicked += HandleCloseButtonClicked;
-                closeButton.SetDynamicResource(Button.TextColorProperty, nameof(BaseTheme.CloseButtonTextColor));
-                closeButton.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CloseButtonBackgroundColor));
+                closeButton.DynamicResource((Button.TextColorProperty, nameof(BaseTheme.CloseButtonTextColor)), 
+                                            (BackgroundColorProperty, nameof(BaseTheme.CloseButtonBackgroundColor)));
 
                 var titleLabel = new Label
                 {
@@ -95,12 +95,12 @@ namespace GitTrends
                     Text = PageTitles.ReferringSitesPage,
                     FontFamily = FontFamilyConstants.RobotoMedium,
                 }.Center().TextCenterVertical();
-                titleLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
+                titleLabel.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor));
 
                 closeButton.Margin = titleLabel.Margin = new Thickness(0, titleTopMargin, 0, 0);
 
                 var titleShadow = new BoxView();
-                titleShadow.SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
+                titleShadow.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
 
                 if (isLightTheme(themeService.Preference))
                 {

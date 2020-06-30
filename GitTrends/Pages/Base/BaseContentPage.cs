@@ -16,7 +16,7 @@ namespace GitTrends
             MainThread = mainThread;
             AnalyticsService = analyticsService;
 
-            SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+            this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 
             On<iOS>().SetUseSafeArea(shouldUseSafeArea);
             On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);

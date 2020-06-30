@@ -21,9 +21,8 @@ namespace GitTrends
             CornerRadius = 4;
             AutomationId = cardAutomationId;
 
-            SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
-            SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.TrendsCardMaterialFrameTheme));
-
+            this.DynamicResource((BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor)),
+                                 (MaterialThemeProperty, nameof(BaseTheme.TrendsCardMaterialFrameTheme)));
         }
 
         enum Row { Title, Number }
@@ -109,7 +108,7 @@ namespace GitTrends
 
                     AutomationId = automationId;
 
-                    SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+                    this.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
                 }
             }
 
@@ -124,7 +123,7 @@ namespace GitTrends
                     HorizontalTextAlignment = TextAlignment.Start;
                     VerticalOptions = LayoutOptions.Start;
 
-                    SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+                    this.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
                 }
             }
         }

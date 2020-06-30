@@ -80,7 +80,7 @@ namespace GitTrends
                 HorizontalTextAlignment = TextAlignment.Center;
                 VerticalTextAlignment = TextAlignment.End;
 
-                SetDynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
+                this.DynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
             }
         }
 
