@@ -11,6 +11,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using static GitTrends.MarkupHelpers;
 
 namespace GitTrends
 {
@@ -20,6 +21,7 @@ namespace GitTrends
         readonly CancellationTokenSource _refreshViewCancelltionTokenSource = new CancellationTokenSource();
 
         readonly RefreshView _refreshView;
+        readonly ThemeService _themeService;
         readonly ReviewService _reviewService;
         readonly DeepLinkingService _deepLinkingService;
 
@@ -33,6 +35,7 @@ namespace GitTrends
         {
             Title = PageTitles.ReferringSitesPage;
 
+            _themeService = themeService;
             _reviewService = reviewService;
             _deepLinkingService = deepLinkingService;
 
@@ -151,6 +154,45 @@ namespace GitTrends
 
             static bool isLightTheme(PreferredTheme preferredTheme) => preferredTheme is PreferredTheme.Light || preferredTheme is PreferredTheme.Default && Xamarin.Forms.Application.Current.RequestedTheme is OSAppTheme.Light;
         }
+
+#pragma warning disable CS8604 // Possible null reference argument.
+        void Build() // TODO: wip
+        {
+            bool iOS = Device.RuntimePlatform is Device.iOS;
+            int titleRowHeight = iOS ? 50 : 0;
+
+            Content = RelativeLayout (
+                _refreshView
+                .Constrain (Constraint.Constant(0),
+                            Constraint.Constant(titleRowHeight), //Set to `0` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
+                            Constraint.RelativeToParent(parent => parent.Width),
+                            Constraint.RelativeToParent(parent => parent.Height - titleRowHeight)), //Set to `parent => parent.Height` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
+
+                iOS ? new BoxView()
+                .DynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor))
+                .Invoke(titleShadow => {
+                    if (isLightTheme(_themeService.Preference))
+                        titleShadow.On<iOS>().SetIsShadowEnabled(true)
+                                             .SetShadowColor(Color.Gray)
+                                             .SetShadowOffset(new Size(0, 1))
+                                             .SetShadowOpacity(0.5)
+                                             .SetShadowRadius(4);
+                })
+                .UnConstrained() : null, // TODO: titleShadow
+
+                iOS ? new Label { } .UnConstrained() : null, // TODO: titleLabel
+
+                iOS ? new Label { } .UnConstrained() : null, // TODO: closeButton
+
+                _storeRatingRequestView
+                .Constrain (Constraint.Constant(0),
+                            Constraint.RelativeToParent(parent => parent.Height - _storeRatingRequestView.GetHeight(parent)),
+                            Constraint.RelativeToParent(parent => parent.Width))
+            );
+
+            static bool isLightTheme(PreferredTheme preferredTheme) => preferredTheme is PreferredTheme.Light || preferredTheme is PreferredTheme.Default && Xamarin.Forms.Application.Current.RequestedTheme is OSAppTheme.Light;
+        }
+#pragma warning restore CS8604 // Possible null reference argument.
 
         protected override void OnAppearing()
         {
