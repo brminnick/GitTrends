@@ -1,6 +1,5 @@
-﻿using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
-using ImageCircle.Forms.Plugin.Abstractions;
+﻿using FFImageLoading.Forms;
+using GitTrends.Mobile.Common;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.XamarinFormsService;
@@ -55,7 +54,7 @@ namespace GitTrends
 
                 AutomationId = SettingsPageAutomationIds.GitHubAvatarImage;
 
-                this.SetBinding(SourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource));
+                this.SetBinding(ImageSourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource));
                 SetDynamicResource(ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource));
                 SetDynamicResource(LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource));
             }
