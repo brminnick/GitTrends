@@ -14,17 +14,20 @@ namespace GitTrends
     {
         readonly WeakEventManager _resumedEventManager = new WeakEventManager();
         readonly IAnalyticsService _analyticsService;
+        readonly LanguageService _languageService;
 
         public App(IAnalyticsService analyticsService,
                     INotificationService notificationService,
                     ThemeService themeService,
-                    SplashScreenPage splashScreenPage)
+                    SplashScreenPage splashScreenPage,
+                    LanguageService languageService)
         {
             Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental" });
 
-            InitializeEssentialServices(themeService, notificationService);
+            InitializeEssentialServices(themeService, notificationService, languageService);
 
             _analyticsService = analyticsService;
+            _languageService = languageService;
 
             MainPage = splashScreenPage;
 
@@ -41,7 +44,7 @@ namespace GitTrends
         {
             base.OnStart();
 
-            _analyticsService.Track("App Started");
+            _analyticsService.Track("App Started", nameof(LanguageService.PreferredLanguage), _languageService.PreferredLanguage ?? "null");
 
             await ClearBageNotifications();
         }
@@ -52,7 +55,7 @@ namespace GitTrends
 
             OnResumed();
 
-            _analyticsService.Track("App Resumed");
+            _analyticsService.Track("App Resumed", nameof(LanguageService.PreferredLanguage), _languageService.PreferredLanguage ?? "null");
 
             await ClearBageNotifications();
         }
@@ -72,10 +75,11 @@ namespace GitTrends
             return notificationService.SetAppBadgeCount(0);
         }
 
-        async void InitializeEssentialServices(ThemeService themeService, INotificationService notificationService)
+        async void InitializeEssentialServices(ThemeService themeService, INotificationService notificationService, LanguageService languageService)
         {
             await themeService.Initialize().ConfigureAwait(false);
             notificationService.Initialize();
+            languageService.Initialize();
         }
 
         void OnResumed() => _resumedEventManager.HandleEvent(this, EventArgs.Empty, nameof(Resumed));

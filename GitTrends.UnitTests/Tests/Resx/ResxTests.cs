@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
+using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using NUnit.Framework;
 
@@ -31,19 +32,21 @@ namespace GitTrends.UnitTests
             typeof(WelcomePageConstants)
         };
 
-        [TestCase("de")]
-        [TestCase("ru")]
-        [TestCase("nl")]
-        public void ConfirmCultureExists(string culture)
+        [Test]
+        public void ConfirmCulturesExists()
         {
             //Arrange
+            var cultureNames = CultureConstants.CulturePickerOptions.Keys;
             var resxCultureInfoList = new List<CultureInfo[]>(_resxTypeList.Select(x => GetAvailableResxCultureInfos(x.Assembly)));
 
             //Act
             foreach (var cultureInfo in resxCultureInfoList)
             {
-                //Assert
-                Assert.IsTrue(cultureInfo.Any(x => x.Name == culture));
+                foreach (var cultureName in cultureNames)
+                {
+                    //Assert
+                    Assert.IsTrue(cultureInfo.Any(x => x.Name == cultureName));
+                }
             }
         }
 
@@ -58,10 +61,14 @@ namespace GitTrends.UnitTests
             {
                 var defaultResx = GetDefaultResx(resxDictionary);
 
+                var missingEntriesList = GetMissingEntries(resxDictionary, defaultResx);
+                var extraEntriesList = GetExtraEntries(resxDictionary, defaultResx);
+                var emptyResxFilesList = GetEmptyResxFiles(resxDictionary);
+
                 //Assert
-                Assert.IsEmpty(GetMissingEntries(resxDictionary, defaultResx));
-                Assert.IsEmpty(GetDispensable(resxDictionary, defaultResx));
-                Assert.IsEmpty(GetEmpty(resxDictionary));
+                Assert.IsEmpty(missingEntriesList, "Missing Translations Found", missingEntriesList);
+                Assert.IsEmpty(extraEntriesList, "Extra Translations Found", extraEntriesList);
+                Assert.IsEmpty(emptyResxFilesList, "Empty Resx Files Found", emptyResxFilesList);
             }
         }
 
@@ -157,14 +164,20 @@ namespace GitTrends.UnitTests
             {
                 var cultureInfo = availableResxsCultureInfos[i];
 
-                var resourceSet = resourceManager.GetResourceSet(cultureInfo, true, false) ?? throw new MultipleAssertException(string.Format("The language \"{0}\" is not specified in \"{1}\".", cultureInfo.Name, type));
+                var resourceSet = resourceManager.GetResourceSet(cultureInfo, true, false) ?? throw new MultipleAssertException($"The language \"{cultureInfo.Name}\" is not specified in \"{type}\".");
 
                 var dict = new Dictionary<string, object>();
 
-                foreach (DictionaryEntry item in resourceSet)
+                foreach (DictionaryEntry? item in resourceSet)
                 {
-                    var key = item.Key.ToString();
-                    var value = item.Value;
+                    if (item is null)
+                        continue;
+
+                    var key = item.Value.Key.ToString();
+                    var value = item.Value.Value;
+
+                    if (key is null || value is null)
+                        continue;
 
                     dict.Add(key, value);
                 }
@@ -176,9 +189,9 @@ namespace GitTrends.UnitTests
         }
 
         //https://stackoverflow.com/a/41760659/5953643
-        static Dictionary<string, List<string>> GetDispensable(Dictionary<string, Dictionary<string, object>> resxDictionaries, Dictionary<string, object> neutralLanguage)
+        static Dictionary<string, List<string>> GetExtraEntries(Dictionary<string, Dictionary<string, object>> resxDictionaries, Dictionary<string, object> neutralLanguage)
         {
-            var dispensable = new Dictionary<string, List<string>>();
+            var extraEntryList = new Dictionary<string, List<string>>();
 
             foreach (var pair in resxDictionaries)
             {
@@ -196,15 +209,15 @@ namespace GitTrends.UnitTests
 
                 if (list.Count > 0)
                 {
-                    dispensable.Add(pair.Key, list);
+                    extraEntryList.Add(pair.Key, list);
                 }
             }
-            return dispensable;
+            return extraEntryList;
         }
 
-        static Dictionary<string, List<string>> GetEmpty(Dictionary<string, Dictionary<string, object>> resxDictionaries)
+        static Dictionary<string, List<string>> GetEmptyResxFiles(Dictionary<string, Dictionary<string, object>> resxDictionaries)
         {
-            var empty = new Dictionary<string, List<string>>();
+            var emptyResxFiles = new Dictionary<string, List<string>>();
 
             foreach (var pair in resxDictionaries)
             {
@@ -212,32 +225,32 @@ namespace GitTrends.UnitTests
 
                 var list = new List<string>();
 
-                foreach (var entrie in resxs)
+                foreach (var entry in resxs)
                 {
-                    if (entrie.Value is null)
+                    if (entry.Value is null)
                     {
-                        list.Add(entrie.Key);
+                        list.Add(entry.Key);
                         continue;
                     }
 
-                    var stringValue = entrie.Value as string;
+                    var stringValue = entry.Value as string;
                     if (string.IsNullOrWhiteSpace(stringValue))
                     {
-                        list.Add(entrie.Key);
+                        list.Add(entry.Key);
                     }
                 }
 
                 if (list.Count > 0)
                 {
-                    empty.Add(pair.Key, list);
+                    emptyResxFiles.Add(pair.Key, list);
                 }
             }
-            return empty;
+            return emptyResxFiles;
         }
 
         static Dictionary<string, List<string>> GetMissingEntries(Dictionary<string, Dictionary<string, object>> resxDictionaries, Dictionary<string, object> neutralLanguage)
         {
-            var missing = new Dictionary<string, List<string>>();
+            var missingEntryList = new Dictionary<string, List<string>>();
 
             foreach (var pair in resxDictionaries)
             {
@@ -255,11 +268,11 @@ namespace GitTrends.UnitTests
 
                 if (list.Count > 0)
                 {
-                    missing.Add(pair.Key, list);
+                    missingEntryList.Add(pair.Key, list);
                 }
             }
 
-            return missing;
+            return missingEntryList;
         }
     }
 }

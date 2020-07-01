@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="TotalViewsTitle" xml:space="preserve">
+        <value>Views</value>
+    </data>
+    <data name="UniqueViewsTitle" xml:space="preserve">
+        <value>Unique Views</value>
+    </data>
+    <data name="TotalClonesTitle" xml:space="preserve">
+        <value>Clones</value>
+    </data>
+    <data name="UniqueClonesTitle" xml:space="preserve">
+        <value>Unique Clones</value>
+    </data>
+    <data name="All" xml:space="preserve">
+        <value>All</value>
+    </data>
+    <data name="NoUniques" xml:space="preserve">
+        <value>No Uniques</value>
+    </data>
+    <data name="JustUniques" xml:space="preserve">
+        <value>Just Uniques</value>
+    </data>
+</root>

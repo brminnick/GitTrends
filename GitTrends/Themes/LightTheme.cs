@@ -112,6 +112,7 @@ namespace GitTrends
         public override string DefaultProfileImageSource { get; } = "DefaultProfileImageGreen";
         public override string DefaultReferringSiteImageSource { get; } = "DefaultReferringSiteImage";
 
-        public override MaterialFrame.Theme MaterialFrameTheme { get; } = MaterialFrame.Theme.Acrylic;
+        public override MaterialFrame.Theme DefaultMaterialFrameTheme { get; } = MaterialFrame.Theme.Acrylic;
+        public override MaterialFrame.Theme TrendsCardMaterialFrameTheme { get; } = MaterialFrame.Theme.Light;
     }
 }

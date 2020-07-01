@@ -58,5 +58,23 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("ErrorPullToRefreshEventArgs", resourceCulture);
             }
         }
+        
+        public static string Site {
+            get {
+                return ResourceManager.GetString("Site", resourceCulture);
+            }
+        }
+        
+        public static string Referrals {
+            get {
+                return ResourceManager.GetString("Referrals", resourceCulture);
+            }
+        }
+        
+        public static string Unique {
+            get {
+                return ResourceManager.GetString("Unique", resourceCulture);
+            }
+        }
     }
 }

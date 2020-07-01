@@ -68,6 +68,9 @@ namespace GitTrends.Droid
         [Preserve, Export(BackdoorMethodConstants.GetLoggedInUserAvatarUrl)]
         public string GetLoggedInUserAvatarUrl() => SerializeObject(UITestBackdoorService.GetLoggedInUserAvatarUrl());
 
+        [Preserve, Export(BackdoorMethodConstants.GetPreferredLanguage)]
+        public string GetPreferredLanguage() => SerializeObject(UITestBackdoorService.GetPreferredLanguage());
+
         static string SerializeObject<T>(T value) => Newtonsoft.Json.JsonConvert.SerializeObject(value);
     }
 }

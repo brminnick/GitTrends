@@ -105,14 +105,14 @@ namespace GitTrends
                 this.Center();
                 Opacity = 0.6;
 
-                AutomationId = SettingsPageAutomationIds.DemoModeButton;
+                AutomationId = SettingsPageAutomationIds.TryDemoButton;
 
                 FontSize = _aliasLabelHeight - 4;
                 FontFamily = FontFamilyConstants.RobotoRegular;
-                Text = GitHubLoginButtonConstants.TryDemo;
 
-                this.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsDemoButtonVisible));
+                this.SetBinding(TextProperty, nameof(SettingsViewModel.TryDemoButtonText));
                 this.SetBinding(CommandProperty, nameof(SettingsViewModel.DemoButtonCommand));
+                this.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsDemoButtonVisible));
 
                 SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
                 SetDynamicResource(TextColorProperty, nameof(BaseTheme.GitHubHandleColor));

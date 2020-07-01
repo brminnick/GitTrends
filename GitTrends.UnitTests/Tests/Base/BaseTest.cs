@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,9 +20,15 @@ namespace GitTrends.UnitTests
         protected const string GitTrendsRepoName = "GitTrends";
         protected const string GitTrendsRepoOwner = "brminnick";
 
+        [TearDown]
+        public virtual Task TearDown() => Task.CompletedTask;
+
         [SetUp]
         public virtual async Task Setup()
         {
+            CultureInfo.DefaultThreadCurrentCulture = null;
+            CultureInfo.DefaultThreadCurrentUICulture = null;
+
             Device.Info = new MockDeviceInfo();
             Device.PlatformServices = new MockPlatformServices();
 

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Shared;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
 using Xamarin.UITest.iOS;
@@ -17,7 +16,7 @@ namespace GitTrends.UITests
             _androidContextMenuOverflowButton, _androidSearchBarButton, _sortButton, _emptyDataView,
             _smallScreenTrendingImage, _largeScreenTrendingImage;
 
-        public RepositoryPage(IApp app) : base(app, PageTitles.RepositoryPage)
+        public RepositoryPage(IApp app) : base(app, () => PageTitles.RepositoryPage)
         {
             _searchBar = GenerateMarkedQuery(RepositoryPageAutomationIds.SearchBar);
             _settingsButton = GenerateMarkedQuery(RepositoryPageAutomationIds.SettingsButton);

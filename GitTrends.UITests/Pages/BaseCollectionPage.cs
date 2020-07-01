@@ -10,7 +10,7 @@ namespace GitTrends.UITests
 {
     abstract class BaseCollectionPage<TCollection> : BasePage
     {
-        protected BaseCollectionPage(IApp app, string pageTitle = "") : base(app, pageTitle)
+        protected BaseCollectionPage(IApp app, Func<string>? getPageTitle) : base(app, getPageTitle)
         {
 
         }

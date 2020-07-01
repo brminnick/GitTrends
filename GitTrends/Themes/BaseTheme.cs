@@ -78,7 +78,8 @@ namespace GitTrends
             Add(nameof(DefaultProfileImageSource), DefaultProfileImageSource);
             Add(nameof(DefaultReferringSiteImageSource), DefaultReferringSiteImageSource);
 
-            Add(nameof(MaterialFrameTheme), MaterialFrameTheme);
+            Add(nameof(DefaultMaterialFrameTheme), DefaultMaterialFrameTheme);
+            Add(nameof(TrendsCardMaterialFrameTheme), TrendsCardMaterialFrameTheme);
         }
 
         public static string GetGitTrendsImageSource() => (string)(Application.Current?.Resources?[nameof(GitTrendsImageSource)] ?? "GitTrends");
@@ -160,6 +161,7 @@ namespace GitTrends
         public abstract string DefaultProfileImageSource { get; }
         public abstract string DefaultReferringSiteImageSource { get; }
 
-        public abstract MaterialFrame.Theme MaterialFrameTheme { get; }
+        public abstract MaterialFrame.Theme DefaultMaterialFrameTheme { get; }
+        public abstract MaterialFrame.Theme TrendsCardMaterialFrameTheme { get; }
     }
 }

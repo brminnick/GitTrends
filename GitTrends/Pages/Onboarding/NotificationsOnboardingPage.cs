@@ -29,18 +29,21 @@ namespace GitTrends
 
         protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.NotificationsPage_Title);
 
-        protected override View CreateDescriptionBodyView() => new Grid
+        protected override View CreateDescriptionBodyView() => new ScrollView
         {
-            RowSpacing = 14,
-
-            RowDefinitions = Rows.Define(
-                (Row.Description, AbsoluteGridLength(65)),
-                (Row.Button, AbsoluteGridLength(42))),
-
-            Children =
+            Content = new Grid
             {
-                new BodyLabel(OnboardingConstants.NotificationsPage_Body_MoreTrafficThanUsual).Row(Row.Description),
-                new EnableNotificationsView().Row(Row.Button)
+                RowSpacing = 14,
+
+                RowDefinitions = Rows.Define(
+                    (Row.Description, AbsoluteGridLength(65)),
+                    (Row.Button, AbsoluteGridLength(42))),
+
+                Children =
+                {
+                    new BodyLabel(OnboardingConstants.NotificationsPage_Body_MoreTrafficThanUsual).Row(Row.Description),
+                    new EnableNotificationsView().Row(Row.Button)
+                }
             }
         };
 
