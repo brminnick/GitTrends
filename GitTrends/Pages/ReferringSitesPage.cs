@@ -158,6 +158,7 @@ namespace GitTrends
 #pragma warning disable CS8604 // Possible null reference argument.
         void Build() // TODO: wip
         {
+            const int titleTopMargin = 10;
             bool iOS = Device.RuntimePlatform is Device.iOS;
             int titleRowHeight = iOS ? 50 : 0;
 
@@ -168,9 +169,9 @@ namespace GitTrends
                             Constraint.RelativeToParent(parent => parent.Width),
                             Constraint.RelativeToParent(parent => parent.Height - titleRowHeight)), //Set to `parent => parent.Height` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
 
-                iOS ? new BoxView()
-                .DynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor))
-                .Invoke(titleShadow => {
+                iOS ? new BoxView { }
+                .DynamicResource (BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor))
+                .Invoke (titleShadow => {
                     if (isLightTheme(_themeService.Preference))
                         titleShadow.On<iOS>().SetIsShadowEnabled(true)
                                              .SetShadowColor(Color.Gray)
@@ -178,9 +179,17 @@ namespace GitTrends
                                              .SetShadowOpacity(0.5)
                                              .SetShadowRadius(4);
                 })
-                .UnConstrained() : null, // TODO: titleShadow
+                .Constrain (Constraint.Constant(0),
+                            Constraint.Constant(0),
+                            Constraint.RelativeToParent(parent => parent.Width),
+                            Constraint.Constant(titleRowHeight)) : null,
 
-                iOS ? new Label { } .UnConstrained() : null, // TODO: titleLabel
+                iOS ? new Label { Text = PageTitles.ReferringSitesPage }
+                .Font (family: FontFamilyConstants.RobotoMedium, size: 30)
+                .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor))
+                .Center () .Margins (top: titleTopMargin) .TextCenterVertical ()
+                .Constrain (Constraint.Constant(10),
+                            Constraint.Constant(0)) : null,
 
                 iOS ? new Label { } .UnConstrained() : null, // TODO: closeButton
 
