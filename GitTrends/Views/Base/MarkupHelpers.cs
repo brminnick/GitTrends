@@ -12,6 +12,13 @@ namespace GitTrends
 
         public static TElement DynamicResource<TElement>(this TElement element, params (BindableProperty property, string key)[] resources) where TElement : Element
         { foreach (var resource in resources) element.SetDynamicResource(resource.property, resource.key); return element; }
+
+        // TODO: Target Padding helpers to IPaddingElement instead of Layout, implement by setting PaddingElement.PaddingProperty
+        // Must to this in Forms PR because IPaddingElement and PaddingElement are internal to Xamarin Forms
+        public static TButton Padding<TButton>(this TButton button, double horizontalSize, double verticalSize) where TButton : Button
+        { button.Padding = new Thickness(horizontalSize, verticalSize); return button; }
+
+        // TODO: Add RefreshView Bind and BindCommand defaults
     }
 
     public static class MarkupHelpers

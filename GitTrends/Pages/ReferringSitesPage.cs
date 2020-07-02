@@ -20,10 +20,13 @@ namespace GitTrends
         readonly StoreRatingRequestView _storeRatingRequestView = new StoreRatingRequestView();
         readonly CancellationTokenSource _refreshViewCancelltionTokenSource = new CancellationTokenSource();
 
-        readonly RefreshView _refreshView;
+        RefreshView _refreshView;
+        readonly Repository _repository;
         readonly ThemeService _themeService;
         readonly ReviewService _reviewService;
         readonly DeepLinkingService _deepLinkingService;
+
+        Button _closeButton;
 
         public ReferringSitesPage(DeepLinkingService deepLinkingService,
                                     ReferringSitesViewModel referringSitesViewModel,
@@ -35,12 +38,16 @@ namespace GitTrends
         {
             Title = PageTitles.ReferringSitesPage;
 
+            _repository = repository;
             _themeService = themeService;
             _reviewService = reviewService;
             _deepLinkingService = deepLinkingService;
 
             ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             reviewService.ReviewCompleted += HandleReviewCompleted;
+
+            Build(); 
+            return; // TODO: remove old source below
 
             var collectionView = new CollectionView
             {
@@ -163,44 +170,86 @@ namespace GitTrends
             int titleRowHeight = iOS ? 50 : 0;
 
             Content = RelativeLayout (
-                _refreshView
-                .Constrain (Constraint.Constant(0),
-                            Constraint.Constant(titleRowHeight), //Set to `0` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
-                            Constraint.RelativeToParent(parent => parent.Width),
-                            Constraint.RelativeToParent(parent => parent.Height - titleRowHeight)), //Set to `parent => parent.Height` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
+                new RefreshView {
+                    AutomationId = ReferringSitesPageAutomationIds.RefreshView,
+                    CommandParameter = (_repository.OwnerLogin, _repository.Name, _repository.Url, _refreshViewCancelltionTokenSource.Token),
+                    Content = CollectionView
+                }  .DynamicResource (RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor))
+                   .Assign (out _refreshView)
+                   .Bind (RefreshView.CommandProperty, nameof(ReferringSitesViewModel.RefreshCommand))
+                   .Bind (RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing))
+                   .Constrain (
+                        Constraint.Constant(0),
+                        Constraint.Constant(titleRowHeight), //Set to `0` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
+                        Constraint.RelativeToParent(parent => parent.Width),
+                        Constraint.RelativeToParent(parent => parent.Height - titleRowHeight)), //Set to `parent => parent.Height` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
 
+                // titleShadow
                 iOS ? new BoxView { }
-                .DynamicResource (BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor))
-                .Invoke (titleShadow => {
-                    if (isLightTheme(_themeService.Preference))
-                        titleShadow.On<iOS>().SetIsShadowEnabled(true)
-                                             .SetShadowColor(Color.Gray)
-                                             .SetShadowOffset(new Size(0, 1))
-                                             .SetShadowOpacity(0.5)
-                                             .SetShadowRadius(4);
-                })
-                .Constrain (Constraint.Constant(0),
-                            Constraint.Constant(0),
-                            Constraint.RelativeToParent(parent => parent.Width),
-                            Constraint.Constant(titleRowHeight)) : null,
+                    .DynamicResource (BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor))
+                    .Invoke (titleShadow => { if (isLightTheme(_themeService.Preference)) titleShadow.On<iOS>()
+                        .SetIsShadowEnabled (true)
+                        .SetShadowColor (Color.Gray)
+                        .SetShadowOffset (new Size(0, 1))
+                        .SetShadowOpacity (0.5)
+                        .SetShadowRadius (4); })
+                    .Constrain (
+                        Constraint.Constant(0),
+                        Constraint.Constant(0),
+                        Constraint.RelativeToParent(parent => parent.Width),
+                        Constraint.Constant(titleRowHeight)) : null,
 
-                iOS ? new Label { Text = PageTitles.ReferringSitesPage }
-                .Font (family: FontFamilyConstants.RobotoMedium, size: 30)
-                .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.TextColor))
-                .Center () .Margins (top: titleTopMargin) .TextCenterVertical ()
-                .Constrain (Constraint.Constant(10),
-                            Constraint.Constant(0)) : null,
+                // titleLabel
+                iOS ? new Label { 
+                    Text = PageTitles.ReferringSitesPage
+                }  .Font (family: FontFamilyConstants.RobotoMedium, size: 30)
+                   .DynamicResource (Label.TextColorProperty, nameof(BaseTheme.TextColor))
+                   .Center () .Margins (top: titleTopMargin) .TextCenterVertical ()
+                   .Constrain (
+                        Constraint.Constant(10),
+                        Constraint.Constant(0)) : null,
 
-                iOS ? new Label { } .UnConstrained() : null, // TODO: closeButton
+                // closeButton
+                iOS ? new Button {
+                    Text = ReferringSitesPageConstants.CloseButtonText,
+                    AutomationId = ReferringSitesPageAutomationIds.CloseButton
+                }  .Font (family: FontFamilyConstants.RobotoRegular)
+                   .DynamicResource(
+                        (Button.TextColorProperty, nameof(BaseTheme.CloseButtonTextColor)), 
+                        (BackgroundColorProperty , nameof(BaseTheme.CloseButtonBackgroundColor)))
+                   .Assign (out _closeButton)
+                   .Invoke (closeButton => closeButton.Clicked += HandleCloseButtonClicked)
+                   .End () .CenterVertical () .Margins (top: titleTopMargin) .Height (titleRowHeight * 3 / 5) .Padding (5, 0)
+                   .Constrain (
+                        Constraint.RelativeToParent(parent => parent.Width - _closeButton.GetWidth(parent) - 10),
+                        Constraint.Constant(0),
+                        Constraint.RelativeToParent(parent => _closeButton.GetWidth(parent))) : null,
 
                 _storeRatingRequestView
-                .Constrain (Constraint.Constant(0),
-                            Constraint.RelativeToParent(parent => parent.Height - _storeRatingRequestView.GetHeight(parent)),
-                            Constraint.RelativeToParent(parent => parent.Width))
+                .Constrain (
+                    Constraint.Constant(0),
+                    Constraint.RelativeToParent(parent => parent.Height - _storeRatingRequestView.GetHeight(parent)),
+                    Constraint.RelativeToParent(parent => parent.Width))
             );
 
             static bool isLightTheme(PreferredTheme preferredTheme) => preferredTheme is PreferredTheme.Light || preferredTheme is PreferredTheme.Default && Xamarin.Forms.Application.Current.RequestedTheme is OSAppTheme.Light;
         }
+
+        CollectionView CollectionView => new CollectionView { 
+            AutomationId = ReferringSitesPageAutomationIds.CollectionView,
+            BackgroundColor = Color.Transparent,
+            ItemTemplate = new ReferringSitesDataTemplate(),
+            SelectionMode = SelectionMode.Single,
+            ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical),
+            //Set iOS Header to `new BoxView { HeightRequest = titleRowHeight + titleTopMargin }` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
+            Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = ReferringSitesDataTemplate.BottomPadding } : null,
+            Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = ReferringSitesDataTemplate.TopPadding } : null,
+            EmptyView = new EmptyDataView ("EmptyReferringSitesList", ReferringSitesPageAutomationIds.EmptyDataView)
+                            .Bind (IsVisibleProperty, nameof(ReferringSitesViewModel.IsEmptyDataViewEnabled))
+                            .Bind (EmptyDataView.TitleProperty, nameof(ReferringSitesViewModel.EmptyDataViewTitle))
+                            .Bind (EmptyDataView.DescriptionProperty, nameof(ReferringSitesViewModel.EmptyDataViewDescription))
+        }  .Invoke (collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged)
+           .Bind (nameof(ReferringSitesViewModel.MobileReferringSitesList));
 #pragma warning restore CS8604 // Possible null reference argument.
 
         protected override void OnAppearing()
