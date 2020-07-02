@@ -117,19 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CreatedBy" xml:space="preserve">
-    <value>Створено Code Traveler LLC</value>
+  <data name="GitHubApiLimit" xml:space="preserve">
+    <value>Дозволено не більше 5000 запитів до GitHub API за годину для одного користувача</value>
   </data>
-  <data name="Language" xml:space="preserve">
-    <value>Мова</value>
+  <data name="LearnMore" xml:space="preserve">
+    <value>Дізнатися більше</value>
   </data>
-  <data name="PreferredChartSettingsLabelText" xml:space="preserve">
-    <value>Вибрані графіки</value>
+  <data name="MinutesReset" xml:space="preserve">
+    <value>До оновлення ліміту {0} хвилин</value>
   </data>
-  <data name="RegisterForNotifications" xml:space="preserve">
-    <value>Підписатися на сповіщення</value>
+  <data name="UnableToConnectToGitHub" xml:space="preserve">
+    <value>Неможливо під'єднатися до GitHub</value>
   </data>
-  <data name="Theme" xml:space="preserve">
-    <value>Тема</value>
+  <data name="UsageLimitExceeded" xml:space="preserve">
+    <value>Перевищена дозволена кількість запитів</value>
   </data>
 </root>

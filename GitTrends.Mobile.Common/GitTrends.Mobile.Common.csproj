@@ -598,6 +598,9 @@
     <EmbeddedResource Update="Constants\PageTitles.uk.resx">
       <DependentUpon>PageTitles.resx</DependentUpon>
     </EmbeddedResource>
+      <EmbeddedResource Update="Constants\PullToRefreshFailedConstants.uk.resx">
+        <DependentUpon>PullToRefreshFailedConstants.resx</DependentUpon>
+      </EmbeddedResource>
     <EmbeddedResource Update="Constants\ReferringSitesPageConstants.uk.resx">
       <DependentUpon>ReferringSitesPageConstants.resx</DependentUpon>
     </EmbeddedResource>
@@ -629,6 +632,8 @@
         </Compile>
         <Compile Update="Constants\PullToRefreshFailedConstants.Designer.cs">
           <DependentUpon>PullToRefreshFailedConstants.resx</DependentUpon>
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
         </Compile>
     </ItemGroup>
     <ItemGroup>
