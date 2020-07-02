@@ -123,4 +123,13 @@
   <data name="ErrorPullToRefreshEventArgs" xml:space="preserve">
     <value>Неможливо отримати список сайтів. Перевірте інтернет-з'єднання та спробуйте знову.</value>
   </data>
+  <data name="Referrals" xml:space="preserve">
+    <value>ПЕРЕХОДИ</value>
+  </data>
+  <data name="Site" xml:space="preserve">
+    <value>САЙТ</value>
+  </data>
+  <data name="Unique" xml:space="preserve">
+    <value>УНІКАЛЬНІ</value>
+  </data>
 </root>
