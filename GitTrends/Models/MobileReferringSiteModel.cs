@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using AsyncAwaitBestPractices;
-using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.Forms;
@@ -20,7 +19,7 @@ namespace GitTrends
         public MobileReferringSiteModel(in ReferringSiteModel referringSiteModel, in ImageSource? favIcon = null)
             : base(referringSiteModel.TotalCount, referringSiteModel.TotalUniqueCount, referringSiteModel.Referrer, referringSiteModel.DownloadedAt)
         {
-            FavIcon = favIcon;
+            FavIcon = favIcon ?? FavIconService.DefaultFavIcon;
         }
 
         event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged

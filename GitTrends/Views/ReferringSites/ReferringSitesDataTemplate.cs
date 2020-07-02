@@ -1,7 +1,7 @@
 ﻿using System;
+using FFImageLoading.Forms;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using ImageCircle.Forms.Plugin.Abstractions;
 using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -193,29 +193,25 @@ namespace GitTrends
                 {
                     public FavIconImage()
                     {
-                        this.Start();
-
                         const int padding = 1;
 
-                        var circleDiameter = Math.Min(_favIconHeight, _favIconWidth);
+                        this.Start();
 
-                        HeightRequest = WidthRequest = circleDiameter;
-                        CornerRadius = circleDiameter / 2;
                         BackgroundColor = Color.White;
 
                         Padding = new Thickness(padding);
 
-                        var circleImage = new CircleImage
-                        {
-                            ErrorPlaceholder = FavIconService.DefaultFavIcon,
-                            LoadingPlaceholder = FavIconService.DefaultFavIcon,
-                            Aspect = Aspect.Fill,
-                            HeightRequest = circleDiameter - padding * 2,
-                            WidthRequest = circleDiameter - padding * 2,
-                        }.Center();
-                        circleImage.SetBinding(CircleImage.SourceProperty, nameof(MobileReferringSiteModel.FavIcon));
+                        var circleDiameter = Math.Min(_favIconHeight, _favIconWidth);
 
-                        Content = circleImage;
+                        CornerRadius = circleDiameter / 2;
+                        HeightRequest = WidthRequest = circleDiameter;
+
+                        Content = new CircleImage
+                        {
+                            Aspect = Aspect.AspectFill,
+                            ErrorPlaceholder = FavIconService.DefaultFavIcon,
+                            LoadingPlaceholder = FavIconService.DefaultFavIcon
+                        }.Bind(CircleImage.ImageSourceProperty, nameof(MobileReferringSiteModel.FavIcon));
                     }
                 }
             }
