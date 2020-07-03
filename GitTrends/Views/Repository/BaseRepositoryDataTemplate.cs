@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
-using ImageCircle.Forms.Plugin.Abstractions;
 using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -96,7 +95,7 @@ namespace GitTrends
 
                         Children.Add(new AvatarImage()
                                         .Row(Row.Title).Column(Column.Avatar).RowSpan(2)
-                                        .Bind(Image.SourceProperty, nameof(Repository.OwnerAvatarUrl)));
+                                        .Bind(CircleImage.ImageSourceProperty, nameof(Repository.OwnerAvatarUrl)));
 
                         Children.Add(new NameLabel()
                                         .Row(Row.Title).Column(Column.Trending).ColumnSpan(7)
@@ -129,7 +128,6 @@ namespace GitTrends
                         {
                             this.Center();
 
-                            HeightRequest = _circleImageHeight;
                             WidthRequest = _circleImageHeight;
 
                             BorderThickness = 1;
