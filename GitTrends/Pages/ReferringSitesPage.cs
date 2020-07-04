@@ -5,7 +5,7 @@ using Xamarin.Forms.Markup;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using static Xamarin.Forms.Constraint;
-using static GitTrends.MarkupHelpers;
+using static GitTrends.MarkupExtensions;
 using vm = GitTrends.ReferringSitesViewModel;
 
 namespace GitTrends

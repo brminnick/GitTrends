@@ -7,6 +7,7 @@ using GitTrends.Shared;
 using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using static GitTrends.MarkupExtensions;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
