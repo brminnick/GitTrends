@@ -47,11 +47,6 @@
         <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.1" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Update="Pages\ReferringSitesPage.logic.cs">
-          <DependentUpon>ReferringSitesPage.cs</DependentUpon>
-        </Compile>
-    </ItemGroup>
-    <ItemGroup>
       <Folder Include="EventArgs\" />
       <Folder Include="Views\" />
       <Folder Include="Views\Repository\" />

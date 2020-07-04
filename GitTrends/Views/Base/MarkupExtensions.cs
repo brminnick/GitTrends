@@ -58,6 +58,38 @@ namespace GitTrends
         public static ConstrainedView Constrain<TView>(this TView view, Expression? x = null, Expression? y = null, Expression? width = null, Expression? height = null) where TView : View => ConstrainedView.FromExpressions(view, x, y, width, height);
 
         public static ConstrainedView Constrain<TView>(this TView view, Constraint? xConstraint = null, Constraint? yConstraint = null, Constraint? widthConstraint = null, Constraint? heightConstraint = null) where TView : View => ConstrainedView.FromConstraints(view, xConstraint, yConstraint, widthConstraint, heightConstraint);
+
+        public static RelativeLayout Add<TView>(this RelativeLayout relativeLayout, TView view) where TView : View?
+        {
+            if (view != null)
+                ((Layout<View>)relativeLayout).Children.Add(view);
+
+            return relativeLayout;
+        }
+
+        public static RelativeLayout Add<TView>(this RelativeLayout relativeLayout, TView view, Bounds bounds) where TView : View?
+        {
+            if (view != null)
+                relativeLayout.Children.Add(view, bounds);
+
+            return relativeLayout;
+        }
+
+        public static RelativeLayout Add<TView>(this RelativeLayout relativeLayout, TView view, Expression? x = null, Expression? y = null, Expression? width = null, Expression? height = null) where TView : View?
+        {
+            if (view != null)
+                relativeLayout.Children.Add(view, x, y, width, height);
+
+            return relativeLayout;
+        }
+
+        public static RelativeLayout Add<TView>(this RelativeLayout relativeLayout, TView view, Constraint? xConstraint = null, Constraint? yConstraint = null, Constraint? widthConstraint = null, Constraint? heightConstraint = null) where TView : View?
+        {
+            if(view != null)
+                relativeLayout.Children.Add(view, xConstraint, yConstraint, widthConstraint, heightConstraint);
+
+            return relativeLayout;
+        }
     }
 
     class ConstrainedView
