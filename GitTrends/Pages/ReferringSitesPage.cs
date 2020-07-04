@@ -88,7 +88,7 @@ namespace GitTrends
             Text = ReferringSitesPageConstants.CloseButtonText,
             AutomationId = ReferringSitesPageAutomationIds.CloseButton
         }  .Font (family: FontFamilyConstants.RobotoRegular)
-           .DynamicResource (
+           .DynamicResources (
                (Button.TextColorProperty, nameof(BaseTheme.CloseButtonTextColor)), 
                (BackgroundColorProperty , nameof(BaseTheme.CloseButtonBackgroundColor)))
            .Assign (out _closeButton)

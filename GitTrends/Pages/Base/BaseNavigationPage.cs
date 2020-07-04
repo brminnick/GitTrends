@@ -7,7 +7,7 @@ namespace GitTrends
     {
         public BaseNavigationPage(Xamarin.Forms.Page root) : base(root)
         {
-            this.DynamicResource((BarTextColorProperty, nameof(BaseTheme.NavigationBarTextColor)),
+            this.DynamicResources((BarTextColorProperty, nameof(BaseTheme.NavigationBarTextColor)),
                                  (BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)),
                                  (BarBackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor)));
 

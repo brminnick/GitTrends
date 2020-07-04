@@ -54,8 +54,8 @@ namespace GitTrends
                 AutomationId = SettingsPageAutomationIds.GitHubAvatarImage;
 
                 this.Bind(ImageSourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource))
-                    .DynamicResource((ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
-                                     (LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)));
+                    .DynamicResources((ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
+                                        (LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)));
             }
         }
 
@@ -109,8 +109,8 @@ namespace GitTrends
                 this.Bind(nameof(SettingsViewModel.DemoButtonCommand))
                     .Bind(TextProperty, nameof(SettingsViewModel.TryDemoButtonText))
                     .Bind(IsVisibleProperty, nameof(SettingsViewModel.IsDemoButtonVisible))
-                    .DynamicResource((BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)),
-                                     (TextColorProperty, nameof(BaseTheme.GitHubHandleColor)));
+                    .DynamicResources((BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)),
+                                        (TextColorProperty, nameof(BaseTheme.GitHubHandleColor)));
             }
         }
 

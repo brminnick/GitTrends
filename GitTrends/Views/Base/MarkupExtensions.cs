@@ -14,7 +14,7 @@ namespace GitTrends
             return element;
         }
 
-        public static TElement DynamicResource<TElement>(this TElement element, params (BindableProperty property, string key)[] resources) where TElement : Element
+        public static TElement DynamicResources<TElement>(this TElement element, params (BindableProperty property, string key)[] resources) where TElement : Element
         {
             foreach (var (property, key) in resources)
                 element.SetDynamicResource(property, key);

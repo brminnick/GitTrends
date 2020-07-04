@@ -133,9 +133,9 @@ namespace GitTrends
 
                             BorderThickness = 1;
 
-                            this.DynamicResource((BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
-                                                 (ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
-                                                 (LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)));
+                            this.DynamicResources((BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
+                                                    (ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
+                                                    (LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)));
                         }
                     }
 

@@ -65,9 +65,9 @@ namespace GitTrends
 
                 SetItemSource();
 
-                this.DynamicResource((FontColorProperty, nameof(BaseTheme.BorderButtonFontColor)),
-                                     (BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor)),
-                                     (BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)))
+                this.DynamicResources((FontColorProperty, nameof(BaseTheme.BorderButtonFontColor)),
+                                        (BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor)),
+                                        (BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)))
                     .Bind(SelectedIndexProperty, nameof(SettingsViewModel.PreferredChartsSelectedIndex));
             }
 

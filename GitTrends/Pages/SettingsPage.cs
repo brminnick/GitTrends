@@ -193,8 +193,8 @@ namespace GitTrends
 
                 this.EndExpand();
 
-                this.DynamicResource((TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor)), 
-                                     (BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)));
+                this.DynamicResources((TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor)), 
+                                        (BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)));
             }
         }
 

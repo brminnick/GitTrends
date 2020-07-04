@@ -21,8 +21,8 @@ namespace GitTrends
             CornerRadius = 4;
             AutomationId = cardAutomationId;
 
-            this.DynamicResource((BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor)),
-                                 (MaterialThemeProperty, nameof(BaseTheme.TrendsCardMaterialFrameTheme)));
+            this.DynamicResources((BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor)),
+                                    (MaterialThemeProperty, nameof(BaseTheme.TrendsCardMaterialFrameTheme)));
         }
 
         enum Row { Title, Number }
