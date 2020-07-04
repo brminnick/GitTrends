@@ -1,12 +1,11 @@
 ﻿using System;
-using FFImageLoading.Forms;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
-using static GitTrends.XamarinFormsService;
+using static GitTrends.MarkupExtensions;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -37,7 +36,7 @@ namespace GitTrends
 
                 Children.Add(new CardViewFrame().Row(Row.Card).Column(Column.Card));
 
-                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+                this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             }
 
             enum Row { TopPadding, Card, BottomPadding }
@@ -53,7 +52,7 @@ namespace GitTrends
                     Elevation = 4;
                     Content = new ContentGrid();
 
-                    SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.DefaultMaterialFrameTheme));
+                    this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.DefaultMaterialFrameTheme));
                 }
             }
 
@@ -139,7 +138,7 @@ namespace GitTrends
                         VerticalOptions = LayoutOptions.Start;
                         VerticalTextAlignment = TextAlignment.Start;
 
-                        SetDynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
+                        this.DynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
                     }
                 }
 
@@ -157,7 +156,7 @@ namespace GitTrends
 
                         VerticalTextAlignment = TextAlignment.End;
 
-                        SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+                        this.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
                         SetBinding(WidthRequestProperty, new Binding(nameof(Width), source: titleLabel));
                     }
                 }
@@ -176,7 +175,7 @@ namespace GitTrends
 
                         VerticalTextAlignment = TextAlignment.End;
 
-                        SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+                        this.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
                     }
                 }
 
@@ -185,7 +184,7 @@ namespace GitTrends
                     public Separator()
                     {
                         VerticalOptions = LayoutOptions.FillAndExpand;
-                        SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
+                        this.DynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
                     }
                 }
 

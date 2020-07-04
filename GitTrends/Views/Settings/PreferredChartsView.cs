@@ -6,7 +6,7 @@ using Syncfusion.XForms.Buttons;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using static GitTrends.XamarinFormsService;
+using static GitTrends.MarkupExtensions;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -65,11 +65,10 @@ namespace GitTrends
 
                 SetItemSource();
 
-                SetDynamicResource(FontColorProperty, nameof(BaseTheme.BorderButtonFontColor));
-                SetDynamicResource(BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor));
-                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
-
-                this.SetBinding(SelectedIndexProperty, nameof(SettingsViewModel.PreferredChartsSelectedIndex));
+                this.DynamicResources((FontColorProperty, nameof(BaseTheme.BorderButtonFontColor)),
+                                        (BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor)),
+                                        (BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)))
+                    .Bind(SelectedIndexProperty, nameof(SettingsViewModel.PreferredChartsSelectedIndex));
             }
 
             void HandlePreferredLanguageChanged(object sender, string? e) => _mainThread.BeginInvokeOnMainThread(SetItemSource);
@@ -81,7 +80,7 @@ namespace GitTrends
                 public TrendsChartSettingsSelectionIndicatorSettings()
                 {
                     CornerRadius = cornerRadius;
-                    SetDynamicResource(ColorProperty, nameof(BaseTheme.TrendsChartSettingsSelectionIndicatorColor));
+                    this.DynamicResource(ColorProperty, nameof(BaseTheme.TrendsChartSettingsSelectionIndicatorColor));
                 }
             }
         }

@@ -8,17 +8,6 @@ namespace GitTrends
 {
     static class XamarinFormsService
     {
-        public static GridLength StarGridLength(double value) => new GridLength(value, GridUnitType.Star);
-        public static GridLength StarGridLength(int value) => StarGridLength((double)value);
-
-        public static GridLength AbsoluteGridLength(double value) => new GridLength(value, GridUnitType.Absolute);
-        public static GridLength AbsoluteGridLength(int value) => AbsoluteGridLength((double)value);
-
-        public static double GetWidth(this View view, in RelativeLayout parent) => view.Measure(parent.Width, parent.Height).Request.Width;
-        public static double GetHeight(this View view, in RelativeLayout parent) => view.Measure(parent.Width, parent.Height).Request.Height;
-
-        public static bool IsNullOrEmpty(this IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
-
         // **** Example Screen Sizes ****
         // iPhone SE 2nd Gen (aka iPhone 8), Width 750, Density 2, Width/Density 375
         // iPhone 11, Width 828, Density 2, Width/Density 414

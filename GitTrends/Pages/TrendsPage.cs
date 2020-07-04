@@ -7,7 +7,7 @@ using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using static GitTrends.XamarinFormsService;
+using static GitTrends.MarkupExtensions;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -90,12 +90,10 @@ namespace GitTrends
             {
                 AutomationId = TrendsPageAutomationIds.ActivityIndicator;
 
-                this.Center();
-
-                SetDynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor));
-
-                this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData));
-                this.SetBinding(IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
+                this.Center()
+                    .DynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor))
+                    .Bind(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData))
+                    .Bind(IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
             }
         }
     }
