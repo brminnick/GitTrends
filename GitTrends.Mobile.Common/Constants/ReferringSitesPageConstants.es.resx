@@ -18,4 +18,13 @@
     <data name="ErrorPullToRefreshEventArgs" xml:space="preserve">
         <value>No se pueden recuperar sitios de referencia. Verifique su conexión a Internet e intente nuevamente.</value>
     </data>
+    <data name="Site" xml:space="preserve">
+        <value>SITIO</value>
+    </data>
+    <data name="Referrals" xml:space="preserve">
+        <value>REFERENCIAS</value>
+    </data>
+    <data name="Unique" xml:space="preserve">
+        <value>UNICA</value>
+    </data>
 </root>
