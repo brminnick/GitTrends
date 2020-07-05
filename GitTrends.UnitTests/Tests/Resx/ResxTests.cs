@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
+using System.Text;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using NUnit.Framework;
@@ -56,57 +57,49 @@ namespace GitTrends.UnitTests
         public void ConfirmTranslationsAreComplete()
         {
             //Arrange
-            var extraEntries = new Dictionary<string, List<string>>();
-            var emptyResxFiles = new Dictionary<string, List<string>>();
-            var missingEntries = new Dictionary<string, List<string>>();
+            var filesWithExtraEntries = new List<ResxFile>();
+            var filesWithMissingEntryData = new List<ResxFile>();
+            var filesWithMissingEntryValue = new List<ResxFile>();
 
-            var resxDictionaries = new List<Dictionary<string, Dictionary<string, object>>>(_resxTypeList.Select(x => GetResxDictionaries(x)));
+            var resxFiles = _resxTypeList.Select(x => GetResxFiles(x)).ToList();
 
             //Act
-            foreach (var resxDictionary in resxDictionaries)
+            foreach (var resxFile in resxFiles)
             {
-                var defaultResx = GetDefaultResx(resxDictionary);
+                var defaultResx = GetDefaultResx(resxFile);
 
-                foreach (var extraEntry in GetExtraEntries(resxDictionary, defaultResx))
+                foreach (var fileWithExtraEntries in GetExtraEntries(resxFile, defaultResx))
                 {
-                    if (extraEntries.ContainsKey(extraEntry.Key))
-                        extraEntries[extraEntry.Key].AddRange(extraEntry.Value);
+                    if (filesWithExtraEntries.Any(x => x.Language == fileWithExtraEntries.Language))
+                        filesWithExtraEntries.First(x => x.Language == fileWithExtraEntries.Language).Entries.AddRange(fileWithExtraEntries.Entries);
                     else
-                        extraEntries.Add(extraEntry.Key, extraEntry.Value);
+                        filesWithExtraEntries.Add(new ResxFile(fileWithExtraEntries.Language, fileWithExtraEntries.Entries));
                 }
 
-                foreach (var emptyResxFile in GetEmptyResxFiles(resxDictionary))
+                foreach (var fileWithMissingEntryData in GetFilesWithMissingEntryData(resxFile, defaultResx))
                 {
-                    if (emptyResxFiles.ContainsKey(emptyResxFile.Key))
-                        emptyResxFiles[emptyResxFile.Key].AddRange(emptyResxFile.Value);
+                    if (filesWithMissingEntryData.Any(x => x.Language == fileWithMissingEntryData.Language))
+                        filesWithMissingEntryData.First(x => x.Language == fileWithMissingEntryData.Language).Entries.AddRange(fileWithMissingEntryData.Entries);
                     else
-                        emptyResxFiles.Add(emptyResxFile.Key, emptyResxFile.Value);
+                        filesWithMissingEntryData.Add(new ResxFile(fileWithMissingEntryData.Language, fileWithMissingEntryData.Entries));
                 }
 
-                foreach (var missingEntry in GetMissingEntries(resxDictionary, defaultResx))
+                foreach (var fileWithMissingEntryValues in GetFilesWithMissingEntryValue(resxFile))
                 {
-                    if (missingEntries.ContainsKey(missingEntry.Key))
-                        missingEntries[missingEntry.Key].AddRange(missingEntry.Value);
+                    if (filesWithMissingEntryValue.Any(x => x.Language == fileWithMissingEntryValues.Language))
+                        filesWithMissingEntryValue.First(x => x.Language == fileWithMissingEntryValues.Language).Entries.AddRange(fileWithMissingEntryValues.Entries);
                     else
-                        missingEntries.Add(missingEntry.Key, missingEntry.Value);
+                        filesWithMissingEntryValue.Add(new ResxFile(fileWithMissingEntryValues.Language, fileWithMissingEntryValues.Entries));
                 }
             }
 
             //Assert
-            Assert.IsEmpty(extraEntries, "Extra Translations Found", extraEntries);
-            Assert.IsEmpty(emptyResxFiles, "Empty Resx Files Found", emptyResxFiles);
-            Assert.IsEmpty(missingEntries, "Missing Translations Found", missingEntries);
+            Assert.IsEmpty(filesWithExtraEntries, "Extra Translations Found", filesWithExtraEntries);
+            Assert.IsEmpty(filesWithMissingEntryData, "Missing Data Found", filesWithMissingEntryData);
+            Assert.IsEmpty(filesWithMissingEntryValue, "Missing Values Found", filesWithMissingEntryValue);
         }
 
-        //https://stackoverflow.com/a/41760659/5953643
-        static Dictionary<string, object> GetDefaultResx(Dictionary<string, Dictionary<string, object>> resxFiles)
-        {
-            if (!resxFiles.TryGetValue(string.Empty, out var neutralLanguage))
-                throw new Exception(string.Format("The neutral language is not specified"));
-
-            resxFiles.Remove(string.Empty);
-            return neutralLanguage;
-        }
+        static List<ResxEntryModel> GetDefaultResx(in List<ResxFile> resxFiles) => resxFiles.First(x => x.Language is "").Entries;
 
         //https://stackoverflow.com/a/41760659/5953643
         static CultureInfo[] GetAvailableResxCultureInfos(Assembly assembly)
@@ -175,7 +168,7 @@ namespace GitTrends.UnitTests
         }
 
         //https://stackoverflow.com/a/41760659/5953643
-        static Dictionary<string, Dictionary<string, object>> GetResxDictionaries(Type type)
+        static List<ResxFile> GetResxFiles(Type type)
         {
             if (type?.FullName is null)
                 throw new ArgumentException($"{nameof(Type.FullName)} cannot be null");
@@ -184,7 +177,7 @@ namespace GitTrends.UnitTests
 
             var resourceManager = new ResourceManager(type.FullName, type.Assembly);
 
-            var resxDictionaries = new Dictionary<string, Dictionary<string, object>>();
+            var resxFiles = new List<ResxFile>();
 
             for (int i = 0; i < availableResxsCultureInfos.Length; i++)
             {
@@ -192,7 +185,7 @@ namespace GitTrends.UnitTests
 
                 var resourceSet = resourceManager.GetResourceSet(cultureInfo, true, false) ?? throw new MultipleAssertException($"The language \"{cultureInfo.Name}\" is not specified in \"{type}\".");
 
-                var dict = new Dictionary<string, object>();
+                var resxEntryModelList = new List<ResxEntryModel>();
 
                 foreach (DictionaryEntry? item in resourceSet)
                 {
@@ -205,100 +198,134 @@ namespace GitTrends.UnitTests
                     if (key is null || value is null)
                         continue;
 
-                    dict.Add(key, value);
+                    resxEntryModelList.Add(new ResxEntryModel(type, key, value));
                 }
 
-                resxDictionaries.Add(cultureInfo.Name, dict);
+                resxFiles.Add(new ResxFile(cultureInfo.Name, resxEntryModelList));
             }
 
-            return resxDictionaries;
+            return resxFiles;
         }
 
-        //https://stackoverflow.com/a/41760659/5953643
-        static Dictionary<string, List<string>> GetExtraEntries(Dictionary<string, Dictionary<string, object>> resxDictionaries, Dictionary<string, object> neutralLanguage)
+        static List<ResxFile> GetExtraEntries(List<ResxFile> resxFiles, List<ResxEntryModel> neutralLanguage)
         {
-            var extraEntryList = new Dictionary<string, List<string>>();
+            var extraEntryFileList = new List<ResxFile>();
 
-            foreach (var pair in resxDictionaries)
+            foreach (var resxFile in resxFiles)
             {
-                var resxs = pair.Value;
+                var resxEntryModelList = resxFile.Entries;
 
-                var list = new List<string>();
+                var extraEntryList = new List<ResxEntryModel>();
 
-                foreach (var key in resxs.Keys)
+                foreach (var resxEntryModel in resxEntryModelList)
                 {
-                    if (!neutralLanguage.ContainsKey(key))
+                    if (!neutralLanguage.Any(x => x.Data == resxEntryModel.Data))
                     {
-                        list.Add(key);
+                        extraEntryList.Add(resxEntryModel);
                     }
                 }
 
-                if (list.Count > 0)
+                if (extraEntryList.Count > 0)
                 {
-                    extraEntryList.Add(pair.Key, list);
+                    extraEntryFileList.Add(new ResxFile(resxFile.Language, extraEntryList));
                 }
             }
-            return extraEntryList;
+            return extraEntryFileList;
         }
 
-        static Dictionary<string, List<string>> GetEmptyResxFiles(Dictionary<string, Dictionary<string, object>> resxDictionaries)
+        static List<ResxFile> GetFilesWithMissingEntryValue(in List<ResxFile> resxFiles)
         {
-            var emptyResxFiles = new Dictionary<string, List<string>>();
+            var emptyResxFiles = new List<ResxFile>();
 
-            foreach (var pair in resxDictionaries)
+            foreach (var resxFile in resxFiles)
             {
-                var resxs = pair.Value;
+                var resxEntryModelList = resxFile.Entries;
 
-                var list = new List<string>();
+                var emptyResxList = new List<ResxEntryModel>();
 
-                foreach (var entry in resxs)
+                foreach (var resxEntryModel in resxEntryModelList)
                 {
-                    if (entry.Value is null)
+                    if (resxEntryModel.Value is null)
                     {
-                        list.Add(entry.Key);
+                        emptyResxList.Add(resxEntryModel);
                         continue;
                     }
 
-                    var stringValue = entry.Value as string;
+                    var stringValue = resxEntryModel.Value as string;
                     if (string.IsNullOrWhiteSpace(stringValue))
                     {
-                        list.Add(entry.Key);
+                        emptyResxList.Add(resxEntryModel);
                     }
                 }
 
-                if (list.Count > 0)
+                if (emptyResxList.Count > 0)
                 {
-                    emptyResxFiles.Add(pair.Key, list);
+                    emptyResxFiles.Add(new ResxFile(resxFile.Language, emptyResxList));
                 }
             }
+
             return emptyResxFiles;
         }
 
-        static Dictionary<string, List<string>> GetMissingEntries(Dictionary<string, Dictionary<string, object>> resxDictionaries, Dictionary<string, object> neutralLanguage)
+        static List<ResxFile> GetFilesWithMissingEntryData(List<ResxFile> resxFiles, List<ResxEntryModel> neutralLanguageResxEntryList)
         {
-            var missingEntryList = new Dictionary<string, List<string>>();
+            var missingEntryFileList = new List<ResxFile>();
 
-            foreach (var pair in resxDictionaries)
+            foreach (var resxFile in resxFiles)
             {
-                var resxs = pair.Value;
+                var resxEntryModelList = resxFile.Entries;
 
-                var list = new List<string>();
+                var missingEntryList = new List<ResxEntryModel>();
 
-                foreach (var key in neutralLanguage.Keys)
+                foreach (var naturalLanguageResxEntry in neutralLanguageResxEntryList)
                 {
-                    if (!resxs.ContainsKey(key))
+                    if (!resxEntryModelList.Any(x => x.Data == naturalLanguageResxEntry.Data))
                     {
-                        list.Add(key);
+                        missingEntryList.Add(naturalLanguageResxEntry);
                     }
                 }
 
-                if (list.Count > 0)
+                if (missingEntryList.Count > 0)
                 {
-                    missingEntryList.Add(pair.Key, list);
+                    missingEntryFileList.Add(new ResxFile(resxFile.Language, missingEntryList));
                 }
             }
 
-            return missingEntryList;
+            return missingEntryFileList;
+        }
+
+        class ResxFile
+        {
+            public ResxFile(in string language, in IEnumerable<ResxEntryModel> resxEntryModels) : this(language) => Entries.AddRange(resxEntryModels);
+            public ResxFile(in string language) => Language = language;
+
+            public string Language { get; }
+            public List<ResxEntryModel> Entries { get; } = new List<ResxEntryModel>();
+
+            public override string ToString()
+            {
+                var stringBuilder = new StringBuilder();
+                stringBuilder.AppendLine(Language);
+
+                foreach (var entry in Entries)
+                {
+                    stringBuilder.Append("\t");
+                    stringBuilder.AppendLine(entry.ToString());
+                }
+
+                return stringBuilder.ToString();
+            }
+        }
+
+        class ResxEntryModel
+        {
+            public ResxEntryModel(in Type type, in string data, in object value) => (Type, Data, Value) = (type, data, value);
+
+            public Type Type { get; }
+            public string Data { get; }
+            public object Value { get; }
+
+            public override string ToString() => $"{Type.Name} [ {Data} : {Value} ]";
         }
     }
 }
