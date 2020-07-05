@@ -59,9 +59,9 @@ namespace GitTrends
             {
                 AutomationId = RepositoryPageAutomationIds.RefreshView,
                 Content = collectionView
-            }  .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor))
-               .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
-               .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
+            }.DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor))
+             .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
+             .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
 
             var settingsToolbarItem = new ToolbarItem
             {
