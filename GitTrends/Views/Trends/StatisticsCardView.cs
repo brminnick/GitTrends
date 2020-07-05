@@ -22,7 +22,7 @@ namespace GitTrends
             AutomationId = cardAutomationId;
 
             this.DynamicResources((BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor)),
-                                    (MaterialThemeProperty, nameof(BaseTheme.TrendsCardMaterialFrameTheme)));
+                                    (MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme)));
         }
 
         enum Row { Title, Number }

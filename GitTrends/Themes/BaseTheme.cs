@@ -74,12 +74,13 @@ namespace GitTrends
             Add(nameof(CloseButtonTextColor), CloseButtonTextColor);
             Add(nameof(CloseButtonBackgroundColor), CloseButtonBackgroundColor);
 
+            Add(nameof(PickerBorderColor), PickerBorderColor);
+
             Add(nameof(GitTrendsImageSource), GitTrendsImageSource);
             Add(nameof(DefaultProfileImageSource), DefaultProfileImageSource);
             Add(nameof(DefaultReferringSiteImageSource), DefaultReferringSiteImageSource);
 
-            Add(nameof(DefaultMaterialFrameTheme), DefaultMaterialFrameTheme);
-            Add(nameof(TrendsCardMaterialFrameTheme), TrendsCardMaterialFrameTheme);
+            Add(nameof(MaterialFrameTheme), MaterialFrameTheme);
         }
 
         public static string GetGitTrendsImageSource() => (string)(Application.Current?.Resources?[nameof(GitTrendsImageSource)] ?? "GitTrends");
@@ -157,11 +158,12 @@ namespace GitTrends
         public abstract Color CloseButtonTextColor { get; }
         public abstract Color CloseButtonBackgroundColor { get; }
 
+        public abstract Color PickerBorderColor { get; }
+
         public abstract string GitTrendsImageSource { get; }
         public abstract string DefaultProfileImageSource { get; }
         public abstract string DefaultReferringSiteImageSource { get; }
 
-        public abstract MaterialFrame.Theme DefaultMaterialFrameTheme { get; }
-        public abstract MaterialFrame.Theme TrendsCardMaterialFrameTheme { get; }
+        public abstract MaterialFrame.Theme MaterialFrameTheme { get; }
     }
 }

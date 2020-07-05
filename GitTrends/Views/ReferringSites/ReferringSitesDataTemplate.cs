@@ -12,11 +12,12 @@ namespace GitTrends
 {
     class ReferringSitesDataTemplate : DataTemplate
     {
+        public const int TopPadding = 8;
+
         public ReferringSitesDataTemplate() : base(() => new CardView())
         {
         }
 
-        public static int TopPadding { get; } = 8;
         public static int BottomPadding { get; } = Device.RuntimePlatform is Device.Android ? 12 : 16;
 
         class CardView : Grid
@@ -52,7 +53,7 @@ namespace GitTrends
                     Elevation = 4;
                     Content = new ContentGrid();
 
-                    this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.DefaultMaterialFrameTheme));
+                    this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
                 }
             }
 
@@ -207,7 +208,6 @@ namespace GitTrends
 
                         Content = new CircleImage
                         {
-                            Aspect = Aspect.AspectFill,
                             ErrorPlaceholder = FavIconService.DefaultFavIcon,
                             LoadingPlaceholder = FavIconService.DefaultFavIcon
                         }.Bind(CircleImage.ImageSourceProperty, nameof(MobileReferringSiteModel.FavIcon));

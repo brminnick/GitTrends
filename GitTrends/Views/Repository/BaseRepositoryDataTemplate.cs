@@ -66,7 +66,7 @@ namespace GitTrends
 
                     Content = new ContentGrid(parentDataTemplateChildren);
 
-                    this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.DefaultMaterialFrameTheme));
+                    this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
                 }
 
                 class ContentGrid : Grid

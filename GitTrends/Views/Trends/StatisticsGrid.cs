@@ -1,5 +1,4 @@
-﻿using System;
-using GitTrends.Mobile.Common;
+﻿using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using Sharpnado.MaterialFrame;
 using Xamarin.Forms;

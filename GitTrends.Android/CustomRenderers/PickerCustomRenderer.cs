@@ -1,5 +1,9 @@
-﻿using Android.Content;
+﻿using System;
+using Android.Content;
+using Android.Graphics;
+using Android.Graphics.Drawables;
 using GitTrends.Droid;
+using GitTrends.Mobile.Common;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
@@ -8,9 +12,7 @@ namespace GitTrends.Droid
 {
     public class PickerCustomRenderer : PickerRenderer
     {
-        public PickerCustomRenderer(Context context) : base(context)
-        {
-        }
+        public PickerCustomRenderer(Context context) : base(context) => ThemeService.PreferenceChanged += HandlePreferenceChanged;
 
         protected override void OnElementChanged(ElementChangedEventArgs<Picker> e)
         {
@@ -21,7 +23,25 @@ namespace GitTrends.Droid
                 Control.Background = null;
                 Control.Gravity = Android.Views.GravityFlags.Center;
                 Control.VerticalScrollBarEnabled = false;
+
+                SetPickerBorder();
             }
         }
+
+        void SetPickerBorder()
+        {
+            if (Control != null && Application.Current != null)
+            {
+                var borderColor = (Xamarin.Forms.Color)Application.Current.Resources[nameof(BaseTheme.PickerBorderColor)];
+
+                var gradientDrawable = new GradientDrawable();
+                gradientDrawable.SetCornerRadius(10);
+                gradientDrawable.SetStroke(2, borderColor.ToAndroid());
+
+                Control.Background = gradientDrawable;
+            }
+        }
+
+        void HandlePreferenceChanged(object sender, PreferredTheme e) => SetPickerBorder();
     }
 }
