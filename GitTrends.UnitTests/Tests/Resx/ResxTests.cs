@@ -18,10 +18,12 @@ namespace GitTrends.UnitTests
             typeof(AppStoreRatingRequestConstants),
             typeof(DemoUserConstants),
             typeof(EmptyDataViewConstants),
+            typeof(EmptyDataViewConstantsInternal),
             typeof(GitHubLoginButtonConstants),
             typeof(NotificationConstants),
             typeof(OnboardingConstants),
             typeof(PageTitles),
+            typeof(PullToRefreshFailedConstants),
             typeof(ReferringSitesPageConstants),
             typeof(RepositoryPageConstants),
             typeof(ReviewServiceConstants),
@@ -54,6 +56,10 @@ namespace GitTrends.UnitTests
         public void ConfirmTranslationsAreComplete()
         {
             //Arrange
+            var extraEntries = new Dictionary<string, List<string>>();
+            var emptyResxFiles = new Dictionary<string, List<string>>();
+            var missingEntries = new Dictionary<string, List<string>>();
+
             var resxDictionaries = new List<Dictionary<string, Dictionary<string, object>>>(_resxTypeList.Select(x => GetResxDictionaries(x)));
 
             //Act
@@ -61,15 +67,35 @@ namespace GitTrends.UnitTests
             {
                 var defaultResx = GetDefaultResx(resxDictionary);
 
-                var missingEntriesList = GetMissingEntries(resxDictionary, defaultResx);
-                var extraEntriesList = GetExtraEntries(resxDictionary, defaultResx);
-                var emptyResxFilesList = GetEmptyResxFiles(resxDictionary);
+                foreach (var extraEntry in GetExtraEntries(resxDictionary, defaultResx))
+                {
+                    if (extraEntries.ContainsKey(extraEntry.Key))
+                        extraEntries[extraEntry.Key].AddRange(extraEntry.Value);
+                    else
+                        extraEntries.Add(extraEntry.Key, extraEntry.Value);
+                }
 
-                //Assert
-                Assert.IsEmpty(missingEntriesList, "Missing Translations Found", missingEntriesList);
-                Assert.IsEmpty(extraEntriesList, "Extra Translations Found", extraEntriesList);
-                Assert.IsEmpty(emptyResxFilesList, "Empty Resx Files Found", emptyResxFilesList);
+                foreach (var emptyResxFile in GetEmptyResxFiles(resxDictionary))
+                {
+                    if (emptyResxFiles.ContainsKey(emptyResxFile.Key))
+                        emptyResxFiles[emptyResxFile.Key].AddRange(emptyResxFile.Value);
+                    else
+                        emptyResxFiles.Add(emptyResxFile.Key, emptyResxFile.Value);
+                }
+
+                foreach (var missingEntry in GetMissingEntries(resxDictionary, defaultResx))
+                {
+                    if (missingEntries.ContainsKey(missingEntry.Key))
+                        missingEntries[missingEntry.Key].AddRange(missingEntry.Value);
+                    else
+                        missingEntries.Add(missingEntry.Key, missingEntry.Value);
+                }
             }
+
+            //Assert
+            Assert.IsEmpty(extraEntries, "Extra Translations Found", extraEntries);
+            Assert.IsEmpty(emptyResxFiles, "Empty Resx Files Found", emptyResxFiles);
+            Assert.IsEmpty(missingEntries, "Missing Translations Found", missingEntries);
         }
 
         //https://stackoverflow.com/a/41760659/5953643

@@ -26,6 +26,14 @@ namespace GitTrends.UnitTests
         [SetUp]
         public virtual async Task Setup()
         {
+            Assert.IsNotNull(AzureConstants.GetTestTokenApiKey);
+            Assert.IsNotNull(AzureConstants.GetSyncFusionInformationApiKey);
+            Assert.IsNotNull(AzureConstants.GetNotificationHubInformationApiKey);
+
+            Assert.IsNotEmpty(AzureConstants.GetTestTokenApiKey);
+            Assert.IsNotEmpty(AzureConstants.GetSyncFusionInformationApiKey);
+            Assert.IsNotEmpty(AzureConstants.GetNotificationHubInformationApiKey);
+
             CultureInfo.DefaultThreadCurrentCulture = null;
             CultureInfo.DefaultThreadCurrentUICulture = null;
 

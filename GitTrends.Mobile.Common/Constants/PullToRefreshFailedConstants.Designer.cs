@@ -16,7 +16,7 @@ namespace GitTrends.Mobile.Common.Constants {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class PullToRefreshFailedConstants {
+    public class PullToRefreshFailedConstants {
         
         private static System.Resources.ResourceManager resourceMan;
         
@@ -27,7 +27,7 @@ namespace GitTrends.Mobile.Common.Constants {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static System.Resources.ResourceManager ResourceManager {
+        public static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
                     System.Resources.ResourceManager temp = new System.Resources.ResourceManager("GitTrends.Mobile.Common.Constants.PullToRefreshFailedConstants", typeof(PullToRefreshFailedConstants).Assembly);
@@ -38,7 +38,7 @@ namespace GitTrends.Mobile.Common.Constants {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static System.Globalization.CultureInfo Culture {
+        public static System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -47,31 +47,31 @@ namespace GitTrends.Mobile.Common.Constants {
             }
         }
         
-        internal static string UnableToConnectToGitHub {
+        public static string UnableToConnectToGitHub {
             get {
                 return ResourceManager.GetString("UnableToConnectToGitHub", resourceCulture);
             }
         }
         
-        internal static string UsageLimitExceeded {
+        public static string UsageLimitExceeded {
             get {
                 return ResourceManager.GetString("UsageLimitExceeded", resourceCulture);
             }
         }
         
-        internal static string GitHubApiLimit {
+        public static string GitHubApiLimit {
             get {
                 return ResourceManager.GetString("GitHubApiLimit", resourceCulture);
             }
         }
         
-        internal static string MinutesReset {
+        public static string MinutesReset {
             get {
                 return ResourceManager.GetString("MinutesReset", resourceCulture);
             }
         }
         
-        internal static string LearnMore {
+        public static string LearnMore {
             get {
                 return ResourceManager.GetString("LearnMore", resourceCulture);
             }

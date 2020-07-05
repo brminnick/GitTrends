@@ -252,7 +252,7 @@
             <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
+            <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>EmptyDataViewConstantsInternal.Designer.cs</LastGenOutput>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.de.resx">
@@ -518,7 +518,7 @@
             <DependentUpon> WelcomePageConstants.resx </DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\PullToRefreshFailedConstants.resx">
-          <Generator>ResXFileCodeGenerator</Generator>
+          <Generator>PublicResXFileCodeGenerator</Generator>
           <LastGenOutput>PullToRefreshFailedConstants.Designer.cs</LastGenOutput>
         </EmbeddedResource>
     </ItemGroup>
