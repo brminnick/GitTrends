@@ -139,6 +139,9 @@
   <data name="SwipeDownToRefresh_ReferringSites" xml:space="preserve">
     <value>Balayer vers le bas pour récuperer les dépôts</value>
   </data>
+  <data name="SwipeDownToRefresh_Repositories" xml:space="preserve">
+    <value>Balayer vers le bas pour récuperer les dépôts</value>
+  </data>
   <data name="Uninitialized" xml:space="preserve">
     <value>Les données n'ont pas été récuperé</value>
   </data>

@@ -123,4 +123,13 @@
   <data name="ErrorPullToRefreshEventArgs" xml:space="preserve">
     <value>Impossible de récupèrer les sites référents. Verifiez votre connexion internet et ressayer.</value>
   </data>
+  <data name="Referrals" xml:space="preserve">
+    <value>REFERENCES</value>
+  </data>
+  <data name="Site" xml:space="preserve">
+    <value>SITE</value>
+  </data>
+  <data name="Unique" xml:space="preserve">
+    <value>UNIQUE</value>
+  </data>
 </root>
