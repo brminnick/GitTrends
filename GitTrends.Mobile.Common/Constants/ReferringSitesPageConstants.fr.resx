@@ -126,7 +126,7 @@
   <data name="Referrals" xml:space="preserve">
     <value>REFERENCES</value>
   </data>
-  <data name="Sites" xml:space="preserve">
+  <data name="Site" xml:space="preserve">
     <value>SITE</value>
   </data>
   <data name="Unique" xml:space="preserve">
