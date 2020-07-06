@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Initializing" xml:space="preserve">
+        <value>Initializing</value>
+    </data>
+    <data name="ConnectingToServers" xml:space="preserve">
+        <value>Connecting to servers</value>
+    </data>
+    <data name="StillWorkingOnIt" xml:space="preserve">
+        <value>Still working on it</value>
+    </data>
+    <data name="LetsTryItLikeThis" xml:space="preserve">
+        <value>Let's try it like this</value>
+    </data>
+    <data name="MaybeThis" xml:space="preserve">
+        <value>Maybe this</value>
+    </data>
+    <data name="AnotherTry" xml:space="preserve">
+        <value>Another try</value>
+    </data>
+    <data name="ItShouldntTakeThisLong" xml:space="preserve">
+        <value>Hmmm, it shouldn't take this long</value>
+    </data>
+    <data name="AreYouSureInternetConnectionIsGood" xml:space="preserve">
+        <value>Are you sure the internet connection is good?</value>
+    </data>
+    <data name="PreviewMode" xml:space="preserve">
+        <value>Preview Mode</value>
+    </data>
+    <data name="WarningsMayAppear" xml:space="preserve">
+        <value>Certain license warnings may appear</value>
+    </data>
+    <data name="InitializationFailed" xml:space="preserve">
+        <value>Initialization Failed</value>
+    </data>
+    <data name="EnsureInternetConnectionAndLatestVersion" xml:space="preserve">
+        <value>Ensure Internet Connection Is Available and Update GitTrends to the Latest Version</value>
+    </data>
+</root>

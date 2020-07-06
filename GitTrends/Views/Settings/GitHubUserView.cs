@@ -1,9 +1,7 @@
 ﻿using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
-using ImageCircle.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using static GitTrends.XamarinFormsService;
+using static GitTrends.MarkupExtensions;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -55,9 +53,9 @@ namespace GitTrends
 
                 AutomationId = SettingsPageAutomationIds.GitHubAvatarImage;
 
-                this.SetBinding(SourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource));
-                SetDynamicResource(ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource));
-                SetDynamicResource(LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource));
+                this.Bind(ImageSourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource))
+                    .DynamicResources((ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
+                                        (LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)));
             }
         }
 
@@ -72,10 +70,9 @@ namespace GitTrends
                 FontSize = _nameLabelHeight - 6;
                 FontFamily = FontFamilyConstants.RobotoMedium;
 
-                this.SetBinding(TextProperty, nameof(SettingsViewModel.GitHubNameLabelText));
-                this.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsNotAuthenticating));
-
-                SetDynamicResource(TextColorProperty, nameof(BaseTheme.GitHubHandleColor));
+                this.Bind(nameof(SettingsViewModel.GitHubNameLabelText))
+                    .Bind(IsVisibleProperty, nameof(SettingsViewModel.IsNotAuthenticating))
+                    .DynamicResource(TextColorProperty, nameof(BaseTheme.GitHubHandleColor));
             }
         }
 
@@ -91,10 +88,9 @@ namespace GitTrends
                 FontSize = _aliasLabelHeight - 4;
                 FontFamily = FontFamilyConstants.RobotoRegular;
 
-                this.SetBinding(TextProperty, nameof(SettingsViewModel.GitHubAliasLabelText));
-                this.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsAliasLabelVisible));
-
-                SetDynamicResource(TextColorProperty, nameof(BaseTheme.GitHubHandleColor));
+                this.Bind(nameof(SettingsViewModel.GitHubAliasLabelText))
+                    .Bind(IsVisibleProperty, nameof(SettingsViewModel.IsAliasLabelVisible))
+                    .DynamicResource(TextColorProperty, nameof(BaseTheme.GitHubHandleColor));
             }
         }
 
@@ -105,17 +101,16 @@ namespace GitTrends
                 this.Center();
                 Opacity = 0.6;
 
-                AutomationId = SettingsPageAutomationIds.DemoModeButton;
+                AutomationId = SettingsPageAutomationIds.TryDemoButton;
 
                 FontSize = _aliasLabelHeight - 4;
                 FontFamily = FontFamilyConstants.RobotoRegular;
-                Text = GitHubLoginButtonConstants.TryDemo;
 
-                this.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsDemoButtonVisible));
-                this.SetBinding(CommandProperty, nameof(SettingsViewModel.DemoButtonCommand));
-
-                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
-                SetDynamicResource(TextColorProperty, nameof(BaseTheme.GitHubHandleColor));
+                this.Bind(nameof(SettingsViewModel.DemoButtonCommand))
+                    .Bind(TextProperty, nameof(SettingsViewModel.TryDemoButtonText))
+                    .Bind(IsVisibleProperty, nameof(SettingsViewModel.IsDemoButtonVisible))
+                    .DynamicResources((BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)),
+                                        (TextColorProperty, nameof(BaseTheme.GitHubHandleColor)));
             }
         }
 
@@ -128,12 +123,10 @@ namespace GitTrends
                 HeightRequest = _nameLabelHeight;
                 WidthRequest = _nameLabelHeight;
 
-                this.Center();
-
-                this.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsAuthenticating));
-                this.SetBinding(IsRunningProperty, nameof(SettingsViewModel.IsAuthenticating));
-
-                SetDynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor));
+                this.Center()
+                    .Bind(IsVisibleProperty, nameof(SettingsViewModel.IsAuthenticating))
+                    .Bind(IsRunningProperty, nameof(SettingsViewModel.IsAuthenticating))
+                    .DynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor));
             }
         }
     }

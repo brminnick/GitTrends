@@ -76,6 +76,10 @@ namespace GitTrends.iOS
         public NSString GetLoggedInUserAvatarUrl(NSString noValue) =>
             SerializeObject(UITestBackdoorService.GetLoggedInUserAvatarUrl());
 
+        [Preserve, Export(BackdoorMethodConstants.GetPreferredLanguage + ":")]
+        public NSString GetPreferredLanguage(NSString noValue) =>
+            SerializeObject(UITestBackdoorService.GetPreferredLanguage());
+
         static NSString SerializeObject<T>(T value) => new NSString(Newtonsoft.Json.JsonConvert.SerializeObject(value));
     }
 }

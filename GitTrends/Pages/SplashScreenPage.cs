@@ -29,7 +29,7 @@ namespace GitTrends
         {
             //Remove BaseContentPageBackground
             RemoveDynamicResource(BackgroundColorProperty);
-            SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.GitTrendsImageBackgroundColor));
+            this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.GitTrendsImageBackgroundColor));
 
             _firstRunService = firstRunService;
 
@@ -46,8 +46,7 @@ namespace GitTrends
                 HorizontalOptions = LayoutOptions.CenterAndExpand,
                 VerticalOptions = LayoutOptions.CenterAndExpand,
                 Aspect = Aspect.AspectFit
-            };
-            _gitTrendsImage.SetDynamicResource(Image.SourceProperty, nameof(BaseTheme.GitTrendsImageSource));
+            }  .DynamicResource(Image.SourceProperty, nameof(BaseTheme.GitTrendsImageSource));
 
             _statusLabel = new Label
             {
@@ -56,8 +55,7 @@ namespace GitTrends
                 Margin = new Thickness(10, 0),
                 AutomationId = SplashScreenPageAutomationIds.StatusLabel,
                 HorizontalTextAlignment = TextAlignment.Center,
-            };
-            _statusLabel.SetDynamicResource(Label.TextColorProperty, nameof(BaseTheme.SplashScreenStatusColor));
+            }  .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SplashScreenStatusColor));
 
             var relativeLayout = new RelativeLayout();
 

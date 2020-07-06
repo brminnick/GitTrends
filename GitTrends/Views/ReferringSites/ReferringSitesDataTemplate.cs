@@ -1,22 +1,23 @@
 ﻿using System;
 using GitTrends.Mobile.Common;
-using ImageCircle.Forms.Plugin.Abstractions;
+using GitTrends.Mobile.Common.Constants;
 using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
-using static GitTrends.XamarinFormsService;
+using static GitTrends.MarkupExtensions;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
     class ReferringSitesDataTemplate : DataTemplate
     {
+        public const int TopPadding = 8;
+
         public ReferringSitesDataTemplate() : base(() => new CardView())
         {
         }
 
-        public static int TopPadding { get; } = 8;
         public static int BottomPadding { get; } = Device.RuntimePlatform is Device.Android ? 12 : 16;
 
         class CardView : Grid
@@ -36,7 +37,7 @@ namespace GitTrends
 
                 Children.Add(new CardViewFrame().Row(Row.Card).Column(Column.Card));
 
-                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+                this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             }
 
             enum Row { TopPadding, Card, BottomPadding }
@@ -52,7 +53,7 @@ namespace GitTrends
                     Elevation = 4;
                     Content = new ContentGrid();
 
-                    SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
+                    this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
                 }
             }
 
@@ -90,14 +91,14 @@ namespace GitTrends
                     Children.Add(new FavIconImage()
                                         .Row(Row.Title).Column(Column.FavIcon).RowSpan(2));
 
-                    Children.Add(new TitleLabel("SITE", TextAlignment.Start, LayoutOptions.Start)
+                    Children.Add(new TitleLabel(ReferringSitesPageConstants.Site, TextAlignment.Start, LayoutOptions.Start)
                                         .Row(Row.Title).Column(Column.Site));
 
                     Children.Add(new DescriptionLabel()
                                         .Row(Row.Description).Column(Column.Site)
                                         .Bind(Label.TextProperty, nameof(MobileReferringSiteModel.Referrer)));
 
-                    Children.Add(new TitleLabel("REFERRALS", TextAlignment.End, LayoutOptions.End).Assign(out TitleLabel referralsTitleLabel)
+                    Children.Add(new TitleLabel(ReferringSitesPageConstants.Referrals, TextAlignment.End, LayoutOptions.End).Assign(out TitleLabel referralsTitleLabel)
                                         .Row(Row.Title).Column(Column.Referrals));
 
                     Children.Add(new StatisticsLabel(referralsTitleLabel)
@@ -107,7 +108,7 @@ namespace GitTrends
                     Children.Add(new Separator()
                                         .Row(Row.Title).Column(Column.Separator).RowSpan(2));
 
-                    Children.Add(new TitleLabel("UNIQUE", TextAlignment.Start, LayoutOptions.Start).Assign(out TitleLabel uniqueTitleLabel)
+                    Children.Add(new TitleLabel(ReferringSitesPageConstants.Unique, TextAlignment.Start, LayoutOptions.Start).Assign(out TitleLabel uniqueTitleLabel)
                                         .Row(Row.Title).Column(Column.Uniques));
 
                     Children.Add(new StatisticsLabel(uniqueTitleLabel)
@@ -138,7 +139,7 @@ namespace GitTrends
                         VerticalOptions = LayoutOptions.Start;
                         VerticalTextAlignment = TextAlignment.Start;
 
-                        SetDynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
+                        this.DynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
                     }
                 }
 
@@ -156,7 +157,7 @@ namespace GitTrends
 
                         VerticalTextAlignment = TextAlignment.End;
 
-                        SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+                        this.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
                         SetBinding(WidthRequestProperty, new Binding(nameof(Width), source: titleLabel));
                     }
                 }
@@ -175,7 +176,7 @@ namespace GitTrends
 
                         VerticalTextAlignment = TextAlignment.End;
 
-                        SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+                        this.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
                     }
                 }
 
@@ -184,7 +185,7 @@ namespace GitTrends
                     public Separator()
                     {
                         VerticalOptions = LayoutOptions.FillAndExpand;
-                        SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
+                        this.DynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
                     }
                 }
 
@@ -192,29 +193,24 @@ namespace GitTrends
                 {
                     public FavIconImage()
                     {
-                        this.Start();
-
                         const int padding = 1;
 
-                        var circleDiameter = Math.Min(_favIconHeight, _favIconWidth);
+                        this.Start();
 
-                        HeightRequest = WidthRequest = circleDiameter;
-                        CornerRadius = circleDiameter / 2;
                         BackgroundColor = Color.White;
 
                         Padding = new Thickness(padding);
 
-                        var circleImage = new CircleImage
+                        var circleDiameter = Math.Min(_favIconHeight, _favIconWidth);
+
+                        CornerRadius = circleDiameter / 2;
+                        HeightRequest = WidthRequest = circleDiameter;
+
+                        Content = new CircleImage
                         {
                             ErrorPlaceholder = FavIconService.DefaultFavIcon,
-                            LoadingPlaceholder = FavIconService.DefaultFavIcon,
-                            Aspect = Aspect.Fill,
-                            HeightRequest = circleDiameter - padding * 2,
-                            WidthRequest = circleDiameter - padding * 2,
-                        }.Center();
-                        circleImage.SetBinding(CircleImage.SourceProperty, nameof(MobileReferringSiteModel.FavIcon));
-
-                        Content = circleImage;
+                            LoadingPlaceholder = FavIconService.DefaultFavIcon
+                        }.Bind(CircleImage.ImageSourceProperty, nameof(MobileReferringSiteModel.FavIcon));
                     }
                 }
             }

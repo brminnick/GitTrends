@@ -74,6 +74,8 @@ namespace GitTrends
             Add(nameof(CloseButtonTextColor), CloseButtonTextColor);
             Add(nameof(CloseButtonBackgroundColor), CloseButtonBackgroundColor);
 
+            Add(nameof(PickerBorderColor), PickerBorderColor);
+
             Add(nameof(GitTrendsImageSource), GitTrendsImageSource);
             Add(nameof(DefaultProfileImageSource), DefaultProfileImageSource);
             Add(nameof(DefaultReferringSiteImageSource), DefaultReferringSiteImageSource);
@@ -155,6 +157,8 @@ namespace GitTrends
 
         public abstract Color CloseButtonTextColor { get; }
         public abstract Color CloseButtonBackgroundColor { get; }
+
+        public abstract Color PickerBorderColor { get; }
 
         public abstract string GitTrendsImageSource { get; }
         public abstract string DefaultProfileImageSource { get; }

@@ -17,7 +17,7 @@ namespace GitTrends
 
             LineBreakMode = LineBreakMode.TailTruncation;
 
-            SetDynamicResource(TextColorProperty, textColorThemeName);
+            this.DynamicResource(TextColorProperty, textColorThemeName);
         }
     }
 }

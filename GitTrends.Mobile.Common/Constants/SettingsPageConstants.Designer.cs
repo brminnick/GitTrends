@@ -64,5 +64,17 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("PreferredChartSettingsLabelText", resourceCulture);
             }
         }
+        
+        public static string Language {
+            get {
+                return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        public static string CreatedBy {
+            get {
+                return ResourceManager.GetString("CreatedBy", resourceCulture);
+            }
+        }
     }
 }

@@ -18,9 +18,9 @@ namespace GitTrends
             CornerRadius = Device.RuntimePlatform is Device.Android ? 7 : -1;
 
 
-            SetDynamicResource(TextColorProperty, nameof(BaseTheme.BorderButtonFontColor));
-            SetDynamicResource(BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor));
-            SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+            this.DynamicResources((TextColorProperty, nameof(BaseTheme.BorderButtonFontColor)),
+                                    (BorderColorProperty, nameof(BaseTheme.BorderButtonBorderColor)),
+                                    (BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)));
         }
     }
 }

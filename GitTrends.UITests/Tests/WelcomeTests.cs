@@ -28,14 +28,14 @@ namespace GitTrends.UITests
             SettingsPage.WaitForGitHubLoginToComplete();
 
             //Assert
-            Assert.AreEqual(GitHubLoginButtonConstants.Disconnect, SettingsPage.GitHubButtonText);
+            Assert.AreEqual(GitHubLoginButtonConstants.Disconnect, SettingsPage.LoginTitleText);
 
             //Act
             SettingsPage.TapLoginButton();
             SettingsPage.WaitForGitHubLogoutToComplete();
 
             //Assert
-            Assert.AreEqual(GitHubLoginButtonConstants.ConnectToGitHub, SettingsPage.GitHubButtonText);
+            Assert.AreEqual(GitHubLoginButtonConstants.ConnectToGitHub, SettingsPage.LoginTitleText);
 
             SettingsPage.TapBackButton();
 

@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0-beta.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0-beta.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
     <PackageReference Include="Refit" Version="5.1.67" />
     <PackageReference Include="Polly" Version="7.2.1" />

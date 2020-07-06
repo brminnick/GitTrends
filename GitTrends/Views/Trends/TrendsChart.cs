@@ -19,7 +19,7 @@ namespace GitTrends
             Margin = new Thickness(16, 0);
             Padding = new Thickness(4, 8, 4, 4);
 
-            SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
+            this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
         }
 
         class Chart : SfChart
@@ -68,14 +68,12 @@ namespace GitTrends
                     FontSize = 9,
                     FontFamily = FontFamilyConstants.RobotoRegular,
                     Margin = new Thickness(2, 4, 2, 0)
-                };
-                primaryAxisLabelStyle.SetDynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
+                }  .DynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
 
                 var axisLineStyle = new ChartLineStyle()
                 {
                     StrokeWidth = 1.51
-                };
-                axisLineStyle.SetDynamicResource(ChartLineStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
+                }  .DynamicResource(ChartLineStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
 
                 PrimaryAxis = new DateTimeAxis
                 {
@@ -91,15 +89,13 @@ namespace GitTrends
                 PrimaryAxis.SetBinding(DateTimeAxis.MinimumProperty, nameof(TrendsViewModel.MinDateValue));
                 PrimaryAxis.SetBinding(DateTimeAxis.MaximumProperty, nameof(TrendsViewModel.MaxDateValue));
 
-                var secondaryAxisMajorTickStyle = new ChartAxisTickStyle();
-                secondaryAxisMajorTickStyle.SetDynamicResource(ChartAxisTickStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
+                var secondaryAxisMajorTickStyle = new ChartAxisTickStyle().DynamicResource(ChartAxisTickStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
 
                 var secondaryAxisLabelStyle = new ChartAxisLabelStyle
                 {
                     FontSize = 12,
                     FontFamily = FontFamilyConstants.RobotoRegular,
-                };
-                secondaryAxisLabelStyle.SetDynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
+                }  .DynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
 
                 SecondaryAxis = new NumericalAxis
                 {
@@ -108,9 +104,8 @@ namespace GitTrends
                     AxisLineStyle = axisLineStyle,
                     MajorTickStyle = secondaryAxisMajorTickStyle,
                     ShowMajorGridLines = false
-                };
-                SecondaryAxis.SetBinding(NumericalAxis.MinimumProperty, nameof(TrendsViewModel.DailyViewsClonesMinValue));
-                SecondaryAxis.SetBinding(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.DailyViewsClonesMaxValue));
+                }  .Bind(NumericalAxis.MinimumProperty, nameof(TrendsViewModel.DailyViewsClonesMinValue))
+                   .Bind(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.DailyViewsClonesMaxValue));
             }
 
             public AreaSeries TotalViewsSeries { get; }
@@ -128,7 +123,7 @@ namespace GitTrends
                     YBindingPath = yDataTitle;
                     LegendIcon = ChartLegendIcon.SeriesType;
 
-                    SetDynamicResource(ColorProperty, colorResource);
+                    this.DynamicResource(ColorProperty, colorResource);
                 }
             }
         }

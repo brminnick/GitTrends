@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -30,9 +29,11 @@ namespace GitTrends
         readonly GitHubUserService _gitHubUserService;
 
         bool _isRefreshing;
+        string _titleText = string.Empty;
         string _searchBarText = string.Empty;
         string _emptyDataViewTitle = string.Empty;
         string _emptyDataViewDescription = string.Empty;
+
         IReadOnlyList<Repository> _repositoryList = Enumerable.Empty<Repository>().ToList();
         IReadOnlyList<Repository> _visibleRepositoryList = Enumerable.Empty<Repository>().ToList();
 
@@ -46,6 +47,10 @@ namespace GitTrends
                                     IMainThread mainThread,
                                     GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
         {
+            LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
+
+            SetTitleText();
+
             _repositoryDatabase = repositoryDatabase;
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
@@ -97,6 +102,12 @@ namespace GitTrends
         {
             get => _isRefreshing;
             set => SetProperty(ref _isRefreshing, value);
+        }
+
+        public string TitleText
+        {
+            get => _titleText;
+            set => SetProperty(ref _titleText, value);
         }
 
         RefreshState RefreshState
@@ -306,6 +317,10 @@ namespace GitTrends
             if (_repositoryList.Any())
                 UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
         }
+
+        void HandlePreferredLanguageChanged(object sender, string? e) => SetTitleText();
+
+        void SetTitleText() => TitleText = PageTitles.RepositoryPage;
 
         //Work-around because ContentPage.OnAppearing does not fire after `ContentPage.PushModalAsync()`
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsRefreshing |= e.IsSessionAuthorized;

@@ -3,6 +3,7 @@ using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using static GitTrends.MarkupExtensions;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
@@ -35,8 +36,8 @@ namespace GitTrends
             Content = new Grid
             {
                 RowDefinitions = Rows.Define(
-                    (Row.Image, StarGridLength(Device.RuntimePlatform is Device.iOS ? 3 : 11)),
-                    (Row.Description, StarGridLength(Device.RuntimePlatform is Device.iOS ? 2 : 9)),
+                    (Row.Image, StarGridLength(GetImageRowStarHeight())),
+                    (Row.Description, StarGridLength(GetDescriptionRowStarHeight())),
                     (Row.Indicator, AbsoluteGridLength(44))),
 
                 ColumnDefinitions = Columns.Define(
@@ -62,6 +63,22 @@ namespace GitTrends
         protected abstract View CreateImageView();
         protected abstract TitleLabel CreateDescriptionTitleLabel();
         protected abstract View CreateDescriptionBodyView();
+
+        static int GetImageRowStarHeight()
+        {
+            if (ScreenHeight < 700)
+                return 8;
+
+            return Device.RuntimePlatform is Device.iOS ? 3 : 11;
+        }
+
+        static int GetDescriptionRowStarHeight()
+        {
+            if (ScreenHeight < 700)
+                return 9;
+
+            return Device.RuntimePlatform is Device.iOS ? 2 : 9;
+        }
 
         class NextLabel : Label
         {

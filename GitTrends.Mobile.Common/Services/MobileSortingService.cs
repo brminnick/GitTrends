@@ -12,7 +12,12 @@ namespace GitTrends.Mobile.Common
     {
         public const SortingOption DefaultSortingOption = SortingOption.Views;
 
-        readonly static Lazy<Dictionary<SortingOption, string>> _sortingOptionsDictionaryHolder = new Lazy<Dictionary<SortingOption, string>>(() => new Dictionary<SortingOption, string>
+        readonly IPreferences _preferences;
+
+        public MobileSortingService(IPreferences preferences) => _preferences = preferences;
+
+        //Keep as expression-bodied member (e.g. don't use a readonly property) to ensure the correct RESX file is uses when the language changes 
+        public static Dictionary<SortingOption, string> SortingOptionsDictionary => new Dictionary<SortingOption, string>
         {
             { SortingOption.Stars,  SortingConstants.Stars },
             { SortingOption.Forks,  SortingConstants.Forks },
@@ -21,13 +26,7 @@ namespace GitTrends.Mobile.Common
             { SortingOption.Clones,  SortingConstants.Clones },
             { SortingOption.UniqueViews,  SortingConstants.UniqueViews },
             { SortingOption.UniqueClones,  SortingConstants.UniqueClones },
-        });
-
-        readonly IPreferences _preferences;
-
-        public MobileSortingService(IPreferences preferences) => _preferences = preferences;
-
-        public static Dictionary<SortingOption, string> SortingOptionsDictionary => _sortingOptionsDictionaryHolder.Value;
+        };
 
         public bool IsReversed
         {

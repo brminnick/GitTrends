@@ -4,7 +4,7 @@ using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using static GitTrends.XamarinFormsService;
+using static GitTrends.MarkupExtensions;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -27,33 +27,36 @@ namespace GitTrends
 
         protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.GitTrendsPage_Title);
 
-        protected override View CreateDescriptionBodyView() => new Grid
+        protected override View CreateDescriptionBodyView() => new ScrollView
         {
-            RowSpacing = 14,
-
-            RowDefinitions = Rows.Define(
-                (Row.Title, AbsoluteGridLength(20)),
-                (Row.Connect, AbsoluteGridLength(24)),
-                (Row.MonitorImage, AbsoluteGridLength(24)),
-                (Row.MonitorDescription, AbsoluteGridLength(2)),
-                (Row.Discover, AbsoluteGridLength(24))),
-
-            ColumnDefinitions = Columns.Define(
-                (Column.Image, AbsoluteGridLength(56)),
-                (Column.Description, Star)),
-
-            Children =
+            Content = new Grid
             {
-                new BodyLabel(OnboardingConstants.GitTrendsPage_Body_MonitorGitHubRepos).Row(Row.Title).ColumnSpan(All<Column>()),
+                RowSpacing = 14,
 
-                new GitHubLogoLabel().Row(Row.Connect).Column(Column.Image),
-                new BodyLabel(GitHubLoginButtonConstants.ConnectToGitHub).Row(Row.Connect).Column(Column.Description),
+                RowDefinitions = Rows.Define(
+                    (Row.Title, Auto),
+                    (Row.Connect, AbsoluteGridLength(24)),
+                    (Row.MonitorImage, AbsoluteGridLength(24)),
+                    (Row.MonitorDescription, AbsoluteGridLength(2)),
+                    (Row.Discover, AbsoluteGridLength(24))),
 
-                new BodySvg("chart.svg").Row(Row.MonitorImage).Column(Column.Image).Center().RowSpan(2),
-                new BodyLabel(OnboardingConstants.GitTrendsPage_Body_MonitorGitHubRepos).TextTop().Row(Row.MonitorImage).RowSpan(2).Column(Column.Description),
+                ColumnDefinitions = Columns.Define(
+                    (Column.Image, AbsoluteGridLength(56)),
+                    (Column.Description, Star)),
 
-                new BodySvg("megaphone.svg").Row(Row.Discover).Column(Column.Image),
-                new BodyLabel(OnboardingConstants.GitTrendsPage_Body_DiscoverReferringSites).Row(Row.Discover).Column(Column.Description),
+                Children =
+                {
+                    new BodyLabel(OnboardingConstants.GitTrendsPage_Body_GitTrendsHelps).Row(Row.Title).ColumnSpan(All<Column>()),
+
+                    new GitHubLogoLabel().Row(Row.Connect).Column(Column.Image),
+                    new BodyLabel(GitHubLoginButtonConstants.ConnectToGitHub).Row(Row.Connect).Column(Column.Description),
+
+                    new BodySvg("chart.svg").Row(Row.MonitorImage).Column(Column.Image).Center().RowSpan(2),
+                    new BodyLabel(OnboardingConstants.GitTrendsPage_Body_MonitorGitHubRepos).TextTop().Row(Row.MonitorImage).RowSpan(2).Column(Column.Description),
+
+                    new BodySvg("megaphone.svg").Row(Row.Discover).Column(Column.Image),
+                    new BodyLabel(OnboardingConstants.GitTrendsPage_Body_DiscoverReferringSites).Row(Row.Discover).Column(Column.Description),
+                }
             }
         };
 

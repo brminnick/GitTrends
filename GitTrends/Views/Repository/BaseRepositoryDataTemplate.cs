@@ -4,10 +4,10 @@ using System.Globalization;
 using System.Linq;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
-using ImageCircle.Forms.Plugin.Abstractions;
 using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using static GitTrends.MarkupExtensions;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
@@ -49,7 +49,7 @@ namespace GitTrends
 
                 Children.Add(new CardViewFrame(parentDataTemplateChildren).Row(CardViewRow.Card).Column(CardViewColumn.Card));
 
-                SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+                this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             }
 
             enum CardViewRow { TopPadding, Card, BottomPadding }
@@ -66,7 +66,7 @@ namespace GitTrends
 
                     Content = new ContentGrid(parentDataTemplateChildren);
 
-                    SetDynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
+                    this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
                 }
 
                 class ContentGrid : Grid
@@ -96,7 +96,7 @@ namespace GitTrends
 
                         Children.Add(new AvatarImage()
                                         .Row(Row.Title).Column(Column.Avatar).RowSpan(2)
-                                        .Bind(Image.SourceProperty, nameof(Repository.OwnerAvatarUrl)));
+                                        .Bind(CircleImage.ImageSourceProperty, nameof(Repository.OwnerAvatarUrl)));
 
                         Children.Add(new NameLabel()
                                         .Row(Row.Title).Column(Column.Trending).ColumnSpan(7)
@@ -129,14 +129,13 @@ namespace GitTrends
                         {
                             this.Center();
 
-                            HeightRequest = _circleImageHeight;
                             WidthRequest = _circleImageHeight;
 
                             BorderThickness = 1;
 
-                            SetDynamicResource(BorderColorProperty, nameof(BaseTheme.SeparatorColor));
-                            SetDynamicResource(ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource));
-                            SetDynamicResource(LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource));
+                            this.DynamicResources((BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
+                                                    (ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
+                                                    (LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)));
                         }
                     }
 
@@ -169,13 +168,13 @@ namespace GitTrends
                             HorizontalTextAlignment = TextAlignment.Start;
                             VerticalTextAlignment = TextAlignment.Start;
 
-                            SetDynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+                            this.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
                         }
                     }
 
                     class Separator : BoxView
                     {
-                        public Separator() => SetDynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
+                        public Separator() => this.DynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
                     }
 
                     class LargeScreenTrendingImage : TrendingImage

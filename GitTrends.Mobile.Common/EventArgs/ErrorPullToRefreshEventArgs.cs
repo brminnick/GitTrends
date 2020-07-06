@@ -1,8 +1,10 @@
-﻿namespace GitTrends.Mobile.Common
+﻿using GitTrends.Mobile.Common.Constants;
+
+namespace GitTrends.Mobile.Common
 {
     public class ErrorPullToRefreshEventArgs : PullToRefreshFailedEventArgs
     {
-        public ErrorPullToRefreshEventArgs(string message) : base("Unable To Connect To GitHub", message)
+        public ErrorPullToRefreshEventArgs(string message) : base(PullToRefreshFailedConstants.UnableToConnectToGitHub, message)
         {
         }
     }

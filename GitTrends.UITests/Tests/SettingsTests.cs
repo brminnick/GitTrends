@@ -25,7 +25,6 @@ namespace GitTrends.UITests
             await base.BeforeEachTest().ConfigureAwait(false);
 
             RepositoryPage.TapSettingsButton();
-
             await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
         }
 
@@ -35,7 +34,7 @@ namespace GitTrends.UITests
             //Arrange
 
             //Act
-            SettingsPage.TapCreatedByLabel();
+            SettingsPage.TapCopyrightLabel();
 
             //Assert
             if (App is iOSApp)
@@ -106,6 +105,91 @@ namespace GitTrends.UITests
         }
 
         [Test]
+        public async Task VerifyLanguagePicker()
+        {
+            //Arrange
+            string? preferredLanguage_Initial, preferredLanguage_Final;
+            string gitHubNameText, gitHubAliasText, tryDemoButtonText, loginTitleLabelText_Disconnect, loginTitleLabelText_Connect,
+                themeTitleLabelText, languageTitleLabelText, settingsPageTitle, copyrightLabelTitleLabelText, registerForNotificationsTitleLabelText,
+                preferredChartsTitleTitleLabelText, preferredChartsAllTitleLabelText, preferredChartsNoUniquesTitleLabelText, preferredChartsOnlyUniquesTitleLabelText;
+
+
+            foreach (var preferredLanguageKeyValuePair in CultureConstants.CulturePickerOptions.Reverse())
+            {
+                //Act
+                preferredLanguage_Initial = SettingsPage.PreferredLanguage;
+
+                await SettingsPage.SelectLanguage(preferredLanguageKeyValuePair.Value).ConfigureAwait(false);
+
+                preferredLanguage_Final = SettingsPage.PreferredLanguage;
+
+                settingsPageTitle = SettingsPage.PageTitle;
+                gitHubNameText = SettingsPage.GitHubNameLabelText;
+                gitHubAliasText = SettingsPage.GitHubAliasLabelText;
+                themeTitleLabelText = SettingsPage.ThemeTitleLabelText;
+                languageTitleLabelText = SettingsPage.LangageTitleLabelText;
+                loginTitleLabelText_Disconnect = SettingsPage.LoginTitleText;
+                copyrightLabelTitleLabelText = SettingsPage.CopyrightLabelText;
+                preferredChartsTitleTitleLabelText = SettingsPage.PreferredChartLabelText;
+                registerForNotificationsTitleLabelText = SettingsPage.RegisterForNotificationsTitleLabelText;
+
+                preferredChartsAllTitleLabelText = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.All];
+                preferredChartsNoUniquesTitleLabelText = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.NoUniques];
+                preferredChartsOnlyUniquesTitleLabelText = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.JustUniques];
+
+                SettingsPage.TapLoginButton();
+                tryDemoButtonText = SettingsPage.TryDemoButtonText;
+                loginTitleLabelText_Connect = SettingsPage.LoginTitleText;
+
+                await login().ConfigureAwait(false);
+
+                SettingsPage.TapBackButton();
+
+                //Assert
+                Assert.AreEqual(PageTitles.RepositoryPage, RepositoryPage.PageTitle);
+
+                Assert.AreNotEqual(preferredLanguage_Final, preferredLanguage_Initial);
+                Assert.AreEqual(preferredLanguage_Final, string.IsNullOrWhiteSpace(preferredLanguageKeyValuePair.Key) ? null : preferredLanguageKeyValuePair.Key);
+
+                Assert.AreEqual(PageTitles.SettingsPage, settingsPageTitle);
+                Assert.AreEqual(SettingsPageConstants.Theme, themeTitleLabelText);
+                Assert.AreEqual(GitHubLoginButtonConstants.TryDemo, tryDemoButtonText);
+                Assert.AreEqual(SettingsPageConstants.Language, languageTitleLabelText);
+                Assert.AreEqual(GitHubLoginButtonConstants.Disconnect, loginTitleLabelText_Disconnect);
+                Assert.AreEqual(GitHubLoginButtonConstants.ConnectToGitHub, loginTitleLabelText_Connect);
+                Assert.AreEqual(SettingsPageConstants.RegisterForNotifications, registerForNotificationsTitleLabelText);
+                Assert.AreEqual(SettingsPageConstants.PreferredChartSettingsLabelText, preferredChartsTitleTitleLabelText);
+
+                Assert.IsTrue(copyrightLabelTitleLabelText.Contains(SettingsPageConstants.CreatedBy));
+
+                Assert.AreEqual(TrendsChartTitleConstants.All, preferredChartsAllTitleLabelText);
+                Assert.AreEqual(TrendsChartTitleConstants.NoUniques, preferredChartsNoUniquesTitleLabelText);
+                Assert.AreEqual(TrendsChartTitleConstants.JustUniques, preferredChartsOnlyUniquesTitleLabelText);
+
+                if (UserType is UserType.Demo)
+                {
+                    Assert.AreEqual(DemoUserConstants.Name, gitHubNameText);
+                    Assert.AreEqual("@" + DemoUserConstants.Alias, gitHubAliasText);
+                }
+
+                Assert.AreEqual(LoggedInUserName, gitHubNameText);
+                Assert.AreEqual("@" + LoggedInUserAlias, gitHubAliasText);
+
+                //Act
+                RepositoryPage.TapSettingsButton();
+                await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
+            };
+
+            async Task login()
+            {
+                if (UserType is UserType.Demo)
+                    SettingsPage.TapTryDemoButton();
+                else if (UserType is UserType.LoggedIn)
+                    await LoginToGitHub().ConfigureAwait(false);
+            }
+        }
+
+        [Test]
         public async Task VerifyChartSettingsOptions()
         {
             //Arrange
@@ -153,7 +237,7 @@ namespace GitTrends.UITests
         {
             //Arrange
             var aliasLabelText = SettingsPage.GitHubAliasLabelText;
-            var nameLabelText = SettingsPage.GitHubAliasNameText;
+            var nameLabelText = SettingsPage.GitHubNameLabelText;
 
             //Act
             SettingsPage.TapGitHubUserView();
@@ -178,7 +262,7 @@ namespace GitTrends.UITests
             SettingsPage.WaitForGitHubLoginToComplete();
 
             aliasLabelText = SettingsPage.GitHubAliasLabelText;
-            nameLabelText = SettingsPage.GitHubAliasNameText;
+            nameLabelText = SettingsPage.GitHubNameLabelText;
 
             SettingsPage.TapGitHubUserView();
 

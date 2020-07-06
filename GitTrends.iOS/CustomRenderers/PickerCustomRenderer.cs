@@ -1,5 +1,5 @@
-﻿using System.ComponentModel;
-using GitTrends.iOS;
+﻿using GitTrends.iOS;
+using GitTrends.Mobile.Common;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
@@ -9,23 +9,31 @@ namespace GitTrends.iOS
 {
     public class PickerCustomRenderer : PickerRenderer
     {
+        public PickerCustomRenderer() => ThemeService.PreferenceChanged += HandlePreferenceChanged;
+
         protected override void OnElementChanged(ElementChangedEventArgs<Picker> e)
         {
             base.OnElementChanged(e);
 
             if (Control != null)
+            {
                 Control.TextAlignment = UITextAlignment.Center;
+                Control.Layer.BorderWidth = 1;
+                Control.Layer.CornerRadius = 5;
+
+                SetBorderColor();
+            }
         }
 
-        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        void SetBorderColor()
         {
-            base.OnElementPropertyChanged(sender, e);
-
-            if (Control != null)
+            if (Control?.Layer != null)
             {
-                var borderColor = (Color)Xamarin.Forms.Application.Current.Resources[nameof(BaseTheme.BorderButtonBorderColor)];
+                var borderColor = (Color)Xamarin.Forms.Application.Current.Resources[nameof(BaseTheme.PickerBorderColor)];
                 Control.Layer.BorderColor = borderColor.ToCGColor();
             }
         }
+
+        void HandlePreferenceChanged(object sender, PreferredTheme e) => SetBorderColor();
     }
 }

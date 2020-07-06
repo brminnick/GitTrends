@@ -9,7 +9,7 @@ namespace GitTrends
             HorizontalOptions = LayoutOptions.End;
 
             if (Device.RuntimePlatform is Device.iOS)
-                SetDynamicResource(OnColorProperty, nameof(BaseTheme.PrimaryColor));
+                this.DynamicResource(OnColorProperty, nameof(BaseTheme.PrimaryColor));
         }
     }
 }

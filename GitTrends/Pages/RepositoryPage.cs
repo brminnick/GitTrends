@@ -28,7 +28,7 @@ namespace GitTrends
                                 DeepLinkingService deepLinkingService,
                                 IMainThread mainThread,
                                 FirstRunService firstRunService,
-                                GitHubUserService gitHubUserService) : base(repositoryViewModel, analyticsService, mainThread, PageTitles.RepositoryPage)
+                                GitHubUserService gitHubUserService) : base(repositoryViewModel, analyticsService, mainThread)
         {
             _firstRunService = firstRunService;
             _gitHubUserService = gitHubUserService;
@@ -59,10 +59,9 @@ namespace GitTrends
             {
                 AutomationId = RepositoryPageAutomationIds.RefreshView,
                 Content = collectionView
-            };
-            _refreshView.SetDynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor));
-            _refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing));
-            _refreshView.SetBinding(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
+            }.DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor))
+             .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
+             .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
 
             var settingsToolbarItem = new ToolbarItem
             {
@@ -101,6 +100,8 @@ namespace GitTrends
             {
                 Content = _refreshView;
             }
+
+            this.SetBinding(TitleProperty, nameof(RepositoryViewModel.TitleText));
         }
 
         public event EventHandler<string> SearchBarTextChanged

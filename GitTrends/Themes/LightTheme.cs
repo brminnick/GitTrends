@@ -108,10 +108,12 @@ namespace GitTrends
         public override Color CloseButtonTextColor { get; } = Color.FromHex(_toolbarTextHex);
         public override Color CloseButtonBackgroundColor { get; } = Color.FromHex(_toolbarSurfaceHex);
 
+        public override Color PickerBorderColor { get; } = Color.LightGray;
+
         public override string GitTrendsImageSource { get; } = "GitTrendsGreen";
         public override string DefaultProfileImageSource { get; } = "DefaultProfileImageGreen";
         public override string DefaultReferringSiteImageSource { get; } = "DefaultReferringSiteImage";
 
-        public override MaterialFrame.Theme MaterialFrameTheme { get; } = MaterialFrame.Theme.Acrylic;
+        public override MaterialFrame.Theme MaterialFrameTheme { get; } = MaterialFrame.Theme.Light;
     }
 }

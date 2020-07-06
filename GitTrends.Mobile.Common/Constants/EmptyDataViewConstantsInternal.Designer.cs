@@ -16,7 +16,7 @@ namespace GitTrends.Mobile.Common.Constants {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class EmptyDataViewConstantsInternal {
+    public class EmptyDataViewConstantsInternal {
         
         private static System.Resources.ResourceManager resourceMan;
         
@@ -27,7 +27,7 @@ namespace GitTrends.Mobile.Common.Constants {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static System.Resources.ResourceManager ResourceManager {
+        public static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
                     System.Resources.ResourceManager temp = new System.Resources.ResourceManager("GitTrends.Mobile.Common.Constants.EmptyDataViewConstantsInternal", typeof(EmptyDataViewConstantsInternal).Assembly);
@@ -38,7 +38,7 @@ namespace GitTrends.Mobile.Common.Constants {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static System.Globalization.CultureInfo Culture {
+        public static System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -47,55 +47,55 @@ namespace GitTrends.Mobile.Common.Constants {
             }
         }
         
-        internal static string PleaseLoginAgain {
+        public static string PleaseLoginAgain {
             get {
                 return ResourceManager.GetString("PleaseLoginAgain", resourceCulture);
             }
         }
         
-        internal static string SwipeDownToRefresh_Repositories {
+        public static string SwipeDownToRefresh_Repositories {
             get {
                 return ResourceManager.GetString("SwipeDownToRefresh_Repositories", resourceCulture);
             }
         }
         
-        internal static string SwipeDownToRefresh_ReferringSites {
+        public static string SwipeDownToRefresh_ReferringSites {
             get {
                 return ResourceManager.GetString("SwipeDownToRefresh_ReferringSites", resourceCulture);
             }
         }
         
-        internal static string LoginExpired {
+        public static string LoginExpired {
             get {
                 return ResourceManager.GetString("LoginExpired", resourceCulture);
             }
         }
         
-        internal static string NoFilterMatch {
+        public static string NoFilterMatch {
             get {
                 return ResourceManager.GetString("NoFilterMatch", resourceCulture);
             }
         }
         
-        internal static string NoRepositoriesFound {
+        public static string NoRepositoriesFound {
             get {
                 return ResourceManager.GetString("NoRepositoriesFound", resourceCulture);
             }
         }
         
-        internal static string ClearSearchBarTryAgain {
+        public static string ClearSearchBarTryAgain {
             get {
                 return ResourceManager.GetString("ClearSearchBarTryAgain", resourceCulture);
             }
         }
         
-        internal static string NoReferralsYet {
+        public static string NoReferralsYet {
             get {
                 return ResourceManager.GetString("NoReferralsYet", resourceCulture);
             }
         }
         
-        internal static string Uninitialized {
+        public static string Uninitialized {
             get {
                 return ResourceManager.GetString("Uninitialized", resourceCulture);
             }
