@@ -12,4 +12,19 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
+    <data name="UnableToConnectToGitHub" xml:space="preserve">
+        <value>No se ha podido conectar con GitHub</value>
+    </data>
+    <data name="UsageLimitExceeded" space="preserve">
+        <value>Límite de uso excedido</value>
+    </data>
+    <data name="GitHubApiLimit" space="preserve">
+        <value>La API de GitHub limita nuestras solicitudes de API a 5,000 solicitudes por usuario por hora</value>
+    </data>
+    <data name="MinutesReset" space="preserve">
+        <value>El límite actual está programado para restablecerse en {0} minutos</value>
+    </data>
+    <data name="LearnMore" space="preserve">
+        <value>Aprende más</value>
+    </data>
 </root>
