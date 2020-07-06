@@ -18,4 +18,13 @@
     <data name="ErrorPullToRefreshEventArgs" xml:space="preserve">
         <value>Het is momenteel niet mogelijk de refererende sites op te halen. Controleer je (internet)verbinding en probeer het opnieuw.</value>
     </data>
+    <data name="Site" xml:space="preserve">
+        <value>SITE</value>
+    </data>
+    <data name="Referrals" xml:space="preserve">
+        <value>REFERRALS</value>
+    </data>
+    <data name="Unique" xml:space="preserve">
+        <value>UNIEK</value>
+    </data>
 </root>
