@@ -123,4 +123,13 @@
   <data name="ErrorPullToRefreshEventArgs" xml:space="preserve">
     <value>Невозможно получить ссылающиеся сайты. Проверьте подключение к Интернету и попробуйте снова.</value>
   </data>
+  <data name="Site" xml:space="preserve">
+    <value>САЙТ</value>
+  </data>
+  <data name="Unique" xml:space="preserve">
+    <value>УНИКАЛЬНЫЙ</value>
+  </data>
+  <data name="Referrals" xml:space="preserve">
+    <value>ССЫЛКИ</value>
+  </data>
 </root>
