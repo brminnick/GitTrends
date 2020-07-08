@@ -17,18 +17,19 @@ namespace GitTrends
     public class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISearchPage
     {
         readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
+
         readonly RefreshView _refreshView;
-        readonly DeepLinkingService _deepLinkingService;
         readonly FirstRunService _firstRunService;
         readonly GitHubUserService _gitHubUserService;
+        readonly DeepLinkingService _deepLinkingService;
 
-        public RepositoryPage(RepositoryViewModel repositoryViewModel,
+        public RepositoryPage(IMainThread mainThread,
+                                FirstRunService firstRunService,
                                 IAnalyticsService analyticsService,
+                                GitHubUserService gitHubUserService,
                                 MobileSortingService sortingService,
                                 DeepLinkingService deepLinkingService,
-                                IMainThread mainThread,
-                                FirstRunService firstRunService,
-                                GitHubUserService gitHubUserService) : base(repositoryViewModel, analyticsService, mainThread)
+                                RepositoryViewModel repositoryViewModel) : base(repositoryViewModel, analyticsService, mainThread)
         {
             _firstRunService = firstRunService;
             _gitHubUserService = gitHubUserService;
@@ -164,8 +165,8 @@ namespace GitTrends
         {
             using var scope = ContainerService.Container.BeginLifetimeScope();
 
-            var profilePage = scope.Resolve<SettingsPage>();
-            return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(profilePage));
+            var settingsPage = scope.Resolve<SettingsPage>();
+            return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(settingsPage));
         }
 
         Task NavigateToTrendsPage(Repository repository)
