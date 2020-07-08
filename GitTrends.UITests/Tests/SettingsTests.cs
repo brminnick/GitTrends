@@ -121,6 +121,12 @@ namespace GitTrends.UITests
 
                 await SettingsPage.SelectLanguage(preferredLanguageKeyValuePair.Value).ConfigureAwait(false);
 
+                SettingsPage.TapLoginButton();
+                tryDemoButtonText = SettingsPage.TryDemoButtonText;
+                loginTitleLabelText_Connect = SettingsPage.LoginTitleText;
+
+                await login().ConfigureAwait(false);
+
                 preferredLanguage_Final = SettingsPage.PreferredLanguage;
 
                 settingsPageTitle = SettingsPage.PageTitle;
@@ -136,12 +142,6 @@ namespace GitTrends.UITests
                 preferredChartsAllTitleLabelText = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.All];
                 preferredChartsNoUniquesTitleLabelText = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.NoUniques];
                 preferredChartsOnlyUniquesTitleLabelText = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.JustUniques];
-
-                SettingsPage.TapLoginButton();
-                tryDemoButtonText = SettingsPage.TryDemoButtonText;
-                loginTitleLabelText_Connect = SettingsPage.LoginTitleText;
-
-                await login().ConfigureAwait(false);
 
                 SettingsPage.TapBackButton();
 

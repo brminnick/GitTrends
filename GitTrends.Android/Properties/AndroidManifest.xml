@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="30" android:versionName="1.2.0" package="com.minnick.gittrends" android:installLocation="auto">
-	<uses-sdk android:minSdkVersion="23" android:targetSdkVersion="29" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="31" android:versionName="1.2.1" package="com.minnick.gittrends" android:installLocation="auto">
+	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="29" />
 	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 	<application android:label="GitTrends" android:fullBackupContent="@xml/auto_backup_rules">
 		<receiver android:name="com.google.firebase.iid.FirebaseInstanceIdInternalReceiver" android:exported="false" />
