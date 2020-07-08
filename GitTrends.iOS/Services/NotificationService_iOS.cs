@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Autofac;
 using GitTrends.iOS;
 using UIKit;
 using UserNotifications;
@@ -11,11 +10,7 @@ namespace GitTrends.iOS
 {
     public class NotificationService_iOS : INotificationService
     {
-        public void Initialize()
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            scope.Resolve<NotificationService>().RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
-        }
+        public void Initialize() => NotificationService.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
 
         public Task<bool?> AreNotificationEnabled() => MainThread.InvokeOnMainThreadAsync(() =>
         {

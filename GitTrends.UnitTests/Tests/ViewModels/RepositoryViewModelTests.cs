@@ -71,8 +71,9 @@ namespace GitTrends.UnitTests
             bool didPullToRefreshFailedFire = false;
             var pullToRefreshFailedTCS = new TaskCompletionSource<PullToRefreshFailedEventArgs>();
 
+            RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
+
             var repositoryViewModel = ServiceCollection.ServiceProvider.GetService<RepositoryViewModel>();
-            repositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 
             //Act
             emptyDataViewTitle_Initial = repositoryViewModel.EmptyDataViewTitle;
@@ -103,7 +104,7 @@ namespace GitTrends.UnitTests
 
             void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
             {
-                repositoryViewModel.PullToRefreshFailed -= HandlePullToRefreshFailed;
+                RepositoryViewModel.PullToRefreshFailed -= HandlePullToRefreshFailed;
 
                 didPullToRefreshFailedFire = true;
                 pullToRefreshFailedTCS.SetResult(e);

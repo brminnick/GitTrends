@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Newtonsoft.Json;
@@ -11,11 +12,33 @@ namespace GitTrends
     {
         const string _oauthTokenKey = "OAuthToken";
 
+        readonly static WeakEventManager<string> _nameChangedEventManager = new WeakEventManager<string>();
+        readonly static WeakEventManager<string> _aliasChangedEventManager = new WeakEventManager<string>();
+        readonly static WeakEventManager<string> _avatarUrlChangedEventManager = new WeakEventManager<string>();
+
         readonly IPreferences _preferences;
         readonly ISecureStorage _secureStorage;
 
         public GitHubUserService(IPreferences preferences, ISecureStorage secureStorage) =>
             (_preferences, _secureStorage) = (preferences, secureStorage);
+
+        public static event EventHandler<string> NameChanged
+        {
+            add => _nameChangedEventManager.AddEventHandler(value);
+            remove => _nameChangedEventManager.RemoveEventHandler(value);
+        }
+
+        public static event EventHandler<string> AliasChanged
+        {
+            add => _aliasChangedEventManager.AddEventHandler(value);
+            remove => _aliasChangedEventManager.RemoveEventHandler(value);
+        }
+
+        public static event EventHandler<string> AvatarUrlChanged
+        {
+            add => _avatarUrlChangedEventManager.AddEventHandler(value);
+            remove => _avatarUrlChangedEventManager.RemoveEventHandler(value);
+        }
 
         public bool IsDemoUser => AvatarUrl == BaseTheme.GetGitTrendsImageSource();
 
@@ -24,19 +47,40 @@ namespace GitTrends
         public string Alias
         {
             get => _preferences.Get(nameof(Alias), string.Empty);
-            set => _preferences.Set(nameof(Alias), value);
+            set
+            {
+                if (Alias != value)
+                {
+                    _preferences.Set(nameof(Alias), value);
+                    OnAliasChanged(value);
+                }
+            }
         }
 
         public string Name
         {
             get => _preferences.Get(nameof(Name), string.Empty);
-            set => _preferences.Set(nameof(Name), value);
+            set
+            {
+                if (Name != value)
+                {
+                    _preferences.Set(nameof(Name), value);
+                    OnNameChanged(value);
+                }
+            }
         }
 
         public string AvatarUrl
         {
             get => _preferences.Get(nameof(AvatarUrl), string.Empty);
-            set => _preferences.Set(nameof(AvatarUrl), value);
+            set
+            {
+                if (AvatarUrl != value)
+                {
+                    _preferences.Set(nameof(AvatarUrl), value);
+                    OnAvatarUrlChanged(value);
+                }
+            }
         }
 
         public async Task<GitHubToken> GetGitHubToken()
@@ -72,5 +116,9 @@ namespace GitTrends
         }
 
         public void InvalidateToken() => _secureStorage.Remove(_oauthTokenKey);
+
+        void OnNameChanged(in string name) => _nameChangedEventManager.HandleEvent(this, name, nameof(NameChanged));
+        void OnAliasChanged(in string alias) => _aliasChangedEventManager.HandleEvent(this, alias, nameof(AliasChanged));
+        void OnAvatarUrlChanged(in string avatarUrl) => _avatarUrlChangedEventManager.HandleEvent(this, avatarUrl, nameof(AvatarUrlChanged));
     }
 }

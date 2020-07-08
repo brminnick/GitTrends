@@ -95,7 +95,23 @@ namespace GitTrends.UITests
                 App.DismissKeyboard();
         }
 
-        protected string GetText(Query query) => App.Query(query).First().Text ?? App.Query(query).First().Label;
+        protected void ScrollTo(in Query query)
+        {
+            try
+            {
+                App.ScrollDownTo(query);
+            }
+            catch
+            {
+                App.ScrollUpTo(query);
+            }
+        }
+
+        protected string GetText(in Query query)
+        {
+            ScrollTo(query);
+            return App.Query(query).First().Text ?? App.Query(query).First().Label;
+        }
     }
 }
 

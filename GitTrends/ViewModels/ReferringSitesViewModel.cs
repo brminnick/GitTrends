@@ -20,7 +20,7 @@ namespace GitTrends
 {
     public class ReferringSitesViewModel : BaseViewModel
     {
-        readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
+        readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
 
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly DeepLinkingService _deepLinkingService;
@@ -41,19 +41,19 @@ namespace GitTrends
 
         bool _isRefreshing, _isStoreRatingRequestVisible, _isEmptyDataViewEnabled;
 
-        public ReferringSitesViewModel(GitHubApiV3Service gitHubApiV3Service,
-                                        DeepLinkingService deepLinkingService,
-                                        IAnalyticsService analyticsService,
-                                        ReferringSitesDatabase referringSitesDatabase,
-                                        GitHubAuthenticationService gitHubAuthenticationService,
+        public ReferringSitesViewModel(IMainThread mainThread,
                                         ReviewService reviewService,
                                         FavIconService favIconService,
-                                        IMainThread mainThread,
                                         IVersionTracking versionTracking,
-                                        GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
+                                        IAnalyticsService analyticsService,
+                                        GitHubUserService gitHubUserService,
+                                        GitHubApiV3Service gitHubApiV3Service,
+                                        DeepLinkingService deepLinkingService,
+                                        ReferringSitesDatabase referringSitesDatabase,
+                                        GitHubAuthenticationService gitHubAuthenticationService) : base(analyticsService, mainThread)
         {
-            reviewService.ReviewRequested += HandleReviewRequested;
-            reviewService.ReviewCompleted += HandleReviewCompleted;
+            ReviewService.ReviewRequested += HandleReviewRequested;
+            ReviewService.ReviewCompleted += HandleReviewCompleted;
 
             _reviewService = reviewService;
             _favIconService = favIconService;
@@ -73,7 +73,7 @@ namespace GitTrends
             UpdateStoreRatingRequestView();
         }
 
-        public event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
+        public static event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
         {
             add => _pullToRefreshFailedEventManager.AddEventHandler(value);
             remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);

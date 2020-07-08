@@ -18,19 +18,18 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             bool isFirstRun_Initial, isFirstRun_Final;
-
             var activateDemoUserTCS = new TaskCompletionSource<object?>();
 
-            var firstRunService = ServiceCollection.ServiceProvider.GetService<FirstRunService>();
+            GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 
-            var githubAuthorizationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
-            githubAuthorizationService.DemoUserActivated += HandleDemoUserActivated;
+            var firstRunService = ServiceCollection.ServiceProvider.GetService<FirstRunService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
 
 
             //Act
             isFirstRun_Initial = firstRunService.IsFirstRun;
 
-            await githubAuthorizationService.ActivateDemoUser().ConfigureAwait(false);
+            await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
             await activateDemoUserTCS.Task.ConfigureAwait(false);
 
             //Assert

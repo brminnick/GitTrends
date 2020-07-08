@@ -21,10 +21,10 @@ namespace GitTrends
 
         CancellationTokenSource? _animationCancellationToken;
 
-        public SplashScreenPage(IAnalyticsService analyticsService,
-                                SplashScreenViewModel splashScreenViewModel,
-                                IMainThread mainThread,
-                                FirstRunService firstRunService)
+        public SplashScreenPage(IMainThread mainThread,
+                                    FirstRunService firstRunService,
+                                    IAnalyticsService analyticsService,                                
+                                    SplashScreenViewModel splashScreenViewModel)
             : base(splashScreenViewModel, analyticsService, mainThread)
         {
             //Remove BaseContentPageBackground
@@ -33,7 +33,7 @@ namespace GitTrends
 
             _firstRunService = firstRunService;
 
-            ViewModel.InitializationComplete += HandleInitializationComplete;
+            SplashScreenViewModel.InitializationComplete += HandleInitializationComplete;
 
             IEnumerable<string> statusMessageList = new[] { SplashScreenPageConstants.Initializing, SplashScreenPageConstants.ConnectingToServers, SplashScreenPageConstants.Initializing, SplashScreenPageConstants.ConnectingToServers, SplashScreenPageConstants.Initializing, SplashScreenPageConstants.ConnectingToServers, SplashScreenPageConstants.StillWorkingOnIt, SplashScreenPageConstants.LetsTryItLikeThis, SplashScreenPageConstants.MaybeThis, SplashScreenPageConstants.AnotherTry, SplashScreenPageConstants.ItShouldntTakeThisLong, SplashScreenPageConstants.AreYouSureInternetConnectionIsGood };
             _statusMessageEnumerator = statusMessageList.GetEnumerator();

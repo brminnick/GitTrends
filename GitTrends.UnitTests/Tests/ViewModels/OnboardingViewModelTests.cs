@@ -19,7 +19,7 @@ namespace GitTrends.UnitTests
             var skipButtonTappedTCS = new TaskCompletionSource<object?>();
 
             var onboardingViewModel = ServiceCollection.ServiceProvider.GetService<OnboardingViewModel>();
-            onboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
+            OnboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
 
             //Act
             await onboardingViewModel.DemoButtonCommand.ExecuteAsync(OnboardingConstants.SkipText).ConfigureAwait(false);
@@ -30,7 +30,7 @@ namespace GitTrends.UnitTests
 
             void HandleSkipButtonTapped(object? sender, EventArgs e)
             {
-                onboardingViewModel.SkipButtonTapped -= HandleSkipButtonTapped;
+                OnboardingViewModel.SkipButtonTapped -= HandleSkipButtonTapped;
 
                 didSkipButtonTappedFire = true;
                 skipButtonTappedTCS.SetResult(null);
@@ -62,8 +62,7 @@ namespace GitTrends.UnitTests
             bool didOpenAsyncFire = false;
             var openAsyncExecutedTCS = new TaskCompletionSource<Uri>();
 
-            var mockBrowser = (MockBrowser)ServiceCollection.ServiceProvider.GetService<IBrowser>();
-            mockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
+            MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
             var onboardingViewModel = ServiceCollection.ServiceProvider.GetService<OnboardingViewModel>();
 
@@ -99,7 +98,7 @@ namespace GitTrends.UnitTests
 
             void HandleOpenAsyncExecuted(object? sender, Uri e)
             {
-                mockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
+                MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
                 didOpenAsyncFire = true;
 
                 openAsyncExecutedTCS.SetResult(e);

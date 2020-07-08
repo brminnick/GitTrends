@@ -7,22 +7,15 @@ namespace GitTrends.UnitTests
 {
     public class ExtendedNotificationService : NotificationService
     {
-        public ExtendedNotificationService(IAnalyticsService analyticsService,
-                                            DeepLinkingService deepLinkingService,
-                                            MobileSortingService sortingService,
-                                            AzureFunctionsApiService azureFunctionsApiService,
-                                            IPreferences preferences,
+        public ExtendedNotificationService(IPreferences preferences,
                                             ISecureStorage secureStorage,
+                                            IAnalyticsService analyticsService,
+                                            MobileSortingService sortingService,
+                                            DeepLinkingService deepLinkingService,
                                             INotificationManager notificationManager,
-                                            INotificationService notificationService) :
-                                        base(analyticsService,
-                                            deepLinkingService,
-                                            sortingService,
-                                            azureFunctionsApiService,
-                                            preferences,
-                                            secureStorage,
-                                            notificationManager,
-                                            notificationService)
+                                            INotificationService notificationService,
+                                            AzureFunctionsApiService azureFunctionsApiService) :
+                                        base(preferences, secureStorage, analyticsService, sortingService, deepLinkingService, notificationManager, notificationService, azureFunctionsApiService)
         {
 
         }

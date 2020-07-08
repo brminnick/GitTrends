@@ -35,8 +35,8 @@ namespace GitTrends
             _gitHubUserService = gitHubUserService;
             _deepLinkingService = deepLinkingService;
 
-            ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             SearchBarTextChanged += HandleSearchBarTextChanged;
+            RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 
             var collectionView = new CollectionView
             {

@@ -55,7 +55,7 @@ namespace GitTrends.Droid
             var notificationService = scope.Resolve<NotificationService>();
 
             _notificationHubInformationTCS = new TaskCompletionSource<NotificationHubInformation>();
-            notificationService.InitializationCompleted += HandleInitializationCompleted;
+            GitTrends.NotificationService.InitializationCompleted += HandleInitializationCompleted;
 
             try
             {
@@ -72,7 +72,7 @@ namespace GitTrends.Droid
             }
             finally
             {
-                notificationService.InitializationCompleted -= HandleInitializationCompleted;
+                GitTrends.NotificationService.InitializationCompleted -= HandleInitializationCompleted;
             }
         }
 

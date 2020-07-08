@@ -113,7 +113,6 @@ namespace GitTrends.UITests
                 themeTitleLabelText, languageTitleLabelText, settingsPageTitle, copyrightLabelTitleLabelText, registerForNotificationsTitleLabelText,
                 preferredChartsTitleTitleLabelText, preferredChartsAllTitleLabelText, preferredChartsNoUniquesTitleLabelText, preferredChartsOnlyUniquesTitleLabelText;
 
-
             foreach (var preferredLanguageKeyValuePair in CultureConstants.CulturePickerOptions.Reverse())
             {
                 //Act

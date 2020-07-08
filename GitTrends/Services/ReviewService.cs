@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
-using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
@@ -15,8 +14,8 @@ namespace GitTrends
         public const int MinimumAppInstallDays = 14;
         public const int MinimumMostRecentRequestDays = 90;
 
-        readonly WeakEventManager _reviewPromptRequestedEventManager = new WeakEventManager();
-        readonly WeakEventManager<ReviewRequest> _reviewCompletedEventManager = new WeakEventManager<ReviewRequest>();
+        readonly static WeakEventManager _reviewPromptRequestedEventManager = new WeakEventManager();
+        readonly static WeakEventManager<ReviewRequest> _reviewCompletedEventManager = new WeakEventManager<ReviewRequest>();
 
         readonly IAppInfo _appInfo;
         readonly IPreferences _preferences;
@@ -34,13 +33,13 @@ namespace GitTrends
                 preferences.Set(nameof(AppInstallDate), DateTime.UtcNow);
         }
 
-        public event EventHandler ReviewRequested
+        public static event EventHandler ReviewRequested
         {
             add => _reviewPromptRequestedEventManager.AddEventHandler(value);
             remove => _reviewPromptRequestedEventManager.RemoveEventHandler(value);
         }
 
-        public event EventHandler<ReviewRequest> ReviewCompleted
+        public static event EventHandler<ReviewRequest> ReviewCompleted
         {
             add => _reviewCompletedEventManager.AddEventHandler(value);
             remove => _reviewCompletedEventManager.RemoveEventHandler(value);

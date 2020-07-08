@@ -26,8 +26,9 @@ namespace GitTrends.UnitTests
             string noButtonText_Initial, noButtonText_AfterFirstAction, noButtonText_AfterSecondAction;
             string titleText_Initial, titleText_AfterFirstAction, titleText_AfterSecondAction;
 
+            ReviewService.ReviewCompleted += HandleReviewCompleted;
+
             var reviewService = ServiceCollection.ServiceProvider.GetService<ReviewService>();
-            reviewService.ReviewCompleted += HandleReviewCompleted;
 
             //Act
             reviewState_Initial = reviewService.CurrentState;
@@ -83,7 +84,7 @@ namespace GitTrends.UnitTests
 
             void HandleReviewCompleted(object? sender, ReviewRequest e)
             {
-                reviewService.ReviewCompleted -= HandleReviewCompleted;
+                ReviewService.ReviewCompleted -= HandleReviewCompleted;
 
                 didReviewCompletedFire = true;
                 reviewCompletedTCS.SetResult(e);
@@ -97,8 +98,9 @@ namespace GitTrends.UnitTests
             bool didReviewRequestedFire = false;
             var reviewRequestedTCS = new TaskCompletionSource<object?>();
 
+            ReviewService.ReviewRequested += HandleReviewRequested;
+
             var reviewService = ServiceCollection.ServiceProvider.GetService<ReviewService>();
-            reviewService.ReviewRequested += HandleReviewRequested;
 
             var preferences = ServiceCollection.ServiceProvider.GetService<IPreferences>();
             preferences.Set("AppInstallDate", DateTime.UtcNow.Subtract(TimeSpan.FromDays(ReviewService.MinimumAppInstallDays)));
@@ -120,7 +122,7 @@ namespace GitTrends.UnitTests
 
             void HandleReviewRequested(object? sender, EventArgs e)
             {
-                reviewService.ReviewRequested -= HandleReviewRequested;
+                ReviewService.ReviewRequested -= HandleReviewRequested;
 
                 didReviewRequestedFire = true;
                 reviewRequestedTCS.SetResult(null);
@@ -132,11 +134,10 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             bool didReviewRequestedFire = false;
+            ReviewService.ReviewRequested += HandleReviewRequested;
 
             var preferences = ServiceCollection.ServiceProvider.GetService<IPreferences>();
-
             var reviewService = ServiceCollection.ServiceProvider.GetService<ReviewService>();
-            reviewService.ReviewRequested += HandleReviewRequested;
 
 
             //Act
@@ -151,7 +152,7 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(preferences.Get("MostRecentRequestDate", default(DateTime)), default(DateTime));
             Assert.AreEqual(preferences.Get("MostRecentReviewedBuildString", default(string)), default(string));
 
-            reviewService.ReviewRequested -= HandleReviewRequested;
+            ReviewService.ReviewRequested -= HandleReviewRequested;
 
             void HandleReviewRequested(object? sender, EventArgs e) => didReviewRequestedFire = true;
         }
@@ -160,13 +161,13 @@ namespace GitTrends.UnitTests
         public async Task TryRequestReviewPromptTest_InvalidMostRecentRequestDate()
         {
             //Arrange
-            bool didReviewRequestedFire = false;
-
             await TryRequestReviewPromptTest_Valid().ConfigureAwait(false);
+
+            bool didReviewRequestedFire = false;
+            ReviewService.ReviewRequested += HandleReviewRequested;
 
             var preferences = ServiceCollection.ServiceProvider.GetService<IPreferences>();
             var reviewService = ServiceCollection.ServiceProvider.GetService<ReviewService>();
-            reviewService.ReviewRequested += HandleReviewRequested;
 
             //Act
             reviewService.TryRequestReviewPrompt();
@@ -176,7 +177,7 @@ namespace GitTrends.UnitTests
             Assert.AreNotEqual(preferences.Get("MostRecentRequestDate", default(DateTime)), default);
             Assert.AreNotEqual(preferences.Get("MostRecentReviewedBuildString", default(string)), default);
 
-            reviewService.ReviewRequested -= HandleReviewRequested;
+            ReviewService.ReviewRequested -= HandleReviewRequested;
 
             void HandleReviewRequested(object? sender, EventArgs e) => didReviewRequestedFire = true;
         }

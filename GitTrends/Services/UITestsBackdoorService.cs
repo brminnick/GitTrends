@@ -28,14 +28,14 @@ namespace GitTrends
         readonly TrendsChartSettingsService _trendsChartSettingsService;
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
-        public UITestsBackdoorService(GitHubAuthenticationService gitHubAuthenticationService,
+        public UITestsBackdoorService(IMainThread mainThread,
+                                        ThemeService themeService,
+                                        LanguageService languageService,
+                                        GitHubUserService gitHubUserService,
                                         NotificationService notificationService,
                                         GitHubGraphQLApiService gitHubGraphQLApiService,
                                         TrendsChartSettingsService trendsChartSettingsService,
-                                        ThemeService themeService,
-                                        GitHubUserService gitHubUserService,
-                                        IMainThread mainThread,
-                                        LanguageService languageService)
+                                        GitHubAuthenticationService gitHubAuthenticationService)
         {
             _mainThread = mainThread;
             _themeService = themeService;
@@ -72,8 +72,8 @@ namespace GitTrends
             var (alias, name, avatarUri) = await _gitHubGraphQLApiService.GetCurrentUserInfo(cancellationToken).ConfigureAwait(false);
 
             _gitHubUserService.Alias = alias;
-            _gitHubUserService.AvatarUrl = avatarUri.ToString();
             _gitHubUserService.Name = name;
+            _gitHubUserService.AvatarUrl = avatarUri.ToString();
         }
 
         public Task<GitHubToken> GetGitHubToken() => _gitHubUserService.GetGitHubToken();

@@ -39,13 +39,13 @@ namespace GitTrends.iOS
             PrintFontNamesToConsole();
 
             using var scope = ContainerService.Container.BeginLifetimeScope();
-            var notificationService = scope.Resolve<INotificationService>();
-            var analyticsService = scope.Resolve<IAnalyticsService>();
             var themeService = scope.Resolve<ThemeService>();
-            var splashScreenPage = scope.Resolve<SplashScreenPage>();
             var languageService = scope.Resolve<LanguageService>();
+            var splashScreenPage = scope.Resolve<SplashScreenPage>();
+            var analyticsService = scope.Resolve<IAnalyticsService>();
+            var notificationService = scope.Resolve<INotificationService>();
 
-            LoadApplication(new App(analyticsService, notificationService, themeService, splashScreenPage, languageService));
+            LoadApplication(new App(themeService, languageService, analyticsService, splashScreenPage, notificationService));
 
             if (launchOptions?.ContainsKey(UIApplication.LaunchOptionsLocalNotificationKey) is true)
                 HandleLocalNotification((UILocalNotification)launchOptions[UIApplication.LaunchOptionsLocalNotificationKey]).SafeFireAndForget(ex => scope.Resolve<IAnalyticsService>().Report(ex));

@@ -26,7 +26,7 @@ namespace GitTrends.UnitTests
             var setNotificationsPreferenceCompletedTCS = new TaskCompletionSource<AccessState?>();
 
             var settingsViewModel = ServiceCollection.ServiceProvider.GetService<SettingsViewModel>();
-            settingsViewModel.SetNotificationsPreferenceCompleted += HandleSetNotificationsPreferenceCompleted;
+            SettingsViewModel.SetNotificationsPreferenceCompleted += HandleSetNotificationsPreferenceCompleted;
 
             var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
 
@@ -59,7 +59,7 @@ namespace GitTrends.UnitTests
 
             void HandleSetNotificationsPreferenceCompleted(object? sender, AccessState? e)
             {
-                settingsViewModel.SetNotificationsPreferenceCompleted -= HandleSetNotificationsPreferenceCompleted;
+                SettingsViewModel.SetNotificationsPreferenceCompleted -= HandleSetNotificationsPreferenceCompleted;
 
                 didSetNotificationsPreferenceCompletedFire = true;
                 setNotificationsPreferenceCompletedTCS.SetResult(e);
@@ -172,8 +172,7 @@ namespace GitTrends.UnitTests
             bool didOpenAsyncFire = false;
             var openAsyncExecutedTCS = new TaskCompletionSource<Uri>();
 
-            var mockBrowser = (MockBrowser)ServiceCollection.ServiceProvider.GetService<IBrowser>();
-            mockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
+            MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
             var settingsViewModel = ServiceCollection.ServiceProvider.GetService<SettingsViewModel>();
 
@@ -215,7 +214,7 @@ namespace GitTrends.UnitTests
 
             void HandleOpenAsyncExecuted(object? sender, Uri e)
             {
-                mockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
+                MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
                 didOpenAsyncFire = true;
 
                 openAsyncExecutedTCS.SetResult(e);
@@ -264,8 +263,7 @@ namespace GitTrends.UnitTests
 
             var settingsViewModel = ServiceCollection.ServiceProvider.GetService<SettingsViewModel>();
 
-            var launcher = (MockLauncher)ServiceCollection.ServiceProvider.GetService<ILauncher>();
-            launcher.OpenAsyncExecuted += HandleOpenAsyncExecuted;
+            MockLauncher.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
             //Act
             settingsViewModel.CopyrightLabelTappedCommand.Execute(null);
@@ -276,7 +274,7 @@ namespace GitTrends.UnitTests
 
             void HandleOpenAsyncExecuted(object? sender, EventArgs e)
             {
-                launcher.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
+                MockLauncher.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
 
                 didOpenAsyncFire = true;
                 openAsyncTCS.SetResult(null);

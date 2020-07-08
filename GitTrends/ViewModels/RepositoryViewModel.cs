@@ -20,13 +20,14 @@ namespace GitTrends
 {
     public class RepositoryViewModel : BaseViewModel
     {
-        readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
-        readonly RepositoryDatabase _repositoryDatabase;
-        readonly GitHubAuthenticationService _gitHubAuthenticationService;
-        readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
-        readonly MobileSortingService _sortingService;
-        readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
+
         readonly GitHubUserService _gitHubUserService;
+        readonly RepositoryDatabase _repositoryDatabase;
+        readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly MobileSortingService _mobileSortingService;
+        readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
+        readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
         bool _isRefreshing;
         string _titleText = string.Empty;
@@ -37,15 +38,14 @@ namespace GitTrends
         IReadOnlyList<Repository> _repositoryList = Enumerable.Empty<Repository>().ToList();
         IReadOnlyList<Repository> _visibleRepositoryList = Enumerable.Empty<Repository>().ToList();
 
-        public RepositoryViewModel(RepositoryDatabase repositoryDatabase,
-                                    GitHubAuthenticationService gitHubAuthenticationService,
-                                    GitHubGraphQLApiService gitHubGraphQLApiService,
+        public RepositoryViewModel(IMainThread mainThread,
                                     IAnalyticsService analyticsService,
+                                    GitHubUserService gitHubUserService,
                                     MobileSortingService sortingService,
+                                    RepositoryDatabase repositoryDatabase,
                                     GitHubApiV3Service gitHubApiV3Service,
-                                    NotificationService notificationService,
-                                    IMainThread mainThread,
-                                    GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
+                                    GitHubGraphQLApiService gitHubGraphQLApiService,
+                                    GitHubAuthenticationService gitHubAuthenticationService) : base(analyticsService, mainThread)
         {
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 
@@ -54,7 +54,7 @@ namespace GitTrends
             _repositoryDatabase = repositoryDatabase;
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
-            _sortingService = sortingService;
+            _mobileSortingService = sortingService;
             _gitHubApiV3Service = gitHubApiV3Service;
             _gitHubUserService = gitHubUserService;
 
@@ -64,13 +64,14 @@ namespace GitTrends
             FilterRepositoriesCommand = new Command<string>(SetSearchBarText);
             SortRepositoriesCommand = new Command<SortingOption>(ExecuteSortRepositoriesCommand);
 
-            notificationService.SortingOptionRequested += HandleSortingOptionRequested;
-            gitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
-            gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
-            gitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
+            NotificationService.SortingOptionRequested += HandleSortingOptionRequested;
+
+            GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
+            GitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
+            GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
         }
 
-        public event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
+        public static event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
         {
             add => _pullToRefreshFailedEventManager.AddEventHandler(value);
             remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
@@ -124,10 +125,10 @@ namespace GitTrends
             HttpResponseMessage? finalResponse = null;
 
             var cancellationTokenSource = new CancellationTokenSource();
-            _gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
-            _gitHubAuthenticationService.LoggedOut += HandleLoggedOut;
+            GitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
+            GitHubAuthenticationService.LoggedOut += HandleLoggedOut;
 
-            AnalyticsService.Track("Refresh Triggered", "Sorting Option", _sortingService.CurrentOption.ToString());
+            AnalyticsService.Track("Refresh Triggered", "Sorting Option", _mobileSortingService.CurrentOption.ToString());
 
             try
             {
@@ -215,8 +216,8 @@ namespace GitTrends
             }
             finally
             {
-                _gitHubAuthenticationService.LoggedOut -= HandleLoggedOut;
-                _gitHubAuthenticationService.AuthorizeSessionStarted -= HandleAuthorizeSessionStarted;
+                GitHubAuthenticationService.LoggedOut -= HandleLoggedOut;
+                GitHubAuthenticationService.AuthorizeSessionStarted -= HandleAuthorizeSessionStarted;
 
                 if (cancellationTokenSource.IsCancellationRequested)
                     UpdateListForLoggedOutUser();
@@ -250,27 +251,27 @@ namespace GitTrends
 
         void ExecuteSortRepositoriesCommand(SortingOption option)
         {
-            if (_sortingService.CurrentOption == option)
-                _sortingService.IsReversed = !_sortingService.IsReversed;
+            if (_mobileSortingService.CurrentOption == option)
+                _mobileSortingService.IsReversed = !_mobileSortingService.IsReversed;
             else
-                _sortingService.IsReversed = false;
+                _mobileSortingService.IsReversed = false;
 
-            _sortingService.CurrentOption = option;
+            _mobileSortingService.CurrentOption = option;
 
             AnalyticsService.Track("SortingOption Changed", new Dictionary<string, string>
             {
-                { nameof(MobileSortingService) + nameof(MobileSortingService.CurrentOption), _sortingService.CurrentOption.ToString() },
-                { nameof(MobileSortingService) + nameof(MobileSortingService.IsReversed), _sortingService.IsReversed.ToString() }
+                { nameof(MobileSortingService) + nameof(MobileSortingService.CurrentOption), _mobileSortingService.CurrentOption.ToString() },
+                { nameof(MobileSortingService) + nameof(MobileSortingService.IsReversed), _mobileSortingService.IsReversed.ToString() }
             });
 
-            UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
+            UpdateVisibleRepositoryList(_searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
         void SetRepositoriesCollection(in IEnumerable<Repository> repositories, string searchBarText)
         {
             _repositoryList = repositories.ToList();
 
-            UpdateVisibleRepositoryList(searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
+            UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
         void AddRepositoriesToCollection(IEnumerable<Repository> repositories, string searchBarText, bool shouldUpdateVisibleRepositoryList = true, bool shouldRemoveRepoisitoriesWithoutViewsClonesData = false)
@@ -283,7 +284,7 @@ namespace GitTrends
                 _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
             if (shouldUpdateVisibleRepositoryList)
-                UpdateVisibleRepositoryList(searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
+                UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
         void UpdateVisibleRepositoryList(in string searchBarText, in SortingOption sortingOption, in bool isReversed)
@@ -296,7 +297,7 @@ namespace GitTrends
         void UpdateListForLoggedOutUser()
         {
             _repositoryList = Enumerable.Empty<Repository>().ToList();
-            UpdateVisibleRepositoryList(string.Empty, _sortingService.CurrentOption, _sortingService.IsReversed);
+            UpdateVisibleRepositoryList(string.Empty, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
         IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IEnumerable<Repository> repositories, string searchBarText)
@@ -315,7 +316,7 @@ namespace GitTrends
             _searchBarText = text;
 
             if (_repositoryList.Any())
-                UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
+                UpdateVisibleRepositoryList(_searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
         void HandlePreferredLanguageChanged(object sender, string? e) => SetTitleText();

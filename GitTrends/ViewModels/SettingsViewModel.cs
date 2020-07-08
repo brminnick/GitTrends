@@ -17,7 +17,7 @@ namespace GitTrends
 {
     public class SettingsViewModel : GitHubAuthenticationViewModel
     {
-        readonly WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new WeakEventManager<AccessState?>();
+        readonly static WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new WeakEventManager<AccessState?>();
 
         readonly ThemeService _themeService;
         readonly LanguageService _languageService;
@@ -41,21 +41,21 @@ namespace GitTrends
         bool _isRegisterForNotificationsSwitchEnabled = true;
         bool _isRegisterForNotificationsSwitchToggled;
 
-        int _preferredChartsSelectedIndex;
         int _themePickerSelectedIndex;
         int _languagePickerSelectedIndex;
+        int _preferredChartsSelectedIndex;
 
-        public SettingsViewModel(GitHubAuthenticationService gitHubAuthenticationService,
+        public SettingsViewModel(IMainThread mainThread,
                                     ThemeService themeService,
-                                    TrendsChartSettingsService trendsChartSettingsService,
+                                    LanguageService languageService,
+                                    IVersionTracking versionTracking,
                                     IAnalyticsService analyticsService,
+                                    GitHubUserService gitHubUserService,
                                     DeepLinkingService deepLinkingService,
                                     NotificationService notificationService,
-                                    IMainThread mainThread,
-                                    GitHubUserService gitHubUserService,
-                                    LanguageService languageService,
-                                    IVersionTracking versionTracking)
-                : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread, gitHubUserService)
+                                    TrendsChartSettingsService trendsChartSettingsService,
+                                    GitHubAuthenticationService gitHubAuthenticationService)
+                : base(mainThread, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
         {
             _themeService = themeService;
             _versionTracking = versionTracking;
@@ -67,16 +67,19 @@ namespace GitTrends
             CopyrightLabelTappedCommand = new AsyncCommand(ExecuteCopyrightLabelTappedCommand);
             GitHubUserViewTappedCommand = new AsyncCommand(ExecuteGitHubUserViewTappedCommand, _ => IsNotAuthenticating);
 
-            gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+            App.Resumed += HandleResumed;
+
+            GitHubUserService.NameChanged += HandleNameChanged;
+            GitHubUserService.AliasChanged += HandleAliasChanged;
+            GitHubUserService.AvatarUrlChanged += HandleAvatarUrlChanged;
+
             ThemeService.PreferenceChanged += HandlePreferenceChanged;
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
+            GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
             ThemePickerSelectedIndex = (int)themeService.Preference;
             PreferredChartsSelectedIndex = (int)trendsChartSettingsService.CurrentTrendsChartOption;
             LanguagePickerSelectedIndex = CultureConstants.CulturePickerOptions.Keys.ToList().IndexOf(languageService.PreferredLanguage ?? string.Empty);
-
-            if (Application.Current is App app)
-                app.Resumed += HandleResumed;
 
             initializeIsRegisterForNotificationsSwitch().SafeFireAndForget();
 
@@ -85,7 +88,7 @@ namespace GitTrends
             async Task initializeIsRegisterForNotificationsSwitch() => IsRegisterForNotificationsSwitchToggled = notificationService.ShouldSendNotifications && await notificationService.AreNotificationsEnabled().ConfigureAwait(false);
         }
 
-        public event EventHandler<AccessState?> SetNotificationsPreferenceCompleted
+        public static event EventHandler<AccessState?> SetNotificationsPreferenceCompleted
         {
             add => _setNotificationsPreferenceCompletedEventManager.AddEventHandler(value);
             remove => _setNotificationsPreferenceCompletedEventManager.RemoveEventHandler(value);
@@ -323,16 +326,18 @@ namespace GitTrends
             return _deepLinkingService.OpenApp("twitter://user?id=3418408341", "https://twitter.com/intent/user?user_id=3418408341");
         }
 
-        void HandlePreferenceChanged(object sender, PreferredTheme e) => UpdateGitHubAvatarImage();
+        void HandleNameChanged(object sender, string e) => SetGitHubValues();
+        void HandleAliasChanged(object sender, string e) => SetGitHubValues();
+        void HandleAvatarUrlChanged(object sender, string e) => SetGitHubValues();
         void HandlePreferredLanguageChanged(object sender, string? e) => InitializeText();
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => SetGitHubValues();
+        void HandlePreferenceChanged(object sender, PreferredTheme e) => UpdateGitHubAvatarImage();
 
         async void HandleResumed(object sender, EventArgs e)
         {
             IsRegisterForNotificationsSwitchToggled = _notificationService.ShouldSendNotifications && await _notificationService.AreNotificationsEnabled().ConfigureAwait(false);
             IsRegisterForNotificationsSwitchEnabled = true;
         }
-
 
         void InitializeText()
         {

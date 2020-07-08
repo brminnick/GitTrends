@@ -13,8 +13,9 @@ namespace GitTrends.UnitTests
             bool didInitializationCompleteFire = false;
             var initializeAppCommandTCS = new TaskCompletionSource<InitializationCompleteEventArgs>();
 
+            SplashScreenViewModel.InitializationComplete += HandleInitializationComplete;
+
             var splashScreenViewModel = ServiceCollection.ServiceProvider.GetService<SplashScreenViewModel>();
-            splashScreenViewModel.InitializationComplete += HandleInitializationComplete;
 
             //Act
             await splashScreenViewModel.InitializeAppCommand.ExecuteAsync().ConfigureAwait(false);
@@ -26,7 +27,7 @@ namespace GitTrends.UnitTests
 
             void HandleInitializationComplete(object? sender, InitializationCompleteEventArgs e)
             {
-                splashScreenViewModel.InitializationComplete -= HandleInitializationComplete;
+                SplashScreenViewModel.InitializationComplete -= HandleInitializationComplete;
 
                 didInitializationCompleteFire = true;
                 initializeAppCommandTCS.SetResult(e);

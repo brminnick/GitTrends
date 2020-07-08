@@ -21,8 +21,7 @@ namespace GitTrends.UnitTests
             bool didOpenAsyncFire = false;
             var openAsyncExecutedTCS = new TaskCompletionSource<Uri>();
 
-            var mockBrowser = (MockBrowser)ServiceCollection.ServiceProvider.GetService<IBrowser>();
-            mockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
+            MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
             var welcomeViewModel = ServiceCollection.ServiceProvider.GetService<WelcomeViewModel>();
 
@@ -58,7 +57,7 @@ namespace GitTrends.UnitTests
 
             void HandleOpenAsyncExecuted(object? sender, Uri e)
             {
-                mockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
+                MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
                 didOpenAsyncFire = true;
 
                 openAsyncExecutedTCS.SetResult(e);

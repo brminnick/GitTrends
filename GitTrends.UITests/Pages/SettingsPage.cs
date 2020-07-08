@@ -120,31 +120,41 @@ namespace GitTrends.UITests
 
         public void TapGitHubUserView()
         {
+            ScrollTo(_gitHubUserView);
             App.Tap(_gitHubUserView);
+
             App.Screenshot("GitHubUserView Tapped");
         }
 
         public void ToggleRegisterForNotificationsSwitch()
         {
+            ScrollTo(_registerForNotiicationsSwitch);
             App.Tap(_registerForNotiicationsSwitch);
+
             App.Screenshot("Register For Notifiations Button Tapped");
         }
 
         public void TapTryDemoButton()
         {
+            ScrollTo(_tryDemoButton);
             App.Tap(_tryDemoButton);
+
             App.Screenshot("Demo Mode Button Tapped");
         }
 
         public void TapCopyrightLabel()
         {
+            ScrollTo(_copyrightLabel);
             App.Tap(_copyrightLabel);
+
             App.Screenshot("Created By Label Tapped");
         }
 
         public void TapLoginButton()
         {
+            ScrollTo(_loginTitleLabel);
             App.Tap(_loginTitleLabel);
+
             App.Screenshot("Login Button Tapped");
         }
 
@@ -220,6 +230,8 @@ namespace GitTrends.UITests
                 AndroidApp _ => 0,
                 _ => throw new NotSupportedException()
             };
+
+            ScrollTo(picker);
 
             try
             {

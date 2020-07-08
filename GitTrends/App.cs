@@ -12,15 +12,16 @@ namespace GitTrends
 {
     public class App : Xamarin.Forms.Application
     {
-        readonly WeakEventManager _resumedEventManager = new WeakEventManager();
-        readonly IAnalyticsService _analyticsService;
-        readonly LanguageService _languageService;
+        readonly static WeakEventManager _resumedEventManager = new WeakEventManager();
 
-        public App(IAnalyticsService analyticsService,
-                    INotificationService notificationService,
-                    ThemeService themeService,
+        readonly LanguageService _languageService;
+        readonly IAnalyticsService _analyticsService;
+
+        public App(ThemeService themeService,
+                    LanguageService languageService,
+                    IAnalyticsService analyticsService,
                     SplashScreenPage splashScreenPage,
-                    LanguageService languageService)
+                    INotificationService notificationService)
         {
             Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental" });
 
@@ -34,7 +35,7 @@ namespace GitTrends
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
         }
 
-        public event EventHandler Resumed
+        public static event EventHandler Resumed
         {
             add => _resumedEventManager.AddEventHandler(value);
             remove => _resumedEventManager.RemoveEventHandler(value);

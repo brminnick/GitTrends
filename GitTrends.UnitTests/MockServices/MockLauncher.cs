@@ -8,9 +8,9 @@ namespace GitTrends.UnitTests
 {
     class MockLauncher : ILauncher
     {
-        readonly WeakEventManager _openAsyncExecutedEventHandler = new WeakEventManager();
+        readonly static WeakEventManager _openAsyncExecutedEventHandler = new WeakEventManager();
 
-        public event EventHandler OpenAsyncExecuted
+        public static event EventHandler OpenAsyncExecuted
         {
             add => _openAsyncExecutedEventHandler.AddEventHandler(value);
             remove => _openAsyncExecutedEventHandler.RemoveEventHandler(value);

@@ -15,20 +15,20 @@ namespace GitTrends
     {
         bool _isAuthenticating = false;
 
-        protected GitHubAuthenticationViewModel(GitHubAuthenticationService gitHubAuthenticationService,
-                                                    DeepLinkingService deepLinkingService,
+        protected GitHubAuthenticationViewModel(IMainThread mainThread,
                                                     IAnalyticsService analyticsService,
-                                                    IMainThread mainThread,
-                                                    GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
+                                                    GitHubUserService gitHubUserService,
+                                                    DeepLinkingService deepLinkingService,
+                                                    GitHubAuthenticationService gitHubAuthenticationService) : base(analyticsService, mainThread)
         {
-            gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
-            gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+            GitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
+            GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
-            ConnectToGitHubButtonCommand = new AsyncCommand<(CancellationToken CancellationToken, Xamarin.Essentials.BrowserLaunchOptions? BrowserLaunchOptions)>(tuple => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, gitHubUserService, tuple.CancellationToken, tuple.BrowserLaunchOptions), _ => IsNotAuthenticating);
             DemoButtonCommand = new AsyncCommand<string?>(text => ExecuteDemoButtonCommand(text), _ => IsNotAuthenticating);
+            ConnectToGitHubButtonCommand = new AsyncCommand<(CancellationToken CancellationToken, Xamarin.Essentials.BrowserLaunchOptions? BrowserLaunchOptions)>(tuple => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, gitHubUserService, tuple.CancellationToken, tuple.BrowserLaunchOptions), _ => IsNotAuthenticating);
 
-            GitHubAuthenticationService = gitHubAuthenticationService;
             GitHubUserService = gitHubUserService;
+            GitHubAuthenticationService = gitHubAuthenticationService;
         }
 
         public IAsyncCommand<(CancellationToken CancellationToken, Xamarin.Essentials.BrowserLaunchOptions? BrowserLaunchOptions)> ConnectToGitHubButtonCommand { get; }

@@ -21,11 +21,10 @@ namespace GitTrends
         readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new CancellationTokenSource();
         readonly IAppInfo _appInfo;
 
-        public WelcomePage(GitHubAuthenticationService gitHubAuthenticationService,
-                            IAnalyticsService analyticsService,
-                            WelcomeViewModel welcomeViewModel,
+        public WelcomePage(IAppInfo appInfo,
                             IMainThread mainThread,
-                            IAppInfo appInfo)
+                            WelcomeViewModel welcomeViewModel,
+                            IAnalyticsService analyticsService)
             : base(welcomeViewModel, analyticsService, mainThread, shouldUseSafeArea: true)
         {
             _appInfo = appInfo;
@@ -36,8 +35,8 @@ namespace GitTrends
             var pageBackgroundColor = Color.FromHex(BaseTheme.LightTealColorHex);
             BackgroundColor = pageBackgroundColor;
 
-            gitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
-            gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+            GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
+            GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
             var browserLaunchOptions = new Xamarin.Essentials.BrowserLaunchOptions
             {

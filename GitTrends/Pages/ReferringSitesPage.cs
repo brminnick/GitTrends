@@ -29,13 +29,13 @@ namespace GitTrends
         readonly ReviewService _reviewService;
         readonly DeepLinkingService _deepLinkingService;
 
-        public ReferringSitesPage(DeepLinkingService deepLinkingService,
-                                  ReferringSitesViewModel referringSitesViewModel,
-                                  Repository repository,
-                                  IAnalyticsService analyticsService,
-                                  ThemeService themeService,
-                                  ReviewService reviewService,
-                                  IMainThread mainThread) : base(referringSitesViewModel, analyticsService, mainThread)
+        public ReferringSitesPage(IMainThread mainThread,
+                                    Repository repository,
+                                    ThemeService themeService,
+                                    ReviewService reviewService,
+                                    IAnalyticsService analyticsService,
+                                    DeepLinkingService deepLinkingService,
+                                    ReferringSitesViewModel referringSitesViewModel) : base(referringSitesViewModel, analyticsService, mainThread)
         {
             Title = PageTitles.ReferringSitesPage;
 
@@ -44,8 +44,8 @@ namespace GitTrends
             _reviewService = reviewService;
             _deepLinkingService = deepLinkingService;
 
-            reviewService.ReviewCompleted += HandleReviewCompleted;
-            ViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
+            ReviewService.ReviewCompleted += HandleReviewCompleted;
+            ReferringSitesViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 
             var titleRowHeight = _isiOS ? 50 : 0;
 

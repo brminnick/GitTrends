@@ -12,12 +12,10 @@ namespace GitTrends
 {
     public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
     {
-        public ConnectToGitHubOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService,
-                                                IAnalyticsService analyticsService,
-                                                IMainThread mainthread)
+        public ConnectToGitHubOnboardingPage(IMainThread mainthread, IAnalyticsService analyticsService)
                 : base(analyticsService, mainthread, Color.FromHex(BaseTheme.CoralColorHex), OnboardingConstants.TryDemoText, 3)
         {
-            gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+            GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
         }
 
         enum Row { Description, Button, ActivityIndicator }

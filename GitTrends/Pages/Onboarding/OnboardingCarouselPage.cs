@@ -14,14 +14,13 @@ namespace GitTrends
         readonly IAnalyticsService _analyticsService;
         readonly IMainThread _mainThread;
 
-        public OnboardingCarouselPage(GitTrendsOnboardingPage welcomeOnboardingPage,
-                                        ChartOnboardingPage chartOnboardingPage,
-                                        NotificationsOnboardingPage notificationsOnboardingPage,
-                                        ConnectToGitHubOnboardingPage connectToGitHubOnboardingPage,
-                                        OnboardingViewModel onboardingViewModel,
-                                        GitHubAuthenticationService gitHubAuthenticationService,
+        public OnboardingCarouselPage(IMainThread mainThread,
                                         IAnalyticsService analyticsService,
-                                        IMainThread mainThread)
+                                        OnboardingViewModel onboardingViewModel,
+                                        ChartOnboardingPage chartOnboardingPage,
+                                        GitTrendsOnboardingPage welcomeOnboardingPage,
+                                        NotificationsOnboardingPage notificationsOnboardingPage,
+                                        ConnectToGitHubOnboardingPage connectToGitHubOnboardingPage)
         {
             On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.OverFullScreen);
 
@@ -32,8 +31,8 @@ namespace GitTrends
             _analyticsService = analyticsService;
             _mainThread = mainThread;
 
-            onboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
-            gitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
+            OnboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
+            GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 
             Children.Add(welcomeOnboardingPage);
             Children.Add(chartOnboardingPage);
