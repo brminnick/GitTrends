@@ -52,6 +52,8 @@ namespace GitTrends.UITests
             App.Tap(_sortButton);
             App.Screenshot("Sort Button Tapped");
 
+            App.WaitForElement(SortingConstants.ActionSheetTitle);
+
             App.Tap(PageTitle);
 
             App.Screenshot("Dismissed Sorting Options");
@@ -70,7 +72,14 @@ namespace GitTrends.UITests
             App.Tap(_sortButton);
             App.Screenshot("Sort Button Tapped");
 
-            App.Tap(SortingConstants.CancelText);
+            App.WaitForElement(SortingConstants.ActionSheetTitle);
+
+            //iPads use a UIPopoverView which does not provide a 'Cancel' option in the
+            if (!App.Query(SortingConstants.CancelText).Any())
+                App.Tap(PageTitle);
+            else
+                App.Tap(SortingConstants.CancelText);
+
             App.Screenshot("Cancel Button Tapped");
 
             return WaitForRepositoriesToFinishSorting();
