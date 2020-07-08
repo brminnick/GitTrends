@@ -102,6 +102,8 @@ namespace GitTrends.UITests
             }
 
             await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
+
+            App.Screenshot("Logged In");
         }
     }
 }
