@@ -7,6 +7,7 @@ using GitTrends.Shared;
 using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using Xamarin.Forms.PancakeView;
 using static GitTrends.MarkupExtensions;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
@@ -21,7 +22,7 @@ namespace GitTrends
         readonly static bool _isSmallScreen = ScreenWidth <= 360;
         readonly static double _circleImageHeight = _isSmallScreen ? 52 : 62;
 
-        protected BaseRepositoryDataTemplate(IEnumerable<View> parentDataTemplateChildren) : base(() => new CardView(parentDataTemplateChildren))
+        protected BaseRepositoryDataTemplate(IEnumerable<View> parentDataTemplateChildren, Repository repository) : base(() => new CardView(parentDataTemplateChildren, repository))
         {
 
         }
@@ -34,7 +35,7 @@ namespace GitTrends
 
         class CardView : Grid
         {
-            public CardView(in IEnumerable<View> parentDataTemplateChildren)
+            public CardView(in IEnumerable<View> parentDataTemplateChildren, in Repository repository)
             {
                 RowSpacing = 0;
                 RowDefinitions = Rows.Define(
@@ -47,7 +48,7 @@ namespace GitTrends
                     (CardViewColumn.Card, StarGridLength(1)),
                     (CardViewColumn.RightPadding, AbsoluteGridLength(16)));
 
-                Children.Add(new CardViewFrame(parentDataTemplateChildren).Row(CardViewRow.Card).Column(CardViewColumn.Card));
+                Children.Add(new CardViewFrame(parentDataTemplateChildren, repository).Row(CardViewRow.Card).Column(CardViewColumn.Card));
 
                 this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             }
@@ -57,21 +58,21 @@ namespace GitTrends
 
             class CardViewFrame : MaterialFrame
             {
-                public CardViewFrame(in IEnumerable<View> parentDataTemplateChildren)
+                public CardViewFrame(in IEnumerable<View> parentDataTemplateChildren, in Repository repository)
                 {
                     Padding = new Thickness(16, 16, 12, 8);
                     CornerRadius = 4;
                     HasShadow = false;
                     Elevation = 4;
 
-                    Content = new ContentGrid(parentDataTemplateChildren);
+                    Content = new ContentGrid(parentDataTemplateChildren, repository);
 
                     this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
                 }
 
                 class ContentGrid : Grid
                 {
-                    public ContentGrid(in IEnumerable<View> parentDataTemplateChildren)
+                    public ContentGrid(in IEnumerable<View> parentDataTemplateChildren, in Repository repository)
                     {
                         this.FillExpand();
 
@@ -94,15 +95,14 @@ namespace GitTrends
                             (Column.Emoji3, AbsoluteGridLength(_emojiColumnSize)),
                             (Column.Statistic3, AbsoluteGridLength(_statsColumnSize)));
 
-                        Children.Add(new AvatarImage()
+                        Children.Add(new AvatarImage(repository.OwnerAvatarUrl)
                                         .Row(Row.Title).Column(Column.Avatar).RowSpan(2)
                                         .Bind(CircleImage.ImageSourceProperty, nameof(Repository.OwnerAvatarUrl)));
 
-                        Children.Add(new NameLabel()
-                                        .Row(Row.Title).Column(Column.Trending).ColumnSpan(7)
-                                        .Bind(Label.TextProperty, nameof(Repository.Name)));
+                        Children.Add(new NameLabel(repository.Name)
+                                        .Row(Row.Title).Column(Column.Trending).ColumnSpan(7));
 
-                        Children.Add(new DescriptionLabel()
+                        Children.Add(new DescriptionLabel(repository.Description)
                                         .Row(Row.Description).Column(Column.Trending).ColumnSpan(7)
                                         .Bind(Label.TextProperty, nameof(Repository.Description)));
 
@@ -125,14 +125,15 @@ namespace GitTrends
 
                     class AvatarImage : CircleImage
                     {
-                        public AvatarImage()
+                        public AvatarImage(in string avatarUrl)
                         {
-                            this.Center();
 
+                            ImageSource = avatarUrl;
                             WidthRequest = _circleImageHeight;
 
-                            BorderThickness = 1;
+                            Border = new Border { Thickness = 1 };
 
+                            this.Center();
                             this.DynamicResources((BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
                                                     (ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
                                                     (LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)));
@@ -141,8 +142,10 @@ namespace GitTrends
 
                     class NameLabel : PrimaryColorLabel
                     {
-                        public NameLabel() : base(20)
+                        public NameLabel(in string name) : base(20)
                         {
+                            Text = name;
+
                             LineBreakMode = LineBreakMode.TailTruncation;
                             HorizontalOptions = LayoutOptions.FillAndExpand;
                             FontFamily = FontFamilyConstants.RobotoBold;
@@ -151,8 +154,10 @@ namespace GitTrends
 
                     class DescriptionLabel : PrimaryColorLabel
                     {
-                        public DescriptionLabel() : base(14)
+                        public DescriptionLabel(in string description) : base(14)
                         {
+                            Text = description;
+
                             MaxLines = 2;
                             LineHeight = 1.16;
                             FontFamily = FontFamilyConstants.RobotoRegular;
