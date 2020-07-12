@@ -48,7 +48,7 @@ namespace GitTrends
                 {
                     new OpacityOverlay().Row(Row.Image).ColumnSpan(All<Column>()),
                     CreateImageView().Row(Row.Image).ColumnSpan(All<Column>()).Margin(Device.RuntimePlatform is Device.iOS ? new Thickness(32, 44 + 32, 32, 32) : new Thickness(32,16)),
-                    descriptionLayout.Row(Row.Description).ColumnSpan(All<Column>()),
+                    descriptionLayout.Row(Row.Description).RowSpan(2).ColumnSpan(All<Column>()),
                     new OnboardingIndicatorView(carouselPositionIndex).Row(Row.Indicator).Column(Column.Indicator),
                     new NextLabel(nextButtonText).Row(Row.Indicator).Column(Column.Button),
                 }
