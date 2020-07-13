@@ -25,7 +25,7 @@ namespace GitTrends.UnitTests
 
             ReferringSitesViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 
-            var referringSitesViewModel = ServiceCollection.ServiceProvider.GetService<ReferringSitesViewModel>();
+            var referringSitesViewModel = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesViewModel>();
 
             //Act
             emptyDataViewTitle_Initial = referringSitesViewModel.EmptyDataViewTitle;
@@ -84,9 +84,9 @@ namespace GitTrends.UnitTests
             bool isEmptyDataViewEnabled_Initial, isEmptyDataViewEnabled_DuringRefresh, isEmptyDataViewEnabled_Final;
             IReadOnlyList<MobileReferringSiteModel> mobileReferringSites_Initial, mobileReferringSites_DuringRefresh, mobileReferringSites_Final;
 
-            var referringSitesViewModel = ServiceCollection.ServiceProvider.GetService<ReferringSitesViewModel>();
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
+            var referringSitesViewModel = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesViewModel>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
             //Act
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
@@ -143,8 +143,8 @@ namespace GitTrends.UnitTests
             string reviewRequestView_YesButtonText_Initial, reviewRequestView_YesButtonText_AfterFirstYesButtonCommand, reviewRequestView_YesButtonText_AfterSecondYesButtonCommand;
             ReviewState reviewState_Initial, reviewState_AfterFirstYesButtonCommand, reviewState_AfterSecondYesButtonCommand;
 
-            var reviewService = ServiceCollection.ServiceProvider.GetService<ReviewService>();
-            var referringSitesViewModel = ServiceCollection.ServiceProvider.GetService<ReferringSitesViewModel>();
+            var reviewService = ServiceCollection.ServiceProvider.GetRequiredService<ReviewService>();
+            var referringSitesViewModel = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesViewModel>();
 
             //Act
             isStoreRatingRequestVisible_Initial = referringSitesViewModel.IsStoreRatingRequestVisible;
@@ -201,8 +201,8 @@ namespace GitTrends.UnitTests
             string reviewRequestView_YesButtonText_Initial, reviewRequestView_YesButtonText_AfterNoButtonCommand, reviewRequestView_YesButtonText_AfterYesButtonCommand;
             ReviewState reviewState_Initial, reviewState_AfterNoButtonCommand, reviewState_AfterYesButtonCommand;
 
-            var referringSitesViewModel = ServiceCollection.ServiceProvider.GetService<ReferringSitesViewModel>();
-            var reviewService = ServiceCollection.ServiceProvider.GetService<ReviewService>();
+            var referringSitesViewModel = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesViewModel>();
+            var reviewService = ServiceCollection.ServiceProvider.GetRequiredService<ReviewService>();
 
             //Act
             reviewState_Initial = reviewService.CurrentState;
@@ -251,8 +251,8 @@ namespace GitTrends.UnitTests
             string reviewRequestView_YesButtonText_Initial, reviewRequestView_YesButtonText_AfterFirstNoButtonCommand, reviewRequestView_YesButtonText_AfterYesButtonCommand;
             ReviewState reviewState_Initial, reviewState_AfterFirstNoButtonCommand, reviewState_AfterYesButtonCommand;
 
-            var referringSitesViewModel = ServiceCollection.ServiceProvider.GetService<ReferringSitesViewModel>();
-            var reviewService = ServiceCollection.ServiceProvider.GetService<ReviewService>();
+            var referringSitesViewModel = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesViewModel>();
+            var reviewService = ServiceCollection.ServiceProvider.GetRequiredService<ReviewService>();
 
             //Act
             reviewState_Initial = reviewService.CurrentState;
@@ -301,8 +301,8 @@ namespace GitTrends.UnitTests
             string reviewRequestView_YesButtonText_Initial, reviewRequestView_YesButtonText_AfterFirstNoButtonCommand, reviewRequestView_YesButtonText_AfterSecondNoButtonCommand;
             ReviewState reviewState_Initial, reviewState_AfterFirstNoButtonCommand, reviewState_AfterSecondNoButtonCommand;
 
-            var referringSitesViewModel = ServiceCollection.ServiceProvider.GetService<ReferringSitesViewModel>();
-            var reviewService = ServiceCollection.ServiceProvider.GetService<ReviewService>();
+            var referringSitesViewModel = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesViewModel>();
+            var reviewService = ServiceCollection.ServiceProvider.GetRequiredService<ReviewService>();
 
             //Act
             reviewState_Initial = reviewService.CurrentState;

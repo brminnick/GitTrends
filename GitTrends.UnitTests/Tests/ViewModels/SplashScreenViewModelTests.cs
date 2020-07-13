@@ -15,7 +15,7 @@ namespace GitTrends.UnitTests
 
             SplashScreenViewModel.InitializationComplete += HandleInitializationComplete;
 
-            var splashScreenViewModel = ServiceCollection.ServiceProvider.GetService<SplashScreenViewModel>();
+            var splashScreenViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SplashScreenViewModel>();
 
             //Act
             await splashScreenViewModel.InitializeAppCommand.ExecuteAsync().ConfigureAwait(false);

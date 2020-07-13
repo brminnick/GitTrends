@@ -28,7 +28,7 @@ namespace GitTrends.UnitTests
 
             ReviewService.ReviewCompleted += HandleReviewCompleted;
 
-            var reviewService = ServiceCollection.ServiceProvider.GetService<ReviewService>();
+            var reviewService = ServiceCollection.ServiceProvider.GetRequiredService<ReviewService>();
 
             //Act
             reviewState_Initial = reviewService.CurrentState;
@@ -100,9 +100,9 @@ namespace GitTrends.UnitTests
 
             ReviewService.ReviewRequested += HandleReviewRequested;
 
-            var reviewService = ServiceCollection.ServiceProvider.GetService<ReviewService>();
+            var reviewService = ServiceCollection.ServiceProvider.GetRequiredService<ReviewService>();
 
-            var preferences = ServiceCollection.ServiceProvider.GetService<IPreferences>();
+            var preferences = ServiceCollection.ServiceProvider.GetRequiredService<IPreferences>();
             preferences.Set("AppInstallDate", DateTime.UtcNow.Subtract(TimeSpan.FromDays(ReviewService.MinimumAppInstallDays)));
 
             //Act
@@ -136,8 +136,8 @@ namespace GitTrends.UnitTests
             bool didReviewRequestedFire = false;
             ReviewService.ReviewRequested += HandleReviewRequested;
 
-            var preferences = ServiceCollection.ServiceProvider.GetService<IPreferences>();
-            var reviewService = ServiceCollection.ServiceProvider.GetService<ReviewService>();
+            var preferences = ServiceCollection.ServiceProvider.GetRequiredService<IPreferences>();
+            var reviewService = ServiceCollection.ServiceProvider.GetRequiredService<ReviewService>();
 
 
             //Act
@@ -166,8 +166,8 @@ namespace GitTrends.UnitTests
             bool didReviewRequestedFire = false;
             ReviewService.ReviewRequested += HandleReviewRequested;
 
-            var preferences = ServiceCollection.ServiceProvider.GetService<IPreferences>();
-            var reviewService = ServiceCollection.ServiceProvider.GetService<ReviewService>();
+            var preferences = ServiceCollection.ServiceProvider.GetRequiredService<IPreferences>();
+            var reviewService = ServiceCollection.ServiceProvider.GetRequiredService<ReviewService>();
 
             //Act
             reviewService.TryRequestReviewPrompt();

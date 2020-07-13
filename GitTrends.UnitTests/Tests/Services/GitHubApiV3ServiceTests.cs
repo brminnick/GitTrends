@@ -17,8 +17,8 @@ namespace GitTrends.UnitTests
         {
             await base.Setup().ConfigureAwait(false);
 
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
         }
@@ -27,7 +27,7 @@ namespace GitTrends.UnitTests
         public async Task GetReferringSitesTest_ValidRepo()
         {
             //Arrange
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
+            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
 
             //Act
             var referringSites = await gitHubApiV3Service.GetReferringSites(GitTrendsRepoOwner, GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
@@ -41,8 +41,8 @@ namespace GitTrends.UnitTests
         public void GetReferringSitesTest_ValidRepo_Unauthenticated()
         {
             //Arrange
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
             gitHubUserService.InvalidateToken();
 
@@ -57,7 +57,7 @@ namespace GitTrends.UnitTests
         public void GetReferringSitesTest_InvalidRepo()
         {
             //Arrange
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
+            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
 
             //Act
             var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetReferringSites("xamarin", GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
@@ -70,7 +70,7 @@ namespace GitTrends.UnitTests
         public async Task GetRepositoryCloneStatisticsTest_ValidRepo()
         {
             //Arrange
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
+            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
 
             //Act
             var clones = await gitHubApiV3Service.GetRepositoryCloneStatistics(GitTrendsRepoOwner, GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
@@ -87,7 +87,7 @@ namespace GitTrends.UnitTests
         public void GetRepositoryCloneStatisticsTest_InvalidRepo()
         {
             //Arrange
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
+            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
 
             //Act
             var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryCloneStatistics("xamarin", GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
@@ -100,8 +100,8 @@ namespace GitTrends.UnitTests
         public void GetRepositoryCloneStatisticsTest_ValidRepo_Unauthenticated()
         {
             //Arrange
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
             gitHubUserService.InvalidateToken();
 
@@ -116,8 +116,8 @@ namespace GitTrends.UnitTests
         public async Task GetRepositoryViewStatisticsTest_ValidRepo()
         {
             //Arrange
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
             //Act
             var views = await gitHubApiV3Service.GetRepositoryViewStatistics(GitTrendsRepoOwner, GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
@@ -134,7 +134,7 @@ namespace GitTrends.UnitTests
         public void GetRepositoryViewStatisticsTest_InvalidRepo()
         {
             //Arrange
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
+            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
 
             //Act
             var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryViewStatistics("xamarin", GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
@@ -147,8 +147,8 @@ namespace GitTrends.UnitTests
         public void GetRepositoryViewStatisticsTest_ValidRepo_Unauthenticated()
         {
             //Arrange
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
             gitHubUserService.InvalidateToken();
 
@@ -167,9 +167,9 @@ namespace GitTrends.UnitTests
             var repositories = new List<Repository>();
             var repositories_NoViewsClonesData = new List<Repository>();
 
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
             //Act
             await foreach (var retrievedRepositories in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
@@ -202,9 +202,9 @@ namespace GitTrends.UnitTests
             var repositories = new List<Repository>();
             var repositories_NoViewsClonesData = new List<Repository>();
 
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
             //Act
             await foreach (var retrievedRepositories in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
@@ -230,7 +230,7 @@ namespace GitTrends.UnitTests
             //Arrange
             var repositories = new List<Repository>();
 
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
+            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
 
             //Act
             await foreach (var repository in gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(Enumerable.Empty<Repository>().ToList(), CancellationToken.None).ConfigureAwait(false))
@@ -250,9 +250,9 @@ namespace GitTrends.UnitTests
             var repositories = new List<Repository>();
             var repositories_NoViewsClonesData = new List<Repository>();
 
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
 
             //Act

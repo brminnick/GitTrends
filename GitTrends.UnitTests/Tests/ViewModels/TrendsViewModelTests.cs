@@ -34,11 +34,11 @@ namespace GitTrends.UnitTests
             IReadOnlyList<DailyViewsModel> dailyViewsModels_Initial, dailyViewsModels_Final;
             IReadOnlyList<DailyClonesModel> dailyClonesModels_Initial, dailyClonesModels_Final;
 
-            var trendsViewModel = ServiceCollection.ServiceProvider.GetService<TrendsViewModel>();
+            var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
 
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetService<GitHubApiV3Service>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
 
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
@@ -128,9 +128,9 @@ namespace GitTrends.UnitTests
 
             Repository repository = CreateRepository(shouldCreateViewsClonesData);
 
-            var trendsViewModel = ServiceCollection.ServiceProvider.GetService<TrendsViewModel>();
+            var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
 
-            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
             //Act
@@ -159,9 +159,9 @@ namespace GitTrends.UnitTests
 
             Repository repository = CreateRepository();
 
-            var trendsViewModel = ServiceCollection.ServiceProvider.GetService<TrendsViewModel>();
+            var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
 
-            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
             //Act
@@ -197,9 +197,9 @@ namespace GitTrends.UnitTests
 
             Repository repository = CreateRepository();
 
-            var trendsViewModel = ServiceCollection.ServiceProvider.GetService<TrendsViewModel>();
+            var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
 
-            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
             //Act
@@ -236,9 +236,9 @@ namespace GitTrends.UnitTests
 
             Repository repository = CreateRepository();
 
-            var trendsViewModel = ServiceCollection.ServiceProvider.GetService<TrendsViewModel>();
+            var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
 
-            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
             //Act
@@ -274,9 +274,9 @@ namespace GitTrends.UnitTests
 
             Repository repository = CreateRepository();
 
-            var trendsViewModel = ServiceCollection.ServiceProvider.GetService<TrendsViewModel>();
+            var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
 
-            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
             //Act

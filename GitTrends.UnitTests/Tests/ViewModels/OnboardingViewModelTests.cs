@@ -18,7 +18,7 @@ namespace GitTrends.UnitTests
             bool didSkipButtonTappedFire = false;
             var skipButtonTappedTCS = new TaskCompletionSource<object?>();
 
-            var onboardingViewModel = ServiceCollection.ServiceProvider.GetService<OnboardingViewModel>();
+            var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
             OnboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
 
             //Act
@@ -41,8 +41,8 @@ namespace GitTrends.UnitTests
         public async Task DemoButtonCommand_TryDemo()
         {
             //Arrange
-            var onboardingViewModel = ServiceCollection.ServiceProvider.GetService<OnboardingViewModel>();
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
             //Act
             await onboardingViewModel.DemoButtonCommand.ExecuteAsync(OnboardingConstants.TryDemoText).ConfigureAwait(false);
@@ -64,7 +64,7 @@ namespace GitTrends.UnitTests
 
             MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
-            var onboardingViewModel = ServiceCollection.ServiceProvider.GetService<OnboardingViewModel>();
+            var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
 
             //Act
             isAuthenticating_BeforeCommand = onboardingViewModel.IsAuthenticating;
@@ -113,7 +113,7 @@ namespace GitTrends.UnitTests
             const string bellSvg = "bell.svg";
 
             string notificationStatusSvgImageSource_Initial, notificationStatusSvgImageSource_Final;
-            var onboardingViewModel = ServiceCollection.ServiceProvider.GetService<OnboardingViewModel>();
+            var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
 
             //Act
             notificationStatusSvgImageSource_Initial = onboardingViewModel.NotificationStatusSvgImageSource;

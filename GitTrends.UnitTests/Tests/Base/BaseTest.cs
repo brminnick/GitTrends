@@ -32,26 +32,26 @@ namespace GitTrends.UnitTests
             Device.Info = new MockDeviceInfo();
             Device.PlatformServices = new MockPlatformServices();
 
-            var preferences = ServiceCollection.ServiceProvider.GetService<IPreferences>();
+            var preferences = ServiceCollection.ServiceProvider.GetRequiredService<IPreferences>();
             preferences.Clear();
 
-            var secureStorage = ServiceCollection.ServiceProvider.GetService<ISecureStorage>();
+            var secureStorage = ServiceCollection.ServiceProvider.GetRequiredService<ISecureStorage>();
             secureStorage.RemoveAll();
 
-            var referringSitesDatabase = ServiceCollection.ServiceProvider.GetService<ReferringSitesDatabase>();
+            var referringSitesDatabase = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesDatabase>();
             await referringSitesDatabase.DeleteAllData().ConfigureAwait(false);
 
-            var repositoryDatabase = ServiceCollection.ServiceProvider.GetService<RepositoryDatabase>();
+            var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
             await repositoryDatabase.DeleteAllData().ConfigureAwait(false);
 
-            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
             await gitHubAuthenticationService.LogOut().ConfigureAwait(false);
 
-            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
+            var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
             await notificationService.SetAppBadgeCount(0).ConfigureAwait(false);
             notificationService.UnRegister();
 
-            var mockNotificationService = (MockNotificationService)ServiceCollection.ServiceProvider.GetService<INotificationService>();
+            var mockNotificationService = (MockNotificationService)ServiceCollection.ServiceProvider.GetRequiredService<INotificationService>();
             mockNotificationService.Reset();
         }
 

@@ -23,7 +23,7 @@ namespace GitTrends.UnitTests
 
             MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
-            var welcomeViewModel = ServiceCollection.ServiceProvider.GetService<WelcomeViewModel>();
+            var welcomeViewModel = ServiceCollection.ServiceProvider.GetRequiredService<WelcomeViewModel>();
 
             //Act
             isAuthenticating_BeforeCommand = welcomeViewModel.IsAuthenticating;
@@ -70,8 +70,8 @@ namespace GitTrends.UnitTests
             //Arrange
             bool isDemoButtonVisible_Initial, isDemoButtonVisible_Final;
 
-            var welcomeViewModel = ServiceCollection.ServiceProvider.GetService<WelcomeViewModel>();
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var welcomeViewModel = ServiceCollection.ServiceProvider.GetRequiredService<WelcomeViewModel>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
             //Act
             isDemoButtonVisible_Initial = welcomeViewModel.IsDemoButtonVisible;

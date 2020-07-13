@@ -14,7 +14,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             Uri invalidUri = new Uri("https://abc123456789.com/");
-            var favIconService = ServiceCollection.ServiceProvider.GetService<FavIconService>();
+            var favIconService = ServiceCollection.ServiceProvider.GetRequiredService<FavIconService>();
 
             //Act
             var fileImageSource = (FileImageSource)await favIconService.GetFavIconImageSource(invalidUri, CancellationToken.None).ConfigureAwait(false);
@@ -33,7 +33,7 @@ namespace GitTrends.UnitTests
         public async Task GetFavIconImageSourceTest_ValidUrl(string url, string expectedFavIconUrl)
         {
             //Arrange
-            var favIconService = ServiceCollection.ServiceProvider.GetService<FavIconService>();
+            var favIconService = ServiceCollection.ServiceProvider.GetRequiredService<FavIconService>();
 
             //Act
             var uriImageSource = (UriImageSource)await favIconService.GetFavIconImageSource(new Uri(url), CancellationToken.None).ConfigureAwait(false);
@@ -47,7 +47,7 @@ namespace GitTrends.UnitTests
         public async Task GetFavIconImageSourceTest_CountryCodeTopLevelDomains(string url, string expectedFavIconUrl)
         {
             //Arrange
-            var favIconService = ServiceCollection.ServiceProvider.GetService<FavIconService>();
+            var favIconService = ServiceCollection.ServiceProvider.GetRequiredService<FavIconService>();
 
             //Act
             var uriImageSource = (UriImageSource)await favIconService.GetFavIconImageSource(new Uri(url), CancellationToken.None).ConfigureAwait(false);

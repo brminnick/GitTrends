@@ -12,7 +12,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             string? license_initial, license_final;
-            var syncfusionService = ServiceCollection.ServiceProvider.GetService<SyncfusionService>();
+            var syncfusionService = ServiceCollection.ServiceProvider.GetRequiredService<SyncfusionService>();
 
             //Act
             license_initial = await syncfusionService.GetLicense().ConfigureAwait(false);

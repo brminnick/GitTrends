@@ -16,7 +16,7 @@ namespace GitTrends.UnitTests
             bool shouldShowViewsByDefault_Initial, shouldShowViewsByDefault_AfterNoUniques, shouldShowViewsByDefault_AfterJustUniques, shouldShowViewsByDefault_AfterAll;
             bool shouldShowUniqueViewsByDefault_Initial, shouldShowUniqueViewsByDefault_AfterNoUniques, shouldShowUniqueViewsByDefault_AfterJustUniques, shouldShowUniqueViewsByDefault_AfterAll;
 
-            var trendsChartSettingsService = ServiceCollection.ServiceProvider.GetService<TrendsChartSettingsService>();
+            var trendsChartSettingsService = ServiceCollection.ServiceProvider.GetRequiredService<TrendsChartSettingsService>();
 
             //Act
             trendsChartOption_Initial = trendsChartSettingsService.CurrentTrendsChartOption;

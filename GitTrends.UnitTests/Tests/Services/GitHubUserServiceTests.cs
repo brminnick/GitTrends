@@ -26,7 +26,7 @@ namespace GitTrends.UnitTests
 
             GitHubUserService.AliasChanged += HandleAliasChanged;
 
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
             alias_Initial = gitHubUserService.Alias;
 
             //Act
@@ -63,7 +63,7 @@ namespace GitTrends.UnitTests
 
             GitHubUserService.NameChanged += HandleNameChanged;
 
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
             name_Initial = gitHubUserService.Name;
 
             //Act
@@ -98,7 +98,7 @@ namespace GitTrends.UnitTests
 
             GitHubUserService.AvatarUrlChanged += HandleAvatarUrlChanged;
 
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
             avatarUrl_Initial = gitHubUserService.AvatarUrl;
 
             //Act
@@ -127,7 +127,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             var gitHubToken = new GitHubToken(_token, _scope, _tokenType);
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
             //Act
             await gitHubUserService.SaveGitHubToken(gitHubToken).ConfigureAwait(false);
@@ -148,7 +148,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             GitHubToken? token_BeforeInvalidation, token_AfterInvalidation;
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
             //Act
             await SaveGitHubTokenTest().ConfigureAwait(false);

@@ -20,7 +20,7 @@ namespace GitTrends.UnitTests
             var didAuthorizeSessionStartedFire = false;
             var authorizeSessionStartedTCS = new TaskCompletionSource<object?>();
 
-            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
             GitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
 
             //Act
@@ -48,7 +48,7 @@ namespace GitTrends.UnitTests
             var didAuthorizeSessionCompletedFire = false;
             var authorizeSessionCompletedTCS = new TaskCompletionSource<bool>();
 
-            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
             GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
             //Act
@@ -75,9 +75,9 @@ namespace GitTrends.UnitTests
             var didDemoUserActivatedFire = false;
             var demoUserActivatedTCS = new TaskCompletionSource<object?>();
 
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
-            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
             GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 
             //Act
@@ -107,9 +107,9 @@ namespace GitTrends.UnitTests
             var didDLoggedOutFire = false;
             var loggedOutTCS = new TaskCompletionSource<object?>();
 
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
-            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
 
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
             GitHubAuthenticationService.LoggedOut += HandleLoggedOut;
@@ -143,8 +143,8 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             string gitHubLoginUrl, scope, state;
-            var preferences = ServiceCollection.ServiceProvider.GetService<IPreferences>();
-            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
+            var preferences = ServiceCollection.ServiceProvider.GetRequiredService<IPreferences>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
 
             //Act
             gitHubLoginUrl = await gitHubAuthenticationService.GetGitHubLoginUrl(CancellationToken.None).ConfigureAwait(false);

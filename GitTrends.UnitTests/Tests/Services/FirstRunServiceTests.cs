@@ -22,8 +22,8 @@ namespace GitTrends.UnitTests
 
             GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 
-            var firstRunService = ServiceCollection.ServiceProvider.GetService<FirstRunService>();
-            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
+            var firstRunService = ServiceCollection.ServiceProvider.GetRequiredService<FirstRunService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
 
 
             //Act

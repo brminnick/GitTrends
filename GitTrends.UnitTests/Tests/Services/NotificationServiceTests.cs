@@ -23,7 +23,7 @@ namespace GitTrends.UnitTests
             var title = NotificationConstants.TrendingRepositoriesNotificationTitle;
             var message = NotificationService.CreateSingleRepositoryNotificationMessage(GitTrendsRepoName, GitTrendsRepoOwner);
 
-            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
+            var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
 
             //Act //Assert
             Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await notificationService.HandleNotification(title, message, badgeCount).ConfigureAwait(false));
@@ -38,7 +38,7 @@ namespace GitTrends.UnitTests
             var title = NotificationConstants.TrendingRepositoriesNotificationTitle;
             var message = NotificationService.CreateSingleRepositoryNotificationMessage(GitTrendsRepoName, GitTrendsRepoOwner);
 
-            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
+            var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
 
             //Act
             await notificationService.HandleNotification(title, message, badgeCount).ConfigureAwait(false);
@@ -60,10 +60,10 @@ namespace GitTrends.UnitTests
             bool didSortingOptionRequestedFire = false;
             var sortingOptionRequestedTCS = new TaskCompletionSource<SortingOption>();
 
-            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
+            var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
             NotificationService.SortingOptionRequested += HandleSortingOptionRequested;
 
-            var sortingService = ServiceCollection.ServiceProvider.GetService<MobileSortingService>();
+            var sortingService = ServiceCollection.ServiceProvider.GetRequiredService<MobileSortingService>();
             sortingService.IsReversed = true;
 
             //Act
@@ -92,8 +92,8 @@ namespace GitTrends.UnitTests
             IReadOnlyList<Repository> emptyTrendingRepositoryList = Enumerable.Empty<Repository>().ToList();
             IReadOnlyList<Repository> trendingRepositoryList = new List<Repository> { CreateRepository() };
 
-            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
-            var notificationManager = ServiceCollection.ServiceProvider.GetService<INotificationManager>();
+            var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
+            var notificationManager = ServiceCollection.ServiceProvider.GetRequiredService<INotificationManager>();
 
             //Act
             pendingNotificationsCount_Initial = await getPendingNotificationCount(notificationManager).ConfigureAwait(false);
@@ -137,8 +137,8 @@ namespace GitTrends.UnitTests
 
             int appBadgeCount_Initial, appBadgeCount_BeforeRegistration, appBadgeCount_AfterSet, appBadgeCount_AfterClear;
 
-            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
-            var notificationManager = ServiceCollection.ServiceProvider.GetService<INotificationManager>();
+            var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
+            var notificationManager = ServiceCollection.ServiceProvider.GetRequiredService<INotificationManager>();
 
             //Act
             appBadgeCount_Initial = notificationManager.Badge;
@@ -173,7 +173,7 @@ namespace GitTrends.UnitTests
             bool didRegistrationCompletedFire = false;
             var registrationCompletedTCS = new TaskCompletionSource<(bool isSuccessful, string errorMessage)>();
 
-            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
+            var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
             NotificationService.RegisterForNotificationsCompleted += HandleRegistrationCompleted;
 
             //Act
@@ -223,7 +223,7 @@ namespace GitTrends.UnitTests
             bool didInitializationCompletedFire = false;
             var initializationCompletedTCS = new TaskCompletionSource<NotificationHubInformation>();
 
-            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
+            var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
             NotificationService.InitializationCompleted += HandleInitializationCompleted;
 
             //Act
