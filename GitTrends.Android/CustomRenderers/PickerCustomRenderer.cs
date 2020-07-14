@@ -37,7 +37,16 @@ namespace GitTrends.Droid
                 gradientDrawable.SetStroke(2, borderColor.ToAndroid());
 
                 if (Control != null)
-                    Control.Background = gradientDrawable;
+                {
+                    try
+                    {
+                        Control.Background = gradientDrawable;
+                    }
+                    catch(System.ObjectDisposedException)
+                    {
+
+                    }
+                }
             }
         }
 
