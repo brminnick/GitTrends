@@ -28,9 +28,9 @@ namespace GitTrends.Droid
 
         void SetPickerBorder()
         {
-            if (Application.Current != null)
+            if (Application.Current?.Resources is BaseTheme theme)
             {
-                var borderColor = (Color)Application.Current.Resources[nameof(BaseTheme.PickerBorderColor)];
+                var borderColor = theme.PickerBorderColor;
 
                 var gradientDrawable = new GradientDrawable();
                 gradientDrawable.SetCornerRadius(10);
