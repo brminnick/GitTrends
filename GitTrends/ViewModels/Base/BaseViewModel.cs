@@ -35,6 +35,6 @@ namespace GitTrends
         }
 
         protected void OnPropertyChanged([CallerMemberName] in string propertyName = "") =>
-            _propertyChangedEventManager.HandleEvent(this, new PropertyChangedEventArgs(propertyName), nameof(INotifyPropertyChanged.PropertyChanged));
+            _propertyChangedEventManager.RaiseEvent(this, new PropertyChangedEventArgs(propertyName), nameof(INotifyPropertyChanged.PropertyChanged));
     }
 }

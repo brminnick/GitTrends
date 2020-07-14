@@ -38,6 +38,6 @@ namespace GitTrends.UnitTests
             return Task.CompletedTask;
         }
 
-        void OnOpenAsyncExecuted() => _openAsyncExecutedEventHandler.HandleEvent(this, EventArgs.Empty, nameof(OpenAsyncExecuted));
+        void OnOpenAsyncExecuted() => _openAsyncExecutedEventHandler.RaiseEvent(this, EventArgs.Empty, nameof(OpenAsyncExecuted));
     }
 }

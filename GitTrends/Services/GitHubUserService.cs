@@ -117,8 +117,8 @@ namespace GitTrends
 
         public void InvalidateToken() => _secureStorage.Remove(_oauthTokenKey);
 
-        void OnNameChanged(in string name) => _nameChangedEventManager.HandleEvent(this, name, nameof(NameChanged));
-        void OnAliasChanged(in string alias) => _aliasChangedEventManager.HandleEvent(this, alias, nameof(AliasChanged));
-        void OnAvatarUrlChanged(in string avatarUrl) => _avatarUrlChangedEventManager.HandleEvent(this, avatarUrl, nameof(AvatarUrlChanged));
+        void OnNameChanged(in string name) => _nameChangedEventManager.RaiseEvent(this, name, nameof(NameChanged));
+        void OnAliasChanged(in string alias) => _aliasChangedEventManager.RaiseEvent(this, alias, nameof(AliasChanged));
+        void OnAvatarUrlChanged(in string avatarUrl) => _avatarUrlChangedEventManager.RaiseEvent(this, avatarUrl, nameof(AvatarUrlChanged));
     }
 }

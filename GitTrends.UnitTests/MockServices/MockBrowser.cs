@@ -32,6 +32,6 @@ namespace GitTrends.UnitTests
             return Task.FromResult(true);
         }
 
-        void OnOpenAsyncExecuted(in Uri uri) => _openAsyncExecutedEventHandler.HandleEvent(this, uri, nameof(OpenAsyncExecuted));
+        void OnOpenAsyncExecuted(in Uri uri) => _openAsyncExecutedEventHandler.RaiseEvent(this, uri, nameof(OpenAsyncExecuted));
     }
 }

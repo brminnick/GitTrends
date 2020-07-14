@@ -142,8 +142,8 @@ namespace GitTrends
                     && DateTime.Compare(MostRecentRequestDate.Add(TimeSpan.FromDays(MinimumMostRecentRequestDays)), DateTime.UtcNow) < 1;
         }
 
-        void OnReviewRequested() => _reviewPromptRequestedEventManager.HandleEvent(this, EventArgs.Empty, nameof(ReviewRequested));
-        void OnReviewRequestCompleted(ReviewRequest reviewRequested) => _reviewCompletedEventManager.HandleEvent(this, reviewRequested, nameof(ReviewCompleted));
+        void OnReviewRequested() => _reviewPromptRequestedEventManager.RaiseEvent(this, EventArgs.Empty, nameof(ReviewRequested));
+        void OnReviewRequestCompleted(ReviewRequest reviewRequested) => _reviewCompletedEventManager.RaiseEvent(this, reviewRequested, nameof(ReviewCompleted));
     }
 
     public interface ISKStoreReviewController

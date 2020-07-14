@@ -83,6 +83,6 @@ namespace GitTrends
             languageService.Initialize();
         }
 
-        void OnResumed() => _resumedEventManager.HandleEvent(this, EventArgs.Empty, nameof(Resumed));
+        void OnResumed() => _resumedEventManager.RaiseEvent(this, EventArgs.Empty, nameof(Resumed));
     }
 }

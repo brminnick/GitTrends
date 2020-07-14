@@ -21,7 +21,7 @@ namespace GitTrends
         protected override View CreateImageView() => new PancakeView
         {
             CornerRadius = 4,
-            BorderColor = Color.FromHex("E0E0E0"),
+            Border = new Border { Color = Color.FromHex("E0E0E0") },
             BackgroundColor = Color.White,
             Padding = new Thickness(5),
 

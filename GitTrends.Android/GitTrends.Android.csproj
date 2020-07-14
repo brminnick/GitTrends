@@ -86,7 +86,7 @@
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="4.7.0.1080" />
     <PackageReference Include="Refit" Version="5.1.67" />
-    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.1" />
+    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.2.0" />
     <PackageReference Include="Polly" Version="7.2.1" />
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.2.0.44" />
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
@@ -101,7 +101,7 @@
     <PackageReference Include="Xamarin.Firebase.Messaging" Version="119.0.1-preview02" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="3.3.0" />
     <PackageReference Include="Xamarin.GooglePlayServices.Base" Version="117.2.1-preview01" />
-    <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.0.0.691" />
+    <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.0.1.698" />
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0.1" />
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.5.3.2" />
     <PackageReference Include="Xamarin.Build.Download" Version="0.10.0" />

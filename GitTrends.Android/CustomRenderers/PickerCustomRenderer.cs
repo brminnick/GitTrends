@@ -42,7 +42,7 @@ namespace GitTrends.Droid
                     {
                         Control.Background = gradientDrawable;
                     }
-                    catch(System.ObjectDisposedException)
+                    catch (System.ObjectDisposedException)
                     {
 
                     }

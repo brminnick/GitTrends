@@ -398,6 +398,6 @@ namespace GitTrends
             }
         }
 
-        void OnSetNotificationsCompleted(AccessState? accessState) => _setNotificationsPreferenceCompletedEventManager.HandleEvent(this, accessState, nameof(SetNotificationsPreferenceCompleted));
+        void OnSetNotificationsCompleted(AccessState? accessState) => _setNotificationsPreferenceCompletedEventManager.RaiseEvent(this, accessState, nameof(SetNotificationsPreferenceCompleted));
     }
 }

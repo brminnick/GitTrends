@@ -156,8 +156,8 @@ namespace GitTrends
 
         Page GetVisiblePageFromNavigationStack() => Application.Current.MainPage.Navigation.NavigationStack.Last();
 
-        void OnPopPageStarted() => _popPageStartedEventManager.HandleEvent(this, EventArgs.Empty, nameof(PopPageStarted));
-        void OnPopPageCompleted(Page page) => _popPageCompletedEventManager.HandleEvent(this, page, nameof(PopPageCompleted));
+        void OnPopPageStarted() => _popPageStartedEventManager.RaiseEvent(this, EventArgs.Empty, nameof(PopPageStarted));
+        void OnPopPageCompleted(Page page) => _popPageCompletedEventManager.RaiseEvent(this, page, nameof(PopPageCompleted));
     }
 }
 #endif

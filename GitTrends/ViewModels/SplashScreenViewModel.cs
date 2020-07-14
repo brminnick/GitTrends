@@ -59,6 +59,6 @@ namespace GitTrends
         }
 
         void OnInitializationComplete(bool isInitializationSuccessful) =>
-            _initializationCompleteEventManager.HandleEvent(this, new InitializationCompleteEventArgs(isInitializationSuccessful), nameof(InitializationComplete));
+            _initializationCompleteEventManager.RaiseEvent(this, new InitializationCompleteEventArgs(isInitializationSuccessful), nameof(InitializationComplete));
     }
 }

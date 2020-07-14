@@ -342,7 +342,7 @@ namespace GitTrends
                 _ => throw new NotSupportedException()
             };
 
-            _pullToRefreshFailedEventManager.HandleEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
+            _pullToRefreshFailedEventManager.RaiseEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
         }
     }
 }

@@ -163,13 +163,13 @@ namespace GitTrends
         }
 
         void OnAuthorizeSessionCompleted(bool isSessionAuthorized) =>
-           _authorizeSessionCompletedEventManager.HandleEvent(this, new AuthorizeSessionCompletedEventArgs(isSessionAuthorized), nameof(AuthorizeSessionCompleted));
+           _authorizeSessionCompletedEventManager.RaiseEvent(this, new AuthorizeSessionCompletedEventArgs(isSessionAuthorized), nameof(AuthorizeSessionCompleted));
 
         void OnAuthorizeSessionStarted() =>
-           _authorizeSessionStartedEventManager.HandleEvent(this, EventArgs.Empty, nameof(AuthorizeSessionStarted));
+           _authorizeSessionStartedEventManager.RaiseEvent(this, EventArgs.Empty, nameof(AuthorizeSessionStarted));
 
-        void OnLoggedOut() => _loggedOuteventManager.HandleEvent(this, EventArgs.Empty, nameof(LoggedOut));
+        void OnLoggedOut() => _loggedOuteventManager.RaiseEvent(this, EventArgs.Empty, nameof(LoggedOut));
 
-        void OnDemoUserActivated() => _demoUserActivatedEventManager.HandleEvent(this, EventArgs.Empty, nameof(DemoUserActivated));
+        void OnDemoUserActivated() => _demoUserActivatedEventManager.RaiseEvent(this, EventArgs.Empty, nameof(DemoUserActivated));
     }
 }

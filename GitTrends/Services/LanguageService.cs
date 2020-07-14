@@ -67,6 +67,6 @@ namespace GitTrends
             };
         }
 
-        void OnPreferredLanguageChanged(in string? culture) => _preferredLanguageChangedEventManager.HandleEvent(this, culture, nameof(PreferredLanguageChanged));
+        void OnPreferredLanguageChanged(in string? culture) => _preferredLanguageChangedEventManager.RaiseEvent(this, culture, nameof(PreferredLanguageChanged));
     }
 }

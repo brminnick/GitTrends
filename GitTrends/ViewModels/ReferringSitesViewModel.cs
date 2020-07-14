@@ -313,6 +313,6 @@ namespace GitTrends
         void HandleReviewRequested(object sender, EventArgs e) => IsStoreRatingRequestVisible = true;
 
         void OnPullToRefreshFailed(PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs) =>
-            _pullToRefreshFailedEventManager.HandleEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
+            _pullToRefreshFailedEventManager.RaiseEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
     }
 }

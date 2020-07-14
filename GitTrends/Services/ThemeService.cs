@@ -108,6 +108,6 @@ namespace GitTrends
                 await SetAppTheme(PreferredTheme.Default);
         }
 
-        void OnPreferenceChanged(PreferredTheme theme) => _mainThread.InvokeOnMainThreadAsync(() => _preferenceChangedEventManager.HandleEvent(this, theme, nameof(PreferenceChanged)));
+        void OnPreferenceChanged(PreferredTheme theme) => _mainThread.InvokeOnMainThreadAsync(() => _preferenceChangedEventManager.RaiseEvent(this, theme, nameof(PreferenceChanged)));
     }
 }
