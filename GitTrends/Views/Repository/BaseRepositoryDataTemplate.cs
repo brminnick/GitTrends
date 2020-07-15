@@ -16,6 +16,9 @@ namespace GitTrends
 {
     abstract class BaseRepositoryDataTemplate : DataTemplate
     {
+        public const int TopPadding = 12;
+        public const int BottomPadding = 4;
+
         const int _statsColumnSize = 40;
         const double _statisticsRowHeight = StatisticsLabel.StatiscsFontSize + 4;
         const double _emojiColumnSize = _statisticsRowHeight;
@@ -29,9 +32,6 @@ namespace GitTrends
 
         protected enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
         protected enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3 }
-
-        public static int TopPadding { get; } = Device.RuntimePlatform is Device.Android ? 4 : 8;
-        public static int BottomPadding { get; } = Device.RuntimePlatform is Device.Android ? 12 : 16;
 
         class CardView : Grid
         {
