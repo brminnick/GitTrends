@@ -11,7 +11,8 @@ using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
-using static Xamarin.Forms.Constraint;
+using static GitTrends.MarkupExtensions;
+using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -19,7 +20,6 @@ namespace GitTrends
     {
         const int _titleTopMargin = 10;
 
-        readonly bool _isiOS = Device.RuntimePlatform is Device.iOS;
         readonly StoreRatingRequestView _storeRatingRequestView = new StoreRatingRequestView();
         readonly CancellationTokenSource _refreshViewCancelltionTokenSource = new CancellationTokenSource();
 
@@ -47,7 +47,9 @@ namespace GitTrends
             ReviewService.ReviewCompleted += HandleReviewCompleted;
             ReferringSitesViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 
-            var titleRowHeight = _isiOS ? 50 : 0;
+            var isiOS = Device.RuntimePlatform is Device.iOS;
+            var titleRowHeight = isiOS ? 50 : 0;
+            var shadowHeight = isiOS ? 1 : 0;
 
             var collectionView = new ReferringSitesCollectionView()
                 .Bind(IsVisibleProperty, nameof(ReferringSitesViewModel.IsEmptyDataViewEnabled))
@@ -58,21 +60,45 @@ namespace GitTrends
 
             var closeButton = new CloseButton(titleRowHeight).Invoke(closeButton => closeButton.Clicked += HandleCloseButtonClicked);
 
-            Content = new RelativeLayout()
-                        .Add(new ReferringSitesRefreshView(collectionView, repository, _refreshViewCancelltionTokenSource.Token).Assign(out _refreshView)
-                                .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor))
-                                .Bind(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.RefreshCommand))
-                                .Bind(RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing)),
-                            Constant(0), Constant(titleRowHeight), RelativeToParent(parent => parent.Width), RelativeToParent(parent => parent.Height - titleRowHeight))
-                        .Add(_isiOS ? new TitleShadowView(themeService) : null,
-                            Constant(0), Constant(0), RelativeToParent(parent => parent.Width), Constant(titleRowHeight))
-                        .Add(_isiOS ? new TitleLabel() : null,
-                            Constant(10), Constant(0))
-                        .Add(_isiOS ? closeButton : null,
-                            RelativeToParent(parent => parent.Width - closeButton.GetWidth(parent) - 10), Constant(0), RelativeToParent(parent => closeButton.GetWidth(parent)))
-                        .Add(_storeRatingRequestView,
-                            Constant(0), RelativeToParent(parent => parent.Height - _storeRatingRequestView.GetHeight(parent)), RelativeToParent(parent => parent.Width));
+            Content = new Grid
+            {
+                RowSpacing = 0,
+
+                RowDefinitions = Rows.Define(
+                    (Row.Title, Auto),
+                    (Row.TitleShadow, AbsoluteGridLength(shadowHeight)),
+                    (Row.List, Star),
+                    (Row.RatingRequest, Auto)),
+
+                ColumnDefinitions = Columns.Define(
+                    (Column.Title, StarGridLength(3)),
+                    (Column.Button, StarGridLength(1))),
+
+                Children =
+                {
+                    new ReferringSitesRefreshView(collectionView, repository, _refreshViewCancelltionTokenSource.Token).Assign(out _refreshView)
+                        .Row(Row.TitleShadow).RowSpan(3).ColumnSpan(All<Column>())
+                        .Bind(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.RefreshCommand))
+                        .Bind(RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing))
+                        .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor)),
+
+                    _storeRatingRequestView
+                        .Row(Row.RatingRequest).ColumnSpan(All<Column>()),
+                }
+            };
+
+            if (isiOS)
+            {
+                var grid = (Grid)Content;
+
+                grid.Children.Add(new TitleShadowView(themeService, titleRowHeight, shadowHeight).Row(Row.Title).ColumnSpan(All<Column>()));
+                grid.Children.Add(new TitleLabel().Row(Row.Title).Column(Column.Title));
+                grid.Children.Add(closeButton.Row(Row.Title).Column(Column.Button));
+            }
         }
+
+        enum Row { Title, TitleShadow, List, RatingRequest }
+        enum Column { Title, Button }
 
         protected override void OnAppearing()
         {
@@ -164,28 +190,30 @@ namespace GitTrends
             {
                 AutomationId = ReferringSitesPageAutomationIds.CollectionView;
                 BackgroundColor = Color.Transparent;
-                ItemTemplate = new ReferringSitesDataTemplate();
+                ItemTemplate = new ReferringSitesDataTemplateSelector();
                 SelectionMode = SelectionMode.Single;
                 ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical);
 
-                //Set iOS Header to `new BoxView { HeightRequest = titleRowHeight + titleTopMargin }` following this bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
-                Header = Device.RuntimePlatform is Device.iOS ? null : new BoxView { HeightRequest = ReferringSitesDataTemplate.BottomPadding };
-                Footer = Device.RuntimePlatform is Device.iOS ? null : new BoxView { HeightRequest = ReferringSitesDataTemplate.TopPadding };
+                //iOS Header + Footer break CollectionView after Refresh bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
+                Header = Device.RuntimePlatform is Device.iOS ? null : new BoxView { HeightRequest = ReferringSitesDataTemplateSelector.BottomPadding };
+                Footer = Device.RuntimePlatform is Device.iOS ? null : new BoxView { HeightRequest = ReferringSitesDataTemplateSelector.TopPadding };
                 EmptyView = new EmptyDataView("EmptyReferringSitesList", ReferringSitesPageAutomationIds.EmptyDataView);
             }
         }
 
         class TitleShadowView : BoxView
         {
-            public TitleShadowView(in ThemeService themeService)
+            public TitleShadowView(in ThemeService themeService, in double heightRequest, in double shadowHeight)
             {
+                HeightRequest = heightRequest;
+
                 this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
                 if (isLightTheme(themeService.Preference))
                 {
                     On<iOS>()
                         .SetIsShadowEnabled(true)
                         .SetShadowColor(Color.Gray)
-                        .SetShadowOffset(new Size(0, 1))
+                        .SetShadowOffset(new Size(0, shadowHeight))
                         .SetShadowOpacity(0.5)
                         .SetShadowRadius(4);
                 }
@@ -199,9 +227,11 @@ namespace GitTrends
             public TitleLabel()
             {
                 Text = PageTitles.ReferringSitesPage;
+                Padding = new Thickness(10, 5, 0, 5);
+
                 this.Font(family: FontFamilyConstants.RobotoMedium, size: 30);
+                this.StartExpand().TextCenterVertical().TextStart();
                 this.DynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
-                this.Center().Margins(top: _titleTopMargin).TextCenterVertical();
             }
         }
 
@@ -211,11 +241,12 @@ namespace GitTrends
             {
                 Text = ReferringSitesPageConstants.CloseButtonText;
                 AutomationId = ReferringSitesPageAutomationIds.CloseButton;
+
                 this.Font(family: FontFamilyConstants.RobotoRegular);
-                this.DynamicResources(
-                    (TextColorProperty, nameof(BaseTheme.CloseButtonTextColor)),
-                    (BackgroundColorProperty, nameof(BaseTheme.CloseButtonBackgroundColor)));
-                this.End().CenterVertical().Margins(top: _titleTopMargin).Height(titleRowHeight * 3 / 5).Padding(5, 0);
+                this.End().CenterVertical().Margins(right: 10).Height(titleRowHeight * 3 / 5).Padding(5, 0);
+
+                this.DynamicResources((TextColorProperty, nameof(BaseTheme.CloseButtonTextColor)),
+                                        (BackgroundColorProperty, nameof(BaseTheme.CloseButtonBackgroundColor)));
             }
         }
     }
