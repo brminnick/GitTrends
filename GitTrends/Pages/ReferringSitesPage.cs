@@ -58,8 +58,6 @@ namespace GitTrends
                 .Bind(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.MobileReferringSitesList))
                 .Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged);
 
-            var closeButton = new CloseButton(titleRowHeight).Invoke(closeButton => closeButton.Clicked += HandleCloseButtonClicked);
-
             Content = new Grid
             {
                 RowSpacing = 0,
@@ -93,7 +91,7 @@ namespace GitTrends
 
                 grid.Children.Add(new TitleShadowView(themeService, titleRowHeight, shadowHeight).Row(Row.Title).ColumnSpan(All<Column>()));
                 grid.Children.Add(new TitleLabel().Row(Row.Title).Column(Column.Title));
-                grid.Children.Add(closeButton.Row(Row.Title).Column(Column.Button));
+                grid.Children.Add(new CloseButton(titleRowHeight).Invoke(closeButton => closeButton.Clicked += HandleCloseButtonClicked).Row(Row.Title).Column(Column.Button));
             }
         }
 
@@ -194,7 +192,7 @@ namespace GitTrends
                 SelectionMode = SelectionMode.Single;
                 ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical);
 
-                //iOS Header + Footer break CollectionView after Refresh bug fix: https://github.com/xamarin/Xamarin.Forms/issues/9879
+                //iOS Header + Footer break CollectionView after Refresh bug: https://github.com/xamarin/Xamarin.Forms/issues/9879
                 Header = Device.RuntimePlatform is Device.iOS ? null : new BoxView { HeightRequest = ReferringSitesDataTemplateSelector.BottomPadding };
                 Footer = Device.RuntimePlatform is Device.iOS ? null : new BoxView { HeightRequest = ReferringSitesDataTemplateSelector.TopPadding };
                 EmptyView = new EmptyDataView("EmptyReferringSitesList", ReferringSitesPageAutomationIds.EmptyDataView);

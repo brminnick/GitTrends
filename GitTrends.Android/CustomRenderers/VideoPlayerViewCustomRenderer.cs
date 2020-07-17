@@ -50,8 +50,7 @@ namespace GitTrends.Droid
             if (Control is null)
                 SetNativeControl(_playerView);
 
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var mediaElementService = scope.Resolve<MediaElementService>();
+            var mediaElementService = ContainerService.Container.Resolve<MediaElementService>();
 
             if (mediaElementService.OnboardingChart?.ManifestUrl != null)
                 Play(mediaElementService.OnboardingChart.ManifestUrl);

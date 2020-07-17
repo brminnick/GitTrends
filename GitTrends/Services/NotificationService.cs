@@ -29,7 +29,7 @@ namespace GitTrends
         readonly IAnalyticsService _analyticsService;
         readonly DeepLinkingService _deepLinkingService;
         readonly INotificationManager _notificationManager;
-        readonly INotificationService _notificationService;
+        readonly IDeviceNotificationsService _notificationService;
         readonly AzureFunctionsApiService _azureFunctionsApiService;
 
         TaskCompletionSource<AccessState>? _settingsResultCompletionSource;
@@ -40,7 +40,7 @@ namespace GitTrends
                                     MobileSortingService sortingService,
                                     DeepLinkingService deepLinkingService,
                                     INotificationManager notificationManager,
-                                    INotificationService notificationService,
+                                    IDeviceNotificationsService notificationService,
                                     AzureFunctionsApiService azureFunctionsApiService)
         {
             _preferences = preferences;

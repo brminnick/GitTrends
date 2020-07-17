@@ -10,7 +10,7 @@ namespace GitTrends
 {
     public class SplashScreenViewModel : BaseViewModel
     {
-        readonly static WeakEventManager<InitializationCompleteEventArgs> _initializationCompleteEventManager = new WeakEventManager<InitializationCompleteEventArgs>();
+        readonly static WeakEventManager<InitializationCompleteEventArgs> _initializationCompletedEventManager = new WeakEventManager<InitializationCompleteEventArgs>();
 
         public SplashScreenViewModel(SyncfusionService syncfusionService,
                                         MediaElementService mediaElementService,
@@ -21,10 +21,10 @@ namespace GitTrends
             InitializeAppCommand = new AsyncCommand(() => ExecuteInitializeAppCommand(syncfusionService, mediaElementService, notificationService));
         }
 
-        public static event EventHandler<InitializationCompleteEventArgs> InitializationComplete
+        public static event EventHandler<InitializationCompleteEventArgs> InitializationCompleted
         {
-            add => _initializationCompleteEventManager.AddEventHandler(value);
-            remove => _initializationCompleteEventManager.RemoveEventHandler(value);
+            add => _initializationCompletedEventManager.AddEventHandler(value);
+            remove => _initializationCompletedEventManager.RemoveEventHandler(value);
         }
 
         public IAsyncCommand InitializeAppCommand { get; }
@@ -54,11 +54,11 @@ namespace GitTrends
             }
             finally
             {
-                OnInitializationComplete(isInitializationSuccessful);
+                OnInitializationCompleted(isInitializationSuccessful);
             }
         }
 
-        void OnInitializationComplete(bool isInitializationSuccessful) =>
-            _initializationCompleteEventManager.RaiseEvent(this, new InitializationCompleteEventArgs(isInitializationSuccessful), nameof(InitializationComplete));
+        void OnInitializationCompleted(bool isInitializationSuccessful) =>
+            _initializationCompletedEventManager.RaiseEvent(this, new InitializationCompleteEventArgs(isInitializationSuccessful), nameof(InitializationCompleted));
     }
 }

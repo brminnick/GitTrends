@@ -38,17 +38,17 @@ namespace GitTrends.iOS
 
             PrintFontNamesToConsole();
 
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var themeService = scope.Resolve<ThemeService>();
-            var languageService = scope.Resolve<LanguageService>();
-            var splashScreenPage = scope.Resolve<SplashScreenPage>();
-            var analyticsService = scope.Resolve<IAnalyticsService>();
-            var notificationService = scope.Resolve<INotificationService>();
+            var themeService = ContainerService.Container.Resolve<ThemeService>();
+            var languageService = ContainerService.Container.Resolve<LanguageService>();
+            var splashScreenPage = ContainerService.Container.Resolve<SplashScreenPage>();
+            var analyticsService = ContainerService.Container.Resolve<IAnalyticsService>();
+            var notificationService = ContainerService.Container.Resolve<NotificationService>();
+            var deviceNotificationsService = ContainerService.Container.Resolve<IDeviceNotificationsService>();
 
-            LoadApplication(new App(themeService, languageService, analyticsService, splashScreenPage, notificationService));
+            LoadApplication(new App(themeService, languageService, analyticsService, splashScreenPage, notificationService, deviceNotificationsService));
 
             if (launchOptions?.ContainsKey(UIApplication.LaunchOptionsLocalNotificationKey) is true)
-                HandleLocalNotification((UILocalNotification)launchOptions[UIApplication.LaunchOptionsLocalNotificationKey]).SafeFireAndForget(ex => scope.Resolve<IAnalyticsService>().Report(ex));
+                HandleLocalNotification((UILocalNotification)launchOptions[UIApplication.LaunchOptionsLocalNotificationKey]).SafeFireAndForget(ex => analyticsService.Report(ex));
 
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
@@ -65,23 +65,19 @@ namespace GitTrends.iOS
             {
                 await ViewControllerServices.CloseSFSafariViewController().ConfigureAwait(false);
 
-                using var scope = ContainerService.Container.BeginLifetimeScope();
-
-                var gitHubAuthenticationService = scope.Resolve<GitHubAuthenticationService>();
+                var gitHubAuthenticationService = ContainerService.Container.Resolve<GitHubAuthenticationService>();
                 await gitHubAuthenticationService.AuthorizeSession(callbackUri, CancellationToken.None).ConfigureAwait(false);
             }
 
             static void onException(Exception e)
             {
-                using var containerScope = ContainerService.Container.BeginLifetimeScope();
-                containerScope.Resolve<IAnalyticsService>().Report(e);
+                ContainerService.Container.Resolve<IAnalyticsService>().Report(e);
             }
         }
 
         public override async void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
         {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
+            var backgroundFetchService = ContainerService.Container.Resolve<BackgroundFetchService>();
 
             await Task.WhenAll(backgroundFetchService.CleanUpDatabase(), backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None)).ConfigureAwait(false);
         }
@@ -91,9 +87,8 @@ namespace GitTrends.iOS
 
         public override async void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
         {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var analyticsService = scope.Resolve<IAnalyticsService>();
-            var notificationService = scope.Resolve<NotificationService>();
+            var analyticsService = ContainerService.Container.Resolve<IAnalyticsService>();
+            var notificationService = ContainerService.Container.Resolve<NotificationService>();
 
             var notificationHubInformation = await notificationService.GetNotificationHubInformation().ConfigureAwait(false);
 
@@ -122,8 +117,7 @@ namespace GitTrends.iOS
 
         Task HandleLocalNotification(in UILocalNotification notification)
         {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var notificationService = scope.Resolve<NotificationService>();
+            var notificationService = ContainerService.Container.Resolve<NotificationService>();
 
             if (notification is null || notification.AlertTitle is null || notification.AlertBody is null)
                 return Task.CompletedTask;

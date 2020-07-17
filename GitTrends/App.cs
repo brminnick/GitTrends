@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
-using Autofac;
 using GitTrends.Shared;
-using Shiny;
-using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
@@ -16,19 +13,20 @@ namespace GitTrends
 
         readonly LanguageService _languageService;
         readonly IAnalyticsService _analyticsService;
+        readonly NotificationService _notificationService;
 
         public App(ThemeService themeService,
                     LanguageService languageService,
                     IAnalyticsService analyticsService,
                     SplashScreenPage splashScreenPage,
-                    INotificationService notificationService)
+                    NotificationService notificationService,
+                    IDeviceNotificationsService deviceNotificationsService)
         {
-            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental" });
+            InitializeEssentialServices(themeService, deviceNotificationsService, languageService);
 
-            InitializeEssentialServices(themeService, notificationService, languageService);
-
-            _analyticsService = analyticsService;
             _languageService = languageService;
+            _analyticsService = analyticsService;
+            _notificationService = notificationService;
 
             MainPage = splashScreenPage;
 
@@ -68,15 +66,9 @@ namespace GitTrends
             _analyticsService.Track("App Backgrounded");
         }
 
-        ValueTask ClearBageNotifications()
-        {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var notificationService = scope.Resolve<NotificationService>();
+        ValueTask ClearBageNotifications() => _notificationService.SetAppBadgeCount(0);
 
-            return notificationService.SetAppBadgeCount(0);
-        }
-
-        async void InitializeEssentialServices(ThemeService themeService, INotificationService notificationService, LanguageService languageService)
+        async void InitializeEssentialServices(ThemeService themeService, IDeviceNotificationsService notificationService, LanguageService languageService)
         {
             await themeService.Initialize().ConfigureAwait(false);
             notificationService.Initialize();

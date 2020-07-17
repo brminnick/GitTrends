@@ -75,8 +75,7 @@ namespace GitTrends
         {
             AnalyticsService.Track("Referring Sites Button Tapped");
 
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var referringSitesPage = scope.Resolve<ReferringSitesPage>(new TypedParameter(typeof(Repository), _repository));
+            var referringSitesPage = ContainerService.Container.Resolve<ReferringSitesPage>(new TypedParameter(typeof(Repository), _repository));
 
             if (Device.RuntimePlatform is Device.iOS)
                 await Navigation.PushModalAsync(referringSitesPage);

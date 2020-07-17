@@ -16,14 +16,10 @@ namespace GitTrends.iOS
 {
     public class MediaElementCustomRenderer : ViewRenderer<VideoPlayerView, UIView>
     {
-        readonly static AVQueuePlayer _queuePlayer = new AVQueuePlayer
-        {
-            Volume = 0,
-        };
-
+        readonly static AVQueuePlayer _queuePlayer = new AVQueuePlayer { Volume = 0 };
+        readonly static AVPlayerLooper _avPlayerLooper = CreateAVPlayerLooper();
         readonly static AVPlayerItem _onboardingChartItem = CreateOnboardingChartItem();
         readonly static AVPlayerViewController _avPlayerViewController = new AVPlayerViewController();
-        readonly static AVPlayerLooper _avPlayerLooper = CreateAVPlayerLooper();
 
         protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayerView> e)
         {
@@ -52,8 +48,7 @@ namespace GitTrends.iOS
 
         static AVPlayerItem CreateOnboardingChartItem()
         {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var mediaElementService = scope.Resolve<MediaElementService>();
+            var mediaElementService = ContainerService.Container.Resolve<MediaElementService>();
 
             if (mediaElementService.OnboardingChart?.HlsUrl is null)
                 throw new NullReferenceException();

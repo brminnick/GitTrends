@@ -5,10 +5,10 @@ using UserNotifications;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
-[assembly: Dependency(typeof(NotificationService_iOS))]
+[assembly: Dependency(typeof(DeviceNotificationsService_iOS))]
 namespace GitTrends.iOS
 {
-    public class NotificationService_iOS : INotificationService
+    public class DeviceNotificationsService_iOS : IDeviceNotificationsService
     {
         public void Initialize() => NotificationService.RegisterForNotificationsCompleted += HandleRegisterForNotificationsCompleted;
 

@@ -51,7 +51,7 @@ namespace GitTrends.UnitTests
             await notificationService.SetAppBadgeCount(0).ConfigureAwait(false);
             notificationService.UnRegister();
 
-            var mockNotificationService = (MockNotificationService)ServiceCollection.ServiceProvider.GetRequiredService<INotificationService>();
+            var mockNotificationService = (MockDeviceNotificationsService)ServiceCollection.ServiceProvider.GetRequiredService<IDeviceNotificationsService>();
             mockNotificationService.Reset();
         }
 

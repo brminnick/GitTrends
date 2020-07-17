@@ -70,8 +70,7 @@ namespace GitTrends
         {
             if (Application.Current is App)
             {
-                using var scope = ContainerService.Container.BeginLifetimeScope();
-                var trendsPage = scope.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
+                var trendsPage = ContainerService.Container.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
 
                 return _mainThread.InvokeOnMainThreadAsync(async () =>
                 {

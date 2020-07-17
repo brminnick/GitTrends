@@ -2,7 +2,7 @@
 
 namespace GitTrends.UnitTests
 {
-    public class MockNotificationService : INotificationService
+    public class MockDeviceNotificationsService : IDeviceNotificationsService
     {
         bool _areNotificationsEnabled;
         int _badgeCount;

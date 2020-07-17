@@ -13,9 +13,9 @@ namespace GitTrends.UnitTests
                                             MobileSortingService sortingService,
                                             DeepLinkingService deepLinkingService,
                                             INotificationManager notificationManager,
-                                            INotificationService notificationService,
-                                            AzureFunctionsApiService azureFunctionsApiService) :
-                                        base(preferences, secureStorage, analyticsService, sortingService, deepLinkingService, notificationManager, notificationService, azureFunctionsApiService)
+                                            AzureFunctionsApiService azureFunctionsApiService,
+                                            IDeviceNotificationsService deviceNotificationsService) :
+                                        base(preferences, secureStorage, analyticsService, sortingService, deepLinkingService, notificationManager, deviceNotificationsService, azureFunctionsApiService)
         {
 
         }

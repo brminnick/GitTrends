@@ -106,7 +106,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ViewControllerServices.cs" />
     <Compile Include="CustomRenderers\SearchPageRenderer.cs" />
-    <Compile Include="Services\NotificationService_iOS.cs" />
+    <Compile Include="Services\DeviceNotificationsService_iOS.cs" />
     <Compile Include="Services\SKStoreReviewController.cs" />
     <Compile Include="CustomRenderers\PickerCustomRenderer.cs" />
     <Compile Include="AppDelegate.BackdoorMethods.cs" />
@@ -423,7 +423,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="4.7.0.1080" />
+    <PackageReference Include="Xamarin.Forms" Version="4.7.0.1142" />
     <PackageReference Include="Refit" Version="5.1.67" />
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.2.0" />
     <PackageReference Include="Polly" Version="7.2.1" />

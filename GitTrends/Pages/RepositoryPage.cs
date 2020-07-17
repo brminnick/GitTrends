@@ -119,15 +119,14 @@ namespace GitTrends
 
             if (!_firstRunService.IsFirstRun && shouldShowWelcomePage(Navigation, token.AccessToken))
             {
-                using var scope = ContainerService.Container.BeginLifetimeScope();
-                var welcomePage = scope.Resolve<WelcomePage>();
+                var welcomePage = ContainerService.Container.Resolve<WelcomePage>();
 
                 //Allow RepositoryPage to appear briefly before loading 
                 await Task.Delay(TimeSpan.FromMilliseconds(250));
                 await Navigation.PushModalAsync(welcomePage);
             }
             else if (!_firstRunService.IsFirstRun
-                        && isUserValid(token.AccessToken)
+                        && isUserValid(token.AccessToken, _gitHubUserService.Alias)
                         && _refreshView.Content is CollectionView collectionView
                         && collectionView.ItemsSource.IsNullOrEmpty())
             {
@@ -138,10 +137,10 @@ namespace GitTrends
             {
                 return !navigation.ModalStack.Any()
                         && _gitHubUserService.Alias != DemoUserConstants.Alias
-                        && !isUserValid(accessToken);
+                        && !isUserValid(accessToken, _gitHubUserService.Alias);
             }
 
-            bool isUserValid(in string accessToken) => !string.IsNullOrWhiteSpace(accessToken) || !string.IsNullOrWhiteSpace(_gitHubUserService.Alias);
+            static bool isUserValid(in string accessToken, in string alias) => !string.IsNullOrWhiteSpace(accessToken) || !string.IsNullOrWhiteSpace(alias);
         }
 
         async void HandleCollectionViewSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -163,17 +162,13 @@ namespace GitTrends
 
         Task NavigateToSettingsPage()
         {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-
-            var settingsPage = scope.Resolve<SettingsPage>();
+            var settingsPage = ContainerService.Container.Resolve<SettingsPage>();
             return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(settingsPage));
         }
 
         Task NavigateToTrendsPage(Repository repository)
         {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-
-            var trendsPage = scope.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
+            var trendsPage = ContainerService.Container.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
             return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
         }
 

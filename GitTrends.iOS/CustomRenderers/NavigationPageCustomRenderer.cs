@@ -1,5 +1,4 @@
-﻿using System;
-using Autofac;
+﻿using Autofac;
 using CoreGraphics;
 using GitTrends.iOS;
 using GitTrends.Mobile.Common;
@@ -18,8 +17,7 @@ namespace GitTrends.iOS
         {
             ThemeService.PreferenceChanged += HandlePreferenceChanged;
 
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            _themeService = scope.Resolve<ThemeService>();
+            _themeService = ContainerService.Container.Resolve<ThemeService>();
         }
 
         protected override void OnElementChanged(VisualElementChangedEventArgs e)

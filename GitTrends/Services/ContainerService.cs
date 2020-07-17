@@ -18,6 +18,8 @@ namespace GitTrends
 
         static IContainer CreateContainer()
         {
+            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental" });
+
             var builder = new ContainerBuilder();
 
             //Register Xamarin.Essentials
@@ -53,7 +55,7 @@ namespace GitTrends
             builder.RegisterType<ThemeService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
             builder.RegisterInstance(ShinyHost.Resolve<INotificationManager>()).As<INotificationManager>().SingleInstance();
-            builder.RegisterInstance(DependencyService.Resolve<INotificationService>()).As<INotificationService>().SingleInstance();
+            builder.RegisterInstance(DependencyService.Resolve<IDeviceNotificationsService>()).As<IDeviceNotificationsService>().SingleInstance();
 #if !AppStore
             builder.RegisterType<UITestsBackdoorService>().AsSelf().SingleInstance();
 #endif

@@ -51,11 +51,11 @@ namespace GitTrends.UnitTests
             services.AddSingleton<IAnalyticsService, MockAnalyticsService>();
             services.AddSingleton<IAppInfo, MockAppInfo>();
             services.AddSingleton<IBrowser, MockBrowser>();
+            services.AddSingleton<IDeviceNotificationsService, MockDeviceNotificationsService>();
             services.AddSingleton<IFileSystem, MockFileSystem>();
             services.AddSingleton<IEmail, MockEmail>();
             services.AddSingleton<ILauncher, MockLauncher>();
             services.AddSingleton<IMainThread, MockMainThread>();
-            services.AddSingleton<INotificationService, MockNotificationService>();
             services.AddSingleton<INotificationManager, MockNotificationManager>();
             services.AddSingleton<ISecureStorage, MockSecureStorage>();
             services.AddSingleton<IPreferences, MockPreferences>();
