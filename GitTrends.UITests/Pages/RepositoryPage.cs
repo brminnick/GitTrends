@@ -147,6 +147,38 @@ namespace GitTrends.UITests
             App.Screenshot("Settings Button Tapped");
         }
 
+        public string GetSettingsButtonText()
+        {
+            if (App is iOSApp)
+                throw new NotSupportedException();
+
+            App.Tap(_androidContextMenuOverflowButton);
+            App.Screenshot("Tapped Android Search Bar Button");
+
+            var settingsButtonText = GetText(_settingsButton);
+
+            App.Tap(PageTitle);
+            App.Screenshot("Dismissed Android Search Bar Button");
+
+            return settingsButtonText;
+        }
+
+        public string GetSortButtonText()
+        {
+            if (App is iOSApp)
+                throw new NotSupportedException();
+
+            App.Tap(_androidContextMenuOverflowButton);
+            App.Screenshot("Tapped Android Search Bar Button");
+
+            var sortButtonText = GetText(_sortButton);
+
+            App.Tap(PageTitle);
+            App.Screenshot("Dismissed Android Search Bar Button");
+
+            return sortButtonText;
+        }
+
         Task WaitForRepositoriesToFinishSorting() => Task.Delay(TimeSpan.FromSeconds(1));
     }
 }

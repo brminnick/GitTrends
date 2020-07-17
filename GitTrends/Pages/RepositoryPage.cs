@@ -37,6 +37,7 @@ namespace GitTrends
 
             SearchBarTextChanged += HandleSearchBarTextChanged;
             RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
+            LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 
             var collectionView = new CollectionView
             {
@@ -208,6 +209,15 @@ namespace GitTrends
                     }
                 }
             });
+        }
+
+        void HandlePreferredLanguageChanged(object sender, string? e)
+        {
+            var sortItem = ToolbarItems.First(x => x.AutomationId is RepositoryPageAutomationIds.SortButton);
+            var settingsItem = ToolbarItems.First(x => x.AutomationId is RepositoryPageAutomationIds.SettingsButton);
+
+            sortItem.Text = RepositoryPageConstants.SortToolbarItemText;
+            settingsItem.Text = PageTitles.SettingsPage;
         }
 
         void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand.Execute(searchBarText);

@@ -231,7 +231,10 @@ namespace GitTrends.UITests
                 _ => throw new NotSupportedException()
             };
 
-            ScrollTo(picker);
+            if (App is AndroidApp)
+                ScrollTo(pickerContainer);
+            else
+                ScrollTo(picker);
 
             try
             {

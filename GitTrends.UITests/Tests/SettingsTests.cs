@@ -108,10 +108,12 @@ namespace GitTrends.UITests
         public async Task VerifyLanguagePicker()
         {
             //Arrange
+            string? settingsButtonText = null, sortButtonText = null;
             string? preferredLanguage_Initial, preferredLanguage_Final;
             string gitHubNameText, gitHubAliasText, tryDemoButtonText, loginTitleLabelText_Disconnect, loginTitleLabelText_Connect,
                 themeTitleLabelText, languageTitleLabelText, settingsPageTitle, copyrightLabelTitleLabelText, registerForNotificationsTitleLabelText,
                 preferredChartsTitleTitleLabelText, preferredChartsAllTitleLabelText, preferredChartsNoUniquesTitleLabelText, preferredChartsOnlyUniquesTitleLabelText;
+
 
             foreach (var preferredLanguageKeyValuePair in CultureConstants.CulturePickerOptions.Reverse())
             {
@@ -144,6 +146,12 @@ namespace GitTrends.UITests
 
                 SettingsPage.TapBackButton();
 
+                if (App is AndroidApp)
+                {
+                    sortButtonText = RepositoryPage.GetSortButtonText();
+                    settingsButtonText = RepositoryPage.GetSettingsButtonText();
+                }
+
                 //Assert
                 Assert.AreEqual(PageTitles.RepositoryPage, RepositoryPage.PageTitle);
 
@@ -169,6 +177,12 @@ namespace GitTrends.UITests
                 {
                     Assert.AreEqual(DemoUserConstants.Name, gitHubNameText);
                     Assert.AreEqual("@" + DemoUserConstants.Alias, gitHubAliasText);
+                }
+
+                if (App is AndroidApp)
+                {
+                    Assert.AreEqual(PageTitles.SettingsPage, settingsButtonText);
+                    Assert.AreEqual(RepositoryPageConstants.SortToolbarItemText, sortButtonText);
                 }
 
                 Assert.AreEqual(LoggedInUserName, gitHubNameText);
