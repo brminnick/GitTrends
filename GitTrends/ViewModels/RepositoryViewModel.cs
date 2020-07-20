@@ -77,9 +77,9 @@ namespace GitTrends
             remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
         }
 
-        public IAsyncCommand PullToRefreshCommand { get; }
-        public ICommand FilterRepositoriesCommand { get; }
         public ICommand SortRepositoriesCommand { get; }
+        public ICommand FilterRepositoriesCommand { get; }
+        public IAsyncCommand PullToRefreshCommand { get; }
 
         public IReadOnlyList<Repository> VisibleRepositoryList
         {

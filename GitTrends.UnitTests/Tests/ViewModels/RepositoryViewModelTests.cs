@@ -39,17 +39,17 @@ namespace GitTrends.UnitTests
             //Act
             await AuthenticateUser(gitHubUserService, graphQLApiService).ConfigureAwait(false);
 
-            emptyDataViewTitle_Initial = RepositoryViewModel.EmptyDataViewTitle;
-            emptyDataViewDescription_Initial = RepositoryViewModel.EmptyDataViewDescription;
-            visibleRepositoryList_Initial = RepositoryViewModel.VisibleRepositoryList;
             beforePullToRefresh = DateTimeOffset.UtcNow;
+            emptyDataViewTitle_Initial = RepositoryViewModel.EmptyDataViewTitle;
+            visibleRepositoryList_Initial = RepositoryViewModel.VisibleRepositoryList;
+            emptyDataViewDescription_Initial = RepositoryViewModel.EmptyDataViewDescription;
 
             await RepositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
 
-            emptyDataViewTitle_Final = RepositoryViewModel.EmptyDataViewTitle;
-            emptyDataViewDescription_Final = RepositoryViewModel.EmptyDataViewDescription;
-            visibleRepositoryList_Final = RepositoryViewModel.VisibleRepositoryList;
             afterPullToRefresh = DateTimeOffset.UtcNow;
+            emptyDataViewTitle_Final = RepositoryViewModel.EmptyDataViewTitle;
+            visibleRepositoryList_Final = RepositoryViewModel.VisibleRepositoryList;
+            emptyDataViewDescription_Final = RepositoryViewModel.EmptyDataViewDescription;
 
             //Assert
             Assert.IsEmpty(visibleRepositoryList_Initial);
@@ -85,8 +85,8 @@ namespace GitTrends.UnitTests
 
             //Act
             emptyDataViewTitle_Initial = RepositoryViewModel.EmptyDataViewTitle;
-            emptyDataViewDescription_Initial = RepositoryViewModel.EmptyDataViewDescription;
             visibleRepositoryList_Initial = RepositoryViewModel.VisibleRepositoryList;
+            emptyDataViewDescription_Initial = RepositoryViewModel.EmptyDataViewDescription;
 
             var pullToRefreshCommandTask = RepositoryViewModel.PullToRefreshCommand.ExecuteAsync();
 
@@ -94,8 +94,8 @@ namespace GitTrends.UnitTests
             var pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
 
             emptyDataViewTitle_Final = RepositoryViewModel.EmptyDataViewTitle;
-            emptyDataViewDescription_Final = RepositoryViewModel.EmptyDataViewDescription;
             visibleRepositoryList_Final = RepositoryViewModel.VisibleRepositoryList;
+            emptyDataViewDescription_Final = RepositoryViewModel.EmptyDataViewDescription;
 
             //Assert
             Assert.IsTrue(didPullToRefreshFailedFire);
