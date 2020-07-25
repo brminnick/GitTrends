@@ -73,6 +73,18 @@
         <Project>{936AEAD4-A683-44AD-A903-F3196454C244}</Project>
         <Name>GitTrends.Mobile.Common</Name>
       </ProjectReference>
+      <ProjectReference Include="..\GitTrends.iOS\GitTrends.iOS.csproj">
+        <Project>{E1C47721-EF16-4F21-AA2F-78951DB0D715}</Project>
+        <Name>GitTrends.iOS</Name>
+        <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+        <Private>False</Private>
+      </ProjectReference>
+      <ProjectReference Include="..\GitTrends.Android\GitTrends.Android.csproj">
+        <Project>{E5785129-AB94-4359-9947-B600D33A9958}</Project>
+        <Name>GitTrends.Android</Name>
+        <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+        <Private>False</Private>
+      </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
