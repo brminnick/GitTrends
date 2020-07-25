@@ -67,18 +67,18 @@ namespace GitTrends
             Content = new Grid
             {
                 RowDefinitions = Rows.Define(
-                    (Row.ImpactLabel, AbsoluteGridLength(125)),
+                    (Row.Totals, AbsoluteGridLength(125)),
                     (Row.CollectionView, Star)),
 
                 Children =
                 {
-                    new StatisticsLabel(string.Empty, true, nameof(BaseTheme.PrimaryTextColor)).Row(Row.ImpactLabel).FillExpandHorizontal().TextCenter()
+                    new StatisticsLabel(string.Empty, true, nameof(BaseTheme.PrimaryTextColor)).Row(Row.Totals).FillExpandHorizontal().TextCenter()
                         .Bind<Label, bool, bool>(IsVisibleProperty,nameof(RepositoryViewModel.IsRefreshing),convert: isRefreshing => !isRefreshing)
                         .Bind<Label, IReadOnlyList<Repository>, string>(Label.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption) switch
                         {
-                            SortingCategory.Views => $"Total Views {repositories.Sum(x => x.TotalViews).ConvertToAbbreviatedText()}, Total Unique Views {repositories.Sum(x => x.TotalUniqueViews).ConvertToAbbreviatedText()}, Total Stars: {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}",
-                            SortingCategory.Clones => $"Total Clones {repositories.Sum(x => x.TotalClones).ConvertToAbbreviatedText()}, Total Unique Views {repositories.Sum(x => x.TotalUniqueClones).ConvertToAbbreviatedText()}, Total Stars: {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}",
-                            SortingCategory.IssuesForks => $"Total Stars {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}, Total Forks {repositories.Sum(x => x.ForkCount).ConvertToAbbreviatedText()}, Total Issues: {repositories.Sum(x => x.IssuesCount).ConvertToAbbreviatedText()}",
+                            SortingCategory.Views => $"{SortingConstants.Views} {repositories.Sum(x => x.TotalViews).ConvertToAbbreviatedText()}, {SortingConstants.UniqueViews} {repositories.Sum(x => x.TotalUniqueViews).ConvertToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}",
+                            SortingCategory.Clones => $"{SortingConstants.Clones} {repositories.Sum(x => x.TotalClones).ConvertToAbbreviatedText()}, Total Unique Views {repositories.Sum(x => x.TotalUniqueClones).ConvertToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}",
+                            SortingCategory.IssuesForks => $"{SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}, {SortingConstants.Forks} {repositories.Sum(x => x.ForkCount).ConvertToAbbreviatedText()}, {SortingConstants.Issues} {repositories.Sum(x => x.IssuesCount).ConvertToAbbreviatedText()}",
                             _ => throw new NotSupportedException()
                         }),
 
@@ -109,7 +109,7 @@ namespace GitTrends
             };
         }
 
-        enum Row { ImpactLabel, CollectionView }
+        enum Row { Totals, CollectionView }
 
         public event EventHandler<string> SearchBarTextChanged
         {
