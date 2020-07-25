@@ -13,6 +13,8 @@ using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
+using static GitTrends.MarkupExtensions;
+using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -29,9 +31,9 @@ namespace GitTrends
                                 FirstRunService firstRunService,
                                 IAnalyticsService analyticsService,
                                 GitHubUserService gitHubUserService,
-                                MobileSortingService sortingService,
                                 DeepLinkingService deepLinkingService,
-                                RepositoryViewModel repositoryViewModel) : base(repositoryViewModel, analyticsService, mainThread)
+                                RepositoryViewModel repositoryViewModel,
+                                MobileSortingService mobileSortingService) : base(repositoryViewModel, analyticsService, mainThread)
         {
             _firstRunService = firstRunService;
             _gitHubUserService = gitHubUserService;
@@ -41,39 +43,7 @@ namespace GitTrends
             RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 
-            _refreshView = new RefreshView
-            {
-                AutomationId = RepositoryPageAutomationIds.RefreshView,
-                Content = new CollectionView
-                {
-                    ItemTemplate = new RepositoryDataTemplateSelector(sortingService),
-                    BackgroundColor = Color.Transparent,
-                    SelectionMode = SelectionMode.Single,
-                    AutomationId = RepositoryPageAutomationIds.CollectionView,
-                    //Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
-                    Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.BottomPadding } : null,
-                    Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.TopPadding } : null,
-                    EmptyView = new EmptyDataView("EmptyRepositoriesList", RepositoryPageAutomationIds.EmptyDataView)
-                            .Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
-                            .Bind(EmptyDataView.TitleProperty, nameof(RepositoryViewModel.EmptyDataViewTitle))
-                            .Bind(EmptyDataView.DescriptionProperty, nameof(RepositoryViewModel.EmptyDataViewDescription))
-
-                }.Bind(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList))
-                 .Bind<CollectionView, IReadOnlyList<Repository>, Label?>(CollectionView.HeaderProperty, nameof(RepositoryViewModel.VisibleRepositoryList))
-                 .Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged)
-                 .Invoke(collectionView => collectionView.SetBinding(CollectionView.HeaderProperty, new MultiBinding
-                 {
-                     Converter = new CollectionViewHeaderMultiValueConverter(),
-                     Bindings =
-                     {
-                         new Binding(nameof(RepositoryViewModel.IsRefreshing)),
-                         new Binding(nameof(repositoryViewModel.VisibleRepositoryList)),
-                         new Binding(nameof(CollectionView.Header), source: collectionView)
-                     }
-                 }))
-            }.DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor))
-             .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
-             .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand));
+            this.SetBinding(TitleProperty, nameof(RepositoryViewModel.TitleText));
 
             ToolbarItems.Add(new ToolbarItem
             {
@@ -94,25 +64,52 @@ namespace GitTrends
                 Command = new AsyncCommand(ExecuteSortToolbarItemCommand)
             });
 
-            //Work-around to prevent LargeNavigationBar from collapsing when CollectionView is scrolled; prevents janky animation when LargeNavigationBar collapses
-            if (Device.RuntimePlatform is Device.iOS)
+            Content = new Grid
             {
-                Content = new Grid
-                {
-                    Children =
-                    {
-                        new BoxView { HeightRequest = 0 },
-                        _refreshView
-                    }
-                };
-            }
-            else
-            {
-                Content = _refreshView;
-            }
+                RowDefinitions = Rows.Define(
+                    (Row.ImpactLabel, AbsoluteGridLength(125)),
+                    (Row.CollectionView, Star)),
 
-            this.SetBinding(TitleProperty, nameof(RepositoryViewModel.TitleText));
+                Children =
+                {
+                    new StatisticsLabel(string.Empty, true, nameof(BaseTheme.PrimaryTextColor)).Row(Row.ImpactLabel).FillExpandHorizontal().TextCenter()
+                        .Bind<Label, bool, bool>(IsVisibleProperty,nameof(RepositoryViewModel.IsRefreshing),convert: isRefreshing => !isRefreshing)
+                        .Bind<Label, IReadOnlyList<Repository>, string>(Label.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption) switch
+                        {
+                            SortingCategory.Views => $"Total Views {repositories.Sum(x => x.TotalViews).ConvertToAbbreviatedText()}, Total Unique Views {repositories.Sum(x => x.TotalUniqueViews).ConvertToAbbreviatedText()}, Total Stars: {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}",
+                            SortingCategory.Clones => $"Total Clones {repositories.Sum(x => x.TotalClones).ConvertToAbbreviatedText()}, Total Unique Views {repositories.Sum(x => x.TotalUniqueClones).ConvertToAbbreviatedText()}, Total Stars: {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}",
+                            SortingCategory.IssuesForks => $"Total Stars {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}, Total Forks {repositories.Sum(x => x.ForkCount).ConvertToAbbreviatedText()}, Total Issues: {repositories.Sum(x => x.IssuesCount).ConvertToAbbreviatedText()}",
+                            _ => throw new NotSupportedException()
+                        }),
+
+                    new RefreshView
+                    {
+                        AutomationId = RepositoryPageAutomationIds.RefreshView,
+                        Content = new CollectionView
+                        {
+                            ItemTemplate = new RepositoryDataTemplateSelector(mobileSortingService),
+                            BackgroundColor = Color.Transparent,
+                            SelectionMode = SelectionMode.Single,
+                            AutomationId = RepositoryPageAutomationIds.CollectionView,
+                            //Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
+                            Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.BottomPadding } : null,
+                            Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.TopPadding } : null,
+                            EmptyView = new EmptyDataView("EmptyRepositoriesList", RepositoryPageAutomationIds.EmptyDataView)
+                                    .Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
+                                    .Bind(EmptyDataView.TitleProperty, nameof(RepositoryViewModel.EmptyDataViewTitle))
+                                    .Bind(EmptyDataView.DescriptionProperty, nameof(RepositoryViewModel.EmptyDataViewDescription))
+
+                        }.Bind(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList))
+                         .Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged)
+                    }.RowSpan(All<Row>()).Assign(out _refreshView)
+                     .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor))
+                     .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
+                     .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand))
+                }
+            };
         }
+
+        enum Row { ImpactLabel, CollectionView }
 
         public event EventHandler<string> SearchBarTextChanged
         {
@@ -231,29 +228,5 @@ namespace GitTrends
         void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand.Execute(searchBarText);
 
         void ISearchPage.OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.RaiseEvent(this, text, nameof(SearchBarTextChanged));
-
-        class CollectionViewHeaderMultiValueConverter : IMultiValueConverter
-        {
-            public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-            {
-                if (values[0] is bool isRefreshing
-                    && values[1] is IList<Repository> repositoryList)
-                {
-                    var header = (View?)values[2];
-
-                    if ((!isRefreshing || header != null) && repositoryList.Any(x => x.DailyViewsList.Any()))
-                    {
-                        var text = $"Impact: Views {repositoryList.Sum(x => x.TotalViews)}";
-                        return new StatisticsLabel(text, true, nameof(BaseTheme.PrimaryTextColor)).FillExpandHorizontal().TextCenter();
-                    }
-
-                    return Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.BottomPadding } : header;
-                }
-
-                return null;
-            }
-
-            public object[] ConvertBack(object? value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
-        }
     }
 }
