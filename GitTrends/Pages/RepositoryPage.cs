@@ -74,13 +74,7 @@ namespace GitTrends
                 {
                     new StatisticsLabel(string.Empty, true, nameof(BaseTheme.PrimaryTextColor)).Row(Row.Totals).FillExpandHorizontal().TextCenter()
                         .Bind<Label, bool, bool>(IsVisibleProperty,nameof(RepositoryViewModel.IsRefreshing),convert: isRefreshing => !isRefreshing)
-                        .Bind<Label, IReadOnlyList<Repository>, string>(Label.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption) switch
-                        {
-                            SortingCategory.Views => $"{SortingConstants.Views} {repositories.Sum(x => x.TotalViews).ConvertToAbbreviatedText()}, {SortingConstants.UniqueViews} {repositories.Sum(x => x.TotalUniqueViews).ConvertToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}",
-                            SortingCategory.Clones => $"{SortingConstants.Clones} {repositories.Sum(x => x.TotalClones).ConvertToAbbreviatedText()}, Total Unique Views {repositories.Sum(x => x.TotalUniqueClones).ConvertToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}",
-                            SortingCategory.IssuesForks => $"{SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}, {SortingConstants.Forks} {repositories.Sum(x => x.ForkCount).ConvertToAbbreviatedText()}, {SortingConstants.Issues} {repositories.Sum(x => x.IssuesCount).ConvertToAbbreviatedText()}",
-                            _ => throw new NotSupportedException()
-                        }),
+                        .Bind<Label, IReadOnlyList<Repository>, string>(Label.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => totalsLabelConverter(repositories, mobileSortingService)),
 
                     new RefreshView
                     {
@@ -102,11 +96,25 @@ namespace GitTrends
                         }.Bind(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList))
                          .Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged)
                     }.RowSpan(All<Row>()).Assign(out _refreshView)
-                     .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor))
                      .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
                      .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand))
+                     .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor))
                 }
             };
+
+            static string totalsLabelConverter(in IReadOnlyList<Repository> repositories, in MobileSortingService mobileSortingService)
+            {
+                if (!repositories.Any())
+                    return string.Empty;
+
+                return MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption) switch
+                {
+                    SortingCategory.Views => $"{SortingConstants.Views} {repositories.Sum(x => x.TotalViews).ConvertToAbbreviatedText()}, {SortingConstants.UniqueViews} {repositories.Sum(x => x.TotalUniqueViews).ConvertToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}",
+                    SortingCategory.Clones => $"{SortingConstants.Clones} {repositories.Sum(x => x.TotalClones).ConvertToAbbreviatedText()}, {SortingConstants.UniqueViews} {repositories.Sum(x => x.TotalUniqueClones).ConvertToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}",
+                    SortingCategory.IssuesForks => $"{SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}, {SortingConstants.Forks} {repositories.Sum(x => x.ForkCount).ConvertToAbbreviatedText()}, {SortingConstants.Issues} {repositories.Sum(x => x.IssuesCount).ConvertToAbbreviatedText()}",
+                    _ => throw new NotSupportedException()
+                };
+            }
         }
 
         enum Row { Totals, CollectionView }
