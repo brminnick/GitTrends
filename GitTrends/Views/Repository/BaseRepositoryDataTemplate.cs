@@ -125,7 +125,6 @@ namespace GitTrends
                     {
                         public AvatarImage(in string avatarUrl)
                         {
-
                             ImageSource = avatarUrl;
                             WidthRequest = _circleImageHeight;
 

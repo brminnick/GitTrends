@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
@@ -72,7 +70,7 @@ namespace GitTrends
 
                 Children =
                 {
-                    new StatisticsLabel(string.Empty, true, nameof(BaseTheme.PrimaryTextColor)).Row(Row.Totals).FillExpandHorizontal().TextCenter()
+                    new TotalsLabel().Row(Row.Totals)
                         .Bind<Label, bool, bool>(IsVisibleProperty,nameof(RepositoryViewModel.IsRefreshing),convert: isRefreshing => !isRefreshing)
                         .Bind<Label, IReadOnlyList<Repository>, string>(Label.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => totalsLabelConverter(repositories, mobileSortingService)),
 
@@ -95,6 +93,7 @@ namespace GitTrends
 
                         }.Bind(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList))
                          .Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged)
+
                     }.RowSpan(All<Row>()).Assign(out _refreshView)
                      .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
                      .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand))
@@ -104,7 +103,7 @@ namespace GitTrends
 
             static string totalsLabelConverter(in IReadOnlyList<Repository> repositories, in MobileSortingService mobileSortingService)
             {
-                if (!repositories.Any())
+                if (Device.RuntimePlatform != Device.iOS || !repositories.Any())
                     return string.Empty;
 
                 return MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption) switch
@@ -236,5 +235,10 @@ namespace GitTrends
         void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand.Execute(searchBarText);
 
         void ISearchPage.OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.RaiseEvent(this, text, nameof(SearchBarTextChanged));
+
+        class TotalsLabel : StatisticsLabel
+        {
+            public TotalsLabel() : base(string.Empty, true, nameof(BaseTheme.PrimaryTextColor)) => this.FillExpand().TextCenter();
+        }
     }
 }
