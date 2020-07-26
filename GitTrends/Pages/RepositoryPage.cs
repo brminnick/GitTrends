@@ -71,7 +71,7 @@ namespace GitTrends
                 Children =
                 {
                     new TotalsLabel().Row(Row.Totals)
-                        .Bind<Label, bool, bool>(IsVisibleProperty,nameof(RepositoryViewModel.IsRefreshing),convert: isRefreshing => !isRefreshing)
+                        .Bind<Label, bool, bool>(IsVisibleProperty,nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
                         .Bind<Label, IReadOnlyList<Repository>, string>(Label.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => totalsLabelConverter(repositories, mobileSortingService)),
 
                     new RefreshView
