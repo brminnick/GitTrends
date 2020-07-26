@@ -49,6 +49,8 @@ namespace GitTrends
                     (CardViewColumn.RightPadding, AbsoluteGridLength(16)));
 
                 Children.Add(new CardViewFrame(parentDataTemplateChildren, repository).Row(CardViewRow.Card).Column(CardViewColumn.Card));
+
+                this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             }
 
             enum CardViewRow { TopPadding, Card, BottomPadding }

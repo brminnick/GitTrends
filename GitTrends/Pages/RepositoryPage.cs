@@ -103,7 +103,7 @@ namespace GitTrends
 
             static string totalsLabelConverter(in IReadOnlyList<Repository> repositories, in MobileSortingService mobileSortingService)
             {
-                if (Device.RuntimePlatform != Device.iOS || !repositories.Any())
+                if (!repositories.Any())
                     return string.Empty;
 
                 return MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption) switch
