@@ -40,12 +40,12 @@ namespace GitTrends
                 RowSpacing = 0;
                 RowDefinitions = Rows.Define(
                     (CardViewRow.TopPadding, AbsoluteGridLength(TopPadding)),
-                    (CardViewRow.Card, StarGridLength(1)),
+                    (CardViewRow.Card, Star),
                     (CardViewRow.BottomPadding, AbsoluteGridLength(BottomPadding)));
 
                 ColumnDefinitions = Columns.Define(
                     (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
-                    (CardViewColumn.Card, StarGridLength(1)),
+                    (CardViewColumn.Card, Star),
                     (CardViewColumn.RightPadding, AbsoluteGridLength(16)));
 
                 Children.Add(new CardViewFrame(parentDataTemplateChildren, repository).Row(CardViewRow.Card).Column(CardViewColumn.Card));
