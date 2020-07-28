@@ -119,6 +119,7 @@
     <Compile Include="MainApplication.BackdoorMethods.cs" />
     <Compile Include="CustomRenderers\PickerCustomRenderer.cs" />
     <Compile Include="CustomRenderers\VideoPlayerViewCustomRenderer.cs" />
+    <Compile Include="CustomRenderers\FloatingActionButtonCustomRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

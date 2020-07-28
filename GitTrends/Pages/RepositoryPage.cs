@@ -98,10 +98,15 @@ namespace GitTrends
                      .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
                      .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand))
                      .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor)),
-
-                    new InformationButton().Row(Row.CollectionView)
                 }
             };
+
+            if(Device.RuntimePlatform is Device.Android)
+            {
+                var grid = (Grid)Content;
+                grid.Children.Add(new FloatingActionButtonView { RippleColor = Color.Blue, ColorNormal = Color.Red }
+                    .Row(Row.CollectionView).End().Bottom());
+            }
 
             static string totalsLabelConverter(in IReadOnlyList<Repository> repositories, in MobileSortingService mobileSortingService)
             {
