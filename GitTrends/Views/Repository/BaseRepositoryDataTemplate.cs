@@ -127,7 +127,6 @@ namespace GitTrends
                     {
                         public AvatarImage(in string avatarUrl)
                         {
-
                             ImageSource = avatarUrl;
                             WidthRequest = _circleImageHeight;
 
@@ -251,10 +250,7 @@ namespace GitTrends
                                 return false;
                             }
 
-                            public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-                            {
-                                throw new NotImplementedException();
-                            }
+                            public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
                         }
                     }
                 }
