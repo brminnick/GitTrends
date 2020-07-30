@@ -14,6 +14,12 @@ namespace GitTrends
         public static readonly BindableProperty CommandProperty = BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(FloatingActionButtonView), null, propertyChanged: (bo, o, n) => ((FloatingActionButtonView)bo).OnCommandChanged());
         public static readonly BindableProperty CommandParameterProperty = BindableProperty.Create(nameof(CommandParameter), typeof(object), typeof(FloatingActionButtonView), null, propertyChanged: (bindable, oldvalue, newvalue) => ((FloatingActionButtonView)bindable).CommandCanExecuteChanged(bindable, EventArgs.Empty));
 
+        public FloatingActionButtonView()
+        {
+            if (Device.RuntimePlatform != Device.Android)
+                throw new NotSupportedException($"{nameof(FloatingActionButtonView)} is only supported on Android");
+        }
+
         public string ImageName
         {
             get => (string)GetValue(ImageNameProperty);

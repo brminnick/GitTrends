@@ -11,7 +11,6 @@ using GitTrends;
 using Android.Graphics;
 using Android.Content.Res;
 
-
 //Inspired by https://github.com/jamesmontemagno/FloatingActionButton-for-Xamarin.Android
 [assembly: ExportRenderer(typeof(FloatingActionButtonView), typeof(FloatingActionButtonViewRenderer))]
 namespace GitTrends.Droid

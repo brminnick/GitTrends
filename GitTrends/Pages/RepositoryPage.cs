@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
@@ -8,6 +9,7 @@ using Autofac;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Shiny;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -66,11 +68,16 @@ namespace GitTrends
             {
                 RowDefinitions = Rows.Define(
                     (Row.Totals, AbsoluteGridLength(125)),
-                    (Row.CollectionView, Star)),
+                    (Row.CollectionView, Star),
+                    (Row.Information, AbsoluteGridLength(100))),
+
+                ColumnDefinitions = Columns.Define(
+                    (Column.CollectionView, Star),
+                    (Column.Information, AbsoluteGridLength(100))),
 
                 Children =
                 {
-                    new TotalsLabel().Row(Row.Totals)
+                    new TotalsLabel().Row(Row.Totals).ColumnSpan(All<Column>())
                         .Bind<Label, bool, bool>(IsVisibleProperty,nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
                         .Bind<Label, IReadOnlyList<Repository>, string>(Label.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => totalsLabelConverter(repositories, mobileSortingService)),
 
@@ -94,18 +101,16 @@ namespace GitTrends
                         }.Bind(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList))
                          .Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged)
 
-                    }.RowSpan(All<Row>()).Assign(out _refreshView)
+                    }.RowSpan(All<Row>()).ColumnSpan(All<Column>()).Assign(out _refreshView)
                      .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
                      .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand))
                      .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor)),
                 }
-            };
+            }.Assign(out Grid grid);
 
-            if(Device.RuntimePlatform is Device.Android)
+            if (Device.RuntimePlatform is Device.Android)
             {
-                var grid = (Grid)Content;
-                grid.Children.Add(new FloatingActionButtonView { RippleColor = Color.Blue, ColorNormal = Color.Red }
-                    .Row(Row.CollectionView).End().Bottom());
+                grid.Children.Add(new InformationButton(mobileSortingService).Row(Row.Information).Column(Column.Information));
             }
 
             static string totalsLabelConverter(in IReadOnlyList<Repository> repositories, in MobileSortingService mobileSortingService)
@@ -123,7 +128,8 @@ namespace GitTrends
             }
         }
 
-        enum Row { Totals, CollectionView }
+        enum Row { Totals, CollectionView, Information }
+        enum Column { CollectionView, Information }
 
         public event EventHandler<string> SearchBarTextChanged
         {
