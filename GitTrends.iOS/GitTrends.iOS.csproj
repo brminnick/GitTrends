@@ -112,6 +112,7 @@
     <Compile Include="AppDelegate.BackdoorMethods.cs" />
     <Compile Include="CustomRenderers\VideoPlayerViewCustomRenderer.cs" />
     <Compile Include="CustomRenderers\NavigationPageCustomRenderer.cs" />
+    <Compile Include="Effects\LabelShadowEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -454,6 +455,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Effects\" />
+  </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
       <UserProperties XamarinHotReloadWrongLinkerErrorInfoBarGitTrendsiOSHideInfoBar="True" />

@@ -119,16 +119,25 @@ namespace GitTrends
         {
             public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(string), typeof(FloatingActionTextButton), string.Empty);
 
+            readonly MobileSortingService _mobileSortingService;
+            readonly FloatingActionButtonView _floatingActionButtonView;
+            readonly FloatingActionButtonType _floatingActionButtonType;
+
             public FloatingActionTextButton(MobileSortingService mobileSortingService, FloatingActionButtonSize floatingActionButtonSize, FloatingActionButtonType floatingActionButtonType, ICommand? command = null)
             {
+                _mobileSortingService = mobileSortingService;
+                _floatingActionButtonType = floatingActionButtonType;
+                ThemeService.PreferenceChanged += HandlePreferenceChanged;
+
                 RowDefinitions = Rows.Define(AbsoluteGridLength(_diameter));
                 ColumnDefinitions = Columns.Define(AbsoluteGridLength(_diameter));
 
-                Children.Add(new FloatingActionButtonView { Size = floatingActionButtonSize, Command = command }.Center()
-                                .Bind<FloatingActionButtonView, IReadOnlyList<Repository>, Color>(FloatingActionButtonView.ColorNormalProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetBackgroundColorConverter(mobileSortingService, floatingActionButtonType)));
+                Children.Add(new FloatingActionButtonView { Size = floatingActionButtonSize, Command = command }.Center().Assign(out _floatingActionButtonView)
+                                .Bind<FloatingActionButtonView, IReadOnlyList<Repository>, Color>(FloatingActionButtonView.ColorNormalProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetBackgroundColor()));
 
                 Children.Add(new Label { TextColor = Color.White }.Center().TextCenter().Font(9, true)
-                                .Bind(Label.TextProperty, nameof(Text), source: this));
+                                .Bind(Label.TextProperty, nameof(Text), source: this)
+                                .Invoke(label => label.Effects.Add(new LabelShadowEffect(1, Color.Black, 0, 0))));
             }
 
             public string Text
@@ -137,9 +146,9 @@ namespace GitTrends
                 set => SetValue(TextProperty, value);
             }
 
-            static Color GetBackgroundColorConverter(in MobileSortingService mobileSortingService, in FloatingActionButtonType floatingActionButtonType)
+            Color GetBackgroundColor()
             {
-                var color = (MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption), floatingActionButtonType) switch
+                var color = (MobileSortingService.GetSortingCategory(_mobileSortingService.CurrentOption), _floatingActionButtonType) switch
                 {
                     (SortingCategory.Clones, FloatingActionButtonType.Statistic1) => (Color)Application.Current.Resources[nameof(BaseTheme.CardClonesStatsIconColor)],
                     (SortingCategory.Clones, FloatingActionButtonType.Statistic2) => (Color)Application.Current.Resources[nameof(BaseTheme.CardUniqueClonesStatsIconColor)],
@@ -154,8 +163,10 @@ namespace GitTrends
                     (_, _) => throw new NotImplementedException()
                 };
 
-                return Application.Current.Resources is DarkTheme ? color.AddLuminosity(-.05) : color; 
+                return Application.Current.Resources is DarkTheme ? color.AddLuminosity(-.05) : color;
             }
+
+            void HandlePreferenceChanged(object sender, PreferredTheme e) => _floatingActionButtonView.ColorNormal = GetBackgroundColor();
         }
     }
 }

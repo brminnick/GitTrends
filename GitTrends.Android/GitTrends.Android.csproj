@@ -120,6 +120,7 @@
     <Compile Include="CustomRenderers\PickerCustomRenderer.cs" />
     <Compile Include="CustomRenderers\VideoPlayerViewCustomRenderer.cs" />
     <Compile Include="CustomRenderers\FloatingActionButtonCustomRenderer.cs" />
+    <Compile Include="Effects\LabelShadowEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -580,6 +581,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\" />
+    <Folder Include="Effects\" />
   </ItemGroup>
   <ItemGroup>
     <GoogleServicesJson Include="google-services.json" />
