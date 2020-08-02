@@ -199,11 +199,11 @@ namespace GitTrends
                 DailyViewsList = repositoryViews.OrderBy(x => x.Day).ToList();
                 DailyClonesList = repositoryClones.OrderBy(x => x.Day).ToList();
 
-                ViewsStatisticsText = repositoryViews.Sum(x => x.TotalViews).ConvertToAbbreviatedText();
-                UniqueViewsStatisticsText = repositoryViews.Sum(x => x.TotalUniqueViews).ConvertToAbbreviatedText();
+                ViewsStatisticsText = repositoryViews.Sum(x => x.TotalViews).ToAbbreviatedText();
+                UniqueViewsStatisticsText = repositoryViews.Sum(x => x.TotalUniqueViews).ToAbbreviatedText();
 
-                ClonesStatisticsText = repositoryClones.Sum(x => x.TotalClones).ConvertToAbbreviatedText();
-                UniqueClonesStatisticsText = repositoryClones.Sum(x => x.TotalUniqueClones).ConvertToAbbreviatedText();
+                ClonesStatisticsText = repositoryClones.Sum(x => x.TotalClones).ToAbbreviatedText();
+                UniqueClonesStatisticsText = repositoryClones.Sum(x => x.TotalUniqueClones).ToAbbreviatedText();
 
                 //Display the Activity Indicator for a minimum time to ensure consistant UX
                 await minimumTimeTask.ConfigureAwait(false);

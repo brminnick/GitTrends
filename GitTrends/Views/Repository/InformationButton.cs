@@ -17,27 +17,26 @@ namespace GitTrends
     class InformationButton : Grid
     {
         const double _luminosityMultiplier = 1.1;
+        const int _diameter = 100;
 
         readonly IMainThread _mainThread;
-        readonly FloatingActionButtonView _informationFloatingActionButton, _statistic1FloatingActionButton, _statistic2FloatingActionButton, _statistic3FloatingActionButton;
+        readonly FloatingActionButtonView _informationFloatingActionButton;
+        readonly FloatingActionTextButton _statistic1FloatingActionButton, _statistic2FloatingActionButton, _statistic3FloatingActionButton;
 
-        public InformationButton(MobileSortingService mobileSortingService, IMainThread mainThread)
+        public InformationButton(in MobileSortingService mobileSortingService, in IMainThread mainThread)
         {
             _mainThread = mainThread;
 
-            ColumnDefinitions = Columns.Define(AbsoluteGridLength(100));
-            RowDefinitions = Rows.Define(AbsoluteGridLength(100));
+            RowDefinitions = Rows.Define(AbsoluteGridLength(_diameter));
+            ColumnDefinitions = Columns.Define(AbsoluteGridLength(_diameter));
 
-            Children.Add(new FloatingActionButtonView { Size = FloatingActionButtonSize.Mini }.Center().Assign(out _statistic1FloatingActionButton)
-                            .Bind<FloatingActionButtonView, IReadOnlyList<Repository>, Color>(FloatingActionButtonView.ColorNormalProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetStatistic1BackgroundColor(mobileSortingService))
+            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic1).Assign(out _statistic1FloatingActionButton)
                             .Invoke(fab => fab.SetBinding(IsVisibleProperty, getIsVisibleBinding())));
 
-            Children.Add(new FloatingActionButtonView { Size = FloatingActionButtonSize.Mini }.Center().Assign(out _statistic2FloatingActionButton)
-                            .Bind<FloatingActionButtonView, IReadOnlyList<Repository>, Color>(FloatingActionButtonView.ColorNormalProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetStatistic2BackgroundColor(mobileSortingService))
+            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic2).Assign(out _statistic2FloatingActionButton)
                             .Invoke(fab => fab.SetBinding(IsVisibleProperty, getIsVisibleBinding())));
 
-            Children.Add(new FloatingActionButtonView { Size = FloatingActionButtonSize.Mini }.Center().Assign(out _statistic3FloatingActionButton)
-                            .Bind<FloatingActionButtonView, IReadOnlyList<Repository>, Color>(FloatingActionButtonView.ColorNormalProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetStatistic3BackgroundColor(mobileSortingService))
+            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic3).Assign(out _statistic3FloatingActionButton)
                             .Invoke(fab => fab.SetBinding(IsVisibleProperty, getIsVisibleBinding())));
 
             Children.Add(new FloatingActionButtonView { Command = new AsyncCommand(ExecuteFloatingActionButtonCommand) }.Center().Assign(out _informationFloatingActionButton)
@@ -54,54 +53,6 @@ namespace GitTrends
                     new Binding(nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay)
                 }
             };
-        }
-
-        //SortingOption.Clones - Total Clones, BaseTheme.CardClonesStatsIconColor
-        //SortingOption.Views - Total Views, BaseTheme.CardViewsStatsIconColor
-        //SortingOption.IssuesForks - Stars, BaseTheme.CardStarsStatsIconColor
-        static Color GetStatistic1BackgroundColor(in MobileSortingService mobileSortingService)
-        {
-            var color = MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption) switch
-            {
-                SortingCategory.Clones => (Color)Application.Current.Resources[nameof(BaseTheme.CardClonesStatsIconColor)],
-                SortingCategory.Views => (Color)Application.Current.Resources[nameof(BaseTheme.CardViewsStatsIconColor)],
-                SortingCategory.IssuesForks => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)],
-                _ => throw new NotImplementedException()
-            };
-
-            return color.MultiplyAlpha(_luminosityMultiplier);
-        }
-
-        //SortingOption.Clones - Unique Clones, BaseTheme.CardUniqueClonesStatsIconColor
-        //SortingOption.Views - Unique Views, BaseTheme.CardUniqueViewsStatsIconColor
-        //SortingOption.IssuesForks - Forks, BaseTheme.CardForksStatsIconColor
-        static Color GetStatistic2BackgroundColor(in MobileSortingService mobileSortingService)
-        {
-            var color = MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption) switch
-            {
-                SortingCategory.Clones => (Color)Application.Current.Resources[nameof(BaseTheme.CardUniqueClonesStatsIconColor)],
-                SortingCategory.Views => (Color)Application.Current.Resources[nameof(BaseTheme.CardUniqueViewsStatsIconColor)],
-                SortingCategory.IssuesForks => (Color)Application.Current.Resources[nameof(BaseTheme.CardForksStatsIconColor)],
-                _ => throw new NotImplementedException()
-            };
-
-            return color.MultiplyAlpha(_luminosityMultiplier);
-        }
-
-        //SortingOption.Clones - Stars, BaseTheme.CardStarsStatsIconColor
-        //SortingOption.Views - Stars. BaseTheme.CardStarsStatsIconColor
-        //SortingOption.IssuesForks - Issues, BaseTheme.CardIssuesStatsIconColor
-        static Color GetStatistic3BackgroundColor(in MobileSortingService mobileSortingService)
-        {
-            var color = MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption) switch
-            {
-                SortingCategory.Clones => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)],
-                SortingCategory.Views => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)],
-                SortingCategory.IssuesForks => (Color)Application.Current.Resources[nameof(BaseTheme.CardIssuesStatsIconColor)],
-                _ => throw new NotImplementedException()
-            };
-
-            return color.MultiplyAlpha(_luminosityMultiplier);
         }
 
         Task ExecuteFloatingActionButtonCommand()
@@ -127,8 +78,10 @@ namespace GitTrends
                                         _statistic3FloatingActionButton.TranslateTo(10, -75, animationDuration, Easing.SpringOut));
             });
 
-            static bool isVisible(in FloatingActionButtonView statisticButton) => statisticButton.TranslationX != 0 && statisticButton.TranslationY != 0;
+            static bool isVisible(in FloatingActionTextButton statisticButton) => statisticButton.TranslationX != 0 && statisticButton.TranslationY != 0;
         }
+
+        enum FloatingActionButtonType { Information, Statistic1, Statistic2, Statistic3 }
 
         class InformationMultiValueConverter : IMultiValueConverter
         {
@@ -141,6 +94,60 @@ namespace GitTrends
             }
 
             public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
+        }
+
+        class FloatingActionTextButton : Grid
+        {
+            public FloatingActionTextButton(MobileSortingService mobileSortingService, FloatingActionButtonType floatingActionButtonType)
+            {
+                RowDefinitions = Rows.Define(AbsoluteGridLength(_diameter));
+                ColumnDefinitions =  Columns.Define(AbsoluteGridLength(_diameter));
+
+                Children.Add(new FloatingActionButtonView { Size = FloatingActionButtonSize.Mini }.Center()
+                                .Bind<FloatingActionButtonView, IReadOnlyList<Repository>, Color>(FloatingActionButtonView.ColorNormalProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetBackgroundColorConverter(mobileSortingService, floatingActionButtonType)));
+
+
+                Children.Add(new Label { TextColor = Color.White }.Center().TextCenter().Font(10)
+                                .Bind<Label, IReadOnlyList<Repository>, string>(Label.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetLabelTextConverter(mobileSortingService, repositories, floatingActionButtonType)));
+            }
+
+            static Color GetBackgroundColorConverter(in MobileSortingService mobileSortingService, in FloatingActionButtonType floatingActionButtonType)
+            {
+                var color = (MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption), floatingActionButtonType) switch
+                {
+                    (SortingCategory.Clones, FloatingActionButtonType.Statistic1) => (Color)Application.Current.Resources[nameof(BaseTheme.CardClonesStatsIconColor)],
+                    (SortingCategory.Clones, FloatingActionButtonType.Statistic2) => (Color)Application.Current.Resources[nameof(BaseTheme.CardUniqueClonesStatsIconColor)],
+                    (SortingCategory.Clones, FloatingActionButtonType.Statistic3) => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)],
+                    (SortingCategory.Views, FloatingActionButtonType.Statistic1) => (Color)Application.Current.Resources[nameof(BaseTheme.CardViewsStatsIconColor)],
+                    (SortingCategory.Views, FloatingActionButtonType.Statistic2) => (Color)Application.Current.Resources[nameof(BaseTheme.CardUniqueViewsStatsIconColor)],
+                    (SortingCategory.Views, FloatingActionButtonType.Statistic3) => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)],
+                    (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic1) => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)],
+                    (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic2) => (Color)Application.Current.Resources[nameof(BaseTheme.CardForksStatsIconColor)],
+                    (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic3) => (Color)Application.Current.Resources[nameof(BaseTheme.CardIssuesStatsIconColor)],
+                    (_, FloatingActionButtonType.Information) => throw new NotSupportedException(),
+                    (_, _) => throw new NotImplementedException()
+                };
+                return color.MultiplyAlpha(_luminosityMultiplier);
+            }
+
+            static string GetLabelTextConverter(in MobileSortingService mobileSortingService, in IReadOnlyList<Repository> repositories, in FloatingActionButtonType floatingActionButtonType)
+            {
+                return (MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption), floatingActionButtonType) switch
+                {
+                    (SortingCategory.Clones, FloatingActionButtonType.Statistic1) => repositories.Sum(x => x.TotalClones).ToAbbreviatedText(),
+                    (SortingCategory.Clones, FloatingActionButtonType.Statistic2) => repositories.Sum(x => x.TotalUniqueClones).ToAbbreviatedText(),
+                    (SortingCategory.Clones, FloatingActionButtonType.Statistic3) => repositories.Sum(x => x.StarCount).ToAbbreviatedText(),
+                    (SortingCategory.Views, FloatingActionButtonType.Statistic1) => repositories.Sum(x => x.TotalViews).ToAbbreviatedText(),
+                    (SortingCategory.Views, FloatingActionButtonType.Statistic2) => repositories.Sum(x => x.TotalUniqueViews).ToAbbreviatedText(),
+                    (SortingCategory.Views, FloatingActionButtonType.Statistic3) => repositories.Sum(x => x.StarCount).ToAbbreviatedText(),
+                    (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic1) => repositories.Sum(x => x.StarCount).ToAbbreviatedText(),
+                    (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic2) => repositories.Sum(x => x.ForkCount).ToAbbreviatedText(),
+                    (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic3) => repositories.Sum(x => x.IssuesCount).ToAbbreviatedText(),
+                    (_, FloatingActionButtonType.Information) => throw new NotSupportedException(),
+                    (_, _) => throw new NotImplementedException()
+                };
+            }
+
         }
     }
 }

@@ -103,7 +103,7 @@ namespace GitTrends
                         Children.Add(new TitleLabel(ReferringSitesPageConstants.Referrals, TextAlignment.End, LayoutOptions.End).Assign(out TitleLabel referralsTitleLabel)
                                             .Row(Row.Title).Column(Column.Referrals));
 
-                        Children.Add(new StatisticsLabel(referralsTitleLabel) { Text = mobileReferringSite.TotalCount.ConvertToAbbreviatedText() }
+                        Children.Add(new StatisticsLabel(referralsTitleLabel) { Text = mobileReferringSite.TotalCount.ToAbbreviatedText() }
                                             .Row(Row.Description).Column(Column.Referrals));
 
                         Children.Add(new Separator()
@@ -112,7 +112,7 @@ namespace GitTrends
                         Children.Add(new TitleLabel(ReferringSitesPageConstants.Unique, TextAlignment.Start, LayoutOptions.Start).Assign(out TitleLabel uniqueTitleLabel)
                                             .Row(Row.Title).Column(Column.Uniques));
 
-                        Children.Add(new StatisticsLabel(uniqueTitleLabel) { Text = mobileReferringSite.TotalUniqueCount.ConvertToAbbreviatedText() }
+                        Children.Add(new StatisticsLabel(uniqueTitleLabel) { Text = mobileReferringSite.TotalUniqueCount.ToAbbreviatedText() }
                                             .Row(Row.Description).Column(Column.Uniques));
                     }
 

@@ -65,7 +65,6 @@ namespace GitTrends.Droid
             SetFabImage(Element.ImageName);
             SetFabSize(Element.Size);
 
-            _floatingActionButton.text
             _floatingActionButton.Elevation = 12;
             _floatingActionButton.BackgroundTintList = ColorStateList.ValueOf(Element.ColorNormal.ToAndroid());
             _floatingActionButton.RippleColor = Element.RippleColor.ToAndroid();

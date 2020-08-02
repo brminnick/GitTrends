@@ -180,8 +180,8 @@ namespace GitTrends.UnitTests
 
             //Assert
             Assert.AreEqual(string.Empty, uniqueClonesStatisticsText_Initial);
-            Assert.AreEqual(repository.TotalUniqueClones.ConvertToAbbreviatedText(), uniqueClonesStatisticsText_AfterFetchDataCommand);
-            Assert.AreEqual(repository.TotalUniqueClones.ConvertToAbbreviatedText(), uniqueClonesStatisticsText_AfterViewsCardTappedCommand);
+            Assert.AreEqual(repository.TotalUniqueClones.ToAbbreviatedText(), uniqueClonesStatisticsText_AfterFetchDataCommand);
+            Assert.AreEqual(repository.TotalUniqueClones.ToAbbreviatedText(), uniqueClonesStatisticsText_AfterViewsCardTappedCommand);
 
             Assert.IsTrue(isUniqueClonesSeriesVisible_Initial);
             Assert.IsTrue(isUniqueClonesSeriesVisible_AfterFetchDataCommand);
@@ -218,8 +218,8 @@ namespace GitTrends.UnitTests
 
             //Assert
             Assert.AreEqual(string.Empty, clonesStatisticsText_Initial);
-            Assert.AreEqual(repository.TotalClones.ConvertToAbbreviatedText(), clonesStatisticsText_AfterFetchDataCommand);
-            Assert.AreEqual(repository.TotalClones.ConvertToAbbreviatedText(), clonesStatisticsText_AfterViewsCardTappedCommand);
+            Assert.AreEqual(repository.TotalClones.ToAbbreviatedText(), clonesStatisticsText_AfterFetchDataCommand);
+            Assert.AreEqual(repository.TotalClones.ToAbbreviatedText(), clonesStatisticsText_AfterViewsCardTappedCommand);
 
             Assert.IsTrue(isClonesSeriesVisible_Initial);
             Assert.IsTrue(isClonesSeriesVisible_AfterFetchDataCommand);
@@ -257,8 +257,8 @@ namespace GitTrends.UnitTests
 
             //Assert
             Assert.AreEqual(string.Empty, uniqueViewsStatisticsText_Initial);
-            Assert.AreEqual(repository.TotalUniqueViews.ConvertToAbbreviatedText(), uniqueViewsStatisticsText_AfterFetchDataCommand);
-            Assert.AreEqual(repository.TotalUniqueViews.ConvertToAbbreviatedText(), uniqueViewsStatisticsText_AfterViewsCardTappedCommand);
+            Assert.AreEqual(repository.TotalUniqueViews.ToAbbreviatedText(), uniqueViewsStatisticsText_AfterFetchDataCommand);
+            Assert.AreEqual(repository.TotalUniqueViews.ToAbbreviatedText(), uniqueViewsStatisticsText_AfterViewsCardTappedCommand);
 
             Assert.IsTrue(isUniqueViewsSeriesVisible_Initial);
             Assert.IsTrue(isUniqueViewsSeriesVisible_AfterFetchDataCommand);
@@ -295,8 +295,8 @@ namespace GitTrends.UnitTests
 
             //Assert
             Assert.AreEqual(string.Empty, viewsStatisticsText_Initial);
-            Assert.AreEqual(repository.TotalViews.ConvertToAbbreviatedText(), viewsStatisticsText_AfterFetchDataCommand);
-            Assert.AreEqual(repository.TotalViews.ConvertToAbbreviatedText(), viewsStatisticsText_AfterViewsCardTappedCommand);
+            Assert.AreEqual(repository.TotalViews.ToAbbreviatedText(), viewsStatisticsText_AfterFetchDataCommand);
+            Assert.AreEqual(repository.TotalViews.ToAbbreviatedText(), viewsStatisticsText_AfterViewsCardTappedCommand);
 
             Assert.IsTrue(isViewsSeriesVisible_Initial);
             Assert.IsTrue(isViewsSeriesVisible_AfterFetchDataCommand);

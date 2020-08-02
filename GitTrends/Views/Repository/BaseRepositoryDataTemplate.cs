@@ -20,7 +20,7 @@ namespace GitTrends
         public const int BottomPadding = 4;
 
         const int _statsColumnSize = 40;
-        const double _statisticsRowHeight = StatisticsLabel.StatiscsFontSize + 4;
+        const double _statisticsRowHeight = StatisticsLabel.StatisticsFontSize + 4;
         const double _emojiColumnSize = _statisticsRowHeight;
         readonly static bool _isSmallScreen = ScreenWidth <= 360;
         readonly static double _circleImageHeight = _isSmallScreen ? 52 : 62;
