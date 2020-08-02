@@ -44,9 +44,9 @@ namespace GitTrends
             set => SetValue(SizeProperty, value);
         }
 
-        public ICommand Command
+        public ICommand? Command
         {
-            get => (ICommand)GetValue(CommandProperty);
+            get => (ICommand?)GetValue(CommandProperty);
             set => SetValue(CommandProperty, value);
         }
 

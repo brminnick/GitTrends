@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
@@ -16,33 +17,33 @@ namespace GitTrends
 {
     class InformationButton : Grid
     {
-        const double _luminosityMultiplier = 1.1;
         const int _diameter = 100;
 
         readonly IMainThread _mainThread;
-        readonly FloatingActionButtonView _informationFloatingActionButton;
-        readonly FloatingActionTextButton _statistic1FloatingActionButton, _statistic2FloatingActionButton, _statistic3FloatingActionButton;
+        readonly FloatingActionTextButton _informationFloatingActionButton, _statistic1FloatingActionButton, _statistic2FloatingActionButton, _statistic3FloatingActionButton;
 
-        public InformationButton(in MobileSortingService mobileSortingService, in IMainThread mainThread)
+        public InformationButton(MobileSortingService mobileSortingService, IMainThread mainThread)
         {
             _mainThread = mainThread;
 
             RowDefinitions = Rows.Define(AbsoluteGridLength(_diameter));
             ColumnDefinitions = Columns.Define(AbsoluteGridLength(_diameter));
 
-            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic1).Assign(out _statistic1FloatingActionButton)
+            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Mini, FloatingActionButtonType.Statistic1).Assign(out _statistic1FloatingActionButton)
+                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetLabelTextConverter(mobileSortingService, repositories, FloatingActionButtonType.Statistic1))
                             .Invoke(fab => fab.SetBinding(IsVisibleProperty, getIsVisibleBinding())));
 
-            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic2).Assign(out _statistic2FloatingActionButton)
+            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Mini, FloatingActionButtonType.Statistic2).Assign(out _statistic2FloatingActionButton)
+                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetLabelTextConverter(mobileSortingService, repositories, FloatingActionButtonType.Statistic2))
                             .Invoke(fab => fab.SetBinding(IsVisibleProperty, getIsVisibleBinding())));
 
-            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic3).Assign(out _statistic3FloatingActionButton)
+            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Mini, FloatingActionButtonType.Statistic3).Assign(out _statistic3FloatingActionButton)
+                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetLabelTextConverter(mobileSortingService, repositories, FloatingActionButtonType.Statistic3))
                             .Invoke(fab => fab.SetBinding(IsVisibleProperty, getIsVisibleBinding())));
 
-            Children.Add(new FloatingActionButtonView { Command = new AsyncCommand(ExecuteFloatingActionButtonCommand) }.Center().Assign(out _informationFloatingActionButton)
-                .DynamicResources((FloatingActionButtonView.ColorNormalProperty, nameof(BaseTheme.NavigationBarBackgroundColor)),
-                                    (FloatingActionButtonView.RippleColorProperty, nameof(BaseTheme.PageBackgroundColor)))
-                .Invoke(fab => fab.SetBinding(IsVisibleProperty, getIsVisibleBinding())));
+            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Normal, FloatingActionButtonType.Information, new AsyncCommand(ExecuteFloatingActionButtonCommand)).Center().Assign(out _informationFloatingActionButton)
+                            .DynamicResource(FloatingActionButtonView.RippleColorProperty, nameof(BaseTheme.PageBackgroundColor))
+                            .Invoke(fab => fab.SetBinding(IsVisibleProperty, getIsVisibleBinding())));
 
             static MultiBinding getIsVisibleBinding() => new MultiBinding
             {
@@ -52,6 +53,24 @@ namespace GitTrends
                     new Binding(nameof(RepositoryViewModel.IsRefreshing), BindingMode.OneWay),
                     new Binding(nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay)
                 }
+            };
+        }
+
+        static string GetLabelTextConverter(in MobileSortingService mobileSortingService, in IReadOnlyList<Repository> repositories, in FloatingActionButtonType floatingActionButtonType)
+        {
+            return (MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption), floatingActionButtonType) switch
+            {
+                (SortingCategory.Clones, FloatingActionButtonType.Statistic1) => repositories.Sum(x => x.TotalClones).ToAbbreviatedText(),
+                (SortingCategory.Clones, FloatingActionButtonType.Statistic2) => repositories.Sum(x => x.TotalUniqueClones).ToAbbreviatedText(),
+                (SortingCategory.Clones, FloatingActionButtonType.Statistic3) => repositories.Sum(x => x.StarCount).ToAbbreviatedText(),
+                (SortingCategory.Views, FloatingActionButtonType.Statistic1) => repositories.Sum(x => x.TotalViews).ToAbbreviatedText(),
+                (SortingCategory.Views, FloatingActionButtonType.Statistic2) => repositories.Sum(x => x.TotalUniqueViews).ToAbbreviatedText(),
+                (SortingCategory.Views, FloatingActionButtonType.Statistic3) => repositories.Sum(x => x.StarCount).ToAbbreviatedText(),
+                (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic1) => repositories.Sum(x => x.StarCount).ToAbbreviatedText(),
+                (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic2) => repositories.Sum(x => x.ForkCount).ToAbbreviatedText(),
+                (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic3) => repositories.Sum(x => x.IssuesCount).ToAbbreviatedText(),
+                (_, FloatingActionButtonType.Information) => throw new NotSupportedException(),
+                (_, _) => throw new NotImplementedException()
             };
         }
 
@@ -98,17 +117,24 @@ namespace GitTrends
 
         class FloatingActionTextButton : Grid
         {
-            public FloatingActionTextButton(MobileSortingService mobileSortingService, FloatingActionButtonType floatingActionButtonType)
+            public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(string), typeof(FloatingActionTextButton), string.Empty);
+
+            public FloatingActionTextButton(MobileSortingService mobileSortingService, FloatingActionButtonSize floatingActionButtonSize, FloatingActionButtonType floatingActionButtonType, ICommand? command = null)
             {
                 RowDefinitions = Rows.Define(AbsoluteGridLength(_diameter));
-                ColumnDefinitions =  Columns.Define(AbsoluteGridLength(_diameter));
+                ColumnDefinitions = Columns.Define(AbsoluteGridLength(_diameter));
 
-                Children.Add(new FloatingActionButtonView { Size = FloatingActionButtonSize.Mini }.Center()
+                Children.Add(new FloatingActionButtonView { Size = floatingActionButtonSize, Command = command }.Center()
                                 .Bind<FloatingActionButtonView, IReadOnlyList<Repository>, Color>(FloatingActionButtonView.ColorNormalProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetBackgroundColorConverter(mobileSortingService, floatingActionButtonType)));
 
+                Children.Add(new Label { TextColor = Color.White }.Center().TextCenter().Font(9, true)
+                                .Bind(Label.TextProperty, nameof(Text), source: this));
+            }
 
-                Children.Add(new Label { TextColor = Color.White }.Center().TextCenter().Font(10)
-                                .Bind<Label, IReadOnlyList<Repository>, string>(Label.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetLabelTextConverter(mobileSortingService, repositories, floatingActionButtonType)));
+            public string Text
+            {
+                get => (string)GetValue(TextProperty);
+                set => SetValue(TextProperty, value);
             }
 
             static Color GetBackgroundColorConverter(in MobileSortingService mobileSortingService, in FloatingActionButtonType floatingActionButtonType)
@@ -124,30 +150,12 @@ namespace GitTrends
                     (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic1) => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)],
                     (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic2) => (Color)Application.Current.Resources[nameof(BaseTheme.CardForksStatsIconColor)],
                     (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic3) => (Color)Application.Current.Resources[nameof(BaseTheme.CardIssuesStatsIconColor)],
-                    (_, FloatingActionButtonType.Information) => throw new NotSupportedException(),
+                    (_, FloatingActionButtonType.Information) => Color.FromHex(BaseTheme.LightTealColorHex),
                     (_, _) => throw new NotImplementedException()
                 };
-                return color.MultiplyAlpha(_luminosityMultiplier);
-            }
 
-            static string GetLabelTextConverter(in MobileSortingService mobileSortingService, in IReadOnlyList<Repository> repositories, in FloatingActionButtonType floatingActionButtonType)
-            {
-                return (MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption), floatingActionButtonType) switch
-                {
-                    (SortingCategory.Clones, FloatingActionButtonType.Statistic1) => repositories.Sum(x => x.TotalClones).ToAbbreviatedText(),
-                    (SortingCategory.Clones, FloatingActionButtonType.Statistic2) => repositories.Sum(x => x.TotalUniqueClones).ToAbbreviatedText(),
-                    (SortingCategory.Clones, FloatingActionButtonType.Statistic3) => repositories.Sum(x => x.StarCount).ToAbbreviatedText(),
-                    (SortingCategory.Views, FloatingActionButtonType.Statistic1) => repositories.Sum(x => x.TotalViews).ToAbbreviatedText(),
-                    (SortingCategory.Views, FloatingActionButtonType.Statistic2) => repositories.Sum(x => x.TotalUniqueViews).ToAbbreviatedText(),
-                    (SortingCategory.Views, FloatingActionButtonType.Statistic3) => repositories.Sum(x => x.StarCount).ToAbbreviatedText(),
-                    (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic1) => repositories.Sum(x => x.StarCount).ToAbbreviatedText(),
-                    (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic2) => repositories.Sum(x => x.ForkCount).ToAbbreviatedText(),
-                    (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic3) => repositories.Sum(x => x.IssuesCount).ToAbbreviatedText(),
-                    (_, FloatingActionButtonType.Information) => throw new NotSupportedException(),
-                    (_, _) => throw new NotImplementedException()
-                };
+                return Application.Current.Resources is DarkTheme ? color.AddLuminosity(-.05) : color; 
             }
-
         }
     }
 }
