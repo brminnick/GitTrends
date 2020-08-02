@@ -27,7 +27,6 @@ namespace GitTrends.Droid
 
         readonly FloatingActionButton _floatingActionButton;
 
-
         public FloatingActionButtonViewRenderer(Context context) : base(context)
         {
             var density = context.Resources?.DisplayMetrics?.Density ?? 0;
@@ -66,6 +65,7 @@ namespace GitTrends.Droid
             SetFabImage(Element.ImageName);
             SetFabSize(Element.Size);
 
+            _floatingActionButton.text
             _floatingActionButton.Elevation = 12;
             _floatingActionButton.BackgroundTintList = ColorStateList.ValueOf(Element.ColorNormal.ToAndroid());
             _floatingActionButton.RippleColor = Element.RippleColor.ToAndroid();
@@ -124,17 +124,21 @@ namespace GitTrends.Droid
 
         void SetFabSize(FloatingActionButtonSize size)
         {
-            if (size == FloatingActionButtonSize.Mini)
+            if (size is FloatingActionButtonSize.Mini)
             {
                 _floatingActionButton.Size = (int)(Resources?.GetDimension(Resource.Dimension.fab_size_mini) ?? _miniHeight);
                 Element.WidthRequest = _miniFrameWidth;
                 Element.HeightRequest = _miniFrameHeight;
             }
-            else
+            else if (size is FloatingActionButtonSize.Normal)
             {
                 _floatingActionButton.Size = (int)(Resources?.GetDimension(Resource.Dimension.fab_size_mini) ?? _normalHeight);
                 Element.WidthRequest = _frameWidth;
                 Element.HeightRequest = _frameHeight;
+            }
+            else
+            {
+                throw new NotImplementedException();
             }
         }
 

@@ -18,8 +18,8 @@ namespace GitTrends
     {
         const double _luminosityMultiplier = 1.1;
 
-        readonly FloatingActionButtonView _informationFloatingActionButton, _statistic1FloatingActionButton, _statistic2FloatingActionButton, _statistic3FloatingActionButton;
         readonly IMainThread _mainThread;
+        readonly FloatingActionButtonView _informationFloatingActionButton, _statistic1FloatingActionButton, _statistic2FloatingActionButton, _statistic3FloatingActionButton;
 
         public InformationButton(MobileSortingService mobileSortingService, IMainThread mainThread)
         {
@@ -85,7 +85,7 @@ namespace GitTrends
                 _ => throw new NotImplementedException()
             };
 
-            return color.AddLuminosity(_luminosityMultiplier);
+            return color.MultiplyAlpha(_luminosityMultiplier);
         }
 
         //SortingOption.Clones - Stars, BaseTheme.CardStarsStatsIconColor

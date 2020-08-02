@@ -110,7 +110,7 @@ namespace GitTrends
 
             if (Device.RuntimePlatform is Device.Android)
             {
-                grid.Children.Add(new InformationButton(mobileSortingService).Row(Row.Information).Column(Column.Information));
+                grid.Children.Add(new InformationButton(mobileSortingService, mainThread).Row(Row.Information).Column(Column.Information));
             }
 
             static string totalsLabelConverter(in IReadOnlyList<Repository> repositories, in MobileSortingService mobileSortingService)
