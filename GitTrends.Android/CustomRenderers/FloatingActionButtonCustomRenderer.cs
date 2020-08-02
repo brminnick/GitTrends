@@ -131,7 +131,7 @@ namespace GitTrends.Droid
             }
             else if (size is FloatingActionButtonSize.Normal)
             {
-                _floatingActionButton.Size = (int)(Resources?.GetDimension(Resource.Dimension.fab_size_mini) ?? _normalHeight);
+                _floatingActionButton.Size = (int)(Resources?.GetDimension(Resource.Dimension.fab_size_normal) ?? _normalHeight);
                 Element.WidthRequest = _frameWidth;
                 Element.HeightRequest = _frameHeight;
             }

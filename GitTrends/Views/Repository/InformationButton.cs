@@ -20,7 +20,7 @@ namespace GitTrends
         const int _diameter = 100;
 
         readonly IMainThread _mainThread;
-        readonly FloatingActionTextButton _informationFloatingActionButton, _statistic1FloatingActionButton, _statistic2FloatingActionButton, _statistic3FloatingActionButton;
+        readonly FloatingActionTextButton _statistic1FloatingActionButton, _statistic2FloatingActionButton, _statistic3FloatingActionButton;
 
         public InformationButton(MobileSortingService mobileSortingService, IMainThread mainThread)
         {
@@ -41,7 +41,7 @@ namespace GitTrends
                             .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetLabelTextConverter(mobileSortingService, repositories, FloatingActionButtonType.Statistic3))
                             .Invoke(fab => fab.SetBinding(IsVisibleProperty, getIsVisibleBinding())));
 
-            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Normal, FloatingActionButtonType.Information, new AsyncCommand(ExecuteFloatingActionButtonCommand)).Center().Assign(out _informationFloatingActionButton)
+            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Normal, FloatingActionButtonType.Information, new AsyncCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium, Text = "Totals" }.Center()
                             .DynamicResource(FloatingActionButtonView.RippleColorProperty, nameof(BaseTheme.PageBackgroundColor))
                             .Invoke(fab => fab.SetBinding(IsVisibleProperty, getIsVisibleBinding())));
 
@@ -78,15 +78,11 @@ namespace GitTrends
         {
             const int animationDuration = 300;
 
-            if (_informationFloatingActionButton is null || _statistic1FloatingActionButton is null || _statistic2FloatingActionButton is null || _statistic3FloatingActionButton is null)
-                throw new NotSupportedException();
-
             return _mainThread.InvokeOnMainThreadAsync(() =>
             {
-                if (isVisible(_statistic1FloatingActionButton)
-                  && isVisible(_statistic2FloatingActionButton)
-                  && isVisible(_statistic3FloatingActionButton))
+                if (isVisible(_statistic1FloatingActionButton) && isVisible(_statistic2FloatingActionButton) && isVisible(_statistic3FloatingActionButton))
                 {
+
                     return Task.WhenAll(_statistic1FloatingActionButton.TranslateTo(0, 0, animationDuration, Easing.SpringIn),
                                            _statistic2FloatingActionButton.TranslateTo(0, 0, animationDuration, Easing.SpringIn),
                                            _statistic3FloatingActionButton.TranslateTo(0, 0, animationDuration, Easing.SpringIn));
@@ -118,6 +114,7 @@ namespace GitTrends
         class FloatingActionTextButton : Grid
         {
             public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(string), typeof(FloatingActionTextButton), string.Empty);
+            public static readonly BindableProperty FontFamilyPropety = BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(FloatingActionTextButton), null);
 
             readonly MobileSortingService _mobileSortingService;
             readonly FloatingActionButtonView _floatingActionButtonView;
@@ -129,14 +126,22 @@ namespace GitTrends
                 _floatingActionButtonType = floatingActionButtonType;
                 ThemeService.PreferenceChanged += HandlePreferenceChanged;
 
+                var fontSize = floatingActionButtonSize switch
+                {
+                    FloatingActionButtonSize.Mini => 9,
+                    FloatingActionButtonSize.Normal => 12,
+                    _ => throw new NotImplementedException(),
+                };
+
                 RowDefinitions = Rows.Define(AbsoluteGridLength(_diameter));
                 ColumnDefinitions = Columns.Define(AbsoluteGridLength(_diameter));
 
                 Children.Add(new FloatingActionButtonView { Size = floatingActionButtonSize, Command = command }.Center().Assign(out _floatingActionButtonView)
                                 .Bind<FloatingActionButtonView, IReadOnlyList<Repository>, Color>(FloatingActionButtonView.ColorNormalProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetBackgroundColor()));
 
-                Children.Add(new Label { TextColor = Color.White }.Center().TextCenter().Font(9, true)
+                Children.Add(new Label { TextColor = Color.White, InputTransparent = true }.Center().TextCenter().Font(fontSize, true)
                                 .Bind(Label.TextProperty, nameof(Text), source: this)
+                                .Bind(Label.FontFamilyProperty, nameof(FontFamily), source: this)
                                 .Invoke(label => label.Effects.Add(new LabelShadowEffect(1, Color.Black, 0, 0))));
             }
 
@@ -144,6 +149,12 @@ namespace GitTrends
             {
                 get => (string)GetValue(TextProperty);
                 set => SetValue(TextProperty, value);
+            }
+
+            public string? FontFamily
+            {
+                get => (string?)GetValue(FontFamilyPropety);
+                set => SetValue(FontFamilyPropety, value);
             }
 
             Color GetBackgroundColor()
