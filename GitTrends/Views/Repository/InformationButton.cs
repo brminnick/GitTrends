@@ -128,8 +128,8 @@ namespace GitTrends
 
                 var fontSize = floatingActionButtonSize switch
                 {
-                    FloatingActionButtonSize.Mini => 9,
-                    FloatingActionButtonSize.Normal => 12,
+                    FloatingActionButtonSize.Mini => 10,
+                    FloatingActionButtonSize.Normal => 13,
                     _ => throw new NotImplementedException(),
                 };
 
@@ -139,10 +139,9 @@ namespace GitTrends
                 Children.Add(new FloatingActionButtonView { Size = floatingActionButtonSize, Command = command }.Center().Assign(out _floatingActionButtonView)
                                 .Bind<FloatingActionButtonView, IReadOnlyList<Repository>, Color>(FloatingActionButtonView.ColorNormalProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetBackgroundColor()));
 
-                Children.Add(new Label { TextColor = Color.White, InputTransparent = true }.Center().TextCenter().Font(fontSize, true)
+                Children.Add(new Label { TextColor = Color.Black, InputTransparent = true }.Center().TextCenter().Font(fontSize)
                                 .Bind(Label.TextProperty, nameof(Text), source: this)
-                                .Bind(Label.FontFamilyProperty, nameof(FontFamily), source: this)
-                                .Invoke(label => label.Effects.Add(new LabelShadowEffect(1, Color.Black, 0, 0))));
+                                .Bind(Label.FontFamilyProperty, nameof(FontFamily), source: this));
             }
 
             public string Text
@@ -174,7 +173,7 @@ namespace GitTrends
                     (_, _) => throw new NotImplementedException()
                 };
 
-                return Application.Current.Resources is DarkTheme ? color.AddLuminosity(-.05) : color;
+                return color.AddLuminosity(.1);
             }
 
             void HandlePreferenceChanged(object sender, PreferredTheme e) => _floatingActionButtonView.ColorNormal = GetBackgroundColor();
