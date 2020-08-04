@@ -169,7 +169,7 @@ namespace GitTrends
                     (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic1) => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)],
                     (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic2) => (Color)Application.Current.Resources[nameof(BaseTheme.CardForksStatsIconColor)],
                     (SortingCategory.IssuesForks, FloatingActionButtonType.Statistic3) => (Color)Application.Current.Resources[nameof(BaseTheme.CardIssuesStatsIconColor)],
-                    (_, FloatingActionButtonType.Information) => Color.FromHex(BaseTheme.LightTealColorHex),
+                    (_, FloatingActionButtonType.Information) => Color.FromHex(BaseTheme.LightTealColorHex).AddLuminosity(.05),
                     (_, _) => throw new NotImplementedException()
                 };
 
