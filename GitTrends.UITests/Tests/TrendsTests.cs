@@ -29,10 +29,10 @@ namespace GitTrends.UITests
 
             Assert.IsTrue(App.Query(selectedRepository.Name).Any());
 
-            Assert.AreEqual(selectedRepository.TotalViews.ConvertToAbbreviatedText(), TrendsPage.ViewsStatisticsLabelText);
-            Assert.AreEqual(selectedRepository.TotalUniqueViews.ConvertToAbbreviatedText(), TrendsPage.UniqueViewsStatisticsLabelText);
-            Assert.AreEqual(selectedRepository.TotalClones.ConvertToAbbreviatedText(), TrendsPage.ClonesStatisticsLabelText);
-            Assert.AreEqual(selectedRepository.TotalUniqueClones.ConvertToAbbreviatedText(), TrendsPage.UniqueClonesStatisticsLabelText);
+            Assert.AreEqual(selectedRepository.TotalViews.ToAbbreviatedText(), TrendsPage.ViewsStatisticsLabelText);
+            Assert.AreEqual(selectedRepository.TotalUniqueViews.ToAbbreviatedText(), TrendsPage.UniqueViewsStatisticsLabelText);
+            Assert.AreEqual(selectedRepository.TotalClones.ToAbbreviatedText(), TrendsPage.ClonesStatisticsLabelText);
+            Assert.AreEqual(selectedRepository.TotalUniqueClones.ToAbbreviatedText(), TrendsPage.UniqueClonesStatisticsLabelText);
         }
 
         [Test]

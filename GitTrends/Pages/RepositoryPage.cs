@@ -8,6 +8,7 @@ using Autofac;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Shiny;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -66,11 +67,16 @@ namespace GitTrends
             {
                 RowDefinitions = Rows.Define(
                     (Row.Totals, AbsoluteGridLength(125)),
-                    (Row.CollectionView, Star)),
+                    (Row.CollectionView, Star),
+                    (Row.Information, AbsoluteGridLength(100))),
+
+                ColumnDefinitions = Columns.Define(
+                    (Column.CollectionView, Star),
+                    (Column.Information, AbsoluteGridLength(100))),
 
                 Children =
                 {
-                    new TotalsLabel().Row(Row.Totals)
+                    new TotalsLabel().Row(Row.Totals).ColumnSpan(All<Column>())
                         .Bind<Label, bool, bool>(IsVisibleProperty,nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
                         .Bind<Label, IReadOnlyList<Repository>, string>(Label.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => totalsLabelConverter(repositories, mobileSortingService)),
 
@@ -87,19 +93,24 @@ namespace GitTrends
                             Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.BottomPadding } : null,
                             Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.TopPadding } : null,
                             EmptyView = new EmptyDataView("EmptyRepositoriesList", RepositoryPageAutomationIds.EmptyDataView)
-                                    .Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
-                                    .Bind(EmptyDataView.TitleProperty, nameof(RepositoryViewModel.EmptyDataViewTitle))
-                                    .Bind(EmptyDataView.DescriptionProperty, nameof(RepositoryViewModel.EmptyDataViewDescription))
+                                            .Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
+                                            .Bind(EmptyDataView.TitleProperty, nameof(RepositoryViewModel.EmptyDataViewTitle))
+                                            .Bind(EmptyDataView.DescriptionProperty, nameof(RepositoryViewModel.EmptyDataViewDescription))
 
                         }.Bind(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList))
                          .Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged)
 
-                    }.RowSpan(All<Row>()).Assign(out _refreshView)
+                    }.RowSpan(All<Row>()).ColumnSpan(All<Column>()).Assign(out _refreshView)
                      .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
                      .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand))
-                     .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor))
+                     .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor)),
                 }
-            };
+            }.Assign(out Grid grid);
+
+            if (Device.RuntimePlatform is Device.Android)
+            {
+                grid.Children.Add(new InformationButton(mobileSortingService, mainThread).Row(Row.Information).Column(Column.Information));
+            }
 
             static string totalsLabelConverter(in IReadOnlyList<Repository> repositories, in MobileSortingService mobileSortingService)
             {
@@ -108,15 +119,16 @@ namespace GitTrends
 
                 return MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption) switch
                 {
-                    SortingCategory.Views => $"{SortingConstants.Views} {repositories.Sum(x => x.TotalViews).ConvertToAbbreviatedText()}, {SortingConstants.UniqueViews} {repositories.Sum(x => x.TotalUniqueViews).ConvertToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}",
-                    SortingCategory.Clones => $"{SortingConstants.Clones} {repositories.Sum(x => x.TotalClones).ConvertToAbbreviatedText()}, {SortingConstants.UniqueClones} {repositories.Sum(x => x.TotalUniqueClones).ConvertToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}",
-                    SortingCategory.IssuesForks => $"{SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ConvertToAbbreviatedText()}, {SortingConstants.Forks} {repositories.Sum(x => x.ForkCount).ConvertToAbbreviatedText()}, {SortingConstants.Issues} {repositories.Sum(x => x.IssuesCount).ConvertToAbbreviatedText()}",
+                    SortingCategory.Views => $"{SortingConstants.Views} {repositories.Sum(x => x.TotalViews).ToAbbreviatedText()}, {SortingConstants.UniqueViews} {repositories.Sum(x => x.TotalUniqueViews).ToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ToAbbreviatedText()}",
+                    SortingCategory.Clones => $"{SortingConstants.Clones} {repositories.Sum(x => x.TotalClones).ToAbbreviatedText()}, {SortingConstants.UniqueClones} {repositories.Sum(x => x.TotalUniqueClones).ToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ToAbbreviatedText()}",
+                    SortingCategory.IssuesForks => $"{SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ToAbbreviatedText()}, {SortingConstants.Forks} {repositories.Sum(x => x.ForkCount).ToAbbreviatedText()}, {SortingConstants.Issues} {repositories.Sum(x => x.IssuesCount).ToAbbreviatedText()}",
                     _ => throw new NotSupportedException()
                 };
             }
         }
 
-        enum Row { Totals, CollectionView }
+        enum Row { Totals, CollectionView, Information }
+        enum Column { CollectionView, Information }
 
         public event EventHandler<string> SearchBarTextChanged
         {

@@ -2,7 +2,7 @@
 {
     public static class StatisticsService
     {
-        public static string ConvertToAbbreviatedText(this long number)
+        public static string ToAbbreviatedText(this long number)
         {
             if (number < 10e2)
                 return string.Format("{0:0}", number);

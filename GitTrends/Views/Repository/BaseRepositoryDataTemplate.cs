@@ -20,7 +20,7 @@ namespace GitTrends
         public const int BottomPadding = 4;
 
         const int _statsColumnSize = 40;
-        const double _statisticsRowHeight = StatisticsLabel.StatiscsFontSize + 4;
+        const double _statisticsRowHeight = StatisticsLabel.StatisticsFontSize + 4;
         const double _emojiColumnSize = _statisticsRowHeight;
         readonly static bool _isSmallScreen = ScreenWidth <= 360;
         readonly static double _circleImageHeight = _isSmallScreen ? 52 : 62;
@@ -40,12 +40,12 @@ namespace GitTrends
                 RowSpacing = 0;
                 RowDefinitions = Rows.Define(
                     (CardViewRow.TopPadding, AbsoluteGridLength(TopPadding)),
-                    (CardViewRow.Card, StarGridLength(1)),
+                    (CardViewRow.Card, Star),
                     (CardViewRow.BottomPadding, AbsoluteGridLength(BottomPadding)));
 
                 ColumnDefinitions = Columns.Define(
                     (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
-                    (CardViewColumn.Card, StarGridLength(1)),
+                    (CardViewColumn.Card, Star),
                     (CardViewColumn.RightPadding, AbsoluteGridLength(16)));
 
                 Children.Add(new CardViewFrame(parentDataTemplateChildren, repository).Row(CardViewRow.Card).Column(CardViewColumn.Card));
