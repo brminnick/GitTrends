@@ -40,7 +40,7 @@
         <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.4.0" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.4.0" />
-        <PackageReference Include="Xamarin.Forms" Version="4.7.0.1239" />
+        <PackageReference Include="Xamarin.Forms" Version="4.7.0.1260" />
         <PackageReference Include="Shiny.Notifications" Version="1.2.0.1755" />
         <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.0.1.707" />
         <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.5.3.2" />
