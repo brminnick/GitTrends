@@ -14,9 +14,6 @@
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>MinimumOSVersion</key>
 	<string>13.0</string>
@@ -72,6 +69,10 @@
 		<string>es</string>
 		<string>fr</string>
 		<string>pt</string>
+		<string>bs</string>
+		<string>uk</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>GitTrends does not require your location</string>
 </dict>
 </plist>
