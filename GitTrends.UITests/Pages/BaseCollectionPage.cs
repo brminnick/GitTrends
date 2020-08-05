@@ -15,7 +15,7 @@ namespace GitTrends.UITests
 
         }
 
-        public List<TCollection> VisibleCollection => App.InvokeBackdoorMethod<List<TCollection>>(BackdoorMethodConstants.GetVisibleCollection);
+        public IReadOnlyList<TCollection> VisibleCollection => App.InvokeBackdoorMethod<List<TCollection>>(BackdoorMethodConstants.GetVisibleCollection);
 
         bool IsRefreshViewRefreshIndicatorDisplayed => App switch
         {

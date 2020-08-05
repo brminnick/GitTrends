@@ -6,6 +6,8 @@ using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using NUnit.Framework;
 using Xamarin.UITest;
+using Xamarin.UITest.Android;
+using Xamarin.UITest.iOS;
 
 namespace GitTrends.UITests
 {
@@ -105,15 +107,26 @@ namespace GitTrends.UITests
             Assert.AreEqual(MobileSortingService.DefaultSortingOption, SortingOption.Views);
 
             //Arrange
-            Repository finalFirstRepository;
-            Repository finalSecondTopRepository;
-            Repository finalLastRepository;
+            Repository finalFirstRepository, finalSecondTopRepository, finalLastRepository;
             Repository initialFirstRepository = RepositoryPage.VisibleCollection.First();
             Repository initialSecondTopRepository = RepositoryPage.VisibleCollection.Skip(1).First();
             Repository initialLastRepository = RepositoryPage.VisibleCollection.Last();
 
+            string floatingActionTextButtonStatistic1Text = string.Empty,
+                    floatingActionTextButtonStatistic2Text = string.Empty,
+                    floatingActionTextButtonStatistic3Text = string.Empty;
+
             //Act
             await RepositoryPage.SetSortingOption(sortingOption).ConfigureAwait(false);
+
+            if (App is AndroidApp)
+            {
+                floatingActionTextButtonStatistic1Text = RepositoryPage.InformationButtonStatistic1Text;
+                floatingActionTextButtonStatistic2Text = RepositoryPage.InformationButtonStatistic2Text;
+                floatingActionTextButtonStatistic3Text = RepositoryPage.InformationButtonStatistic3Text;
+
+                RepositoryPage.TapInformationButton();
+            }
 
             //Assert
             finalFirstRepository = RepositoryPage.VisibleCollection.First();
@@ -124,6 +137,26 @@ namespace GitTrends.UITests
                 Assert.GreaterOrEqual(initialFirstRepository.TotalViews, initialSecondTopRepository.TotalViews);
 
             Assert.GreaterOrEqual(initialFirstRepository.TotalViews, initialLastRepository.TotalViews);
+
+            if (App is AndroidApp)
+            {
+                var floatingActionTextButtonStatistic1Text_Expected = StatisticsService.GetFloatingActionTextButtonText(MobileSortingService.GetSortingCategory(sortingOption), RepositoryPage.VisibleCollection, FloatingActionButtonType.Statistic1);
+                var floatingActionTextButtonStatistic2Text_Expected = StatisticsService.GetFloatingActionTextButtonText(MobileSortingService.GetSortingCategory(sortingOption), RepositoryPage.VisibleCollection, FloatingActionButtonType.Statistic2);
+                var floatingActionTextButtonStatistic3Text_Expected = StatisticsService.GetFloatingActionTextButtonText(MobileSortingService.GetSortingCategory(sortingOption), RepositoryPage.VisibleCollection, FloatingActionButtonType.Statistic3);
+
+                Assert.AreEqual(floatingActionTextButtonStatistic1Text_Expected, floatingActionTextButtonStatistic1Text);
+                Assert.AreEqual(floatingActionTextButtonStatistic2Text_Expected, floatingActionTextButtonStatistic2Text);
+                Assert.AreEqual(floatingActionTextButtonStatistic3Text_Expected, floatingActionTextButtonStatistic3Text);
+            }
+            else if (App is iOSApp)
+            {
+                var informationLabelText_Expected = StatisticsService.GetInformationLabelText(RepositoryPage.VisibleCollection, MobileSortingService.GetSortingCategory(sortingOption));
+                Assert.AreEqual(informationLabelText_Expected, RepositoryPage.InformationLabelText);
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
 
             switch (sortingOption)
             {

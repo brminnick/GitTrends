@@ -14,7 +14,8 @@ namespace GitTrends.UITests
     {
         readonly Query _searchBar, _settingsButton, _collectionView, _refreshView,
             _androidContextMenuOverflowButton, _androidSearchBarButton, _sortButton, _emptyDataView,
-            _smallScreenTrendingImage, _largeScreenTrendingImage;
+            _smallScreenTrendingImage, _largeScreenTrendingImage, _informationLabel, _informationButton,
+            _statistic1FloatingActionButton, _statistic2FloatingActionButton, _statistic3FloatingActionButton;
 
         public RepositoryPage(IApp app) : base(app, () => PageTitles.RepositoryPage)
         {
@@ -28,12 +29,36 @@ namespace GitTrends.UITests
             _emptyDataView = GenerateMarkedQuery(RepositoryPageAutomationIds.EmptyDataView);
             _smallScreenTrendingImage = GenerateMarkedQuery(RepositoryPageAutomationIds.SmallScreenTrendingImage);
             _largeScreenTrendingImage = GenerateMarkedQuery(RepositoryPageAutomationIds.LargeScreenTrendingImage);
+            _informationButton = GenerateMarkedQuery(RepositoryPageAutomationIds.InformationButton);
+            _informationLabel = GenerateMarkedQuery(RepositoryPageAutomationIds.InformationLabel);
+            _statistic1FloatingActionButton = GenerateMarkedQuery(RepositoryPageAutomationIds.GetFloatingActionTextButtonLabelAutomationId(FloatingActionButtonType.Statistic1));
+            _statistic2FloatingActionButton = GenerateMarkedQuery(RepositoryPageAutomationIds.GetFloatingActionTextButtonLabelAutomationId(FloatingActionButtonType.Statistic2));
+            _statistic3FloatingActionButton = GenerateMarkedQuery(RepositoryPageAutomationIds.GetFloatingActionTextButtonLabelAutomationId(FloatingActionButtonType.Statistic3));
         }
 
         public bool IsEmptyDataViewVisible => App.Query(_emptyDataView).Any();
 
         public int SmallScreenTrendingImageCount => App.Query(_smallScreenTrendingImage).Count();
         public int LargeScreenTrendingImageCount => App.Query(_largeScreenTrendingImage).Count();
+
+        public string InformationLabelText => App is iOSApp ? GetText(_informationLabel) : throw new NotSupportedException("Information Label Only Available on iOS");
+
+        public string InformationButtonStatistic1Text => App is AndroidApp ? GetText(_statistic1FloatingActionButton) : throw new NotSupportedException("Information Button Only Available on Android");
+        public string InformationButtonStatistic2Text => App is AndroidApp ? GetText(_statistic2FloatingActionButton) : throw new NotSupportedException("Information Button Only Available on Android");
+        public string InformationButtonStatistic3Text => App is AndroidApp ? GetText(_statistic3FloatingActionButton) : throw new NotSupportedException("Information Button Only Available on Android");
+
+        public void TapInformationButton()
+        {
+            if (App is AndroidApp)
+            {
+                App.Tap(_informationButton);
+                App.Screenshot("Information Button Tapped");
+            }
+            else
+            {
+                throw new NotSupportedException("Information Button Only Available on Android");
+            }
+        }
 
         public void WaitForEmptyDataView()
         {

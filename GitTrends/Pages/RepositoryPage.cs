@@ -76,9 +76,9 @@ namespace GitTrends
 
                 Children =
                 {
-                    new TotalsLabel().Row(Row.Totals).ColumnSpan(All<Column>())
+                    new InformationLabel().Row(Row.Totals).ColumnSpan(All<Column>())
                         .Bind<Label, bool, bool>(IsVisibleProperty,nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
-                        .Bind<Label, IReadOnlyList<Repository>, string>(Label.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => totalsLabelConverter(repositories, mobileSortingService)),
+                        .Bind<Label, IReadOnlyList<Repository>, string>(Label.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => StatisticsService.GetInformationLabelText(repositories, mobileSortingService)),
 
                     new RefreshView
                     {
@@ -109,21 +109,7 @@ namespace GitTrends
 
             if (Device.RuntimePlatform is Device.Android)
             {
-                grid.Children.Add(new InformationButton(mobileSortingService, mainThread).Row(Row.Information).Column(Column.Information));
-            }
-
-            static string totalsLabelConverter(in IReadOnlyList<Repository> repositories, in MobileSortingService mobileSortingService)
-            {
-                if (!repositories.Any())
-                    return string.Empty;
-
-                return MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption) switch
-                {
-                    SortingCategory.Views => $"{SortingConstants.Views} {repositories.Sum(x => x.TotalViews).ToAbbreviatedText()}, {SortingConstants.UniqueViews} {repositories.Sum(x => x.TotalUniqueViews).ToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ToAbbreviatedText()}",
-                    SortingCategory.Clones => $"{SortingConstants.Clones} {repositories.Sum(x => x.TotalClones).ToAbbreviatedText()}, {SortingConstants.UniqueClones} {repositories.Sum(x => x.TotalUniqueClones).ToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ToAbbreviatedText()}",
-                    SortingCategory.IssuesForks => $"{SortingConstants.Stars} {repositories.Sum(x => x.StarCount).ToAbbreviatedText()}, {SortingConstants.Forks} {repositories.Sum(x => x.ForkCount).ToAbbreviatedText()}, {SortingConstants.Issues} {repositories.Sum(x => x.IssuesCount).ToAbbreviatedText()}",
-                    _ => throw new NotSupportedException()
-                };
+                grid.Children.Add(new InformationButton(mobileSortingService, mainThread, analyticsService).Row(Row.Information).Column(Column.Information));
             }
         }
 
@@ -248,9 +234,13 @@ namespace GitTrends
 
         void ISearchPage.OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.RaiseEvent(this, text, nameof(SearchBarTextChanged));
 
-        class TotalsLabel : StatisticsLabel
+        class InformationLabel : StatisticsLabel
         {
-            public TotalsLabel() : base(string.Empty, true, nameof(BaseTheme.PrimaryTextColor)) => this.FillExpand().TextCenter();
+            public InformationLabel() : base(string.Empty, true, nameof(BaseTheme.PrimaryTextColor))
+            {
+                AutomationId = RepositoryPageAutomationIds.InformationLabel;
+                this.FillExpand().TextCenter();
+            }
         }
     }
 }
