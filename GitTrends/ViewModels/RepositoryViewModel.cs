@@ -51,12 +51,12 @@ namespace GitTrends
 
             SetTitleText();
 
-            _repositoryDatabase = repositoryDatabase;
-            _gitHubAuthenticationService = gitHubAuthenticationService;
-            _gitHubGraphQLApiService = gitHubGraphQLApiService;
-            _mobileSortingService = sortingService;
-            _gitHubApiV3Service = gitHubApiV3Service;
             _gitHubUserService = gitHubUserService;
+            _mobileSortingService = sortingService;
+            _repositoryDatabase = repositoryDatabase;
+            _gitHubApiV3Service = gitHubApiV3Service;
+            _gitHubGraphQLApiService = gitHubGraphQLApiService;
+            _gitHubAuthenticationService = gitHubAuthenticationService;
 
             RefreshState = RefreshState.Uninitialized;
 

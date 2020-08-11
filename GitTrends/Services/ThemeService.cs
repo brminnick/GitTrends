@@ -69,10 +69,10 @@ namespace GitTrends
                     Application.Current.Resources = theme;
 
                     _analyticsService.Track("Theme Changed", new Dictionary<string, string>
-            {
-                                { nameof(PreferredTheme), preferredTheme.ToString() },
-                                { nameof(Application.Current.RequestedTheme), Application.Current.RequestedTheme.ToString() }
-            });
+                    {
+                        { nameof(PreferredTheme), preferredTheme.ToString() },
+                        { nameof(Application.Current.RequestedTheme), Application.Current.RequestedTheme.ToString() }
+                    });
 
                     OnPreferenceChanged(preferredTheme);
 
@@ -87,7 +87,8 @@ namespace GitTrends
             Application.Current.Resources.Add(new Style(typeof(ContentPage))
             {
                 ApplyToDerivedTypes = true,
-                Setters = {
+                Setters =
+                {
                     new Setter
                     {
                         Property = Xamarin.Forms.DebugRainbows.DebugRainbow.ShowColorsProperty,

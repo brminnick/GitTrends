@@ -97,7 +97,7 @@
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.4.0" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.4.0" />
     <PackageReference Include="Shiny.Notifications" Version="1.2.0.1755" />
-    <PackageReference Include="Xam.Plugins.Android.ExoPlayer" Version="2.11.6" />
+    <PackageReference Include="Xam.Plugins.Android.ExoPlayer" Version="2.11.8" />
     <PackageReference Include="Xamarin.Firebase.Messaging" Version="119.0.1-preview02" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="3.3.0" />
     <PackageReference Include="Xamarin.GooglePlayServices.Base" Version="117.2.1-preview02" />
