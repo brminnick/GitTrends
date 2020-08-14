@@ -96,7 +96,7 @@ namespace GitTrends
                 return trendingRepositories;
             }
 
-            return Enumerable.Empty<Repository>().ToList();
+            return new List<Repository>();
         }
     }
 }

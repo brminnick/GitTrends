@@ -143,20 +143,20 @@ namespace GitTrends
 
         public List<DailyViewsModel> DailyViewsList
         {
-            get => _dailyViewsList ??= Enumerable.Empty<DailyViewsModel>().ToList();
+            get => _dailyViewsList ??= new List<DailyViewsModel>();
             set => SetProperty(ref _dailyViewsList, value, UpdateDailyViewsListPropertiesChanged);
         }
 
         public List<DailyClonesModel> DailyClonesList
         {
-            get => _dailyClonesList ??= Enumerable.Empty<DailyClonesModel>().ToList();
+            get => _dailyClonesList ??= new List<DailyClonesModel>();
             set => SetProperty(ref _dailyClonesList, value, UpdateDailyClonesListPropertiesChanged);
         }
 
         async Task ExecuteFetchDataCommand(Repository repository, CancellationToken cancellationToken)
         {
-            IReadOnlyList<DailyViewsModel> repositoryViews = Enumerable.Empty<DailyViewsModel>().ToList();
-            IReadOnlyList<DailyClonesModel> repositoryClones = Enumerable.Empty<DailyClonesModel>().ToList();
+            IReadOnlyList<DailyViewsModel> repositoryViews = new List<DailyViewsModel>();
+            IReadOnlyList<DailyClonesModel> repositoryClones = new List<DailyClonesModel>();
 
             var minimumTimeTask = Task.Delay(TimeSpan.FromSeconds(2));
 
@@ -187,8 +187,8 @@ namespace GitTrends
             }
             catch (Exception e)
             {
-                repositoryViews = Enumerable.Empty<DailyViewsModel>().ToList();
-                repositoryClones = Enumerable.Empty<DailyClonesModel>().ToList();
+                repositoryViews = new List<DailyViewsModel>();
+                repositoryClones = new List<DailyClonesModel>();
 
                 EmptyDataViewTitle = EmptyDataViewConstants.UnableToRetrieveData;
 

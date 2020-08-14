@@ -99,7 +99,7 @@
     <PackageReference Include="Shiny.Notifications" Version="1.2.0.1755" />
     <PackageReference Include="Xam.Plugins.Android.ExoPlayer" Version="2.11.8" />
     <PackageReference Include="Xamarin.Firebase.Messaging" Version="119.0.1-preview02" />
-    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="3.3.0" />
+    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.0.0" />
     <PackageReference Include="Xamarin.GooglePlayServices.Base" Version="117.2.1-preview02" />
     <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.1.0.714" />
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0.1" />

@@ -7,10 +7,10 @@ namespace GitTrends.Shared
     public class IssuesConnection
     {
         public IssuesConnection(long totalCount, IEnumerable<Issue>? nodes) =>
-            (IssuesCount, IssueList) = (totalCount, nodes?.ToList() ?? Enumerable.Empty<Issue>().ToList());
+            (IssuesCount, IssueList) = (totalCount, nodes?.ToList() ?? new List<Issue>());
 
         [JsonProperty("nodes")]
-        public List<Issue> IssueList { get; }
+        public IReadOnlyList<Issue> IssueList { get; }
 
         [JsonProperty("totalCount")]
         public long IssuesCount { get; }

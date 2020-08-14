@@ -35,8 +35,8 @@ namespace GitTrends.UITests
 
         public bool IsTrending { get; set; }
 
-        public IReadOnlyList<DailyViewsModel> DailyViewsList { get; set; } = Enumerable.Empty<DailyViewsModel>().ToList();
+        public IReadOnlyList<DailyViewsModel> DailyViewsList { get; set; } = new List<DailyViewsModel>();
 
-        public IReadOnlyList<DailyClonesModel> DailyClonesList { get; set; } = Enumerable.Empty<DailyClonesModel>().ToList();
+        public IReadOnlyList<DailyClonesModel> DailyClonesList { get; set; } = new List<DailyClonesModel>();
     }
 }

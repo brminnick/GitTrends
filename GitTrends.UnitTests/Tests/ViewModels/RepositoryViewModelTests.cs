@@ -18,7 +18,7 @@ namespace GitTrends.UnitTests
         public override Task Setup()
         {
             _repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
-            _repositoryViewModel.VisibleRepositoryList = Enumerable.Empty<Repository>().ToList();
+            _repositoryViewModel.VisibleRepositoryList = new List<Repository>();
 
             return base.Setup();
         }

@@ -8,7 +8,7 @@ namespace GitTrends.Shared
     {
         public RepositoryConnection(IEnumerable<Repository>? nodes, PageInfo pageInfo)
         {
-            RepositoryList = nodes?.ToList() ?? Enumerable.Empty<Repository>().ToList();
+            RepositoryList = nodes?.ToList() ?? new List<Repository>();
             PageInfo = pageInfo;
         }
 

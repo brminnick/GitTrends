@@ -133,7 +133,7 @@ namespace GitTrends
 
         public IReadOnlyList<MobileReferringSiteModel> MobileReferringSitesList
         {
-            get => _mobileReferringSiteList ??= Enumerable.Empty<MobileReferringSiteModel>().ToList();
+            get => _mobileReferringSiteList ??= new List<MobileReferringSiteModel>();
             set => SetProperty(ref _mobileReferringSiteList, value);
         }
 
@@ -168,7 +168,7 @@ namespace GitTrends
         async Task ExecuteRefreshCommand(string owner, string repository, string repositoryUrl, CancellationToken cancellationToken)
         {
             HttpResponseMessage? finalResponse = null;
-            IReadOnlyList<ReferringSiteModel> referringSitesList = Enumerable.Empty<ReferringSiteModel>().ToList();
+            IReadOnlyList<ReferringSiteModel> referringSitesList = new List<ReferringSiteModel>();
 
             try
             {

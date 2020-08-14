@@ -233,7 +233,7 @@ namespace GitTrends.UnitTests
             var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
 
             //Act
-            await foreach (var repository in gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(Enumerable.Empty<Repository>().ToList(), CancellationToken.None).ConfigureAwait(false))
+            await foreach (var repository in gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(new List<Repository>(), CancellationToken.None).ConfigureAwait(false))
             {
                 repositories.Add(repository);
             }

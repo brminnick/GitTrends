@@ -35,8 +35,8 @@ namespace GitTrends
         string _emptyDataViewTitle = string.Empty;
         string _emptyDataViewDescription = string.Empty;
 
-        IReadOnlyList<Repository> _repositoryList = Enumerable.Empty<Repository>().ToList();
-        IReadOnlyList<Repository> _visibleRepositoryList = Enumerable.Empty<Repository>().ToList();
+        IReadOnlyList<Repository> _repositoryList = new List<Repository>();
+        IReadOnlyList<Repository> _visibleRepositoryList = new List<Repository>();
 
         public RepositoryViewModel(IMainThread mainThread,
                                     IAnalyticsService analyticsService,
@@ -296,7 +296,7 @@ namespace GitTrends
 
         void UpdateListForLoggedOutUser()
         {
-            _repositoryList = Enumerable.Empty<Repository>().ToList();
+            _repositoryList = new List<Repository>();
             UpdateVisibleRepositoryList(string.Empty, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
