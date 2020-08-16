@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -9,6 +10,7 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using Autofac;
+using FFImageLoading;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
@@ -292,6 +294,11 @@ namespace GitTrends
             var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
 
             VisibleRepositoryList = MobileSortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
+
+            foreach (var url in VisibleRepositoryList.Select(x => x.OwnerAvatarUrl).Distinct().Where(isValidUri))
+                ImageService.Instance.LoadString(url).PreloadAsync().SafeFireAndForget(ex => AnalyticsService.Report(ex));
+
+            static bool isValidUri(string url) => Uri.TryCreate(url, UriKind.Absolute, out _);
         }
 
         void UpdateListForLoggedOutUser()
