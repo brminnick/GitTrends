@@ -9,9 +9,9 @@ using Xamarin.Android.Net;
 namespace GitTrends.Droid
 {
 #if AppStore
-    [Application(Debuggable = true)]
-#else
     [Application(Debuggable = false)]
+#else
+    [Application(Debuggable = true)]
 #endif
     public partial class MainApplication : Application
     {
