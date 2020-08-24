@@ -41,6 +41,23 @@ namespace GitTrends
             return data.Repository;
         }
 
+        public async IAsyncEnumerable<StarGazers> GetStarGazerInfo(string repositoryName, string repositoryOwner, [EnumeratorCancellation] CancellationToken cancellationToken, int numberOfStarGazersPerRequest = 100)
+        {
+            StarGazerResponse? starGazerResponse = null;
+
+            var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
+
+            do
+            {
+                var endCursor = GetEndCursorString(starGazerResponse?.Repository.StarGazers.StarredAt.LastOrDefault()?.Cursor);
+                starGazerResponse = await ExecuteGraphQLRequest(() => GitHubApiClient.StarGazerQuery(new StarGazerQueryContent(repositoryName, repositoryOwner, endCursor, numberOfStarGazersPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+
+                if (starGazerResponse?.Repository.StarGazers != null)
+                    yield return starGazerResponse.Repository.StarGazers;
+
+            } while (starGazerResponse?.Repository.StarGazers.StarredAt.Count == numberOfStarGazersPerRequest);
+        }
+
         public async IAsyncEnumerable<IEnumerable<Repository>> GetRepositories(string repositoryOwner, [EnumeratorCancellation] CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
         {
             if (_gitHubUserService.IsDemoUser)
@@ -52,10 +69,13 @@ namespace GitTrends
 
                 for (int i = 0; i < DemoDataConstants.RepoCount; i++)
                 {
+                    var stars = DemoDataConstants.GetRandomNumber();
+                    var stargazerInfo = generateStarGazerInfo(stars);
+
                     var demoRepo = new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
                                                 new RepositoryOwner(DemoUserConstants.Alias, _gitHubUserService.AvatarUrl),
                                                 new IssuesConnection(DemoDataConstants.GetRandomNumber(), Enumerable.Empty<Issue>()),
-                                                _gitHubUserService.AvatarUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false);
+                                                _gitHubUserService.AvatarUrl, new StarGazers(stars, stargazerInfo), false);
                     demoDataList.Add(demoRepo);
                 }
 
@@ -75,16 +95,28 @@ namespace GitTrends
                 }
                 while (repositoryConnection?.PageInfo?.HasNextPage is true);
             }
+
+            static IEnumerable<StarGazerInfo> generateStarGazerInfo(in int starCount)
+            {
+                var starGazerList = new List<StarGazerInfo>();
+
+                var startDate = DemoDataConstants.GetRandomDate();
+
+                for (int i = 0; i < starCount; i++)
+                    starGazerList.Add(new StarGazerInfo(DemoDataConstants.GetRandomDate(), string.Empty));
+
+                return starGazerList.OrderBy(x => x.StarredAt);
+            }
         }
+
+        static string GetEndCursorString(string? endCursor) => string.IsNullOrWhiteSpace(endCursor) ? string.Empty : "after: \"" + endCursor + "\"";
 
         async Task<RepositoryConnection> GetRepositoryConnection(string repositoryOwner, string? endCursor, CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
         {
             var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-            var data = await ExecuteGraphQLRequest(() => GitHubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, getEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+            var data = await ExecuteGraphQLRequest(() => GitHubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
             return data.GitHubUser.RepositoryConnection;
-
-            static string getEndCursorString(string? endCursor) => string.IsNullOrWhiteSpace(endCursor) ? string.Empty : "after: \"" + endCursor + "\"";
         }
 
         async Task<T> ExecuteGraphQLRequest<T>(Func<Task<GraphQLResponse<T>>> action, CancellationToken cancellationToken, int numRetries = 2, [CallerMemberName] string callerName = "")

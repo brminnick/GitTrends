@@ -28,8 +28,10 @@ namespace GitTrends.Shared
             OwnerAvatarUrl = owner.AvatarUrl;
             IssuesCount = issues?.IssuesCount ?? 0;
             Url = url;
-            StarCount = stargazers.TotalCount;
             IsFork = isFork;
+
+            StarCount = stargazers.TotalCount;
+            StarredAt = stargazers.StarredAt.Select(x => x.StarredAt).ToList();
 
             if (views != null && clones != null)
                 AddMissingDates(views, clones);
@@ -67,6 +69,7 @@ namespace GitTrends.Shared
 
         public IReadOnlyList<DailyViewsModel> DailyViewsList { get; }
         public IReadOnlyList<DailyClonesModel> DailyClonesList { get; }
+        public IReadOnlyList<DateTimeOffset> StarredAt { get; }
 
         [JsonProperty("url")]
         public string Url { get; }
@@ -122,9 +125,22 @@ namespace GitTrends.Shared
 
     public class StarGazers
     {
-        public StarGazers(long totalCount) => TotalCount = totalCount;
+        public StarGazers(long totalCount, IEnumerable<StarGazerInfo> edges) =>
+            (TotalCount, StarredAt) = (totalCount, edges.ToList());
 
         [JsonProperty("totalCount")]
         public long TotalCount { get; }
+
+        [JsonProperty("edges")]
+        public IReadOnlyList<StarGazerInfo> StarredAt { get; }
+    }
+
+    public class StarGazerInfo
+    {
+        public StarGazerInfo(DateTimeOffset starredAt, string cursor) =>
+            (StarredAt, Cursor) = (starredAt, cursor);
+
+        public DateTimeOffset StarredAt { get; }
+        public string Cursor { get; }
     }
 }

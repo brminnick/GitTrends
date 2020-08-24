@@ -13,6 +13,8 @@ namespace GitTrends.Mobile.Common
 
         static readonly Random _random = new Random((int)DateTime.Now.Ticks);
 
+        public static int GetRandomNumber() => _random.Next(MaximumRandomNumber);
+
         public static string GetRandomText()
         {
             var startIndex = _random.Next(_loremIpsum.Length / 2);
@@ -21,6 +23,14 @@ namespace GitTrends.Mobile.Common
             return _loremIpsum.Substring(startIndex, length);
         }
 
-        public static int GetRandomNumber() => _random.Next(MaximumRandomNumber);
+        //https://stackoverflow.com/a/194870/5953643
+        public static DateTimeOffset GetRandomDate()
+        {
+            var gitHubFoundedDate = new DateTimeOffset(2008, 2, 8, 0, 0, 0, TimeSpan.Zero);
+
+            int range = (DateTime.Today - gitHubFoundedDate).Days;
+
+            return gitHubFoundedDate.AddDays(_random.Next(range));
+        }
     }
 }

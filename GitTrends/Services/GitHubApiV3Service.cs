@@ -43,7 +43,7 @@ namespace GitTrends
                                                 new RepositoryOwner(matchingRepository.OwnerLogin, matchingRepository.OwnerAvatarUrl),
                                                 new IssuesConnection(matchingRepository.IssuesCount, null),
                                                 matchingRepository.Url,
-                                                new StarGazers(matchingRepository.StarCount),
+                                                new StarGazers(matchingRepository.StarCount, matchingRepository.StarredAt.Select(x => new StarGazerInfo(x, string.Empty))),
                                                 matchingRepository.IsFork,
                                                 viewsResponse.DailyViewsList,
                                                 clonesResponse.DailyClonesList);

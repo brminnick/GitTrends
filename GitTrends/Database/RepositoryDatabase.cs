@@ -234,7 +234,10 @@ namespace GitTrends
                                         new RepositoryOwner(repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl ?? repositoryDatabaseModel.OwnerLogin),
                                         new IssuesConnection(repositoryDatabaseModel.IssuesCount, Enumerable.Empty<Issue>()),
                                         repositoryDatabaseModel.Url,
-                                        new StarGazers(repositoryDatabaseModel.StarCount),
+#if AppStore
+#error new StarGazers using Enumerable.Empty
+#endif
+                                        new StarGazers(repositoryDatabaseModel.StarCount, Enumerable.Empty<StarGazerInfo>()),
                                         repositoryDatabaseModel.IsFork,
                                         repositoryDatabaseModel.DataDownloadedAt,
                                         repositoryDatabaseModel.IsFavorite,
