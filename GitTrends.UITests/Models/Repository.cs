@@ -35,6 +35,8 @@ namespace GitTrends.UITests
 
         public bool IsTrending { get; set; }
 
+        public bool IsFavorite { get; set; }
+
         public IReadOnlyList<DailyViewsModel> DailyViewsList { get; set; } = new List<DailyViewsModel>();
 
         public IReadOnlyList<DailyClonesModel> DailyClonesList { get; set; } = new List<DailyClonesModel>();

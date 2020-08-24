@@ -219,6 +219,8 @@ namespace GitTrends
 
             public long TotalUniqueClones { get; set; }
 
+            public bool IsFavorite { get; set; }
+
             public static Repository ToRepository(in RepositoryDatabaseModel repositoryDatabaseModel,
                                                     in IEnumerable<DailyClonesDatabaseModel> dailyClonesDatabaseModels,
                                                     in IEnumerable<DailyViewsDatabaseModel> dailyViewsDatabaseModels)
@@ -235,6 +237,7 @@ namespace GitTrends
                                         new StarGazers(repositoryDatabaseModel.StarCount),
                                         repositoryDatabaseModel.IsFork,
                                         repositoryDatabaseModel.DataDownloadedAt,
+                                        repositoryDatabaseModel.IsFavorite,
                                         viewsList,
                                         clonesList);
             }
@@ -257,6 +260,7 @@ namespace GitTrends
                     TotalUniqueClones = repository.TotalUniqueClones,
                     TotalViews = repository.TotalViews,
                     TotalUniqueViews = repository.TotalUniqueViews,
+                    IsFavorite = repository.IsFavorite
                 };
             }
         }

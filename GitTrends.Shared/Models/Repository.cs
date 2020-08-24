@@ -9,10 +9,11 @@ namespace GitTrends.Shared
 {
     public class Repository : IRepository
     {
-        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork, DateTimeOffset dataDownloadedAt, IList<DailyViewsModel>? views = null, IList<DailyClonesModel>? clones = null)
+        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork, DateTimeOffset dataDownloadedAt, bool isFavorite, IList<DailyViewsModel>? views = null, IList<DailyClonesModel>? clones = null)
             : this(name, description, forkCount, owner, issues, url, stargazers, isFork, views, clones)
         {
             DataDownloadedAt = dataDownloadedAt;
+            IsFavorite = IsFavorite;
         }
 
         [JsonConstructor]
@@ -61,6 +62,7 @@ namespace GitTrends.Shared
         public long ForkCount { get; }
         public bool IsFork { get; }
 
+        public bool IsFavorite { get; }
         public bool IsTrending { get; }
 
         public IReadOnlyList<DailyViewsModel> DailyViewsList { get; }

@@ -162,7 +162,7 @@ namespace GitTrends.UnitTests
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
                                                         new RepositoryOwner(DemoUserConstants.Alias, gitTrendsAvatarUrl),
                                                         new IssuesConnection(DemoDataConstants.GetRandomNumber(), Enumerable.Empty<Issue>()),
-                                                        repositoryUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false, downloadedAt, dailyViewsList, dailyClonesList);
+                                                        repositoryUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false, downloadedAt, false, dailyViewsList, dailyClonesList);
         }
 
         static MobileReferringSiteModel CreateExpiredMobileReferringSite(DateTimeOffset downloadedAt, string referrer)

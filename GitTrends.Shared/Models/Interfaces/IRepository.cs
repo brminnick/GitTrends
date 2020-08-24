@@ -13,9 +13,10 @@ namespace GitTrends.Shared
         string Description { get; }
         long ForkCount { get; }
         string Url { get; }
-        public long TotalViews { get; }
-        public long TotalUniqueViews { get; }
-        public long TotalClones { get; }
-        public long TotalUniqueClones { get; }
+        long TotalViews { get; }
+        long TotalUniqueViews { get; }
+        long TotalClones { get; }
+        long TotalUniqueClones { get; }
+        bool IsFavorite { get; }
     }
 }
