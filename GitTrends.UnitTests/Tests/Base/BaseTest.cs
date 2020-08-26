@@ -72,6 +72,7 @@ namespace GitTrends.UnitTests
             const string gitTrendsAvatarUrl = "https://avatars3.githubusercontent.com/u/61480020?s=400&u=b1a900b5fa1ede22af9d2d9bfd6c49a072e659ba&v=4";
             var downloadedAt = DateTimeOffset.UtcNow;
 
+            var starredAtList = new List<DateTimeOffset>();
             var dailyViewsList = new List<DailyViewsModel>();
             var dailyClonesList = new List<DailyClonesModel>();
 
@@ -80,14 +81,15 @@ namespace GitTrends.UnitTests
                 var count = DemoDataConstants.GetRandomNumber();
                 var uniqeCount = count / 2; //Ensures uniqueCount is always less than count
 
+                starredAtList.Add(DemoDataConstants.GetRandomDate());
                 dailyViewsList.Add(new DailyViewsModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
                 dailyClonesList.Add(new DailyClonesModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
             }
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-                                                        new RepositoryOwner(DemoUserConstants.Alias, gitTrendsAvatarUrl),
-                                                        new IssuesConnection(DemoDataConstants.GetRandomNumber(), Enumerable.Empty<Issue>()),
-                                                        gitTrendsAvatarUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false, downloadedAt, false, dailyViewsList, dailyClonesList);
+                                                        DemoUserConstants.Alias, gitTrendsAvatarUrl,
+                                                        DemoDataConstants.GetRandomNumber(),
+                                                        gitTrendsAvatarUrl, false, downloadedAt, false, dailyViewsList, dailyClonesList, starredAtList.OrderBy(x => x));
         }
     }
 }

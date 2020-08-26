@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using GitTrends.Shared;
 
 namespace GitTrends.Mobile.Common
 {
@@ -31,6 +34,18 @@ namespace GitTrends.Mobile.Common
             int range = (DateTime.Today - gitHubFoundedDate).Days;
 
             return gitHubFoundedDate.AddDays(_random.Next(range));
+        }
+
+        public static IEnumerable<DateTimeOffset> GenerateStarredAtDates(in int starCount)
+        {
+            var starGazerList = new List<DateTimeOffset>();
+
+            var startDate = GetRandomDate();
+
+            for (int i = 0; i < starCount; i++)
+                starGazerList.Add(GetRandomDate());
+
+            return starGazerList.OrderBy(x => x);
         }
     }
 }

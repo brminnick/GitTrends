@@ -219,7 +219,7 @@ namespace GitTrends
 
             public long TotalUniqueClones { get; set; }
 
-            public bool IsFavorite { get; set; }
+            public bool? IsFavorite { get; set; }
 
             public static Repository ToRepository(in RepositoryDatabaseModel repositoryDatabaseModel,
                                                     in IEnumerable<DailyClonesDatabaseModel> dailyClonesDatabaseModels,
@@ -231,18 +231,18 @@ namespace GitTrends
                 return new Repository(repositoryDatabaseModel.Name,
                                         repositoryDatabaseModel.Description,
                                         repositoryDatabaseModel.ForkCount,
-                                        new RepositoryOwner(repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl ?? repositoryDatabaseModel.OwnerLogin),
-                                        new IssuesConnection(repositoryDatabaseModel.IssuesCount, Enumerable.Empty<Issue>()),
+                                        repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl ?? repositoryDatabaseModel.OwnerLogin,
+                                        repositoryDatabaseModel.IssuesCount,
                                         repositoryDatabaseModel.Url,
-#if AppStore
-#error new StarGazers using Enumerable.Empty
-#endif
-                                        new StarGazers(repositoryDatabaseModel.StarCount, Enumerable.Empty<StarGazerInfo>()),
                                         repositoryDatabaseModel.IsFork,
                                         repositoryDatabaseModel.DataDownloadedAt,
                                         repositoryDatabaseModel.IsFavorite,
                                         viewsList,
-                                        clonesList);
+                                        clonesList,
+#if AppStore
+#error StarredAt Missing From Database Data
+#endif
+                                        Enumerable.Empty<DateTimeOffset>());
             }
 
             public static RepositoryDatabaseModel ToRepositoryDatabase(in Repository repository)

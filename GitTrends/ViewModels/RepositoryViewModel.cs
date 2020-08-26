@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -30,6 +31,7 @@ namespace GitTrends
         readonly MobileSortingService _mobileSortingService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
+        readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
         bool _isRefreshing;
         string _titleText = string.Empty;
@@ -47,7 +49,8 @@ namespace GitTrends
                                     RepositoryDatabase repositoryDatabase,
                                     GitHubApiV3Service gitHubApiV3Service,
                                     GitHubGraphQLApiService gitHubGraphQLApiService,
-                                    GitHubAuthenticationService gitHubAuthenticationService) : base(analyticsService, mainThread)
+                                    GitHubAuthenticationService gitHubAuthenticationService,
+                                    GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, mainThread)
         {
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 
@@ -59,6 +62,7 @@ namespace GitTrends
             _gitHubApiV3Service = gitHubApiV3Service;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _gitHubAuthenticationService = gitHubAuthenticationService;
+            _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
 
             RefreshState = RefreshState.Uninitialized;
 
@@ -134,20 +138,29 @@ namespace GitTrends
 
             try
             {
-                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
+                const int minimumBatchCount = 20;
+
+                var repositoryList = new List<Repository>();
+                await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    //Only display the first update to avoid unncessary work on the UIThread
-                    var shouldUpdateVisibleRepositoryList = !VisibleRepositoryList.Any();
-                    AddRepositoriesToCollection(retrievedRepositories, _searchBarText, shouldUpdateVisibleRepositoryList);
+                    repositoryList.Add(repository);
+
+                    //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
+                    if (!_gitHubUserService.IsDemoUser && repositoryList.Count > minimumBatchCount)
+                    {
+                        //Only display the first update to avoid unncessary work on the UIThread
+                        var shouldUpdateVisibleRepositoryList = !VisibleRepositoryList.Any();
+                        AddRepositoriesToCollection(repositoryList, _searchBarText, shouldUpdateVisibleRepositoryList);
+                    }
                 }
 
                 var completedRepoitories = new List<Repository>();
-                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList, cancellationTokenSource.Token).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(_repositoryList, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     completedRepoitories.Add(retrievedRepositoryWithViewsAndClonesData);
 
                     //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
-                    if (!_gitHubUserService.IsDemoUser && completedRepoitories.Count > 20)
+                    if (!_gitHubUserService.IsDemoUser && completedRepoitories.Count > minimumBatchCount)
                     {
                         AddRepositoriesToCollection(completedRepoitories, _searchBarText);
                         completedRepoitories.Clear();
@@ -249,7 +262,7 @@ namespace GitTrends
                     AnalyticsService.Report(e);
                 }
             }
-        }
+        }        
 
         void ExecuteSortRepositoriesCommand(SortingOption option)
         {

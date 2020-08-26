@@ -38,7 +38,8 @@ namespace GitTrends.UnitTests
 
             var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
             var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
+            var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
+
 
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
@@ -46,7 +47,7 @@ namespace GitTrends.UnitTests
 
             if (shouldIncludeViewsClonesData)
             {
-                await foreach (var completedReposiory in gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(new[] { repository }, CancellationToken.None))
+                await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(new[] { repository }, CancellationToken.None))
                 {
                     repository = completedReposiory;
                 }

@@ -92,9 +92,9 @@ namespace GitTrends.UnitTests
             //Act
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
-            await foreach (var retrievedRepositories in githubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
+            await foreach (var repository in githubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
             {
-                repositories.AddRange(retrievedRepositories);
+                repositories.Add(repository);
             }
 
             //Assert
@@ -126,9 +126,9 @@ namespace GitTrends.UnitTests
             //Act
             await AuthenticateUser(gitHubUserService, githubGraphQLApiService).ConfigureAwait(false);
 
-            await foreach (var retrievedRepositories in githubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
+            await foreach (var repository in githubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
             {
-                repositories.AddRange(retrievedRepositories);
+                repositories.Add(repository);
             }
 
             //Assert

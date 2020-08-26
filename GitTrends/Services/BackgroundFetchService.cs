@@ -4,38 +4,46 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
     public class BackgroundFetchService
     {
         readonly IAnalyticsService _analyticsService;
+        readonly GitHubUserService _gitHubUserService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
-        readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly RepositoryDatabase _repositoryDatabase;
         readonly NotificationService _notificationService;
         readonly ReferringSitesDatabase _referringSitesDatabase;
-        readonly GitHubUserService _gitHubUserService;
+        readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
+        readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
-        public BackgroundFetchService(IAnalyticsService analyticsService,
+        public BackgroundFetchService(IAppInfo appInfo,
+                                        GitHubUserService gitHubUserService,
+                                        IAnalyticsService analyticsService,
                                         GitHubApiV3Service gitHubApiV3Service,
-                                        GitHubGraphQLApiService gitHubGraphQLApiService,
                                         RepositoryDatabase repositoryDatabase,
-                                        ReferringSitesDatabase referringSitesDatabase,
                                         NotificationService notificationService,
-                                        GitHubUserService gitHubUserService)
+                                        ReferringSitesDatabase referringSitesDatabase,
+                                        GitHubGraphQLApiService gitHubGraphQLApiService,
+                                        GitHubApiRepositoriesService gitHubApiRepositoriesService)
         {
             _analyticsService = analyticsService;
+            _gitHubUserService = gitHubUserService;
             _gitHubApiV3Service = gitHubApiV3Service;
-            _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _repositoryDatabase = repositoryDatabase;
             _notificationService = notificationService;
             _referringSitesDatabase = referringSitesDatabase;
-            _gitHubUserService = gitHubUserService;
+            _gitHubGraphQLApiService = gitHubGraphQLApiService;
+            _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
+
+            CleanUpDatabaseIdentifier = $"{appInfo.PackageName}.{nameof(CleanUpDatabase)}";
+            NotifyTrendingRepositoriesIdentifier = $"{appInfo.PackageName}.{nameof(NotifyTrendingRepositories)}";
         }
 
-        public static string NotifyTrendingRepositoriesIdentifier { get; } = $"{Xamarin.Essentials.AppInfo.PackageName}.{nameof(NotifyTrendingRepositories)}";
-        public static string CleanUpDatabaseIdentifier { get; } = $"{Xamarin.Essentials.AppInfo.PackageName}.{nameof(CleanUpDatabase)}";
+        public string CleanUpDatabaseIdentifier { get; }
+        public string NotifyTrendingRepositoriesIdentifier { get; }
 
         public async Task CleanUpDatabase()
         {
@@ -70,15 +78,15 @@ namespace GitTrends
             if (!_gitHubUserService.IsDemoUser && !string.IsNullOrEmpty(_gitHubUserService.Alias))
             {
                 var retrievedRepositoryList = new List<Repository>();
-                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(_gitHubUserService.Alias, cancellationToken).ConfigureAwait(false))
+                await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(_gitHubUserService.Alias, cancellationToken).ConfigureAwait(false))
                 {
-                    retrievedRepositoryList.AddRange(retrievedRepositories);
+                    retrievedRepositoryList.Add(repository);
                 }
 
                 var retrievedRepositoryList_NoDuplicatesNoForks = RepositoryService.RemoveForksAndDuplicates(retrievedRepositoryList);
 
                 var trendingRepositories = new List<Repository>();
-                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(retrievedRepositoryList_NoDuplicatesNoForks.ToList(), cancellationToken).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(retrievedRepositoryList_NoDuplicatesNoForks.ToList(), cancellationToken).ConfigureAwait(false))
                 {
                     try
                     {

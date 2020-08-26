@@ -33,10 +33,10 @@ namespace GitTrends
             return (data.Viewer.Alias, data.Viewer.Name, data.Viewer.AvatarUri);
         }
 
-        public async Task<Repository> GetRepository(string repositoryOwner, string repositoryName, CancellationToken cancellationToken, int numberOfIssuesPerRequest = 100)
+        public async Task<Repository> GetRepository(string repositoryOwner, string repositoryName, CancellationToken cancellationToken)
         {
             var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-            var data = await ExecuteGraphQLRequest(() => GitHubApiClient.RepositoryQuery(new RepositoryQueryContent(repositoryOwner, repositoryName, numberOfIssuesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+            var data = await ExecuteGraphQLRequest(() => GitHubApiClient.RepositoryQuery(new RepositoryQueryContent(repositoryOwner, repositoryName), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
             return data.Repository;
         }
@@ -58,28 +58,20 @@ namespace GitTrends
             } while (starGazerResponse?.Repository.StarGazers.StarredAt.Count == numberOfStarGazersPerRequest);
         }
 
-        public async IAsyncEnumerable<IEnumerable<Repository>> GetRepositories(string repositoryOwner, [EnumeratorCancellation] CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
+        public async IAsyncEnumerable<Repository> GetRepositories(string repositoryOwner, [EnumeratorCancellation] CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
         {
             if (_gitHubUserService.IsDemoUser)
             {
                 //Yield off of main thread to generate the demoDataList
                 await Task.Yield();
 
-                var demoDataList = new List<Repository>();
-
                 for (int i = 0; i < DemoDataConstants.RepoCount; i++)
                 {
-                    var stars = DemoDataConstants.GetRandomNumber();
-                    var stargazerInfo = generateStarGazerInfo(stars);
-
                     var demoRepo = new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-                                                new RepositoryOwner(DemoUserConstants.Alias, _gitHubUserService.AvatarUrl),
-                                                new IssuesConnection(DemoDataConstants.GetRandomNumber(), Enumerable.Empty<Issue>()),
-                                                _gitHubUserService.AvatarUrl, new StarGazers(stars, stargazerInfo), false);
-                    demoDataList.Add(demoRepo);
+                                                DemoUserConstants.Alias, _gitHubUserService.AvatarUrl,
+                                                DemoDataConstants.GetRandomNumber(), _gitHubUserService.AvatarUrl, false, DateTimeOffset.UtcNow);
+                    yield return demoRepo;
                 }
-
-                yield return demoDataList;
 
                 //Allow UI to update
                 await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
@@ -91,21 +83,14 @@ namespace GitTrends
                 do
                 {
                     repositoryConnection = await GetRepositoryConnection(repositoryOwner, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
-                    yield return repositoryConnection?.RepositoryList ?? Enumerable.Empty<Repository>();
+
+                    foreach (var repository in repositoryConnection.RepositoryList)
+                    {
+                        yield return new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
+                                                        repository.Issues.IssuesCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt);
+                    }
                 }
                 while (repositoryConnection?.PageInfo?.HasNextPage is true);
-            }
-
-            static IEnumerable<StarGazerInfo> generateStarGazerInfo(in int starCount)
-            {
-                var starGazerList = new List<StarGazerInfo>();
-
-                var startDate = DemoDataConstants.GetRandomDate();
-
-                for (int i = 0; i < starCount; i++)
-                    starGazerList.Add(new StarGazerInfo(DemoDataConstants.GetRandomDate(), string.Empty));
-
-                return starGazerList.OrderBy(x => x.StarredAt);
             }
         }
 
