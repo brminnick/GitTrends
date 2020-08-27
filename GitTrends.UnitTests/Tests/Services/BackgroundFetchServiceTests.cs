@@ -76,7 +76,7 @@ namespace GitTrends.UnitTests
             static async Task<int> getRepositoryDatabaseCount(RepositoryDatabase repositoryDatabase)
             {
                 var repositories = await repositoryDatabase.GetRepositories().ConfigureAwait(false);
-                return repositories.Count();
+                return repositories.Count;
             }
 
             static async Task<int> getReferringSitesDatabaseCount(ReferringSitesDatabase referringSitesDatabase, params string[] repositoryUrl)

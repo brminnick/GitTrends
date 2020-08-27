@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -131,10 +129,13 @@ namespace GitTrends
             HttpResponseMessage? finalResponse = null;
 
             var cancellationTokenSource = new CancellationTokenSource();
-            GitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
             GitHubAuthenticationService.LoggedOut += HandleLoggedOut;
+            GitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
 
             AnalyticsService.Track("Refresh Triggered", "Sorting Option", _mobileSortingService.CurrentOption.ToString());
+
+            List<Repository>? repositoryDatabaseList = null;
+            var reposiotryDatabaseTask = _repositoryDatabase.GetRepositories();
 
             try
             {
@@ -143,7 +144,13 @@ namespace GitTrends
                 var repositoryList = new List<Repository>();
                 await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    repositoryList.Add(repository);
+                    repositoryDatabaseList ??= await reposiotryDatabaseTask.ConfigureAwait(false);
+
+                    repositoryList.Add(repositoryDatabaseList.FirstOrDefault(x => x.Url == repository.Url) switch
+                    {
+                        { IsFavorite: true } => new Repository(repository.Name, repository.Description, repository.ForkCount, repository.OwnerLogin, repository.OwnerAvatarUrl, repository.IssuesCount, repository.Url, repository.IsFork, repository.DataDownloadedAt, true),
+                        _ => repository
+                    });
 
                     //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
                     if (!_gitHubUserService.IsDemoUser && repositoryList.Count > minimumBatchCount)
@@ -151,8 +158,12 @@ namespace GitTrends
                         //Only display the first update to avoid unncessary work on the UIThread
                         var shouldUpdateVisibleRepositoryList = !VisibleRepositoryList.Any();
                         AddRepositoriesToCollection(repositoryList, _searchBarText, shouldUpdateVisibleRepositoryList);
+                        repositoryList.Clear();
                     }
                 }
+
+                //Add Remaining Repositories to _repositoryList
+                AddRepositoriesToCollection(repositoryList, _searchBarText);
 
                 var completedRepoitories = new List<Repository>();
                 await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(_repositoryList, cancellationTokenSource.Token).ConfigureAwait(false))
@@ -168,7 +179,7 @@ namespace GitTrends
                 }
 
                 //Add Remaining Repositories to VisibleRepositoryList
-                AddRepositoriesToCollection(completedRepoitories, _searchBarText, shouldRemoveRepoisitoriesWithoutViewsClonesData: true);
+                AddRepositoriesToCollection(completedRepoitories, _searchBarText, true);
 
                 if (!_gitHubUserService.IsDemoUser)
                 {
@@ -214,12 +225,12 @@ namespace GitTrends
             {
                 AnalyticsService.Report(e);
 
-                var repositoryList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
-                SetRepositoriesCollection(repositoryList, _searchBarText);
+                repositoryDatabaseList ??= await reposiotryDatabaseTask.ConfigureAwait(false);
+                SetRepositoriesCollection(repositoryDatabaseList, _searchBarText);
 
-                if (repositoryList.Any())
+                if (repositoryDatabaseList.Any())
                 {
-                    var dataDownloadedAt = repositoryList.Max(x => x.DataDownloadedAt);
+                    var dataDownloadedAt = repositoryDatabaseList.Max(x => x.DataDownloadedAt);
                     OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"{RepositoryPageConstants.DisplayingDataFrom} {dataDownloadedAt.ToLocalTime():dd MMMM @ HH:mm}\n\n{RepositoryPageConstants.CheckInternetConnectionTryAgain}."));
                 }
                 else
@@ -262,7 +273,7 @@ namespace GitTrends
                     AnalyticsService.Report(e);
                 }
             }
-        }        
+        }
 
         void ExecuteSortRepositoriesCommand(SortingOption option)
         {

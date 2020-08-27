@@ -53,7 +53,7 @@ namespace GitTrends
             await SaveDailyViews(repository).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<Repository>> GetRepositories()
+        public async Task<List<Repository>> GetRepositories()
         {
             var (repositoryDatabaseConnection, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection) = await GetDatabaseConnections().ConfigureAwait(false);
 
