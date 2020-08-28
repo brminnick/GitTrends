@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace GitTrends.Shared
 {
@@ -14,10 +12,8 @@ namespace GitTrends.Shared
             IsFavorite = isFavorite;
             DataDownloadedAt = dataDownloadedAt;
 
-            StarredAt = starredAt?.ToList() ?? new List<DateTimeOffset>();
+            StarredAt = starredAt?.OrderBy(x => x).ToList() ?? new List<DateTimeOffset>();
             StarCount = StarredAt.Count;
-
-            DataDownloadedAt = DateTimeOffset.UtcNow;
 
             Name = name;
             Description = description;
@@ -58,6 +54,7 @@ namespace GitTrends.Shared
         public string Description { get; }
         public long ForkCount { get; }
         public bool IsFork { get; }
+        public string Url { get; }
 
         public bool? IsFavorite { get; }
         public bool IsTrending { get; }
@@ -65,9 +62,6 @@ namespace GitTrends.Shared
         public IReadOnlyList<DailyViewsModel> DailyViewsList { get; }
         public IReadOnlyList<DailyClonesModel> DailyClonesList { get; }
         public IReadOnlyList<DateTimeOffset> StarredAt { get; }
-
-        [JsonProperty("url")]
-        public string Url { get; }
 
         public override string ToString()
         {
@@ -105,26 +99,5 @@ namespace GitTrends.Shared
 
             static DateTimeOffset removeHourMinuteSecond(in DateTimeOffset date) => new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
         }
-    }
-
-    public class StarGazers
-    {
-        public StarGazers(long totalCount, IEnumerable<StarGazerInfo> edges) =>
-            (TotalCount, StarredAt) = (totalCount, edges.ToList());
-
-        [JsonProperty("totalCount")]
-        public long TotalCount { get; }
-
-        [JsonProperty("edges")]
-        public IReadOnlyList<StarGazerInfo> StarredAt { get; }
-    }
-
-    public class StarGazerInfo
-    {
-        public StarGazerInfo(DateTimeOffset starredAt, string cursor) =>
-            (StarredAt, Cursor) = (starredAt, cursor);
-
-        public DateTimeOffset StarredAt { get; }
-        public string Cursor { get; }
     }
 }

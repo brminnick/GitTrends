@@ -163,7 +163,7 @@ namespace GitTrends.UnitTests
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
                                                         DemoUserConstants.Alias, gitTrendsAvatarUrl,
-                                                        DemoDataConstants.GetRandomNumber(), repositoryUrl, false, downloadedAt, false, dailyViewsList, dailyClonesList, starredAtList.OrderBy(x => x));
+                                                        DemoDataConstants.GetRandomNumber(), repositoryUrl, false, downloadedAt, false, dailyViewsList, dailyClonesList, starredAtList);
         }
 
         static MobileReferringSiteModel CreateExpiredMobileReferringSite(DateTimeOffset downloadedAt, string referrer)

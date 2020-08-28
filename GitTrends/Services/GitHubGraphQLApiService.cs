@@ -36,9 +36,25 @@ namespace GitTrends
         public async Task<Repository> GetRepository(string repositoryOwner, string repositoryName, CancellationToken cancellationToken)
         {
             var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-            var data = await ExecuteGraphQLRequest(() => GitHubApiClient.RepositoryQuery(new RepositoryQueryContent(repositoryOwner, repositoryName), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
-            return data.Repository;
+            var repositoryQueryTask = ExecuteGraphQLRequest(() => GitHubApiClient.RepositoryQuery(new RepositoryQueryContent(repositoryOwner, repositoryName), GetGitHubBearerTokenHeader(token)), cancellationToken);
+            var starGazersQueryTask = GetStarGazers(repositoryName, repositoryOwner, cancellationToken);
+
+            await Task.WhenAll(repositoryQueryTask, starGazersQueryTask).ConfigureAwait(false);
+
+            var starGazersResult = await starGazersQueryTask.ConfigureAwait(false);
+            var repositoryResult = await repositoryQueryTask.ConfigureAwait(false);
+
+            return new Repository(repositoryResult.Repository.Name,
+                                    repositoryResult.Repository.Description,
+                                    repositoryResult.Repository.ForkCount,
+                                    repositoryResult.Repository.Owner.Login,
+                                    repositoryResult.Repository.Owner.AvatarUrl,
+                                    repositoryResult.Repository.Issues.IssuesCount,
+                                    repositoryResult.Repository.Url.ToString(),
+                                    repositoryResult.Repository.IsFork,
+                                    DateTimeOffset.UtcNow,
+                                    starredAt: starGazersResult.StarredAt.Select(x => x.StarredAt));
         }
 
         public async Task<StarGazers> GetStarGazers(string repositoryName, string repositoryOwner, CancellationToken cancellationToken)

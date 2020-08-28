@@ -62,5 +62,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitHubViewerResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\StarGazerQueryResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\StarGazers.cs" />
   </ItemGroup>
 </Project>
