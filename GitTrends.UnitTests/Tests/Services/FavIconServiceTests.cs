@@ -25,11 +25,11 @@ namespace GitTrends.UnitTests
         }
 
         [TestCase("http://codetraveler.io", "https://favicons.githubusercontent.com/codetraveler.io")] //Clear Text Uri
-        [TestCase("https://codetraveler.io", "https://favicons.githubusercontent.com/codetraveler.io")] //Cached Google FavIcon
+        [TestCase("https://codetraveler.io", "https://favicons.githubusercontent.com/codetraveler.io")] //Cached GitHub FavIcon
         [TestCase("https://contiva.atlassian.net/", "https://wac-cdn.atlassian.com/assets/img/favicons/atlassian/favicon.png")] //Icon Url
         [TestCase("https://chrissainty.com/", "https://chrissainty.com/favicon.png")] //Shortcut icon Url
         [TestCase("https://forums.xamarin.com/", "https://xamarin.com/static/images/tiles/apple-touch-icon.png")] //Apple Touch Icon Url
-        [TestCase("https://javiersuarezruiz.wordpress.com/", "https://wordpress.com/favicon.ico")] //FavIcon Url
+        [TestCase("https://mondaypunday.com/", "https://mondaypunday.com/favicon.ico")] //FavIcon Url
         public async Task GetFavIconImageSourceTest_ValidUrl(string url, string expectedFavIconUrl)
         {
             //Arrange
