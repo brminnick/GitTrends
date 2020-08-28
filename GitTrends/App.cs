@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Globalization;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Autofac;
@@ -26,11 +27,17 @@ namespace GitTrends
                     NotificationService notificationService,
                     IDeviceNotificationsService deviceNotificationsService)
         {
-            InitializeEssentialServices(themeService, deviceNotificationsService, languageService);
-
             _languageService = languageService;
             _analyticsService = analyticsService;
             _notificationService = notificationService;
+
+            analyticsService.Track("App Initialized", new Dictionary<string, string>
+            {
+                { nameof(LanguageService.PreferredLanguage), _languageService.PreferredLanguage ?? "default" },
+                { nameof(CultureInfo.CurrentUICulture), CultureInfo.CurrentUICulture.TwoLetterISOLanguageName }
+            });
+
+            InitializeEssentialServices(themeService, deviceNotificationsService, languageService);
 
             MainPage = splashScreenPage;
 
@@ -46,8 +53,6 @@ namespace GitTrends
         protected override async void OnStart()
         {
             base.OnStart();
-
-            _analyticsService.Track("App Started", nameof(LanguageService.PreferredLanguage), _languageService.PreferredLanguage ?? "null");
 
             await ClearBageNotifications();
         }
