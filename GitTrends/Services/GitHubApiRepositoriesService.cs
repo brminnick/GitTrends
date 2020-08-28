@@ -59,7 +59,7 @@ namespace GitTrends
         {
             var getViewStatisticsTask = _gitHubApiV3Service.GetRepositoryViewStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
             var getCloneStatisticsTask = _gitHubApiV3Service.GetRepositoryCloneStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
-            var getStarGazrsTask = GetStarGazerInfo(repository.Name, repository.OwnerLogin, cancellationToken);
+            var getStarGazrsTask = _gitHubGraphQLApiService.GetStarGazers(repository.Name, repository.OwnerLogin, cancellationToken);
 
             try
             {
@@ -73,26 +73,14 @@ namespace GitTrends
             {
                 _analyticsService.Report(e, new Dictionary<string, string>
                 {
-                    { nameof(Repository)+ nameof(Repository.Name), repository.Name },
-                    { nameof(Repository)+ nameof(Repository.OwnerLogin), repository.OwnerLogin },
+                    { nameof(Repository) + nameof(Repository.Name), repository.Name },
+                    { nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin },
                     { nameof(GitHubUserService) + nameof(GitHubUserService.Alias), _gitHubUserService.Alias },
                     { nameof(GitHubUserService) + nameof(GitHubUserService.Name), _gitHubUserService.Name },
                 });
 
                 return (null, null, null);
             }
-        }
-
-        async Task<StarGazers> GetStarGazerInfo(string repositoryName, string repositoryOwner, CancellationToken cancellationToken)
-        {
-            var starGazerInfoList = new List<StarGazerInfo>();
-
-            await foreach (var starGazerResponse in _gitHubGraphQLApiService.GetStarGazerInfo(repositoryName, repositoryOwner, cancellationToken).ConfigureAwait(false))
-            {
-                starGazerInfoList.AddRange(starGazerResponse.StarredAt);
-            }
-
-            return new StarGazers(starGazerInfoList.Count, starGazerInfoList);
         }
     }
 }
