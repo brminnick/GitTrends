@@ -26,6 +26,8 @@ namespace GitTrends.UnitTests
         [SetUp]
         public virtual async Task Setup()
         {
+            FFImageLoading.ImageService.EnableMockImageService = true;
+
             CultureInfo.DefaultThreadCurrentCulture = null;
             CultureInfo.DefaultThreadCurrentUICulture = null;
 
@@ -85,9 +87,9 @@ namespace GitTrends.UnitTests
             }
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-                                                        new RepositoryOwner(DemoUserConstants.Alias, gitTrendsAvatarUrl),
-                                                        new IssuesConnection(DemoDataConstants.GetRandomNumber(), Enumerable.Empty<Issue>()),
-                                                        gitTrendsAvatarUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false, downloadedAt, false, dailyViewsList, dailyClonesList);
+                                                        DemoUserConstants.Alias, gitTrendsAvatarUrl,
+                                                        DemoDataConstants.GetRandomNumber(),
+                                                        gitTrendsAvatarUrl, false, downloadedAt, false, dailyViewsList, dailyClonesList, DemoDataConstants.GenerateStarredAtDates(DemoDataConstants.GetRandomNumber()));
         }
     }
 }

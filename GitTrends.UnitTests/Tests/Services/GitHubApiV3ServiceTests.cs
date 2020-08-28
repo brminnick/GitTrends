@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Refit;
@@ -157,122 +153,6 @@ namespace GitTrends.UnitTests
 
             //Assert
             Assert.AreEqual(HttpStatusCode.Forbidden, exception.StatusCode);
-        }
-
-        [Test]
-        public async Task UpdateRepositoriesWithViewsAndClonesData_ValidRepo()
-        {
-            //Arrange
-            IReadOnlyList<Repository> repositories_NoViewsClonesData_Filtered;
-            var repositories = new List<Repository>();
-            var repositories_NoViewsClonesData = new List<Repository>();
-
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
-
-            //Act
-            await foreach (var retrievedRepositories in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
-            {
-                repositories_NoViewsClonesData.AddRange(retrievedRepositories);
-            }
-
-            repositories_NoViewsClonesData_Filtered = RepositoryService.RemoveForksAndDuplicates(repositories_NoViewsClonesData).ToList();
-
-            await foreach (var repository in gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesData_Filtered, CancellationToken.None).ConfigureAwait(false))
-            {
-                repositories.Add(repository);
-            }
-
-            //Assert
-            Assert.IsNotEmpty(repositories);
-            Assert.IsNotEmpty(repositories_NoViewsClonesData);
-
-            Assert.IsEmpty(repositories_NoViewsClonesData.SelectMany(x => x.DailyClonesList));
-            Assert.IsEmpty(repositories_NoViewsClonesData.SelectMany(x => x.DailyViewsList));
-
-            Assert.IsNotEmpty(repositories.SelectMany(x => x.DailyClonesList));
-            Assert.IsNotEmpty(repositories.SelectMany(x => x.DailyViewsList));
-        }
-
-        [Test]
-        public async Task UpdateRepositoriesWithViewsAndClonesData_ValidRepo_NotFiltered()
-        {
-            //Arrange
-            var repositories = new List<Repository>();
-            var repositories_NoViewsClonesData = new List<Repository>();
-
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
-
-            //Act
-            await foreach (var retrievedRepositories in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
-            {
-                repositories_NoViewsClonesData.AddRange(retrievedRepositories);
-            }
-
-            var exception = Assert.ThrowsAsync<InvalidOperationException>(async () =>
-            {
-                await foreach (var repository in gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesData, CancellationToken.None).ConfigureAwait(false))
-                {
-                    repositories.Add(repository);
-                }
-            });
-
-            //Assert
-            Assert.IsTrue(exception.Message.Contains("more than one matching element"));
-        }
-
-        [Test]
-        public async Task UpdateRepositoriesWithViewsAndClonesData_EmptyRepos()
-        {
-            //Arrange
-            var repositories = new List<Repository>();
-
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
-
-            //Act
-            await foreach (var repository in gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(new List<Repository>(), CancellationToken.None).ConfigureAwait(false))
-            {
-                repositories.Add(repository);
-            }
-
-            //Assert
-            Assert.IsEmpty(repositories);
-        }
-
-        [Test]
-        public async Task UpdateRepositoriesWithViewsAndClonesData_ValidRepo_Unauthenticated()
-        {
-            //Arrange
-            IReadOnlyList<Repository> repositories_NoViewsClonesData_Filtered;
-            var repositories = new List<Repository>();
-            var repositories_NoViewsClonesData = new List<Repository>();
-
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
-            var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-
-
-            //Act
-            await foreach (var retrievedRepositories in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
-            {
-                repositories_NoViewsClonesData.AddRange(retrievedRepositories);
-            }
-
-            repositories_NoViewsClonesData_Filtered = RepositoryService.RemoveForksAndDuplicates(repositories_NoViewsClonesData).ToList();
-
-            gitHubUserService.InvalidateToken();
-
-            await foreach (var repository in gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesData_Filtered, CancellationToken.None).ConfigureAwait(false))
-            {
-                repositories.Add(repository);
-            };
-
-            //Assert
-            Assert.IsEmpty(repositories.SelectMany(x => x.DailyClonesList));
-            Assert.IsEmpty(repositories.SelectMany(x => x.DailyViewsList));
         }
     }
 }

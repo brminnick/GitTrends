@@ -2,33 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace GitTrends.Shared
 {
     public class Repository : IRepository
     {
-        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork, DateTimeOffset dataDownloadedAt, bool isFavorite, IList<DailyViewsModel>? views = null, IList<DailyClonesModel>? clones = null)
-            : this(name, description, forkCount, owner, issues, url, stargazers, isFork, views, clones)
+        public Repository(string name, string description, long forkCount, string ownerLogin, string ownerAvatarUrl, long issuesCount, string url, bool isFork, DateTimeOffset dataDownloadedAt, bool? isFavorite = null, IList<DailyViewsModel>? views = null, IList<DailyClonesModel>? clones = null, IEnumerable<DateTimeOffset>? starredAt = null)
         {
+            IsFavorite = isFavorite;
             DataDownloadedAt = dataDownloadedAt;
-            IsFavorite = IsFavorite;
-        }
 
-        [JsonConstructor]
-        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork, IList<DailyViewsModel>? views = null, IList<DailyClonesModel>? clones = null)
-        {
-            DataDownloadedAt = DateTimeOffset.UtcNow;
+            StarredAt = starredAt?.OrderBy(x => x).ToList() ?? new List<DateTimeOffset>();
+            StarCount = StarredAt.Count;
 
             Name = name;
             Description = description;
             ForkCount = forkCount;
-            OwnerLogin = owner.Login;
-            OwnerAvatarUrl = owner.AvatarUrl;
-            IssuesCount = issues?.IssuesCount ?? 0;
+            OwnerLogin = ownerLogin;
+            OwnerAvatarUrl = ownerAvatarUrl;
+            IssuesCount = issuesCount;
             Url = url;
-            StarCount = stargazers.TotalCount;
             IsFork = isFork;
 
             if (views != null && clones != null)
@@ -61,15 +54,14 @@ namespace GitTrends.Shared
         public string Description { get; }
         public long ForkCount { get; }
         public bool IsFork { get; }
+        public string Url { get; }
 
-        public bool IsFavorite { get; }
+        public bool? IsFavorite { get; }
         public bool IsTrending { get; }
 
         public IReadOnlyList<DailyViewsModel> DailyViewsList { get; }
         public IReadOnlyList<DailyClonesModel> DailyClonesList { get; }
-
-        [JsonProperty("url")]
-        public string Url { get; }
+        public IReadOnlyList<DateTimeOffset> StarredAt { get; }
 
         public override string ToString()
         {
@@ -107,24 +99,5 @@ namespace GitTrends.Shared
 
             static DateTimeOffset removeHourMinuteSecond(in DateTimeOffset date) => new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
         }
-    }
-
-    public class RepositoryOwner
-    {
-        public RepositoryOwner(string login, string avatarUrl) => (Login, AvatarUrl) = (login, avatarUrl);
-
-        [JsonProperty("login")]
-        public string Login { get; }
-
-        [JsonProperty("avatarUrl")]
-        public string AvatarUrl { get; }
-    }
-
-    public class StarGazers
-    {
-        public StarGazers(long totalCount) => TotalCount = totalCount;
-
-        [JsonProperty("totalCount")]
-        public long TotalCount { get; }
     }
 }

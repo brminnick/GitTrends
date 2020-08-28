@@ -17,6 +17,6 @@ namespace GitTrends.Shared
         long TotalUniqueViews { get; }
         long TotalClones { get; }
         long TotalUniqueClones { get; }
-        bool IsFavorite { get; }
+        bool? IsFavorite { get; }
     }
 }

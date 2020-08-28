@@ -14,6 +14,18 @@ namespace GitTrends.Shared
 
         [Post("")]
         Task<GraphQLResponse<GitHubViewerResponse>> ViewerLoginQuery([Body] ViewerLoginQueryContent request, [Header("Authorization")] string authorization);
+
+        [Post("")]
+        Task<GraphQLResponse<StarGazerResponse>> StarGazerQuery([Body] StarGazerQueryContent request, [Header("Authorization")] string authorization);
+    }
+
+    public class StarGazerQueryContent : GraphQLRequest
+    {
+        public StarGazerQueryContent(string repositoryName, string repositoryOwner, string? endCursorString, int numberOfStarGazersPerRequest = 100)
+            : base("query { repository(name: \"" + repositoryName + "\", owner: \"" + repositoryOwner + "\") { stargazers(first:" + numberOfStarGazersPerRequest + endCursorString + ") { edges { starredAt, cursor } } }} ")
+        {
+
+        }
     }
 
     public class ViewerLoginQueryContent : GraphQLRequest
@@ -26,8 +38,8 @@ namespace GitTrends.Shared
 
     public class RepositoryQueryContent : GraphQLRequest
     {
-        public RepositoryQueryContent(string repositoryOwner, string repositoryName, int numberOfIssuesPerRequest = 100)
-            : base("query { repository(owner:\"" + repositoryOwner + "\" name:\"" + repositoryName + "\"){ name, description, forkCount, url, owner { avatarUrl, login }, stargazers { totalCount }, isFork, issues(first:" + numberOfIssuesPerRequest + "){ nodes { title, body, createdAt, closedAt, state }}}}")
+        public RepositoryQueryContent(string repositoryOwner, string repositoryName)
+            : base("query { repository(owner:\"" + repositoryOwner + "\" name:\"" + repositoryName + "\"){ name, description, forkCount, url, owner { avatarUrl, login }, isFork, issues(states:OPEN) { totalCount }}}")
         {
 
         }
@@ -36,7 +48,7 @@ namespace GitTrends.Shared
     public class RepositoryConnectionQueryContent : GraphQLRequest
     {
         public RepositoryConnectionQueryContent(string repositoryOwner, string endCursorString, int numberOfRepositoriesPerRequest = 100)
-            : base("query{ user(login: \"" + repositoryOwner + "\") {followers { totalCount }, repositories(first:" + numberOfRepositoriesPerRequest + endCursorString + ") { nodes { name, description, forkCount, url, owner { avatarUrl, login }, stargazers { totalCount }, isFork, issues(states:OPEN) { totalCount } }, pageInfo { endCursor, hasNextPage, hasPreviousPage, startCursor } } } }")
+            : base("query{ user(login: \"" + repositoryOwner + "\") {repositories(first:" + numberOfRepositoriesPerRequest + endCursorString + ") { nodes { name, description, forkCount, url, owner { avatarUrl, login }, isFork, issues(states:OPEN) { totalCount } }, pageInfo { endCursor, hasNextPage, hasPreviousPage, startCursor } } } }")
         {
 
         }

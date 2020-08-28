@@ -21,9 +21,9 @@ namespace GitTrends.UnitTests
             MobileReferringSiteModel expiredReferringSite_Initial, unexpiredReferringSite_Initial;
             Repository expiredRepository_Initial, unexpiredRepository_Initial, expiredRepository_Final, unexpiredRepository_Final;
 
+            var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
             var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
             var referringSitesDatabase = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesDatabase>();
-            var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
 
             expiredRepository_Initial = CreateExpiredRepository(DateTimeOffset.UtcNow.Subtract(repositoryDatabase.ExpiresAt), "https://github.com/brminnick/gittrends");
             unexpiredRepository_Initial = CreateExpiredRepository(DateTimeOffset.UtcNow, "https://github.com/brminnick/gitstatus");
@@ -76,7 +76,7 @@ namespace GitTrends.UnitTests
             static async Task<int> getRepositoryDatabaseCount(RepositoryDatabase repositoryDatabase)
             {
                 var repositories = await repositoryDatabase.GetRepositories().ConfigureAwait(false);
-                return repositories.Count();
+                return repositories.Count;
             }
 
             static async Task<int> getReferringSitesDatabaseCount(ReferringSitesDatabase referringSitesDatabase, params string[] repositoryUrl)
@@ -147,6 +147,7 @@ namespace GitTrends.UnitTests
         {
             const string gitTrendsAvatarUrl = "https://avatars3.githubusercontent.com/u/61480020?s=400&u=b1a900b5fa1ede22af9d2d9bfd6c49a072e659ba&v=4";
 
+            var starredAtList = new List<DateTimeOffset>();
             var dailyViewsList = new List<DailyViewsModel>();
             var dailyClonesList = new List<DailyClonesModel>();
 
@@ -155,14 +156,14 @@ namespace GitTrends.UnitTests
                 var count = DemoDataConstants.GetRandomNumber();
                 var uniqeCount = count / 2; //Ensures uniqueCount is always less than count
 
+                starredAtList.Add(DemoDataConstants.GetRandomDate());
                 dailyViewsList.Add(new DailyViewsModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
                 dailyClonesList.Add(new DailyClonesModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
             }
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-                                                        new RepositoryOwner(DemoUserConstants.Alias, gitTrendsAvatarUrl),
-                                                        new IssuesConnection(DemoDataConstants.GetRandomNumber(), Enumerable.Empty<Issue>()),
-                                                        repositoryUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false, downloadedAt, false, dailyViewsList, dailyClonesList);
+                                                        DemoUserConstants.Alias, gitTrendsAvatarUrl,
+                                                        DemoDataConstants.GetRandomNumber(), repositoryUrl, false, downloadedAt, false, dailyViewsList, dailyClonesList, starredAtList);
         }
 
         static MobileReferringSiteModel CreateExpiredMobileReferringSite(DateTimeOffset downloadedAt, string referrer)

@@ -23,6 +23,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<DeepLinkingService>();
             services.AddSingleton<NotificationService, ExtendedNotificationService>();
             services.AddSingleton<GitHubApiV3Service>();
+            services.AddSingleton<GitHubApiRepositoriesService>();
             services.AddSingleton<GitHubAuthenticationService>();
             services.AddSingleton<GitHubGraphQLApiService>();
             services.AddSingleton<GitHubUserService>();

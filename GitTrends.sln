@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.UITests", "GitTrends.UITests\GitTrends.UITests.csproj", "{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends", "GitTrends\GitTrends.csproj", "{4E7B0399-BAD2-48AF-B7FA-02EC17338FAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends", "GitTrends\GitTrends.csproj", "{4E7B0399-BAD2-48AF-B7FA-02EC17338FAE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.UnitTests", "GitTrends.UnitTests\GitTrends.UnitTests.csproj", "{EE380E99-E700-4B0C-9C56-B098CB400AAE}"
 EndProject
