@@ -76,9 +76,9 @@ namespace GitTrends
 
         async void InitializeEssentialServices(ThemeService themeService, IDeviceNotificationsService notificationService, LanguageService languageService)
         {
-            await themeService.Initialize().ConfigureAwait(false);
-            notificationService.Initialize();
             languageService.Initialize();
+            notificationService.Initialize();
+            await themeService.Initialize().ConfigureAwait(false);
         }
 
         void OnResumed() => _resumedEventManager.RaiseEvent(this, EventArgs.Empty, nameof(Resumed));
