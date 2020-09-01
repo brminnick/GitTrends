@@ -12,7 +12,6 @@ namespace GitTrends.UnitTests
 {
     class RepositoryViewModelTests : BaseTest
     {
-
         [Test]
         public async Task PullToRefreshCommandTest_Authenticated()
         {
@@ -25,10 +24,10 @@ namespace GitTrends.UnitTests
 
             var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
             var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
-            var graphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
             //Act
-            await AuthenticateUser(gitHubUserService, graphQLApiService).ConfigureAwait(false);
+            await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
             beforePullToRefresh = DateTimeOffset.UtcNow;
             emptyDataViewTitle_Initial = repositoryViewModel.EmptyDataViewTitle;

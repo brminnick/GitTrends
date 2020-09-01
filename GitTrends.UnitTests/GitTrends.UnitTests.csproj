@@ -16,6 +16,7 @@
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.5.3.2" />
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.7" />
+    <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,5 +29,6 @@
     <Folder Include="Tests\ViewModels\" />
     <Folder Include="Tests\Services\" />
     <Folder Include="Tests\Resx\" />
+    <Folder Include="Tests\ViewModels\RepositoryViewModel\" />
   </ItemGroup>
 </Project>

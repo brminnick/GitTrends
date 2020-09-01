@@ -8,9 +8,12 @@ namespace GitTrends.Shared
 {
     public static class GitHubApiService
     {
+        public const string RateLimitRemainingHeader = "X-RateLimit-Remaining";
+        public const string RateLimitResetHeader = "X-RateLimit-Reset";
+
         public static int GetNumberOfApiRequestsRemaining(in HttpResponseHeaders httpResponseHeaders)
         {
-            var rateLimitRemainingHeader = httpResponseHeaders.First(x => x.Key.Equals("X-RateLimit-Remaining", StringComparison.OrdinalIgnoreCase));
+            var rateLimitRemainingHeader = httpResponseHeaders.First(x => x.Key.Equals(RateLimitRemainingHeader, StringComparison.OrdinalIgnoreCase));
             var remainingApiRequests = int.Parse(rateLimitRemainingHeader.Value.First());
 
             return remainingApiRequests;
@@ -40,7 +43,7 @@ namespace GitTrends.Shared
             if (!HasReachedMaximimApiCallLimit(httpResponseHeaders))
                 throw new ArgumentException("Maximum API Call Limit Has Not Been Reached");
 
-            var rateLimitResetHeader = httpResponseHeaders.First(x => x.Key.Equals("X-RateLimit-Reset", StringComparison.OrdinalIgnoreCase));
+            var rateLimitResetHeader = httpResponseHeaders.First(x => x.Key.Equals(RateLimitResetHeader, StringComparison.OrdinalIgnoreCase));
             return long.Parse(rateLimitResetHeader.Value.First());
         }
     }
