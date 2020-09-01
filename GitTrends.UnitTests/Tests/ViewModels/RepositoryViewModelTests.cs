@@ -12,16 +12,6 @@ namespace GitTrends.UnitTests
 {
     class RepositoryViewModelTests : BaseTest
     {
-        RepositoryViewModel? _repositoryViewModel;
-        RepositoryViewModel RepositoryViewModel => _repositoryViewModel ?? throw new NullReferenceException();
-
-        public override Task Setup()
-        {
-            _repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
-            _repositoryViewModel.VisibleRepositoryList = new List<Repository>();
-
-            return base.Setup();
-        }
 
         [Test]
         public async Task PullToRefreshCommandTest_Authenticated()
@@ -34,22 +24,23 @@ namespace GitTrends.UnitTests
             string emptyDataViewDescription_Initial, emptyDataViewDescription_Final;
 
             var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
             var graphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
             //Act
             await AuthenticateUser(gitHubUserService, graphQLApiService).ConfigureAwait(false);
 
             beforePullToRefresh = DateTimeOffset.UtcNow;
-            emptyDataViewTitle_Initial = RepositoryViewModel.EmptyDataViewTitle;
-            visibleRepositoryList_Initial = RepositoryViewModel.VisibleRepositoryList;
-            emptyDataViewDescription_Initial = RepositoryViewModel.EmptyDataViewDescription;
+            emptyDataViewTitle_Initial = repositoryViewModel.EmptyDataViewTitle;
+            visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
+            emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
 
-            await RepositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
+            await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
 
             afterPullToRefresh = DateTimeOffset.UtcNow;
-            emptyDataViewTitle_Final = RepositoryViewModel.EmptyDataViewTitle;
-            visibleRepositoryList_Final = RepositoryViewModel.VisibleRepositoryList;
-            emptyDataViewDescription_Final = RepositoryViewModel.EmptyDataViewDescription;
+            emptyDataViewTitle_Final = repositoryViewModel.EmptyDataViewTitle;
+            visibleRepositoryList_Final = repositoryViewModel.VisibleRepositoryList;
+            emptyDataViewDescription_Final = repositoryViewModel.EmptyDataViewDescription;
 
             //Assert
             Assert.IsEmpty(visibleRepositoryList_Initial);
@@ -78,24 +69,26 @@ namespace GitTrends.UnitTests
             string emptyDataViewTitle_Initial, emptyDataViewTitle_Final;
             string emptyDataViewDescription_Initial, emptyDataViewDescription_Final;
 
+            var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
+
             bool didPullToRefreshFailedFire = false;
             var pullToRefreshFailedTCS = new TaskCompletionSource<PullToRefreshFailedEventArgs>();
 
             RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 
             //Act
-            emptyDataViewTitle_Initial = RepositoryViewModel.EmptyDataViewTitle;
-            visibleRepositoryList_Initial = RepositoryViewModel.VisibleRepositoryList;
-            emptyDataViewDescription_Initial = RepositoryViewModel.EmptyDataViewDescription;
+            emptyDataViewTitle_Initial = repositoryViewModel.EmptyDataViewTitle;
+            visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
+            emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
 
-            var pullToRefreshCommandTask = RepositoryViewModel.PullToRefreshCommand.ExecuteAsync();
+            var pullToRefreshCommandTask = repositoryViewModel.PullToRefreshCommand.ExecuteAsync();
 
             await pullToRefreshCommandTask.ConfigureAwait(false);
             var pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
 
-            emptyDataViewTitle_Final = RepositoryViewModel.EmptyDataViewTitle;
-            visibleRepositoryList_Final = RepositoryViewModel.VisibleRepositoryList;
-            emptyDataViewDescription_Final = RepositoryViewModel.EmptyDataViewDescription;
+            emptyDataViewTitle_Final = repositoryViewModel.EmptyDataViewTitle;
+            visibleRepositoryList_Final = repositoryViewModel.VisibleRepositoryList;
+            emptyDataViewDescription_Final = repositoryViewModel.EmptyDataViewDescription;
 
             //Assert
             Assert.IsTrue(didPullToRefreshFailedFire);
@@ -127,23 +120,24 @@ namespace GitTrends.UnitTests
             int repositoryListCount_Initial, repositoryListCount_Final;
             IReadOnlyList<Repository> repositoryList_Initial, repositoryList_Final;
 
+            var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
             var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
 
             //Act
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-            await RepositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
+            await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
 
-            repositoryList_Initial = RepositoryViewModel.VisibleRepositoryList;
+            repositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
             repository = repositoryList_Initial.First();
             repositoryListCount_Initial = repositoryList_Initial.Count;
 
-            RepositoryViewModel.FilterRepositoriesCommand.Execute(repository.Name + DemoDataConstants.GetRandomText());
+            repositoryViewModel.FilterRepositoriesCommand.Execute(repository.Name + DemoDataConstants.GetRandomText());
 
-            repositoryList_Final = RepositoryViewModel.VisibleRepositoryList;
+            repositoryList_Final = repositoryViewModel.VisibleRepositoryList;
             repositoryListCount_Final = repositoryList_Final.Count;
 
             //Assert
-            Assert.IsEmpty(RepositoryViewModel.VisibleRepositoryList);
+            Assert.IsEmpty(repositoryViewModel.VisibleRepositoryList);
             Assert.Greater(repositoryListCount_Initial, 0);
             Assert.Less(repositoryListCount_Final, repositoryListCount_Initial);
         }
@@ -156,23 +150,24 @@ namespace GitTrends.UnitTests
             int repositoryListCount_Initial, repositoryListCount_Final;
             IReadOnlyList<Repository> repositoryList_Initial, repositoryList_Final;
 
+            var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
             var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
 
             //Act
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-            await RepositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
+            await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
 
-            repositoryList_Initial = RepositoryViewModel.VisibleRepositoryList;
+            repositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
             repository = repositoryList_Initial.First();
             repositoryListCount_Initial = repositoryList_Initial.Count;
 
-            RepositoryViewModel.FilterRepositoriesCommand.Execute(repository.Name);
+            repositoryViewModel.FilterRepositoriesCommand.Execute(repository.Name);
 
-            repositoryList_Final = RepositoryViewModel.VisibleRepositoryList;
+            repositoryList_Final = repositoryViewModel.VisibleRepositoryList;
             repositoryListCount_Final = repositoryList_Final.Count;
 
             //Assert
-            Assert.Contains(repository, RepositoryViewModel.VisibleRepositoryList.ToArray());
+            Assert.Contains(repository, repositoryViewModel.VisibleRepositoryList.ToArray());
             Assert.Greater(repositoryListCount_Initial, 1);
             Assert.Less(repositoryListCount_Final, repositoryListCount_Initial);
         }
@@ -184,14 +179,15 @@ namespace GitTrends.UnitTests
         public async Task SortRepositoriesCommandTest_InvalidSortingOption(SortingOption sortingOption)
         {
             //Arrange
+            var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
             var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
 
             //Act
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-            await RepositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
+            await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
 
             //Assert
-            Assert.Throws<InvalidEnumArgumentException>(() => RepositoryViewModel.SortRepositoriesCommand.Execute(sortingOption));
+            Assert.Throws<InvalidEnumArgumentException>(() => repositoryViewModel.SortRepositoriesCommand.Execute(sortingOption));
         }
 
         [TestCase(SortingOption.Clones)]
@@ -204,22 +200,23 @@ namespace GitTrends.UnitTests
         public async Task SortRepositoriesCommandTest_ValidSortingOption(SortingOption sortingOption)
         {
             //Arrange
+            var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
             var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
 
             //Act
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-            await RepositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
+            await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
 
-            RepositoryViewModel.SortRepositoriesCommand.Execute(sortingOption);
+            repositoryViewModel.SortRepositoriesCommand.Execute(sortingOption);
 
             //Assert
-            AssertRepositoriesSorted(RepositoryViewModel.VisibleRepositoryList, sortingOption);
+            AssertRepositoriesSorted(repositoryViewModel.VisibleRepositoryList, sortingOption);
 
             //Act
-            RepositoryViewModel.SortRepositoriesCommand.Execute(sortingOption);
+            repositoryViewModel.SortRepositoriesCommand.Execute(sortingOption);
 
             //Assert
-            AssertRepositoriesReversedSorted(RepositoryViewModel.VisibleRepositoryList, sortingOption);
+            AssertRepositoriesReversedSorted(repositoryViewModel.VisibleRepositoryList, sortingOption);
         }
 
         static void AssertRepositoriesReversedSorted(in IEnumerable<Repository> repositories, in SortingOption sortingOption)

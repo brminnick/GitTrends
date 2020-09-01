@@ -2,6 +2,7 @@
 using Autofac;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
+using Refit;
 using Shiny;
 using Shiny.Notifications;
 using Xamarin.Essentials.Implementation;
@@ -82,6 +83,15 @@ namespace GitTrends
             builder.RegisterType<SplashScreenPage>().AsSelf();
             builder.RegisterType<TrendsPage>().AsSelf().WithParameter(new TypedParameter(typeof(Repository), nameof(Repository).ToLower()));
             builder.RegisterType<WelcomePage>().AsSelf();
+
+            //Register Refit Services
+            var gitHubV3ApiClient = RestService.For<IGitHubApiV3>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubRestApiUrl));
+            var gitHubGraphQLApiClient = RestService.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
+            var azureFunctionsApiClient = RestService.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
+
+            builder.RegisterInstance(gitHubV3ApiClient).SingleInstance();
+            builder.RegisterInstance(gitHubGraphQLApiClient).SingleInstance();
+            builder.RegisterInstance(azureFunctionsApiClient).SingleInstance();
 
             return builder.Build();
         }

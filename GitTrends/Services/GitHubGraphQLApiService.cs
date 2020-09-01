@@ -7,28 +7,25 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
-using Refit;
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
     public class GitHubGraphQLApiService : BaseMobileApiService
     {
-        readonly static Lazy<IGitHubGraphQLApi> _githubApiClientHolder = new Lazy<IGitHubGraphQLApi>(() => RestService.For<IGitHubGraphQLApi>(CreateHttpClient(GitHubConstants.GitHubGraphQLApi)));
-
+        readonly IGitHubGraphQLApi _githubApiClient;
         readonly GitHubUserService _gitHubUserService;
 
-        public GitHubGraphQLApiService(IAnalyticsService analyticsService, IMainThread mainThread, GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
+        public GitHubGraphQLApiService(IAnalyticsService analyticsService, IMainThread mainThread, GitHubUserService gitHubUserService, IGitHubGraphQLApi gitHubGraphQLApi) : base(analyticsService, mainThread)
         {
+            _githubApiClient = gitHubGraphQLApi;
             _gitHubUserService = gitHubUserService;
         }
-
-        static IGitHubGraphQLApi GitHubApiClient => _githubApiClientHolder.Value;
 
         public async Task<(string login, string name, Uri avatarUri)> GetCurrentUserInfo(CancellationToken cancellationToken)
         {
             var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-            var data = await ExecuteGraphQLRequest(() => GitHubApiClient.ViewerLoginQuery(new ViewerLoginQueryContent(), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+            var data = await ExecuteGraphQLRequest(() => _githubApiClient.ViewerLoginQuery(new ViewerLoginQueryContent(), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
             return (data.Viewer.Alias, data.Viewer.Name, data.Viewer.AvatarUri);
         }
@@ -37,7 +34,7 @@ namespace GitTrends
         {
             var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
 
-            var repositoryQueryTask = ExecuteGraphQLRequest(() => GitHubApiClient.RepositoryQuery(new RepositoryQueryContent(repositoryOwner, repositoryName), GetGitHubBearerTokenHeader(token)), cancellationToken);
+            var repositoryQueryTask = ExecuteGraphQLRequest(() => _githubApiClient.RepositoryQuery(new RepositoryQueryContent(repositoryOwner, repositoryName), GetGitHubBearerTokenHeader(token)), cancellationToken);
             var starGazersQueryTask = GetStarGazers(repositoryName, repositoryOwner, cancellationToken);
 
             await Task.WhenAll(repositoryQueryTask, starGazersQueryTask).ConfigureAwait(false);
@@ -128,7 +125,7 @@ namespace GitTrends
             do
             {
                 var endCursor = GetEndCursorString(starGazerResponse?.Repository.StarGazers.StarredAt.LastOrDefault()?.Cursor);
-                starGazerResponse = await ExecuteGraphQLRequest(() => GitHubApiClient.StarGazerQuery(new StarGazerQueryContent(repositoryName, repositoryOwner, endCursor, numberOfStarGazersPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+                starGazerResponse = await ExecuteGraphQLRequest(() => _githubApiClient.StarGazerQuery(new StarGazerQueryContent(repositoryName, repositoryOwner, endCursor, numberOfStarGazersPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
                 if (starGazerResponse?.Repository.StarGazers != null)
                     yield return starGazerResponse.Repository.StarGazers;
@@ -139,7 +136,7 @@ namespace GitTrends
         async Task<RepositoryConnection> GetRepositoryConnection(string repositoryOwner, string? endCursor, CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
         {
             var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-            var data = await ExecuteGraphQLRequest(() => GitHubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+            var data = await ExecuteGraphQLRequest(() => _githubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
             return data.GitHubUser.RepositoryConnection;
         }
