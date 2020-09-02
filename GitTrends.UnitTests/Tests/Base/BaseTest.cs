@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
@@ -9,6 +8,7 @@ using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using Refit;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
@@ -26,6 +26,8 @@ namespace GitTrends.UnitTests
         [SetUp]
         public virtual async Task Setup()
         {
+            InitializeServiceCollection();
+
             FFImageLoading.ImageService.EnableMockImageService = true;
 
             CultureInfo.DefaultThreadCurrentCulture = null;
@@ -55,6 +57,15 @@ namespace GitTrends.UnitTests
 
             var mockNotificationService = (MockDeviceNotificationsService)ServiceCollection.ServiceProvider.GetRequiredService<IDeviceNotificationsService>();
             mockNotificationService.Reset();
+        }
+
+        protected virtual void InitializeServiceCollection()
+        {
+            var gitHubApiV3Client = RestService.For<IGitHubApiV3>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubRestApiUrl));
+            var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
+            var azureFunctionsClient = RestService.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
+
+            ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
         }
 
         protected static async Task AuthenticateUser(GitHubUserService gitHubUserService, GitHubGraphQLApiService gitHubGraphQLApiService)

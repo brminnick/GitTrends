@@ -9,13 +9,21 @@ namespace GitTrends.UnitTests
 {
     public class ServiceCollection
     {
-        readonly static Lazy<IServiceProvider> _serviceProviderHolder = new Lazy<IServiceProvider>(CreateContainer);
+        static IServiceProvider? _serviceProviderHolder;
 
-        public static IServiceProvider ServiceProvider => _serviceProviderHolder.Value;
+        public static IServiceProvider ServiceProvider => _serviceProviderHolder ?? throw new NullReferenceException("Must call Initialize first");
 
-        static IServiceProvider CreateContainer()
+        public static void Initialize(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi) =>
+            _serviceProviderHolder = CreateContainer(azureFunctionsApi, gitHubApiV3, gitHubGraphQLApi);
+
+        static IServiceProvider CreateContainer(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi)
         {
             var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+
+            //GitTrends Refit Services
+            services.AddSingleton(azureFunctionsApi);
+            services.AddSingleton(gitHubApiV3);
+            services.AddSingleton(gitHubGraphQLApi);
 
             //GitTrends Services
             services.AddSingleton<AzureFunctionsApiService>();

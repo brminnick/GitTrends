@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
 namespace GitTrends.UnitTests
@@ -13,7 +14,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             GetGitHubClientIdDTO? tokenDTO;
-            var azureFunctionsApiService = new AzureFunctionsApiService(new MockAnalyticsService(), new MockMainThread());
+            var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
 
             //Act
             tokenDTO = await azureFunctionsApiService.GetGitHubClientId(CancellationToken.None).ConfigureAwait(false);
@@ -30,7 +31,7 @@ namespace GitTrends.UnitTests
             //Arrange
             GitHubToken? gitHubToken;
             var generateTokenDTO = new GenerateTokenDTO(string.Empty, string.Empty);
-            var azureFunctionsApiService = new AzureFunctionsApiService(new MockAnalyticsService(), new MockMainThread());
+            var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
 
             //Act
             gitHubToken = await azureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO, CancellationToken.None).ConfigureAwait(false);
@@ -47,7 +48,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             SyncFusionDTO? syncFusionDTO;
-            var azureFunctionsApiService = new AzureFunctionsApiService(new MockAnalyticsService(), new MockMainThread());
+            var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
 
             //Act
             syncFusionDTO = await azureFunctionsApiService.GetSyncfusionInformation(CancellationToken.None).ConfigureAwait(false);
@@ -64,7 +65,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             StreamingManifest? streamingManifest;
-            var azureFunctionsApiService = new AzureFunctionsApiService(new MockAnalyticsService(), new MockMainThread());
+            var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
 
             //Act
             streamingManifest = await azureFunctionsApiService.GetChartStreamingUrl(CancellationToken.None).ConfigureAwait(false);
@@ -82,7 +83,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             NotificationHubInformation? notificationHubInformation;
-            var azureFunctionsApiService = new AzureFunctionsApiService(new MockAnalyticsService(), new MockMainThread());
+            var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
 
             //Act
             notificationHubInformation = await azureFunctionsApiService.GetNotificationHubInformation(CancellationToken.None).ConfigureAwait(false);
