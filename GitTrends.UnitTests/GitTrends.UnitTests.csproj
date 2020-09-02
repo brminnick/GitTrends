@@ -30,5 +30,6 @@
     <Folder Include="Tests\Services\" />
     <Folder Include="Tests\Resx\" />
     <Folder Include="Tests\ViewModels\RepositoryViewModel\" />
+    <Folder Include="Tests\ViewModels\ReferringSitesViewModel\" />
   </ItemGroup>
 </Project>

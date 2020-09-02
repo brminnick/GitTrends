@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
@@ -20,7 +19,7 @@ namespace GitTrends.UnitTests
         public async Task PullToRefreshCommandTest_MaximumApiLimit()
         {
             //Arrange
-            DateTimeOffset beforePullToRefresh, afterPullToRefresh;
+            PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs;
             IReadOnlyList<Repository> visibleRepositoryList_Initial, visibleRepositoryList_Final;
 
             string emptyDataViewTitle_Initial, emptyDataViewTitle_Final;
@@ -30,39 +29,40 @@ namespace GitTrends.UnitTests
             var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
             var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
+            var pullToRefreshFailedTCS = new TaskCompletionSource<PullToRefreshFailedEventArgs>();
+            RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
+
             //Act
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
-            beforePullToRefresh = DateTimeOffset.UtcNow;
             emptyDataViewTitle_Initial = repositoryViewModel.EmptyDataViewTitle;
             visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
             emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
 
             await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
 
-            afterPullToRefresh = DateTimeOffset.UtcNow;
             emptyDataViewTitle_Final = repositoryViewModel.EmptyDataViewTitle;
             visibleRepositoryList_Final = repositoryViewModel.VisibleRepositoryList;
             emptyDataViewDescription_Final = repositoryViewModel.EmptyDataViewDescription;
 
-            //Assert
+            pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
 
-            throw new NotImplementedException("Below Assert Statements Copy/Pasted from RepositoryViewModelTests");
+            //Assert
             Assert.IsEmpty(visibleRepositoryList_Initial);
-            Assert.IsNotEmpty(visibleRepositoryList_Final);
+            Assert.IsEmpty(visibleRepositoryList_Final);
 
             Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true), emptyDataViewTitle_Initial);
-            Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Succeeded, false), emptyDataViewTitle_Final);
+            Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.MaximumApiLimit, true), emptyDataViewTitle_Final);
 
             Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
-            Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Succeeded, false), emptyDataViewDescription_Final);
+            Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.MaximumApiLimit, true), emptyDataViewDescription_Final);
 
-            Assert.IsTrue(visibleRepositoryList_Final.Any(x => x.OwnerLogin is GitTrendsRepoOwner && x.Name is GitTrendsRepoName));
+            Assert.IsTrue(pullToRefreshFailedEventArgs is MaximimApiRequestsReachedEventArgs);
 
-            foreach (var repository in visibleRepositoryList_Final)
+            void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
             {
-                Assert.Less(beforePullToRefresh, repository.DataDownloadedAt);
-                Assert.Greater(afterPullToRefresh, repository.DataDownloadedAt);
+                ReferringSitesViewModel.PullToRefreshFailed -= HandlePullToRefreshFailed;
+                pullToRefreshFailedTCS.SetResult(e);
             }
         }
 
