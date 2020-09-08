@@ -7,7 +7,7 @@ using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends.UnitTests
 {
-    public class ServiceCollection
+    static class ServiceCollection
     {
         static IServiceProvider? _serviceProviderHolder;
 
@@ -37,6 +37,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<GitHubUserService>();
             services.AddSingleton<FavIconService>();
             services.AddSingleton<FirstRunService>();
+            services.AddSingleton<ImageCachingService>();
             services.AddSingleton<LanguageService>();
             services.AddSingleton<MediaElementService>();
             services.AddSingleton<ReferringSitesDatabase>();

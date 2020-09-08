@@ -23,6 +23,7 @@ namespace GitTrends
     {
         readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
 
+        readonly ImageCachingService _imageService;
         readonly GitHubUserService _gitHubUserService;
         readonly RepositoryDatabase _repositoryDatabase;
         readonly GitHubApiV3Service _gitHubApiV3Service;
@@ -41,6 +42,7 @@ namespace GitTrends
         IReadOnlyList<Repository> _visibleRepositoryList = new List<Repository>();
 
         public RepositoryViewModel(IMainThread mainThread,
+                                    ImageCachingService imageService,
                                     IAnalyticsService analyticsService,
                                     GitHubUserService gitHubUserService,
                                     MobileSortingService sortingService,
@@ -54,6 +56,7 @@ namespace GitTrends
 
             SetTitleText();
 
+            _imageService = imageService;
             _gitHubUserService = gitHubUserService;
             _mobileSortingService = sortingService;
             _repositoryDatabase = repositoryDatabase;
@@ -319,10 +322,7 @@ namespace GitTrends
 
             VisibleRepositoryList = MobileSortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
 
-            foreach (var url in VisibleRepositoryList.Select(x => x.OwnerAvatarUrl).Distinct().Where(isValidUri))
-                ImageService.Instance.LoadString(url).PreloadAsync().SafeFireAndForget(ex => AnalyticsService.Report(ex));
-
-            static bool isValidUri(string url) => Uri.TryCreate(url, UriKind.Absolute, out _);
+            _imageService.PreloadRepositoryImages(VisibleRepositoryList).SafeFireAndForget(ex => AnalyticsService.Report(ex));
         }
 
         void UpdateListForLoggedOutUser()

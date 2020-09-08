@@ -100,4 +100,9 @@ namespace GitTrends.Shared
             static DateTimeOffset removeHourMinuteSecond(in DateTimeOffset date) => new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
         }
     }
+
+    public static class RepositoryExtensions
+    {
+        public static bool IsOwnerAvatarUrlValid(this Repository repository) => Uri.TryCreate(repository.OwnerAvatarUrl, UriKind.Absolute, out _);
+    }
 }
