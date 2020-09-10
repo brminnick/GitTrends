@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{542E25
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GitTrends.Shared", "GitTrends.Shared\GitTrends.Shared.shproj", "{D14F8262-1D13-493F-B78B-5C34F282EF07}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends.Functions", "GitTrends.Functions\GitTrends.Functions.csproj", "{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.Functions", "GitTrends.Functions\GitTrends.Functions.csproj", "{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{277A4FFB-91D3-4028-A47C-C39726594FC1}"
 	ProjectSection(SolutionItems) = preProject
