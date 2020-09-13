@@ -137,9 +137,6 @@ namespace GitTrends
 
             AnalyticsService.Track("Refresh Triggered", "Sorting Option", _mobileSortingService.CurrentOption.ToString());
 
-            List<Repository>? repositoryDatabaseList = null;
-            var reposiotryDatabaseTask = _repositoryDatabase.GetRepositories();
-
             try
             {
                 const int minimumBatchCount = 20;
@@ -147,11 +144,11 @@ namespace GitTrends
                 var repositoryList = new List<Repository>();
                 await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    repositoryDatabaseList ??= await reposiotryDatabaseTask.ConfigureAwait(false);
+                    var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
 
-                    repositoryList.Add(repositoryDatabaseList.FirstOrDefault(x => x.Url == repository.Url) switch
+                    repositoryList.Add(repositoryFromDatabase?.IsFavorite switch
                     {
-                        { IsFavorite: true } => new Repository(repository.Name, repository.Description, repository.ForkCount, repository.OwnerLogin, repository.OwnerAvatarUrl, repository.IssuesCount, repository.Url, repository.IsFork, repository.DataDownloadedAt, true),
+                        true => new Repository(repository.Name, repository.Description, repository.ForkCount, repository.OwnerLogin, repository.OwnerAvatarUrl, repository.IssuesCount, repository.Url, repository.IsFork, repository.DataDownloadedAt, true),
                         _ => repository
                     });
 
@@ -168,21 +165,21 @@ namespace GitTrends
                 //Add Remaining Repositories to _repositoryList
                 AddRepositoriesToCollection(repositoryList, _searchBarText);
 
-                var completedRepoitories = new List<Repository>();
+                var completedRepositories = new List<Repository>();
                 await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(_repositoryList, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    completedRepoitories.Add(retrievedRepositoryWithViewsAndClonesData);
+                    completedRepositories.Add(retrievedRepositoryWithViewsAndClonesData);
 
                     //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
-                    if (!_gitHubUserService.IsDemoUser && completedRepoitories.Count > minimumBatchCount)
+                    if (!_gitHubUserService.IsDemoUser && completedRepositories.Count > minimumBatchCount)
                     {
-                        AddRepositoriesToCollection(completedRepoitories, _searchBarText);
-                        completedRepoitories.Clear();
+                        AddRepositoriesToCollection(completedRepositories, _searchBarText);
+                        completedRepositories.Clear();
                     }
                 }
 
                 //Add Remaining Repositories to VisibleRepositoryList
-                AddRepositoriesToCollection(completedRepoitories, _searchBarText, true);
+                AddRepositoriesToCollection(completedRepositories, _searchBarText, true);
 
                 if (!_gitHubUserService.IsDemoUser)
                 {
@@ -228,7 +225,7 @@ namespace GitTrends
             {
                 AnalyticsService.Report(e);
 
-                repositoryDatabaseList ??= await reposiotryDatabaseTask.ConfigureAwait(false);
+                var repositoryDatabaseList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
                 SetRepositoriesCollection(repositoryDatabaseList, _searchBarText);
 
                 if (repositoryDatabaseList.Any())

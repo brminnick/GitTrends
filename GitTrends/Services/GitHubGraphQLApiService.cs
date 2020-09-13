@@ -83,7 +83,7 @@ namespace GitTrends
             if (_gitHubUserService.IsDemoUser)
             {
                 //Yield off of main thread to generate the demoDataList
-                await Task.Yield();
+                await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
 
                 for (int i = 0; i < DemoDataConstants.RepoCount; i++)
                 {
