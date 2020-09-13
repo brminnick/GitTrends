@@ -46,7 +46,7 @@ namespace GitTrends
                 {
                     await DatabaseConnection.CreateTablesAsync(CreateFlags.None, typeof(T)).ConfigureAwait(false);
                 }
-                catch (SQLiteException e) when (e.Message.Contains("PRIMARY KEY"))
+                catch (SQLiteException e) when (e.Message.Contains("PRIMARY KEY", StringComparison.OrdinalIgnoreCase))
                 {
                     await DatabaseConnection.DropTableAsync(DatabaseConnection.TableMappings.First(x => x.MappedType == typeof(T)));
                     await DatabaseConnection.CreateTablesAsync(CreateFlags.None, typeof(T)).ConfigureAwait(false);

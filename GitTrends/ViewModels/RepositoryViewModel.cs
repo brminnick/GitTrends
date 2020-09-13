@@ -9,7 +9,6 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using Autofac;
-using FFImageLoading;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
@@ -141,16 +140,15 @@ namespace GitTrends
             {
                 const int minimumBatchCount = 20;
 
+                var favoriteRepositoryUrls = await _repositoryDatabase.GetFavoritesUrls().ConfigureAwait(false);
+
                 var repositoryList = new List<Repository>();
                 await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
-
-                    repositoryList.Add(repositoryFromDatabase?.IsFavorite switch
-                    {
-                        true => new Repository(repository.Name, repository.Description, repository.ForkCount, repository.OwnerLogin, repository.OwnerAvatarUrl, repository.IssuesCount, repository.Url, repository.IsFork, repository.DataDownloadedAt, true),
-                        _ => repository
-                    });
+                    if (favoriteRepositoryUrls.Contains(repository.Url))
+                        repositoryList.Add(new Repository(repository.Name, repository.Description, repository.ForkCount, repository.OwnerLogin, repository.OwnerAvatarUrl, repository.IssuesCount, repository.Url, repository.IsFork, repository.DataDownloadedAt, true));
+                    else
+                        repositoryList.Add(repository);
 
                     //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
                     if (!_gitHubUserService.IsDemoUser && repositoryList.Count > minimumBatchCount)
