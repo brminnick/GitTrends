@@ -24,8 +24,8 @@ namespace GitTrends
             GitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
             GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
-            DemoButtonCommand = new AsyncCommand<string?>(text => ExecuteDemoButtonCommand(text), _ => IsNotAuthenticating);
-            ConnectToGitHubButtonCommand = new AsyncCommand<(CancellationToken CancellationToken, Xamarin.Essentials.BrowserLaunchOptions? BrowserLaunchOptions)>(tuple => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, gitHubUserService, tuple.CancellationToken, tuple.BrowserLaunchOptions), _ => IsNotAuthenticating);
+            DemoButtonCommand = new AsyncCommand<string?, object?>(text => ExecuteDemoButtonCommand(text), _ => IsNotAuthenticating);
+            ConnectToGitHubButtonCommand = new AsyncCommand<(CancellationToken CancellationToken, Xamarin.Essentials.BrowserLaunchOptions? BrowserLaunchOptions), object?>(tuple => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, gitHubUserService, tuple.CancellationToken, tuple.BrowserLaunchOptions), _ => IsNotAuthenticating);
 
             GitHubUserService = gitHubUserService;
             GitHubAuthenticationService = gitHubAuthenticationService;
