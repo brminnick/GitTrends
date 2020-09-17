@@ -29,7 +29,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Refit" Version="5.2.1" />
-        <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="5.0.0-pre1" />
+        <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="5.0.0-pre2" />
         <PackageReference Include="Polly" Version="7.2.1" />
         <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.2.0.44" />
         <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
