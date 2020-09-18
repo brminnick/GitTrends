@@ -17,6 +17,8 @@ fastlane/screenshots/screenshots.html
 # scan temporary files
 fastlane/test_output
 
+**/local.settings.json
+
 
 ### XamarinStudio ###
 bin/
