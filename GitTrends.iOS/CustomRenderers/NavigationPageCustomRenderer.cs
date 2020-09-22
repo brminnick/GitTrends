@@ -31,7 +31,7 @@ namespace GitTrends.iOS
 
         void AddShadow(PreferredTheme preferredTheme)
         {
-            if (NavigationBar is null)
+            if (NavigationBar?.Layer is null)
                 return;
 
             if (isLightTheme(preferredTheme))
