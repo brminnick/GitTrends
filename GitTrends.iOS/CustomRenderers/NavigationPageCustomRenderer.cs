@@ -15,9 +15,8 @@ namespace GitTrends.iOS
 
         public NavigationPageCustomRenderer()
         {
-            ThemeService.PreferenceChanged += HandlePreferenceChanged;
-
             _themeService = ContainerService.Container.Resolve<ThemeService>();
+            ThemeService.PreferenceChanged += HandlePreferenceChanged;
         }
 
         protected override void OnElementChanged(VisualElementChangedEventArgs e)
