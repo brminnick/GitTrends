@@ -11,7 +11,7 @@ on:
 jobs:
   
     UnitTests:
-      runs-on: macos-latest
+      runs-on: ubuntu-latest
       env:
         GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}
         GetSyncFusionInformationApiKey: ${{ secrets.GetSyncFusionInformationApiKey }}
@@ -31,7 +31,8 @@ jobs:
 
           UnitTestDirectory=`dirname $UnitTestProject`
           echo $UnitTestDirectory
-
+          
+          dotnet build -c
           dotnet test  -c "Release" $UnitTestDirectory
   
     Android:
