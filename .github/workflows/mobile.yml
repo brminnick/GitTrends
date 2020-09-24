@@ -31,7 +31,7 @@ jobs:
 
           UnitTestDirectory=`dirname $UnitTestProject`
           echo $UnitTestDirectory
-
+          
           dotnet test  -c "Release" $UnitTestDirectory
   
     Android:
