@@ -51,6 +51,8 @@ namespace GitTrends
         {
             base.OnStart();
 
+            _analyticsService.Track("App Started");
+
             await ClearBageNotifications();
         }
 
@@ -60,7 +62,7 @@ namespace GitTrends
 
             OnResumed();
 
-            _analyticsService.Track("App Resumed", nameof(LanguageService.PreferredLanguage), _languageService.PreferredLanguage ?? "null");
+            _analyticsService.Track("App Resumed");
 
             await ClearBageNotifications();
         }
