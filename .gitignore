@@ -17,6 +17,7 @@ fastlane/screenshots/screenshots.html
 # scan temporary files
 fastlane/test_output
 
+**/__*.json
 **/local.settings.json
 
 
