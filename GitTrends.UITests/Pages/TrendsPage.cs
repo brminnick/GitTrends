@@ -4,24 +4,19 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using Newtonsoft.Json;
 using Xamarin.UITest;
-using Xamarin.UITest.Queries;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
 namespace GitTrends.UITests
 {
     class TrendsPage : BasePage
     {
-        readonly Query _trendsChart, _trendsChartLegend, _trendsChartPrimaryAxis, _trendsChartSecondaryAxis,
-            _activityIndicator, _androidContextMenuOverflowButton, _referringSiteButton, _viewsCard,
+        readonly Query _viewsClonesChart, _activityIndicator, _androidContextMenuOverflowButton, _referringSiteButton, _viewsCard,
             _uniqueViewsCard, _clonesCard, _uniqueClonesCard, _viewsStatisticsLabel, _uniqueViewsStatisticsLabel,
             _clonesStatisticsLabel, _uniqueClonesStatisticsLabel, _emptyDataView;
 
         public TrendsPage(IApp app) : base(app)
         {
-            _trendsChart = GenerateMarkedQuery(TrendsPageAutomationIds.TrendsChart);
-            _trendsChartLegend = GenerateMarkedQuery(TrendsPageAutomationIds.TrendsChartLegend);
-            _trendsChartPrimaryAxis = GenerateMarkedQuery(TrendsPageAutomationIds.TrendsChartPrimaryAxis);
-            _trendsChartSecondaryAxis = GenerateMarkedQuery(TrendsPageAutomationIds.TrendsChartSecondaryAxis);
+            _viewsClonesChart = GenerateMarkedQuery(TrendsPageAutomationIds.ViewsClonesChart);
 
             _viewsCard = GenerateMarkedQuery(TrendsPageAutomationIds.ViewsCard);
             _uniqueViewsCard = GenerateMarkedQuery(TrendsPageAutomationIds.UniqueViewsCard);
@@ -60,7 +55,7 @@ namespace GitTrends.UITests
             }
 
             App.WaitForNoElement(_activityIndicator, timeout: timespan);
-            App.WaitForElement(_trendsChart, timeout: timespan);
+            App.WaitForElement(_viewsClonesChart, timeout: timespan);
 
             DismissSyncfusionLicensePopup();
 

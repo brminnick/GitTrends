@@ -17,10 +17,10 @@ namespace GitTrends
         readonly CancellationTokenSource _fetchDataCancellationTokenSource = new CancellationTokenSource();
         readonly Repository _repository;
 
-        public TrendsPage(TrendsViewModel trendsViewModel,
+        public TrendsPage(IMainThread mainThread,
                             Repository repository,
-                            IAnalyticsService analyticsService,
-                            IMainThread mainThread) : base(trendsViewModel, analyticsService, mainThread, true)
+                            TrendsViewModel trendsViewModel,
+                            IAnalyticsService analyticsService) : base(trendsViewModel, analyticsService, mainThread, true)
         {
             Title = repository.Name;
             _repository = repository;
@@ -50,12 +50,15 @@ namespace GitTrends
                 {
                     new StatisticsGrid()
                         .Row(Row.Statistics),
-                    new TrendsChart()
+
+                    new ViewClonesChart()
                         .Row(Row.Chart),
+
                     new EmptyDataView("EmptyInsightsChart", TrendsPageAutomationIds.EmptyDataView)
                         .Row(Row.Chart)
                         .Bind(IsVisibleProperty, nameof(TrendsViewModel.IsEmptyDataViewVisible))
                         .Bind(EmptyDataView.TitleProperty, nameof(TrendsViewModel.EmptyDataViewTitle)),
+
                     new TrendsChartActivityIndicator()
                         .Row(Row.Chart),
                 }

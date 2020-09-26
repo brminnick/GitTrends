@@ -122,7 +122,7 @@ namespace GitTrends
         {
             var trendsPageLayout = (Layout<View>)GetVisibleContentPage().Content;
 
-            var trendsFrame = trendsPageLayout.Children.OfType<TrendsChart>().First();
+            var trendsFrame = trendsPageLayout.Children.OfType<ViewClonesChart>().First();
             var trendsChart = (SfChart)trendsFrame.Content;
 
             return trendsChart.Series.First(x => x.Label.Equals(seriesTitle)).IsVisible;

@@ -4,17 +4,19 @@
     {
         public const string ActivityIndicator = nameof(TrendsPageAutomationIds) + nameof(ActivityIndicator);
 
-        public const string TrendsChart = nameof(TrendsPageAutomationIds) + nameof(TrendsChart);
-        public const string TrendsChartLegend = nameof(TrendsPageAutomationIds) + nameof(TrendsChartLegend);
-        public const string TrendsChartPrimaryAxis = nameof(TrendsPageAutomationIds) + nameof(TrendsChartPrimaryAxis);
-        public const string TrendsChartSecondaryAxis = nameof(TrendsPageAutomationIds) + nameof(TrendsChartSecondaryAxis);
+        public const string StarsChart = nameof(TrendsPageAutomationIds) + nameof(StarsChart);
+        public const string ViewsClonesChart = nameof(TrendsPageAutomationIds) + nameof(ViewsClonesChart);
 
         public const string EmptyDataView = nameof(TrendsPageAutomationIds) + nameof(EmptyDataView);
+
+        public const string StarsCard = nameof(TrendsPageAutomationIds) + nameof(StarsCard);
 
         public const string ViewsCard = nameof(TrendsPageAutomationIds) + nameof(ViewsCard);
         public const string UniqueViewsCard = nameof(TrendsPageAutomationIds) + nameof(UniqueViewsCard);
         public const string ClonesCard = nameof(TrendsPageAutomationIds) + nameof(ClonesCard);
         public const string UniqueClonesCard = nameof(TrendsPageAutomationIds) + nameof(UniqueClonesCard);
+
+        public const string StarsStatisticsLabel = nameof(TrendsPageAutomationIds) + nameof(StarsStatisticsLabel);
 
         public const string ViewsStatisticsLabel = nameof(TrendsPageAutomationIds) + nameof(ViewsStatisticsLabel);
         public const string UniqueViewsStatisticsLabel = nameof(TrendsPageAutomationIds) + nameof(UniqueViewsStatisticsLabel);

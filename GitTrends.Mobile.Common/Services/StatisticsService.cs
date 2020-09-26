@@ -8,6 +8,8 @@ namespace GitTrends.Mobile.Common
 {
     public static class StatisticsService
     {
+        public static string ToAbbreviatedText(this int number) => ToAbbreviatedText((long)number);
+
         public static string ToAbbreviatedText(this long number)
         {
             if (number < 10e2)
