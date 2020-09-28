@@ -10,7 +10,7 @@ on:
 
 jobs:
   
-    UnitTests:
+    UnitTests_Android_iOS:
       runs-on: macos-latest
       env:
         GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}
@@ -33,15 +33,10 @@ jobs:
           echo $UnitTestDirectory
           
           dotnet test  -c "Release" $UnitTestDirectory
-  
-    Android:
-      runs-on: macos-latest
-      steps:
-      - uses: actions/checkout@v1
-      - name: Android
-        run: |
-          nuget restore          
+          
           msbuild ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release     
+          msbuild ./GitTrends.Android/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release /p:Platform=iPhone    
+          
 
 # Ignore iOS until GitHub Actions adds iOS Certificates & Provisioning Profiles
 #    iOS:
