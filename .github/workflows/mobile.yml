@@ -16,17 +16,16 @@ jobs:
         GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}
         GetSyncFusionInformationApiKey: ${{ secrets.GetSyncFusionInformationApiKey }}
         GetNotificationHubInformationApiKey: ${{ secrets.GetNotificationHubInformationApiKey }}
-        SourceDirectory: "./"
       steps:
       - uses: actions/checkout@v1
-      - name: UnitTests
+      - name: UnitTests_Android_iOS
         run: |
           nuget restore
           
           chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
           ./GitTrends.Android/appcenter-pre-build.sh
 
-          UnitTestProject=`find "$SourceDirectory" -name GitTrends.UnitTests.csproj`
+          UnitTestProject=`find ./ -name GitTrends.UnitTests.csproj`
           echo $UnitTestProject
 
           UnitTestDirectory=`dirname $UnitTestProject`
@@ -35,10 +34,12 @@ jobs:
           dotnet test  -c "Release" $UnitTestDirectory
           
           msbuild ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release     
+
+          # Use iOS simulator until GitHub Actions adds iOS Certificates & Provisioning Profiles
           msbuild ./GitTrends.Android/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release /p:Platform=iPhoneSimulator    
           
 
-# Ignore iOS until GitHub Actions adds iOS Certificates & Provisioning Profiles
+
 #    iOS:
 #      runs-on: macos-latest
 #      steps:
