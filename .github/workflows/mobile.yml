@@ -18,14 +18,18 @@ jobs:
         GetNotificationHubInformationApiKey: ${{ secrets.GetNotificationHubInformationApiKey }}
       steps:
       - uses: actions/checkout@v1
-      - name: UnitTests_Android_iOS
+      - name: Restore NuGet 
         run: |
           nuget restore
+      - name: Inject API Keys
+        run: |
           
           chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
           ./GitTrends.Android/appcenter-pre-build.sh
-
-          UnitTestProject=`find ./ -name GitTrends.UnitTests.csproj`
+          
+      - name: Run Unit Tests
+        run: |   
+          UnitTestProject=`find . -name GitTrends.UnitTests.csproj`
           echo $UnitTestProject
 
           UnitTestDirectory=`dirname $UnitTestProject`
@@ -33,8 +37,12 @@ jobs:
           
           dotnet test  -c "Release" $UnitTestDirectory
           
+      - name: Build Android App
+        run: |                    
           msbuild ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release     
 
+      - name: Build iOS App
+        run: |                 
           # Use iOS simulator until GitHub Actions adds iOS Certificates & Provisioning Profiles
           msbuild ./GitTrends.Android/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release /p:Platform=iPhoneSimulator    
           
