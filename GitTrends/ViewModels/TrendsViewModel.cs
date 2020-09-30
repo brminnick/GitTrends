@@ -168,9 +168,9 @@ namespace GitTrends
             set => SetProperty(ref _dailyClonesList, value, UpdateDailyClonesListPropertiesChanged);
         }
 
-        public List<DailyStarsModel> DailyStarsList
+        public IReadOnlyList<DailyStarsModel> DailyStarsList
         {
-            get => _dailyStarsList ??= new List<DailyStarsModel>();
+            get => _dailyStarsList ??= Array.Empty<DailyStarsModel>();
             set => SetProperty(ref _dailyStarsList, value, UpdateDailyStarsListPropertiesChanged);
         }
 
