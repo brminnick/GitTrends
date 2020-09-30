@@ -68,12 +68,12 @@ namespace GitTrends.iOS
             if (leftBarButtonItem != null)
                 parentViewController.NavigationItem.LeftBarButtonItems = new UIBarButtonItem[] { leftBarButtonItem };
             else
-                parentViewController.NavigationItem.LeftBarButtonItems = Enumerable.Empty<UIBarButtonItem>().ToArray();
+                parentViewController.NavigationItem.LeftBarButtonItems = Array.Empty<UIBarButtonItem>();
 
             if (rightBarButtonItems.Any())
                 parentViewController.NavigationItem.RightBarButtonItems = rightBarButtonItems.ToArray();
             else
-                parentViewController.NavigationItem.RightBarButtonItems = Enumerable.Empty<UIBarButtonItem>().ToArray();
+                parentViewController.NavigationItem.RightBarButtonItems = Array.Empty<UIBarButtonItem>();
         }
 
         async Task<(UIBarButtonItem? LeftBarButtonItem, List<UIBarButtonItem> RightBarButtonItems)> GetToolbarItems(IEnumerable<ToolbarItem> items)

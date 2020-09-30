@@ -133,7 +133,7 @@ namespace GitTrends
 
         public IReadOnlyList<MobileReferringSiteModel> MobileReferringSitesList
         {
-            get => _mobileReferringSiteList ??= new List<MobileReferringSiteModel>();
+            get => _mobileReferringSiteList ??= Array.Empty<MobileReferringSiteModel>();
             set => SetProperty(ref _mobileReferringSiteList, value);
         }
 
@@ -167,8 +167,37 @@ namespace GitTrends
 
         async Task ExecuteRefreshCommand(string owner, string repository, string repositoryUrl, CancellationToken cancellationToken)
         {
+            var referringSitesList = await GetReferringSites(owner, repository, cancellationToken).ConfigureAwait(false);
+
+            try
+            {
+                if (!_gitHubUserService.IsDemoUser)
+                {
+                    await foreach (var mobileReferringSite in GetMobileReferringSiteWithFavIconList(referringSitesList, repositoryUrl, cancellationToken).ConfigureAwait(false))
+                    {
+                        var referringSite = MobileReferringSitesList.Single(x => x.Referrer == mobileReferringSite.Referrer);
+                        referringSite.FavIcon = mobileReferringSite.FavIcon;
+                    }
+
+                    foreach (var referringSite in MobileReferringSitesList)
+                        await _referringSitesDatabase.SaveReferringSite(referringSite, repositoryUrl).ConfigureAwait(false);
+                }
+            }
+            catch (Exception e)
+            {
+                //Let's track the exception, but we don't need to do anything with it because the data still appears, just without the icons
+                AnalyticsService.Report(e);
+            }
+            finally
+            {
+                IsRefreshing = false;
+            }
+        }
+
+        async Task<IReadOnlyList<ReferringSiteModel>> GetReferringSites(string owner, string repository, CancellationToken cancellationToken)
+        {
             HttpResponseMessage? finalResponse = null;
-            IReadOnlyList<ReferringSiteModel> referringSitesList = new List<ReferringSiteModel>();
+            IReadOnlyList<ReferringSiteModel> referringSitesList = Array.Empty<ReferringSiteModel>();
 
             try
             {
@@ -221,30 +250,9 @@ namespace GitTrends
                 IsEmptyDataViewEnabled = true;
             }
 
-            try
-            {
-                await foreach (var mobileReferringSite in GetMobileReferringSiteWithFavIconList(referringSitesList, repositoryUrl, cancellationToken).ConfigureAwait(false))
-                {
-                    var referringSite = MobileReferringSitesList.Single(x => x.Referrer == mobileReferringSite.Referrer);
-                    referringSite.FavIcon = mobileReferringSite.FavIcon;
-                }
-
-                if (!_gitHubUserService.IsDemoUser)
-                {
-                    foreach (var referringSite in MobileReferringSitesList)
-                        await _referringSitesDatabase.SaveReferringSite(referringSite, repositoryUrl).ConfigureAwait(false);
-                }
-            }
-            catch (Exception e)
-            {
-                //Let's track the exception, but we don't need to do anything with it because the data still appears, just without the icons
-                AnalyticsService.Report(e);
-            }
-            finally
-            {
-                IsRefreshing = false;
-            }
+            return referringSitesList;
         }
+
 
         async IAsyncEnumerable<MobileReferringSiteModel> GetMobileReferringSiteWithFavIconList(IEnumerable<ReferringSiteModel> referringSites, string repositoryUrl, [EnumeratorCancellation] CancellationToken cancellationToken)
         {

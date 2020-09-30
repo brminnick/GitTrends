@@ -14,7 +14,7 @@ namespace GitTrends.UnitTests
 {
     class ResxTests : BaseTest
     {
-        static readonly List<Type> _resxTypeList = new List<Type>
+        static readonly IReadOnlyList<Type> _resxTypeList = new[]
         {
             typeof(AppStoreRatingRequestConstants),
             typeof(DemoUserConstants),
@@ -40,7 +40,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             var cultureNames = CultureConstants.CulturePickerOptions.Keys;
-            var resxCultureInfoList = new List<CultureInfo[]>(_resxTypeList.Select(x => GetAvailableResxCultureInfos(x.Assembly)));
+            IReadOnlyList<CultureInfo[]> resxCultureInfoList = _resxTypeList.Select(x => GetAvailableResxCultureInfos(x.Assembly)).ToList();
 
             //Act
             foreach (var cultureInfo in resxCultureInfoList)

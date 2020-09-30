@@ -54,7 +54,7 @@ namespace GitTrends
             await SaveDailyViews(repository).ConfigureAwait(false);
         }
 
-        public async Task<List<string>> GetFavoritesUrls()
+        public async Task<IReadOnlyList<string>> GetFavoritesUrls()
         {
             var repositoryDatabaseConnection = await GetDatabaseConnection<RepositoryDatabaseModel>().ConfigureAwait(false);
             var favoriteRepositories = await AttemptAndRetry(() => repositoryDatabaseConnection.Table<RepositoryDatabaseModel>().Where(x => x.IsFavorite == true).ToListAsync()).ConfigureAwait(false);
@@ -75,13 +75,13 @@ namespace GitTrends
             return RepositoryDatabaseModel.ToRepository(repositoryDatabaseModel, dailyClones, dailyViews, starGazers);
         }
 
-        public async Task<List<Repository>> GetRepositories()
+        public async Task<IReadOnlyList<Repository>> GetRepositories()
         {
             var repositoryDatabaseConnection = await GetDatabaseConnection<RepositoryDatabaseModel>().ConfigureAwait(false);
 
             var repositoryDatabaseModels = await AttemptAndRetry(() => repositoryDatabaseConnection.Table<RepositoryDatabaseModel>().ToListAsync()).ConfigureAwait(false);
             if (!repositoryDatabaseModels.Any())
-                return new List<Repository>();
+                return Array.Empty<Repository>();
 
             var repositoryList = new List<Repository>();
             foreach (var repositoryDatabaseModel in repositoryDatabaseModels)
@@ -97,9 +97,9 @@ namespace GitTrends
 
         static bool IsWithin14Days(DateTimeOffset dataDate, DateTimeOffset mostRecentDate) => dataDate.CompareTo(mostRecentDate.Subtract(TimeSpan.FromDays(13)).ToLocalTime()) >= 0;
 
-        async Task<(IEnumerable<DailyClonesDatabaseModel> dailyClones,
-                            IEnumerable<DailyViewsDatabaseModel> dailyViews,
-                            IEnumerable<StarGazerInfoDatabaseModel> starGazers)> GetStarsClonesViews(RepositoryDatabaseModel repository)
+        async Task<(IReadOnlyList<DailyClonesDatabaseModel> dailyClones,
+                            IReadOnlyList<DailyViewsDatabaseModel> dailyViews,
+                            IReadOnlyList<StarGazerInfoDatabaseModel> starGazers)> GetStarsClonesViews(RepositoryDatabaseModel repository)
         {
             var (_, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection, starGazerInfoDatabaseConnection) = await GetDatabaseConnections().ConfigureAwait(false);
 
@@ -125,7 +125,7 @@ namespace GitTrends
             var dailyClones = sortedRecentDailyClonesDatabaseModels.Where(x => IsWithin14Days(x.Day, mostRecentDate)).GroupBy(x => x.Day).Select(x => x.First()).Take(14);
             var dailyViews = sortedRecentDailyViewsDatabaseModels.Where(x => IsWithin14Days(x.Day, mostRecentDate)).GroupBy(x => x.Day).Select(x => x.First()).Take(14);
 
-            return (dailyClones, dailyViews, sortedStarGazerInfoModels);
+            return (dailyClones.ToList(), dailyViews.ToList(), sortedStarGazerInfoModels);
         }
 
         async Task<(SQLiteAsyncConnection RepositoryDatabaseConnection,

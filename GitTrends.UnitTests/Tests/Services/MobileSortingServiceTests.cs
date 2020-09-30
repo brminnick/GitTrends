@@ -18,7 +18,7 @@ namespace GitTrends.UnitTests
             const string lastReferer = "t.co";
 
             //Arrange
-            var referringSitesList = new List<MobileReferringSiteModel>
+            IReadOnlyList<MobileReferringSiteModel> referringSitesList = new[]
             {
                 new MobileReferringSiteModel(new ReferringSiteModel(10, 10, "Google")),
                 new MobileReferringSiteModel(new ReferringSiteModel(10, 10, "codetraver.io")),

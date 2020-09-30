@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Refit;
 using RichardSzalay.MockHttp;
-using SQLite;
 
 namespace GitTrends.UnitTests
 {
@@ -22,7 +21,7 @@ namespace GitTrends.UnitTests
             //Arrange
             PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs;
             IReadOnlyList<Repository> visibleRepositoryList_Initial, visibleRepositoryList_Final;
-            IReadOnlyList<Repository> generatedRepositories = new List<Repository>
+            IReadOnlyList<Repository> generatedRepositories = new[]
             {
                 CreateRepository(),
                 CreateRepository(),
@@ -76,7 +75,7 @@ namespace GitTrends.UnitTests
 
             foreach (var visibleRepository in visibleRepositoryList_Final)
             {
-            //Ensure visibleRepositoryList_Final matches the generatedRepositories
+                //Ensure visibleRepositoryList_Final matches the generatedRepositories
                 var matchingRepository = generatedRepositories.Single(x => x.Url == visibleRepository.Url);
 
                 Assert.AreEqual(visibleRepository.DailyClonesList.Count, matchingRepository.DailyClonesList.Count);

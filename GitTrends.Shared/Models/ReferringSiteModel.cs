@@ -10,7 +10,7 @@ namespace GitTrends.Shared
             DownloadedAt = downloadedAt ?? DateTimeOffset.UtcNow;
 
             Referrer = referrer;
-            Uri.TryCreate("https://" + referrer, UriKind.Absolute, out var referringUri);
+            Uri.TryCreate("https://" + referrer, UriKind.Absolute, out Uri? referringUri);
 
             if (referringUri is null)
             {
