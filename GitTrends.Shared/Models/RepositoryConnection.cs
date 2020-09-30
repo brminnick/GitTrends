@@ -9,12 +9,12 @@ namespace GitTrends.Shared
     {
         public RepositoryConnection(IEnumerable<RepositoryConnectionNode>? nodes, PageInfo pageInfo)
         {
-            RepositoryList = nodes?.ToList() ?? new List<RepositoryConnectionNode>();
+            RepositoryList = nodes?.ToList() ?? (IReadOnlyList<RepositoryConnectionNode>)Array.Empty<RepositoryConnectionNode>();
             PageInfo = pageInfo;
         }
 
         [JsonProperty("nodes")]
-        public List<RepositoryConnectionNode> RepositoryList { get; }
+        public IReadOnlyList<RepositoryConnectionNode> RepositoryList { get; }
 
         [JsonProperty("pageInfo")]
         public PageInfo PageInfo { get; }

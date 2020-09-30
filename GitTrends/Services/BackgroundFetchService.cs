@@ -104,7 +104,7 @@ namespace GitTrends
                 return trendingRepositories;
             }
 
-            return new List<Repository>();
+            return Array.Empty<Repository>();
         }
     }
 }

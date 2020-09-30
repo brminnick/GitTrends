@@ -37,8 +37,8 @@ namespace GitTrends.UITests
 
         public bool? IsFavorite { get; set; }
 
-        public IReadOnlyList<DailyViewsModel> DailyViewsList { get; set; } = new List<DailyViewsModel>();
+        public IReadOnlyList<DailyViewsModel> DailyViewsList { get; set; } = Array.Empty<DailyViewsModel>();
 
-        public IReadOnlyList<DailyClonesModel> DailyClonesList { get; set; } = new List<DailyClonesModel>();
+        public IReadOnlyList<DailyClonesModel> DailyClonesList { get; set; } = Array.Empty<DailyClonesModel>();
     }
 }

@@ -31,9 +31,9 @@ namespace GitTrends
         string _uniqueViewsStatisticsText = string.Empty;
         string _uniqueClonesStatisticsText = string.Empty;
 
-        List<DailyStarsModel>? _dailyStarsList;
-        List<DailyViewsModel>? _dailyViewsList;
-        List<DailyClonesModel>? _dailyClonesList;
+        IReadOnlyList<DailyStarsModel>? _dailyStarsList;
+        IReadOnlyList<DailyViewsModel>? _dailyViewsList;
+        IReadOnlyList<DailyClonesModel>? _dailyClonesList;
 
         public TrendsViewModel(IAnalyticsService analyticsService,
                                 GitHubApiV3Service gitHubApiV3Service,
@@ -156,15 +156,15 @@ namespace GitTrends
             });
         }
 
-        public List<DailyViewsModel> DailyViewsList
+        public IReadOnlyList<DailyViewsModel> DailyViewsList
         {
-            get => _dailyViewsList ??= new List<DailyViewsModel>();
+            get => _dailyViewsList ??= Array.Empty<DailyViewsModel>();
             set => SetProperty(ref _dailyViewsList, value, UpdateDailyViewsListPropertiesChanged);
         }
 
-        public List<DailyClonesModel> DailyClonesList
+        public IReadOnlyList<DailyClonesModel> DailyClonesList
         {
-            get => _dailyClonesList ??= new List<DailyClonesModel>();
+            get => _dailyClonesList ??= Array.Empty<DailyClonesModel>();
             set => SetProperty(ref _dailyClonesList, value, UpdateDailyClonesListPropertiesChanged);
         }
 
@@ -176,11 +176,11 @@ namespace GitTrends
 
         async Task ExecuteFetchDataCommand(Repository repository, CancellationToken cancellationToken)
         {
-            IReadOnlyList<DateTimeOffset> repositoryStars = new DateTimeOffset[0];
-            IReadOnlyList<DailyViewsModel> repositoryViews = new DailyViewsModel[0];
-            IReadOnlyList<DailyClonesModel> repositoryClones = new DailyClonesModel[0];
+            IReadOnlyList<DateTimeOffset> repositoryStars = Array.Empty<DateTimeOffset>();
+            IReadOnlyList<DailyViewsModel> repositoryViews = Array.Empty<DailyViewsModel>();
+            IReadOnlyList<DailyClonesModel> repositoryClones = Array.Empty<DailyClonesModel>();
 
-            var minimumTimeTask = Task.Delay(TimeSpan.FromSeconds(2));
+            var minimumTimeTask = Task.Delay(TimeSpan.FromSeconds(1));
 
             try
             {
@@ -213,9 +213,9 @@ namespace GitTrends
             }
             catch (Exception e)
             {
-                repositoryStars = new List<DateTimeOffset>();
-                repositoryViews = new List<DailyViewsModel>();
-                repositoryClones = new List<DailyClonesModel>();
+                repositoryStars = Array.Empty<DateTimeOffset>();
+                repositoryViews = Array.Empty<DailyViewsModel>();
+                repositoryClones = Array.Empty<DailyClonesModel>();
 
                 EmptyDataViewTitle = EmptyDataViewConstants.UnableToRetrieveData;
 

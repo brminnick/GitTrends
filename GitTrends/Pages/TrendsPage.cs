@@ -17,24 +17,23 @@ namespace GitTrends
         readonly CancellationTokenSource _fetchDataCancellationTokenSource = new CancellationTokenSource();
         readonly Repository _repository;
 
-        public TrendsPage(IMainThread mainThread,
-                            Repository repository,
+        public TrendsPage(Repository repository,
+                            IMainThread mainThread,
                             TrendsViewModel trendsViewModel,
                             IAnalyticsService analyticsService) : base(trendsViewModel, analyticsService, mainThread, true)
         {
-            Title = repository.Name;
             _repository = repository;
+
+            Title = repository.Name;
 
             ViewModel.FetchDataCommand.Execute((repository, _fetchDataCancellationTokenSource.Token));
 
-            var referringSitesToolbarItem = new ToolbarItem
+            ToolbarItems.Add(new ToolbarItem
             {
                 Text = PageTitles.ReferringSitesPage,
                 IconImageSource = "ReferringSitesIcon",
                 AutomationId = TrendsPageAutomationIds.ReferringSitesButton
-            };
-            referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked;
-            ToolbarItems.Add(referringSitesToolbarItem);
+            }.Invoke(referringSitesToolbarItem => referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked));
 
             Content = new Grid
             {
@@ -44,7 +43,7 @@ namespace GitTrends
 
                 RowDefinitions = Rows.Define(
                     (Row.Statistics, AbsoluteGridLength(StatisticsGrid.StatisticsGridHeight)),
-                    (Row.Chart, StarGridLength(1))),
+                    (Row.Chart, Star)),
 
                 Children =
                 {
@@ -90,9 +89,14 @@ namespace GitTrends
         {
             public TrendsChartActivityIndicator()
             {
+                //The size of UIActivityIndicator is fixed by iOS, so we'll use Xamarin.Forms.VisualElement.Scale to increase its size
+                //https://stackoverflow.com/a/2638224/5953643
+                if (Device.RuntimePlatform is Device.iOS)
+                    Scale = 2;
+
                 AutomationId = TrendsPageAutomationIds.ActivityIndicator;
 
-                this.Center()
+                this.CenterExpand()
                     .DynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor))
                     .Bind(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData))
                     .Bind(IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));

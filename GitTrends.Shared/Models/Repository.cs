@@ -12,7 +12,7 @@ namespace GitTrends.Shared
             IsFavorite = isFavorite;
             DataDownloadedAt = dataDownloadedAt;
 
-            StarredAt = starredAt?.OrderBy(x => x).ToList() ?? new List<DateTimeOffset>();
+            StarredAt = (starredAt?.OrderBy(x => x) ?? Enumerable.Empty<DateTimeOffset>()).ToList();
             StarCount = StarredAt.Count;
 
             Name = name;

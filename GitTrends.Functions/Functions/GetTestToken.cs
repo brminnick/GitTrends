@@ -15,7 +15,7 @@ namespace GitTrends.Functions
 {
     class GetTestToken
     {
-        readonly static Lazy<List<string>> _testTokenListHolder = new Lazy<List<string>>(() => new List<string>
+        readonly static Lazy<IReadOnlyList<string>> _testTokenListHolder = new Lazy<IReadOnlyList<string>>(() => new List<string>
         {
             { Environment.GetEnvironmentVariable("UITestToken_brminnick") ?? string.Empty },
             { Environment.GetEnvironmentVariable("UITestToken_GitTrends") ?? string.Empty },
@@ -27,7 +27,7 @@ namespace GitTrends.Functions
 
         public GetTestToken(GitHubApiV3Service gitHubApiV3Service) => _gitHubApiV3Service = gitHubApiV3Service;
 
-        List<string> TestTokenList => _testTokenListHolder.Value;
+        IReadOnlyList<string> TestTokenList => _testTokenListHolder.Value;
 
         [FunctionName(nameof(GetTestToken))]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request, ILogger log)
