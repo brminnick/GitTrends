@@ -35,11 +35,11 @@ namespace GitTrends
         IReadOnlyList<DailyViewsModel>? _dailyViewsList;
         IReadOnlyList<DailyClonesModel>? _dailyClonesList;
 
-        public TrendsViewModel(IAnalyticsService analyticsService,
+        public TrendsViewModel(IMainThread mainThread,
+                                IAnalyticsService analyticsService,
                                 GitHubApiV3Service gitHubApiV3Service,
                                 GitHubGraphQLApiService gitHubGraphQLApiService,
-                                TrendsChartSettingsService trendsChartSettingsService,
-                                IMainThread mainThread) : base(analyticsService, mainThread)
+                                TrendsChartSettingsService trendsChartSettingsService) : base(analyticsService, mainThread)
         {
             _gitHubApiV3Service = gitHubApiV3Service;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
