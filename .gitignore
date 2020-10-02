@@ -1,6 +1,8 @@
 
 # Created by https://www.gitignore.io/api/xamarinstudio,visualstudio,visualstudiocode,xcode,android,macos,csharp,f#,fastlane,java,jetbrains,linux,monodevelop,objective-c,swift,sublimetext,unity
 
+**/.vscode*
+
 ### fastlane ###
 # fastlane - A streamlined workflow tool for Cocoa deployment
 
