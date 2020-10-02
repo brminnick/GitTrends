@@ -5,7 +5,7 @@ namespace GitTrends
 {
     abstract class BaseTrendsChart : SfChart
     {
-        public BaseTrendsChart(in string automationId)
+        protected BaseTrendsChart(in string automationId)
         {
             Margin = 0;
             ChartPadding = new Thickness(0, 24, 0, 4);

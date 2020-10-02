@@ -6,7 +6,7 @@ namespace GitTrends
 {
     abstract class BaseChartView : MaterialFrame
     {
-        public BaseChartView(in BaseTrendsChart trendsChart)
+        protected BaseChartView(in BaseTrendsChart trendsChart)
         {
             CornerRadius = 4;
             Elevation = 4;

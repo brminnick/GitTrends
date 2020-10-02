@@ -65,6 +65,7 @@ namespace GitTrends
         public IAsyncCommand<(Repository Repository, CancellationToken CancellationToken)> FetchDataCommand { get; }
 
         public double DailyViewsClonesMinValue { get; } = 0;
+        public double DailyStarsMinValue { get; } = 0;
 
         public bool IsEmptyDataViewVisible => !IsChartVisible && !IsFetchingData;
         public bool IsChartVisible => !IsFetchingData && DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
@@ -74,6 +75,8 @@ namespace GitTrends
 
         public DateTime MaxDailyStarsDate => DailyStarsList.Max(x => x.Day).DateTime;
         public DateTime MinDailyStarsDate => DailyStarsList.Min(x => x.Day).DateTime;
+
+        public double DailyStarsMaxValue => DailyStarsList.Max(x => x.TotalStars);
 
         public double DailyViewsClonesMaxValue
         {
@@ -255,6 +258,9 @@ namespace GitTrends
         {
             OnPropertyChanged(nameof(IsChartVisible));
             OnPropertyChanged(nameof(IsEmptyDataViewVisible));
+
+            OnPropertyChanged(nameof(DailyStarsMaxValue));
+            OnPropertyChanged(nameof(DailyStarsMinValue));
 
             OnPropertyChanged(nameof(MaxDailyStarsDate));
             OnPropertyChanged(nameof(MinDailyStarsDate));

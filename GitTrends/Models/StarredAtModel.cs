@@ -3,10 +3,12 @@ namespace GitTrends
 {
     public class DailyStarsModel
     {
-        public DailyStarsModel(int totalStars, DateTimeOffset date) =>
-            (TotalStars, Day) = (totalStars, date);
+        public DailyStarsModel(double totalStars, DateTimeOffset day) =>
+            (TotalStars, Day) = (totalStars, day);
 
-        public int TotalStars { get; }
+        public DateTime LocalDay => Day.LocalDateTime;
+
+        public double TotalStars { get; }
         public DateTimeOffset Day { get; }
     }
 }
