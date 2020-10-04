@@ -12,7 +12,7 @@ namespace GitTrends
         public static readonly BindableProperty ErrorPlaceholderProperty = BindableProperty.Create(nameof(ErrorPlaceholder), typeof(ImageSource), typeof(CircleImage), null);
         public static readonly BindableProperty LoadingPlaceholderProperty = BindableProperty.Create(nameof(LoadingPlaceholder), typeof(ImageSource), typeof(CircleImage), null);
 
-        public CircleImage(ImageSource imageSource, ImageSource errorPlaceholder, ImageSource loadingPlaceholder) : this()
+        public CircleImage(in ImageSource imageSource, in ImageSource errorPlaceholder, in ImageSource loadingPlaceholder) : this()
         {
             ImageSource = imageSource;
             ErrorPlaceholder = errorPlaceholder;
