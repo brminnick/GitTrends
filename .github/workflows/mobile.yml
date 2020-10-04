@@ -44,7 +44,7 @@ jobs:
       - name: Build iOS App
         run: |                 
           # Use iOS simulator until GitHub Actions adds iOS Certificates & Provisioning Profiles
-          msbuild ./GitTrends.Android/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release /p:Platform=iPhoneSimulator    
+          msbuild ./GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release /p:Platform=iPhoneSimulator    
           
 
 
