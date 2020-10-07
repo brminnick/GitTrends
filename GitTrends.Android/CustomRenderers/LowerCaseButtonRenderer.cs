@@ -1,5 +1,4 @@
 ﻿using Android.Content;
-using GitTrends;
 using GitTrends.Droid;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
