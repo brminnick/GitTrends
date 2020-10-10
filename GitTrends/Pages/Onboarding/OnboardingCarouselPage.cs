@@ -1,35 +1,23 @@
 ﻿using System;
 using System.Linq;
 using GitTrends.Shared;
-using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends
 {
-    public class OnboardingCarouselPage : CarouselPage
+    public class OnboardingCarouselPage : BaseCarouselPage<OnboardingViewModel>
     {
-        readonly IAnalyticsService _analyticsService;
-        readonly IMainThread _mainThread;
-
         public OnboardingCarouselPage(IMainThread mainThread,
                                         IAnalyticsService analyticsService,
                                         OnboardingViewModel onboardingViewModel,
                                         ChartOnboardingPage chartOnboardingPage,
                                         GitTrendsOnboardingPage welcomeOnboardingPage,
                                         NotificationsOnboardingPage notificationsOnboardingPage,
-                                        ConnectToGitHubOnboardingPage connectToGitHubOnboardingPage)
+                                        ConnectToGitHubOnboardingPage connectToGitHubOnboardingPage) : base(onboardingViewModel, mainThread, analyticsService)
         {
             On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.OverFullScreen);
-
-            ChildAdded += HandleChildAdded;
-            ChildRemoved += HandleChildRemoved;
-
-            BindingContext = onboardingViewModel;
-            _analyticsService = analyticsService;
-            _mainThread = mainThread;
 
             OnboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
             GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
@@ -40,35 +28,16 @@ namespace GitTrends
             Children.Add(connectToGitHubOnboardingPage);
         }
 
-        public int PageCount => Children.Count;
-
         //Disable the Hardware Back Button on Android
         protected override bool OnBackButtonPressed() => false;
 
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-
-            _analyticsService.Track($"{GetType().Name} Appeared");
-        }
-
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-
-            _analyticsService.Track($"{GetType().Name} Disappeared");
-        }
-
         void HandleSkipButtonTapped(object sender, EventArgs e)
         {
-            _analyticsService.Track("Skip Button Tapped");
+            AnalyticsService.Track("Skip Button Tapped");
 
-            _mainThread.BeginInvokeOnMainThread(() => CurrentPage = Children.Last());
+            MainThread.BeginInvokeOnMainThread(() => CurrentPage = Children.Last());
         }
 
         void HandleDemoUserActivated(object sender, EventArgs e) => MainThread.BeginInvokeOnMainThread(() => Navigation.PopModalAsync());
-
-        void HandleChildAdded(object sender, ElementEventArgs e) => OnPropertyChanged(nameof(PageCount));
-        void HandleChildRemoved(object sender, ElementEventArgs e) => OnPropertyChanged(nameof(PageCount));
     }
 }

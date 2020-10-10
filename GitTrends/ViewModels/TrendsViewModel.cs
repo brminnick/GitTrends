@@ -73,10 +73,10 @@ namespace GitTrends
         public DateTime MinViewClonesDate => DateTimeService.GetMinimumLocalDateTime(DailyViewsList, DailyClonesList);
         public DateTime MaxViewClonesDate => DateTimeService.GetMaximumLocalDateTime(DailyViewsList, DailyClonesList);
 
-        public DateTime MaxDailyStarsDate => DailyStarsList.Max(x => x.Day).DateTime;
-        public DateTime MinDailyStarsDate => DailyStarsList.Min(x => x.Day).DateTime;
+        public DateTime MaxDailyStarsDate => DailyStarsList.Any() ? DailyStarsList.Max(x => x.Day).DateTime : DateTime.Today;
+        public DateTime MinDailyStarsDate => DailyStarsList.Any() ? DailyStarsList.Min(x => x.Day).DateTime : DateTime.Today.Subtract(TimeSpan.FromDays(7));
 
-        public double DailyStarsMaxValue => DailyStarsList.Max(x => x.TotalStars);
+        public double DailyStarsMaxValue => DailyStarsList.Any() ? DailyStarsList.Max(x => x.TotalStars) : 0;
 
         public double DailyViewsClonesMaxValue
         {

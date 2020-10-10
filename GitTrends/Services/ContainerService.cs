@@ -82,7 +82,9 @@ namespace GitTrends
             builder.RegisterType<RepositoryPage>().AsSelf();
             builder.RegisterType<SettingsPage>().AsSelf();
             builder.RegisterType<SplashScreenPage>().AsSelf();
-            builder.RegisterType<TrendsPage>().AsSelf().WithParameter(new TypedParameter(typeof(Repository), nameof(Repository).ToLower()));
+            builder.RegisterType<StarsTrendsPage>().AsSelf();
+            builder.RegisterType<TrendsCarouselPage>().AsSelf().WithParameter(new TypedParameter(typeof(Repository), nameof(Repository).ToLower()));
+            builder.RegisterType<ViewsClonesTrendsPage>().AsSelf();
             builder.RegisterType<WelcomePage>().AsSelf();
 
             //Register Refit Services

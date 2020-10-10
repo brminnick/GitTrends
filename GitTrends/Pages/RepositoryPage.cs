@@ -179,8 +179,8 @@ namespace GitTrends
 
         Task NavigateToTrendsPage(Repository repository)
         {
-            var trendsPage = ContainerService.Container.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
-            return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
+            var trendsCarouselPage = ContainerService.Container.Resolve<TrendsCarouselPage>(new TypedParameter(typeof(Repository), repository));
+            return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsCarouselPage));
         }
 
         Task ExecuteSetttingsToolbarItemCommand()
