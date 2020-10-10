@@ -12,7 +12,7 @@ namespace GitTrends
     {
         public BaseTrendsContentPage(in IMainThread mainThread,
                                         in int carouselPositionIndex,
-                                        in IAnalyticsService analyticsService) : base(analyticsService, mainThread, true)
+                                        in IAnalyticsService analyticsService) : base(analyticsService, mainThread, false)
         {
             Content = new Grid
             {
