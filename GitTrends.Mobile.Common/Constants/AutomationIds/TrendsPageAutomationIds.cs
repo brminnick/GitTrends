@@ -24,5 +24,7 @@
         public const string UniqueClonesStatisticsLabel = nameof(TrendsPageAutomationIds) + nameof(UniqueClonesStatisticsLabel);
 
         public const string ReferringSitesButton = nameof(TrendsPageAutomationIds) + nameof(ReferringSitesButton);
+
+        public const string IndicatorView = nameof(TrendsPageAutomationIds) + nameof(IndicatorView);
     }
 }

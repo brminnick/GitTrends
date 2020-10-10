@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using GitTrends.Mobile.Common;
+﻿using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -9,12 +8,13 @@ using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    class BaseTrendsContentPage : BaseContentPage
+    abstract class BaseTrendsContentPage : BaseContentPage
     {
-        public BaseTrendsContentPage(in IReadOnlyList<View> gridChildren, in IAnalyticsService analyticsService, in IMainThread mainThread)
-            : base(analyticsService, mainThread, true)
+        public BaseTrendsContentPage(in IMainThread mainThread,
+                                        in int carouselPositionIndex,
+                                        in IAnalyticsService analyticsService) : base(analyticsService, mainThread, true)
         {
-            var grid = new Grid
+            Content = new Grid
             {
                 ColumnSpacing = 8,
                 RowSpacing = 12,
@@ -22,20 +22,52 @@ namespace GitTrends
 
                 RowDefinitions = Rows.Define(
                     (Row.Statistics, AbsoluteGridLength(ViewsClonesStatisticsGrid.StatisticsGridHeight)),
-                    (Row.Chart, Star)),
+                    (Row.Chart, Star),
+                    (Row.Indicator, AbsoluteGridLength(44))),
+
+                Children =
+                {
+                    CreateStatisticsLayout()
+                        .Row(Row.Statistics),
+
+                    new EmptyDataView("EmptyInsightsChart", TrendsPageAutomationIds.EmptyDataView)
+                        .Row(Row.Chart)
+                        .Bind(IsVisibleProperty, nameof(TrendsViewModel.IsEmptyDataViewVisible))
+                        .Bind(EmptyDataView.TitleProperty, nameof(TrendsViewModel.EmptyDataViewTitle)),
+
+                    CreateChartView()
+                        .Row(Row.Chart),
+
+                    new TrendsChartActivityIndicator()
+                        .Row(Row.Chart),
+
+                    new TrendsIndicatorView(carouselPositionIndex).CenterExpand()
+                        .Row(Row.Indicator)
+                }
             };
-
-            foreach (var view in gridChildren)
-            {
-                grid.Children.Add(view);
-            }
-
-            grid.Children.Add(new TrendsChartActivityIndicator().Row(Row.Chart));
-
-            Content = grid;
         }
 
-        protected enum Row { Statistics, Chart }
+        protected enum Row { Statistics, Chart, Indicator }
+
+        protected abstract BaseChartView CreateChartView();
+        protected abstract Layout CreateStatisticsLayout();
+
+        class TrendsIndicatorView : IndicatorView
+        {
+            public TrendsIndicatorView(in int position)
+            {
+                Position = position;
+
+                var selectedIndicatorColor = (Color)Application.Current.Resources[nameof(BaseTheme.NavigationBarBackgroundColor)];
+
+                SelectedIndicatorColor = selectedIndicatorColor;
+                IndicatorColor = selectedIndicatorColor.MultiplyAlpha(0.25);
+                AutomationId = TrendsPageAutomationIds.IndicatorView;
+
+                SetBinding(CountProperty, new Binding(nameof(TrendsCarouselPage.PageCount),
+                                                        source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(TrendsCarouselPage))));
+            }
+        }
 
         class TrendsChartActivityIndicator : ActivityIndicator
         {
