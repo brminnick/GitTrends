@@ -37,6 +37,8 @@ namespace GitTrends
             Children.Add(viewsClonesTrendsPage);
             Children.Add(starsTrendsPage);
 
+            this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+
             trendsViewModel.FetchDataCommand.Execute((repository, _fetchDataCancellationTokenSource.Token));
         }
 
