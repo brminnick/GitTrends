@@ -161,6 +161,10 @@ namespace GitTrends
                 SelectedIndicatorColor = Color.White;
                 IndicatorColor = Color.White.MultiplyAlpha(0.25);
                 Margin = new Thickness(30, 0, 0, 0);
+
+#if AppStore
+#error IdicatorView Regression https://github.com/xamarin/Xamarin.Forms/issues/12318
+#endif
                 HorizontalOptions = LayoutOptions.Start;
                 AutomationId = OnboardingAutomationIds.PageIndicator;
 

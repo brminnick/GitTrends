@@ -41,7 +41,7 @@ namespace GitTrends
                     new TrendsChartActivityIndicator()
                         .Row(Row.Chart),
 
-                    new TrendsIndicatorView(carouselPositionIndex).CenterExpand()
+                    new TrendsIndicatorView(carouselPositionIndex).FillExpand()
                         .Row(Row.Indicator)
                 }
             };
