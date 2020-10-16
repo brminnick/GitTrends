@@ -45,6 +45,7 @@
         <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.1.0.714" />
         <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-pre2" />
         <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.3" />
+        <PackageReference Include="Plugin.StoreReview" Version="3.0.0-beta" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="EventArgs\" />
