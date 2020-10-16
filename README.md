@@ -65,6 +65,7 @@ Mobile App
 - [Sharpnado.MaterialFrame](https://github.com/roubachof/Sharpnado.MaterialFrame) - A modern Xamarin.Forms Frame component supporting blur, acrylic, dark mode. Implemented with RealtimeBlurView on Android (custom blurview) and UIVisualEffectView on iOS.
 - [PancakeView](https://github.com/sthewissen/Xamarin.Forms.PancakeView) - An extended ContentView for Xamarin.Forms with rounded corners, borders, shadows and more!
 - [Undraw.co](https://undraw.co/) - Open-source illustrations for any idea you can imagine and create
+- [Empty States](https://emptystat.es/) - A curated gallery showcasing designs where no data is available in the UI
 
 Cloud Backend
 - [.NET Core](https://docs.microsoft.com/dotnet/core/?WT.mc_id=gittrends-github-bramin) - an [open-source](https://github.com/dotnet/core), general-purpose development platform maintained by Microsoft and the .NET community on [GitHub](https://github.com/dotnet/core)
