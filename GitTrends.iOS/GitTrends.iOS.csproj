@@ -425,7 +425,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1364" />
+    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1560" />
     <PackageReference Include="Refit" Version="5.2.1" />
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="5.0.0-pre2" />
     <PackageReference Include="Polly" Version="7.2.1" />
