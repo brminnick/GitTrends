@@ -20,10 +20,7 @@ namespace GitTrends
                 StarsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyStarsList));
                 StarsSeries.SetBinding(ChartSeries.IsVisibleProperty, nameof(TrendsViewModel.IsViewsSeriesVisible));
 
-                Series = new ChartSeriesCollection
-                {
-                    StarsSeries
-                };
+                Series = new ChartSeriesCollection { StarsSeries };
 
                 var primaryAxisLabelStyle = new ChartAxisLabelStyle
                 {

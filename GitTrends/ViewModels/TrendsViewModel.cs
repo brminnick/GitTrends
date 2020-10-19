@@ -254,8 +254,6 @@ namespace GitTrends
                 yield return new DailyStarsModel(++totalStars, starDate);
 
             //Ensure chart includes todays date
-            var temp = starredAtDates.Max().DayOfYear;
-
             if (starredAtDates.Max().DayOfYear != DateTimeOffset.UtcNow.DayOfYear)
                 yield return new DailyStarsModel(totalStars, DateTimeOffset.UtcNow);
         }
