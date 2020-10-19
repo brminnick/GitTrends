@@ -73,10 +73,10 @@ namespace GitTrends
         public DateTime MinViewClonesDate => DateTimeService.GetMinimumLocalDateTime(DailyViewsList, DailyClonesList);
         public DateTime MaxViewClonesDate => DateTimeService.GetMaximumLocalDateTime(DailyViewsList, DailyClonesList);
 
-        public DateTime MaxDailyStarsDate => DailyStarsList.Any() ? DailyStarsList.Max(x => x.Day).DateTime : DateTime.Today;
-        public DateTime MinDailyStarsDate => DailyStarsList.Any() ? DailyStarsList.Min(x => x.Day).DateTime : DateTime.Today.Subtract(TimeSpan.FromDays(7));
+        public DateTime MaxDailyStarsDate => DailyStarsList.Any() ? DailyStarsList.Last().LocalDay : DateTime.Today;
+        public DateTime MinDailyStarsDate => DailyStarsList.Any() ? DailyStarsList.First().LocalDay : DateTime.Today.Subtract(TimeSpan.FromDays(14));
 
-        public double DailyStarsMaxValue => DailyStarsList.Any() ? DailyStarsList.Max(x => x.TotalStars) : 0;
+        public double DailyStarsMaxValue => DailyStarsList.Any() ? DailyStarsList.Last().TotalStars : 0;
 
         public double DailyViewsClonesMaxValue
         {
@@ -252,6 +252,12 @@ namespace GitTrends
 
             foreach (var starDate in starredAtDates)
                 yield return new DailyStarsModel(++totalStars, starDate);
+
+            //Ensure chart includes todays date
+            var temp = starredAtDates.Max().DayOfYear;
+
+            if (starredAtDates.Max().DayOfYear != DateTimeOffset.UtcNow.DayOfYear)
+                yield return new DailyStarsModel(totalStars, DateTimeOffset.UtcNow);
         }
 
         void UpdateDailyStarsListPropertiesChanged()

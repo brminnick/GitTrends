@@ -47,6 +47,12 @@ namespace GitTrends.Mobile.Common.Constants {
             }
         }
         
+        public static string StarsTitle {
+            get {
+                return ResourceManager.GetString("StarsTitle", resourceCulture);
+            }
+        }
+        
         public static string TotalViewsTitle {
             get {
                 return ResourceManager.GetString("TotalViewsTitle", resourceCulture);

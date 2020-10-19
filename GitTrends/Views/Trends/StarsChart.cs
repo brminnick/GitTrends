@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using GitTrends.Mobile.Common;
+﻿using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
@@ -17,7 +16,7 @@ namespace GitTrends
         {
             public StarsTrendsChart() : base(TrendsPageAutomationIds.ViewsClonesChart)
             {
-                StarsSeries = new TrendsAreaSeries("Star History", nameof(DailyStarsModel.LocalDay), nameof(DailyStarsModel.TotalStars), nameof(BaseTheme.CardStarsStatsIconColor));
+                StarsSeries = new TrendsAreaSeries(TrendsChartTitleConstants.StarsTitle, nameof(DailyStarsModel.LocalDay), nameof(DailyStarsModel.TotalStars), nameof(BaseTheme.CardStarsStatsIconColor));
                 StarsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyStarsList));
                 StarsSeries.SetBinding(ChartSeries.IsVisibleProperty, nameof(TrendsViewModel.IsViewsSeriesVisible));
 
@@ -40,7 +39,7 @@ namespace GitTrends
 
                 PrimaryAxis = new DateTimeAxis
                 {
-                    IntervalType = DateTimeIntervalType.Days,
+                    IntervalType = DateTimeIntervalType.Months,
                     Interval = 1,
                     RangePadding = DateTimeRangePadding.Round,
                     LabelStyle = primaryAxisLabelStyle,
