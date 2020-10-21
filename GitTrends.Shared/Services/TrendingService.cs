@@ -6,30 +6,24 @@ namespace GitTrends.Shared
 {
     static class TrendingService
     {
-        public static (bool? isViewsTrending, bool? isClonesTrending) IsTrending(in Repository repository)
-        {
-            var sortedDailyViewsList = repository.DailyViewsList.OrderBy(x => x.TotalViews).ToList();
-            var sortedDailyClonesList = repository.DailyClonesList.OrderBy(x => x.TotalClones).ToList();
+        public static (bool? isViewsTrending, bool? isClonesTrending) IsTrending(this Repository repository) =>
+            (repository.DailyViewsList.IsTrending(), repository.DailyClonesList.IsTrending());
 
-            return (DoesContainUpperOutlier(sortedDailyViewsList),
-                        DoesContainUpperOutlier(sortedDailyClonesList));
-        }
-
-        public static bool? IsTrending(in List<DailyClonesModel> dailyClones)
+        public static bool? IsTrending(this IEnumerable<DailyClonesModel> dailyClones)
         {
             var sortedDailyClonesList = dailyClones.OrderByDescending(x => x.TotalClones).ToList();
 
             return DoesContainUpperOutlier(sortedDailyClonesList);
         }
 
-        public static bool? IsTrending(in List<DailyViewsModel> dailyViews)
+        public static bool? IsTrending(this IEnumerable<DailyViewsModel> dailyViews)
         {
             var sortedDailyViewsList = dailyViews.OrderByDescending(x => x.TotalViews).ToList();
 
             return DoesContainUpperOutlier(sortedDailyViewsList);
         }
 
-        static bool? DoesContainUpperOutlier(in List<DailyViewsModel> dailyViewsModels)
+        static bool? DoesContainUpperOutlier(in IList<DailyViewsModel> dailyViewsModels)
         {
             var quartileIndicies = GetQuartileIndicies(dailyViewsModels);
 
@@ -49,7 +43,7 @@ namespace GitTrends.Shared
             return upperOuterFence > 10 && GetTwoMostRecentDays(dailyViewsModels).Any(x => x.TotalViews > upperOuterFence);
         }
 
-        static bool? DoesContainUpperOutlier(in List<DailyClonesModel> dailyClonesModels)
+        static bool? DoesContainUpperOutlier(in IList<DailyClonesModel> dailyClonesModels)
         {
             var quartileIndicies = GetQuartileIndicies(dailyClonesModels);
 
@@ -69,7 +63,7 @@ namespace GitTrends.Shared
             return upperOuterFence > 10 && GetTwoMostRecentDays(dailyClonesModels).Any(x => x.TotalClones > upperOuterFence);
         }
 
-        static (int? Q1, int? Q2, int? Q3) GetQuartileIndicies<T>(in List<T> list)
+        static (int? Q1, int? Q2, int? Q3) GetQuartileIndicies<T>(in IList<T> list)
         {
             if (list.Count > 1)
                 return (list.Count / 4, list.Count / 2, list.Count * 3 / 4);
@@ -77,9 +71,7 @@ namespace GitTrends.Shared
                 return (null, null, null);
         }
 
-        static IEnumerable<T> GetTwoMostRecentDays<T>(in List<T> dailyClonesModels) where T : BaseDailyModel
-        {
-            return dailyClonesModels.Where(x => DateTime.Compare(x.LocalDay.AddDays(2), DateTime.Now) > 0);
-        }
+        static IEnumerable<T> GetTwoMostRecentDays<T>(in IList<T> dailyClonesModels) where T : BaseDailyModel =>
+            dailyClonesModels.Where(x => DateTime.Compare(x.LocalDay.AddDays(2), DateTime.Now) > 0);
     }
 }

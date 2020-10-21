@@ -35,8 +35,8 @@ namespace GitTrends.Shared
             TotalClones = DailyClonesList.Sum(x => x.TotalClones);
             TotalUniqueClones = DailyClonesList.Sum(x => x.TotalUniqueClones);
 
-            var (isViewsTrending, isClonesTrending) = TrendingService.IsTrending(this);
-            IsTrending = (isViewsTrending ?? false) || (isClonesTrending ?? false);
+            IsTrending = (DailyViewsList.IsTrending() ?? false)
+                            || (DailyClonesList.IsTrending() ?? false);
         }
 
         public DateTimeOffset DataDownloadedAt { get; }
