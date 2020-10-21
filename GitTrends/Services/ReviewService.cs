@@ -95,12 +95,12 @@ namespace GitTrends
         {
             var previousState = CurrentState;
 
-            var updatedState = action switch
+            var updatedState = (action, CurrentState) switch
             {
-                ReviewAction.NoButtonTapped when CurrentState is ReviewState.Greeting => ReviewState.RequestFeedback,
-                ReviewAction.NoButtonTapped => ReviewState.Greeting,
-                ReviewAction.YesButtonTapped when CurrentState is ReviewState.Greeting => ReviewState.RequestReview,
-                ReviewAction.YesButtonTapped => ReviewState.Greeting,
+                (ReviewAction.NoButtonTapped, ReviewState.Greeting) => ReviewState.RequestFeedback,
+                (ReviewAction.NoButtonTapped, _) => ReviewState.Greeting,
+                (ReviewAction.YesButtonTapped, ReviewState.Greeting) => ReviewState.RequestReview,
+                (ReviewAction.YesButtonTapped, _) => ReviewState.Greeting,
                 _ => throw new NotSupportedException()
             };
 
