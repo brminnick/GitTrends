@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Plugin.StoreReview;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Plugin.StoreReview;
 
 namespace GitTrends
 {
@@ -120,8 +119,12 @@ namespace GitTrends
             if (ShouldDisplayReviewRequest())
             {
                 _analyticsService.Track("Review Request Triggered", nameof(Device.RuntimePlatform), Device.RuntimePlatform);
-                
+
+#if AppStore
                 CrossStoreReview.Current.RequestReview(false);
+#else
+                CrossStoreReview.Current.RequestReview(true);
+#endif
 
                 MostRecentReviewedBuildString = _appInfo.BuildString;
                 MostRecentRequestDate = DateTime.UtcNow;
