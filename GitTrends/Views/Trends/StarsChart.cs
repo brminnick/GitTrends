@@ -25,8 +25,6 @@ namespace GitTrends
             const int _minimumStarCount = 10;
             const int _maximumStarCount = 100;
 
-            readonly DateTimeAxis _primaryAxis;
-
             public StarsTrendsChart(IMainThread mainThread) : base(mainThread, TrendsPageAutomationIds.ViewsClonesChart)
             {
                 var primaryAxisLabelStyle = new ChartAxisLabelStyle
@@ -41,7 +39,7 @@ namespace GitTrends
                     StrokeWidth = 1.51
                 }.DynamicResource(ChartLineStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
 
-                PrimaryAxis = _primaryAxis = new DateTimeAxis
+                PrimaryAxis = new DateTimeAxis
                 {
                     IntervalType = DateTimeIntervalType.Months,
                     Interval = 1,
