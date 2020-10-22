@@ -2,6 +2,7 @@
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Syncfusion.SfChart.XForms;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 
@@ -9,13 +10,13 @@ namespace GitTrends
 {
     class ViewClonesChart : BaseChartView
     {
-        public ViewClonesChart() : base(new ViewsClonesTrendsChart())
+        public ViewClonesChart(IMainThread mainThread) : base(new ViewsClonesTrendsChart(mainThread))
         {
         }
 
         class ViewsClonesTrendsChart : BaseTrendsChart
         {
-            public ViewsClonesTrendsChart() : base(TrendsPageAutomationIds.ViewsClonesChart)
+            public ViewsClonesTrendsChart(IMainThread mainThread) : base(mainThread, TrendsPageAutomationIds.ViewsClonesChart)
             {
                 TotalViewsSeries = new TrendsAreaSeries(TrendsChartTitleConstants.TotalViewsTitle, nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalViews), nameof(BaseTheme.TotalViewsColor));
                 TotalViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList));

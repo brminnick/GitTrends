@@ -11,7 +11,7 @@ namespace GitTrends
 
         }
 
-        protected override BaseChartView CreateChartView() => new StarsChart();
+        protected override BaseChartView CreateChartView() => new StarsChart(MainThread);
         protected override Layout CreateStatisticsLayout() => new StarsStatisticsGrid();
     }
 }

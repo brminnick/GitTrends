@@ -11,7 +11,7 @@ namespace GitTrends
 
         }
 
-        protected override BaseChartView CreateChartView() => new ViewClonesChart();
+        protected override BaseChartView CreateChartView() => new ViewClonesChart(MainThread);
         protected override Layout CreateStatisticsLayout() => new ViewsClonesStatisticsGrid();
     }
 }

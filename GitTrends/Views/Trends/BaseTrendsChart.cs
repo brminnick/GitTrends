@@ -1,24 +1,36 @@
-﻿using Syncfusion.SfChart.XForms;
+﻿using System.Threading.Tasks;
+using Syncfusion.SfChart.XForms;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace GitTrends
 {
     abstract class BaseTrendsChart : SfChart
     {
-        protected BaseTrendsChart(in string automationId)
+        readonly IMainThread _mainThread;
+        readonly ChartZoomPanBehavior _chartZoomPanBehavior = new ChartZoomPanBehavior();
+
+        protected BaseTrendsChart(in IMainThread mainThread, in string automationId)
         {
+            _mainThread = mainThread;
+            AutomationId = automationId;
+
             Margin = 0;
             ChartPadding = new Thickness(0, 24, 0, 4);
 
             BackgroundColor = Color.Transparent;
 
-            AutomationId = automationId;
-
             ChartBehaviors = new ChartBehaviorCollection
             {
-                new ChartZoomPanBehavior(),
+                _chartZoomPanBehavior,
                 new ChartTrackballBehavior()
             };
+        }
+
+        protected async Task SetZoom(double primaryAxisStart, double primaryAxisEnd, double secondaryAxisStart, double secondaryAxisEnd)
+        {
+            await _mainThread.InvokeOnMainThreadAsync(() => _chartZoomPanBehavior.ZoomByRange(PrimaryAxis, primaryAxisStart, primaryAxisEnd));
+            await _mainThread.InvokeOnMainThreadAsync(() => _chartZoomPanBehavior.ZoomByRange(SecondaryAxis, secondaryAxisStart, secondaryAxisEnd));
         }
 
         protected class TrendsAreaSeries : AreaSeries
