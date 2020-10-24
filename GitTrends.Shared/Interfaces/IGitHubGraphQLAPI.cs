@@ -7,16 +7,16 @@ namespace GitTrends.Shared
     public interface IGitHubGraphQLApi
     {
         [Post("")]
-        Task<GraphQLResponse<RepositoryResponse>> RepositoryQuery([Body] RepositoryQueryContent request, [Header("Authorization")] string authorization);
+        Task<ApiResponse<GraphQLResponse<RepositoryResponse>>> RepositoryQuery([Body] RepositoryQueryContent request, [Header("Authorization")] string authorization);
 
         [Post("")]
-        Task<GraphQLResponse<RepositoryConnectionResponse>> RepositoryConnectionQuery([Body] RepositoryConnectionQueryContent request, [Header("Authorization")] string authorization);
+        Task<ApiResponse<GraphQLResponse<RepositoryConnectionResponse>>> RepositoryConnectionQuery([Body] RepositoryConnectionQueryContent request, [Header("Authorization")] string authorization);
 
         [Post("")]
-        Task<GraphQLResponse<GitHubViewerResponse>> ViewerLoginQuery([Body] ViewerLoginQueryContent request, [Header("Authorization")] string authorization);
+        Task<ApiResponse<GraphQLResponse<GitHubViewerResponse>>> ViewerLoginQuery([Body] ViewerLoginQueryContent request, [Header("Authorization")] string authorization);
 
         [Post("")]
-        Task<GraphQLResponse<StarGazerResponse>> StarGazerQuery([Body] StarGazerQueryContent request, [Header("Authorization")] string authorization);
+        Task<ApiResponse<GraphQLResponse<StarGazerResponse>>> StarGazerQuery([Body] StarGazerQueryContent request, [Header("Authorization")] string authorization);
     }
 
     public class StarGazerQueryContent : GraphQLRequest
