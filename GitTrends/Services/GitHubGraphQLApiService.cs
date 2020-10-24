@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Refit;
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
@@ -25,7 +26,7 @@ namespace GitTrends
         public async Task<(string login, string name, Uri avatarUri)> GetCurrentUserInfo(CancellationToken cancellationToken)
         {
             var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-            var data = await ExecuteGraphQLRequest(() => _githubApiClient.ViewerLoginQuery(new ViewerLoginQueryContent(), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+            var data = await ExecuteGraphQLRequest(_githubApiClient.ViewerLoginQuery(new ViewerLoginQueryContent(), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
             return (data.Viewer.Alias, data.Viewer.Name, data.Viewer.AvatarUri);
         }
@@ -34,7 +35,7 @@ namespace GitTrends
         {
             var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
 
-            var repositoryQueryTask = ExecuteGraphQLRequest(() => _githubApiClient.RepositoryQuery(new RepositoryQueryContent(repositoryOwner, repositoryName), GetGitHubBearerTokenHeader(token)), cancellationToken);
+            var repositoryQueryTask = ExecuteGraphQLRequest(_githubApiClient.RepositoryQuery(new RepositoryQueryContent(repositoryOwner, repositoryName), GetGitHubBearerTokenHeader(token)), cancellationToken);
             var starGazersQueryTask = GetStarGazers(repositoryName, repositoryOwner, cancellationToken);
 
             await Task.WhenAll(repositoryQueryTask, starGazersQueryTask).ConfigureAwait(false);
@@ -125,7 +126,7 @@ namespace GitTrends
             do
             {
                 var endCursor = GetEndCursorString(starGazerResponse?.Repository.StarGazers.StarredAt.LastOrDefault()?.Cursor);
-                starGazerResponse = await ExecuteGraphQLRequest(() => _githubApiClient.StarGazerQuery(new StarGazerQueryContent(repositoryName, repositoryOwner, endCursor, numberOfStarGazersPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+                starGazerResponse = await ExecuteGraphQLRequest(_githubApiClient.StarGazerQuery(new StarGazerQueryContent(repositoryName, repositoryOwner, endCursor, numberOfStarGazersPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
                 if (starGazerResponse?.Repository.StarGazers != null)
                     yield return starGazerResponse.Repository.StarGazers;
@@ -136,21 +137,21 @@ namespace GitTrends
         async Task<RepositoryConnection> GetRepositoryConnection(string repositoryOwner, string? endCursor, CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
         {
             var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-            var data = await ExecuteGraphQLRequest(() => _githubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+            var data = await ExecuteGraphQLRequest(_githubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
             return data.GitHubUser.RepositoryConnection;
         }
 
-        async Task<T> ExecuteGraphQLRequest<T>(Func<Task<GraphQLResponse<T>>> action, CancellationToken cancellationToken, int numRetries = 2, [CallerMemberName] string callerName = "")
+        async Task<T> ExecuteGraphQLRequest<T>(Task<ApiResponse<GraphQLResponse<T>>> action, CancellationToken cancellationToken, int numRetries = 2, [CallerMemberName] string callerName = "")
         {
             var response = await AttemptAndRetry_Mobile(action, cancellationToken, numRetries, callerName: callerName).ConfigureAwait(false);
 
-            if (response.Errors != null && response.Errors.Count() > 1)
-                throw new AggregateException(response.Errors.Select(x => new Exception(x.Message)));
-            else if (response.Errors != null && response.Errors.Any())
-                throw new Exception(response.Errors.First().Message.ToString());
+            await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
 
-            return response.Data;
+            if (response.Content.Errors != null)
+                throw new GraphQLException(response.Content.Errors, response.Headers, response.StatusCode);
+
+            return response.Content.Data;
         }
     }
 }

@@ -25,13 +25,12 @@ namespace GitTrends.Shared
             return remainingApiRequests <= 0;
         }
 
-        public static bool HasReachedMaximimApiCallLimit(in Exception exception)
+        public static bool HasReachedMaximimApiCallLimit(in Exception exception) => exception switch
         {
-            if (exception is ApiException apiException && apiException.StatusCode is HttpStatusCode.Forbidden)
-                return HasReachedMaximimApiCallLimit(apiException.Headers);
-
-            return false;
-        }
+            ApiException apiException when apiException.StatusCode is HttpStatusCode.Forbidden => HasReachedMaximimApiCallLimit(apiException.Headers),
+            GraphQLException graphQLException => HasReachedMaximimApiCallLimit(graphQLException.ResponseHeaders),
+            _ => false
+        };
 
         public static bool IsUserAuthenticated(HttpResponseHeaders httpResponseHeaders) => httpResponseHeaders.Vary.Any(x => x is "Authorization");
 

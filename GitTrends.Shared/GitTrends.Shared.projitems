@@ -63,5 +63,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\StarGazerQueryResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\StarGazers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\GraphQLException.cs" />
   </ItemGroup>
 </Project>

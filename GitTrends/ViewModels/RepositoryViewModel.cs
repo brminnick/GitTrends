@@ -208,6 +208,7 @@ namespace GitTrends
                 var responseHeaders = e switch
                 {
                     ApiException exception => exception.Headers,
+                    GraphQLException graphQLException => graphQLException.ResponseHeaders,
                     HttpRequestException _ when finalResponse != null => finalResponse.Headers,
                     _ => throw new NotSupportedException()
                 };
