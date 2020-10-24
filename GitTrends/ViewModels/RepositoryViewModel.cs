@@ -198,7 +198,7 @@ namespace GitTrends
                 await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
                 await _repositoryDatabase.DeleteAllData().ConfigureAwait(false);
 
-                SetRepositoriesCollection(Enumerable.Empty<Repository>(), _searchBarText);
+                SetRepositoriesCollection(Array.Empty<Repository>(), _searchBarText);
 
                 RefreshState = RefreshState.LoginExpired;
             }
@@ -216,7 +216,7 @@ namespace GitTrends
                 var maximimApiRequestsReachedEventArgs = new MaximimApiRequestsReachedEventArgs(GitHubApiService.GetRateLimitResetDateTime(responseHeaders));
                 OnPullToRefreshFailed(maximimApiRequestsReachedEventArgs);
 
-                SetRepositoriesCollection(Enumerable.Empty<Repository>(), _searchBarText);
+                SetRepositoriesCollection(Array.Empty<Repository>(), _searchBarText);
 
                 RefreshState = RefreshState.MaximumApiLimit;
             }
@@ -292,14 +292,14 @@ namespace GitTrends
             UpdateVisibleRepositoryList(_searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
-        void SetRepositoriesCollection(in IEnumerable<Repository> repositories, string searchBarText)
+        void SetRepositoriesCollection(in IReadOnlyList<Repository> repositories, in string searchBarText)
         {
-            _repositoryList = repositories.ToList();
+            _repositoryList = repositories;
 
             UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
-        void AddRepositoriesToCollection(IEnumerable<Repository> repositories, string searchBarText, bool shouldUpdateVisibleRepositoryList = true, bool shouldRemoveRepoisitoriesWithoutViewsClonesData = false)
+        void AddRepositoriesToCollection(in IReadOnlyList<Repository> repositories, in string searchBarText, in bool shouldUpdateVisibleRepositoryList = true, in bool shouldRemoveRepoisitoriesWithoutViewsClonesData = false)
         {
             var updatedRepositoryList = _repositoryList.Concat(repositories);
 
@@ -327,7 +327,7 @@ namespace GitTrends
             UpdateVisibleRepositoryList(string.Empty, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
-        IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IEnumerable<Repository> repositories, string searchBarText)
+        IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IReadOnlyList<Repository> repositories, string searchBarText)
         {
             if (string.IsNullOrWhiteSpace(searchBarText))
                 return repositories;

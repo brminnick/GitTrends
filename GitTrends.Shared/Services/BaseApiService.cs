@@ -29,9 +29,9 @@ namespace GitTrends.Shared
             return client;
         }
 
-        protected static Task<T> AttemptAndRetry<T>(Task<T> action, CancellationToken cancellationToken, int numRetries = 3)
+        protected static Task<T> AttemptAndRetry<T>(Func<Task<T>> action, CancellationToken cancellationToken, int numRetries = 3)
         {
-            return Policy.Handle<Exception>(shouldHandleException).WaitAndRetryAsync(numRetries, retryAttempt).ExecuteAsync(token => action, cancellationToken);
+            return Policy.Handle<Exception>(shouldHandleException).WaitAndRetryAsync(numRetries, retryAttempt).ExecuteAsync(token => action(), cancellationToken);
 
             static TimeSpan retryAttempt(int attemptNumber) => TimeSpan.FromSeconds(Math.Pow(2, attemptNumber));
 
