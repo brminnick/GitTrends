@@ -12,7 +12,7 @@ namespace GitTrends.UITests
     {
         readonly Query _viewsClonesChart, _activityIndicator, _androidContextMenuOverflowButton, _referringSiteButton, _viewsCard,
             _uniqueViewsCard, _clonesCard, _uniqueClonesCard, _viewsStatisticsLabel, _uniqueViewsStatisticsLabel,
-            _clonesStatisticsLabel, _uniqueClonesStatisticsLabel, _emptyDataView;
+            _clonesStatisticsLabel, _uniqueClonesStatisticsLabel, _emptyViewsClonesDataView, _emptyStarsDataView;
 
         public TrendsPage(IApp app) : base(app)
         {
@@ -33,7 +33,8 @@ namespace GitTrends.UITests
             _clonesStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.ClonesStatisticsLabel);
             _uniqueClonesStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.UniqueClonesStatisticsLabel);
 
-            _emptyDataView = GenerateMarkedQuery(TrendsPageAutomationIds.EmptyViewsTrendsDataView);
+            _emptyStarsDataView = GenerateMarkedQuery(TrendsPageAutomationIds.EmptyStarsDataView);
+            _emptyViewsClonesDataView = GenerateMarkedQuery(TrendsPageAutomationIds.EmptyViewsClonesDataView);
         }
 
         public string ViewsStatisticsLabelText => GetText(_viewsStatisticsLabel);
@@ -41,7 +42,7 @@ namespace GitTrends.UITests
         public string ClonesStatisticsLabelText => GetText(_clonesStatisticsLabel);
         public string UniqueClonesStatisticsLabelText => GetText(_uniqueClonesStatisticsLabel);
 
-        public bool IsEmptyDataViewVisible => App.Query(_emptyDataView).Any();
+        public bool IsEmptyViewsClonesDataViewVisible => App.Query(_emptyViewsClonesDataView).Any();
 
         public override Task WaitForPageToLoad(TimeSpan? timespan = null)
         {
@@ -62,10 +63,10 @@ namespace GitTrends.UITests
             return Task.CompletedTask;
         }
 
-        public void WaitForEmptyDataView()
+        public void WaitForEmptyViewsClonesDataView()
         {
-            App.WaitForElement(_emptyDataView);
-            App.Screenshot("Empty Data View Appeared");
+            App.WaitForElement(_emptyViewsClonesDataView);
+            App.Screenshot("Empty Views Clones Data View Appeared");
         }
 
         public bool IsSeriesVisible(string seriesName)

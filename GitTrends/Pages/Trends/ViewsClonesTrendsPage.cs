@@ -8,7 +8,7 @@ namespace GitTrends
     class ViewsClonesTrendsPage : BaseTrendsContentPage
     {
         public ViewsClonesTrendsPage(IMainThread mainThread, IAnalyticsService analyticsService)
-            : base(mainThread, new EmptyDataView("EmptyTrafficChart", TrendsPageAutomationIds.EmptyViewsTrendsDataView), 0, analyticsService)
+            : base(mainThread, new EmptyDataView("EmptyTrafficChart", TrendsPageAutomationIds.EmptyViewsClonesDataView), 0, analyticsService)
         {
 
         }
