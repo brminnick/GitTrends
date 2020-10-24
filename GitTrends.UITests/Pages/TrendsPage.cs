@@ -33,7 +33,7 @@ namespace GitTrends.UITests
             _clonesStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.ClonesStatisticsLabel);
             _uniqueClonesStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.UniqueClonesStatisticsLabel);
 
-            _emptyDataView = GenerateMarkedQuery(TrendsPageAutomationIds.EmptyDataView);
+            _emptyDataView = GenerateMarkedQuery(TrendsPageAutomationIds.EmptyViewsTrendsDataView);
         }
 
         public string ViewsStatisticsLabelText => GetText(_viewsStatisticsLabel);

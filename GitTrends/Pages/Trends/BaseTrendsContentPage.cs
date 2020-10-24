@@ -11,6 +11,7 @@ namespace GitTrends
     abstract class BaseTrendsContentPage : BaseContentPage
     {
         public BaseTrendsContentPage(in IMainThread mainThread,
+                                        in EmptyDataView emptyDataView,
                                         in int carouselPositionIndex,
                                         in IAnalyticsService analyticsService) : base(analyticsService, mainThread, false)
         {
@@ -30,7 +31,7 @@ namespace GitTrends
                     CreateStatisticsLayout()
                         .Row(Row.Statistics),
 
-                    new EmptyDataView("EmptyInsightsChart", TrendsPageAutomationIds.EmptyDataView)
+                    emptyDataView
                         .Row(Row.Chart)
                         .Bind(IsVisibleProperty, nameof(TrendsViewModel.IsEmptyDataViewVisible))
                         .Bind(EmptyDataView.TitleProperty, nameof(TrendsViewModel.EmptyDataViewTitle)),
