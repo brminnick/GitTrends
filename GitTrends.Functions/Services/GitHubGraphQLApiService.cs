@@ -12,7 +12,7 @@ namespace GitTrends.Functions
 
         public GitHubGraphQLApiService(IGitHubGraphQLApi gitHubGraphQLApi) => _gitHubGraphQLClient = gitHubGraphQLApi;
 
-        public Task<ApiResponse<GraphQLResponse<GitHubViewerResponse>>> ViewerLoginQuery(string authorization, CancellationToken cancellationToken) =>
-            AttemptAndRetry(() => _gitHubGraphQLClient.ViewerLoginQuery(new ViewerLoginQueryContent(), authorization), cancellationToken);
+        public Task<ApiResponse<GraphQLResponse<GitHubViewerResponse>>> ViewerLoginQuery(string token, CancellationToken cancellationToken) =>
+            AttemptAndRetry(() => _gitHubGraphQLClient.ViewerLoginQuery(new ViewerLoginQueryContent(), $"Bearer {token}"), cancellationToken);
     }
 }
