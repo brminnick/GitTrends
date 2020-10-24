@@ -53,7 +53,7 @@ namespace GitTrends
                     new TrendsChart()
                         .Row(Row.Chart),
 
-                    new EmptyDataView("EmptyInsightsChart", TrendsPageAutomationIds.EmptyDataView)
+                    new EmptyDataView("EmptyTrafficChart", TrendsPageAutomationIds.EmptyDataView)
                         .Row(Row.Chart)
                         .Bind(IsVisibleProperty, nameof(TrendsViewModel.IsEmptyDataViewVisible))
                         .Bind(EmptyDataView.TitleProperty, nameof(TrendsViewModel.EmptyDataViewTitle)),
