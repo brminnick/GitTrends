@@ -166,7 +166,7 @@ namespace GitTrends
                 Margin = new Thickness(30, 0, 0, 0);
 
 #if AppStore
-#error IdicatorView Regression https://github.com/xamarin/Xamarin.Forms/issues/12318
+#error IdicatorView Regression https://github.com/xamarin/Xamarin.Forms/issues/12028
 #endif
                 HorizontalOptions = LayoutOptions.Start;
                 AutomationId = OnboardingAutomationIds.PageIndicator;
