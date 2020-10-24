@@ -1,18 +1,18 @@
-﻿using System.Net.Http;
+﻿using System;
 using System.Net;
-using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using GitTrends.Shared;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using Refit;
 using RichardSzalay.MockHttp;
-using Newtonsoft.Json;
 
 namespace GitTrends.UnitTests
 {
     class RepositoryViewModelTests_MaximimApiCallLimit_GraphQLApi : RepositoryViewModelTests_MaximimApiCallLimit
     {
-        //[Test]
+        [Test]
         public Task PullToRefreshCommandTest_MaximumApiLimit_GraphQLApi() => ExecutePullToRefreshCommandTestMaximumApiLimitTest();
 
         protected override void InitializeServiceCollection()
