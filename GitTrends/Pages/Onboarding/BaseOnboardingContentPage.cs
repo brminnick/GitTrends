@@ -150,6 +150,9 @@ namespace GitTrends
         {
             public OnboardingIndicatorView(in int position)
             {
+#if AppStore
+#error IndicatorView Regression: https://github.com/xamarin/Xamarin.Forms/issues/12318
+#endif
                 Position = position;
                 SelectedIndicatorColor = Color.White;
                 IndicatorColor = Color.White.MultiplyAlpha(0.25);
