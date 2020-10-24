@@ -12,6 +12,6 @@ namespace GitTrends.Functions
         public GitHubApiV3Service(IGitHubApiV3 gitHubApiV3Client) => _gitHubApiV3Client = gitHubApiV3Client;
 
         public Task<HttpResponseMessage> GetGitHubApiResponse(string token, CancellationToken cancellationToken) =>
-            AttemptAndRetry(_gitHubApiV3Client.GetGitHubApiResponse_Authenticated($"Bearer {token}"), cancellationToken);
+            AttemptAndRetry(() => _gitHubApiV3Client.GetGitHubApiResponse_Authenticated($"Bearer {token}"), cancellationToken);
     }
 }
