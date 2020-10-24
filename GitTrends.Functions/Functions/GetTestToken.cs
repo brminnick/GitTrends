@@ -15,32 +15,36 @@ namespace GitTrends.Functions
 {
     class GetTestToken
     {
-        readonly static Lazy<IReadOnlyList<string>> _testTokenListHolder = new Lazy<IReadOnlyList<string>>(() => new List<string>
+        readonly static IReadOnlyList<string> _testTokenList = new[]
         {
-            { Environment.GetEnvironmentVariable("UITestToken_brminnick") ?? string.Empty },
-            { Environment.GetEnvironmentVariable("UITestToken_GitTrends") ?? string.Empty },
-            { Environment.GetEnvironmentVariable("UITestToken_GitTrendsApp") ?? string.Empty },
-            { Environment.GetEnvironmentVariable("UITestToken_TheCodeTraveler") ?? string.Empty }
-        });
+            Environment.GetEnvironmentVariable("UITestToken_brminnick") ?? string.Empty,
+            Environment.GetEnvironmentVariable("UITestToken_GitTrends") ?? string.Empty,
+            Environment.GetEnvironmentVariable("UITestToken_GitTrendsApp") ?? string.Empty,
+            Environment.GetEnvironmentVariable("UITestToken_TheCodeTraveler") ?? string.Empty
+        };
 
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
 
-        public GetTestToken(GitHubApiV3Service gitHubApiV3Service) => _gitHubApiV3Service = gitHubApiV3Service;
-
-        IReadOnlyList<string> TestTokenList => _testTokenListHolder.Value;
+        public GetTestToken(GitHubApiV3Service gitHubApiV3Service, GitHubGraphQLApiService gitHubGraphQLApiService) =>
+            (_gitHubApiV3Service, _gitHubGraphQLApiService) = (gitHubApiV3Service, gitHubGraphQLApiService);
 
         [FunctionName(nameof(GetTestToken))]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request, ILogger log)
         {
-            foreach (var testToken in TestTokenList)
+            foreach (var testToken in _testTokenList)
             {
-                var timeout = TimeSpan.FromSeconds(1);
+                var timeout = TimeSpan.FromSeconds(2);
                 var cancellationTokenSource = new CancellationTokenSource(timeout);
 
-                var gitHubApiResponse = await _gitHubApiV3Service.GetGitHubApiResponse(testToken, cancellationTokenSource.Token).ConfigureAwait(false);
-                var apiRequestsRemaining = GitHubApiService.GetNumberOfApiRequestsRemaining(gitHubApiResponse.Headers);
+                var gitHubRestApiResponse = await _gitHubApiV3Service.GetGitHubApiResponse(testToken, cancellationTokenSource.Token).ConfigureAwait(false);
+                var gitHubGraphQLApiResponse = await _gitHubGraphQLApiService.ViewerLoginQuery(testToken, cancellationTokenSource.Token).ConfigureAwait(false);
 
-                if (apiRequestsRemaining > 1000)
+                var restApiRequestsRemaining = GitHubApiService.GetNumberOfApiRequestsRemaining(gitHubRestApiResponse.Headers);
+                var graphQLApiRequestsRemaining = GitHubApiService.GetNumberOfApiRequestsRemaining(gitHubGraphQLApiResponse.Headers);
+
+                if (restApiRequestsRemaining > 1000
+                    && graphQLApiRequestsRemaining > 1000)
                 {
                     var gitHubToken = new GitHubToken(testToken, GitHubConstants.OAuthScope, "Bearer");
 
