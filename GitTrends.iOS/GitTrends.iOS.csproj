@@ -396,12 +396,24 @@
     <ImageAsset Include="Assets.xcassets\EmptyTrafficChart.imageset\Contents.json">
       <Visible>False</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\EmptyTrafficChart.imageset\EmptyTrafficChart.png" />
-    <ImageAsset Include="Assets.xcassets\EmptyTrafficChart.imageset\EmptyTrafficChart%402x.png" />
-    <ImageAsset Include="Assets.xcassets\EmptyTrafficChart.imageset\EmptyTrafficChart%403x.png" />
-    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList.png" />
-    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%402x.png" />
-    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%403x.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyTrafficChart.imageset\EmptyTrafficChart.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyTrafficChart.imageset\EmptyTrafficChart%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyTrafficChart.imageset\EmptyTrafficChart%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
