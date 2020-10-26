@@ -25,9 +25,14 @@ namespace GitTrends.Functions
 
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
+        readonly GitHubApiExceptionService _gitHubApiExceptionService;
 
-        public GetTestToken(GitHubApiV3Service gitHubApiV3Service, GitHubGraphQLApiService gitHubGraphQLApiService) =>
-            (_gitHubApiV3Service, _gitHubGraphQLApiService) = (gitHubApiV3Service, gitHubGraphQLApiService);
+        public GetTestToken(GitHubApiV3Service gitHubApiV3Service, GitHubGraphQLApiService gitHubGraphQLApiService, GitHubApiExceptionService gitHubApiExceptionService)
+        {
+            _gitHubApiV3Service = gitHubApiV3Service;
+            _gitHubGraphQLApiService = gitHubGraphQLApiService;
+            _gitHubApiExceptionService = gitHubApiExceptionService;
+        }
 
         [FunctionName(nameof(GetTestToken))]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request, ILogger log)
@@ -40,8 +45,8 @@ namespace GitTrends.Functions
                 var gitHubRestApiResponse = await _gitHubApiV3Service.GetGitHubApiResponse(testToken, cancellationTokenSource.Token).ConfigureAwait(false);
                 var gitHubGraphQLApiResponse = await _gitHubGraphQLApiService.ViewerLoginQuery(testToken, cancellationTokenSource.Token).ConfigureAwait(false);
 
-                var restApiRequestsRemaining = GitHubApiService.GetNumberOfApiRequestsRemaining(gitHubRestApiResponse.Headers);
-                var graphQLApiRequestsRemaining = GitHubApiService.GetNumberOfApiRequestsRemaining(gitHubGraphQLApiResponse.Headers);
+                var restApiRequestsRemaining = _gitHubApiExceptionService.GetRemainingRequestCount(gitHubRestApiResponse.Headers);
+                var graphQLApiRequestsRemaining = _gitHubApiExceptionService.GetRemainingRequestCount(gitHubGraphQLApiResponse.Headers);
 
                 if (restApiRequestsRemaining > 1000
                     && graphQLApiRequestsRemaining > 1000)

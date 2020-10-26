@@ -28,6 +28,7 @@ namespace GitTrends
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly MobileSortingService _mobileSortingService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
+        readonly GitHubApiExceptionService _gitHubApiExceptionService;
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
@@ -48,6 +49,7 @@ namespace GitTrends
                                     RepositoryDatabase repositoryDatabase,
                                     GitHubApiV3Service gitHubApiV3Service,
                                     GitHubGraphQLApiService gitHubGraphQLApiService,
+                                    GitHubApiExceptionService gitHubApiExceptionService,
                                     GitHubAuthenticationService gitHubAuthenticationService,
                                     GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, mainThread)
         {
@@ -61,6 +63,7 @@ namespace GitTrends
             _repositoryDatabase = repositoryDatabase;
             _gitHubApiV3Service = gitHubApiV3Service;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
+            _gitHubApiExceptionService = gitHubApiExceptionService;
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
 
@@ -202,8 +205,8 @@ namespace GitTrends
 
                 RefreshState = RefreshState.LoginExpired;
             }
-            catch (Exception e) when (GitHubApiService.HasReachedMaximimApiCallLimit(e)
-                                        || (e is HttpRequestException && finalResponse != null && GitHubApiService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
+            catch (Exception e) when (_gitHubApiExceptionService.HasReachedMaximimApiCallLimit(e)
+                                        || (e is HttpRequestException && finalResponse != null && _gitHubApiExceptionService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
             {
                 var responseHeaders = e switch
                 {
@@ -213,7 +216,7 @@ namespace GitTrends
                     _ => throw new NotSupportedException()
                 };
 
-                var maximimApiRequestsReachedEventArgs = new MaximimApiRequestsReachedEventArgs(GitHubApiService.GetRateLimitResetDateTime(responseHeaders));
+                var maximimApiRequestsReachedEventArgs = new MaximimApiRequestsReachedEventArgs(_gitHubApiExceptionService.GetRateLimitResetDateTime(responseHeaders));
                 OnPullToRefreshFailed(maximimApiRequestsReachedEventArgs);
 
                 SetRepositoriesCollection(Array.Empty<Repository>(), _searchBarText);

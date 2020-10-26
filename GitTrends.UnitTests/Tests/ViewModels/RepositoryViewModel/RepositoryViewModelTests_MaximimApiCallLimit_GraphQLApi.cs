@@ -35,8 +35,8 @@ namespace GitTrends.UnitTests
             {
                 Content = new StringContent(JsonConvert.SerializeObject(repositoryConnectionResponse))
             };
-            errorResponseMessage.Headers.Add(GitHubApiService.RateLimitRemainingHeader, "0");
-            errorResponseMessage.Headers.Add(GitHubApiService.RateLimitResetHeader, DateTimeOffset.UtcNow.AddMinutes(50).ToUnixTimeSeconds().ToString());
+            errorResponseMessage.Headers.Add(GitHubApiExceptionService.RateLimitRemainingHeader, "0");
+            errorResponseMessage.Headers.Add(GitHubApiExceptionService.RateLimitResetHeader, DateTimeOffset.UtcNow.AddMinutes(50).ToUnixTimeSeconds().ToString());
 
             var viewerLoginResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
             {

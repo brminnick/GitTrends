@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Refit;
@@ -41,8 +42,9 @@ namespace GitTrends
             builder.RegisterType<DeepLinkingService>().AsSelf().SingleInstance();
             builder.RegisterType<FavIconService>().AsSelf().SingleInstance();
             builder.RegisterType<FirstRunService>().AsSelf().SingleInstance();
-            builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
+            builder.RegisterType<GitHubApiExceptionService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubApiRepositoriesService>().AsSelf().SingleInstance();
+            builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubAuthenticationService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubUserService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubGraphQLApiService>().AsSelf().SingleInstance();
