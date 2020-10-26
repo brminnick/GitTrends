@@ -30,6 +30,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<BackgroundFetchService>();
             services.AddSingleton<DeepLinkingService>();
             services.AddSingleton<NotificationService, ExtendedNotificationService>();
+            services.AddSingleton<GitHubApiExceptionService>();
             services.AddSingleton<GitHubApiV3Service>();
             services.AddSingleton<GitHubApiRepositoriesService>();
             services.AddSingleton<GitHubAuthenticationService>();

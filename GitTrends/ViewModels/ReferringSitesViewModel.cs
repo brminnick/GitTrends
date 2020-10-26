@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
+using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
@@ -22,14 +23,15 @@ namespace GitTrends
     {
         readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
 
-        readonly GitHubApiV3Service _gitHubApiV3Service;
-        readonly DeepLinkingService _deepLinkingService;
         readonly ReviewService _reviewService;
-        readonly GitHubAuthenticationService _gitHubAuthenticationService;
-        readonly ReferringSitesDatabase _referringSitesDatabase;
         readonly FavIconService _favIconService;
         readonly IVersionTracking _versionTracking;
         readonly GitHubUserService _gitHubUserService;
+        readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly DeepLinkingService _deepLinkingService;
+        readonly ReferringSitesDatabase _referringSitesDatabase;
+        readonly GitHubApiExceptionService _gitHubApiExceptionService;
+        readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
         IReadOnlyList<MobileReferringSiteModel>? _mobileReferringSiteList;
 
@@ -50,6 +52,7 @@ namespace GitTrends
                                         GitHubApiV3Service gitHubApiV3Service,
                                         DeepLinkingService deepLinkingService,
                                         ReferringSitesDatabase referringSitesDatabase,
+                                        GitHubApiExceptionService gitHubApiExceptionService,
                                         GitHubAuthenticationService gitHubAuthenticationService) : base(analyticsService, mainThread)
         {
             ReviewService.ReviewRequested += HandleReviewRequested;
@@ -62,6 +65,7 @@ namespace GitTrends
             _gitHubApiV3Service = gitHubApiV3Service;
             _deepLinkingService = deepLinkingService;
             _referringSitesDatabase = referringSitesDatabase;
+            _gitHubApiExceptionService = gitHubApiExceptionService;
             _gitHubAuthenticationService = gitHubAuthenticationService;
 
             RefreshState = RefreshState.Uninitialized;
@@ -223,8 +227,8 @@ namespace GitTrends
 
                 RefreshState = RefreshState.LoginExpired;
             }
-            catch (Exception e) when (GitHubApiService.HasReachedMaximimApiCallLimit(e)
-                                        || (e is HttpRequestException && finalResponse != null && GitHubApiService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
+            catch (Exception e) when (_gitHubApiExceptionService.HasReachedMaximimApiCallLimit(e)
+                                        || (e is HttpRequestException && finalResponse != null && _gitHubApiExceptionService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
             {
                 var responseHeaders = e switch
                 {
@@ -234,7 +238,7 @@ namespace GitTrends
                     _ => throw new NotSupportedException()
                 };
 
-                OnPullToRefreshFailed(new MaximimApiRequestsReachedEventArgs(GitHubApiService.GetRateLimitResetDateTime(responseHeaders)));
+                OnPullToRefreshFailed(new MaximimApiRequestsReachedEventArgs(_gitHubApiExceptionService.GetRateLimitResetDateTime(responseHeaders)));
 
                 RefreshState = RefreshState.MaximumApiLimit;
             }

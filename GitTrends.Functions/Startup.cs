@@ -33,6 +33,7 @@ namespace GitTrends.Functions
             builder.Services.AddSingleton<GitHubAuthService>();
             builder.Services.AddSingleton<GitHubApiV3Service>();
             builder.Services.AddSingleton<GitHubGraphQLApiService>();
+            builder.Services.AddSingleton<GitHubApiExceptionService>();
 
             static TimeSpan sleepDurationProvider(int attemptNumber) => TimeSpan.FromSeconds(Math.Pow(2, attemptNumber));
             static DecompressionMethods getDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip;
