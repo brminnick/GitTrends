@@ -414,6 +414,10 @@
     <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%403x.png">
       <Visible>false</Visible>
     </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyStarChart.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\EmptyStarChart.imageset\EmptyStarChart.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyStarChart.imageset\EmptyStarChart%402x.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyStarChart.imageset\EmptyStarChart%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -459,6 +463,7 @@
   <ItemGroup>
     <Folder Include="Effects\" />
     <Folder Include="Assets.xcassets\EmptyTrafficChart.imageset\" />
+    <Folder Include="Assets.xcassets\EmptyStarChart.imageset\" />
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>

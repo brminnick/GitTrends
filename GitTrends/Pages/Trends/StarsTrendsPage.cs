@@ -8,7 +8,7 @@ namespace GitTrends
     class StarsTrendsPage : BaseTrendsContentPage
     {
         public StarsTrendsPage(IAnalyticsService analyticsService, IMainThread mainThread)
-            : base(mainThread, new EmptyDataView("EmptyTrafficChart", TrendsPageAutomationIds.EmptyStarsDataView), 1, analyticsService)
+            : base(mainThread, new EmptyDataView("EmptyStarChart", TrendsPageAutomationIds.EmptyStarsDataView), 1, analyticsService)
         {
 
         }
