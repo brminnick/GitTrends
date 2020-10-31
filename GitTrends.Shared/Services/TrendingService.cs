@@ -11,14 +11,14 @@ namespace GitTrends.Shared
 
         public static bool? IsTrending(this IEnumerable<DailyClonesModel> dailyClones)
         {
-            var sortedDailyClonesList = dailyClones.OrderByDescending(x => x.TotalClones).ToList();
+            var sortedDailyClonesList = dailyClones.OrderBy(x => x.TotalClones).ToList();
 
             return DoesContainUpperOutlier(sortedDailyClonesList);
         }
 
         public static bool? IsTrending(this IEnumerable<DailyViewsModel> dailyViews)
         {
-            var sortedDailyViewsList = dailyViews.OrderByDescending(x => x.TotalViews).ToList();
+            var sortedDailyViewsList = dailyViews.OrderBy(x => x.TotalViews).ToList();
 
             return DoesContainUpperOutlier(sortedDailyViewsList);
         }
@@ -72,6 +72,6 @@ namespace GitTrends.Shared
         }
 
         static IEnumerable<T> GetTwoMostRecentDays<T>(in IList<T> dailyClonesModels) where T : BaseDailyModel =>
-            dailyClonesModels.Where(x => DateTime.Compare(x.LocalDay.AddDays(2), DateTime.Now) > 0);
+            dailyClonesModels.Where(x => x.LocalDay.AddDays(2) > DateTime.Now);
     }
 }
