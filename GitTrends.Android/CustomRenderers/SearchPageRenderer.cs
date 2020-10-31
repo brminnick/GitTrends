@@ -23,7 +23,10 @@ namespace GitTrends.Droid
             base.OnAttachedToWindow();
 
             if (Element is ISearchPage && Element is Page page && page.Parent is NavigationPage navigationPage)
+            {
                 navigationPage.Popped += HandleNavigationPagePopped;
+                navigationPage.PoppedToRoot += HandleNavigationPagePopped;
+            }
         }
 
         protected override void Dispose(bool disposing)
