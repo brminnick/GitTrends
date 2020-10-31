@@ -48,5 +48,51 @@ namespace GitTrends.Mobile.Common
             RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.SwipeDownToRefresh_Repositories,
             _ => throw new NotSupportedException()
         };
+
+        public static string GetViewsClonesTitleText(in RefreshState refreshState) => refreshState switch
+        {
+            RefreshState.Uninitialized => EmptyDataViewConstantsInternal.Uninitialized,
+            RefreshState.Succeeded => EmptyDataViewConstants.NoTrafficYet,
+            RefreshState.LoginExpired => EmptyDataViewConstantsInternal.LoginExpired,
+            RefreshState.Error => EmptyDataViewConstants.UnableToRetrieveData,
+            RefreshState.MaximumApiLimit => EmptyDataViewConstants.UnableToRetrieveData,
+            _ => throw new NotSupportedException()
+        };
+
+#if AppStore
+#error Stars Chart Refresh State not complete
+#endif
+
+        public static string GetStarsTitleText(in RefreshState refreshState, in bool isStarsListEmpty) => refreshState switch
+        {
+            RefreshState.Uninitialized => "Uninitialized",
+            RefreshState.Succeeded when !isStarsListEmpty => "1 Star Text",
+            RefreshState.Succeeded => "0 Stars Text",
+            RefreshState.LoginExpired => EmptyDataViewConstantsInternal.PleaseLoginAgain,
+            RefreshState.Error => EmptyDataViewConstants.UnableToRetrieveData,
+            RefreshState.MaximumApiLimit => EmptyDataViewConstants.UnableToRetrieveData,
+            _ => throw new NotSupportedException()
+        };
+
+        public static string GetViewsClonesImage(in RefreshState refreshState) => refreshState switch
+        {
+            RefreshState.Uninitialized => "EmptyTrafficChart",
+            RefreshState.Succeeded => "EmptyTrafficChart",
+            RefreshState.LoginExpired => "EmptyTrafficChart",
+            RefreshState.Error => "EmptyTrafficChart",
+            RefreshState.MaximumApiLimit => "EmptyTrafficChart",
+            _ => throw new NotSupportedException()
+        };
+
+        public static string GetStarsImage(in RefreshState refreshState, in bool isStarsListEmpty) => refreshState switch
+        {
+            RefreshState.Uninitialized => "EmptyStarChart",
+            RefreshState.Succeeded when !isStarsListEmpty => "1StarEmptyChartImage",
+            RefreshState.Succeeded => "EmptyStarChart",
+            RefreshState.LoginExpired => "EmptyStarChart",
+            RefreshState.Error => "EmptyStarChart",
+            RefreshState.MaximumApiLimit => "EmptyStarChart",
+            _ => throw new NotSupportedException()
+        };
     }
 }

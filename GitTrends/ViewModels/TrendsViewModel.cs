@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Refit;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
@@ -20,16 +21,21 @@ namespace GitTrends
 
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
+        readonly GitHubApiExceptionService _gitHubApiExceptionService;
 
         bool _isFetchingData = true;
         bool _isViewsSeriesVisible, _isUniqueViewsSeriesVisible, _isClonesSeriesVisible, _isUniqueClonesSeriesVisible;
 
-        string _emptyDataViewText = string.Empty;
         string _starsStatisticsText = string.Empty;
         string _viewsStatisticsText = string.Empty;
         string _clonesStatisticsText = string.Empty;
         string _uniqueViewsStatisticsText = string.Empty;
         string _uniqueClonesStatisticsText = string.Empty;
+        string _starsEmptyDataViewTitleText = string.Empty;
+        string _viewsClonesEmptyDataViewTitleText = string.Empty;
+
+        ImageSource? __starsEmptyDataViewImage;
+        ImageSource? _viewsClonesEmptyDataViewImage;
 
         IReadOnlyList<DailyStarsModel>? _dailyStarsList;
         IReadOnlyList<DailyViewsModel>? _dailyViewsList;
@@ -39,10 +45,12 @@ namespace GitTrends
                                 IAnalyticsService analyticsService,
                                 GitHubApiV3Service gitHubApiV3Service,
                                 GitHubGraphQLApiService gitHubGraphQLApiService,
+                                GitHubApiExceptionService gitHubApiExceptionService,
                                 TrendsChartSettingsService trendsChartSettingsService) : base(analyticsService, mainThread)
         {
             _gitHubApiV3Service = gitHubApiV3Service;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
+            _gitHubApiExceptionService = gitHubApiExceptionService;
 
             IsViewsSeriesVisible = trendsChartSettingsService.ShouldShowViewsByDefault;
             IsUniqueViewsSeriesVisible = trendsChartSettingsService.ShouldShowUniqueViewsByDefault;
@@ -53,6 +61,8 @@ namespace GitTrends
             UniqueViewsCardTappedCommand = new Command(() => IsUniqueViewsSeriesVisible = !IsUniqueViewsSeriesVisible);
             ClonesCardTappedCommand = new Command(() => IsClonesSeriesVisible = !IsClonesSeriesVisible);
             UniqueClonesCardTappedCommand = new Command(() => IsUniqueClonesSeriesVisible = !IsUniqueClonesSeriesVisible);
+
+            RefreshState = RefreshState.Uninitialized;
 
             FetchDataCommand = new AsyncCommand<(Repository Repository, CancellationToken CancellationToken)>(tuple => ExecuteFetchDataCommand(tuple.Repository, tuple.CancellationToken));
         }
@@ -67,8 +77,11 @@ namespace GitTrends
         public double DailyViewsClonesMinValue { get; } = 0;
         public double DailyStarsMinValue { get; } = 0;
 
-        public bool IsEmptyDataViewVisible => !IsChartVisible && !IsFetchingData;
-        public bool IsChartVisible => !IsFetchingData && DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
+        public bool IsStarsEmptyDataViewVisible => !IsStarsChartVisible && !IsFetchingData;
+        public bool IsStarsChartVisible => !IsFetchingData && DailyStarsList.Count > 1;
+
+        public bool IsViewsClonesEmptyDataViewVisible => !IsViewsClonesChartVisible && !IsFetchingData;
+        public bool IsViewsClonesChartVisible => !IsFetchingData && DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
 
         public DateTime MinViewClonesDate => DateTimeService.GetMinimumLocalDateTime(DailyViewsList, DailyClonesList);
         public DateTime MaxViewClonesDate => DateTimeService.GetMaximumLocalDateTime(DailyViewsList, DailyClonesList);
@@ -89,10 +102,28 @@ namespace GitTrends
             }
         }
 
-        public string EmptyDataViewTitle
+        public ImageSource? ViewsClonesEmptyDataViewImage
         {
-            get => _emptyDataViewText;
-            set => SetProperty(ref _emptyDataViewText, value);
+            get => _viewsClonesEmptyDataViewImage;
+            set => SetProperty(ref _viewsClonesEmptyDataViewImage, value);
+        }
+
+        public ImageSource? StarsEmptyDataViewImage
+        {
+            get => __starsEmptyDataViewImage;
+            set => SetProperty(ref __starsEmptyDataViewImage, value);
+        }
+
+        public string ViewsClonesEmptyDataViewTitleText
+        {
+            get => _viewsClonesEmptyDataViewTitleText;
+            set => SetProperty(ref _viewsClonesEmptyDataViewTitleText, value);
+        }
+
+        public string StarsEmptyDataViewTitleText
+        {
+            get => _starsEmptyDataViewTitleText;
+            set => SetProperty(ref _starsEmptyDataViewTitleText, value);
         }
 
         public string StarsStatisticsText
@@ -152,29 +183,37 @@ namespace GitTrends
         public bool IsFetchingData
         {
             get => _isFetchingData;
-            set => SetProperty(ref _isFetchingData, value, () =>
-            {
-                OnPropertyChanged(nameof(IsChartVisible));
-                OnPropertyChanged(nameof(IsEmptyDataViewVisible));
-            });
+            set => SetProperty(ref _isFetchingData, value, OnIsFetchingDataChanged);
         }
 
         public IReadOnlyList<DailyViewsModel> DailyViewsList
         {
             get => _dailyViewsList ??= Array.Empty<DailyViewsModel>();
-            set => SetProperty(ref _dailyViewsList, value, UpdateDailyViewsListPropertiesChanged);
+            set => SetProperty(ref _dailyViewsList, value, OnDailyViewsListChanged);
         }
 
         public IReadOnlyList<DailyClonesModel> DailyClonesList
         {
             get => _dailyClonesList ??= Array.Empty<DailyClonesModel>();
-            set => SetProperty(ref _dailyClonesList, value, UpdateDailyClonesListPropertiesChanged);
+            set => SetProperty(ref _dailyClonesList, value, OnDailyClonesListChanged);
         }
 
         public IReadOnlyList<DailyStarsModel> DailyStarsList
         {
             get => _dailyStarsList ??= Array.Empty<DailyStarsModel>();
-            set => SetProperty(ref _dailyStarsList, value, UpdateDailyStarsListPropertiesChanged);
+            set => SetProperty(ref _dailyStarsList, value, OnDailyStarsListChanged);
+        }
+
+        RefreshState RefreshState
+        {
+            set
+            {
+                ViewsClonesEmptyDataViewImage = EmptyDataViewService.GetViewsClonesImage(value);
+                ViewsClonesEmptyDataViewTitleText = EmptyDataViewService.GetViewsClonesTitleText(value);
+
+                StarsEmptyDataViewImage = EmptyDataViewService.GetStarsImage(value, !DailyStarsList.Any());
+                StarsEmptyDataViewTitleText = EmptyDataViewService.GetStarsTitleText(value, !DailyStarsList.Any());
+            }
         }
 
         async Task ExecuteFetchDataCommand(Repository repository, CancellationToken cancellationToken)
@@ -212,17 +251,40 @@ namespace GitTrends
                     repositoryClones = repositoryClonesResponse.DailyClonesList;
                 }
 
-                EmptyDataViewTitle = EmptyDataViewConstants.NoTrafficYet;
+                RefreshState = RefreshState.Succeeded;
             }
-            catch (Exception e)
+            catch (Exception e) when (e is ApiException exception && exception.StatusCode is HttpStatusCode.Unauthorized)
             {
                 repositoryStars = Array.Empty<DateTimeOffset>();
                 repositoryViews = Array.Empty<DailyViewsModel>();
                 repositoryClones = Array.Empty<DailyClonesModel>();
 
-                EmptyDataViewTitle = EmptyDataViewConstants.UnableToRetrieveData;
+                RefreshState = RefreshState.LoginExpired;
+            }
+            catch (Exception e) when (_gitHubApiExceptionService.HasReachedMaximimApiCallLimit(e))
+            {
+                var responseHeaders = e switch
+                {
+                    ApiException exception => exception.Headers,
+                    GraphQLException graphQLException => graphQLException.ResponseHeaders,
+                    _ => throw new NotSupportedException()
+                };
 
+                repositoryStars = Array.Empty<DateTimeOffset>();
+                repositoryViews = Array.Empty<DailyViewsModel>();
+                repositoryClones = Array.Empty<DailyClonesModel>();
+
+                RefreshState = RefreshState.MaximumApiLimit;
+            }
+            catch (Exception e)
+            {
                 AnalyticsService.Report(e);
+
+                repositoryStars = Array.Empty<DateTimeOffset>();
+                repositoryViews = Array.Empty<DailyViewsModel>();
+                repositoryClones = Array.Empty<DailyClonesModel>();
+
+                RefreshState = RefreshState.Error;
             }
             finally
             {
@@ -258,10 +320,10 @@ namespace GitTrends
                 yield return new DailyStarsModel(totalStars, DateTimeOffset.UtcNow);
         }
 
-        void UpdateDailyStarsListPropertiesChanged()
+        void OnDailyStarsListChanged()
         {
-            OnPropertyChanged(nameof(IsChartVisible));
-            OnPropertyChanged(nameof(IsEmptyDataViewVisible));
+            OnPropertyChanged(nameof(IsStarsChartVisible));
+            OnPropertyChanged(nameof(IsStarsEmptyDataViewVisible));
 
             OnPropertyChanged(nameof(DailyStarsMaxValue));
             OnPropertyChanged(nameof(DailyStarsMinValue));
@@ -270,10 +332,10 @@ namespace GitTrends
             OnPropertyChanged(nameof(MinDailyStarsDate));
         }
 
-        void UpdateDailyClonesListPropertiesChanged()
+        void OnDailyClonesListChanged()
         {
-            OnPropertyChanged(nameof(IsChartVisible));
-            OnPropertyChanged(nameof(IsEmptyDataViewVisible));
+            OnPropertyChanged(nameof(IsViewsClonesChartVisible));
+            OnPropertyChanged(nameof(IsViewsClonesEmptyDataViewVisible));
 
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
             OnPropertyChanged(nameof(DailyViewsClonesMinValue));
@@ -282,16 +344,25 @@ namespace GitTrends
             OnPropertyChanged(nameof(MaxViewClonesDate));
         }
 
-        void UpdateDailyViewsListPropertiesChanged()
+        void OnDailyViewsListChanged()
         {
-            OnPropertyChanged(nameof(IsChartVisible));
-            OnPropertyChanged(nameof(IsEmptyDataViewVisible));
+            OnPropertyChanged(nameof(IsViewsClonesChartVisible));
+            OnPropertyChanged(nameof(IsViewsClonesEmptyDataViewVisible));
 
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
 
             OnPropertyChanged(nameof(MinViewClonesDate));
             OnPropertyChanged(nameof(MaxViewClonesDate));
+        }
+
+        void OnIsFetchingDataChanged()
+        {
+            OnPropertyChanged(nameof(IsStarsChartVisible));
+            OnPropertyChanged(nameof(IsStarsEmptyDataViewVisible));
+
+            OnPropertyChanged(nameof(IsViewsClonesChartVisible));
+            OnPropertyChanged(nameof(IsViewsClonesEmptyDataViewVisible));
         }
 
         [Conditional("DEBUG")]

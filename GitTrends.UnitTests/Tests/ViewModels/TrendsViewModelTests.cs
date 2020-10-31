@@ -57,30 +57,30 @@ namespace GitTrends.UnitTests
             minDateValue_Initial = trendsViewModel.MinViewClonesDate;
             maxDateValue_Initial = trendsViewModel.MaxViewClonesDate;
             isFetchingData_Initial = trendsViewModel.IsFetchingData;
-            isChartVisible_Initial = trendsViewModel.IsChartVisible;
+            isChartVisible_Initial = trendsViewModel.IsViewsClonesChartVisible;
             dailyViewsModels_Initial = trendsViewModel.DailyViewsList;
             dailyClonesModels_Initial = trendsViewModel.DailyClonesList;
-            emptyDataViewTitle_Initial = trendsViewModel.EmptyDataViewTitle;
-            isEmptyDataViewVisible_Initial = trendsViewModel.IsEmptyDataViewVisible;
+            emptyDataViewTitle_Initial = trendsViewModel.ViewsClonesEmptyDataViewTitleText;
+            isEmptyDataViewVisible_Initial = trendsViewModel.IsViewsClonesEmptyDataViewVisible;
             dailyViewsClonesMinValue_Initial = trendsViewModel.DailyViewsClonesMinValue;
             dailyViewsClonesMaxValue_Initial = trendsViewModel.DailyViewsClonesMaxValue;
 
             var fetchDataCommandTask = trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None));
 
             isFetchingData_DuringFetchDataCommand = trendsViewModel.IsFetchingData;
-            isChartVisible_DuringFetchDataCommand = trendsViewModel.IsChartVisible;
-            isEmptyDataViewVisible_DuringFetchDataCommand = trendsViewModel.IsEmptyDataViewVisible;
+            isChartVisible_DuringFetchDataCommand = trendsViewModel.IsViewsClonesChartVisible;
+            isEmptyDataViewVisible_DuringFetchDataCommand = trendsViewModel.IsViewsClonesEmptyDataViewVisible;
 
             await fetchDataCommandTask.ConfigureAwait(false);
 
             minDateValue_Final = trendsViewModel.MinViewClonesDate;
             maxDateValue_Final = trendsViewModel.MaxViewClonesDate;
             isFetchingData_Final = trendsViewModel.IsFetchingData;
-            isChartVisible_Final = trendsViewModel.IsChartVisible;
+            isChartVisible_Final = trendsViewModel.IsViewsClonesChartVisible;
             dailyViewsModels_Final = trendsViewModel.DailyViewsList;
             dailyClonesModels_Final = trendsViewModel.DailyClonesList;
-            emptyDataViewTitle_Final = trendsViewModel.EmptyDataViewTitle;
-            isEmptyDataViewVisible_Final = trendsViewModel.IsEmptyDataViewVisible;
+            emptyDataViewTitle_Final = trendsViewModel.ViewsClonesEmptyDataViewTitleText;
+            isEmptyDataViewVisible_Final = trendsViewModel.IsViewsClonesEmptyDataViewVisible;
             dailyViewsClonesMinValue_Final = trendsViewModel.DailyViewsClonesMinValue;
             dailyViewsClonesMaxValue_Final = trendsViewModel.DailyViewsClonesMaxValue;
 

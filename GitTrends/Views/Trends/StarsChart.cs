@@ -71,7 +71,7 @@ namespace GitTrends
 
                 StarsSeries = new TrendsAreaSeries(TrendsChartTitleConstants.StarsTitle, nameof(DailyStarsModel.LocalDay), nameof(DailyStarsModel.TotalStars), nameof(BaseTheme.CardStarsStatsIconColor));
                 StarsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyStarsList));
-                StarsSeries.SetBinding(ChartSeries.IsVisibleProperty, nameof(TrendsViewModel.IsViewsSeriesVisible));
+                StarsSeries.SetBinding(ChartSeries.IsVisibleProperty, nameof(TrendsViewModel.IsStarsChartVisible));
                 StarsSeries.PropertyChanged += HandleStarSeriesPropertyChanged;
 
                 Series = new ChartSeriesCollection { StarsSeries };

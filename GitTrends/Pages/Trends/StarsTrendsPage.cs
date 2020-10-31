@@ -2,18 +2,22 @@
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
+using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {
     class StarsTrendsPage : BaseTrendsContentPage
     {
-        public StarsTrendsPage(IAnalyticsService analyticsService, IMainThread mainThread)
-            : base(mainThread, new EmptyDataView("EmptyStarChart", TrendsPageAutomationIds.EmptyStarsDataView), 1, analyticsService)
+        public StarsTrendsPage(IAnalyticsService analyticsService, IMainThread mainThread) : base(mainThread, 1, analyticsService)
         {
 
         }
 
+        protected override Layout CreateHeaderView() => new StarsStatisticsGrid();
         protected override BaseChartView CreateChartView() => new StarsChart(MainThread);
-        protected override Layout CreateStatisticsLayout() => new StarsStatisticsGrid();
+        protected override EmptyDataView CreateEmptyDataView() => new EmptyDataView(TrendsPageAutomationIds.StarsEmptyDataView)
+                                                                    .Bind(IsVisibleProperty, nameof(TrendsViewModel.IsStarsEmptyDataViewVisible))
+                                                                    .Bind(EmptyDataView.TitleProperty, nameof(TrendsViewModel.StarsEmptyDataViewTitleText))
+                                                                    .Bind(EmptyDataView.ImageSourceProperty, nameof(TrendsViewModel.StarsEmptyDataViewImage));
     }
 }

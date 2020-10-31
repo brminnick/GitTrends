@@ -7,8 +7,8 @@
         public const string StarsChart = nameof(TrendsPageAutomationIds) + nameof(StarsChart);
         public const string ViewsClonesChart = nameof(TrendsPageAutomationIds) + nameof(ViewsClonesChart);
 
-        public const string EmptyStarsDataView = nameof(TrendsPageAutomationIds) + nameof(EmptyStarsDataView);
-        public const string EmptyViewsClonesDataView = nameof(TrendsPageAutomationIds) + nameof(EmptyViewsClonesDataView);
+        public const string StarsEmptyDataView = nameof(TrendsPageAutomationIds) + nameof(StarsEmptyDataView);
+        public const string ViewsClonesEmptyDataView = nameof(TrendsPageAutomationIds) + nameof(ViewsClonesEmptyDataView);
 
         public const string StarsCard = nameof(TrendsPageAutomationIds) + nameof(StarsCard);
 

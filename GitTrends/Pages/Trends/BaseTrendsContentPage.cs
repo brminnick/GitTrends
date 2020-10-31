@@ -11,7 +11,6 @@ namespace GitTrends
     abstract class BaseTrendsContentPage : BaseContentPage
     {
         public BaseTrendsContentPage(in IMainThread mainThread,
-                                        in EmptyDataView emptyDataView,
                                         in int carouselPositionIndex,
                                         in IAnalyticsService analyticsService) : base(analyticsService, mainThread, false)
         {
@@ -22,21 +21,19 @@ namespace GitTrends
                 Padding = new Thickness(0, 16),
 
                 RowDefinitions = Rows.Define(
-                    (Row.Statistics, AbsoluteGridLength(ViewsClonesStatisticsGrid.StatisticsGridHeight)),
+                    (Row.Header, AbsoluteGridLength(ViewsClonesStatisticsGrid.StatisticsGridHeight)),
                     (Row.Chart, Star),
-                    (Row.Indicator, AbsoluteGridLength(44))),
+                    (Row.Indicator, AbsoluteGridLength(22))),
 
                 Children =
                 {
-                    CreateStatisticsLayout()
-                        .Row(Row.Statistics),
-
-                    emptyDataView
-                        .Row(Row.Chart)
-                        .Bind(IsVisibleProperty, nameof(TrendsViewModel.IsEmptyDataViewVisible))
-                        .Bind(EmptyDataView.TitleProperty, nameof(TrendsViewModel.EmptyDataViewTitle)),
+                    CreateHeaderView()
+                        .Row(Row.Header),
 
                     CreateChartView()
+                        .Row(Row.Chart),
+
+                    CreateEmptyDataView()
                         .Row(Row.Chart),
 
                     new TrendsChartActivityIndicator()
@@ -48,10 +45,11 @@ namespace GitTrends
             };
         }
 
-        protected enum Row { Statistics, Chart, Indicator }
+        protected enum Row { Header, Chart, Indicator }
 
+        protected abstract Layout CreateHeaderView();
         protected abstract BaseChartView CreateChartView();
-        protected abstract Layout CreateStatisticsLayout();
+        protected abstract EmptyDataView CreateEmptyDataView();
 
         class TrendsIndicatorView : IndicatorView
         {
