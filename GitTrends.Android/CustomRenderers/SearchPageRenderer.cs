@@ -42,6 +42,14 @@ namespace GitTrends.Droid
                 AddSearchToToolbar(page.Title);
         }
 
+        protected override void OnElementChanged(ElementChangedEventArgs<Page> e)
+        {
+            base.OnElementChanged(e);
+
+            if (e.NewElement is ISearchPage && e.NewElement is Page page && page.Parent is NavigationPage navigationPage && navigationPage.CurrentPage is ISearchPage)
+                AddSearchToToolbar(page.Title);
+        }
+
         void HandleNavigationPagePopped(object sender, NavigationEventArgs e)
         {
             if (sender is NavigationPage navigationPage
