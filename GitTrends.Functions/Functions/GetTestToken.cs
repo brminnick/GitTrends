@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
@@ -42,14 +43,10 @@ namespace GitTrends.Functions
                 var timeout = TimeSpan.FromSeconds(2);
                 var cancellationTokenSource = new CancellationTokenSource(timeout);
 
-                var gitHubRestApiResponse = await _gitHubApiV3Service.GetGitHubApiResponse(testToken, cancellationTokenSource.Token).ConfigureAwait(false);
-                var gitHubGraphQLApiResponse = await _gitHubGraphQLApiService.ViewerLoginQuery(testToken, cancellationTokenSource.Token).ConfigureAwait(false);
+                var gitHubApiRateLimits = await _gitHubApiExceptionService.GetApiRateLimits(new AuthenticationHeaderValue("bearer", testToken), cancellationTokenSource.Token).ConfigureAwait(false);
 
-                var restApiRequestsRemaining = _gitHubApiExceptionService.GetRemainingRequestCount(gitHubRestApiResponse.Headers);
-                var graphQLApiRequestsRemaining = _gitHubApiExceptionService.GetRemainingRequestCount(gitHubGraphQLApiResponse.Headers);
-
-                if (restApiRequestsRemaining > 1000
-                    && graphQLApiRequestsRemaining > 1000)
+                if (gitHubApiRateLimits.RestApi.RemainingRequestCount > 1000
+                    && gitHubApiRateLimits.GraphQLApi.RemainingRequestCount > 1000)
                 {
                     var gitHubToken = new GitHubToken(testToken, GitHubConstants.OAuthScope, "Bearer");
 
