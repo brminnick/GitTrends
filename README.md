@@ -50,7 +50,7 @@ Monitor the traffic to your GitHub Repos!<br/>
 ## Resources
 
 Mobile App
-- [GitHubApiStatus](https://github.com/brminnick/GitHubApiStatus) - A .NET library that helps understand GitHub API Rate Limits
+- [GitHubApiStatus](https://github.com/brminnick/GitHubApiStatus) - A .NET library that makes it easy to understand GitHub's API Rate Limit
 - [Xamarin](https://docs.microsoft.com/xamarin/?WT.mc_id=mobile-0000-bramin) - build native apps for Android, iOS, and macOS using .NET code and platform-specific user interfaces
 - [Xamarin.Essentials](https://docs.microsoft.com/xamarin/essentials/?WT.mc_id=mobile-0000-bramin) - provides cross-platform APIs for their mobile applications
 - [Xamarin.Forms](https://docs.microsoft.com/xamarin/get-started/what-is-xamarin-forms?WT.mc_id=mobile-0000-bramin) - an open-source UI framework to build Android, iOS, and Windows applications from a single shared codebase
