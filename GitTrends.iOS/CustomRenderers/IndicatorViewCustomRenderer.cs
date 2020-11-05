@@ -13,9 +13,8 @@ namespace GitTrends.iOS
             base.OnElementChanged(e);
 
 #warning Workaround for https://github.com/brminnick/GitTrends/issues/154
-            if (UIDevice.CurrentDevice.CheckSystemVersion(14, 0))
+            if (UIDevice.CurrentDevice.CheckSystemVersion(14, 0) && Control is UIPageControl pageControl)
             {
-                var pageControl = (UIPageControl)Control;
                 pageControl.AllowsContinuousInteraction = false;
                 pageControl.BackgroundStyle = UIPageControlBackgroundStyle.Minimal;
             }
