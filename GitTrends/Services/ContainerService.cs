@@ -1,6 +1,5 @@
 ﻿using System;
 using Autofac;
-using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Refit;
@@ -20,7 +19,7 @@ namespace GitTrends
 
         static IContainer CreateContainer()
         {
-            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental" });
+            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental", "SwipeView_Experimental" });
 
             var builder = new ContainerBuilder();
 

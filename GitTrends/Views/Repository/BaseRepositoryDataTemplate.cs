@@ -25,7 +25,7 @@ namespace GitTrends
         readonly static bool _isSmallScreen = ScreenWidth <= 360;
         readonly static double _circleImageHeight = _isSmallScreen ? 52 : 62;
 
-        protected BaseRepositoryDataTemplate(IEnumerable<View> parentDataTemplateChildren, Repository repository) : base(() => new CardView(parentDataTemplateChildren, repository))
+        protected BaseRepositoryDataTemplate(IEnumerable<View> parentDataTemplateChildren, RepositoryViewModel repositoryViewModel, Repository repository) : base(() => new CardView(parentDataTemplateChildren, repositoryViewModel, repository))
         {
 
         }
@@ -33,22 +33,39 @@ namespace GitTrends
         protected enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
         protected enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3 }
 
-        class CardView : Grid
+        class CardView : ExtendedSwipeView
         {
-            public CardView(in IEnumerable<View> parentDataTemplateChildren, in Repository repository)
+            public CardView(in IEnumerable<View> parentDataTemplateChildren, in RepositoryViewModel repositoryViewModel, in Repository repository)
             {
-                RowSpacing = 0;
-                RowDefinitions = Rows.Define(
-                    (CardViewRow.TopPadding, AbsoluteGridLength(TopPadding)),
-                    (CardViewRow.Card, Star),
-                    (CardViewRow.BottomPadding, AbsoluteGridLength(BottomPadding)));
+                TappedCommand = repositoryViewModel.RepositoryTappedCommand;
+                TappedCommandParameter = repository;
 
-                ColumnDefinitions = Columns.Define(
-                    (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
-                    (CardViewColumn.Card, Star),
-                    (CardViewColumn.RightPadding, AbsoluteGridLength(16)));
+                RightItems = new SwipeItems
+                {
+                    new SwipeItem { CommandParameter = repository }
+                        .Bind<SwipeItem, bool?, string>(SwipeItem.TextProperty, nameof(Repository.IsFavorite), convert: isFavorite => isFavorite is true ? "Favorite" : "Not Favorite")
+                        .Bind(SwipeItem.CommandProperty, nameof(RepositoryViewModel.ToggleIsFavoriteCommand), source: repositoryViewModel)
+                };
 
-                Children.Add(new CardViewFrame(parentDataTemplateChildren, repository).Row(CardViewRow.Card).Column(CardViewColumn.Card));
+                Content = new Grid
+                {
+                    RowSpacing = 0,
+
+                    RowDefinitions = Rows.Define(
+                        (CardViewRow.TopPadding, AbsoluteGridLength(TopPadding)),
+                        (CardViewRow.Card, Star),
+                        (CardViewRow.BottomPadding, AbsoluteGridLength(BottomPadding))),
+
+                    ColumnDefinitions = Columns.Define(
+                        (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
+                        (CardViewColumn.Card, Star),
+                        (CardViewColumn.RightPadding, AbsoluteGridLength(16))),
+
+                    Children =
+                    {
+                        new CardViewFrame(parentDataTemplateChildren, repository).Row(CardViewRow.Card).Column(CardViewColumn.Card)
+                    }
+                };
 
                 this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             }
