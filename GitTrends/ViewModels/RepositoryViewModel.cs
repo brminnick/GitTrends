@@ -69,9 +69,10 @@ namespace GitTrends
 
             RefreshState = RefreshState.Uninitialized;
 
-            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(gitHubUserService.Alias));
             FilterRepositoriesCommand = new Command<string>(SetSearchBarText);
             SortRepositoriesCommand = new Command<SortingOption>(ExecuteSortRepositoriesCommand);
+            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(gitHubUserService.Alias));
+            ToggleIsFavoriteCommand = new AsyncCommand<Repository>(repository => ExecuteToggleIsFavoriteCommand(repository));
 
             NotificationService.SortingOptionRequested += HandleSortingOptionRequested;
 
@@ -89,6 +90,7 @@ namespace GitTrends
         public ICommand SortRepositoriesCommand { get; }
         public ICommand FilterRepositoriesCommand { get; }
         public IAsyncCommand PullToRefreshCommand { get; }
+        public IAsyncCommand<Repository> ToggleIsFavoriteCommand { get; }
 
         public IReadOnlyList<Repository> VisibleRepositoryList
         {
@@ -257,6 +259,17 @@ namespace GitTrends
 
             void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
             void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();
+        }
+
+        Task ExecuteToggleIsFavoriteCommand(Repository repository)
+        {
+            repository = new Repository(repository.Name, repository.Description, repository.ForkCount, repository.OwnerLogin, repository.OwnerAvatarUrl,
+                                            repository.IssuesCount, repository.Url, repository.IsFork, repository.DataDownloadedAt, !repository.IsFavorite,
+                                            repository.DailyViewsList.ToArray(), repository.DailyClonesList.ToArray(), repository.StarredAt.ToArray());
+
+            UpdateVisibleRepositoryList(_searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
+
+            return _repositoryDatabase.SaveRepository(repository);
         }
 
         async ValueTask SaveRepositoriesToDatabase(IEnumerable<Repository> repositories)

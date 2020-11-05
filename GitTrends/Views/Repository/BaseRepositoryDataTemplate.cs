@@ -33,22 +33,36 @@ namespace GitTrends
         protected enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
         protected enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3 }
 
-        class CardView : Grid
+        class CardView : SwipeView
         {
             public CardView(in IEnumerable<View> parentDataTemplateChildren, in Repository repository)
             {
-                RowSpacing = 0;
-                RowDefinitions = Rows.Define(
-                    (CardViewRow.TopPadding, AbsoluteGridLength(TopPadding)),
-                    (CardViewRow.Card, Star),
-                    (CardViewRow.BottomPadding, AbsoluteGridLength(BottomPadding)));
+                RightItems = new SwipeItems
+                {
+                    new SwipeItem()
+                        .Bind<SwipeItem, bool, string>(SwipeItem.TextProperty, nameof(Repository.IsFavorite), convert: isFavorite => isFavorite ? "Favorite" : "Not Favorite")
+                        .Bind(SwipeItem.CommandProperty, nameof(RepositoryViewModel.ToggleIsFavoriteCommand), source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))
+                };
 
-                ColumnDefinitions = Columns.Define(
-                    (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
-                    (CardViewColumn.Card, Star),
-                    (CardViewColumn.RightPadding, AbsoluteGridLength(16)));
+                Content = new Grid
+                {
+                    RowSpacing = 0,
 
-                Children.Add(new CardViewFrame(parentDataTemplateChildren, repository).Row(CardViewRow.Card).Column(CardViewColumn.Card));
+                    RowDefinitions = Rows.Define(
+                        (CardViewRow.TopPadding, AbsoluteGridLength(TopPadding)),
+                        (CardViewRow.Card, Star),
+                        (CardViewRow.BottomPadding, AbsoluteGridLength(BottomPadding))),
+
+                    ColumnDefinitions = Columns.Define(
+                        (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
+                        (CardViewColumn.Card, Star),
+                        (CardViewColumn.RightPadding, AbsoluteGridLength(16))),
+
+                    Children =
+                    {
+                        new CardViewFrame(parentDataTemplateChildren, repository).Row(CardViewRow.Card).Column(CardViewColumn.Card)
+                    }
+                };
 
                 this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             }
