@@ -21,6 +21,7 @@ namespace GitTrends
     public class RepositoryViewModel : BaseViewModel
     {
         readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
+        readonly WeakEventManager<Repository> _repositoryTappedEventManager = new WeakEventManager<Repository>();
 
         readonly ImageCachingService _imageService;
         readonly GitHubUserService _gitHubUserService;
@@ -71,8 +72,11 @@ namespace GitTrends
 
             FilterRepositoriesCommand = new Command<string>(SetSearchBarText);
             SortRepositoriesCommand = new Command<SortingOption>(ExecuteSortRepositoriesCommand);
+
             PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(gitHubUserService.Alias));
-            ToggleIsFavoriteCommand = new AsyncCommand<Repository>(repository => ExecuteToggleIsFavoriteCommand(repository));
+
+            RepositoryTappedCommand = new Command<Repository>(repository => OnRepositoryTapped(repository));
+            ToggleIsFavoriteCommand = new AsyncValueCommand<Repository>(repository => ExecuteToggleIsFavoriteCommand(repository));
 
             NotificationService.SortingOptionRequested += HandleSortingOptionRequested;
 
@@ -87,10 +91,17 @@ namespace GitTrends
             remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
         }
 
+        public event EventHandler<Repository> RepositoryTapped
+        {
+            add => _repositoryTappedEventManager.AddEventHandler(value);
+            remove => _repositoryTappedEventManager.RemoveEventHandler(value);
+        }
+
         public ICommand SortRepositoriesCommand { get; }
         public ICommand FilterRepositoriesCommand { get; }
+        public Command<Repository> RepositoryTappedCommand { get; }
         public IAsyncCommand PullToRefreshCommand { get; }
-        public IAsyncCommand<Repository> ToggleIsFavoriteCommand { get; }
+        public AsyncValueCommand<Repository> ToggleIsFavoriteCommand { get; }
 
         public IReadOnlyList<Repository> VisibleRepositoryList
         {
@@ -261,15 +272,21 @@ namespace GitTrends
             void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();
         }
 
-        Task ExecuteToggleIsFavoriteCommand(Repository repository)
+        async ValueTask ExecuteToggleIsFavoriteCommand(Repository repository)
         {
-            repository = new Repository(repository.Name, repository.Description, repository.ForkCount, repository.OwnerLogin, repository.OwnerAvatarUrl,
-                                            repository.IssuesCount, repository.Url, repository.IsFork, repository.DataDownloadedAt, !repository.IsFavorite,
+            var updatedRepository = new Repository(repository.Name, repository.Description, repository.ForkCount, repository.OwnerLogin, repository.OwnerAvatarUrl,
+                                            repository.IssuesCount, repository.Url, repository.IsFork, repository.DataDownloadedAt,
+                                            repository.IsFavorite.HasValue ? !repository.IsFavorite : true,
                                             repository.DailyViewsList.ToArray(), repository.DailyClonesList.ToArray(), repository.StarredAt.ToArray());
 
-            UpdateVisibleRepositoryList(_searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
+            var updatedRepositoryList = new List<Repository>(_visibleRepositoryList);
+            updatedRepositoryList.Remove(repository);
+            updatedRepositoryList.Add(updatedRepository);
 
-            return _repositoryDatabase.SaveRepository(repository);
+            SetRepositoriesCollection(updatedRepositoryList, _searchBarText);
+
+            if (!_gitHubUserService.IsDemoUser)
+                await _repositoryDatabase.SaveRepository(repository);
         }
 
         async ValueTask SaveRepositoriesToDatabase(IEnumerable<Repository> repositories)
@@ -374,6 +391,8 @@ namespace GitTrends
         void HandleGitHubAuthenticationServiceLoggedOut(object sender, EventArgs e) => UpdateListForLoggedOutUser();
 
         void HandleSortingOptionRequested(object sender, SortingOption sortingOption) => SortRepositoriesCommand.Execute(sortingOption);
+
+        void OnRepositoryTapped(in Repository repository) => _repositoryTappedEventManager.RaiseEvent(this, repository, nameof(RepositoryTapped));
 
         void OnPullToRefreshFailed(PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs)
         {

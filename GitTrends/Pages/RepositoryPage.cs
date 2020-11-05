@@ -38,6 +38,9 @@ namespace GitTrends
             _gitHubUserService = gitHubUserService;
             _deepLinkingService = deepLinkingService;
 
+            //Workaround for CollectionView.SelectionChanged firing when SwipeView is swiped
+            repositoryViewModel.RepositoryTapped += HandleRepositoryTapped;
+
             SearchBarTextChanged += HandleSearchBarTextChanged;
             RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
@@ -85,9 +88,8 @@ namespace GitTrends
                         AutomationId = RepositoryPageAutomationIds.RefreshView,
                         Content = new CollectionView
                         {
-                            ItemTemplate = new RepositoryDataTemplateSelector(mobileSortingService),
+                            ItemTemplate = new RepositoryDataTemplateSelector(mobileSortingService, repositoryViewModel),
                             BackgroundColor = Color.Transparent,
-                            SelectionMode = SelectionMode.Single,
                             AutomationId = RepositoryPageAutomationIds.CollectionView,
                             //Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
                             Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.BottomPadding } : null,
@@ -98,7 +100,6 @@ namespace GitTrends
                                             .Bind(EmptyDataView.DescriptionProperty, nameof(RepositoryViewModel.EmptyDataViewDescription))
 
                         }.Bind(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList))
-                         .Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged)
 
                     }.RowSpan(All<Row>()).ColumnSpan(All<Column>()).Assign(out _refreshView)
                      .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
@@ -154,21 +155,15 @@ namespace GitTrends
             static bool isUserValid(in string accessToken, in string alias) => !string.IsNullOrWhiteSpace(accessToken) || !string.IsNullOrWhiteSpace(alias);
         }
 
-        async void HandleCollectionViewSelectionChanged(object sender, SelectionChangedEventArgs e)
+        async void HandleRepositoryTapped(object sender, Repository e)
         {
-            var collectionView = (CollectionView)sender;
-            collectionView.SelectedItem = null;
-
-            if (e?.CurrentSelection.FirstOrDefault() is Repository repository)
+            AnalyticsService.Track("Repository Tapped", new Dictionary<string, string>
             {
-                AnalyticsService.Track("Repository Tapped", new Dictionary<string, string>
-                {
-                    { nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin },
-                    { nameof(Repository) + nameof(Repository.Name), repository.Name }
-                });
+                { nameof(Repository) + nameof(Repository.OwnerLogin), e.OwnerLogin },
+                { nameof(Repository) + nameof(Repository.Name), e.Name }
+            });
 
-                await NavigateToTrendsPage(repository);
-            }
+            await NavigateToTrendsPage(e);
         }
 
         Task NavigateToSettingsPage()
