@@ -65,7 +65,8 @@ namespace GitTrends
                     LabelStyle = secondaryAxisLabelStyle,
                     AxisLineStyle = axisLineStyle,
                     MajorTickStyle = secondaryAxisMajorTickStyle,
-                    ShowMajorGridLines = false
+                    ShowMajorGridLines = false,
+                    Interval = 1
                 }.Bind(NumericalAxis.MinimumProperty, nameof(TrendsViewModel.DailyStarsMinValue))
                  .Bind(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.DailyStarsMaxValue));
 
