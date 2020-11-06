@@ -78,7 +78,7 @@ namespace GitTrends
         public double DailyStarsMinValue { get; } = 0;
 
         public bool IsStarsEmptyDataViewVisible => !IsStarsChartVisible && !IsFetchingData;
-        public bool IsStarsChartVisible => !IsFetchingData && DailyStarsList.Count > 1;
+        public bool IsStarsChartVisible => !IsFetchingData && TotalStars > 1;
 
         public bool IsViewsClonesEmptyDataViewVisible => !IsViewsClonesChartVisible && !IsFetchingData;
         public bool IsViewsClonesChartVisible => !IsFetchingData && DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
@@ -204,6 +204,8 @@ namespace GitTrends
             set => SetProperty(ref _dailyStarsList, value, OnDailyStarsListChanged);
         }
 
+        double TotalStars => DailyStarsList.Any() ? DailyStarsList.Last().TotalStars : 0;
+
         RefreshState RefreshState
         {
             set
@@ -211,13 +213,15 @@ namespace GitTrends
                 ViewsClonesEmptyDataViewImage = EmptyDataViewService.GetViewsClonesImage(value);
                 ViewsClonesEmptyDataViewTitleText = EmptyDataViewService.GetViewsClonesTitleText(value);
 
-                StarsEmptyDataViewImage = EmptyDataViewService.GetStarsImage(value, !DailyStarsList.Any());
-                StarsEmptyDataViewTitleText = EmptyDataViewService.GetStarsTitleText(value, !DailyStarsList.Any());
+                StarsEmptyDataViewImage = EmptyDataViewService.GetStarsImage(value, TotalStars);
+                StarsEmptyDataViewTitleText = EmptyDataViewService.GetStarsTitleText(value, TotalStars);
             }
         }
 
         async Task ExecuteFetchDataCommand(Repository repository, CancellationToken cancellationToken)
         {
+            var refreshState = RefreshState.Uninitialized;
+
             IReadOnlyList<DateTimeOffset> repositoryStars = Array.Empty<DateTimeOffset>();
             IReadOnlyList<DailyViewsModel> repositoryViews = Array.Empty<DailyViewsModel>();
             IReadOnlyList<DailyClonesModel> repositoryClones = Array.Empty<DailyClonesModel>();
@@ -251,7 +255,7 @@ namespace GitTrends
                     repositoryClones = repositoryClonesResponse.DailyClonesList;
                 }
 
-                RefreshState = RefreshState.Succeeded;
+                refreshState = RefreshState.Succeeded;
             }
             catch (Exception e) when (e is ApiException exception && exception.StatusCode is HttpStatusCode.Unauthorized)
             {
@@ -259,7 +263,7 @@ namespace GitTrends
                 repositoryViews = Array.Empty<DailyViewsModel>();
                 repositoryClones = Array.Empty<DailyClonesModel>();
 
-                RefreshState = RefreshState.LoginExpired;
+                refreshState = RefreshState.LoginExpired;
             }
             catch (Exception e) when (_gitHubApiExceptionService.HasReachedMaximimApiCallLimit(e))
             {
@@ -274,7 +278,7 @@ namespace GitTrends
                 repositoryViews = Array.Empty<DailyViewsModel>();
                 repositoryClones = Array.Empty<DailyClonesModel>();
 
-                RefreshState = RefreshState.MaximumApiLimit;
+                refreshState = RefreshState.MaximumApiLimit;
             }
             catch (Exception e)
             {
@@ -284,7 +288,7 @@ namespace GitTrends
                 repositoryViews = Array.Empty<DailyViewsModel>();
                 repositoryClones = Array.Empty<DailyClonesModel>();
 
-                RefreshState = RefreshState.Error;
+                refreshState = RefreshState.Error;
             }
             finally
             {
@@ -299,6 +303,9 @@ namespace GitTrends
 
                 ClonesStatisticsText = repositoryClones.Sum(x => x.TotalClones).ToAbbreviatedText();
                 UniqueClonesStatisticsText = repositoryClones.Sum(x => x.TotalUniqueClones).ToAbbreviatedText();
+
+                //Set RefreshState last, because EmptyDataViews are dependent on the Chart ItemSources, e.g. DailyStarsList
+                RefreshState = refreshState;
 
                 //Display the Activity Indicator for a minimum time to ensure consistant UX
                 await minimumTimeTask.ConfigureAwait(false);

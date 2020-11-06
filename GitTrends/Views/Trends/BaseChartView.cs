@@ -10,7 +10,7 @@ namespace GitTrends
         {
             CornerRadius = 4;
             Elevation = 4;
-            Content = trendsChart.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsViewsClonesChartVisible), BindingMode.OneWay);
+            Content = trendsChart;
 
             Margin = new Thickness(16, 0);
             Padding = new Thickness(4, 8, 4, 4);

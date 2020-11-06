@@ -83,6 +83,8 @@ namespace GitTrends
                     ShowMajorGridLines = false
                 }.Bind(NumericalAxis.MinimumProperty, nameof(TrendsViewModel.DailyViewsClonesMinValue))
                  .Bind(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.DailyViewsClonesMaxValue));
+
+                this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsViewsClonesChartVisible));
             }
 
             public AreaSeries TotalViewsSeries { get; }
