@@ -20,6 +20,11 @@
         public const string CopyrightLabel = nameof(SettingsPageAutomationIds) + nameof(CopyrightLabel);
         #endregion
 
+        #region About Row
+        public const string AboutTitleLabel = nameof(SettingsPageAutomationIds) + nameof(AboutTitleLabel);
+        public const string AboutButton = nameof(SettingsPageAutomationIds) + nameof(AboutButton);
+        #endregion
+
         #region Login Row
         public const string LoginTitleLabel = nameof(SettingsPageAutomationIds) + nameof(LoginTitleLabel);
         #endregion

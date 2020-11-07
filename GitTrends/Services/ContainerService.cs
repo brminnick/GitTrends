@@ -74,6 +74,7 @@ namespace GitTrends
             builder.RegisterType<WelcomeViewModel>().AsSelf();
 
             //Register Pages
+            builder.RegisterType<AboutPage>().AsSelf();
             builder.RegisterType<ChartOnboardingPage>().AsSelf();
             builder.RegisterType<ConnectToGitHubOnboardingPage>().AsSelf();
             builder.RegisterType<GitTrendsOnboardingPage>().AsSelf();

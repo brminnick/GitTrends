@@ -11,7 +11,6 @@ using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Shiny;
 using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -27,6 +26,7 @@ namespace GitTrends
         readonly TrendsChartSettingsService _trendsChartSettingsService;
 
         string _titleText = string.Empty;
+        string _aboutLabelText = string.Empty;
         string _themeLabelText = string.Empty;
         string _gitHubButtonText = string.Empty;
         string _languageLabelText = string.Empty;
@@ -101,6 +101,12 @@ namespace GitTrends
 
         public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText == GitHubLoginButtonConstants.Disconnect;
         public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginLabelText == GitHubLoginButtonConstants.ConnectToGitHub;
+
+        public string AboutLabelText
+        {
+            get => _aboutLabelText;
+            set => SetProperty(ref _aboutLabelText, value);
+        }
 
         public bool ShouldShowClonesByDefaultSwitchValue
         {
@@ -342,6 +348,7 @@ namespace GitTrends
         void InitializeText()
         {
             TitleText = PageTitles.SettingsPage;
+            AboutLabelText = AboutPageConstants.About;
             TryDemoButtonText = GitHubLoginButtonConstants.TryDemo;
             CopyrightLabelText = $"{getVersionNumberText(_versionTracking)}\n{SettingsPageConstants.CreatedBy}";
             PreferredChartsLabelText = SettingsPageConstants.PreferredChartSettingsLabelText;

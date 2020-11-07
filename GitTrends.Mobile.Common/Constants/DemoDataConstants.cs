@@ -17,12 +17,12 @@ namespace GitTrends.Mobile.Common
 
         public static int GetRandomNumber() => _random.Next(MaximumRandomNumber);
 
-        public static string GetRandomText()
+        public static string GetRandomText(int? length = null)
         {
             var startIndex = _random.Next(_loremIpsum.Length / 2);
-            var length = _random.Next(_loremIpsum.Length - 1 - startIndex);
+            length ??= _random.Next(_loremIpsum.Length - 1 - startIndex);
 
-            return _loremIpsum.Substring(startIndex, length);
+            return _loremIpsum.Substring(startIndex, length.Value);
         }
 
         //https://stackoverflow.com/a/194870/5953643

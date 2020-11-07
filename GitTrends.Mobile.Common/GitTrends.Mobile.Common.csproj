@@ -522,6 +522,13 @@
           <Generator>PublicResXFileCodeGenerator</Generator>
           <LastGenOutput>PullToRefreshFailedConstants.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+          <LastGenOutput>AboutPageConstants.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.en.resx">
+          <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
@@ -635,6 +642,9 @@
           <DependentUpon>PullToRefreshFailedConstants.resx</DependentUpon>
           <DesignTime>True</DesignTime>
           <AutoGen>True</AutoGen>
+        </Compile>
+        <Compile Update="Constants\AboutPageConstants.Designer.cs">
+          <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </Compile>
     </ItemGroup>
     <ItemGroup>
