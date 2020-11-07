@@ -77,6 +77,8 @@ namespace GitTrends
         public double DailyViewsClonesMinValue { get; } = 0;
         public double DailyStarsMinValue { get; } = 0;
 
+        public double TotalStars => DailyStarsList.Any() ? DailyStarsList.Last().TotalStars : 0;
+
         public bool IsStarsEmptyDataViewVisible => !IsStarsChartVisible && !IsFetchingData;
         public bool IsStarsChartVisible => !IsFetchingData && TotalStars > 1;
 
@@ -203,8 +205,6 @@ namespace GitTrends
             get => _dailyStarsList ??= Array.Empty<DailyStarsModel>();
             set => SetProperty(ref _dailyStarsList, value, OnDailyStarsListChanged);
         }
-
-        double TotalStars => DailyStarsList.Any() ? DailyStarsList.Last().TotalStars : 0;
 
         RefreshState RefreshState
         {
@@ -337,6 +337,8 @@ namespace GitTrends
 
             OnPropertyChanged(nameof(MaxDailyStarsDate));
             OnPropertyChanged(nameof(MinDailyStarsDate));
+
+            OnPropertyChanged(nameof(TotalStars));
         }
 
         void OnDailyClonesListChanged()
