@@ -85,8 +85,8 @@ namespace GitTrends
         public bool IsViewsClonesEmptyDataViewVisible => !IsViewsClonesChartVisible && !IsFetchingData;
         public bool IsViewsClonesChartVisible => !IsFetchingData && DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
 
-        public double ViewsClonesChartYAxisInterval => DailyViewsClonesMaxValue > 5 ? Math.Round(DailyViewsClonesMaxValue / 10) : 1;
-        public double StarsChartYAxisInterval => DailyStarsMaxValue > 5 ? Math.Round(DailyStarsMaxValue / 10) : 1;
+        public double ViewsClonesChartYAxisInterval => DailyViewsClonesMaxValue > 20 ? Math.Round(DailyViewsClonesMaxValue / 10) : 2;
+        public double StarsChartYAxisInterval => DailyStarsMaxValue > 20 ? Math.Round(DailyStarsMaxValue / 10) : 2;
 
         public DateTime MinViewsClonesDate => DateTimeService.GetMinimumLocalDateTime(DailyViewsList, DailyClonesList);
         public DateTime MaxViewsClonesDate => DateTimeService.GetMaximumLocalDateTime(DailyViewsList, DailyClonesList);
