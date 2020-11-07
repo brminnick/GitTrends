@@ -8,9 +8,9 @@ using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {
-    class ViewClonesChart : BaseChartView
+    class ViewsClonesChart : BaseChartView
     {
-        public ViewClonesChart(IMainThread mainThread) : base(new ViewsClonesTrendsChart(mainThread))
+        public ViewsClonesChart(IMainThread mainThread) : base(new ViewsClonesTrendsChart(mainThread))
         {
         }
 
@@ -64,8 +64,8 @@ namespace GitTrends
                     MajorTickStyle = new ChartAxisTickStyle { StrokeColor = Color.Transparent },
                     ShowMajorGridLines = false,
                 };
-                PrimaryAxis.SetBinding(DateTimeAxis.MinimumProperty, nameof(TrendsViewModel.MinViewClonesDate));
-                PrimaryAxis.SetBinding(DateTimeAxis.MaximumProperty, nameof(TrendsViewModel.MaxViewClonesDate));
+                PrimaryAxis.SetBinding(DateTimeAxis.MinimumProperty, nameof(TrendsViewModel.MinViewsClonesDate));
+                PrimaryAxis.SetBinding(DateTimeAxis.MaximumProperty, nameof(TrendsViewModel.MaxViewsClonesDate));
 
                 var secondaryAxisMajorTickStyle = new ChartAxisTickStyle().DynamicResource(ChartAxisTickStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
 
@@ -81,9 +81,9 @@ namespace GitTrends
                     AxisLineStyle = axisLineStyle,
                     MajorTickStyle = secondaryAxisMajorTickStyle,
                     ShowMajorGridLines = false,
-                    Interval = 1
                 }.Bind(NumericalAxis.MinimumProperty, nameof(TrendsViewModel.DailyViewsClonesMinValue))
-                 .Bind(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.DailyViewsClonesMaxValue));
+                 .Bind(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.DailyViewsClonesMaxValue))
+                 .Bind(NumericalAxis.IntervalProperty, nameof(TrendsViewModel.ViewsClonesChartYAxisInterval));
 
                 this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsViewsClonesChartVisible));
             }

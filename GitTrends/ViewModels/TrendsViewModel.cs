@@ -85,8 +85,11 @@ namespace GitTrends
         public bool IsViewsClonesEmptyDataViewVisible => !IsViewsClonesChartVisible && !IsFetchingData;
         public bool IsViewsClonesChartVisible => !IsFetchingData && DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
 
-        public DateTime MinViewClonesDate => DateTimeService.GetMinimumLocalDateTime(DailyViewsList, DailyClonesList);
-        public DateTime MaxViewClonesDate => DateTimeService.GetMaximumLocalDateTime(DailyViewsList, DailyClonesList);
+        public double ViewsClonesChartYAxisInterval => DailyViewsClonesMaxValue > 5 ? Math.Round(DailyViewsClonesMaxValue / 10) : 1;
+        public double StarsChartYAxisInterval => DailyStarsMaxValue > 5 ? Math.Round(DailyStarsMaxValue / 10) : 1;
+
+        public DateTime MinViewsClonesDate => DateTimeService.GetMinimumLocalDateTime(DailyViewsList, DailyClonesList);
+        public DateTime MaxViewsClonesDate => DateTimeService.GetMaximumLocalDateTime(DailyViewsList, DailyClonesList);
 
         public DateTime MaxDailyStarsDate => DailyStarsList.Any() ? DailyStarsList.Last().LocalDay : DateTime.Today;
         public DateTime MinDailyStarsDate => DailyStarsList.Any() ? DailyStarsList.First().LocalDay : DateTime.Today.Subtract(TimeSpan.FromDays(14));
@@ -339,6 +342,8 @@ namespace GitTrends
             OnPropertyChanged(nameof(MinDailyStarsDate));
 
             OnPropertyChanged(nameof(TotalStars));
+
+            OnPropertyChanged(nameof(StarsChartYAxisInterval));
         }
 
         void OnDailyClonesListChanged()
@@ -349,8 +354,10 @@ namespace GitTrends
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
             OnPropertyChanged(nameof(DailyViewsClonesMinValue));
 
-            OnPropertyChanged(nameof(MinViewClonesDate));
-            OnPropertyChanged(nameof(MaxViewClonesDate));
+            OnPropertyChanged(nameof(MinViewsClonesDate));
+            OnPropertyChanged(nameof(MaxViewsClonesDate));
+
+            OnPropertyChanged(nameof(ViewsClonesChartYAxisInterval));
         }
 
         void OnDailyViewsListChanged()
@@ -361,8 +368,10 @@ namespace GitTrends
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
             OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
 
-            OnPropertyChanged(nameof(MinViewClonesDate));
-            OnPropertyChanged(nameof(MaxViewClonesDate));
+            OnPropertyChanged(nameof(MinViewsClonesDate));
+            OnPropertyChanged(nameof(MaxViewsClonesDate));
+
+            OnPropertyChanged(nameof(ViewsClonesChartYAxisInterval));
         }
 
         void OnIsFetchingDataChanged()

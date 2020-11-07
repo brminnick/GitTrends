@@ -27,11 +27,11 @@ namespace GitTrends
             };
         }
 
-        protected async Task SetZoom(double primaryAxisStart, double primaryAxisEnd, double secondaryAxisStart, double secondaryAxisEnd)
+        protected Task SetZoom(double primaryAxisStart, double primaryAxisEnd, double secondaryAxisStart, double secondaryAxisEnd) => _mainThread.InvokeOnMainThreadAsync(() =>
         {
-            await _mainThread.InvokeOnMainThreadAsync(() => _chartZoomPanBehavior.ZoomByRange(PrimaryAxis, primaryAxisStart, primaryAxisEnd));
-            await _mainThread.InvokeOnMainThreadAsync(() => _chartZoomPanBehavior.ZoomByRange(SecondaryAxis, secondaryAxisStart, secondaryAxisEnd));
-        }
+            _chartZoomPanBehavior.ZoomByRange(PrimaryAxis, primaryAxisStart, primaryAxisEnd);
+            _chartZoomPanBehavior.ZoomByRange(SecondaryAxis, secondaryAxisStart, secondaryAxisEnd);
+        });
 
         protected class TrendsAreaSeries : AreaSeries
         {

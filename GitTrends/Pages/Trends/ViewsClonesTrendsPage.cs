@@ -14,7 +14,7 @@ namespace GitTrends
         }
 
         protected override Layout CreateHeaderView() => new ViewsClonesStatisticsGrid();
-        protected override BaseChartView CreateChartView() => new ViewClonesChart(MainThread);
+        protected override BaseChartView CreateChartView() => new ViewsClonesChart(MainThread);
         protected override EmptyDataView CreateEmptyDataView() => new EmptyDataView(TrendsPageAutomationIds.ViewsClonesEmptyDataView)
                                                                     .Bind(IsVisibleProperty, nameof(TrendsViewModel.IsViewsClonesEmptyDataViewVisible))
                                                                     .Bind(EmptyDataView.TitleProperty, nameof(TrendsViewModel.ViewsClonesEmptyDataViewTitleText))

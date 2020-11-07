@@ -54,8 +54,8 @@ namespace GitTrends.UnitTests
             }
 
             //Act
-            minDateValue_Initial = trendsViewModel.MinViewClonesDate;
-            maxDateValue_Initial = trendsViewModel.MaxViewClonesDate;
+            minDateValue_Initial = trendsViewModel.MinViewsClonesDate;
+            maxDateValue_Initial = trendsViewModel.MaxViewsClonesDate;
             isFetchingData_Initial = trendsViewModel.IsFetchingData;
             isChartVisible_Initial = trendsViewModel.IsViewsClonesChartVisible;
             dailyViewsModels_Initial = trendsViewModel.DailyViewsList;
@@ -73,8 +73,8 @@ namespace GitTrends.UnitTests
 
             await fetchDataCommandTask.ConfigureAwait(false);
 
-            minDateValue_Final = trendsViewModel.MinViewClonesDate;
-            maxDateValue_Final = trendsViewModel.MaxViewClonesDate;
+            minDateValue_Final = trendsViewModel.MinViewsClonesDate;
+            maxDateValue_Final = trendsViewModel.MaxViewsClonesDate;
             isFetchingData_Final = trendsViewModel.IsFetchingData;
             isChartVisible_Final = trendsViewModel.IsViewsClonesChartVisible;
             dailyViewsModels_Final = trendsViewModel.DailyViewsList;
