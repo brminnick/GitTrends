@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Autofac;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Xamarin.Essentials;
@@ -28,6 +29,9 @@ namespace GitTrends
             var loginRowTapGesture = new TapGestureRecognizer();
             loginRowTapGesture.Tapped += HandleLoginRowTapped;
 
+            var aboutRowTapGesture = new TapGestureRecognizer();
+            aboutRowTapGesture.Tapped += HandleAboutRowTapped;
+
             Content = new ScrollView
             {
                 Content = _contentGrid = new Grid
@@ -40,6 +44,8 @@ namespace GitTrends
                     RowDefinitions = Rows.Define(
                         (Row.GitHubUser, AbsoluteGridLength(GitHubUserView.TotalHeight)),
                         (Row.GitHubUserSeparator, AbsoluteGridLength(separatorRowHeight)),
+                        (Row.About, AbsoluteGridLength(settingsRowHeight)),
+                        (Row.AboutSeparator, AbsoluteGridLength(separatorRowHeight)),
                         (Row.Login, AbsoluteGridLength(settingsRowHeight)),
                         (Row.LoginSeparator, AbsoluteGridLength(separatorRowHeight)),
                         (Row.Notifications, AbsoluteGridLength(settingsRowHeight)),
@@ -59,45 +65,79 @@ namespace GitTrends
 
                     Children =
                     {
-                        new GitHubUserView().Row(Row.GitHubUser).ColumnSpan(All<Column>()),
+                        new GitHubUserView()
+                            .Row(Row.GitHubUser).ColumnSpan(All<Column>()),
 
-                        new Separator().Row(Row.GitHubUserSeparator).ColumnSpan(All<Column>()),
+                        new Separator()
+                            .Row(Row.GitHubUserSeparator).ColumnSpan(All<Column>()),
 
-                        new LoginRowTappableView(loginRowTapGesture).Row(Row.Login).ColumnSpan(All<Column>()),
-                        new LoginRowSvg("logout.svg", getSVGIconColor).Row(Row.Login).Column(Column.Icon),
-                        new LoginLabel().Row(Row.Login).Column(Column.Title),
-                        new LoginRowSvg("right_arrow.svg", getSVGIconColor).End().Row(Row.Login).Column(Column.Button),
+                        new AboutRowTappableView(aboutRowTapGesture)
+                            .Row(Row.About).ColumnSpan(All<Column>()),
+                        new AboutRowSvg("about.svg", getSVGIconColor)
+                            .Row(Row.About).Column(Column.Icon),
+                        new AboutTitleLabel(SettingsPageAutomationIds.AboutTitleLabel)
+                            .Row(Row.About).Column(Column.Title)
+                            .Bind(Label.TextProperty, nameof(SettingsViewModel.AboutLabelText)),
+                        new AboutRowSvg("right_arrow.svg", getSVGIconColor).End()
+                            .Row(Row.About).Column(Column.Button),
 
-                        new Separator().Row(Row.LoginSeparator).ColumnSpan(All<Column>()),
+                        new Separator()
+                            .Row(Row.AboutSeparator).ColumnSpan(All<Column>()),
 
-                        new SvgImage("bell.svg", getSVGIconColor).Row(Row.Notifications).Column(Column.Icon),
-                        new SettingsTitleLabel(SettingsPageAutomationIds.RegisterForNotificationsTitleLabel).Row(Row.Notifications).Column(Column.Title)
+                        new LoginRowTappableView(loginRowTapGesture)
+                            .Row(Row.Login).ColumnSpan(All<Column>()),
+                        new LoginRowSvg("logout.svg", getSVGIconColor)
+                            .Row(Row.Login).Column(Column.Icon),
+                        new LoginLabel()
+                            .Row(Row.Login).Column(Column.Title),
+                        new LoginRowSvg("right_arrow.svg", getSVGIconColor).End()
+                            .Row(Row.Login).Column(Column.Button),
+
+                        new Separator()
+                            .Row(Row.LoginSeparator).ColumnSpan(All<Column>()),
+
+                        new SvgImage("bell.svg", getSVGIconColor)
+                            .Row(Row.Notifications).Column(Column.Icon),
+                        new SettingsTitleLabel(SettingsPageAutomationIds.RegisterForNotificationsTitleLabel)
+                            .Row(Row.Notifications).Column(Column.Title)
                             .Bind(Label.TextProperty, nameof(SettingsViewModel.RegisterForNotificationsLabelText)),
-                        new EnableNotificationsSwitch().Row(Row.Notifications).Column(Column.Button),
+                        new EnableNotificationsSwitch()
+                            .Row(Row.Notifications).Column(Column.Button),
 
-                        new Separator().Row(Row.NotificationsSeparator).ColumnSpan(All<Column>()),
+                        new Separator()
+                            .Row(Row.NotificationsSeparator).ColumnSpan(All<Column>()),
 
-                        new SvgImage("theme.svg", getSVGIconColor).Row(Row.Theme).Column(Column.Icon),
-                        new SettingsTitleLabel(SettingsPageAutomationIds.ThemeTitleLabel).Row(Row.Theme).Column(Column.Title)
+                        new SvgImage("theme.svg", getSVGIconColor)
+                            .Row(Row.Theme).Column(Column.Icon),
+                        new SettingsTitleLabel(SettingsPageAutomationIds.ThemeTitleLabel)
+                            .Row(Row.Theme).Column(Column.Title)
                             .Bind(Label.TextProperty, nameof(SettingsViewModel.ThemeLabelText)),
-                        new SettingsPicker(SettingsPageAutomationIds.ThemePicker, 70).Row(Row.Theme).Column(Column.Button)
+                        new SettingsPicker(SettingsPageAutomationIds.ThemePicker, 70)
+                            .Row(Row.Theme).Column(Column.Button)
                             .Bind(Picker.ItemsSourceProperty, nameof(SettingsViewModel.ThemePickerItemsSource))
                             .Bind(Picker.SelectedIndexProperty, nameof(SettingsViewModel.ThemePickerSelectedIndex)),
 
-                        new Separator().Row(Row.ThemeSeparator).ColumnSpan(All<Column>()),
+                        new Separator()
+                            .Row(Row.ThemeSeparator).ColumnSpan(All<Column>()),
 
-                        new SvgImage("language.svg", getSVGIconColor).Row(Row.Language).Column(Column.Icon),
-                        new SettingsTitleLabel(SettingsPageAutomationIds.LanguageTitleLabel).Row(Row.Language).Column(Column.Title)
+                        new SvgImage("language.svg", getSVGIconColor)
+                            .Row(Row.Language).Column(Column.Icon),
+                        new SettingsTitleLabel(SettingsPageAutomationIds.LanguageTitleLabel)
+                            .Row(Row.Language).Column(Column.Title)
                             .Bind(Label.TextProperty, nameof(SettingsViewModel.LanguageLabelText)),
-                        new SettingsPicker(SettingsPageAutomationIds.LanguagePicker, 100).Row(Row.Language).Column(Column.Button)
+                        new SettingsPicker(SettingsPageAutomationIds.LanguagePicker, 100)
+                            .Row(Row.Language).Column(Column.Button)
                             .Bind(Picker.ItemsSourceProperty, nameof(SettingsViewModel.LanguagePickerItemsSource))
                             .Bind(Picker.SelectedIndexProperty, nameof(SettingsViewModel.LanguagePickerSelectedIndex)),
 
-                        new Separator().Row(Row.LanguageSeparator).ColumnSpan(All<Column>()),
+                        new Separator()
+                            .Row(Row.LanguageSeparator).ColumnSpan(All<Column>()),
 
-                        new PreferredChartsView(settingsViewModel, mainThread).Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
+                        new PreferredChartsView(settingsViewModel, mainThread)
+                            .Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
 
-                        new CopyrightLabel().Row(Row.Copyright).ColumnSpan(All<Column>())
+                        new CopyrightLabel()
+                            .Row(Row.Copyright).ColumnSpan(All<Column>())
                     }
                 }
             };
@@ -107,7 +147,7 @@ namespace GitTrends
             static Color getSVGIconColor() => (Color)Application.Current.Resources[nameof(BaseTheme.IconColor)];
         }
 
-        enum Row { GitHubUser, GitHubUserSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, Language, LanguageSeparator, PreferredCharts, CopyrightPadding, Copyright }
+        enum Row { GitHubUser, GitHubUserSeparator, About, AboutSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, Language, LanguageSeparator, PreferredCharts, CopyrightPadding, Copyright }
         enum Column { Icon, Title, Button }
 
         protected override void OnDisappearing()
@@ -115,6 +155,12 @@ namespace GitTrends
             _connectToGitHubCancellationTokenSource.Cancel();
 
             base.OnDisappearing();
+        }
+
+        async void HandleAboutRowTapped(object sender, EventArgs e)
+        {
+            var aboutPage = ContainerService.Container.Resolve<AboutPage>();
+            await Navigation.PushAsync(aboutPage);
         }
 
         async void HandleLoginRowTapped(object sender, EventArgs e)
@@ -129,6 +175,11 @@ namespace GitTrends
 
                 await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(1, 350, Easing.CubicOut)));
             }
+        }
+
+        class AboutRowTappableView : View
+        {
+            public AboutRowTappableView(TapGestureRecognizer tapGestureRecognizer) => GestureRecognizers.Add(tapGestureRecognizer);
         }
 
         class LoginRowTappableView : View, ILoginRowView
@@ -161,9 +212,27 @@ namespace GitTrends
             }
         }
 
+        class AboutTitleLabel : SettingsTitleLabel
+        {
+            public AboutTitleLabel(in string automationId) : base(automationId)
+            {
+                //Allow AboutRowTappableView to handle taps
+                InputTransparent = true;
+            }
+        }
+
+        class AboutRowSvg : SvgImage
+        {
+            public AboutRowSvg(in string svgFileName, in Func<Color> getTextColor) : base(svgFileName, getTextColor)
+            {
+                //Allow AboutRowTappableView to handle taps
+                InputTransparent = true;
+            }
+        }
+
         class SettingsTitleLabel : TitleLabel
         {
-            public SettingsTitleLabel(in string automationId)=> AutomationId = automationId;
+            public SettingsTitleLabel(in string automationId) => AutomationId = automationId;
         }
 
         class Separator : BoxView
@@ -193,7 +262,7 @@ namespace GitTrends
 
                 this.EndExpand();
 
-                this.DynamicResources((TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor)), 
+                this.DynamicResources((TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor)),
                                         (BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)));
             }
         }
