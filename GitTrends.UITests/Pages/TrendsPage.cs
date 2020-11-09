@@ -2,20 +2,23 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using Newtonsoft.Json;
 using Xamarin.UITest;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
 namespace GitTrends.UITests
 {
-    class TrendsPage : BasePage
+    class TrendsPage : BaseCarouselPage
     {
         readonly Query _viewsClonesChart, _activityIndicator, _androidContextMenuOverflowButton, _referringSiteButton, _viewsCard,
             _uniqueViewsCard, _clonesCard, _uniqueClonesCard, _viewsStatisticsLabel, _uniqueViewsStatisticsLabel,
-            _clonesStatisticsLabel, _uniqueClonesStatisticsLabel, _emptyViewsClonesDataView, _emptyStarsDataView;
+            _clonesStatisticsLabel, _uniqueClonesStatisticsLabel, _emptyViewsClonesDataView, _emptyStarsDataView,
+            _starsChart, _starsStatisticsLabel;
 
-        public TrendsPage(IApp app) : base(app)
+        public TrendsPage(IApp app) : base(app, BackdoorMethodConstants.GetCurrentTrendsPageNumber)
         {
+            _starsChart = GenerateMarkedQuery(TrendsPageAutomationIds.StarsChart);
             _viewsClonesChart = GenerateMarkedQuery(TrendsPageAutomationIds.ViewsClonesChart);
 
             _viewsCard = GenerateMarkedQuery(TrendsPageAutomationIds.ViewsCard);
@@ -33,6 +36,8 @@ namespace GitTrends.UITests
             _clonesStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.ClonesStatisticsLabel);
             _uniqueClonesStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.UniqueClonesStatisticsLabel);
 
+            _starsStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.StarsStatisticsLabel);
+
             _emptyStarsDataView = GenerateMarkedQuery(TrendsPageAutomationIds.StarsEmptyDataView);
             _emptyViewsClonesDataView = GenerateMarkedQuery(TrendsPageAutomationIds.ViewsClonesEmptyDataView);
         }
@@ -42,7 +47,13 @@ namespace GitTrends.UITests
         public string ClonesStatisticsLabelText => GetText(_clonesStatisticsLabel);
         public string UniqueClonesStatisticsLabelText => GetText(_uniqueClonesStatisticsLabel);
 
+        public string StarsStatisticsLabelText => GetText(_starsStatisticsLabel);
+
         public bool IsEmptyViewsClonesDataViewVisible => App.Query(_emptyViewsClonesDataView).Any();
+        public bool IsEmptyStarsDataViewVisible => App.Query(_emptyStarsDataView).Any();
+
+        public bool IsViewsClonesChartVisible => App.Query(_viewsClonesChart).Any();
+        public bool IsStarsChartVisible => App.Query(_starsChart).Any();
 
         public override Task WaitForPageToLoad(TimeSpan? timespan = null)
         {
@@ -56,9 +67,21 @@ namespace GitTrends.UITests
             }
 
             App.WaitForNoElement(_activityIndicator, timeout: timespan);
-            App.WaitForElement(_viewsClonesChart, timeout: timespan);
 
             DismissSyncfusionLicensePopup();
+
+            switch (CurrentPageNumber)
+            {
+                case 0:
+                    App.WaitForElement(_viewsClonesChart, timeout: timespan);
+                    break;
+                case 1:
+                    App.WaitForElement(_starsChart, timeout: timespan);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
 
             return Task.CompletedTask;
         }
@@ -69,9 +92,21 @@ namespace GitTrends.UITests
             App.Screenshot("Empty Views Clones Data View Appeared");
         }
 
-        public bool IsSeriesVisible(string seriesName)
+        public void WaitForEmptyStarsDataView()
         {
-            var serializedIsSeriesVisible = App.InvokeBackdoorMethod(BackdoorMethodConstants.IsTrendsSeriesVisible, seriesName).ToString();
+            App.WaitForElement(_emptyStarsDataView);
+            App.Screenshot("Empty Stars Data View Appeared");
+        }
+
+        public bool IsViewsClonesChartSeriesVisible(string seriesName)
+        {
+            var serializedIsSeriesVisible = App.InvokeBackdoorMethod(BackdoorMethodConstants.IsViewsClonesChartSeriesVisible, seriesName).ToString();
+            return JsonConvert.DeserializeObject<bool>(serializedIsSeriesVisible);
+        }
+
+        public bool IsStarsChartSeriesVisible()
+        {
+            var serializedIsSeriesVisible = App.InvokeBackdoorMethod(BackdoorMethodConstants.IsViewsClonesChartSeriesVisible, TrendsChartTitleConstants.StarsTitle).ToString();
             return JsonConvert.DeserializeObject<bool>(serializedIsSeriesVisible);
         }
 

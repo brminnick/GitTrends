@@ -29,13 +29,17 @@ namespace GitTrends.iOS
         public NSString GetCurrentTrendsChartOption(NSString noValue) =>
             SerializeObject(UITestBackdoorService.GetCurrentTrendsChartOption());
 
-        [Preserve, Export(BackdoorMethodConstants.IsTrendsSeriesVisible + ":")]
-        public NSString IsTrendsSeriesVisible(NSString seriesLabel) =>
-            SerializeObject(UITestBackdoorService.IsTrendsSeriesVisible(seriesLabel.ToString()));
+        [Preserve, Export(BackdoorMethodConstants.IsViewsClonesChartSeriesVisible + ":")]
+        public NSString IsViewsClonesChartSeriesVisible(NSString seriesLabel) =>
+            SerializeObject(UITestBackdoorService.IsViewsClonesChartSeriesVisible(seriesLabel.ToString()));
 
         [Preserve, Export(BackdoorMethodConstants.GetCurrentOnboardingPageNumber + ":")]
         public NSString GetCurrentOnboardingPageNumber(NSString noValue) =>
             SerializeObject(UITestBackdoorService.GetCurrentOnboardingPageNumber());
+
+        [Preserve, Export(BackdoorMethodConstants.GetCurrentTrendsPageNumber + ":")]
+        public NSString GetCurrentTrendsPageNumber(NSString noValue) =>
+            SerializeObject(UITestBackdoorService.GetCurrentTrendsPageNumber());
 
         [Preserve, Export(BackdoorMethodConstants.PopPage + ":")]
         public async void PopPage(NSString noValue) =>

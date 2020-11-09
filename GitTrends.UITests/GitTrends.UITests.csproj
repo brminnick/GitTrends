@@ -33,7 +33,6 @@
         <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Pages\BasePage.cs" />
         <Compile Include="Pages\ReferringSitesPage.cs" />
         <Compile Include="Pages\RepositoryPage.cs" />
         <Compile Include="Pages\SettingsPage.cs" />
@@ -44,7 +43,6 @@
         <Compile Include="Models\Repository.cs" />
         <Compile Include="Tests\Base\BaseUITest.cs" />
         <Compile Include="Pages\OnboardingPage.cs" />
-        <Compile Include="Pages\BaseCollectionPage.cs" />
         <Compile Include="Pages\WelcomePage.cs" />
         <Compile Include="Tests\AppStoreScreenShotsTests.cs" />
         <Compile Include="Tests\LaunchTests.cs" />
@@ -56,6 +54,9 @@
         <Compile Include="Tests\TrendsTests.cs" />
         <Compile Include="Tests\WelcomeTests.cs" />
         <Compile Include="Models\ReferringSiteModel.cs" />
+        <Compile Include="Pages\Base\BaseCollectionPage.cs" />
+        <Compile Include="Pages\Base\BasePage.cs" />
+        <Compile Include="Pages\Base\BaseCarouselPage.cs" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Pages\" />
@@ -63,6 +64,7 @@
         <Folder Include="Services\" />
         <Folder Include="Models\" />
         <Folder Include="Tests\Base\" />
+        <Folder Include="Pages\Base\" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="System" />

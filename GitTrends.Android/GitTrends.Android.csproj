@@ -24,6 +24,7 @@
     <Nullable>enable</Nullable>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <AndroidSupportedAbis>armeabi-v7a;arm64-v8a;x86;x86_64</AndroidSupportedAbis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -54,7 +55,6 @@
     <EnableLLVM>true</EnableLLVM>
     <AndroidPackageFormat>aab</AndroidPackageFormat>
     <AndroidTlsProvider>btls</AndroidTlsProvider>
-    <AndroidSupportedAbis>armeabi-v7a;arm64-v8a;x86;x86_64</AndroidSupportedAbis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
     <DebugType></DebugType>
@@ -75,7 +75,6 @@
     <EnableLLVM>true</EnableLLVM>
     <AndroidTlsProvider>btls</AndroidTlsProvider>
     <AndroidLinkTool>r8</AndroidLinkTool>
-    <AndroidSupportedAbis>armeabi-v7a;arm64-v8a;x86;x86_64</AndroidSupportedAbis>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />

@@ -7,10 +7,13 @@
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <Configurations>Debug;Release;AppStore</Configurations>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " >
+        <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;</DefineConstants>
+    </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
         <DebugType>
         </DebugType>
+        <DefineConstants>TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_0;</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
         <IntermediateOutputPath>obj\AppStore</IntermediateOutputPath>

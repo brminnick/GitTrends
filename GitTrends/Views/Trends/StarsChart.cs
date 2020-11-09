@@ -25,7 +25,7 @@ namespace GitTrends
             const int _minimumStarCount = 10;
             const int _maximumStarCount = 100;
 
-            public StarsTrendsChart(IMainThread mainThread) : base(mainThread, TrendsPageAutomationIds.ViewsClonesChart)
+            public StarsTrendsChart(IMainThread mainThread) : base(mainThread, TrendsPageAutomationIds.StarsChart)
             {
                 var primaryAxisLabelStyle = new ChartAxisLabelStyle
                 {
