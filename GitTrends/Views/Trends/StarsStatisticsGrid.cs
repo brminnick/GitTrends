@@ -1,7 +1,8 @@
-﻿using Xamarin.Forms;
+﻿using GitTrends.Mobile.Common;
+using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using static Xamarin.Forms.Markup.GridRowsColumns;
 using static GitTrends.MarkupExtensions;
+using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -36,9 +37,9 @@ namespace GitTrends
             Children.Add(new StarSvg()
                             .Row(Row.Stars).Column(Column.LeftStar));
 
-            Children.Add(new StarsStatisticsLabel(48)
+            Children.Add(new StarsStatisticsLabel(48) { AutomationId = TrendsPageAutomationIds.StarsStatisticsLabel }
                             .Row(Row.Stars).Column(Column.Text)
-                            .Bind(Label.TextProperty, nameof(TrendsViewModel.TotalStars)));
+                            .Bind<Label, double, string>(Label.TextProperty, nameof(TrendsViewModel.TotalStars), convert: totalStars => totalStars.ToAbbreviatedText()));
 
             Children.Add(new StarSvg()
                             .Row(Row.Stars).Column(Column.RightStar));

@@ -13,6 +13,8 @@ namespace GitTrends.UITests
     [TestFixture(Platform.iOS, UserType.Demo)]
     class TrendsTests : BaseUITest
     {
+        Repository? _selectedRepository;
+
         public TrendsTests(Platform platform, UserType userType) : base(platform, userType)
         {
         }
@@ -21,52 +23,67 @@ namespace GitTrends.UITests
         {
             await base.BeforeEachTest().ConfigureAwait(false);
 
-            var selectedRepository = RepositoryPage.VisibleCollection.First();
+            _selectedRepository = RepositoryPage.VisibleCollection.First();
 
-            RepositoryPage.TapRepository(selectedRepository.Name);
+            RepositoryPage.TapRepository(_selectedRepository.Name);
 
             await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
 
-            Assert.IsTrue(App.Query(selectedRepository.Name).Any());
+            Assert.IsTrue(App.Query(_selectedRepository.Name).Any());
 
-            Assert.AreEqual(selectedRepository.TotalViews.ToAbbreviatedText(), TrendsPage.ViewsStatisticsLabelText);
-            Assert.AreEqual(selectedRepository.TotalUniqueViews.ToAbbreviatedText(), TrendsPage.UniqueViewsStatisticsLabelText);
-            Assert.AreEqual(selectedRepository.TotalClones.ToAbbreviatedText(), TrendsPage.ClonesStatisticsLabelText);
-            Assert.AreEqual(selectedRepository.TotalUniqueClones.ToAbbreviatedText(), TrendsPage.UniqueClonesStatisticsLabelText);
+            Assert.AreEqual(_selectedRepository.TotalViews.ToAbbreviatedText(), TrendsPage.ViewsStatisticsLabelText);
+            Assert.AreEqual(_selectedRepository.TotalUniqueViews.ToAbbreviatedText(), TrendsPage.UniqueViewsStatisticsLabelText);
+            Assert.AreEqual(_selectedRepository.TotalClones.ToAbbreviatedText(), TrendsPage.ClonesStatisticsLabelText);
+            Assert.AreEqual(_selectedRepository.TotalUniqueClones.ToAbbreviatedText(), TrendsPage.UniqueClonesStatisticsLabelText);
         }
 
         [Test]
-        public void EnsureCardsAreInteractive()
+        public void EnsureViewsClonesCardsAreInteractive()
         {
             //Arrange
-            bool isViewsSeriesVisible_Initial = TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.TotalViewsTitle);
-            bool isUniqueViewsSeriesVisible_Initial = TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.UniqueViewsTitle);
-            bool isClonesSeriesVisible_Initial = TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.TotalClonesTitle);
-            bool isUniqueClonesSeriesVisible_Initial = TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.UniqueClonesTitle);
+            bool isViewsSeriesVisible_Initial = TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.TotalViewsTitle);
+            bool isUniqueViewsSeriesVisible_Initial = TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.UniqueViewsTitle);
+            bool isClonesSeriesVisible_Initial = TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.TotalClonesTitle);
+            bool isUniqueClonesSeriesVisible_Initial = TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.UniqueClonesTitle);
 
             //Act
             TrendsPage.TapViewsCard();
 
             //Assert
-            Assert.AreNotEqual(isViewsSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.TotalViewsTitle));
+            Assert.AreNotEqual(isViewsSeriesVisible_Initial, TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.TotalViewsTitle));
 
             //Act
             TrendsPage.TapUniqueViewsCard();
 
             //Assert
-            Assert.AreNotEqual(isUniqueViewsSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.UniqueViewsTitle));
+            Assert.AreNotEqual(isUniqueViewsSeriesVisible_Initial, TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.UniqueViewsTitle));
 
             //Act
             TrendsPage.TapClonesCard();
 
             //Assert
-            Assert.AreNotEqual(isClonesSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.TotalClonesTitle));
+            Assert.AreNotEqual(isClonesSeriesVisible_Initial, TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.TotalClonesTitle));
 
             //Act
             TrendsPage.TapUniqueClonesCard();
 
             //Assert
-            Assert.AreNotEqual(isUniqueClonesSeriesVisible_Initial, TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.UniqueClonesTitle));
+            Assert.AreNotEqual(isUniqueClonesSeriesVisible_Initial, TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.UniqueClonesTitle));
+        }
+
+        [Test]
+        public async Task ViewStarsChart()
+        {
+            //Arrange
+            Assert.IsTrue(TrendsPage.IsViewsClonesChartVisible);
+
+            //Act
+            await TrendsPage.MoveToNextPage();
+            await TrendsPage.WaitForPageToLoad();
+
+            //Assert
+            Assert.IsTrue(TrendsPage.IsStarsChartVisible);
+            Assert.AreEqual(_selectedRepository?.StarCount.ToAbbreviatedText(), TrendsPage.StarsStatisticsLabelText);
         }
     }
 }
