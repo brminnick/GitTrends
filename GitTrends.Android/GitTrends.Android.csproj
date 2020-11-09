@@ -36,7 +36,6 @@
     <WarningLevel>4</WarningLevel>
     <AndroidDexTool>d8</AndroidDexTool>
     <AndroidUseAapt2>true</AndroidUseAapt2>
-    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

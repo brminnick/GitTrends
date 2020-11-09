@@ -7,7 +7,7 @@
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <Configurations>Debug;Release;AppStore</Configurations>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " >
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -50,15 +50,6 @@
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.pt.resx">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Constants\EmptyDataViewConstants.bs.resx">
-          <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Constants\EmptyDataViewConstants.ru.resx">
-            <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Constants\EmptyDataViewConstants.pt.resx">
-            <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.bs.resx">
           <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
@@ -248,13 +239,6 @@
         <EmbeddedResource Update="Constants\SplashScreenPageConstants.de.resx">
             <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
         </EmbeddedResource>
-        <EmbeddedResource Update="Constants\EmptyDataViewConstants.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>EmptyDataViewConstants.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Constants\EmptyDataViewConstants.de.resx">
-            <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
-        </EmbeddedResource>
         <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.resx">
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>EmptyDataViewConstantsInternal.Designer.cs</LastGenOutput>
@@ -341,9 +325,6 @@
         <EmbeddedResource Update="Constants\SplashScreenPageConstants.nl.resx">
             <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
         </EmbeddedResource>
-        <EmbeddedResource Update="Constants\EmptyDataViewConstants.nl.resx">
-            <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
-        </EmbeddedResource>
         <EmbeddedResource Update="Constants\DemoUserConstants.nl.resx">
             <DependentUpon>DemoUserConstants.resx</DependentUpon>
         </EmbeddedResource>
@@ -358,9 +339,6 @@
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\DemoUserConstants.en.resx">
             <DependentUpon>DemoUserConstants.resx</DependentUpon>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Constants\EmptyDataViewConstants.en.resx">
-            <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.en.resx">
             <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
@@ -434,9 +412,6 @@
         <EmbeddedResource Update="Constants\DemoUserConstants.fr.resx">
             <DependentUpon>DemoUserConstants.resx</DependentUpon>
         </EmbeddedResource>
-        <EmbeddedResource Update="Constants\EmptyDataViewConstants.fr.resx">
-            <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
-        </EmbeddedResource>
         <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.fr.resx">
             <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
         </EmbeddedResource>
@@ -478,9 +453,6 @@
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\DemoUserConstants.es.resx">
             <DependentUpon>DemoUserConstants.resx</DependentUpon>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Constants\EmptyDataViewConstants.es.resx">
-            <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.es.resx">
             <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
@@ -567,9 +539,6 @@
         <Compile Update="Constants\SplashScreenPageConstants.Designer.cs">
             <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
         </Compile>
-        <Compile Update="Constants\EmptyDataViewConstants.Designer.cs">
-            <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
-        </Compile>
         <Compile Update="Constants\ReviewServiceConstants.Designer.cs">
             <DependentUpon>ReviewServiceConstants.resx</DependentUpon>
         </Compile>
@@ -590,9 +559,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Constants\DemoUserConstants.uk.resx">
       <DependentUpon>DemoUserConstants.resx</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Constants\EmptyDataViewConstants.uk.resx">
-      <DependentUpon>EmptyDataViewConstants.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.uk.resx">
       <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>

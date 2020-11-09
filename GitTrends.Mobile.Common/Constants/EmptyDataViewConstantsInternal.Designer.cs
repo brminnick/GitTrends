@@ -100,5 +100,17 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("Uninitialized", resourceCulture);
             }
         }
+        
+        public static string UnableToRetrieveData {
+            get {
+                return ResourceManager.GetString("UnableToRetrieveData", resourceCulture);
+            }
+        }
+        
+        public static string NoTrafficYet {
+            get {
+                return ResourceManager.GetString("NoTrafficYet", resourceCulture);
+            }
+        }
     }
 }

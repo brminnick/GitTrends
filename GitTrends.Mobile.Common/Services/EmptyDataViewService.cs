@@ -10,8 +10,8 @@ namespace GitTrends.Mobile.Common
             RefreshState.Uninitialized => EmptyDataViewConstantsInternal.Uninitialized,
             RefreshState.Succeeded => EmptyDataViewConstantsInternal.NoReferralsYet,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.LoginExpired,
-            RefreshState.Error => EmptyDataViewConstants.UnableToRetrieveData,
-            RefreshState.MaximumApiLimit => EmptyDataViewConstants.UnableToRetrieveData,
+            RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
+            RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.UnableToRetrieveData,
             _ => throw new NotSupportedException()
         };
 
@@ -32,8 +32,8 @@ namespace GitTrends.Mobile.Common
             RefreshState.Succeeded => EmptyDataViewConstantsInternal.NoRepositoriesFound,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.LoginExpired,
             RefreshState.Error when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.NoFilterMatch,
-            RefreshState.Error => EmptyDataViewConstants.UnableToRetrieveData,
-            RefreshState.MaximumApiLimit => EmptyDataViewConstants.UnableToRetrieveData,
+            RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
+            RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.UnableToRetrieveData,
             _ => throw new NotSupportedException()
         };
 
@@ -52,10 +52,10 @@ namespace GitTrends.Mobile.Common
         public static string GetViewsClonesTitleText(in RefreshState refreshState) => refreshState switch
         {
             RefreshState.Uninitialized => EmptyDataViewConstantsInternal.Uninitialized,
-            RefreshState.Succeeded => EmptyDataViewConstants.NoTrafficYet,
+            RefreshState.Succeeded => EmptyDataViewConstantsInternal.NoTrafficYet,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.LoginExpired,
-            RefreshState.Error => EmptyDataViewConstants.UnableToRetrieveData,
-            RefreshState.MaximumApiLimit => EmptyDataViewConstants.UnableToRetrieveData,
+            RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
+            RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.UnableToRetrieveData,
             _ => throw new NotSupportedException()
         };
 
@@ -69,8 +69,8 @@ namespace GitTrends.Mobile.Common
             RefreshState.Succeeded when totalStars is 1 => "1 Star Text",
             RefreshState.Succeeded => "0 Stars Text",
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.PleaseLoginAgain,
-            RefreshState.Error => EmptyDataViewConstants.UnableToRetrieveData,
-            RefreshState.MaximumApiLimit => EmptyDataViewConstants.UnableToRetrieveData,
+            RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
+            RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.UnableToRetrieveData,
             _ => throw new NotSupportedException()
         };
 
