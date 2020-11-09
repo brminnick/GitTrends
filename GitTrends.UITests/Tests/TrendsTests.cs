@@ -9,8 +9,8 @@ namespace GitTrends.UITests
 {
     [TestFixture(Platform.Android, UserType.Demo)]
     [TestFixture(Platform.Android, UserType.LoggedIn)]
-    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     [TestFixture(Platform.iOS, UserType.Demo)]
+    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     class TrendsTests : BaseUITest
     {
         Repository? _selectedRepository;

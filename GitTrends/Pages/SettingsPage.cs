@@ -227,6 +227,7 @@ namespace GitTrends
             {
                 //Allow AboutRowTappableView to handle taps
                 InputTransparent = true;
+                AutomationId = SettingsPageAutomationIds.AboutButton;
             }
         }
 

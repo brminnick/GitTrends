@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
@@ -15,6 +16,7 @@ namespace GitTrends.UITests
         readonly Platform _platform;
 
         IApp? _app;
+        AboutPage? _aboutPage;
         TrendsPage? _trendsPage;
         WelcomePage? _welcomePage;
         SettingsPage? _settingsPage;
@@ -28,6 +30,7 @@ namespace GitTrends.UITests
         protected UserType UserType { get; }
 
         protected IApp App => _app ?? throw new NullReferenceException();
+        protected AboutPage AboutPage => _aboutPage ?? throw new NullReferenceException();
         protected TrendsPage TrendsPage => _trendsPage ?? throw new NullReferenceException();
         protected WelcomePage WelcomePage => _welcomePage ?? throw new NullReferenceException();
         protected SettingsPage SettingsPage => _settingsPage ?? throw new NullReferenceException();
@@ -45,6 +48,7 @@ namespace GitTrends.UITests
         {
             _app = AppInitializer.StartApp(_platform);
 
+            _aboutPage = new AboutPage(App);
             _trendsPage = new TrendsPage(App);
             _welcomePage = new WelcomePage(App);
             _settingsPage = new SettingsPage(App);

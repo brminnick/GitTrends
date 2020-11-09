@@ -20,7 +20,13 @@ namespace GitTrends.Mobile.Common
         public static string GetRandomText(int? length = null)
         {
             var startIndex = _random.Next(_loremIpsum.Length / 2);
-            length ??= _random.Next(_loremIpsum.Length - 1 - startIndex);
+
+            var maximumLength = _loremIpsum.Length - 1 - startIndex;
+
+            length ??= _random.Next(maximumLength);
+
+            //Ensure Length is not out of bounds
+            Math.Min(length.Value, maximumLength);
 
             return _loremIpsum.Substring(startIndex, length.Value);
         }

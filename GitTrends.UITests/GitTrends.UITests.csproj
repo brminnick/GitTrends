@@ -57,6 +57,8 @@
         <Compile Include="Pages\Base\BaseCollectionPage.cs" />
         <Compile Include="Pages\Base\BasePage.cs" />
         <Compile Include="Pages\Base\BaseCarouselPage.cs" />
+        <Compile Include="Pages\AboutPage.cs" />
+        <Compile Include="Tests\AboutTests.cs" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Pages\" />

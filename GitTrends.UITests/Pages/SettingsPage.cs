@@ -19,7 +19,7 @@ namespace GitTrends.UITests
             _preferredChartSettingsControl, _tryDemoButton, _copyrightLabel,
             _registerForNotiicationsSwitch, _gitHubUserView, _themePicker, _themePickerContainer,
             _languagePicker, _languagePickerContainer, _registerForNotificationsTitleLabel, _themeTitleLabel,
-            _loginTitleLabel, _languageTitleLabel;
+            _loginTitleLabel, _languageTitleLabel, _aboutPageLabel, _aboutPageButton;
 
         public SettingsPage(IApp app) : base(app, () => PageTitles.SettingsPage)
         {
@@ -29,6 +29,9 @@ namespace GitTrends.UITests
             _gitHubAliasLabel = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubAliasLabel);
             _tryDemoButton = GenerateMarkedQuery(SettingsPageAutomationIds.TryDemoButton);
             _gitHubSettingsViewActivityIndicator = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubSettingsViewActivityIndicator);
+
+            _aboutPageLabel = GenerateMarkedQuery(SettingsPageAutomationIds.AboutTitleLabel);
+            _aboutPageButton = GenerateMarkedQuery(SettingsPageAutomationIds.AboutButton);
 
             _loginTitleLabel = GenerateMarkedQuery(SettingsPageAutomationIds.LoginTitleLabel);
 
@@ -62,6 +65,7 @@ namespace GitTrends.UITests
 
         public string LoginTitleText => GetText(_loginTitleLabel);
 
+        public string AboutLabelText => GetText(_aboutPageLabel);
         public string TryDemoButtonText => GetText(_tryDemoButton);
         public string CopyrightLabelText => GetText(_copyrightLabel);
         public string ThemeTitleLabelText => GetText(_themeTitleLabel);
@@ -85,6 +89,18 @@ namespace GitTrends.UITests
 
             App.WaitForNoElement("Send You Notifications", timeout: timeout);
             App.Screenshot("Operating System Push Notification Dialog Disappeared");
+        }
+
+        public void TapAboutLabel()
+        {
+            App.Tap(_aboutPageLabel);
+            App.Screenshot("About Page Label Tapped");
+        }
+
+        public void TapAboutButton()
+        {
+            App.Tap(_aboutPageButton);
+            App.Screenshot("About Page Button Tapped");
         }
 
         public async Task SetTrendsChartOption(TrendsChartOption trendsChartOption)
