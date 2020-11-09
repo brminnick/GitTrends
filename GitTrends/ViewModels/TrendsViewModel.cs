@@ -75,7 +75,7 @@ namespace GitTrends
         public IAsyncCommand<(Repository Repository, CancellationToken CancellationToken)> FetchDataCommand { get; }
 
         public double DailyViewsClonesMinValue { get; } = 0;
-        public double DailyStarsMinValue { get; } = 0;
+        public double MinDailyStarsValue { get; } = 0;
 
         public double TotalStars => DailyStarsList.Any() ? DailyStarsList.Last().TotalStars : 0;
 
@@ -86,7 +86,7 @@ namespace GitTrends
         public bool IsViewsClonesChartVisible => !IsFetchingData && DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
 
         public double ViewsClonesChartYAxisInterval => DailyViewsClonesMaxValue > 20 ? Math.Round(DailyViewsClonesMaxValue / 10) : 2;
-        public double StarsChartYAxisInterval => DailyStarsMaxValue > 20 ? Math.Round(DailyStarsMaxValue / 10) : 2;
+        public double StarsChartYAxisInterval => MaxDailyStarsValue > 20 ? Math.Round(MaxDailyStarsValue / 10) : 2;
 
         public DateTime MinViewsClonesDate => DateTimeService.GetMinimumLocalDateTime(DailyViewsList, DailyClonesList);
         public DateTime MaxViewsClonesDate => DateTimeService.GetMaximumLocalDateTime(DailyViewsList, DailyClonesList);
@@ -94,7 +94,7 @@ namespace GitTrends
         public DateTime MaxDailyStarsDate => DailyStarsList.Any() ? DailyStarsList.Last().LocalDay : DateTime.Today;
         public DateTime MinDailyStarsDate => DailyStarsList.Any() ? DailyStarsList.First().LocalDay : DateTime.Today.Subtract(TimeSpan.FromDays(14));
 
-        public double DailyStarsMaxValue => DailyStarsList.Any() ? DailyStarsList.Last().TotalStars : 0;
+        public double MaxDailyStarsValue => TotalStars > MinumumChartHeight ? TotalStars : MinumumChartHeight;
 
         public double DailyViewsClonesMaxValue
         {
@@ -335,8 +335,8 @@ namespace GitTrends
             OnPropertyChanged(nameof(IsStarsChartVisible));
             OnPropertyChanged(nameof(IsStarsEmptyDataViewVisible));
 
-            OnPropertyChanged(nameof(DailyStarsMaxValue));
-            OnPropertyChanged(nameof(DailyStarsMinValue));
+            OnPropertyChanged(nameof(MaxDailyStarsValue));
+            OnPropertyChanged(nameof(MinDailyStarsValue));
 
             OnPropertyChanged(nameof(MaxDailyStarsDate));
             OnPropertyChanged(nameof(MinDailyStarsDate));

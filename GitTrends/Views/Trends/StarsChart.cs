@@ -66,8 +66,8 @@ namespace GitTrends
                     AxisLineStyle = axisLineStyle,
                     MajorTickStyle = secondaryAxisMajorTickStyle,
                     ShowMajorGridLines = false,
-                }.Bind(NumericalAxis.MinimumProperty, nameof(TrendsViewModel.DailyStarsMinValue))
-                 .Bind(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.DailyStarsMaxValue))
+                }.Bind(NumericalAxis.MinimumProperty, nameof(TrendsViewModel.MinDailyStarsValue))
+                 .Bind(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.MaxDailyStarsValue))
                  .Bind(NumericalAxis.IntervalProperty, nameof(TrendsViewModel.StarsChartYAxisInterval));
 
                 StarsSeries = new TrendsAreaSeries(TrendsChartTitleConstants.StarsTitle, nameof(DailyStarsModel.LocalDay), nameof(DailyStarsModel.TotalStars), nameof(BaseTheme.CardStarsStatsIconColor));
