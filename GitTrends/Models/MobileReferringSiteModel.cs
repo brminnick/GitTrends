@@ -12,7 +12,7 @@ namespace GitTrends
     {
         public const int FavIconSize = 32;
 
-        readonly WeakEventManager _propertyChangedEventManager = new WeakEventManager();
+        readonly WeakEventManager _propertyChangedEventManager = new();
 
         ImageSource? _favIcon;
 

@@ -21,7 +21,7 @@ namespace GitTrends
 {
     public class ReferringSitesViewModel : BaseViewModel
     {
-        readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
+        readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
 
         readonly ReviewService _reviewService;
         readonly FavIconService _favIconService;

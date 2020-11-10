@@ -8,7 +8,7 @@ namespace GitTrends.Mobile.Common
 {
     public abstract class AzureFunctionsApiService : BaseApiService
     {
-        readonly static Lazy<IAzureFunctionsApi> _azureFunctionsApiClientHolder = new Lazy<IAzureFunctionsApi>(() => RestService.For<IAzureFunctionsApi>(CreateHttpClient(AzureConstants.AzureFunctionsApiUrl)));
+        readonly static Lazy<IAzureFunctionsApi> _azureFunctionsApiClientHolder = new(() => RestService.For<IAzureFunctionsApi>(CreateHttpClient(AzureConstants.AzureFunctionsApiUrl)));
 
         static IAzureFunctionsApi AzureFunctionsApiClient => _azureFunctionsApiClientHolder.Value;
 

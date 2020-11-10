@@ -20,8 +20,8 @@ namespace GitTrends
 {
     public class RepositoryViewModel : BaseViewModel
     {
-        readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
-        readonly WeakEventManager<Repository> _repositoryTappedEventManager = new WeakEventManager<Repository>();
+        readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
+        readonly WeakEventManager<Repository> _repositoryTappedEventManager = new();
 
         readonly ImageCachingService _imageService;
         readonly GitHubUserService _gitHubUserService;
@@ -162,7 +162,7 @@ namespace GitTrends
                 await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     if (favoriteRepositoryUrls.Contains(repository.Url))
-                        repositoryList.Add(repository with { IsFavorite = true }),
+                        repositoryList.Add(repository with { IsFavorite = true });
                     else
                         repositoryList.Add(repository);
 

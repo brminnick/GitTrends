@@ -59,7 +59,7 @@ namespace GitTrends.UnitTests
             var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetReferringSites("xamarin", GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
             //Assert
-            Assert.AreEqual(exception.StatusCode, HttpStatusCode.NotFound);
+            Assert.AreEqual(HttpStatusCode.NotFound, exception.StatusCode);
         }
 
         [Test]

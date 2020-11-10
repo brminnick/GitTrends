@@ -16,7 +16,7 @@ namespace GitTrends
 {
     public class SettingsViewModel : GitHubAuthenticationViewModel
     {
-        readonly static WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new WeakEventManager<AccessState?>();
+        readonly static WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new();
 
         readonly ThemeService _themeService;
         readonly LanguageService _languageService;

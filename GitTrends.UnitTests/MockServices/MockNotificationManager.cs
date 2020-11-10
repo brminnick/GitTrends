@@ -8,7 +8,7 @@ namespace GitTrends.UnitTests
 {
     public class MockNotificationManager : INotificationManager
     {
-        readonly Dictionary<int, Notification> _pendingNotificationsDitcionary = new Dictionary<int, Notification>();
+        readonly Dictionary<int, Notification> _pendingNotificationsDitcionary = new();
         readonly IDeviceNotificationsService _deviceNotificationsService;
 
         int _badge;
