@@ -39,14 +39,14 @@ namespace GitTrends
 
                 if (viewsResponse != null && clonesResponse != null && starGazers != null)
                 {
-                    var matchingRepository = repositories.Single(x => x.Name == viewsResponse.RepositoryName);
-
-                    yield return matchingRepository with
+                    var updatedRepository = repositories.Single(x => x.Name == viewsResponse.RepositoryName) with
                     {
                         DailyViewsList = viewsResponse.DailyViewsList,
                         DailyClonesList = clonesResponse.DailyClonesList,
                         StarredAt = starGazers.StarredAt.Select(x => x.StarredAt).ToList()
-                    };                                                ;
+                    };
+
+                    yield return updatedRepository;
                 }
             }
         }

@@ -225,7 +225,7 @@ namespace GitTrends
                 {
                     ApiException exception => exception.Headers,
                     GraphQLException graphQLException => graphQLException.ResponseHeaders,
-                    HttpRequestException _ when finalResponse != null => finalResponse.Headers,
+                    HttpRequestException when finalResponse != null => finalResponse.Headers,
                     _ => throw new NotSupportedException()
                 };
 
@@ -286,7 +286,7 @@ namespace GitTrends
             SetRepositoriesCollection(updatedRepositoryList, _searchBarText);
 
             if (!_gitHubUserService.IsDemoUser)
-                await _repositoryDatabase.SaveRepository(repository);
+                await _repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
         }
 
         async ValueTask SaveRepositoriesToDatabase(IEnumerable<Repository> repositories)
@@ -341,6 +341,9 @@ namespace GitTrends
             else
                 _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
+            foreach (var repository in _repositoryList)
+                Console.WriteLine($"{repository.Name}: {repository.TotalViews}");
+
             if (shouldUpdateVisibleRepositoryList)
                 UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
@@ -350,6 +353,9 @@ namespace GitTrends
             var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
 
             VisibleRepositoryList = MobileSortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
+
+            foreach (var repository in VisibleRepositoryList)
+                Console.WriteLine($"{repository.Name}: {repository.TotalViews}");
 
             _imageService.PreloadRepositoryImages(VisibleRepositoryList).SafeFireAndForget(ex => AnalyticsService.Report(ex));
         }
