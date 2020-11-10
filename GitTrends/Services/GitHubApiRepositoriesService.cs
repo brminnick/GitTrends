@@ -41,16 +41,12 @@ namespace GitTrends
                 {
                     var matchingRepository = repositories.Single(x => x.Name == viewsResponse.RepositoryName);
 
-                    yield return new Repository(matchingRepository.Name, matchingRepository.Description, matchingRepository.ForkCount,
-                                                matchingRepository.OwnerLogin, matchingRepository.OwnerAvatarUrl,
-                                                matchingRepository.IssuesCount,
-                                                matchingRepository.Url,
-                                                matchingRepository.IsFork,
-                                                matchingRepository.DataDownloadedAt,
-                                                matchingRepository.IsFavorite,
-                                                viewsResponse.DailyViewsList,
-                                                clonesResponse.DailyClonesList,
-                                                starGazers.StarredAt.Select(x => x.StarredAt));
+                    yield return matchingRepository with
+                    {
+                        DailyViewsList = viewsResponse.DailyViewsList,
+                        DailyClonesList = clonesResponse.DailyClonesList,
+                        StarredAt = starGazers.StarredAt.Select(x => x.StarredAt).ToList()
+                    };                                                ;
                 }
             }
         }

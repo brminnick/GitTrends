@@ -162,7 +162,7 @@ namespace GitTrends
                 await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     if (favoriteRepositoryUrls.Contains(repository.Url))
-                        repositoryList.Add(new Repository(repository.Name, repository.Description, repository.ForkCount, repository.OwnerLogin, repository.OwnerAvatarUrl, repository.IssuesCount, repository.Url, repository.IsFork, repository.DataDownloadedAt, true));
+                        repositoryList.Add(repository with { IsFavorite = true }),
                     else
                         repositoryList.Add(repository);
 
@@ -274,10 +274,10 @@ namespace GitTrends
 
         async ValueTask ExecuteToggleIsFavoriteCommand(Repository repository)
         {
-            var updatedRepository = new Repository(repository.Name, repository.Description, repository.ForkCount, repository.OwnerLogin, repository.OwnerAvatarUrl,
-                                            repository.IssuesCount, repository.Url, repository.IsFork, repository.DataDownloadedAt,
-                                            repository.IsFavorite.HasValue ? !repository.IsFavorite : true,
-                                            repository.DailyViewsList.ToArray(), repository.DailyClonesList.ToArray(), repository.StarredAt.ToArray());
+            var updatedRepository = repository with
+            {
+                IsFavorite = repository.IsFavorite.HasValue ? !repository.IsFavorite : true
+            };
 
             var updatedRepositoryList = new List<Repository>(_visibleRepositoryList);
             updatedRepositoryList.Remove(repository);

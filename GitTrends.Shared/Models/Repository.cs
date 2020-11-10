@@ -39,29 +39,29 @@ namespace GitTrends.Shared
                             || (DailyClonesList.IsTrending() ?? false);
         }
 
-        public DateTimeOffset DataDownloadedAt { get; }
+        public DateTimeOffset DataDownloadedAt { get; init; }
 
-        public long TotalViews { get; }
-        public long TotalUniqueViews { get; }
-        public long TotalClones { get; }
-        public long TotalUniqueClones { get; }
+        public long TotalViews { get; init; }
+        public long TotalUniqueViews { get; init; }
+        public long TotalClones { get; init; }
+        public long TotalUniqueClones { get; init; }
 
-        public string OwnerLogin { get; }
-        public string OwnerAvatarUrl { get; }
-        public long StarCount { get; }
-        public long IssuesCount { get; }
-        public string Name { get; }
-        public string Description { get; }
-        public long ForkCount { get; }
-        public bool IsFork { get; }
-        public string Url { get; }
+        public string OwnerLogin { get; init; }
+        public string OwnerAvatarUrl { get; init; }
+        public long StarCount { get; init; }
+        public long IssuesCount { get; init; }
+        public string Name { get; init; }
+        public string Description { get; init; }
+        public long ForkCount { get; init; }
+        public bool IsFork { get; init; }
+        public string Url { get; init; }
 
-        public bool? IsFavorite { get; }
-        public bool IsTrending { get; }
+        public bool? IsFavorite { get; init; }
+        public bool IsTrending { get; init; }
 
-        public IReadOnlyList<DailyViewsModel> DailyViewsList { get; }
-        public IReadOnlyList<DailyClonesModel> DailyClonesList { get; }
-        public IReadOnlyList<DateTimeOffset> StarredAt { get; }
+        public IReadOnlyList<DailyViewsModel> DailyViewsList { get; init; }
+        public IReadOnlyList<DailyClonesModel> DailyClonesList { get; init; }
+        public IReadOnlyList<DateTimeOffset> StarredAt { get; init; }
 
         public override string ToString()
         {
