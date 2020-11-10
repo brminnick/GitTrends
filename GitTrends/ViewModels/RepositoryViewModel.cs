@@ -182,6 +182,11 @@ namespace GitTrends
                 var completedRepositories = new List<Repository>();
                 await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(_repositoryList, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
+                    if(retrievedRepositoryWithViewsAndClonesData.Name is "GitTrends")
+                    {
+
+                    }
+
                     completedRepositories.Add(retrievedRepositoryWithViewsAndClonesData);
 
                     //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
@@ -353,6 +358,8 @@ namespace GitTrends
             var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
 
             VisibleRepositoryList = MobileSortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
+
+            var gitTrends = VisibleRepositoryList.FirstOrDefault(x => x.Name is "GitTrends");
 
             foreach (var repository in VisibleRepositoryList)
                 Console.WriteLine($"{repository.Name}: {repository.TotalViews}");

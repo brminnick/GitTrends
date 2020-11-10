@@ -67,7 +67,7 @@ namespace GitTrends.Shared
                 _dailyClonesList = dailyClonesList;
 
                 TotalClones = dailyClonesList.Sum(x => x.TotalClones);
-                TotalUniqueViews = dailyClonesList.Sum(x => x.TotalUniqueClones);
+                TotalUniqueClones = dailyClonesList.Sum(x => x.TotalUniqueClones);
 
                 IsTrending |= dailyClonesList.IsTrending() ?? false;
             }
