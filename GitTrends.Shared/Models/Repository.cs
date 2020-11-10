@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GitTrends.Shared
 {
-    public class Repository : IRepository
+    public record Repository : IRepository
     {
         public Repository(string name, string description, long forkCount, string ownerLogin, string ownerAvatarUrl, long issuesCount, string url, bool isFork, DateTimeOffset dataDownloadedAt, bool? isFavorite = null, IList<DailyViewsModel>? views = null, IList<DailyClonesModel>? clones = null, IEnumerable<DateTimeOffset>? starredAt = null)
         {

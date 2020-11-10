@@ -8,7 +8,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class MobileReferringSiteModel : ReferringSiteModel, INotifyPropertyChanged, IMobileReferringSiteModel
+    public record MobileReferringSiteModel : ReferringSiteModel, IMobileReferringSiteModel, INotifyPropertyChanged
     {
         public const int FavIconSize = 32;
 

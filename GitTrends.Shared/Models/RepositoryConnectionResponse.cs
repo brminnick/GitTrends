@@ -2,7 +2,7 @@
 
 namespace GitTrends.Shared
 {
-    public class RepositoryConnectionResponse
+    public record RepositoryConnectionResponse
     {
         public RepositoryConnectionResponse(User user) => GitHubUser = user;
 
