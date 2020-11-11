@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace GitTrends.Shared
 {
-    public class User
+    public record User
     {
         public User(RepositoryConnection repositories, string name, string company, DateTimeOffset createdAt, string login, Uri avatarUrl)
         {

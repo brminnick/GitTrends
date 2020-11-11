@@ -9,7 +9,7 @@ namespace GitTrends
 {
     public abstract class BaseViewModel : INotifyPropertyChanged
     {
-        readonly WeakEventManager _propertyChangedEventManager = new WeakEventManager();
+        readonly WeakEventManager _propertyChangedEventManager = new();
 
         public BaseViewModel(IAnalyticsService analyticsService, IMainThread mainThread) => (AnalyticsService, MainThread) = (analyticsService, mainThread);
 

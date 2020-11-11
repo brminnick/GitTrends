@@ -53,13 +53,21 @@ namespace GitTrends.UnitTests
             Assert.IsNotEmpty(repositories);
             Assert.IsNotEmpty(repositories_NoViewsClonesData);
 
-            Assert.IsEmpty(repositories_NoViewsClonesData.SelectMany(x => x.StarredAt));
-            Assert.IsEmpty(repositories_NoViewsClonesData.SelectMany(x => x.DailyViewsList));
-            Assert.IsEmpty(repositories_NoViewsClonesData.SelectMany(x => x.DailyClonesList));
+            Assert.AreEqual(0, repositories_NoViewsClonesData.SelectMany(x => x.StarredAt).Count());
+            Assert.AreEqual(0, repositories_NoViewsClonesData.Sum(x => x.TotalClones));
+            Assert.AreEqual(0, repositories_NoViewsClonesData.Sum(x => x.TotalUniqueClones));
+            Assert.AreEqual(0, repositories_NoViewsClonesData.Sum(x => x.TotalViews));
+            Assert.AreEqual(0, repositories_NoViewsClonesData.Sum(x => x.TotalUniqueViews));
 
             Assert.IsNotEmpty(repositories.SelectMany(x => x.StarredAt));
             Assert.IsNotEmpty(repositories.SelectMany(x => x.DailyViewsList));
             Assert.IsNotEmpty(repositories.SelectMany(x => x.DailyClonesList));
+
+            Assert.Less(0, repositories.SelectMany(x => x.StarredAt).Count());
+            Assert.Less(0, repositories.Sum(x => x.TotalClones));
+            Assert.Less(0, repositories.Sum(x => x.TotalUniqueClones));
+            Assert.Less(0, repositories.Sum(x => x.TotalViews));
+            Assert.Less(0, repositories.Sum(x => x.TotalUniqueViews));
         }
 
         [Test]

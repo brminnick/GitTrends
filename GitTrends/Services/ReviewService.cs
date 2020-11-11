@@ -14,16 +14,16 @@ namespace GitTrends
         public const int MinimumAppInstallDays = 14;
         public const int MinimumMostRecentRequestDays = 90;
 
-        readonly static WeakEventManager _reviewPromptRequestedEventManager = new WeakEventManager();
-        readonly static WeakEventManager<ReviewRequest> _reviewCompletedEventManager = new WeakEventManager<ReviewRequest>();
+        readonly static WeakEventManager _reviewPromptRequestedEventManager = new();
+        readonly static WeakEventManager<ReviewRequest> _reviewCompletedEventManager = new();
 
         readonly IAppInfo _appInfo;
         readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;
 
-        public ReviewService(IAnalyticsService analyticsService,
+        public ReviewService(IAppInfo appInfo,
                                 IPreferences preferences,
-                                IAppInfo appInfo)
+                                IAnalyticsService analyticsService)
         {
             _appInfo = appInfo;
             _preferences = preferences;

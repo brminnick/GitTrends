@@ -12,7 +12,7 @@ namespace GitTrends
 {
     class TrendsCarouselPage : BaseCarouselPage<TrendsViewModel>
     {
-        readonly CancellationTokenSource _fetchDataCancellationTokenSource = new CancellationTokenSource();
+        readonly CancellationTokenSource _fetchDataCancellationTokenSource = new();
 
         readonly Repository _repository;
 

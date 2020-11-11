@@ -12,10 +12,10 @@ namespace GitTrends
 {
     public class GitHubAuthenticationService
     {
-        readonly static WeakEventManager _loggedOuteventManager = new WeakEventManager();
-        readonly static WeakEventManager _demoUserActivatedEventManager = new WeakEventManager();
-        readonly static WeakEventManager _authorizeSessionStartedEventManager = new WeakEventManager();
-        readonly static WeakEventManager<AuthorizeSessionCompletedEventArgs> _authorizeSessionCompletedEventManager = new WeakEventManager<AuthorizeSessionCompletedEventArgs>();
+        readonly static WeakEventManager _loggedOuteventManager = new();
+        readonly static WeakEventManager _demoUserActivatedEventManager = new();
+        readonly static WeakEventManager _authorizeSessionStartedEventManager = new();
+        readonly static WeakEventManager<AuthorizeSessionCompletedEventArgs> _authorizeSessionCompletedEventManager = new();
 
         readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;

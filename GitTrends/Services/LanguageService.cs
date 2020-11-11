@@ -10,7 +10,7 @@ namespace GitTrends
 {
     public class LanguageService
     {
-        readonly static WeakEventManager<string?> _preferredLanguageChangedEventManager = new WeakEventManager<string?>();
+        readonly static WeakEventManager<string?> _preferredLanguageChangedEventManager = new();
 
         readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;

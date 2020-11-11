@@ -156,14 +156,14 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(0, minDailyStarsValue_Initial);
             Assert.AreEqual(minDailyStarsValue_Final, minDailyStarsValue_Initial);
 
-            Assert.AreEqual(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13)).ToLocalTime().Date, minViewsClonesDate_Initial.ToLocalTime().Date);
-            Assert.LessOrEqual(minViewsClonesDate_Final.ToLocalTime().Date, minViewsClonesDate_Initial.ToLocalTime().Date);
+            Assert.AreEqual(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13)).Date, minViewsClonesDate_Initial.Date);
+            Assert.LessOrEqual(minViewsClonesDate_Final.Date, minViewsClonesDate_Initial.Date);
 
-            Assert.AreEqual(DateTimeOffset.UtcNow.ToLocalTime().Date, maxViewsClonesDate_Initial.ToLocalTime().Date);
-            Assert.LessOrEqual(maxViewsClonesDate_Final.ToLocalTime().Date, maxViewsClonesDate_Initial.ToLocalTime().Date);
+            Assert.AreEqual(DateTimeOffset.UtcNow.Date, maxViewsClonesDate_Initial.Date);
+            Assert.LessOrEqual(maxViewsClonesDate_Final.Date, maxViewsClonesDate_Initial.Date);
 
-            Assert.LessOrEqual(minDailyStarsDate_Final.ToLocalTime().Date, minDailyStarsDate_Initial.ToLocalTime().Date);
-            Assert.LessOrEqual(maxDailyStarsDate_Final.ToLocalTime().Date, maxDailyStarsDate_Initial.ToLocalTime().Date);
+            Assert.LessOrEqual(minDailyStarsDate_Final.Date, minDailyStarsDate_Initial.Date);
+            Assert.LessOrEqual(maxDailyStarsDate_Final.Date, maxDailyStarsDate_Initial.Date);
 
             Assert.AreEqual(EmptyDataViewService.GetViewsClonesTitleText(RefreshState.Uninitialized), viewsClonesEmptyDataViewTitleText_Initial);
             Assert.AreEqual(EmptyDataViewService.GetViewsClonesTitleText(RefreshState.Succeeded), viewsClonesEmptyDataViewTitleText_Final);

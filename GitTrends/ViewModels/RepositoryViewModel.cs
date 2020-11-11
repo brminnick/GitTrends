@@ -20,8 +20,8 @@ namespace GitTrends
 {
     public class RepositoryViewModel : BaseViewModel
     {
-        readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
-        readonly WeakEventManager<Repository> _repositoryTappedEventManager = new WeakEventManager<Repository>();
+        readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
+        readonly WeakEventManager<Repository> _repositoryTappedEventManager = new();
 
         readonly ImageCachingService _imageService;
         readonly GitHubUserService _gitHubUserService;
@@ -162,7 +162,7 @@ namespace GitTrends
                 await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     if (favoriteRepositoryUrls.Contains(repository.Url))
-                        repositoryList.Add(new Repository(repository.Name, repository.Description, repository.ForkCount, repository.OwnerLogin, repository.OwnerAvatarUrl, repository.IssuesCount, repository.Url, repository.IsFork, repository.DataDownloadedAt, true));
+                        repositoryList.Add(repository with { IsFavorite = true });
                     else
                         repositoryList.Add(repository);
 
@@ -182,6 +182,11 @@ namespace GitTrends
                 var completedRepositories = new List<Repository>();
                 await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(_repositoryList, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
+                    if(retrievedRepositoryWithViewsAndClonesData.Name is "GitTrends")
+                    {
+
+                    }
+
                     completedRepositories.Add(retrievedRepositoryWithViewsAndClonesData);
 
                     //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
@@ -225,7 +230,7 @@ namespace GitTrends
                 {
                     ApiException exception => exception.Headers,
                     GraphQLException graphQLException => graphQLException.ResponseHeaders,
-                    HttpRequestException _ when finalResponse != null => finalResponse.Headers,
+                    HttpRequestException when finalResponse != null => finalResponse.Headers,
                     _ => throw new NotSupportedException()
                 };
 
@@ -274,10 +279,10 @@ namespace GitTrends
 
         async ValueTask ExecuteToggleIsFavoriteCommand(Repository repository)
         {
-            var updatedRepository = new Repository(repository.Name, repository.Description, repository.ForkCount, repository.OwnerLogin, repository.OwnerAvatarUrl,
-                                            repository.IssuesCount, repository.Url, repository.IsFork, repository.DataDownloadedAt,
-                                            repository.IsFavorite.HasValue ? !repository.IsFavorite : true,
-                                            repository.DailyViewsList.ToArray(), repository.DailyClonesList.ToArray(), repository.StarredAt.ToArray());
+            var updatedRepository = repository with
+            {
+                IsFavorite = repository.IsFavorite.HasValue ? !repository.IsFavorite : true
+            };
 
             var updatedRepositoryList = new List<Repository>(_visibleRepositoryList);
             updatedRepositoryList.Remove(repository);
@@ -286,7 +291,7 @@ namespace GitTrends
             SetRepositoriesCollection(updatedRepositoryList, _searchBarText);
 
             if (!_gitHubUserService.IsDemoUser)
-                await _repositoryDatabase.SaveRepository(repository);
+                await _repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
         }
 
         async ValueTask SaveRepositoriesToDatabase(IEnumerable<Repository> repositories)
@@ -341,6 +346,9 @@ namespace GitTrends
             else
                 _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
+            foreach (var repository in _repositoryList)
+                Console.WriteLine($"{repository.Name}: {repository.TotalViews}");
+
             if (shouldUpdateVisibleRepositoryList)
                 UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
@@ -350,6 +358,11 @@ namespace GitTrends
             var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
 
             VisibleRepositoryList = MobileSortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
+
+            var gitTrends = VisibleRepositoryList.FirstOrDefault(x => x.Name is "GitTrends");
+
+            foreach (var repository in VisibleRepositoryList)
+                Console.WriteLine($"{repository.Name}: {repository.TotalViews}");
 
             _imageService.PreloadRepositoryImages(VisibleRepositoryList).SafeFireAndForget(ex => AnalyticsService.Report(ex));
         }

@@ -18,7 +18,7 @@ namespace GitTrends
     {
         const int _demoLabelFontSize = 16;
 
-        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new CancellationTokenSource();
+        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
         readonly IAppInfo _appInfo;
 
         public WelcomePage(IAppInfo appInfo,
