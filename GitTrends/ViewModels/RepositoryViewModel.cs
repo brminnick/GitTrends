@@ -182,11 +182,6 @@ namespace GitTrends
                 var completedRepositories = new List<Repository>();
                 await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(_repositoryList, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    if(retrievedRepositoryWithViewsAndClonesData.Name is "GitTrends")
-                    {
-
-                    }
-
                     completedRepositories.Add(retrievedRepositoryWithViewsAndClonesData);
 
                     //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
@@ -345,9 +340,6 @@ namespace GitTrends
                 _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).Where(x => x.DailyClonesList.Count > 1 || x.DailyViewsList.Count > 1).ToList();
             else
                 _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
-
-            foreach (var repository in _repositoryList)
-                Console.WriteLine($"{repository.Name}: {repository.TotalViews}");
 
             if (shouldUpdateVisibleRepositoryList)
                 UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
