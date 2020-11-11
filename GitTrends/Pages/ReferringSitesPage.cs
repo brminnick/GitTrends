@@ -20,8 +20,8 @@ namespace GitTrends
     {
         const int _titleTopMargin = 10;
 
-        readonly StoreRatingRequestView _storeRatingRequestView = new StoreRatingRequestView();
-        readonly CancellationTokenSource _refreshViewCancelltionTokenSource = new CancellationTokenSource();
+        readonly StoreRatingRequestView _storeRatingRequestView = new();
+        readonly CancellationTokenSource _refreshViewCancelltionTokenSource = new();
 
         readonly Repository _repository;
         readonly RefreshView _refreshView;

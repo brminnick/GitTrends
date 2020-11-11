@@ -13,7 +13,7 @@ namespace GitTrends
 {
     public static class ContainerService
     {
-        readonly static Lazy<IContainer> _containerHolder = new Lazy<IContainer>(CreateContainer);
+        readonly static Lazy<IContainer> _containerHolder = new(CreateContainer);
 
         public static IContainer Container => _containerHolder.Value;
 

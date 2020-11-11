@@ -10,7 +10,7 @@ namespace GitTrends
 {
     public class SplashScreenViewModel : BaseViewModel
     {
-        readonly static WeakEventManager<InitializationCompleteEventArgs> _initializationCompletedEventManager = new WeakEventManager<InitializationCompleteEventArgs>();
+        readonly static WeakEventManager<InitializationCompleteEventArgs> _initializationCompletedEventManager = new();
 
         public SplashScreenViewModel(SyncfusionService syncfusionService,
                                         MediaElementService mediaElementService,

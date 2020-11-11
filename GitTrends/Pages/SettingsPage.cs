@@ -16,7 +16,7 @@ namespace GitTrends
 {
     public class SettingsPage : BaseContentPage<SettingsViewModel>
     {
-        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new CancellationTokenSource();
+        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
         readonly Grid _contentGrid;
 
         public SettingsPage(SettingsViewModel settingsViewModel,

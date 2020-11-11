@@ -16,10 +16,10 @@ namespace GitTrends.iOS
 {
     public class MediaElementCustomRenderer : ViewRenderer<VideoPlayerView, UIView>
     {
-        readonly static AVQueuePlayer _queuePlayer = new AVQueuePlayer { Volume = 0 };
+        readonly static AVQueuePlayer _queuePlayer = new() { Volume = 0 };
         readonly static AVPlayerItem _onboardingChartItem = CreateOnboardingChartItem();
         readonly static AVPlayerLooper _avPlayerLooper = CreateAVPlayerLooper();
-        readonly static AVPlayerViewController _avPlayerViewController = new AVPlayerViewController();
+        readonly static AVPlayerViewController _avPlayerViewController = new();
 
         protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayerView> e)
         {

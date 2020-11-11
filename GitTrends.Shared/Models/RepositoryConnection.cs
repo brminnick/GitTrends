@@ -5,11 +5,11 @@ using Newtonsoft.Json;
 
 namespace GitTrends.Shared
 {
-    public class RepositoryConnection
+    public record RepositoryConnection
     {
         public RepositoryConnection(IEnumerable<RepositoryConnectionNode>? nodes, PageInfo pageInfo)
         {
-            RepositoryList = nodes?.ToList() ?? (IReadOnlyList<RepositoryConnectionNode>)Array.Empty<RepositoryConnectionNode>();
+            RepositoryList = (nodes ?? Array.Empty<RepositoryConnectionNode>()).ToList();
             PageInfo = pageInfo;
         }
 
@@ -20,52 +20,10 @@ namespace GitTrends.Shared
         public PageInfo PageInfo { get; }
     }
 
-    public class RepositoryConnectionNode
+    public record RepositoryConnectionNode(string Name, string Description, long ForkCount, Uri Url, RepositoryOwner Owner, bool IsFork, IssuesConnection Issues)
     {
-        public RepositoryConnectionNode(string name, string description, long forkCount, Uri url, RepositoryOwner owner, bool isFork, IssuesConnection issues)
-        {
-            DataDownloadedAt = DateTimeOffset.UtcNow;
-            Name = name;
-            Description = description;
-            ForkCount = forkCount;
-            Url = url;
-            Owner = owner;
-            IsFork = isFork;
-            Issues = issues;
-        }
-
-        public DateTimeOffset DataDownloadedAt { get; }
-
-        [JsonProperty("name")]
-        public string Name { get; }
-
-        [JsonProperty("description")]
-        public string Description { get; }
-
-        [JsonProperty("forkCount")]
-        public long ForkCount { get; }
-
-        [JsonProperty("url")]
-        public Uri Url { get; }
-
-        [JsonProperty("owner")]
-        public RepositoryOwner Owner { get; }
-
-        [JsonProperty("isFork")]
-        public bool IsFork { get; }
-
-        [JsonProperty("issues")]
-        public IssuesConnection Issues { get; }
+        public DateTimeOffset DataDownloadedAt { get; } = DateTimeOffset.UtcNow;
     }
 
-    public class RepositoryOwner
-    {
-        public RepositoryOwner(string login, string avatarUrl) => (Login, AvatarUrl) = (login, avatarUrl);
-
-        [JsonProperty("login")]
-        public string Login { get; }
-
-        [JsonProperty("avatarUrl")]
-        public string AvatarUrl { get; }
-    }
+    public record RepositoryOwner(string Login, string AvatarUrl);
 }

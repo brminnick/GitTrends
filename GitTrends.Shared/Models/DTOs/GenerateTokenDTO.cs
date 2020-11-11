@@ -1,10 +1,10 @@
 ﻿namespace GitTrends.Shared
 {
-    public class GenerateTokenDTO
-    {
-        public GenerateTokenDTO(string loginCode, string state) => (LoginCode, State) = (loginCode, state);
+    public record GenerateTokenDTO(string LoginCode, string State);
+}
 
-        public string LoginCode { get; }
-        public string State { get; }
-    }
+#warning .NET 5 workaround https://stackoverflow.com/a/62656145/5953643
+namespace System.Runtime.CompilerServices
+{
+    public class IsExternalInit { }
 }

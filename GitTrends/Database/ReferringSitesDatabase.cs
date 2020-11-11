@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using SQLite;
 using Xamarin.Essentials.Interfaces;
@@ -69,28 +68,28 @@ namespace GitTrends
             return await databaseConnection.InsertOrReplaceAsync(referringSitesDatabaseModel).ConfigureAwait(false);
         }
 
-        class MobileReferringSitesDatabaseModel : IMobileReferringSiteModel
+        record MobileReferringSitesDatabaseModel : IMobileReferringSiteModel
         {
             //PrimaryKey must be nullable https://github.com/praeclarum/sqlite-net/issues/327
             [PrimaryKey]
-            public int? Id { get; set; }
+            public int? Id { get; init; }
 
             [Indexed]
-            public string RepositoryUrl { get; set; } = string.Empty;
+            public string RepositoryUrl { get; init; } = string.Empty;
 
-            public string FavIconImageUrl { get; set; } = string.Empty;
+            public string FavIconImageUrl { get; init; } = string.Empty;
 
-            public DateTimeOffset DownloadedAt { get; set; }
+            public DateTimeOffset DownloadedAt { get; init; }
 
-            public string Referrer { get; set; } = string.Empty;
+            public string Referrer { get; init; } = string.Empty;
 
-            public bool IsReferrerUriValid { get; set; }
+            public bool IsReferrerUriValid { get; init; }
 
-            public Uri? ReferrerUri { get; set; }
+            public Uri? ReferrerUri { get; init; }
 
-            public long TotalCount { get; set; }
+            public long TotalCount { get; init; }
 
-            public long TotalUniqueCount { get; set; }
+            public long TotalUniqueCount { get; init; }
 
             public static MobileReferringSiteModel ToReferringSitesModel(MobileReferringSitesDatabaseModel referringSitesDatabaseModel)
             {
