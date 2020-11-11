@@ -106,12 +106,11 @@ namespace GitTrends.UnitTests
                 Assert.GreaterOrEqual(DemoDataConstants.MaximumRandomNumber, repository.IssuesCount);
                 Assert.GreaterOrEqual(DemoDataConstants.MaximumRandomNumber, repository.ForkCount);
                 Assert.AreEqual(DemoUserConstants.Alias, repository.OwnerLogin);
-                Assert.IsEmpty(repository.DailyClonesList);
-                Assert.IsEmpty(repository.DailyViewsList);
-                Assert.AreEqual(repository.TotalClones, 0);
-                Assert.AreEqual(repository.TotalUniqueClones, 0);
-                Assert.AreEqual(repository.TotalViews, 0);
-                Assert.AreEqual(repository.TotalUniqueViews, 0);
+
+                Assert.AreEqual(0, repository.TotalClones);
+                Assert.AreEqual(0, repository.TotalUniqueClones);
+                Assert.AreEqual(0, repository.TotalViews);
+                Assert.AreEqual(0, repository.TotalUniqueViews);
             }
         }
 
@@ -138,8 +137,11 @@ namespace GitTrends.UnitTests
             Assert.IsTrue(repositories.Any(x => x.OwnerLogin == gitHubUserService.Alias));
             Assert.IsTrue(repositories.Any(x => x.OwnerAvatarUrl is AuthenticatedGitHubUserAvatarUrl));
 
-            Assert.IsEmpty(repositories.SelectMany(x => x.DailyClonesList));
-            Assert.IsEmpty(repositories.SelectMany(x => x.DailyViewsList));
+            Assert.AreEqual(0, repositories.Sum(x => x.TotalViews));
+            Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueViews));
+            Assert.AreEqual(0, repositories.Sum(x => x.TotalClones));
+            Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueClones));
+            Assert.AreEqual(0, repositories.Sum(x => x.StarCount));
         }
 
         [Test]
@@ -198,9 +200,6 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(GitTrendsRepoName, repository.Name);
             Assert.AreEqual(GitTrendsRepoOwner, repository.OwnerLogin);
             Assert.AreEqual(AuthenticatedGitHubUserAvatarUrl, repository.OwnerAvatarUrl);
-
-            Assert.IsEmpty(repository.DailyClonesList);
-            Assert.IsEmpty(repository.DailyViewsList);
 
             Assert.AreEqual(0, repository.TotalClones);
             Assert.AreEqual(0, repository.TotalUniqueClones);
