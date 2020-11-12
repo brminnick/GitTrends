@@ -16,8 +16,9 @@ namespace GitTrends
 {
     public class SettingsPage : BaseContentPage<SettingsViewModel>
     {
-        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
         readonly Grid _contentGrid;
+
+        CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
 
         public SettingsPage(SettingsViewModel settingsViewModel,
                             IAnalyticsService analyticsService,
@@ -149,6 +150,13 @@ namespace GitTrends
 
         enum Row { GitHubUser, GitHubUserSeparator, About, AboutSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, Language, LanguageSeparator, PreferredCharts, CopyrightPadding, Copyright }
         enum Column { Icon, Title, Button }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            _connectToGitHubCancellationTokenSource = new();
+        }
 
         protected override void OnDisappearing()
         {
