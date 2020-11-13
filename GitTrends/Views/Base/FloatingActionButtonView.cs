@@ -14,6 +14,8 @@ namespace GitTrends
 
         public FloatingActionButtonView()
         {
+            SetSize(this, Size);
+
             Shadow = new DropShadow
             {
                 Offset = new Point(1, 1),
@@ -46,6 +48,11 @@ namespace GitTrends
             var floatingActionButton = (FloatingActionButtonView)bindable;
             var size = (FloatingActionButtonSize)newValue;
 
+            SetSize(floatingActionButton, size);
+        }
+
+        static void SetSize(FloatingActionButtonView floatingActionButton, FloatingActionButtonSize size)
+        {
             floatingActionButton.HeightRequest = floatingActionButton.WidthRequest = size switch
             {
                 FloatingActionButtonSize.Normal => 56,
