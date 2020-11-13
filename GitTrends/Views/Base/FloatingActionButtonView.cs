@@ -16,7 +16,6 @@ namespace GitTrends
         {
             SetSize(this, Size);
 
-            Shadow = new DropShadow();
             GestureRecognizers.Add(new TapGestureRecognizer().Invoke(tapGesture => tapGesture.Tapped += HandleTapped));
         }
 
