@@ -21,7 +21,7 @@
         </DebugType>
         <Optimize>true</Optimize>
         <OutputPath>bin\AppStore</OutputPath>
-        <DefineConstants>TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_0;AppStore</DefineConstants>
+        <DefineConstants>TRACE;NETSTANDARD;NETSTANDARD2_0;AppStore</DefineConstants>
         <NoWarn>1701;1702</NoWarn>
         <NoStdLib>false</NoStdLib>
     </PropertyGroup>
@@ -625,7 +625,7 @@
     <ItemGroup>
         <PackageReference Include="refit" Version="5.2.1" />
         <PackageReference Include="Polly" Version="7.2.1" />
-        <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-pre2" />
+        <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-pre3" />
         <PackageReference Include="GitHubApiStatus" Version="1.0.1" />
     </ItemGroup>
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />

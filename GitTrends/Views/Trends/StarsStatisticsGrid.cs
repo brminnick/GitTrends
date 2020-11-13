@@ -57,7 +57,7 @@ namespace GitTrends
         class StarSvg : SvgImage
         {
             public StarSvg()
-                : base("star.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.PageBackgroundColor)], 44, 44)
+                : base("star.svg", () => Color.White, 44, 44)
             {
                 this.Center();
             }
@@ -65,7 +65,7 @@ namespace GitTrends
 
         class SeparatorLine : BoxView
         {
-            public SeparatorLine() => SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+            public SeparatorLine() => BackgroundColor = Color.White;
         }
 
         class StarsStatisticsLabel : Label
@@ -77,9 +77,10 @@ namespace GitTrends
 
             public StarsStatisticsLabel(in int fontSize)
             {
-                this.TextCenter()
-                    .DynamicResource(TextColorProperty, nameof(BaseTheme.PageBackgroundColor));
+                this.TextCenter();
+
                 FontSize = fontSize;
+                TextColor = Color.Black;
                 FontFamily = FontFamilyConstants.RobotoBold;
             }
         }

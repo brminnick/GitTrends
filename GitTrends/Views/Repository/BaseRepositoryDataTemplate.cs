@@ -37,14 +37,15 @@ namespace GitTrends
         {
             public CardView(in IEnumerable<View> parentDataTemplateChildren, in RepositoryViewModel repositoryViewModel, in Repository repository)
             {
+                BackgroundColor = Color.Transparent;
+
                 TappedCommand = repositoryViewModel.RepositoryTappedCommand;
                 TappedCommandParameter = repository;
 
                 RightItems = new SwipeItems
                 {
-                    new SwipeItem { CommandParameter = repository }
+                    new SwipeItem { CommandParameter = repository, Command = repositoryViewModel.ToggleIsFavoriteCommand }
                         .Bind<SwipeItem, bool?, string>(SwipeItem.TextProperty, nameof(Repository.IsFavorite), convert: isFavorite => isFavorite is true ? "Favorite" : "Not Favorite")
-                        .Bind(SwipeItem.CommandProperty, nameof(RepositoryViewModel.ToggleIsFavoriteCommand), source: repositoryViewModel)
                 };
 
                 Content = new Grid
@@ -66,8 +67,6 @@ namespace GitTrends
                         new CardViewFrame(parentDataTemplateChildren, repository).Row(CardViewRow.Card).Column(CardViewColumn.Card)
                     }
                 };
-
-                this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
             }
 
             enum CardViewRow { TopPadding, Card, BottomPadding }
