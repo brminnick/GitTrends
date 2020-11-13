@@ -16,12 +16,7 @@ namespace GitTrends
         {
             SetSize(this, Size);
 
-            Shadow = new DropShadow
-            {
-                Offset = new Point(1, 1),
-                Color = Color.Black,
-            };
-
+            Shadow = new DropShadow();
             GestureRecognizers.Add(new TapGestureRecognizer().Invoke(tapGesture => tapGesture.Tapped += HandleTapped));
         }
 
