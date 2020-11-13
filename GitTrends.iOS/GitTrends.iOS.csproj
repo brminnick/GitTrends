@@ -427,6 +427,10 @@
     <ImageAsset Include="Assets.xcassets\EmptyStarChart.imageset\EmptyStarChart%403x.png">
       <Visible>false</Visible>
     </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart%402x.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -473,6 +477,7 @@
     <Folder Include="Effects\" />
     <Folder Include="Assets.xcassets\EmptyTrafficChart.imageset\" />
     <Folder Include="Assets.xcassets\EmptyStarChart.imageset\" />
+    <Folder Include="Assets.xcassets\EmptyOneStarChart.imageset\" />
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
