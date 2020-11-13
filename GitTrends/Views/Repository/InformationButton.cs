@@ -46,7 +46,6 @@ namespace GitTrends
                             .Invoke(fab => fab.SetBinding(IsVisibleProperty, getIsVisibleBinding())));
 
             Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Normal, FloatingActionButtonType.Information, new AsyncCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium, Text = "TOTAL" }.Center()
-                            .DynamicResource(FloatingActionButtonView.RippleColorProperty, nameof(BaseTheme.PageBackgroundColor))
                             .Invoke(fab => fab.SetBinding(IsVisibleProperty, getIsVisibleBinding())));
 
             static MultiBinding getIsVisibleBinding() => new MultiBinding
@@ -105,8 +104,8 @@ namespace GitTrends
             public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(FloatingActionTextButton), null);
 
             readonly MobileSortingService _mobileSortingService;
-            readonly FloatingActionButtonView _floatingActionButtonView;
             readonly FloatingActionButtonType _floatingActionButtonType;
+            readonly FloatingActionButtonView _floatingActionButtonView;
 
             public FloatingActionTextButton(in MobileSortingService mobileSortingService,
                                             in FloatingActionButtonSize floatingActionButtonSize,
@@ -127,12 +126,15 @@ namespace GitTrends
                 RowDefinitions = Rows.Define(AbsoluteGridLength(_diameter));
                 ColumnDefinitions = Columns.Define(AbsoluteGridLength(_diameter));
 
-                Children.Add(new FloatingActionButtonView { Size = floatingActionButtonSize, Command = command }.Center().Assign(out _floatingActionButtonView)
-                                .Bind<FloatingActionButtonView, IReadOnlyList<Repository>, Color>(FloatingActionButtonView.ColorNormalProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetBackgroundColor()));
-
-                Children.Add(new TextLabel(floatingActionButtonType).Center().TextCenter().Font(fontSize)
-                                .Bind(Label.TextProperty, nameof(Text), source: this)
-                                .Bind(Label.FontFamilyProperty, nameof(FontFamily), source: this));
+                Children.Add(new FloatingActionButtonView
+                {
+                    Size = floatingActionButtonSize,
+                    Command = command,
+                    Content = new TextLabel(floatingActionButtonType).Center().TextCenter().Font(fontSize)
+                                    .Bind(Label.TextProperty, nameof(Text), source: this)
+                                    .Bind(Label.FontFamilyProperty, nameof(FontFamily), source: this)
+                }.Center().Assign(out _floatingActionButtonView)
+                 .Bind<FloatingActionButtonView, IReadOnlyList<Repository>, Color>(BackgroundColorProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetBackgroundColor()));
             }
 
             public string Text
@@ -167,7 +169,7 @@ namespace GitTrends
                 return color.AddLuminosity(.1);
             }
 
-            void HandlePreferenceChanged(object sender, PreferredTheme e) => _floatingActionButtonView.ColorNormal = GetBackgroundColor();
+            void HandlePreferenceChanged(object sender, PreferredTheme e) => _floatingActionButtonView.BackgroundColor = GetBackgroundColor();
 
             class TextLabel : Label
             {

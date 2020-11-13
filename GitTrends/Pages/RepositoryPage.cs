@@ -79,10 +79,6 @@ namespace GitTrends
 
                 Children =
                 {
-                    new InformationLabel().Row(Row.Totals).ColumnSpan(All<Column>())
-                        .Bind<Label, bool, bool>(IsVisibleProperty,nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
-                        .Bind<Label, IReadOnlyList<Repository>, string>(Label.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => StatisticsService.GetInformationLabelText(repositories, mobileSortingService)),
-
                     new RefreshView
                     {
                         AutomationId = RepositoryPageAutomationIds.RefreshView,
@@ -105,13 +101,10 @@ namespace GitTrends
                      .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
                      .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand))
                      .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor)),
-                }
-            }.Assign(out Grid grid);
 
-            if (Device.RuntimePlatform is Device.Android)
-            {
-                grid.Children.Add(new InformationButton(mobileSortingService, mainThread, analyticsService).Row(Row.Information).Column(Column.Information));
-            }
+                    new InformationButton(mobileSortingService, mainThread, analyticsService).Row(Row.Information).Column(Column.Information)
+                }
+            };
         }
 
         enum Row { Totals, CollectionView, Information }
