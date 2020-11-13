@@ -2,19 +2,21 @@
 using Xamarin.Forms;
 using System.Windows.Input;
 using Xamarin.Forms.Markup;
-using Xamarin.Forms.PancakeView;
 
 namespace GitTrends
 {
     class FloatingActionButtonView : CirclePancakeView
     {
+        const int _diameterNormal = 56;
+        const int _diameterMini = 40;
+
         public static readonly BindableProperty SizeProperty = BindableProperty.Create(nameof(Size), typeof(FloatingActionButtonSize), typeof(FloatingActionButtonView), FloatingActionButtonSize.Normal, propertyChanged: OnSizeChanged);
         public static readonly BindableProperty CommandProperty = BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(FloatingActionButtonView), null, propertyChanged: (bo, o, n) => ((FloatingActionButtonView)bo).OnCommandChanged());
         public static readonly BindableProperty CommandParameterProperty = BindableProperty.Create(nameof(CommandParameter), typeof(object), typeof(FloatingActionButtonView), null, propertyChanged: (bindable, oldvalue, newvalue) => ((FloatingActionButtonView)bindable).CommandCanExecuteChanged(bindable, EventArgs.Empty));
 
         public FloatingActionButtonView()
         {
-            SetSize(this, Size);
+            HeightRequest = WidthRequest = _diameterNormal;
 
             GestureRecognizers.Add(new TapGestureRecognizer().Invoke(tapGesture => tapGesture.Tapped += HandleTapped));
         }
@@ -42,15 +44,10 @@ namespace GitTrends
             var floatingActionButton = (FloatingActionButtonView)bindable;
             var size = (FloatingActionButtonSize)newValue;
 
-            SetSize(floatingActionButton, size);
-        }
-
-        static void SetSize(FloatingActionButtonView floatingActionButton, FloatingActionButtonSize size)
-        {
             floatingActionButton.HeightRequest = floatingActionButton.WidthRequest = size switch
             {
-                FloatingActionButtonSize.Normal => 56,
-                FloatingActionButtonSize.Mini => 40,
+                FloatingActionButtonSize.Normal => _diameterNormal,
+                FloatingActionButtonSize.Mini => _diameterMini,
                 _ => throw new NotImplementedException()
             };
         }
