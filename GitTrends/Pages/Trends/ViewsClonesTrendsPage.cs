@@ -8,7 +8,8 @@ namespace GitTrends
 {
     class ViewsClonesTrendsPage : BaseTrendsContentPage
     {
-        public ViewsClonesTrendsPage(IMainThread mainThread, IAnalyticsService analyticsService) : base(mainThread, 0, analyticsService)
+        public ViewsClonesTrendsPage(IMainThread mainThread, IAnalyticsService analyticsService)
+            : base(mainThread, (Color)Application.Current.Resources[nameof(BaseTheme.CardViewsStatsIconColor)], 0, analyticsService)
         {
 
         }

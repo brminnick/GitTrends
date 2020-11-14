@@ -31,7 +31,7 @@ namespace GitTrends
             Children.Add(new SeparatorLine()
                             .Row(Row.TopLine).ColumnSpan(All<Column>()));
 
-            Children.Add(new StarsStatisticsLabel("Total", 24)
+            Children.Add(new StarsStatisticsLabel("TOTAL", 24)
                             .Row(Row.Total).ColumnSpan(All<Column>()));
 
             Children.Add(new StarSvg()
@@ -80,7 +80,7 @@ namespace GitTrends
                 this.TextCenter();
 
                 FontSize = fontSize;
-                TextColor = Color.Black;
+                TextColor = Color.FromHex(DarkTheme.PageBackgroundColorHex);
                 FontFamily = FontFamilyConstants.RobotoBold;
             }
         }

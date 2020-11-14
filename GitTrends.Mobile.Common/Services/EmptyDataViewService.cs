@@ -66,7 +66,7 @@ namespace GitTrends.Mobile.Common
         public static string GetStarsTitleText(in RefreshState refreshState, in double totalStars) => refreshState switch
         {
             RefreshState.Uninitialized => "Uninitialized",
-            RefreshState.Succeeded when totalStars is 1 => "1 Star Text",
+            RefreshState.Succeeded when totalStars is 1 => "Congratulations!",
             RefreshState.Succeeded => "0 Stars Text",
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.PleaseLoginAgain,
             RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
@@ -87,7 +87,7 @@ namespace GitTrends.Mobile.Common
         public static string GetStarsImage(in RefreshState refreshState, in double totalStars) => refreshState switch
         {
             RefreshState.Uninitialized => "EmptyStarChart",
-            RefreshState.Succeeded when totalStars is 1 => "1StarEmptyChartImage",
+            RefreshState.Succeeded when totalStars is 1 => "EmptyOneStarChart",
             RefreshState.Succeeded => "EmptyStarChart",
             RefreshState.LoginExpired => "EmptyStarChart",
             RefreshState.Error => "EmptyStarChart",
