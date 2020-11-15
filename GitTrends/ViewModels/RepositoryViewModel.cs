@@ -351,11 +351,6 @@ namespace GitTrends
 
             VisibleRepositoryList = MobileSortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
 
-            var gitTrends = VisibleRepositoryList.FirstOrDefault(x => x.Name is "GitTrends");
-
-            foreach (var repository in VisibleRepositoryList)
-                Console.WriteLine($"{repository.Name}: {repository.TotalViews}");
-
             _imageService.PreloadRepositoryImages(VisibleRepositoryList).SafeFireAndForget(ex => AnalyticsService.Report(ex));
         }
 

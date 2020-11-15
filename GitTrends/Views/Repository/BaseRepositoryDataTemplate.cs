@@ -126,11 +126,11 @@ namespace GitTrends
                                         .Row(Row.Separator).Column(Column.Trending).ColumnSpan(7));
 
                         //On large screens, display TrendingImage in the same column as the repository name
-                        Children.Add(new LargeScreenTrendingImage().Assign(out LargeScreenTrendingImage largeScreenTrendingImage)
+                        Children.Add(new LargeScreenTrendingImage(repository.IsTrending, repository.IsFavorite).Assign(out LargeScreenTrendingImage largeScreenTrendingImage)
                                         .Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2));
 
                         //On smaller screens, display TrendingImage under the Avatar
-                        Children.Add(new SmallScreenTrendingImage(largeScreenTrendingImage)
+                        Children.Add(new SmallScreenTrendingImage(repository.IsTrending, repository.IsFavorite, largeScreenTrendingImage)
                                         .Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3));
 
                         foreach (var child in parentDataTemplateChildren)
@@ -199,15 +199,16 @@ namespace GitTrends
 
                     class LargeScreenTrendingImage : TrendingImage
                     {
-                        public LargeScreenTrendingImage() : base(RepositoryPageAutomationIds.LargeScreenTrendingImage)
+                        public LargeScreenTrendingImage(bool isTrending, bool? isFavorite) : base(RepositoryPageAutomationIds.LargeScreenTrendingImage, isTrending, isFavorite)
                         {
                             SetBinding(IsVisibleProperty, new MultiBinding
                             {
                                 Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth >= SvgWidthRequest),
                                 Bindings =
                                 {
-                                    new Binding(nameof(Repository.IsTrending)),
-                                    new Binding(nameof(Width), source: this)
+                                    new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
+                                    new Binding(nameof(Width), BindingMode.OneWay, source: this),
+                                    new Binding(nameof(Repository.IsFavorite), BindingMode.OneWay)
                                 }
                             });
                         }
@@ -215,15 +216,17 @@ namespace GitTrends
 
                     class SmallScreenTrendingImage : TrendingImage
                     {
-                        public SmallScreenTrendingImage(LargeScreenTrendingImage largeScreenTrendingImage) : base(RepositoryPageAutomationIds.SmallScreenTrendingImage)
+                        public SmallScreenTrendingImage(bool isTrending, bool? isFavorite, LargeScreenTrendingImage largeScreenTrendingImage) :
+                            base(RepositoryPageAutomationIds.SmallScreenTrendingImage, isTrending, isFavorite)
                         {
                             SetBinding(IsVisibleProperty, new MultiBinding
                             {
                                 Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth < SvgWidthRequest),
                                 Bindings =
                                 {
-                                    new Binding(nameof(Repository.IsTrending)),
-                                    new Binding(nameof(Width), source: largeScreenTrendingImage)
+                                    new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
+                                    new Binding(nameof(Width), BindingMode.OneWay, source: largeScreenTrendingImage),
+                                    new Binding(nameof(Repository.IsFavorite), BindingMode.OneWay)
                                 }
                             });
                         }
@@ -234,7 +237,11 @@ namespace GitTrends
                         public const double SvgWidthRequest = 62;
                         public const double SvgHeightRequest = 16;
 
-                        public TrendingImage(string automationId) : base("trending_tag.svg", nameof(BaseTheme.CardTrendingStatsColor), SvgWidthRequest, SvgHeightRequest)
+                        public TrendingImage(string automationId, bool isTrending, bool? isFavorite)
+                            : base(isTrending ? "trending_tag.svg" : "favorite_tag.svg",
+                                    isFavorite is true ? nameof(BaseTheme.CardStarsStatsIconColor) : nameof(BaseTheme.CardTrendingStatsColor),
+                                    SvgWidthRequest,
+                                    SvgHeightRequest)
                         {
                             AutomationId = automationId;
                             HorizontalOptions = LayoutOptions.Start;
@@ -252,18 +259,17 @@ namespace GitTrends
                                 if (values is null || !values.Any())
                                     return false;
 
-                                if (values[0] is bool isTrending && isTrending is true
-                                    && values[1] is double width)
-                                {
-                                    // When `Width is -1`, Xamarin.Forms hasn't inflated the View
-                                    // Allow Xamarin.Forms to inflate the view, then validate its Width
-                                    if (width is -1 || _isWidthValid(width))
-                                        return true;
-
+                                if (values[0] is null || values[1] is null)
                                     return false;
-                                }
 
-                                return false;
+                                var isTrending = (bool)values[0];
+                                var width = (double)values[1];
+                                var isFavorite = (bool?)values[2];
+
+                                // When `Width is -1`, Xamarin.Forms hasn't inflated the View
+                                // Allow Xamarin.Forms to inflate the view, then validate its Width
+                                return (isTrending || isFavorite is true)
+                                        && (width is -1 || _isWidthValid(width));
                             }
 
                             public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
