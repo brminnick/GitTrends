@@ -112,5 +112,41 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("NoTrafficYet", resourceCulture);
             }
         }
+        
+        public static string ZeroStarsEmptyDataViewDescription1 {
+            get {
+                return ResourceManager.GetString("ZeroStarsEmptyDataViewDescription1", resourceCulture);
+            }
+        }
+        
+        public static string ZeroStarsEmptyDataViewDescription2 {
+            get {
+                return ResourceManager.GetString("ZeroStarsEmptyDataViewDescription2", resourceCulture);
+            }
+        }
+        
+        public static string ZeroStarsEmptyDataViewDescription3 {
+            get {
+                return ResourceManager.GetString("ZeroStarsEmptyDataViewDescription3", resourceCulture);
+            }
+        }
+        
+        public static string Congratulations {
+            get {
+                return ResourceManager.GetString("Congratulations", resourceCulture);
+            }
+        }
+        
+        public static string NoStarsYet {
+            get {
+                return ResourceManager.GetString("NoStarsYet", resourceCulture);
+            }
+        }
+        
+        public static string FirstStar {
+            get {
+                return ResourceManager.GetString("FirstStar", resourceCulture);
+            }
+        }
     }
 }

@@ -10,8 +10,8 @@ namespace GitTrends
 {
     abstract class BaseTrendsContentPage : BaseContentPage
     {
-        public BaseTrendsContentPage(in IMainThread mainThread,
-                                        in Color indicatorColor,
+        public BaseTrendsContentPage(in Color indicatorColor,
+                                        in IMainThread mainThread,
                                         in int carouselPositionIndex,
                                         in IAnalyticsService analyticsService) : base(analyticsService, mainThread, false)
         {
@@ -34,10 +34,10 @@ namespace GitTrends
                     new TrendsIndicatorView(carouselPositionIndex, indicatorColor).FillExpand()
                         .Row(Row.Indicator),
 
-                    CreateChartView()
+                    CreateChartView().Assign(out BaseChartView chartView)
                         .Row(Row.Chart),
 
-                    CreateEmptyDataView()
+                    CreateEmptyDataView().Margin(chartView.Margin).Padding(new Thickness(chartView.Padding.Left + 4, chartView.Padding.Top + 4, chartView.Padding.Right + 4, chartView.Padding.Bottom + 4))
                         .Row(Row.Chart),
 
                     new TrendsChartActivityIndicator()

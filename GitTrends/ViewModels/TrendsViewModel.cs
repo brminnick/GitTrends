@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Essentials.Interfaces;
@@ -29,9 +30,11 @@ namespace GitTrends
         string _starsStatisticsText = string.Empty;
         string _viewsStatisticsText = string.Empty;
         string _clonesStatisticsText = string.Empty;
+        string _starsHeaderMessageText = string.Empty;
         string _uniqueViewsStatisticsText = string.Empty;
         string _uniqueClonesStatisticsText = string.Empty;
         string _starsEmptyDataViewTitleText = string.Empty;
+        string _starsEmptyDataViewDescriptionText = string.Empty;
         string _viewsClonesEmptyDataViewTitleText = string.Empty;
 
         ImageSource? __starsEmptyDataViewImage;
@@ -131,6 +134,12 @@ namespace GitTrends
             set => SetProperty(ref _starsEmptyDataViewTitleText, value);
         }
 
+        public string StarsEmptyDataViewDescriptionText
+        {
+            get => _starsEmptyDataViewDescriptionText;
+            set => SetProperty(ref _starsEmptyDataViewDescriptionText, value);
+        }
+
         public string StarsStatisticsText
         {
             get => _starsStatisticsText;
@@ -185,6 +194,12 @@ namespace GitTrends
             set => SetProperty(ref _isUniqueClonesSeriesVisible, value);
         }
 
+        public string StarsHeaderMessageText
+        {
+            get => _starsHeaderMessageText;
+            set => SetProperty(ref _starsHeaderMessageText, value);
+        }
+
         public bool IsFetchingData
         {
             get => _isFetchingData;
@@ -218,6 +233,13 @@ namespace GitTrends
 
                 StarsEmptyDataViewImage = EmptyDataViewService.GetStarsImage(value, TotalStars);
                 StarsEmptyDataViewTitleText = EmptyDataViewService.GetStarsTitleText(value, TotalStars);
+                StarsEmptyDataViewDescriptionText = EmptyDataViewService.GetStarsEmptyDataViewDescriptionText(value, TotalStars);
+
+                StarsHeaderMessageText = TotalStars switch
+                {
+                    0 or 1 => TrendsChartTitleConstants.YouGotThis,
+                    _ => TrendsChartTitleConstants.KeepItUp
+                };
             }
         }
 
