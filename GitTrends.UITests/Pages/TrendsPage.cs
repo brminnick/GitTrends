@@ -14,7 +14,7 @@ namespace GitTrends.UITests
         readonly Query _viewsClonesChart, _activityIndicator, _androidContextMenuOverflowButton, _referringSiteButton, _viewsCard,
             _uniqueViewsCard, _clonesCard, _uniqueClonesCard, _viewsStatisticsLabel, _uniqueViewsStatisticsLabel,
             _clonesStatisticsLabel, _uniqueClonesStatisticsLabel, _emptyViewsClonesDataView, _emptyStarsDataView,
-            _starsChart, _starsStatisticsLabel;
+            _starsChart, _starsStatisticsLabel, _starsHeaderMessageLabel;
 
         public TrendsPage(IApp app) : base(app, BackdoorMethodConstants.GetCurrentTrendsPageNumber)
         {
@@ -37,23 +37,25 @@ namespace GitTrends.UITests
             _uniqueClonesStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.UniqueClonesStatisticsLabel);
 
             _starsStatisticsLabel = GenerateMarkedQuery(TrendsPageAutomationIds.StarsStatisticsLabel);
+            _starsHeaderMessageLabel = GenerateMarkedQuery(TrendsPageAutomationIds.StarsHeaderMessageLabel);
 
             _emptyStarsDataView = GenerateMarkedQuery(TrendsPageAutomationIds.StarsEmptyDataView);
             _emptyViewsClonesDataView = GenerateMarkedQuery(TrendsPageAutomationIds.ViewsClonesEmptyDataView);
         }
 
         public string ViewsStatisticsLabelText => GetText(_viewsStatisticsLabel);
-        public string UniqueViewsStatisticsLabelText => GetText(_uniqueViewsStatisticsLabel);
         public string ClonesStatisticsLabelText => GetText(_clonesStatisticsLabel);
+        public string StarsHeaderMessageLabelText => GetText(_starsHeaderMessageLabel);
+        public string UniqueViewsStatisticsLabelText => GetText(_uniqueViewsStatisticsLabel);
         public string UniqueClonesStatisticsLabelText => GetText(_uniqueClonesStatisticsLabel);
 
         public string StarsStatisticsLabelText => GetText(_starsStatisticsLabel);
 
-        public bool IsEmptyViewsClonesDataViewVisible => App.Query(_emptyViewsClonesDataView).Any();
         public bool IsEmptyStarsDataViewVisible => App.Query(_emptyStarsDataView).Any();
+        public bool IsEmptyViewsClonesDataViewVisible => App.Query(_emptyViewsClonesDataView).Any();
 
-        public bool IsViewsClonesChartVisible => App.Query(_viewsClonesChart).Any();
         public bool IsStarsChartVisible => App.Query(_starsChart).Any();
+        public bool IsViewsClonesChartVisible => App.Query(_viewsClonesChart).Any();
 
         public override Task WaitForPageToLoad(TimeSpan? timespan = null)
         {

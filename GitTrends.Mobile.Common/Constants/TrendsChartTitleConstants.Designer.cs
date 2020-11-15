@@ -94,5 +94,17 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("JustUniques", resourceCulture);
             }
         }
+        
+        public static string KeepItUp {
+            get {
+                return ResourceManager.GetString("KeepItUp", resourceCulture);
+            }
+        }
+        
+        public static string YouGotThis {
+            get {
+                return ResourceManager.GetString("YouGotThis", resourceCulture);
+            }
+        }
     }
 }

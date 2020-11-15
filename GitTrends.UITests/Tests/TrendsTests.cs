@@ -83,7 +83,8 @@ namespace GitTrends.UITests
 
             //Assert
             Assert.IsTrue(TrendsPage.IsStarsChartVisible);
-            Assert.AreEqual(_selectedRepository?.StarCount.ToAbbreviatedText(), TrendsPage.StarsStatisticsLabelText);
+            Assert.AreEqual(_selectedRepository!.StarCount.ToAbbreviatedText(), TrendsPage.StarsStatisticsLabelText);
+            Assert.AreEqual(_selectedRepository!.StarCount > 1 ? TrendsChartTitleConstants.KeepItUp.ToUpper() : TrendsChartTitleConstants.YouGotThis.ToUpper(), TrendsPage.StarsHeaderMessageLabelText);
         }
     }
 }

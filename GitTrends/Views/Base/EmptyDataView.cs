@@ -56,7 +56,7 @@ namespace GitTrends
 
         class TextLabel : Label
         {
-            public TextLabel(Span title, Span description)
+            public TextLabel(in Span title, in Span description)
             {
                 title.FontSize = 24;
                 title.FontFamily = FontFamilyConstants.RobotoMedium;

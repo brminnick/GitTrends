@@ -1,10 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using GitTrends.Mobile.Common.Constants;
 
 namespace GitTrends.Mobile.Common
 {
     public static class EmptyDataViewService
     {
+        readonly static IReadOnlyList<string> _zeroStarsEmptyDataViewDescription = new[]
+        {
+            EmptyDataViewConstantsInternal.ZeroStarsEmptyDataViewDescription1,
+            EmptyDataViewConstantsInternal.ZeroStarsEmptyDataViewDescription2,
+            EmptyDataViewConstantsInternal.ZeroStarsEmptyDataViewDescription3
+        };
+
+        readonly static Random _random = new((int)DateTime.Now.Ticks);
+
         public static string GetReferringSitesTitleText(in RefreshState refreshState) => refreshState switch
         {
             RefreshState.Uninitialized => EmptyDataViewConstantsInternal.Uninitialized,
@@ -59,15 +69,22 @@ namespace GitTrends.Mobile.Common
             _ => throw new NotSupportedException()
         };
 
-#if AppStore
-#error Stars Chart Refresh State not complete
-#endif
+        public static string GetStarsEmptyDataViewDescriptionText(in RefreshState refreshState, in double totalStars) => refreshState switch
+        {
+            RefreshState.Uninitialized => string.Empty,
+            RefreshState.Succeeded when totalStars is 1 => EmptyDataViewConstantsInternal.FirstStar,
+            RefreshState.Succeeded => GetZeroStarsDescription(),
+            RefreshState.LoginExpired => string.Empty,
+            RefreshState.Error => string.Empty,
+            RefreshState.MaximumApiLimit => string.Empty,
+            _ => throw new NotSupportedException()
+        };
 
         public static string GetStarsTitleText(in RefreshState refreshState, in double totalStars) => refreshState switch
         {
-            RefreshState.Uninitialized => "Uninitialized",
-            RefreshState.Succeeded when totalStars is 1 => "1 Star Text",
-            RefreshState.Succeeded => "0 Stars Text",
+            RefreshState.Uninitialized => EmptyDataViewConstantsInternal.Uninitialized,
+            RefreshState.Succeeded when totalStars is 1 => EmptyDataViewConstantsInternal.Congratulations,
+            RefreshState.Succeeded => EmptyDataViewConstantsInternal.NoStarsYet,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.PleaseLoginAgain,
             RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
             RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.UnableToRetrieveData,
@@ -87,12 +104,14 @@ namespace GitTrends.Mobile.Common
         public static string GetStarsImage(in RefreshState refreshState, in double totalStars) => refreshState switch
         {
             RefreshState.Uninitialized => "EmptyStarChart",
-            RefreshState.Succeeded when totalStars is 1 => "1StarEmptyChartImage",
+            RefreshState.Succeeded when totalStars is 1 => "EmptyOneStarChart",
             RefreshState.Succeeded => "EmptyStarChart",
             RefreshState.LoginExpired => "EmptyStarChart",
             RefreshState.Error => "EmptyStarChart",
             RefreshState.MaximumApiLimit => "EmptyStarChart",
             _ => throw new NotSupportedException()
         };
+
+        static string GetZeroStarsDescription() => _zeroStarsEmptyDataViewDescription[_random.Next(0, _zeroStarsEmptyDataViewDescription.Count)];
     }
 }
