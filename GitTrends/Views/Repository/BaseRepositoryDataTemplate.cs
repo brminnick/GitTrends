@@ -206,8 +206,9 @@ namespace GitTrends
                                 Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth >= SvgWidthRequest),
                                 Bindings =
                                 {
-                                    new Binding(nameof(Repository.IsTrending)),
-                                    new Binding(nameof(Width), source: this)
+                                    new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
+                                    new Binding(nameof(Width), BindingMode.OneWay, source: this),
+                                    new Binding(nameof(Repository.IsFavorite), BindingMode.OneWay)
                                 }
                             });
                         }
@@ -222,8 +223,9 @@ namespace GitTrends
                                 Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth < SvgWidthRequest),
                                 Bindings =
                                 {
-                                    new Binding(nameof(Repository.IsTrending)),
-                                    new Binding(nameof(Width), source: largeScreenTrendingImage)
+                                    new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
+                                    new Binding(nameof(Width), BindingMode.OneWay, source: largeScreenTrendingImage),
+                                    new Binding(nameof(Repository.IsFavorite), BindingMode.OneWay)
                                 }
                             });
                         }
@@ -239,6 +241,18 @@ namespace GitTrends
                             AutomationId = automationId;
                             HorizontalOptions = LayoutOptions.Start;
                             VerticalOptions = LayoutOptions.End;
+
+                            this.Bind<SvgImage, bool, ImageSource>(SourceProperty, nameof(Repository.IsTrending), convert: isTrending => isTrending switch
+                            {
+                                true => SvgService.GetFullPath("trending_tag.svg"),
+                                false => SvgService.GetFullPath("favorite_tag.svg"),
+                            });
+
+                            this.Bind<SvgImage, bool?, Func<Color>>(GetTextColorProperty, nameof(Repository.IsFavorite), convert: isFavorite => isFavorite switch
+                            {
+                                true => () => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)],
+                                _ => () => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)],
+                            });
                         }
 
                         protected class IsVisibleConverter : IMultiValueConverter
@@ -252,18 +266,19 @@ namespace GitTrends
                                 if (values is null || !values.Any())
                                     return false;
 
-                                if (values[0] is bool isTrending && isTrending is true
-                                    && values[1] is double width)
-                                {
-                                    // When `Width is -1`, Xamarin.Forms hasn't inflated the View
-                                    // Allow Xamarin.Forms to inflate the view, then validate its Width
-                                    if (width is -1 || _isWidthValid(width))
-                                        return true;
-
+                                if (values[0] is null || values[1] is null)
                                     return false;
-                                }
 
-                                return false;
+                                var isTrending = (bool)values[0];
+                                var width = (double)values[1];
+                                var isFavorite = (bool?)values[2];
+
+
+                                throw new NotImplementedException("IsFavorite Tag only appearing when repo is also Trending");
+                                // When `Width is -1`, Xamarin.Forms hasn't inflated the View
+                                // Allow Xamarin.Forms to inflate the view, then validate its Width
+                                return (isTrending || isFavorite is true)
+                                        && (width is -1 || _isWidthValid(width));
                             }
 
                             public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
