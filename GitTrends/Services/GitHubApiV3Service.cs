@@ -35,13 +35,12 @@ namespace GitTrends
                     var count = DemoDataConstants.GetRandomNumber();
                     var uniqeCount = count / 2; //Ensures uniqueCount is always less than count
 
-                    //Ensure one Demo repo is Trending
-                    if (i is 13 && new Random().Next(0, 100) is 99)
+                    //Ensures one Demo repo is Trending
+                    if (i is 13 && new Random().Next(0, DemoDataConstants.RepoCount) is DemoDataConstants.RepoCount - 1)
                         dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow, DemoDataConstants.MaximumRandomNumber * 4, DemoDataConstants.MaximumRandomNumber / 2));
                     else
                         dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
                 }
-
 
                 return new RepositoryViewsResponseModel(dailyViewsModelList.Sum(x => x.TotalViews), dailyViewsModelList.Sum(x => x.TotalUniqueViews), dailyViewsModelList, repo, owner);
             }

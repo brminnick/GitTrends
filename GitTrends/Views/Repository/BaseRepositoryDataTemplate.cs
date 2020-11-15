@@ -236,7 +236,7 @@ namespace GitTrends
                         public const double SvgWidthRequest = 62;
                         public const double SvgHeightRequest = 16;
 
-                        public TrendingImage(string automationId) : base("trending_tag.svg", nameof(BaseTheme.CardTrendingStatsColor), SvgWidthRequest, SvgHeightRequest)
+                        public TrendingImage(string automationId) : base("favorite_tag.svg", nameof(BaseTheme.CardTrendingStatsColor), SvgWidthRequest, SvgHeightRequest)
                         {
                             AutomationId = automationId;
                             HorizontalOptions = LayoutOptions.Start;
@@ -273,8 +273,6 @@ namespace GitTrends
                                 var width = (double)values[1];
                                 var isFavorite = (bool?)values[2];
 
-
-                                throw new NotImplementedException("IsFavorite Tag only appearing when repo is also Trending");
                                 // When `Width is -1`, Xamarin.Forms hasn't inflated the View
                                 // Allow Xamarin.Forms to inflate the view, then validate its Width
                                 return (isTrending || isFavorite is true)
