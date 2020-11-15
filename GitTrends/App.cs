@@ -19,8 +19,8 @@ namespace GitTrends
 
         public App(ThemeService themeService,
                     LanguageService languageService,
-                    IAnalyticsService analyticsService,
                     SplashScreenPage splashScreenPage,
+                    IAnalyticsService analyticsService,
                     NotificationService notificationService,
                     IDeviceNotificationsService deviceNotificationsService)
         {

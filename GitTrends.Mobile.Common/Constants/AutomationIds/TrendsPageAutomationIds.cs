@@ -16,6 +16,7 @@
         public const string UniqueClonesCard = nameof(TrendsPageAutomationIds) + nameof(UniqueClonesCard);
 
         public const string StarsStatisticsLabel = nameof(TrendsPageAutomationIds) + nameof(StarsStatisticsLabel);
+        public const string StarsHeaderMessageLabel = nameof(TrendsPageAutomationIds) + nameof(StarsHeaderMessageLabel);
 
         public const string ViewsStatisticsLabel = nameof(TrendsPageAutomationIds) + nameof(ViewsStatisticsLabel);
         public const string UniqueViewsStatisticsLabel = nameof(TrendsPageAutomationIds) + nameof(UniqueViewsStatisticsLabel);

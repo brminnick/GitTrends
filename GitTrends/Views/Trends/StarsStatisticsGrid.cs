@@ -8,6 +8,9 @@ namespace GitTrends
 {
     class StarsStatisticsGrid : Grid
     {
+        const int _textSize = 24;
+        const int _textRowHeight = _textSize + 8;
+
         public StarsStatisticsGrid()
         {
             this.FillExpand()
@@ -18,9 +21,9 @@ namespace GitTrends
 
             RowDefinitions = Rows.Define(
                 (Row.TopLine, AbsoluteGridLength(1)),
-                (Row.Total, StarGridLength(1)),
-                (Row.Stars, StarGridLength(3)),
-                (Row.Message, StarGridLength(1)),
+                (Row.Total, AbsoluteGridLength(_textRowHeight)),
+                (Row.Stars, StarGridLength(1)),
+                (Row.Message, AbsoluteGridLength(_textRowHeight)),
                 (Row.BottomLine, AbsoluteGridLength(1)));
 
             ColumnDefinitions = Columns.Define(
@@ -31,7 +34,7 @@ namespace GitTrends
             Children.Add(new SeparatorLine()
                             .Row(Row.TopLine).ColumnSpan(All<Column>()));
 
-            Children.Add(new StarsStatisticsLabel("Total", 24)
+            Children.Add(new StarsStatisticsLabel("TOTAL", _textSize)
                             .Row(Row.Total).ColumnSpan(All<Column>()));
 
             Children.Add(new StarSvg()
@@ -44,8 +47,9 @@ namespace GitTrends
             Children.Add(new StarSvg()
                             .Row(Row.Stars).Column(Column.RightStar));
 
-            Children.Add(new StarsStatisticsLabel("KEEP IT UP!", 24)
-                            .Row(Row.Message).ColumnSpan(All<Column>()));
+            Children.Add(new StarsStatisticsLabel(_textSize) { AutomationId = TrendsPageAutomationIds.StarsHeaderMessageLabel }
+                            .Row(Row.Message).ColumnSpan(All<Column>())
+                            .Bind(Label.TextProperty, nameof(TrendsViewModel.StarsHeaderMessageText)));
 
             Children.Add(new SeparatorLine()
                             .Row(Row.BottomLine).ColumnSpan(All<Column>()));
@@ -56,8 +60,7 @@ namespace GitTrends
 
         class StarSvg : SvgImage
         {
-            public StarSvg()
-                : base("star.svg", () => Color.White, 44, 44)
+            public StarSvg() : base("star.svg", () => Color.White, 44, 44)
             {
                 this.Center();
             }
@@ -79,8 +82,10 @@ namespace GitTrends
             {
                 this.TextCenter();
 
+                TextTransform = TextTransform.Uppercase;
+
                 FontSize = fontSize;
-                TextColor = Color.Black;
+                TextColor = Color.FromHex(DarkTheme.PageBackgroundColorHex);
                 FontFamily = FontFamilyConstants.RobotoBold;
             }
         }

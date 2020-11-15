@@ -10,7 +10,8 @@ namespace GitTrends
 {
     abstract class BaseTrendsContentPage : BaseContentPage
     {
-        public BaseTrendsContentPage(in IMainThread mainThread,
+        public BaseTrendsContentPage(in Color indicatorColor,
+                                        in IMainThread mainThread,
                                         in int carouselPositionIndex,
                                         in IAnalyticsService analyticsService) : base(analyticsService, mainThread, false)
         {
@@ -22,30 +23,30 @@ namespace GitTrends
 
                 RowDefinitions = Rows.Define(
                     (Row.Header, AbsoluteGridLength(ViewsClonesStatisticsGrid.StatisticsGridHeight)),
-                    (Row.Chart, Star),
-                    (Row.Indicator, AbsoluteGridLength(22))),
+                    (Row.Indicator, AbsoluteGridLength(12)),
+                    (Row.Chart, Star)),
 
                 Children =
                 {
                     CreateHeaderView()
                         .Row(Row.Header),
 
-                    CreateChartView()
+                    new TrendsIndicatorView(carouselPositionIndex, indicatorColor).FillExpand()
+                        .Row(Row.Indicator),
+
+                    CreateChartView().Assign(out BaseChartView chartView)
                         .Row(Row.Chart),
 
-                    CreateEmptyDataView()
+                    CreateEmptyDataView().Margin(chartView.Margin).Padding(new Thickness(chartView.Padding.Left + 4, chartView.Padding.Top + 4, chartView.Padding.Right + 4, chartView.Padding.Bottom + 4))
                         .Row(Row.Chart),
 
                     new TrendsChartActivityIndicator()
                         .Row(Row.Chart),
-
-                    new TrendsIndicatorView(carouselPositionIndex).FillExpand()
-                        .Row(Row.Indicator)
                 }
             };
         }
 
-        protected enum Row { Header, Chart, Indicator }
+        protected enum Row { Header, Indicator, Chart }
 
         protected abstract Layout CreateHeaderView();
         protected abstract BaseChartView CreateChartView();
@@ -53,15 +54,17 @@ namespace GitTrends
 
         class TrendsIndicatorView : IndicatorView
         {
-            public TrendsIndicatorView(in int position)
+            public TrendsIndicatorView(in int position, in Color indicatorColor)
             {
                 Position = position;
 
-                var selectedIndicatorColor = (Color)Application.Current.Resources[nameof(BaseTheme.NavigationBarBackgroundColor)];
-
-                SelectedIndicatorColor = selectedIndicatorColor;
-                IndicatorColor = selectedIndicatorColor.MultiplyAlpha(0.25);
+                SelectedIndicatorColor = indicatorColor;
+                IndicatorColor = Color.FromHex("#BFBFBF");
                 AutomationId = TrendsPageAutomationIds.IndicatorView;
+
+                IndicatorSize = 8;
+
+                this.Center();
 
                 SetBinding(CountProperty, new Binding(nameof(TrendsCarouselPage.PageCount),
                                                         source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(TrendsCarouselPage))));

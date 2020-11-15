@@ -36,4 +36,10 @@
     <data name="JustUniques" xml:space="preserve">
         <value>Just Uniques</value>
     </data>
+    <data name="KeepItUp" xml:space="preserve">
+        <value>Keep it up!</value>
+    </data>
+    <data name="YouGotThis" xml:space="preserve">
+        <value>You got this!</value>
+    </data>
 </root>

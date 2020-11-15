@@ -8,7 +8,7 @@ namespace GitTrends
     abstract class BaseTrendsChart : SfChart
     {
         readonly IMainThread _mainThread;
-        readonly ChartZoomPanBehavior _chartZoomPanBehavior = new ChartZoomPanBehavior();
+        readonly ChartZoomPanBehavior _chartZoomPanBehavior = new();
 
         protected BaseTrendsChart(in IMainThread mainThread, in string automationId)
         {
