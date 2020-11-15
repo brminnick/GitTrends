@@ -44,8 +44,13 @@ namespace GitTrends
 
                 RightItems = new SwipeItems
                 {
-                    new SwipeItem { CommandParameter = repository, Command = repositoryViewModel.ToggleIsFavoriteCommand }
-                        .Bind<SwipeItem, bool?, string>(SwipeItem.TextProperty, nameof(Repository.IsFavorite), convert: isFavorite => isFavorite is true ? "Favorite" : "Not Favorite")
+                    new SwipeItemView
+                    {
+                        CommandParameter = repository,
+                        Command = repositoryViewModel.ToggleIsFavoriteCommand,
+                        Content = new SvgImage(repository.IsFavorite is true ? "star.svg" : "star_outline.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)], 44, 44)
+                                    .Margin(new Thickness(0, 0, 32, 0))
+                    }
                 };
 
                 Content = new Grid

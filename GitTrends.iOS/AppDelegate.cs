@@ -45,7 +45,7 @@ namespace GitTrends.iOS
             var notificationService = ContainerService.Container.Resolve<NotificationService>();
             var deviceNotificationsService = ContainerService.Container.Resolve<IDeviceNotificationsService>();
 
-            LoadApplication(new App(themeService, languageService, analyticsService, splashScreenPage, notificationService, deviceNotificationsService));
+            LoadApplication(new App(themeService, languageService, splashScreenPage, analyticsService, notificationService, deviceNotificationsService));
 
             if (launchOptions?.ContainsKey(UIApplication.LaunchOptionsLocalNotificationKey) is true)
                 HandleLocalNotification((UILocalNotification)launchOptions[UIApplication.LaunchOptionsLocalNotificationKey]).SafeFireAndForget(ex => analyticsService.Report(ex));
