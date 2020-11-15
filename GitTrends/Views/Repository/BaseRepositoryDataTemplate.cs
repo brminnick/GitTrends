@@ -126,11 +126,11 @@ namespace GitTrends
                                         .Row(Row.Separator).Column(Column.Trending).ColumnSpan(7));
 
                         //On large screens, display TrendingImage in the same column as the repository name
-                        Children.Add(new LargeScreenTrendingImage().Assign(out LargeScreenTrendingImage largeScreenTrendingImage)
+                        Children.Add(new LargeScreenTrendingImage(repository.IsTrending, repository.IsFavorite).Assign(out LargeScreenTrendingImage largeScreenTrendingImage)
                                         .Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2));
 
                         //On smaller screens, display TrendingImage under the Avatar
-                        Children.Add(new SmallScreenTrendingImage(largeScreenTrendingImage)
+                        Children.Add(new SmallScreenTrendingImage(repository.IsTrending, repository.IsFavorite, largeScreenTrendingImage)
                                         .Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3));
 
                         foreach (var child in parentDataTemplateChildren)
@@ -199,7 +199,7 @@ namespace GitTrends
 
                     class LargeScreenTrendingImage : TrendingImage
                     {
-                        public LargeScreenTrendingImage() : base(RepositoryPageAutomationIds.LargeScreenTrendingImage)
+                        public LargeScreenTrendingImage(bool isTrending, bool? isFavorite) : base(RepositoryPageAutomationIds.LargeScreenTrendingImage, isTrending, isFavorite)
                         {
                             SetBinding(IsVisibleProperty, new MultiBinding
                             {
@@ -216,7 +216,8 @@ namespace GitTrends
 
                     class SmallScreenTrendingImage : TrendingImage
                     {
-                        public SmallScreenTrendingImage(LargeScreenTrendingImage largeScreenTrendingImage) : base(RepositoryPageAutomationIds.SmallScreenTrendingImage)
+                        public SmallScreenTrendingImage(bool isTrending, bool? isFavorite, LargeScreenTrendingImage largeScreenTrendingImage) :
+                            base(RepositoryPageAutomationIds.SmallScreenTrendingImage, isTrending, isFavorite)
                         {
                             SetBinding(IsVisibleProperty, new MultiBinding
                             {
@@ -236,23 +237,15 @@ namespace GitTrends
                         public const double SvgWidthRequest = 62;
                         public const double SvgHeightRequest = 16;
 
-                        public TrendingImage(string automationId) : base("favorite_tag.svg", nameof(BaseTheme.CardTrendingStatsColor), SvgWidthRequest, SvgHeightRequest)
+                        public TrendingImage(string automationId, bool isTrending, bool? isFavorite)
+                            : base(isTrending ? "trending_tag.svg" : "favorite_tag.svg",
+                                    isFavorite is true ? nameof(BaseTheme.CardStarsStatsIconColor) : nameof(BaseTheme.CardTrendingStatsColor),
+                                    SvgWidthRequest,
+                                    SvgHeightRequest)
                         {
                             AutomationId = automationId;
                             HorizontalOptions = LayoutOptions.Start;
                             VerticalOptions = LayoutOptions.End;
-
-                            this.Bind<SvgImage, bool, ImageSource>(SourceProperty, nameof(Repository.IsTrending), convert: isTrending => isTrending switch
-                            {
-                                true => SvgService.GetFullPath("trending_tag.svg"),
-                                false => SvgService.GetFullPath("favorite_tag.svg"),
-                            });
-
-                            this.Bind<SvgImage, bool?, Func<Color>>(GetTextColorProperty, nameof(Repository.IsFavorite), convert: isFavorite => isFavorite switch
-                            {
-                                true => () => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)],
-                                _ => () => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)],
-                            });
                         }
 
                         protected class IsVisibleConverter : IMultiValueConverter
