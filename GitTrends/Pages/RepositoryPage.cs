@@ -32,7 +32,7 @@ namespace GitTrends
                                 GitHubUserService gitHubUserService,
                                 DeepLinkingService deepLinkingService,
                                 RepositoryViewModel repositoryViewModel,
-                                MobileSortingService mobileSortingService) : base(repositoryViewModel, analyticsService, mainThread)
+                                MobileSortingService mobileSortingService) : base(repositoryViewModel, analyticsService, mainThread, true)
         {
             _firstRunService = firstRunService;
             _gitHubUserService = gitHubUserService;
@@ -69,9 +69,8 @@ namespace GitTrends
             Content = new Grid
             {
                 RowDefinitions = Rows.Define(
-                    (Row.Totals, AbsoluteGridLength(125)),
                     (Row.CollectionView, Star),
-                    (Row.Information, AbsoluteGridLength(100))),
+                    (Row.Information, AbsoluteGridLength(Device.RuntimePlatform is Device.iOS ? 120 : 100))),
 
                 ColumnDefinitions = Columns.Define(
                     (Column.CollectionView, Star),
@@ -79,6 +78,10 @@ namespace GitTrends
 
                 Children =
                 {
+                    //Work around to prevent iOS Navigation Bar from collapsing
+                    new BoxView { HeightRequest = 0.1 }
+                        .RowSpan(All<Row>()).ColumnSpan(All<Column>()),
+
                     new RefreshView
                     {
                         AutomationId = RepositoryPageAutomationIds.RefreshView,
@@ -107,7 +110,7 @@ namespace GitTrends
             };
         }
 
-        enum Row { Totals, CollectionView, Information }
+        enum Row { CollectionView, Information }
         enum Column { CollectionView, Information }
 
         public event EventHandler<string> SearchBarTextChanged

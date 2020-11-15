@@ -35,7 +35,7 @@ namespace GitTrends
 
         class CardView : ExtendedSwipeView
         {
-            public CardView(in IEnumerable<View> parentDataTemplateChildren, in RepositoryViewModel repositoryViewModel, in Repository repository)
+            public CardView(in IEnumerable<View> dataTemplateChildren, in RepositoryViewModel repositoryViewModel, in Repository repository)
             {
                 BackgroundColor = Color.Transparent;
 
@@ -69,7 +69,7 @@ namespace GitTrends
 
                     Children =
                     {
-                        new CardViewFrame(parentDataTemplateChildren, repository).Row(CardViewRow.Card).Column(CardViewColumn.Card)
+                        new CardViewFrame(dataTemplateChildren, repository).Row(CardViewRow.Card).Column(CardViewColumn.Card)
                     }
                 };
             }
@@ -79,21 +79,21 @@ namespace GitTrends
 
             class CardViewFrame : MaterialFrame
             {
-                public CardViewFrame(in IEnumerable<View> parentDataTemplateChildren, in Repository repository)
+                public CardViewFrame(in IEnumerable<View> dataTemplateChildren, in Repository repository)
                 {
                     Padding = new Thickness(16, 16, 12, 8);
                     CornerRadius = 4;
                     HasShadow = false;
                     Elevation = 4;
 
-                    Content = new ContentGrid(parentDataTemplateChildren, repository);
+                    Content = new ContentGrid(dataTemplateChildren, repository);
 
                     this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
                 }
 
                 class ContentGrid : Grid
                 {
-                    public ContentGrid(in IEnumerable<View> parentDataTemplateChildren, in Repository repository)
+                    public ContentGrid(in IEnumerable<View> dataTemplateChildren, in Repository repository)
                     {
                         this.FillExpand();
 
@@ -138,7 +138,7 @@ namespace GitTrends
                         Children.Add(new SmallScreenTrendingImage(repository.IsTrending, repository.IsFavorite, largeScreenTrendingImage)
                                         .Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3));
 
-                        foreach (var child in parentDataTemplateChildren)
+                        foreach (var child in dataTemplateChildren)
                         {
                             Children.Add(child);
                         }
