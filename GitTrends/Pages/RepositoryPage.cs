@@ -70,11 +70,11 @@ namespace GitTrends
             {
                 RowDefinitions = Rows.Define(
                     (Row.CollectionView, Star),
-                    (Row.Information, AbsoluteGridLength(Device.RuntimePlatform is Device.iOS ? 120 : 100))),
+                    (Row.Information, AbsoluteGridLength(Device.RuntimePlatform is Device.iOS ? InformationButton.Diameter + 10 : InformationButton.Diameter))),
 
                 ColumnDefinitions = Columns.Define(
                     (Column.CollectionView, Star),
-                    (Column.Information, AbsoluteGridLength(100))),
+                    (Column.Information, AbsoluteGridLength(InformationButton.Diameter))),
 
                 Children =
                 {

@@ -1,24 +1,61 @@
 ﻿using System;
-using Xamarin.Forms;
 using System.Windows.Input;
+using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {
-    class FloatingActionButtonView : CirclePancakeView
+    class FloatingActionButtonView : AbsoluteLayout
     {
-        const int _diameterNormal = 56;
-        const int _diameterMini = 40;
+        const int _fabDiameterMini = 40;
+        const int _fabDiameterNormal = 56;
+
+        const int _shadowDiameterMini = _fabDiameterMini + 1;
+        const int _shadowDiameterNormal = _fabDiameterNormal + 2;
 
         public static readonly BindableProperty SizeProperty = BindableProperty.Create(nameof(Size), typeof(FloatingActionButtonSize), typeof(FloatingActionButtonView), FloatingActionButtonSize.Normal, propertyChanged: OnSizeChanged);
         public static readonly BindableProperty CommandProperty = BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(FloatingActionButtonView), null, propertyChanged: (bo, o, n) => ((FloatingActionButtonView)bo).OnCommandChanged());
         public static readonly BindableProperty CommandParameterProperty = BindableProperty.Create(nameof(CommandParameter), typeof(object), typeof(FloatingActionButtonView), null, propertyChanged: (bindable, oldvalue, newvalue) => ((FloatingActionButtonView)bindable).CommandCanExecuteChanged(bindable, EventArgs.Empty));
+        public static readonly BindableProperty FloatingActionButtonBackgroundColorProperty = BindableProperty.Create(nameof(FloatingActionButtonBackgroundColor), typeof(Color), typeof(FloatingActionButtonView), Color.Transparent, propertyChanged: OnFloatingActionBackgroundColorChanged);
 
         public FloatingActionButtonView()
         {
-            HeightRequest = WidthRequest = _diameterNormal;
+            WidthRequest = _shadowDiameterNormal + 10;
+            HeightRequest = _shadowDiameterNormal + 10;
 
-            GestureRecognizers.Add(new TapGestureRecognizer().Invoke(tapGesture => tapGesture.Tapped += HandleTapped));
+            Shadow = new CirclePancakeView
+            {
+                WidthRequest = _shadowDiameterNormal,
+                HeightRequest = _shadowDiameterNormal,
+                BackgroundColor = Color.FromHex(DarkTheme.PageBackgroundColorHex),
+                Opacity = 0.2
+            }.Center();
+
+            FloatingActionButton = new CirclePancakeView
+            {
+                WidthRequest = _fabDiameterNormal,
+                HeightRequest = _fabDiameterNormal
+            }.Center();
+
+            FloatingActionButton.GestureRecognizers.Add(new TapGestureRecognizer().Invoke(tapGesture => tapGesture.Tapped += HandleTapped));
+
+            Children.Add(Shadow, new Rectangle(.51, .55, -1, -1), AbsoluteLayoutFlags.PositionProportional);
+            Children.Add(FloatingActionButton, new Rectangle(.5, .5, -1, -1), AbsoluteLayoutFlags.PositionProportional);
+        }
+
+        public CirclePancakeView Shadow { get; }
+        public CirclePancakeView FloatingActionButton { get; }
+
+        public View Content
+        {
+            get => FloatingActionButton.Content;
+            set => FloatingActionButton.Content = value;
+        }
+
+        public Color FloatingActionButtonBackgroundColor
+        {
+            get => (Color)GetValue(FloatingActionButtonBackgroundColorProperty);
+            set => SetValue(FloatingActionButtonBackgroundColorProperty, value);
         }
 
         public FloatingActionButtonSize Size
@@ -39,15 +76,30 @@ namespace GitTrends
             set => SetValue(CommandParameterProperty, value);
         }
 
+        static void OnFloatingActionBackgroundColorChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            var floatingActionButtonView = (FloatingActionButtonView)bindable;
+            var color = (Color)newValue;
+
+            floatingActionButtonView.FloatingActionButton.BackgroundColor = color;
+        }
+
         static void OnSizeChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            var floatingActionButton = (FloatingActionButtonView)bindable;
+            var floatingActionButtonView = (FloatingActionButtonView)bindable;
             var size = (FloatingActionButtonSize)newValue;
 
-            floatingActionButton.HeightRequest = floatingActionButton.WidthRequest = size switch
+            floatingActionButtonView.Shadow.WidthRequest = floatingActionButtonView.Shadow.HeightRequest = size switch
             {
-                FloatingActionButtonSize.Normal => _diameterNormal,
-                FloatingActionButtonSize.Mini => _diameterMini,
+                FloatingActionButtonSize.Normal => _shadowDiameterNormal,
+                FloatingActionButtonSize.Mini => _shadowDiameterMini,
+                _ => throw new NotImplementedException()
+            };
+
+            floatingActionButtonView.FloatingActionButton.WidthRequest = floatingActionButtonView.FloatingActionButton.HeightRequest = size switch
+            {
+                FloatingActionButtonSize.Normal => _fabDiameterNormal,
+                FloatingActionButtonSize.Mini => _fabDiameterMini,
                 _ => throw new NotImplementedException()
             };
         }
