@@ -1,11 +1,10 @@
 ﻿using FFImageLoading.Forms;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using Xamarin.Forms.PancakeView;
 
 namespace GitTrends
 {
-    public class CircleImage : PancakeView
+    public class CircleImage : CirclePancakeView
     {
         public static readonly BindableProperty AspectProperty = BindableProperty.Create(nameof(Aspect), typeof(Aspect), typeof(CircleImage), Aspect.AspectFit);
         public static readonly BindableProperty ImageSourceProperty = BindableProperty.Create(nameof(ImageSource), typeof(ImageSource), typeof(CircleImage), null);
@@ -21,16 +20,10 @@ namespace GitTrends
 
         public CircleImage()
         {
-            this.Bind<PancakeView, double, double>(CornerRadiusProperty, nameof(Width), convert: convertWidthToCornerRadius, source: this);
-
-            IsClippedToBounds = true;
-
             Content = new CachedImage()
                         .Bind(CachedImage.SourceProperty, nameof(ImageSource), source: this)
                         .Bind(CachedImage.ErrorPlaceholderProperty, nameof(ErrorPlaceholder), source: this)
                         .Bind(CachedImage.LoadingPlaceholderProperty, nameof(LoadingPlaceholder), source: this);
-
-            static double convertWidthToCornerRadius(double width) => width is -1 ? -1 : width / 2;
         }
 
         public Aspect Aspect

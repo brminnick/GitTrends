@@ -120,7 +120,6 @@
     <Compile Include="MainApplication.BackdoorMethods.cs" />
     <Compile Include="CustomRenderers\PickerCustomRenderer.cs" />
     <Compile Include="CustomRenderers\VideoPlayerViewCustomRenderer.cs" />
-    <Compile Include="CustomRenderers\FloatingActionButtonCustomRenderer.cs" />
     <Compile Include="Effects\LabelShadowEffect.cs" />
   </ItemGroup>
   <ItemGroup>

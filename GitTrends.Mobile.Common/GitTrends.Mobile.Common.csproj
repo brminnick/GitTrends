@@ -533,17 +533,11 @@
         <Compile Update="Constants\SettingsPageConstants.Designer.cs">
             <DependentUpon>SettingsPageConstants.resx</DependentUpon>
         </Compile>
-        <Compile Update="Constants\TrendsChartTitleConstants.Designer.cs">
-            <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
-        </Compile>
         <Compile Update="Constants\SplashScreenPageConstants.Designer.cs">
             <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
         </Compile>
         <Compile Update="Constants\ReviewServiceConstants.Designer.cs">
             <DependentUpon>ReviewServiceConstants.resx</DependentUpon>
-        </Compile>
-        <Compile Update="Constants\EmptyDataViewConstantsInternal.Designer.cs">
-            <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
         </Compile>
         <Compile Update="Constants\DemoUserConstants.Designer.cs">
             <DependentUpon>DemoUserConstants.resx</DependentUpon>
@@ -614,6 +608,12 @@
         </Compile>
         <Compile Update="Constants\AboutPageConstants.Designer.cs">
           <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Constants\TrendsChartTitleConstants.Designer.cs">
+          <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Constants\TrendsChartTitleConstants.Designer.cs">
+          <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
         </Compile>
     </ItemGroup>
     <ItemGroup>
