@@ -158,8 +158,12 @@ namespace GitTrends
             public OnboardingIndicatorView(in int position)
             {
                 Position = position;
+
+                IsEnabled = false;
+
                 SelectedIndicatorColor = Color.White;
                 IndicatorColor = Color.White.MultiplyAlpha(0.25);
+
                 Margin = new Thickness(30, 0, 0, 0);
 
 #if AppStore

@@ -13,7 +13,7 @@ namespace GitTrends
         public BaseTrendsContentPage(in Color indicatorColor,
                                         in IMainThread mainThread,
                                         in int carouselPositionIndex,
-                                        in IAnalyticsService analyticsService) : base(analyticsService, mainThread, false)
+                                        in IAnalyticsService analyticsService) : base(analyticsService, mainThread, true)
         {
             Content = new Grid
             {
@@ -58,13 +58,17 @@ namespace GitTrends
             {
                 Position = position;
 
+                IndicatorSize = 8;
+
+                IsEnabled = false;
+
                 SelectedIndicatorColor = indicatorColor;
                 IndicatorColor = Color.FromHex("#BFBFBF");
                 AutomationId = TrendsPageAutomationIds.IndicatorView;
 
-                IndicatorSize = 8;
 
                 this.Center();
+
 
                 SetBinding(CountProperty, new Binding(nameof(TrendsCarouselPage.PageCount),
                                                         source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(TrendsCarouselPage))));
