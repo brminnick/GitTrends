@@ -63,9 +63,9 @@ namespace GitTrends
                         (CardViewRow.BottomPadding, AbsoluteGridLength(BottomPadding))),
 
                     ColumnDefinitions = Columns.Define(
-                        (CardViewColumn.LeftPadding, AbsoluteGridLength(16)),
+                        (CardViewColumn.LeftPadding, AbsoluteGridLength(_isSmallScreen ? 8 : 16)),
                         (CardViewColumn.Card, Star),
-                        (CardViewColumn.RightPadding, AbsoluteGridLength(16))),
+                        (CardViewColumn.RightPadding, AbsoluteGridLength(_isSmallScreen ? 8 : 16))),
 
                     Children =
                     {
@@ -81,7 +81,7 @@ namespace GitTrends
             {
                 public CardViewFrame(in IEnumerable<View> dataTemplateChildren, in Repository repository)
                 {
-                    Padding = new Thickness(16, 16, 12, 8);
+                    Padding = _isSmallScreen ? new Thickness(8, 16, 6, 8) : new Thickness(16, 16, 12, 8);
                     CornerRadius = 4;
                     HasShadow = false;
                     Elevation = 4;
@@ -106,8 +106,8 @@ namespace GitTrends
                             (Row.Statistics, AbsoluteGridLength(_statisticsRowHeight)));
 
                         ColumnDefinitions = Columns.Define(
-                            (Column.Avatar, AbsoluteGridLength(_circleImageHeight)),
-                            (Column.AvatarPadding, AbsoluteGridLength(_isSmallScreen ? 8 : 16)),
+                            (Column.Avatar, AbsoluteGridLength(_isSmallScreen ? _circleImageHeight - 4 : _circleImageHeight)),
+                            (Column.AvatarPadding, AbsoluteGridLength(_isSmallScreen ? 4 : 16)),
                             (Column.Trending, StarGridLength(1)),
                             (Column.Emoji1, AbsoluteGridLength(_emojiColumnSize)),
                             (Column.Statistic1, AbsoluteGridLength(_statsColumnSize)),
