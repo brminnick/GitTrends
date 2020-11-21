@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -130,7 +128,10 @@ namespace GitTrends.UnitTests
 
             Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Initial);
             Assert.IsFalse(isViewsClonesEmptyDataViewVisible_DuringFetchDataCommand);
-            Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Final);
+            if (shouldIncludeViewsClonesData)
+                Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Final);
+            else
+                Assert.IsTrue(isViewsClonesEmptyDataViewVisible_Final);
 
             Assert.IsFalse(isStarsEmptyDataViewVisible_Initial);
             Assert.IsFalse(isStarsEmptyDataViewVisible_DuringFetchDataCommand);
@@ -138,17 +139,20 @@ namespace GitTrends.UnitTests
 
             Assert.IsFalse(isViewsClonesChartVisible_Initial);
             Assert.IsFalse(isViewsClonesChartVisible_DuringFetchDataCommand);
-            Assert.IsTrue(isViewsClonesChartVisible_Final);
+            if (shouldIncludeViewsClonesData)
+                Assert.IsTrue(isViewsClonesChartVisible_Final);
+            else
+                Assert.IsFalse(isViewsClonesChartVisible_Final);
 
             Assert.IsFalse(isStarsChartVisible_Initial);
             Assert.IsFalse(isStarsChartVisible_DuringFetchDataCommand);
             Assert.IsTrue(isStarsChartVisible_Final);
 
             Assert.AreEqual(TrendsViewModel.MinumumChartHeight, dailyViewsClonesMaxValue_Initial);
-            Assert.Greater(dailyViewsClonesMaxValue_Final, dailyViewsClonesMaxValue_Initial);
+            Assert.GreaterOrEqual(dailyViewsClonesMaxValue_Final, dailyViewsClonesMaxValue_Initial);
 
             Assert.AreEqual(TrendsViewModel.MinumumChartHeight, maxDailyStarsValue_Initial);
-            Assert.Greater(maxDailyStarsValue_Final, maxDailyStarsValue_Initial);
+            Assert.GreaterOrEqual(maxDailyStarsValue_Final, maxDailyStarsValue_Initial);
 
             Assert.AreEqual(0, dailyViewsClonesMinValue_Initial);
             Assert.AreEqual(dailyViewsClonesMinValue_Final, dailyViewsClonesMinValue_Initial);

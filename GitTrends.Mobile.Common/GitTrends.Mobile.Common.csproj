@@ -504,6 +504,10 @@
         <EmbeddedResource Update="Constants\AboutPageConstants.en.resx">
             <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Condition=" '$(EnableDefaultEmbeddedResourceItems)' == 'true' " Update="Constants\ThemeConstants.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+          <LastGenOutput>ThemeConstants.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">

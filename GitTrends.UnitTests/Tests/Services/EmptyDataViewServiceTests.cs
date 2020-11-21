@@ -179,12 +179,12 @@ namespace GitTrends.UnitTests
             Assert.Throws<NotSupportedException>(() => EmptyDataViewService.GetViewsClonesTitleText(refreshState));
         }
 
-        [TestCase(RefreshState.Uninitialized, 0, "Test Not Completed")]
-        [TestCase(RefreshState.Uninitialized, 1, "Test Not Completed")]
-        [TestCase(RefreshState.Uninitialized, 2, "Test Not Completed")]
-        [TestCase(RefreshState.Succeeded, 0, "Test Not Completed")]
-        [TestCase(RefreshState.Succeeded, 1, "Test Not Completed")]
-        [TestCase(RefreshState.Succeeded, 2, "Test Not Completed")]
+        [TestCase(RefreshState.Uninitialized, 0, "Data not gathered")]
+        [TestCase(RefreshState.Uninitialized, 1, "Data not gathered")]
+        [TestCase(RefreshState.Uninitialized, 2, "Data not gathered")]
+        [TestCase(RefreshState.Succeeded, 0, "No Stars Yet")]
+        [TestCase(RefreshState.Succeeded, 1, "Congratulations!")]
+        [TestCase(RefreshState.Succeeded, 2, "No Stars Yet")]
         [TestCase(RefreshState.LoginExpired, 0, "Please login again")]
         [TestCase(RefreshState.LoginExpired, 1, "Please login again")]
         [TestCase(RefreshState.LoginExpired, 2, "Please login again")]
@@ -263,7 +263,7 @@ namespace GitTrends.UnitTests
         [TestCase(RefreshState.Uninitialized, 1, "EmptyStarChart")]
         [TestCase(RefreshState.Uninitialized, 2, "EmptyStarChart")]
         [TestCase(RefreshState.Succeeded, 0, "EmptyStarChart")]
-        [TestCase(RefreshState.Succeeded, 1, "1StarEmptyChartImage")]
+        [TestCase(RefreshState.Succeeded, 1, "EmptyOneStarChart")]
         [TestCase(RefreshState.Succeeded, 2, "EmptyStarChart")]
         [TestCase(RefreshState.LoginExpired, 0, "EmptyStarChart")]
         [TestCase(RefreshState.LoginExpired, 1, "EmptyStarChart")]
