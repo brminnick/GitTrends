@@ -24,7 +24,6 @@ namespace GitTrends.iOS
             Sharpnado.MaterialFrame.iOS.iOSMaterialFrameRenderer.Init();
 
             Syncfusion.SfChart.XForms.iOS.Renderers.SfChartRenderer.Init();
-            Syncfusion.XForms.iOS.Buttons.SfSegmentedControlRenderer.Init();
 
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init();
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageSourceHandler();
