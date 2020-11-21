@@ -29,6 +29,7 @@ namespace GitTrends.UnitTests
         [TestCase(typeof(SettingsPageConstants))]
         [TestCase(typeof(SortingConstants))]
         [TestCase(typeof(SplashScreenPageConstants))]
+        [TestCase(typeof(ThemeConstants))]
         [TestCase(typeof(TrendsChartTitleConstants))]
         [TestCase(typeof(WelcomePageConstants))]
         public void ConfirmCulturesExists(Type resxType)
@@ -63,6 +64,7 @@ namespace GitTrends.UnitTests
         [TestCase(typeof(SettingsPageConstants))]
         [TestCase(typeof(SortingConstants))]
         [TestCase(typeof(SplashScreenPageConstants))]
+        [TestCase(typeof(ThemeConstants))]
         [TestCase(typeof(TrendsChartTitleConstants))]
         [TestCase(typeof(WelcomePageConstants))]
         public void ConfirmTranslationsAreComplete(Type resxType)

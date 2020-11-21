@@ -203,7 +203,7 @@ namespace GitTrends.UITests
         }
 
         [Test]
-        public async Task VerifyChartSettingsOptions()
+        public async Task VerifyChartPicker()
         {
             //Arrange
 

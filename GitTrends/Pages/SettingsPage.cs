@@ -45,8 +45,6 @@ namespace GitTrends
                     RowDefinitions = Rows.Define(
                         (Row.GitHubUser, AbsoluteGridLength(GitHubUserView.TotalHeight)),
                         (Row.GitHubUserSeparator, AbsoluteGridLength(separatorRowHeight)),
-                        (Row.About, AbsoluteGridLength(settingsRowHeight)),
-                        (Row.AboutSeparator, AbsoluteGridLength(separatorRowHeight)),
                         (Row.Login, AbsoluteGridLength(settingsRowHeight)),
                         (Row.LoginSeparator, AbsoluteGridLength(separatorRowHeight)),
                         (Row.Notifications, AbsoluteGridLength(settingsRowHeight)),
@@ -55,14 +53,17 @@ namespace GitTrends
                         (Row.ThemeSeparator, AbsoluteGridLength(separatorRowHeight)),
                         (Row.Language, AbsoluteGridLength(settingsRowHeight)),
                         (Row.LanguageSeparator, AbsoluteGridLength(separatorRowHeight)),
-                        (Row.PreferredCharts, AbsoluteGridLength(80)),
+                        (Row.PreferredCharts, AbsoluteGridLength(settingsRowHeight)),
+                        (Row.PreferredChartsSeparator, AbsoluteGridLength(separatorRowHeight)),
+                        (Row.About, AbsoluteGridLength(settingsRowHeight)),
+                        (Row.AboutSeparator, AbsoluteGridLength(separatorRowHeight)),
                         (Row.CopyrightPadding, AbsoluteGridLength(20)),
                         (Row.Copyright, Star)),
 
                     ColumnDefinitions = Columns.Define(
                         (Column.Icon, AbsoluteGridLength(24)),
-                        (Column.Title, StarGridLength(5)),
-                        (Column.Button, StarGridLength(3))),
+                        (Column.Title, Star),
+                        (Column.Button, AbsoluteGridLength(100))),
 
                     Children =
                     {
@@ -71,19 +72,6 @@ namespace GitTrends
 
                         new Separator()
                             .Row(Row.GitHubUserSeparator).ColumnSpan(All<Column>()),
-
-                        new AboutRowTappableView(aboutRowTapGesture)
-                            .Row(Row.About).ColumnSpan(All<Column>()),
-                        new AboutRowSvg("about.svg", getSVGIconColor)
-                            .Row(Row.About).Column(Column.Icon),
-                        new AboutTitleLabel(SettingsPageAutomationIds.AboutTitleLabel)
-                            .Row(Row.About).Column(Column.Title)
-                            .Bind(Label.TextProperty, nameof(SettingsViewModel.AboutLabelText)),
-                        new AboutRowSvg("right_arrow.svg", getSVGIconColor).End()
-                            .Row(Row.About).Column(Column.Button),
-
-                        new Separator()
-                            .Row(Row.AboutSeparator).ColumnSpan(All<Column>()),
 
                         new LoginRowTappableView(loginRowTapGesture)
                             .Row(Row.Login).ColumnSpan(All<Column>()),
@@ -134,8 +122,31 @@ namespace GitTrends
                         new Separator()
                             .Row(Row.LanguageSeparator).ColumnSpan(All<Column>()),
 
-                        new PreferredChartsView(settingsViewModel, mainThread)
-                            .Row(Row.PreferredCharts).ColumnSpan(All<Column>()),
+                        new SvgImage("chart.svg", getSVGIconColor)
+                            .Row(Row.PreferredCharts).Column(Column.Icon),
+                        new SettingsTitleLabel(SettingsPageAutomationIds.PreferredChartTitleLabel)
+                            .Row(Row.PreferredCharts).Column(Column.Title)
+                            .Bind(Label.TextProperty, nameof(SettingsViewModel.PreferredChartsLabelText)),
+                        new SettingsPicker(SettingsPageAutomationIds.PreferredChartsPicker, 100).Assign(out Picker preferredChartsPicker)
+                            .Row(Row.PreferredCharts).Column(Column.Button)
+                            .Bind(Picker.ItemsSourceProperty, nameof(SettingsViewModel.PreferredChartsItemsSource))
+                            .Bind(Picker.SelectedIndexProperty, nameof(SettingsViewModel.PreferredChartsSelectedIndex)),
+
+                        new Separator()
+                            .Row(Row.PreferredChartsSeparator).ColumnSpan(All<Column>()),
+
+                        new AboutRowTappableView(aboutRowTapGesture)
+                            .Row(Row.About).ColumnSpan(All<Column>()),
+                        new AboutRowSvg("about.svg", getSVGIconColor)
+                            .Row(Row.About).Column(Column.Icon),
+                        new AboutTitleLabel(SettingsPageAutomationIds.AboutTitleLabel)
+                            .Row(Row.About).Column(Column.Title)
+                            .Bind(Label.TextProperty, nameof(SettingsViewModel.AboutLabelText)),
+                        new AboutRowSvg("right_arrow.svg", getSVGIconColor).End()
+                            .Row(Row.About).Column(Column.Button),
+
+                        new Separator()
+                            .Row(Row.AboutSeparator).ColumnSpan(All<Column>()),
 
                         new CopyrightLabel()
                             .Row(Row.Copyright).ColumnSpan(All<Column>())
@@ -148,7 +159,7 @@ namespace GitTrends
             static Color getSVGIconColor() => (Color)Application.Current.Resources[nameof(BaseTheme.IconColor)];
         }
 
-        enum Row { GitHubUser, GitHubUserSeparator, About, AboutSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, Language, LanguageSeparator, PreferredCharts, CopyrightPadding, Copyright }
+        enum Row { GitHubUser, GitHubUserSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, Language, LanguageSeparator, PreferredCharts, PreferredChartsSeparator, About, AboutSeparator, CopyrightPadding, Copyright }
         enum Column { Icon, Title, Button }
 
         protected override void OnAppearing()
