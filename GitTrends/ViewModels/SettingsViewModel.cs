@@ -48,9 +48,6 @@ namespace GitTrends
         int _languagePickerSelectedIndex;
         int _preferredChartsSelectedIndex;
 
-        int _userSetPreferredChartsIndex;
-        int _userSetThemePickerIndex;
-
         public SettingsViewModel(IMainThread mainThread,
                                     ThemeService themeService,
                                     LanguageService languageService,
@@ -83,13 +80,13 @@ namespace GitTrends
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
             GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
+            InitializeText();
+
             ThemePickerSelectedIndex = (int)themeService.Preference;
             PreferredChartsSelectedIndex = (int)trendsChartSettingsService.CurrentTrendsChartOption;
             LanguagePickerSelectedIndex = CultureConstants.CulturePickerOptions.Keys.ToList().IndexOf(languageService.PreferredLanguage ?? string.Empty);
 
             initializeIsRegisterForNotificationsSwitch().SafeFireAndForget();
-
-            InitializeText();
 
             async Task initializeIsRegisterForNotificationsSwitch() => IsRegisterForNotificationsSwitchToggled = notificationService.ShouldSendNotifications && await notificationService.AreNotificationsEnabled().ConfigureAwait(false);
         }
@@ -232,19 +229,27 @@ namespace GitTrends
         public int ThemePickerSelectedIndex
         {
             get => _themePickerSelectedIndex;
-            set => SetProperty(ref _themePickerSelectedIndex, value, () => _themeService.Preference = (PreferredTheme)value);
+            set => SetProperty(ref _themePickerSelectedIndex, value, () =>
+            {
+                if (Enum.IsDefined(typeof(PreferredTheme), value))
+                    _themeService.Preference = (PreferredTheme)value;
+            });
+        }
+
+        public int PreferredChartsSelectedIndex
+        {
+            get => _preferredChartsSelectedIndex;
+            set => SetProperty(ref _preferredChartsSelectedIndex, value, () =>
+            {
+                if (Enum.IsDefined(typeof(TrendsChartOption), value))
+                    _trendsChartSettingsService.CurrentTrendsChartOption = (TrendsChartOption)value;
+            });
         }
 
         public int LanguagePickerSelectedIndex
         {
             get => _languagePickerSelectedIndex;
             set => SetProperty(ref _languagePickerSelectedIndex, value, () => _languageService.PreferredLanguage = CultureConstants.CulturePickerOptions.Skip(value).First().Key);
-        }
-
-        public int PreferredChartsSelectedIndex
-        {
-            get => _preferredChartsSelectedIndex;
-            set => SetProperty(ref _preferredChartsSelectedIndex, value);
         }
 
         public bool IsRegisterForNotificationsSwitchEnabled
@@ -360,8 +365,9 @@ namespace GitTrends
 
         void InitializeText()
         {
-            var themePickerSelectedIndex = ThemePickerSelectedIndex;
-            var preferredChartsSelectedIndex = PreferredChartsSelectedIndex;
+            //Changing the Picker.ItemSource resets the Selected Index to -1
+            var originalThemePickerIndex = ThemePickerSelectedIndex;
+            var originalPreferredChartsIndex = PreferredChartsSelectedIndex;
 
             TitleText = PageTitles.SettingsPage;
             AboutLabelText = AboutPageConstants.About;
@@ -375,8 +381,8 @@ namespace GitTrends
             ThemePickerItemsSource = ThemePickerConstants.ThemePickerTitles.Values.ToList();
             PreferredChartsItemsSource = TrendsChartConstants.TrendsChartTitles.Values.ToList();
 
-            ThemePickerSelectedIndex = themePickerSelectedIndex;
-            PreferredChartsSelectedIndex = preferredChartsSelectedIndex;
+            ThemePickerSelectedIndex = originalThemePickerIndex;
+            PreferredChartsSelectedIndex = originalPreferredChartsIndex;
 
             SetGitHubValues();
 

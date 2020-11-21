@@ -62,8 +62,8 @@ namespace GitTrends
 
                     ColumnDefinitions = Columns.Define(
                         (Column.Icon, AbsoluteGridLength(24)),
-                        (Column.Title, StarGridLength(5)),
-                        (Column.Button, StarGridLength(3))),
+                        (Column.Title, Star),
+                        (Column.Button, AbsoluteGridLength(100))),
 
                     Children =
                     {
@@ -127,10 +127,10 @@ namespace GitTrends
                         new SettingsTitleLabel(SettingsPageAutomationIds.PreferredChartSettingsLabel)
                             .Row(Row.PreferredCharts).Column(Column.Title)
                             .Bind(Label.TextProperty, nameof(SettingsViewModel.PreferredChartsLabelText)),
-                        new SettingsPicker(SettingsPageAutomationIds.PreferredChartSettingsControl, 150).Assign(out Picker preferredChartsPicker)
+                        new SettingsPicker(SettingsPageAutomationIds.PreferredChartSettingsControl, 100).Assign(out Picker preferredChartsPicker)
                             .Row(Row.PreferredCharts).Column(Column.Button)
                             .Bind(Picker.ItemsSourceProperty, nameof(SettingsViewModel.PreferredChartsItemsSource))
-                            .Bind(Picker.SelectedItemProperty, nameof(SettingsViewModel.PreferredChartsSelectedIndex)),
+                            .Bind(Picker.SelectedIndexProperty, nameof(SettingsViewModel.PreferredChartsSelectedIndex)),
 
                         new Separator()
                             .Row(Row.PreferredChartsSeparator).ColumnSpan(All<Column>()),
