@@ -124,10 +124,10 @@ namespace GitTrends
 
                         new SvgImage("chart.svg", getSVGIconColor)
                             .Row(Row.PreferredCharts).Column(Column.Icon),
-                        new SettingsTitleLabel(SettingsPageAutomationIds.PreferredChartSettingsLabel)
+                        new SettingsTitleLabel(SettingsPageAutomationIds.PreferredChartTitleLabel)
                             .Row(Row.PreferredCharts).Column(Column.Title)
                             .Bind(Label.TextProperty, nameof(SettingsViewModel.PreferredChartsLabelText)),
-                        new SettingsPicker(SettingsPageAutomationIds.PreferredChartSettingsControl, 100).Assign(out Picker preferredChartsPicker)
+                        new SettingsPicker(SettingsPageAutomationIds.PreferredChartsPicker, 100).Assign(out Picker preferredChartsPicker)
                             .Row(Row.PreferredCharts).Column(Column.Button)
                             .Bind(Picker.ItemsSourceProperty, nameof(SettingsViewModel.PreferredChartsItemsSource))
                             .Bind(Picker.SelectedIndexProperty, nameof(SettingsViewModel.PreferredChartsSelectedIndex)),

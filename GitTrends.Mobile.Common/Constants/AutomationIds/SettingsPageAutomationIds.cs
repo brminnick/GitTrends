@@ -12,8 +12,8 @@
         #endregion
 
         #region PreferredChartsView
-        public const string PreferredChartSettingsLabel = nameof(SettingsPageAutomationIds) + nameof(PreferredChartSettingsLabel);
-        public const string PreferredChartSettingsControl = nameof(SettingsPageAutomationIds) + nameof(PreferredChartSettingsControl);
+        public const string PreferredChartTitleLabel = nameof(SettingsPageAutomationIds) + nameof(PreferredChartTitleLabel);
+        public const string PreferredChartsPicker = nameof(SettingsPageAutomationIds) + nameof(PreferredChartsPicker);
         #endregion
 
         #region CopyrightLabel
