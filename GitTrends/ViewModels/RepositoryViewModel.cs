@@ -286,7 +286,7 @@ namespace GitTrends
             SetRepositoriesCollection(updatedRepositoryList, _searchBarText);
 
             if (!_gitHubUserService.IsDemoUser)
-                await _repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
+                await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
         }
 
         async ValueTask SaveRepositoriesToDatabase(IEnumerable<Repository> repositories)
