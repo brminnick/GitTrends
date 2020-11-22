@@ -21,7 +21,6 @@ namespace GitTrends
     public class RepositoryViewModel : BaseViewModel
     {
         readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
-        readonly WeakEventManager<Repository> _repositoryTappedEventManager = new();
 
         readonly ImageCachingService _imageService;
         readonly GitHubUserService _gitHubUserService;
@@ -75,7 +74,6 @@ namespace GitTrends
 
             PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(gitHubUserService.Alias));
 
-            RepositoryTappedCommand = new Command<Repository>(repository => OnRepositoryTapped(repository));
             ToggleIsFavoriteCommand = new AsyncValueCommand<Repository>(repository => ExecuteToggleIsFavoriteCommand(repository));
 
             NotificationService.SortingOptionRequested += HandleSortingOptionRequested;
@@ -91,15 +89,8 @@ namespace GitTrends
             remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
         }
 
-        public event EventHandler<Repository> RepositoryTapped
-        {
-            add => _repositoryTappedEventManager.AddEventHandler(value);
-            remove => _repositoryTappedEventManager.RemoveEventHandler(value);
-        }
-
         public ICommand SortRepositoriesCommand { get; }
         public ICommand FilterRepositoriesCommand { get; }
-        public Command<Repository> RepositoryTappedCommand { get; }
         public IAsyncCommand PullToRefreshCommand { get; }
         public AsyncValueCommand<Repository> ToggleIsFavoriteCommand { get; }
 
@@ -391,8 +382,6 @@ namespace GitTrends
         void HandleGitHubAuthenticationServiceLoggedOut(object sender, EventArgs e) => UpdateListForLoggedOutUser();
 
         void HandleSortingOptionRequested(object sender, SortingOption sortingOption) => SortRepositoriesCommand.Execute(sortingOption);
-
-        void OnRepositoryTapped(in Repository repository) => _repositoryTappedEventManager.RaiseEvent(this, repository, nameof(RepositoryTapped));
 
         void OnPullToRefreshFailed(PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs)
         {

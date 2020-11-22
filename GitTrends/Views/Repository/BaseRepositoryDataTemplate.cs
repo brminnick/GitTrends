@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Sharpnado.MaterialFrame;
@@ -22,25 +23,33 @@ namespace GitTrends
         const int _statsColumnSize = 40;
         const double _statisticsRowHeight = StatisticsLabel.StatisticsFontSize + 4;
         const double _emojiColumnSize = _statisticsRowHeight;
+
         readonly static bool _isSmallScreen = ScreenWidth <= 360;
         readonly static double _circleImageHeight = _isSmallScreen ? 52 : 62;
+
+        readonly static WeakEventManager _tappedWeakEventManager = new();
 
         protected BaseRepositoryDataTemplate(IEnumerable<View> parentDataTemplateChildren, RepositoryViewModel repositoryViewModel, Repository repository) : base(() => new CardView(parentDataTemplateChildren, repositoryViewModel, repository))
         {
 
         }
 
+        public static event EventHandler Tapped
+        {
+            add => _tappedWeakEventManager.AddEventHandler(value);
+            remove => _tappedWeakEventManager.RemoveEventHandler(value);
+        }
+
         protected enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
         protected enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3 }
 
-        class CardView : ExtendedSwipeView
+        class CardView : ExtendedSwipeView<Repository>
         {
             public CardView(in IEnumerable<View> dataTemplateChildren, in RepositoryViewModel repositoryViewModel, in Repository repository)
             {
-                BackgroundColor = Color.Transparent;
+                Tapped += HandleTapped;
 
-                TappedCommand = repositoryViewModel.RepositoryTappedCommand;
-                TappedCommandParameter = repository;
+                BackgroundColor = Color.Transparent;
 
                 RightItems = new SwipeItems
                 {
@@ -76,6 +85,8 @@ namespace GitTrends
 
             enum CardViewRow { TopPadding, Card, BottomPadding }
             enum CardViewColumn { LeftPadding, Card, RightPadding }
+
+            void HandleTapped(object sender, EventArgs e) => _tappedWeakEventManager.RaiseEvent(this, e, nameof(BaseRepositoryDataTemplate.Tapped));
 
             class CardViewFrame : MaterialFrame
             {
