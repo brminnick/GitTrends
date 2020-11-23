@@ -40,7 +40,7 @@ namespace GitTrends.UnitTests
             mobileReferringSites_Initial = referringSitesViewModel.MobileReferringSitesList;
             emptyDataViewDescription_Initial = referringSitesViewModel.EmptyDataViewDescription;
 
-            var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((GitTrendsRepoOwner, GitTrendsRepoName, $"https://github.com/{GitTrendsRepoOwner}/{GitTrendsRepoName}", CancellationToken.None));
+            var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, $"https://github.com/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", CancellationToken.None));
 
             isEmptyDataViewEnabled_DuringRefresh = referringSitesViewModel.IsEmptyDataViewEnabled;
             mobileReferringSites_DuringRefresh = referringSitesViewModel.MobileReferringSitesList;

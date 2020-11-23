@@ -36,6 +36,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<GitHubAuthenticationService>();
             services.AddSingleton<GitHubGraphQLApiService>();
             services.AddSingleton<GitHubUserService>();
+            services.AddSingleton<GitTrendsContributorsService>();
             services.AddSingleton<FavIconService>();
             services.AddSingleton<FirstRunService>();
             services.AddSingleton<ImageCachingService>();

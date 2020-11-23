@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
+using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
@@ -33,7 +34,7 @@ namespace GitTrends.UnitTests
             isEmptyDataViewEnabled_Initial = referringSitesViewModel.IsEmptyDataViewEnabled;
             emptyDataViewDescription_Initial = referringSitesViewModel.EmptyDataViewDescription;
 
-            var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((GitTrendsRepoOwner, GitTrendsRepoName, $"https://github.com/{GitTrendsRepoOwner}/{GitTrendsRepoName}", CancellationToken.None));
+            var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, $"https://github.com/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", CancellationToken.None));
 
             isEmptyDataViewEnabled_DuringRefresh = referringSitesViewModel.IsEmptyDataViewEnabled;
             mobileReferringSites_DuringRefresh = referringSitesViewModel.MobileReferringSitesList;
@@ -97,7 +98,7 @@ namespace GitTrends.UnitTests
             mobileReferringSites_Initial = referringSitesViewModel.MobileReferringSitesList;
             emptyDataViewDescription_Initial = referringSitesViewModel.EmptyDataViewDescription;
 
-            var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((GitTrendsRepoOwner, GitTrendsRepoName, $"https://github.com/{GitTrendsRepoOwner}/{GitTrendsRepoName}", CancellationToken.None));
+            var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, $"https://github.com/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", CancellationToken.None));
 
             isEmptyDataViewEnabled_DuringRefresh = referringSitesViewModel.IsEmptyDataViewEnabled;
             mobileReferringSites_DuringRefresh = referringSitesViewModel.MobileReferringSitesList;

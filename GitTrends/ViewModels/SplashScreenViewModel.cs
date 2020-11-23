@@ -12,13 +12,14 @@ namespace GitTrends
     {
         readonly static WeakEventManager<InitializationCompleteEventArgs> _initializationCompletedEventManager = new();
 
-        public SplashScreenViewModel(SyncfusionService syncfusionService,
-                                        MediaElementService mediaElementService,
+        public SplashScreenViewModel(IMainThread mainThread,
                                         IAnalyticsService analyticsService,
+                                        SyncfusionService syncfusionService,
+                                        MediaElementService mediaElementService,
                                         NotificationService notificationService,
-                                        IMainThread mainThread) : base(analyticsService, mainThread)
+                                        GitTrendsContributorsService gitTrendsContributorsService) : base(analyticsService, mainThread)
         {
-            InitializeAppCommand = new AsyncCommand(() => ExecuteInitializeAppCommand(syncfusionService, mediaElementService, notificationService));
+            InitializeAppCommand = new AsyncCommand(() => ExecuteInitializeAppCommand(syncfusionService, mediaElementService, notificationService, gitTrendsContributorsService));
         }
 
         public static event EventHandler<InitializationCompleteEventArgs> InitializationCompleted
@@ -29,22 +30,25 @@ namespace GitTrends
 
         public IAsyncCommand InitializeAppCommand { get; }
 
-        async Task ExecuteInitializeAppCommand(SyncfusionService syncFusionService, MediaElementService mediaElementService, NotificationService notificationService)
+        async Task ExecuteInitializeAppCommand(SyncfusionService syncFusionService, MediaElementService mediaElementService, NotificationService notificationService, GitTrendsContributorsService gitTrendsContributorsService)
         {
             bool isInitializationSuccessful = false;
 
             try
             {
                 var initializeSyncfusionTask = syncFusionService.Initialize(CancellationToken.None);
-                var intializeOnboardingChartValueTask = mediaElementService.InitializeOnboardingChart(CancellationToken.None);
                 var initializeNotificationServiceTask = notificationService.Initialize(CancellationToken.None);
+                var intializeOnboardingChartValueTask = mediaElementService.InitializeOnboardingChart(CancellationToken.None);
+                var initializeGitTrendsContributorsTask = gitTrendsContributorsService.Initialize(CancellationToken.None);
 #if DEBUG
                 initializeSyncfusionTask.SafeFireAndForget(ex => AnalyticsService.Report(ex));
                 initializeNotificationServiceTask.SafeFireAndForget(ex => AnalyticsService.Report(ex));
 #else
-                await Task.WhenAll(initializeNotificationServiceTask, initializeSyncfusionTask).ConfigureAwait(false);
+                await initializeSyncfusionTask.ConfigureAwait(false);
+                await initializeNotificationServiceTask.ConfigureAwait(false);
 #endif
                 await intializeOnboardingChartValueTask.ConfigureAwait(false);
+                await initializeGitTrendsContributorsTask.ConfigureAwait(false);
 
                 isInitializationSuccessful = true;
             }

@@ -30,7 +30,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Repository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryClonesModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryConnection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryConnectionResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryViewsModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\User.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Base\BaseDailyModel.cs" />
@@ -62,7 +61,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitHubViewerResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\StarGazerQueryResponse.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\StarGazers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GraphQLException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryConnectionResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\StarGazers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryContributor.cs" />
   </ItemGroup>
 </Project>

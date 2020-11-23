@@ -133,7 +133,7 @@ namespace GitTrends.UnitTests
             //Assert
             Assert.GreaterOrEqual(300, repositories.Count);
 
-            Assert.IsTrue(repositories.Any(x => x.Name is GitTrendsRepoName));
+            Assert.IsTrue(repositories.Any(x => x.Name is GitHubConstants.GitTrendsRepoName));
             Assert.IsTrue(repositories.Any(x => x.OwnerLogin == gitHubUserService.Alias));
             Assert.IsTrue(repositories.Any(x => x.OwnerAvatarUrl is AuthenticatedGitHubUserAvatarUrl));
 
@@ -152,7 +152,7 @@ namespace GitTrends.UnitTests
             var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
             //Act
-            var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetRepository(gitHubUserService.Alias, GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
+            var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetRepository(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
             //Assert
             Assert.AreEqual(HttpStatusCode.Unauthorized, exception.StatusCode);
@@ -168,7 +168,7 @@ namespace GitTrends.UnitTests
 
             //Act
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-            var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetRepository(gitHubUserService.Alias, GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
+            var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetRepository(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
             //Assert
             Assert.AreEqual(HttpStatusCode.Unauthorized, exception.StatusCode);
@@ -189,7 +189,7 @@ namespace GitTrends.UnitTests
             //Act
             beforeDownload = DateTimeOffset.UtcNow;
 
-            repository = await githubGraphQLApiService.GetRepository(GitTrendsRepoOwner, GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
+            repository = await githubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 
             afterDownload = DateTimeOffset.UtcNow;
 
@@ -197,8 +197,8 @@ namespace GitTrends.UnitTests
             Assert.Greater(repository.StarCount, 150);
             Assert.Greater(repository.ForkCount, 30);
 
-            Assert.AreEqual(GitTrendsRepoName, repository.Name);
-            Assert.AreEqual(GitTrendsRepoOwner, repository.OwnerLogin);
+            Assert.AreEqual(GitHubConstants.GitTrendsRepoName, repository.Name);
+            Assert.AreEqual(GitHubConstants.GitTrendsRepoOwner, repository.OwnerLogin);
             Assert.AreEqual(AuthenticatedGitHubUserAvatarUrl, repository.OwnerAvatarUrl);
 
             Assert.AreEqual(0, repository.TotalClones);

@@ -106,7 +106,7 @@ namespace GitTrends
             return areNotificationsEnabled ?? false;
         }
 
-        public async Task Initialize(CancellationToken cancellationToken)
+        public async ValueTask Initialize(CancellationToken cancellationToken)
         {
             var notificationHubInformation = await GetNotificationHubInformation().ConfigureAwait(false);
 
