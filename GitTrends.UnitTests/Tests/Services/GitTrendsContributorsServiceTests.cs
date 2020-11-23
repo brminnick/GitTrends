@@ -16,6 +16,7 @@ namespace GitTrends.UnitTests
             //Arrange
             IReadOnlyList<Contributor> contributors_Initial, contributors_Final;
             DateTimeOffset beforeTest, afterTest;
+
             var gitTrendsContributorsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsContributorsService>();
 
             //Act

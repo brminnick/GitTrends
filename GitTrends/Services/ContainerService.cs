@@ -66,6 +66,7 @@ namespace GitTrends
 #endif
 
             //Register ViewModels
+            builder.RegisterType<AboutViewModel>().AsSelf();
             builder.RegisterType<OnboardingViewModel>().AsSelf();
             builder.RegisterType<ReferringSitesViewModel>().AsSelf();
             builder.RegisterType<RepositoryViewModel>().AsSelf();

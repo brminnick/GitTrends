@@ -15,14 +15,17 @@ namespace GitTrends
         readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly ImageCachingService _imageCachingService;
 
         public GitTrendsContributorsService(IPreferences preferences,
                                                 IAnalyticsService analyticsService,
-                                                GitHubApiV3Service gitHubApiV3Service)
+                                                GitHubApiV3Service gitHubApiV3Service,
+                                                ImageCachingService imageCachingService)
         {
             _preferences = preferences;
             _analyticsService = analyticsService;
             _gitHubApiV3Service = gitHubApiV3Service;
+            _imageCachingService = imageCachingService;
         }
 
         public IReadOnlyList<Contributor> Contributors
@@ -45,8 +48,11 @@ namespace GitTrends
                 try
                 {
                     Contributors = await _gitHubApiV3Service.GetGitTrendsContributors(cancellationToken).ConfigureAwait(false);
+
+                    foreach (var contributor in Contributors)
+                        _imageCachingService.PreloadImage(contributor.AvatarUrl).SafeFireAndForget(ex => _analyticsService.Report(ex));
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     _analyticsService.Report(e);
                 }

@@ -116,9 +116,12 @@ namespace GitTrends
                             (Column.Emoji3, AbsoluteGridLength(_emojiColumnSize)),
                             (Column.Statistic3, AbsoluteGridLength(_statsColumnSize)));
 
-                        Children.Add(new AvatarImage(repository.OwnerAvatarUrl)
+                        Children.Add(new AvatarImage(repository.OwnerAvatarUrl, _circleImageHeight)
                                         .Row(Row.Title).Column(Column.Avatar).RowSpan(2)
-                                        .Bind(CircleImage.ImageSourceProperty, nameof(Repository.OwnerAvatarUrl)));
+                                        .Bind(CircleImage.ImageSourceProperty, nameof(Repository.OwnerAvatarUrl))
+                                        .DynamicResources((BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
+                                                            (CircleImage.ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
+                                                            (CircleImage.LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource))));
 
                         Children.Add(new NameLabel(repository.Name)
                                         .Row(Row.Title).Column(Column.Trending).ColumnSpan(7));
@@ -141,22 +144,6 @@ namespace GitTrends
                         foreach (var child in dataTemplateChildren)
                         {
                             Children.Add(child);
-                        }
-                    }
-
-                    class AvatarImage : CircleImage
-                    {
-                        public AvatarImage(in string avatarUrl)
-                        {
-                            ImageSource = avatarUrl;
-                            WidthRequest = _circleImageHeight;
-
-                            Border = new Border { Thickness = 1 };
-
-                            this.Center();
-                            this.DynamicResources((BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
-                                                    (ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
-                                                    (LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)));
                         }
                     }
 
