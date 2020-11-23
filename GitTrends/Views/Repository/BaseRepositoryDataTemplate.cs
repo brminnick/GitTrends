@@ -128,15 +128,13 @@ namespace GitTrends
                             (Column.Statistic3, AbsoluteGridLength(_statsColumnSize)));
 
                         Children.Add(new AvatarImage(repository.OwnerAvatarUrl)
-                                        .Row(Row.Title).Column(Column.Avatar).RowSpan(2)
-                                        .Bind(CircleImage.ImageSourceProperty, nameof(Repository.OwnerAvatarUrl)));
+                                        .Row(Row.Title).Column(Column.Avatar).RowSpan(2));
 
                         Children.Add(new NameLabel(repository.Name)
                                         .Row(Row.Title).Column(Column.Trending).ColumnSpan(7));
 
                         Children.Add(new DescriptionLabel(repository.Description)
-                                        .Row(Row.Description).Column(Column.Trending).ColumnSpan(7)
-                                        .Bind(Label.TextProperty, nameof(Repository.Description)));
+                                        .Row(Row.Description).Column(Column.Trending).ColumnSpan(7));
 
                         Children.Add(new Separator()
                                         .Row(Row.Separator).Column(Column.Trending).ColumnSpan(7));
