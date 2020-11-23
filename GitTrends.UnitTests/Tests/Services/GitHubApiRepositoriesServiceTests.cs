@@ -160,7 +160,7 @@ namespace GitTrends.UnitTests
             var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
             //Act
-            starGazers = await gitHubGraphQLApiService.GetStarGazers(GitTrendsRepoName, GitTrendsRepoOwner, CancellationToken.None).ConfigureAwait(false); ;
+            starGazers = await gitHubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None).ConfigureAwait(false); ;
 
             //Assert
             Assert.NotNull(starGazers);
@@ -197,7 +197,7 @@ namespace GitTrends.UnitTests
 
             //Act
             gitHubUserService.InvalidateToken();
-            var apiException = Assert.ThrowsAsync<ApiException>(() => gitHubGraphQLApiService.GetStarGazers(GitTrendsRepoName, GitTrendsRepoOwner, CancellationToken.None));
+            var apiException = Assert.ThrowsAsync<ApiException>(() => gitHubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None));
 
             //Assert
             Assert.AreEqual(HttpStatusCode.Unauthorized, apiException.StatusCode);

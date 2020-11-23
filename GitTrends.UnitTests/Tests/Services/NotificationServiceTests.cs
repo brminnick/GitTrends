@@ -21,7 +21,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             var title = NotificationConstants.TrendingRepositoriesNotificationTitle;
-            var message = NotificationService.CreateSingleRepositoryNotificationMessage(GitTrendsRepoName, GitTrendsRepoOwner);
+            var message = NotificationService.CreateSingleRepositoryNotificationMessage(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner);
 
             var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
 
@@ -36,7 +36,7 @@ namespace GitTrends.UnitTests
             //Arrange
             const int badgeCount = 1;
             var title = NotificationConstants.TrendingRepositoriesNotificationTitle;
-            var message = NotificationService.CreateSingleRepositoryNotificationMessage(GitTrendsRepoName, GitTrendsRepoOwner);
+            var message = NotificationService.CreateSingleRepositoryNotificationMessage(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner);
 
             var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
 

@@ -21,6 +21,8 @@ namespace GitTrends
             _gitHubUserService = gitHubUserService;
         }
 
+        public Task<List<Contributor>> GetGitTrendsContributors(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _githubApiClient.GetContributors(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName), cancellationToken);
+
         public async Task<RepositoryViewsResponseModel> GetRepositoryViewStatistics(string owner, string repo, CancellationToken cancellationToken)
         {
             if (_gitHubUserService.IsDemoUser)
