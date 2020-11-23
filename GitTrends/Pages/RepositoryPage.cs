@@ -39,10 +39,10 @@ namespace GitTrends
             _deepLinkingService = deepLinkingService;
 
             //Workaround for CollectionView.SelectionChanged firing when SwipeView is swiped
-            repositoryViewModel.RepositoryTapped += HandleRepositoryTapped;
 
             SearchBarTextChanged += HandleSearchBarTextChanged;
             RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
+            BaseRepositoryDataTemplate.Tapped += HandleRepositoryDataTemplateTapped;
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 
             this.SetBinding(TitleProperty, nameof(RepositoryViewModel.TitleText));
@@ -151,15 +151,18 @@ namespace GitTrends
             static bool isUserValid(in string accessToken, in string alias) => !string.IsNullOrWhiteSpace(accessToken) || !string.IsNullOrWhiteSpace(alias);
         }
 
-        async void HandleRepositoryTapped(object sender, Repository e)
+        async void HandleRepositoryDataTemplateTapped(object sender, EventArgs e)
         {
+            var view = (View)sender;
+            var repository = (Repository)view.BindingContext;
+
             AnalyticsService.Track("Repository Tapped", new Dictionary<string, string>
             {
-                { nameof(Repository) + nameof(Repository.OwnerLogin), e.OwnerLogin },
-                { nameof(Repository) + nameof(Repository.Name), e.Name }
+                { nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin },
+                { nameof(Repository) + nameof(Repository.Name), repository.Name }
             });
 
-            await NavigateToTrendsPage(e);
+            await NavigateToTrendsPage(repository);
         }
 
         Task NavigateToSettingsPage()

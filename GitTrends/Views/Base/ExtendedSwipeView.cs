@@ -5,9 +5,19 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class ExtendedSwipeView : SwipeView
+    class ExtendedSwipeView : BaseExtendedSwipeView<object?>
     {
-        public ExtendedSwipeView()
+    }
+
+    class ExtendedSwipeView<TBindingContext> : BaseExtendedSwipeView<TBindingContext>
+    {
+    }
+
+    abstract class BaseExtendedSwipeView<TBindingContext> : SwipeView
+    {
+        readonly WeakEventManager _tappedWeakEventManager = new();
+
+        public BaseExtendedSwipeView()
         {
             CloseRequested += OnCloseRequested;
             SwipeEnded += OnSwipeEnded;
@@ -18,8 +28,14 @@ namespace GitTrends
             GestureRecognizers.Add(tappedGestureRecognizer);
         }
 
-        public static readonly BindableProperty TappedCommandProperty = BindableProperty.Create(nameof(TappedCommand), typeof(ICommand), typeof(ExtendedSwipeView));
-        public static readonly BindableProperty TappedCommandParameterProperty = BindableProperty.Create(nameof(TappedCommandParameter), typeof(object), typeof(ExtendedSwipeView));
+        public static readonly BindableProperty TappedCommandProperty = BindableProperty.Create(nameof(TappedCommand), typeof(ICommand), typeof(BaseExtendedSwipeView<TBindingContext>));
+        public static readonly BindableProperty TappedCommandParameterProperty = BindableProperty.Create(nameof(TappedCommandParameter), typeof(object), typeof(BaseExtendedSwipeView<TBindingContext>));
+
+        public event EventHandler Tapped
+        {
+            add => _tappedWeakEventManager.AddEventHandler(value);
+            remove => _tappedWeakEventManager.RemoveEventHandler(value);
+        }
 
         public bool IsSwiped { get; private set; }
 
@@ -46,9 +62,14 @@ namespace GitTrends
         void HandleTapped(object sender, EventArgs e)
         {
             if (!IsSwiped)
+            {
+                OnTapped();
                 TappedCommand?.Execute(TappedCommandParameter);
+            }
             else
+            {
                 IsSwiped = false;
+            }
         }
 
         SwipeMode GetSwipeMode(SwipeDirection swipeDirection) => swipeDirection switch
@@ -59,5 +80,8 @@ namespace GitTrends
             SwipeDirection.Right => LeftItems.Mode,
             _ => throw new NotSupportedException()
         };
+
+        void OnTapped() =>
+            _tappedWeakEventManager.RaiseEvent(this, EventArgs.Empty, nameof(Tapped));
     }
 }
