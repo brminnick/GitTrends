@@ -5,6 +5,7 @@ using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
 using static GitTrends.MarkupExtensions;
+using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -33,7 +34,7 @@ namespace GitTrends
                             SelectionMode = SelectionMode.Single,
                             ItemTemplate = new ContributorDataTemplate(),
                             ItemsSource = ViewModel.GitTrendsContributors,
-                            ItemsLayout = new GridItemsLayout(XamarinFormsService.IsSmallScreen ? 4: 5, ItemsLayoutOrientation.Vertical)
+                            ItemsLayout = new GridItemsLayout(IsSmallScreen ? 4: 5, ItemsLayoutOrientation.Vertical)
                         }.Invoke(collectionView => collectionView.SelectionChanged += HandleContributorSelectionChanged)
                     }
                 }
