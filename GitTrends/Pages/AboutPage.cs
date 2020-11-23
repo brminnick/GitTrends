@@ -1,4 +1,5 @@
-﻿using GitTrends.Mobile.Common.Constants;
+﻿using System.Linq;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -10,10 +11,15 @@ namespace GitTrends
 {
     class AboutPage : BaseContentPage<AboutViewModel>
     {
+        readonly DeepLinkingService _deepLinkingService;
+
         public AboutPage(IMainThread mainThread,
                             AboutViewModel aboutViewModel,
-                            IAnalyticsService analyticsService) : base(aboutViewModel, analyticsService, mainThread)
+                            IAnalyticsService analyticsService,
+                            DeepLinkingService deepLinkingService) : base(aboutViewModel, analyticsService, mainThread)
         {
+            _deepLinkingService = deepLinkingService;
+
             Title = AboutPageConstants.About;
 
             Content = new ScrollView
@@ -24,15 +30,29 @@ namespace GitTrends
                     {
                         new CollectionView
                         {
+                            SelectionMode = SelectionMode.Single,
                             ItemTemplate = new ContributorDataTemplate(),
                             ItemsSource = ViewModel.GitTrendsContributors,
-                            ItemsLayout = new GridItemsLayout(4, ItemsLayoutOrientation.Vertical)
-                        }
+                            ItemsLayout = new GridItemsLayout(XamarinFormsService.IsSmallScreen ? 4: 5, ItemsLayoutOrientation.Vertical)
+                        }.Invoke(collectionView => collectionView.SelectionChanged += HandleContributorSelectionChanged)
                     }
                 }
             };
-
         }
+
+        async void HandleContributorSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var collectionView = (CollectionView)sender;
+            collectionView.SelectedItem = null;
+
+            if (e.CurrentSelection.FirstOrDefault() is Contributor contributor)
+            {
+                AnalyticsService.Track("Contributor Tapped", nameof(Contributor.Login), contributor.Login);
+
+                await _deepLinkingService.OpenBrowser(contributor.GitHubUrl);
+            }
+        }
+
         class ContributorDataTemplate : DataTemplate
         {
             const int _circleDiameter = 50;
@@ -57,9 +77,10 @@ namespace GitTrends
                         .Bind(CircleImage.ImageSourceProperty, nameof(Contributor.AvatarUrl), BindingMode.OneTime)
                         .DynamicResource(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
 
-                    new Label().TextCenterHorizontal().TextTop().Font(12, family: FontFamilyConstants.RobotoRegular)
+                    new Label { LineBreakMode = LineBreakMode.TailTruncation }.TextCenterHorizontal().TextTop().Font(12, family: FontFamilyConstants.RobotoRegular)
                         .Row(Row.Login)
                         .Bind(Label.TextProperty, nameof(Contributor.Login), BindingMode.OneTime)
+                        .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
                 }
             };
 
