@@ -57,7 +57,7 @@ namespace GitTrends
         {
             try
             {
-                var contributors = JsonConvert.DeserializeObject<List<Contributor>>(_preferences.Get(nameof(Contributors), null));
+                var contributors = JsonConvert.DeserializeObject<IReadOnlyList<Contributor>>(_preferences.Get(nameof(Contributors), null));
                 return contributors ?? new List<Contributor>();
             }
             catch (ArgumentNullException)
