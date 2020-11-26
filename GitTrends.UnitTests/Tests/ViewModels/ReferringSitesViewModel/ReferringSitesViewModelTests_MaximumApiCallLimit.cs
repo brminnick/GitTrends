@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
@@ -90,8 +91,8 @@ namespace GitTrends.UnitTests
         static HttpClient CreateMaximumApiLimitHttpClient(string url)
         {
             var responseMessage = new HttpResponseMessage(HttpStatusCode.Forbidden);
-            responseMessage.Headers.Add(GitHubApiExceptionService.RateLimitRemainingHeader, "0");
-            responseMessage.Headers.Add(GitHubApiExceptionService.RateLimitResetHeader, DateTimeOffset.UtcNow.AddMinutes(50).ToUnixTimeSeconds().ToString());
+            responseMessage.Headers.Add(GitHubApiStatusService.RateLimitRemainingHeader, "0");
+            responseMessage.Headers.Add(GitHubApiStatusService.RateLimitResetHeader, DateTimeOffset.UtcNow.AddMinutes(50).ToUnixTimeSeconds().ToString());
 
             var httpMessageHandler = new MockHttpMessageHandler();
             httpMessageHandler.When($"{url}/*").Respond(request => responseMessage);

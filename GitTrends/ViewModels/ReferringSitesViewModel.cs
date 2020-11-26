@@ -30,6 +30,7 @@ namespace GitTrends
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly DeepLinkingService _deepLinkingService;
         readonly ReferringSitesDatabase _referringSitesDatabase;
+        readonly GitHubApiStatusService _gitHubApiStatusService;
         readonly GitHubApiExceptionService _gitHubApiExceptionService;
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
@@ -52,6 +53,7 @@ namespace GitTrends
                                         GitHubApiV3Service gitHubApiV3Service,
                                         DeepLinkingService deepLinkingService,
                                         ReferringSitesDatabase referringSitesDatabase,
+                                        GitHubApiStatusService gitHubApiStatusService,
                                         GitHubApiExceptionService gitHubApiExceptionService,
                                         GitHubAuthenticationService gitHubAuthenticationService) : base(analyticsService, mainThread)
         {
@@ -65,6 +67,7 @@ namespace GitTrends
             _gitHubApiV3Service = gitHubApiV3Service;
             _deepLinkingService = deepLinkingService;
             _referringSitesDatabase = referringSitesDatabase;
+            _gitHubApiStatusService = gitHubApiStatusService;
             _gitHubApiExceptionService = gitHubApiExceptionService;
             _gitHubAuthenticationService = gitHubAuthenticationService;
 
@@ -228,17 +231,17 @@ namespace GitTrends
                 RefreshState = RefreshState.LoginExpired;
             }
             catch (Exception e) when (_gitHubApiExceptionService.HasReachedMaximimApiCallLimit(e)
-                                        || (e is HttpRequestException && finalResponse != null && _gitHubApiExceptionService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
+                                        || (e is HttpRequestException && finalResponse != null && _gitHubApiStatusService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
             {
                 var responseHeaders = e switch
                 {
                     ApiException exception => exception.Headers,
                     GraphQLException graphQLException => graphQLException.ResponseHeaders,
-                    HttpRequestException _ when finalResponse != null => finalResponse.Headers,
+                    HttpRequestException when finalResponse != null => finalResponse.Headers,
                     _ => throw new NotSupportedException()
                 };
 
-                OnPullToRefreshFailed(new MaximimApiRequestsReachedEventArgs(_gitHubApiExceptionService.GetRateLimitResetDateTime(responseHeaders)));
+                OnPullToRefreshFailed(new MaximimApiRequestsReachedEventArgs(_gitHubApiStatusService.GetRateLimitResetDateTime(responseHeaders)));
 
                 RefreshState = RefreshState.MaximumApiLimit;
             }

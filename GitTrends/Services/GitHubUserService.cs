@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
-using GitTrends.Mobile.Common.Constants;
+using GitHubApiStatus;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.Essentials.Interfaces;
@@ -18,9 +19,16 @@ namespace GitTrends
 
         readonly IPreferences _preferences;
         readonly ISecureStorage _secureStorage;
+        readonly GitHubApiStatusService _gitHubApiStatusService;
 
-        public GitHubUserService(IPreferences preferences, ISecureStorage secureStorage) =>
-            (_preferences, _secureStorage) = (preferences, secureStorage);
+        public GitHubUserService(IPreferences preferences,
+                                    ISecureStorage secureStorage,
+                                    GitHubApiStatusService gitHubApiStatusService)
+        {
+            _preferences = preferences;
+            _secureStorage = secureStorage;
+            _gitHubApiStatusService = gitHubApiStatusService;
+        }
 
         public static event EventHandler<string> NameChanged
         {
@@ -91,7 +99,16 @@ namespace GitTrends
             {
                 var token = JsonConvert.DeserializeObject<GitHubToken?>(serializedToken);
 
-                return token ?? GitHubToken.Empty;
+                if (token is null)
+                    return GitHubToken.Empty;
+
+                if (!_gitHubApiStatusService.IsProductHeaderValueValid)
+                    _gitHubApiStatusService.AddProductHeaderValue(GetProductHeaderValue());
+
+                if (!_gitHubApiStatusService.IsAuthenticationHeaderValueSet)
+                    _gitHubApiStatusService.SetAuthenticationHeaderValue(GetAuthenticationHeaderValue(token));
+
+                return token;
             }
             catch (ArgumentNullException)
             {
@@ -116,6 +133,9 @@ namespace GitTrends
         }
 
         public void InvalidateToken() => _secureStorage.Remove(_oauthTokenKey);
+
+        AuthenticationHeaderValue GetAuthenticationHeaderValue(in GitHubToken token) => new(token.TokenType, token.AccessToken);
+        ProductHeaderValue GetProductHeaderValue() => new($"{nameof(GitTrends)}.{Alias}");
 
         void OnNameChanged(in string name) => _nameChangedEventManager.RaiseEvent(this, name, nameof(NameChanged));
         void OnAliasChanged(in string alias) => _aliasChangedEventManager.RaiseEvent(this, alias, nameof(AliasChanged));

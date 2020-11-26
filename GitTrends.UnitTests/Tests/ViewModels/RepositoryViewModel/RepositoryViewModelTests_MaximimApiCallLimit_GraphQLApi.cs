@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using GitHubApiStatus;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -35,8 +36,8 @@ namespace GitTrends.UnitTests
             {
                 Content = new StringContent(JsonConvert.SerializeObject(repositoryConnectionResponse))
             };
-            errorResponseMessage.Headers.Add(GitHubApiExceptionService.RateLimitRemainingHeader, "0");
-            errorResponseMessage.Headers.Add(GitHubApiExceptionService.RateLimitResetHeader, DateTimeOffset.UtcNow.AddMinutes(50).ToUnixTimeSeconds().ToString());
+            errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitRemainingHeader, "0");
+            errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitResetHeader, DateTimeOffset.UtcNow.AddMinutes(50).ToUnixTimeSeconds().ToString());
 
             var viewerLoginResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
             {
