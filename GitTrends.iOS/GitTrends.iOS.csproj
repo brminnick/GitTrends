@@ -443,7 +443,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="4.8.0.1687" />
-    <PackageReference Include="Refit" Version="5.2.1" />
+    <PackageReference Include="Refit" Version="5.2.4" />
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="5.0.2" />
     <PackageReference Include="Polly" Version="7.2.1" />
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.3.0.35" />

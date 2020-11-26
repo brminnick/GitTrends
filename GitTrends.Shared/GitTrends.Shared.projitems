@@ -47,7 +47,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Base\BaseTotalCountModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\RepositoryService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\StreamingUrl.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\GitHubApiExceptionService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IDailyClonesModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IDailyViewsModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\NotificationHubInformation.cs" />

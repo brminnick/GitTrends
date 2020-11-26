@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using GitHubApiStatus;
 using GitTrends.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,13 +27,11 @@ namespace GitTrends.Functions
 
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
-        readonly GitHubApiExceptionService _gitHubApiExceptionService;
 
-        public GetTestToken(GitHubApiV3Service gitHubApiV3Service, GitHubGraphQLApiService gitHubGraphQLApiService, GitHubApiExceptionService gitHubApiExceptionService)
+        public GetTestToken(GitHubApiV3Service gitHubApiV3Service, GitHubGraphQLApiService gitHubGraphQLApiService)
         {
             _gitHubApiV3Service = gitHubApiV3Service;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
-            _gitHubApiExceptionService = gitHubApiExceptionService;
         }
 
         [FunctionName(nameof(GetTestToken))]
@@ -43,7 +42,9 @@ namespace GitTrends.Functions
                 var timeout = TimeSpan.FromSeconds(2);
                 var cancellationTokenSource = new CancellationTokenSource(timeout);
 
-                var gitHubApiRateLimits = await _gitHubApiExceptionService.GetApiRateLimits(new AuthenticationHeaderValue("bearer", testToken), cancellationTokenSource.Token).ConfigureAwait(false);
+                var gitHubApiStatusService = new GitHubApiStatusService(new AuthenticationHeaderValue("bearer", testToken), new ProductHeaderValue(nameof(GitTrends)));
+
+                var gitHubApiRateLimits = await gitHubApiStatusService.GetApiRateLimits(cancellationTokenSource.Token).ConfigureAwait(false);
 
                 if (gitHubApiRateLimits.RestApi.RemainingRequestCount > 1000
                     && gitHubApiRateLimits.GraphQLApi.RemainingRequestCount > 1000)
