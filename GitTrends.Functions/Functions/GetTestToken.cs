@@ -26,11 +26,13 @@ namespace GitTrends.Functions
         };
 
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly IGitHubApiStatusService _gitHubApiStatusService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
 
-        public GetTestToken(GitHubApiV3Service gitHubApiV3Service, GitHubGraphQLApiService gitHubGraphQLApiService)
+        public GetTestToken(GitHubApiV3Service gitHubApiV3Service, IGitHubApiStatusService gitHubApiStatusService, GitHubGraphQLApiService gitHubGraphQLApiService)
         {
             _gitHubApiV3Service = gitHubApiV3Service;
+            _gitHubApiStatusService = gitHubApiStatusService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
         }
 
@@ -42,9 +44,8 @@ namespace GitTrends.Functions
                 var timeout = TimeSpan.FromSeconds(2);
                 var cancellationTokenSource = new CancellationTokenSource(timeout);
 
-                var gitHubApiStatusService = new GitHubApiStatusService(new AuthenticationHeaderValue("bearer", testToken), new ProductHeaderValue(nameof(GitTrends)));
-
-                var gitHubApiRateLimits = await gitHubApiStatusService.GetApiRateLimits(cancellationTokenSource.Token).ConfigureAwait(false);
+                _gitHubApiStatusService.SetAuthenticationHeaderValue(new AuthenticationHeaderValue("bearer", testToken));
+                var gitHubApiRateLimits = await _gitHubApiStatusService.GetApiRateLimits(cancellationTokenSource.Token).ConfigureAwait(false);
 
                 if (gitHubApiRateLimits.RestApi.RemainingRequestCount > 1000
                     && gitHubApiRateLimits.GraphQLApi.RemainingRequestCount > 1000)

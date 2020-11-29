@@ -31,7 +31,6 @@ namespace GitTrends
         readonly DeepLinkingService _deepLinkingService;
         readonly ReferringSitesDatabase _referringSitesDatabase;
         readonly GitHubApiStatusService _gitHubApiStatusService;
-        readonly GitHubApiExceptionService _gitHubApiExceptionService;
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
         IReadOnlyList<MobileReferringSiteModel>? _mobileReferringSiteList;
@@ -54,7 +53,6 @@ namespace GitTrends
                                         DeepLinkingService deepLinkingService,
                                         ReferringSitesDatabase referringSitesDatabase,
                                         GitHubApiStatusService gitHubApiStatusService,
-                                        GitHubApiExceptionService gitHubApiExceptionService,
                                         GitHubAuthenticationService gitHubAuthenticationService) : base(analyticsService, mainThread)
         {
             ReviewService.ReviewRequested += HandleReviewRequested;
@@ -68,7 +66,6 @@ namespace GitTrends
             _deepLinkingService = deepLinkingService;
             _referringSitesDatabase = referringSitesDatabase;
             _gitHubApiStatusService = gitHubApiStatusService;
-            _gitHubApiExceptionService = gitHubApiExceptionService;
             _gitHubAuthenticationService = gitHubAuthenticationService;
 
             RefreshState = RefreshState.Uninitialized;
@@ -230,7 +227,7 @@ namespace GitTrends
 
                 RefreshState = RefreshState.LoginExpired;
             }
-            catch (Exception e) when (_gitHubApiExceptionService.HasReachedMaximimApiCallLimit(e)
+            catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximimApiCallLimit(e)
                                         || (e is HttpRequestException && finalResponse != null && _gitHubApiStatusService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
             {
                 var responseHeaders = e switch

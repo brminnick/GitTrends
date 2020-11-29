@@ -43,7 +43,6 @@ namespace GitTrends
             builder.RegisterType<FavIconService>().AsSelf().SingleInstance();
             builder.RegisterType<FirstRunService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubApiStatusService>().AsSelf().SingleInstance();
-            builder.RegisterType<GitHubApiExceptionService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubApiRepositoriesService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubAuthenticationService>().AsSelf().SingleInstance();

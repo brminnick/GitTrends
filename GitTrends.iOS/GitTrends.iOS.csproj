@@ -427,10 +427,18 @@
     <ImageAsset Include="Assets.xcassets\EmptyStarChart.imageset\EmptyStarChart%403x.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart.png" />
-    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart%402x.png" />
-    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart%403x.png" />
+    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

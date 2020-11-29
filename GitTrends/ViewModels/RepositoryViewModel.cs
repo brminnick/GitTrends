@@ -30,7 +30,6 @@ namespace GitTrends
         readonly MobileSortingService _mobileSortingService;
         readonly GitHubApiStatusService _gitHubApiStatusService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
-        readonly GitHubApiExceptionService _gitHubApiExceptionService;
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
@@ -52,7 +51,6 @@ namespace GitTrends
                                     GitHubApiV3Service gitHubApiV3Service,
                                     GitHubApiStatusService gitHubApiStatusService,
                                     GitHubGraphQLApiService gitHubGraphQLApiService,
-                                    GitHubApiExceptionService gitHubApiExceptionService,
                                     GitHubAuthenticationService gitHubAuthenticationService,
                                     GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, mainThread)
         {
@@ -67,7 +65,6 @@ namespace GitTrends
             _gitHubApiV3Service = gitHubApiV3Service;
             _gitHubApiStatusService = gitHubApiStatusService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
-            _gitHubApiExceptionService = gitHubApiExceptionService;
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
 
@@ -213,7 +210,7 @@ namespace GitTrends
 
                 RefreshState = RefreshState.LoginExpired;
             }
-            catch (Exception e) when (_gitHubApiExceptionService.HasReachedMaximimApiCallLimit(e)
+            catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximimApiCallLimit(e)
                                         || (e is HttpRequestException && finalResponse != null && _gitHubApiStatusService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
             {
                 var responseHeaders = e switch

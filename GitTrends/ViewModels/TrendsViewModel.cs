@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
+using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
@@ -21,8 +22,8 @@ namespace GitTrends
         public const int MinumumChartHeight = 20;
 
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly GitHubApiStatusService _gitHubApiStatusService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
-        readonly GitHubApiExceptionService _gitHubApiExceptionService;
 
         bool _isFetchingData = true;
         bool _isViewsSeriesVisible, _isUniqueViewsSeriesVisible, _isClonesSeriesVisible, _isUniqueClonesSeriesVisible;
@@ -47,13 +48,13 @@ namespace GitTrends
         public TrendsViewModel(IMainThread mainThread,
                                 IAnalyticsService analyticsService,
                                 GitHubApiV3Service gitHubApiV3Service,
+                                GitHubApiStatusService gitHubApiStatusService,
                                 GitHubGraphQLApiService gitHubGraphQLApiService,
-                                GitHubApiExceptionService gitHubApiExceptionService,
                                 TrendsChartSettingsService trendsChartSettingsService) : base(analyticsService, mainThread)
         {
             _gitHubApiV3Service = gitHubApiV3Service;
+            _gitHubApiStatusService = gitHubApiStatusService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
-            _gitHubApiExceptionService = gitHubApiExceptionService;
 
             IsViewsSeriesVisible = trendsChartSettingsService.ShouldShowViewsByDefault;
             IsUniqueViewsSeriesVisible = trendsChartSettingsService.ShouldShowUniqueViewsByDefault;
@@ -290,7 +291,7 @@ namespace GitTrends
 
                 refreshState = RefreshState.LoginExpired;
             }
-            catch (Exception e) when (_gitHubApiExceptionService.HasReachedMaximimApiCallLimit(e))
+            catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximimApiCallLimit(e))
             {
                 var responseHeaders = e switch
                 {

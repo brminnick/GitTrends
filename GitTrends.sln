@@ -10,8 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{542E25
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GitTrends.Shared", "GitTrends.Shared\GitTrends.Shared.shproj", "{D14F8262-1D13-493F-B78B-5C34F282EF07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.Functions", "GitTrends.Functions\GitTrends.Functions.csproj", "{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{277A4FFB-91D3-4028-A47C-C39726594FC1}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -19,19 +17,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.UITests", "GitTrends.UITests\GitTrends.UITests.csproj", "{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends", "GitTrends\GitTrends.csproj", "{4E7B0399-BAD2-48AF-B7FA-02EC17338FAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends", "GitTrends\GitTrends.csproj", "{4E7B0399-BAD2-48AF-B7FA-02EC17338FAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.UnitTests", "GitTrends.UnitTests\GitTrends.UnitTests.csproj", "{EE380E99-E700-4B0C-9C56-B098CB400AAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends.UnitTests", "GitTrends.UnitTests\GitTrends.UnitTests.csproj", "{EE380E99-E700-4B0C-9C56-B098CB400AAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.Mobile.Common", "GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj", "{936AEAD4-A683-44AD-A903-F3196454C244}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends.Mobile.Common", "GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj", "{936AEAD4-A683-44AD-A903-F3196454C244}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.iOS", "GitTrends.iOS\GitTrends.iOS.csproj", "{E1C47721-EF16-4F21-AA2F-78951DB0D715}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.Android", "GitTrends.Android\GitTrends.Android.csproj", "{E5785129-AB94-4359-9947-B600D33A9958}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends.Functions", "GitTrends.Functions\GitTrends.Functions.csproj", "{123D4395-741A-4850-8899-5D8215A481EC}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		GitTrends.Shared\GitTrends.Shared.projitems*{09224c6b-d0e4-4cc8-9ccb-936d6a22d57b}*SharedItemsImports = 5
+		GitTrends.Shared\GitTrends.Shared.projitems*{123d4395-741a-4850-8899-5d8215a481ec}*SharedItemsImports = 5
 		GitTrends.Shared\GitTrends.Shared.projitems*{936aead4-a683-44ad-a903-f3196454c244}*SharedItemsImports = 5
 		GitTrends.Shared\GitTrends.Shared.projitems*{d14f8262-1d13-493f-b78b-5c34f282ef07}*SharedItemsImports = 13
 	EndGlobalSection
@@ -44,16 +44,6 @@ Global
 		Release|iPhone = Release|iPhone
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
-		{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}.AppStore|iPhone.ActiveCfg = Release|Any CPU
-		{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}.Debug|iPhone.Build.0 = Debug|Any CPU
-		{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B}.Release|iPhone.Build.0 = Release|Any CPU
 		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
 		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.AppStore|iPhone.ActiveCfg = Release|Any CPU
 		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -127,19 +117,29 @@ Global
 		{E5785129-AB94-4359-9947-B600D33A9958}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{E5785129-AB94-4359-9947-B600D33A9958}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{E5785129-AB94-4359-9947-B600D33A9958}.Release|iPhone.Build.0 = Release|Any CPU
+		{123D4395-741A-4850-8899-5D8215A481EC}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{123D4395-741A-4850-8899-5D8215A481EC}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{123D4395-741A-4850-8899-5D8215A481EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{123D4395-741A-4850-8899-5D8215A481EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{123D4395-741A-4850-8899-5D8215A481EC}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{123D4395-741A-4850-8899-5D8215A481EC}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{123D4395-741A-4850-8899-5D8215A481EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{123D4395-741A-4850-8899-5D8215A481EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{123D4395-741A-4850-8899-5D8215A481EC}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{123D4395-741A-4850-8899-5D8215A481EC}.Release|iPhone.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D14F8262-1D13-493F-B78B-5C34F282EF07} = {542E2517-3912-4324-B383-9F1FC42AA3CD}
-		{09224C6B-D0E4-4CC8-9CCB-936D6A22D57B} = {30BA162E-26D2-4B3D-9347-986271EF77A7}
 		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE} = {BA9E6A61-3143-42DF-9669-97F7F557B7A2}
 		{4E7B0399-BAD2-48AF-B7FA-02EC17338FAE} = {BA9E6A61-3143-42DF-9669-97F7F557B7A2}
 		{EE380E99-E700-4B0C-9C56-B098CB400AAE} = {BA9E6A61-3143-42DF-9669-97F7F557B7A2}
 		{936AEAD4-A683-44AD-A903-F3196454C244} = {BA9E6A61-3143-42DF-9669-97F7F557B7A2}
 		{E1C47721-EF16-4F21-AA2F-78951DB0D715} = {BA9E6A61-3143-42DF-9669-97F7F557B7A2}
 		{E5785129-AB94-4359-9947-B600D33A9958} = {BA9E6A61-3143-42DF-9669-97F7F557B7A2}
+		{123D4395-741A-4850-8899-5D8215A481EC} = {30BA162E-26D2-4B3D-9347-986271EF77A7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C9CC4446-8D01-4DD5-90B3-0A650B0DE0DD}

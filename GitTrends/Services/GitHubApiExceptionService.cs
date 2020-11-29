@@ -6,16 +6,12 @@ using Refit;
 
 namespace GitTrends
 {
-    public class GitHubApiExceptionService
+    public static class GitHubApiExceptionService
     {
-        readonly GitHubApiStatusService _gitHubApiStatusService;
-
-        public GitHubApiExceptionService(GitHubApiStatusService gitHubApiStatusService) => _gitHubApiStatusService = gitHubApiStatusService;
-
-        public bool HasReachedMaximimApiCallLimit(in Exception exception) => exception switch
+        public static bool HasReachedMaximimApiCallLimit(this IGitHubApiStatusService gitHubApiStatusService, in Exception exception) => exception switch
         {
-            ApiException apiException when apiException.StatusCode is HttpStatusCode.Forbidden => _gitHubApiStatusService.HasReachedMaximimApiCallLimit(apiException.Headers),
-            GraphQLException graphQLException => _gitHubApiStatusService.HasReachedMaximimApiCallLimit(graphQLException.ResponseHeaders),
+            ApiException apiException when apiException.StatusCode is HttpStatusCode.Forbidden => gitHubApiStatusService.HasReachedMaximimApiCallLimit(apiException.Headers),
+            GraphQLException graphQLException => gitHubApiStatusService.HasReachedMaximimApiCallLimit(graphQLException.ResponseHeaders),
             _ => false
         };
     }
