@@ -143,6 +143,9 @@ namespace GitTrends
 
         async Task SaveStarGazerInfo(Repository repository)
         {
+            if (repository.StarredAt is null)
+                return;
+
             var starGazerInfoDatabaseConnection = await GetDatabaseConnection<StarGazerInfoDatabaseModel>().ConfigureAwait(false);
 
             foreach (var starredAtDate in repository.StarredAt)
@@ -159,6 +162,9 @@ namespace GitTrends
 
         async Task SaveDailyClones(Repository repository)
         {
+            if (repository.DailyClonesList is null)
+                return;
+
             var dailyClonesDatabaseConnection = await GetDatabaseConnection<DailyClonesDatabaseModel>().ConfigureAwait(false);
 
             foreach (var dailyClonesModel in repository.DailyClonesList)
@@ -170,6 +176,9 @@ namespace GitTrends
 
         async Task SaveDailyViews(Repository repository)
         {
+            if (repository.DailyViewsList is null)
+                return;
+
             var dailyViewsDatabaseConnection = await GetDatabaseConnection<DailyViewsDatabaseModel>().ConfigureAwait(false);
 
             foreach (var dailyViewsModel in repository.DailyViewsList)
@@ -277,7 +286,7 @@ namespace GitTrends
             [PrimaryKey]
             public string Url { get; init; } = string.Empty;
 
-            public long StarCount { get; init; }
+            public long? StarCount { get; init; }
 
             public string OwnerLogin { get; init; } = string.Empty;
 
@@ -287,13 +296,13 @@ namespace GitTrends
 
             public bool IsFork { get; init; }
 
-            public long TotalViews { get; init; }
+            public long? TotalViews { get; init; }
 
-            public long TotalUniqueViews { get; init; }
+            public long? TotalUniqueViews { get; init; }
 
-            public long TotalClones { get; init; }
+            public long? TotalClones { get; init; }
 
-            public long TotalUniqueClones { get; init; }
+            public long? TotalUniqueClones { get; init; }
 
             [Indexed]
             public bool? IsFavorite { get; init; }

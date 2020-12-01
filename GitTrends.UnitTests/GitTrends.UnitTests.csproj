@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>false</IsPackable>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>Enable</Nullable>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <LangVersion>preview</LangVersion>
@@ -18,7 +18,7 @@
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
-    <PackageReference Include="GitHubApiStatus.Extensions" Version="2.0.0-pre6" />
+    <PackageReference Include="GitHubApiStatus.Extensions" Version="2.0.0-pre7" />
   </ItemGroup>
 
   <ItemGroup>

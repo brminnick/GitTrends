@@ -11,7 +11,7 @@ namespace GitTrends.UITests
 
         public string OwnerLogin { get; init; } = string.Empty;
 
-        public long StarCount { get; init; }
+        public long? StarCount { get; init; }
 
         public long IssuesCount { get; init; }
 
@@ -25,20 +25,20 @@ namespace GitTrends.UITests
 
         public string Url { get; init; } = string.Empty;
 
-        public long TotalViews { get; init; }
+        public long? TotalViews { get; init; }
 
-        public long TotalUniqueViews { get; init; }
+        public long? TotalUniqueViews { get; init; }
 
-        public long TotalClones { get; init; }
+        public long? TotalClones { get; init; }
 
-        public long TotalUniqueClones { get; init; }
+        public long? TotalUniqueClones { get; init; }
 
         public bool IsTrending { get; init; }
 
         public bool? IsFavorite { get; init; }
 
-        public IReadOnlyList<DailyViewsModel> DailyViewsList { get; init; } = Array.Empty<DailyViewsModel>();
+        public IReadOnlyList<DailyViewsModel>? DailyViewsList { get; init; } = Array.Empty<DailyViewsModel>();
 
-        public IReadOnlyList<DailyClonesModel> DailyClonesList { get; init; } = Array.Empty<DailyClonesModel>();
+        public IReadOnlyList<DailyClonesModel>? DailyClonesList { get; init; } = Array.Empty<DailyClonesModel>();
     }
 }
