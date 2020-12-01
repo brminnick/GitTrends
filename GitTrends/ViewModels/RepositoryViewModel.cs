@@ -329,7 +329,7 @@ namespace GitTrends
             var updatedRepositoryList = _repositoryList.Concat(repositories);
 
             if (shouldRemoveRepoisitoriesWithoutViewsClonesData)
-                _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).Where(x => x.DailyClonesList.Count > 1 || x.DailyViewsList.Count > 1).ToList();
+                _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).Where(x => x.DailyClonesList?.Count > 1 || x.DailyViewsList?.Count > 1).ToList();
             else
                 _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 

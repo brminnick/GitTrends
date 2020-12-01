@@ -256,7 +256,9 @@ namespace GitTrends
 
             try
             {
-                if (repository.DailyClonesList.Any() && repository.DailyViewsList.Any())
+                if ((repository.StarredAt?.Any() ?? false)
+                        && (repository.DailyViewsList?.Any() ?? false)
+                        && (repository.DailyClonesList?.Any() ?? false))
                 {
                     repositoryStars = repository.StarredAt;
                     repositoryViews = repository.DailyViewsList;

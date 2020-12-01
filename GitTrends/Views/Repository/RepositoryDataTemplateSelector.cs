@@ -31,7 +31,7 @@ namespace GitTrends
             };
         }
 
-        static bool IsStatisticsLabelVisible(IEnumerable<BaseDailyModel> dailyModels) => dailyModels.Any();
+        static bool IsStatisticsLabelVisible(IEnumerable<BaseDailyModel>? dailyModels) => dailyModels?.Any() ?? false;
 
         class ClonesDataTemplate : BaseRepositoryDataTemplate
         {

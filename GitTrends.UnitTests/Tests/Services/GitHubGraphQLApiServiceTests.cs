@@ -107,10 +107,10 @@ namespace GitTrends.UnitTests
                 Assert.GreaterOrEqual(DemoDataConstants.MaximumRandomNumber, repository.ForkCount);
                 Assert.AreEqual(DemoUserConstants.Alias, repository.OwnerLogin);
 
-                Assert.AreEqual(0, repository.TotalClones);
-                Assert.AreEqual(0, repository.TotalUniqueClones);
-                Assert.AreEqual(0, repository.TotalViews);
-                Assert.AreEqual(0, repository.TotalUniqueViews);
+                Assert.IsNull(repository.TotalClones);
+                Assert.IsNull(repository.TotalUniqueClones);
+                Assert.IsNull(repository.TotalViews);
+                Assert.IsNull(repository.TotalUniqueViews);
             }
         }
 
@@ -201,10 +201,10 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(GitHubConstants.GitTrendsRepoOwner, repository.OwnerLogin);
             Assert.AreEqual(AuthenticatedGitHubUserAvatarUrl, repository.OwnerAvatarUrl);
 
-            Assert.AreEqual(0, repository.TotalClones);
-            Assert.AreEqual(0, repository.TotalUniqueClones);
-            Assert.AreEqual(0, repository.TotalViews);
-            Assert.AreEqual(0, repository.TotalUniqueViews);
+            Assert.IsNull(repository.TotalClones);
+            Assert.IsNull(repository.TotalUniqueClones);
+            Assert.IsNull(repository.TotalViews);
+            Assert.IsNull(repository.TotalUniqueViews);
 
             Assert.IsTrue(beforeDownload.CompareTo(repository.DataDownloadedAt) < 0);
             Assert.IsTrue(afterDownload.CompareTo(repository.DataDownloadedAt) > 0);

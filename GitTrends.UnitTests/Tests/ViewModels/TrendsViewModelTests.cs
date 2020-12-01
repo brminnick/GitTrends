@@ -128,10 +128,7 @@ namespace GitTrends.UnitTests
 
             Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Initial);
             Assert.IsFalse(isViewsClonesEmptyDataViewVisible_DuringFetchDataCommand);
-            if (shouldIncludeViewsClonesData)
-                Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Final);
-            else
-                Assert.IsTrue(isViewsClonesEmptyDataViewVisible_Final);
+            Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Final);
 
             Assert.IsFalse(isStarsEmptyDataViewVisible_Initial);
             Assert.IsFalse(isStarsEmptyDataViewVisible_DuringFetchDataCommand);
@@ -139,14 +136,11 @@ namespace GitTrends.UnitTests
 
             Assert.IsFalse(isViewsClonesChartVisible_Initial);
             Assert.IsFalse(isViewsClonesChartVisible_DuringFetchDataCommand);
-            if (shouldIncludeViewsClonesData)
-                Assert.IsTrue(isViewsClonesChartVisible_Final);
-            else
-                Assert.IsFalse(isViewsClonesChartVisible_Final);
+            Assert.True(isViewsClonesChartVisible_Final);
 
             Assert.IsFalse(isStarsChartVisible_Initial);
             Assert.IsFalse(isStarsChartVisible_DuringFetchDataCommand);
-            Assert.IsTrue(isStarsChartVisible_Final);
+            Assert.True(isStarsChartVisible_Final);
 
             Assert.AreEqual(TrendsViewModel.MinumumChartHeight, dailyViewsClonesMaxValue_Initial);
             Assert.GreaterOrEqual(dailyViewsClonesMaxValue_Final, dailyViewsClonesMaxValue_Initial);

@@ -7,9 +7,9 @@ namespace GitTrends.Shared
 {
     public record Repository : IRepository
     {
-        IReadOnlyList<DateTimeOffset> _starredAt = Array.Empty<DateTimeOffset>();
-        IReadOnlyList<DailyViewsModel> _dailyViewsList = Array.Empty<DailyViewsModel>();
-        IReadOnlyList<DailyClonesModel> _dailyClonesList = Array.Empty<DailyClonesModel>();
+        IReadOnlyList<DateTimeOffset>? _starredAt;
+        IReadOnlyList<DailyViewsModel>? _dailyViewsList;
+        IReadOnlyList<DailyClonesModel>? _dailyClonesList;
 
         public Repository(string name, string description, long forkCount, string ownerLogin, string ownerAvatarUrl, long issuesCount, string url, bool isFork, DateTimeOffset dataDownloadedAt, bool? isFavorite = null, IEnumerable<DailyViewsModel>? views = null, IEnumerable<DailyClonesModel>? clones = null, IEnumerable<DateTimeOffset>? starredAt = null)
         {
@@ -25,9 +25,9 @@ namespace GitTrends.Shared
             Url = url;
             IsFork = isFork;
 
-            StarredAt = (starredAt ?? Enumerable.Empty<DateTimeOffset>()).ToList();
-            DailyViewsList = (views ?? Enumerable.Empty<DailyViewsModel>()).ToList();
-            DailyClonesList = (clones ?? Enumerable.Empty<DailyClonesModel>()).ToList();
+            StarredAt = starredAt?.ToList();
+            DailyViewsList = views?.ToList();
+            DailyClonesList = clones?.ToList();
         }
 
         public DateTimeOffset DataDownloadedAt { get; }
@@ -43,52 +43,51 @@ namespace GitTrends.Shared
 
         public bool? IsFavorite { get; init; }
 
-        public IReadOnlyList<DailyViewsModel> DailyViewsList
+        public IReadOnlyList<DailyViewsModel>? DailyViewsList
         {
             get => _dailyViewsList;
             init
             {
-                var dailyViewsList = AddMissingDates(value);
+                var dailyViewsList = value is null ? null : AddMissingDates(value);
                 _dailyViewsList = dailyViewsList;
 
-                TotalViews = dailyViewsList.Sum(x => x.TotalViews);
-                TotalUniqueViews = dailyViewsList.Sum(x => x.TotalUniqueViews);
+                TotalViews = dailyViewsList?.Sum(x => x.TotalViews);
+                TotalUniqueViews = dailyViewsList?.Sum(x => x.TotalUniqueViews);
 
-                IsTrending |= dailyViewsList.IsTrending() ?? false;
+                IsTrending |= dailyViewsList?.IsTrending() ?? false;
             }
         }
 
-        public IReadOnlyList<DailyClonesModel> DailyClonesList
+        public IReadOnlyList<DailyClonesModel>? DailyClonesList
         {
             get => _dailyClonesList;
             init
             {
-                var dailyClonesList = AddMissingDates(value);
+                var dailyClonesList = value is null ? null : AddMissingDates(value);
                 _dailyClonesList = dailyClonesList;
 
-                TotalClones = dailyClonesList.Sum(x => x.TotalClones);
-                TotalUniqueClones = dailyClonesList.Sum(x => x.TotalUniqueClones);
+                TotalClones = dailyClonesList?.Sum(x => x.TotalClones);
+                TotalUniqueClones = dailyClonesList?.Sum(x => x.TotalUniqueClones);
 
-                IsTrending |= dailyClonesList.IsTrending() ?? false;
+                IsTrending |= dailyClonesList?.IsTrending() ?? false;
             }
         }
 
-        public IReadOnlyList<DateTimeOffset> StarredAt
+        public IReadOnlyList<DateTimeOffset>? StarredAt
         {
             get => _starredAt;
             init
             {
-                _starredAt = value.OrderBy(x => x).ToList();
-
-                StarCount = value.Count;
+                _starredAt = value?.OrderBy(x => x).ToList();
+                StarCount = value?.Count;
             }
         }
 
-        public long TotalViews { get; private init; }
-        public long TotalUniqueViews { get; private init; }
-        public long TotalClones { get; private init; }
-        public long TotalUniqueClones { get; private init; }
-        public long StarCount { get; private init; }
+        public long? TotalViews { get; private init; }
+        public long? TotalUniqueViews { get; private init; }
+        public long? TotalClones { get; private init; }
+        public long? TotalUniqueClones { get; private init; }
+        public long? StarCount { get; private init; }
         public bool IsTrending { get; private init; }
 
         public override string ToString()

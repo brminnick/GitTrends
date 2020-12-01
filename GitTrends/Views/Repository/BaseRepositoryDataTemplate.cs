@@ -8,7 +8,6 @@ using GitTrends.Shared;
 using Sharpnado.MaterialFrame;
 using Xamarin.Forms;
 using Xamarin.Forms.Markup;
-using Xamarin.Forms.PancakeView;
 using static GitTrends.MarkupExtensions;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.Forms.Markup.GridRowsColumns;
@@ -23,9 +22,7 @@ namespace GitTrends
         const int _statsColumnSize = 40;
         const double _statisticsRowHeight = StatisticsLabel.StatisticsFontSize + 4;
         const double _emojiColumnSize = _statisticsRowHeight;
-
-        readonly static bool _isSmallScreen = ScreenWidth <= 360;
-        readonly static double _circleImageHeight = _isSmallScreen ? 52 : 62;
+        readonly static double _circleImageHeight = IsSmallScreen ? 52 : 62;
 
         readonly static WeakEventManager _tappedWeakEventManager = new();
 
@@ -72,9 +69,9 @@ namespace GitTrends
                         (CardViewRow.BottomPadding, AbsoluteGridLength(BottomPadding))),
 
                     ColumnDefinitions = Columns.Define(
-                        (CardViewColumn.LeftPadding, AbsoluteGridLength(_isSmallScreen ? 8 : 16)),
+                        (CardViewColumn.LeftPadding, AbsoluteGridLength(IsSmallScreen ? 8 : 16)),
                         (CardViewColumn.Card, Star),
-                        (CardViewColumn.RightPadding, AbsoluteGridLength(_isSmallScreen ? 8 : 16))),
+                        (CardViewColumn.RightPadding, AbsoluteGridLength(IsSmallScreen ? 8 : 16))),
 
                     Children =
                     {
@@ -92,7 +89,7 @@ namespace GitTrends
             {
                 public CardViewFrame(in IEnumerable<View> dataTemplateChildren, in Repository repository)
                 {
-                    Padding = _isSmallScreen ? new Thickness(8, 16, 6, 8) : new Thickness(16, 16, 12, 8);
+                    Padding = IsSmallScreen ? new Thickness(8, 16, 6, 8) : new Thickness(16, 16, 12, 8);
                     CornerRadius = 4;
                     HasShadow = false;
                     Elevation = 4;
@@ -117,8 +114,8 @@ namespace GitTrends
                             (Row.Statistics, AbsoluteGridLength(_statisticsRowHeight)));
 
                         ColumnDefinitions = Columns.Define(
-                            (Column.Avatar, AbsoluteGridLength(_isSmallScreen ? _circleImageHeight - 4 : _circleImageHeight)),
-                            (Column.AvatarPadding, AbsoluteGridLength(_isSmallScreen ? 4 : 16)),
+                            (Column.Avatar, AbsoluteGridLength(IsSmallScreen ? _circleImageHeight - 4 : _circleImageHeight)),
+                            (Column.AvatarPadding, AbsoluteGridLength(IsSmallScreen ? 4 : 16)),
                             (Column.Trending, StarGridLength(1)),
                             (Column.Emoji1, AbsoluteGridLength(_emojiColumnSize)),
                             (Column.Statistic1, AbsoluteGridLength(_statsColumnSize)),
@@ -127,8 +124,11 @@ namespace GitTrends
                             (Column.Emoji3, AbsoluteGridLength(_emojiColumnSize)),
                             (Column.Statistic3, AbsoluteGridLength(_statsColumnSize)));
 
-                        Children.Add(new AvatarImage(repository.OwnerAvatarUrl)
-                                        .Row(Row.Title).Column(Column.Avatar).RowSpan(2));
+                        Children.Add(new AvatarImage(repository.OwnerAvatarUrl, _circleImageHeight)
+                                        .Row(Row.Title).Column(Column.Avatar).RowSpan(2)
+                                        .DynamicResources((BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
+                                                            (CircleImage.ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
+                                                            (CircleImage.LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource))));
 
                         Children.Add(new NameLabel(repository.Name)
                                         .Row(Row.Title).Column(Column.Trending).ColumnSpan(7));
@@ -150,22 +150,6 @@ namespace GitTrends
                         foreach (var child in dataTemplateChildren)
                         {
                             Children.Add(child);
-                        }
-                    }
-
-                    class AvatarImage : CircleImage
-                    {
-                        public AvatarImage(in string avatarUrl)
-                        {
-                            ImageSource = avatarUrl;
-                            WidthRequest = _circleImageHeight;
-
-                            Border = new Border { Thickness = 1 };
-
-                            this.Center();
-                            this.DynamicResources((BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
-                                                    (ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
-                                                    (LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)));
                         }
                     }
 

@@ -21,7 +21,7 @@ namespace GitTrends
 
         readonly IMainThread _mainThread;
         readonly IAnalyticsService _analyticsService;
-        readonly FloatingActionTextButton _statistic1FloatingActionButton, _statistic2FloatingActionButton, _statistic3FloatingActionButton;
+        readonly FloatingActionTextButton _totalButton, _statistic1FloatingActionButton, _statistic2FloatingActionButton, _statistic3FloatingActionButton;
 
         public InformationButton(MobileSortingService mobileSortingService, in IMainThread mainThread, in IAnalyticsService analyticsService)
         {
@@ -34,15 +34,15 @@ namespace GitTrends
             ColumnDefinitions = Columns.Define(AbsoluteGridLength(Diameter));
 
             Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Mini, FloatingActionButtonType.Statistic1).Center().Assign(out _statistic1FloatingActionButton)
-                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic1)));
+                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic1)));
 
             Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Mini, FloatingActionButtonType.Statistic2).Center().Assign(out _statistic2FloatingActionButton)
-                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic2)));
+                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic2)));
 
             Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Mini, FloatingActionButtonType.Statistic3).Center().Assign(out _statistic3FloatingActionButton)
-                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic3)));
+                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic3)));
 
-            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Normal, FloatingActionButtonType.Information, new AsyncCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium, Text = "TOTAL" }.Center());
+            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Normal, FloatingActionButtonType.Information, new AsyncCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium, Text = "TOTAL" }.Center().Assign(out _totalButton));
 
             SetBinding(IsVisibleProperty, new MultiBinding
             {
@@ -60,25 +60,34 @@ namespace GitTrends
             const int animationDuration = 300;
             const string informationButtonTapped = "Information Button Tapped";
 
-            return _mainThread.InvokeOnMainThreadAsync(() =>
+            return _mainThread.InvokeOnMainThreadAsync(async () =>
             {
+                bounceButton(_totalButton);
+
                 if (isVisible(_statistic1FloatingActionButton) && isVisible(_statistic2FloatingActionButton) && isVisible(_statistic3FloatingActionButton))
                 {
                     _analyticsService.Track(informationButtonTapped, nameof(isVisible), "true");
 
-                    return Task.WhenAll(_statistic1FloatingActionButton.TranslateTo(0, 0, animationDuration, Easing.SpringIn), _statistic1FloatingActionButton.RotateTo(0, animationDuration, Easing.SpringIn),
+                    await Task.WhenAll(_statistic1FloatingActionButton.TranslateTo(0, 0, animationDuration, Easing.SpringIn), _statistic1FloatingActionButton.RotateTo(0, animationDuration, Easing.SpringIn),
                                            _statistic2FloatingActionButton.TranslateTo(0, 0, animationDuration, Easing.SpringIn), _statistic2FloatingActionButton.RotateTo(0, animationDuration, Easing.SpringIn),
                                            _statistic3FloatingActionButton.TranslateTo(0, 0, animationDuration, Easing.SpringIn), _statistic3FloatingActionButton.RotateTo(0, animationDuration, Easing.SpringIn));
                 }
+                else
+                {
+                    _analyticsService.Track(informationButtonTapped, nameof(isVisible), "false");
 
-                _analyticsService.Track(informationButtonTapped, nameof(isVisible), "false");
-
-                return Task.WhenAll(_statistic1FloatingActionButton.TranslateTo(-75, 10, animationDuration, Easing.SpringOut), _statistic1FloatingActionButton.RotateTo(360, animationDuration, Easing.SpringOut),
-                                        _statistic2FloatingActionButton.TranslateTo(-50, -50, animationDuration, Easing.SpringOut), _statistic2FloatingActionButton.RotateTo(360, animationDuration, Easing.SpringOut),
-                                        _statistic3FloatingActionButton.TranslateTo(10, -75, animationDuration, Easing.SpringOut), _statistic3FloatingActionButton.RotateTo(360, animationDuration, Easing.SpringOut));
+                    await Task.WhenAll(_statistic1FloatingActionButton.TranslateTo(-75, 10, animationDuration, Easing.SpringOut), _statistic1FloatingActionButton.RotateTo(360, animationDuration, Easing.SpringOut),
+                                            _statistic2FloatingActionButton.TranslateTo(-50, -50, animationDuration, Easing.SpringOut), _statistic2FloatingActionButton.RotateTo(360, animationDuration, Easing.SpringOut),
+                                            _statistic3FloatingActionButton.TranslateTo(10, -75, animationDuration, Easing.SpringOut), _statistic3FloatingActionButton.RotateTo(360, animationDuration, Easing.SpringOut));
+                }
             });
 
             static bool isVisible(in FloatingActionTextButton statisticButton) => statisticButton.TranslationX != 0 && statisticButton.TranslationY != 0;
+            static async void bounceButton(FloatingActionTextButton floatingActionTextButton)
+            {
+                await floatingActionTextButton.ScaleTo(1.1, animationDuration / 2);
+                await floatingActionTextButton.ScaleTo(1, animationDuration / 2);
+            }
         }
 
         class InformationMultiValueConverter : IMultiValueConverter
