@@ -134,6 +134,14 @@ namespace GitTrends
             }
         }
 
+        static IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IReadOnlyList<Repository> repositories, string searchBarText)
+        {
+            if (string.IsNullOrWhiteSpace(searchBarText))
+                return repositories;
+
+            return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
+        }
+
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
             HttpResponseMessage? finalResponse = null;
@@ -354,14 +362,6 @@ namespace GitTrends
         {
             _repositoryList = Array.Empty<Repository>();
             UpdateVisibleRepositoryList(string.Empty, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
-        }
-
-        IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IReadOnlyList<Repository> repositories, string searchBarText)
-        {
-            if (string.IsNullOrWhiteSpace(searchBarText))
-                return repositories;
-
-            return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
         }
 
         void SetSearchBarText(string text)
