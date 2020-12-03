@@ -230,7 +230,11 @@ namespace GitTrends
             }
             catch (Exception e)
             {
-                AnalyticsService.Report(e);
+                AnalyticsService.Report(e, new Dictionary<string, string>
+                {
+                    { nameof(IGitHubApiStatusService.IsAbuseRateLimit), _gitHubApiStatusService.IsAbuseRateLimit(e, out var delta).ToString() },
+                    { nameof(delta), delta.ToString() }
+                });
 
                 var repositoryDatabaseList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
                 SetRepositoriesCollection(repositoryDatabaseList, _searchBarText);
