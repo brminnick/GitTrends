@@ -35,12 +35,14 @@ namespace GitTrends
 
             Content = new ScrollView
             {
+                Margin = new Thickness(0, 0, 0, 12),
+
                 Content = _contentGrid = new Grid
                 {
                     RowSpacing = 8,
                     ColumnSpacing = 16.5,
 
-                    Margin = new Thickness(30, 0, 30, 5),
+                    Margin = new Thickness(28, 0),
 
                     RowDefinitions = Rows.Define(
                         (Row.GitHubUser, AbsoluteGridLength(GitHubUserView.TotalHeight)),

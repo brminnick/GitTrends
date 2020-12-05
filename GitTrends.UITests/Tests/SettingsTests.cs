@@ -29,6 +29,24 @@ namespace GitTrends.UITests
         }
 
         [Test]
+        public void VerifyLogOutButton()
+        {
+            //Arrange
+            bool isLoggedIn_Final, isLoggedIn_Initial;
+
+            //Act
+            isLoggedIn_Initial = SettingsPage.IsLoggedIn;
+
+            SettingsPage.TapLoginButton();
+
+            isLoggedIn_Final = SettingsPage.IsLoggedIn;
+
+            //Assert
+            Assert.IsTrue(isLoggedIn_Initial);
+            Assert.IsTrue(isLoggedIn_Final);
+        }
+
+        [Test]
         public void EnsureCreatedByLabelOpensBrowser()
         {
             //Arrange
