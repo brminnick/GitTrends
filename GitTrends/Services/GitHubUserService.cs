@@ -28,6 +28,10 @@ namespace GitTrends
             _preferences = preferences;
             _secureStorage = secureStorage;
             _gitHubApiStatusService = gitHubApiStatusService;
+
+            GitHubAuthenticationService.LoggedOut += HandleLoggedOut;
+            GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
+            GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
         }
 
         public static event EventHandler<string> NameChanged
@@ -48,9 +52,17 @@ namespace GitTrends
             remove => _avatarUrlChangedEventManager.RemoveEventHandler(value);
         }
 
-        public bool IsDemoUser => AvatarUrl == BaseTheme.GetGitTrendsImageSource();
+        public bool IsDemoUser
+        {
+            get => _preferences.Get(nameof(IsDemoUser), false);
+            set => _preferences.Set(nameof(IsDemoUser), value);
+        }
 
-        public bool IsAuthenticated => !string.IsNullOrWhiteSpace(Alias);
+        public bool IsAuthenticated
+        {
+            get => _preferences.Get(nameof(IsAuthenticated), false);
+            private set => _preferences.Set(nameof(IsAuthenticated), value);
+        }
 
         public string Alias
         {
@@ -120,7 +132,7 @@ namespace GitTrends
             }
         }
 
-        public Task SaveGitHubToken(GitHubToken token)
+        public async Task SaveGitHubToken(GitHubToken token)
         {
             if (token is null)
                 throw new ArgumentNullException(nameof(token));
@@ -129,13 +141,28 @@ namespace GitTrends
                 throw new ArgumentNullException(nameof(token.AccessToken));
 
             var serializedToken = JsonConvert.SerializeObject(token);
-            return _secureStorage.SetAsync(_oauthTokenKey, serializedToken);
+            await _secureStorage.SetAsync(_oauthTokenKey, serializedToken).ConfigureAwait(false);
+
+            IsAuthenticated = true;
         }
 
-        public void InvalidateToken() => _secureStorage.Remove(_oauthTokenKey);
+        public void InvalidateToken()
+        {
+            _secureStorage.Remove(_oauthTokenKey);
+            IsAuthenticated = false;
+        }
 
-        AuthenticationHeaderValue GetAuthenticationHeaderValue(in GitHubToken token) => new(token.TokenType, token.AccessToken);
-        ProductHeaderValue GetProductHeaderValue() => new($"{nameof(GitTrends)}.{Alias}");
+        static AuthenticationHeaderValue GetAuthenticationHeaderValue(in GitHubToken token) => new(token.TokenType, token.AccessToken);
+        static ProductHeaderValue GetProductHeaderValue() => new($"{nameof(GitTrends)}");
+
+        void HandleLoggedOut(object sender, EventArgs e)
+        {
+            IsAuthenticated = false;
+            IsDemoUser = false;
+        }
+
+        void HandleDemoUserActivated(object sender, EventArgs e) => IsDemoUser = true;
+        void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsAuthenticated = e.IsSessionAuthorized;
 
         void OnNameChanged(in string name) => _nameChangedEventManager.RaiseEvent(this, name, nameof(NameChanged));
         void OnAliasChanged(in string alias) => _aliasChangedEventManager.RaiseEvent(this, alias, nameof(AliasChanged));

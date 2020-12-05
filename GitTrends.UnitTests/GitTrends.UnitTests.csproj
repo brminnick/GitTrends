@@ -6,6 +6,7 @@
     <Nullable>Enable</Nullable>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <LangVersion>preview</LangVersion>
+    <GenerateErrorForMissingTargetingPacks>false</GenerateErrorForMissingTargetingPacks>
   </PropertyGroup>
 
   <ItemGroup>
