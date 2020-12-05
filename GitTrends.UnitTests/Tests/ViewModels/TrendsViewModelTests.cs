@@ -142,10 +142,10 @@ namespace GitTrends.UnitTests
             Assert.IsFalse(isStarsChartVisible_DuringFetchDataCommand);
             Assert.True(isStarsChartVisible_Final);
 
-            Assert.AreEqual(TrendsViewModel.MinumumChartHeight, dailyViewsClonesMaxValue_Initial);
+            Assert.AreEqual(TrendsViewModel.MinimumChartHeight, dailyViewsClonesMaxValue_Initial);
             Assert.GreaterOrEqual(dailyViewsClonesMaxValue_Final, dailyViewsClonesMaxValue_Initial);
 
-            Assert.AreEqual(TrendsViewModel.MinumumChartHeight, maxDailyStarsValue_Initial);
+            Assert.AreEqual(TrendsViewModel.MinimumChartHeight, maxDailyStarsValue_Initial);
             Assert.GreaterOrEqual(maxDailyStarsValue_Final, maxDailyStarsValue_Initial);
 
             Assert.AreEqual(0, dailyViewsClonesMinValue_Initial);

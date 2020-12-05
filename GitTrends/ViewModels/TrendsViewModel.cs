@@ -19,7 +19,7 @@ namespace GitTrends
 {
     public class TrendsViewModel : BaseViewModel
     {
-        public const int MinumumChartHeight = 20;
+        public const int MinimumChartHeight = 20;
 
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly GitHubApiStatusService _gitHubApiStatusService;
@@ -98,7 +98,7 @@ namespace GitTrends
         public DateTime MaxDailyStarsDate => DailyStarsList.Any() ? DailyStarsList.Last().LocalDay : DateTime.Today;
         public DateTime MinDailyStarsDate => DailyStarsList.Any() ? DailyStarsList.First().LocalDay : DateTime.Today.Subtract(TimeSpan.FromDays(14));
 
-        public double MaxDailyStarsValue => TotalStars > MinumumChartHeight ? TotalStars : MinumumChartHeight;
+        public double MaxDailyStarsValue => TotalStars > MinimumChartHeight ? TotalStars : MinimumChartHeight;
 
         public double DailyViewsClonesMaxValue
         {
@@ -107,7 +107,7 @@ namespace GitTrends
                 var dailyViewMaxValue = DailyViewsList.Any() ? DailyViewsList.Max(x => x.TotalViews) : 0;
                 var dailyClonesMaxValue = DailyClonesList.Any() ? DailyClonesList.Max(x => x.TotalClones) : 0;
 
-                return Math.Max(Math.Max(dailyViewMaxValue, dailyClonesMaxValue), MinumumChartHeight);
+                return Math.Max(Math.Max(dailyViewMaxValue, dailyClonesMaxValue), MinimumChartHeight);
             }
         }
 
