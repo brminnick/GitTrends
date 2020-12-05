@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Http;
 using GitHubApiStatus;
 using GitTrends.Shared;
 using Microsoft.AspNetCore.Http;
@@ -44,19 +45,29 @@ namespace GitTrends.Functions
                 var timeout = TimeSpan.FromSeconds(2);
                 var cancellationTokenSource = new CancellationTokenSource(timeout);
 
-                _gitHubApiStatusService.SetAuthenticationHeaderValue(new AuthenticationHeaderValue("bearer", testToken));
-                var gitHubApiRateLimits = await _gitHubApiStatusService.GetApiRateLimits(cancellationTokenSource.Token).ConfigureAwait(false);
-
-                if (gitHubApiRateLimits.RestApi.RemainingRequestCount > 1000
-                    && gitHubApiRateLimits.GraphQLApi.RemainingRequestCount > 1000)
+                try
                 {
-                    var gitHubToken = new GitHubToken(testToken, GitHubConstants.OAuthScope, "Bearer");
+                    _gitHubApiStatusService.SetAuthenticationHeaderValue(new AuthenticationHeaderValue("bearer", testToken));
+                    var gitHubApiRateLimits = await _gitHubApiStatusService.GetApiRateLimits(cancellationTokenSource.Token).ConfigureAwait(false);
 
-                    return new ContentResult
+                    if (gitHubApiRateLimits.RestApi.RemainingRequestCount > 1000
+                        && gitHubApiRateLimits.GraphQLApi.RemainingRequestCount > 1000)
                     {
-                        Content = JsonConvert.SerializeObject(gitHubToken),
-                        StatusCode = (int)HttpStatusCode.OK,
-                        ContentType = "application/json"
+                        var gitHubToken = new GitHubToken(testToken, GitHubConstants.OAuthScope, "Bearer");
+
+                        return new ContentResult
+                        {
+                            Content = JsonConvert.SerializeObject(gitHubToken),
+                            StatusCode = (int)HttpStatusCode.OK,
+                            ContentType = "application/json"
+                        };
+                    }
+                }
+                catch(Exception e)
+                {
+                    return new ObjectResult(e.ToString())
+                    {
+                        StatusCode = (int)HttpStatusCode.InternalServerError
                     };
                 }
             };
