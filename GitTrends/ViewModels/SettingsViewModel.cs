@@ -281,7 +281,7 @@ namespace GitTrends
         {
             AnalyticsService.Track("Login Button Tapped", nameof(gitHubUserService.IsAuthenticated), gitHubUserService.IsAuthenticated.ToString());
 
-            if (gitHubUserService.IsAuthenticated)
+            if (gitHubUserService.IsAuthenticated || gitHubUserService.IsDemoUser)
             {
                 await gitHubAuthenticationService.LogOut().ConfigureAwait(false);
 
@@ -295,19 +295,33 @@ namespace GitTrends
 
         protected override async Task ExecuteDemoButtonCommand(string? buttonText)
         {
+            var demoUserActivatedTCS = new TaskCompletionSource<object?>();
+            GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
+
             try
             {
                 await base.ExecuteDemoButtonCommand(buttonText).ConfigureAwait(false);
 
                 AnalyticsService.Track("Settings Try Demo Button Tapped");
                 await GitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-                SetGitHubValues();
+                await demoUserActivatedTCS.Task.ConfigureAwait(false);
             }
             finally
             {
                 IsAuthenticating = false;
             }
+
+            void HandleDemoUserActivated(object sender, EventArgs e)
+            {
+                GitHubAuthenticationService.DemoUserActivated -= HandleDemoUserActivated;
+
+                SetGitHubValues();
+
+                demoUserActivatedTCS.SetResult(null);
+            }
         }
+
+
 
         void ExecutePreferredChartsChangedCommand(TrendsChartOption trendsChartOption)
         {
@@ -408,10 +422,11 @@ namespace GitTrends
 
         void SetGitHubValues()
         {
-            GitHubAliasLabelText = GitHubUserService.IsAuthenticated ? $"@{GitHubUserService.Alias}" : string.Empty;
-            GitHubNameLabelText = GitHubUserService.IsAuthenticated ? GitHubUserService.Name : GitHubLoginButtonConstants.NotLoggedIn;
-            LoginLabelText = GitHubUserService.IsAuthenticated ? GitHubLoginButtonConstants.Disconnect : GitHubLoginButtonConstants.ConnectToGitHub;
-            GitHubAvatarImageSource = GitHubUserService.IsAuthenticated ? GitHubUserService.AvatarUrl : BaseTheme.GetDefaultProfileImageSource();
+            LoginLabelText = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? GitHubLoginButtonConstants.Disconnect : GitHubLoginButtonConstants.ConnectToGitHub;
+
+            GitHubAliasLabelText = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? $"@{GitHubUserService.Alias}" : string.Empty;
+            GitHubNameLabelText = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? GitHubUserService.Name : GitHubLoginButtonConstants.NotLoggedIn;
+            GitHubAvatarImageSource = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? GitHubUserService.AvatarUrl : BaseTheme.GetDefaultProfileImageSource();
         }
 
         Task ExecuteGitHubUserViewTappedCommand()

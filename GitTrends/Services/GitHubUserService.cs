@@ -115,21 +115,28 @@ namespace GitTrends
                     return GitHubToken.Empty;
 
                 if (!_gitHubApiStatusService.IsProductHeaderValueValid)
-                    _gitHubApiStatusService.AddProductHeaderValue(GetProductHeaderValue());
+                    _gitHubApiStatusService.AddProductHeaderValue(getProductHeaderValue());
 
                 if (!_gitHubApiStatusService.IsAuthenticationHeaderValueSet)
-                    _gitHubApiStatusService.SetAuthenticationHeaderValue(GetAuthenticationHeaderValue(token));
+                    _gitHubApiStatusService.SetAuthenticationHeaderValue(getAuthenticationHeaderValue(token));
+
+                IsAuthenticated = true;
 
                 return token;
             }
             catch (ArgumentNullException)
             {
+                IsAuthenticated = false; 
                 return GitHubToken.Empty;
             }
             catch (JsonReaderException)
             {
+                IsAuthenticated = false;
                 return GitHubToken.Empty;
             }
+
+            static AuthenticationHeaderValue getAuthenticationHeaderValue(in GitHubToken token) => new(token.TokenType, token.AccessToken);
+            static ProductHeaderValue getProductHeaderValue() => new($"{nameof(GitTrends)}");
         }
 
         public async Task SaveGitHubToken(GitHubToken token)
@@ -151,9 +158,6 @@ namespace GitTrends
             _secureStorage.Remove(_oauthTokenKey);
             IsAuthenticated = false;
         }
-
-        static AuthenticationHeaderValue GetAuthenticationHeaderValue(in GitHubToken token) => new(token.TokenType, token.AccessToken);
-        static ProductHeaderValue GetProductHeaderValue() => new($"{nameof(GitTrends)}");
 
         void HandleLoggedOut(object sender, EventArgs e)
         {
