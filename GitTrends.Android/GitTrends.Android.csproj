@@ -92,15 +92,15 @@
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.3.0.35" />
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
-    <PackageReference Include="Autofac" Version="6.0.0" />
+    <PackageReference Include="Autofac" Version="6.1.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.0.0" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.0.0" />
     <PackageReference Include="Shiny.Notifications" Version="1.2.0.1755" />
     <PackageReference Include="Xam.Plugins.Android.ExoPlayer" Version="2.11.8" />
-    <PackageReference Include="Xamarin.Firebase.Messaging" Version="120.1.7" />
+    <PackageReference Include="Xamarin.Firebase.Messaging" Version="120.2.4" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
     <PackageReference Include="Xamarin.GooglePlayServices.Base" Version="117.2.1" />
-    <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.759" />
+    <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.1.0.5" />
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-pre4" />
     <PackageReference Include="Xamarin.Build.Download" Version="0.10.0" />
