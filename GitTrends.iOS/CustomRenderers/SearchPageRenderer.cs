@@ -27,17 +27,6 @@ namespace GitTrends.iOS
             _searchController.SearchBar.Placeholder = string.Empty;
         }
 
-        protected override void OnElementChanged(VisualElementChangedEventArgs e)
-        {
-            base.OnElementChanged(e);
-
-            if (e.OldElement is not null)
-                e.OldElement.SizeChanged -= HandleSizeChanged;
-
-            if (e.NewElement is not null)
-                e.NewElement.SizeChanged += HandleSizeChanged;
-        }
-
         public override async void ViewWillAppear(bool animated)
         {
             base.ViewDidAppear(animated);
@@ -70,6 +59,17 @@ namespace GitTrends.iOS
         {
             if (Element is ISearchPage searchPage)
                 searchPage.OnSearchBarTextChanged(searchController.SearchBar.Text ?? string.Empty);
+        }
+
+        protected override void OnElementChanged(VisualElementChangedEventArgs e)
+        {
+            base.OnElementChanged(e);
+
+            if (e.OldElement is not null)
+                e.OldElement.SizeChanged -= HandleSizeChanged;
+
+            if (e.NewElement is not null)
+                e.NewElement.SizeChanged += HandleSizeChanged;
         }
 
         async Task UpdateBarButtonItems(UIViewController parentViewController, Page page)
@@ -135,7 +135,7 @@ namespace GitTrends.iOS
             _ => Task.FromResult<UIImage?>(null)
         };
 
-        //Work-around for https://github.com/brminnick/GitTrends/issues/171
+        //Work-around to accomidate UISearchController height, https://github.com/brminnick/GitTrends/issues/171
         void HandleSizeChanged(object sender, EventArgs e)
         {
             if (ParentViewController?.NavigationItem.SearchController is not null
