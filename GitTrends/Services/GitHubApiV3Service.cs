@@ -87,7 +87,7 @@ namespace GitTrends
         {
             var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
 
-            if (_gitHubUserService.IsDemoUser)
+            if (!_gitHubUserService.IsAuthenticated)
                 return await AttemptAndRetry_Mobile(() => _githubApiClient.GetGitHubApiResponse_Unauthenticated(), cancellationToken).ConfigureAwait(false);
 
             return await AttemptAndRetry_Mobile(() => _githubApiClient.GetGitHubApiResponse_Authenticated(GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);

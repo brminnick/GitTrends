@@ -118,9 +118,9 @@ namespace GitTrends.iOS
 
         static Task<UIImage?> GetUIImage(ImageSource source) => source switch
         {
-            FileImageSource _ => new FileImageSourceHandler().LoadImageAsync(source),
-            UriImageSource _ => new ImageLoaderSourceHandler().LoadImageAsync(source),
-            StreamImageSource _ => new StreamImagesourceHandler().LoadImageAsync(source),
+            FileImageSource => new FileImageSourceHandler().LoadImageAsync(source),
+            UriImageSource => new ImageLoaderSourceHandler().LoadImageAsync(source),
+            StreamImageSource => new StreamImagesourceHandler().LoadImageAsync(source),
             _ => Task.FromResult<UIImage?>(null)
         };
     }
