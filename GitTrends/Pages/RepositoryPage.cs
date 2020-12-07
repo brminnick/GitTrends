@@ -32,7 +32,7 @@ namespace GitTrends
                                 GitHubUserService gitHubUserService,
                                 DeepLinkingService deepLinkingService,
                                 RepositoryViewModel repositoryViewModel,
-                                MobileSortingService mobileSortingService) : base(repositoryViewModel, analyticsService, mainThread, true)
+                                MobileSortingService mobileSortingService) : base(repositoryViewModel, analyticsService, mainThread)
         {
             _firstRunService = firstRunService;
             _gitHubUserService = gitHubUserService;
@@ -70,7 +70,7 @@ namespace GitTrends
             {
                 RowDefinitions = Rows.Define(
                     (Row.CollectionView, Star),
-                    (Row.Information, AbsoluteGridLength(Device.RuntimePlatform is Device.iOS ? InformationButton.Diameter + 10 : InformationButton.Diameter))),
+                    (Row.Information, AbsoluteGridLength(InformationButton.Diameter))),
 
                 ColumnDefinitions = Columns.Define(
                     (Column.CollectionView, Star),
