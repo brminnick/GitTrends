@@ -65,9 +65,6 @@ namespace GitTrends.iOS
         {
             base.OnElementChanged(e);
 
-            if (e.OldElement is not null)
-                e.OldElement.SizeChanged -= HandleSizeChanged;
-
             if (e.NewElement is not null)
                 e.NewElement.SizeChanged += HandleSizeChanged;
         }
@@ -135,7 +132,7 @@ namespace GitTrends.iOS
             _ => Task.FromResult<UIImage?>(null)
         };
 
-        //Work-around to accomidate UISearchController height, https://github.com/brminnick/GitTrends/issues/171
+        //Work-around to accommodate UISearchController height, https://github.com/brminnick/GitTrends/issues/171
         void HandleSizeChanged(object sender, EventArgs e)
         {
             if (ParentViewController?.NavigationItem.SearchController is not null
