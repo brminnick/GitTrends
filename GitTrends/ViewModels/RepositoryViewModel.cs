@@ -218,7 +218,7 @@ namespace GitTrends
 
                 RefreshState = RefreshState.LoginExpired;
             }
-            catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximimApiCallLimit(e)
+            catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximumApiCallLimit(e)
                                         || (e is HttpRequestException && finalResponse != null && _gitHubApiStatusService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
             {
                 var responseHeaders = e switch
@@ -229,7 +229,7 @@ namespace GitTrends
                     _ => throw new NotSupportedException()
                 };
 
-                var maximimApiRequestsReachedEventArgs = new MaximimApiRequestsReachedEventArgs(_gitHubApiStatusService.GetRateLimitResetDateTime(responseHeaders));
+                var maximimApiRequestsReachedEventArgs = new MaximumApiRequestsReachedEventArgs(_gitHubApiStatusService.GetRateLimitResetDateTime(responseHeaders));
                 OnPullToRefreshFailed(maximimApiRequestsReachedEventArgs);
 
                 SetRepositoriesCollection(Array.Empty<Repository>(), _searchBarText);
@@ -393,7 +393,7 @@ namespace GitTrends
             RefreshState = pullToRefreshFailedEventArgs switch
             {
                 ErrorPullToRefreshEventArgs _ => RefreshState.Error,
-                MaximimApiRequestsReachedEventArgs _ => RefreshState.MaximumApiLimit,
+                MaximumApiRequestsReachedEventArgs _ => RefreshState.MaximumApiLimit,
                 LoginExpiredPullToRefreshEventArgs _ => RefreshState.LoginExpired,
                 _ => throw new NotSupportedException()
             };

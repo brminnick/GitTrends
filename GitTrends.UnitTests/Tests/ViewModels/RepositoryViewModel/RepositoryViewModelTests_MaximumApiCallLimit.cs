@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace GitTrends.UnitTests
 {
-    abstract class RepositoryViewModelTests_MaximimApiCallLimit : BaseTest
+    abstract class RepositoryViewModelTests_MaximumApiCallLimit : BaseTest
     {
         protected async Task ExecutePullToRefreshCommandTestMaximumApiLimitTest()
         {
@@ -50,7 +50,7 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
             Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.MaximumApiLimit, true), emptyDataViewDescription_Final);
 
-            Assert.IsTrue(pullToRefreshFailedEventArgs is MaximimApiRequestsReachedEventArgs);
+            Assert.IsTrue(pullToRefreshFailedEventArgs is MaximumApiRequestsReachedEventArgs);
 
             void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
             {

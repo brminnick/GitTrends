@@ -10,7 +10,7 @@ using RichardSzalay.MockHttp;
 
 namespace GitTrends.UnitTests
 {
-    class RepositoryViewModelTests_MaximimApiCallLimit_RestApi : RepositoryViewModelTests_MaximimApiCallLimit
+    class RepositoryViewModelTests_MaximumApiCallLimit_RestApi : RepositoryViewModelTests_MaximumApiCallLimit
     {
         [Test]
         public Task PullToRefreshCommandTest_MaximumApiLimit_RestLApi() => ExecutePullToRefreshCommandTestMaximumApiLimitTest();

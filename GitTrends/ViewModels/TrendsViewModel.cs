@@ -293,7 +293,7 @@ namespace GitTrends
 
                 refreshState = RefreshState.LoginExpired;
             }
-            catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximimApiCallLimit(e))
+            catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximumApiCallLimit(e))
             {
                 var responseHeaders = e switch
                 {

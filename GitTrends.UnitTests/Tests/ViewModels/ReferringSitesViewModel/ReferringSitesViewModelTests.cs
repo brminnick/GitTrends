@@ -49,7 +49,7 @@ namespace GitTrends.UnitTests
 
             //Assert
             Assert.IsTrue(didPullToRefreshFailedFire);
-            Assert.IsTrue(pullToRefreshFailedEventArgs is MaximimApiRequestsReachedEventArgs || pullToRefreshFailedEventArgs is ErrorPullToRefreshEventArgs);
+            Assert.IsTrue(pullToRefreshFailedEventArgs is MaximumApiRequestsReachedEventArgs || pullToRefreshFailedEventArgs is ErrorPullToRefreshEventArgs);
 
             Assert.IsFalse(isEmptyDataViewEnabled_Initial);
             Assert.IsFalse(isEmptyDataViewEnabled_DuringRefresh);

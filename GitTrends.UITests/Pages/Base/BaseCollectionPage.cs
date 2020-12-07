@@ -83,7 +83,7 @@ namespace GitTrends.UITests
                 }
                 catch
                 {
-                    var maximimApiRequestsReachedEventArgs = new MaximimApiRequestsReachedEventArgs(0);
+                    var maximimApiRequestsReachedEventArgs = new MaximumApiRequestsReachedEventArgs(0);
                     App.WaitForElement(maximimApiRequestsReachedEventArgs.Title, timeout: timeout);
 
                     App.Screenshot("Maximum API Requests Popup Appeared");
