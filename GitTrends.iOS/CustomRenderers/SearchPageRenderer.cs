@@ -27,6 +27,17 @@ namespace GitTrends.iOS
             _searchController.SearchBar.Placeholder = string.Empty;
         }
 
+        protected override void OnElementChanged(VisualElementChangedEventArgs e)
+        {
+            base.OnElementChanged(e);
+
+            if (e.OldElement is not null)
+                e.OldElement.SizeChanged -= HandleSizeChanged;
+
+            if (e.NewElement is not null)
+                e.NewElement.SizeChanged += HandleSizeChanged;
+        }
+
         public override async void ViewWillAppear(bool animated)
         {
             base.ViewDidAppear(animated);
@@ -123,5 +134,21 @@ namespace GitTrends.iOS
             StreamImageSource => new StreamImagesourceHandler().LoadImageAsync(source),
             _ => Task.FromResult<UIImage?>(null)
         };
+
+        //Work-around for https://github.com/brminnick/GitTrends/issues/171
+        void HandleSizeChanged(object sender, EventArgs e)
+        {
+            if (ParentViewController?.NavigationItem.SearchController is not null
+                && Element.Height is not -1
+                && Element is Page page)
+            {
+                Element.SizeChanged -= HandleSizeChanged;
+
+                page.Padding = new Thickness(page.Padding.Left,
+                                                page.Padding.Top,
+                                                page.Padding.Right,
+                                                page.Padding.Bottom + _searchController.SearchBar.Frame.Height);
+            }
+        }
     }
 }
