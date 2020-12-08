@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {

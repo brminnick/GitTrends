@@ -1,8 +1,8 @@
 ﻿using GitTrends.Mobile.Common;
 using GitTrends.Shared;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {

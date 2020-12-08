@@ -1,5 +1,5 @@
-﻿using Xamarin.Forms;
-using Xamarin.Forms.Markup;
+﻿using Xamarin.CommunityToolkit.Markup;
+using Xamarin.Forms;
 using Xamarin.Forms.PancakeView;
 
 namespace GitTrends

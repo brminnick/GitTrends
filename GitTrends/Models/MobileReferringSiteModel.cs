@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using AsyncAwaitBestPractices;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.Forms;
@@ -12,7 +11,7 @@ namespace GitTrends
     {
         public const int FavIconSize = 32;
 
-        readonly WeakEventManager _propertyChangedEventManager = new();
+        readonly AsyncAwaitBestPractices.WeakEventManager _propertyChangedEventManager = new();
 
         ImageSource? _favIcon;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {

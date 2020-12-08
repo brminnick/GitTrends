@@ -2,9 +2,9 @@
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Syncfusion.SfChart.XForms;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {

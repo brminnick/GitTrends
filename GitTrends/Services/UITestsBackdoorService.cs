@@ -16,7 +16,7 @@ namespace GitTrends
 {
     public class UITestsBackdoorService
     {
-        readonly static WeakEventManager _popPageStartedEventManager = new();
+        readonly static AsyncAwaitBestPractices.WeakEventManager _popPageStartedEventManager = new();
         readonly static WeakEventManager<Page> _popPageCompletedEventManager = new();
 
         readonly IMainThread _mainThread;

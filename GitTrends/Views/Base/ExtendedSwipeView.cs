@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Input;
-using AsyncAwaitBestPractices;
 using Xamarin.Forms;
 
 namespace GitTrends
@@ -15,7 +14,7 @@ namespace GitTrends
 
     abstract class BaseExtendedSwipeView<TBindingContext> : SwipeView
     {
-        readonly WeakEventManager _tappedWeakEventManager = new();
+        readonly AsyncAwaitBestPractices.WeakEventManager _tappedWeakEventManager = new();
 
         public BaseExtendedSwipeView()
         {

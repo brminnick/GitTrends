@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Sharpnado.MaterialFrame;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 using static GitTrends.MarkupExtensions;
 using static GitTrends.XamarinFormsService;
-using static Xamarin.Forms.Markup.GridRowsColumns;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -24,7 +23,7 @@ namespace GitTrends
         const double _emojiColumnSize = _statisticsRowHeight;
         readonly static double _circleImageHeight = IsSmallScreen ? 52 : 62;
 
-        readonly static WeakEventManager _tappedWeakEventManager = new();
+        readonly static AsyncAwaitBestPractices.WeakEventManager _tappedWeakEventManager = new();
 
         protected BaseRepositoryDataTemplate(IEnumerable<View> parentDataTemplateChildren, RepositoryViewModel repositoryViewModel, Repository repository) : base(() => new CardView(parentDataTemplateChildren, repositoryViewModel, repository))
         {

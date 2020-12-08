@@ -1,7 +1,7 @@
-﻿using Xamarin.Forms;
-using Xamarin.Forms.Markup;
+﻿using Xamarin.CommunityToolkit.Markup;
+using Xamarin.Forms;
 using static GitTrends.MarkupExtensions;
-using static Xamarin.Forms.Markup.GridRowsColumns;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -77,7 +77,7 @@ namespace GitTrends
                     Spans =
                     {
                         title,
-                        new Span { Text = "\n" }.Font(24),
+                        new Span { Text = "\n" }.Font(size: 24),
                         description
                     }
                 };

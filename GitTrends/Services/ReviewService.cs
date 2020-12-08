@@ -14,7 +14,7 @@ namespace GitTrends
         public const int MinimumAppInstallDays = 14;
         public const int MinimumMostRecentRequestDays = 90;
 
-        readonly static WeakEventManager _reviewPromptRequestedEventManager = new();
+        readonly static AsyncAwaitBestPractices.WeakEventManager _reviewPromptRequestedEventManager = new();
         readonly static WeakEventManager<ReviewRequest> _reviewCompletedEventManager = new();
 
         readonly IAppInfo _appInfo;
