@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -67,6 +68,19 @@ namespace GitTrends
             }
             catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.Forbidden)
             {
+                reportException(e);
+
+                return (null, null, null);
+            }
+            catch (GraphQLException<StarGazers> e) when (e.ContainsSamlOrganizationAthenticationError())
+            {
+                reportException(e);
+
+                return (null, null, null);
+            }
+
+            void reportException(in Exception e)
+            {
                 _analyticsService.Report(e, new Dictionary<string, string>
                 {
                     { nameof(Repository) + nameof(Repository.Name), repository.Name },
@@ -74,8 +88,6 @@ namespace GitTrends
                     { nameof(GitHubUserService) + nameof(GitHubUserService.Alias), _gitHubUserService.Alias },
                     { nameof(GitHubUserService) + nameof(GitHubUserService.Name), _gitHubUserService.Name },
                 });
-
-                return (null, null, null);
             }
         }
     }

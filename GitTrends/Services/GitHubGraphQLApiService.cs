@@ -107,7 +107,8 @@ namespace GitTrends
 
                     foreach (var repository in repositoryConnection.RepositoryList)
                     {
-                        yield return new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
+                        if (repository is not null)
+                            yield return new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
                                                         repository.Issues.IssuesCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt);
                     }
                 }
@@ -136,10 +137,20 @@ namespace GitTrends
 
         async Task<RepositoryConnection> GetRepositoryConnection(string repositoryOwner, string? endCursor, CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
         {
-            var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-            var data = await ExecuteGraphQLRequest(() => _githubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+            RepositoryConnectionResponse repositoryConnectionResponse;
 
-            return data.GitHubUser.RepositoryConnection;
+            var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
+
+            try
+            {
+                repositoryConnectionResponse = await ExecuteGraphQLRequest(() => _githubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+            }
+            catch (GraphQLException<RepositoryConnectionResponse> e) when (e.GraphQLData != null && e.ContainsSamlOrganizationAthenticationError())
+            {
+                repositoryConnectionResponse = e.GraphQLData;
+            }
+
+            return repositoryConnectionResponse.GitHubUser.RepositoryConnection;
         }
 
         async Task<T> ExecuteGraphQLRequest<T>(Func<Task<ApiResponse<GraphQLResponse<T>>>> action, CancellationToken cancellationToken, int numRetries = 2, [CallerMemberName] string callerName = "")
@@ -149,9 +160,14 @@ namespace GitTrends
             await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
 
             if (response.Content.Errors != null)
-                throw new GraphQLException(response.Content.Errors, response.Headers, response.StatusCode);
+                throw new GraphQLException<T>(response.Content.Data, response.Content.Errors, response.StatusCode, response.Headers);
 
             return response.Content.Data;
         }
+    }
+
+    public static class GraphQLExceptionExtensions
+    {
+        public static bool ContainsSamlOrganizationAthenticationError<T>(this GraphQLException<T> graphQLException) => graphQLException.Errors.Any(x => x.Message.Contains("SAML", StringComparison.OrdinalIgnoreCase) && x.Message.Contains("organization", StringComparison.OrdinalIgnoreCase));
     }
 }

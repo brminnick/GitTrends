@@ -14,7 +14,7 @@ namespace GitTrends.Shared
         }
 
         [JsonProperty("nodes")]
-        public IReadOnlyList<RepositoryConnectionNode> RepositoryList { get; }
+        public IReadOnlyList<RepositoryConnectionNode?> RepositoryList { get; }
 
         [JsonProperty("pageInfo")]
         public PageInfo PageInfo { get; }
