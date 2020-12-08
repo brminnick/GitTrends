@@ -28,6 +28,8 @@ namespace GitTrends
             _mainThread = mainThread;
             _analyticsService = analyticsService;
 
+            InputTransparent = true;
+
             AutomationId = RepositoryPageAutomationIds.InformationButton;
 
             RowDefinitions = Rows.Define(AbsoluteGridLength(Diameter));
