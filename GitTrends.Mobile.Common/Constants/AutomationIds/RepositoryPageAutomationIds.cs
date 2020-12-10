@@ -11,7 +11,6 @@
         public const string LargeScreenTrendingImage = nameof(RepositoryPageAutomationIds) + nameof(LargeScreenTrendingImage);
         public const string SmallScreenTrendingImage = nameof(RepositoryPageAutomationIds) + nameof(SmallScreenTrendingImage);
         public const string InformationButton = nameof(RepositoryPageAutomationIds) + nameof(InformationButton);
-        public const string InformationLabel = nameof(RepositoryPageAutomationIds) + nameof(InformationLabel);
 
         public static string GetFloatingActionTextButtonLabelAutomationId(in FloatingActionButtonType floatingActionButtonType)
         {
