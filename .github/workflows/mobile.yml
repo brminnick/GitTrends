@@ -29,7 +29,7 @@ jobs:
       - name: Setup .NET Core v3.1
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '3.0.x'
+          dotnet-version: '3.1.x'
         
       - name: Restore NuGet 
         run: |
