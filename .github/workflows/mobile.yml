@@ -17,11 +17,24 @@ jobs:
         GetSyncFusionInformationApiKey: ${{ secrets.GetSyncFusionInformationApiKey }}
         GetNotificationHubInformationApiKey: ${{ secrets.GetNotificationHubInformationApiKey }}
         APPCENTER_SOURCE_DIRECTORY: .
+
       steps:
       - uses: actions/checkout@v1
+        
+      - name: Setup .NET v5.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+          
+      - name: Setup .NET Core v3.1
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+        
       - name: Restore NuGet 
         run: |
           nuget restore
+        
       - name: Inject API Keys
         run: |
           chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
