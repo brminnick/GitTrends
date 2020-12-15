@@ -636,7 +636,7 @@
     <ItemGroup>
         <PackageReference Include="refit" Version="5.2.4" />
         <PackageReference Include="Polly" Version="7.2.1" />
-        <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-pre5" />
+        <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-rc1" />
         <PackageReference Include="GitHubApiStatus" Version="2.0.0-pre9" />
     </ItemGroup>
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />

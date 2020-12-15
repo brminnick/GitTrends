@@ -25,7 +25,7 @@
         <PackageReference Include="Refit.HttpClientFactory" Version="5.2.4" />
         <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="3.1.10" />
         <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
-        <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-pre5" />
+        <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-rc1" />
     </ItemGroup>
     <ItemGroup>
         <None Update="host.json">

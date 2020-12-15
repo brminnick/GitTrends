@@ -15,7 +15,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
     <PackageReference Include="Refit" Version="5.2.4" />
     <PackageReference Include="Polly" Version="7.2.1" />
-    <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-pre5" />
+    <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-rc1" />
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
