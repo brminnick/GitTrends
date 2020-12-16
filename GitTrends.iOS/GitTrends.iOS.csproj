@@ -114,7 +114,6 @@
     <Compile Include="CustomRenderers\NavigationPageCustomRenderer.cs" />
     <Compile Include="Effects\LabelShadowEffect.cs" />
     <Compile Include="CustomRenderers\CarouselPageCustomRenderer.cs" />
-    <Compile Include="CustomRenderers\IndicatorViewCustomRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
