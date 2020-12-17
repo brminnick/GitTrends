@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +41,7 @@ namespace GitTrends.UnitTests
             mobileReferringSites_Initial = referringSitesViewModel.MobileReferringSitesList;
             emptyDataViewDescription_Initial = referringSitesViewModel.EmptyDataViewDescription;
 
-            var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((GitTrendsRepoOwner, GitTrendsRepoName, $"https://github.com/{GitTrendsRepoOwner}/{GitTrendsRepoName}", CancellationToken.None));
+            var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, $"https://github.com/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", CancellationToken.None));
 
             isEmptyDataViewEnabled_DuringRefresh = referringSitesViewModel.IsEmptyDataViewEnabled;
             mobileReferringSites_DuringRefresh = referringSitesViewModel.MobileReferringSitesList;
@@ -69,7 +70,7 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.MaximumApiLimit), emptyDataViewDescription_Final);
             Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Uninitialized), emptyDataViewDescription_Initial);
 
-            Assert.IsTrue(pullToRefreshFailedEventArgs is MaximimApiRequestsReachedEventArgs);
+            Assert.IsTrue(pullToRefreshFailedEventArgs is MaximumApiRequestsReachedEventArgs);
 
             void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
             {
@@ -90,8 +91,8 @@ namespace GitTrends.UnitTests
         static HttpClient CreateMaximumApiLimitHttpClient(string url)
         {
             var responseMessage = new HttpResponseMessage(HttpStatusCode.Forbidden);
-            responseMessage.Headers.Add(GitHubApiService.RateLimitRemainingHeader, "0");
-            responseMessage.Headers.Add(GitHubApiService.RateLimitResetHeader, DateTimeOffset.UtcNow.AddMinutes(50).ToUnixTimeSeconds().ToString());
+            responseMessage.Headers.Add(GitHubApiStatusService.RateLimitRemainingHeader, "0");
+            responseMessage.Headers.Add(GitHubApiStatusService.RateLimitResetHeader, DateTimeOffset.UtcNow.AddMinutes(50).ToUnixTimeSeconds().ToString());
 
             var httpMessageHandler = new MockHttpMessageHandler();
             httpMessageHandler.When($"{url}/*").Respond(request => responseMessage);

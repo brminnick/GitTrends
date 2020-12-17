@@ -2,7 +2,7 @@
 
 namespace GitTrends.Shared
 {
-    public abstract class GraphQLRequest
+    public abstract record GraphQLRequest
     {
         protected GraphQLRequest(string query, string variables = "") => (Query, Variables) = (query, variables);
 

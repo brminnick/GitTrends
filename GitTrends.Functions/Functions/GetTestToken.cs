@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Http;
+using GitHubApiStatus;
 using GitTrends.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,40 +18,56 @@ namespace GitTrends.Functions
 {
     class GetTestToken
     {
-        readonly static Lazy<IReadOnlyList<string>> _testTokenListHolder = new Lazy<IReadOnlyList<string>>(() => new List<string>
+        readonly static IReadOnlyList<string> _testTokenList = new[]
         {
-            { Environment.GetEnvironmentVariable("UITestToken_brminnick") ?? string.Empty },
-            { Environment.GetEnvironmentVariable("UITestToken_GitTrends") ?? string.Empty },
-            { Environment.GetEnvironmentVariable("UITestToken_GitTrendsApp") ?? string.Empty },
-            { Environment.GetEnvironmentVariable("UITestToken_TheCodeTraveler") ?? string.Empty }
-        });
+            Environment.GetEnvironmentVariable("UITestToken_brminnick") ?? string.Empty,
+            Environment.GetEnvironmentVariable("UITestToken_GitTrends") ?? string.Empty,
+            Environment.GetEnvironmentVariable("UITestToken_GitTrendsApp") ?? string.Empty,
+            Environment.GetEnvironmentVariable("UITestToken_TheCodeTraveler") ?? string.Empty
+        };
 
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly IGitHubApiStatusService _gitHubApiStatusService;
+        readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
 
-        public GetTestToken(GitHubApiV3Service gitHubApiV3Service) => _gitHubApiV3Service = gitHubApiV3Service;
-
-        IReadOnlyList<string> TestTokenList => _testTokenListHolder.Value;
+        public GetTestToken(GitHubApiV3Service gitHubApiV3Service, IGitHubApiStatusService gitHubApiStatusService, GitHubGraphQLApiService gitHubGraphQLApiService)
+        {
+            _gitHubApiV3Service = gitHubApiV3Service;
+            _gitHubApiStatusService = gitHubApiStatusService;
+            _gitHubGraphQLApiService = gitHubGraphQLApiService;
+        }
 
         [FunctionName(nameof(GetTestToken))]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request, ILogger log)
         {
-            foreach (var testToken in TestTokenList)
+            foreach (var testToken in _testTokenList)
             {
-                var timeout = TimeSpan.FromSeconds(1);
+                var timeout = TimeSpan.FromSeconds(2);
                 var cancellationTokenSource = new CancellationTokenSource(timeout);
 
-                var gitHubApiResponse = await _gitHubApiV3Service.GetGitHubApiResponse(testToken, cancellationTokenSource.Token).ConfigureAwait(false);
-                var apiRequestsRemaining = GitHubApiService.GetNumberOfApiRequestsRemaining(gitHubApiResponse.Headers);
-
-                if (apiRequestsRemaining > 1000)
+                try
                 {
-                    var gitHubToken = new GitHubToken(testToken, GitHubConstants.OAuthScope, "Bearer");
+                    _gitHubApiStatusService.SetAuthenticationHeaderValue(new AuthenticationHeaderValue("bearer", testToken));
+                    var gitHubApiRateLimits = await _gitHubApiStatusService.GetApiRateLimits(cancellationTokenSource.Token).ConfigureAwait(false);
 
-                    return new ContentResult
+                    if (gitHubApiRateLimits.RestApi.RemainingRequestCount > 1000
+                        && gitHubApiRateLimits.GraphQLApi.RemainingRequestCount > 1000)
                     {
-                        Content = JsonConvert.SerializeObject(gitHubToken),
-                        StatusCode = (int)HttpStatusCode.OK,
-                        ContentType = "application/json"
+                        var gitHubToken = new GitHubToken(testToken, GitHubConstants.OAuthScope, "Bearer");
+
+                        return new ContentResult
+                        {
+                            Content = JsonConvert.SerializeObject(gitHubToken),
+                            StatusCode = (int)HttpStatusCode.OK,
+                            ContentType = "application/json"
+                        };
+                    }
+                }
+                catch(Exception e)
+                {
+                    return new ObjectResult(e.ToString())
+                    {
+                        StatusCode = (int)HttpStatusCode.InternalServerError
                     };
                 }
             };

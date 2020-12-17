@@ -14,33 +14,29 @@ namespace GitTrends.UnitTests
 {
     class ResxTests : BaseTest
     {
-        static readonly IReadOnlyList<Type> _resxTypeList = new[]
-        {
-            typeof(AppStoreRatingRequestConstants),
-            typeof(DemoUserConstants),
-            typeof(EmptyDataViewConstants),
-            typeof(EmptyDataViewConstantsInternal),
-            typeof(GitHubLoginButtonConstants),
-            typeof(NotificationConstants),
-            typeof(OnboardingConstants),
-            typeof(PageTitles),
-            typeof(PullToRefreshFailedConstants),
-            typeof(ReferringSitesPageConstants),
-            typeof(RepositoryPageConstants),
-            typeof(ReviewServiceConstants),
-            typeof(SettingsPageConstants),
-            typeof(SortingConstants),
-            typeof(SplashScreenPageConstants),
-            typeof(TrendsChartTitleConstants),
-            typeof(WelcomePageConstants)
-        };
-
-        [Test]
-        public void ConfirmCulturesExists()
+        [TestCase(typeof(AboutPageConstants))]
+        [TestCase(typeof(AppStoreRatingRequestConstants))]
+        [TestCase(typeof(DemoUserConstants))]
+        [TestCase(typeof(EmptyDataViewConstantsInternal))]
+        [TestCase(typeof(GitHubLoginButtonConstants))]
+        [TestCase(typeof(NotificationConstants))]
+        [TestCase(typeof(OnboardingConstants))]
+        [TestCase(typeof(PageTitles))]
+        [TestCase(typeof(PullToRefreshFailedConstants))]
+        [TestCase(typeof(ReferringSitesPageConstants))]
+        [TestCase(typeof(RepositoryPageConstants))]
+        [TestCase(typeof(ReviewServiceConstants))]
+        [TestCase(typeof(SettingsPageConstants))]
+        [TestCase(typeof(SortingConstants))]
+        [TestCase(typeof(SplashScreenPageConstants))]
+        [TestCase(typeof(ThemeConstants))]
+        [TestCase(typeof(TrendsChartTitleConstants))]
+        [TestCase(typeof(WelcomePageConstants))]
+        public void ConfirmCulturesExists(Type resxType)
         {
             //Arrange
             var cultureNames = CultureConstants.CulturePickerOptions.Keys;
-            IReadOnlyList<CultureInfo[]> resxCultureInfoList = _resxTypeList.Select(x => GetAvailableResxCultureInfos(x.Assembly)).ToList();
+            var resxCultureInfoList = GetAvailableResxCultureInfos(resxType.Assembly);
 
             //Act
             foreach (var cultureInfo in resxCultureInfoList)
@@ -48,49 +44,63 @@ namespace GitTrends.UnitTests
                 foreach (var cultureName in cultureNames)
                 {
                     //Assert
-                    Assert.IsTrue(cultureInfo.Any(x => x.Name == cultureName));
+                    Assert.IsTrue(resxCultureInfoList.Any(x => x.Name == cultureName));
                 }
             }
         }
 
-        [Test]
-        public void ConfirmTranslationsAreComplete()
+        [TestCase(typeof(AboutPageConstants))]
+        [TestCase(typeof(AppStoreRatingRequestConstants))]
+        [TestCase(typeof(DemoUserConstants))]
+        [TestCase(typeof(EmptyDataViewConstantsInternal))]
+        [TestCase(typeof(GitHubLoginButtonConstants))]
+        [TestCase(typeof(NotificationConstants))]
+        [TestCase(typeof(OnboardingConstants))]
+        [TestCase(typeof(PageTitles))]
+        [TestCase(typeof(PullToRefreshFailedConstants))]
+        [TestCase(typeof(ReferringSitesPageConstants))]
+        [TestCase(typeof(RepositoryPageConstants))]
+        [TestCase(typeof(ReviewServiceConstants))]
+        [TestCase(typeof(SettingsPageConstants))]
+        [TestCase(typeof(SortingConstants))]
+        [TestCase(typeof(SplashScreenPageConstants))]
+        [TestCase(typeof(ThemeConstants))]
+        [TestCase(typeof(TrendsChartTitleConstants))]
+        [TestCase(typeof(WelcomePageConstants))]
+        public void ConfirmTranslationsAreComplete(Type resxType)
         {
             //Arrange
             var filesWithExtraEntries = new List<ResxFile>();
             var filesWithMissingEntryData = new List<ResxFile>();
             var filesWithMissingEntryValue = new List<ResxFile>();
 
-            var resxFiles = _resxTypeList.Select(x => GetResxFiles(x)).ToList();
+            var resxFiles = GetResxFiles(resxType);
 
             //Act
-            foreach (var resxFile in resxFiles)
+            var defaultResx = GetDefaultResx(resxFiles);
+
+            foreach (var fileWithExtraEntries in GetExtraEntries(resxFiles, defaultResx))
             {
-                var defaultResx = GetDefaultResx(resxFile);
+                if (filesWithExtraEntries.Any(x => x.Language == fileWithExtraEntries.Language))
+                    filesWithExtraEntries.First(x => x.Language == fileWithExtraEntries.Language).Entries.AddRange(fileWithExtraEntries.Entries);
+                else
+                    filesWithExtraEntries.Add(new ResxFile(fileWithExtraEntries.Language, fileWithExtraEntries.Entries));
+            }
 
-                foreach (var fileWithExtraEntries in GetExtraEntries(resxFile, defaultResx))
-                {
-                    if (filesWithExtraEntries.Any(x => x.Language == fileWithExtraEntries.Language))
-                        filesWithExtraEntries.First(x => x.Language == fileWithExtraEntries.Language).Entries.AddRange(fileWithExtraEntries.Entries);
-                    else
-                        filesWithExtraEntries.Add(new ResxFile(fileWithExtraEntries.Language, fileWithExtraEntries.Entries));
-                }
+            foreach (var fileWithMissingEntryData in GetFilesWithMissingEntryData(resxFiles, defaultResx))
+            {
+                if (filesWithMissingEntryData.Any(x => x.Language == fileWithMissingEntryData.Language))
+                    filesWithMissingEntryData.First(x => x.Language == fileWithMissingEntryData.Language).Entries.AddRange(fileWithMissingEntryData.Entries);
+                else
+                    filesWithMissingEntryData.Add(new ResxFile(fileWithMissingEntryData.Language, fileWithMissingEntryData.Entries));
+            }
 
-                foreach (var fileWithMissingEntryData in GetFilesWithMissingEntryData(resxFile, defaultResx))
-                {
-                    if (filesWithMissingEntryData.Any(x => x.Language == fileWithMissingEntryData.Language))
-                        filesWithMissingEntryData.First(x => x.Language == fileWithMissingEntryData.Language).Entries.AddRange(fileWithMissingEntryData.Entries);
-                    else
-                        filesWithMissingEntryData.Add(new ResxFile(fileWithMissingEntryData.Language, fileWithMissingEntryData.Entries));
-                }
-
-                foreach (var fileWithMissingEntryValues in GetFilesWithMissingEntryValue(resxFile))
-                {
-                    if (filesWithMissingEntryValue.Any(x => x.Language == fileWithMissingEntryValues.Language))
-                        filesWithMissingEntryValue.First(x => x.Language == fileWithMissingEntryValues.Language).Entries.AddRange(fileWithMissingEntryValues.Entries);
-                    else
-                        filesWithMissingEntryValue.Add(new ResxFile(fileWithMissingEntryValues.Language, fileWithMissingEntryValues.Entries));
-                }
+            foreach (var fileWithMissingEntryValues in GetFilesWithMissingEntryValue(resxFiles))
+            {
+                if (filesWithMissingEntryValue.Any(x => x.Language == fileWithMissingEntryValues.Language))
+                    filesWithMissingEntryValue.First(x => x.Language == fileWithMissingEntryValues.Language).Entries.AddRange(fileWithMissingEntryValues.Entries);
+                else
+                    filesWithMissingEntryValue.Add(new ResxFile(fileWithMissingEntryValues.Language, fileWithMissingEntryValues.Entries));
             }
 
             //Assert
@@ -104,14 +114,12 @@ namespace GitTrends.UnitTests
         //https://stackoverflow.com/a/41760659/5953643
         static CultureInfo[] GetAvailableResxCultureInfos(Assembly assembly)
         {
-            var assemblyResxCultures = new HashSet<CultureInfo>();
-
             // must have invariant culture
-            assemblyResxCultures.Add(CultureInfo.InvariantCulture);
+            var assemblyResxCultures = new HashSet<CultureInfo> { CultureInfo.InvariantCulture };
 
             string[] names = assembly.GetManifestResourceNames();
 
-            if (names != null && names.Length > 0)
+            if (names is not null && names.Length > 0)
             {
                 var allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
 
@@ -151,7 +159,7 @@ namespace GitTrends.UnitTests
                             }
 
                             using var resourceSet = resourceManager.GetResourceSet(culture, true, false);
-                            if (resourceSet != null)
+                            if (resourceSet is not null)
                             {
                                 assemblyResxCultures.Add(culture);
                             }
@@ -170,6 +178,8 @@ namespace GitTrends.UnitTests
         //https://stackoverflow.com/a/41760659/5953643
         static List<ResxFile> GetResxFiles(Type type)
         {
+            var assertionExceptionList = new List<AssertionException>();
+
             if (type?.FullName is null)
                 throw new ArgumentException($"{nameof(Type.FullName)} cannot be null");
 
@@ -183,7 +193,13 @@ namespace GitTrends.UnitTests
             {
                 var cultureInfo = availableResxsCultureInfos[i];
 
-                var resourceSet = resourceManager.GetResourceSet(cultureInfo, true, false) ?? throw new MultipleAssertException($"The language \"{cultureInfo.Name}\" is not specified in \"{type}\".");
+                var resourceSet = resourceManager.GetResourceSet(cultureInfo, true, false);
+
+                if (resourceSet is null)
+                {
+                    assertionExceptionList.Add(new AssertionException($"The language \"{cultureInfo.Name}\" is not specified in \"{type}\"."));
+                    continue;
+                }
 
                 var resxEntryModelList = new List<ResxEntryModel>();
 
@@ -203,6 +219,9 @@ namespace GitTrends.UnitTests
 
                 resxFiles.Add(new ResxFile(cultureInfo.Name, resxEntryModelList));
             }
+
+            if (assertionExceptionList.Any())
+                throw new AggregateException(assertionExceptionList);
 
             return resxFiles;
         }

@@ -120,6 +120,9 @@
   <data name="All" xml:space="preserve">
     <value>Alle</value>
   </data>
+  <data name="StarsTitle" xml:space="preserve">
+    <value>Sterne</value>
+  </data>  
   <data name="JustUniques" xml:space="preserve">
     <value>Ohne Duplikate</value>
   </data>

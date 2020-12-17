@@ -5,6 +5,8 @@ namespace GitTrends
 {
     public class DarkTheme : BaseTheme
     {
+        public const string PageBackgroundColorHex = "#121212";
+
         const string _offWhite = "#F0EFEF";
 
         const string _primaryTextHex = "#CCBAC4";
@@ -18,7 +20,6 @@ namespace GitTrends
         const string _accentLightBlueHex = "#F0EFEF";
         const string _accentPurpleHex = "#C795CA";
         const string _accentIndigoHex = "#5D6AB1";
-        const string _backgroundSurfaceHex = "#121212";
         const string _cardSurfaceHex = "#1D2221";
         const string _toolbarSurfaceHex = "#1E2423";
         const string _circleImageBackgroundHex = "#FFFFFF";
@@ -56,8 +57,8 @@ namespace GitTrends
         public override Color NavigationBarBackgroundColor { get; } = Color.FromHex(_toolbarSurfaceHex);
         public override Color NavigationBarTextColor { get; } = Color.FromHex(_toolbarTextHex);
 
-        public override Color PageBackgroundColor { get; } = Color.FromHex(_backgroundSurfaceHex);
-        public override Color PageBackgroundColor_85Opactity { get; } = Color.FromHex(_backgroundSurfaceHex).MultiplyAlpha(0.85);
+        public override Color PageBackgroundColor { get; } = Color.FromHex(PageBackgroundColorHex);
+        public override Color PageBackgroundColor_85Opactity { get; } = Color.FromHex(PageBackgroundColorHex).MultiplyAlpha(0.85);
 
         //Text
         public override Color PrimaryTextColor { get; } = Color.FromHex(_primaryTextHex);

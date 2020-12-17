@@ -39,4 +39,10 @@
     <data name="Uninitialized" xml:space="preserve">
         <value>Data niet opgehaald</value>
     </data>
+    <data name="UnableToRetrieveData" xml:space="preserve">
+        <value>Kon data niet ophalen</value>
+    </data>
+    <data name="NoTrafficYet" xml:space="preserve">
+        <value>Nog geen data beschikbaar</value>
+    </data>
 </root>

@@ -15,11 +15,11 @@ namespace GitTrends.UITests
     class SettingsPage : BasePage
     {
         readonly Query _gitHubAvatarImage, _gitHubAliasLabel, _gitHubNameLabel,
-            _gitHubSettingsViewActivityIndicator, _preferredChartSettingsLabel,
-            _preferredChartSettingsControl, _tryDemoButton, _copyrightLabel,
+            _gitHubSettingsViewActivityIndicator, _preferredChartTitleLabel,
+            _preferredChartsPicker, _preferredChartsPickerContainer, _tryDemoButton, _copyrightLabel,
             _registerForNotiicationsSwitch, _gitHubUserView, _themePicker, _themePickerContainer,
             _languagePicker, _languagePickerContainer, _registerForNotificationsTitleLabel, _themeTitleLabel,
-            _loginTitleLabel, _languageTitleLabel;
+            _loginTitleLabel, _languageTitleLabel, _aboutPageLabel, _aboutPageButton;
 
         public SettingsPage(IApp app) : base(app, () => PageTitles.SettingsPage)
         {
@@ -29,6 +29,9 @@ namespace GitTrends.UITests
             _gitHubAliasLabel = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubAliasLabel);
             _tryDemoButton = GenerateMarkedQuery(SettingsPageAutomationIds.TryDemoButton);
             _gitHubSettingsViewActivityIndicator = GenerateMarkedQuery(SettingsPageAutomationIds.GitHubSettingsViewActivityIndicator);
+
+            _aboutPageLabel = GenerateMarkedQuery(SettingsPageAutomationIds.AboutTitleLabel);
+            _aboutPageButton = GenerateMarkedQuery(SettingsPageAutomationIds.AboutButton);
 
             _loginTitleLabel = GenerateMarkedQuery(SettingsPageAutomationIds.LoginTitleLabel);
 
@@ -43,8 +46,9 @@ namespace GitTrends.UITests
             _languagePicker = GenerateMarkedQuery(SettingsPageAutomationIds.LanguagePicker);
             _languagePickerContainer = GenerateMarkedQuery(SettingsPageAutomationIds.LanguagePicker + "_Container");
 
-            _preferredChartSettingsLabel = GenerateMarkedQuery(SettingsPageAutomationIds.PreferredChartSettingsLabel);
-            _preferredChartSettingsControl = GenerateMarkedQuery(SettingsPageAutomationIds.PreferredChartSettingsControl);
+            _preferredChartTitleLabel = GenerateMarkedQuery(SettingsPageAutomationIds.PreferredChartTitleLabel);
+            _preferredChartsPicker = GenerateMarkedQuery(SettingsPageAutomationIds.PreferredChartsPicker);
+            _preferredChartsPickerContainer = GenerateMarkedQuery(SettingsPageAutomationIds.PreferredChartsPicker + "_Container");
 
             _copyrightLabel = GenerateMarkedQuery(SettingsPageAutomationIds.CopyrightLabel);
         }
@@ -62,11 +66,12 @@ namespace GitTrends.UITests
 
         public string LoginTitleText => GetText(_loginTitleLabel);
 
+        public string AboutLabelText => GetText(_aboutPageLabel);
         public string TryDemoButtonText => GetText(_tryDemoButton);
         public string CopyrightLabelText => GetText(_copyrightLabel);
         public string ThemeTitleLabelText => GetText(_themeTitleLabel);
         public string LangageTitleLabelText => GetText(_languageTitleLabel);
-        public string PreferredChartLabelText => GetText(_preferredChartSettingsLabel);
+        public string PreferredChartLabelText => GetText(_preferredChartTitleLabel);
         public string RegisterForNotificationsTitleLabelText => GetText(_registerForNotificationsTitleLabel);
 
         public PreferredTheme PreferredTheme => App.InvokeBackdoorMethod<PreferredTheme>(BackdoorMethodConstants.GetPreferredTheme);
@@ -87,35 +92,24 @@ namespace GitTrends.UITests
             App.Screenshot("Operating System Push Notification Dialog Disappeared");
         }
 
-        public async Task SetTrendsChartOption(TrendsChartOption trendsChartOption)
+        public void TapAboutLabel()
         {
-            const int margin = 10;
+            App.Tap(_aboutPageLabel);
+            App.Screenshot("About Page Label Tapped");
+        }
 
-            var trendsChartQuery = App.Query(_preferredChartSettingsControl).First();
+        public void TapAboutButton()
+        {
+            App.Tap(_aboutPageButton);
+            App.Screenshot("About Page Button Tapped");
+        }
 
-            switch (trendsChartOption)
-            {
-                case TrendsChartOption.All:
-                    App.TapCoordinates(trendsChartQuery.Rect.X + margin, trendsChartQuery.Rect.CenterY);
-                    break;
+        public Task SetTrendsChartOption(TrendsChartOption trendsChartOption)
+        {
+            var index = (int)trendsChartOption;
+            var totalRows = Enum.GetNames(typeof(TrendsChartOption)).Count();
 
-                case TrendsChartOption.NoUniques:
-                    App.TapCoordinates(trendsChartQuery.Rect.CenterX, trendsChartQuery.Rect.CenterY);
-                    break;
-
-                case TrendsChartOption.JustUniques:
-                    App.TapCoordinates(trendsChartQuery.Rect.X + trendsChartQuery.Rect.Width - margin, trendsChartQuery.Rect.CenterY);
-                    break;
-
-                default:
-                    throw new NotSupportedException();
-            }
-
-            await waitForSettingsToUpdate().ConfigureAwait(false);
-
-            App.Screenshot($"Trends Chart Option Changed to {trendsChartOption}");
-
-            static Task waitForSettingsToUpdate() => Task.Delay(TimeSpan.FromSeconds(1));
+            return SelectFromPicker(index, totalRows, trendsChartOption.ToString(), _preferredChartsPicker, _preferredChartsPickerContainer);
         }
 
         public void TapGitHubUserView()

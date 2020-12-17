@@ -16,6 +16,7 @@ namespace GitTrends
         // Galaxy Nexus, Width 720, Density 2, Width/Density 360
         public static double ScreenWidth { get; } = DeviceDisplay.MainDisplayInfo.Width / DeviceDisplay.MainDisplayInfo.Density;
         public static double ScreenHeight { get; } = DeviceDisplay.MainDisplayInfo.Height / DeviceDisplay.MainDisplayInfo.Density;
+        public static bool IsSmallScreen { get; } = ScreenWidth <= 360;
 
         public static void SetSelectedStateBackgroundColor(this VisualElement visualElement, Color color)
         {

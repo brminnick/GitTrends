@@ -12,6 +12,9 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
+    <data name="StarsTitle" xml:space="preserve">
+        <value>Stars</value>
+    </data>
     <data name="TotalViewsTitle" xml:space="preserve">
         <value>Views</value>
     </data>
@@ -32,5 +35,11 @@
     </data>
     <data name="JustUniques" xml:space="preserve">
         <value>Just Uniques</value>
+    </data>
+    <data name="KeepItUp" xml:space="preserve">
+        <value>Keep it up!</value>
+    </data>
+    <data name="YouGotThis" xml:space="preserve">
+        <value>You got this!</value>
     </data>
 </root>

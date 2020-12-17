@@ -10,10 +10,10 @@ using Xamarin.UITest.iOS;
 
 namespace GitTrends.UITests
 {
-    [TestFixture(Platform.iOS, UserType.Demo)]
-    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     [TestFixture(Platform.Android, UserType.Demo)]
     [TestFixture(Platform.Android, UserType.LoggedIn)]
+    [TestFixture(Platform.iOS, UserType.Demo)]
+    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     class SettingsTests : BaseUITest
     {
         public SettingsTests(Platform platform, UserType userType) : base(platform, userType)
@@ -26,6 +26,24 @@ namespace GitTrends.UITests
 
             RepositoryPage.TapSettingsButton();
             await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
+        }
+
+        [Test]
+        public void VerifyLogOutButton()
+        {
+            //Arrange
+            bool isLoggedIn_Final, isLoggedIn_Initial;
+
+            //Act
+            isLoggedIn_Initial = SettingsPage.IsLoggedIn;
+
+            SettingsPage.TapLoginButton();
+
+            isLoggedIn_Final = SettingsPage.IsLoggedIn;
+
+            //Assert
+            Assert.IsTrue(isLoggedIn_Initial);
+            Assert.IsTrue(isLoggedIn_Final);
         }
 
         [Test]
@@ -203,7 +221,7 @@ namespace GitTrends.UITests
         }
 
         [Test]
-        public async Task VerifyChartSettingsOptions()
+        public async Task VerifyChartPicker()
         {
             //Arrange
 
@@ -240,10 +258,10 @@ namespace GitTrends.UITests
             await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
 
             //Assert
-            Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.TotalViewsTitle));
-            Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.TotalClonesTitle));
-            Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.UniqueViewsTitle));
-            Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.UniqueClonesTitle));
+            Assert.IsTrue(TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.TotalViewsTitle));
+            Assert.IsTrue(TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.TotalClonesTitle));
+            Assert.IsFalse(TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.UniqueViewsTitle));
+            Assert.IsFalse(TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.UniqueClonesTitle));
         }
 
         void EnsureGitHubUserViewOpensBrowser_LoggedIn()

@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Refit;
@@ -13,13 +14,13 @@ namespace GitTrends
 {
     public static class ContainerService
     {
-        readonly static Lazy<IContainer> _containerHolder = new Lazy<IContainer>(CreateContainer);
+        readonly static Lazy<IContainer> _containerHolder = new(CreateContainer);
 
         public static IContainer Container => _containerHolder.Value;
 
         static IContainer CreateContainer()
         {
-            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental" });
+            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental", "SwipeView_Experimental" });
 
             var builder = new ContainerBuilder();
 
@@ -41,11 +42,13 @@ namespace GitTrends
             builder.RegisterType<DeepLinkingService>().AsSelf().SingleInstance();
             builder.RegisterType<FavIconService>().AsSelf().SingleInstance();
             builder.RegisterType<FirstRunService>().AsSelf().SingleInstance();
-            builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
+            builder.RegisterType<GitHubApiStatusService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubApiRepositoriesService>().AsSelf().SingleInstance();
+            builder.RegisterType<GitHubApiV3Service>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubAuthenticationService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubUserService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubGraphQLApiService>().AsSelf().SingleInstance();
+            builder.RegisterType<GitTrendsContributorsService>().AsSelf().SingleInstance();
             builder.RegisterType<ImageCachingService>().AsSelf().SingleInstance();
             builder.RegisterType<LanguageService>().AsSelf().SingleInstance();
             builder.RegisterType<MediaElementService>().AsSelf().SingleInstance();
@@ -64,6 +67,7 @@ namespace GitTrends
 #endif
 
             //Register ViewModels
+            builder.RegisterType<AboutViewModel>().AsSelf();
             builder.RegisterType<OnboardingViewModel>().AsSelf();
             builder.RegisterType<ReferringSitesViewModel>().AsSelf();
             builder.RegisterType<RepositoryViewModel>().AsSelf();
@@ -73,6 +77,7 @@ namespace GitTrends
             builder.RegisterType<WelcomeViewModel>().AsSelf();
 
             //Register Pages
+            builder.RegisterType<AboutPage>().AsSelf();
             builder.RegisterType<ChartOnboardingPage>().AsSelf();
             builder.RegisterType<ConnectToGitHubOnboardingPage>().AsSelf();
             builder.RegisterType<GitTrendsOnboardingPage>().AsSelf();
@@ -82,7 +87,9 @@ namespace GitTrends
             builder.RegisterType<RepositoryPage>().AsSelf();
             builder.RegisterType<SettingsPage>().AsSelf();
             builder.RegisterType<SplashScreenPage>().AsSelf();
-            builder.RegisterType<TrendsPage>().AsSelf().WithParameter(new TypedParameter(typeof(Repository), nameof(Repository).ToLower()));
+            builder.RegisterType<StarsTrendsPage>().AsSelf();
+            builder.RegisterType<TrendsCarouselPage>().AsSelf().WithParameter(new TypedParameter(typeof(Repository), nameof(Repository).ToLower()));
+            builder.RegisterType<ViewsClonesTrendsPage>().AsSelf();
             builder.RegisterType<WelcomePage>().AsSelf();
 
             //Register Refit Services

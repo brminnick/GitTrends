@@ -1,4 +1,5 @@
 ﻿using System;
+using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,9 +33,11 @@ namespace GitTrends.UnitTests
             services.AddSingleton<NotificationService, ExtendedNotificationService>();
             services.AddSingleton<GitHubApiV3Service>();
             services.AddSingleton<GitHubApiRepositoriesService>();
+            services.AddSingleton<GitHubApiStatusService>();
             services.AddSingleton<GitHubAuthenticationService>();
             services.AddSingleton<GitHubGraphQLApiService>();
             services.AddSingleton<GitHubUserService>();
+            services.AddSingleton<GitTrendsContributorsService>();
             services.AddSingleton<FavIconService>();
             services.AddSingleton<FirstRunService>();
             services.AddSingleton<ImageCachingService>();

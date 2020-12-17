@@ -13,8 +13,8 @@ namespace GitTrends.UITests
 {
     [TestFixture(Platform.Android, UserType.Demo)]
     [TestFixture(Platform.Android, UserType.LoggedIn)]
-    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     [TestFixture(Platform.iOS, UserType.Demo)]
+    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     class RepositoriesTests : BaseUITest
     {
         public RepositoriesTests(Platform platform, UserType userType) : base(platform, userType)
@@ -237,7 +237,7 @@ namespace GitTrends.UITests
                     Assert.AreEqual(0, smallScreenTrendingImageCount);
             }
 
-            Assert.IsFalse(visibleRepositoryList.Any(x => x.DailyClonesList.Count <= 0 || x.DailyViewsList.Count <= 0));
+            Assert.IsFalse(visibleRepositoryList.Any(x => x.DailyClonesList?.Count <= 0 || x.DailyViewsList?.Count <= 0));
         }
 
         [Test]

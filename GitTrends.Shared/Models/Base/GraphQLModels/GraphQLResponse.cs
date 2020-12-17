@@ -1,15 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace GitTrends.Shared
+﻿namespace GitTrends.Shared
 {
-    public class GraphQLResponse<T>
-    {
-        public GraphQLResponse(T data, GraphQLError[] errors) => (Data, Errors) = (data, errors);
-
-        [JsonProperty("data")]
-        public T Data { get; }
-
-        [JsonProperty("errors")]
-        public GraphQLError[] Errors { get; }
-    }
+    public record GraphQLResponse<T>(T Data, GraphQLError[] Errors);
 }

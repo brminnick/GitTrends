@@ -147,5 +147,165 @@ namespace GitTrends.UnitTests
             //Assert
             Assert.Throws<NotSupportedException>(() => EmptyDataViewService.GetRepositoryDescriptionText(refreshState, isRepositoryListEmpty));
         }
+
+        [TestCase(RefreshState.Uninitialized, "Data not gathered")]
+        [TestCase(RefreshState.Succeeded, "No traffic yet")]
+        [TestCase(RefreshState.LoginExpired, "GitHub Login Expired")]
+        [TestCase(RefreshState.Error, "Unable to retrieve data")]
+        [TestCase(RefreshState.MaximumApiLimit, "Unable to retrieve data")]
+        public void GetViewsClonesTitleText_ValidRefreshState(RefreshState refreshState, string expectedResult)
+        {
+            //Arrange
+            string actualResult;
+
+            //Act
+            actualResult = EmptyDataViewService.GetViewsClonesTitleText(refreshState);
+
+            //Assert
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [TestCase(int.MinValue)]
+        [TestCase(-1)]
+        [TestCase(5)]
+        [TestCase(int.MaxValue)]
+        public void GetViewsClonesTitleText_InvalidRefreshState(RefreshState refreshState)
+        {
+            //Arrange
+
+            //Act
+
+            //Assert
+            Assert.Throws<NotSupportedException>(() => EmptyDataViewService.GetViewsClonesTitleText(refreshState));
+        }
+
+        [TestCase(RefreshState.Uninitialized, 0, "Data not gathered")]
+        [TestCase(RefreshState.Uninitialized, 1, "Data not gathered")]
+        [TestCase(RefreshState.Uninitialized, 2, "Data not gathered")]
+        [TestCase(RefreshState.Succeeded, 0, "No Stars Yet")]
+        [TestCase(RefreshState.Succeeded, 1, "Congratulations!")]
+        [TestCase(RefreshState.Succeeded, 2, "No Stars Yet")]
+        [TestCase(RefreshState.LoginExpired, 0, "Please login again")]
+        [TestCase(RefreshState.LoginExpired, 1, "Please login again")]
+        [TestCase(RefreshState.LoginExpired, 2, "Please login again")]
+        [TestCase(RefreshState.Error, 0, "Unable to retrieve data")]
+        [TestCase(RefreshState.Error, 1, "Unable to retrieve data")]
+        [TestCase(RefreshState.Error, 2, "Unable to retrieve data")]
+        [TestCase(RefreshState.MaximumApiLimit, 0, "Unable to retrieve data")]
+        [TestCase(RefreshState.MaximumApiLimit, 1, "Unable to retrieve data")]
+        [TestCase(RefreshState.MaximumApiLimit, 2, "Unable to retrieve data")]
+        public void GetStarsTitleText_ValidRefreshState(RefreshState refreshState, double totalStars, string expectedResult)
+        {
+            //Arrange
+            string actualResult;
+
+            //Act
+            actualResult = EmptyDataViewService.GetStarsTitleText(refreshState, totalStars);
+
+            //Assert
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [TestCase(int.MinValue, 0)]
+        [TestCase(int.MinValue, 1)]
+        [TestCase(int.MinValue, 2)]
+        [TestCase(-1, 0)]
+        [TestCase(-1, 1)]
+        [TestCase(-1, 2)]
+        [TestCase(5, 0)]
+        [TestCase(5, 1)]
+        [TestCase(5, 2)]
+        [TestCase(int.MaxValue, 0)]
+        [TestCase(int.MaxValue, 1)]
+        [TestCase(int.MaxValue, 2)]
+        public void GetStarsTitleText_InvalidRefreshState(RefreshState refreshState, double totalStars)
+        {
+            //Arrange
+
+            //Act
+
+            //Assert
+            Assert.Throws<NotSupportedException>(() => EmptyDataViewService.GetStarsTitleText(refreshState, totalStars));
+        }
+
+        [TestCase(RefreshState.Uninitialized, "EmptyTrafficChart")]
+        [TestCase(RefreshState.Succeeded, "EmptyTrafficChart")]
+        [TestCase(RefreshState.LoginExpired, "EmptyTrafficChart")]
+        [TestCase(RefreshState.Error, "EmptyTrafficChart")]
+        [TestCase(RefreshState.MaximumApiLimit, "EmptyTrafficChart")]
+        public void GetViewsClonesImage_ValidRefreshState(RefreshState refreshState, string expectedResult)
+        {
+            //Arrange
+            string actualResult;
+
+            //Act
+            actualResult = EmptyDataViewService.GetViewsClonesImage(refreshState);
+
+            //Assert
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [TestCase(int.MinValue)]
+        [TestCase(-1)]
+        [TestCase(5)]
+        [TestCase(int.MaxValue)]
+        public void GetViewsClonesImage_InvalidRefreshState(RefreshState refreshState)
+        {
+            //Arrange
+
+            //Act
+
+            //Assert
+            Assert.Throws<NotSupportedException>(() => EmptyDataViewService.GetViewsClonesImage(refreshState));
+        }
+
+        [TestCase(RefreshState.Uninitialized, 0, "EmptyStarChart")]
+        [TestCase(RefreshState.Uninitialized, 1, "EmptyStarChart")]
+        [TestCase(RefreshState.Uninitialized, 2, "EmptyStarChart")]
+        [TestCase(RefreshState.Succeeded, 0, "EmptyStarChart")]
+        [TestCase(RefreshState.Succeeded, 1, "EmptyOneStarChart")]
+        [TestCase(RefreshState.Succeeded, 2, "EmptyStarChart")]
+        [TestCase(RefreshState.LoginExpired, 0, "EmptyStarChart")]
+        [TestCase(RefreshState.LoginExpired, 1, "EmptyStarChart")]
+        [TestCase(RefreshState.LoginExpired, 2, "EmptyStarChart")]
+        [TestCase(RefreshState.Error, 0, "EmptyStarChart")]
+        [TestCase(RefreshState.Error, 1, "EmptyStarChart")]
+        [TestCase(RefreshState.Error, 2, "EmptyStarChart")]
+        [TestCase(RefreshState.MaximumApiLimit, 0, "EmptyStarChart")]
+        [TestCase(RefreshState.MaximumApiLimit, 1, "EmptyStarChart")]
+        [TestCase(RefreshState.MaximumApiLimit, 2, "EmptyStarChart")]
+        public void GetStarsImage_ValidRefreshState(RefreshState refreshState, double totalStars, string expectedResult)
+        {
+            //Arrange
+            string actualResult;
+
+            //Act
+            actualResult = EmptyDataViewService.GetStarsImage(refreshState, totalStars);
+
+            //Assert
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [TestCase(int.MinValue, 0)]
+        [TestCase(int.MinValue, 1)]
+        [TestCase(int.MinValue, 2)]
+        [TestCase(-1, 0)]
+        [TestCase(-1, 1)]
+        [TestCase(-1, 2)]
+        [TestCase(5, 0)]
+        [TestCase(5, 1)]
+        [TestCase(5, 2)]
+        [TestCase(int.MaxValue, 0)]
+        [TestCase(int.MaxValue, 1)]
+        [TestCase(int.MaxValue, 2)]
+        public void GetStarsImage_InvalidRefreshState(RefreshState refreshState, double totalStars)
+        {
+            //Arrange
+
+            //Act
+
+            //Assert
+            Assert.Throws<NotSupportedException>(() => EmptyDataViewService.GetStarsImage(refreshState, totalStars));
+        }
     }
 }

@@ -16,8 +16,8 @@ namespace GitTrends
 {
     public class UITestsBackdoorService
     {
-        readonly static WeakEventManager _popPageStartedEventManager = new WeakEventManager();
-        readonly static WeakEventManager<Page> _popPageCompletedEventManager = new WeakEventManager<Page>();
+        readonly static AsyncAwaitBestPractices.WeakEventManager _popPageStartedEventManager = new();
+        readonly static WeakEventManager<Page> _popPageCompletedEventManager = new();
 
         readonly IMainThread _mainThread;
         readonly ThemeService _themeService;
@@ -118,22 +118,24 @@ namespace GitTrends
 
         public TrendsChartOption GetCurrentTrendsChartOption() => _trendsChartSettingsService.CurrentTrendsChartOption;
 
-        public bool IsTrendsSeriesVisible(string seriesTitle)
-        {
-            var trendsPageLayout = (Layout<View>)GetVisibleContentPage().Content;
+        public bool IsViewsClonesChartSeriesVisible(string seriesTitle) => IsChartSeriesVisible<ViewsClonesTrendsPage>(seriesTitle);
 
-            var trendsFrame = trendsPageLayout.Children.OfType<TrendsChart>().First();
-            var trendsChart = (SfChart)trendsFrame.Content;
-
-            return trendsChart.Series.First(x => x.Label.Equals(seriesTitle)).IsVisible;
-        }
+        public bool IsStarsChartSeriesVisible(string seriesTitle) => IsChartSeriesVisible<StarsTrendsPage>(seriesTitle);
 
         public int GetCurrentOnboardingPageNumber()
         {
-            var onboardingCarouselPage = (OnboardingCarouselPage)Application.Current.MainPage.Navigation.ModalStack.Last();
+            var onboardingCarouselPage = (OnboardingCarouselPage)GetVisiblePage();
             var currentPage = onboardingCarouselPage.CurrentPage;
 
             return onboardingCarouselPage.Children.IndexOf(currentPage);
+        }
+
+        public int GetCurrentTrendsPageNumber()
+        {
+            var trendsCarouselPage = (TrendsCarouselPage)GetVisiblePage();
+            var currentPage = trendsCarouselPage.CurrentPage;
+
+            return trendsCarouselPage.Children.IndexOf(currentPage);
         }
 
         public Task<bool> AreNotificationsEnabled() => _notificationService.AreNotificationsEnabled();
@@ -150,7 +152,22 @@ namespace GitTrends
                 throw new Exception($"{visibleContentPage.GetType()} Does Not Contain a RefreshView");
         }
 
-        ContentPage GetVisibleContentPage() => (ContentPage)(GetVisiblePageFromModalStack() ?? GetVisiblePageFromNavigationStack());
+        bool IsChartSeriesVisible<T>(string seriesTitle) where T : BaseTrendsContentPage
+        {
+            var trendsCarouselPage = (TrendsCarouselPage)GetVisiblePage();
+            var starsTrendsPage = trendsCarouselPage.Children.OfType<T>().First();
+
+            var viewsClonesTrendsPageLayout = (Layout<View>)starsTrendsPage.Content;
+
+            var trendsFrame = viewsClonesTrendsPageLayout.Children.OfType<ViewsClonesChart>().First();
+            var trendsChart = (SfChart)trendsFrame.Content;
+
+            return trendsChart.Series.First(x => x.Label.Equals(seriesTitle)).IsVisible;
+        }
+
+        ContentPage GetVisibleContentPage() => (ContentPage)GetVisiblePage();
+
+        Page GetVisiblePage() => GetVisiblePageFromModalStack() ?? GetVisiblePageFromNavigationStack();
 
         Page? GetVisiblePageFromModalStack() => Application.Current.MainPage.Navigation.ModalStack.LastOrDefault();
 

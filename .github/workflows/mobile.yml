@@ -3,7 +3,7 @@ name: Xamarin
 on:
   push:
     branches:
-      - "*"
+      - "main"
   pull_request:
     branches: 
       - "*"
@@ -35,16 +35,16 @@ jobs:
           UnitTestDirectory=`dirname $UnitTestProject`
           echo $UnitTestDirectory
           
-          dotnet test  -c "Release" $UnitTestDirectory
+          dotnet test  -c 'Release' $UnitTestDirectory
           
       - name: Build Android App
         run: |                    
           msbuild ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release     
 
-      - name: Build iOS App
-        run: |                 
-          # Use iOS simulator until GitHub Actions adds iOS Certificates & Provisioning Profiles
-          msbuild ./GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release /p:Platform=iPhoneSimulator    
+      # Keep Commented until GitHub Actions adds iOS Certificates & Provisioning Profiles
+      #- name: Build iOS App
+        #run: |
+          # msbuild ./GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release /p:Platform=iPhoneSimulator    
           
 
 

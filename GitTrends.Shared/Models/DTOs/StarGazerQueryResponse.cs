@@ -1,20 +1,6 @@
-﻿using Newtonsoft.Json;
-
-namespace GitTrends.Shared
+﻿namespace GitTrends.Shared
 {
-    public class StarGazerResponse
-    {
-        public StarGazerResponse(RepositoryStarGazers repository) => Repository = repository;
+    public record StarGazerResponse(RepositoryStarGazers Repository);
 
-        [JsonProperty("repository")]
-        public RepositoryStarGazers Repository { get; }
-    }
-
-    public class RepositoryStarGazers
-    {
-        public RepositoryStarGazers(StarGazers starGazers) => StarGazers = starGazers;
-
-        [JsonProperty("stargazers")]
-        public StarGazers StarGazers { get; }
-    }
+    public record RepositoryStarGazers(StarGazers StarGazers);
 }

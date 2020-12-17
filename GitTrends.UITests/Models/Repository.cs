@@ -7,38 +7,38 @@ namespace GitTrends.UITests
 {
     public class Repository : IRepository
     {
-        public DateTimeOffset DataDownloadedAt { get; set; }
+        public DateTimeOffset DataDownloadedAt { get; init; }
 
-        public string OwnerLogin { get; set; } = string.Empty;
+        public string OwnerLogin { get; init; } = string.Empty;
 
-        public long StarCount { get; set; }
+        public long? StarCount { get; init; }
 
-        public long IssuesCount { get; set; }
+        public long IssuesCount { get; init; }
 
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; init; } = string.Empty;
 
-        public string Description { get; set; } = string.Empty;
+        public string Description { get; init; } = string.Empty;
 
-        public long ForkCount { get; set; }
+        public long ForkCount { get; init; }
 
-        public string OwnerAvatarUrl { get; set; } = string.Empty;
+        public string OwnerAvatarUrl { get; init; } = string.Empty;
 
-        public string Url { get; set; } = string.Empty;
+        public string Url { get; init; } = string.Empty;
 
-        public long TotalViews { get; set; }
+        public long? TotalViews { get; init; }
 
-        public long TotalUniqueViews { get; set; }
+        public long? TotalUniqueViews { get; init; }
 
-        public long TotalClones { get; set; }
+        public long? TotalClones { get; init; }
 
-        public long TotalUniqueClones { get; set; }
+        public long? TotalUniqueClones { get; init; }
 
-        public bool IsTrending { get; set; }
+        public bool IsTrending { get; init; }
 
-        public bool? IsFavorite { get; set; }
+        public bool? IsFavorite { get; init; }
 
-        public IReadOnlyList<DailyViewsModel> DailyViewsList { get; set; } = Array.Empty<DailyViewsModel>();
+        public IReadOnlyList<DailyViewsModel>? DailyViewsList { get; init; } = Array.Empty<DailyViewsModel>();
 
-        public IReadOnlyList<DailyClonesModel> DailyClonesList { get; set; } = Array.Empty<DailyClonesModel>();
+        public IReadOnlyList<DailyClonesModel>? DailyClonesList { get; init; } = Array.Empty<DailyClonesModel>();
     }
 }

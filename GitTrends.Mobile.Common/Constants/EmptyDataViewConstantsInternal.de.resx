@@ -144,4 +144,10 @@
   <data name="Uninitialized" xml:space="preserve">
     <value>Daten nicht gesammelt</value>
   </data>
+  <data name="NoTrafficYet" xml:space="preserve">
+    <value>Noch kein Traffic</value>
+  </data>
+  <data name="UnableToRetrieveData" xml:space="preserve">
+    <value>Daten können nicht abgerufen werden</value>
+  </data>
 </root>

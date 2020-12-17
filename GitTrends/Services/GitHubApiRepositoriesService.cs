@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -39,18 +40,14 @@ namespace GitTrends
 
                 if (viewsResponse != null && clonesResponse != null && starGazers != null)
                 {
-                    var matchingRepository = repositories.Single(x => x.Name == viewsResponse.RepositoryName);
+                    var updatedRepository = repositories.Single(x => x.Name == viewsResponse.RepositoryName) with
+                    {
+                        DailyViewsList = viewsResponse.DailyViewsList,
+                        DailyClonesList = clonesResponse.DailyClonesList,
+                        StarredAt = starGazers.StarredAt.Select(x => x.StarredAt).ToList()
+                    };
 
-                    yield return new Repository(matchingRepository.Name, matchingRepository.Description, matchingRepository.ForkCount,
-                                                matchingRepository.OwnerLogin, matchingRepository.OwnerAvatarUrl,
-                                                matchingRepository.IssuesCount,
-                                                matchingRepository.Url,
-                                                matchingRepository.IsFork,
-                                                matchingRepository.DataDownloadedAt,
-                                                matchingRepository.IsFavorite,
-                                                viewsResponse.DailyViewsList,
-                                                clonesResponse.DailyClonesList,
-                                                starGazers.StarredAt.Select(x => x.StarredAt));
+                    yield return updatedRepository;
                 }
             }
         }
@@ -71,6 +68,19 @@ namespace GitTrends
             }
             catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.Forbidden)
             {
+                reportException(e);
+
+                return (null, null, null);
+            }
+            catch (GraphQLException<StarGazers> e) when (e.ContainsSamlOrganizationAthenticationError())
+            {
+                reportException(e);
+
+                return (null, null, null);
+            }
+
+            void reportException(in Exception e)
+            {
                 _analyticsService.Report(e, new Dictionary<string, string>
                 {
                     { nameof(Repository) + nameof(Repository.Name), repository.Name },
@@ -78,8 +88,6 @@ namespace GitTrends
                     { nameof(GitHubUserService) + nameof(GitHubUserService.Alias), _gitHubUserService.Alias },
                     { nameof(GitHubUserService) + nameof(GitHubUserService.Name), _gitHubUserService.Name },
                 });
-
-                return (null, null, null);
             }
         }
     }

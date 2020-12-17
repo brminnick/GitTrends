@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using static GitTrends.MarkupExtensions;
-using static Xamarin.Forms.Markup.GridRowsColumns;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -20,8 +20,8 @@ namespace GitTrends
     {
         const int _titleTopMargin = 10;
 
-        readonly StoreRatingRequestView _storeRatingRequestView = new StoreRatingRequestView();
-        readonly CancellationTokenSource _refreshViewCancelltionTokenSource = new CancellationTokenSource();
+        readonly StoreRatingRequestView _storeRatingRequestView = new();
+        readonly CancellationTokenSource _refreshViewCancelltionTokenSource = new();
 
         readonly Repository _repository;
         readonly RefreshView _refreshView;
@@ -53,8 +53,6 @@ namespace GitTrends
 
             var collectionView = new ReferringSitesCollectionView()
                 .Bind(IsVisibleProperty, nameof(ReferringSitesViewModel.IsEmptyDataViewEnabled))
-                .Bind(EmptyDataView.TitleProperty, nameof(ReferringSitesViewModel.EmptyDataViewTitle))
-                .Bind(EmptyDataView.DescriptionProperty, nameof(ReferringSitesViewModel.EmptyDataViewDescription))
                 .Bind(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.MobileReferringSitesList))
                 .Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged);
 
@@ -195,7 +193,9 @@ namespace GitTrends
                 //iOS Header + Footer break CollectionView after Refresh bug: https://github.com/xamarin/Xamarin.Forms/issues/9879
                 Header = Device.RuntimePlatform is Device.iOS ? null : new BoxView { HeightRequest = ReferringSitesDataTemplateSelector.BottomPadding };
                 Footer = Device.RuntimePlatform is Device.iOS ? null : new BoxView { HeightRequest = ReferringSitesDataTemplateSelector.TopPadding };
-                EmptyView = new EmptyDataView("EmptyReferringSitesList", ReferringSitesPageAutomationIds.EmptyDataView);
+                EmptyView = new EmptyDataView("EmptyReferringSitesList", ReferringSitesPageAutomationIds.EmptyDataView)
+                                .Bind(EmptyDataView.TitleProperty, nameof(ReferringSitesViewModel.EmptyDataViewTitle))
+                                .Bind(EmptyDataView.DescriptionProperty, nameof(ReferringSitesViewModel.EmptyDataViewDescription));
             }
         }
 

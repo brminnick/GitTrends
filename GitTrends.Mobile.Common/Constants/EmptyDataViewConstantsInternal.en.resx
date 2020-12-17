@@ -39,4 +39,28 @@
     <data name="Uninitialized" xml:space="preserve">
         <value>Data not gathered</value>
     </data>
+    <data name="UnableToRetrieveData" xml:space="preserve">
+        <value>Unable to retrieve data</value>
+    </data>
+    <data name="NoTrafficYet" xml:space="preserve">
+        <value>No traffic yet</value>
+    </data>
+    <data name="ZeroStarsEmptyDataViewDescription1" xml:space="preserve">
+        <value>No worries! Keep up the good work and the stars come!</value>
+    </data>
+    <data name="ZeroStarsEmptyDataViewDescription2" xml:space="preserve">
+        <value>Invite the community to check out your great work!</value>
+    </data>
+    <data name="ZeroStarsEmptyDataViewDescription3" xml:space="preserve">
+        <value>Share updates with friends and get your first star!</value>
+    </data>
+    <data name="Congratulations" xml:space="preserve">
+        <value>Congratulations!</value>
+    </data>
+    <data name="NoStarsYet" xml:space="preserve">
+        <value>No Stars Yet</value>
+    </data>
+    <data name="FirstStar" xml:space="preserve">
+        <value>You got your first star, woohoo!</value>
+    </data>
 </root>

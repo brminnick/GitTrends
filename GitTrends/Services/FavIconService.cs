@@ -16,7 +16,7 @@ namespace GitTrends
 {
     public class FavIconService
     {
-        static readonly Lazy<HttpClient> _clientHolder = new Lazy<HttpClient>(new HttpClient { Timeout = TimeSpan.FromSeconds(10) });
+        static readonly Lazy<HttpClient> _clientHolder = new(new HttpClient { Timeout = TimeSpan.FromSeconds(10) });
         readonly IAnalyticsService _analyticsService;
 
         public FavIconService(IAnalyticsService analyticsService) => _analyticsService = analyticsService;

@@ -100,5 +100,53 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("Uninitialized", resourceCulture);
             }
         }
+        
+        public static string UnableToRetrieveData {
+            get {
+                return ResourceManager.GetString("UnableToRetrieveData", resourceCulture);
+            }
+        }
+        
+        public static string NoTrafficYet {
+            get {
+                return ResourceManager.GetString("NoTrafficYet", resourceCulture);
+            }
+        }
+        
+        public static string ZeroStarsEmptyDataViewDescription1 {
+            get {
+                return ResourceManager.GetString("ZeroStarsEmptyDataViewDescription1", resourceCulture);
+            }
+        }
+        
+        public static string ZeroStarsEmptyDataViewDescription2 {
+            get {
+                return ResourceManager.GetString("ZeroStarsEmptyDataViewDescription2", resourceCulture);
+            }
+        }
+        
+        public static string ZeroStarsEmptyDataViewDescription3 {
+            get {
+                return ResourceManager.GetString("ZeroStarsEmptyDataViewDescription3", resourceCulture);
+            }
+        }
+        
+        public static string Congratulations {
+            get {
+                return ResourceManager.GetString("Congratulations", resourceCulture);
+            }
+        }
+        
+        public static string NoStarsYet {
+            get {
+                return ResourceManager.GetString("NoStarsYet", resourceCulture);
+            }
+        }
+        
+        public static string FirstStar {
+            get {
+                return ResourceManager.GetString("FirstStar", resourceCulture);
+            }
+        }
     }
 }

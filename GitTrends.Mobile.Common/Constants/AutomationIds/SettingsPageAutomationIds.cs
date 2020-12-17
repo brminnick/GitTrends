@@ -12,12 +12,17 @@
         #endregion
 
         #region PreferredChartsView
-        public const string PreferredChartSettingsLabel = nameof(SettingsPageAutomationIds) + nameof(PreferredChartSettingsLabel);
-        public const string PreferredChartSettingsControl = nameof(SettingsPageAutomationIds) + nameof(PreferredChartSettingsControl);
+        public const string PreferredChartTitleLabel = nameof(SettingsPageAutomationIds) + nameof(PreferredChartTitleLabel);
+        public const string PreferredChartsPicker = nameof(SettingsPageAutomationIds) + nameof(PreferredChartsPicker);
         #endregion
 
         #region CopyrightLabel
         public const string CopyrightLabel = nameof(SettingsPageAutomationIds) + nameof(CopyrightLabel);
+        #endregion
+
+        #region About Row
+        public const string AboutTitleLabel = nameof(SettingsPageAutomationIds) + nameof(AboutTitleLabel);
+        public const string AboutButton = nameof(SettingsPageAutomationIds) + nameof(AboutButton);
         #endregion
 
         #region Login Row
