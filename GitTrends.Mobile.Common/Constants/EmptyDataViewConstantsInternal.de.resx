@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
+	<!-- 
     Microsoft ResX Schema 
     
     Version 2.0
@@ -59,95 +59,113 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="ClearSearchBarTryAgain" xml:space="preserve">
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="metadata">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" />
+							</xsd:sequence>
+							<xsd:attribute name="name" use="required" type="xsd:string" />
+							<xsd:attribute name="type" type="xsd:string" />
+							<xsd:attribute name="mimetype" type="xsd:string" />
+							<xsd:attribute ref="xml:space" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="assembly">
+						<xsd:complexType>
+							<xsd:attribute name="alias" type="xsd:string" />
+							<xsd:attribute name="name" type="xsd:string" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+							<xsd:attribute ref="xml:space" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="ClearSearchBarTryAgain" xml:space="preserve">
     <value>Leere die Suchleiste und versuche es erneut</value>
   </data>
-  <data name="LoginExpired" xml:space="preserve">
+	<data name="LoginExpired" xml:space="preserve">
     <value>GitHub-Login abgelaufen</value>
   </data>
-  <data name="NoFilterMatch" xml:space="preserve">
+	<data name="NoFilterMatch" xml:space="preserve">
     <value>Keine übereinstimmenden Repos gefunden</value>
   </data>
-  <data name="NoReferralsYet" xml:space="preserve">
+	<data name="NoReferralsYet" xml:space="preserve">
     <value>Noch keine Verweise</value>
   </data>
-  <data name="NoRepositoriesFound" xml:space="preserve">
+	<data name="NoRepositoriesFound" xml:space="preserve">
     <value>Deine Repoliste ist leer</value>
   </data>
-  <data name="PleaseLoginAgain" xml:space="preserve">
+	<data name="PleaseLoginAgain" xml:space="preserve">
     <value>Bitte erneut einloggen</value>
   </data>
-  <data name="SwipeDownToRefresh_ReferringSites" xml:space="preserve">
+	<data name="SwipeDownToRefresh_ReferringSites" xml:space="preserve">
     <value>Wische runter, um verweisende Sites abzurufen</value>
   </data>
-  <data name="SwipeDownToRefresh_Repositories" xml:space="preserve">
+	<data name="SwipeDownToRefresh_Repositories" xml:space="preserve">
     <value>Wische runter, um Repos abzurufen</value>
   </data>
-  <data name="Uninitialized" xml:space="preserve">
+	<data name="Uninitialized" xml:space="preserve">
     <value>Daten nicht gesammelt</value>
   </data>
-  <data name="NoTrafficYet" xml:space="preserve">
+	<data name="NoTrafficYet" xml:space="preserve">
     <value>Noch kein Traffic</value>
   </data>
-  <data name="UnableToRetrieveData" xml:space="preserve">
+	<data name="UnableToRetrieveData" xml:space="preserve">
     <value>Daten können nicht abgerufen werden</value>
   </data>
+	<data name="ZeroStarsEmptyDataViewDescription1" xml:space="preserve">
+        <value>Keine Sorge! Mache weiter so gute Arbeit und die Sterne werden kommen!</value>
+    </data>
+	<data name="ZeroStarsEmptyDataViewDescription2" xml:space="preserve">
+        <value>Lade die Community ein, deine tolle Arbeit anzusehen!</value>
+    </data>
+	<data name="ZeroStarsEmptyDataViewDescription3" xml:space="preserve">
+        <value>Teile Updates mit Freunden und erhalte deinen ersten Stern!</value>
+    </data>
+	<data name="Congratulations" xml:space="preserve">
+        <value>Glückwunsch!</value>
+    </data>
+	<data name="NoStarsYet" xml:space="preserve">
+        <value>Noch keine Sterne</value>
+    </data>
+	<data name="FirstStar" xml:space="preserve">
+        <value>Du hast deinen ersten Stern erhalten!</value>
+    </data>
 </root>
