@@ -775,7 +775,7 @@
       <Name>GitTrends</Name>
     </ProjectReference>
     <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj">
-      <Project>{936AEAD4-A683-44AD-A903-F3196454C244}</Project>
+      <Project>{4EF65986-3519-49ED-9AC5-A4E4EF20A1D6}</Project>
       <Name>GitTrends.Mobile.Common</Name>
     </ProjectReference>
   </ItemGroup>

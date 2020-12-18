@@ -516,20 +516,26 @@
         <EmbeddedResource Update="Constants\AboutPageConstants.uk.resx">
             <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
-    <EmbeddedResource Update="Constants\AboutPageConstants.bs.resx">
+        <EmbeddedResource Update="Constants\AboutPageConstants.bs.resx">
             <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
-        <EmbeddedResource Condition=" '$(EnableDefaultEmbeddedResourceItems)' == 'true' " Update="Constants\ThemeConstants.resx">
+        <EmbeddedResource Update="Constants\ThemeConstants.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
           <LastGenOutput>ThemeConstants.Designer.cs</LastGenOutput>
         </EmbeddedResource>
-        <EmbeddedResource Update="Constants\AboutPageConstants.bs.resx">
-          <Generator>ResXFileCodeGenerator</Generator>
-          <LastGenOutput>AboutPageConstants.bs.Designer.cs</LastGenOutput>
-        <EmbeddedResource Condition=" '$(EnableDefaultEmbeddedResourceItems)' == 'true' " Update="Constants\AboutPageConstants %28copy%29.uk.resx">
+        <EmbeddedResource Update="Constants\AboutPageConstants.uk.resx">
           <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
-        <EmbeddedResource Condition=" '$(EnableDefaultEmbeddedResourceItems)' == 'true' " Update="Constants\ThemeConstants %28copy%29.de.resx">
+        <EmbeddedResource Update="Constants\AboutPageConstants.nl.resx">
+          <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.de.resx">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.ru.resx">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.nl.resx">
           <DependentUpon>ThemeConstants.resx</DependentUpon>
         </EmbeddedResource>
     </ItemGroup>
