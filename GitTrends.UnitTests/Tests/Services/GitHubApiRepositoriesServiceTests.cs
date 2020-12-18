@@ -182,7 +182,7 @@ namespace GitTrends.UnitTests
             var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
             //Act
-            var graphQLException = Assert.ThrowsAsync<GraphQLException>(() => gitHubGraphQLApiService.GetStarGazers(fakeRepoName, fakeRepoOwner, CancellationToken.None));
+            var graphQLException = Assert.ThrowsAsync<GraphQLException<StarGazerResponse>>(() => gitHubGraphQLApiService.GetStarGazers(fakeRepoName, fakeRepoOwner, CancellationToken.None));
 
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, graphQLException.StatusCode);
