@@ -36,4 +36,10 @@
 	<data name="JustUniques" xml:space="preserve">
     <value>Solo Únicas</value>
   </data>
+	<data name="KeepItUp" xml:space="preserve">
+    <value>Manten este buen ritmo!</value>
+  </data>
+	<data name="YouGotThis" xml:space="preserve">
+    <value>Sigue asi, tu puedes!</value>
+  </data>
 </root>

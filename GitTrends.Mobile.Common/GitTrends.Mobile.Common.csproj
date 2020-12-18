@@ -526,10 +526,16 @@
         <EmbeddedResource Update="Constants\AboutPageConstants.uk.resx">
           <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.es.resx">
+          <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\AboutPageConstants.nl.resx">
           <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\ThemeConstants.de.resx">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.es.resx">
           <DependentUpon>ThemeConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\ThemeConstants.ru.resx">
