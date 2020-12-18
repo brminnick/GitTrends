@@ -138,4 +138,10 @@
   <data name="JustUniques" xml:space="preserve">
     <value>Samo unikatni</value>
   </data>
+  <data name="YouGotThis" xml:space="preserve">
+    <value>Ti možeš ovo!</value>
+  </data>
+  <data name="KeepItUp" xml:space="preserve">
+    <value>Samo nastavi!</value>
+  </data>
 </root>

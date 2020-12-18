@@ -522,6 +522,22 @@
           <Generator>PublicResXFileCodeGenerator</Generator>
           <LastGenOutput>PullToRefreshFailedConstants.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Condition=" '$(EnableDefaultEmbeddedResourceItems)' == 'true' " Update="Constants\ThemeConstants.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+          <LastGenOutput>ThemeConstants.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Condition=" '$(EnableDefaultEmbeddedResourceItems)' == 'true' " Update="Constants\ThemeConstants.bs.resx">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        
+        <EmbeddedResource Update="Constants\AboutPageConstants.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>AboutPageConstants.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.bs.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>AboutPageConstants.bs.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
@@ -626,6 +642,13 @@
     <EmbeddedResource Update="Constants\WelcomePageConstants.uk.resx">
       <DependentUpon>WelcomePageConstants.resx</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Update="Constants\ThemeConstants.bs.resx">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+    <EmbeddedResource Update="Constants\AboutPageConstants.bs.resx">
+          <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+    
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
             <DesignTime>True</DesignTime>
@@ -635,6 +658,17 @@
           <DependentUpon>PullToRefreshFailedConstants.resx</DependentUpon>
           <DesignTime>True</DesignTime>
           <AutoGen>True</AutoGen>
+        </Compile>
+        <Compile Update="Constants\ThemeConstants.Designer.cs">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </Compile>
+    
+        <Compile Update="Constants\AboutPageConstants.Designer.cs">
+          <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </Compile>
+        
+        <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Constants\AboutPageConstants.bs.Designer.cs">
+          <DependentUpon>AboutPageConstants.bs.resx</DependentUpon>
         </Compile>
     </ItemGroup>
     <ItemGroup>
