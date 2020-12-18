@@ -516,9 +516,17 @@
         <EmbeddedResource Update="Constants\AboutPageConstants.uk.resx">
             <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
+    <EmbeddedResource Update="Constants\AboutPageConstants.bs.resx">
+            <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Condition=" '$(EnableDefaultEmbeddedResourceItems)' == 'true' " Update="Constants\ThemeConstants.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
           <LastGenOutput>ThemeConstants.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        
+        <EmbeddedResource Update="Constants\AboutPageConstants.bs.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>AboutPageConstants.bs.Designer.cs</LastGenOutput>
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
@@ -630,6 +638,9 @@
         <EmbeddedResource Update="Constants\ThemeConstants.de.resx">
             <DependentUpon>ThemeConstants.resx</DependentUpon>
         </EmbeddedResource>
+    <EmbeddedResource Update="Constants\ThemeConstants.bs.resx">
+            <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
             <DesignTime>True</DesignTime>
@@ -651,6 +662,9 @@
             <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
         </Compile>
 
+        <Compile Update="Constants\AboutPageConstants.bs.Designer.cs">
+          <DependentUpon>AboutPageConstants.bs.resx</DependentUpon>
+        </Compile>
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Enums\" />
