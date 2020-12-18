@@ -504,6 +504,9 @@
         <EmbeddedResource Update="Constants\AboutPageConstants.en.resx">
             <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.ru.resx">
+            <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\AboutPageConstants.de.resx">
             <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
