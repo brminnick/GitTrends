@@ -144,6 +144,7 @@
   <data name="Uninitialized" xml:space="preserve">
     <value>Podaci nisu sakupljeni</value>
   </data>
+  <data name="Congratulations" xml:space="preserve">
         <value>Čestitamo</value>
   </data>
   <data name="ZeroStarsEmptyDataViewDescription1" xml:space="preserve">
