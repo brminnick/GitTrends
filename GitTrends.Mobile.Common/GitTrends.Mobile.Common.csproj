@@ -510,6 +510,9 @@
         <EmbeddedResource Update="Constants\AboutPageConstants.pt.resx">
             <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.uk.resx">
+            <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Condition=" '$(EnableDefaultEmbeddedResourceItems)' == 'true' " Update="Constants\ThemeConstants.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
           <LastGenOutput>ThemeConstants.Designer.cs</LastGenOutput>
@@ -561,6 +564,9 @@
         <Compile Update="Constants\ThemeConstants.Designer.cs">
             <DependentUpon>ThemeConstants.resx</DependentUpon>
         </Compile>
+        <Compile Update="Constants\EmptyDataViewConstantsInternal.Designer.cs">
+            <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
+        </Compile>
         <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.uk.resx">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
         </EmbeddedResource>
@@ -610,6 +616,9 @@
             <DependentUpon>WelcomePageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\ThemeConstants.en.resx">
+            <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.uk.resx">
             <DependentUpon>ThemeConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\ThemeConstants.pt.resx">
