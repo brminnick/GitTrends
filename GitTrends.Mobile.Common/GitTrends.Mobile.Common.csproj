@@ -507,6 +507,9 @@
         <EmbeddedResource Update="Constants\AboutPageConstants.de.resx">
             <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.pt.resx">
+            <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Condition=" '$(EnableDefaultEmbeddedResourceItems)' == 'true' " Update="Constants\ThemeConstants.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
           <LastGenOutput>ThemeConstants.Designer.cs</LastGenOutput>
@@ -607,6 +610,9 @@
             <DependentUpon>WelcomePageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\ThemeConstants.en.resx">
+            <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.pt.resx">
             <DependentUpon>ThemeConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\ThemeConstants.de.resx">
