@@ -1,49 +1,67 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="ClearSearchBarTryAgain" xml:space="preserve">
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="ClearSearchBarTryAgain" xml:space="preserve">
     <value>Videz la bar de recherche et essayez à nouveau</value>
   </data>
-  <data name="LoginExpired" xml:space="preserve">
+	<data name="LoginExpired" xml:space="preserve">
     <value>Le login GitHub a expiré </value>
   </data>
-  <data name="NoFilterMatch" xml:space="preserve">
+	<data name="NoFilterMatch" xml:space="preserve">
     <value>Aucun dépôt convenant à ces filtres n'a été trouvé</value>
   </data>
-  <data name="NoReferralsYet" xml:space="preserve">
+	<data name="NoReferralsYet" xml:space="preserve">
     <value>Il n'y a aucun référant pour le moment </value>
     <comment>I feel that there is a better term that "référant" to say "referral"</comment>
   </data>
-  <data name="NoRepositoriesFound" xml:space="preserve">
+	<data name="NoRepositoriesFound" xml:space="preserve">
     <value>Votre liste de dépôt est vide</value>
   </data>
-  <data name="PleaseLoginAgain" xml:space="preserve">
+	<data name="PleaseLoginAgain" xml:space="preserve">
     <value>Balayer vers le bas pour récuperer les sites référents</value>
   </data>
-  <data name="SwipeDownToRefresh_ReferringSites" xml:space="preserve">
+	<data name="SwipeDownToRefresh_ReferringSites" xml:space="preserve">
     <value>Balayer vers le bas pour récuperer les dépôts</value>
   </data>
-  <data name="SwipeDownToRefresh_Repositories" xml:space="preserve">
+	<data name="SwipeDownToRefresh_Repositories" xml:space="preserve">
     <value>Balayer vers le bas pour récuperer les dépôts</value>
   </data>
-  <data name="Uninitialized" xml:space="preserve">
+	<data name="Uninitialized" xml:space="preserve">
     <value>Les données n'ont pas été récuperé</value>
   </data>
-  <data name="NoTrafficYet" xml:space="preserve">
+	<data name="NoTrafficYet" xml:space="preserve">
     <value>Aucun trafique pour le moment</value>
   </data>
-  <data name="UnableToRetrieveData" xml:space="preserve">
+	<data name="UnableToRetrieveData" xml:space="preserve">
     <value>Impossible de récuperer les données</value>
+  </data>
+	<data name="FirstStar" xml:space="preserve">
+    <value>Premiere etoile</value>
+  </data>
+	<data name="NoStarsYet" xml:space="preserve">
+    <value>Pas encore d'etoile</value>
+  </data>
+	<data name="ZeroStarsEmptyDataViewDescription2" xml:space="preserve">
+    <value>Invitez la communaute a contempler votre super travail!</value>
+  </data>
+	<data name="ZeroStarsEmptyDataViewDescription3" xml:space="preserve">
+    <value>Partagez les updates avec vos amis et obtenez votre premiere etoile!</value>
+  </data>
+	<data name="ZeroStarsEmptyDataViewDescription1" xml:space="preserve">
+    <value>Pas d'inquietude! Continuer a faire du bon travailer et vous aurez des etoiles!</value>
+  </data>
+	<data name="Congratulations" xml:space="preserve">
+    <value>Felicitations!</value>
   </data>
 </root>

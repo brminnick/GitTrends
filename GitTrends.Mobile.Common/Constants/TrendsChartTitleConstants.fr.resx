@@ -36,4 +36,10 @@
 	<data name="UniqueViewsTitle" xml:space="preserve">
     <value>Vue uniques</value>
   </data>
+	<data name="KeepItUp" xml:space="preserve">
+    <value>Continuez comme ca!</value>
+  </data>
+	<data name="YouGotThis" xml:space="preserve">
+    <value>Vous assurez!</value>
+  </data>
 </root>
