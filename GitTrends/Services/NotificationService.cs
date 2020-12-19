@@ -19,9 +19,9 @@ namespace GitTrends
     {
         const string _getNotificationHubInformationKey = "GetNotificationHubInformation";
 
-        readonly static WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new WeakEventManager<SortingOption>();
-        readonly static WeakEventManager<NotificationHubInformation> _initializationCompletedEventManager = new WeakEventManager<NotificationHubInformation>();
-        readonly static WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new WeakEventManager<(bool isSuccessful, string errorMessage)>();
+        readonly static WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new();
+        readonly static WeakEventManager<NotificationHubInformation> _initializationCompletedEventManager = new();
+        readonly static WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new();
 
         readonly IPreferences _preferences;
         readonly ISecureStorage _secureStorage;
@@ -106,7 +106,7 @@ namespace GitTrends
             return areNotificationsEnabled ?? false;
         }
 
-        public async Task Initialize(CancellationToken cancellationToken)
+        public async ValueTask Initialize(CancellationToken cancellationToken)
         {
             var notificationHubInformation = await GetNotificationHubInformation().ConfigureAwait(false);
 

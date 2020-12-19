@@ -17,8 +17,6 @@ namespace GitTrends.UnitTests
         public async Task AliasTest()
         {
             //Arrange
-            const string expectedAlias = "brminnick";
-
             string alias_Initial, aliasChangedResult, alias_Final;
 
             bool didAliasChangedFire = false;
@@ -30,14 +28,14 @@ namespace GitTrends.UnitTests
             alias_Initial = gitHubUserService.Alias;
 
             //Act
-            gitHubUserService.Alias = expectedAlias;
+            gitHubUserService.Alias = GitHubConstants.GitTrendsRepoOwner;
             aliasChangedResult = await aliasChangedTCS.Task.ConfigureAwait(false);
             alias_Final = gitHubUserService.Alias;
 
             //Assert
             Assert.IsTrue(didAliasChangedFire);
             Assert.AreEqual(string.Empty, alias_Initial);
-            Assert.AreEqual(expectedAlias, alias_Final);
+            Assert.AreEqual(GitHubConstants.GitTrendsRepoOwner, alias_Final);
             Assert.AreEqual(alias_Final, aliasChangedResult);
 
 

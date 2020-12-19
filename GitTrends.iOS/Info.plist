@@ -55,14 +55,14 @@
 		<string>processing</string>
 	</array>
 	<key>CFBundleShortVersionString</key>
-	<string>1.3.2</string>
+	<string>2.0.0</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.minnick.GitTrends.NotifyTrendingRepositories</string>
 		<string>com.minnick.GitTrends.CleanUpDatabase</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>37</string>
+	<string>38</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>

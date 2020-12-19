@@ -120,7 +120,7 @@ namespace GitTrends.UnitTests
 
             //Assert
             Assert.IsTrue(gitHubUserService.IsDemoUser);
-            Assert.IsTrue(gitHubUserService.IsAuthenticated);
+            Assert.IsFalse(gitHubUserService.IsAuthenticated);
             Assert.IsFalse(result);
         }
 

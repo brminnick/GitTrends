@@ -78,8 +78,8 @@ namespace GitTrends.UnitTests
                 //Ensure visibleRepositoryList_Final matches the generatedRepositories
                 var matchingRepository = generatedRepositories.Single(x => x.Url == visibleRepository.Url);
 
-                Assert.AreEqual(visibleRepository.DailyClonesList.Count, matchingRepository.DailyClonesList.Count);
-                Assert.AreEqual(visibleRepository.DailyViewsList.Count, matchingRepository.DailyViewsList.Count);
+                Assert.AreEqual(visibleRepository.DailyClonesList?.Count, matchingRepository.DailyClonesList?.Count);
+                Assert.AreEqual(visibleRepository.DailyViewsList?.Count, matchingRepository.DailyViewsList?.Count);
                 Assert.AreEqual(visibleRepository.DataDownloadedAt, matchingRepository.DataDownloadedAt);
                 Assert.AreEqual(visibleRepository.Description, matchingRepository.Description);
                 Assert.AreEqual(visibleRepository.ForkCount, matchingRepository.ForkCount);
@@ -91,7 +91,7 @@ namespace GitTrends.UnitTests
                 Assert.AreEqual(visibleRepository.OwnerAvatarUrl, matchingRepository.OwnerAvatarUrl);
                 Assert.AreEqual(visibleRepository.OwnerLogin, matchingRepository.OwnerLogin);
                 Assert.AreEqual(visibleRepository.StarCount, matchingRepository.StarCount);
-                Assert.AreEqual(visibleRepository.StarredAt.Count, matchingRepository.StarredAt.Count);
+                Assert.AreEqual(visibleRepository.StarredAt?.Count, matchingRepository.StarredAt?.Count);
                 Assert.AreEqual(visibleRepository.TotalClones, matchingRepository.TotalClones);
                 Assert.AreEqual(visibleRepository.TotalUniqueClones, matchingRepository.TotalUniqueClones);
                 Assert.AreEqual(visibleRepository.TotalUniqueViews, matchingRepository.TotalUniqueViews);

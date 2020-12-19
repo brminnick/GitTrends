@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
@@ -15,29 +16,31 @@ namespace GitTrends.UITests
         readonly Platform _platform;
 
         IApp? _app;
-        ReferringSitesPage? _referringSitesPage;
-        RepositoryPage? _repositoryPage;
-        SettingsPage? _settingsPage;
+        AboutPage? _aboutPage;
         TrendsPage? _trendsPage;
-        SplashScreenPage? _splashScreenPage;
-        OnboardingPage? _onboardingPage;
         WelcomePage? _welcomePage;
+        SettingsPage? _settingsPage;
+        RepositoryPage? _repositoryPage;
+        OnboardingPage? _onboardingPage;
+        SplashScreenPage? _splashScreenPage;
+        ReferringSitesPage? _referringSitesPage;
 
         protected BaseUITest(Platform platform, UserType userType) => (_platform, UserType) = (platform, userType);
 
         protected UserType UserType { get; }
 
         protected IApp App => _app ?? throw new NullReferenceException();
-        protected ReferringSitesPage ReferringSitesPage => _referringSitesPage ?? throw new NullReferenceException();
-        protected RepositoryPage RepositoryPage => _repositoryPage ?? throw new NullReferenceException();
-        protected SettingsPage SettingsPage => _settingsPage ?? throw new NullReferenceException();
+        protected AboutPage AboutPage => _aboutPage ?? throw new NullReferenceException();
         protected TrendsPage TrendsPage => _trendsPage ?? throw new NullReferenceException();
-        protected SplashScreenPage SplashScreenPage => _splashScreenPage ?? throw new NullReferenceException();
-        protected OnboardingPage OnboardingPage => _onboardingPage ?? throw new NullReferenceException();
         protected WelcomePage WelcomePage => _welcomePage ?? throw new NullReferenceException();
+        protected SettingsPage SettingsPage => _settingsPage ?? throw new NullReferenceException();
+        protected RepositoryPage RepositoryPage => _repositoryPage ?? throw new NullReferenceException();
+        protected OnboardingPage OnboardingPage => _onboardingPage ?? throw new NullReferenceException();
+        protected SplashScreenPage SplashScreenPage => _splashScreenPage ?? throw new NullReferenceException();
+        protected ReferringSitesPage ReferringSitesPage => _referringSitesPage ?? throw new NullReferenceException();
 
-        protected string LoggedInUserAlias => App.InvokeBackdoorMethod<string>(BackdoorMethodConstants.GetLoggedInUserAlias);
         protected string LoggedInUserName => App.InvokeBackdoorMethod<string>(BackdoorMethodConstants.GetLoggedInUserName);
+        protected string LoggedInUserAlias => App.InvokeBackdoorMethod<string>(BackdoorMethodConstants.GetLoggedInUserAlias);
         protected string LoggedInUserAvatarUrl => App.InvokeBackdoorMethod<string>(BackdoorMethodConstants.GetLoggedInUserAvatarUrl);
 
         [SetUp]
@@ -45,13 +48,14 @@ namespace GitTrends.UITests
         {
             _app = AppInitializer.StartApp(_platform);
 
+            _aboutPage = new AboutPage(App);
+            _trendsPage = new TrendsPage(App);
+            _welcomePage = new WelcomePage(App);
+            _settingsPage = new SettingsPage(App);
+            _repositoryPage = new RepositoryPage(App);
+            _onboardingPage = new OnboardingPage(App);
             _splashScreenPage = new SplashScreenPage(App);
             _referringSitesPage = new ReferringSitesPage(App);
-            _repositoryPage = new RepositoryPage(App);
-            _settingsPage = new SettingsPage(App);
-            _trendsPage = new TrendsPage(App);
-            _onboardingPage = new OnboardingPage(App);
-            _welcomePage = new WelcomePage(App);
 
             App.Screenshot("App Initialized");
 

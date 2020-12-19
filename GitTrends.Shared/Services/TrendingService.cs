@@ -9,15 +9,21 @@ namespace GitTrends.Shared
         public static (bool? isViewsTrending, bool? isClonesTrending) IsTrending(this Repository repository) =>
             (repository.DailyViewsList.IsTrending(), repository.DailyClonesList.IsTrending());
 
-        public static bool? IsTrending(this IEnumerable<DailyClonesModel> dailyClones)
+        public static bool? IsTrending(this IEnumerable<DailyClonesModel>? dailyClones)
         {
+            if (dailyClones is null)
+                return false;
+
             var sortedDailyClonesList = dailyClones.OrderBy(x => x.TotalClones).ToList();
 
             return DoesContainUpperOutlier(sortedDailyClonesList);
         }
 
-        public static bool? IsTrending(this IEnumerable<DailyViewsModel> dailyViews)
+        public static bool? IsTrending(this IEnumerable<DailyViewsModel>? dailyViews)
         {
+            if (dailyViews is null)
+                return false;
+
             var sortedDailyViewsList = dailyViews.OrderBy(x => x.TotalViews).ToList();
 
             return DoesContainUpperOutlier(sortedDailyViewsList);

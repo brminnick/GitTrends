@@ -9,17 +9,17 @@ using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Shiny;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 using static GitTrends.MarkupExtensions;
-using static Xamarin.Forms.Markup.GridRowsColumns;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
     public class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISearchPage
     {
-        readonly WeakEventManager<string> _searchTextChangedEventManager = new WeakEventManager<string>();
+        readonly WeakEventManager<string> _searchTextChangedEventManager = new();
 
         readonly RefreshView _refreshView;
         readonly FirstRunService _firstRunService;
@@ -38,8 +38,11 @@ namespace GitTrends
             _gitHubUserService = gitHubUserService;
             _deepLinkingService = deepLinkingService;
 
+            //Workaround for CollectionView.SelectionChanged firing when SwipeView is swiped
+
             SearchBarTextChanged += HandleSearchBarTextChanged;
             RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
+            BaseRepositoryDataTemplate.Tapped += HandleRepositoryDataTemplateTapped;
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 
             this.SetBinding(TitleProperty, nameof(RepositoryViewModel.TitleText));
@@ -66,28 +69,26 @@ namespace GitTrends
             Content = new Grid
             {
                 RowDefinitions = Rows.Define(
-                    (Row.Totals, AbsoluteGridLength(125)),
                     (Row.CollectionView, Star),
-                    (Row.Information, AbsoluteGridLength(100))),
+                    (Row.Information, AbsoluteGridLength(InformationButton.Diameter))),
 
                 ColumnDefinitions = Columns.Define(
                     (Column.CollectionView, Star),
-                    (Column.Information, AbsoluteGridLength(100))),
+                    (Column.Information, AbsoluteGridLength(InformationButton.Diameter))),
 
                 Children =
                 {
-                    new InformationLabel().Row(Row.Totals).ColumnSpan(All<Column>())
-                        .Bind<Label, bool, bool>(IsVisibleProperty,nameof(RepositoryViewModel.IsRefreshing), convert: isRefreshing => !isRefreshing)
-                        .Bind<Label, IReadOnlyList<Repository>, string>(Label.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => StatisticsService.GetInformationLabelText(repositories, mobileSortingService)),
+                    //Work around to prevent iOS Navigation Bar from collapsing
+                    new BoxView { HeightRequest = 0.1 }
+                        .RowSpan(All<Row>()).ColumnSpan(All<Column>()),
 
                     new RefreshView
                     {
                         AutomationId = RepositoryPageAutomationIds.RefreshView,
                         Content = new CollectionView
                         {
-                            ItemTemplate = new RepositoryDataTemplateSelector(mobileSortingService),
+                            ItemTemplate = new RepositoryDataTemplateSelector(mobileSortingService, repositoryViewModel),
                             BackgroundColor = Color.Transparent,
-                            SelectionMode = SelectionMode.Single,
                             AutomationId = RepositoryPageAutomationIds.CollectionView,
                             //Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
                             Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.BottomPadding } : null,
@@ -98,22 +99,18 @@ namespace GitTrends
                                             .Bind(EmptyDataView.DescriptionProperty, nameof(RepositoryViewModel.EmptyDataViewDescription))
 
                         }.Bind(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList))
-                         .Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged)
 
                     }.RowSpan(All<Row>()).ColumnSpan(All<Column>()).Assign(out _refreshView)
                      .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
                      .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand))
                      .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor)),
-                }
-            }.Assign(out Grid grid);
 
-            if (Device.RuntimePlatform is Device.Android)
-            {
-                grid.Children.Add(new InformationButton(mobileSortingService, mainThread, analyticsService).Row(Row.Information).Column(Column.Information));
-            }
+                    new InformationButton(mobileSortingService, mainThread, analyticsService).Row(Row.Information).Column(Column.Information)
+                }
+            };
         }
 
-        enum Row { Totals, CollectionView, Information }
+        enum Row { CollectionView, Information }
         enum Column { CollectionView, Information }
 
         public event EventHandler<string> SearchBarTextChanged
@@ -154,21 +151,18 @@ namespace GitTrends
             static bool isUserValid(in string accessToken, in string alias) => !string.IsNullOrWhiteSpace(accessToken) || !string.IsNullOrWhiteSpace(alias);
         }
 
-        async void HandleCollectionViewSelectionChanged(object sender, SelectionChangedEventArgs e)
+        async void HandleRepositoryDataTemplateTapped(object sender, EventArgs e)
         {
-            var collectionView = (CollectionView)sender;
-            collectionView.SelectedItem = null;
+            var view = (View)sender;
+            var repository = (Repository)view.BindingContext;
 
-            if (e?.CurrentSelection.FirstOrDefault() is Repository repository)
+            AnalyticsService.Track("Repository Tapped", new Dictionary<string, string>
             {
-                AnalyticsService.Track("Repository Tapped", new Dictionary<string, string>
-                {
-                    { nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin },
-                    { nameof(Repository) + nameof(Repository.Name), repository.Name }
-                });
+                { nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin },
+                { nameof(Repository) + nameof(Repository.Name), repository.Name }
+            });
 
-                await NavigateToTrendsPage(repository);
-            }
+            await NavigateToTrendsPage(repository);
         }
 
         Task NavigateToSettingsPage()
@@ -179,8 +173,8 @@ namespace GitTrends
 
         Task NavigateToTrendsPage(Repository repository)
         {
-            var trendsPage = ContainerService.Container.Resolve<TrendsPage>(new TypedParameter(typeof(Repository), repository));
-            return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsPage));
+            var trendsCarouselPage = ContainerService.Container.Resolve<TrendsCarouselPage>(new TypedParameter(typeof(Repository), repository));
+            return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsCarouselPage));
         }
 
         Task ExecuteSetttingsToolbarItemCommand()
@@ -233,14 +227,5 @@ namespace GitTrends
         void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand.Execute(searchBarText);
 
         void ISearchPage.OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.RaiseEvent(this, text, nameof(SearchBarTextChanged));
-
-        class InformationLabel : StatisticsLabel
-        {
-            public InformationLabel() : base(string.Empty, true, nameof(BaseTheme.PrimaryTextColor))
-            {
-                AutomationId = RepositoryPageAutomationIds.InformationLabel;
-                this.FillExpand().TextCenter();
-            }
-        }
     }
 }

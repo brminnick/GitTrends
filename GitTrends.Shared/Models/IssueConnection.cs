@@ -5,10 +5,10 @@ using Newtonsoft.Json;
 
 namespace GitTrends.Shared
 {
-    public class IssuesConnection
+    public record IssuesConnection
     {
         public IssuesConnection(long totalCount, IEnumerable<Issue>? nodes) =>
-            (IssuesCount, IssueList) = (totalCount, nodes?.ToList() ?? (IReadOnlyList<Issue>)Array.Empty<Issue>());
+            (IssuesCount, IssueList) = (totalCount, (nodes ?? Array.Empty<Issue>()).ToList());
 
         [JsonProperty("nodes")]
         public IReadOnlyList<Issue> IssueList { get; }

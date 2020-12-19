@@ -10,13 +10,13 @@ namespace GitTrends
 {
     public class MediaElementService
     {
-        readonly AzureFunctionsApiService _azureFunctionsApiService;
-        readonly IAnalyticsService _analyticsService;
         readonly IPreferences _preferences;
+        readonly IAnalyticsService _analyticsService;
+        readonly AzureFunctionsApiService _azureFunctionsApiService;
 
-        public MediaElementService(AzureFunctionsApiService azureFunctionsApiService,
+        public MediaElementService(IPreferences preferences,
                                     IAnalyticsService analyticsService,
-                                    IPreferences preferences)
+                                    AzureFunctionsApiService azureFunctionsApiService)
         {
             _azureFunctionsApiService = azureFunctionsApiService;
             _analyticsService = analyticsService;
@@ -25,21 +25,8 @@ namespace GitTrends
 
         public StreamingManifest? OnboardingChart
         {
-            get
-            {
-                try
-                {
-                    return JsonConvert.DeserializeObject<StreamingManifest?>(_preferences.Get(nameof(OnboardingChart), null));
-                }
-                catch (ArgumentNullException)
-                {
-                    return null;
-                }
-                catch (JsonReaderException)
-                {
-                    return null;
-                }
-            }
+            get => GetOnboardingChart();
+            private set => _preferences.Set(nameof(OnboardingChart), JsonConvert.SerializeObject(value));
         }
 
         public async ValueTask InitializeOnboardingChart(CancellationToken cancellationToken)
@@ -54,12 +41,28 @@ namespace GitTrends
                 try
                 {
                     var chartVideoStreamingUrl = await _azureFunctionsApiService.GetChartStreamingUrl(cancellationToken).ConfigureAwait(false);
-                    _preferences.Set(nameof(OnboardingChart), JsonConvert.SerializeObject(chartVideoStreamingUrl));
+                    OnboardingChart = chartVideoStreamingUrl;
                 }
                 catch (Exception e)
                 {
                     _analyticsService.Report(e);
                 }
+            }
+        }
+
+        StreamingManifest? GetOnboardingChart()
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<StreamingManifest?>(_preferences.Get(nameof(OnboardingChart), null));
+            }
+            catch (ArgumentNullException)
+            {
+                return null;
+            }
+            catch (JsonReaderException)
+            {
+                return null;
             }
         }
     }

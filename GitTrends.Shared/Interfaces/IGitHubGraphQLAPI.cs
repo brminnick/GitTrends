@@ -19,7 +19,7 @@ namespace GitTrends.Shared
         Task<ApiResponse<GraphQLResponse<StarGazerResponse>>> StarGazerQuery([Body] StarGazerQueryContent request, [Header("Authorization")] string authorization);
     }
 
-    public class StarGazerQueryContent : GraphQLRequest
+    public record StarGazerQueryContent : GraphQLRequest
     {
         public StarGazerQueryContent(string repositoryName, string repositoryOwner, string? endCursorString, int numberOfStarGazersPerRequest = 100)
             : base("query { repository(name: \"" + repositoryName + "\", owner: \"" + repositoryOwner + "\") { stargazers(first:" + numberOfStarGazersPerRequest + endCursorString + ") { edges { starredAt, cursor } } }} ")
@@ -28,7 +28,7 @@ namespace GitTrends.Shared
         }
     }
 
-    public class ViewerLoginQueryContent : GraphQLRequest
+    public record ViewerLoginQueryContent : GraphQLRequest
     {
         public ViewerLoginQueryContent() : base("query { viewer{ login, name, avatarUrl }}")
         {
@@ -36,7 +36,7 @@ namespace GitTrends.Shared
         }
     }
 
-    public class RepositoryQueryContent : GraphQLRequest
+    public record RepositoryQueryContent : GraphQLRequest
     {
         public RepositoryQueryContent(string repositoryOwner, string repositoryName)
             : base("query { repository(owner:\"" + repositoryOwner + "\" name:\"" + repositoryName + "\"){ name, description, forkCount, url, owner { avatarUrl, login }, isFork, issues(states:OPEN) { totalCount }}}")
@@ -45,7 +45,7 @@ namespace GitTrends.Shared
         }
     }
 
-    public class RepositoryConnectionQueryContent : GraphQLRequest
+    public record RepositoryConnectionQueryContent : GraphQLRequest
     {
         public RepositoryConnectionQueryContent(string repositoryOwner, string endCursorString, int numberOfRepositoriesPerRequest = 100)
             : base("query{ user(login: \"" + repositoryOwner + "\") {repositories(first:" + numberOfRepositoriesPerRequest + endCursorString + ") { nodes { name, description, forkCount, url, owner { avatarUrl, login }, isFork, issues(states:OPEN) { totalCount } }, pageInfo { endCursor, hasNextPage, hasPreviousPage, startCursor } } } }")

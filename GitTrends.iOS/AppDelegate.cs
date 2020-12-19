@@ -24,7 +24,6 @@ namespace GitTrends.iOS
             Sharpnado.MaterialFrame.iOS.iOSMaterialFrameRenderer.Init();
 
             Syncfusion.SfChart.XForms.iOS.Renderers.SfChartRenderer.Init();
-            Syncfusion.XForms.iOS.Buttons.SfSegmentedControlRenderer.Init();
 
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init();
             FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageSourceHandler();
@@ -45,7 +44,7 @@ namespace GitTrends.iOS
             var notificationService = ContainerService.Container.Resolve<NotificationService>();
             var deviceNotificationsService = ContainerService.Container.Resolve<IDeviceNotificationsService>();
 
-            LoadApplication(new App(themeService, languageService, analyticsService, splashScreenPage, notificationService, deviceNotificationsService));
+            LoadApplication(new App(themeService, languageService, splashScreenPage, analyticsService, notificationService, deviceNotificationsService));
 
             if (launchOptions?.ContainsKey(UIApplication.LaunchOptionsLocalNotificationKey) is true)
                 HandleLocalNotification((UILocalNotification)launchOptions[UIApplication.LaunchOptionsLocalNotificationKey]).SafeFireAndForget(ex => analyticsService.Report(ex));

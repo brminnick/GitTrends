@@ -2,10 +2,10 @@
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
+using Xamarin.CommunityToolkit.Markup;
 using static GitTrends.MarkupExtensions;
 using static GitTrends.XamarinFormsService;
-using static Xamarin.Forms.Markup.GridRowsColumns;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -46,19 +46,26 @@ namespace GitTrends
 
                 Children =
                 {
-                    new OpacityOverlay().Row(Row.Image).ColumnSpan(All<Column>()),
-                    CreateImageView().Row(Row.Image).ColumnSpan(All<Column>()).Margin(Device.RuntimePlatform is Device.iOS ? new Thickness(32, 44 + 32, 32, 32) : new Thickness(32,16)),
-                    descriptionLayout.Row(Row.Description).RowSpan(2).ColumnSpan(All<Column>()),
-                    new OnboardingIndicatorView(carouselPositionIndex).Row(Row.Indicator).Column(Column.Indicator),
-                    new NextLabel(nextButtonText).Row(Row.Indicator).Column(Column.Button),
+                    new OpacityOverlay()
+                        .Row(Row.Image).ColumnSpan(All<Column>()),
+
+                    CreateImageView()
+                        .Row(Row.Image).ColumnSpan(All<Column>()).Margin(Device.RuntimePlatform is Device.iOS ? new Thickness(32, 44 + 32, 32, 32) : new Thickness(32,16)),
+
+                    descriptionLayout.Row(Row.Description)
+                        .RowSpan(2).ColumnSpan(All<Column>()),
+
+                    new OnboardingIndicatorView(carouselPositionIndex)
+                        .Row(Row.Indicator).Column(Column.Indicator),
+
+                    new NextLabel(nextButtonText)
+                        .Row(Row.Indicator).Column(Column.Button),
                 }
             };
         }
 
         enum Row { Image, Description, Indicator }
         enum Column { Indicator, Button }
-
-        protected OnboardingViewModel ViewModel => (OnboardingViewModel)BindingContext;
 
         protected abstract View CreateImageView();
         protected abstract TitleLabel CreateDescriptionTitleLabel();
@@ -151,9 +158,17 @@ namespace GitTrends
             public OnboardingIndicatorView(in int position)
             {
                 Position = position;
+
+                IsEnabled = false;
+
                 SelectedIndicatorColor = Color.White;
                 IndicatorColor = Color.White.MultiplyAlpha(0.25);
+
                 Margin = new Thickness(30, 0, 0, 0);
+
+#if AppStore
+#error IdicatorView Regression https://github.com/xamarin/Xamarin.Forms/issues/12028
+#endif
                 HorizontalOptions = LayoutOptions.Start;
                 AutomationId = OnboardingAutomationIds.PageIndicator;
 

@@ -13,8 +13,8 @@ namespace GitTrends.UITests
 {
     [TestFixture(Platform.Android, UserType.Demo)]
     [TestFixture(Platform.Android, UserType.LoggedIn)]
-    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     [TestFixture(Platform.iOS, UserType.Demo)]
+    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     class RepositoriesTests : BaseUITest
     {
         public RepositoriesTests(Platform platform, UserType userType) : base(platform, userType)
@@ -93,7 +93,6 @@ namespace GitTrends.UITests
                 Assert.GreaterOrEqual(finalSecondTopRepository.TotalViews, finalLastRepository.TotalViews);
         }
 
-        [TestCase(MobileSortingService.DefaultSortingOption)]
         [TestCase(SortingOption.Clones)]
         [TestCase(SortingOption.Forks)]
         [TestCase(SortingOption.Issues)]
@@ -107,26 +106,22 @@ namespace GitTrends.UITests
             Assert.AreEqual(MobileSortingService.DefaultSortingOption, SortingOption.Views);
 
             //Arrange
+            string floatingActionTextButtonStatistic1Text, floatingActionTextButtonStatistic2Text, floatingActionTextButtonStatistic3Text;
+
             Repository finalFirstRepository, finalSecondTopRepository, finalLastRepository;
             Repository initialFirstRepository = RepositoryPage.VisibleCollection.First();
             Repository initialSecondTopRepository = RepositoryPage.VisibleCollection.Skip(1).First();
             Repository initialLastRepository = RepositoryPage.VisibleCollection.Last();
 
-            string floatingActionTextButtonStatistic1Text = string.Empty,
-                    floatingActionTextButtonStatistic2Text = string.Empty,
-                    floatingActionTextButtonStatistic3Text = string.Empty;
 
             //Act
             await RepositoryPage.SetSortingOption(sortingOption).ConfigureAwait(false);
 
-            if (App is AndroidApp)
-            {
-                floatingActionTextButtonStatistic1Text = RepositoryPage.InformationButtonStatistic1Text;
-                floatingActionTextButtonStatistic2Text = RepositoryPage.InformationButtonStatistic2Text;
-                floatingActionTextButtonStatistic3Text = RepositoryPage.InformationButtonStatistic3Text;
+            floatingActionTextButtonStatistic1Text = RepositoryPage.InformationButtonStatistic1Text;
+            floatingActionTextButtonStatistic2Text = RepositoryPage.InformationButtonStatistic2Text;
+            floatingActionTextButtonStatistic3Text = RepositoryPage.InformationButtonStatistic3Text;
 
-                RepositoryPage.TapInformationButton();
-            }
+            RepositoryPage.TapInformationButton();
 
             //Assert
             finalFirstRepository = RepositoryPage.VisibleCollection.First();
@@ -138,25 +133,14 @@ namespace GitTrends.UITests
 
             Assert.GreaterOrEqual(initialFirstRepository.TotalViews, initialLastRepository.TotalViews);
 
-            if (App is AndroidApp)
-            {
-                var floatingActionTextButtonStatistic1Text_Expected = StatisticsService.GetFloatingActionTextButtonText(MobileSortingService.GetSortingCategory(sortingOption), RepositoryPage.VisibleCollection, FloatingActionButtonType.Statistic1);
-                var floatingActionTextButtonStatistic2Text_Expected = StatisticsService.GetFloatingActionTextButtonText(MobileSortingService.GetSortingCategory(sortingOption), RepositoryPage.VisibleCollection, FloatingActionButtonType.Statistic2);
-                var floatingActionTextButtonStatistic3Text_Expected = StatisticsService.GetFloatingActionTextButtonText(MobileSortingService.GetSortingCategory(sortingOption), RepositoryPage.VisibleCollection, FloatingActionButtonType.Statistic3);
 
-                Assert.AreEqual(floatingActionTextButtonStatistic1Text_Expected, floatingActionTextButtonStatistic1Text);
-                Assert.AreEqual(floatingActionTextButtonStatistic2Text_Expected, floatingActionTextButtonStatistic2Text);
-                Assert.AreEqual(floatingActionTextButtonStatistic3Text_Expected, floatingActionTextButtonStatistic3Text);
-            }
-            else if (App is iOSApp)
-            {
-                var informationLabelText_Expected = StatisticsService.GetInformationLabelText(RepositoryPage.VisibleCollection, MobileSortingService.GetSortingCategory(sortingOption));
-                Assert.AreEqual(informationLabelText_Expected, RepositoryPage.InformationLabelText);
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
+            var floatingActionTextButtonStatistic1Text_Expected = StatisticsService.GetFloatingActionTextButtonText(MobileSortingService.GetSortingCategory(sortingOption), RepositoryPage.VisibleCollection, FloatingActionButtonType.Statistic1);
+            var floatingActionTextButtonStatistic2Text_Expected = StatisticsService.GetFloatingActionTextButtonText(MobileSortingService.GetSortingCategory(sortingOption), RepositoryPage.VisibleCollection, FloatingActionButtonType.Statistic2);
+            var floatingActionTextButtonStatistic3Text_Expected = StatisticsService.GetFloatingActionTextButtonText(MobileSortingService.GetSortingCategory(sortingOption), RepositoryPage.VisibleCollection, FloatingActionButtonType.Statistic3);
+
+            Assert.AreEqual(floatingActionTextButtonStatistic1Text_Expected, floatingActionTextButtonStatistic1Text);
+            Assert.AreEqual(floatingActionTextButtonStatistic2Text_Expected, floatingActionTextButtonStatistic2Text);
+            Assert.AreEqual(floatingActionTextButtonStatistic3Text_Expected, floatingActionTextButtonStatistic3Text);
 
             switch (sortingOption)
             {
@@ -237,7 +221,7 @@ namespace GitTrends.UITests
                     Assert.AreEqual(0, smallScreenTrendingImageCount);
             }
 
-            Assert.IsFalse(visibleRepositoryList.Any(x => x.DailyClonesList.Count <= 0 || x.DailyViewsList.Count <= 0));
+            Assert.IsFalse(visibleRepositoryList.Any(x => x.DailyClonesList?.Count <= 0 || x.DailyViewsList?.Count <= 0));
         }
 
         [Test]

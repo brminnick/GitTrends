@@ -9,6 +9,7 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using Autofac;
+using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
@@ -20,15 +21,15 @@ namespace GitTrends
 {
     public class RepositoryViewModel : BaseViewModel
     {
-        readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
+        readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
 
         readonly ImageCachingService _imageService;
         readonly GitHubUserService _gitHubUserService;
         readonly RepositoryDatabase _repositoryDatabase;
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly MobileSortingService _mobileSortingService;
+        readonly GitHubApiStatusService _gitHubApiStatusService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
-        readonly GitHubApiExceptionService _gitHubApiExceptionService;
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
         readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
@@ -48,8 +49,8 @@ namespace GitTrends
                                     MobileSortingService sortingService,
                                     RepositoryDatabase repositoryDatabase,
                                     GitHubApiV3Service gitHubApiV3Service,
+                                    GitHubApiStatusService gitHubApiStatusService,
                                     GitHubGraphQLApiService gitHubGraphQLApiService,
-                                    GitHubApiExceptionService gitHubApiExceptionService,
                                     GitHubAuthenticationService gitHubAuthenticationService,
                                     GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, mainThread)
         {
@@ -62,16 +63,19 @@ namespace GitTrends
             _mobileSortingService = sortingService;
             _repositoryDatabase = repositoryDatabase;
             _gitHubApiV3Service = gitHubApiV3Service;
+            _gitHubApiStatusService = gitHubApiStatusService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
-            _gitHubApiExceptionService = gitHubApiExceptionService;
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
 
             RefreshState = RefreshState.Uninitialized;
 
-            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(gitHubUserService.Alias));
             FilterRepositoriesCommand = new Command<string>(SetSearchBarText);
             SortRepositoriesCommand = new Command<SortingOption>(ExecuteSortRepositoriesCommand);
+
+            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(gitHubUserService.Alias));
+
+            ToggleIsFavoriteCommand = new AsyncValueCommand<Repository>(repository => ExecuteToggleIsFavoriteCommand(repository));
 
             NotificationService.SortingOptionRequested += HandleSortingOptionRequested;
 
@@ -89,6 +93,7 @@ namespace GitTrends
         public ICommand SortRepositoriesCommand { get; }
         public ICommand FilterRepositoriesCommand { get; }
         public IAsyncCommand PullToRefreshCommand { get; }
+        public AsyncValueCommand<Repository> ToggleIsFavoriteCommand { get; }
 
         public IReadOnlyList<Repository> VisibleRepositoryList
         {
@@ -129,6 +134,14 @@ namespace GitTrends
             }
         }
 
+        static IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IReadOnlyList<Repository> repositories, string searchBarText)
+        {
+            if (string.IsNullOrWhiteSpace(searchBarText))
+                return repositories;
+
+            return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
+        }
+
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
             HttpResponseMessage? finalResponse = null;
@@ -149,7 +162,7 @@ namespace GitTrends
                 await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     if (favoriteRepositoryUrls.Contains(repository.Url))
-                        repositoryList.Add(new Repository(repository.Name, repository.Description, repository.ForkCount, repository.OwnerLogin, repository.OwnerAvatarUrl, repository.IssuesCount, repository.Url, repository.IsFork, repository.DataDownloadedAt, true));
+                        repositoryList.Add(repository with { IsFavorite = true });
                     else
                         repositoryList.Add(repository);
 
@@ -205,18 +218,18 @@ namespace GitTrends
 
                 RefreshState = RefreshState.LoginExpired;
             }
-            catch (Exception e) when (_gitHubApiExceptionService.HasReachedMaximimApiCallLimit(e)
-                                        || (e is HttpRequestException && finalResponse != null && _gitHubApiExceptionService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
+            catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximumApiCallLimit(e)
+                                        || (e is HttpRequestException && finalResponse != null && _gitHubApiStatusService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
             {
                 var responseHeaders = e switch
                 {
                     ApiException exception => exception.Headers,
                     GraphQLException graphQLException => graphQLException.ResponseHeaders,
-                    HttpRequestException _ when finalResponse != null => finalResponse.Headers,
+                    HttpRequestException when finalResponse != null => finalResponse.Headers,
                     _ => throw new NotSupportedException()
                 };
 
-                var maximimApiRequestsReachedEventArgs = new MaximimApiRequestsReachedEventArgs(_gitHubApiExceptionService.GetRateLimitResetDateTime(responseHeaders));
+                var maximimApiRequestsReachedEventArgs = new MaximumApiRequestsReachedEventArgs(_gitHubApiStatusService.GetRateLimitResetDateTime(responseHeaders));
                 OnPullToRefreshFailed(maximimApiRequestsReachedEventArgs);
 
                 SetRepositoriesCollection(Array.Empty<Repository>(), _searchBarText);
@@ -225,7 +238,11 @@ namespace GitTrends
             }
             catch (Exception e)
             {
-                AnalyticsService.Report(e);
+                AnalyticsService.Report(e, new Dictionary<string, string>
+                {
+                    { nameof(IGitHubApiStatusService.IsAbuseRateLimit), _gitHubApiStatusService.IsAbuseRateLimit(e, out var delta).ToString() },
+                    { nameof(delta), delta.ToString() }
+                });
 
                 var repositoryDatabaseList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
                 SetRepositoriesCollection(repositoryDatabaseList, _searchBarText);
@@ -257,6 +274,23 @@ namespace GitTrends
 
             void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
             void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();
+        }
+
+        async ValueTask ExecuteToggleIsFavoriteCommand(Repository repository)
+        {
+            var updatedRepository = repository with
+            {
+                IsFavorite = repository.IsFavorite.HasValue ? !repository.IsFavorite : true
+            };
+
+            var updatedRepositoryList = new List<Repository>(_visibleRepositoryList);
+            updatedRepositoryList.Remove(repository);
+            updatedRepositoryList.Add(updatedRepository);
+
+            SetRepositoriesCollection(updatedRepositoryList, _searchBarText);
+
+            if (!_gitHubUserService.IsDemoUser)
+                await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
         }
 
         async ValueTask SaveRepositoriesToDatabase(IEnumerable<Repository> repositories)
@@ -307,7 +341,7 @@ namespace GitTrends
             var updatedRepositoryList = _repositoryList.Concat(repositories);
 
             if (shouldRemoveRepoisitoriesWithoutViewsClonesData)
-                _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).Where(x => x.DailyClonesList.Count > 1 || x.DailyViewsList.Count > 1).ToList();
+                _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).Where(x => x.DailyClonesList?.Count > 1 || x.DailyViewsList?.Count > 1).ToList();
             else
                 _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
@@ -328,14 +362,6 @@ namespace GitTrends
         {
             _repositoryList = Array.Empty<Repository>();
             UpdateVisibleRepositoryList(string.Empty, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
-        }
-
-        IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IReadOnlyList<Repository> repositories, string searchBarText)
-        {
-            if (string.IsNullOrWhiteSpace(searchBarText))
-                return repositories;
-
-            return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
         }
 
         void SetSearchBarText(string text)
@@ -367,7 +393,7 @@ namespace GitTrends
             RefreshState = pullToRefreshFailedEventArgs switch
             {
                 ErrorPullToRefreshEventArgs _ => RefreshState.Error,
-                MaximimApiRequestsReachedEventArgs _ => RefreshState.MaximumApiLimit,
+                MaximumApiRequestsReachedEventArgs _ => RefreshState.MaximumApiLimit,
                 LoginExpiredPullToRefreshEventArgs _ => RefreshState.LoginExpired,
                 _ => throw new NotSupportedException()
             };

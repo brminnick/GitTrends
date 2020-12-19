@@ -28,13 +28,17 @@ namespace GitTrends.Droid
         public string GetCurrentTrendsChartOption() =>
             SerializeObject(UITestBackdoorService.GetCurrentTrendsChartOption());
 
-        [Preserve, Export(BackdoorMethodConstants.IsTrendsSeriesVisible)]
-        public bool IsTrendsSeriesVisible(string seriesLabel) =>
-            UITestBackdoorService.IsTrendsSeriesVisible(seriesLabel);
+        [Preserve, Export(BackdoorMethodConstants.IsViewsClonesChartSeriesVisible)]
+        public bool IsViewsClonesChartSeriesVisible(string seriesLabel) =>
+            UITestBackdoorService.IsViewsClonesChartSeriesVisible(seriesLabel);
 
         [Preserve, Export(BackdoorMethodConstants.GetCurrentOnboardingPageNumber)]
         public string GetCurrentOnboardingPageNumber() =>
             SerializeObject(UITestBackdoorService.GetCurrentOnboardingPageNumber());
+
+        [Preserve, Export(BackdoorMethodConstants.GetCurrentTrendsPageNumber)]
+        public string GetCurrentTrendsPageNumber() =>
+            SerializeObject(UITestBackdoorService.GetCurrentTrendsPageNumber());
 
         [Preserve, Export(BackdoorMethodConstants.PopPage)]
         public async void PopPage() =>

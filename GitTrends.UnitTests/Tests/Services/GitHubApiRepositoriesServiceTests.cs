@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using Refit;
 
 namespace GitTrends.UnitTests
 {
@@ -51,13 +53,24 @@ namespace GitTrends.UnitTests
             Assert.IsNotEmpty(repositories);
             Assert.IsNotEmpty(repositories_NoViewsClonesData);
 
-            Assert.IsEmpty(repositories_NoViewsClonesData.SelectMany(x => x.StarredAt));
-            Assert.IsEmpty(repositories_NoViewsClonesData.SelectMany(x => x.DailyViewsList));
-            Assert.IsEmpty(repositories_NoViewsClonesData.SelectMany(x => x.DailyClonesList));
+            foreach (var repository in repositories_NoViewsClonesData)
+            {
+                Assert.IsNull(repository.StarredAt);
+                Assert.IsNull(repository.TotalClones);
+                Assert.IsNull(repository.TotalUniqueClones);
+                Assert.IsNull(repository.TotalViews);
+                Assert.IsNull(repository.TotalUniqueViews);
+            }
 
             Assert.IsNotEmpty(repositories.SelectMany(x => x.StarredAt));
             Assert.IsNotEmpty(repositories.SelectMany(x => x.DailyViewsList));
             Assert.IsNotEmpty(repositories.SelectMany(x => x.DailyClonesList));
+
+            Assert.Less(0, repositories.SelectMany(x => x.StarredAt).Count());
+            Assert.Less(0, repositories.Sum(x => x.TotalClones));
+            Assert.Less(0, repositories.Sum(x => x.TotalUniqueClones));
+            Assert.Less(0, repositories.Sum(x => x.TotalViews));
+            Assert.Less(0, repositories.Sum(x => x.TotalUniqueViews));
         }
 
         [Test]
@@ -139,6 +152,58 @@ namespace GitTrends.UnitTests
             Assert.IsEmpty(repositories.SelectMany(x => x.StarredAt));
             Assert.IsEmpty(repositories.SelectMany(x => x.DailyViewsList));
             Assert.IsEmpty(repositories.SelectMany(x => x.DailyClonesList));
+        }
+
+        [Test]
+        public async Task GetStarGazers_ValidRepo()
+        {
+            //Arrange
+            StarGazers starGazers;
+
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+            //Act
+            starGazers = await gitHubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None).ConfigureAwait(false); ;
+
+            //Assert
+            Assert.NotNull(starGazers);
+            Assert.Greater(starGazers.TotalCount, 250);
+            Assert.IsNotEmpty(starGazers.StarredAt);
+            Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
+        }
+
+        [Test]
+        public void GetStarGazers_InvalidRepo()
+        {
+            //Arrange
+            const string fakeRepoName = "abc123321";
+            const string fakeRepoOwner = "zxcvbnmlkjhgfdsa1234567890";
+
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+            //Act
+            var graphQLException = Assert.ThrowsAsync<GraphQLException<StarGazerResponse>>(() => gitHubGraphQLApiService.GetStarGazers(fakeRepoName, fakeRepoOwner, CancellationToken.None));
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.OK, graphQLException.StatusCode);
+            Assert.IsTrue(graphQLException.Errors.First().Message.Contains("Could not resolve to a Repository", StringComparison.OrdinalIgnoreCase));
+
+            //"Could not resolve to a Repository with the name 'zxcvbnmlkjhgfdsa1234567890/abc123321'."
+        }
+
+        [Test]
+        public void GetStarGazers_Unauthenticated()
+        {
+            //Arrange
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+            //Act
+            gitHubUserService.InvalidateToken();
+            var apiException = Assert.ThrowsAsync<ApiException>(() => gitHubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None));
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.Unauthorized, apiException.StatusCode);
         }
     }
 }

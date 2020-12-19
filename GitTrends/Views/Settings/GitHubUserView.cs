@@ -1,8 +1,8 @@
 ﻿using GitTrends.Mobile.Common;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 using static GitTrends.MarkupExtensions;
-using static Xamarin.Forms.Markup.GridRowsColumns;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {

@@ -1,17 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using GitTrends.Mobile.Common.Constants;
 
 namespace GitTrends.Mobile.Common
 {
     public static class EmptyDataViewService
     {
+        readonly static IReadOnlyList<string> _zeroStarsEmptyDataViewDescription = new[]
+        {
+            EmptyDataViewConstantsInternal.ZeroStarsEmptyDataViewDescription1,
+            EmptyDataViewConstantsInternal.ZeroStarsEmptyDataViewDescription2,
+            EmptyDataViewConstantsInternal.ZeroStarsEmptyDataViewDescription3
+        };
+
+        readonly static Random _random = new((int)DateTime.Now.Ticks);
+
         public static string GetReferringSitesTitleText(in RefreshState refreshState) => refreshState switch
         {
             RefreshState.Uninitialized => EmptyDataViewConstantsInternal.Uninitialized,
             RefreshState.Succeeded => EmptyDataViewConstantsInternal.NoReferralsYet,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.LoginExpired,
-            RefreshState.Error => EmptyDataViewConstants.UnableToRetrieveData,
-            RefreshState.MaximumApiLimit => EmptyDataViewConstants.UnableToRetrieveData,
+            RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
+            RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.UnableToRetrieveData,
             _ => throw new NotSupportedException()
         };
 
@@ -32,8 +42,8 @@ namespace GitTrends.Mobile.Common
             RefreshState.Succeeded => EmptyDataViewConstantsInternal.NoRepositoriesFound,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.LoginExpired,
             RefreshState.Error when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.NoFilterMatch,
-            RefreshState.Error => EmptyDataViewConstants.UnableToRetrieveData,
-            RefreshState.MaximumApiLimit => EmptyDataViewConstants.UnableToRetrieveData,
+            RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
+            RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.UnableToRetrieveData,
             _ => throw new NotSupportedException()
         };
 
@@ -48,5 +58,60 @@ namespace GitTrends.Mobile.Common
             RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.SwipeDownToRefresh_Repositories,
             _ => throw new NotSupportedException()
         };
+
+        public static string GetViewsClonesTitleText(in RefreshState refreshState) => refreshState switch
+        {
+            RefreshState.Uninitialized => EmptyDataViewConstantsInternal.Uninitialized,
+            RefreshState.Succeeded => EmptyDataViewConstantsInternal.NoTrafficYet,
+            RefreshState.LoginExpired => EmptyDataViewConstantsInternal.LoginExpired,
+            RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
+            RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.UnableToRetrieveData,
+            _ => throw new NotSupportedException()
+        };
+
+        public static string GetStarsEmptyDataViewDescriptionText(in RefreshState refreshState, in double totalStars) => refreshState switch
+        {
+            RefreshState.Uninitialized => string.Empty,
+            RefreshState.Succeeded when totalStars is 1 => EmptyDataViewConstantsInternal.FirstStar,
+            RefreshState.Succeeded => GetZeroStarsDescription(),
+            RefreshState.LoginExpired => string.Empty,
+            RefreshState.Error => string.Empty,
+            RefreshState.MaximumApiLimit => string.Empty,
+            _ => throw new NotSupportedException()
+        };
+
+        public static string GetStarsTitleText(in RefreshState refreshState, in double totalStars) => refreshState switch
+        {
+            RefreshState.Uninitialized => EmptyDataViewConstantsInternal.Uninitialized,
+            RefreshState.Succeeded when totalStars is 1 => EmptyDataViewConstantsInternal.Congratulations,
+            RefreshState.Succeeded => EmptyDataViewConstantsInternal.NoStarsYet,
+            RefreshState.LoginExpired => EmptyDataViewConstantsInternal.PleaseLoginAgain,
+            RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
+            RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.UnableToRetrieveData,
+            _ => throw new NotSupportedException()
+        };
+
+        public static string GetViewsClonesImage(in RefreshState refreshState) => refreshState switch
+        {
+            RefreshState.Uninitialized => "EmptyTrafficChart",
+            RefreshState.Succeeded => "EmptyTrafficChart",
+            RefreshState.LoginExpired => "EmptyTrafficChart",
+            RefreshState.Error => "EmptyTrafficChart",
+            RefreshState.MaximumApiLimit => "EmptyTrafficChart",
+            _ => throw new NotSupportedException()
+        };
+
+        public static string GetStarsImage(in RefreshState refreshState, in double totalStars) => refreshState switch
+        {
+            RefreshState.Uninitialized => "EmptyStarChart",
+            RefreshState.Succeeded when totalStars is 1 => "EmptyOneStarChart",
+            RefreshState.Succeeded => "EmptyStarChart",
+            RefreshState.LoginExpired => "EmptyStarChart",
+            RefreshState.Error => "EmptyStarChart",
+            RefreshState.MaximumApiLimit => "EmptyStarChart",
+            _ => throw new NotSupportedException()
+        };
+
+        static string GetZeroStarsDescription() => _zeroStarsEmptyDataViewDescription[_random.Next(0, _zeroStarsEmptyDataViewDescription.Count)];
     }
 }

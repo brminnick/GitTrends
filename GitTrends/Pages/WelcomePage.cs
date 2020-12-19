@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using static GitTrends.MarkupExtensions;
-using static Xamarin.Forms.Markup.GridRowsColumns;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -18,7 +18,7 @@ namespace GitTrends
     {
         const int _demoLabelFontSize = 16;
 
-        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new CancellationTokenSource();
+        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
         readonly IAppInfo _appInfo;
 
         public WelcomePage(IAppInfo appInfo,
@@ -47,6 +47,7 @@ namespace GitTrends
 
             Content = new Grid
             {
+                Padding = 8,
                 RowSpacing = 24,
 
                 RowDefinitions = Rows.Define(

@@ -1,11 +1,4 @@
-﻿using Newtonsoft.Json;
-namespace GitTrends.Shared
+﻿namespace GitTrends.Shared
 {
-    public class GitHubViewerResponse
-    {
-        public GitHubViewerResponse(User viewer) => Viewer = viewer;
-
-        [JsonProperty("viewer")]
-        public User Viewer { get; }
-    }
+    public record GitHubViewerResponse(User Viewer);
 }

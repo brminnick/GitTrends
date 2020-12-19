@@ -6,7 +6,7 @@ namespace GitTrends.UnitTests
 {
     public class MockPreferences : IPreferences
     {
-        readonly static Lazy<Hashtable> _hashtableHolder = new Lazy<Hashtable>();
+        readonly static Lazy<Hashtable> _hashtableHolder = new();
 
         Hashtable Hashtable => _hashtableHolder.Value;
 

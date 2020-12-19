@@ -143,6 +143,9 @@ namespace GitTrends
 
         async Task SaveStarGazerInfo(Repository repository)
         {
+            if (repository.StarredAt is null)
+                return;
+
             var starGazerInfoDatabaseConnection = await GetDatabaseConnection<StarGazerInfoDatabaseModel>().ConfigureAwait(false);
 
             foreach (var starredAtDate in repository.StarredAt)
@@ -159,6 +162,9 @@ namespace GitTrends
 
         async Task SaveDailyClones(Repository repository)
         {
+            if (repository.DailyClonesList is null)
+                return;
+
             var dailyClonesDatabaseConnection = await GetDatabaseConnection<DailyClonesDatabaseModel>().ConfigureAwait(false);
 
             foreach (var dailyClonesModel in repository.DailyClonesList)
@@ -170,6 +176,9 @@ namespace GitTrends
 
         async Task SaveDailyViews(Repository repository)
         {
+            if (repository.DailyViewsList is null)
+                return;
+
             var dailyViewsDatabaseConnection = await GetDatabaseConnection<DailyViewsDatabaseModel>().ConfigureAwait(false);
 
             foreach (var dailyViewsModel in repository.DailyViewsList)
@@ -179,133 +188,124 @@ namespace GitTrends
             }
         }
 
-        class DailyClonesDatabaseModel : IDailyClonesModel
+        record DailyClonesDatabaseModel : IDailyClonesModel
         {
             public DateTime LocalDay => Day.LocalDateTime;
 
             //PrimaryKey must be nullable https://github.com/praeclarum/sqlite-net/issues/327
             [PrimaryKey]
-            public int? Id { get; set; }
+            public int? Id { get; init; }
 
             [Indexed]
-            public string RepositoryUrl { get; set; } = string.Empty;
+            public string RepositoryUrl { get; init; } = string.Empty;
 
-            public DateTimeOffset Day { get; set; }
+            public DateTimeOffset Day { get; init; }
 
-            public DateTimeOffset DownloadedAt { get; set; } = DateTimeOffset.UtcNow;
+            public DateTimeOffset DownloadedAt { get; init; } = DateTimeOffset.UtcNow;
 
-            public long TotalClones { get; set; }
+            public long TotalClones { get; init; }
 
-            public long TotalUniqueClones { get; set; }
+            public long TotalUniqueClones { get; init; }
 
             public static DailyClonesModel ToDailyClonesModel(in DailyClonesDatabaseModel dailyClonesDatabaseModel) =>
-                new DailyClonesModel(dailyClonesDatabaseModel.Day, dailyClonesDatabaseModel.TotalClones, dailyClonesDatabaseModel.TotalUniqueClones);
+                new(dailyClonesDatabaseModel.Day, dailyClonesDatabaseModel.TotalClones, dailyClonesDatabaseModel.TotalUniqueClones);
 
-            public static DailyClonesDatabaseModel ToDailyClonesDatabaseModel(in DailyClonesModel dailyClonesModel, in Repository repository)
+            public static DailyClonesDatabaseModel ToDailyClonesDatabaseModel(in DailyClonesModel dailyClonesModel, in Repository repository) => new()
             {
-                return new DailyClonesDatabaseModel
-                {
-                    DownloadedAt = repository.DataDownloadedAt,
-                    RepositoryUrl = repository.Url,
-                    Day = dailyClonesModel.Day,
-                    TotalClones = dailyClonesModel.TotalClones,
-                    TotalUniqueClones = dailyClonesModel.TotalUniqueClones
-                };
-            }
+                DownloadedAt = repository.DataDownloadedAt,
+                RepositoryUrl = repository.Url,
+                Day = dailyClonesModel.Day,
+                TotalClones = dailyClonesModel.TotalClones,
+                TotalUniqueClones = dailyClonesModel.TotalUniqueClones
+            };
         }
 
-        class StarGazerInfoDatabaseModel : IStarGazerInfo
+        record StarGazerInfoDatabaseModel : IStarGazerInfo
         {
             //PrimaryKey must be nullable https://github.com/praeclarum/sqlite-net/issues/327
             [PrimaryKey]
-            public int? Id { get; set; }
+            public int? Id { get; init; }
 
             [Indexed]
-            public string RepositoryUrl { get; set; } = string.Empty;
+            public string RepositoryUrl { get; init; } = string.Empty;
 
-            public DateTimeOffset StarredAt { get; set; }
+            public DateTimeOffset StarredAt { get; init; }
 
             public static StarGazerInfo ToStarGazerInfo(in StarGazerInfoDatabaseModel starGazerInfoDatabaseModel) =>
-               new StarGazerInfo(starGazerInfoDatabaseModel.StarredAt, string.Empty);
+               new(starGazerInfoDatabaseModel.StarredAt, string.Empty);
 
-            public static StarGazerInfoDatabaseModel ToStarGazerInfoDatabaseModel(in StarGazerInfo starGazerInfo, in Repository repository)
+            public static StarGazerInfoDatabaseModel ToStarGazerInfoDatabaseModel(in StarGazerInfo starGazerInfo, in Repository repository) => new()
             {
-                return new StarGazerInfoDatabaseModel
-                {
-                    StarredAt = starGazerInfo.StarredAt,
-                    RepositoryUrl = repository.Url,
-                };
-            }
+                StarredAt = starGazerInfo.StarredAt,
+                RepositoryUrl = repository.Url,
+            };
         }
 
-        class DailyViewsDatabaseModel : IDailyViewsModel
+        record DailyViewsDatabaseModel : IDailyViewsModel
         {
             public DateTime LocalDay => Day.LocalDateTime;
 
             //PrimaryKey must be nullable https://github.com/praeclarum/sqlite-net/issues/327
             [PrimaryKey]
-            public int? Id { get; set; }
+            public int? Id { get; init; }
 
             [Indexed]
-            public string RepositoryUrl { get; set; } = string.Empty;
+            public string RepositoryUrl { get; init; } = string.Empty;
 
-            public DateTimeOffset Day { get; set; }
+            public DateTimeOffset Day { get; init; }
 
-            public DateTimeOffset DownloadedAt { get; set; } = DateTimeOffset.UtcNow;
+            public DateTimeOffset DownloadedAt { get; init; } = DateTimeOffset.UtcNow;
 
-            public long TotalViews { get; set; }
+            public long TotalViews { get; init; }
 
-            public long TotalUniqueViews { get; set; }
+            public long TotalUniqueViews { get; init; }
 
             public static DailyViewsModel ToDailyViewsModel(in DailyViewsDatabaseModel dailyViewsDatabaseModel) =>
-                new DailyViewsModel(dailyViewsDatabaseModel.Day, dailyViewsDatabaseModel.TotalViews, dailyViewsDatabaseModel.TotalUniqueViews);
+                new(dailyViewsDatabaseModel.Day, dailyViewsDatabaseModel.TotalViews, dailyViewsDatabaseModel.TotalUniqueViews);
 
-            public static DailyViewsDatabaseModel ToDailyViewsDatabaseModel(in DailyViewsModel dailyViewsModel, in Repository repository)
+            public static DailyViewsDatabaseModel ToDailyViewsDatabaseModel(in DailyViewsModel dailyViewsModel, in Repository repository) => new()
             {
-                return new DailyViewsDatabaseModel
-                {
-                    DownloadedAt = repository.DataDownloadedAt,
-                    RepositoryUrl = repository.Url,
-                    Day = dailyViewsModel.Day,
-                    TotalViews = dailyViewsModel.TotalViews,
-                    TotalUniqueViews = dailyViewsModel.TotalUniqueViews
-                };
-            }
+                DownloadedAt = repository.DataDownloadedAt,
+                RepositoryUrl = repository.Url,
+                Day = dailyViewsModel.Day,
+                TotalViews = dailyViewsModel.TotalViews,
+                TotalUniqueViews = dailyViewsModel.TotalUniqueViews
+            };
         }
 
-        class RepositoryDatabaseModel : IRepository
+        record RepositoryDatabaseModel : IRepository
         {
-            public DateTimeOffset DataDownloadedAt { get; set; } = DateTimeOffset.UtcNow;
+            public DateTimeOffset DataDownloadedAt { get; init; } = DateTimeOffset.UtcNow;
 
-            public string Name { get; set; } = string.Empty;
+            public string Name { get; init; } = string.Empty;
 
-            public string Description { get; set; } = string.Empty;
+            public string Description { get; init; } = string.Empty;
 
-            public long ForkCount { get; set; }
+            public long ForkCount { get; init; }
 
             [PrimaryKey]
-            public string Url { get; set; } = string.Empty;
+            public string Url { get; init; } = string.Empty;
 
-            public long StarCount { get; set; }
+            public long? StarCount { get; init; }
 
-            public string OwnerLogin { get; set; } = string.Empty;
+            public string OwnerLogin { get; init; } = string.Empty;
 
-            public string OwnerAvatarUrl { get; set; } = string.Empty;
+            public string OwnerAvatarUrl { get; init; } = string.Empty;
 
-            public long IssuesCount { get; set; }
+            public long IssuesCount { get; init; }
 
-            public bool IsFork { get; set; }
+            public bool IsFork { get; init; }
 
-            public long TotalViews { get; set; }
+            public long? TotalViews { get; init; }
 
-            public long TotalUniqueViews { get; set; }
+            public long? TotalUniqueViews { get; init; }
 
-            public long TotalClones { get; set; }
+            public long? TotalClones { get; init; }
 
-            public long TotalUniqueClones { get; set; }
+            public long? TotalUniqueClones { get; init; }
 
             [Indexed]
-            public bool? IsFavorite { get; set; }
+            public bool? IsFavorite { get; init; }
 
             public static Repository ToRepository(in RepositoryDatabaseModel repositoryDatabaseModel,
                                                     in IEnumerable<DailyClonesDatabaseModel> dailyClonesDatabaseModels,
@@ -329,27 +329,24 @@ namespace GitTrends
                                         starGazerInfoDatabaseModels.Select(x => x.StarredAt).Distinct());
             }
 
-            public static RepositoryDatabaseModel ToRepositoryDatabase(in Repository repository)
+            public static RepositoryDatabaseModel ToRepositoryDatabase(in Repository repository) => new()
             {
-                return new RepositoryDatabaseModel
-                {
-                    DataDownloadedAt = repository.DataDownloadedAt,
-                    Description = repository.Description,
-                    StarCount = repository.StarCount,
-                    Url = repository.Url,
-                    IssuesCount = repository.IssuesCount,
-                    ForkCount = repository.ForkCount,
-                    Name = repository.Name,
-                    OwnerAvatarUrl = repository.OwnerAvatarUrl,
-                    OwnerLogin = repository.OwnerLogin,
-                    IsFork = repository.IsFork,
-                    TotalClones = repository.TotalClones,
-                    TotalUniqueClones = repository.TotalUniqueClones,
-                    TotalViews = repository.TotalViews,
-                    TotalUniqueViews = repository.TotalUniqueViews,
-                    IsFavorite = repository.IsFavorite
-                };
-            }
+                DataDownloadedAt = repository.DataDownloadedAt,
+                Description = repository.Description,
+                StarCount = repository.StarCount,
+                Url = repository.Url,
+                IssuesCount = repository.IssuesCount,
+                ForkCount = repository.ForkCount,
+                Name = repository.Name,
+                OwnerAvatarUrl = repository.OwnerAvatarUrl,
+                OwnerLogin = repository.OwnerLogin,
+                IsFork = repository.IsFork,
+                TotalClones = repository.TotalClones,
+                TotalUniqueClones = repository.TotalUniqueClones,
+                TotalViews = repository.TotalViews,
+                TotalUniqueViews = repository.TotalUniqueViews,
+                IsFavorite = repository.IsFavorite
+            };
         }
     }
 }

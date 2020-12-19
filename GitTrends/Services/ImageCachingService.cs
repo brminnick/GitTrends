@@ -36,6 +36,7 @@ namespace GitTrends
             static IEnumerable<Repository> getDistinctOwnerAvatarUrlList(in IEnumerable<Repository> repositories) => repositories.GroupBy(x => x.OwnerAvatarUrl).Select(g => g.First());
         }
 
-        public Task PreloadImage(in string url) => ImageService.Instance.LoadString(url).PreloadAsync();
+        public Task PreloadImage(in string url) => ImageService.Instance.LoadUrl(url).PreloadAsync();
+        public Task PreloadImage(in Uri uri) => PreloadImage(uri.ToString());
     }
 }

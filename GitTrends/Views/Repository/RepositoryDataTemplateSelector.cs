@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {
     class RepositoryDataTemplateSelector : DataTemplateSelector
     {
         readonly MobileSortingService _sortingService;
+        readonly RepositoryViewModel _repositoryViewModel;
 
-        public RepositoryDataTemplateSelector(MobileSortingService sortingService) => _sortingService = sortingService;
+        public RepositoryDataTemplateSelector(in MobileSortingService sortingService, in RepositoryViewModel repositoryViewModel) =>
+            (_sortingService, _repositoryViewModel) = (sortingService, repositoryViewModel);
 
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
@@ -22,18 +24,18 @@ namespace GitTrends
 
             return sortingCategory switch
             {
-                SortingCategory.Clones => new ClonesDataTemplate(repository),
-                SortingCategory.Views => new ViewsDataTemplate(repository),
-                SortingCategory.IssuesForks => new IssuesForksDataTemplate(repository),
+                SortingCategory.Clones => new ClonesDataTemplate(_repositoryViewModel, repository),
+                SortingCategory.Views => new ViewsDataTemplate(_repositoryViewModel, repository),
+                SortingCategory.IssuesForks => new IssuesForksDataTemplate(_repositoryViewModel, repository),
                 _ => throw new NotSupportedException()
             };
         }
 
-        static bool IsStatisticsLabelVisible(IEnumerable<BaseDailyModel> dailyModels) => dailyModels.Any();
+        static bool IsStatisticsLabelVisible(IEnumerable<BaseDailyModel>? dailyModels) => dailyModels?.Any() ?? false;
 
         class ClonesDataTemplate : BaseRepositoryDataTemplate
         {
-            public ClonesDataTemplate(in Repository repository) : base(CreateClonesDataTemplateViews(repository), repository)
+            public ClonesDataTemplate(in RepositoryViewModel repositoryViewModel, in Repository repository) : base(CreateClonesDataTemplateViews(repository), repositoryViewModel, repository)
             {
 
             }
@@ -59,7 +61,7 @@ namespace GitTrends
 
         class ViewsDataTemplate : BaseRepositoryDataTemplate
         {
-            public ViewsDataTemplate(in Repository repository) : base(CreateViewsDataTemplateViews(repository), repository)
+            public ViewsDataTemplate(in RepositoryViewModel repositoryViewModel, in Repository repository) : base(CreateViewsDataTemplateViews(repository), repositoryViewModel, repository)
             {
 
             }
@@ -85,7 +87,7 @@ namespace GitTrends
 
         class IssuesForksDataTemplate : BaseRepositoryDataTemplate
         {
-            public IssuesForksDataTemplate(in Repository repository) : base(CreateIssuesForksDataTemplateViews(repository), repository)
+            public IssuesForksDataTemplate(in RepositoryViewModel repositoryViewModel, in Repository repository) : base(CreateIssuesForksDataTemplateViews(repository), repositoryViewModel, repository)
             {
 
             }

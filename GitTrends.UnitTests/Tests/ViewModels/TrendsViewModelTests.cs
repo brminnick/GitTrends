@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -22,17 +21,29 @@ namespace GitTrends.UnitTests
             double dailyViewsClonesMinValue_Initial, dailyViewsClonesMinValue_Final;
             double dailyViewsClonesMaxValue_Initial, dailyViewsClonesMaxValue_Final;
 
-            string emptyDataViewTitle_Initial, emptyDataViewTitle_Final;
+            double minDailyStarsValue_Initial, minDailyStarsValue_Final;
+            double maxDailyStarsValue_Initial, maxDailyStarsValue_Final;
 
-            bool isChartVisible_Initial, isChartVisible_DuringFetchDataCommand, isChartVisible_Final;
+            string viewsClonesEmptyDataViewTitleText_Initial, viewsClonesEmptyDataViewTitleText_Final;
+            string starsEmptyDataViewTitleText_Initial, starsEmptyDataViewTitleText_Final;
+
+            bool isViewsClonesChartVisible_Initial, isViewsClonesChartVisible_DuringFetchDataCommand, isViewsClonesChartVisible_Final;
+            bool isStarsChartVisible_Initial, isStarsChartVisible_DuringFetchDataCommand, isStarsChartVisible_Final;
+
             bool isFetchingData_Initial, isFetchingData_DuringFetchDataCommand, isFetchingData_Final;
-            bool isEmptyDataViewVisible_Initial, isEmptyDataViewVisible_DuringFetchDataCommand, isEmptyDataViewVisible_Final;
 
-            DateTime minDateValue_Initial, minDateValue_Final;
-            DateTime maxDateValue_Initial, maxDateValue_Final;
+            bool isViewsClonesEmptyDataViewVisible_Initial, isViewsClonesEmptyDataViewVisible_DuringFetchDataCommand, isViewsClonesEmptyDataViewVisible_Final;
+            bool isStarsEmptyDataViewVisible_Initial, isStarsEmptyDataViewVisible_DuringFetchDataCommand, isStarsEmptyDataViewVisible_Final;
 
-            IReadOnlyList<DailyViewsModel> dailyViewsModels_Initial, dailyViewsModels_Final;
-            IReadOnlyList<DailyClonesModel> dailyClonesModels_Initial, dailyClonesModels_Final;
+            DateTime minViewsClonesDate_Initial, minViewsClonesDate_Final;
+            DateTime maxViewsClonesDate_Initial, maxViewsClonesDate_Final;
+
+            DateTime minDailyStarsDate_Initial, minDailyStarsDate_Final;
+            DateTime maxDailyStarsDate_Initial, maxDailyStarsDate_Final;
+
+            IReadOnlyList<DailyStarsModel> dailyStarsList_Initial, dailyStarsList_Final;
+            IReadOnlyList<DailyViewsModel> dailyViewsList_Initial, dailyViewsList_Final;
+            IReadOnlyList<DailyClonesModel> dailyClonesList_Initial, dailyClonesList_Final;
 
             var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
 
@@ -43,7 +54,7 @@ namespace GitTrends.UnitTests
 
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
-            repository = await gitHubGraphQLApiService.GetRepository(GitTrendsRepoOwner, GitTrendsRepoName, CancellationToken.None);
+            repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None);
 
             if (shouldIncludeViewsClonesData)
             {
@@ -54,69 +65,109 @@ namespace GitTrends.UnitTests
             }
 
             //Act
-            minDateValue_Initial = trendsViewModel.MinDateValue;
-            maxDateValue_Initial = trendsViewModel.MaxDateValue;
             isFetchingData_Initial = trendsViewModel.IsFetchingData;
-            isChartVisible_Initial = trendsViewModel.IsChartVisible;
-            dailyViewsModels_Initial = trendsViewModel.DailyViewsList;
-            dailyClonesModels_Initial = trendsViewModel.DailyClonesList;
-            emptyDataViewTitle_Initial = trendsViewModel.EmptyDataViewTitle;
-            isEmptyDataViewVisible_Initial = trendsViewModel.IsEmptyDataViewVisible;
+            dailyStarsList_Initial = trendsViewModel.DailyStarsList;
+            dailyViewsList_Initial = trendsViewModel.DailyViewsList;
+            dailyClonesList_Initial = trendsViewModel.DailyClonesList;
+            maxDailyStarsDate_Initial = trendsViewModel.MaxDailyStarsDate;
+            minDailyStarsDate_Initial = trendsViewModel.MinDailyStarsDate;
+            minDailyStarsValue_Initial = trendsViewModel.MinDailyStarsValue;
+            maxDailyStarsValue_Initial = trendsViewModel.MaxDailyStarsValue;
+            minViewsClonesDate_Initial = trendsViewModel.MinViewsClonesDate;
+            maxViewsClonesDate_Initial = trendsViewModel.MaxViewsClonesDate;
+            isStarsChartVisible_Initial = trendsViewModel.IsStarsChartVisible;
             dailyViewsClonesMinValue_Initial = trendsViewModel.DailyViewsClonesMinValue;
             dailyViewsClonesMaxValue_Initial = trendsViewModel.DailyViewsClonesMaxValue;
+            isViewsClonesChartVisible_Initial = trendsViewModel.IsViewsClonesChartVisible;
+            starsEmptyDataViewTitleText_Initial = trendsViewModel.StarsEmptyDataViewTitleText;
+            isStarsEmptyDataViewVisible_Initial = trendsViewModel.IsStarsEmptyDataViewVisible;
+            viewsClonesEmptyDataViewTitleText_Initial = trendsViewModel.ViewsClonesEmptyDataViewTitleText;
+            isViewsClonesEmptyDataViewVisible_Initial = trendsViewModel.IsViewsClonesEmptyDataViewVisible;
 
             var fetchDataCommandTask = trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None));
 
             isFetchingData_DuringFetchDataCommand = trendsViewModel.IsFetchingData;
-            isChartVisible_DuringFetchDataCommand = trendsViewModel.IsChartVisible;
-            isEmptyDataViewVisible_DuringFetchDataCommand = trendsViewModel.IsEmptyDataViewVisible;
+            isStarsChartVisible_DuringFetchDataCommand = trendsViewModel.IsStarsChartVisible;
+            isViewsClonesChartVisible_DuringFetchDataCommand = trendsViewModel.IsViewsClonesChartVisible;
+            isStarsEmptyDataViewVisible_DuringFetchDataCommand = trendsViewModel.IsStarsEmptyDataViewVisible;
+            isViewsClonesEmptyDataViewVisible_DuringFetchDataCommand = trendsViewModel.IsViewsClonesEmptyDataViewVisible;
 
             await fetchDataCommandTask.ConfigureAwait(false);
 
-            minDateValue_Final = trendsViewModel.MinDateValue;
-            maxDateValue_Final = trendsViewModel.MaxDateValue;
             isFetchingData_Final = trendsViewModel.IsFetchingData;
-            isChartVisible_Final = trendsViewModel.IsChartVisible;
-            dailyViewsModels_Final = trendsViewModel.DailyViewsList;
-            dailyClonesModels_Final = trendsViewModel.DailyClonesList;
-            emptyDataViewTitle_Final = trendsViewModel.EmptyDataViewTitle;
-            isEmptyDataViewVisible_Final = trendsViewModel.IsEmptyDataViewVisible;
+            dailyStarsList_Final = trendsViewModel.DailyStarsList;
+            dailyViewsList_Final = trendsViewModel.DailyViewsList;
+            dailyClonesList_Final = trendsViewModel.DailyClonesList;
+            maxDailyStarsDate_Final = trendsViewModel.MaxDailyStarsDate;
+            minDailyStarsDate_Final = trendsViewModel.MinDailyStarsDate;
+            minDailyStarsValue_Final = trendsViewModel.MinDailyStarsValue;
+            maxDailyStarsValue_Final = trendsViewModel.MaxDailyStarsValue;
+            isStarsChartVisible_Final = trendsViewModel.IsStarsChartVisible;
+            minViewsClonesDate_Final = trendsViewModel.MinViewsClonesDate;
+            maxViewsClonesDate_Final = trendsViewModel.MaxViewsClonesDate;
             dailyViewsClonesMinValue_Final = trendsViewModel.DailyViewsClonesMinValue;
             dailyViewsClonesMaxValue_Final = trendsViewModel.DailyViewsClonesMaxValue;
+            isViewsClonesChartVisible_Final = trendsViewModel.IsViewsClonesChartVisible;
+            starsEmptyDataViewTitleText_Final = trendsViewModel.StarsEmptyDataViewTitleText;
+            isStarsEmptyDataViewVisible_Final = trendsViewModel.IsStarsEmptyDataViewVisible;
+            viewsClonesEmptyDataViewTitleText_Final = trendsViewModel.ViewsClonesEmptyDataViewTitleText;
+            isViewsClonesEmptyDataViewVisible_Final = trendsViewModel.IsViewsClonesEmptyDataViewVisible;
 
             //Assert
-            Assert.IsEmpty(dailyViewsModels_Initial);
-            Assert.IsEmpty(dailyClonesModels_Initial);
+            Assert.IsEmpty(dailyViewsList_Initial);
+            Assert.IsEmpty(dailyClonesList_Initial);
+            Assert.IsEmpty(dailyStarsList_Initial);
 
-            Assert.IsNotEmpty(dailyViewsModels_Final);
-            Assert.IsNotEmpty(dailyClonesModels_Final);
+            Assert.IsNotEmpty(dailyViewsList_Final);
+            Assert.IsNotEmpty(dailyClonesList_Final);
+            Assert.IsNotEmpty(dailyStarsList_Final);
 
             Assert.IsTrue(isFetchingData_Initial);
             Assert.IsTrue(isFetchingData_DuringFetchDataCommand);
             Assert.IsFalse(isFetchingData_Final);
 
-            Assert.IsFalse(isEmptyDataViewVisible_Initial);
-            Assert.IsFalse(isEmptyDataViewVisible_DuringFetchDataCommand);
-            Assert.IsFalse(isEmptyDataViewVisible_Final);
+            Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Initial);
+            Assert.IsFalse(isViewsClonesEmptyDataViewVisible_DuringFetchDataCommand);
+            Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Final);
 
-            Assert.IsFalse(isChartVisible_Initial);
-            Assert.IsFalse(isChartVisible_DuringFetchDataCommand);
-            Assert.IsTrue(isChartVisible_Final);
+            Assert.IsFalse(isStarsEmptyDataViewVisible_Initial);
+            Assert.IsFalse(isStarsEmptyDataViewVisible_DuringFetchDataCommand);
+            Assert.IsFalse(isStarsEmptyDataViewVisible_Final);
 
-            Assert.AreEqual(TrendsViewModel.MinumumChartHeight, dailyViewsClonesMaxValue_Initial);
-            Assert.Greater(dailyViewsClonesMaxValue_Final, dailyViewsClonesMaxValue_Initial);
+            Assert.IsFalse(isViewsClonesChartVisible_Initial);
+            Assert.IsFalse(isViewsClonesChartVisible_DuringFetchDataCommand);
+            Assert.True(isViewsClonesChartVisible_Final);
+
+            Assert.IsFalse(isStarsChartVisible_Initial);
+            Assert.IsFalse(isStarsChartVisible_DuringFetchDataCommand);
+            Assert.True(isStarsChartVisible_Final);
+
+            Assert.AreEqual(TrendsViewModel.MinimumChartHeight, dailyViewsClonesMaxValue_Initial);
+            Assert.GreaterOrEqual(dailyViewsClonesMaxValue_Final, dailyViewsClonesMaxValue_Initial);
+
+            Assert.AreEqual(TrendsViewModel.MinimumChartHeight, maxDailyStarsValue_Initial);
+            Assert.GreaterOrEqual(maxDailyStarsValue_Final, maxDailyStarsValue_Initial);
 
             Assert.AreEqual(0, dailyViewsClonesMinValue_Initial);
             Assert.AreEqual(dailyViewsClonesMinValue_Final, dailyViewsClonesMinValue_Initial);
 
-            Assert.AreEqual(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13)).ToLocalTime().Date, minDateValue_Initial.ToLocalTime().Date);
-            Assert.LessOrEqual(minDateValue_Final.ToLocalTime().Date, minDateValue_Initial.ToLocalTime().Date);
+            Assert.AreEqual(0, minDailyStarsValue_Initial);
+            Assert.AreEqual(minDailyStarsValue_Final, minDailyStarsValue_Initial);
 
-            Assert.AreEqual(DateTimeOffset.UtcNow.ToLocalTime().Date, maxDateValue_Initial.ToLocalTime().Date);
-            Assert.LessOrEqual(maxDateValue_Final.ToLocalTime().Date, maxDateValue_Initial.ToLocalTime().Date);
+            Assert.AreEqual(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13)).Date, minViewsClonesDate_Initial.Date);
+            Assert.LessOrEqual(minViewsClonesDate_Final.Date, minViewsClonesDate_Initial.Date);
 
-            Assert.AreEqual(string.Empty, emptyDataViewTitle_Initial);
-            Assert.AreEqual(EmptyDataViewConstants.NoTrafficYet, emptyDataViewTitle_Final);
+            Assert.AreEqual(DateTimeOffset.UtcNow.Date, maxViewsClonesDate_Initial.Date);
+            Assert.LessOrEqual(maxViewsClonesDate_Final.Date, maxViewsClonesDate_Initial.Date);
+
+            Assert.LessOrEqual(minDailyStarsDate_Final.Date, minDailyStarsDate_Initial.Date);
+            Assert.LessOrEqual(maxDailyStarsDate_Final.Date, maxDailyStarsDate_Initial.Date);
+
+            Assert.AreEqual(EmptyDataViewService.GetViewsClonesTitleText(RefreshState.Uninitialized), viewsClonesEmptyDataViewTitleText_Initial);
+            Assert.AreEqual(EmptyDataViewService.GetViewsClonesTitleText(RefreshState.Succeeded), viewsClonesEmptyDataViewTitleText_Final);
+
+            Assert.AreEqual(EmptyDataViewService.GetStarsTitleText(RefreshState.Uninitialized, trendsViewModel.TotalStars), starsEmptyDataViewTitleText_Initial);
+            Assert.AreEqual(EmptyDataViewService.GetStarsTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), starsEmptyDataViewTitleText_Final);
         }
 
         [TestCase(true)]
@@ -124,8 +175,9 @@ namespace GitTrends.UnitTests
         public async Task FetchDataCommandTest_DemoUser(bool shouldCreateViewsClonesData)
         {
             //Arrange
-            IReadOnlyList<DailyViewsModel> dailyViewsModels_Initial, dailyViewsModels_Final;
-            IReadOnlyList<DailyClonesModel> dailyClonesModels_Initial, dailyClonesModels_Final;
+            IReadOnlyList<DailyStarsModel> dailyStarsList_Initial, dailyStarsList_Final;
+            IReadOnlyList<DailyViewsModel> dailyViewsList_Initial, dailyViewsList_Final;
+            IReadOnlyList<DailyClonesModel> dailyClonesList_Initial, dailyClonesList_Final;
 
             Repository repository = CreateRepository(shouldCreateViewsClonesData);
 
@@ -135,20 +187,24 @@ namespace GitTrends.UnitTests
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
             //Act
-            dailyViewsModels_Initial = trendsViewModel.DailyViewsList;
-            dailyClonesModels_Initial = trendsViewModel.DailyClonesList;
+            dailyStarsList_Initial = trendsViewModel.DailyStarsList;
+            dailyViewsList_Initial = trendsViewModel.DailyViewsList;
+            dailyClonesList_Initial = trendsViewModel.DailyClonesList;
 
             await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
 
-            dailyViewsModels_Final = trendsViewModel.DailyViewsList;
-            dailyClonesModels_Final = trendsViewModel.DailyClonesList;
+            dailyStarsList_Final = trendsViewModel.DailyStarsList;
+            dailyViewsList_Final = trendsViewModel.DailyViewsList;
+            dailyClonesList_Final = trendsViewModel.DailyClonesList;
 
             //Assret
-            Assert.IsEmpty(dailyViewsModels_Initial);
-            Assert.IsEmpty(dailyClonesModels_Initial);
+            Assert.IsEmpty(dailyStarsList_Initial);
+            Assert.IsEmpty(dailyViewsList_Initial);
+            Assert.IsEmpty(dailyClonesList_Initial);
 
-            Assert.IsNotEmpty(dailyViewsModels_Final);
-            Assert.IsNotEmpty(dailyClonesModels_Final);
+            Assert.IsNotEmpty(dailyStarsList_Final);
+            Assert.IsNotEmpty(dailyViewsList_Final);
+            Assert.IsNotEmpty(dailyClonesList_Final);
         }
 
         [Test]
