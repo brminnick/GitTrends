@@ -227,14 +227,5 @@ namespace GitTrends
         void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand.Execute(searchBarText);
 
         void ISearchPage.OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.RaiseEvent(this, text, nameof(SearchBarTextChanged));
-
-        class InformationLabel : StatisticsLabel
-        {
-            public InformationLabel() : base(string.Empty, true, nameof(BaseTheme.PrimaryTextColor))
-            {
-                AutomationId = RepositoryPageAutomationIds.InformationLabel;
-                this.FillExpand().TextCenter();
-            }
-        }
     }
 }

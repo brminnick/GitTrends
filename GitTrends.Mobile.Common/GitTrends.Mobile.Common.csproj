@@ -504,9 +504,51 @@
         <EmbeddedResource Update="Constants\AboutPageConstants.en.resx">
             <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
-        <EmbeddedResource Condition=" '$(EnableDefaultEmbeddedResourceItems)' == 'true' " Update="Constants\ThemeConstants.resx">
+        <EmbeddedResource Update="Constants\AboutPageConstants.fr.resx">
+            <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.ru.resx">
+            <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.de.resx">
+            <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.pt.resx">
+            <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.uk.resx">
+            <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.bs.resx">
+            <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
           <LastGenOutput>ThemeConstants.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.uk.resx">
+          <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.es.resx">
+          <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.nl.resx">
+          <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.de.resx">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.fr.resx">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.es.resx">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.ru.resx">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.nl.resx">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
@@ -554,6 +596,9 @@
         </Compile>
         <Compile Update="Constants\ThemeConstants.Designer.cs">
             <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Constants\EmptyDataViewConstantsInternal.Designer.cs">
+            <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
         </Compile>
         <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.uk.resx">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
@@ -606,6 +651,18 @@
         <EmbeddedResource Update="Constants\ThemeConstants.en.resx">
             <DependentUpon>ThemeConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.uk.resx">
+            <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.pt.resx">
+            <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.de.resx">
+            <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+    <EmbeddedResource Update="Constants\ThemeConstants.bs.resx">
+            <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
             <DesignTime>True</DesignTime>
@@ -616,6 +673,7 @@
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
         </Compile>
+
         <Compile Update="Constants\AboutPageConstants.Designer.cs">
             <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </Compile>
@@ -626,6 +684,9 @@
             <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
         </Compile>
 
+        <Compile Update="Constants\AboutPageConstants.bs.Designer.cs">
+          <DependentUpon>AboutPageConstants.bs.resx</DependentUpon>
+        </Compile>
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Enums\" />
@@ -636,7 +697,7 @@
     <ItemGroup>
         <PackageReference Include="refit" Version="5.2.4" />
         <PackageReference Include="Polly" Version="7.2.1" />
-        <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-pre5" />
+        <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-rc1" />
         <PackageReference Include="GitHubApiStatus" Version="2.0.0-pre9" />
     </ItemGroup>
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
