@@ -20,9 +20,9 @@ namespace GitTrends
 
         CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
 
-        public SettingsPage(SettingsViewModel settingsViewModel,
+        public SettingsPage(IMainThread mainThread,
                             IAnalyticsService analyticsService,
-                            IMainThread mainThread) : base(settingsViewModel, analyticsService, mainThread, true)
+                            SettingsViewModel settingsViewModel) : base(settingsViewModel, analyticsService, mainThread, true)
         {
             const int separatorRowHeight = 1;
             const int settingsRowHeight = 38;
@@ -57,8 +57,8 @@ namespace GitTrends
                         (Row.LanguageSeparator, AbsoluteGridLength(separatorRowHeight)),
                         (Row.PreferredCharts, AbsoluteGridLength(settingsRowHeight)),
                         (Row.PreferredChartsSeparator, AbsoluteGridLength(separatorRowHeight)),
-                        //(Row.About, AbsoluteGridLength(settingsRowHeight)),
-                        //(Row.AboutSeparator, AbsoluteGridLength(separatorRowHeight)),
+                        (Row.About, AbsoluteGridLength(settingsRowHeight)),
+                        (Row.AboutSeparator, AbsoluteGridLength(separatorRowHeight)),
                         (Row.CopyrightPadding, AbsoluteGridLength(20)),
                         (Row.Copyright, Star)),
 
@@ -137,18 +137,18 @@ namespace GitTrends
                         new Separator()
                             .Row(Row.PreferredChartsSeparator).ColumnSpan(All<Column>()),
 
-                        //new AboutRowTappableView(aboutRowTapGesture)
-                        //    .Row(Row.About).ColumnSpan(All<Column>()),
-                        //new AboutRowSvg("about.svg", getSVGIconColor)
-                        //    .Row(Row.About).Column(Column.Icon),
-                        //new AboutTitleLabel(SettingsPageAutomationIds.AboutTitleLabel)
-                        //    .Row(Row.About).Column(Column.Title)
-                        //    .Bind(Label.TextProperty, nameof(SettingsViewModel.AboutLabelText)),
-                        //new AboutRowSvg("right_arrow.svg", getSVGIconColor).End()
-                        //    .Row(Row.About).Column(Column.Button),
+                        new AboutRowTappableView(aboutRowTapGesture)
+                            .Row(Row.About).ColumnSpan(All<Column>()),
+                        new AboutRowSvg("about.svg", getSVGIconColor)
+                            .Row(Row.About).Column(Column.Icon),
+                        new AboutTitleLabel(SettingsPageAutomationIds.AboutTitleLabel)
+                            .Row(Row.About).Column(Column.Title)
+                            .Bind(Label.TextProperty, nameof(SettingsViewModel.AboutLabelText)),
+                        new AboutRowSvg("right_arrow.svg", getSVGIconColor).End()
+                            .Row(Row.About).Column(Column.Button),
 
-                        //new Separator()
-                        //    .Row(Row.AboutSeparator).ColumnSpan(All<Column>()),
+                        new Separator()
+                            .Row(Row.AboutSeparator).ColumnSpan(All<Column>()),
 
                         new CopyrightLabel()
                             .Row(Row.Copyright).ColumnSpan(All<Column>())
@@ -161,7 +161,7 @@ namespace GitTrends
             static Color getSVGIconColor() => (Color)Application.Current.Resources[nameof(BaseTheme.IconColor)];
         }
 
-        enum Row { GitHubUser, GitHubUserSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, Language, LanguageSeparator, PreferredCharts, PreferredChartsSeparator, /*About, AboutSeparator, */CopyrightPadding, Copyright }
+        enum Row { GitHubUser, GitHubUserSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, Language, LanguageSeparator, PreferredCharts, PreferredChartsSeparator, About, AboutSeparator, CopyrightPadding, Copyright }
         enum Column { Icon, Title, Button }
 
         protected override void OnAppearing()
