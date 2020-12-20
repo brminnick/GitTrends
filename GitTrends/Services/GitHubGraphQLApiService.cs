@@ -163,9 +163,11 @@ namespace GitTrends
             }
             catch(ApiException e)
             {
-                throw new Exception($@"Content: {e.Content}
+                throw new Exception($@"Message: {e.Message}
 
 Content Headers: {e.ContentHeaders}
+
+Auth Scheme: {e.RequestMessage.Headers.Authorization.Scheme}
 
 Auth Parameter (first 5 characters): {e.RequestMessage.Headers.Authorization.Parameter[0..5]}
 
