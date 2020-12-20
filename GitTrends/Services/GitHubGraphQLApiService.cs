@@ -157,7 +157,14 @@ namespace GitTrends
         {
             var response = await AttemptAndRetry_Mobile(action, cancellationToken, numRetries, callerName: callerName).ConfigureAwait(false);
 
-            await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
+            try
+            {
+                await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
+            }
+            catch
+            {
+                throw new GraphQLException<T>(response.Content.Data, response.Content.Errors, response.StatusCode, response.Headers);
+            }
 
             if (response.Content.Errors != null)
                 throw new GraphQLException<T>(response.Content.Data, response.Content.Errors, response.StatusCode, response.Headers);
