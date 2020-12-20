@@ -19,7 +19,19 @@ namespace GitTrends
 
         protected IAnalyticsService AnalyticsService { get; }
 
-        protected string GetGitHubBearerTokenHeader(GitHubToken token) => $"{token.TokenType} {token.AccessToken}";
+        protected string GetGitHubBearerTokenHeader(GitHubToken token)
+        {
+            if (token.IsEmpty())
+                throw new Exception("Token Cannot Be Empty");
+
+            if (string.IsNullOrWhiteSpace(token.TokenType))
+                throw new Exception("Invalid TokenType");
+
+            if (string.IsNullOrWhiteSpace(token.AccessToken))
+                throw new Exception("Invalid AccessToken");
+
+            return $"{token.TokenType} {token.AccessToken}";
+        }
 
         protected async Task<T> AttemptAndRetry_Mobile<T>(Func<Task<T>> action, CancellationToken cancellationToken, int numRetries = 3, IDictionary<string, string>? properties = null, [CallerMemberName] string callerName = "")
         {
