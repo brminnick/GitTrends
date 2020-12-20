@@ -167,7 +167,7 @@ namespace GitTrends
 
 Content Headers: {e.ContentHeaders}
 
-Request Headers: {e.RequestMessage.Headers}
+Auth Parameter (first 5 characters): {e.RequestMessage.Headers.Authorization.Parameter[0..5]}
 
 Data: {e.Data}
 
