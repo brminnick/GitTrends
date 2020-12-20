@@ -8,7 +8,17 @@ namespace GitTrends.UnitTests
     {
         readonly Dictionary<string, string> _dictionary = new();
 
-        public Task<string> GetAsync(string key) => Task.FromResult(_dictionary[key]);
+        public Task<string?> GetAsync(string key)
+        {
+            try
+            {
+                return Task.FromResult<string?>(_dictionary[key]);
+            }
+            catch
+            {
+                return Task.FromResult<string?>(null);
+            }
+        }
 
         public bool Remove(string key)
         {

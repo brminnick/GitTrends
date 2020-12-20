@@ -161,9 +161,19 @@ namespace GitTrends
             {
                 await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
             }
-            catch
+            catch(ApiException e)
             {
-                throw new GraphQLException<T>(response.Content.Data, response.Content.Errors, response.StatusCode, response.Headers);
+                throw new Exception($@"Content: {e.Content}
+
+Content Headers: {e.ContentHeaders}
+
+Request Headers: {e.RequestMessage.Headers}
+
+Data: {e.Data}
+
+StatusCode: {e.StatusCode}
+
+Uri: {e.Uri}");
             }
 
             if (response.Content.Errors != null)
