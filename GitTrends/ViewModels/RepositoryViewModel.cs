@@ -283,6 +283,8 @@ namespace GitTrends
                 IsFavorite = repository.IsFavorite.HasValue ? !repository.IsFavorite : true
             };
 
+            AnalyticsService.Track("IsFavorite Toggled", nameof(Repository.IsFavorite), updatedRepository.IsFavorite.ToString());
+
             var updatedRepositoryList = new List<Repository>(_visibleRepositoryList);
             updatedRepositoryList.Remove(repository);
             updatedRepositoryList.Add(updatedRepository);
