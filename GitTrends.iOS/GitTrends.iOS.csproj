@@ -449,7 +449,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.1791-pre5" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.1829-pre6" />
     <PackageReference Include="Refit" Version="5.2.4" />
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="5.0.2" />
     <PackageReference Include="Polly" Version="7.2.1" />
@@ -463,7 +463,7 @@
     <PackageReference Include="Shiny.Notifications" Version="1.2.0.1755" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
     <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
-    <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-rc1" />
+    <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0" />
     <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.3" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
