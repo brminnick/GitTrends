@@ -193,7 +193,7 @@ namespace GitTrends
                 }
 
                 //Add Remaining Repositories to VisibleRepositoryList
-                AddRepositoriesToCollection(completedRepositories, _searchBarText, true);
+                AddRepositoriesToCollection(completedRepositories, _searchBarText);
 
                 if (!_gitHubUserService.IsDemoUser)
                 {
@@ -338,14 +338,10 @@ namespace GitTrends
             UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
-        void AddRepositoriesToCollection(in IReadOnlyList<Repository> repositories, in string searchBarText, in bool shouldUpdateVisibleRepositoryList = true, in bool shouldRemoveRepoisitoriesWithoutViewsClonesData = false)
+        void AddRepositoriesToCollection(in IReadOnlyList<Repository> repositories, in string searchBarText, in bool shouldUpdateVisibleRepositoryList = true)
         {
             var updatedRepositoryList = _repositoryList.Concat(repositories);
-
-            if (shouldRemoveRepoisitoriesWithoutViewsClonesData)
-                _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).Where(x => x.DailyClonesList?.Count > 1 || x.DailyViewsList?.Count > 1).ToList();
-            else
-                _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
+            _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
             if (shouldUpdateVisibleRepositoryList)
                 UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
