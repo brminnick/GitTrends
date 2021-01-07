@@ -10,6 +10,10 @@
         <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
         <Configurations>AppStore;Debug;Release</Configurations>
     </PropertyGroup>
+    <Target Name="CopyRuntimes" AfterTargets="AfterBuild"  Condition=" '$(OS)' == 'UNIX' ">
+        <!-- To workaround a bug where the files aren't copied correctly for non-Windows platforms -->
+        <Exec Command="rm -rf $(OutDir)bin/runtimes/* &amp;&amp; mkdir -p $(OutDir)bin/runtimes &amp;&amp; cp -R $(OutDir)runtimes/* $(OutDir)bin/runtimes/" />
+    </Target>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
       <IntermediateOutputPath>obj\AppStore</IntermediateOutputPath>
       <DebugType></DebugType>
@@ -17,7 +21,6 @@
       <OutputPath>bin\AppStore</OutputPath>
       <DefineConstants></DefineConstants>
       <NoWarn></NoWarn>
-      <LangVersion>Default</LangVersion>
       <NoStdLib>false</NoStdLib>
     </PropertyGroup>
     <ItemGroup>

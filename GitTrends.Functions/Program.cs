@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -21,9 +20,6 @@ namespace GitTrends.Functions
 
         static Task Main(string[] args)
         {
-#if DEBUG
-            Debugger.Launch();
-#endif
             var host = new HostBuilder()
                 .ConfigureAppConfiguration(configurationBuilder =>
                 {
