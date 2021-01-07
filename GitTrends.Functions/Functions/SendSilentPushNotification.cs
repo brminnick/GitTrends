@@ -25,14 +25,14 @@ namespace GitTrends.Functions
         public static Task Run([TimerTrigger(_runEveryHourCron)] TimerInfo myTimer, ILogger log) => Task.WhenAll(TrySendAppleSilentNotification(Client, log), TrySendFcmSilentNotification(Client, log));
 
         [FunctionName(nameof(SendSilentPushNotification) + "Debug")]
-        public static async Task RunDebug([TimerTrigger(_runEveryHourCron, RunOnStartup = true)] TimerInfo myTimer, ILogger log)
+        public static Task RunDebug([TimerTrigger(_runEveryHourCron, RunOnStartup = true)] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation(_notificationHubFullConnectionString);
             log.LogInformation(_notificationHubFullConnectionString_Debug);
             log.LogInformation(GetNotificationHubInformation.NotificationHubName);
             log.LogInformation(GetNotificationHubInformation.NotificationHubName_Debug);
 
-            await Task.WhenAll(TrySendAppleSilentNotification(DebugClient, log), TrySendFcmSilentNotification(DebugClient, log)).ConfigureAwait(false);
+            return Task.WhenAll(TrySendAppleSilentNotification(DebugClient, log), TrySendFcmSilentNotification(DebugClient, log));
         }
 
         static async Task TrySendAppleSilentNotification(NotificationHubClient client, ILogger log)
