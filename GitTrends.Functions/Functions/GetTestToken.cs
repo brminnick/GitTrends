@@ -6,11 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using GitHubApiStatus;
 using GitTrends.Shared;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Pipeline;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace GitTrends.Functions
@@ -37,7 +37,7 @@ namespace GitTrends.Functions
         }
 
         [FunctionName(nameof(GetTestToken))]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request, ILogger log)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData req, FunctionExecutionContext executionContext)
         {
             foreach (var testToken in _testTokenList)
             {

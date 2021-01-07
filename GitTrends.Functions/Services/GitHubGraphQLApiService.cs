@@ -1,12 +1,11 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using Refit;
 
 namespace GitTrends.Functions
 {
-    public class GitHubGraphQLApiService : BaseApiService
+    class GitHubGraphQLApiService : BaseApiService
     {
         readonly IGitHubGraphQLApi _gitHubGraphQLClient;
 
