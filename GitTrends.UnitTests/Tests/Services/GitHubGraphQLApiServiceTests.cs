@@ -25,7 +25,7 @@ namespace GitTrends.UnitTests
             var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false));
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.Unauthorized, exception.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace GitTrends.UnitTests
             var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false));
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.Unauthorized, exception.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
         }
 
         [Test]
@@ -77,7 +77,7 @@ namespace GitTrends.UnitTests
             });
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.Unauthorized, exception.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
         }
 
         [Test]
@@ -155,7 +155,7 @@ namespace GitTrends.UnitTests
             var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetRepository(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.Unauthorized, exception.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
         }
 
         [Test]
@@ -171,7 +171,7 @@ namespace GitTrends.UnitTests
             var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetRepository(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.Unauthorized, exception.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
         }
 
         [Test]

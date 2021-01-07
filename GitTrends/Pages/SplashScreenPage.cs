@@ -68,7 +68,7 @@ namespace GitTrends
                         .Row(Row.Text),
 
                     new GitTrendsImage().Center().Assign(out _gitTrendsImage)
-                        .RowSpan(All<Row>()),                    
+                        .RowSpan(All<Row>()),
                 }
             };
         }
@@ -99,39 +99,36 @@ namespace GitTrends
             Animate(_animationCancellationToken.Token);
         }
 
-        async void Animate(CancellationToken pulseCancellationToken)
+        async void Animate(CancellationToken pulseCancellationToken) => await MainThread.InvokeOnMainThreadAsync(async () =>
         {
-            await MainThread.InvokeOnMainThreadAsync(async () =>
+            while (!pulseCancellationToken.IsCancellationRequested)
             {
-                while (!pulseCancellationToken.IsCancellationRequested)
+                var pulseImageTask = PulseImage();
+                await Task.Delay(TimeSpan.FromMilliseconds(400));
+
+                //Label leaves the screen
+                await _loadingLabel.TranslateTo(10, 0, 100, Easing.CubicInOut);
+                await _loadingLabel.TranslateTo(-DeviceDisplay.MainDisplayInfo.Width / 2, 0, 250, Easing.CubicIn);
+
+                //Move the label to the other side of the screen
+                _loadingLabel.TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2;
+
+                //Update Status Label Text
+                if (!_statusMessageEnumerator.MoveNext())
                 {
-                    var pulseImageTask = PulseImage();
-                    await Task.Delay(TimeSpan.FromMilliseconds(400));
-
-                    //Label leaves the screen
-                    await _loadingLabel.TranslateTo(10, 0, 100, Easing.CubicInOut);
-                    await _loadingLabel.TranslateTo(-DeviceDisplay.MainDisplayInfo.Width / 2, 0, 250, Easing.CubicIn);
-
-                    //Move the label to the other side of the screen
-                    _loadingLabel.TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2;
-
-                    //Update Status Label Text
-                    if (!_statusMessageEnumerator.MoveNext())
-                    {
-                        _statusMessageEnumerator.Reset();
-                        _statusMessageEnumerator.MoveNext();
-                    }
-                    await ChangeLabelText(_statusMessageEnumerator.Current);
-
-                    //Label reappears on the screen
-                    await _loadingLabel.TranslateTo(-10, 0, 250, Easing.CubicOut);
-                    await _loadingLabel.TranslateTo(0, 0, 250, Easing.CubicOut);
-
-                    await pulseImageTask;
-                    await Task.Delay(TimeSpan.FromMilliseconds(250));
+                    _statusMessageEnumerator.Reset();
+                    _statusMessageEnumerator.MoveNext();
                 }
-            });
-        }
+                await ChangeLabelText(_statusMessageEnumerator.Current);
+
+                //Label reappears on the screen
+                await _loadingLabel.TranslateTo(-10, 0, 250, Easing.CubicOut);
+                await _loadingLabel.TranslateTo(0, 0, 250, Easing.CubicOut);
+
+                await pulseImageTask;
+                await Task.Delay(TimeSpan.FromMilliseconds(250));
+            }
+        });
 
         Task PulseImage() => MainThread.InvokeOnMainThreadAsync(async () =>
         {
