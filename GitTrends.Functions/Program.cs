@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -27,7 +28,6 @@ namespace GitTrends.Functions
                 .ConfigureAppConfiguration(configurationBuilder =>
                 {
                     configurationBuilder.AddCommandLine(args);
-                            
                 })
                 .ConfigureFunctionsWorker((hostBuilderContext, workerApplicationBuilder) =>
                 {

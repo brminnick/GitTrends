@@ -26,12 +26,13 @@
         <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
         <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="4.0.3" />
         <PackageReference Include="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" Version="1.2.0" />
-        <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.0.0-preview1" OutputItemType="Analyzer" />
-        <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.0.0-preview1" />
+        <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.0.0-preview2" OutputItemType="Analyzer" />
+        <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.0.0-preview2" />
         <PackageReference Include="Refit.HttpClientFactory" Version="5.2.4" />
         <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="5.0.1" />
         <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
         <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1-preview1" />
+        <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
     </ItemGroup>
     <ItemGroup>
         <None Update="host.json">
@@ -39,7 +40,6 @@
         </None>
         <None Update="local.settings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <CopyToPublishDirectory>Never</CopyToPublishDirectory>
         </None>
     </ItemGroup>
     <ItemGroup>
