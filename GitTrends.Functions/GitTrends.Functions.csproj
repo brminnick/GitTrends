@@ -10,7 +10,7 @@
         <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
         <Configurations>AppStore;Debug;Release</Configurations>
     </PropertyGroup>
-    <Target Name="CopyRuntimes" AfterTargets="AfterBuild"  Condition=" '$(OS)' == 'UNIX' ">
+    <Target Name="CopyRuntimes" AfterTargets="AfterBuild" Condition=" '$(OS)' == 'UNIX' ">
         <!-- To workaround a bug where the files aren't copied correctly for non-Windows platforms -->
         <Exec Command="rm -rf $(OutDir)bin/runtimes/* &amp;&amp; mkdir -p $(OutDir)bin/runtimes &amp;&amp; cp -R $(OutDir)runtimes/* $(OutDir)bin/runtimes/" />
     </Target>
@@ -36,6 +36,7 @@
         <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
         <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1-preview1" />
         <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
+        <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
     </ItemGroup>
     <ItemGroup>
         <None Update="host.json">
