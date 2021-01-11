@@ -205,7 +205,7 @@ namespace GitTrends
                 RefreshState = RefreshState.Succeeded;
             }
             catch (Exception e) when ((e is ApiException exception && exception.StatusCode is HttpStatusCode.Unauthorized)
-                                        || (e is HttpRequestException && finalResponse != null && finalResponse.StatusCode is HttpStatusCode.Unauthorized))
+                                        || (e is HttpRequestException && finalResponse?.StatusCode is HttpStatusCode.Unauthorized))
             {
                 var loginExpiredEventArgs = new LoginExpiredPullToRefreshEventArgs();
 
