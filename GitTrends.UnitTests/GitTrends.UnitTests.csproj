@@ -19,7 +19,7 @@
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
-    <PackageReference Include="GitHubApiStatus.Extensions" Version="2.0.0-pre10" />
+    <PackageReference Include="GitHubApiStatus.Extensions" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
