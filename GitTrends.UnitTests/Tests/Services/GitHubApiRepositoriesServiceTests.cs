@@ -99,7 +99,7 @@ namespace GitTrends.UnitTests
             });
 
             //Assert
-            Assert.IsTrue(exception.Message.Contains("more than one matching element"));
+            Assert.IsTrue(exception?.Message.Contains("more than one matching element"));
         }
 
         [Test]
@@ -182,11 +182,11 @@ namespace GitTrends.UnitTests
             var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
             //Act
-            var graphQLException = Assert.ThrowsAsync<GraphQLException>(() => gitHubGraphQLApiService.GetStarGazers(fakeRepoName, fakeRepoOwner, CancellationToken.None));
+            var graphQLException = Assert.ThrowsAsync<GraphQLException<StarGazerResponse>>(() => gitHubGraphQLApiService.GetStarGazers(fakeRepoName, fakeRepoOwner, CancellationToken.None));
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.OK, graphQLException.StatusCode);
-            Assert.IsTrue(graphQLException.Errors.First().Message.Contains("Could not resolve to a Repository", StringComparison.OrdinalIgnoreCase));
+            Assert.AreEqual(HttpStatusCode.OK, graphQLException?.StatusCode);
+            Assert.IsTrue(graphQLException?.Errors.First().Message.Contains("Could not resolve to a Repository", StringComparison.OrdinalIgnoreCase));
 
             //"Could not resolve to a Repository with the name 'zxcvbnmlkjhgfdsa1234567890/abc123321'."
         }
@@ -203,7 +203,7 @@ namespace GitTrends.UnitTests
             var apiException = Assert.ThrowsAsync<ApiException>(() => gitHubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None));
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.Unauthorized, apiException.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, apiException?.StatusCode);
         }
     }
 }

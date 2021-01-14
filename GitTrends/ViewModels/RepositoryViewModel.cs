@@ -193,7 +193,7 @@ namespace GitTrends
                 }
 
                 //Add Remaining Repositories to VisibleRepositoryList
-                AddRepositoriesToCollection(completedRepositories, _searchBarText, true);
+                AddRepositoriesToCollection(completedRepositories, _searchBarText);
 
                 if (!_gitHubUserService.IsDemoUser)
                 {
@@ -205,7 +205,7 @@ namespace GitTrends
                 RefreshState = RefreshState.Succeeded;
             }
             catch (Exception e) when ((e is ApiException exception && exception.StatusCode is HttpStatusCode.Unauthorized)
-                                        || (e is HttpRequestException && finalResponse != null && finalResponse.StatusCode is HttpStatusCode.Unauthorized))
+                                        || (e is HttpRequestException && finalResponse?.StatusCode is HttpStatusCode.Unauthorized))
             {
                 var loginExpiredEventArgs = new LoginExpiredPullToRefreshEventArgs();
 
@@ -283,6 +283,8 @@ namespace GitTrends
                 IsFavorite = repository.IsFavorite.HasValue ? !repository.IsFavorite : true
             };
 
+            AnalyticsService.Track("IsFavorite Toggled", nameof(Repository.IsFavorite), updatedRepository.IsFavorite.ToString());
+
             var updatedRepositoryList = new List<Repository>(_visibleRepositoryList);
             updatedRepositoryList.Remove(repository);
             updatedRepositoryList.Add(updatedRepository);
@@ -336,14 +338,10 @@ namespace GitTrends
             UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
-        void AddRepositoriesToCollection(in IReadOnlyList<Repository> repositories, in string searchBarText, in bool shouldUpdateVisibleRepositoryList = true, in bool shouldRemoveRepoisitoriesWithoutViewsClonesData = false)
+        void AddRepositoriesToCollection(in IReadOnlyList<Repository> repositories, in string searchBarText, in bool shouldUpdateVisibleRepositoryList = true)
         {
             var updatedRepositoryList = _repositoryList.Concat(repositories);
-
-            if (shouldRemoveRepoisitoriesWithoutViewsClonesData)
-                _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).Where(x => x.DailyClonesList?.Count > 1 || x.DailyViewsList?.Count > 1).ToList();
-            else
-                _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
+            _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
             if (shouldUpdateVisibleRepositoryList)
                 UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
