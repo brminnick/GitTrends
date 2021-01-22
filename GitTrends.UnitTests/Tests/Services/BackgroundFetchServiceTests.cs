@@ -71,6 +71,7 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(unexpiredRepository_Initial.DailyViewsList.Sum(x => x.TotalViews), unexpiredRepository_Final.DailyViewsList.Sum(x => x.TotalViews));
             Assert.AreEqual(unexpiredRepository_Initial.DailyViewsList.Sum(x => x.TotalUniqueViews), unexpiredRepository_Final.DailyViewsList.Sum(x => x.TotalUniqueViews));
 
+            Assert.AreEqual(2, repositoryDatabaseCount_Final);
             Assert.AreEqual(1, referringSitesDatabaseCount_Final);
 
             Assert.IsTrue(unexpiredRepository_Initial.IsFavorite);
