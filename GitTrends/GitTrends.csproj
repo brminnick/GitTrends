@@ -32,7 +32,7 @@
         <PackageReference Include="Refit" Version="5.2.4" />
         <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="5.0.2" />
         <PackageReference Include="Polly" Version="7.2.1" />
-        <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.3.0.35" />
+        <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.4.0.35" />
         <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
         <PackageReference Include="Autofac" Version="6.1.0" />
