@@ -5,7 +5,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "dotnet:nuget"
+  - package-ecosystem: "nuget"
     directory: "/"
     schedule:
       interval: "daily"
