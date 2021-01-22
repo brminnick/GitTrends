@@ -57,8 +57,7 @@
     <AndroidTlsProvider>btls</AndroidTlsProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
-    <DebugType>
-    </DebugType>
+    <DebugType></DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\AppStore</OutputPath>
     <DefineConstants>AppStore</DefineConstants>
