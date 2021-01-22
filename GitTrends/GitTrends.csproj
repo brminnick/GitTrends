@@ -15,17 +15,13 @@
       <DebugType></DebugType>
       <Optimize>true</Optimize>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='AppStore|AnyCPU'">
-      <DebugType />
-      <Optimize>true</Optimize>
-    </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
       <IntermediateOutputPath>obj\AppStore</IntermediateOutputPath>
       <DebugType></DebugType>
-      <Optimize>false</Optimize>
+      <Optimize>true</Optimize>
       <OutputPath>bin\AppStore</OutputPath>
       <DefineConstants>AppStore</DefineConstants>
-      <NoWarn></NoWarn>
+      <NoWarn>1701;1702</NoWarn>
       <NoStdLib>false</NoStdLib>
     </PropertyGroup>
     <ItemGroup>
