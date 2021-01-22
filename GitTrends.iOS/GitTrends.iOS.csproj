@@ -66,6 +66,7 @@
     <MtouchFastDev>true</MtouchFastDev>
     <MtouchProfiling>true</MtouchProfiling>
     <CodesignProvision>GitTrends Development Profile</CodesignProvision>
+    <MtouchLink>SdkOnly</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -93,7 +94,7 @@
     <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
     <MtouchLink>SdkOnly</MtouchLink>
     <LangVersion>Default</LangVersion>
-    <CodesignProvision>Git Trends App Store</CodesignProvision>
+    <CodesignProvision>GitTrends App Store</CodesignProvision>
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchArch>ARM64</MtouchArch>
     <MtouchExtraArgs>--optimize=experimental-xforms-product-type</MtouchExtraArgs>
