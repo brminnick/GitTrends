@@ -19,8 +19,8 @@ namespace GitTrends
             ColumnSpacing = 12;
 
             RowDefinitions = Rows.Define(
-                (Row.Title, AbsoluteGridLength(50)),
-                (Row.Buttons, AbsoluteGridLength(40)));
+                (Row.Title, 50),
+                (Row.Buttons, 40));
             ColumnDefinitions = Columns.Define(
                 (Column.No, Star),
                 (Column.Yes, Star));

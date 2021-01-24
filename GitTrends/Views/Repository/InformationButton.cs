@@ -30,8 +30,8 @@ namespace GitTrends
 
             AutomationId = RepositoryPageAutomationIds.InformationButton;
 
-            RowDefinitions = Rows.Define(AbsoluteGridLength(Diameter));
-            ColumnDefinitions = Columns.Define(AbsoluteGridLength(Diameter));
+            RowDefinitions = Rows.Define(Diameter);
+            ColumnDefinitions = Columns.Define(Diameter);
 
             Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Mini, FloatingActionButtonType.Statistic1).Center().Assign(out _statistic1FloatingActionButton)
                             .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic1)));

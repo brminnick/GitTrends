@@ -60,7 +60,7 @@ namespace GitTrends
                 RowDefinitions = Rows.Define(
                     (Row.Image, Star),
                     (Row.Text, Auto),
-                    (Row.BottomPadding, AbsoluteGridLength(50))),
+                    (Row.BottomPadding, 50)),
 
                 Children =
                 {

@@ -4,8 +4,6 @@ using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.CommunityToolkit.Markup;
-using static GitTrends.MarkupExtensions;
-using static GitTrends.XamarinFormsService;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -22,42 +20,45 @@ namespace GitTrends
             _deepLinkingService = deepLinkingService;
 
             Title = AboutPageConstants.About;
+            Padding = new Thickness(16, 8);
 
             Content = new Grid
             {
                 ColumnDefinitions = Columns.Define(
                     (Column.Icon, Stars(4)),
-                    (Column.WatchingIcon, AbsoluteGridLength(5)),
+                    (Column.WatchingIcon, 5),
                     (Column.WatchingTitle, Stars(2)),
-                    (Column.WatchingSeparator, AbsoluteGridLength(1)),
-                    (Column.StarsIcon, AbsoluteGridLength(5)),
+                    (Column.WatchingSeparator, 1),
+                    (Column.StarsIcon, 5),
                     (Column.StarsTitle, Stars(2)),
-                    (Column.StarsSeparator, AbsoluteGridLength(1)),
-                    (Column.ForksIcon, AbsoluteGridLength(5)),
+                    (Column.StarsSeparator, 1),
+                    (Column.ForksIcon, 5),
                     (Column.ForksTitle, Stars(2))),
 
                 RowDefinitions = Rows.Define(
-                    (Row.Title, AbsoluteGridLength(30)),
-                    (Row.Description, AbsoluteGridLength(50)),
-                    (Row.StatsTitle, AbsoluteGridLength(10)),
-                    (Row.StatsNumber, AbsoluteGridLength(20)),
-                    (Row.ActionButtons, AbsoluteGridLength(35)),
-                    (Row.CollaboratorTitle, AbsoluteGridLength(10)),
-                    (Row.CollaboratorDescription, AbsoluteGridLength(25)),
-                    (Row.CollaboratorCollection, AbsoluteGridLength(50)),
-                    (Row.LibrariesTitle, AbsoluteGridLength(10)),
-                    (Row.LibrariesDescription, AbsoluteGridLength(15)),
+                    (Row.Title, 30),
+                    (Row.Description, 50),
+                    (Row.StatsTitle, 10),
+                    (Row.StatsNumber, 20),
+                    (Row.ActionButtons, 35),
+                    (Row.CollaboratorTitle, 10),
+                    (Row.CollaboratorDescription, 25),
+                    (Row.CollaboratorCollection, 75),
+                    (Row.LibrariesTitle, 10),
+                    (Row.LibrariesDescription, 15),
                     (Row.LibrariesCollection, Stars(1))),
 
                 Children =
                 {
-                    new Label { BackgroundColor = Color.Accent, Text = "GitTrends Icon"}
-                        .Row(Row.Title).RowSpan(4).Column(Column.Icon),
+                     new Image().CenterExpand()
+                        .Row(Row.Title).RowSpan(4).Column(Column.Icon)
+                        .DynamicResource(Image.SourceProperty, nameof(BaseTheme.GitTrendsImageSource)),
 
-                    new Label { BackgroundColor = Color.AliceBlue, Text = "GitTrends"}
-                        .Row(Row.Title).Column(Column.WatchingIcon).ColumnSpan(8),
+                    new Label { Text = "GitTrends" }.Font(FontFamilyConstants.RobotoBold, 36)
+                        .Row(Row.Title).Column(Column.WatchingIcon).ColumnSpan(8)
+                        .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor)),
 
-                    new Label { BackgroundColor = Color.AntiqueWhite, Text = "Description"}
+                    new DescriptionLabel("DescriptionDescriptionDescriptionDescriptionDescriptionDescription")
                         .Row(Row.Description).Column(Column.WatchingIcon).ColumnSpan(8),
 
                     new Label { BackgroundColor = Color.Aqua, Text = "W" }
@@ -105,8 +106,14 @@ namespace GitTrends
                     new Label { BackgroundColor = Color.CadetBlue, Text = "Collaborator Description" }
                         .Row(Row.CollaboratorDescription).ColumnSpan(All<Column>()),
 
-                    new Label { BackgroundColor = Color.CadetBlue, Text = "Collaborator Collection" }
-                        .Row(Row.CollaboratorCollection).ColumnSpan(All<Column>()),
+                    new CollectionView
+                    {
+                        SelectionMode = SelectionMode.Single,
+                        ItemTemplate = new ContributorDataTemplate(),
+                        ItemsSource = ViewModel.GitTrendsContributors,
+                        ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Horizontal)
+                    }.Row(Row.CollaboratorCollection).ColumnSpan(All<Column>())
+                     .Invoke(collectionView => collectionView.SelectionChanged += HandleContributorSelectionChanged),
 
                     new Label { BackgroundColor = Color.Chartreuse, Text = "Libraries" }
                         .Row(Row.LibrariesTitle).ColumnSpan(All<Column>()),
@@ -123,17 +130,6 @@ namespace GitTrends
         enum Row { Title, Description, StatsTitle, StatsNumber, ActionButtons, CollaboratorTitle, CollaboratorDescription, CollaboratorCollection, LibrariesTitle, LibrariesDescription, LibrariesCollection }
         enum Column { Icon, WatchingIcon, WatchingTitle, WatchingSeparator, StarsIcon, StarsTitle, StarsSeparator, ForksIcon, ForksTitle }
 
-
-/*        new CollectionView
-                        {
-                            SelectionMode = SelectionMode.Single,
-                            ItemTemplate = new ContributorDataTemplate(),
-                            ItemsSource = ViewModel.GitTrendsContributors,
-                            ItemsLayout = new GridItemsLayout(IsSmallScreen? 4: 5, ItemsLayoutOrientation.Vertical)
-                        }.Invoke(collectionView => collectionView.SelectionChanged += HandleContributorSelectionChanged)*/
-
-
-
         async void HandleContributorSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var collectionView = (CollectionView)sender;
@@ -149,36 +145,80 @@ namespace GitTrends
 
         class ContributorDataTemplate : DataTemplate
         {
+            const int _textPadding = 5;
             const int _circleDiameter = 50;
+            const double _horizontalPadding = 0.5;
 
             public ContributorDataTemplate() : base(CreateContributorDataTemplate)
             {
 
             }
 
-            static Grid CreateContributorDataTemplate() => new Grid
+            enum ContributorRow { Avatar, Login }
+            enum ContributorColumn { LeftPadding, LeftText, Image, RightText, RightPadding }
+
+            static Grid CreateContributorDataTemplate() => new()
             {
                 RowSpacing = 4,
 
                 RowDefinitions = Rows.Define(
-                    (Row.Avatar, AbsoluteGridLength(_circleDiameter)),
-                    (Row.Login, AbsoluteGridLength(25))),
+                    (ContributorRow.Avatar, _circleDiameter),
+                    (ContributorRow.Login, 25)),
+
+                ColumnDefinitions = Columns.Define(
+                    (ContributorColumn.LeftPadding, _horizontalPadding),
+                    (ContributorColumn.LeftText, _textPadding),
+                    (ContributorColumn.Image, _circleDiameter),
+                    (ContributorColumn.RightText, _textPadding),
+                    (ContributorColumn.RightPadding, _horizontalPadding)),
 
                 Children =
                 {
                     new AvatarImage(_circleDiameter)
-                        .Row(Row.Avatar)
+                        .Row(ContributorRow.Avatar).Column(ContributorColumn.Image)
                         .Bind(CircleImage.ImageSourceProperty, nameof(Contributor.AvatarUrl), BindingMode.OneTime)
                         .DynamicResource(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
 
                     new Label { LineBreakMode = LineBreakMode.TailTruncation }.TextCenterHorizontal().TextTop().Font(FontFamilyConstants.RobotoRegular, 12)
-                        .Row(Row.Login)
+                        .Row(ContributorRow.Login).Column(ContributorColumn.LeftText).ColumnSpan(3)
                         .Bind(Label.TextProperty, nameof(Contributor.Login), BindingMode.OneTime)
                         .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
                 }
             };
+        }
 
-            enum Row { Avatar, Login }
+        class TitleLabel : Label
+        {
+            public TitleLabel()
+            {
+                FontSize = 14;
+
+                HorizontalOptions = LayoutOptions.StartAndExpand;
+                VerticalOptions = LayoutOptions.StartAndExpand;
+
+                FontFamily = FontFamilyConstants.RobotoMedium;
+                LineBreakMode = LineBreakMode.TailTruncation;
+
+                this.DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
+            }
+        }
+
+        class DescriptionLabel : Label
+        {
+            public DescriptionLabel(string text)
+            {
+                Text = text;
+
+                FontSize = 10;
+
+                HorizontalOptions = LayoutOptions.StartAndExpand;
+                VerticalOptions = LayoutOptions.StartAndExpand;
+
+                FontFamily = FontFamilyConstants.RobotoRegular;
+                LineBreakMode = LineBreakMode.TailTruncation;
+
+                this.DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
+            }
         }
     }
 }

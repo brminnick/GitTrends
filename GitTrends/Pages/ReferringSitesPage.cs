@@ -62,13 +62,13 @@ namespace GitTrends
 
                 RowDefinitions = Rows.Define(
                     (Row.Title, Auto),
-                    (Row.TitleShadow, AbsoluteGridLength(shadowHeight)),
+                    (Row.TitleShadow, shadowHeight),
                     (Row.List, Star),
                     (Row.RatingRequest, Auto)),
 
                 ColumnDefinitions = Columns.Define(
-                    (Column.Title, StarGridLength(3)),
-                    (Column.Button, StarGridLength(1))),
+                    (Column.Title, Stars(3)),
+                    (Column.Button, Stars(1))),
 
                 Children =
                 {

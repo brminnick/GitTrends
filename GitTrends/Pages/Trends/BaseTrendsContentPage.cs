@@ -22,8 +22,8 @@ namespace GitTrends
                 Padding = new Thickness(0, 16),
 
                 RowDefinitions = Rows.Define(
-                    (Row.Header, AbsoluteGridLength(ViewsClonesStatisticsGrid.StatisticsGridHeight)),
-                    (Row.Indicator, AbsoluteGridLength(12)),
+                    (Row.Header, ViewsClonesStatisticsGrid.StatisticsGridHeight),
+                    (Row.Indicator, 12),
                     (Row.Chart, Star)),
 
                 Children =
