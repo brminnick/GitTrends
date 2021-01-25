@@ -20,7 +20,7 @@ namespace GitTrends
             _deepLinkingService = deepLinkingService;
 
             Title = AboutPageConstants.About;
-            Padding = new Thickness(16, 8);
+            Padding = new Thickness(28, 16, 0, 0);
 
             Content = new Grid
             {
@@ -41,9 +41,9 @@ namespace GitTrends
                     (Row.StatsTitle, 10),
                     (Row.StatsNumber, 20),
                     (Row.ActionButtons, 35),
-                    (Row.CollaboratorTitle, 10),
-                    (Row.CollaboratorDescription, 25),
-                    (Row.CollaboratorCollection, 75),
+                    (Row.CollaboratorTitle, 30),
+                    (Row.CollaboratorDescription, 40),
+                    (Row.CollaboratorCollection, 100),
                     (Row.LibrariesTitle, 10),
                     (Row.LibrariesDescription, 15),
                     (Row.LibrariesCollection, Stars(1))),
@@ -54,11 +54,11 @@ namespace GitTrends
                         .Row(Row.Title).RowSpan(4).Column(Column.Icon)
                         .DynamicResource(Image.SourceProperty, nameof(BaseTheme.GitTrendsImageSource)),
 
-                    new Label { Text = "GitTrends" }.Font(FontFamilyConstants.RobotoBold, 36)
+                    new Label { Text = "GitTrends" }.Font(FontFamilyConstants.RobotoMedium, 24).Margin(new Thickness(0, 0, 32, 0))
                         .Row(Row.Title).Column(Column.WatchingIcon).ColumnSpan(8)
                         .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor)),
 
-                    new DescriptionLabel("DescriptionDescriptionDescriptionDescriptionDescriptionDescription")
+                    new DescriptionLabel("GitTrends is an open-source app to help monitor ")
                         .Row(Row.Description).Column(Column.WatchingIcon).ColumnSpan(8),
 
                     new Label { BackgroundColor = Color.Aqua, Text = "W" }
@@ -100,10 +100,10 @@ namespace GitTrends
                     new Label { BackgroundColor = Color.Brown, Text = "Request Feature" }
                         .Row(Row.ActionButtons).Column(Column.WatchingSeparator).ColumnSpan(6),
 
-                    new Label { BackgroundColor = Color.BurlyWood, Text = "Collaborator" }
+                    new TitleLabel("Collaborators")
                         .Row(Row.CollaboratorTitle).ColumnSpan(All<Column>()),
 
-                    new Label { BackgroundColor = Color.CadetBlue, Text = "Collaborator Description" }
+                    new DescriptionLabel("Thank You to all of our amazing open-source contributors!").Margin(new Thickness(0, 0, 32, 0))
                         .Row(Row.CollaboratorDescription).ColumnSpan(All<Column>()),
 
                     new CollectionView
@@ -112,13 +112,14 @@ namespace GitTrends
                         ItemTemplate = new ContributorDataTemplate(),
                         ItemsSource = ViewModel.GitTrendsContributors,
                         ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Horizontal)
-                    }.Row(Row.CollaboratorCollection).ColumnSpan(All<Column>())
+                    }.Center()
+                     .Row(Row.CollaboratorCollection).ColumnSpan(All<Column>())
                      .Invoke(collectionView => collectionView.SelectionChanged += HandleContributorSelectionChanged),
 
-                    new Label { BackgroundColor = Color.Chartreuse, Text = "Libraries" }
+                    new TitleLabel("Libraries")
                         .Row(Row.LibrariesTitle).ColumnSpan(All<Column>()),
 
-                    new Label { BackgroundColor = Color.Chocolate, Text = "Library Description" }
+                    new DescriptionLabel("GitTrends leverages following libraries and frameworks").Margin(new Thickness(0, 0, 32, 0))
                         .Row(Row.LibrariesDescription).ColumnSpan(All<Column>()),
 
                     new Label { BackgroundColor = Color.Coral, Text = "Library Collection" }
@@ -146,8 +147,7 @@ namespace GitTrends
         class ContributorDataTemplate : DataTemplate
         {
             const int _textPadding = 5;
-            const int _circleDiameter = 50;
-            const double _horizontalPadding = 0.5;
+            const int _circleDiameter = 62;
 
             public ContributorDataTemplate() : base(CreateContributorDataTemplate)
             {
@@ -155,7 +155,7 @@ namespace GitTrends
             }
 
             enum ContributorRow { Avatar, Login }
-            enum ContributorColumn { LeftPadding, LeftText, Image, RightText, RightPadding }
+            enum ContributorColumn { LeftText, Image, RightText, RightPadding }
 
             static Grid CreateContributorDataTemplate() => new()
             {
@@ -166,11 +166,10 @@ namespace GitTrends
                     (ContributorRow.Login, 25)),
 
                 ColumnDefinitions = Columns.Define(
-                    (ContributorColumn.LeftPadding, _horizontalPadding),
                     (ContributorColumn.LeftText, _textPadding),
                     (ContributorColumn.Image, _circleDiameter),
                     (ContributorColumn.RightText, _textPadding),
-                    (ContributorColumn.RightPadding, _horizontalPadding)),
+                    (ContributorColumn.RightPadding, 0.5)),
 
                 Children =
                 {
@@ -181,7 +180,7 @@ namespace GitTrends
 
                     new Label { LineBreakMode = LineBreakMode.TailTruncation }.TextCenterHorizontal().TextTop().Font(FontFamilyConstants.RobotoRegular, 12)
                         .Row(ContributorRow.Login).Column(ContributorColumn.LeftText).ColumnSpan(3)
-                        .Bind(Label.TextProperty, nameof(Contributor.Login), BindingMode.OneTime)
+                        .Bind<Label, string, string>(Label.TextProperty, nameof(Contributor.Login), BindingMode.OneTime, convert: login => $"@{login}")
                         .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
                 }
             };
@@ -189,9 +188,10 @@ namespace GitTrends
 
         class TitleLabel : Label
         {
-            public TitleLabel()
+            public TitleLabel(in string text)
             {
-                FontSize = 14;
+                Text = text;
+                FontSize = 16;
 
                 HorizontalOptions = LayoutOptions.StartAndExpand;
                 VerticalOptions = LayoutOptions.StartAndExpand;
@@ -209,7 +209,7 @@ namespace GitTrends
             {
                 Text = text;
 
-                FontSize = 10;
+                FontSize = 12;
 
                 HorizontalOptions = LayoutOptions.StartAndExpand;
                 VerticalOptions = LayoutOptions.StartAndExpand;
