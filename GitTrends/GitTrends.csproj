@@ -42,10 +42,6 @@
         <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1-preview2" />
         <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.3" />
         <PackageReference Include="Xamarin.CommunityToolkit.Markup" Version="1.0.2" />
-        <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="3.8.0">
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-          <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
     </ItemGroup>
     <ItemGroup>
       <Folder Include="EventArgs\" />
