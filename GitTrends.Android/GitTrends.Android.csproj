@@ -106,6 +106,11 @@
     <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.3" />
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.3" />
     <PackageReference Include="Xamarin.Google.Dagger" Version="2.27.0" />
+    <PackageReference Include="Microsoft.Net.Compilers.Toolset">
+      <Version>3.8.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />

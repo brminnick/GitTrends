@@ -460,6 +460,11 @@
     <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1-preview2" />
     <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.3" />
+    <PackageReference Include="Microsoft.Net.Compilers.Toolset">
+      <Version>3.8.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
