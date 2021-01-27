@@ -57,19 +57,3 @@ jobs:
           echo $UnitTestDirectory
           
           dotnet test  -c 'Release' $UnitTestDirectory
-
-      # Keep Commented until GitHub Actions adds iOS Certificates & Provisioning Profiles
-      #- name: Build iOS App
-        #run: |
-          # msbuild ./GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release /p:Platform=iPhoneSimulator    
-          
-
-
-#    iOS:
-#      runs-on: macos-latest
-#      steps:
-#      - uses: actions/checkout@v1
-#      - name: iOS
-#        run: |
-#          nuget restore
-#          msbuild GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /t:Rebuild /p:Platform=iPhone /p:Configuration=Release
