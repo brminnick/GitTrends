@@ -42,7 +42,11 @@ jobs:
           
       - name: Build Android App
         run: |                    
-          mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Release     
+          mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /p:Configuration=Release     
+
+      - name: Build iOS App
+        run: |                    
+          mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /p:Configuration=Release /p:Platform=iPhone
           
       - name: Run Unit Tests
         run: |   
