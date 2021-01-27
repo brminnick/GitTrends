@@ -133,9 +133,11 @@ namespace GitTrends.UnitTests
             //Assert
             Assert.GreaterOrEqual(300, repositories.Count);
 
-            Assert.IsTrue(repositories.Any(x => x.Name is GitHubConstants.GitTrendsRepoName));
-            Assert.IsTrue(repositories.Any(x => x.OwnerLogin == gitHubUserService.Alias));
-            Assert.IsTrue(repositories.Any(x => x.OwnerAvatarUrl is AuthenticatedGitHubUserAvatarUrl));
+            var gitTrendsRepository = repositories.Single(x => x.Name is GitHubConstants.GitTrendsRepoName);
+
+            Assert.AreEqual(GitHubConstants.GitTrendsRepoName, gitTrendsRepository.Name);
+            Assert.AreEqual(gitHubUserService.Alias, gitTrendsRepository.OwnerLogin);
+            Assert.AreEqual(AuthenticatedGitHubUserAvatarUrl, gitTrendsRepository.OwnerAvatarUrl);
 
             Assert.AreEqual(0, repositories.Sum(x => x.TotalViews));
             Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueViews));
