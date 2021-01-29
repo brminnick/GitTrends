@@ -1,10 +1,10 @@
 ﻿using System;
 using GitTrends.Shared;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Pipeline;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.Logging;
 
 namespace GitTrends.Functions
 {
@@ -17,7 +17,7 @@ namespace GitTrends.Functions
         readonly static string _notificationHubConnectionString = Environment.GetEnvironmentVariable("NotificationHubListenConnectionString") ?? string.Empty;
 
         [FunctionName(nameof(GetNotificationHubInformation))]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request, ILogger log) =>
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData req, FunctionExecutionContext executionContext) =>
            new OkObjectResult(new NotificationHubInformation(NotificationHubName, _notificationHubConnectionString, NotificationHubName_Debug, _notificationHubConnectionString_Debug));
     }
 }

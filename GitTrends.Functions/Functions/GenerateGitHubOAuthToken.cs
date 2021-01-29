@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using GitTrends.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Pipeline;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
@@ -22,18 +24,16 @@ namespace GitTrends.Functions
         public GenerateGitHubOAuthToken(GitHubAuthService gitHubAuthService) => _gitHubAuthService = gitHubAuthService;
 
         [FunctionName(nameof(GenerateGitHubOAuthToken))]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest httpRequest, ILogger log)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req, FunctionExecutionContext executionContext)
         {
-            log.LogInformation("Received request for OAuth Token");
+            var logger = executionContext.Logger;
+            logger.LogInformation("Received request for OAuth Token");
 
-            using var reader = new StreamReader(httpRequest.Body);
-            var body = await reader.ReadToEndAsync().ConfigureAwait(false);
-
-            var generateTokenDTO = JsonConvert.DeserializeObject<GenerateTokenDTO>(body);
+            var generateTokenDTO = JsonConvert.DeserializeObject<GenerateTokenDTO>(req.Body);
 
             var token = await _gitHubAuthService.GetGitHubToken(_clientId, _clientSecret, generateTokenDTO.LoginCode, generateTokenDTO.State).ConfigureAwait(false);
 
-            log.LogInformation("Token Retrieved");
+            logger.LogInformation("Token Retrieved");
 
             return new ContentResult
             {
