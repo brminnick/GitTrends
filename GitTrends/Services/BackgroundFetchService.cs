@@ -77,10 +77,15 @@ namespace GitTrends
         {
             if (!_gitHubUserService.IsDemoUser && !string.IsNullOrEmpty(_gitHubUserService.Alias))
             {
+                var favoriteRepositoryUrls = await _repositoryDatabase.GetFavoritesUrls().ConfigureAwait(false);
+
                 var retrievedRepositoryList = new List<Repository>();
                 await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(_gitHubUserService.Alias, cancellationToken).ConfigureAwait(false))
                 {
-                    retrievedRepositoryList.Add(repository);
+                    if (favoriteRepositoryUrls.Contains(repository.Url))
+                        retrievedRepositoryList.Add(repository with { IsFavorite = true });
+                    else
+                        retrievedRepositoryList.Add(repository);
                 }
 
                 var retrievedRepositoryList_NoDuplicatesNoForks = RepositoryService.RemoveForksAndDuplicates(retrievedRepositoryList);
