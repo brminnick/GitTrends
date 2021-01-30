@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
@@ -19,5 +20,6 @@ namespace GitTrends
         public Task<SyncFusionDTO> GetSyncfusionInformation(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetSyncfusionInformation(SyncfusionService.AssemblyVersionNumber), cancellationToken);
         public Task<StreamingManifest> GetChartStreamingUrl(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetChartStreamingUrl(), cancellationToken);
         public Task<NotificationHubInformation> GetNotificationHubInformation(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetNotificationHubInformation(), cancellationToken);
+        public Task<IReadOnlyList<string>> GetGitTrendsCSProjPaths(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetGitTrendsCSProjPaths(), cancellationToken);
     }
 }
