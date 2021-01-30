@@ -5,9 +5,10 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using AsyncAwaitBestPractices;
+using GitTrends.Shared;
 using Newtonsoft.Json;
 using NuGet.Common;
-using NuGet.Packaging;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using Xamarin.Essentials.Interfaces;
@@ -16,11 +17,12 @@ namespace GitTrends
 {
     public class NuGetService
     {
-        readonly SourceRepository _sourceRepository = Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
+        readonly SourceRepository _sourceRepository = NuGet.Protocol.Core.Types.Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
 
         readonly IPreferences _preferences;
+        readonly IAnalyticsService _analyticsService;
 
-        public NuGetService(IPreferences preferences) => _preferences = preferences;
+        public NuGetService(IPreferences preferences, IAnalyticsService analyticsService) => (_preferences, _analyticsService) = (preferences, analyticsService);
 
         public IReadOnlyList<(string title, Uri imageUri)> InstalledNugetPackages
         {
@@ -39,15 +41,24 @@ namespace GitTrends
             }
         }
 
-        public async Task Initialize(CancellationToken cancellationToken)
+        public async ValueTask Initialize(CancellationToken cancellationToken)
         {
-            var installedPackagesList = new List<(string title, Uri imageUri)>();
-            await foreach (var installedPackageInfo in GetInstalledPackageInfo(cancellationToken))
-            {
-                installedPackagesList.Add(installedPackageInfo);
-            }
+            if (InstalledNugetPackages.Any())
+                initialize().SafeFireAndForget(ex => _analyticsService.Report(ex));
+            else
+                await initialize().ConfigureAwait(false);
 
-            InstalledNugetPackages = installedPackagesList;
+            async Task initialize()
+            {
+                var installedPackagesList = new List<(string title, Uri imageUri)>();
+
+                await foreach (var installedPackageInfo in GetInstalledPackageInfo(cancellationToken))
+                {
+                    installedPackagesList.Add(installedPackageInfo);
+                }
+
+                InstalledNugetPackages = installedPackagesList;
+            }
         }
 
         public async IAsyncEnumerable<(string title, Uri imageUri)> GetInstalledPackageInfo([EnumeratorCancellation] CancellationToken cancellationToken)
