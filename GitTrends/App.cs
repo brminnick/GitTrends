@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using GitTrends.Shared;
@@ -13,28 +14,26 @@ namespace GitTrends
     {
         readonly static WeakEventManager _resumedEventManager = new();
 
-        readonly LanguageService _languageService;
         readonly IAnalyticsService _analyticsService;
         readonly NotificationService _notificationService;
 
-        public App(ThemeService themeService,
-                    LanguageService languageService,
+        public App(LanguageService languageService,
                     SplashScreenPage splashScreenPage,
                     IAnalyticsService analyticsService,
                     NotificationService notificationService,
-                    IDeviceNotificationsService deviceNotificationsService)
+                    AppInitializationService appInitializationService)
         {
-            _languageService = languageService;
             _analyticsService = analyticsService;
             _notificationService = notificationService;
 
             analyticsService.Track("App Initialized", new Dictionary<string, string>
             {
-                { nameof(LanguageService.PreferredLanguage), _languageService.PreferredLanguage ?? "default" },
+                { nameof(LanguageService.PreferredLanguage), languageService.PreferredLanguage ?? "default" },
                 { nameof(CultureInfo.CurrentUICulture), CultureInfo.CurrentUICulture.TwoLetterISOLanguageName }
             });
 
-            InitializeEssentialServices(themeService, deviceNotificationsService, languageService);
+            var appInitializationCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+            appInitializationService.InitializeApp(appInitializationCancellationTokenSource.Token).SafeFireAndForget(ex => analyticsService.Report(ex));
 
             MainPage = splashScreenPage;
 
@@ -75,13 +74,6 @@ namespace GitTrends
         }
 
         ValueTask ClearBageNotifications() => _notificationService.SetAppBadgeCount(0);
-
-        async void InitializeEssentialServices(ThemeService themeService, IDeviceNotificationsService notificationService, LanguageService languageService)
-        {
-            languageService.Initialize();
-            notificationService.Initialize();
-            await themeService.Initialize().ConfigureAwait(false);
-        }
 
         void OnResumed() => _resumedEventManager.RaiseEvent(this, EventArgs.Empty, nameof(Resumed));
     }
