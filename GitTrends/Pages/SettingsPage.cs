@@ -35,8 +35,6 @@ namespace GitTrends
 
             Content = new ScrollView
             {
-                Margin = new Thickness(0, 0, 0, 12),
-
                 Content = _contentGrid = new Grid
                 {
                     RowSpacing = 8,

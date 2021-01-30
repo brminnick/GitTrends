@@ -64,6 +64,7 @@
       <Folder Include="Interfaces\" />
       <Folder Include="Effects\" />
       <Folder Include="Pages\Trends\" />
+      <Folder Include="Views\About\" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="repo_forked.svg" />
