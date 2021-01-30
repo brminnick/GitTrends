@@ -37,6 +37,7 @@ namespace GitTrends
 
             //Register Services
             builder.RegisterType<AnalyticsService>().As<IAnalyticsService>().SingleInstance();
+            builder.RegisterType<AppInitializationService>().AsSelf().SingleInstance();
             builder.RegisterType<AzureFunctionsApiService>().AsSelf().SingleInstance();
             builder.RegisterType<BackgroundFetchService>().AsSelf().SingleInstance();
             builder.RegisterType<DeepLinkingService>().AsSelf().SingleInstance();
@@ -53,6 +54,7 @@ namespace GitTrends
             builder.RegisterType<LanguageService>().AsSelf().SingleInstance();
             builder.RegisterType<MediaElementService>().AsSelf().SingleInstance();
             builder.RegisterType<NotificationService>().AsSelf().SingleInstance();
+            builder.RegisterType<NuGetService>().AsSelf().SingleInstance();
             builder.RegisterType<ReferringSitesDatabase>().AsSelf().SingleInstance();
             builder.RegisterType<RepositoryDatabase>().AsSelf().SingleInstance();
             builder.RegisterType<ReviewService>().AsSelf().SingleInstance();
@@ -72,7 +74,6 @@ namespace GitTrends
             builder.RegisterType<ReferringSitesViewModel>().AsSelf();
             builder.RegisterType<RepositoryViewModel>().AsSelf();
             builder.RegisterType<SettingsViewModel>().AsSelf();
-            builder.RegisterType<SplashScreenViewModel>().AsSelf();
             builder.RegisterType<TrendsViewModel>().AsSelf();
             builder.RegisterType<WelcomeViewModel>().AsSelf();
 

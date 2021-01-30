@@ -10,12 +10,11 @@ using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    public class SplashScreenPage : BaseContentPage<SplashScreenViewModel>
+    public class SplashScreenPage : BaseContentPage
     {
         readonly IEnumerator<string> _statusMessageEnumerator = new List<string>
         {
@@ -41,9 +40,8 @@ namespace GitTrends
 
         public SplashScreenPage(IMainThread mainThread,
                                     FirstRunService firstRunService,
-                                    IAnalyticsService analyticsService,
-                                    SplashScreenViewModel splashScreenViewModel)
-            : base(splashScreenViewModel, analyticsService, mainThread)
+                                    IAnalyticsService analyticsService)
+            : base(analyticsService, mainThread)
         {
             //Remove BaseContentPageBackground
             RemoveDynamicResource(BackgroundColorProperty);
@@ -51,7 +49,7 @@ namespace GitTrends
 
             _firstRunService = firstRunService;
 
-            SplashScreenViewModel.InitializationCompleted += HandleInitializationCompleted;
+            AppInitializationService.InitializationCompleted += HandleInitializationCompleted;
 
             _statusMessageEnumerator.MoveNext();
 
@@ -93,8 +91,6 @@ namespace GitTrends
 
             //Wait for Image to reach an opacity of 1
             await Task.WhenAll(fadeImageTask, pulseImageTask);
-
-            ViewModel.InitializeAppCommand.Execute(null);
 
             Animate(_animationCancellationToken.Token);
         }
