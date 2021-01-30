@@ -39,15 +39,15 @@ namespace GitTrends
             _azureFunctionsApiService = azureFunctionsApiService;
         }
 
-        public ReadOnlyDictionary<string, (Uri IconUri, Uri NuGetUri)> InstalledNugetPackages
+        public IReadOnlyList<NuGetPackageModel> InstalledNugetPackages
         {
             get
             {
                 var serializedInstalledNuGetPackages = _preferences.Get(nameof(InstalledNugetPackages), null);
 
                 return serializedInstalledNuGetPackages is null
-                    ? new ReadOnlyDictionary<string, (Uri, Uri)>(new Dictionary<string, (Uri, Uri)>())
-                    : JsonConvert.DeserializeObject<ReadOnlyDictionary<string, (Uri, Uri)>>(serializedInstalledNuGetPackages);
+                    ? Array.Empty<NuGetPackageModel>()
+                    : JsonConvert.DeserializeObject<IReadOnlyList<NuGetPackageModel>>(serializedInstalledNuGetPackages);
             }
             private set
             {
@@ -65,7 +65,7 @@ namespace GitTrends
 
             async Task initialize()
             {
-                var installedPackagesDictionary = new Dictionary<string, (Uri iconUri, Uri nugetUri)>();
+                var installedPackagesDictionary = new Dictionary<string, (Uri IconUri, Uri NugetUri)>();
 
                 await foreach (var packageInfo in GetPackageInfo(cancellationToken).ConfigureAwait(false))
                 {
@@ -73,7 +73,13 @@ namespace GitTrends
                         installedPackagesDictionary.Add(packageInfo.Title, (packageInfo.ImageUri, packageInfo.NugetUri));
                 }
 
-                InstalledNugetPackages = new ReadOnlyDictionary<string, (Uri, Uri)>(installedPackagesDictionary);
+                var nugetPackageModelList = new List<NuGetPackageModel>();
+                foreach (var entry in installedPackagesDictionary)
+                {
+                    nugetPackageModelList.Add(new NuGetPackageModel(entry.Key, entry.Value.IconUri, entry.Value.NugetUri));
+                }
+
+                InstalledNugetPackages = nugetPackageModelList.OrderBy(x => x.PackageName).ToList();
             }
         }
 
@@ -97,7 +103,7 @@ namespace GitTrends
 
             Parallel.ForEach(getInstalledPackageInfoTCSList, async package =>
             {
-                const string defaultNuGetIcon = "https://www.nuget.org/Content/gallery/img/default-package-icon.svg";
+                const string defaultNuGetIcon = "https://www.nuget.org/Content/gallery/img/logo-og-600x600.png";
                 IEnumerable<IPackageSearchMetadata> metadatas = Enumerable.Empty<IPackageSearchMetadata>();
 
                 try

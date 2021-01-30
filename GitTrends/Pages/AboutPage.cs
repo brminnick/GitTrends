@@ -122,8 +122,16 @@ namespace GitTrends
                     new DescriptionLabel("GitTrends leverages following libraries and frameworks")
                         .Row(Row.LibrariesDescription).Column(Column.Icon).ColumnSpan(6),
 
-                    new Label { BackgroundColor = Color.Coral, Text = "Library Collection" }
-                        .Row(Row.LibrariesCollection).ColumnSpan(All<Column>()),
+                    new CollectionView
+                    {
+                        Header = new BoxView { WidthRequest = horizontalPadding },
+                        SelectionMode = SelectionMode.Single,
+                        ItemTemplate = new LibraryDataTemplate(),
+                        ItemsSource = ViewModel.NuGetPackageModels,
+                        ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Horizontal)
+                    }.Center()
+                     .Row(Row.LibrariesCollection).ColumnSpan(All<Column>())
+                     .Invoke(collectionView => collectionView.SelectionChanged += HandleLibrarySelectionChanged),
                 }
             };
         }
@@ -141,6 +149,19 @@ namespace GitTrends
                 AnalyticsService.Track("Contributor Tapped", nameof(Contributor.Login), contributor.Login);
 
                 await _deepLinkingService.OpenBrowser(contributor.GitHubUrl);
+            }
+        }
+
+        async void HandleLibrarySelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var collectionView = (CollectionView)sender;
+            collectionView.SelectedItem = null;
+
+            if (e.CurrentSelection.FirstOrDefault() is NuGetPackageModel nuGetPackageModel)
+            {
+                AnalyticsService.Track("Library Tapped", nameof(NuGetPackageModel.PackageName), nuGetPackageModel.PackageName);
+
+                await _deepLinkingService.OpenBrowser(nuGetPackageModel.WebsiteUri);
             }
         }
 
