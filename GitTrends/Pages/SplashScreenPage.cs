@@ -53,8 +53,6 @@ namespace GitTrends
             _firstRunService = firstRunService;
             _appInitializationService = appInitializationService;
 
-            AppInitializationService.InitializationCompleted += HandleInitializationCompleted;
-
             _statusMessageEnumerator.MoveNext();
 
             Content = new Grid
@@ -96,10 +94,17 @@ namespace GitTrends
             //Wait for Image to reach an opacity of 1
             await Task.WhenAll(fadeImageTask, pulseImageTask);
 
-            var appInitializationCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
-            _appInitializationService.InitializeApp(appInitializationCancellationTokenSource.Token).SafeFireAndForget(ex => AnalyticsService.Report(ex));
-
             Animate(_animationCancellationToken.Token);
+
+            if (_appInitializationService.IsInitializationComplete)
+            {
+                await Task.Delay(1500);
+                await HandleInitializationCompleted(true);
+            }
+            else
+            {
+                AppInitializationService.InitializationCompleted += HandleInitializationCompleted;
+            }
         }
 
         async void Animate(CancellationToken pulseCancellationToken) => await MainThread.InvokeOnMainThreadAsync(async () =>
@@ -186,10 +191,14 @@ namespace GitTrends
             await _loadingLabel.FadeTo(1, 250, Easing.CubicIn);
         });
 
-        async void HandleInitializationCompleted(object sender, InitializationCompleteEventArgs e)
+        async void HandleInitializationCompleted(object sender, InitializationCompleteEventArgs e) =>
+            await HandleInitializationCompleted(e.IsInitializationSuccessful).ConfigureAwait(false);
+
+        async Task HandleInitializationCompleted(bool isInitializationSuccessful)
         {
             _animationCancellationToken?.Cancel();
-            if (e.IsInitializationSuccessful)
+
+            if (isInitializationSuccessful)
             {
 #if DEBUG
                 await ChangeLabelText(SplashScreenPageConstants.PreviewMode, SplashScreenPageConstants.WarningsMayAppear);

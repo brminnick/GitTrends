@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using GitTrends.Shared;
@@ -19,7 +20,8 @@ namespace GitTrends
         public App(LanguageService languageService,
                     SplashScreenPage splashScreenPage,
                     IAnalyticsService analyticsService,
-                    NotificationService notificationService)
+                    NotificationService notificationService,
+                    AppInitializationService appInitializationService)
         {
             _analyticsService = analyticsService;
             _notificationService = notificationService;
@@ -31,6 +33,9 @@ namespace GitTrends
             });
 
             MainPage = splashScreenPage;
+
+            var appInitializationCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+            appInitializationService.InitializeApp(appInitializationCancellationTokenSource.Token).SafeFireAndForget(ex => analyticsService.Report(ex));
 
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
         }

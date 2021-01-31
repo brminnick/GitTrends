@@ -47,6 +47,8 @@ namespace GitTrends
             remove => _initializationCompletedEventManager.RemoveEventHandler(value);
         }
 
+        public bool IsInitializationComplete { get; private set; }
+
         public async Task InitializeApp(CancellationToken cancellationToken)
         {
             bool isInitializationSuccessful = false;
@@ -91,7 +93,10 @@ namespace GitTrends
             }
         }
 
-        void OnInitializationCompleted(bool isInitializationSuccessful) =>
+        void OnInitializationCompleted(bool isInitializationSuccessful)
+        {
+            IsInitializationComplete = true;
             _initializationCompletedEventManager.RaiseEvent(this, new InitializationCompleteEventArgs(isInitializationSuccessful), nameof(InitializationCompleted));
+        }
     }
 }
