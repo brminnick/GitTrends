@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -26,16 +25,19 @@ namespace GitTrends
         readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly ImageCachingService _imageCachingService;
         readonly AzureFunctionsApiService _azureFunctionsApiService;
 
         public NuGetService(IPreferences preferences,
                             IAnalyticsService analyticsService,
                             GitHubApiV3Service gitHubApiV3Service,
+                            ImageCachingService imageCachingService,
                             AzureFunctionsApiService azureFunctionsApiService)
         {
             _preferences = preferences;
             _analyticsService = analyticsService;
             _gitHubApiV3Service = gitHubApiV3Service;
+            _imageCachingService = imageCachingService;
             _azureFunctionsApiService = azureFunctionsApiService;
         }
 
@@ -80,6 +82,9 @@ namespace GitTrends
                 }
 
                 InstalledNugetPackages = nugetPackageModelList.OrderBy(x => x.PackageName).ToList();
+
+                foreach (var nugetPackageModel in InstalledNugetPackages)
+                    _imageCachingService.PreloadImage(nugetPackageModel.IconUri).SafeFireAndForget(ex => _analyticsService.Report(ex));
             }
         }
 
@@ -112,11 +117,11 @@ namespace GitTrends
                 }
                 catch (Exception e)
                 {
-
+                    _analyticsService.Report(e, nameof(package.PackageName), package.PackageName);
                 }
 
-                var iconUri = metadatas.FirstOrDefault().IconUrl;
-                var nugetUri = metadatas.FirstOrDefault().PackageDetailsUrl;
+                var iconUri = metadatas.LastOrDefault().IconUrl;
+                var nugetUri = metadatas.LastOrDefault().PackageDetailsUrl;
 
                 if (nugetUri is null)
                     package.PackageInfoTCS.SetResult(null);

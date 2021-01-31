@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AsyncAwaitBestPractices;
 using Autofac;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
@@ -35,12 +36,14 @@ namespace GitTrends
         readonly Label _loadingLabel;
         readonly Image _gitTrendsImage;
         readonly FirstRunService _firstRunService;
+        readonly AppInitializationService _appInitializationService;
 
         CancellationTokenSource? _animationCancellationToken;
 
         public SplashScreenPage(IMainThread mainThread,
                                     FirstRunService firstRunService,
-                                    IAnalyticsService analyticsService)
+                                    IAnalyticsService analyticsService,
+                                    AppInitializationService appInitializationService)
             : base(analyticsService, mainThread)
         {
             //Remove BaseContentPageBackground
@@ -48,6 +51,7 @@ namespace GitTrends
             this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.GitTrendsImageBackgroundColor));
 
             _firstRunService = firstRunService;
+            _appInitializationService = appInitializationService;
 
             AppInitializationService.InitializationCompleted += HandleInitializationCompleted;
 
@@ -91,6 +95,9 @@ namespace GitTrends
 
             //Wait for Image to reach an opacity of 1
             await Task.WhenAll(fadeImageTask, pulseImageTask);
+
+            var appInitializationCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+            _appInitializationService.InitializeApp(appInitializationCancellationTokenSource.Token).SafeFireAndForget(ex => AnalyticsService.Report(ex));
 
             Animate(_animationCancellationToken.Token);
         }

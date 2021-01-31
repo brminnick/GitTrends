@@ -34,7 +34,7 @@ namespace GitTrends
 
             Children =
                 {
-                    new AvatarImage(_circleDiameter)
+                    new AvatarImage(_circleDiameter).FillExpand()
                         .Row(ContributorRow.Avatar).Column(ContributorColumn.Image)
                         .Bind(CircleImage.ImageSourceProperty, nameof(Contributor.AvatarUrl), BindingMode.OneTime)
                         .DynamicResource(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),

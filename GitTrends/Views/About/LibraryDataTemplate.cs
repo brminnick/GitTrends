@@ -7,7 +7,7 @@ namespace GitTrends
 {
     class LibraryDataTemplate : DataTemplate
     {
-        const int _textPadding = 5;
+        const int _textPadding = 10;
         const int _circleDiameter = 62;
 
         public LibraryDataTemplate() : base(CreateLibraryDataTemplate)
@@ -34,7 +34,7 @@ namespace GitTrends
 
             Children =
             {
-                new AvatarImage(_circleDiameter)
+                new AvatarImage(_circleDiameter).FillExpand()
                     .Row(ContributorRow.Avatar).Column(ContributorColumn.Image)
                     .Bind(CircleImage.ImageSourceProperty, nameof(NuGetPackageModel.IconUri), BindingMode.OneTime)
                     .DynamicResource(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),

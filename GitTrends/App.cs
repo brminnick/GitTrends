@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using GitTrends.Shared;
@@ -20,8 +19,7 @@ namespace GitTrends
         public App(LanguageService languageService,
                     SplashScreenPage splashScreenPage,
                     IAnalyticsService analyticsService,
-                    NotificationService notificationService,
-                    AppInitializationService appInitializationService)
+                    NotificationService notificationService)
         {
             _analyticsService = analyticsService;
             _notificationService = notificationService;
@@ -31,9 +29,6 @@ namespace GitTrends
                 { nameof(LanguageService.PreferredLanguage), languageService.PreferredLanguage ?? "default" },
                 { nameof(CultureInfo.CurrentUICulture), CultureInfo.CurrentUICulture.TwoLetterISOLanguageName }
             });
-
-            var appInitializationCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
-            appInitializationService.InitializeApp(appInitializationCancellationTokenSource.Token).SafeFireAndForget(ex => analyticsService.Report(ex));
 
             MainPage = splashScreenPage;
 

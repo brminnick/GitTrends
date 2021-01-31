@@ -71,7 +71,7 @@ namespace GitTrends
                 initializeNotificationServiceTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
 #else
                 await initializeNuGetServiceTask.ConfigureAwait(false);
-                await initializeSyncfusionServiceTask.ConfigureAwait(false);
+                await initializeSyncFusionServiceTask.ConfigureAwait(false);
                 await initializeNotificationServiceTask.ConfigureAwait(false);
 #endif
 

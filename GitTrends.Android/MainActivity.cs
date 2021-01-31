@@ -42,7 +42,7 @@ namespace GitTrends.Droid
             var notificationService = ContainerService.Container.Resolve<NotificationService>();
             var appInitializationService = ContainerService.Container.Resolve<AppInitializationService>();
 
-            LoadApplication(new App(languageService, splashScreenPage, analyticsService, notificationService, appInitializationService));
+            LoadApplication(new App(languageService, splashScreenPage, analyticsService, notificationService));
 
             TryHandleOpenedFromUri(Intent?.Data);
             TryHandleOpenedFromNotification(Intent);
