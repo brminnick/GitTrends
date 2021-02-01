@@ -10,9 +10,9 @@ namespace GitTrends
     {
         readonly static WeakEventManager<InitializationCompleteEventArgs> _initializationCompletedEventManager = new();
 
-        readonly NuGetService _nuGetService;
         readonly ThemeService _themeService;
         readonly LanguageService _languageService;
+        readonly LibrariesService _librariesService;
         readonly IAnalyticsService _analyticsService;
         readonly SyncfusionService _syncfusionService;
         readonly MediaElementService _mediaElementService;
@@ -20,9 +20,9 @@ namespace GitTrends
         readonly IDeviceNotificationsService _deviceNotificationsService;
         readonly GitTrendsContributorsService _gitTrendsContributorsService;
 
-        public AppInitializationService(NuGetService nuGetService,
-                                        ThemeService themeService,
+        public AppInitializationService(ThemeService themeService,
                                         LanguageService languageService,
+                                        LibrariesService librariesService,
                                         IAnalyticsService analyticsService,
                                         SyncfusionService syncFusionService,
                                         MediaElementService mediaElementService,
@@ -30,9 +30,9 @@ namespace GitTrends
                                         IDeviceNotificationsService deviceNotificationService,
                                         GitTrendsContributorsService gitTrendsContributorsService)
         {
-            _nuGetService = nuGetService;
             _themeService = themeService;
             _languageService = languageService;
+            _librariesService = librariesService;
             _analyticsService = analyticsService;
             _syncfusionService = syncFusionService;
             _mediaElementService = mediaElementService;
@@ -62,17 +62,17 @@ namespace GitTrends
                 #endregion
 
                 #region Then, Initialize Services Requiring API Response
-                var initializeNuGetServiceTask = _nuGetService.Initialize(cancellationToken);
+                var initializeLibrariesServiceTask = _librariesService.Initialize(cancellationToken);
                 var initializeSyncFusionServiceTask = _syncfusionService.Initialize(cancellationToken);
                 var initializeNotificationServiceTask = _notificationService.Initialize(cancellationToken);
                 var intializeOnboardingChartValueTask = _mediaElementService.InitializeOnboardingChart(cancellationToken);
                 var initializeGitTrendsContributorsTask = _gitTrendsContributorsService.Initialize(cancellationToken);
 #if DEBUG
-                initializeNuGetServiceTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
+                initializeLibrariesServiceTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
                 initializeSyncFusionServiceTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
                 initializeNotificationServiceTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
 #else
-                await initializeNuGetServiceTask.ConfigureAwait(false);
+                await initializeLibrariesServiceTask.ConfigureAwait(false);
                 await initializeSyncFusionServiceTask.ConfigureAwait(false);
                 await initializeNotificationServiceTask.ConfigureAwait(false);
 #endif

@@ -52,9 +52,9 @@ namespace GitTrends
             builder.RegisterType<GitTrendsContributorsService>().AsSelf().SingleInstance();
             builder.RegisterType<ImageCachingService>().AsSelf().SingleInstance();
             builder.RegisterType<LanguageService>().AsSelf().SingleInstance();
+            builder.RegisterType<LibrariesService>().AsSelf().SingleInstance();
             builder.RegisterType<MediaElementService>().AsSelf().SingleInstance();
             builder.RegisterType<NotificationService>().AsSelf().SingleInstance();
-            builder.RegisterType<NuGetService>().AsSelf().SingleInstance();
             builder.RegisterType<ReferringSitesDatabase>().AsSelf().SingleInstance();
             builder.RegisterType<RepositoryDatabase>().AsSelf().SingleInstance();
             builder.RegisterType<ReviewService>().AsSelf().SingleInstance();

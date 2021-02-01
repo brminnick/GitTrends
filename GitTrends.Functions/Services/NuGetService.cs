@@ -7,85 +7,36 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using AsyncAwaitBestPractices;
-using GitTrends.Shared;
-using Newtonsoft.Json;
-using NuGet.Common;
+using Microsoft.Extensions.Logging;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
-using Xamarin.Essentials.Interfaces;
 
-namespace GitTrends
+namespace GitTrends.Functions
 {
-    public class NuGetService
+    class NuGetService
     {
-        static readonly HttpClient _client = new();
-        readonly SourceRepository _sourceRepository = NuGet.Protocol.Core.Types.Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
+        readonly SourceRepository _sourceRepository = Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
 
-        readonly IPreferences _preferences;
-        readonly IAnalyticsService _analyticsService;
+        readonly static IReadOnlyList<string> _csProjFilePaths = new[]
+        {
+            Environment.GetEnvironmentVariable("iOSCSProjPath") ?? string.Empty,
+            Environment.GetEnvironmentVariable("UITestCSProjPath") ?? string.Empty,
+            Environment.GetEnvironmentVariable("AndroidCSProjPath") ?? string.Empty,
+            Environment.GetEnvironmentVariable("UnitTestCSProjPath") ?? string.Empty,
+            Environment.GetEnvironmentVariable("GitTrendsCSProjPath") ?? string.Empty,
+            Environment.GetEnvironmentVariable("FunctionsCSProjPath") ?? string.Empty,
+            Environment.GetEnvironmentVariable("MobileCommonCSProjPath") ?? string.Empty
+        };
+
+        readonly ILogger _logger;
+        readonly HttpClient _client;
         readonly GitHubApiV3Service _gitHubApiV3Service;
-        readonly ImageCachingService _imageCachingService;
-        readonly AzureFunctionsApiService _azureFunctionsApiService;
 
-        public NuGetService(IPreferences preferences,
-                            IAnalyticsService analyticsService,
-                            GitHubApiV3Service gitHubApiV3Service,
-                            ImageCachingService imageCachingService,
-                            AzureFunctionsApiService azureFunctionsApiService)
+        public NuGetService(GitHubApiV3Service gitHubApiV3Service, HttpClient httpClient, ILogger<NuGetService> logger)
         {
-            _preferences = preferences;
-            _analyticsService = analyticsService;
+            _logger = logger;
+            _client = httpClient;
             _gitHubApiV3Service = gitHubApiV3Service;
-            _imageCachingService = imageCachingService;
-            _azureFunctionsApiService = azureFunctionsApiService;
-        }
-
-        public IReadOnlyList<NuGetPackageModel> InstalledNugetPackages
-        {
-            get
-            {
-                var serializedInstalledNuGetPackages = _preferences.Get(nameof(InstalledNugetPackages), null);
-
-                return serializedInstalledNuGetPackages is null
-                    ? Array.Empty<NuGetPackageModel>()
-                    : JsonConvert.DeserializeObject<IReadOnlyList<NuGetPackageModel>>(serializedInstalledNuGetPackages);
-            }
-            private set
-            {
-                var serializedInstalledNuGetPackages = JsonConvert.SerializeObject(value);
-                _preferences.Set(nameof(InstalledNugetPackages), serializedInstalledNuGetPackages);
-            }
-        }
-
-        public async ValueTask Initialize(CancellationToken cancellationToken)
-        {
-            if (InstalledNugetPackages.Any())
-                initialize().SafeFireAndForget(ex => _analyticsService.Report(ex));
-            else
-                await initialize().ConfigureAwait(false);
-
-            async Task initialize()
-            {
-                var installedPackagesDictionary = new Dictionary<string, (Uri IconUri, Uri NugetUri)>();
-
-                await foreach (var packageInfo in GetPackageInfo(cancellationToken).ConfigureAwait(false))
-                {
-                    if (!installedPackagesDictionary.ContainsKey(packageInfo.Title))
-                        installedPackagesDictionary.Add(packageInfo.Title, (packageInfo.ImageUri, packageInfo.NugetUri));
-                }
-
-                var nugetPackageModelList = new List<NuGetPackageModel>();
-                foreach (var entry in installedPackagesDictionary)
-                {
-                    nugetPackageModelList.Add(new NuGetPackageModel(entry.Key, entry.Value.IconUri, entry.Value.NugetUri));
-                }
-
-                InstalledNugetPackages = nugetPackageModelList.OrderBy(x => x.PackageName).ToList();
-
-                foreach (var nugetPackageModel in InstalledNugetPackages)
-                    _imageCachingService.PreloadImage(nugetPackageModel.IconUri).SafeFireAndForget(ex => _analyticsService.Report(ex));
-            }
         }
 
         public async IAsyncEnumerable<(string Title, Uri ImageUri, Uri NugetUri)> GetPackageInfo([EnumeratorCancellation] CancellationToken cancellationToken)
@@ -113,11 +64,11 @@ namespace GitTrends
 
                 try
                 {
-                    metadatas = await metadataResource.GetMetadataAsync(package.PackageName, true, true, new SourceCacheContext(), NullLogger.Instance, cancellationToken).ConfigureAwait(false);
+                    metadatas = await metadataResource.GetMetadataAsync(package.PackageName, true, true, new SourceCacheContext(), NuGet.Common.NullLogger.Instance, cancellationToken).ConfigureAwait(false);
                 }
                 catch (Exception e)
                 {
-                    _analyticsService.Report(e, nameof(package.PackageName), package.PackageName);
+                    _logger.LogError(e, e.Message);
                 }
 
                 var iconUri = metadatas.LastOrDefault().IconUrl;
@@ -152,10 +103,8 @@ namespace GitTrends
 
         async IAsyncEnumerable<string> GetCsprojFiles([EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var csprojFilePaths = await _azureFunctionsApiService.GetGitTrendsCSProjPaths(cancellationToken).ConfigureAwait(false);
-
             var getCSProjFileTaskList = new List<(string csprojFilePath, TaskCompletionSource<string> csprojSourceCodeTCS)>();
-            foreach (var csprojFilePath in csprojFilePaths)
+            foreach (var csprojFilePath in _csProjFilePaths)
             {
                 getCSProjFileTaskList.Add((csprojFilePath, new TaskCompletionSource<string>()));
             }
