@@ -25,7 +25,7 @@ namespace GitTrends.Shared
         [Get("/GetNotificationHubInformation")]
         Task<NotificationHubInformation> GetNotificationHubInformation([AliasAs("code")] string functionKey = AzureConstants.GetNotificationHubInformationApiKey);
 
-        [Get("/GetGitTrendsCSProjPaths")]
-        Task<IReadOnlyList<string>> GetGitTrendsCSProjPaths();
+        [Get("/GetLibraries")]
+        Task<IReadOnlyList<NuGetPackageModel>> GetLibraries();
     }
 }

@@ -27,6 +27,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton(gitHubGraphQLApi);
 
             //GitTrends Services
+            services.AddTransient<AppInitializationService>();
             services.AddSingleton<AzureFunctionsApiService>();
             services.AddSingleton<BackgroundFetchService>();
             services.AddSingleton<DeepLinkingService>();
@@ -56,7 +57,6 @@ namespace GitTrends.UnitTests
             services.AddTransient<ReferringSitesViewModel>();
             services.AddTransient<RepositoryViewModel>();
             services.AddTransient<SettingsViewModel>();
-            services.AddTransient<SplashScreenViewModel>();
             services.AddTransient<TrendsViewModel>();
             services.AddTransient<WelcomeViewModel>();
 

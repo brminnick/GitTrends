@@ -8,15 +8,15 @@ namespace GitTrends
     class AboutViewModel : BaseViewModel
     {
         public AboutViewModel(IMainThread mainThread,
-                                NuGetService nuGetService,
+                                LibrariesService librariesService,
                                 IAnalyticsService analyticsService,
                                 GitTrendsContributorsService gitTrendsContributorsService) : base(analyticsService, mainThread)
         {
             GitTrendsContributors = gitTrendsContributorsService.Contributors.OrderByDescending(x => x.ContributionCount).ToList();
-            NuGetPackageModels = nuGetService.InstalledNugetPackages;
+            InstalledLibraries = librariesService.InstalledLibraries;
         }
 
         public IReadOnlyList<Contributor> GitTrendsContributors { get; }
-        public IReadOnlyList<NuGetPackageModel> NuGetPackageModels { get; }
+        public IReadOnlyList<NuGetPackageModel> InstalledLibraries { get; }
     }
 }

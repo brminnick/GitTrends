@@ -127,7 +127,7 @@ namespace GitTrends
                         Header = new BoxView { WidthRequest = horizontalPadding },
                         SelectionMode = SelectionMode.Single,
                         ItemTemplate = new LibraryDataTemplate(),
-                        ItemsSource = ViewModel.NuGetPackageModels,
+                        ItemsSource = ViewModel.InstalledLibraries,
                         ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Horizontal)
                     }.Center()
                      .Row(Row.LibrariesCollection).ColumnSpan(All<Column>())
