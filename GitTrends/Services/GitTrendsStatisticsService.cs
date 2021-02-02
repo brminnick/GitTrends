@@ -28,6 +28,20 @@ namespace GitTrends
             _imageCachingService = imageCachingService;
         }
 
+        public Uri? GitHubUri
+        {
+            get
+            {
+                var url = _preferences.Get(nameof(GitHubUri), null);
+                return url is null ? null : new Uri(url);
+            }
+            private set
+            {
+                if (value is not null)
+                    _preferences.Set(nameof(GitHubUri), value.ToString());
+            }
+        }
+
         public long? Stars
         {
             get
@@ -35,7 +49,11 @@ namespace GitTrends
                 var stars = _preferences.Get(nameof(Stars), (long)-1);
                 return stars < 0 ? null : stars;
             }
-            private set => _preferences.Set(nameof(Stars), value ?? -1);
+            private set
+            {
+                if (value.HasValue)
+                    _preferences.Set(nameof(Stars), value.Value);
+            }
         }
 
         public long? Watchers
@@ -45,7 +63,11 @@ namespace GitTrends
                 var watchers = _preferences.Get(nameof(Watchers), (long)-1);
                 return watchers < 0 ? null : watchers;
             }
-            private set => _preferences.Set(nameof(Watchers), value ?? -1);
+            private set
+            {
+                if (value.HasValue)
+                    _preferences.Set(nameof(Watchers), value.Value);
+            }
         }
 
         public long? Forks
@@ -55,7 +77,11 @@ namespace GitTrends
                 var forks = _preferences.Get(nameof(Forks), (long)-1);
                 return forks < 0 ? null : forks;
             }
-            private set => _preferences.Set(nameof(Forks), value ?? -1);
+            private set
+            {
+                if (value.HasValue)
+                    _preferences.Set(nameof(Forks), value.Value);
+            }
         }
 
         public IReadOnlyList<Contributor> Contributors
@@ -66,7 +92,7 @@ namespace GitTrends
 
         public async ValueTask Initialize(CancellationToken cancellationToken)
         {
-            if (Stars is null || Watchers is null || Forks is null || !Contributors.Any())
+            if (GitHubUri is null || Stars is null || Watchers is null || Forks is null || !Contributors.Any())
                 await initialize().ConfigureAwait(false);
             else
                 initialize().SafeFireAndForget(ex => _analyticsService.Report(ex));
@@ -83,6 +109,7 @@ namespace GitTrends
                 Stars = gitTrendsRepository?.StarCount;
                 Forks = gitTrendsRepository?.ForkCount;
                 Watchers = gitTrendsRepository?.WatchersCount;
+                GitHubUri = gitTrendsRepository?.Url is null ? null : new Uri(gitTrendsRepository?.Url);
 
                 Contributors = await getGitTrendsContributorsTask.ConfigureAwait(false);
                 foreach (var contributor in Contributors)

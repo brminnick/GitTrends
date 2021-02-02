@@ -85,16 +85,16 @@ namespace GitTrends
                     new StatsTitleLayout("Forks", "repo_forked.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)])
                         .Row(Row.StatsTitle).Column(Column.Forks),
 
-                    new StatisticsLabel(ViewModel.Watchers.ToAbbreviatedText())
+                    new StatisticsLabel(ViewModel.Watchers.ToAbbreviatedText(), AboutPageAutomationIds.WatchersLabel)
                         .Row(Row.StatsNumber).Column(Column.Watching),
 
-                    new StatisticsLabel(ViewModel.Stars.ToAbbreviatedText())
+                    new StatisticsLabel(ViewModel.Stars.ToAbbreviatedText(), AboutPageAutomationIds.StarsLabel)
                         .Row(Row.StatsNumber).Column(Column.Stars),
 
-                    new StatisticsLabel(ViewModel.Forks.ToAbbreviatedText())
+                    new StatisticsLabel(ViewModel.Forks.ToAbbreviatedText(), AboutPageAutomationIds.ForksLabel)
                         .Row(Row.StatsNumber).Column(Column.Forks),
 
-                    new Label { BackgroundColor = Color.BlueViolet, Text = "View on GitHub" }
+                    new ViewOnGitHubButton()
                         .Row(Row.ActionButtons).Column(Column.Icon).ColumnSpan(3),
 
                     new Label { BackgroundColor = Color.Brown, Text = "Request Feature" }
@@ -168,9 +168,13 @@ namespace GitTrends
 
         class StatisticsLabel : Label
         {
-            public StatisticsLabel(in string text)
+            public StatisticsLabel(in string text, in string automationId)
             {
                 Text = text;
+                AutomationId = automationId;
+
+                FontSize = 16;
+                FontFamily = FontFamilyConstants.RobotoMedium;
 
                 this.Center().TextCenter().DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
             }
@@ -207,6 +211,14 @@ namespace GitTrends
                 LineBreakMode = LineBreakMode.TailTruncation;
 
                 this.DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
+            }
+        }
+
+        class ViewOnGitHubButton : GitHubView
+        {
+            public ViewOnGitHubButton() : base("View on GitHub", AboutPageAutomationIds.ViewOnGitHubButton, 14, FontFamilyConstants.RobotoMedium)
+            {
+                GestureRecognizers.Add(new TapGestureRecognizer().Bind(TapGestureRecognizer.CommandProperty, nameof(AboutViewModel.ViewOnGitHubCommand)));
             }
         }
 

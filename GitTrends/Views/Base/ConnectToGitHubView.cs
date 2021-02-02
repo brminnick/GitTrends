@@ -6,9 +6,21 @@ using Xamarin.Forms.PancakeView;
 
 namespace GitTrends
 {
-    class ConnectToGitHubView : PancakeView
+    class ConnectToGitHubView : GitHubView
     {
-        public ConnectToGitHubView(in string automationId, CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions = null)
+        public ConnectToGitHubView(in string automationId,
+                                    CancellationToken cancellationToken,
+                                    Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions = null)
+            : base(GitHubLoginButtonConstants.ConnectToGitHub, automationId, 18, FontFamilyConstants.RobotoRegular)
+        {
+            GestureRecognizers.Add(new TapGestureRecognizer { CommandParameter = (cancellationToken, browserLaunchOptions) }
+                .Bind(TapGestureRecognizer.CommandProperty, nameof(OnboardingViewModel.ConnectToGitHubButtonCommand)));
+        }
+    }
+
+    class GitHubView : PancakeView
+    {
+        public GitHubView(in string text, in string automationId, in int fontSize, in string fontFamily)
         {
             AutomationId = automationId;
             HorizontalOptions = LayoutOptions.CenterAndExpand;
@@ -23,14 +35,11 @@ namespace GitTrends
                 Children =
                 {
                     new GitHubSvgImage(),
-                    new ConnectToGitHubLabel()
+                    new GitHubLabel(text, fontSize,fontFamily)
                 }
             };
 
             BackgroundColor = Color.FromHex("231F20");
-
-            GestureRecognizers.Add(new TapGestureRecognizer { CommandParameter = (cancellationToken, browserLaunchOptions) }
-                                    .Bind(TapGestureRecognizer.CommandProperty, nameof(OnboardingViewModel.ConnectToGitHubButtonCommand)));
         }
 
         class GitHubSvgImage : SvgImage
@@ -40,17 +49,18 @@ namespace GitTrends
             }
         }
 
-        class ConnectToGitHubLabel : Label
+        class GitHubLabel : Label
         {
-            public ConnectToGitHubLabel()
+            public GitHubLabel(in string text, in int fontSize = 18, in string fontFamily = FontFamilyConstants.RobotoRegular)
             {
+                Text = text;
+                FontSize = fontSize;
+                FontFamily = fontFamily;
+
                 HorizontalTextAlignment = TextAlignment.Center;
                 VerticalTextAlignment = TextAlignment.Center;
                 VerticalOptions = LayoutOptions.CenterAndExpand;
                 TextColor = Color.White;
-                FontSize = 18;
-                FontFamily = FontFamilyConstants.RobotoRegular;
-                Text = GitHubLoginButtonConstants.ConnectToGitHub;
             }
         }
     }
