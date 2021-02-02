@@ -66,5 +66,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryContributor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\NuGetPackageModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\GetRepositoryResponse.cs" />
   </ItemGroup>
 </Project>

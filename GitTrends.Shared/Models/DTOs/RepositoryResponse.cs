@@ -10,5 +10,8 @@ namespace GitTrends.Shared
                                             Uri Url,
                                             RepositoryOwner Owner,
                                             bool IsFork,
-                                            IssuesConnection Issues);
+                                            IssuesConnection Issues,
+                                            Watchers Watchers);
+
+    public record Watchers(long TotalCount);
 }

@@ -26,7 +26,19 @@ namespace GitTrends.Shared
         [Get("/repos/{owner}/{repo}/contributors")]
         Task<IReadOnlyList<Contributor>> GetContributors(string owner, string repo);
 
+        [Get("/repos/{owner}/{repo}/contributors")]
+        Task<IReadOnlyList<Contributor>> GetContributors(string owner, string repo, [Header("Authorization")] string authorization);
+
         [Get("/repos/brminnick/gittrends/contents{filePath}")]
         public Task<RepositoryFile> GetGitTrendsFile(string filePath);
+
+        [Get("/repos/brminnick/gittrends/contents{filePath}")]
+        public Task<RepositoryFile> GetGitTrendsFile(string filePath, [Header("Authorization")] string authorization);
+
+        [Get("/repos/{owner}/{repo}")]
+        public Task<GetRepositoryResponse> GetRepository(string owner, string repo);
+
+        [Get("/repos/{owner}/{repo}")]
+        public Task<GetRepositoryResponse> GetRepository(string owner, string repo, [Header("Authorization")] string authorization);
     }
 }

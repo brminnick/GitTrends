@@ -8,29 +8,48 @@ using NUnit.Framework;
 
 namespace GitTrends.UnitTests
 {
-    class GitTrendsContributorsServiceTests : BaseTest
+    class GitTrendsStatisticsServiceTests : BaseTest
     {
         [Test]
         public async Task InitializeContributorsTest()
         {
             //Arrange
-            IReadOnlyList<Contributor> contributors_Initial, contributors_Final;
             DateTimeOffset beforeTest, afterTest;
+            IReadOnlyList<Contributor> contributors_Initial, contributors_Final;
+            long? watchers_Initial, watchers_Final, stars_Initial, stars_Final, forks_Initial, forks_Final;
 
-            var gitTrendsContributorsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsContributorsService>();
+            var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
 
             //Act
             beforeTest = DateTimeOffset.UtcNow;
-            contributors_Initial = gitTrendsContributorsService.Contributors;
+            stars_Initial = gitTrendsStatisticsService.Stars;
+            forks_Initial = gitTrendsStatisticsService.Forks;
+            watchers_Initial = gitTrendsStatisticsService.Watchers;
+            contributors_Initial = gitTrendsStatisticsService.Contributors;
 
-            await gitTrendsContributorsService.Initialize(CancellationToken.None).ConfigureAwait(false);
+            await gitTrendsStatisticsService.Initialize(CancellationToken.None).ConfigureAwait(false);
 
-            contributors_Final = gitTrendsContributorsService.Contributors;
             afterTest = DateTimeOffset.UtcNow;
+            stars_Final = gitTrendsStatisticsService.Stars;
+            forks_Final = gitTrendsStatisticsService.Forks;
+            watchers_Final = gitTrendsStatisticsService.Watchers;
+            contributors_Final = gitTrendsStatisticsService.Contributors;
 
             //Assert
+            Assert.IsNull(stars_Initial);
+            Assert.IsNull(forks_Initial);
+            Assert.IsNull(watchers_Initial);
+
             Assert.IsNotNull(contributors_Initial);
             Assert.IsEmpty(contributors_Initial);
+
+            Assert.IsNotNull(stars_Final);
+            Assert.IsNotNull(forks_Final);
+            Assert.IsNotNull(watchers_Final);
+
+            Assert.Less(0, stars_Final);
+            Assert.Less(0, forks_Final);
+            Assert.Less(0, watchers_Final);
 
             Assert.IsNotEmpty(contributors_Final);
 

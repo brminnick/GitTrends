@@ -166,8 +166,8 @@ namespace GitTrends.UnitTests
             }
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-                                                        DemoUserConstants.Alias, gitTrendsAvatarUrl,
-                                                        DemoDataConstants.GetRandomNumber(), repositoryUrl, false, downloadedAt, true, dailyViewsList, dailyClonesList, starredAtList);
+                                                        DemoUserConstants.Alias, gitTrendsAvatarUrl, DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
+                                                        repositoryUrl, false, downloadedAt, true, dailyViewsList, dailyClonesList, starredAtList);
         }
 
         static MobileReferringSiteModel CreateMobileReferringSite(DateTimeOffset downloadedAt, string referrer)

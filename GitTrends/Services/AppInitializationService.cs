@@ -17,8 +17,8 @@ namespace GitTrends
         readonly SyncfusionService _syncfusionService;
         readonly MediaElementService _mediaElementService;
         readonly NotificationService _notificationService;
+        readonly GitTrendsStatisticsService _gitTrendsStatisticsService;
         readonly IDeviceNotificationsService _deviceNotificationsService;
-        readonly GitTrendsContributorsService _gitTrendsContributorsService;
 
         public AppInitializationService(ThemeService themeService,
                                         LanguageService languageService,
@@ -27,8 +27,8 @@ namespace GitTrends
                                         SyncfusionService syncFusionService,
                                         MediaElementService mediaElementService,
                                         NotificationService notificationService,
-                                        IDeviceNotificationsService deviceNotificationService,
-                                        GitTrendsContributorsService gitTrendsContributorsService)
+                                        GitTrendsStatisticsService gitTrendsStatisticsService,
+                                        IDeviceNotificationsService deviceNotificationService)
         {
             _themeService = themeService;
             _languageService = languageService;
@@ -38,7 +38,7 @@ namespace GitTrends
             _mediaElementService = mediaElementService;
             _notificationService = notificationService;
             _deviceNotificationsService = deviceNotificationService;
-            _gitTrendsContributorsService = gitTrendsContributorsService;
+            _gitTrendsStatisticsService = gitTrendsStatisticsService;
         }
 
         public static event EventHandler<InitializationCompleteEventArgs> InitializationCompleted
@@ -62,23 +62,23 @@ namespace GitTrends
                 #endregion
 
                 #region Then, Initialize Services Requiring API Response
-                var initializeLibrariesServiceTask = _librariesService.Initialize(cancellationToken);
                 var initializeSyncFusionServiceTask = _syncfusionService.Initialize(cancellationToken);
-                var initializeNotificationServiceTask = _notificationService.Initialize(cancellationToken);
                 var intializeOnboardingChartValueTask = _mediaElementService.InitializeOnboardingChart(cancellationToken);
-                var initializeGitTrendsContributorsTask = _gitTrendsContributorsService.Initialize(cancellationToken);
+                var initializeLibrariesServiceValueTask = _librariesService.Initialize(cancellationToken);
+                var initializeNotificationServiceValueTask = _notificationService.Initialize(cancellationToken);
+                var initializeGitTrendsStatisticsValueTask = _gitTrendsStatisticsService.Initialize(cancellationToken);
 #if DEBUG
-                initializeLibrariesServiceTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
                 initializeSyncFusionServiceTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
-                initializeNotificationServiceTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
+                initializeLibrariesServiceValueTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
+                initializeNotificationServiceValueTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
 #else
-                await initializeLibrariesServiceTask.ConfigureAwait(false);
                 await initializeSyncFusionServiceTask.ConfigureAwait(false);
-                await initializeNotificationServiceTask.ConfigureAwait(false);
+                await initializeLibrariesServiceValueTask.ConfigureAwait(false);
+                await initializeNotificationServiceValueTask.ConfigureAwait(false);
 #endif
 
                 await intializeOnboardingChartValueTask.ConfigureAwait(false);
-                await initializeGitTrendsContributorsTask.ConfigureAwait(false);
+                await initializeGitTrendsStatisticsValueTask.ConfigureAwait(false);
                 #endregion
 
                 isInitializationSuccessful = true;

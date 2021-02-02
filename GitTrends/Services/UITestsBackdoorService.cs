@@ -61,8 +61,8 @@ namespace GitTrends
 
         public string? GetPreferredLanguage() => _languageService.PreferredLanguage;
 
-        public string GetLoggedInUserAlias() => _gitHubUserService.Alias;
         public string GetLoggedInUserName() => _gitHubUserService.Name;
+        public string GetLoggedInUserAlias() => _gitHubUserService.Alias;
         public string GetLoggedInUserAvatarUrl() => _gitHubUserService.AvatarUrl;
 
         public async Task SetGitHubUser(string token, CancellationToken cancellationToken)

@@ -134,8 +134,8 @@ namespace GitTrends
                         SQLiteAsyncConnection StarGazerInfoDatabaseConnection)> GetDatabaseConnections()
         {
             var repositoryDatabaseConnection = await GetDatabaseConnection<RepositoryDatabaseModel>().ConfigureAwait(false);
-            var dailyClonesDatabaseConnection = await GetDatabaseConnection<DailyClonesDatabaseModel>().ConfigureAwait(false);
             var dailyViewsDatabaseConnection = await GetDatabaseConnection<DailyViewsDatabaseModel>().ConfigureAwait(false);
+            var dailyClonesDatabaseConnection = await GetDatabaseConnection<DailyClonesDatabaseModel>().ConfigureAwait(false);
             var starGazerInfoDatabaseConnection = await GetDatabaseConnection<StarGazerInfoDatabaseModel>().ConfigureAwait(false);
 
             return (repositoryDatabaseConnection, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection, starGazerInfoDatabaseConnection);
@@ -294,6 +294,8 @@ namespace GitTrends
 
             public long IssuesCount { get; init; }
 
+            public long WatchersCount { get; init; }
+
             public bool IsFork { get; init; }
 
             public long? TotalViews { get; init; }
@@ -320,6 +322,7 @@ namespace GitTrends
                                         repositoryDatabaseModel.ForkCount,
                                         repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl ?? repositoryDatabaseModel.OwnerLogin,
                                         repositoryDatabaseModel.IssuesCount,
+                                        repositoryDatabaseModel.WatchersCount,
                                         repositoryDatabaseModel.Url,
                                         repositoryDatabaseModel.IsFork,
                                         repositoryDatabaseModel.DataDownloadedAt,
@@ -337,6 +340,7 @@ namespace GitTrends
                 Url = repository.Url,
                 IssuesCount = repository.IssuesCount,
                 ForkCount = repository.ForkCount,
+                WatchersCount = repository.WatchersCount,
                 Name = repository.Name,
                 OwnerAvatarUrl = repository.OwnerAvatarUrl,
                 OwnerLogin = repository.OwnerLogin,

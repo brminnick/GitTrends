@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.CommunityToolkit.Markup;
@@ -84,13 +85,13 @@ namespace GitTrends
                     new StatsTitleLayout("Forks", "repo_forked.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)])
                         .Row(Row.StatsTitle).Column(Column.Forks),
 
-                    new Label { BackgroundColor = Color.CornflowerBlue, Text = "Watching Number" }
+                    new StatisticsLabel(ViewModel.Watchers.ToAbbreviatedText())
                         .Row(Row.StatsNumber).Column(Column.Watching),
 
-                    new Label { BackgroundColor = Color.Cornsilk, Text = "Stars Number" }
+                    new StatisticsLabel(ViewModel.Stars.ToAbbreviatedText())
                         .Row(Row.StatsNumber).Column(Column.Stars),
 
-                    new Label { BackgroundColor = Color.Crimson, Text = "Forks Number" }
+                    new StatisticsLabel(ViewModel.Forks.ToAbbreviatedText())
                         .Row(Row.StatsNumber).Column(Column.Forks),
 
                     new Label { BackgroundColor = Color.BlueViolet, Text = "View on GitHub" }
@@ -162,6 +163,16 @@ namespace GitTrends
                 AnalyticsService.Track("Library Tapped", nameof(NuGetPackageModel.PackageName), nuGetPackageModel.PackageName);
 
                 await _deepLinkingService.OpenBrowser(nuGetPackageModel.WebsiteUri);
+            }
+        }
+
+        class StatisticsLabel : Label
+        {
+            public StatisticsLabel(in string text)
+            {
+                Text = text;
+
+                this.Center().TextCenter().DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
             }
         }
 

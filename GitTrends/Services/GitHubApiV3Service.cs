@@ -15,11 +15,17 @@ namespace GitTrends
         readonly IGitHubApiV3 _githubApiClient;
         readonly GitHubUserService _gitHubUserService;
 
-        public GitHubApiV3Service(IAnalyticsService analyticsService, IMainThread mainThread, GitHubUserService gitHubUserService, IGitHubApiV3 gitHubApiV3) : base(analyticsService, mainThread)
+        public GitHubApiV3Service(IMainThread mainThread,
+                                    IGitHubApiV3 gitHubApiV3,
+                                    IAnalyticsService analyticsService,
+                                    GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
         {
             _githubApiClient = gitHubApiV3;
             _gitHubUserService = gitHubUserService;
         }
+
+        public Task<GetRepositoryResponse> GetRepository(string owner, string repositoryName, CancellationToken cancellationToken) =>
+            AttemptAndRetry_Mobile(() => _githubApiClient.GetRepository(owner, repositoryName), cancellationToken);
 
         public Task<IReadOnlyList<Contributor>> GetGitTrendsContributors(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _githubApiClient.GetContributors(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName), cancellationToken);
 

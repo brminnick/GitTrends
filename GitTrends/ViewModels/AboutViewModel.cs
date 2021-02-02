@@ -10,12 +10,24 @@ namespace GitTrends
         public AboutViewModel(IMainThread mainThread,
                                 LibrariesService librariesService,
                                 IAnalyticsService analyticsService,
-                                GitTrendsContributorsService gitTrendsContributorsService) : base(analyticsService, mainThread)
+                                GitTrendsStatisticsService gitTrendsStatisticsService) : base(analyticsService, mainThread)
         {
-            GitTrendsContributors = gitTrendsContributorsService.Contributors.OrderByDescending(x => x.ContributionCount).ToList();
+            if (gitTrendsStatisticsService.Stars.HasValue)
+                Stars = gitTrendsStatisticsService.Stars.Value;
+
+            if (gitTrendsStatisticsService.Watchers.HasValue)
+                Watchers = gitTrendsStatisticsService.Watchers.Value;
+
+            if (gitTrendsStatisticsService.Forks.HasValue)
+                Forks = gitTrendsStatisticsService.Forks.Value;
+
+            GitTrendsContributors = gitTrendsStatisticsService.Contributors.OrderByDescending(x => x.ContributionCount).ToList();
             InstalledLibraries = librariesService.InstalledLibraries;
         }
 
+        public long Stars { get; }
+        public long Forks { get; }
+        public long Watchers { get; }
         public IReadOnlyList<Contributor> GitTrendsContributors { get; }
         public IReadOnlyList<NuGetPackageModel> InstalledLibraries { get; }
     }
