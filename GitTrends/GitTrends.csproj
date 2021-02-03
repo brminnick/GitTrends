@@ -96,6 +96,7 @@
       <None Remove="Resources\SVGs\about.svg" />
       <None Remove="Resources\SVGs\favorite_tag.svg" />
       <None Remove="Resources\SVGs\star_outline.svg" />
+      <None Remove="Resources\SVGs\sparkle.svg" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="Resources\SVGs\chart.svg" />
@@ -126,6 +127,7 @@
       <EmbeddedResource Include="Resources\SVGs\about.svg" />
       <EmbeddedResource Include="Resources\SVGs\favorite_tag.svg" />
       <EmbeddedResource Include="Resources\SVGs\star_outline.svg" />
+      <EmbeddedResource Include="Resources\SVGs\sparkle.svg" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj" />

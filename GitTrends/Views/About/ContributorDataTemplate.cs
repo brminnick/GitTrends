@@ -7,6 +7,10 @@ namespace GitTrends
 {
     class ContributorDataTemplate : DataTemplate
     {
+        public const int RowHeight = _rowSpacing + _circleDiameter + _loginTextHeight;
+
+        const int _rowSpacing = 4;
+        const int _loginTextHeight = 25;
         const int _textPadding = 5;
         const int _circleDiameter = 62;
 
@@ -15,35 +19,35 @@ namespace GitTrends
 
         }
 
-        enum ContributorRow { Avatar, Login }
-        enum ContributorColumn { LeftText, Image, RightText, RightPadding }
+        enum Row { Avatar, Login }
+        enum Column { LeftText, Image, RightText, RightPadding }
 
         static Grid CreateContributorDataTemplate() => new()
         {
-            RowSpacing = 4,
+            RowSpacing = _rowSpacing,
 
             RowDefinitions = Rows.Define(
-                (ContributorRow.Avatar, _circleDiameter),
-                (ContributorRow.Login, 25)),
+                (Row.Avatar, _circleDiameter),
+                (Row.Login, _loginTextHeight)),
 
             ColumnDefinitions = Columns.Define(
-                (ContributorColumn.LeftText, _textPadding),
-                (ContributorColumn.Image, _circleDiameter),
-                (ContributorColumn.RightText, _textPadding),
-                (ContributorColumn.RightPadding, 0.5)),
+                (Column.LeftText, _textPadding),
+                (Column.Image, _circleDiameter),
+                (Column.RightText, _textPadding),
+                (Column.RightPadding, 0.5)),
 
             Children =
-                {
-                    new AvatarImage(_circleDiameter).FillExpand()
-                        .Row(ContributorRow.Avatar).Column(ContributorColumn.Image)
-                        .Bind(CircleImage.ImageSourceProperty, nameof(Contributor.AvatarUrl), BindingMode.OneTime)
-                        .DynamicResource(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
+            {
+                new AvatarImage(_circleDiameter).FillExpand()
+                    .Row(Row.Avatar).Column(Column.Image)
+                    .Bind(CircleImage.ImageSourceProperty, nameof(Contributor.AvatarUrl), BindingMode.OneTime)
+                    .DynamicResource(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
 
-                    new Label { LineBreakMode = LineBreakMode.TailTruncation }.TextCenterHorizontal().TextTop().Font(FontFamilyConstants.RobotoRegular, 12)
-                        .Row(ContributorRow.Login).Column(ContributorColumn.LeftText).ColumnSpan(3)
-                        .Bind<Label, string, string>(Label.TextProperty, nameof(Contributor.Login), BindingMode.OneTime, convert: login => $"@{login}")
-                        .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
-                }
+                new Label { LineBreakMode = LineBreakMode.TailTruncation }.CenterHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, 12)
+                    .Row(Row.Login).Column(Column.LeftText).ColumnSpan(3)
+                    .Bind<Label, string, string>(Label.TextProperty, nameof(Contributor.Login), BindingMode.OneTime, convert: login => $"@{login}")
+                    .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
+            }
         };
     }
 }

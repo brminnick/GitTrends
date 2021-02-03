@@ -93,6 +93,7 @@ namespace GitTrends
 
             //Wait for Image to reach an opacity of 1
             await Task.WhenAll(fadeImageTask, pulseImageTask);
+            await Task.Delay(100);
 
             Animate(_animationCancellationToken.Token);
 

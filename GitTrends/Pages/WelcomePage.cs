@@ -63,7 +63,7 @@ namespace GitTrends
                         .Row(Row.WelcomeLabel),
                     new Image { Source = "WelcomeImage" }.Center()
                         .Row(Row.Image),
-                    new ConnectToGitHubButton(_connectToGitHubCancellationTokenSource.Token, browserLaunchOptions)
+                    new ConnectToGitHubButton(WelcomePageAutomationIds.ConnectToGitHubButton, _connectToGitHubCancellationTokenSource.Token, browserLaunchOptions).CenterHorizontal().Bottom()
                         .Row(Row.GitHubButton),
                     new DemoLabel()
                         .Row(Row.DemoButton),
@@ -115,15 +115,6 @@ namespace GitTrends
 
                 this.Bind(IsVisibleProperty, nameof(WelcomeViewModel.IsAuthenticating));
                 this.Bind(IsRunningProperty, nameof(WelcomeViewModel.IsAuthenticating));
-            }
-        }
-
-        class ConnectToGitHubButton : ConnectToGitHubView
-        {
-            public ConnectToGitHubButton(CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions browserLaunchOptions) : base(WelcomePageAutomationIds.ConnectToGitHubButton, cancellationToken, browserLaunchOptions)
-            {
-                HorizontalOptions = LayoutOptions.Center;
-                VerticalOptions = LayoutOptions.End;
             }
         }
 

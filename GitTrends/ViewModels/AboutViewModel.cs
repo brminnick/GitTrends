@@ -34,15 +34,24 @@ namespace GitTrends
 
                 return deepLinkingService.OpenBrowser(gitTrendsStatisticsService.GitHubUri);
             });
+
+            RequestFeatureCommand = new AsyncCommand(() =>
+            {
+                if (gitTrendsStatisticsService?.GitHubUri is null)
+                    return Task.CompletedTask;
+
+                return deepLinkingService.OpenBrowser(gitTrendsStatisticsService.GitHubUri + "/issues/new?template=feature_request.md");
+            });
         }
 
-        public long Stars { get; }
-        public long Forks { get; }
-        public long Watchers { get; }
+        public long? Stars { get; }
+        public long? Forks { get; }
+        public long? Watchers { get; }
 
         public IReadOnlyList<Contributor> GitTrendsContributors { get; }
         public IReadOnlyList<NuGetPackageModel> InstalledLibraries { get; }
 
         public IAsyncCommand ViewOnGitHubCommand { get; }
+        public IAsyncCommand RequestFeatureCommand { get; }
     }
 }

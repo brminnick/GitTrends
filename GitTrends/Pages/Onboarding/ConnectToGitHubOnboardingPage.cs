@@ -44,7 +44,7 @@ namespace GitTrends
                 Children =
                 {
                     new BodyLabel(OnboardingConstants.ConnectToGitHubPage_Body_GetStarted).Row(Row.Description),
-                    new ConnectToGitHubView(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None, new Xamarin.Essentials.BrowserLaunchOptions
+                    new ConnectToGitHubButton(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None, new Xamarin.Essentials.BrowserLaunchOptions
                     {
                         PreferredControlColor = Color.White,
                         PreferredToolbarColor = Color.FromHex(BaseTheme.CoralColorHex).MultiplyAlpha(0.75),

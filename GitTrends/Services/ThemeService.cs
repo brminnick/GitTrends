@@ -76,7 +76,11 @@ namespace GitTrends
 
                     OnPreferenceChanged(preferredTheme);
 
+#if AppStore
                     EnableDebugRainbows(false);
+#else
+                    EnableDebugRainbows(false);
+#endif
                 }
             });
         }

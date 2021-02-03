@@ -7,6 +7,7 @@ using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+using static GitTrends.XamarinFormsService;
 
 namespace GitTrends
 {
@@ -20,7 +21,7 @@ namespace GitTrends
                             DeepLinkingService deepLinkingService) : base(aboutViewModel, analyticsService, mainThread)
         {
             const int titleColumnWidth = 68;
-            const int horizontalPadding = 32;
+            const int horizontalPadding = 28;
             const int separatorColumnWidth = 1;
 
             _deepLinkingService = deepLinkingService;
@@ -85,20 +86,17 @@ namespace GitTrends
                     new StatsTitleLayout("Forks", "repo_forked.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)])
                         .Row(Row.StatsTitle).Column(Column.Forks),
 
-                    new StatisticsLabel(ViewModel.Watchers.ToAbbreviatedText(), AboutPageAutomationIds.WatchersLabel)
+                    new StatisticsLabel(ViewModel.Watchers?.ToAbbreviatedText() ?? string.Empty, AboutPageAutomationIds.WatchersLabel)
                         .Row(Row.StatsNumber).Column(Column.Watching),
 
-                    new StatisticsLabel(ViewModel.Stars.ToAbbreviatedText(), AboutPageAutomationIds.StarsLabel)
+                    new StatisticsLabel(ViewModel.Stars?.ToAbbreviatedText() ?? string.Empty, AboutPageAutomationIds.StarsLabel)
                         .Row(Row.StatsNumber).Column(Column.Stars),
 
-                    new StatisticsLabel(ViewModel.Forks.ToAbbreviatedText(), AboutPageAutomationIds.ForksLabel)
+                    new StatisticsLabel(ViewModel.Forks?.ToAbbreviatedText() ?? string.Empty, AboutPageAutomationIds.ForksLabel)
                         .Row(Row.StatsNumber).Column(Column.Forks),
 
-                    new ViewOnGitHubButton()
-                        .Row(Row.ActionButtons).Column(Column.Icon).ColumnSpan(3),
-
-                    new Label { BackgroundColor = Color.Brown, Text = "Request Feature" }
-                        .Row(Row.ActionButtons).Column(Column.WatchingSeparator).ColumnSpan(4),
+                    new ButtonLayout().Center()
+                        .Row(Row.ActionButtons).Column(Column.Icon).ColumnSpan(6),
 
                     new TitleLabel("Collaborators")
                         .Row(Row.CollaboratorTitle).Column(Column.Icon).ColumnSpan(6),
@@ -108,12 +106,13 @@ namespace GitTrends
 
                     new CollectionView
                     {
+                        HeightRequest = ContributorDataTemplate.RowHeight + 8,
                         Header = new BoxView { WidthRequest = horizontalPadding },
                         SelectionMode = SelectionMode.Single,
                         ItemTemplate = new ContributorDataTemplate(),
                         ItemsSource = ViewModel.GitTrendsContributors,
                         ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Horizontal)
-                    }.Center()
+                    }.Top()
                      .Row(Row.CollaboratorCollection).ColumnSpan(All<Column>())
                      .Invoke(collectionView => collectionView.SelectionChanged += HandleContributorSelectionChanged),
 
@@ -125,12 +124,13 @@ namespace GitTrends
 
                     new CollectionView
                     {
+                        HeightRequest = LibraryDataTemplate.RowHeight * 2 + 8,
                         Header = new BoxView { WidthRequest = horizontalPadding },
                         SelectionMode = SelectionMode.Single,
                         ItemTemplate = new LibraryDataTemplate(),
                         ItemsSource = ViewModel.InstalledLibraries,
-                        ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Horizontal)
-                    }.Center()
+                        ItemsLayout = IsSmallScreen ? new LinearItemsLayout(ItemsLayoutOrientation.Horizontal) : new GridItemsLayout(2, ItemsLayoutOrientation.Horizontal)
+                    }.Top()
                      .Row(Row.LibrariesCollection).ColumnSpan(All<Column>())
                      .Invoke(collectionView => collectionView.SelectionChanged += HandleLibrarySelectionChanged),
                 }
@@ -214,11 +214,41 @@ namespace GitTrends
             }
         }
 
-        class ViewOnGitHubButton : GitHubView
+        class ButtonLayout : StackLayout
         {
-            public ViewOnGitHubButton() : base("View on GitHub", AboutPageAutomationIds.ViewOnGitHubButton, 14, FontFamilyConstants.RobotoMedium)
+            public ButtonLayout()
             {
-                GestureRecognizers.Add(new TapGestureRecognizer().Bind(TapGestureRecognizer.CommandProperty, nameof(AboutViewModel.ViewOnGitHubCommand)));
+                Spacing = 16;
+                Orientation = StackOrientation.Horizontal;
+
+                Children.Add(new ViewOnGitHubButton().EndExpand());
+                Children.Add(new RequestFeatureButton().StartExpand());
+            }
+
+            class ViewOnGitHubButton : AboutPageButton
+            {
+                public ViewOnGitHubButton() : base("github.svg", "View on GitHub", AboutPageAutomationIds.ViewOnGitHubButton, Color.FromHex("231F20"), nameof(AboutViewModel.ViewOnGitHubCommand))
+                {
+                }
+            }
+
+            class RequestFeatureButton : AboutPageButton
+            {
+                public RequestFeatureButton() : base("sparkle.svg", "Request Feature", AboutPageAutomationIds.RequestFeatureButton, Color.FromHex("F97B4F"), nameof(AboutViewModel.RequestFeatureCommand))
+                {
+                }
+            }
+
+
+            abstract class AboutPageButton : SvgTextLabel
+            {
+                protected AboutPageButton(in string svgFileName, in string text, in string automationId, in Color backgroundColor, in string commandPropertyBindingPath)
+                    : base(svgFileName, text, automationId, IsSmallScreen ? 10 : 14, FontFamilyConstants.RobotoMedium, 4)
+                {
+                    Padding = new Thickness(8, 8);
+                    BackgroundColor = backgroundColor;
+                    GestureRecognizers.Add(new TapGestureRecognizer().Bind(TapGestureRecognizer.CommandProperty, commandPropertyBindingPath));
+                }
             }
         }
 
