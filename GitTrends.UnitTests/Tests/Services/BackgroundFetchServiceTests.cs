@@ -25,11 +25,11 @@ namespace GitTrends.UnitTests
             var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
             var referringSitesDatabase = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesDatabase>();
 
-            expiredRepository_Initial = CreateExpiredRepository(DateTimeOffset.UtcNow.Subtract(repositoryDatabase.ExpiresAt), "https://github.com/brminnick/gittrends");
-            unexpiredRepository_Initial = CreateExpiredRepository(DateTimeOffset.UtcNow, "https://github.com/brminnick/gitstatus");
+            expiredRepository_Initial = CreateRepository(DateTimeOffset.UtcNow.Subtract(repositoryDatabase.ExpiresAt), "https://github.com/brminnick/gittrends");
+            unexpiredRepository_Initial = CreateRepository(DateTimeOffset.UtcNow, "https://github.com/brminnick/gitstatus");
 
-            expiredReferringSite_Initial = CreateExpiredMobileReferringSite(DateTimeOffset.UtcNow.Subtract(referringSitesDatabase.ExpiresAt), "Google");
-            unexpiredReferringSite_Initial = CreateExpiredMobileReferringSite(DateTimeOffset.UtcNow, "codetraveler.io");
+            expiredReferringSite_Initial = CreateMobileReferringSite(DateTimeOffset.UtcNow.Subtract(referringSitesDatabase.ExpiresAt), "Google");
+            unexpiredReferringSite_Initial = CreateMobileReferringSite(DateTimeOffset.UtcNow, "codetraveler.io");
 
             await repositoryDatabase.SaveRepository(expiredRepository_Initial).ConfigureAwait(false);
             await repositoryDatabase.SaveRepository(unexpiredRepository_Initial).ConfigureAwait(false);
@@ -71,7 +71,11 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(unexpiredRepository_Initial.DailyViewsList.Sum(x => x.TotalViews), unexpiredRepository_Final.DailyViewsList.Sum(x => x.TotalViews));
             Assert.AreEqual(unexpiredRepository_Initial.DailyViewsList.Sum(x => x.TotalUniqueViews), unexpiredRepository_Final.DailyViewsList.Sum(x => x.TotalUniqueViews));
 
+            Assert.AreEqual(2, repositoryDatabaseCount_Final);
             Assert.AreEqual(1, referringSitesDatabaseCount_Final);
+
+            Assert.IsTrue(unexpiredRepository_Initial.IsFavorite);
+            Assert.IsTrue(unexpiredRepository_Final.IsFavorite);
 
             static async Task<int> getRepositoryDatabaseCount(RepositoryDatabase repositoryDatabase)
             {
@@ -143,7 +147,7 @@ namespace GitTrends.UnitTests
             Assert.IsTrue(result);
         }
 
-        static Repository CreateExpiredRepository(DateTimeOffset downloadedAt, string repositoryUrl)
+        static Repository CreateRepository(DateTimeOffset downloadedAt, string repositoryUrl)
         {
             const string gitTrendsAvatarUrl = "https://avatars3.githubusercontent.com/u/61480020?s=400&u=b1a900b5fa1ede22af9d2d9bfd6c49a072e659ba&v=4";
 
@@ -163,10 +167,10 @@ namespace GitTrends.UnitTests
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
                                                         DemoUserConstants.Alias, gitTrendsAvatarUrl,
-                                                        DemoDataConstants.GetRandomNumber(), repositoryUrl, false, downloadedAt, false, dailyViewsList, dailyClonesList, starredAtList);
+                                                        DemoDataConstants.GetRandomNumber(), repositoryUrl, false, downloadedAt, true, dailyViewsList, dailyClonesList, starredAtList);
         }
 
-        static MobileReferringSiteModel CreateExpiredMobileReferringSite(DateTimeOffset downloadedAt, string referrer)
+        static MobileReferringSiteModel CreateMobileReferringSite(DateTimeOffset downloadedAt, string referrer)
         {
             return new MobileReferringSiteModel(new ReferringSiteModel(DemoDataConstants.GetRandomNumber(),
                                                 DemoDataConstants.GetRandomNumber(),

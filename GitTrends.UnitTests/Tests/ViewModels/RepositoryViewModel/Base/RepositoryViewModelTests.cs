@@ -55,6 +55,15 @@ namespace GitTrends.UnitTests
 
             foreach (var repository in visibleRepositoryList_Final)
             {
+                Assert.IsNotNull(repository.DailyClonesList);
+                Assert.IsNotNull(repository.DailyViewsList);
+                Assert.IsNotNull(repository.StarCount);
+                Assert.IsNotNull(repository.StarredAt);
+                Assert.IsNotNull(repository.TotalClones);
+                Assert.IsNotNull(repository.TotalUniqueClones);
+                Assert.IsNotNull(repository.TotalUniqueViews);
+                Assert.IsNotNull(repository.TotalViews);
+
                 Assert.Less(beforePullToRefresh, repository.DataDownloadedAt);
                 Assert.Greater(afterPullToRefresh, repository.DataDownloadedAt);
             }

@@ -16,7 +16,7 @@ namespace GitTrends.UnitTests
 {
     abstract class BaseTest
     {
-        protected const string AuthenticatedGitHubUserAvatarUrl = "https://avatars0.githubusercontent.com/u/13558917?u=f1392f8aefe2d52a87c4d371981cb7153199fa27&v=4";
+        protected const string AuthenticatedGitHubUserAvatarUrl = "https://avatars.githubusercontent.com/u/13558917?u=f1392f8aefe2d52a87c4d371981cb7153199fa27&v=4";
 
         [TearDown]
         public virtual Task TearDown() => Task.CompletedTask;
@@ -69,6 +69,9 @@ namespace GitTrends.UnitTests
         protected static async Task AuthenticateUser(GitHubUserService gitHubUserService, GitHubGraphQLApiService gitHubGraphQLApiService)
         {
             var token = await Mobile.Common.AzureFunctionsApiService.GetTestToken().ConfigureAwait(false);
+            if (token.IsEmpty() || string.IsNullOrWhiteSpace(token.AccessToken))
+                throw new Exception("Invalid Token");
+
             await gitHubUserService.SaveGitHubToken(token).ConfigureAwait(false);
 
             var (login, name, avatarUri) = await gitHubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false);
