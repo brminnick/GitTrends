@@ -20,9 +20,9 @@ namespace GitTrends
 
         CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
 
-        public SettingsPage(SettingsViewModel settingsViewModel,
+        public SettingsPage(IMainThread mainThread,
                             IAnalyticsService analyticsService,
-                            IMainThread mainThread) : base(settingsViewModel, analyticsService, mainThread, true)
+                            SettingsViewModel settingsViewModel) : base(settingsViewModel, analyticsService, mainThread, true)
         {
             const int separatorRowHeight = 1;
             const int settingsRowHeight = 38;
