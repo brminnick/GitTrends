@@ -69,30 +69,30 @@ namespace GitTrends
                     new DescriptionLabel("GitTrends is an open-source app to help monitor ") { MaxLines = 3 }
                         .Row(Row.Description).Column(Column.Watching).ColumnSpan(5),
 
-                    new StatsTitleLayout("Watching", "unique_views.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)])
+                    new StatsTitleLayout("Watching", "unique_views.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout watchingTitleLabel)
                         .Row(Row.StatsTitle).Column(Column.Watching),
 
                     new BoxView()
                         .Row(Row.StatsTitle).RowSpan(2).Column(Column.WatchingSeparator)
                         .DynamicResource(BackgroundColorProperty,nameof(BaseTheme.SettingsLabelTextColor)),
 
-                    new StatsTitleLayout("Stars", "star.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)])
+                    new StatsTitleLayout("Stars", "star.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout starsTitleLabel)
                         .Row(Row.StatsTitle).Column(Column.Stars),
 
                     new BoxView()
                         .Row(Row.StatsTitle).RowSpan(2).Column(Column.StarsSeparator)
                         .DynamicResource(BackgroundColorProperty,nameof(BaseTheme.SettingsLabelTextColor)),
 
-                    new StatsTitleLayout("Forks", "repo_forked.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)])
+                    new StatsTitleLayout("Forks", "repo_forked.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout forksTitleLabel)
                         .Row(Row.StatsTitle).Column(Column.Forks),
 
-                    new StatisticsLabel(ViewModel.Watchers?.ToAbbreviatedText() ?? string.Empty, AboutPageAutomationIds.WatchersLabel)
+                    new StatisticsLabel(ViewModel.Watchers?.ToAbbreviatedText() ?? string.Empty, AboutPageAutomationIds.WatchersLabel, watchingTitleLabel)
                         .Row(Row.StatsNumber).Column(Column.Watching),
 
-                    new StatisticsLabel(ViewModel.Stars?.ToAbbreviatedText() ?? string.Empty, AboutPageAutomationIds.StarsLabel)
+                    new StatisticsLabel(ViewModel.Stars?.ToAbbreviatedText() ?? string.Empty, AboutPageAutomationIds.StarsLabel, starsTitleLabel)
                         .Row(Row.StatsNumber).Column(Column.Stars),
 
-                    new StatisticsLabel(ViewModel.Forks?.ToAbbreviatedText() ?? string.Empty, AboutPageAutomationIds.ForksLabel)
+                    new StatisticsLabel(ViewModel.Forks?.ToAbbreviatedText() ?? string.Empty, AboutPageAutomationIds.ForksLabel, forksTitleLabel)
                         .Row(Row.StatsNumber).Column(Column.Forks),
 
                     new ButtonLayout().Center()
@@ -168,7 +168,7 @@ namespace GitTrends
 
         class StatisticsLabel : Label
         {
-            public StatisticsLabel(in string text, in string automationId)
+            public StatisticsLabel(in string text, in string automationId, in StatsTitleLayout statsTitleLayout)
             {
                 Text = text;
                 AutomationId = automationId;
@@ -177,6 +177,7 @@ namespace GitTrends
                 FontFamily = FontFamilyConstants.RobotoMedium;
 
                 this.Center().TextCenter().DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
+                this.Bind(WidthRequestProperty, nameof(Width), source: statsTitleLayout);
             }
         }
 

@@ -156,7 +156,7 @@ namespace GitTrends
                             VerticalTextAlignment = TextAlignment.End;
 
                             this.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
-                            SetBinding(WidthRequestProperty, new Binding(nameof(Width), source: titleLabel));
+                            this.Bind(WidthRequestProperty, nameof(Width), source: titleLabel);
                         }
                     }
 
