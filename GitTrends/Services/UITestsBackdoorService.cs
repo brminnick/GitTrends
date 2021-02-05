@@ -78,14 +78,6 @@ namespace GitTrends
 
         public Task<GitHubToken> GetGitHubToken() => _gitHubUserService.GetGitHubToken();
 
-        public void TriggerReviewRequest()
-        {
-            var referringSitesPage = (ReferringSitesPage)GetVisibleContentPage();
-            var referringSitesViewModel = (ReferringSitesViewModel)referringSitesPage.BindingContext;
-
-            referringSitesViewModel.IsStoreRatingRequestVisible = true;
-        }
-
         public string GetReviewRequestAppStoreTitle() => AppStoreConstants.RatingRequest;
 
         public PreferredTheme GetPreferredTheme() => _themeService.Preference;

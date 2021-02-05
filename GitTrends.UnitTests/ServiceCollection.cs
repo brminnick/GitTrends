@@ -3,6 +3,7 @@ using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using Plugin.StoreReview.Abstractions;
 using Shiny.Notifications;
 using Xamarin.Essentials.Interfaces;
 
@@ -72,6 +73,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<IMainThread, MockMainThread>();
             services.AddSingleton<INotificationManager, MockNotificationManager>();
             services.AddSingleton<ISecureStorage, MockSecureStorage>();
+            services.AddSingleton<IStoreReview, MockStoreReview>();
             services.AddSingleton<IPreferences, MockPreferences>();
             services.AddSingleton<IVersionTracking, MockVersionTracking>();
 

@@ -3,6 +3,8 @@ using Autofac;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
+using Plugin.StoreReview;
+using Plugin.StoreReview.Abstractions;
 using Refit;
 using Shiny;
 using Shiny.Notifications;
@@ -62,6 +64,7 @@ namespace GitTrends
             builder.RegisterType<SyncfusionService>().AsSelf().SingleInstance();
             builder.RegisterType<ThemeService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
+            builder.RegisterInstance(CrossStoreReview.Current).As<IStoreReview>().SingleInstance();
             builder.RegisterInstance(ShinyHost.Resolve<INotificationManager>()).As<INotificationManager>().SingleInstance();
             builder.RegisterInstance(DependencyService.Resolve<IDeviceNotificationsService>()).As<IDeviceNotificationsService>().SingleInstance();
 #if !AppStore
