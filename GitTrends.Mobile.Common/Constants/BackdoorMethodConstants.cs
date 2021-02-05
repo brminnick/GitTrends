@@ -20,6 +20,7 @@ namespace GitTrends.Mobile.Common
         public const string SetGitHubUser = nameof(SetGitHubUser);
         public const string ShouldSendNotifications = nameof(ShouldSendNotifications);
         public const string TriggerPullToRefresh = nameof(TriggerPullToRefresh);
+        public const string TriggerReviewRequest = nameof(TriggerReviewRequest);
     }
 }
 #endif

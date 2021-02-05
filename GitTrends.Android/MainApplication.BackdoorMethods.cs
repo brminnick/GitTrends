@@ -49,6 +49,9 @@ namespace GitTrends.Droid
         [Preserve, Export(BackdoorMethodConstants.GetPreferredTheme)]
         public string GetPreferredTheme() => SerializeObject(UITestBackdoorService.GetPreferredTheme());
 
+        [Preserve, Export(BackdoorMethodConstants.TriggerReviewRequest)]
+        public void TriggerReviewRequest() => UITestBackdoorService.TriggerReviewRequest();
+
         [Preserve, Export(BackdoorMethodConstants.GetReviewRequestAppStoreTitle)]
         public string GetReviewRequestAppStoreTitle() => SerializeObject(UITestBackdoorService.GetReviewRequestAppStoreTitle());
 

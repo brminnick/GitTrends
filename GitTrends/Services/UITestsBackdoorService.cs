@@ -6,8 +6,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using Autofac;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
+using Plugin.StoreReview.Abstractions;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -77,6 +79,8 @@ namespace GitTrends
         }
 
         public Task<GitHubToken> GetGitHubToken() => _gitHubUserService.GetGitHubToken();
+
+        public void TriggerReviewRequest() => ContainerService.Container.Resolve<IStoreReview>().RequestReview(true);
 
         public string GetReviewRequestAppStoreTitle() => AppStoreConstants.RatingRequest;
 
