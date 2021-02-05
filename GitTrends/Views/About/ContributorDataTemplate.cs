@@ -22,7 +22,7 @@ namespace GitTrends
         enum Row { Avatar, Login }
         enum Column { LeftText, Image, RightText, RightPadding }
 
-        static Grid CreateContributorDataTemplate() => new()
+        static Grid CreateContributorDataTemplate() => new Grid
         {
             RowSpacing = _rowSpacing,
 
@@ -48,6 +48,6 @@ namespace GitTrends
                     .Bind<Label, string, string>(Label.TextProperty, nameof(Contributor.Login), BindingMode.OneTime, convert: login => $"@{login}")
                     .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
             }
-        };
+        }.DynamicResource(VisualElement.BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
     }
 }

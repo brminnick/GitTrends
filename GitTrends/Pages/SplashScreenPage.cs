@@ -95,16 +95,17 @@ namespace GitTrends
             await Task.WhenAll(fadeImageTask, pulseImageTask);
             await Task.Delay(100);
 
-            Animate(_animationCancellationToken.Token);
+            AppInitializationService.InitializationCompleted += HandleInitializationCompleted;
 
             if (_appInitializationService.IsInitializationComplete)
             {
-                await Task.Delay(1500);
+                AppInitializationService.InitializationCompleted -= HandleInitializationCompleted;
+
                 await HandleInitializationCompleted(true);
             }
             else
-            {
-                AppInitializationService.InitializationCompleted += HandleInitializationCompleted;
+            {                
+                Animate(_animationCancellationToken.Token);
             }
         }
 
