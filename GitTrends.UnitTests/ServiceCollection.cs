@@ -43,6 +43,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<FirstRunService>();
             services.AddSingleton<ImageCachingService>();
             services.AddSingleton<LanguageService>();
+            services.AddSingleton<LibrariesService>();
             services.AddSingleton<MediaElementService>();
             services.AddSingleton<ReferringSitesDatabase>();
             services.AddSingleton<RepositoryDatabase>();

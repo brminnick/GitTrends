@@ -18,6 +18,9 @@ namespace GitTrends.UnitTests
 
             var appInitializationService = ServiceCollection.ServiceProvider.GetRequiredService<AppInitializationService>();
 
+            //Assert
+            Assert.IsFalse(appInitializationService.IsInitializationComplete);
+
             //Act
             await appInitializationService.InitializeApp(CancellationToken.None).ConfigureAwait(false);
             var initializationCompleteEventArgs = await initializeAppCommandTCS.Task.ConfigureAwait(false);
@@ -25,6 +28,7 @@ namespace GitTrends.UnitTests
             //Assert
             Assert.IsTrue(didInitializationCompleteFire);
             Assert.IsTrue(initializationCompleteEventArgs.IsInitializationSuccessful);
+            Assert.IsTrue(appInitializationService.IsInitializationComplete);
 
             void HandleInitializationComplete(object? sender, InitializationCompleteEventArgs e)
             {

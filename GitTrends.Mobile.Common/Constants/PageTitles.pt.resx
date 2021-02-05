@@ -21,4 +21,7 @@
 	<data name="SettingsPage" xml:space="preserve">
     <value>Configurações</value>
   </data>
+	<data name="AboutPage" xml:space="preserve">
+    <value>Sobre</value>
+  </data>
 </root>

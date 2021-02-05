@@ -26,7 +26,7 @@ namespace GitTrends
 
             _deepLinkingService = deepLinkingService;
 
-            Title = AboutPageConstants.About;
+            Title = PageTitles.AboutPage;
             Padding = new Thickness(0, 16, 0, 0);
 
             Content = new Grid
@@ -66,24 +66,24 @@ namespace GitTrends
                         .Row(Row.Title).Column(Column.Watching).ColumnSpan(5)
                         .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor)),
 
-                    new DescriptionLabel("GitTrends is an open-source app to help monitor ") { MaxLines = 3 }
+                    new DescriptionLabel(AboutPageConstants.DescriptionText) { MaxLines = 3 }
                         .Row(Row.Description).Column(Column.Watching).ColumnSpan(5),
 
-                    new StatsTitleLayout("Watching", "unique_views.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout watchingTitleLabel)
+                    new StatsTitleLayout(AboutPageConstants.Watching, "unique_views.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout watchingTitleLabel)
                         .Row(Row.StatsTitle).Column(Column.Watching),
 
                     new BoxView()
                         .Row(Row.StatsTitle).RowSpan(2).Column(Column.WatchingSeparator)
                         .DynamicResource(BackgroundColorProperty,nameof(BaseTheme.SettingsLabelTextColor)),
 
-                    new StatsTitleLayout("Stars", "star.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout starsTitleLabel)
+                    new StatsTitleLayout(AboutPageConstants.Stars, "star.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout starsTitleLabel)
                         .Row(Row.StatsTitle).Column(Column.Stars),
 
                     new BoxView()
                         .Row(Row.StatsTitle).RowSpan(2).Column(Column.StarsSeparator)
                         .DynamicResource(BackgroundColorProperty,nameof(BaseTheme.SettingsLabelTextColor)),
 
-                    new StatsTitleLayout("Forks", "repo_forked.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout forksTitleLabel)
+                    new StatsTitleLayout(AboutPageConstants.Forks, "repo_forked.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout forksTitleLabel)
                         .Row(Row.StatsTitle).Column(Column.Forks),
 
                     new StatisticsLabel(ViewModel.Watchers?.ToAbbreviatedText() ?? string.Empty, AboutPageAutomationIds.WatchersLabel, watchingTitleLabel)
@@ -98,10 +98,10 @@ namespace GitTrends
                     new ButtonLayout().Center()
                         .Row(Row.ActionButtons).Column(Column.Icon).ColumnSpan(6),
 
-                    new TitleLabel("Collaborators")
+                    new TitleLabel(AboutPageConstants.CollaboratorsTitle)
                         .Row(Row.CollaboratorTitle).Column(Column.Icon).ColumnSpan(6),
 
-                    new DescriptionLabel("Thank You to all of our amazing open-source contributors!")
+                    new DescriptionLabel(AboutPageConstants.CollaboratorsDescription)
                         .Row(Row.CollaboratorDescription).Column(Column.Icon).ColumnSpan(6),
 
                     new CollectionView
@@ -116,10 +116,10 @@ namespace GitTrends
                      .Row(Row.CollaboratorCollection).ColumnSpan(All<Column>())
                      .Invoke(collectionView => collectionView.SelectionChanged += HandleContributorSelectionChanged),
 
-                    new TitleLabel("Libraries")
+                    new TitleLabel(AboutPageConstants.LibrariesTitle)
                         .Row(Row.LibrariesTitle).Column(Column.Icon).ColumnSpan(6),
 
-                    new DescriptionLabel("GitTrends leverages following libraries and frameworks")
+                    new DescriptionLabel(AboutPageConstants.LibrariesDescription)
                         .Row(Row.LibrariesDescription).Column(Column.Icon).ColumnSpan(6),
 
                     new CollectionView

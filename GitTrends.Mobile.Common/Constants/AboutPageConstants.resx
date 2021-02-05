@@ -15,4 +15,28 @@
 	<data name="About" xml:space="preserve">
     <value>About</value>
   </data>
+	<data name="DescriptionText" xml:space="preserve">
+    <value>GitTrends is an open-source app to help monitor...[INCOMPLETE]</value>
+  </data>
+	<data name="Stars" xml:space="preserve">
+    <value>Stars</value>
+  </data>
+	<data name="Forks" xml:space="preserve">
+    <value>Forks</value>
+  </data>
+	<data name="Watching" xml:space="preserve">
+    <value>Watching</value>
+  </data>
+	<data name="CollaboratorsTitle" xml:space="preserve">
+    <value>Collaborators</value>
+  </data>
+	<data name="CollaboratorsDescription" xml:space="preserve">
+    <value>Thank You to all of our amazing open-source contributors...[INCOMPLETE]</value>
+  </data>
+	<data name="LibrariesTitle" xml:space="preserve">
+    <value>Libraries</value>
+  </data>
+	<data name="LibrariesDescription" xml:space="preserve">
+    <value>GitTrends leverages following libraries and frameworks...[INCOMPLETE]</value>
+  </data>
 </root>

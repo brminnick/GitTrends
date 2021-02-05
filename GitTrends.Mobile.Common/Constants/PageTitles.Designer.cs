@@ -64,5 +64,11 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("ReferringSitesPage", resourceCulture);
             }
         }
+        
+        public static string AboutPage {
+            get {
+                return ResourceManager.GetString("AboutPage", resourceCulture);
+            }
+        }
     }
 }
