@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using AsyncAwaitBestPractices;
 using Autofac;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
@@ -38,7 +37,7 @@ namespace GitTrends
         readonly FirstRunService _firstRunService;
         readonly AppInitializationService _appInitializationService;
 
-        CancellationTokenSource? _animationCancellationToken;
+        CancellationTokenSource _animationCancellationToken = new();
 
         public SplashScreenPage(IMainThread mainThread,
                                     FirstRunService firstRunService,
@@ -104,7 +103,7 @@ namespace GitTrends
                 await HandleInitializationCompleted(true);
             }
             else
-            {                
+            {
                 Animate(_animationCancellationToken.Token);
             }
         }
@@ -198,7 +197,7 @@ namespace GitTrends
 
         async Task HandleInitializationCompleted(bool isInitializationSuccessful)
         {
-            _animationCancellationToken?.Cancel();
+            _animationCancellationToken.Cancel();
 
             if (isInitializationSuccessful)
             {
