@@ -41,11 +41,11 @@ namespace GitTrends
 
                 RowDefinitions = Rows.Define(
                     (Row.Title, Auto),
-                    (Row.Zoom, AbsoluteGridLength(48)),
-                    (Row.LongPress, AbsoluteGridLength(48))),
+                    (Row.Zoom, 48),
+                    (Row.LongPress, 48)),
 
                 ColumnDefinitions = Columns.Define(
-                    (Column.Image, AbsoluteGridLength(56)),
+                    (Column.Image, 56),
                     (Column.Description, Star)),
 
                 Children =

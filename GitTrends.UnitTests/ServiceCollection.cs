@@ -3,6 +3,7 @@ using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using Plugin.StoreReview.Abstractions;
 using Shiny.Notifications;
 using Xamarin.Essentials.Interfaces;
 
@@ -27,6 +28,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton(gitHubGraphQLApi);
 
             //GitTrends Services
+            services.AddTransient<AppInitializationService>();
             services.AddSingleton<AzureFunctionsApiService>();
             services.AddSingleton<BackgroundFetchService>();
             services.AddSingleton<DeepLinkingService>();
@@ -37,11 +39,12 @@ namespace GitTrends.UnitTests
             services.AddSingleton<GitHubAuthenticationService>();
             services.AddSingleton<GitHubGraphQLApiService>();
             services.AddSingleton<GitHubUserService>();
-            services.AddSingleton<GitTrendsContributorsService>();
+            services.AddSingleton<GitTrendsStatisticsService>();
             services.AddSingleton<FavIconService>();
             services.AddSingleton<FirstRunService>();
             services.AddSingleton<ImageCachingService>();
             services.AddSingleton<LanguageService>();
+            services.AddSingleton<LibrariesService>();
             services.AddSingleton<MediaElementService>();
             services.AddSingleton<ReferringSitesDatabase>();
             services.AddSingleton<RepositoryDatabase>();
@@ -56,7 +59,6 @@ namespace GitTrends.UnitTests
             services.AddTransient<ReferringSitesViewModel>();
             services.AddTransient<RepositoryViewModel>();
             services.AddTransient<SettingsViewModel>();
-            services.AddTransient<SplashScreenViewModel>();
             services.AddTransient<TrendsViewModel>();
             services.AddTransient<WelcomeViewModel>();
 
@@ -71,6 +73,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<IMainThread, MockMainThread>();
             services.AddSingleton<INotificationManager, MockNotificationManager>();
             services.AddSingleton<ISecureStorage, MockSecureStorage>();
+            services.AddSingleton<IStoreReview, MockStoreReview>();
             services.AddSingleton<IPreferences, MockPreferences>();
             services.AddSingleton<IVersionTracking, MockVersionTracking>();
 

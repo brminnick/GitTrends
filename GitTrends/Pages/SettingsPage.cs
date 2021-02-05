@@ -35,8 +35,6 @@ namespace GitTrends
 
             Content = new ScrollView
             {
-                Margin = new Thickness(0, 0, 0, 12),
-
                 Content = _contentGrid = new Grid
                 {
                     RowSpacing = 8,
@@ -45,27 +43,27 @@ namespace GitTrends
                     Margin = new Thickness(28, 0),
 
                     RowDefinitions = Rows.Define(
-                        (Row.GitHubUser, AbsoluteGridLength(GitHubUserView.TotalHeight)),
-                        (Row.GitHubUserSeparator, AbsoluteGridLength(separatorRowHeight)),
-                        (Row.Login, AbsoluteGridLength(settingsRowHeight)),
-                        (Row.LoginSeparator, AbsoluteGridLength(separatorRowHeight)),
-                        (Row.Notifications, AbsoluteGridLength(settingsRowHeight)),
-                        (Row.NotificationsSeparator, AbsoluteGridLength(separatorRowHeight)),
-                        (Row.Theme, AbsoluteGridLength(settingsRowHeight)),
-                        (Row.ThemeSeparator, AbsoluteGridLength(separatorRowHeight)),
-                        (Row.Language, AbsoluteGridLength(settingsRowHeight)),
-                        (Row.LanguageSeparator, AbsoluteGridLength(separatorRowHeight)),
-                        (Row.PreferredCharts, AbsoluteGridLength(settingsRowHeight)),
-                        (Row.PreferredChartsSeparator, AbsoluteGridLength(separatorRowHeight)),
-                        (Row.About, AbsoluteGridLength(settingsRowHeight)),
-                        (Row.AboutSeparator, AbsoluteGridLength(separatorRowHeight)),
-                        (Row.CopyrightPadding, AbsoluteGridLength(20)),
+                        (Row.GitHubUser, GitHubUserView.TotalHeight),
+                        (Row.GitHubUserSeparator, separatorRowHeight),
+                        (Row.Login, settingsRowHeight),
+                        (Row.LoginSeparator, separatorRowHeight),
+                        (Row.Notifications, settingsRowHeight),
+                        (Row.NotificationsSeparator, separatorRowHeight),
+                        (Row.Theme, settingsRowHeight),
+                        (Row.ThemeSeparator, separatorRowHeight),
+                        (Row.Language, settingsRowHeight),
+                        (Row.LanguageSeparator, separatorRowHeight),
+                        (Row.PreferredCharts, settingsRowHeight),
+                        (Row.PreferredChartsSeparator, separatorRowHeight),
+                        (Row.About, settingsRowHeight),
+                        (Row.AboutSeparator, separatorRowHeight),
+                        (Row.CopyrightPadding, 20),
                         (Row.Copyright, Star)),
 
                     ColumnDefinitions = Columns.Define(
-                        (Column.Icon, AbsoluteGridLength(24)),
+                        (Column.Icon, 24),
                         (Column.Title, Star),
-                        (Column.Button, AbsoluteGridLength(100))),
+                        (Column.Button, 100)),
 
                     Children =
                     {

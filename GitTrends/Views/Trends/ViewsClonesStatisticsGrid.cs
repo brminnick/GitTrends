@@ -24,12 +24,12 @@ namespace GitTrends
             Padding = new Thickness(16, 0);
 
             RowDefinitions = Rows.Define(
-                (Row.ViewsStats, AbsoluteGridLength(_rowHeight)),
-                (Row.ClonesStats, AbsoluteGridLength(_rowHeight)));
+                (Row.ViewsStats, _rowHeight),
+                (Row.ClonesStats, _rowHeight));
 
             ColumnDefinitions = Columns.Define(
-                (Column.Total, StarGridLength(1)),
-                (Column.Unique, StarGridLength(1)));
+                (Column.Total, Stars(1)),
+                (Column.Unique, Stars(1)));
 
             Children.Add(new StatisticsCard(SortingConstants.Views, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor), TrendsPageAutomationIds.ViewsCard, TrendsPageAutomationIds.ViewsStatisticsLabel)
                 .Row(Row.ViewsStats).Column(Column.Total)

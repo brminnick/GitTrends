@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
 namespace GitTrends.UnitTests
 {
-    class SplashScreenViewModelTests : BaseTest
+    class AppInitializationServiceTests : BaseTest
     {
         [Test]
         public async Task InitiazeAppCommandTest()
@@ -13,21 +14,25 @@ namespace GitTrends.UnitTests
             bool didInitializationCompleteFire = false;
             var initializeAppCommandTCS = new TaskCompletionSource<InitializationCompleteEventArgs>();
 
-            SplashScreenViewModel.InitializationCompleted += HandleInitializationComplete;
+            AppInitializationService.InitializationCompleted += HandleInitializationComplete;
 
-            var splashScreenViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SplashScreenViewModel>();
+            var appInitializationService = ServiceCollection.ServiceProvider.GetRequiredService<AppInitializationService>();
+
+            //Assert
+            Assert.IsFalse(appInitializationService.IsInitializationComplete);
 
             //Act
-            await splashScreenViewModel.InitializeAppCommand.ExecuteAsync().ConfigureAwait(false);
+            await appInitializationService.InitializeApp(CancellationToken.None).ConfigureAwait(false);
             var initializationCompleteEventArgs = await initializeAppCommandTCS.Task.ConfigureAwait(false);
 
             //Assert
             Assert.IsTrue(didInitializationCompleteFire);
             Assert.IsTrue(initializationCompleteEventArgs.IsInitializationSuccessful);
+            Assert.IsTrue(appInitializationService.IsInitializationComplete);
 
             void HandleInitializationComplete(object? sender, InitializationCompleteEventArgs e)
             {
-                SplashScreenViewModel.InitializationCompleted -= HandleInitializationComplete;
+                AppInitializationService.InitializationCompleted -= HandleInitializationComplete;
 
                 didInitializationCompleteFire = true;
                 initializeAppCommandTCS.SetResult(e);

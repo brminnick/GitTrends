@@ -70,11 +70,11 @@ namespace GitTrends
             {
                 RowDefinitions = Rows.Define(
                     (Row.CollectionView, Star),
-                    (Row.Information, AbsoluteGridLength(InformationButton.Diameter))),
+                    (Row.Information, InformationButton.Diameter)),
 
                 ColumnDefinitions = Columns.Define(
                     (Column.CollectionView, Star),
-                    (Column.Information, AbsoluteGridLength(InformationButton.Diameter))),
+                    (Column.Information, InformationButton.Diameter)),
 
                 Children =
                 {

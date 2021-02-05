@@ -6,8 +6,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using Autofac;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
+using Plugin.StoreReview.Abstractions;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -61,8 +63,8 @@ namespace GitTrends
 
         public string? GetPreferredLanguage() => _languageService.PreferredLanguage;
 
-        public string GetLoggedInUserAlias() => _gitHubUserService.Alias;
         public string GetLoggedInUserName() => _gitHubUserService.Name;
+        public string GetLoggedInUserAlias() => _gitHubUserService.Alias;
         public string GetLoggedInUserAvatarUrl() => _gitHubUserService.AvatarUrl;
 
         public async Task SetGitHubUser(string token, CancellationToken cancellationToken)
@@ -78,13 +80,7 @@ namespace GitTrends
 
         public Task<GitHubToken> GetGitHubToken() => _gitHubUserService.GetGitHubToken();
 
-        public void TriggerReviewRequest()
-        {
-            var referringSitesPage = (ReferringSitesPage)GetVisibleContentPage();
-            var referringSitesViewModel = (ReferringSitesViewModel)referringSitesPage.BindingContext;
-
-            referringSitesViewModel.IsStoreRatingRequestVisible = true;
-        }
+        public void TriggerReviewRequest() => ContainerService.Container.Resolve<IStoreReview>().RequestReview(true);
 
         public string GetReviewRequestAppStoreTitle() => AppStoreConstants.RatingRequest;
 

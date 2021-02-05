@@ -11,13 +11,27 @@ namespace GitTrends.Shared
         IReadOnlyList<DailyViewsModel>? _dailyViewsList;
         IReadOnlyList<DailyClonesModel>? _dailyClonesList;
 
-        public Repository(string name, string description, long forkCount, string ownerLogin, string ownerAvatarUrl, long issuesCount, string url, bool isFork, DateTimeOffset dataDownloadedAt, bool? isFavorite = null, IEnumerable<DailyViewsModel>? views = null, IEnumerable<DailyClonesModel>? clones = null, IEnumerable<DateTimeOffset>? starredAt = null)
+        public Repository(string name,
+                            string description,
+                            long forkCount,
+                            string ownerLogin,
+                            string ownerAvatarUrl,
+                            long issuesCount,
+                            long watchersCount,
+                            string url,
+                            bool isFork,
+                            DateTimeOffset dataDownloadedAt,
+                            bool? isFavorite = null,
+                            IEnumerable<DailyViewsModel>? views = null,
+                            IEnumerable<DailyClonesModel>? clones = null,
+                            IEnumerable<DateTimeOffset>? starredAt = null)
         {
             IsFavorite = isFavorite;
             DataDownloadedAt = dataDownloadedAt;
 
             Name = name;
             Description = description;
+            WatchersCount = watchersCount;
             ForkCount = forkCount;
             OwnerLogin = ownerLogin;
             OwnerAvatarUrl = ownerAvatarUrl;
@@ -37,6 +51,7 @@ namespace GitTrends.Shared
         public long IssuesCount { get; init; }
         public string Name { get; init; }
         public string Description { get; init; }
+        public long WatchersCount { get; init; }
         public long ForkCount { get; init; }
         public bool IsFork { get; init; }
         public string Url { get; init; }

@@ -41,15 +41,13 @@ namespace GitTrends.Droid
             SerializeObject(UITestBackdoorService.GetCurrentTrendsPageNumber());
 
         [Preserve, Export(BackdoorMethodConstants.PopPage)]
-        public async void PopPage() =>
-            await UITestBackdoorService.PopPage().ConfigureAwait(false);
+        public async void PopPage() => await UITestBackdoorService.PopPage().ConfigureAwait(false);
 
         [Preserve, Export(BackdoorMethodConstants.ShouldSendNotifications)]
         public bool ShouldSendNotifications() => UITestBackdoorService.ShouldSendNotifications();
 
         [Preserve, Export(BackdoorMethodConstants.GetPreferredTheme)]
-        public string GetPreferredTheme() =>
-            SerializeObject(UITestBackdoorService.GetPreferredTheme());
+        public string GetPreferredTheme() => SerializeObject(UITestBackdoorService.GetPreferredTheme());
 
         [Preserve, Export(BackdoorMethodConstants.TriggerReviewRequest)]
         public void TriggerReviewRequest() => UITestBackdoorService.TriggerReviewRequest();
