@@ -1,4 +1,5 @@
 ﻿using GitTrends.Shared;
+using Sharpnado.MaterialFrame;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
@@ -38,12 +39,12 @@ namespace GitTrends
 
             Children =
             {
-                new AvatarImage(_circleDiameter).FillExpand()
+                new AvatarImage(_circleDiameter){ BackgroundColor = Color.White, Padding = 12 }.FillExpand()
                     .Row(Row.Avatar).Column(Column.Image)
                     .Bind(CircleImage.ImageSourceProperty, nameof(NuGetPackageModel.IconUri), BindingMode.OneTime)
-                    .DynamicResource(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
+                    .DynamicResource(Frame.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
 
-                new Label { LineBreakMode = LineBreakMode.TailTruncation }.CenterHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, 12)
+                new Label { LineBreakMode = LineBreakMode.TailTruncation }.FillExpandHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, 12)
                     .Row(Row.Login).Column(Column.LeftText).ColumnSpan(3)
                     .Bind(Label.TextProperty, nameof(NuGetPackageModel.PackageName), BindingMode.OneTime)
                     .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))

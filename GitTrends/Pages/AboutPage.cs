@@ -8,6 +8,8 @@ using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 using static GitTrends.XamarinFormsService;
+using Syncfusion.Licensing;
+using Xamarin.Essentials;
 
 namespace GitTrends
 {
@@ -32,6 +34,7 @@ namespace GitTrends
             Content = new Grid
             {
                 ColumnSpacing = 2,
+                RowSpacing = 6,
 
                 ColumnDefinitions = Columns.Define(
                     (Column.LeftPadding, horizontalPadding),
@@ -44,21 +47,21 @@ namespace GitTrends
                     (Column.RightPadding, horizontalPadding)),
 
                 RowDefinitions = Rows.Define(
-                    (Row.Title, 30),
-                    (Row.Description, 50),
-                    (Row.StatsTitle, 12),
-                    (Row.StatsNumber, 16),
-                    (Row.ActionButtons, 35),
-                    (Row.CollaboratorTitle, 30),
-                    (Row.CollaboratorDescription, 40),
+                    (Row.Title, 32),
+                    (Row.Description, 48),
+                    (Row.StatsTitle, 16),
+                    (Row.StatsNumber, 20),
+                    (Row.ActionButtons, 60),
+                    (Row.CollaboratorTitle, 20),
+                    (Row.CollaboratorDescription, 32),
                     (Row.CollaboratorCollection, 100),
-                    (Row.LibrariesTitle, 10),
-                    (Row.LibrariesDescription, 15),
+                    (Row.LibrariesTitle, 20),
+                    (Row.LibrariesDescription, 32),
                     (Row.LibrariesCollection, Star)),
 
                 Children =
                 {
-                     new Image().CenterExpand()
+                     new Image().CenterExpand().Margins(right: 12)
                         .Row(Row.Title).RowSpan(4).Column(Column.Icon)
                         .DynamicResource(Image.SourceProperty, nameof(BaseTheme.GitTrendsImageSource)),
 
@@ -98,7 +101,7 @@ namespace GitTrends
                     new ButtonLayout().Center()
                         .Row(Row.ActionButtons).Column(Column.Icon).ColumnSpan(6),
 
-                    new TitleLabel(AboutPageConstants.CollaboratorsTitle)
+                    new TitleLabel(AboutPageConstants.CollaboratorsTitle).TextBottom().BottomExpand()
                         .Row(Row.CollaboratorTitle).Column(Column.Icon).ColumnSpan(6),
 
                     new DescriptionLabel(AboutPageConstants.CollaboratorsDescription)
@@ -106,6 +109,7 @@ namespace GitTrends
 
                     new CollectionView
                     {
+                        HorizontalScrollBarVisibility = ScrollBarVisibility.Never,
                         HeightRequest = ContributorDataTemplate.RowHeight + 8,
                         Header = new BoxView { WidthRequest = horizontalPadding },
                         SelectionMode = SelectionMode.Single,
@@ -124,6 +128,7 @@ namespace GitTrends
 
                     new CollectionView
                     {
+                        HorizontalScrollBarVisibility = ScrollBarVisibility.Never,
                         HeightRequest = LibraryDataTemplate.RowHeight * 2 + 8,
                         Header = new BoxView { WidthRequest = horizontalPadding },
                         SelectionMode = SelectionMode.Single,
@@ -136,6 +141,7 @@ namespace GitTrends
                 }
             };
         }
+
 
         enum Row { Title, Description, StatsTitle, StatsNumber, ActionButtons, CollaboratorTitle, CollaboratorDescription, CollaboratorCollection, LibrariesTitle, LibrariesDescription, LibrariesCollection }
         enum Column { LeftPadding, Icon, Watching, WatchingSeparator, Stars, StarsSeparator, Forks, RightPadding }
@@ -174,7 +180,7 @@ namespace GitTrends
                 AutomationId = automationId;
 
                 FontSize = 16;
-                FontFamily = FontFamilyConstants.RobotoMedium;
+                FontFamily = FontFamilyConstants.RobotoRegular;
 
                 this.Center().TextCenter().DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
                 this.Bind(WidthRequestProperty, nameof(Width), source: statsTitleLayout);
@@ -205,6 +211,8 @@ namespace GitTrends
                 Text = text;
                 FontSize = 12;
 
+                MaxLines = 2;
+
                 HorizontalOptions = LayoutOptions.StartAndExpand;
                 VerticalOptions = LayoutOptions.StartAndExpand;
 
@@ -221,6 +229,8 @@ namespace GitTrends
             {
                 Spacing = 16;
                 Orientation = StackOrientation.Horizontal;
+
+                Margin = new Thickness(0, 8, 0, 16);
 
                 Children.Add(new ViewOnGitHubButton().EndExpand());
                 Children.Add(new RequestFeatureButton().StartExpand());
@@ -246,7 +256,7 @@ namespace GitTrends
                 protected AboutPageButton(in string svgFileName, in string text, in string automationId, in Color backgroundColor, in string commandPropertyBindingPath)
                     : base(svgFileName, text, automationId, IsSmallScreen ? 10 : 14, FontFamilyConstants.RobotoMedium, 4)
                 {
-                    Padding = new Thickness(8, 8);
+                    Padding = new Thickness(DeviceInfo.Platform == DevicePlatform.iOS ? 12 : 16, 8);
                     BackgroundColor = backgroundColor;
                     GestureRecognizers.Add(new TapGestureRecognizer().Bind(TapGestureRecognizer.CommandProperty, commandPropertyBindingPath));
                 }

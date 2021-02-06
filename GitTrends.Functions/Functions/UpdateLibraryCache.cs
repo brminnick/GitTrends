@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
@@ -27,7 +28,7 @@ namespace GitTrends.Functions
             await foreach (var (Title, ImageUri, NugetUri) in _nuGetService.GetPackageInfo(cancellationTokenSource.Token))
             {
                 log.LogInformation($"Found {Title}");
-                if (!nugetPackageDictionary.ContainsKey(Title))
+                if (!nugetPackageDictionary.Any(x => x.Key.Equals(Title, StringComparison.OrdinalIgnoreCase)))
                     nugetPackageDictionary.Add(Title, (ImageUri, NugetUri));
             }
 

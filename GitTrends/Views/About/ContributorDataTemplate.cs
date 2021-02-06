@@ -41,7 +41,7 @@ namespace GitTrends
                 new AvatarImage(_circleDiameter).FillExpand()
                     .Row(Row.Avatar).Column(Column.Image)
                     .Bind(CircleImage.ImageSourceProperty, nameof(Contributor.AvatarUrl), BindingMode.OneTime)
-                    .DynamicResource(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
+                    .DynamicResource(Frame.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
 
                 new Label { LineBreakMode = LineBreakMode.TailTruncation }.CenterHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, 12)
                     .Row(Row.Login).Column(Column.LeftText).ColumnSpan(3)
