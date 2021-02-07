@@ -695,7 +695,7 @@
         <Folder Include="Services\" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="refit" Version="5.2.4" />
+        <PackageReference Include="Refit" Version="5.2.4" />
         <PackageReference Include="Polly" Version="7.2.1" />
         <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1" />
         <PackageReference Include="GitHubApiStatus" Version="2.0.0" />
