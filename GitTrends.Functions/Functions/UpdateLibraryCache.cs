@@ -29,7 +29,7 @@ namespace GitTrends.Functions
             {
                 log.LogInformation($"Found {Title}");
                 if (!nugetPackageDictionary.Any(x => x.Key.Equals(Title, StringComparison.OrdinalIgnoreCase)))
-                    nugetPackageDictionary.Add(Title, (ImageUri, NugetUri));
+                    nugetPackageDictionary.Add(Title.ToPascalCase(), (ImageUri, NugetUri));
             }
 
             var nugetPackageModelList = new List<NuGetPackageModel>();

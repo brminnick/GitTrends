@@ -1,5 +1,4 @@
 ﻿using GitTrends.Shared;
-using Sharpnado.MaterialFrame;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
@@ -11,9 +10,9 @@ namespace GitTrends
         public const int RowHeight = _rowSpacing + _circleDiameter + _loginTextHeight;
 
         const int _rowSpacing = 4;
-        const int _loginTextHeight = 25;
-        const int _textPadding = 5;
-        const int _circleDiameter = 62;
+        const int _loginTextHeight = 24;
+        const int _textPadding = 8;
+        const int _circleDiameter = 64;
 
         public LibraryDataTemplate() : base(CreateLibraryDataTemplate)
         {
@@ -42,7 +41,7 @@ namespace GitTrends
                 new AvatarImage(_circleDiameter){ BackgroundColor = Color.White, Padding = 12 }.FillExpand()
                     .Row(Row.Avatar).Column(Column.Image)
                     .Bind(CircleImage.ImageSourceProperty, nameof(NuGetPackageModel.IconUri), BindingMode.OneTime)
-                    .DynamicResource(Frame.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
+                    .DynamicResource(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
 
                 new Label { LineBreakMode = LineBreakMode.TailTruncation }.FillExpandHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, 12)
                     .Row(Row.Login).Column(Column.LeftText).ColumnSpan(3)

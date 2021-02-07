@@ -125,7 +125,7 @@ namespace GitTrends
 
                         Children.Add(new AvatarImage(repository.OwnerAvatarUrl, _circleImageHeight)
                                         .Row(Row.Title).Column(Column.Avatar).RowSpan(2)
-                                        .DynamicResources((BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
+                                        .DynamicResources((CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
                                                             (CircleImage.ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
                                                             (CircleImage.LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource))));
 

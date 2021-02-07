@@ -4,12 +4,12 @@ using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.CommunityToolkit.Markup;
+using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+using Xamarin.Forms.Shapes;
 using static GitTrends.XamarinFormsService;
-using Syncfusion.Licensing;
-using Xamarin.Essentials;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -219,7 +219,7 @@ namespace GitTrends
                 FontFamily = FontFamilyConstants.RobotoRegular;
                 LineBreakMode = LineBreakMode.TailTruncation;
 
-                this.DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
+                this.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
             }
         }
 
@@ -256,8 +256,8 @@ namespace GitTrends
                 protected AboutPageButton(in string svgFileName, in string text, in string automationId, in Color backgroundColor, in string commandPropertyBindingPath)
                     : base(svgFileName, text, automationId, IsSmallScreen ? 10 : 14, FontFamilyConstants.RobotoMedium, 4)
                 {
-                    Padding = new Thickness(DeviceInfo.Platform == DevicePlatform.iOS ? 12 : 16, 8);
                     BackgroundColor = backgroundColor;
+                    Padding = new Thickness(DeviceInfo.Platform == DevicePlatform.iOS ? 12 : 16, 8);
                     GestureRecognizers.Add(new TapGestureRecognizer().Bind(TapGestureRecognizer.CommandProperty, commandPropertyBindingPath));
                 }
             }
