@@ -19,17 +19,17 @@ namespace GitTrends.Functions
 
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.Services.AddRefitClient<IGitHubAuthApi>(getRefitSettings())
+            builder.Services.AddRefitClient<IGitHubAuthApi>(RefitExtensions.GetNewtonsoftJsonRefitSettings())
                 .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubBaseUrl))
                 .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
                 .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
 
-            builder.Services.AddRefitClient<IGitHubApiV3>(getRefitSettings())
+            builder.Services.AddRefitClient<IGitHubApiV3>(RefitExtensions.GetNewtonsoftJsonRefitSettings())
                 .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubRestApiUrl))
                 .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
                 .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
 
-            builder.Services.AddRefitClient<IGitHubGraphQLApi>(getRefitSettings())
+            builder.Services.AddRefitClient<IGitHubGraphQLApi>(RefitExtensions.GetNewtonsoftJsonRefitSettings())
                 .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubGraphQLApi))
                 .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
                 .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
@@ -43,7 +43,6 @@ namespace GitTrends.Functions
             builder.Services.AddSingleton<GitHubGraphQLApiService>();
 
             static TimeSpan sleepDurationProvider(int attemptNumber) => TimeSpan.FromSeconds(Math.Pow(2, attemptNumber));
-            static RefitSettings getRefitSettings() => new(new NewtonsoftJsonContentSerializer());
             static DecompressionMethods getDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip;
         }
     }
