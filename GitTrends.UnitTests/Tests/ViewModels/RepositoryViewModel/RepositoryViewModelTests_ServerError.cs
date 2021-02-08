@@ -8,7 +8,6 @@ using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using Refit;
 using RichardSzalay.MockHttp;
 
 namespace GitTrends.UnitTests
@@ -108,9 +107,9 @@ namespace GitTrends.UnitTests
 
         protected override void InitializeServiceCollection()
         {
-            var gitHubApiV3Client = RestService.For<IGitHubApiV3>(CreateServerErrorHttpClient(GitHubConstants.GitHubRestApiUrl));
-            var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
-            var azureFunctionsClient = RestService.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
+            var gitHubApiV3Client = RefitExtensions.For<IGitHubApiV3>(CreateServerErrorHttpClient(GitHubConstants.GitHubRestApiUrl));
+            var gitHubGraphQLCLient = RefitExtensions.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
+            var azureFunctionsClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
 
             ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
         }

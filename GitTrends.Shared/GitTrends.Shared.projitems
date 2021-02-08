@@ -64,5 +64,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryConnectionResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\StarGazers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryContributor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RefitExtensions.cs" />
   </ItemGroup>
 </Project>

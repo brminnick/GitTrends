@@ -3,7 +3,6 @@ using Autofac;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
-using Refit;
 using Shiny;
 using Shiny.Notifications;
 using Xamarin.Essentials.Implementation;
@@ -93,9 +92,9 @@ namespace GitTrends
             builder.RegisterType<WelcomePage>().AsSelf();
 
             //Register Refit Services
-            IGitHubApiV3 gitHubV3ApiClient = RestService.For<IGitHubApiV3>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubRestApiUrl));
-            IGitHubGraphQLApi gitHubGraphQLApiClient = RestService.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
-            IAzureFunctionsApi azureFunctionsApiClient = RestService.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
+            IGitHubApiV3 gitHubV3ApiClient = RefitExtensions.For<IGitHubApiV3>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubRestApiUrl));
+            IGitHubGraphQLApi gitHubGraphQLApiClient = RefitExtensions.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
+            IAzureFunctionsApi azureFunctionsApiClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl)); 
 
             builder.RegisterInstance(gitHubV3ApiClient).SingleInstance();
             builder.RegisterInstance(gitHubGraphQLApiClient).SingleInstance();
