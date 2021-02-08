@@ -107,6 +107,7 @@
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.3" />
     <PackageReference Include="Plugin.StoreReview" Version="3.0.0-beta" />
     <PackageReference Include="Xamarin.Google.Dagger" Version="2.27.0" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.2" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />

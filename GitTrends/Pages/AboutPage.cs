@@ -3,11 +3,12 @@ using System.Linq;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using SkiaSharp;
+using SkiaSharp.Views.Forms;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.Forms.Shapes;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
@@ -15,6 +16,7 @@ namespace GitTrends
 {
     class AboutPage : BaseContentPage<AboutViewModel>
     {
+        const int _separatorColumnWidth = 2;
         readonly DeepLinkingService _deepLinkingService;
 
         public AboutPage(IMainThread mainThread,
@@ -24,7 +26,6 @@ namespace GitTrends
         {
             const int titleColumnWidth = 68;
             const int horizontalPadding = 28;
-            const int separatorColumnWidth = 1;
 
             _deepLinkingService = deepLinkingService;
 
@@ -40,9 +41,9 @@ namespace GitTrends
                     (Column.LeftPadding, horizontalPadding),
                     (Column.Icon, Star),
                     (Column.Watching, titleColumnWidth),
-                    (Column.WatchingSeparator, separatorColumnWidth),
+                    (Column.WatchingSeparator, _separatorColumnWidth),
                     (Column.Stars, titleColumnWidth),
-                    (Column.StarsSeparator, separatorColumnWidth),
+                    (Column.StarsSeparator, _separatorColumnWidth),
                     (Column.Forks, titleColumnWidth),
                     (Column.RightPadding, horizontalPadding)),
 
@@ -75,16 +76,14 @@ namespace GitTrends
                     new StatsTitleLayout(AboutPageConstants.Watching, "unique_views.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout watchingTitleLabel)
                         .Row(Row.StatsTitle).Column(Column.Watching),
 
-                    new BoxView()
-                        .Row(Row.StatsTitle).RowSpan(2).Column(Column.WatchingSeparator)
-                        .DynamicResource(BackgroundColorProperty,nameof(BaseTheme.SettingsLabelTextColor)),
+                    new DashedLineSeparator()
+                        .Row(Row.StatsTitle).RowSpan(2).Column(Column.WatchingSeparator),
 
                     new StatsTitleLayout(AboutPageConstants.Stars, "star.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout starsTitleLabel)
                         .Row(Row.StatsTitle).Column(Column.Stars),
 
-                    new BoxView()
-                        .Row(Row.StatsTitle).RowSpan(2).Column(Column.StarsSeparator)
-                        .DynamicResource(BackgroundColorProperty,nameof(BaseTheme.SettingsLabelTextColor)),
+                    new DashedLineSeparator()
+                        .Row(Row.StatsTitle).RowSpan(2).Column(Column.StarsSeparator),
 
                     new StatsTitleLayout(AboutPageConstants.Forks, "repo_forked.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout forksTitleLabel)
                         .Row(Row.StatsTitle).Column(Column.Forks),
@@ -169,6 +168,36 @@ namespace GitTrends
                 AnalyticsService.Track("Library Tapped", nameof(NuGetPackageModel.PackageName), nuGetPackageModel.PackageName);
 
                 await _deepLinkingService.OpenBrowser(nuGetPackageModel.WebsiteUri);
+            }
+        }
+
+        class DashedLineSeparator : SKCanvasView
+        {
+            public DashedLineSeparator()
+            {
+                ThemeService.PreferenceChanged += HandlePreferenceChanged;
+                PaintSurface += HandlePaintSurface;
+            }
+
+            void HandlePreferenceChanged(object sender, PreferredTheme e) => InvalidateSurface();
+
+            void HandlePaintSurface(object sender, SKPaintSurfaceEventArgs e)
+            {
+                var imageInfo = e.Info;
+                var canvas = e.Surface.Canvas;
+
+                canvas.Clear();
+
+                using var paintDashedLines = new SKPaint
+                {
+                    Style = SKPaintStyle.Stroke,
+                    Color = ((Color)Application.Current.Resources[nameof(BaseTheme.NavigationBarBackgroundColor)]).ToSKColor(),
+                    StrokeWidth = _separatorColumnWidth,
+                    StrokeCap = SKStrokeCap.Butt,
+                    PathEffect = SKPathEffect.CreateDash(new[] { 8f, 8f }, 0f)
+                };
+
+                canvas.DrawLine(imageInfo.Width / 2, 0, imageInfo.Width / 2, imageInfo.Height, paintDashedLines);
             }
         }
 
