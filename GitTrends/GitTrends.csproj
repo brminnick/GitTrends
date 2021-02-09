@@ -43,58 +43,7 @@
         <PackageReference Include="Xamarin.CommunityToolkit.Markup" Version="1.0.2" />
         <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.1" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="EventArgs\" />
-      <Folder Include="Views\" />
-      <Folder Include="Views\Repository\" />
-      <Folder Include="Views\Base\" />
-      <Folder Include="Database\" />
-      <Folder Include="Resources\" />
-      <Folder Include="Views\Settings\" />
-      <Folder Include="Themes\" />
-      <Folder Include="Views\ReferringSites\" />
-      <Folder Include="Models\" />
-      <Folder Include="Views\Settings\Base\" />
-      <Folder Include="Pages\Onboarding\" />
-      <Folder Include="Resources\SVGs\" />
-      <Folder Include="Resources\Fonts\" />
-      <Folder Include="Views\Trends\" />
-      <Folder Include="Constants\" />
-      <Folder Include="Interfaces\" />
-      <Folder Include="Effects\" />
-      <Folder Include="Pages\Trends\" />
-    </ItemGroup>
-    <ItemGroup>
-      <None Remove="repo_forked.svg" />
-      <None Remove="Resources\SVGs\chart.svg" />
-      <None Remove="Resources\SVGs\issue_opened.svg" />
-      <None Remove="Resources\SVGs\megaphone.svg" />
-      <None Remove="Resources\SVGs\repo_forked.svg" />
-      <None Remove="Resources\SVGs\star.svg" />
-      <None Remove="Resources\SVGs\total_clones.svg" />
-      <None Remove="Resources\SVGs\total_views.svg" />
-      <None Remove="Resources\SVGs\trending_tag.svg" />
-      <None Remove="Resources\SVGs\unique_clones.svg" />
-      <None Remove="Resources\SVGs\unique_views.svg" />
-      <None Remove="Resources\Fonts\FontAwesomeBrands.ttf" />
-      <None Remove="Resources\Fonts\Roboto-Bold.ttf" />
-      <None Remove="Resources\Fonts\Roboto-Medium.ttf" />
-      <None Remove="Resources\Fonts\Roboto-Regular.ttf" />
-      <None Remove="Resources\SVGs\zoom_gesture.svg" />
-      <None Remove="Resources\SVGs\longpress_gesture.svg" />
-      <None Remove="Resources\Fonts\Font Awesome 5 Free-Solid-900.otf" />
-      <None Remove="Resources\SVGs\bell.svg" />
-      <None Remove="Resources\SVGs\check.svg" />
-      <None Remove="Resources\SVGs\error.svg" />
-      <None Remove="Resources\SVGs\github.svg" />
-      <None Remove="Resources\SVGs\darkmode.svg" />
-      <None Remove="Resources\SVGs\logout.svg" />
-      <None Remove="Resources\SVGs\right_arrow.svg" />
-      <None Remove="Resources\SVGs\language.svg" />
-      <None Remove="Resources\SVGs\about.svg" />
-      <None Remove="Resources\SVGs\favorite_tag.svg" />
-      <None Remove="Resources\SVGs\star_outline.svg" />
-    </ItemGroup>
+
     <ItemGroup>
       <EmbeddedResource Include="Resources\SVGs\chart.svg" />
       <EmbeddedResource Include="Resources\SVGs\issue_opened.svg" />
