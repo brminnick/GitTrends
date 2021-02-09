@@ -70,7 +70,7 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
             Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Error, false), emptyDataViewDescription_Final);
 
-            Assert.IsTrue(pullToRefreshFailedEventArgs is ErrorPullToRefreshEventArgs);
+            Assert.IsInstanceOf<ErrorPullToRefreshEventArgs>(pullToRefreshFailedEventArgs);
 
             foreach (var visibleRepository in visibleRepositoryList_Final)
             {
