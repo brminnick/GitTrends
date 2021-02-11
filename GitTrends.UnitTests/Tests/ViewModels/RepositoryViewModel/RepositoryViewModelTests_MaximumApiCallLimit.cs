@@ -9,7 +9,7 @@ namespace GitTrends.UnitTests
 {
     abstract class RepositoryViewModelTests_MaximumApiCallLimit : BaseTest
     {
-        protected async Task ExecutePullToRefreshCommandTestMaximumApiLimitTest()
+        protected async Task ExecutePullToRefreshCommandTestMaximumApiLimitTest(TaskCompletionSource<PullToRefreshFailedEventArgs> pullToRefreshFailedTCS)
         {
             //Arrange
             PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs;
@@ -22,7 +22,6 @@ namespace GitTrends.UnitTests
             var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
             var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
-            var pullToRefreshFailedTCS = new TaskCompletionSource<PullToRefreshFailedEventArgs>();
             RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 
             //Act
@@ -50,7 +49,7 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
             Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.MaximumApiLimit, true), emptyDataViewDescription_Final);
 
-            Assert.IsTrue(pullToRefreshFailedEventArgs is MaximumApiRequestsReachedEventArgs);
+            Assert.IsInstanceOf<MaximumApiRequestsReachedEventArgs>(pullToRefreshFailedEventArgs);
 
             void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
             {

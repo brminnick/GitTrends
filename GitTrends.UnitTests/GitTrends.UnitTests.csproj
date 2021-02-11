@@ -13,27 +13,17 @@
     <PackageReference Include="NUnit" Version="3.13.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
-    <PackageReference Include="Refit" Version="5.2.4" />
     <PackageReference Include="Polly" Version="7.2.1" />
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1" />
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
     <PackageReference Include="GitHubApiStatus.Extensions" Version="2.0.0" />
+    <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.8" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GitTrends\GitTrends.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Tests\" />
-    <Folder Include="Tests\Base\" />
-    <Folder Include="MockServices\" />
-    <Folder Include="Tests\ViewModels\" />
-    <Folder Include="Tests\Services\" />
-    <Folder Include="Tests\Resx\" />
-    <Folder Include="Tests\ViewModels\RepositoryViewModel\" />
-    <Folder Include="Tests\ViewModels\ReferringSitesViewModel\" />
-    <Folder Include="Tests\ViewModels\RepositoryViewModel\Base\" />
-  </ItemGroup>
+
 </Project>

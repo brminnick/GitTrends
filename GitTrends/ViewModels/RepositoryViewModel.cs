@@ -390,9 +390,9 @@ namespace GitTrends
         {
             RefreshState = pullToRefreshFailedEventArgs switch
             {
-                ErrorPullToRefreshEventArgs _ => RefreshState.Error,
-                MaximumApiRequestsReachedEventArgs _ => RefreshState.MaximumApiLimit,
-                LoginExpiredPullToRefreshEventArgs _ => RefreshState.LoginExpired,
+                ErrorPullToRefreshEventArgs => RefreshState.Error,
+                MaximumApiRequestsReachedEventArgs => RefreshState.MaximumApiLimit,
+                LoginExpiredPullToRefreshEventArgs => RefreshState.LoginExpired,
                 _ => throw new NotSupportedException()
             };
 

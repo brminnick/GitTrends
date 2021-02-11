@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Newtonsoft.Json;
 using Refit;
 using Xamarin.Essentials.Interfaces;
 
@@ -163,8 +164,11 @@ namespace GitTrends
 
             await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
 
-            if (response.Content.Errors != null)
+            if (response?.Content?.Errors != null)
                 throw new GraphQLException<T>(response.Content.Data, response.Content.Errors, response.StatusCode, response.Headers);
+
+            if (response?.Content is null)
+                throw new JsonSerializationException();
 
             return response.Content.Data;
         }
