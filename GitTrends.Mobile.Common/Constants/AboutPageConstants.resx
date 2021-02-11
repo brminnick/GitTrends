@@ -16,7 +16,7 @@
     <value>About</value>
   </data>
 	<data name="DescriptionText" xml:space="preserve">
-    <value>GitTrends is an open-source app to help monitor GitTrends is an open-source app to help monitor...[INCOMPLETE]</value>
+    <value>GitTrends is an open-source app built in C# using Xamarin.Forms that helps you monitor your GitHub repositories!</value>
   </data>
 	<data name="Stars" xml:space="preserve">
     <value>Stars</value>
@@ -31,12 +31,12 @@
     <value>Collaborators</value>
   </data>
 	<data name="CollaboratorsDescription" xml:space="preserve">
-    <value>Thank You to all of our amazing open-source contributors...[INCOMPLETE]</value>
+    <value>Thank You to all of our amazing open-source contributors. Tap on a contributor to learn more!</value>
   </data>
 	<data name="LibrariesTitle" xml:space="preserve">
     <value>Libraries</value>
   </data>
 	<data name="LibrariesDescription" xml:space="preserve">
-    <value>GitTrends leverages following libraries and frameworks...[INCOMPLETE]</value>
+    <value>Thank you to all of the amazing libraries and frameworks that made GitTrends possible!</value>
   </data>
 </root>
