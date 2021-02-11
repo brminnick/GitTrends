@@ -95,7 +95,7 @@ namespace GitTrends
 
         void OnInitializationCompleted(bool isInitializationSuccessful)
         {
-            IsInitializationComplete = true;
+            IsInitializationComplete = isInitializationSuccessful;
             _initializationCompletedEventManager.RaiseEvent(this, new InitializationCompleteEventArgs(isInitializationSuccessful), nameof(InitializationCompleted));
         }
     }
