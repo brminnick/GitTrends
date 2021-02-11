@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
-using SkiaSharp;
-using SkiaSharp.Views.Forms;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
@@ -16,7 +13,6 @@ namespace GitTrends
 {
     class AboutPage : BaseContentPage<AboutViewModel>
     {
-        const int _separatorColumnWidth = 2;
         readonly DeepLinkingService _deepLinkingService;
 
         public AboutPage(IMainThread mainThread,
@@ -24,7 +20,6 @@ namespace GitTrends
                             IAnalyticsService analyticsService,
                             DeepLinkingService deepLinkingService) : base(aboutViewModel, analyticsService, mainThread)
         {
-            const int titleColumnWidth = 68;
             const int horizontalPadding = 28;
 
             _deepLinkingService = deepLinkingService;
@@ -39,20 +34,15 @@ namespace GitTrends
 
                 ColumnDefinitions = Columns.Define(
                     (Column.LeftPadding, horizontalPadding),
-                    (Column.Icon, Star),
-                    (Column.Watching, titleColumnWidth),
-                    (Column.WatchingSeparator, _separatorColumnWidth),
-                    (Column.Stars, titleColumnWidth),
-                    (Column.StarsSeparator, _separatorColumnWidth),
-                    (Column.Forks, titleColumnWidth),
+                    (Column.Icon, 108),
+                    (Column.Statistics, Star),
                     (Column.RightPadding, horizontalPadding)),
 
                 RowDefinitions = Rows.Define(
                     (Row.Title, 32),
                     (Row.Description, 48),
-                    (Row.StatsTitle, 16),
-                    (Row.StatsNumber, 20),
-                    (Row.ActionButtons, 60),
+                    (Row.Statistics, 36),
+                    (Row.ActionButtons, 68),
                     (Row.CollaboratorTitle, 20),
                     (Row.CollaboratorDescription, 32),
                     (Row.CollaboratorCollection, 100),
@@ -63,48 +53,27 @@ namespace GitTrends
                 Children =
                 {
                      new Image().CenterExpand().Margins(right: 12)
-                        .Row(Row.Title).RowSpan(4).Column(Column.Icon)
+                        .Row(Row.Title).RowSpan(3).Column(Column.Icon)
                         .DynamicResource(Image.SourceProperty, nameof(BaseTheme.GitTrendsImageSource)),
 
                     new Label { Text = "GitTrends" }.Font(FontFamilyConstants.RobotoMedium, 24)
-                        .Row(Row.Title).Column(Column.Watching).ColumnSpan(5)
+                        .Row(Row.Title).Column(Column.Statistics)
                         .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor)),
 
                     new DescriptionLabel(AboutPageConstants.DescriptionText) { MaxLines = 3 }
-                        .Row(Row.Description).Column(Column.Watching).ColumnSpan(5),
+                        .Row(Row.Description).Column(Column.Statistics),
 
-                    new StatsTitleLayout(AboutPageConstants.Watching, "unique_views.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout watchingTitleLabel)
-                        .Row(Row.StatsTitle).Column(Column.Watching),
-
-                    new DashedLineSeparator()
-                        .Row(Row.StatsTitle).RowSpan(2).Column(Column.WatchingSeparator),
-
-                    new StatsTitleLayout(AboutPageConstants.Stars, "star.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout starsTitleLabel)
-                        .Row(Row.StatsTitle).Column(Column.Stars),
-
-                    new DashedLineSeparator()
-                        .Row(Row.StatsTitle).RowSpan(2).Column(Column.StarsSeparator),
-
-                    new StatsTitleLayout(AboutPageConstants.Forks, "repo_forked.svg",() => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)]).Assign(out StatsTitleLayout forksTitleLabel)
-                        .Row(Row.StatsTitle).Column(Column.Forks),
-
-                    new StatisticsLabel(ViewModel.Watchers?.ToAbbreviatedText() ?? string.Empty, AboutPageAutomationIds.WatchersLabel, watchingTitleLabel)
-                        .Row(Row.StatsNumber).Column(Column.Watching),
-
-                    new StatisticsLabel(ViewModel.Stars?.ToAbbreviatedText() ?? string.Empty, AboutPageAutomationIds.StarsLabel, starsTitleLabel)
-                        .Row(Row.StatsNumber).Column(Column.Stars),
-
-                    new StatisticsLabel(ViewModel.Forks?.ToAbbreviatedText() ?? string.Empty, AboutPageAutomationIds.ForksLabel, forksTitleLabel)
-                        .Row(Row.StatsNumber).Column(Column.Forks),
+                    new GitTrendsStatisticsView()
+                        .Row(Row.Statistics).Column(Column.Statistics),
 
                     new ButtonLayout().Center()
-                        .Row(Row.ActionButtons).Column(Column.Icon).ColumnSpan(6),
+                        .Row(Row.ActionButtons).Column(Column.Icon).ColumnSpan(2),
 
                     new TitleLabel(AboutPageConstants.CollaboratorsTitle).TextBottom().BottomExpand()
-                        .Row(Row.CollaboratorTitle).Column(Column.Icon).ColumnSpan(6),
+                        .Row(Row.CollaboratorTitle).Column(Column.Icon).ColumnSpan(2),
 
                     new DescriptionLabel(AboutPageConstants.CollaboratorsDescription)
-                        .Row(Row.CollaboratorDescription).Column(Column.Icon).ColumnSpan(6),
+                        .Row(Row.CollaboratorDescription).Column(Column.Icon).ColumnSpan(2),
 
                     new CollectionView
                     {
@@ -120,10 +89,10 @@ namespace GitTrends
                      .Invoke(collectionView => collectionView.SelectionChanged += HandleContributorSelectionChanged),
 
                     new TitleLabel(AboutPageConstants.LibrariesTitle)
-                        .Row(Row.LibrariesTitle).Column(Column.Icon).ColumnSpan(6),
+                        .Row(Row.LibrariesTitle).Column(Column.Icon).ColumnSpan(2),
 
                     new DescriptionLabel(AboutPageConstants.LibrariesDescription)
-                        .Row(Row.LibrariesDescription).Column(Column.Icon).ColumnSpan(6),
+                        .Row(Row.LibrariesDescription).Column(Column.Icon).ColumnSpan(2),
 
                     new CollectionView
                     {
@@ -142,8 +111,8 @@ namespace GitTrends
         }
 
 
-        enum Row { Title, Description, StatsTitle, StatsNumber, ActionButtons, CollaboratorTitle, CollaboratorDescription, CollaboratorCollection, LibrariesTitle, LibrariesDescription, LibrariesCollection }
-        enum Column { LeftPadding, Icon, Watching, WatchingSeparator, Stars, StarsSeparator, Forks, RightPadding }
+        enum Row { Title, Description, Statistics, ActionButtons, CollaboratorTitle, CollaboratorDescription, CollaboratorCollection, LibrariesTitle, LibrariesDescription, LibrariesCollection }
+        enum Column { LeftPadding, Icon, Statistics, RightPadding }
 
         async void HandleContributorSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -168,51 +137,6 @@ namespace GitTrends
                 AnalyticsService.Track("Library Tapped", nameof(NuGetPackageModel.PackageName), nuGetPackageModel.PackageName);
 
                 await _deepLinkingService.OpenBrowser(nuGetPackageModel.WebsiteUri);
-            }
-        }
-
-        class DashedLineSeparator : SKCanvasView
-        {
-            public DashedLineSeparator()
-            {
-                ThemeService.PreferenceChanged += HandlePreferenceChanged;
-                PaintSurface += HandlePaintSurface;
-            }
-
-            void HandlePreferenceChanged(object sender, PreferredTheme e) => InvalidateSurface();
-
-            void HandlePaintSurface(object sender, SKPaintSurfaceEventArgs e)
-            {
-                var imageInfo = e.Info;
-                var canvas = e.Surface.Canvas;
-
-                canvas.Clear();
-
-                using var paintDashedLines = new SKPaint
-                {
-                    Style = SKPaintStyle.Stroke,
-                    Color = ((Color)Application.Current.Resources[nameof(BaseTheme.NavigationBarBackgroundColor)]).ToSKColor(),
-                    StrokeWidth = _separatorColumnWidth,
-                    StrokeCap = SKStrokeCap.Butt,
-                    PathEffect = SKPathEffect.CreateDash(new[] { 8f, 8f }, 0f)
-                };
-
-                canvas.DrawLine(imageInfo.Width / 2, 0, imageInfo.Width / 2, imageInfo.Height, paintDashedLines);
-            }
-        }
-
-        class StatisticsLabel : Label
-        {
-            public StatisticsLabel(in string text, in string automationId, in StatsTitleLayout statsTitleLayout)
-            {
-                Text = text;
-                AutomationId = automationId;
-
-                FontSize = 16;
-                FontFamily = FontFamilyConstants.RobotoRegular;
-
-                this.Center().TextCenter().DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
-                this.Bind(WidthRequestProperty, nameof(Width), source: statsTitleLayout);
             }
         }
 
@@ -259,7 +183,7 @@ namespace GitTrends
                 Spacing = 16;
                 Orientation = StackOrientation.Horizontal;
 
-                Margin = new Thickness(0, 8, 0, 16);
+                Margin = new Thickness(0, 16, 0, 16);
 
                 Children.Add(new ViewOnGitHubButton().EndExpand());
                 Children.Add(new RequestFeatureButton().StartExpand());
@@ -288,47 +212,6 @@ namespace GitTrends
                     BackgroundColor = backgroundColor;
                     Padding = new Thickness(DeviceInfo.Platform == DevicePlatform.iOS ? 12 : 16, 8);
                     GestureRecognizers.Add(new TapGestureRecognizer().Bind(TapGestureRecognizer.CommandProperty, commandPropertyBindingPath));
-                }
-            }
-        }
-
-        class StatsTitleLayout : StackLayout
-        {
-            public StatsTitleLayout(in string text, in string svgFileName, in Func<Color> getTextColor)
-            {
-                Spacing = 2;
-                Orientation = StackOrientation.Horizontal;
-
-                HorizontalOptions = LayoutOptions.Center;
-
-                Children.Add(new AboutPageSvgImage(svgFileName, getTextColor));
-                Children.Add(new StatsTitleLabel(text));
-            }
-
-            class AboutPageSvgImage : SvgImage
-            {
-                public AboutPageSvgImage(in string svgFileName, in Func<Color> getTextColor) : base(svgFileName, getTextColor, 12, 12)
-                {
-                    HorizontalOptions = LayoutOptions.End;
-                    VerticalOptions = LayoutOptions.Center;
-                }
-            }
-
-            class StatsTitleLabel : Label
-            {
-                public StatsTitleLabel(in string text)
-                {
-                    Text = text;
-                    FontSize = 12;
-                    FontFamily = FontFamilyConstants.RobotoMedium;
-
-                    HorizontalOptions = LayoutOptions.FillAndExpand;
-                    VerticalOptions = LayoutOptions.FillAndExpand;
-
-                    HorizontalTextAlignment = TextAlignment.Start;
-                    VerticalTextAlignment = TextAlignment.Center;
-
-                    this.DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
                 }
             }
         }
