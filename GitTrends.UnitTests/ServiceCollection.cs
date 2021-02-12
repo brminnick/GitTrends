@@ -28,7 +28,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton(gitHubGraphQLApi);
 
             //GitTrends Services
-            services.AddTransient<AppInitializationService>();
+            services.AddSingleton<AppInitializationService>();
             services.AddSingleton<AzureFunctionsApiService>();
             services.AddSingleton<BackgroundFetchService>();
             services.AddSingleton<DeepLinkingService>();
