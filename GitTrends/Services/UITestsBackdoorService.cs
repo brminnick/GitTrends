@@ -92,6 +92,22 @@ namespace GitTrends
 
         public IReadOnlyList<T> GetVisibleCollection<T>() => GetVisibleCollection().Cast<T>().ToList();
 
+        public IReadOnlyList<NuGetPackageModel> GetVisibleLibraries()
+        {
+            var aboutPage = (AboutPage)GetVisibleContentPage();
+            var aboutViewModel = (AboutViewModel)aboutPage.BindingContext;
+
+            return aboutViewModel.InstalledLibraries;
+        }
+
+        public IReadOnlyList<Contributor> GetVisibleContributors()
+        {
+            var aboutPage = (AboutPage)GetVisibleContentPage();
+            var aboutViewModel = (AboutViewModel)aboutPage.BindingContext;
+
+            return aboutViewModel.GitTrendsContributors;
+        }
+
         public async Task PopPage()
         {
             OnPopPageStarted();

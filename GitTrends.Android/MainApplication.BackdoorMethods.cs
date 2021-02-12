@@ -73,6 +73,12 @@ namespace GitTrends.Droid
         [Preserve, Export(BackdoorMethodConstants.GetPreferredLanguage)]
         public string GetPreferredLanguage() => SerializeObject(UITestBackdoorService.GetPreferredLanguage());
 
+        [Preserve, Export(BackdoorMethodConstants.GetContributorsCollection)]
+        public string GetContributorsCollection() => SerializeObject(UITestBackdoorService.GetVisibleContributors());
+
+        [Preserve, Export(BackdoorMethodConstants.GetLibrariesCollection)]
+        public string GetLibrariesCollection() => SerializeObject(UITestBackdoorService.GetVisibleLibraries());
+
         static string SerializeObject<T>(T value) => Newtonsoft.Json.JsonConvert.SerializeObject(value);
     }
 }
