@@ -16,21 +16,21 @@ namespace GitTrends.Mobile.Common.Constants {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class AboutPageConstants {
+    public class PageTitles {
         
         private static System.Resources.ResourceManager resourceMan;
         
         private static System.Globalization.CultureInfo resourceCulture;
         
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal AboutPageConstants() {
+        internal PageTitles() {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         public static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("GitTrends.Mobile.Common.Constants.AboutPageConstants", typeof(AboutPageConstants).Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("GitTrends.Mobile.Common.Constants.PageTitles", typeof(PageTitles).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -47,51 +47,27 @@ namespace GitTrends.Mobile.Common.Constants {
             }
         }
         
-        public static string DescriptionText {
+        public static string RepositoryPage {
             get {
-                return ResourceManager.GetString("DescriptionText", resourceCulture);
+                return ResourceManager.GetString("RepositoryPage", resourceCulture);
             }
         }
         
-        public static string Stars {
+        public static string SettingsPage {
             get {
-                return ResourceManager.GetString("Stars", resourceCulture);
+                return ResourceManager.GetString("SettingsPage", resourceCulture);
             }
         }
         
-        public static string Forks {
+        public static string ReferringSitesPage {
             get {
-                return ResourceManager.GetString("Forks", resourceCulture);
+                return ResourceManager.GetString("ReferringSitesPage", resourceCulture);
             }
         }
         
-        public static string Watching {
+        public static string AboutPage {
             get {
-                return ResourceManager.GetString("Watching", resourceCulture);
-            }
-        }
-        
-        public static string CollaboratorsTitle {
-            get {
-                return ResourceManager.GetString("CollaboratorsTitle", resourceCulture);
-            }
-        }
-        
-        public static string CollaboratorsDescription {
-            get {
-                return ResourceManager.GetString("CollaboratorsDescription", resourceCulture);
-            }
-        }
-        
-        public static string LibrariesTitle {
-            get {
-                return ResourceManager.GetString("LibrariesTitle", resourceCulture);
-            }
-        }
-        
-        public static string LibrariesDescription {
-            get {
-                return ResourceManager.GetString("LibrariesDescription", resourceCulture);
+                return ResourceManager.GetString("AboutPage", resourceCulture);
             }
         }
     }

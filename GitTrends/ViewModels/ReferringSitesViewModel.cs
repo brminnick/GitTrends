@@ -21,44 +21,32 @@ namespace GitTrends
     {
         readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
 
-        readonly ReviewService _reviewService;
         readonly FavIconService _favIconService;
-        readonly IVersionTracking _versionTracking;
         readonly GitHubUserService _gitHubUserService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
-        readonly DeepLinkingService _deepLinkingService;
         readonly ReferringSitesDatabase _referringSitesDatabase;
         readonly GitHubApiStatusService _gitHubApiStatusService;
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
         IReadOnlyList<MobileReferringSiteModel>? _mobileReferringSiteList;
 
-        string _reviewRequestView_NoButtonText = string.Empty;
-        string _reviewRequestView_YesButtonText = string.Empty;
-        string _reviewRequestView_TitleLabel = string.Empty;
         string _emptyDataViewText = string.Empty;
         string _emptyDataViewDescription = string.Empty;
 
-        bool _isRefreshing, _isStoreRatingRequestVisible, _isEmptyDataViewEnabled;
+        bool _isRefreshing, _isEmptyDataViewEnabled;
 
         public ReferringSitesViewModel(IMainThread mainThread,
-                                        ReviewService reviewService,
                                         FavIconService favIconService,
-                                        IVersionTracking versionTracking,
                                         IAnalyticsService analyticsService,
                                         GitHubUserService gitHubUserService,
                                         GitHubApiV3Service gitHubApiV3Service,
-                                        DeepLinkingService deepLinkingService,
                                         ReferringSitesDatabase referringSitesDatabase,
                                         GitHubApiStatusService gitHubApiStatusService,
                                         GitHubAuthenticationService gitHubAuthenticationService) : base(analyticsService, mainThread)
         {
-            _reviewService = reviewService;
             _favIconService = favIconService;
-            _versionTracking = versionTracking;
             _gitHubUserService = gitHubUserService;
             _gitHubApiV3Service = gitHubApiV3Service;
-            _deepLinkingService = deepLinkingService;
             _referringSitesDatabase = referringSitesDatabase;
             _gitHubApiStatusService = gitHubApiStatusService;
             _gitHubAuthenticationService = gitHubAuthenticationService;

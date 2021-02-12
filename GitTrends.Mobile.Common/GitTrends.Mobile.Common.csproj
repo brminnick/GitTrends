@@ -107,6 +107,10 @@
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>GitHubLoginButtonConstants.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\PageTitles.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>PageTitles.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.de.resx">
             <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
         </EmbeddedResource>
@@ -555,6 +559,9 @@
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
         </Compile>
+        <Compile Update="Constants\PageTitles.Designer.cs">
+            <DependentUpon>PageTitles.resx</DependentUpon>
+        </Compile>
         <Compile Update="Constants\GitHubLoginButtonConstants.Designer.cs">
             <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
         </Compile>
@@ -590,9 +597,6 @@
         </Compile>
         <Compile Update="Constants\NotificationConstants.Designer.cs">
             <DependentUpon>NotificationConstants.resx</DependentUpon>
-        </Compile>
-        <Compile Update="Constants\ThemeConstants.Designer.cs">
-            <DependentUpon>ThemeConstants.resx</DependentUpon>
         </Compile>
         <Compile Update="Constants\EmptyDataViewConstantsInternal.Designer.cs">
             <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
@@ -683,6 +687,9 @@
 
         <Compile Update="Constants\AboutPageConstants.bs.Designer.cs">
           <DependentUpon>AboutPageConstants.bs.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Constants\ThemeConstants.Designer.cs">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
         </Compile>
     </ItemGroup>
     <ItemGroup>
