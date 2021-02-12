@@ -21,4 +21,7 @@
 	<data name="SettingsPage" xml:space="preserve">
     <value>Налаштування</value>
   </data>
+	<data name="AboutPage" xml:space="preserve">
+    <value>О приложении</value>
+  </data>
 </root>

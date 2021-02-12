@@ -3,6 +3,9 @@ using Autofac;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
+using Plugin.StoreReview;
+using Plugin.StoreReview.Abstractions;
+using Refit;
 using Shiny;
 using Shiny.Notifications;
 using Xamarin.Essentials.Implementation;
@@ -36,6 +39,7 @@ namespace GitTrends
 
             //Register Services
             builder.RegisterType<AnalyticsService>().As<IAnalyticsService>().SingleInstance();
+            builder.RegisterType<AppInitializationService>().AsSelf().SingleInstance();
             builder.RegisterType<AzureFunctionsApiService>().AsSelf().SingleInstance();
             builder.RegisterType<BackgroundFetchService>().AsSelf().SingleInstance();
             builder.RegisterType<DeepLinkingService>().AsSelf().SingleInstance();
@@ -47,9 +51,10 @@ namespace GitTrends
             builder.RegisterType<GitHubAuthenticationService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubUserService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubGraphQLApiService>().AsSelf().SingleInstance();
-            builder.RegisterType<GitTrendsContributorsService>().AsSelf().SingleInstance();
+            builder.RegisterType<GitTrendsStatisticsService>().AsSelf().SingleInstance();
             builder.RegisterType<ImageCachingService>().AsSelf().SingleInstance();
             builder.RegisterType<LanguageService>().AsSelf().SingleInstance();
+            builder.RegisterType<LibrariesService>().AsSelf().SingleInstance();
             builder.RegisterType<MediaElementService>().AsSelf().SingleInstance();
             builder.RegisterType<NotificationService>().AsSelf().SingleInstance();
             builder.RegisterType<ReferringSitesDatabase>().AsSelf().SingleInstance();
@@ -59,6 +64,7 @@ namespace GitTrends
             builder.RegisterType<SyncfusionService>().AsSelf().SingleInstance();
             builder.RegisterType<ThemeService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
+            builder.RegisterInstance(CrossStoreReview.Current).As<IStoreReview>().SingleInstance();
             builder.RegisterInstance(ShinyHost.Resolve<INotificationManager>()).As<INotificationManager>().SingleInstance();
             builder.RegisterInstance(DependencyService.Resolve<IDeviceNotificationsService>()).As<IDeviceNotificationsService>().SingleInstance();
 #if !AppStore
@@ -71,7 +77,6 @@ namespace GitTrends
             builder.RegisterType<ReferringSitesViewModel>().AsSelf();
             builder.RegisterType<RepositoryViewModel>().AsSelf();
             builder.RegisterType<SettingsViewModel>().AsSelf();
-            builder.RegisterType<SplashScreenViewModel>().AsSelf();
             builder.RegisterType<TrendsViewModel>().AsSelf();
             builder.RegisterType<WelcomeViewModel>().AsSelf();
 

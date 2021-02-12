@@ -12,6 +12,7 @@ namespace GitTrends.Shared
         string Name { get; }
         string Description { get; }
         long ForkCount { get; }
+        long WatchersCount { get; }
         string Url { get; }
         long? TotalViews { get; }
         long? TotalUniqueViews { get; }

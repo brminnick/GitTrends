@@ -52,12 +52,12 @@ namespace GitTrends
                 HorizontalOptions = LayoutOptions.FillAndExpand;
 
                 RowDefinitions = Rows.Define(
-                    (Row.Title, StarGridLength(1)),
-                    (Row.Number, StarGridLength(2)));
+                    (Row.Title, Stars(1)),
+                    (Row.Number, Stars(2)));
 
                 ColumnDefinitions = Columns.Define(
-                    (Column.Stats, StarGridLength(1)),
-                    (Column.Icon, AbsoluteGridLength(32)));
+                    (Column.Stats, Stars(1)),
+                    (Column.Icon, 32));
 
                 Children.Add(new PrimaryColorLabel(14, title)
                                 .Row(Row.Title).Column(Column.Stats));

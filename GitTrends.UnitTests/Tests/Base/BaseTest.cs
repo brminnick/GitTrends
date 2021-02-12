@@ -99,7 +99,7 @@ namespace GitTrends.UnitTests
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
                                                         DemoUserConstants.Alias, gitTrendsAvatarUrl,
-                                                        DemoDataConstants.GetRandomNumber(),
+                                                        DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
                                                         gitTrendsAvatarUrl, false, downloadedAt, false, dailyViewsList, dailyClonesList, DemoDataConstants.GenerateStarredAtDates(DemoDataConstants.GetRandomNumber()));
         }
     }

@@ -11,19 +11,23 @@ namespace GitTrends
 {
     public class DeepLinkingService
     {
-        readonly IAppInfo _appInfo;
         readonly IEmail _email;
+        readonly IAppInfo _appInfo;
         readonly IBrowser _browser;
-        readonly IMainThread _mainThread;
         readonly ILauncher _launcher;
+        readonly IMainThread _mainThread;
 
-        public DeepLinkingService(IMainThread mainThread, IBrowser browser, IEmail email, IAppInfo appInfo, ILauncher launcher)
+        public DeepLinkingService(IEmail email,
+                                    IBrowser browser,
+                                    IAppInfo appInfo,
+                                    ILauncher launcher,
+                                    IMainThread mainThread)
         {
-            _appInfo = appInfo;
             _email = email;
+            _appInfo = appInfo;
             _browser = browser;
-            _mainThread = mainThread;
             _launcher = launcher;
+            _mainThread = mainThread;
         }
 
         public Task ShowSettingsUI() => _mainThread.InvokeOnMainThreadAsync(_appInfo.ShowSettingsUI);

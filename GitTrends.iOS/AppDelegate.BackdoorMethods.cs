@@ -84,6 +84,14 @@ namespace GitTrends.iOS
         public NSString GetPreferredLanguage(NSString noValue) =>
             SerializeObject(UITestBackdoorService.GetPreferredLanguage());
 
+        [Preserve, Export(BackdoorMethodConstants.GetContributorsCollection + ":")]
+        public NSString GetContributorsCollection(NSString noValue) =>
+            SerializeObject(UITestBackdoorService.GetVisibleContributors());
+
+        [Preserve, Export(BackdoorMethodConstants.GetLibrariesCollection + ":")]
+        public NSString GetLibrariesCollection(NSString noValue) =>
+            SerializeObject(UITestBackdoorService.GetVisibleLibraries());
+
         static NSString SerializeObject<T>(T value) => new (Newtonsoft.Json.JsonConvert.SerializeObject(value));
     }
 }

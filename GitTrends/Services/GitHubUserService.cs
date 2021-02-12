@@ -55,7 +55,7 @@ namespace GitTrends
         public bool IsDemoUser
         {
             get => _preferences.Get(nameof(IsDemoUser), false);
-            set => _preferences.Set(nameof(IsDemoUser), value);
+            private set => _preferences.Set(nameof(IsDemoUser), value);
         }
 
         public bool IsAuthenticated

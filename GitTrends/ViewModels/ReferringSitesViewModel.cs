@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitHubApiStatus;
@@ -15,7 +14,6 @@ using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -55,9 +53,6 @@ namespace GitTrends
                                         GitHubApiStatusService gitHubApiStatusService,
                                         GitHubAuthenticationService gitHubAuthenticationService) : base(analyticsService, mainThread)
         {
-            ReviewService.ReviewRequested += HandleReviewRequested;
-            ReviewService.ReviewCompleted += HandleReviewCompleted;
-
             _reviewService = reviewService;
             _favIconService = favIconService;
             _versionTracking = versionTracking;
@@ -71,10 +66,6 @@ namespace GitTrends
             RefreshState = RefreshState.Uninitialized;
 
             RefreshCommand = new AsyncCommand<(string Owner, string Repository, string RepositoryUrl, CancellationToken Token)>(tuple => ExecuteRefreshCommand(tuple.Owner, tuple.Repository, tuple.RepositoryUrl, tuple.Token));
-            NoButtonCommand = new Command(() => HandleReviewRequestButtonTapped(ReviewAction.NoButtonTapped));
-            YesButtonCommand = new Command(() => HandleReviewRequestButtonTapped(ReviewAction.YesButtonTapped));
-
-            UpdateStoreRatingRequestView();
         }
 
         public static event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
@@ -83,8 +74,6 @@ namespace GitTrends
             remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
         }
 
-        public ICommand NoButtonCommand { get; }
-        public ICommand YesButtonCommand { get; }
         public IAsyncCommand<(string Owner, string Repository, string RepositoryUrl, CancellationToken Token)> RefreshCommand { get; }
 
         public string EmptyDataViewTitle
@@ -103,30 +92,6 @@ namespace GitTrends
         {
             get => _isEmptyDataViewEnabled;
             set => SetProperty(ref _isEmptyDataViewEnabled, value);
-        }
-
-        public string ReviewRequestView_TitleLabel
-        {
-            get => _reviewRequestView_TitleLabel;
-            set => SetProperty(ref _reviewRequestView_TitleLabel, value);
-        }
-
-        public string ReviewRequestView_NoButtonText
-        {
-            get => _reviewRequestView_NoButtonText;
-            set => SetProperty(ref _reviewRequestView_NoButtonText, value);
-        }
-
-        public string ReviewRequestView_YesButtonText
-        {
-            get => _reviewRequestView_YesButtonText;
-            set => SetProperty(ref _reviewRequestView_YesButtonText, value);
-        }
-
-        public bool IsStoreRatingRequestVisible
-        {
-            get => _isStoreRatingRequestVisible;
-            set => SetProperty(ref _isStoreRatingRequestVisible, value);
         }
 
         public bool IsRefreshing
@@ -148,25 +113,6 @@ namespace GitTrends
                 EmptyDataViewTitle = EmptyDataViewService.GetReferringSitesTitleText(value);
                 EmptyDataViewDescription = EmptyDataViewService.GetReferringSitesDescriptionText(value);
             }
-        }
-
-        void HandleReviewRequestButtonTapped(in ReviewAction action)
-        {
-            AnalyticsService.Track("Review Request Button Tapped", new Dictionary<string, string>
-            {
-                { nameof(ReviewAction), action.ToString() },
-                { nameof(ReviewService.CurrentState),  _reviewService.CurrentState.ToString() }
-            });
-
-            _reviewService.UpdateState(action);
-            UpdateStoreRatingRequestView();
-        }
-
-        void UpdateStoreRatingRequestView()
-        {
-            ReviewRequestView_TitleLabel = _reviewService.StoreRatingRequestViewTitle;
-            ReviewRequestView_NoButtonText = _reviewService.NoButtonText;
-            ReviewRequestView_YesButtonText = _reviewService.YesButtonText;
         }
 
         async Task ExecuteRefreshCommand(string owner, string repository, string repositoryUrl, CancellationToken cancellationToken)
@@ -298,32 +244,6 @@ namespace GitTrends
                 static bool isFavIconValid(MobileReferringSiteModel mobileReferringSiteModel) => !string.IsNullOrWhiteSpace(mobileReferringSiteModel.FavIconImageUrl) && mobileReferringSiteModel.DownloadedAt.CompareTo(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(30))) > 0;
             }
         }
-
-        async void HandleReviewCompleted(object sender, ReviewRequest request)
-        {
-            AnalyticsService.Track("Review Completed", nameof(ReviewRequest), request.ToString());
-
-            switch (request)
-            {
-                case ReviewRequest.AppStore:
-                    await _deepLinkingService.OpenApp(AppStoreConstants.AppLink, AppStoreConstants.Url).ConfigureAwait(false);
-                    break;
-
-                case ReviewRequest.Email:
-                    await _deepLinkingService.SendEmail($"GitTrends App Feedback, Version {_versionTracking.CurrentVersion}",
-                                                        "Here's my feedback on how to make the app great!",
-                                                        new[] { "support@gittrends.com" }).ConfigureAwait(false);
-                    break;
-
-                case ReviewRequest.None:
-                    break;
-
-                default:
-                    throw new NotSupportedException();
-            }
-        }
-
-        void HandleReviewRequested(object sender, EventArgs e) => IsStoreRatingRequestVisible = true;
 
         void OnPullToRefreshFailed(PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs) =>
             _pullToRefreshFailedEventManager.RaiseEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));

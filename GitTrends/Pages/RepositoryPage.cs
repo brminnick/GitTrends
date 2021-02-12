@@ -12,7 +12,6 @@ using Shiny;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -70,11 +69,11 @@ namespace GitTrends
             {
                 RowDefinitions = Rows.Define(
                     (Row.CollectionView, Star),
-                    (Row.Information, AbsoluteGridLength(InformationButton.Diameter))),
+                    (Row.Information, InformationButton.Diameter)),
 
                 ColumnDefinitions = Columns.Define(
                     (Column.CollectionView, Star),
-                    (Column.Information, AbsoluteGridLength(InformationButton.Diameter))),
+                    (Column.Information, InformationButton.Diameter)),
 
                 Children =
                 {

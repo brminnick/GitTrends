@@ -37,10 +37,11 @@
         <PackageReference Include="Xamarin.Forms" Version="5.0.0.1931" />
         <PackageReference Include="Shiny.Notifications" Version="1.2.0.1755" />
         <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
+        <PackageReference Include="Plugin.StoreReview" Version="3.0.0-beta" />
         <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.4" />
         <PackageReference Include="Xamarin.CommunityToolkit.Markup" Version="1.0.2" />
+        <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.2" />
     </ItemGroup>
-
     <ItemGroup>
       <EmbeddedResource Include="Resources\SVGs\chart.svg" />
       <EmbeddedResource Include="Resources\SVGs\issue_opened.svg" />
@@ -70,6 +71,7 @@
       <EmbeddedResource Include="Resources\SVGs\about.svg" />
       <EmbeddedResource Include="Resources\SVGs\favorite_tag.svg" />
       <EmbeddedResource Include="Resources\SVGs\star_outline.svg" />
+      <EmbeddedResource Include="Resources\SVGs\sparkle.svg" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj" />

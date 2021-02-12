@@ -36,8 +36,8 @@ namespace GitTrends
                 RowSpacing = 14,
 
                 RowDefinitions = Rows.Define(
-                    (Row.Description, AbsoluteGridLength(65)),
-                    (Row.Button, AbsoluteGridLength(42))),
+                    (Row.Description, 65),
+                    (Row.Button, 42)),
 
                 Children =
                 {
