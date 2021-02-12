@@ -5,6 +5,7 @@ using SkiaSharp;
 using SkiaSharp.Views.Forms;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
+using static GitTrends.XamarinFormsService;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -33,8 +34,8 @@ namespace GitTrends
             public StatisticsGrid(in string title, in string svgFileName, in string automationId, in string bindingPath)
             {
                 RowDefinitions = Rows.Define(
-                    (Row.Title, 16),
-                    (Row.Number, 20));
+                    (Row.Title, IsSmallScreen ? 12 : 16),
+                    (Row.Number, IsSmallScreen ? 16 : 20));
 
                 Children.Add(new StatsTitleLayout(title, svgFileName, () => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)])
                                 .Row(Row.Title));
@@ -73,16 +74,9 @@ namespace GitTrends
                     public StatsTitleLabel(in string text)
                     {
                         Text = text;
-                        FontSize = 12;
-                        FontFamily = FontFamilyConstants.RobotoMedium;
+                        LineBreakMode = LineBreakMode.TailTruncation;
 
-                        HorizontalOptions = LayoutOptions.FillAndExpand;
-                        VerticalOptions = LayoutOptions.FillAndExpand;
-
-                        HorizontalTextAlignment = TextAlignment.Start;
-                        VerticalTextAlignment = TextAlignment.Center;
-
-                        this.DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
+                        this.TextStart().TextCenterVertical().FillExpand().Font(FontFamilyConstants.RobotoMedium, IsSmallScreen ? 8 : 12).DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
                     }
                 }
             }
@@ -93,7 +87,7 @@ namespace GitTrends
                 {
                     AutomationId = automationId;
 
-                    FontSize = 16;
+                    FontSize = IsSmallScreen ? 12 : 16;
                     FontFamily = FontFamilyConstants.RobotoRegular;
 
                     this.Center().TextCenter().DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));

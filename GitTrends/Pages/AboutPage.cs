@@ -22,6 +22,9 @@ namespace GitTrends
         {
             const int horizontalPadding = 28;
 
+            var titleRowHeight = IsSmallScreen ? 16 : 20;
+            var descriptionRowHeight = IsSmallScreen ? 28 : 32;
+
             _deepLinkingService = deepLinkingService;
 
             Title = PageTitles.AboutPage;
@@ -39,20 +42,20 @@ namespace GitTrends
                     (Column.RightPadding, horizontalPadding)),
 
                 RowDefinitions = Rows.Define(
-                    (Row.Title, 32),
-                    (Row.Description, 48),
-                    (Row.Statistics, 36),
-                    (Row.ActionButtons, 68),
-                    (Row.CollaboratorTitle, 20),
-                    (Row.CollaboratorDescription, 32),
-                    (Row.CollaboratorCollection, 100),
-                    (Row.LibrariesTitle, 20),
-                    (Row.LibrariesDescription, 32),
+                    (Row.Title, IsSmallScreen ? 28 : 32),
+                    (Row.Description, IsSmallScreen ? 44 : 48),
+                    (Row.Statistics, IsSmallScreen ? 28 : 36),
+                    (Row.ActionButtons, IsSmallScreen ? 64 : 68),
+                    (Row.CollaboratorTitle, titleRowHeight),
+                    (Row.CollaboratorDescription, descriptionRowHeight),
+                    (Row.CollaboratorCollection, IsSmallScreen ? 84 : 100),
+                    (Row.LibrariesTitle, titleRowHeight),
+                    (Row.LibrariesDescription, descriptionRowHeight),
                     (Row.LibrariesCollection, Star)),
 
                 Children =
                 {
-                     new Image().CenterExpand().Margins(right: 12)
+                     new Image().CenterExpand().Margins(right: IsSmallScreen ? 8 : 12)
                         .Row(Row.Title).RowSpan(3).Column(Column.Icon)
                         .DynamicResource(Image.SourceProperty, nameof(BaseTheme.GitTrendsImageSource)),
 
@@ -97,7 +100,7 @@ namespace GitTrends
                     new CollectionView
                     {
                         HorizontalScrollBarVisibility = ScrollBarVisibility.Never,
-                        HeightRequest = LibraryDataTemplate.RowHeight * 2 + 8,
+                        HeightRequest = IsSmallScreen ? LibraryDataTemplate.RowHeight + 8 : LibraryDataTemplate.RowHeight * 2 + 8,
                         Header = new BoxView { WidthRequest = horizontalPadding },
                         SelectionMode = SelectionMode.Single,
                         ItemTemplate = new LibraryDataTemplate(),
@@ -145,15 +148,9 @@ namespace GitTrends
             public TitleLabel(in string text)
             {
                 Text = text;
-                FontSize = 16;
-
-                HorizontalOptions = LayoutOptions.StartAndExpand;
-                VerticalOptions = LayoutOptions.StartAndExpand;
-
-                FontFamily = FontFamilyConstants.RobotoMedium;
                 LineBreakMode = LineBreakMode.TailTruncation;
 
-                this.DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
+                this.Font(FontFamilyConstants.RobotoMedium, IsSmallScreen ? 14 : 16).StartExpand().DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
             }
         }
 
@@ -162,17 +159,10 @@ namespace GitTrends
             public DescriptionLabel(in string text)
             {
                 Text = text;
-                FontSize = 12;
-
                 MaxLines = 2;
-
-                HorizontalOptions = LayoutOptions.StartAndExpand;
-                VerticalOptions = LayoutOptions.StartAndExpand;
-
-                FontFamily = FontFamilyConstants.RobotoRegular;
                 LineBreakMode = LineBreakMode.TailTruncation;
 
-                this.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+                this.Font(FontFamilyConstants.RobotoRegular, IsSmallScreen ? 10 : 12).StartExpand().DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
             }
         }
 
@@ -181,9 +171,10 @@ namespace GitTrends
             public ButtonLayout()
             {
                 Spacing = 16;
+
                 Orientation = StackOrientation.Horizontal;
 
-                Margin = new Thickness(0, 16, 0, 16);
+                Margin = new Thickness(0, 16);
 
                 Children.Add(new ViewOnGitHubButton().EndExpand());
                 Children.Add(new RequestFeatureButton().StartExpand());
@@ -207,10 +198,10 @@ namespace GitTrends
             abstract class AboutPageButton : SvgTextLabel
             {
                 protected AboutPageButton(in string svgFileName, in string text, in string automationId, in Color backgroundColor, in string commandPropertyBindingPath)
-                    : base(svgFileName, text, automationId, IsSmallScreen ? 10 : 14, FontFamilyConstants.RobotoMedium, 4)
+                    : base(svgFileName, text, automationId, IsSmallScreen ? 12 : 14, FontFamilyConstants.RobotoMedium, 4)
                 {
                     BackgroundColor = backgroundColor;
-                    Padding = new Thickness(DeviceInfo.Platform == DevicePlatform.iOS ? 12 : 16, 8);
+                    Padding = IsSmallScreen ? new Thickness(DeviceInfo.Platform == DevicePlatform.iOS ? 8 : 12, 8) : new Thickness(DeviceInfo.Platform == DevicePlatform.iOS ? 10 : 16, 8);
                     GestureRecognizers.Add(new TapGestureRecognizer().Bind(TapGestureRecognizer.CommandProperty, commandPropertyBindingPath));
                 }
             }

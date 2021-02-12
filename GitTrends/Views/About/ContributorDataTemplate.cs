@@ -1,23 +1,25 @@
 ﻿using GitTrends.Shared;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
+using static GitTrends.XamarinFormsService;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
     class ContributorDataTemplate : DataTemplate
     {
-        public const int RowHeight = _rowSpacing + _circleDiameter + _loginTextHeight;
-
         const int _rowSpacing = 4;
         const int _loginTextHeight = 25;
         const int _textPadding = 4;
-        const int _circleDiameter = 64;
+
+        readonly static int _circleDiameter = IsSmallScreen ? 54 : 64;
 
         public ContributorDataTemplate() : base(CreateContributorDataTemplate)
         {
 
         }
+
+        public static int RowHeight { get; } = _rowSpacing + _circleDiameter + _loginTextHeight;
 
         enum Row { Avatar, Login }
         enum Column { LeftText, Image, RightText, RightPadding }
@@ -43,7 +45,7 @@ namespace GitTrends
                     .Bind(CircleImage.ImageSourceProperty, nameof(Contributor.AvatarUrl), BindingMode.OneTime)
                     .DynamicResource(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
 
-                new Label { LineBreakMode = LineBreakMode.TailTruncation }.CenterHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, 12)
+                new Label { LineBreakMode = LineBreakMode.TailTruncation }.CenterHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, IsSmallScreen ? 10 : 12)
                     .Row(Row.Login).Column(Column.LeftText).ColumnSpan(3)
                     .Bind<Label, string, string>(Label.TextProperty, nameof(Contributor.Login), BindingMode.OneTime, convert: login => $"@{login}")
                     .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
