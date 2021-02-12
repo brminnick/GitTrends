@@ -555,9 +555,6 @@
         <Compile Update="Constants\AppStoreRatingRequestConstants.Designer.cs">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
         </Compile>
-        <Compile Update="Constants\PageTitles.Designer.cs">
-            <DependentUpon>PageTitles.resx</DependentUpon>
-        </Compile>
         <Compile Update="Constants\GitHubLoginButtonConstants.Designer.cs">
             <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
         </Compile>
@@ -698,7 +695,7 @@
         <PackageReference Include="Polly" Version="7.2.1" />
         <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1" />
         <PackageReference Include="GitHubApiStatus" Version="2.0.1" />
-        <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.8" />
+        <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.15" />
     </ItemGroup>
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
 </Project>

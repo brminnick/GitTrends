@@ -107,7 +107,7 @@
     <PackageReference Include="Plugin.StoreReview" Version="3.0.0-beta" />
     <PackageReference Include="Xamarin.Google.Dagger" Version="2.27.0" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.2" />
-    <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.8" />
+    <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.15" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
