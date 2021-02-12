@@ -55,6 +55,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<TrendsChartSettingsService>();
 
             //GitTrends ViewModels
+            services.AddTransient<AboutViewModel>();
             services.AddTransient<OnboardingViewModel>();
             services.AddTransient<ReferringSitesViewModel>();
             services.AddTransient<RepositoryViewModel>();

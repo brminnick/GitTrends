@@ -7,7 +7,7 @@ using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
-    class AboutViewModel : BaseViewModel
+    public class AboutViewModel : BaseViewModel
     {
         public AboutViewModel(IMainThread mainThread,
                                 LibrariesService librariesService,
@@ -32,6 +32,8 @@ namespace GitTrends
                 if (gitTrendsStatisticsService?.GitHubUri is null)
                     return Task.CompletedTask;
 
+                AnalyticsService.Track("View On GitHub Tapped");
+
                 return deepLinkingService.OpenBrowser(gitTrendsStatisticsService.GitHubUri);
             });
 
@@ -39,6 +41,8 @@ namespace GitTrends
             {
                 if (gitTrendsStatisticsService?.GitHubUri is null)
                     return Task.CompletedTask;
+
+                AnalyticsService.Track("Request Feature Tapped");
 
                 return deepLinkingService.OpenBrowser(gitTrendsStatisticsService.GitHubUri + "/issues/new?template=feature_request.md");
             });
