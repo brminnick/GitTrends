@@ -23,7 +23,7 @@ namespace GitTrends.UITests
             RepositoryPage.TapSettingsButton();
             await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
 
-            Assert.AreEqual(AboutPageConstants.About, SettingsPage.AboutLabelText);
+            Assert.AreEqual(PageTitles.AboutPage, SettingsPage.AboutLabelText);
 
             SettingsPage.TapAboutButton();
             await AboutPage.WaitForPageToLoad().ConfigureAwait(false);

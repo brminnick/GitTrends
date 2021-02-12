@@ -47,12 +47,6 @@ namespace GitTrends.Mobile.Common.Constants {
             }
         }
         
-        public static string About {
-            get {
-                return ResourceManager.GetString("About", resourceCulture);
-            }
-        }
-        
         public static string DescriptionText {
             get {
                 return ResourceManager.GetString("DescriptionText", resourceCulture);

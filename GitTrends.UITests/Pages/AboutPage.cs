@@ -11,7 +11,7 @@ namespace GitTrends.UITests
     {
         readonly Query _requestFeatureButton, _viewOnGitHubButton, _watchersLabel, _starsLabel, _forksLabel;
 
-        public AboutPage(IApp app) : base(app, () => AboutPageConstants.About)
+        public AboutPage(IApp app) : base(app, () => PageTitles.AboutPage)
         {
             _forksLabel = GenerateMarkedQuery(AboutPageAutomationIds.ForksLabel);
             _starsLabel = GenerateMarkedQuery(AboutPageAutomationIds.StarsLabel);
