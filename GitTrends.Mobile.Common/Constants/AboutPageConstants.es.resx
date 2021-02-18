@@ -12,4 +12,28 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
+  <data name="DescriptionText" xml:space="preserve">
+    <value>GitTrends es una aplicación de código abierto construida en C # usando Xamarin.Forms que te ayuda a monitorear tus repositorios de GitHub!</value>
+  </data>
+  <data name="Stars" xml:space="preserve">
+    <value>Stars</value>
+  </data>
+  <data name="Forks" xml:space="preserve">
+    <value>Forks</value>
+  </data>
+  <data name="Watching" xml:space="preserve">
+    <value>Watching</value>
+  </data>
+  <data name="CollaboratorsTitle" xml:space="preserve">
+    <value>Colaboradores</value>
+  </data>
+  <data name="CollaboratorsDescription" xml:space="preserve">
+    <value>Gracias a todos nuestros increíbles colaboradores de código abierto. Tap en un colaborador para obtener más información.</value>
+  </data>
+  <data name="LibrariesTitle" xml:space="preserve">
+    <value>Librerías</value>
+  </data>
+  <data name="LibrariesDescription" xml:space="preserve">
+    <value>¡Gracias a todas las increíbles librerias y frameworks que hicieron posible GitTrends!</value>
+  </data>
 </root>
