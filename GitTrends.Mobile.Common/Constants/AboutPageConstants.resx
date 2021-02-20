@@ -36,4 +36,10 @@
 	<data name="LibrariesDescription" xml:space="preserve">
     <value>Thank you to all of the amazing libraries and frameworks that made GitTrends possible!</value>
   </data>
+  <data name="GitHubButton" xml:space="preserve">
+    <value>View on GitHub</value>
+  </data>
+  <data name="RequestFeatureButton" xml:space="preserve">
+    <value>Request Feature</value>
+  </data>
 </root>

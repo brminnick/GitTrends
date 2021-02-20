@@ -94,5 +94,17 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("LibrariesDescription", resourceCulture);
             }
         }
+        
+        public static string GitHubButton {
+            get {
+                return ResourceManager.GetString("GitHubButton", resourceCulture);
+            }
+        }
+        
+        public static string RequestFeatureButton {
+            get {
+                return ResourceManager.GetString("RequestFeatureButton", resourceCulture);
+            }
+        }
     }
 }

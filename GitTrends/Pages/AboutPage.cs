@@ -182,14 +182,14 @@ namespace GitTrends
 
             class ViewOnGitHubButton : AboutPageButton
             {
-                public ViewOnGitHubButton() : base("github.svg", "View on GitHub", AboutPageAutomationIds.ViewOnGitHubButton, Color.FromHex("231F20"), nameof(AboutViewModel.ViewOnGitHubCommand))
+                public ViewOnGitHubButton() : base("github.svg", AboutPageConstants.GitHubButton, AboutPageAutomationIds.ViewOnGitHubButton, Color.FromHex("231F20"), nameof(AboutViewModel.ViewOnGitHubCommand))
                 {
                 }
             }
 
             class RequestFeatureButton : AboutPageButton
             {
-                public RequestFeatureButton() : base("sparkle.svg", "Request Feature", AboutPageAutomationIds.RequestFeatureButton, Color.FromHex("F97B4F"), nameof(AboutViewModel.RequestFeatureCommand))
+                public RequestFeatureButton() : base("sparkle.svg", AboutPageConstants.RequestFeatureButton, AboutPageAutomationIds.RequestFeatureButton, Color.FromHex("F97B4F"), nameof(AboutViewModel.RequestFeatureCommand))
                 {
                 }
             }
