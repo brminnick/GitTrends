@@ -78,7 +78,7 @@ namespace GitTrends
             _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
 
             // Text of the total button
-            _totalButtonText = "To";//"IOMLAN";
+            _totalButtonText = "IOMLAN";
 
             RefreshState = RefreshState.Uninitialized;
 

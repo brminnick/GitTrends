@@ -9,7 +9,7 @@ namespace GitTrends
     {
         const int _fabDiameterMini = 40;
         const int _fabDiameterNormal = 56;
-        const int _fabDiameterLarge = 80;
+        const int _fabDiameterLarge = 70;
 
         const int _shadowDiameterMini = _fabDiameterMini + 1;
         const int _shadowDiameterNormal = _fabDiameterNormal + 2;
