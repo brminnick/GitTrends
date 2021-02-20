@@ -130,5 +130,5 @@ namespace GitTrends
         void CommandCanExecuteChanged(object sender, EventArgs eventArgs) => IsEnabled = Command?.CanExecute(CommandParameter) ?? false;
     }
 
-    public enum FloatingActionButtonSize { Normal, Mini, Large }
+    public enum FloatingActionButtonSize { Normal, Mini, Large, None }
 }

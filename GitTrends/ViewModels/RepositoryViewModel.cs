@@ -39,7 +39,7 @@ namespace GitTrends
         string _emptyDataViewTitle = string.Empty;
         string _emptyDataViewDescription = string.Empty;
 
-        string _totalButtonText = string.Empty;
+        string _totalButtonText = "TOTAL";
 
         public string TotalButtonText
         {
@@ -76,9 +76,6 @@ namespace GitTrends
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
-
-            // Text of the total button
-            _totalButtonText = "IOMLAN";
 
             RefreshState = RefreshState.Uninitialized;
 
@@ -120,7 +117,7 @@ namespace GitTrends
         }
 
 
-        public FloatingActionButtonSize TotalButtonSize => (TotalButtonText.Length) switch
+        public FloatingActionButtonSize TotalButtonSize => TotalButtonText.Length switch
         {
             <= 3 => FloatingActionButtonSize.Mini,
             <= 5 => FloatingActionButtonSize.Normal,
