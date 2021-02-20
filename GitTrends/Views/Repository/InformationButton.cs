@@ -33,16 +33,19 @@ namespace GitTrends
             RowDefinitions = Rows.Define(AbsoluteGridLength(Diameter));
             ColumnDefinitions = Columns.Define(AbsoluteGridLength(Diameter));
 
-            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Mini, FloatingActionButtonType.Statistic1).Center().Assign(out _statistic1FloatingActionButton)
+            Children.Add(new FloatingActionTextButton(mobileSortingService, /*FloatingActionButtonSize.Mini,*/ FloatingActionButtonType.Statistic1).Center().Assign(out _statistic1FloatingActionButton)
                             .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic1)));
 
-            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Mini, FloatingActionButtonType.Statistic2).Center().Assign(out _statistic2FloatingActionButton)
+            Children.Add(new FloatingActionTextButton(mobileSortingService,/* FloatingActionButtonSize.Mini,*/ FloatingActionButtonType.Statistic2).Center().Assign(out _statistic2FloatingActionButton)
                             .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic2)));
 
-            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Mini, FloatingActionButtonType.Statistic3).Center().Assign(out _statistic3FloatingActionButton)
+            Children.Add(new FloatingActionTextButton(mobileSortingService,/* FloatingActionButtonSize.Mini,*/ FloatingActionButtonType.Statistic3).Center().Assign(out _statistic3FloatingActionButton)
                             .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic3)));
 
-            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonSize.Normal, FloatingActionButtonType.Information, new AsyncCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium, Text = "TOTAL" }.Center().Assign(out _totalButton));
+            Children.Add(new FloatingActionTextButton(mobileSortingService, /*FloatingActionButtonSize.Normal,*/ FloatingActionButtonType.Information, new AsyncCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium/*, Text = "IOMLAN"*/ }.Center().Assign(out _totalButton)
+                            .Bind(FloatingActionTextButton.SizeProperty, nameof(RepositoryViewModel.TotalButtonSize))
+                            .Bind(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.TotalButtonText))
+                            );
 
             SetBinding(IsVisibleProperty, new MultiBinding
             {
@@ -112,7 +115,7 @@ namespace GitTrends
             readonly FloatingActionButtonType _floatingActionButtonType;
 
             public FloatingActionTextButton(in MobileSortingService mobileSortingService,
-                                            in FloatingActionButtonSize floatingActionButtonSize,
+                                            //in FloatingActionButtonSize floatingActionButtonSize,
                                             in FloatingActionButtonType floatingActionButtonType,
                                             in ICommand? command = null)
             {
@@ -121,13 +124,18 @@ namespace GitTrends
 
                 ThemeService.PreferenceChanged += HandlePreferenceChanged;
 
-                Size = floatingActionButtonSize;
+                
+
+                
+
+                //Size = floatingActionButtonSize;
                 Command = command;
 
-                var fontSize = floatingActionButtonSize switch
+                var fontSize = Size/*floatingActionButtonSize*/ switch
                 {
                     FloatingActionButtonSize.Mini => 10,
                     FloatingActionButtonSize.Normal => 13,
+                    FloatingActionButtonSize.Large => 13,
                     _ => throw new NotImplementedException(),
                 };
 

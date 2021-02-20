@@ -39,6 +39,15 @@ namespace GitTrends
         string _emptyDataViewTitle = string.Empty;
         string _emptyDataViewDescription = string.Empty;
 
+        string _totalButtonText = string.Empty;
+
+        public string TotalButtonText
+        {
+            get { return _totalButtonText; }
+            set => SetProperty(ref _totalButtonText, value);
+        }
+
+
         IReadOnlyList<Repository> _repositoryList = Array.Empty<Repository>();
         IReadOnlyList<Repository> _visibleRepositoryList = Array.Empty<Repository>();
 
@@ -67,6 +76,9 @@ namespace GitTrends
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
+
+            // Text of the total button
+            _totalButtonText = "To";//"IOMLAN";
 
             RefreshState = RefreshState.Uninitialized;
 
@@ -106,6 +118,14 @@ namespace GitTrends
             get => _emptyDataViewTitle;
             set => SetProperty(ref _emptyDataViewTitle, value);
         }
+
+
+        public FloatingActionButtonSize TotalButtonSize => (TotalButtonText.Length) switch
+        {
+            <= 3 => FloatingActionButtonSize.Mini,
+            <= 5 => FloatingActionButtonSize.Normal,
+            > 5 => FloatingActionButtonSize.Large
+        };
 
         public string EmptyDataViewDescription
         {
