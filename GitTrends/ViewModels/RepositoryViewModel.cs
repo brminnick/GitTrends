@@ -39,13 +39,7 @@ namespace GitTrends
         string _emptyDataViewTitle = string.Empty;
         string _emptyDataViewDescription = string.Empty;
 
-        string _totalButtonText = "TOTAL";
-
-        public string TotalButtonText
-        {
-            get { return _totalButtonText; }
-            set => SetProperty(ref _totalButtonText, value);
-        }
+        
 
 
         IReadOnlyList<Repository> _repositoryList = Array.Empty<Repository>();
@@ -116,7 +110,7 @@ namespace GitTrends
             set => SetProperty(ref _emptyDataViewTitle, value);
         }
 
-
+        // Select the size of the button according the length of his text
         public FloatingActionButtonSize TotalButtonSize => TotalButtonText.Length switch
         {
             <= 3 => FloatingActionButtonSize.Mini,
@@ -135,7 +129,14 @@ namespace GitTrends
             get => _isRefreshing;
             set => SetProperty(ref _isRefreshing, value);
         }
+        string _totalButtonText = "TOTAL";
 
+        
+        public string TotalButtonText
+        {
+            get { return _totalButtonText; }
+            set => SetProperty(ref _totalButtonText, value);
+        }
         public string TitleText
         {
             get => _titleText;
