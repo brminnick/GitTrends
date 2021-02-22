@@ -59,7 +59,7 @@ namespace GitTrends
                         .Row(Row.Title).RowSpan(3).Column(Column.Icon)
                         .DynamicResource(Image.SourceProperty, nameof(BaseTheme.GitTrendsImageSource)),
 
-                    new Label { Text = "GitTrends" }.Font(FontFamilyConstants.RobotoMedium, 24)
+                    new Label { Text = GitHubConstants.GitTrendsRepoName }.Font(FontFamilyConstants.RobotoMedium, 24)
                         .Row(Row.Title).Column(Column.Statistics)
                         .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor)),
 
@@ -87,7 +87,7 @@ namespace GitTrends
                         ItemTemplate = new ContributorDataTemplate(),
                         ItemsSource = ViewModel.GitTrendsContributors,
                         ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Horizontal)
-                    }.Top()
+                    }.Top().Margins(top: 4)
                      .Row(Row.CollaboratorCollection).ColumnSpan(All<Column>())
                      .Invoke(collectionView => collectionView.SelectionChanged += HandleContributorSelectionChanged),
 

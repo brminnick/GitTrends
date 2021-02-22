@@ -14,9 +14,9 @@ namespace GitTrends
     {
         readonly static WeakEventManager<PreferredTheme> _preferenceChangedEventManager = new();
 
+        readonly IMainThread _mainThread;
         readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;
-        readonly IMainThread _mainThread;
 
         public ThemeService(IAnalyticsService analyticsService, IPreferences preferences, IMainThread mainThread)
         {
