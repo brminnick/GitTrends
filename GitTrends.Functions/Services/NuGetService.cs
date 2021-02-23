@@ -71,7 +71,7 @@ namespace GitTrends.Functions
                     _logger.LogError(e, e.Message);
                 }
 
-                if (!metadatas.Any())
+                if (metadatas?.Any() is not true)
                     package.PackageInfoTCS.SetResult(null);
 
                 var metadataIconUri = metadatas.Last().IconUrl;

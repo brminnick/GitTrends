@@ -25,22 +25,30 @@ namespace GitTrends.Functions
             builder.Services.AddHttpClient();
 
             builder.Services.AddRefitClient<IGitHubAuthApi>(RefitExtensions.GetNewtonsoftJsonRefitSettings())
-                .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubBaseUrl))
-                .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
+                .ConfigureHttpClient(client =>
+                {
+                    client.BaseAddress = new Uri(GitHubConstants.GitHubBaseUrl);
+                    client.DefaultRequestHeaders.Authorization = getGitHubAuthenticationHeaderValue();
+                })
+                .ConfigurePrimaryHttpMessageHandler(_ => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
                 .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
 
             builder.Services.AddRefitClient<IGitHubApiV3>(RefitExtensions.GetNewtonsoftJsonRefitSettings())
-                .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubRestApiUrl))
-                .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
+                .ConfigureHttpClient(client =>
+                {
+                    client.BaseAddress = new Uri(GitHubConstants.GitHubRestApiUrl);
+                    client.DefaultRequestHeaders.Authorization = getGitHubAuthenticationHeaderValue();
+                })
+                .ConfigurePrimaryHttpMessageHandler(_ => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
                 .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
 
             builder.Services.AddRefitClient<IGitHubGraphQLApi>(RefitExtensions.GetNewtonsoftJsonRefitSettings())
                 .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubGraphQLApi))
-                .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
+                .ConfigurePrimaryHttpMessageHandler(_ => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
                 .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
 
-            builder.Services.AddGitHubApiStatusService(new AuthenticationHeaderValue("bearer", _token), new ProductHeaderValue(nameof(GitTrends)))
-                .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
+            builder.Services.AddGitHubApiStatusService(getGitHubAuthenticationHeaderValue(), new ProductHeaderValue(nameof(GitTrends)))
+                .ConfigurePrimaryHttpMessageHandler(_ => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
                 .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
 
             builder.Services.AddSingleton<NuGetService>();
@@ -52,6 +60,7 @@ namespace GitTrends.Functions
 
             static TimeSpan sleepDurationProvider(int attemptNumber) => TimeSpan.FromSeconds(Math.Pow(2, attemptNumber));
             static DecompressionMethods getDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip;
+            static AuthenticationHeaderValue getGitHubAuthenticationHeaderValue() => new("bearer", _token);
         }
     }
 }
