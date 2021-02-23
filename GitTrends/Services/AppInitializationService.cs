@@ -49,7 +49,7 @@ namespace GitTrends
 
         public bool IsInitializationComplete { get; private set; }
 
-        public async Task InitializeApp(CancellationToken cancellationToken)
+        public async Task<bool> InitializeApp(CancellationToken cancellationToken)
         {
             bool isInitializationSuccessful = false;
 
@@ -91,6 +91,8 @@ namespace GitTrends
             {
                 OnInitializationCompleted(isInitializationSuccessful);
             }
+
+            return isInitializationSuccessful;
         }
 
         void OnInitializationCompleted(bool isInitializationSuccessful)

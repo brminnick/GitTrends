@@ -22,13 +22,15 @@ namespace GitTrends.UnitTests
             Assert.IsFalse(appInitializationService.IsInitializationComplete);
 
             //Act
-            await appInitializationService.InitializeApp(CancellationToken.None).ConfigureAwait(false);
+            var isInitializationSuccessful = await appInitializationService.InitializeApp(CancellationToken.None).ConfigureAwait(false);
             var initializationCompleteEventArgs = await initializeAppCommandTCS.Task.ConfigureAwait(false);
 
             //Assert
+            Assert.IsTrue(isInitializationSuccessful);
             Assert.IsTrue(didInitializationCompleteFire);
-            Assert.IsTrue(initializationCompleteEventArgs.IsInitializationSuccessful);
             Assert.IsTrue(appInitializationService.IsInitializationComplete);
+            Assert.IsTrue(initializationCompleteEventArgs.IsInitializationSuccessful);
+            Assert.AreEqual(isInitializationSuccessful, initializationCompleteEventArgs.IsInitializationSuccessful);
 
             void HandleInitializationComplete(object? sender, InitializationCompleteEventArgs e)
             {

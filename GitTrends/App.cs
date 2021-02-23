@@ -16,6 +16,7 @@ namespace GitTrends
 
         readonly IAnalyticsService _analyticsService;
         readonly NotificationService _notificationService;
+        readonly AppInitializationService _appInitializationService;
 
         public App(LanguageService languageService,
                     SplashScreenPage splashScreenPage,
@@ -25,6 +26,7 @@ namespace GitTrends
         {
             _analyticsService = analyticsService;
             _notificationService = notificationService;
+            _appInitializationService = appInitializationService;
 
             analyticsService.Track("App Initialized", new Dictionary<string, string>
             {
@@ -33,9 +35,6 @@ namespace GitTrends
             });
 
             MainPage = splashScreenPage;
-
-            var appInitializationCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
-            appInitializationService.InitializeApp(appInitializationCancellationTokenSource.Token).SafeFireAndForget(ex => analyticsService.Report(ex));
 
             On<iOS>().SetHandleControlUpdatesOnMainThread(true);
         }
@@ -53,6 +52,9 @@ namespace GitTrends
             _analyticsService.Track("App Started");
 
             await ClearBageNotifications();
+
+            var appInitializationCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+            await _appInitializationService.InitializeApp(appInitializationCancellationTokenSource.Token);
         }
 
         protected override async void OnResume()
