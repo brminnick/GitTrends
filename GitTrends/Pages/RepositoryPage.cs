@@ -126,11 +126,7 @@ namespace GitTrends
 
             if (!_firstRunService.IsFirstRun && shouldShowWelcomePage(Navigation, token.AccessToken))
             {
-                var welcomePage = ContainerService.Container.Resolve<WelcomePage>();
-
-                //Allow RepositoryPage to appear briefly before loading 
-                await Task.Delay(TimeSpan.FromMilliseconds(250));
-                await Navigation.PushModalAsync(welcomePage);
+                await NavigateToWelcomePage();
             }
             else if (!_firstRunService.IsFirstRun
                         && isUserValid(token.AccessToken, _gitHubUserService.Alias)
@@ -150,6 +146,7 @@ namespace GitTrends
             static bool isUserValid(in string accessToken, in string alias) => !string.IsNullOrWhiteSpace(accessToken) || !string.IsNullOrWhiteSpace(alias);
         }
 
+
         async void HandleRepositoryDataTemplateTapped(object sender, EventArgs e)
         {
             var view = (View)sender;
@@ -162,6 +159,15 @@ namespace GitTrends
             });
 
             await NavigateToTrendsPage(repository);
+        }
+
+        async Task NavigateToWelcomePage()
+        {
+            var welcomePage = ContainerService.Container.Resolve<WelcomePage>();
+
+            //Allow RepositoryPage to appear briefly before loading 
+            await Task.Delay(TimeSpan.FromMilliseconds(250));
+            await Navigation.PushModalAsync(welcomePage);
         }
 
         Task NavigateToSettingsPage()
@@ -193,22 +199,30 @@ namespace GitTrends
                 ViewModel.SortRepositoriesCommand.Execute(MobileSortingService.SortingOptionsDictionary.First(x => x.Value == selection).Key);
         }
 
-        void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)
+        void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs eventArgs)
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                if (!Application.Current.MainPage.Navigation.ModalStack.Any()
+                if (Application.Current is App
+                    && !Application.Current.MainPage.Navigation.ModalStack.Any()
                     && Application.Current.MainPage.Navigation.NavigationStack.Last() is RepositoryPage)
                 {
-                    if (e.Accept is null)
+                    switch (eventArgs)
                     {
-                        await DisplayAlert(e.Title, e.Message, e.Cancel);
-                    }
-                    else
-                    {
-                        var isAccepted = await DisplayAlert(e.Title, e.Message, e.Accept, e.Cancel);
-                        if (isAccepted)
-                            await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs);
+                        case MaximumApiRequestsReachedEventArgs:
+                            var isAccepted = await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Accept, eventArgs.Cancel);
+                            if (isAccepted)
+                                await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs);
+                            break;
+
+                        case LoginExpiredPullToRefreshEventArgs:
+                            await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Cancel);
+                            await NavigateToSettingsPage();
+                            break;
+
+                        default:
+                            await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Cancel);
+                            break;
                     }
                 }
             });
