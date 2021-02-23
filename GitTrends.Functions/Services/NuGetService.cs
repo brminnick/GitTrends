@@ -71,13 +71,19 @@ namespace GitTrends.Functions
                     _logger.LogError(e, e.Message);
                 }
 
-                var iconUri = metadatas.LastOrDefault().IconUrl;
-                var nugetUri = metadatas.LastOrDefault().PackageDetailsUrl;
-
-                if (nugetUri is null)
+                if (!metadatas.Any())
                     package.PackageInfoTCS.SetResult(null);
-                else
-                    package.PackageInfoTCS.SetResult((package.PackageName, iconUri ?? new Uri(defaultNuGetIcon), nugetUri));
+
+                var metadataIconUri = metadatas.Last().IconUrl;
+
+                var isIconUrlValid = await isUriValid(metadataIconUri).ConfigureAwait(false);
+                var iconUri = isIconUrlValid switch
+                {
+                    true => metadataIconUri,
+                    false => new Uri(defaultNuGetIcon)
+                };
+
+                package.PackageInfoTCS.SetResult((package.PackageName, iconUri, metadatas.Last().PackageDetailsUrl));
             });
 
             var remainingTasks = getInstalledPackageInfoTCSList.Select(x => x.PackageInfoTCS.Task).ToList();
@@ -90,6 +96,19 @@ namespace GitTrends.Functions
                 var packageInfo = await completedTask.ConfigureAwait(false);
                 if (packageInfo.HasValue)
                     yield return packageInfo.Value;
+            }
+
+            async Task<bool> isUriValid(Uri? uri)
+            {
+                try
+                {
+                    var response = await _client.GetAsync(uri).ConfigureAwait(false);
+                    return response.IsSuccessStatusCode;
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
 

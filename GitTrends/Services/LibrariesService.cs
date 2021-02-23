@@ -62,8 +62,18 @@ namespace GitTrends
                 InstalledLibraries = libraries.OrderBy(x => x.PackageName).ToList();
 
                 foreach (var nugetPackageModel in InstalledLibraries)
-                    _imageCachingService.PreloadImage(nugetPackageModel.IconUri).SafeFireAndForget(ex => _analyticsService.Report(ex));
+                {
+                    _imageCachingService.PreloadImage(nugetPackageModel.IconUri).SafeFireAndForget(ex =>
+                    {
+                        _analyticsService.Report(ex, new Dictionary<string, string>
+                        {
+                            { nameof(nugetPackageModel.PackageName), nugetPackageModel.PackageName },
+                            { nameof(nugetPackageModel.IconUri), nugetPackageModel.IconUri.ToString() },
+
+                        });
+                    });
+                }
             }
-        }        
+        }
     }
 }

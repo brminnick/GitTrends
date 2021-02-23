@@ -1,7 +1,14 @@
 {
-    "IsEncrypted": false,
-    "Values": {
-        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-        "FUNCTIONS_WORKER_RUNTIME": "dotnet"
-    }
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "iOSCSProjPath": "/GitTrends.iOS/GitTrends.iOS.csproj",
+    "UITestCSProjPath": "/GitTrends.UITests/GitTrends.UITests.csproj",
+    "AndroidCSProjPath": "/GitTrends.Android/GitTrends.Android.csproj",
+    "UnitTestCSProjPath": "/GitTrends.UnitTests/GitTrends.UnitTests.csproj",
+    "GitTrendsCSProjPath": "/GitTrends/GitTrends.csproj",
+    "FunctionsCSProjPath": "/GitTrends.Functions/GitTrends.Functions.csproj",
+    "MobileCommonCSProjPath": "/GitTrends.Mobile.Common/GitTrends.Mobile.Common.csproj"
+  }
 }
