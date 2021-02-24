@@ -45,7 +45,7 @@ namespace GitTrends
                     .Bind(CircleImage.ImageSourceProperty, nameof(Contributor.AvatarUrl), BindingMode.OneTime)
                     .DynamicResource(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
 
-                new Label { LineBreakMode = LineBreakMode.TailTruncation }.CenterHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, IsSmallScreen ? 10 : 12)
+                new Label { LineBreakMode = LineBreakMode.TailTruncation }.FillExpandHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, IsSmallScreen ? 10 : 12)
                     .Row(Row.Login).Column(Column.LeftText).ColumnSpan(3)
                     .Bind<Label, string, string>(Label.TextProperty, nameof(Contributor.Login), BindingMode.OneTime, convert: login => $"@{login}")
                     .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
