@@ -13,9 +13,9 @@ namespace GitTrends
 
         public AvatarImage(in double diameter)
         {
-            this.Center();
+            this.CenterExpand();
 
-            WidthRequest = diameter;
+            WidthRequest = HeightRequest = diameter;
 
             Border = new Border
             {
