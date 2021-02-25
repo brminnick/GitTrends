@@ -38,10 +38,10 @@ namespace GitTrends
             _deepLinkingService = deepLinkingService;
 
             //Workaround for CollectionView.SelectionChanged firing when SwipeView is swiped
+            BaseRepositoryDataTemplate.Tapped += HandleRepositoryDataTemplateTapped;
 
             SearchBarTextChanged += HandleSearchBarTextChanged;
             RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
-            BaseRepositoryDataTemplate.Tapped += HandleRepositoryDataTemplateTapped;
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 
             this.SetBinding(TitleProperty, nameof(RepositoryViewModel.TitleText));
