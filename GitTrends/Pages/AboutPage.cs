@@ -28,87 +28,90 @@ namespace GitTrends
             _deepLinkingService = deepLinkingService;
 
             Title = PageTitles.AboutPage;
-            Padding = new Thickness(0, 16, 0, 0);
 
-            Content = new Grid
+            Content = new ScrollView
             {
-                ColumnSpacing = 2,
-                RowSpacing = 6,
-
-                ColumnDefinitions = Columns.Define(
-                    (Column.LeftPadding, horizontalPadding),
-                    (Column.Icon, 108),
-                    (Column.Statistics, Star),
-                    (Column.RightPadding, horizontalPadding)),
-
-                RowDefinitions = Rows.Define(
-                    (Row.Title, IsSmallScreen ? 28 : 32),
-                    (Row.Description, IsSmallScreen ? 44 : 48),
-                    (Row.Statistics, IsSmallScreen ? 28 : 36),
-                    (Row.ActionButtons, IsSmallScreen ? 64 : 68),
-                    (Row.CollaboratorTitle, titleRowHeight),
-                    (Row.CollaboratorDescription, descriptionRowHeight),
-                    (Row.CollaboratorCollection, IsSmallScreen ? 84 : 100),
-                    (Row.LibrariesTitle, titleRowHeight),
-                    (Row.LibrariesDescription, descriptionRowHeight),
-                    (Row.LibrariesCollection, Star)),
-
-                Children =
+                Padding = new Thickness(0, 16, 0, 0),
+                Content = new Grid
                 {
-                     new Image().CenterExpand().Margins(right: IsSmallScreen ? 8 : 12)
-                        .Row(Row.Title).RowSpan(3).Column(Column.Icon)
-                        .DynamicResource(Image.SourceProperty, nameof(BaseTheme.GitTrendsImageSource)),
+                    ColumnSpacing = 2,
+                    RowSpacing = 6,
 
-                    new Label { Text = GitHubConstants.GitTrendsRepoName }.Font(FontFamilyConstants.RobotoMedium, 24)
-                        .Row(Row.Title).Column(Column.Statistics)
-                        .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor)),
+                    ColumnDefinitions = Columns.Define(
+                        (Column.LeftPadding, horizontalPadding),
+                        (Column.Icon, 108),
+                        (Column.Statistics, Star),
+                        (Column.RightPadding, horizontalPadding)),
 
-                    new DescriptionLabel(AboutPageConstants.DescriptionText) { MaxLines = 3 }
-                        .Row(Row.Description).Column(Column.Statistics),
+                    RowDefinitions = Rows.Define(
+                        (Row.Title, IsSmallScreen ? 28 : 32),
+                        (Row.Description, IsSmallScreen ? 44 : 48),
+                        (Row.Statistics, IsSmallScreen ? 28 : 36),
+                        (Row.ActionButtons, IsSmallScreen ? 64 : 68),
+                        (Row.CollaboratorTitle, titleRowHeight),
+                        (Row.CollaboratorDescription, descriptionRowHeight),
+                        (Row.CollaboratorCollection, IsSmallScreen ? 84 : 100),
+                        (Row.LibrariesTitle, titleRowHeight),
+                        (Row.LibrariesDescription, descriptionRowHeight),
+                        (Row.LibrariesCollection, Star)),
 
-                    new GitTrendsStatisticsView()
-                        .Row(Row.Statistics).Column(Column.Statistics),
-
-                    new ButtonLayout().Center()
-                        .Row(Row.ActionButtons).Column(Column.Icon).ColumnSpan(2),
-
-                    new TitleLabel(AboutPageConstants.CollaboratorsTitle).TextBottom().BottomExpand()
-                        .Row(Row.CollaboratorTitle).Column(Column.Icon).ColumnSpan(2),
-
-                    new DescriptionLabel(AboutPageConstants.CollaboratorsDescription)
-                        .Row(Row.CollaboratorDescription).Column(Column.Icon).ColumnSpan(2),
-
-                    new CollectionView
+                    Children =
                     {
-                        HorizontalScrollBarVisibility = ScrollBarVisibility.Never,
-                        HeightRequest = ContributorDataTemplate.RowHeight + 8,
-                        Header = new BoxView { WidthRequest = horizontalPadding },
-                        SelectionMode = SelectionMode.Single,
-                        ItemTemplate = new ContributorDataTemplate(),
-                        ItemsSource = ViewModel.GitTrendsContributors,
-                        ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Horizontal)
-                    }.Top().Margins(top: 4)
-                     .Row(Row.CollaboratorCollection).ColumnSpan(All<Column>())
-                     .Invoke(collectionView => collectionView.SelectionChanged += HandleContributorSelectionChanged),
+                         new Image().CenterExpand().Margins(right: IsSmallScreen ? 8 : 12)
+                            .Row(Row.Title).RowSpan(3).Column(Column.Icon)
+                            .DynamicResource(Image.SourceProperty, nameof(BaseTheme.GitTrendsImageSource)),
 
-                    new TitleLabel(AboutPageConstants.LibrariesTitle)
-                        .Row(Row.LibrariesTitle).Column(Column.Icon).ColumnSpan(2),
+                        new Label { Text = GitHubConstants.GitTrendsRepoName }.Font(FontFamilyConstants.RobotoMedium, 24)
+                            .Row(Row.Title).Column(Column.Statistics)
+                            .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor)),
 
-                    new DescriptionLabel(AboutPageConstants.LibrariesDescription)
-                        .Row(Row.LibrariesDescription).Column(Column.Icon).ColumnSpan(2),
+                        new DescriptionLabel(AboutPageConstants.DescriptionText) { MaxLines = 3 }
+                            .Row(Row.Description).Column(Column.Statistics),
 
-                    new CollectionView
-                    {
-                        HorizontalScrollBarVisibility = ScrollBarVisibility.Never,
-                        HeightRequest = IsSmallScreen ? LibraryDataTemplate.RowHeight + 8 : LibraryDataTemplate.RowHeight * 2 + 8,
-                        Header = new BoxView { WidthRequest = horizontalPadding },
-                        SelectionMode = SelectionMode.Single,
-                        ItemTemplate = new LibraryDataTemplate(),
-                        ItemsSource = ViewModel.InstalledLibraries,
-                        ItemsLayout = IsSmallScreen ? new LinearItemsLayout(ItemsLayoutOrientation.Horizontal) : new GridItemsLayout(2, ItemsLayoutOrientation.Horizontal)
-                    }.Top()
-                     .Row(Row.LibrariesCollection).ColumnSpan(All<Column>())
-                     .Invoke(collectionView => collectionView.SelectionChanged += HandleLibrarySelectionChanged),
+                        new GitTrendsStatisticsView()
+                            .Row(Row.Statistics).Column(Column.Statistics),
+
+                        new ButtonLayout().Center()
+                            .Row(Row.ActionButtons).Column(Column.Icon).ColumnSpan(2),
+
+                        new TitleLabel(AboutPageConstants.CollaboratorsTitle).TextBottom().BottomExpand()
+                            .Row(Row.CollaboratorTitle).Column(Column.Icon).ColumnSpan(2),
+
+                        new DescriptionLabel(AboutPageConstants.CollaboratorsDescription)
+                            .Row(Row.CollaboratorDescription).Column(Column.Icon).ColumnSpan(2),
+
+                        new CollectionView
+                        {
+                            HorizontalScrollBarVisibility = ScrollBarVisibility.Never,
+                            HeightRequest = ContributorDataTemplate.RowHeight + 8,
+                            Header = new BoxView { WidthRequest = horizontalPadding },
+                            SelectionMode = SelectionMode.Single,
+                            ItemTemplate = new ContributorDataTemplate(),
+                            ItemsSource = ViewModel.GitTrendsContributors,
+                            ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Horizontal)
+                        }.Top().Margins(top: 4)
+                         .Row(Row.CollaboratorCollection).ColumnSpan(All<Column>())
+                         .Invoke(collectionView => collectionView.SelectionChanged += HandleContributorSelectionChanged),
+
+                        new TitleLabel(AboutPageConstants.LibrariesTitle)
+                            .Row(Row.LibrariesTitle).Column(Column.Icon).ColumnSpan(2),
+
+                        new DescriptionLabel(AboutPageConstants.LibrariesDescription)
+                            .Row(Row.LibrariesDescription).Column(Column.Icon).ColumnSpan(2),
+
+                        new CollectionView
+                        {
+                            HorizontalScrollBarVisibility = ScrollBarVisibility.Never,
+                            HeightRequest = IsSmallScreen ? LibraryDataTemplate.RowHeight + 8 : LibraryDataTemplate.RowHeight * 2 + 8,
+                            Header = new BoxView { WidthRequest = horizontalPadding },
+                            SelectionMode = SelectionMode.Single,
+                            ItemTemplate = new LibraryDataTemplate(),
+                            ItemsSource = ViewModel.InstalledLibraries,
+                            ItemsLayout = IsSmallScreen ? new LinearItemsLayout(ItemsLayoutOrientation.Horizontal) : new GridItemsLayout(2, ItemsLayoutOrientation.Horizontal)
+                        }.Top()
+                         .Row(Row.LibrariesCollection).ColumnSpan(All<Column>())
+                         .Invoke(collectionView => collectionView.SelectionChanged += HandleLibrarySelectionChanged),
+                    }
                 }
             };
         }

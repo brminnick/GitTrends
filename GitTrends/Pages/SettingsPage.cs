@@ -152,7 +152,7 @@ namespace GitTrends
                             .Row(Row.Copyright).ColumnSpan(All<Column>())
                     }
                 }
-            };
+            }.Paddings(bottom: 8);
 
             this.SetBinding(TitleProperty, nameof(SettingsViewModel.TitleText));
 
