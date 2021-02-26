@@ -9,9 +9,11 @@ namespace GitTrends
     {
         const int _fabDiameterMini = 40;
         const int _fabDiameterNormal = 56;
+        const int _fabDiameterLarge = 70;
 
         const int _shadowDiameterMini = _fabDiameterMini + 1;
         const int _shadowDiameterNormal = _fabDiameterNormal + 2;
+        const int _shadowDiameterLarge = _fabDiameterLarge + 2;
 
         public static readonly BindableProperty SizeProperty = BindableProperty.Create(nameof(Size), typeof(FloatingActionButtonSize), typeof(FloatingActionButtonView), FloatingActionButtonSize.Normal, propertyChanged: OnSizeChanged);
         public static readonly BindableProperty CommandProperty = BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(FloatingActionButtonView), null, propertyChanged: (bo, o, n) => ((FloatingActionButtonView)bo).OnCommandChanged());
@@ -93,6 +95,7 @@ namespace GitTrends
             {
                 FloatingActionButtonSize.Normal => _shadowDiameterNormal,
                 FloatingActionButtonSize.Mini => _shadowDiameterMini,
+                FloatingActionButtonSize.Large => _shadowDiameterLarge,
                 _ => throw new NotImplementedException()
             };
 
@@ -100,6 +103,7 @@ namespace GitTrends
             {
                 FloatingActionButtonSize.Normal => _fabDiameterNormal,
                 FloatingActionButtonSize.Mini => _fabDiameterMini,
+                FloatingActionButtonSize.Large => _fabDiameterLarge,
                 _ => throw new NotImplementedException()
             };
         }
@@ -126,5 +130,5 @@ namespace GitTrends
         void CommandCanExecuteChanged(object sender, EventArgs eventArgs) => IsEnabled = Command?.CanExecute(CommandParameter) ?? false;
     }
 
-    enum FloatingActionButtonSize { Normal, Mini }
+    public enum FloatingActionButtonSize { Normal, Mini, Large, None }
 }
