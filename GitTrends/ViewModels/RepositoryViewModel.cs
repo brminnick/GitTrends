@@ -129,12 +129,12 @@ namespace GitTrends
             get => _isRefreshing;
             set => SetProperty(ref _isRefreshing, value);
         }
-        string _totalButtonText = "TOTAL";
+        string _totalButtonText = RepositoryPageConstants.TOTAL;
 
         
         public string TotalButtonText
         {
-            get { return _totalButtonText; }
+            get => _totalButtonText;
             set => SetProperty(ref _totalButtonText, value);
         }
         public string TitleText
