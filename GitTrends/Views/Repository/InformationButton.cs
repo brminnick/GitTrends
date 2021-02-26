@@ -43,7 +43,7 @@ namespace GitTrends
             Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic3, floatingActionButtonSize: FloatingActionButtonSize.Mini).Center().Assign(out _statistic3FloatingActionButton)
                             .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic3)));
 
-            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Information, new AsyncCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium/*, Text = "IOMLAN"*/ }.Center().Assign(out _totalButton)
+            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Information, new AsyncCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium }.Center().Assign(out _totalButton)
                             .Bind(FloatingActionTextButton.SizeProperty, nameof(RepositoryViewModel.TotalButtonSize))
                             .Bind(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.TotalButtonText)));
 
@@ -130,14 +130,13 @@ namespace GitTrends
                     Size = floatingActionButtonSize;
 
 
-                //Size = floatingActionButtonSize;
                 Command = command;
 
                 var fontSize = Size switch
                 {
                     FloatingActionButtonSize.Mini => 10,
-                    FloatingActionButtonSize.Normal => 13,
-                    FloatingActionButtonSize.Large => 13,
+                    FloatingActionButtonSize.Normal or FloatingActionButtonSize.Large => 13,
+
                     _ => throw new NotImplementedException(),
                 };
 
