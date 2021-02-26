@@ -8,7 +8,6 @@ using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using Refit;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
@@ -59,9 +58,9 @@ namespace GitTrends.UnitTests
 
         protected virtual void InitializeServiceCollection()
         {
-            var gitHubApiV3Client = RestService.For<IGitHubApiV3>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubRestApiUrl));
-            var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
-            var azureFunctionsClient = RestService.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
+            var gitHubApiV3Client = RefitExtensions.For<IGitHubApiV3>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubRestApiUrl));
+            var gitHubGraphQLCLient = RefitExtensions.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
+            var azureFunctionsClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
 
             ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
         }
@@ -100,7 +99,7 @@ namespace GitTrends.UnitTests
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
                                                         DemoUserConstants.Alias, gitTrendsAvatarUrl,
-                                                        DemoDataConstants.GetRandomNumber(),
+                                                        DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
                                                         gitTrendsAvatarUrl, false, downloadedAt, false, dailyViewsList, dailyClonesList, DemoDataConstants.GenerateStarredAtDates(DemoDataConstants.GetRandomNumber()));
         }
     }

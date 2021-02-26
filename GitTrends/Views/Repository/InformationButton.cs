@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.CommunityToolkit.Markup;
 using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
@@ -30,8 +31,8 @@ namespace GitTrends
 
             AutomationId = RepositoryPageAutomationIds.InformationButton;
 
-            RowDefinitions = Rows.Define(AbsoluteGridLength(Diameter));
-            ColumnDefinitions = Columns.Define(AbsoluteGridLength(Diameter));
+            RowDefinitions = Rows.Define(Diameter);
+            ColumnDefinitions = Columns.Define(Diameter);
 
             Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic1, floatingActionButtonSize: FloatingActionButtonSize.Mini).Center().Assign(out _statistic1FloatingActionButton)
                             .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic1)));
@@ -44,8 +45,7 @@ namespace GitTrends
 
             Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Information, new AsyncCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium/*, Text = "IOMLAN"*/ }.Center().Assign(out _totalButton)
                             .Bind(FloatingActionTextButton.SizeProperty, nameof(RepositoryViewModel.TotalButtonSize))
-                            .Bind(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.TotalButtonText))
-                            );
+                            .Bind(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.TotalButtonText)));
 
             SetBinding(IsVisibleProperty, new MultiBinding
             {

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Refit;
 
 namespace GitTrends.Shared
@@ -23,5 +24,8 @@ namespace GitTrends.Shared
 
         [Get("/GetNotificationHubInformation")]
         Task<NotificationHubInformation> GetNotificationHubInformation([AliasAs("code")] string functionKey = AzureConstants.GetNotificationHubInformationApiKey);
+
+        [Get("/GetLibraries")]
+        Task<IReadOnlyList<NuGetPackageModel>> GetLibraries();
     }
 }

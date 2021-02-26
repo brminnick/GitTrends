@@ -14,9 +14,9 @@ namespace GitTrends
     {
         readonly static WeakEventManager<PreferredTheme> _preferenceChangedEventManager = new();
 
+        readonly IMainThread _mainThread;
         readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;
-        readonly IMainThread _mainThread;
 
         public ThemeService(IAnalyticsService analyticsService, IPreferences preferences, IMainThread mainThread)
         {
@@ -56,11 +56,11 @@ namespace GitTrends
 
             return _mainThread.InvokeOnMainThreadAsync(() =>
             {
-                var theme = preferredTheme switch
+                BaseTheme theme = preferredTheme switch
                 {
                     PreferredTheme.Dark => new DarkTheme(),
                     PreferredTheme.Light => new LightTheme(),
-                    PreferredTheme.Default => Application.Current.RequestedTheme is OSAppTheme.Dark ? new DarkTheme() : (BaseTheme)new LightTheme(),
+                    PreferredTheme.Default => Application.Current.RequestedTheme is OSAppTheme.Dark ? new DarkTheme() : new LightTheme(),
                     _ => throw new NotSupportedException()
                 };
 

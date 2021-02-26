@@ -11,7 +11,6 @@ using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -20,7 +19,6 @@ namespace GitTrends
     {
         const int _titleTopMargin = 10;
 
-        readonly StoreRatingRequestView _storeRatingRequestView = new();
         readonly CancellationTokenSource _refreshViewCancelltionTokenSource = new();
 
         readonly Repository _repository;
@@ -44,7 +42,6 @@ namespace GitTrends
             _reviewService = reviewService;
             _deepLinkingService = deepLinkingService;
 
-            ReviewService.ReviewCompleted += HandleReviewCompleted;
             ReferringSitesViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 
             var isiOS = Device.RuntimePlatform is Device.iOS;
@@ -62,13 +59,12 @@ namespace GitTrends
 
                 RowDefinitions = Rows.Define(
                     (Row.Title, Auto),
-                    (Row.TitleShadow, AbsoluteGridLength(shadowHeight)),
-                    (Row.List, Star),
-                    (Row.RatingRequest, Auto)),
+                    (Row.TitleShadow, shadowHeight),
+                    (Row.List, Star)),
 
                 ColumnDefinitions = Columns.Define(
-                    (Column.Title, StarGridLength(3)),
-                    (Column.Button, StarGridLength(1))),
+                    (Column.Title, Stars(3)),
+                    (Column.Button, Stars(1))),
 
                 Children =
                 {
@@ -77,9 +73,6 @@ namespace GitTrends
                         .Bind(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.RefreshCommand))
                         .Bind(RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing))
                         .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor)),
-
-                    _storeRatingRequestView
-                        .Row(Row.RatingRequest).ColumnSpan(All<Column>()),
                 }
             };
 
@@ -93,7 +86,7 @@ namespace GitTrends
             }
         }
 
-        enum Row { Title, TitleShadow, List, RatingRequest }
+        enum Row { Title, TitleShadow, List }
         enum Column { Title, Button }
 
         protected override void OnAppearing()
@@ -113,7 +106,6 @@ namespace GitTrends
             base.OnDisappearing();
 
             _refreshViewCancelltionTokenSource.Cancel();
-            _storeRatingRequestView.IsVisible = false;
         }
 
         async void HandleCollectionViewSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -155,18 +147,6 @@ namespace GitTrends
                 }
             });
         }
-
-        void HandleReviewCompleted(object sender, ReviewRequest e) => MainThread.BeginInvokeOnMainThread(async () =>
-        {
-            const int animationDuration = 300;
-
-            await Task.WhenAll(_storeRatingRequestView.TranslateTo(0, _storeRatingRequestView.Height, animationDuration),
-                                _storeRatingRequestView.ScaleTo(0, animationDuration));
-
-            _storeRatingRequestView.IsVisible = false;
-            _storeRatingRequestView.Scale = 1;
-            _storeRatingRequestView.TranslationY = 0;
-        });
 
         async void HandleCloseButtonClicked(object sender, EventArgs e) => await Navigation.PopModalAsync();
 

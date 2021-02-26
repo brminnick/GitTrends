@@ -3,6 +3,8 @@ using Autofac;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
+using Plugin.StoreReview;
+using Plugin.StoreReview.Abstractions;
 using Refit;
 using Shiny;
 using Shiny.Notifications;
@@ -37,6 +39,7 @@ namespace GitTrends
 
             //Register Services
             builder.RegisterType<AnalyticsService>().As<IAnalyticsService>().SingleInstance();
+            builder.RegisterType<AppInitializationService>().AsSelf().SingleInstance();
             builder.RegisterType<AzureFunctionsApiService>().AsSelf().SingleInstance();
             builder.RegisterType<BackgroundFetchService>().AsSelf().SingleInstance();
             builder.RegisterType<DeepLinkingService>().AsSelf().SingleInstance();
@@ -48,9 +51,10 @@ namespace GitTrends
             builder.RegisterType<GitHubAuthenticationService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubUserService>().AsSelf().SingleInstance();
             builder.RegisterType<GitHubGraphQLApiService>().AsSelf().SingleInstance();
-            builder.RegisterType<GitTrendsContributorsService>().AsSelf().SingleInstance();
+            builder.RegisterType<GitTrendsStatisticsService>().AsSelf().SingleInstance();
             builder.RegisterType<ImageCachingService>().AsSelf().SingleInstance();
             builder.RegisterType<LanguageService>().AsSelf().SingleInstance();
+            builder.RegisterType<LibrariesService>().AsSelf().SingleInstance();
             builder.RegisterType<MediaElementService>().AsSelf().SingleInstance();
             builder.RegisterType<NotificationService>().AsSelf().SingleInstance();
             builder.RegisterType<ReferringSitesDatabase>().AsSelf().SingleInstance();
@@ -60,6 +64,7 @@ namespace GitTrends
             builder.RegisterType<SyncfusionService>().AsSelf().SingleInstance();
             builder.RegisterType<ThemeService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
+            builder.RegisterInstance(CrossStoreReview.Current).As<IStoreReview>().SingleInstance();
             builder.RegisterInstance(ShinyHost.Resolve<INotificationManager>()).As<INotificationManager>().SingleInstance();
             builder.RegisterInstance(DependencyService.Resolve<IDeviceNotificationsService>()).As<IDeviceNotificationsService>().SingleInstance();
 #if !AppStore
@@ -72,7 +77,6 @@ namespace GitTrends
             builder.RegisterType<ReferringSitesViewModel>().AsSelf();
             builder.RegisterType<RepositoryViewModel>().AsSelf();
             builder.RegisterType<SettingsViewModel>().AsSelf();
-            builder.RegisterType<SplashScreenViewModel>().AsSelf();
             builder.RegisterType<TrendsViewModel>().AsSelf();
             builder.RegisterType<WelcomeViewModel>().AsSelf();
 
@@ -93,9 +97,9 @@ namespace GitTrends
             builder.RegisterType<WelcomePage>().AsSelf();
 
             //Register Refit Services
-            IGitHubApiV3 gitHubV3ApiClient = RestService.For<IGitHubApiV3>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubRestApiUrl));
-            IGitHubGraphQLApi gitHubGraphQLApiClient = RestService.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
-            IAzureFunctionsApi azureFunctionsApiClient = RestService.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
+            IGitHubApiV3 gitHubV3ApiClient = RefitExtensions.For<IGitHubApiV3>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubRestApiUrl));
+            IGitHubGraphQLApi gitHubGraphQLApiClient = RefitExtensions.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
+            IAzureFunctionsApi azureFunctionsApiClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl)); 
 
             builder.RegisterInstance(gitHubV3ApiClient).SingleInstance();
             builder.RegisterInstance(gitHubGraphQLApiClient).SingleInstance();

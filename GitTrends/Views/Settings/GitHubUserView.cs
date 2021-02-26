@@ -26,9 +26,9 @@ namespace GitTrends
             RowSpacing = 4;
 
             RowDefinitions = Rows.Define(
-                (Row.Image, AbsoluteGridLength(_imageHeight)),
-                (Row.Name, AbsoluteGridLength(_nameLabelHeight)),
-                (Row.Alias, AbsoluteGridLength(_aliasLabelHeight)));
+                (Row.Image, _imageHeight),
+                (Row.Name, _nameLabelHeight),
+                (Row.Alias, _aliasLabelHeight));
 
             Children.Add(new GitHubAvatarImage().Row(Row.Image));
             Children.Add(new NameLabel().Row(Row.Name));

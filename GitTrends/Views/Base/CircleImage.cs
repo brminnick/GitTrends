@@ -23,7 +23,7 @@ namespace GitTrends
         public CircleImage()
         {
             Border ??= new Border();
-            Border.Bind(Border.ColorProperty, nameof(BorderColor), source: this);
+            this.Bind(Frame.BorderColorProperty, nameof(BorderColor), source: this);
 
             Content = new CachedImage()
                         .Bind(CachedImage.SourceProperty, nameof(ImageSource), source: this)
