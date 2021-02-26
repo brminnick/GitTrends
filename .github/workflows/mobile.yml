@@ -9,8 +9,8 @@ on:
       - "*"
 
 jobs:
-  
-    UnitTests_Android_iOS:
+
+    Build_Android:
       runs-on: macos-latest
       env:
         GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}
@@ -43,10 +43,40 @@ jobs:
       - name: Build Android App
         run: |                    
           mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /p:Configuration=Release     
-
+          
       # - name: Build iOS App
       #   run: |                    
       #     mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /p:Configuration=Debug /p:Platform=iPhoneSimulator
+  
+    UnitTest_GitTrends:
+      runs-on: macos-latest
+      env:
+        GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}
+        GetSyncFusionInformationApiKey: ${{ secrets.GetSyncFusionInformationApiKey }}
+        GetNotificationHubInformationApiKey: ${{ secrets.GetNotificationHubInformationApiKey }}
+        APPCENTER_SOURCE_DIRECTORY: .
+
+      steps:
+      - uses: actions/checkout@v1
+        
+      - name: Setup .NET v5.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+          
+      - name: Setup .NET Core v3.1
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+        
+      - name: Restore NuGet 
+        run: |
+          nuget restore
+        
+      - name: Inject API Keys
+        run: |
+          chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
+          ./GitTrends.Android/appcenter-pre-build.sh
           
       - name: Run Unit Tests
         run: |   
