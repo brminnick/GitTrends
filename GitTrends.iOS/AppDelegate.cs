@@ -37,16 +37,11 @@ namespace GitTrends.iOS
 
             PrintFontNamesToConsole();
 
-            var languageService = ContainerService.Container.Resolve<LanguageService>();
-            var splashScreenPage = ContainerService.Container.Resolve<SplashScreenPage>();
-            var analyticsService = ContainerService.Container.Resolve<IAnalyticsService>();
-            var notificationService = ContainerService.Container.Resolve<NotificationService>();
-            var appInitializationService = ContainerService.Container.Resolve<AppInitializationService>();
-
-            LoadApplication(new App(languageService, splashScreenPage, analyticsService, notificationService, appInitializationService));
+            var app = ContainerService.Container.Resolve<App>();
+            LoadApplication(app);
 
             if (launchOptions?.ContainsKey(UIApplication.LaunchOptionsLocalNotificationKey) is true)
-                HandleLocalNotification((UILocalNotification)launchOptions[UIApplication.LaunchOptionsLocalNotificationKey]).SafeFireAndForget(ex => analyticsService.Report(ex));
+                HandleLocalNotification((UILocalNotification)launchOptions[UIApplication.LaunchOptionsLocalNotificationKey]).SafeFireAndForget(ex => ContainerService.Container.Resolve<IAnalyticsService>().Report(ex));
 
             return base.FinishedLaunching(uiApplication, launchOptions);
         }

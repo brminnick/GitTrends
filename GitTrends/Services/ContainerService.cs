@@ -5,7 +5,6 @@ using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Plugin.StoreReview;
 using Plugin.StoreReview.Abstractions;
-using Refit;
 using Shiny;
 using Shiny.Notifications;
 using Xamarin.Essentials.Implementation;
@@ -38,6 +37,7 @@ namespace GitTrends
             builder.RegisterType<VersionTrackingImplementation>().As<IVersionTracking>().SingleInstance();
 
             //Register Services
+            builder.RegisterType<App>().AsSelf().SingleInstance();
             builder.RegisterType<AnalyticsService>().As<IAnalyticsService>().SingleInstance();
             builder.RegisterType<AppInitializationService>().AsSelf().SingleInstance();
             builder.RegisterType<AzureFunctionsApiService>().AsSelf().SingleInstance();
