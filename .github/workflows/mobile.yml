@@ -10,7 +10,7 @@ on:
 
 jobs:
 
-    Build_GitTrends.Android:
+    Build_Android:
       runs-on: macos-latest
       env:
         GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}
