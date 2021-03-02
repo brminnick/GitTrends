@@ -45,8 +45,6 @@ namespace GitTrends
                                     AppInitializationService appInitializationService)
             : base(analyticsService, mainThread)
         {
-            //Remove BaseContentPageBackground
-            RemoveDynamicResource(BackgroundColorProperty);
             this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.GitTrendsImageBackgroundColor));
 
             _firstRunService = firstRunService;

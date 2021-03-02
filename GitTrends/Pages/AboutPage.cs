@@ -116,7 +116,6 @@ namespace GitTrends
             };
         }
 
-
         enum Row { Title, Description, Statistics, ActionButtons, CollaboratorTitle, CollaboratorDescription, CollaboratorCollection, LibrariesTitle, LibrariesDescription, LibrariesCollection }
         enum Column { LeftPadding, Icon, Statistics, RightPadding }
 
