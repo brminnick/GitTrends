@@ -21,4 +21,7 @@
 	<data name="CheckInternetConnectionTryAgain" xml:space="preserve">
     <value>Controleer je (internet)verbinding en probeer opnieuw</value>
   </data>
+  <data name="TOTAL" xml:space="preserve">
+    <value>TOTAAL</value>
+  </data>
 </root>
