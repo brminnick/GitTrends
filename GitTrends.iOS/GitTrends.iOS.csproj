@@ -18,6 +18,7 @@
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <WarningsAsErrors>nullable</WarningsAsErrors>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
