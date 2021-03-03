@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using FFImageLoading.Svg.Forms;
 using GitTrends.Mobile.Common;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 
 namespace GitTrends
 {

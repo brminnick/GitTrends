@@ -2,22 +2,20 @@
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 using static GitTrends.MarkupExtensions;
-using static Xamarin.Forms.Markup.GridRowsColumns;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
     public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
     {
-        public ConnectToGitHubOnboardingPage(GitHubAuthenticationService gitHubAuthenticationService,
-                                                IAnalyticsService analyticsService,
-                                                IMainThread mainthread)
+        public ConnectToGitHubOnboardingPage(IMainThread mainthread, IAnalyticsService analyticsService)
                 : base(analyticsService, mainthread, Color.FromHex(BaseTheme.CoralColorHex), OnboardingConstants.TryDemoText, 3)
         {
-            gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+            GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
         }
 
         enum Row { Description, Button, ActivityIndicator }
@@ -39,14 +37,14 @@ namespace GitTrends
                 RowSpacing = 16,
 
                 RowDefinitions = Rows.Define(
-                        (Row.Description, AbsoluteGridLength(65)),
-                        (Row.Button, AbsoluteGridLength(42)),
-                        (Row.ActivityIndicator, AbsoluteGridLength(42))),
+                        (Row.Description, 65),
+                        (Row.Button, 42),
+                        (Row.ActivityIndicator, 42)),
 
                 Children =
                 {
                     new BodyLabel(OnboardingConstants.ConnectToGitHubPage_Body_GetStarted).Row(Row.Description),
-                    new ConnectToGitHubView(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None, new Xamarin.Essentials.BrowserLaunchOptions
+                    new ConnectToGitHubButton(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None, new Xamarin.Essentials.BrowserLaunchOptions
                     {
                         PreferredControlColor = Color.White,
                         PreferredToolbarColor = Color.FromHex(BaseTheme.CoralColorHex).MultiplyAlpha(0.75),

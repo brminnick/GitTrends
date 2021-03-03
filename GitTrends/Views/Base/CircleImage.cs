@@ -1,18 +1,19 @@
 ﻿using FFImageLoading.Forms;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
 
 namespace GitTrends
 {
-    public class CircleImage : PancakeView
+    public class CircleImage : CirclePancakeView
     {
         public static readonly BindableProperty AspectProperty = BindableProperty.Create(nameof(Aspect), typeof(Aspect), typeof(CircleImage), Aspect.AspectFit);
         public static readonly BindableProperty ImageSourceProperty = BindableProperty.Create(nameof(ImageSource), typeof(ImageSource), typeof(CircleImage), null);
+        public static readonly BindableProperty BorderColorProperty = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(CircleImage), default(Color));
         public static readonly BindableProperty ErrorPlaceholderProperty = BindableProperty.Create(nameof(ErrorPlaceholder), typeof(ImageSource), typeof(CircleImage), null);
         public static readonly BindableProperty LoadingPlaceholderProperty = BindableProperty.Create(nameof(LoadingPlaceholder), typeof(ImageSource), typeof(CircleImage), null);
 
-        public CircleImage(ImageSource imageSource, ImageSource errorPlaceholder, ImageSource loadingPlaceholder) : this()
+        public CircleImage(in ImageSource imageSource, in ImageSource errorPlaceholder, in ImageSource loadingPlaceholder) : this()
         {
             ImageSource = imageSource;
             ErrorPlaceholder = errorPlaceholder;
@@ -21,17 +22,19 @@ namespace GitTrends
 
         public CircleImage()
         {
-            this.Bind<PancakeView, double, double>(WidthProperty, nameof(Height), source: this);
-            this.Bind<PancakeView, double, double>(CornerRadiusProperty, nameof(Width), convert: convertWidthToCornerRadius, source: this);
-
-            IsClippedToBounds = true;
+            Border ??= new Border();
+            this.Bind(Frame.BorderColorProperty, nameof(BorderColor), source: this);
 
             Content = new CachedImage()
                         .Bind(CachedImage.SourceProperty, nameof(ImageSource), source: this)
                         .Bind(CachedImage.ErrorPlaceholderProperty, nameof(ErrorPlaceholder), source: this)
                         .Bind(CachedImage.LoadingPlaceholderProperty, nameof(LoadingPlaceholder), source: this);
+        }
 
-            static double convertWidthToCornerRadius(double width) => width / 2;
+        public Color BorderColor
+        {
+            get => (Color)GetValue(BorderColorProperty);
+            set => SetValue(BorderColorProperty, value);
         }
 
         public Aspect Aspect

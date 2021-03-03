@@ -11,7 +11,7 @@ namespace GitTrends
 {
     public class OnboardingViewModel : GitHubAuthenticationViewModel
     {
-        readonly WeakEventManager _skipButtonTappedEventManager = new WeakEventManager();
+        readonly static WeakEventManager _skipButtonTappedEventManager = new();
 
         readonly IAnalyticsService _analyticsService;
         readonly NotificationService _notificationService;
@@ -19,14 +19,14 @@ namespace GitTrends
 
         string _notificationStatusSvgImageSource = "";
 
-        public OnboardingViewModel(DeepLinkingService deepLinkingService,
-                                    GitHubAuthenticationService gitHubAuthenticationService,
-                                    NotificationService notificationService,
-                                    IAnalyticsService analyticsService,
-                                    IMainThread mainThread,
+        public OnboardingViewModel(IMainThread mainThread,
                                     FirstRunService firstRunService,
-                                    GitHubUserService gitHubUserService)
-                : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread, gitHubUserService)
+                                    IAnalyticsService analyticsService,
+                                    GitHubUserService gitHubUserService,
+                                    DeepLinkingService deepLinkingService,
+                                    NotificationService notificationService,
+                                    GitHubAuthenticationService gitHubAuthenticationService)
+                : base(mainThread, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
         {
             const string defaultNotificationSvg = "bell.svg";
 
@@ -39,7 +39,7 @@ namespace GitTrends
             EnableNotificationsButtonTapped = new AsyncCommand(ExecuteEnableNotificationsButtonTapped);
         }
 
-        public event EventHandler SkipButtonTapped
+        public static event EventHandler SkipButtonTapped
         {
             add => _skipButtonTappedEventManager.AddEventHandler(value);
             remove => _skipButtonTappedEventManager.RemoveEventHandler(value);
@@ -115,6 +115,6 @@ namespace GitTrends
             }
         }
 
-        void OnSkipButtonTapped() => _skipButtonTappedEventManager.HandleEvent(null, EventArgs.Empty, nameof(SkipButtonTapped));
+        void OnSkipButtonTapped() => _skipButtonTappedEventManager.RaiseEvent(null, EventArgs.Empty, nameof(SkipButtonTapped));
     }
 }

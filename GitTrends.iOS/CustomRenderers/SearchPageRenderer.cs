@@ -61,6 +61,14 @@ namespace GitTrends.iOS
                 searchPage.OnSearchBarTextChanged(searchController.SearchBar.Text ?? string.Empty);
         }
 
+        protected override void OnElementChanged(VisualElementChangedEventArgs e)
+        {
+            base.OnElementChanged(e);
+
+            if (e.NewElement is not null)
+                e.NewElement.SizeChanged += HandleSizeChanged;
+        }
+
         async Task UpdateBarButtonItems(UIViewController parentViewController, Page page)
         {
             var (leftBarButtonItem, rightBarButtonItems) = await GetToolbarItems(page.ToolbarItems);
@@ -68,12 +76,12 @@ namespace GitTrends.iOS
             if (leftBarButtonItem != null)
                 parentViewController.NavigationItem.LeftBarButtonItems = new UIBarButtonItem[] { leftBarButtonItem };
             else
-                parentViewController.NavigationItem.LeftBarButtonItems = Enumerable.Empty<UIBarButtonItem>().ToArray();
+                parentViewController.NavigationItem.LeftBarButtonItems = Array.Empty<UIBarButtonItem>();
 
             if (rightBarButtonItems.Any())
                 parentViewController.NavigationItem.RightBarButtonItems = rightBarButtonItems.ToArray();
             else
-                parentViewController.NavigationItem.RightBarButtonItems = Enumerable.Empty<UIBarButtonItem>().ToArray();
+                parentViewController.NavigationItem.RightBarButtonItems = Array.Empty<UIBarButtonItem>();
         }
 
         async Task<(UIBarButtonItem? LeftBarButtonItem, List<UIBarButtonItem> RightBarButtonItems)> GetToolbarItems(IEnumerable<ToolbarItem> items)
@@ -118,10 +126,32 @@ namespace GitTrends.iOS
 
         static Task<UIImage?> GetUIImage(ImageSource source) => source switch
         {
-            FileImageSource _ => new FileImageSourceHandler().LoadImageAsync(source),
-            UriImageSource _ => new ImageLoaderSourceHandler().LoadImageAsync(source),
-            StreamImageSource _ => new StreamImagesourceHandler().LoadImageAsync(source),
+            FileImageSource => new FileImageSourceHandler().LoadImageAsync(source),
+            UriImageSource => new ImageLoaderSourceHandler().LoadImageAsync(source),
+            StreamImageSource => new StreamImagesourceHandler().LoadImageAsync(source),
             _ => Task.FromResult<UIImage?>(null)
         };
+
+        //Work-around to accommodate UISearchController height, https://github.com/brminnick/GitTrends/issues/171
+        void HandleSizeChanged(object sender, EventArgs e)
+        {
+            if (ParentViewController?.NavigationItem.SearchController is not null
+                && Element.Height is not -1
+                && Element is Page page)
+            {
+                Element.SizeChanged -= HandleSizeChanged;
+
+                if (NavigationController.NavigationBar.PrefersLargeTitles is true)
+                {
+                    var statusBarSize = UIApplication.SharedApplication.StatusBarFrame.Size;
+                    var statusBarHeight = Math.Min(statusBarSize.Height, statusBarSize.Width);
+
+                    page.Padding = new Thickness(page.Padding.Left,
+                                                    page.Padding.Top,
+                                                    page.Padding.Right,
+                                                    page.Padding.Bottom + statusBarHeight);
+                }
+            }
+        }
     }
 }

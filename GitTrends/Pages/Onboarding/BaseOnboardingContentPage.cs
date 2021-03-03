@@ -2,10 +2,10 @@
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
+using Xamarin.CommunityToolkit.Markup;
 using static GitTrends.MarkupExtensions;
 using static GitTrends.XamarinFormsService;
-using static Xamarin.Forms.Markup.GridRowsColumns;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -36,29 +36,36 @@ namespace GitTrends
             Content = new Grid
             {
                 RowDefinitions = Rows.Define(
-                    (Row.Image, StarGridLength(GetImageRowStarHeight())),
-                    (Row.Description, StarGridLength(GetDescriptionRowStarHeight())),
-                    (Row.Indicator, AbsoluteGridLength(44))),
+                    (Row.Image, Stars(GetImageRowStarHeight())),
+                    (Row.Description, Stars(GetDescriptionRowStarHeight())),
+                    (Row.Indicator, 44)),
 
                 ColumnDefinitions = Columns.Define(
-                    (Column.Indicator, StarGridLength(1)),
-                    (Column.Button, StarGridLength(1))),
+                    (Column.Indicator, Stars(1)),
+                    (Column.Button, Stars(1))),
 
                 Children =
                 {
-                    new OpacityOverlay().Row(Row.Image).ColumnSpan(All<Column>()),
-                    CreateImageView().Row(Row.Image).ColumnSpan(All<Column>()).Margin(Device.RuntimePlatform is Device.iOS ? new Thickness(32, 44 + 32, 32, 32) : new Thickness(32,16)),
-                    descriptionLayout.Row(Row.Description).ColumnSpan(All<Column>()),
-                    new OnboardingIndicatorView(carouselPositionIndex).Row(Row.Indicator).Column(Column.Indicator),
-                    new NextLabel(nextButtonText).Row(Row.Indicator).Column(Column.Button),
+                    new OpacityOverlay()
+                        .Row(Row.Image).ColumnSpan(All<Column>()),
+
+                    CreateImageView()
+                        .Row(Row.Image).ColumnSpan(All<Column>()).Margin(Device.RuntimePlatform is Device.iOS ? new Thickness(32, 44 + 32, 32, 32) : new Thickness(32,16)),
+
+                    descriptionLayout.Row(Row.Description)
+                        .RowSpan(2).ColumnSpan(All<Column>()),
+
+                    new OnboardingIndicatorView(carouselPositionIndex)
+                        .Row(Row.Indicator).Column(Column.Indicator),
+
+                    new NextLabel(nextButtonText)
+                        .Row(Row.Indicator).Column(Column.Button),
                 }
             };
         }
 
         enum Row { Image, Description, Indicator }
         enum Column { Indicator, Button }
-
-        protected OnboardingViewModel ViewModel => (OnboardingViewModel)BindingContext;
 
         protected abstract View CreateImageView();
         protected abstract TitleLabel CreateDescriptionTitleLabel();
@@ -151,9 +158,14 @@ namespace GitTrends
             public OnboardingIndicatorView(in int position)
             {
                 Position = position;
+
+                IsEnabled = false;
+
                 SelectedIndicatorColor = Color.White;
                 IndicatorColor = Color.White.MultiplyAlpha(0.25);
+
                 Margin = new Thickness(30, 0, 0, 0);
+
                 HorizontalOptions = LayoutOptions.Start;
                 AutomationId = OnboardingAutomationIds.PageIndicator;
 

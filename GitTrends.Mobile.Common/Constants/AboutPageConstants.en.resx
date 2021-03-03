@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="DescriptionText" xml:space="preserve">
+    <value>GitTrends is an open-source app built in C# using Xamarin.Forms that helps you monitor your GitHub repositories!</value>
+  </data>
+	<data name="Stars" xml:space="preserve">
+    <value>Stars</value>
+  </data>
+	<data name="Forks" xml:space="preserve">
+    <value>Forks</value>
+  </data>
+	<data name="Watching" xml:space="preserve">
+    <value>Watching</value>
+  </data>
+	<data name="CollaboratorsTitle" xml:space="preserve">
+    <value>Collaborators</value>
+  </data>
+	<data name="CollaboratorsDescription" xml:space="preserve">
+    <value>Thank you to all of our amazing open-source contributors. Tap on a contributor to learn more!</value>
+  </data>
+	<data name="LibrariesTitle" xml:space="preserve">
+    <value>Libraries</value>
+  </data>
+	<data name="LibrariesDescription" xml:space="preserve">
+    <value>Thank you to all of the amazing libraries and frameworks that made GitTrends possible!</value>
+  </data>
+  <data name="GitHubButton" xml:space="preserve">
+    <value>View on GitHub</value>
+  </data>
+  <data name="RequestFeatureButton" xml:space="preserve">
+    <value>Request Feature</value>
+  </data>
+</root>

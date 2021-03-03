@@ -51,12 +51,10 @@ namespace GitTrends
                 await setIsBusy(false).ConfigureAwait(false);
             }
 
-            Task setIsBusy(bool isBusy)
+            async ValueTask setIsBusy(bool isBusy)
             {
                 if (Xamarin.Forms.Application.Current?.MainPage is Xamarin.Forms.Page mainPage)
-                    return _mainThread.InvokeOnMainThreadAsync(() => mainPage.IsBusy = isBusy);
-
-                return Task.CompletedTask;
+                    await _mainThread.InvokeOnMainThreadAsync(() => mainPage.IsBusy = isBusy).ConfigureAwait(false);
             }
         }
     }

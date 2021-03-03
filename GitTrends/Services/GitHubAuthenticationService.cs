@@ -12,55 +12,55 @@ namespace GitTrends
 {
     public class GitHubAuthenticationService
     {
-        readonly WeakEventManager<AuthorizeSessionCompletedEventArgs> _authorizeSessionCompletedEventManager = new WeakEventManager<AuthorizeSessionCompletedEventArgs>();
-        readonly WeakEventManager _authorizeSessionStartedEventManager = new WeakEventManager();
-        readonly WeakEventManager _loggedOuteventManager = new WeakEventManager();
-        readonly WeakEventManager _demoUserActivatedEventManager = new WeakEventManager();
+        readonly static WeakEventManager _loggedOuteventManager = new();
+        readonly static WeakEventManager _demoUserActivatedEventManager = new();
+        readonly static WeakEventManager _authorizeSessionStartedEventManager = new();
+        readonly static WeakEventManager<AuthorizeSessionCompletedEventArgs> _authorizeSessionCompletedEventManager = new();
 
-        readonly AzureFunctionsApiService _azureFunctionsApiService;
-        readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
-        readonly RepositoryDatabase _repositoryDatabase;
+        readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;
         readonly GitHubUserService _gitHubUserService;
-        readonly IPreferences _preferences;
+        readonly RepositoryDatabase _repositoryDatabase;
+        readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
+        readonly AzureFunctionsApiService _azureFunctionsApiService;
 
-        public GitHubAuthenticationService(AzureFunctionsApiService azureFunctionsApiService,
-                                            GitHubGraphQLApiService gitHubGraphQLApiService,
-                                            RepositoryDatabase repositoryDatabase,
+        public GitHubAuthenticationService(IPreferences preferences,
                                             IAnalyticsService analyticsService,
-                                            IPreferences preferences,
-                                            GitHubUserService gitHubUserService)
+                                            GitHubUserService gitHubUserService,
+                                            RepositoryDatabase repositoryDatabase,
+                                            GitHubGraphQLApiService gitHubGraphQLApiService,
+                                            AzureFunctionsApiService azureFunctionsApiService)
         {
-            _azureFunctionsApiService = azureFunctionsApiService;
-            _gitHubGraphQLApiService = gitHubGraphQLApiService;
-            _repositoryDatabase = repositoryDatabase;
-            _gitHubUserService = gitHubUserService;
-            _analyticsService = analyticsService;
             _preferences = preferences;
+            _analyticsService = analyticsService;
+            _gitHubUserService = gitHubUserService;
+            _repositoryDatabase = repositoryDatabase;
+            _gitHubGraphQLApiService = gitHubGraphQLApiService;
+            _azureFunctionsApiService = azureFunctionsApiService;
 
             ThemeService.PreferenceChanged += HandlePreferenceChanged;
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
         }
 
-        public event EventHandler AuthorizeSessionStarted
+        public static event EventHandler AuthorizeSessionStarted
         {
             add => _authorizeSessionStartedEventManager.AddEventHandler(value);
             remove => _authorizeSessionStartedEventManager.RemoveEventHandler(value);
         }
 
-        public event EventHandler<AuthorizeSessionCompletedEventArgs> AuthorizeSessionCompleted
+        public static event EventHandler<AuthorizeSessionCompletedEventArgs> AuthorizeSessionCompleted
         {
             add => _authorizeSessionCompletedEventManager.AddEventHandler(value);
             remove => _authorizeSessionCompletedEventManager.RemoveEventHandler(value);
         }
 
-        public event EventHandler DemoUserActivated
+        public static event EventHandler DemoUserActivated
         {
             add => _demoUserActivatedEventManager.AddEventHandler(value);
             remove => _demoUserActivatedEventManager.RemoveEventHandler(value);
         }
 
-        public event EventHandler LoggedOut
+        public static event EventHandler LoggedOut
         {
             add => _loggedOuteventManager.AddEventHandler(value);
             remove => _loggedOuteventManager.RemoveEventHandler(value);
@@ -163,13 +163,13 @@ namespace GitTrends
         }
 
         void OnAuthorizeSessionCompleted(bool isSessionAuthorized) =>
-           _authorizeSessionCompletedEventManager.HandleEvent(this, new AuthorizeSessionCompletedEventArgs(isSessionAuthorized), nameof(AuthorizeSessionCompleted));
+           _authorizeSessionCompletedEventManager.RaiseEvent(this, new AuthorizeSessionCompletedEventArgs(isSessionAuthorized), nameof(AuthorizeSessionCompleted));
 
         void OnAuthorizeSessionStarted() =>
-           _authorizeSessionStartedEventManager.HandleEvent(this, EventArgs.Empty, nameof(AuthorizeSessionStarted));
+           _authorizeSessionStartedEventManager.RaiseEvent(this, EventArgs.Empty, nameof(AuthorizeSessionStarted));
 
-        void OnLoggedOut() => _loggedOuteventManager.HandleEvent(this, EventArgs.Empty, nameof(LoggedOut));
+        void OnLoggedOut() => _loggedOuteventManager.RaiseEvent(this, EventArgs.Empty, nameof(LoggedOut));
 
-        void OnDemoUserActivated() => _demoUserActivatedEventManager.HandleEvent(this, EventArgs.Empty, nameof(DemoUserActivated));
+        void OnDemoUserActivated() => _demoUserActivatedEventManager.RaiseEvent(this, EventArgs.Empty, nameof(DemoUserActivated));
     }
 }

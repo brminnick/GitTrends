@@ -10,10 +10,10 @@ using Xamarin.UITest.iOS;
 
 namespace GitTrends.UITests
 {
-    [TestFixture(Platform.iOS, UserType.Demo)]
-    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     [TestFixture(Platform.Android, UserType.Demo)]
     [TestFixture(Platform.Android, UserType.LoggedIn)]
+    [TestFixture(Platform.iOS, UserType.Demo)]
+    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     class SettingsTests : BaseUITest
     {
         public SettingsTests(Platform platform, UserType userType) : base(platform, userType)
@@ -26,6 +26,24 @@ namespace GitTrends.UITests
 
             RepositoryPage.TapSettingsButton();
             await SettingsPage.WaitForPageToLoad().ConfigureAwait(false);
+        }
+
+        [Test]
+        public void VerifyLogOutButton()
+        {
+            //Arrange
+            bool isLoggedIn_Final, isLoggedIn_Initial;
+
+            //Act
+            isLoggedIn_Initial = SettingsPage.IsLoggedIn;
+
+            SettingsPage.TapLoginButton();
+
+            isLoggedIn_Final = SettingsPage.IsLoggedIn;
+
+            //Assert
+            Assert.IsTrue(isLoggedIn_Initial);
+            Assert.IsTrue(isLoggedIn_Final);
         }
 
         [Test]
@@ -108,6 +126,7 @@ namespace GitTrends.UITests
         public async Task VerifyLanguagePicker()
         {
             //Arrange
+            string? settingsButtonText = null, sortButtonText = null;
             string? preferredLanguage_Initial, preferredLanguage_Final;
             string gitHubNameText, gitHubAliasText, tryDemoButtonText, loginTitleLabelText_Disconnect, loginTitleLabelText_Connect,
                 themeTitleLabelText, languageTitleLabelText, settingsPageTitle, copyrightLabelTitleLabelText, registerForNotificationsTitleLabelText,
@@ -120,6 +139,12 @@ namespace GitTrends.UITests
                 preferredLanguage_Initial = SettingsPage.PreferredLanguage;
 
                 await SettingsPage.SelectLanguage(preferredLanguageKeyValuePair.Value).ConfigureAwait(false);
+
+                SettingsPage.TapLoginButton();
+                tryDemoButtonText = SettingsPage.TryDemoButtonText;
+                loginTitleLabelText_Connect = SettingsPage.LoginTitleText;
+
+                await login().ConfigureAwait(false);
 
                 preferredLanguage_Final = SettingsPage.PreferredLanguage;
 
@@ -137,13 +162,13 @@ namespace GitTrends.UITests
                 preferredChartsNoUniquesTitleLabelText = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.NoUniques];
                 preferredChartsOnlyUniquesTitleLabelText = TrendsChartConstants.TrendsChartTitles[TrendsChartOption.JustUniques];
 
-                SettingsPage.TapLoginButton();
-                tryDemoButtonText = SettingsPage.TryDemoButtonText;
-                loginTitleLabelText_Connect = SettingsPage.LoginTitleText;
-
-                await login().ConfigureAwait(false);
-
                 SettingsPage.TapBackButton();
+
+                if (App is AndroidApp)
+                {
+                    sortButtonText = RepositoryPage.GetSortButtonText();
+                    settingsButtonText = RepositoryPage.GetSettingsButtonText();
+                }
 
                 //Assert
                 Assert.AreEqual(PageTitles.RepositoryPage, RepositoryPage.PageTitle);
@@ -172,6 +197,12 @@ namespace GitTrends.UITests
                     Assert.AreEqual("@" + DemoUserConstants.Alias, gitHubAliasText);
                 }
 
+                if (App is AndroidApp)
+                {
+                    Assert.AreEqual(PageTitles.SettingsPage, settingsButtonText);
+                    Assert.AreEqual(RepositoryPageConstants.SortToolbarItemText, sortButtonText);
+                }
+
                 Assert.AreEqual(LoggedInUserName, gitHubNameText);
                 Assert.AreEqual("@" + LoggedInUserAlias, gitHubAliasText);
 
@@ -190,7 +221,7 @@ namespace GitTrends.UITests
         }
 
         [Test]
-        public async Task VerifyChartSettingsOptions()
+        public async Task VerifyChartPicker()
         {
             //Arrange
 
@@ -227,10 +258,10 @@ namespace GitTrends.UITests
             await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
 
             //Assert
-            Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.TotalViewsTitle));
-            Assert.IsTrue(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.TotalClonesTitle));
-            Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.UniqueViewsTitle));
-            Assert.IsFalse(TrendsPage.IsSeriesVisible(TrendsChartTitleConstants.UniqueClonesTitle));
+            Assert.IsTrue(TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.TotalViewsTitle));
+            Assert.IsTrue(TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.TotalClonesTitle));
+            Assert.IsFalse(TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.UniqueViewsTitle));
+            Assert.IsFalse(TrendsPage.IsViewsClonesChartSeriesVisible(TrendsChartTitleConstants.UniqueClonesTitle));
         }
 
         void EnsureGitHubUserViewOpensBrowser_LoggedIn()

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Common.Constants;
+using AsyncAwaitBestPractices;
+using GitHubApiStatus;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.Essentials.Interfaces;
@@ -11,32 +13,94 @@ namespace GitTrends
     {
         const string _oauthTokenKey = "OAuthToken";
 
+        readonly static WeakEventManager<string> _nameChangedEventManager = new();
+        readonly static WeakEventManager<string> _aliasChangedEventManager = new();
+        readonly static WeakEventManager<string> _avatarUrlChangedEventManager = new();
+
         readonly IPreferences _preferences;
         readonly ISecureStorage _secureStorage;
+        readonly GitHubApiStatusService _gitHubApiStatusService;
 
-        public GitHubUserService(IPreferences preferences, ISecureStorage secureStorage) =>
-            (_preferences, _secureStorage) = (preferences, secureStorage);
+        public GitHubUserService(IPreferences preferences,
+                                    ISecureStorage secureStorage,
+                                    GitHubApiStatusService gitHubApiStatusService)
+        {
+            _preferences = preferences;
+            _secureStorage = secureStorage;
+            _gitHubApiStatusService = gitHubApiStatusService;
 
-        public bool IsDemoUser => AvatarUrl == BaseTheme.GetGitTrendsImageSource();
+            GitHubAuthenticationService.LoggedOut += HandleLoggedOut;
+            GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
+            GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+        }
 
-        public bool IsAuthenticated => !string.IsNullOrWhiteSpace(Alias);
+        public static event EventHandler<string> NameChanged
+        {
+            add => _nameChangedEventManager.AddEventHandler(value);
+            remove => _nameChangedEventManager.RemoveEventHandler(value);
+        }
+
+        public static event EventHandler<string> AliasChanged
+        {
+            add => _aliasChangedEventManager.AddEventHandler(value);
+            remove => _aliasChangedEventManager.RemoveEventHandler(value);
+        }
+
+        public static event EventHandler<string> AvatarUrlChanged
+        {
+            add => _avatarUrlChangedEventManager.AddEventHandler(value);
+            remove => _avatarUrlChangedEventManager.RemoveEventHandler(value);
+        }
+
+        public bool IsDemoUser
+        {
+            get => _preferences.Get(nameof(IsDemoUser), false);
+            private set => _preferences.Set(nameof(IsDemoUser), value);
+        }
+
+        public bool IsAuthenticated
+        {
+            get => _preferences.Get(nameof(IsAuthenticated), false);
+            private set => _preferences.Set(nameof(IsAuthenticated), value);
+        }
 
         public string Alias
         {
             get => _preferences.Get(nameof(Alias), string.Empty);
-            set => _preferences.Set(nameof(Alias), value);
+            set
+            {
+                if (Alias != value)
+                {
+                    _preferences.Set(nameof(Alias), value);
+                    OnAliasChanged(value);
+                }
+            }
         }
 
         public string Name
         {
             get => _preferences.Get(nameof(Name), string.Empty);
-            set => _preferences.Set(nameof(Name), value);
+            set
+            {
+                if (Name != value)
+                {
+                    _preferences.Set(nameof(Name), value);
+                    OnNameChanged(value);
+                }
+            }
         }
 
         public string AvatarUrl
         {
             get => _preferences.Get(nameof(AvatarUrl), string.Empty);
-            set => _preferences.Set(nameof(AvatarUrl), value);
+            set
+            {
+                if (AvatarUrl != value)
+                {
+                    _preferences.Set(nameof(AvatarUrl), value);
+                    OnAvatarUrlChanged(value);
+                }
+            }
         }
 
         public async Task<GitHubToken> GetGitHubToken()
@@ -47,19 +111,35 @@ namespace GitTrends
             {
                 var token = JsonConvert.DeserializeObject<GitHubToken?>(serializedToken);
 
-                return token ?? GitHubToken.Empty;
+                if (token is null)
+                    return GitHubToken.Empty;
+
+                if (!_gitHubApiStatusService.IsProductHeaderValueValid)
+                    _gitHubApiStatusService.AddProductHeaderValue(getProductHeaderValue());
+
+                if (!_gitHubApiStatusService.IsAuthenticationHeaderValueSet)
+                    _gitHubApiStatusService.SetAuthenticationHeaderValue(getAuthenticationHeaderValue(token));
+
+                IsAuthenticated = true;
+
+                return token;
             }
             catch (ArgumentNullException)
             {
+                IsAuthenticated = false; 
                 return GitHubToken.Empty;
             }
             catch (JsonReaderException)
             {
+                IsAuthenticated = false;
                 return GitHubToken.Empty;
             }
+
+            static AuthenticationHeaderValue getAuthenticationHeaderValue(in GitHubToken token) => new(token.TokenType, token.AccessToken);
+            static ProductHeaderValue getProductHeaderValue() => new($"{nameof(GitTrends)}");
         }
 
-        public Task SaveGitHubToken(GitHubToken token)
+        public async Task SaveGitHubToken(GitHubToken token)
         {
             if (token is null)
                 throw new ArgumentNullException(nameof(token));
@@ -68,9 +148,28 @@ namespace GitTrends
                 throw new ArgumentNullException(nameof(token.AccessToken));
 
             var serializedToken = JsonConvert.SerializeObject(token);
-            return _secureStorage.SetAsync(_oauthTokenKey, serializedToken);
+            await _secureStorage.SetAsync(_oauthTokenKey, serializedToken).ConfigureAwait(false);
+
+            IsAuthenticated = true;
         }
 
-        public void InvalidateToken() => _secureStorage.Remove(_oauthTokenKey);
+        public void InvalidateToken()
+        {
+            _secureStorage.Remove(_oauthTokenKey);
+            IsAuthenticated = false;
+        }
+
+        void HandleLoggedOut(object sender, EventArgs e)
+        {
+            IsAuthenticated = false;
+            IsDemoUser = false;
+        }
+
+        void HandleDemoUserActivated(object sender, EventArgs e) => IsDemoUser = true;
+        void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsAuthenticated = e.IsSessionAuthorized;
+
+        void OnNameChanged(in string name) => _nameChangedEventManager.RaiseEvent(this, name, nameof(NameChanged));
+        void OnAliasChanged(in string alias) => _aliasChangedEventManager.RaiseEvent(this, alias, nameof(AliasChanged));
+        void OnAvatarUrlChanged(in string avatarUrl) => _avatarUrlChangedEventManager.RaiseEvent(this, avatarUrl, nameof(AvatarUrlChanged));
     }
 }

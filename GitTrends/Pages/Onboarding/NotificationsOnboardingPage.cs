@@ -1,12 +1,12 @@
 ﻿using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 using Xamarin.Forms.PancakeView;
 using static GitTrends.MarkupExtensions;
-using static Xamarin.Forms.Markup.GridRowsColumns;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -36,8 +36,8 @@ namespace GitTrends
                 RowSpacing = 14,
 
                 RowDefinitions = Rows.Define(
-                    (Row.Description, AbsoluteGridLength(65)),
-                    (Row.Button, AbsoluteGridLength(42))),
+                    (Row.Description, 65),
+                    (Row.Button, 42)),
 
                 Children =
                 {

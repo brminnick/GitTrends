@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
 using NUnit.Framework;
 using Xamarin.UITest;
 using Xamarin.UITest.iOS;
@@ -12,8 +10,8 @@ namespace GitTrends.UITests
 {
     [TestFixture(Platform.Android, UserType.Demo)]
     [TestFixture(Platform.Android, UserType.LoggedIn)]
-    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     [TestFixture(Platform.iOS, UserType.Demo)]
+    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     class ReferringSitesTests : BaseUITest
     {
         public ReferringSitesTests(Platform platform, UserType userType) : base(platform, userType)
@@ -24,7 +22,7 @@ namespace GitTrends.UITests
         {
             await base.BeforeEachTest().ConfigureAwait(false);
 
-            var referringSites = new List<ReferringSiteModel>();
+            IReadOnlyList<ReferringSiteModel> referringSites = Array.Empty<ReferringSiteModel>();
 
             var repositories = RepositoryPage.VisibleCollection;
             var repositoriesEnumerator = repositories.GetEnumerator();
@@ -79,58 +77,6 @@ namespace GitTrends.UITests
                 SettingsPage.WaitForBrowserToOpen();
                 Assert.IsTrue(ReferringSitesPage.IsBrowserOpen);
             }
-        }
-
-        [TestCase(ReviewAction.NoButtonTapped, ReviewAction.NoButtonTapped)]
-        [TestCase(ReviewAction.NoButtonTapped, ReviewAction.YesButtonTapped)]
-        [TestCase(ReviewAction.YesButtonTapped, ReviewAction.NoButtonTapped)]
-        [TestCase(ReviewAction.YesButtonTapped, ReviewAction.YesButtonTapped)]
-        public void VerifyStoreRequest(ReviewAction firstAction, ReviewAction secondAction)
-        {
-            //Arrange
-            string firstTitleText, secondTitleText, firstNoButtonText, secondNoButtonText, firstYesButtonText, secondYesButtonText;
-
-            //Act
-            ReferringSitesPage.TriggerReviewRequest();
-            ReferringSitesPage.WaitForReviewRequest();
-
-            firstTitleText = ReferringSitesPage.StoreRatingRequestTitleLabelText;
-            firstNoButtonText = ReferringSitesPage.StoreRatingRequestNoButtonText;
-            firstYesButtonText = ReferringSitesPage.StoreRatingRequestYesButtonText;
-
-            PerformReviewAction(firstAction);
-
-            secondTitleText = ReferringSitesPage.StoreRatingRequestTitleLabelText;
-            secondNoButtonText = ReferringSitesPage.StoreRatingRequestNoButtonText;
-            secondYesButtonText = ReferringSitesPage.StoreRatingRequestYesButtonText;
-
-            //Assert
-            Assert.AreEqual(ReviewServiceConstants.TitleLabel_EnjoyingGitTrends, firstTitleText);
-            Assert.AreEqual(ReviewServiceConstants.NoButton_NotReally, firstNoButtonText);
-            Assert.AreEqual(ReviewServiceConstants.YesButton_Yes, firstYesButtonText);
-            Assert.AreEqual(ReviewServiceConstants.NoButton_NoThanks, secondNoButtonText);
-            Assert.AreEqual(ReviewServiceConstants.YesButton_OkSure, secondYesButtonText);
-
-            if (firstAction is ReviewAction.NoButtonTapped)
-                Assert.AreEqual(ReviewServiceConstants.TitleLabel_Feedback, secondTitleText);
-            else
-                Assert.AreEqual(ReferringSitesPage.ExpectedAppStoreRequestTitle, secondTitleText);
-
-            //Act
-            PerformReviewAction(secondAction);
-
-            if (secondAction is ReviewAction.NoButtonTapped)
-                ReferringSitesPage.WaitForNoReviewRequest();
-        }
-
-        void PerformReviewAction(in ReviewAction reviewAction)
-        {
-            if (reviewAction is ReviewAction.YesButtonTapped)
-                ReferringSitesPage.TapStoreRatingRequestYesButton();
-            else if (reviewAction is ReviewAction.NoButtonTapped)
-                ReferringSitesPage.TapStoreRatingRequestNoButton();
-            else
-                throw new NotSupportedException();
         }
     }
 }

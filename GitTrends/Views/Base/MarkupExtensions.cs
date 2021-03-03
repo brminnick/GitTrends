@@ -31,12 +31,6 @@ namespace GitTrends
 
     static class MarkupExtensions
     {
-        public static GridLength StarGridLength(double value) => new GridLength(value, GridUnitType.Star);
-        public static GridLength StarGridLength(int value) => StarGridLength((double)value);
-
-        public static GridLength AbsoluteGridLength(double value) => new GridLength(value, GridUnitType.Absolute);
-        public static GridLength AbsoluteGridLength(int value) => AbsoluteGridLength((double)value);
-
         public static double GetWidth(this View view, in RelativeLayout parent) => view.Measure(parent.Width, parent.Height).Request.Width;
         public static double GetHeight(this View view, in RelativeLayout parent) => view.Measure(parent.Width, parent.Height).Request.Height;
 
@@ -85,7 +79,7 @@ namespace GitTrends
 
         public static RelativeLayout Add<TView>(this RelativeLayout relativeLayout, TView view, Constraint? xConstraint = null, Constraint? yConstraint = null, Constraint? widthConstraint = null, Constraint? heightConstraint = null) where TView : View?
         {
-            if(view != null)
+            if (view != null)
                 relativeLayout.Children.Add(view, xConstraint, yConstraint, widthConstraint, heightConstraint);
 
             return relativeLayout;

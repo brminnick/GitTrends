@@ -1,9 +1,10 @@
-﻿using Xamarin.Forms;
-using Xamarin.Forms.Markup;
+﻿using Xamarin.CommunityToolkit.Markup;
+using Xamarin.Forms;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    class EmptyDataView : AbsoluteLayout
+    class EmptyDataView : Grid
     {
         public static readonly BindableProperty TitleProperty = BindableProperty.Create(nameof(Title), typeof(string), typeof(EmptyDataView), string.Empty);
         public static readonly BindableProperty DescriptionProperty = BindableProperty.Create(nameof(Description), typeof(string), typeof(EmptyDataView), string.Empty);
@@ -14,27 +15,33 @@ namespace GitTrends
             ImageSource = imageSource;
         }
 
+        //Workaround for https://github.com/xamarin/Xamarin.Forms/issues/10551
         public EmptyDataView(in string automationId)
         {
             AutomationId = automationId;
 
-            var stackLayout = new StackLayout
-            {
-                Spacing = 24,
-                Children =
-                {
-                    new TextLabel
-                    (
-                        new Span().Bind(Span.TextProperty, nameof(Title), source: this),
-                        new Span().Bind(Span.TextProperty, nameof(Description), source: this)
-                    ),
-                    new EmptyStateImage(ImageSource).Bind(Image.SourceProperty, nameof(ImageSource), source: this)
-                }
-            };
+            this.Center();
 
-            //Workaround for https://github.com/xamarin/Xamarin.Forms/issues/10551
-            Children.Add(stackLayout, new Rectangle(.5, .5, -1, -1), AbsoluteLayoutFlags.PositionProportional);
+            Margin = 8;
+            Padding = 12;
+            RowSpacing = 24;
+
+            RowDefinitions = Rows.Define(
+                (Row.Text, Stars(1)),
+                (Row.Image, Stars(2)));
+
+            Children.Add(new TextLabel
+            (
+                new Span().Bind(Span.TextProperty, nameof(Title), source: this),
+                new Span().Bind(Span.TextProperty, nameof(Description), source: this)
+            ).Row(Row.Text));
+
+            Children.Add(new EmptyStateImage(ImageSource)
+                            .Row(Row.Image).Top()
+                            .Bind(Image.SourceProperty, nameof(ImageSource), source: this));
         }
+
+        enum Row { Text, Image }
 
         public string Title
         {
@@ -56,7 +63,7 @@ namespace GitTrends
 
         class TextLabel : Label
         {
-            public TextLabel(Span title, Span description)
+            public TextLabel(in Span title, in Span description)
             {
                 title.FontSize = 24;
                 title.FontFamily = FontFamilyConstants.RobotoMedium;
@@ -69,7 +76,7 @@ namespace GitTrends
                     Spans =
                     {
                         title,
-                        new Span { Text = "\n" },
+                        new Span { Text = "\n" }.Font(size: 24),
                         description
                     }
                 };

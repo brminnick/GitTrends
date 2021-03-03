@@ -8,8 +8,8 @@ namespace GitTrends
 {
     public class SyncfusionService
     {
-        readonly static Lazy<long> _assemblyVersionNumberHolder = new Lazy<long>(() => long.Parse(System.Reflection.Assembly.GetAssembly(typeof(Syncfusion.CoreAssembly)).GetName().Version.ToString().Replace(".", "")));
-        readonly static Lazy<string> _syncfusionLicenseKeyHolder = new Lazy<string>(() => $"{nameof(SyncFusionDTO.LicenseKey)}{_assemblyVersionNumberHolder.Value}");
+        readonly static Lazy<long> _assemblyVersionNumberHolder = new(() => long.Parse(System.Reflection.Assembly.GetAssembly(typeof(Syncfusion.CoreAssembly)).GetName().Version.ToString().Replace(".", "")));
+        readonly static Lazy<string> _syncfusionLicenseKeyHolder = new(() => $"{nameof(SyncFusionDTO.LicenseKey)}{_assemblyVersionNumberHolder.Value}");
 
         readonly IAnalyticsService _analyticsService;
         readonly ISecureStorage _secureStorage;

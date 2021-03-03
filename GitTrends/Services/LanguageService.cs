@@ -10,7 +10,7 @@ namespace GitTrends
 {
     public class LanguageService
     {
-        readonly static WeakEventManager<string?> _preferredLanguageChangedEventManager = new WeakEventManager<string?>();
+        readonly static WeakEventManager<string?> _preferredLanguageChangedEventManager = new();
 
         readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;
@@ -67,6 +67,6 @@ namespace GitTrends
             };
         }
 
-        void OnPreferredLanguageChanged(in string? culture) => _preferredLanguageChangedEventManager.HandleEvent(this, culture, nameof(PreferredLanguageChanged));
+        void OnPreferredLanguageChanged(in string? culture) => _preferredLanguageChangedEventManager.RaiseEvent(this, culture, nameof(PreferredLanguageChanged));
     }
 }

@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using NUnit.Framework;
 using Xamarin.UITest;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
 namespace GitTrends.UITests
 {
-    class OnboardingPage : BasePage
+    class OnboardingPage : BaseCarouselPage
     {
         readonly Query _connectToGitHubButton, _enableNotificationsButton, _nextButton,
             _pageIndicator, _titleLabel, _activityIndicator;
 
-        public OnboardingPage(IApp app) : base(app)
+        public OnboardingPage(IApp app) : base(app, BackdoorMethodConstants.GetCurrentOnboardingPageNumber)
         {
             _connectToGitHubButton = GenerateMarkedQuery(OnboardingAutomationIds.ConnectToGitHubButton);
             _enableNotificationsButton = GenerateMarkedQuery(OnboardingAutomationIds.EnableNotificationsButton);
@@ -26,13 +24,11 @@ namespace GitTrends.UITests
 
         public string TitleLabelText => GetText(_titleLabel);
 
-        public int CurrentPageNumber => App.InvokeBackdoorMethod<int>(BackdoorMethodConstants.GetCurrentOnboardingPageNumber);
-
         public bool AreNotificationsEnabeld => App.InvokeBackdoorMethod<bool>(BackdoorMethodConstants.ShouldSendNotifications);
 
         public override Task WaitForPageToLoad(TimeSpan? timeout = null)
         {
-            App.WaitForElement(_pageIndicator, timeout:timeout);
+            App.WaitForElement(_pageIndicator, timeout: timeout);
             App.WaitForNoElement(_activityIndicator, timeout: timeout);
 
             switch (CurrentPageNumber)
@@ -67,40 +63,6 @@ namespace GitTrends.UITests
         {
             App.WaitForNoElement(_activityIndicator);
             App.Screenshot("Activity Indicator Disappeared");
-        }
-
-        public async Task MoveToNextPage()
-        {
-            var initialPageNumber = CurrentPageNumber;
-
-            var screenSize = App.Query().First().Rect;
-            App.DragCoordinates(screenSize.Width * 9 / 10, screenSize.CenterY, screenSize.Width * 1 / 10, screenSize.CenterY);
-
-            while(CurrentPageNumber == initialPageNumber)
-                await Task.Delay(TimeSpan.FromMilliseconds(10)).ConfigureAwait(false);
-
-            var finalPageNumber = CurrentPageNumber;
-
-            App.Screenshot($"Moved from Page {initialPageNumber} to Page {finalPageNumber}");
-
-            Assert.GreaterOrEqual(finalPageNumber, initialPageNumber);
-        }
-
-        public async Task MoveToPreviousPage()
-        {
-            var initialPageNumber = CurrentPageNumber;
-
-            var screenSize = App.Query().First().Rect;
-            App.DragCoordinates(screenSize.Width * 1 / 10, screenSize.CenterY, screenSize.Width * 9 / 10, screenSize.CenterY);
-
-            while (CurrentPageNumber == initialPageNumber)
-                await Task.Delay(TimeSpan.FromMilliseconds(10)).ConfigureAwait(false);
-
-            var finalPageNumber = CurrentPageNumber;
-
-            App.Screenshot($"Moved from Page {initialPageNumber} to Page {finalPageNumber}");
-
-            Assert.LessOrEqual(finalPageNumber, initialPageNumber);
         }
 
         public void TapConnectToGitHubButton()

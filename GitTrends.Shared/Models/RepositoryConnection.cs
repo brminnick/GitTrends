@@ -1,21 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 
 namespace GitTrends.Shared
 {
-    public class RepositoryConnection
+    public record RepositoryConnection
     {
-        public RepositoryConnection(IEnumerable<Repository>? nodes, PageInfo pageInfo)
+        public RepositoryConnection(IEnumerable<RepositoryConnectionNode>? nodes, PageInfo pageInfo)
         {
-            RepositoryList = nodes?.ToList() ?? Enumerable.Empty<Repository>().ToList();
+            RepositoryList = (nodes ?? Array.Empty<RepositoryConnectionNode>()).ToList();
             PageInfo = pageInfo;
         }
 
         [JsonProperty("nodes")]
-        public List<Repository> RepositoryList { get; }
+        public IReadOnlyList<RepositoryConnectionNode?> RepositoryList { get; }
 
         [JsonProperty("pageInfo")]
         public PageInfo PageInfo { get; }
     }
+
+    public record RepositoryConnectionNode(string Name, string Description, long ForkCount, Uri Url, RepositoryOwner Owner, bool IsFork, IssuesConnection Issues, Watchers Watchers)
+    {
+        public DateTimeOffset DataDownloadedAt { get; } = DateTimeOffset.UtcNow;
+    }
+
+    public record RepositoryOwner(string Login, string AvatarUrl);
 }

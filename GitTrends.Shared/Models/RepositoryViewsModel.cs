@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace GitTrends.Shared
 {
-    public class RepositoryViewsResponseModel : BaseRepositoryModel
+    public record RepositoryViewsResponseModel : BaseRepositoryModel
     {
         public RepositoryViewsResponseModel(long count, long uniques, IEnumerable<DailyViewsModel> views, string repositoryName = "", string repositoryOwner = "")
             : base(count, uniques, repositoryName, repositoryOwner)

@@ -10,8 +10,8 @@ namespace GitTrends
     {
 
         protected BaseContentPage(in IAnalyticsService analyticsService,
-                                    IMainThread mainThread,
-                                    bool shouldUseSafeArea = false)
+                                    in IMainThread mainThread,
+                                    in bool shouldUseSafeArea = false)
         {
             MainThread = mainThread;
             AnalyticsService = analyticsService;
@@ -42,7 +42,7 @@ namespace GitTrends
 
     public abstract class BaseContentPage<T> : BaseContentPage where T : BaseViewModel
     {
-        protected BaseContentPage(in T viewModel, IAnalyticsService analyticsService, IMainThread mainThread, bool shouldUseSafeArea = false)
+        protected BaseContentPage(in T viewModel, in IAnalyticsService analyticsService, in IMainThread mainThread, in bool shouldUseSafeArea = false)
             : base(analyticsService, mainThread, shouldUseSafeArea)
         {
             BindingContext = ViewModel = viewModel;

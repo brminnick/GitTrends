@@ -14,7 +14,8 @@ namespace GitTrends.UITests
     {
         readonly Query _searchBar, _settingsButton, _collectionView, _refreshView,
             _androidContextMenuOverflowButton, _androidSearchBarButton, _sortButton, _emptyDataView,
-            _smallScreenTrendingImage, _largeScreenTrendingImage;
+            _smallScreenTrendingImage, _largeScreenTrendingImage, _informationButton,
+            _statistic1FloatingActionButton, _statistic2FloatingActionButton, _statistic3FloatingActionButton;
 
         public RepositoryPage(IApp app) : base(app, () => PageTitles.RepositoryPage)
         {
@@ -28,12 +29,26 @@ namespace GitTrends.UITests
             _emptyDataView = GenerateMarkedQuery(RepositoryPageAutomationIds.EmptyDataView);
             _smallScreenTrendingImage = GenerateMarkedQuery(RepositoryPageAutomationIds.SmallScreenTrendingImage);
             _largeScreenTrendingImage = GenerateMarkedQuery(RepositoryPageAutomationIds.LargeScreenTrendingImage);
+            _informationButton = GenerateMarkedQuery(RepositoryPageAutomationIds.InformationButton);
+            _statistic1FloatingActionButton = GenerateMarkedQuery(RepositoryPageAutomationIds.GetFloatingActionTextButtonLabelAutomationId(FloatingActionButtonType.Statistic1));
+            _statistic2FloatingActionButton = GenerateMarkedQuery(RepositoryPageAutomationIds.GetFloatingActionTextButtonLabelAutomationId(FloatingActionButtonType.Statistic2));
+            _statistic3FloatingActionButton = GenerateMarkedQuery(RepositoryPageAutomationIds.GetFloatingActionTextButtonLabelAutomationId(FloatingActionButtonType.Statistic3));
         }
 
         public bool IsEmptyDataViewVisible => App.Query(_emptyDataView).Any();
 
         public int SmallScreenTrendingImageCount => App.Query(_smallScreenTrendingImage).Count();
         public int LargeScreenTrendingImageCount => App.Query(_largeScreenTrendingImage).Count();
+
+        public string InformationButtonStatistic1Text => GetText(_statistic1FloatingActionButton);
+        public string InformationButtonStatistic2Text => GetText(_statistic2FloatingActionButton);
+        public string InformationButtonStatistic3Text => GetText(_statistic3FloatingActionButton);
+
+        public void TapInformationButton()
+        {
+            App.Tap(_informationButton);
+            App.Screenshot("Information Button Tapped");
+        }
 
         public void WaitForEmptyDataView()
         {
@@ -51,6 +66,8 @@ namespace GitTrends.UITests
 
             App.Tap(_sortButton);
             App.Screenshot("Sort Button Tapped");
+
+            App.WaitForElement(SortingConstants.ActionSheetTitle);
 
             App.Tap(PageTitle);
 
@@ -70,7 +87,14 @@ namespace GitTrends.UITests
             App.Tap(_sortButton);
             App.Screenshot("Sort Button Tapped");
 
-            App.Tap(SortingConstants.CancelText);
+            App.WaitForElement(SortingConstants.ActionSheetTitle);
+
+            //iPads use a UIPopoverView which does not provide a 'Cancel' option in the
+            if (!App.Query(SortingConstants.CancelText).Any())
+                App.Tap(PageTitle);
+            else
+                App.Tap(SortingConstants.CancelText);
+
             App.Screenshot("Cancel Button Tapped");
 
             return WaitForRepositoriesToFinishSorting();
@@ -136,6 +160,38 @@ namespace GitTrends.UITests
 
             App.Tap(_settingsButton);
             App.Screenshot("Settings Button Tapped");
+        }
+
+        public string GetSettingsButtonText()
+        {
+            if (App is iOSApp)
+                throw new NotSupportedException();
+
+            App.Tap(_androidContextMenuOverflowButton);
+            App.Screenshot("Tapped Android Search Bar Button");
+
+            var settingsButtonText = GetText(_settingsButton);
+
+            App.Tap(PageTitle);
+            App.Screenshot("Dismissed Android Search Bar Button");
+
+            return settingsButtonText;
+        }
+
+        public string GetSortButtonText()
+        {
+            if (App is iOSApp)
+                throw new NotSupportedException();
+
+            App.Tap(_androidContextMenuOverflowButton);
+            App.Screenshot("Tapped Android Search Bar Button");
+
+            var sortButtonText = GetText(_sortButton);
+
+            App.Tap(PageTitle);
+            App.Screenshot("Dismissed Android Search Bar Button");
+
+            return sortButtonText;
         }
 
         Task WaitForRepositoriesToFinishSorting() => Task.Delay(TimeSpan.FromSeconds(1));

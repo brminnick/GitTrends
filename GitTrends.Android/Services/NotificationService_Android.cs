@@ -12,10 +12,10 @@ using GitTrends.Shared;
 using Microsoft.Azure.NotificationHubs;
 using Xamarin.Forms;
 
-[assembly: Dependency(typeof(NotificationService_Android))]
+[assembly: Dependency(typeof(DeviceNotificationsService_Android))]
 namespace GitTrends.Droid
 {
-    public class NotificationService_Android : INotificationService
+    public class DeviceNotificationsService_Android : IDeviceNotificationsService
     {
         Context CurrentContext => Xamarin.Essentials.Platform.AppContext;
 
@@ -51,11 +51,10 @@ namespace GitTrends.Droid
 
         public override async void OnNewToken(string token)
         {
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var notificationService = scope.Resolve<NotificationService>();
+            var notificationService = ContainerService.Container.Resolve<NotificationService>();
 
             _notificationHubInformationTCS = new TaskCompletionSource<NotificationHubInformation>();
-            notificationService.InitializationCompleted += HandleInitializationCompleted;
+            GitTrends.NotificationService.InitializationCompleted += HandleInitializationCompleted;
 
             try
             {
@@ -68,11 +67,11 @@ namespace GitTrends.Droid
             }
             catch (Exception e)
             {
-                scope.Resolve<IAnalyticsService>().Report(e);
+                ContainerService.Container.Resolve<IAnalyticsService>().Report(e);
             }
             finally
             {
-                notificationService.InitializationCompleted -= HandleInitializationCompleted;
+                GitTrends.NotificationService.InitializationCompleted -= HandleInitializationCompleted;
             }
         }
 
@@ -80,8 +79,7 @@ namespace GitTrends.Droid
         {
             base.OnMessageReceived(message);
 
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var backgroundFetchService = scope.Resolve<BackgroundFetchService>();
+            var backgroundFetchService = ContainerService.Container.Resolve<BackgroundFetchService>();
 
             await Task.WhenAll(backgroundFetchService.CleanUpDatabase(), backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None));
         }

@@ -1,5 +1,4 @@
-﻿using System;
-using Autofac;
+﻿using Autofac;
 using CoreGraphics;
 using GitTrends.iOS;
 using GitTrends.Mobile.Common;
@@ -12,15 +11,9 @@ namespace GitTrends.iOS
 {
     public class NavigationPageCustomRenderer : NavigationRenderer
     {
-        readonly ThemeService _themeService;
+        readonly ThemeService _themeService = ContainerService.Container.Resolve<ThemeService>();
 
-        public NavigationPageCustomRenderer()
-        {
-            ThemeService.PreferenceChanged += HandlePreferenceChanged;
-
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            _themeService = scope.Resolve<ThemeService>();
-        }
+        public NavigationPageCustomRenderer() => ThemeService.PreferenceChanged += HandlePreferenceChanged;
 
         protected override void OnElementChanged(VisualElementChangedEventArgs e)
         {
@@ -33,7 +26,7 @@ namespace GitTrends.iOS
 
         void AddShadow(PreferredTheme preferredTheme)
         {
-            if (NavigationBar is null)
+            if (NavigationBar?.Layer is null)
                 return;
 
             if (isLightTheme(preferredTheme))

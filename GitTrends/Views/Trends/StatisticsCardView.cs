@@ -1,9 +1,9 @@
 ﻿using System;
 using Sharpnado.MaterialFrame;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 using static GitTrends.MarkupExtensions;
-using static Xamarin.Forms.Markup.GridRowsColumns;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -52,19 +52,19 @@ namespace GitTrends
                 HorizontalOptions = LayoutOptions.FillAndExpand;
 
                 RowDefinitions = Rows.Define(
-                    (Row.Title, StarGridLength(1)),
-                    (Row.Number, StarGridLength(2)));
+                    (Row.Title, Stars(1)),
+                    (Row.Number, Stars(2)));
 
                 ColumnDefinitions = Columns.Define(
-                    (Column.Stats, StarGridLength(1)),
-                    (Column.Icon, AbsoluteGridLength(32)));
+                    (Column.Stats, Stars(1)),
+                    (Column.Icon, 32));
 
                 Children.Add(new PrimaryColorLabel(14, title)
                                 .Row(Row.Title).Column(Column.Stats));
                 Children.Add(new TrendsStatisticsLabel(34, statisticsTextAutomationId)
                                 .Row(Row.Number).Column(Column.Stats).ColumnSpan(2)
                                 .Bind(Label.TextProperty, nameof(Text), source: statisticsCard)
-                                .Bind<TrendsStatisticsLabel, bool, bool>(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData), source: statisticsCard, convert: isFetchingData => !isFetchingData));
+                                .Bind<TrendsStatisticsLabel, bool, bool>(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData), convert: isFetchingData => !isFetchingData));
                 Children.Add(new RepositoryStatSVGImage(svgImage, svgColorTheme).Assign(out _svgImage)
                                 .Row(Row.Title).Column(Column.Icon).RowSpan(2)
                                 .Bind<SvgImage, bool, Func<Color>>(SvgImage.GetTextColorProperty, nameof(IsSeriesVisible), source: statisticsCard, convert: convertIsSeriesVisible));

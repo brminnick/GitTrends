@@ -2,10 +2,10 @@
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms.PancakeView;
 using static GitTrends.MarkupExtensions;
-using static Xamarin.Forms.Markup.GridRowsColumns;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -21,7 +21,7 @@ namespace GitTrends
         protected override View CreateImageView() => new PancakeView
         {
             CornerRadius = 4,
-            BorderColor = Color.FromHex("E0E0E0"),
+            Border = new Border { Color = Color.FromHex("E0E0E0") },
             BackgroundColor = Color.White,
             Padding = new Thickness(5),
 
@@ -41,11 +41,11 @@ namespace GitTrends
 
                 RowDefinitions = Rows.Define(
                     (Row.Title, Auto),
-                    (Row.Zoom, AbsoluteGridLength(48)),
-                    (Row.LongPress, AbsoluteGridLength(48))),
+                    (Row.Zoom, 48),
+                    (Row.LongPress, 48)),
 
                 ColumnDefinitions = Columns.Define(
-                    (Column.Image, AbsoluteGridLength(56)),
+                    (Column.Image, 56),
                     (Column.Description, Star)),
 
                 Children =

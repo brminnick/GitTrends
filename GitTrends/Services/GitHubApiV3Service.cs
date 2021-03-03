@@ -2,80 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
-using Refit;
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
     public class GitHubApiV3Service : BaseMobileApiService
     {
-        readonly static Lazy<IGitHubApiV3> _githubApiClient = new Lazy<IGitHubApiV3>(() => RestService.For<IGitHubApiV3>(CreateHttpClient(GitHubConstants.GitHubRestApiUrl)));
+        readonly IGitHubApiV3 _githubApiClient;
         readonly GitHubUserService _gitHubUserService;
 
-        public GitHubApiV3Service(IAnalyticsService analyticsService, IMainThread mainThread, GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
+        public GitHubApiV3Service(IMainThread mainThread,
+                                    IGitHubApiV3 gitHubApiV3,
+                                    IAnalyticsService analyticsService,
+                                    GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
         {
+            _githubApiClient = gitHubApiV3;
             _gitHubUserService = gitHubUserService;
         }
 
-        static IGitHubApiV3 GithubApiClient => _githubApiClient.Value;
+        public Task<GetRepositoryResponse> GetRepository(string owner, string repositoryName, CancellationToken cancellationToken) =>
+            AttemptAndRetry_Mobile(() => _githubApiClient.GetRepository(owner, repositoryName), cancellationToken);
 
-        public async IAsyncEnumerable<Repository> UpdateRepositoriesWithViewsAndClonesData(IReadOnlyList<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
-        {
-            var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsResponseModel?, RepositoryClonesResponseModel?)>>(repositories.Select(x => getRepositoryStatistics(x)));
+        public Task<IReadOnlyList<Contributor>> GetGitTrendsContributors(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _githubApiClient.GetContributors(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName), cancellationToken);
 
-            while (getRepositoryStatisticsTaskList.Any())
-            {
-                var completedStatisticsTask = await Task.WhenAny(getRepositoryStatisticsTaskList).ConfigureAwait(false);
-                getRepositoryStatisticsTaskList.Remove(completedStatisticsTask);
-
-                var (viewsResponse, clonesResponse) = await completedStatisticsTask.ConfigureAwait(false);
-
-                if (viewsResponse != null && clonesResponse != null)
-                {
-                    var matchingRepository = repositories.Single(x => x.Name == viewsResponse.RepositoryName);
-
-                    yield return new Repository(matchingRepository.Name, matchingRepository.Description, matchingRepository.ForkCount,
-                                                new RepositoryOwner(matchingRepository.OwnerLogin, matchingRepository.OwnerAvatarUrl),
-                                                new IssuesConnection(matchingRepository.IssuesCount, null),
-                                                matchingRepository.Url,
-                                                new StarGazers(matchingRepository.StarCount),
-                                                matchingRepository.IsFork,
-                                                viewsResponse.DailyViewsList,
-                                                clonesResponse.DailyClonesList);
-                }
-            }
-
-            async Task<(RepositoryViewsResponseModel? ViewsResponse, RepositoryClonesResponseModel? ClonesResponse)> getRepositoryStatistics(Repository repository)
-            {
-                var getViewStatisticsTask = GetRepositoryViewStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
-                var getCloneStatisticsTask = GetRepositoryCloneStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
-
-                try
-                {
-                    await Task.WhenAll(getViewStatisticsTask, getCloneStatisticsTask).ConfigureAwait(false);
-
-                    return (await getViewStatisticsTask.ConfigureAwait(false),
-                            await getCloneStatisticsTask.ConfigureAwait(false));
-                }
-                catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.Forbidden)
-                {
-                    AnalyticsService.Report(e, new Dictionary<string, string>
-                    {
-                        { nameof(Repository)+ nameof(Repository.Name), repository.Name },
-                        { nameof(Repository)+ nameof(Repository.OwnerLogin), repository.OwnerLogin },
-                        { nameof(GitHubUserService) + nameof(GitHubUserService.Alias), _gitHubUserService.Alias },
-                        { nameof(GitHubUserService) + nameof(GitHubUserService.Name), _gitHubUserService.Name },
-                    });
-
-                    return (null, null);
-                }
-            }
-        }
+        public Task<RepositoryFile> GetGitTrendsFile(string fileName, CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _githubApiClient.GetGitTrendsFile(fileName), cancellationToken);
 
         public async Task<RepositoryViewsResponseModel> GetRepositoryViewStatistics(string owner, string repo, CancellationToken cancellationToken)
         {
@@ -86,23 +40,24 @@ namespace GitTrends
 
                 var dailyViewsModelList = new List<DailyViewsModel>();
 
-                for (int i = 1; i < 14; i++)
+                for (int i = 0; i < 14; i++)
                 {
                     var count = DemoDataConstants.GetRandomNumber();
                     var uniqeCount = count / 2; //Ensures uniqueCount is always less than count
 
-                    dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
+                    //Ensures one Demo repo is Trending
+                    if (i is 13 && new Random().Next(0, DemoDataConstants.RepoCount) is DemoDataConstants.RepoCount - 1 or DemoDataConstants.RepoCount - 2)
+                        dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow, DemoDataConstants.MaximumRandomNumber * 4, DemoDataConstants.MaximumRandomNumber / 2));
+                    else
+                        dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
                 }
-
-                //Add one trending repo
-                dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow, DemoDataConstants.MaximumRandomNumber * 4, DemoDataConstants.MaximumRandomNumber / 2));
 
                 return new RepositoryViewsResponseModel(dailyViewsModelList.Sum(x => x.TotalViews), dailyViewsModelList.Sum(x => x.TotalUniqueViews), dailyViewsModelList, repo, owner);
             }
             else
             {
                 var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-                var response = await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryViewStatistics(owner, repo, GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+                var response = await AttemptAndRetry_Mobile(() => _githubApiClient.GetRepositoryViewStatistics(owner, repo, GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
                 return new RepositoryViewsResponseModel(response.TotalCount, response.TotalUniqueCount, response.DailyViewsList, repo, owner);
             }
@@ -130,7 +85,7 @@ namespace GitTrends
             else
             {
                 var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-                var response = await AttemptAndRetry_Mobile(() => GithubApiClient.GetRepositoryCloneStatistics(owner, repo, GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+                var response = await AttemptAndRetry_Mobile(() => _githubApiClient.GetRepositoryCloneStatistics(owner, repo, GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
                 return new RepositoryClonesResponseModel(response.TotalCount, response.TotalUniqueCount, response.DailyClonesList, repo, owner);
             }
@@ -140,10 +95,10 @@ namespace GitTrends
         {
             var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
 
-            if (_gitHubUserService.IsDemoUser)
-                return await AttemptAndRetry_Mobile(() => GithubApiClient.GetGitHubApiResponse_Unauthenticated(), cancellationToken).ConfigureAwait(false);
+            if (!_gitHubUserService.IsAuthenticated)
+                return await AttemptAndRetry_Mobile(() => _githubApiClient.GetGitHubApiResponse_Unauthenticated(), cancellationToken).ConfigureAwait(false);
 
-            return await AttemptAndRetry_Mobile(() => GithubApiClient.GetGitHubApiResponse_Authenticated(GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+            return await AttemptAndRetry_Mobile(() => _githubApiClient.GetGitHubApiResponse_Authenticated(GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<IReadOnlyList<ReferringSiteModel>> GetReferringSites(string owner, string repo, CancellationToken cancellationToken)
@@ -165,7 +120,7 @@ namespace GitTrends
             else
             {
                 var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-                var referringSites = await AttemptAndRetry_Mobile(() => GithubApiClient.GetReferingSites(owner, repo, GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+                var referringSites = await AttemptAndRetry_Mobile(() => _githubApiClient.GetReferingSites(owner, repo, GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
 
                 return referringSites;
             }

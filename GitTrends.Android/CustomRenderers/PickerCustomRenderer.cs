@@ -1,6 +1,4 @@
-﻿using System;
-using Android.Content;
-using Android.Graphics;
+﻿using Android.Content;
 using Android.Graphics.Drawables;
 using GitTrends.Droid;
 using GitTrends.Mobile.Common;
@@ -30,15 +28,25 @@ namespace GitTrends.Droid
 
         void SetPickerBorder()
         {
-            if (Control != null && Application.Current != null)
+            if (Application.Current?.Resources is BaseTheme theme)
             {
-                var borderColor = (Xamarin.Forms.Color)Application.Current.Resources[nameof(BaseTheme.PickerBorderColor)];
+                var borderColor = theme.PickerBorderColor;
 
                 var gradientDrawable = new GradientDrawable();
                 gradientDrawable.SetCornerRadius(10);
                 gradientDrawable.SetStroke(2, borderColor.ToAndroid());
 
-                Control.Background = gradientDrawable;
+                if (Control != null)
+                {
+                    try
+                    {
+                        Control.Background = gradientDrawable;
+                    }
+                    catch (System.ObjectDisposedException)
+                    {
+
+                    }
+                }
             }
         }
 

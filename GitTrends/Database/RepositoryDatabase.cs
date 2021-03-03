@@ -17,16 +17,17 @@ namespace GitTrends
 
         public override async Task<int> DeleteAllData()
         {
-            var (repositoryDatabaseConnection, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection) = await GetDatabaseConnections().ConfigureAwait(false);
+            var (repositoryDatabaseConnection, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection, starGazerInfoDatabaseConnection) = await GetDatabaseConnections().ConfigureAwait(false);
 
             await AttemptAndRetry(() => dailyViewsDatabaseConnection.DeleteAllAsync<DailyViewsDatabaseModel>()).ConfigureAwait(false);
             await AttemptAndRetry(() => dailyClonesDatabaseConnection.DeleteAllAsync<DailyClonesDatabaseModel>()).ConfigureAwait(false);
+            await AttemptAndRetry(() => starGazerInfoDatabaseConnection.DeleteAllAsync<StarGazerInfoDatabaseModel>()).ConfigureAwait(false);
             return await AttemptAndRetry(() => repositoryDatabaseConnection.DeleteAllAsync<RepositoryDatabaseModel>()).ConfigureAwait(false);
         }
 
         public async Task DeleteExpiredData()
         {
-            var (_, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection) = await GetDatabaseConnections().ConfigureAwait(false);
+            var (_, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection, _) = await GetDatabaseConnections().ConfigureAwait(false);
 
             var dailyClones = await dailyClonesDatabaseConnection.Table<DailyClonesDatabaseModel>().ToListAsync();
             var dailyViews = await dailyViewsDatabaseConnection.Table<DailyViewsDatabaseModel>().ToListAsync();
@@ -48,56 +49,122 @@ namespace GitTrends
             var repositoryDatabaseModel = RepositoryDatabaseModel.ToRepositoryDatabase(repository);
             await AttemptAndRetry(() => databaseConnection.InsertOrReplaceAsync(repositoryDatabaseModel)).ConfigureAwait(false);
 
-
+            await SaveStarGazerInfo(repository).ConfigureAwait(false);
             await SaveDailyClones(repository).ConfigureAwait(false);
             await SaveDailyViews(repository).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<Repository>> GetRepositories()
+        public async Task<IReadOnlyList<string>> GetFavoritesUrls()
         {
-            var (repositoryDatabaseConnection, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection) = await GetDatabaseConnections().ConfigureAwait(false);
+            var repositoryDatabaseConnection = await GetDatabaseConnection<RepositoryDatabaseModel>().ConfigureAwait(false);
+            var favoriteRepositories = await AttemptAndRetry(() => repositoryDatabaseConnection.Table<RepositoryDatabaseModel>().Where(x => x.IsFavorite == true).ToListAsync()).ConfigureAwait(false);
+
+            return favoriteRepositories.Select(x => x.Url).ToList();
+        }
+
+        public async Task<Repository?> GetRepository(string repositoryUrl)
+        {
+            var repositoryDatabaseConnection = await GetDatabaseConnection<RepositoryDatabaseModel>().ConfigureAwait(false);
+
+            var repositoryDatabaseModel = await AttemptAndRetry(() => repositoryDatabaseConnection.Table<RepositoryDatabaseModel>().FirstOrDefaultAsync(x => x.Url == repositoryUrl)).ConfigureAwait(false);
+            if (repositoryDatabaseModel is null)
+                return null;
+
+            var (dailyClones, dailyViews, starGazers) = await GetStarsClonesViews(repositoryDatabaseModel).ConfigureAwait(false);
+
+            return RepositoryDatabaseModel.ToRepository(repositoryDatabaseModel, dailyClones, dailyViews, starGazers);
+        }
+
+        public async Task<IReadOnlyList<Repository>> GetRepositories()
+        {
+            var repositoryDatabaseConnection = await GetDatabaseConnection<RepositoryDatabaseModel>().ConfigureAwait(false);
 
             var repositoryDatabaseModels = await AttemptAndRetry(() => repositoryDatabaseConnection.Table<RepositoryDatabaseModel>().ToListAsync()).ConfigureAwait(false);
-            var dailyClonesDatabaseModels = await AttemptAndRetry(() => dailyClonesDatabaseConnection.Table<DailyClonesDatabaseModel>().ToListAsync()).ConfigureAwait(false);
-            var dailyViewsDatabaseModels = await AttemptAndRetry(() => dailyViewsDatabaseConnection.Table<DailyViewsDatabaseModel>().ToListAsync()).ConfigureAwait(false);
-
-            var sortedRecentDailyClonesDatabaseModels = dailyClonesDatabaseModels.OrderByDescending(x => x.DownloadedAt).ToList();
-            var sortedRecentDailyViewsDatabaseModels = dailyViewsDatabaseModels.OrderByDescending(x => x.DownloadedAt).ToList();
-
-            var mostRecentCloneDay = sortedRecentDailyClonesDatabaseModels.Any() ? sortedRecentDailyClonesDatabaseModels.Max(x => x.Day) : default;
-            var mostRecentViewDay = sortedRecentDailyClonesDatabaseModels.Any() ? sortedRecentDailyViewsDatabaseModels.Max(x => x.Day) : default;
-
-            var mostRecentDate = mostRecentCloneDay.CompareTo(mostRecentViewDay) > 0 ? mostRecentCloneDay : mostRecentViewDay;
+            if (!repositoryDatabaseModels.Any())
+                return Array.Empty<Repository>();
 
             var repositoryList = new List<Repository>();
             foreach (var repositoryDatabaseModel in repositoryDatabaseModels)
             {
-                var dailyClones = sortedRecentDailyClonesDatabaseModels.Where(x => x.RepositoryUrl == repositoryDatabaseModel.Url && isWithin14Days(x.Day, mostRecentDate)).GroupBy(x => x.Day).Select(x => x.First()).Take(14);
-                var dailyViews = sortedRecentDailyViewsDatabaseModels.Where(x => x.RepositoryUrl == repositoryDatabaseModel.Url && isWithin14Days(x.Day, mostRecentDate)).GroupBy(x => x.Day).Select(x => x.First()).Take(14);
+                var (dailyClones, dailyViews, starGazers) = await GetStarsClonesViews(repositoryDatabaseModel).ConfigureAwait(false);
 
-                var repository = RepositoryDatabaseModel.ToRepository(repositoryDatabaseModel, dailyClones, dailyViews);
+                var repository = RepositoryDatabaseModel.ToRepository(repositoryDatabaseModel, dailyClones, dailyViews, starGazers);
                 repositoryList.Add(repository);
             }
 
             return repositoryList;
-
-            static bool isWithin14Days(DateTimeOffset dataDate, DateTimeOffset mostRecentDate) => dataDate.CompareTo(mostRecentDate.Subtract(TimeSpan.FromDays(13)).ToLocalTime()) >= 0;
         }
 
+        static bool IsWithin14Days(DateTimeOffset dataDate, DateTimeOffset mostRecentDate) => dataDate.CompareTo(mostRecentDate.Subtract(TimeSpan.FromDays(13)).ToLocalTime()) >= 0;
+
+        async Task<(IReadOnlyList<DailyClonesDatabaseModel> dailyClones,
+                            IReadOnlyList<DailyViewsDatabaseModel> dailyViews,
+                            IReadOnlyList<StarGazerInfoDatabaseModel> starGazers)> GetStarsClonesViews(RepositoryDatabaseModel repository)
+        {
+            var (_, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection, starGazerInfoDatabaseConnection) = await GetDatabaseConnections().ConfigureAwait(false);
+
+            var getStarGazerInfoModelsTask = AttemptAndRetry(() => starGazerInfoDatabaseConnection.Table<StarGazerInfoDatabaseModel>().Where(x => x.RepositoryUrl == repository.Url).ToListAsync());
+            var getDailyClonesDatabaseModelsTask = AttemptAndRetry(() => dailyClonesDatabaseConnection.Table<DailyClonesDatabaseModel>().Where(x => x.RepositoryUrl == repository.Url).ToListAsync());
+            var getDailyViewsDatabaseModelsTask = AttemptAndRetry(() => dailyViewsDatabaseConnection.Table<DailyViewsDatabaseModel>().Where(x => x.RepositoryUrl == repository.Url).ToListAsync());
+
+            await Task.WhenAll(getDailyClonesDatabaseModelsTask, getDailyViewsDatabaseModelsTask, getStarGazerInfoModelsTask).ConfigureAwait(false);
+
+            var starGazerInfoModels = await getStarGazerInfoModelsTask.ConfigureAwait(false);
+            var dailyClonesDatabaseModels = await getDailyClonesDatabaseModelsTask.ConfigureAwait(false);
+            var dailyViewsDatabaseModels = await getDailyViewsDatabaseModelsTask.ConfigureAwait(false);
+
+            var sortedRecentDailyClonesDatabaseModels = dailyClonesDatabaseModels.OrderByDescending(x => x.DownloadedAt).ToList();
+            var sortedRecentDailyViewsDatabaseModels = dailyViewsDatabaseModels.OrderByDescending(x => x.DownloadedAt).ToList();
+            var sortedStarGazerInfoModels = starGazerInfoModels.OrderByDescending(x => x.StarredAt).ToList();
+
+            var mostRecentCloneDay = sortedRecentDailyClonesDatabaseModels.Any() ? sortedRecentDailyClonesDatabaseModels.Max(x => x.Day) : default;
+            var mostRecentViewDay = sortedRecentDailyViewsDatabaseModels.Any() ? sortedRecentDailyViewsDatabaseModels.Max(x => x.Day) : default;
+
+            var mostRecentDate = mostRecentCloneDay.CompareTo(mostRecentViewDay) > 0 ? mostRecentCloneDay : mostRecentViewDay;
+
+            var dailyClones = sortedRecentDailyClonesDatabaseModels.Where(x => IsWithin14Days(x.Day, mostRecentDate)).GroupBy(x => x.Day).Select(x => x.First()).Take(14);
+            var dailyViews = sortedRecentDailyViewsDatabaseModels.Where(x => IsWithin14Days(x.Day, mostRecentDate)).GroupBy(x => x.Day).Select(x => x.First()).Take(14);
+
+            return (dailyClones.ToList(), dailyViews.ToList(), sortedStarGazerInfoModels);
+        }
 
         async Task<(SQLiteAsyncConnection RepositoryDatabaseConnection,
                         SQLiteAsyncConnection DailyClonesDatabaseConnection,
-                        SQLiteAsyncConnection DailyViewsDatabaseConnection)> GetDatabaseConnections()
+                        SQLiteAsyncConnection DailyViewsDatabaseConnection,
+                        SQLiteAsyncConnection StarGazerInfoDatabaseConnection)> GetDatabaseConnections()
         {
             var repositoryDatabaseConnection = await GetDatabaseConnection<RepositoryDatabaseModel>().ConfigureAwait(false);
-            var dailyClonesDatabaseConnection = await GetDatabaseConnection<DailyClonesDatabaseModel>().ConfigureAwait(false);
             var dailyViewsDatabaseConnection = await GetDatabaseConnection<DailyViewsDatabaseModel>().ConfigureAwait(false);
+            var dailyClonesDatabaseConnection = await GetDatabaseConnection<DailyClonesDatabaseModel>().ConfigureAwait(false);
+            var starGazerInfoDatabaseConnection = await GetDatabaseConnection<StarGazerInfoDatabaseModel>().ConfigureAwait(false);
 
-            return (repositoryDatabaseConnection, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection);
+            return (repositoryDatabaseConnection, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection, starGazerInfoDatabaseConnection);
+        }
+
+        async Task SaveStarGazerInfo(Repository repository)
+        {
+            if (repository.StarredAt is null)
+                return;
+
+            var starGazerInfoDatabaseConnection = await GetDatabaseConnection<StarGazerInfoDatabaseModel>().ConfigureAwait(false);
+
+            foreach (var starredAtDate in repository.StarredAt)
+            {
+                var starGazerInfoDatabaseModel = new StarGazerInfoDatabaseModel
+                {
+                    RepositoryUrl = repository.Url,
+                    StarredAt = starredAtDate
+                };
+
+                await AttemptAndRetry(() => starGazerInfoDatabaseConnection.InsertOrReplaceAsync(starGazerInfoDatabaseModel)).ConfigureAwait(false);
+            }
         }
 
         async Task SaveDailyClones(Repository repository)
         {
+            if (repository.DailyClonesList is null)
+                return;
+
             var dailyClonesDatabaseConnection = await GetDatabaseConnection<DailyClonesDatabaseModel>().ConfigureAwait(false);
 
             foreach (var dailyClonesModel in repository.DailyClonesList)
@@ -109,6 +176,9 @@ namespace GitTrends
 
         async Task SaveDailyViews(Repository repository)
         {
+            if (repository.DailyViewsList is null)
+                return;
+
             var dailyViewsDatabaseConnection = await GetDatabaseConnection<DailyViewsDatabaseModel>().ConfigureAwait(false);
 
             foreach (var dailyViewsModel in repository.DailyViewsList)
@@ -118,110 +188,131 @@ namespace GitTrends
             }
         }
 
-        class DailyClonesDatabaseModel : IDailyClonesModel
+        record DailyClonesDatabaseModel : IDailyClonesModel
         {
             public DateTime LocalDay => Day.LocalDateTime;
 
             //PrimaryKey must be nullable https://github.com/praeclarum/sqlite-net/issues/327
             [PrimaryKey]
-            public int? Id { get; set; }
+            public int? Id { get; init; }
 
             [Indexed]
-            public string RepositoryUrl { get; set; } = string.Empty;
+            public string RepositoryUrl { get; init; } = string.Empty;
 
-            public DateTimeOffset Day { get; set; }
+            public DateTimeOffset Day { get; init; }
 
-            public DateTimeOffset DownloadedAt { get; set; } = DateTimeOffset.UtcNow;
+            public DateTimeOffset DownloadedAt { get; init; } = DateTimeOffset.UtcNow;
 
-            public long TotalClones { get; set; }
+            public long TotalClones { get; init; }
 
-            public long TotalUniqueClones { get; set; }
+            public long TotalUniqueClones { get; init; }
 
             public static DailyClonesModel ToDailyClonesModel(in DailyClonesDatabaseModel dailyClonesDatabaseModel) =>
-                new DailyClonesModel(dailyClonesDatabaseModel.Day, dailyClonesDatabaseModel.TotalClones, dailyClonesDatabaseModel.TotalUniqueClones);
+                new(dailyClonesDatabaseModel.Day, dailyClonesDatabaseModel.TotalClones, dailyClonesDatabaseModel.TotalUniqueClones);
 
-            public static DailyClonesDatabaseModel ToDailyClonesDatabaseModel(in DailyClonesModel dailyClonesModel, in Repository repository)
+            public static DailyClonesDatabaseModel ToDailyClonesDatabaseModel(in DailyClonesModel dailyClonesModel, in Repository repository) => new()
             {
-                return new DailyClonesDatabaseModel
-                {
-                    DownloadedAt = repository.DataDownloadedAt,
-                    RepositoryUrl = repository.Url,
-                    Day = dailyClonesModel.Day,
-                    TotalClones = dailyClonesModel.TotalClones,
-                    TotalUniqueClones = dailyClonesModel.TotalUniqueClones
-                };
-            }
+                DownloadedAt = repository.DataDownloadedAt,
+                RepositoryUrl = repository.Url,
+                Day = dailyClonesModel.Day,
+                TotalClones = dailyClonesModel.TotalClones,
+                TotalUniqueClones = dailyClonesModel.TotalUniqueClones
+            };
         }
 
-        class DailyViewsDatabaseModel : IDailyViewsModel
+        record StarGazerInfoDatabaseModel : IStarGazerInfo
+        {
+            //PrimaryKey must be nullable https://github.com/praeclarum/sqlite-net/issues/327
+            [PrimaryKey]
+            public int? Id { get; init; }
+
+            [Indexed]
+            public string RepositoryUrl { get; init; } = string.Empty;
+
+            public DateTimeOffset StarredAt { get; init; }
+
+            public static StarGazerInfo ToStarGazerInfo(in StarGazerInfoDatabaseModel starGazerInfoDatabaseModel) =>
+               new(starGazerInfoDatabaseModel.StarredAt, string.Empty);
+
+            public static StarGazerInfoDatabaseModel ToStarGazerInfoDatabaseModel(in StarGazerInfo starGazerInfo, in Repository repository) => new()
+            {
+                StarredAt = starGazerInfo.StarredAt,
+                RepositoryUrl = repository.Url,
+            };
+        }
+
+        record DailyViewsDatabaseModel : IDailyViewsModel
         {
             public DateTime LocalDay => Day.LocalDateTime;
 
             //PrimaryKey must be nullable https://github.com/praeclarum/sqlite-net/issues/327
             [PrimaryKey]
-            public int? Id { get; set; }
+            public int? Id { get; init; }
 
             [Indexed]
-            public string RepositoryUrl { get; set; } = string.Empty;
+            public string RepositoryUrl { get; init; } = string.Empty;
 
-            public DateTimeOffset Day { get; set; }
+            public DateTimeOffset Day { get; init; }
 
-            public DateTimeOffset DownloadedAt { get; set; } = DateTimeOffset.UtcNow;
+            public DateTimeOffset DownloadedAt { get; init; } = DateTimeOffset.UtcNow;
 
-            public long TotalViews { get; set; }
+            public long TotalViews { get; init; }
 
-            public long TotalUniqueViews { get; set; }
+            public long TotalUniqueViews { get; init; }
 
             public static DailyViewsModel ToDailyViewsModel(in DailyViewsDatabaseModel dailyViewsDatabaseModel) =>
-                new DailyViewsModel(dailyViewsDatabaseModel.Day, dailyViewsDatabaseModel.TotalViews, dailyViewsDatabaseModel.TotalUniqueViews);
+                new(dailyViewsDatabaseModel.Day, dailyViewsDatabaseModel.TotalViews, dailyViewsDatabaseModel.TotalUniqueViews);
 
-            public static DailyViewsDatabaseModel ToDailyViewsDatabaseModel(in DailyViewsModel dailyViewsModel, in Repository repository)
+            public static DailyViewsDatabaseModel ToDailyViewsDatabaseModel(in DailyViewsModel dailyViewsModel, in Repository repository) => new()
             {
-                return new DailyViewsDatabaseModel
-                {
-                    DownloadedAt = repository.DataDownloadedAt,
-                    RepositoryUrl = repository.Url,
-                    Day = dailyViewsModel.Day,
-                    TotalViews = dailyViewsModel.TotalViews,
-                    TotalUniqueViews = dailyViewsModel.TotalUniqueViews
-                };
-            }
+                DownloadedAt = repository.DataDownloadedAt,
+                RepositoryUrl = repository.Url,
+                Day = dailyViewsModel.Day,
+                TotalViews = dailyViewsModel.TotalViews,
+                TotalUniqueViews = dailyViewsModel.TotalUniqueViews
+            };
         }
 
-        class RepositoryDatabaseModel : IRepository
+        record RepositoryDatabaseModel : IRepository
         {
-            public DateTimeOffset DataDownloadedAt { get; set; } = DateTimeOffset.UtcNow;
+            public DateTimeOffset DataDownloadedAt { get; init; } = DateTimeOffset.UtcNow;
 
-            public string Name { get; set; } = string.Empty;
+            public string Name { get; init; } = string.Empty;
 
-            public string Description { get; set; } = string.Empty;
+            public string Description { get; init; } = string.Empty;
 
-            public long ForkCount { get; set; }
+            public long ForkCount { get; init; }
 
             [PrimaryKey]
-            public string Url { get; set; } = string.Empty;
+            public string Url { get; init; } = string.Empty;
 
-            public long StarCount { get; set; }
+            public long? StarCount { get; init; }
 
-            public string OwnerLogin { get; set; } = string.Empty;
+            public string OwnerLogin { get; init; } = string.Empty;
 
-            public string OwnerAvatarUrl { get; set; } = string.Empty;
+            public string OwnerAvatarUrl { get; init; } = string.Empty;
 
-            public long IssuesCount { get; set; }
+            public long IssuesCount { get; init; }
 
-            public bool IsFork { get; set; }
+            public long WatchersCount { get; init; }
 
-            public long TotalViews { get; set; }
+            public bool IsFork { get; init; }
 
-            public long TotalUniqueViews { get; set; }
+            public long? TotalViews { get; init; }
 
-            public long TotalClones { get; set; }
+            public long? TotalUniqueViews { get; init; }
 
-            public long TotalUniqueClones { get; set; }
+            public long? TotalClones { get; init; }
+
+            public long? TotalUniqueClones { get; init; }
+
+            [Indexed]
+            public bool? IsFavorite { get; init; }
 
             public static Repository ToRepository(in RepositoryDatabaseModel repositoryDatabaseModel,
                                                     in IEnumerable<DailyClonesDatabaseModel> dailyClonesDatabaseModels,
-                                                    in IEnumerable<DailyViewsDatabaseModel> dailyViewsDatabaseModels)
+                                                    in IEnumerable<DailyViewsDatabaseModel> dailyViewsDatabaseModels,
+                                                    in IEnumerable<StarGazerInfoDatabaseModel> starGazerInfoDatabaseModels)
             {
                 var clonesList = dailyClonesDatabaseModels.Select(x => DailyClonesDatabaseModel.ToDailyClonesModel(x)).ToList();
                 var viewsList = dailyViewsDatabaseModels.Select(x => DailyViewsDatabaseModel.ToDailyViewsModel(x)).ToList();
@@ -229,36 +320,37 @@ namespace GitTrends
                 return new Repository(repositoryDatabaseModel.Name,
                                         repositoryDatabaseModel.Description,
                                         repositoryDatabaseModel.ForkCount,
-                                        new RepositoryOwner(repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl ?? repositoryDatabaseModel.OwnerLogin),
-                                        new IssuesConnection(repositoryDatabaseModel.IssuesCount, Enumerable.Empty<Issue>()),
+                                        repositoryDatabaseModel.OwnerLogin, repositoryDatabaseModel.OwnerAvatarUrl ?? repositoryDatabaseModel.OwnerLogin,
+                                        repositoryDatabaseModel.IssuesCount,
+                                        repositoryDatabaseModel.WatchersCount,
                                         repositoryDatabaseModel.Url,
-                                        new StarGazers(repositoryDatabaseModel.StarCount),
                                         repositoryDatabaseModel.IsFork,
                                         repositoryDatabaseModel.DataDownloadedAt,
+                                        repositoryDatabaseModel.IsFavorite,
                                         viewsList,
-                                        clonesList);
+                                        clonesList,
+                                        starGazerInfoDatabaseModels.Select(x => x.StarredAt).Distinct());
             }
 
-            public static RepositoryDatabaseModel ToRepositoryDatabase(in Repository repository)
+            public static RepositoryDatabaseModel ToRepositoryDatabase(in Repository repository) => new()
             {
-                return new RepositoryDatabaseModel
-                {
-                    DataDownloadedAt = repository.DataDownloadedAt,
-                    Description = repository.Description,
-                    StarCount = repository.StarCount,
-                    Url = repository.Url,
-                    IssuesCount = repository.IssuesCount,
-                    ForkCount = repository.ForkCount,
-                    Name = repository.Name,
-                    OwnerAvatarUrl = repository.OwnerAvatarUrl,
-                    OwnerLogin = repository.OwnerLogin,
-                    IsFork = repository.IsFork,
-                    TotalClones = repository.TotalClones,
-                    TotalUniqueClones = repository.TotalUniqueClones,
-                    TotalViews = repository.TotalViews,
-                    TotalUniqueViews = repository.TotalUniqueViews,
-                };
-            }
+                DataDownloadedAt = repository.DataDownloadedAt,
+                Description = repository.Description,
+                StarCount = repository.StarCount,
+                Url = repository.Url,
+                IssuesCount = repository.IssuesCount,
+                ForkCount = repository.ForkCount,
+                WatchersCount = repository.WatchersCount,
+                Name = repository.Name,
+                OwnerAvatarUrl = repository.OwnerAvatarUrl,
+                OwnerLogin = repository.OwnerLogin,
+                IsFork = repository.IsFork,
+                TotalClones = repository.TotalClones,
+                TotalUniqueClones = repository.TotalUniqueClones,
+                TotalViews = repository.TotalViews,
+                TotalUniqueViews = repository.TotalUniqueViews,
+                IsFavorite = repository.IsFavorite
+            };
         }
     }
 }

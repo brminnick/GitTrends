@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.Forms.Markup;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using static GitTrends.MarkupExtensions;
-using static Xamarin.Forms.Markup.GridRowsColumns;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -18,14 +18,13 @@ namespace GitTrends
     {
         const int _demoLabelFontSize = 16;
 
-        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new CancellationTokenSource();
+        readonly CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
         readonly IAppInfo _appInfo;
 
-        public WelcomePage(GitHubAuthenticationService gitHubAuthenticationService,
-                            IAnalyticsService analyticsService,
-                            WelcomeViewModel welcomeViewModel,
+        public WelcomePage(IAppInfo appInfo,
                             IMainThread mainThread,
-                            IAppInfo appInfo)
+                            WelcomeViewModel welcomeViewModel,
+                            IAnalyticsService analyticsService)
             : base(welcomeViewModel, analyticsService, mainThread, shouldUseSafeArea: true)
         {
             _appInfo = appInfo;
@@ -36,8 +35,8 @@ namespace GitTrends
             var pageBackgroundColor = Color.FromHex(BaseTheme.LightTealColorHex);
             BackgroundColor = pageBackgroundColor;
 
-            gitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
-            gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+            GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
+            GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
             var browserLaunchOptions = new Xamarin.Essentials.BrowserLaunchOptions
             {
@@ -48,14 +47,15 @@ namespace GitTrends
 
             Content = new Grid
             {
+                Padding = 8,
                 RowSpacing = 24,
 
                 RowDefinitions = Rows.Define(
-                    (Row.WelcomeLabel, StarGridLength(2)),
-                    (Row.Image, StarGridLength(4)),
-                    (Row.GitHubButton, StarGridLength(2)),
-                    (Row.DemoButton, StarGridLength(1)),
-                    (Row.VersionLabel, StarGridLength(1))),
+                    (Row.WelcomeLabel, Stars(2)),
+                    (Row.Image, Stars(4)),
+                    (Row.GitHubButton, Stars(2)),
+                    (Row.DemoButton, Stars(1)),
+                    (Row.VersionLabel, Stars(1))),
 
                 Children =
                 {
@@ -63,7 +63,7 @@ namespace GitTrends
                         .Row(Row.WelcomeLabel),
                     new Image { Source = "WelcomeImage" }.Center()
                         .Row(Row.Image),
-                    new ConnectToGitHubButton(_connectToGitHubCancellationTokenSource.Token, browserLaunchOptions)
+                    new ConnectToGitHubButton(WelcomePageAutomationIds.ConnectToGitHubButton, _connectToGitHubCancellationTokenSource.Token, browserLaunchOptions).CenterHorizontal().Bottom()
                         .Row(Row.GitHubButton),
                     new DemoLabel()
                         .Row(Row.DemoButton),
@@ -115,15 +115,6 @@ namespace GitTrends
 
                 this.Bind(IsVisibleProperty, nameof(WelcomeViewModel.IsAuthenticating));
                 this.Bind(IsRunningProperty, nameof(WelcomeViewModel.IsAuthenticating));
-            }
-        }
-
-        class ConnectToGitHubButton : ConnectToGitHubView
-        {
-            public ConnectToGitHubButton(CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions browserLaunchOptions) : base(WelcomePageAutomationIds.ConnectToGitHubButton, cancellationToken, browserLaunchOptions)
-            {
-                HorizontalOptions = LayoutOptions.Center;
-                VerticalOptions = LayoutOptions.End;
             }
         }
 

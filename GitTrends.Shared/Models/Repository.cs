@@ -2,72 +2,108 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace GitTrends.Shared
 {
-    public class Repository : IRepository
+    public record Repository : IRepository
     {
-        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork, DateTimeOffset dataDownloadedAt, IList<DailyViewsModel>? views = null, IList<DailyClonesModel>? clones = null)
-            : this(name, description, forkCount, owner, issues, url, stargazers, isFork, views, clones)
-        {
-            DataDownloadedAt = dataDownloadedAt;
-        }
+        IReadOnlyList<DateTimeOffset>? _starredAt;
+        IReadOnlyList<DailyViewsModel>? _dailyViewsList;
+        IReadOnlyList<DailyClonesModel>? _dailyClonesList;
 
-        [JsonConstructor]
-        public Repository(string name, string description, long forkCount, RepositoryOwner owner, IssuesConnection? issues, string url, StarGazers stargazers, bool isFork, IList<DailyViewsModel>? views = null, IList<DailyClonesModel>? clones = null)
+        public Repository(string name,
+                            string description,
+                            long forkCount,
+                            string ownerLogin,
+                            string ownerAvatarUrl,
+                            long issuesCount,
+                            long watchersCount,
+                            string url,
+                            bool isFork,
+                            DateTimeOffset dataDownloadedAt,
+                            bool? isFavorite = null,
+                            IEnumerable<DailyViewsModel>? views = null,
+                            IEnumerable<DailyClonesModel>? clones = null,
+                            IEnumerable<DateTimeOffset>? starredAt = null)
         {
-            DataDownloadedAt = DateTimeOffset.UtcNow;
+            IsFavorite = isFavorite;
+            DataDownloadedAt = dataDownloadedAt;
 
             Name = name;
             Description = description;
+            WatchersCount = watchersCount;
             ForkCount = forkCount;
-            OwnerLogin = owner.Login;
-            OwnerAvatarUrl = owner.AvatarUrl;
-            IssuesCount = issues?.IssuesCount ?? 0;
+            OwnerLogin = ownerLogin;
+            OwnerAvatarUrl = ownerAvatarUrl;
+            IssuesCount = issuesCount;
             Url = url;
-            StarCount = stargazers.TotalCount;
             IsFork = isFork;
 
-            if (views != null && clones != null)
-                AddMissingDates(views, clones);
-
-            DailyViewsList = (views ?? Enumerable.Empty<DailyViewsModel>()).ToList();
-            DailyClonesList = (clones ?? Enumerable.Empty<DailyClonesModel>()).ToList();
-
-            TotalViews = DailyViewsList.Sum(x => x.TotalViews);
-            TotalUniqueViews = DailyViewsList.Sum(x => x.TotalUniqueViews);
-            TotalClones = DailyClonesList.Sum(x => x.TotalClones);
-            TotalUniqueClones = DailyClonesList.Sum(x => x.TotalUniqueClones);
-
-            var (isViewsTrending, isClonesTrending) = TrendingService.IsTrending(this);
-            IsTrending = (isViewsTrending ?? false) || (isClonesTrending ?? false);
+            StarredAt = starredAt?.ToList();
+            DailyViewsList = views?.ToList();
+            DailyClonesList = clones?.ToList();
         }
 
         public DateTimeOffset DataDownloadedAt { get; }
 
-        public long TotalViews { get; }
-        public long TotalUniqueViews { get; }
-        public long TotalClones { get; }
-        public long TotalUniqueClones { get; }
+        public string OwnerLogin { get; init; }
+        public string OwnerAvatarUrl { get; init; }
+        public long IssuesCount { get; init; }
+        public string Name { get; init; }
+        public string Description { get; init; }
+        public long WatchersCount { get; init; }
+        public long ForkCount { get; init; }
+        public bool IsFork { get; init; }
+        public string Url { get; init; }
 
-        public string OwnerLogin { get; }
-        public string OwnerAvatarUrl { get; }
-        public long StarCount { get; }
-        public long IssuesCount { get; }
-        public string Name { get; }
-        public string Description { get; }
-        public long ForkCount { get; }
-        public bool IsFork { get; }
+        public bool? IsFavorite { get; init; }
 
-        public bool IsTrending { get; }
+        public IReadOnlyList<DailyViewsModel>? DailyViewsList
+        {
+            get => _dailyViewsList;
+            init
+            {
+                var dailyViewsList = value is null ? null : AddMissingDates(value);
+                _dailyViewsList = dailyViewsList;
 
-        public IReadOnlyList<DailyViewsModel> DailyViewsList { get; }
-        public IReadOnlyList<DailyClonesModel> DailyClonesList { get; }
+                TotalViews = dailyViewsList?.Sum(x => x.TotalViews);
+                TotalUniqueViews = dailyViewsList?.Sum(x => x.TotalUniqueViews);
 
-        [JsonProperty("url")]
-        public string Url { get; }
+                IsTrending |= dailyViewsList?.IsTrending() ?? false;
+            }
+        }
+
+        public IReadOnlyList<DailyClonesModel>? DailyClonesList
+        {
+            get => _dailyClonesList;
+            init
+            {
+                var dailyClonesList = value is null ? null : AddMissingDates(value);
+                _dailyClonesList = dailyClonesList;
+
+                TotalClones = dailyClonesList?.Sum(x => x.TotalClones);
+                TotalUniqueClones = dailyClonesList?.Sum(x => x.TotalUniqueClones);
+
+                IsTrending |= dailyClonesList?.IsTrending() ?? false;
+            }
+        }
+
+        public IReadOnlyList<DateTimeOffset>? StarredAt
+        {
+            get => _starredAt;
+            init
+            {
+                _starredAt = value?.OrderBy(x => x).ToList();
+                StarCount = value?.Count;
+            }
+        }
+
+        public long? TotalViews { get; private init; }
+        public long? TotalUniqueViews { get; private init; }
+        public long? TotalClones { get; private init; }
+        public long? TotalUniqueClones { get; private init; }
+        public long? StarCount { get; private init; }
+        public bool IsTrending { get; private init; }
 
         public override string ToString()
         {
@@ -84,45 +120,52 @@ namespace GitTrends.Shared
             return stringBuilder.ToString();
         }
 
-        static void AddMissingDates(in IList<DailyViewsModel> dailyViewsList, in IList<DailyClonesModel> dailyClonesList)
+        static IReadOnlyList<DailyViewsModel> AddMissingDates(in IEnumerable<DailyViewsModel> dailyViews)
         {
-            var day = DateTimeService.GetMinimumDateTimeOffset(dailyViewsList, dailyClonesList);
-            var maximumDay = DateTimeService.GetMaximumDateTimeOffset(dailyViewsList, dailyClonesList);
+            var dailyViewsList = new List<DailyViewsModel>(dailyViews);
 
-            var viewsDays = dailyViewsList.Select(x => x.Day.Day).ToList();
-            var clonesDays = dailyClonesList.Select(x => x.Day.Day).ToList();
+            var day = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
+            var maximumDay = DateTimeOffset.UtcNow;
+
+            var daysList = dailyViews.Select(x => x.Day.Day).ToList();
 
             while (day.Day != maximumDay.AddDays(1).Day)
             {
-                if (!viewsDays.Contains(day.Day))
-                    dailyViewsList.Add(new DailyViewsModel(removeHourMinuteSecond(day), 0, 0));
-
-                if (!clonesDays.Contains(day.Day))
-                    dailyClonesList.Add(new DailyClonesModel(removeHourMinuteSecond(day), 0, 0));
+                if (!daysList.Contains(day.Day))
+                    dailyViewsList.Add(new DailyViewsModel(RemoveHourMinuteSecond(day), 0, 0));
 
                 day = day.AddDays(1);
             }
 
-            static DateTimeOffset removeHourMinuteSecond(in DateTimeOffset date) => new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
+            return dailyViewsList;
         }
+
+        static IReadOnlyList<DailyClonesModel> AddMissingDates(in IEnumerable<DailyClonesModel> dailyClones)
+        {
+            var dailyClonesList = new List<DailyClonesModel>(dailyClones);
+
+            var day = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
+            var maximumDay = DateTimeOffset.UtcNow;
+
+            var daysList = dailyClones.Select(x => x.Day.Day).ToList();
+
+            while (day.Day != maximumDay.AddDays(1).Day)
+            {
+                if (!daysList.Contains(day.Day))
+                    dailyClonesList.Add(new DailyClonesModel(RemoveHourMinuteSecond(day), 0, 0));
+
+                day = day.AddDays(1);
+            }
+
+            return dailyClonesList;
+        }
+
+
+        static DateTimeOffset RemoveHourMinuteSecond(in DateTimeOffset date) => new(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
     }
 
-    public class RepositoryOwner
+    public static class RepositoryExtensions
     {
-        public RepositoryOwner(string login, string avatarUrl) => (Login, AvatarUrl) = (login, avatarUrl);
-
-        [JsonProperty("login")]
-        public string Login { get; }
-
-        [JsonProperty("avatarUrl")]
-        public string AvatarUrl { get; }
-    }
-
-    public class StarGazers
-    {
-        public StarGazers(long totalCount) => TotalCount = totalCount;
-
-        [JsonProperty("totalCount")]
-        public long TotalCount { get; }
+        public static bool IsOwnerAvatarUrlValid(this Repository repository) => Uri.TryCreate(repository.OwnerAvatarUrl, UriKind.Absolute, out _);
     }
 }

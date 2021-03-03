@@ -8,9 +8,9 @@ namespace GitTrends.UnitTests
 {
     class MockLauncher : ILauncher
     {
-        readonly WeakEventManager _openAsyncExecutedEventHandler = new WeakEventManager();
+        readonly static WeakEventManager _openAsyncExecutedEventHandler = new();
 
-        public event EventHandler OpenAsyncExecuted
+        public static event EventHandler OpenAsyncExecuted
         {
             add => _openAsyncExecutedEventHandler.AddEventHandler(value);
             remove => _openAsyncExecutedEventHandler.RemoveEventHandler(value);
@@ -38,6 +38,6 @@ namespace GitTrends.UnitTests
             return Task.CompletedTask;
         }
 
-        void OnOpenAsyncExecuted() => _openAsyncExecutedEventHandler.HandleEvent(this, EventArgs.Empty, nameof(OpenAsyncExecuted));
+        void OnOpenAsyncExecuted() => _openAsyncExecutedEventHandler.RaiseEvent(this, EventArgs.Empty, nameof(OpenAsyncExecuted));
     }
 }

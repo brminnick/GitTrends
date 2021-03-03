@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using NUnit.Framework;
 using Xamarin.UITest;
@@ -8,10 +7,10 @@ using Xamarin.UITest.iOS;
 
 namespace GitTrends.UITests
 {
-    [TestFixture(Platform.Android, UserType.LoggedIn)]
-    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     [TestFixture(Platform.Android, UserType.Demo)]
+    [TestFixture(Platform.Android, UserType.LoggedIn)]
     [TestFixture(Platform.iOS, UserType.Demo)]
+    [TestFixture(Platform.iOS, UserType.LoggedIn)]
     class WelcomeTests : BaseUITest
     {
         public WelcomeTests(Platform platform, UserType userType) : base(platform, userType)

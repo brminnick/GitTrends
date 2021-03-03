@@ -23,7 +23,10 @@ namespace GitTrends.Droid
             base.OnAttachedToWindow();
 
             if (Element is ISearchPage && Element is Page page && page.Parent is NavigationPage navigationPage)
+            {
                 navigationPage.Popped += HandleNavigationPagePopped;
+                navigationPage.PoppedToRoot += HandleNavigationPagePopped;
+            }
         }
 
         protected override void Dispose(bool disposing)
@@ -39,6 +42,14 @@ namespace GitTrends.Droid
             base.OnSizeChanged(w, h, oldw, oldh);
 
             if (Element is ISearchPage && Element is Page page && page.Parent is NavigationPage navigationPage && navigationPage.CurrentPage is ISearchPage)
+                AddSearchToToolbar(page.Title);
+        }
+
+        protected override void OnElementChanged(ElementChangedEventArgs<Page> e)
+        {
+            base.OnElementChanged(e);
+
+            if (e.NewElement is ISearchPage && e.NewElement is Page page && page.Parent is NavigationPage navigationPage && navigationPage.CurrentPage is ISearchPage)
                 AddSearchToToolbar(page.Title);
         }
 

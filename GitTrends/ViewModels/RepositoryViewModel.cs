@@ -9,6 +9,7 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using Autofac;
+using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
@@ -20,13 +21,17 @@ namespace GitTrends
 {
     public class RepositoryViewModel : BaseViewModel
     {
-        readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new WeakEventManager<PullToRefreshFailedEventArgs>();
-        readonly RepositoryDatabase _repositoryDatabase;
-        readonly GitHubAuthenticationService _gitHubAuthenticationService;
-        readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
-        readonly MobileSortingService _sortingService;
-        readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
+
+        readonly ImageCachingService _imageService;
         readonly GitHubUserService _gitHubUserService;
+        readonly RepositoryDatabase _repositoryDatabase;
+        readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly MobileSortingService _mobileSortingService;
+        readonly GitHubApiStatusService _gitHubApiStatusService;
+        readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
+        readonly GitHubAuthenticationService _gitHubAuthenticationService;
+        readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
         bool _isRefreshing;
         string _titleText = string.Empty;
@@ -34,51 +39,64 @@ namespace GitTrends
         string _emptyDataViewTitle = string.Empty;
         string _emptyDataViewDescription = string.Empty;
 
-        IReadOnlyList<Repository> _repositoryList = Enumerable.Empty<Repository>().ToList();
-        IReadOnlyList<Repository> _visibleRepositoryList = Enumerable.Empty<Repository>().ToList();
+        
 
-        public RepositoryViewModel(RepositoryDatabase repositoryDatabase,
-                                    GitHubAuthenticationService gitHubAuthenticationService,
-                                    GitHubGraphQLApiService gitHubGraphQLApiService,
+
+        IReadOnlyList<Repository> _repositoryList = Array.Empty<Repository>();
+        IReadOnlyList<Repository> _visibleRepositoryList = Array.Empty<Repository>();
+
+        public RepositoryViewModel(IMainThread mainThread,
+                                    ImageCachingService imageService,
                                     IAnalyticsService analyticsService,
+                                    GitHubUserService gitHubUserService,
                                     MobileSortingService sortingService,
+                                    RepositoryDatabase repositoryDatabase,
                                     GitHubApiV3Service gitHubApiV3Service,
-                                    NotificationService notificationService,
-                                    IMainThread mainThread,
-                                    GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
+                                    GitHubApiStatusService gitHubApiStatusService,
+                                    GitHubGraphQLApiService gitHubGraphQLApiService,
+                                    GitHubAuthenticationService gitHubAuthenticationService,
+                                    GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, mainThread)
         {
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 
             SetTitleText();
 
-            _repositoryDatabase = repositoryDatabase;
-            _gitHubAuthenticationService = gitHubAuthenticationService;
-            _gitHubGraphQLApiService = gitHubGraphQLApiService;
-            _sortingService = sortingService;
-            _gitHubApiV3Service = gitHubApiV3Service;
+            _imageService = imageService;
             _gitHubUserService = gitHubUserService;
+            _mobileSortingService = sortingService;
+            _repositoryDatabase = repositoryDatabase;
+            _gitHubApiV3Service = gitHubApiV3Service;
+            _gitHubApiStatusService = gitHubApiStatusService;
+            _gitHubGraphQLApiService = gitHubGraphQLApiService;
+            _gitHubAuthenticationService = gitHubAuthenticationService;
+            _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
 
             RefreshState = RefreshState.Uninitialized;
 
-            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(gitHubUserService.Alias));
             FilterRepositoriesCommand = new Command<string>(SetSearchBarText);
             SortRepositoriesCommand = new Command<SortingOption>(ExecuteSortRepositoriesCommand);
 
-            notificationService.SortingOptionRequested += HandleSortingOptionRequested;
-            gitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
-            gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
-            gitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
+            PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(gitHubUserService.Alias));
+
+            ToggleIsFavoriteCommand = new AsyncValueCommand<Repository>(repository => ExecuteToggleIsFavoriteCommand(repository));
+
+            NotificationService.SortingOptionRequested += HandleSortingOptionRequested;
+
+            GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
+            GitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
+            GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
         }
 
-        public event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
+        public static event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
         {
             add => _pullToRefreshFailedEventManager.AddEventHandler(value);
             remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
         }
 
-        public IAsyncCommand PullToRefreshCommand { get; }
-        public ICommand FilterRepositoriesCommand { get; }
         public ICommand SortRepositoriesCommand { get; }
+        public ICommand FilterRepositoriesCommand { get; }
+        public IAsyncCommand PullToRefreshCommand { get; }
+        public AsyncValueCommand<Repository> ToggleIsFavoriteCommand { get; }
 
         public IReadOnlyList<Repository> VisibleRepositoryList
         {
@@ -92,6 +110,14 @@ namespace GitTrends
             set => SetProperty(ref _emptyDataViewTitle, value);
         }
 
+        // Select the size of the button according the length of his text
+        public FloatingActionButtonSize TotalButtonSize => TotalButtonText.Length switch
+        {
+            <= 3 => FloatingActionButtonSize.Mini,
+            <= 5 => FloatingActionButtonSize.Normal,
+            > 5 => FloatingActionButtonSize.Large
+        };
+
         public string EmptyDataViewDescription
         {
             get => _emptyDataViewDescription;
@@ -103,7 +129,14 @@ namespace GitTrends
             get => _isRefreshing;
             set => SetProperty(ref _isRefreshing, value);
         }
+        string _totalButtonText = RepositoryPageConstants.TOTAL;
 
+        
+        public string TotalButtonText
+        {
+            get => _totalButtonText;
+            set => SetProperty(ref _totalButtonText, value);
+        }
         public string TitleText
         {
             get => _titleText;
@@ -119,40 +152,66 @@ namespace GitTrends
             }
         }
 
+        static IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IEnumerable<Repository> repositories, string searchBarText)
+        {
+            if (string.IsNullOrWhiteSpace(searchBarText))
+                return repositories;
+
+            return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
+        }
+
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
             HttpResponseMessage? finalResponse = null;
 
             var cancellationTokenSource = new CancellationTokenSource();
-            _gitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
-            _gitHubAuthenticationService.LoggedOut += HandleLoggedOut;
+            GitHubAuthenticationService.LoggedOut += HandleLoggedOut;
+            GitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
 
-            AnalyticsService.Track("Refresh Triggered", "Sorting Option", _sortingService.CurrentOption.ToString());
+            AnalyticsService.Track("Refresh Triggered", "Sorting Option", _mobileSortingService.CurrentOption.ToString());
 
             try
             {
-                await foreach (var retrievedRepositories in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
-                {
-                    //Only display the first update to avoid unncessary work on the UIThread
-                    var shouldUpdateVisibleRepositoryList = !VisibleRepositoryList.Any();
-                    AddRepositoriesToCollection(retrievedRepositories, _searchBarText, shouldUpdateVisibleRepositoryList);
-                }
+                const int minimumBatchCount = 20;
 
-                var completedRepoitories = new List<Repository>();
-                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiV3Service.UpdateRepositoriesWithViewsAndClonesData(_repositoryList, cancellationTokenSource.Token).ConfigureAwait(false))
+                var favoriteRepositoryUrls = await _repositoryDatabase.GetFavoritesUrls().ConfigureAwait(false);
+
+                var repositoryList = new List<Repository>();
+                await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    completedRepoitories.Add(retrievedRepositoryWithViewsAndClonesData);
+                    if (favoriteRepositoryUrls.Contains(repository.Url))
+                        repositoryList.Add(repository with { IsFavorite = true });
+                    else
+                        repositoryList.Add(repository);
 
                     //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
-                    if (!_gitHubUserService.IsDemoUser && completedRepoitories.Count > 20)
+                    if (!_gitHubUserService.IsDemoUser && repositoryList.Count > minimumBatchCount)
                     {
-                        AddRepositoriesToCollection(completedRepoitories, _searchBarText);
-                        completedRepoitories.Clear();
+                        //Only display the first update to avoid unncessary work on the UIThread
+                        var shouldUpdateVisibleRepositoryList = !VisibleRepositoryList.Any();
+                        AddRepositoriesToCollection(repositoryList, _searchBarText, shouldUpdateVisibleRepositoryList);
+                        repositoryList.Clear();
+                    }
+                }
+
+                //Add Remaining Repositories to _repositoryList
+                AddRepositoriesToCollection(repositoryList, _searchBarText);
+
+                var completedRepositories = new List<Repository>();
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(_repositoryList, cancellationTokenSource.Token).ConfigureAwait(false))
+                {
+                    completedRepositories.Add(retrievedRepositoryWithViewsAndClonesData);
+
+                    //Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
+                    if (!_gitHubUserService.IsDemoUser && completedRepositories.Count > minimumBatchCount)
+                    {
+                        AddRepositoriesToCollection(completedRepositories, _searchBarText);
+                        completedRepositories.Clear();
                     }
                 }
 
                 //Add Remaining Repositories to VisibleRepositoryList
-                AddRepositoriesToCollection(completedRepoitories, _searchBarText, shouldRemoveRepoisitoriesWithoutViewsClonesData: true);
+                AddRepositoriesToCollection(completedRepositories, _searchBarText);
 
                 if (!_gitHubUserService.IsDemoUser)
                 {
@@ -164,7 +223,7 @@ namespace GitTrends
                 RefreshState = RefreshState.Succeeded;
             }
             catch (Exception e) when ((e is ApiException exception && exception.StatusCode is HttpStatusCode.Unauthorized)
-                                        || (e is HttpRequestException && finalResponse != null && finalResponse.StatusCode is HttpStatusCode.Unauthorized))
+                                        || (e is HttpRequestException && finalResponse?.StatusCode is HttpStatusCode.Unauthorized))
             {
                 var loginExpiredEventArgs = new LoginExpiredPullToRefreshEventArgs();
 
@@ -173,37 +232,42 @@ namespace GitTrends
                 await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
                 await _repositoryDatabase.DeleteAllData().ConfigureAwait(false);
 
-                SetRepositoriesCollection(Enumerable.Empty<Repository>(), _searchBarText);
+                SetRepositoriesCollection(Array.Empty<Repository>(), _searchBarText);
 
                 RefreshState = RefreshState.LoginExpired;
             }
-            catch (Exception e) when (GitHubApiService.HasReachedMaximimApiCallLimit(e)
-                                        || (e is HttpRequestException && finalResponse != null && GitHubApiService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
+            catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximumApiCallLimit(e)
+                                        || (e is HttpRequestException && finalResponse != null && _gitHubApiStatusService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
             {
                 var responseHeaders = e switch
                 {
                     ApiException exception => exception.Headers,
-                    HttpRequestException _ when finalResponse != null => finalResponse.Headers,
+                    GraphQLException graphQLException => graphQLException.ResponseHeaders,
+                    HttpRequestException when finalResponse != null => finalResponse.Headers,
                     _ => throw new NotSupportedException()
                 };
 
-                var maximimApiRequestsReachedEventArgs = new MaximimApiRequestsReachedEventArgs(GitHubApiService.GetRateLimitResetDateTime(responseHeaders));
+                var maximimApiRequestsReachedEventArgs = new MaximumApiRequestsReachedEventArgs(_gitHubApiStatusService.GetRateLimitResetDateTime(responseHeaders));
                 OnPullToRefreshFailed(maximimApiRequestsReachedEventArgs);
 
-                SetRepositoriesCollection(Enumerable.Empty<Repository>(), _searchBarText);
+                SetRepositoriesCollection(Array.Empty<Repository>(), _searchBarText);
 
                 RefreshState = RefreshState.MaximumApiLimit;
             }
             catch (Exception e)
             {
-                AnalyticsService.Report(e);
-
-                var repositoryList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
-                SetRepositoriesCollection(repositoryList, _searchBarText);
-
-                if (repositoryList.Any())
+                AnalyticsService.Report(e, new Dictionary<string, string>
                 {
-                    var dataDownloadedAt = repositoryList.Max(x => x.DataDownloadedAt);
+                    { nameof(IGitHubApiStatusService.IsAbuseRateLimit), _gitHubApiStatusService.IsAbuseRateLimit(e, out var delta).ToString() },
+                    { nameof(delta), delta.ToString() }
+                });
+
+                var repositoryDatabaseList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
+                SetRepositoriesCollection(repositoryDatabaseList, _searchBarText);
+
+                if (repositoryDatabaseList.Any())
+                {
+                    var dataDownloadedAt = repositoryDatabaseList.Max(x => x.DataDownloadedAt);
                     OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"{RepositoryPageConstants.DisplayingDataFrom} {dataDownloadedAt.ToLocalTime():dd MMMM @ HH:mm}\n\n{RepositoryPageConstants.CheckInternetConnectionTryAgain}."));
                 }
                 else
@@ -215,8 +279,8 @@ namespace GitTrends
             }
             finally
             {
-                _gitHubAuthenticationService.LoggedOut -= HandleLoggedOut;
-                _gitHubAuthenticationService.AuthorizeSessionStarted -= HandleAuthorizeSessionStarted;
+                GitHubAuthenticationService.LoggedOut -= HandleLoggedOut;
+                GitHubAuthenticationService.AuthorizeSessionStarted -= HandleAuthorizeSessionStarted;
 
                 if (cancellationTokenSource.IsCancellationRequested)
                     UpdateListForLoggedOutUser();
@@ -228,6 +292,25 @@ namespace GitTrends
 
             void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
             void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();
+        }
+
+        async ValueTask ExecuteToggleIsFavoriteCommand(Repository repository)
+        {
+            var updatedRepository = repository with
+            {
+                IsFavorite = repository.IsFavorite.HasValue ? !repository.IsFavorite : true
+            };
+
+            AnalyticsService.Track("IsFavorite Toggled", nameof(Repository.IsFavorite), updatedRepository.IsFavorite.ToString());
+
+            var updatedRepositoryList = new List<Repository>(_visibleRepositoryList);
+            updatedRepositoryList.Remove(repository);
+            updatedRepositoryList.Add(updatedRepository);
+
+            SetRepositoriesCollection(updatedRepositoryList, _searchBarText);
+
+            if (!_gitHubUserService.IsDemoUser)
+                await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
         }
 
         async ValueTask SaveRepositoriesToDatabase(IEnumerable<Repository> repositories)
@@ -250,40 +333,36 @@ namespace GitTrends
 
         void ExecuteSortRepositoriesCommand(SortingOption option)
         {
-            if (_sortingService.CurrentOption == option)
-                _sortingService.IsReversed = !_sortingService.IsReversed;
+            if (_mobileSortingService.CurrentOption == option)
+                _mobileSortingService.IsReversed = !_mobileSortingService.IsReversed;
             else
-                _sortingService.IsReversed = false;
+                _mobileSortingService.IsReversed = false;
 
-            _sortingService.CurrentOption = option;
+            _mobileSortingService.CurrentOption = option;
 
             AnalyticsService.Track("SortingOption Changed", new Dictionary<string, string>
             {
-                { nameof(MobileSortingService) + nameof(MobileSortingService.CurrentOption), _sortingService.CurrentOption.ToString() },
-                { nameof(MobileSortingService) + nameof(MobileSortingService.IsReversed), _sortingService.IsReversed.ToString() }
+                { nameof(MobileSortingService) + nameof(MobileSortingService.CurrentOption), _mobileSortingService.CurrentOption.ToString() },
+                { nameof(MobileSortingService) + nameof(MobileSortingService.IsReversed), _mobileSortingService.IsReversed.ToString() }
             });
 
-            UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
+            UpdateVisibleRepositoryList(_searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
-        void SetRepositoriesCollection(in IEnumerable<Repository> repositories, string searchBarText)
+        void SetRepositoriesCollection(in IReadOnlyList<Repository> repositories, in string searchBarText)
         {
-            _repositoryList = repositories.ToList();
+            _repositoryList = repositories;
 
-            UpdateVisibleRepositoryList(searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
+            UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
-        void AddRepositoriesToCollection(IEnumerable<Repository> repositories, string searchBarText, bool shouldUpdateVisibleRepositoryList = true, bool shouldRemoveRepoisitoriesWithoutViewsClonesData = false)
+        void AddRepositoriesToCollection(in IEnumerable<Repository> repositories, in string searchBarText, in bool shouldUpdateVisibleRepositoryList = true)
         {
             var updatedRepositoryList = _repositoryList.Concat(repositories);
-
-            if (shouldRemoveRepoisitoriesWithoutViewsClonesData)
-                _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).Where(x => x.DailyClonesList.Count > 1 || x.DailyViewsList.Count > 1).ToList();
-            else
-                _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
+            _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
             if (shouldUpdateVisibleRepositoryList)
-                UpdateVisibleRepositoryList(searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
+                UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
         void UpdateVisibleRepositoryList(in string searchBarText, in SortingOption sortingOption, in bool isReversed)
@@ -291,20 +370,14 @@ namespace GitTrends
             var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
 
             VisibleRepositoryList = MobileSortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
+
+            _imageService.PreloadRepositoryImages(VisibleRepositoryList).SafeFireAndForget(ex => AnalyticsService.Report(ex));
         }
 
         void UpdateListForLoggedOutUser()
         {
-            _repositoryList = Enumerable.Empty<Repository>().ToList();
-            UpdateVisibleRepositoryList(string.Empty, _sortingService.CurrentOption, _sortingService.IsReversed);
-        }
-
-        IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IEnumerable<Repository> repositories, string searchBarText)
-        {
-            if (string.IsNullOrWhiteSpace(searchBarText))
-                return repositories;
-
-            return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
+            _repositoryList = Array.Empty<Repository>();
+            UpdateVisibleRepositoryList(string.Empty, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
         void SetSearchBarText(string text)
@@ -315,7 +388,7 @@ namespace GitTrends
             _searchBarText = text;
 
             if (_repositoryList.Any())
-                UpdateVisibleRepositoryList(_searchBarText, _sortingService.CurrentOption, _sortingService.IsReversed);
+                UpdateVisibleRepositoryList(_searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
         void HandlePreferredLanguageChanged(object sender, string? e) => SetTitleText();
@@ -335,13 +408,13 @@ namespace GitTrends
         {
             RefreshState = pullToRefreshFailedEventArgs switch
             {
-                ErrorPullToRefreshEventArgs _ => RefreshState.Error,
-                MaximimApiRequestsReachedEventArgs _ => RefreshState.MaximumApiLimit,
-                LoginExpiredPullToRefreshEventArgs _ => RefreshState.LoginExpired,
+                ErrorPullToRefreshEventArgs => RefreshState.Error,
+                MaximumApiRequestsReachedEventArgs => RefreshState.MaximumApiLimit,
+                LoginExpiredPullToRefreshEventArgs => RefreshState.LoginExpired,
                 _ => throw new NotSupportedException()
             };
 
-            _pullToRefreshFailedEventManager.HandleEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
+            _pullToRefreshFailedEventManager.RaiseEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
         }
     }
 }

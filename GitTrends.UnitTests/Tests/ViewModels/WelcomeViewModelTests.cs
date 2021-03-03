@@ -21,10 +21,9 @@ namespace GitTrends.UnitTests
             bool didOpenAsyncFire = false;
             var openAsyncExecutedTCS = new TaskCompletionSource<Uri>();
 
-            var mockBrowser = (MockBrowser)ServiceCollection.ServiceProvider.GetService<IBrowser>();
-            mockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
+            MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
-            var welcomeViewModel = ServiceCollection.ServiceProvider.GetService<WelcomeViewModel>();
+            var welcomeViewModel = ServiceCollection.ServiceProvider.GetRequiredService<WelcomeViewModel>();
 
             //Act
             isAuthenticating_BeforeCommand = welcomeViewModel.IsAuthenticating;
@@ -58,7 +57,7 @@ namespace GitTrends.UnitTests
 
             void HandleOpenAsyncExecuted(object? sender, Uri e)
             {
-                mockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
+                MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
                 didOpenAsyncFire = true;
 
                 openAsyncExecutedTCS.SetResult(e);
@@ -71,8 +70,8 @@ namespace GitTrends.UnitTests
             //Arrange
             bool isDemoButtonVisible_Initial, isDemoButtonVisible_Final;
 
-            var welcomeViewModel = ServiceCollection.ServiceProvider.GetService<WelcomeViewModel>();
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var welcomeViewModel = ServiceCollection.ServiceProvider.GetRequiredService<WelcomeViewModel>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
             //Act
             isDemoButtonVisible_Initial = welcomeViewModel.IsDemoButtonVisible;

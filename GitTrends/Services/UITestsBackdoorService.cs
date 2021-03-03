@@ -6,8 +6,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using Autofac;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
+using Plugin.StoreReview.Abstractions;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
@@ -16,8 +18,8 @@ namespace GitTrends
 {
     public class UITestsBackdoorService
     {
-        readonly static WeakEventManager _popPageStartedEventManager = new WeakEventManager();
-        readonly static WeakEventManager<Page> _popPageCompletedEventManager = new WeakEventManager<Page>();
+        readonly static AsyncAwaitBestPractices.WeakEventManager _popPageStartedEventManager = new();
+        readonly static WeakEventManager<Page> _popPageCompletedEventManager = new();
 
         readonly IMainThread _mainThread;
         readonly ThemeService _themeService;
@@ -28,14 +30,14 @@ namespace GitTrends
         readonly TrendsChartSettingsService _trendsChartSettingsService;
         readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
-        public UITestsBackdoorService(GitHubAuthenticationService gitHubAuthenticationService,
+        public UITestsBackdoorService(IMainThread mainThread,
+                                        ThemeService themeService,
+                                        LanguageService languageService,
+                                        GitHubUserService gitHubUserService,
                                         NotificationService notificationService,
                                         GitHubGraphQLApiService gitHubGraphQLApiService,
                                         TrendsChartSettingsService trendsChartSettingsService,
-                                        ThemeService themeService,
-                                        GitHubUserService gitHubUserService,
-                                        IMainThread mainThread,
-                                        LanguageService languageService)
+                                        GitHubAuthenticationService gitHubAuthenticationService)
         {
             _mainThread = mainThread;
             _themeService = themeService;
@@ -61,8 +63,8 @@ namespace GitTrends
 
         public string? GetPreferredLanguage() => _languageService.PreferredLanguage;
 
-        public string GetLoggedInUserAlias() => _gitHubUserService.Alias;
         public string GetLoggedInUserName() => _gitHubUserService.Name;
+        public string GetLoggedInUserAlias() => _gitHubUserService.Alias;
         public string GetLoggedInUserAvatarUrl() => _gitHubUserService.AvatarUrl;
 
         public async Task SetGitHubUser(string token, CancellationToken cancellationToken)
@@ -72,19 +74,13 @@ namespace GitTrends
             var (alias, name, avatarUri) = await _gitHubGraphQLApiService.GetCurrentUserInfo(cancellationToken).ConfigureAwait(false);
 
             _gitHubUserService.Alias = alias;
-            _gitHubUserService.AvatarUrl = avatarUri.ToString();
             _gitHubUserService.Name = name;
+            _gitHubUserService.AvatarUrl = avatarUri.ToString();
         }
 
         public Task<GitHubToken> GetGitHubToken() => _gitHubUserService.GetGitHubToken();
 
-        public void TriggerReviewRequest()
-        {
-            var referringSitesPage = (ReferringSitesPage)GetVisibleContentPage();
-            var referringSitesViewModel = (ReferringSitesViewModel)referringSitesPage.BindingContext;
-
-            referringSitesViewModel.IsStoreRatingRequestVisible = true;
-        }
+        public void TriggerReviewRequest() => ContainerService.Container.Resolve<IStoreReview>().RequestReview(true);
 
         public string GetReviewRequestAppStoreTitle() => AppStoreConstants.RatingRequest;
 
@@ -95,6 +91,22 @@ namespace GitTrends
         public Task TriggerPullToRefresh() => _mainThread.InvokeOnMainThreadAsync(() => GetVisibleRefreshView().IsRefreshing = true);
 
         public IReadOnlyList<T> GetVisibleCollection<T>() => GetVisibleCollection().Cast<T>().ToList();
+
+        public IReadOnlyList<NuGetPackageModel> GetVisibleLibraries()
+        {
+            var aboutPage = (AboutPage)GetVisibleContentPage();
+            var aboutViewModel = (AboutViewModel)aboutPage.BindingContext;
+
+            return aboutViewModel.InstalledLibraries;
+        }
+
+        public IReadOnlyList<Contributor> GetVisibleContributors()
+        {
+            var aboutPage = (AboutPage)GetVisibleContentPage();
+            var aboutViewModel = (AboutViewModel)aboutPage.BindingContext;
+
+            return aboutViewModel.GitTrendsContributors;
+        }
 
         public async Task PopPage()
         {
@@ -118,22 +130,24 @@ namespace GitTrends
 
         public TrendsChartOption GetCurrentTrendsChartOption() => _trendsChartSettingsService.CurrentTrendsChartOption;
 
-        public bool IsTrendsSeriesVisible(string seriesTitle)
-        {
-            var trendsPageLayout = (Layout<View>)GetVisibleContentPage().Content;
+        public bool IsViewsClonesChartSeriesVisible(string seriesTitle) => IsChartSeriesVisible<ViewsClonesTrendsPage>(seriesTitle);
 
-            var trendsFrame = trendsPageLayout.Children.OfType<TrendsChart>().First();
-            var trendsChart = (SfChart)trendsFrame.Content;
-
-            return trendsChart.Series.First(x => x.Label.Equals(seriesTitle)).IsVisible;
-        }
+        public bool IsStarsChartSeriesVisible(string seriesTitle) => IsChartSeriesVisible<StarsTrendsPage>(seriesTitle);
 
         public int GetCurrentOnboardingPageNumber()
         {
-            var onboardingCarouselPage = (OnboardingCarouselPage)Application.Current.MainPage.Navigation.ModalStack.Last();
+            var onboardingCarouselPage = (OnboardingCarouselPage)GetVisiblePage();
             var currentPage = onboardingCarouselPage.CurrentPage;
 
             return onboardingCarouselPage.Children.IndexOf(currentPage);
+        }
+
+        public int GetCurrentTrendsPageNumber()
+        {
+            var trendsCarouselPage = (TrendsCarouselPage)GetVisiblePage();
+            var currentPage = trendsCarouselPage.CurrentPage;
+
+            return trendsCarouselPage.Children.IndexOf(currentPage);
         }
 
         public Task<bool> AreNotificationsEnabled() => _notificationService.AreNotificationsEnabled();
@@ -150,14 +164,29 @@ namespace GitTrends
                 throw new Exception($"{visibleContentPage.GetType()} Does Not Contain a RefreshView");
         }
 
-        ContentPage GetVisibleContentPage() => (ContentPage)(GetVisiblePageFromModalStack() ?? GetVisiblePageFromNavigationStack());
+        bool IsChartSeriesVisible<T>(string seriesTitle) where T : BaseTrendsContentPage
+        {
+            var trendsCarouselPage = (TrendsCarouselPage)GetVisiblePage();
+            var starsTrendsPage = trendsCarouselPage.Children.OfType<T>().First();
+
+            var viewsClonesTrendsPageLayout = (Layout<View>)starsTrendsPage.Content;
+
+            var trendsFrame = viewsClonesTrendsPageLayout.Children.OfType<ViewsClonesChart>().First();
+            var trendsChart = (SfChart)trendsFrame.Content;
+
+            return trendsChart.Series.First(x => x.Label.Equals(seriesTitle)).IsVisible;
+        }
+
+        ContentPage GetVisibleContentPage() => (ContentPage)GetVisiblePage();
+
+        Page GetVisiblePage() => GetVisiblePageFromModalStack() ?? GetVisiblePageFromNavigationStack();
 
         Page? GetVisiblePageFromModalStack() => Application.Current.MainPage.Navigation.ModalStack.LastOrDefault();
 
         Page GetVisiblePageFromNavigationStack() => Application.Current.MainPage.Navigation.NavigationStack.Last();
 
-        void OnPopPageStarted() => _popPageStartedEventManager.HandleEvent(this, EventArgs.Empty, nameof(PopPageStarted));
-        void OnPopPageCompleted(Page page) => _popPageCompletedEventManager.HandleEvent(this, page, nameof(PopPageCompleted));
+        void OnPopPageStarted() => _popPageStartedEventManager.RaiseEvent(this, EventArgs.Empty, nameof(PopPageStarted));
+        void OnPopPageCompleted(Page page) => _popPageCompletedEventManager.RaiseEvent(this, page, nameof(PopPageCompleted));
     }
 }
 #endif

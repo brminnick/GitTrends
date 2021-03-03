@@ -1,4 +1,4 @@
-[![Xamarin](https://github.com/brminnick/GitTrends/workflows/Xamarin/badge.svg)](https://github.com/brminnick/GitTrends/actions?query=workflow%3AXamarin) [![Azure Functions](https://github.com/brminnick/GitTrends/workflows/Azure%20Functions/badge.svg)](https://github.com/brminnick/GitTrends/actions?query=workflow%3A%22Azure+Functions%22) [![Build status](https://build.appcenter.ms/v0.1/apps/c63bf4d1-5d86-4fc4-97dc-69f111beea2c/branches/master/badge)](https://appcenter.ms?WT.mc_id=gittrends-github-bramin) [![Build status](https://build.appcenter.ms/v0.1/apps/b7393f98-7966-4e0f-b7b9-4e8eafea5a27/branches/master/badge)](https://appcenter.ms?WT.mc_id=gittrends-github-bramin)
+[![Xamarin](https://github.com/brminnick/GitTrends/workflows/Xamarin/badge.svg)](https://github.com/brminnick/GitTrends/actions?query=workflow%3AXamarin) [![Azure Functions](https://github.com/brminnick/GitTrends/workflows/Azure%20Functions/badge.svg)](https://github.com/brminnick/GitTrends/actions?query=workflow%3A%22Azure+Functions%22) [![Build status](https://build.appcenter.ms/v0.1/apps/90353386-21d8-4a81-a1a3-7e5df4cbf8d3/branches/main/badge)](https://appcenter.ms) [![Build status](https://build.appcenter.ms/v0.1/apps/c1dc82e1-fffd-4236-8a17-45d992913793/branches/main/badge)](https://appcenter.ms)
 
 <div class="header" align="center">
   <h1 align="center">GitTrends: GitHub Insights</h1>
@@ -26,6 +26,10 @@
   </a>
 </p>
 
+<p align="center">
+<a href="https://www.buymeacoffee.com/bminnick" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-green.png" alt="Buy Me A Coffee" style="height: 35px !important;width: 150px !important;" ></a>
+</p>
+
 I created GitTrends because I love contributing to open source libraries, but I had trouble keeping track of which repos were receiving traffic and which ones were not. For example, I recently discovered that a repo I hadn't updated in +2 years was still getting 10-20 views per week. 
 
 With GitTrends, I can now stay on top of which repos are trending and ensure its code doesn't go stale!
@@ -46,10 +50,11 @@ Monitor the traffic to your GitHub Repos!<br/>
 ## Resources
 
 Mobile App
-- [Xamarin](https://docs.microsoft.com/xamarin/?WT.mc_id=gittrends-github-bramin) - build native apps for Android, iOS, and macOS using .NET code and platform-specific user interfaces
-- [Xamarin.Essentials](https://docs.microsoft.com/xamarin/essentials/?WT.mc_id=gittrends-github-bramin) - provides cross-platform APIs for their mobile applications
-- [Xamarin.Forms](https://docs.microsoft.com/xamarin/get-started/what-is-xamarin-forms?WT.mc_id=gittrends-github-bramin) - an open-source UI framework to build Android, iOS, and Windows applications from a single shared codebase
-- [AppCenter](https://docs.microsoft.com/appcenter/?WT.mc_id=gittrends-github-bramin) - continuously build, test, release, and monitor mobile apps
+- [GitHubApiStatus](https://github.com/brminnick/GitHubApiStatus) - A .NET library that makes it easy to understand GitHub's API Rate Limit
+- [Xamarin](https://docs.microsoft.com/xamarin/?WT.mc_id=mobile-0000-bramin) - build native apps for Android, iOS, and macOS using .NET code and platform-specific user interfaces
+- [Xamarin.Essentials](https://docs.microsoft.com/xamarin/essentials/?WT.mc_id=mobile-0000-bramin) - provides cross-platform APIs for their mobile applications
+- [Xamarin.Forms](https://docs.microsoft.com/xamarin/get-started/what-is-xamarin-forms?WT.mc_id=mobile-0000-bramin) - an open-source UI framework to build Android, iOS, and Windows applications from a single shared codebase
+- [AppCenter](https://docs.microsoft.com/appcenter/?WT.mc_id=mobile-0000-bramin) - continuously build, test, release, and monitor mobile apps
 - [AsyncAwaitBestPractices](https://github.com/brminnick/AsyncAwaitBestPractices) - Extensions for System.Threading.Tasks.Task
 - [Autofac](https://github.com/autofac/Autofac) - an IoC container for .NET
 - [Debug Rainbows](https://github.com/sthewissen/Xamarin.Forms.DebugRainbows) - Xamarin.Forms UI layout tool
@@ -60,13 +65,15 @@ Mobile App
 - [Syncfusion](https://syncfusion.com) - a UI Component Suite for Building Powerful Web, Desktop, and Mobile Apps
 - [Sharpnado.MaterialFrame](https://github.com/roubachof/Sharpnado.MaterialFrame) - A modern Xamarin.Forms Frame component supporting blur, acrylic, dark mode. Implemented with RealtimeBlurView on Android (custom blurview) and UIVisualEffectView on iOS.
 - [PancakeView](https://github.com/sthewissen/Xamarin.Forms.PancakeView) - An extended ContentView for Xamarin.Forms with rounded corners, borders, shadows and more!
+- [Undraw.co](https://undraw.co/) - Open-source illustrations for any idea you can imagine and create
+- [Empty States](https://emptystat.es/tags/mobile) - A curated gallery showcasing designs where no data is available in the UI
 
 Cloud Backend
-- [.NET Core](https://docs.microsoft.com/dotnet/core/?WT.mc_id=gittrends-github-bramin) - an [open-source](https://github.com/dotnet/core), general-purpose development platform maintained by Microsoft and the .NET community on [GitHub](https://github.com/dotnet/core)
-- [Azure Functions](https://docs.microsoft.com/azure/azure-functions/?WT.mc_id=gittrends-github-bramin) - a serverless compute service that lets you run event-triggered code without having to explicitly provision or manage infrastructure
-- [Azure Functions Dependency Injection](https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection?WT.mc_id=gittrends-github-bramin) - Azure Functions supports the dependency injection (DI) software design pattern, which is a technique to achieve [Inversion of Control (IoC)](https://docs.microsoft.com/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles?WT.mc_id=gittrends-github-bramin#dependency-inversion) between classes and their dependencies
-- [Polly + HttpClientFactory](https://docs.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/implement-http-call-retries-exponential-backoff-polly?WT.mc_id=gittrends-github-bramin) - the recommended approach for retries with exponential backoff is to take advantage of more advanced .NET libraries
-- [Refit + HttpClientFactory](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?WT.mc_id=gittrends-github-bramin#generated-clients) - `IHttpClientFactory` can be used in combination with third-party libraries such as Refit
+- [.NET Core](https://docs.microsoft.com/dotnet/core/?WT.mc_id=mobile-0000-bramin) - an [open-source](https://github.com/dotnet/core), general-purpose development platform maintained by Microsoft and the .NET community on [GitHub](https://github.com/dotnet/core)
+- [Azure Functions](https://docs.microsoft.com/azure/azure-functions/?WT.mc_id=mobile-0000-bramin) - a serverless compute service that lets you run event-triggered code without having to explicitly provision or manage infrastructure
+- [Azure Functions Dependency Injection](https://docs.microsoft.com/azure/azure-functions/functions-dotnet-dependency-injection?WT.mc_id=mobile-0000-bramin) - Azure Functions supports the dependency injection (DI) software design pattern, which is a technique to achieve [Inversion of Control (IoC)](https://docs.microsoft.com/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles?WT.mc_id=mobile-0000-bramin#dependency-inversion) between classes and their dependencies
+- [Polly + HttpClientFactory](https://docs.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/implement-http-call-retries-exponential-backoff-polly?WT.mc_id=mobile-0000-bramin) - the recommended approach for retries with exponential backoff is to take advantage of more advanced .NET libraries
+- [Refit + HttpClientFactory](https://docs.microsoft.com/aspnet/core/fundamentals/http-requests?WT.mc_id=mobile-0000-bramin#generated-clients) - `IHttpClientFactory` can be used in combination with third-party libraries such as Refit
 
 ## Author
 

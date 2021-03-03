@@ -25,10 +25,10 @@ namespace GitTrends.UnitTests
             bool didSetNotificationsPreferenceCompletedFire = false;
             var setNotificationsPreferenceCompletedTCS = new TaskCompletionSource<AccessState?>();
 
-            var settingsViewModel = ServiceCollection.ServiceProvider.GetService<SettingsViewModel>();
-            settingsViewModel.SetNotificationsPreferenceCompleted += HandleSetNotificationsPreferenceCompleted;
+            var settingsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SettingsViewModel>();
+            SettingsViewModel.SetNotificationsPreferenceCompleted += HandleSetNotificationsPreferenceCompleted;
 
-            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
+            var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
 
             //Act
             shouldSendNotifications_Initial = notificationService.ShouldSendNotifications;
@@ -59,7 +59,7 @@ namespace GitTrends.UnitTests
 
             void HandleSetNotificationsPreferenceCompleted(object? sender, AccessState? e)
             {
-                settingsViewModel.SetNotificationsPreferenceCompleted -= HandleSetNotificationsPreferenceCompleted;
+                SettingsViewModel.SetNotificationsPreferenceCompleted -= HandleSetNotificationsPreferenceCompleted;
 
                 didSetNotificationsPreferenceCompletedFire = true;
                 setNotificationsPreferenceCompletedTCS.SetResult(e);
@@ -73,8 +73,8 @@ namespace GitTrends.UnitTests
             int preferredChartsIndex_Initial, preferredChartsIndex_AfterJustUniques, preferredChartsIndex_AfterNoUniques, preferredChartsIndex_AfterAll;
             TrendsChartOption currentTrendsChartOption_Initial, currentTrendsChartOption_AfterJustUniques, currentTrendsChartOption_AfterNoUniques, currentTrendsChartOption_AfterAll;
 
-            var settingsViewModel = ServiceCollection.ServiceProvider.GetService<SettingsViewModel>();
-            var trendsChartSettingsService = ServiceCollection.ServiceProvider.GetService<TrendsChartSettingsService>();
+            var settingsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SettingsViewModel>();
+            var trendsChartSettingsService = ServiceCollection.ServiceProvider.GetRequiredService<TrendsChartSettingsService>();
 
             //Act
             currentTrendsChartOption_Initial = trendsChartSettingsService.CurrentTrendsChartOption;
@@ -120,8 +120,8 @@ namespace GitTrends.UnitTests
             string gitHubAliasLabelText_Initial, gitHubAliasLabelText_Final;
             string gitHubAvatarImageSource_Initial, gitHubAvatarImageSource_Final;
 
-            var settingsViewModel = ServiceCollection.ServiceProvider.GetService<SettingsViewModel>();
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
+            var settingsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SettingsViewModel>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
             //Act
             loginLabelText_Initial = settingsViewModel.LoginLabelText;
@@ -172,10 +172,9 @@ namespace GitTrends.UnitTests
             bool didOpenAsyncFire = false;
             var openAsyncExecutedTCS = new TaskCompletionSource<Uri>();
 
-            var mockBrowser = (MockBrowser)ServiceCollection.ServiceProvider.GetService<IBrowser>();
-            mockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
+            MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
-            var settingsViewModel = ServiceCollection.ServiceProvider.GetService<SettingsViewModel>();
+            var settingsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SettingsViewModel>();
 
             //Act
             isAuthenticating_BeforeCommand = settingsViewModel.IsAuthenticating;
@@ -215,7 +214,7 @@ namespace GitTrends.UnitTests
 
             void HandleOpenAsyncExecuted(object? sender, Uri e)
             {
-                mockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
+                MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
                 didOpenAsyncFire = true;
 
                 openAsyncExecutedTCS.SetResult(e);
@@ -229,7 +228,7 @@ namespace GitTrends.UnitTests
             int themePickerIndex_Initial, themePickerIndex_AfterDarkTheme, themePickerIndex_AfterLightTheme, themePickerIndex_AfterDefaultTheme;
             IReadOnlyList<string> themePickerItemSource_Initial, themePickerItemSource_Final;
 
-            var settingsViewModel = ServiceCollection.ServiceProvider.GetService<SettingsViewModel>();
+            var settingsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SettingsViewModel>();
 
             //Act
             themePickerItemSource_Initial = settingsViewModel.ThemePickerItemsSource;
@@ -262,10 +261,9 @@ namespace GitTrends.UnitTests
             bool didOpenAsyncFire = false;
             var openAsyncTCS = new TaskCompletionSource<object?>();
 
-            var settingsViewModel = ServiceCollection.ServiceProvider.GetService<SettingsViewModel>();
+            var settingsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SettingsViewModel>();
 
-            var launcher = (MockLauncher)ServiceCollection.ServiceProvider.GetService<ILauncher>();
-            launcher.OpenAsyncExecuted += HandleOpenAsyncExecuted;
+            MockLauncher.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
             //Act
             settingsViewModel.CopyrightLabelTappedCommand.Execute(null);
@@ -276,7 +274,7 @@ namespace GitTrends.UnitTests
 
             void HandleOpenAsyncExecuted(object? sender, EventArgs e)
             {
-                launcher.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
+                MockLauncher.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
 
                 didOpenAsyncFire = true;
                 openAsyncTCS.SetResult(null);

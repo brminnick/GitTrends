@@ -1,16 +1,15 @@
 ﻿using System;
-using Newtonsoft.Json;
 
 namespace GitTrends.Shared
 {
-    public class ReferringSiteModel : BaseTotalCountModel
-    {
+    public record ReferringSiteModel : BaseTotalCountModel, IReferringSiteModel
+    { 
         public ReferringSiteModel(in long count, in long uniques, in string referrer, in DateTimeOffset? downloadedAt = null) : base(count, uniques)
         {
             DownloadedAt = downloadedAt ?? DateTimeOffset.UtcNow;
 
             Referrer = referrer;
-            Uri.TryCreate("https://" + referrer, UriKind.Absolute, out var referringUri);
+            Uri.TryCreate("https://" + referrer, UriKind.Absolute, out Uri? referringUri);
 
             if (referringUri is null)
             {
@@ -30,14 +29,8 @@ namespace GitTrends.Shared
         }
 
         public DateTimeOffset DownloadedAt { get; }
-
-        [JsonProperty("referrer")]
         public string Referrer { get; }
-
-        [JsonProperty("isReferrerUriValid")]
         public bool IsReferrerUriValid { get; }
-
-        [JsonProperty("referrerUri")]
         public Uri? ReferrerUri { get; }
     }
 }

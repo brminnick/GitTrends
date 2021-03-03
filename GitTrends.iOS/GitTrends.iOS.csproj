@@ -18,6 +18,7 @@
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,7 +33,6 @@
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
     <CodesignKey>iPhone Developer</CodesignKey>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
     <MtouchFastDev>true</MtouchFastDev>
     <MtouchProfiling>true</MtouchProfiling>
@@ -47,7 +47,6 @@
     <MtouchArch>x86_64</MtouchArch>
     <ConsolePause>false</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchUseLlvm>true</MtouchUseLlvm>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
@@ -62,10 +61,10 @@
     <MtouchArch>ARM64</MtouchArch>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchFastDev>true</MtouchFastDev>
     <MtouchProfiling>true</MtouchProfiling>
     <CodesignProvision>GitTrends Development Profile</CodesignProvision>
+    <MtouchLink>SdkOnly</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -76,27 +75,23 @@
     <MtouchArch>ARM64</MtouchArch>
     <ConsolePause>false</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchLink>SdkOnly</MtouchLink>
-    <MtouchExtraArgs>--optimize=experimental-xforms-product-type</MtouchExtraArgs>
     <CodesignProvision>GitTrends Development Profile</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\AppStore</OutputPath>
-    <DefineConstants>AppStore</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodesignKey>iPhone Distribution</CodesignKey>
-    <MtouchVerbosity>
-    </MtouchVerbosity>
-    <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
-    <MtouchLink>SdkOnly</MtouchLink>
-    <LangVersion>Default</LangVersion>
-    <CodesignProvision>Git Trends App Store</CodesignProvision>
-    <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchArch>ARM64</MtouchArch>
-    <MtouchExtraArgs>--optimize=experimental-xforms-product-type</MtouchExtraArgs>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <MtouchUseLlvm>true</MtouchUseLlvm>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <CodesignProvision>GitTrends App Store</CodesignProvision>
+    <DefineConstants>AppStore</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -106,12 +101,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ViewControllerServices.cs" />
     <Compile Include="CustomRenderers\SearchPageRenderer.cs" />
-    <Compile Include="Services\NotificationService_iOS.cs" />
-    <Compile Include="Services\SKStoreReviewController.cs" />
+    <Compile Include="Services\DeviceNotificationsService_iOS.cs" />
     <Compile Include="CustomRenderers\PickerCustomRenderer.cs" />
     <Compile Include="AppDelegate.BackdoorMethods.cs" />
     <Compile Include="CustomRenderers\VideoPlayerViewCustomRenderer.cs" />
     <Compile Include="CustomRenderers\NavigationPageCustomRenderer.cs" />
+    <Compile Include="Effects\LabelShadowEffect.cs" />
+    <Compile Include="CustomRenderers\CarouselPageCustomRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -388,29 +384,53 @@
     <ImageAsset Include="Assets.xcassets\EmptyRepositoriesList.imageset\Contents.json">
       <Visible>False</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%403x.png">
+    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\Contents.json">
+      <Visible>False</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyTrafficChart.imageset\Contents.json">
+      <Visible>False</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyTrafficChart.imageset\EmptyTrafficChart.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%402x.png">
+    <ImageAsset Include="Assets.xcassets\EmptyTrafficChart.imageset\EmptyTrafficChart%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyTrafficChart.imageset\EmptyTrafficChart%403x.png">
       <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\Contents.json">
-      <Visible>False</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\EmptyInsightsChart%403x.png">
+    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%402x.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\EmptyInsightsChart%402x.png">
+    <ImageAsset Include="Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%403x.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\EmptyInsightsChart.png">
+    <ImageAsset Include="Assets.xcassets\EmptyStarChart.imageset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\EmptyInsightsChart.imageset\Contents.json">
-      <Visible>False</Visible>
+    <ImageAsset Include="Assets.xcassets\EmptyStarChart.imageset\EmptyStarChart.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyStarChart.imageset\EmptyStarChart%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyStarChart.imageset\EmptyStarChart%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart%403x.png">
+      <Visible>false</Visible>
     </ImageAsset>
   </ItemGroup>
   <ItemGroup>
@@ -423,23 +443,24 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="4.7.0.1080" />
-    <PackageReference Include="Refit" Version="5.1.67" />
-    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.1" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
+    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="5.0.2" />
     <PackageReference Include="Polly" Version="7.2.1" />
-    <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.1.0.42" />
+    <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.3.0.35" />
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
-    <PackageReference Include="Autofac" Version="5.2.0" />
-    <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="18.1.0.42" />
-    <PackageReference Include="Xamarin.TestCloud.Agent" Version="0.21.9" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.2.2" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.2.2" />
+    <PackageReference Include="Autofac" Version="6.1.0" />
+    <PackageReference Include="Xamarin.TestCloud.Agent" Version="0.22.2" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.1.0" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.1.0" />
     <PackageReference Include="Shiny.Notifications" Version="1.2.0.1755" />
-    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="3.3.0" />
-    <PackageReference Include="Xamarin.Forms.PancakeView" Version="1.4.2" />
-    <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.5.3.2" />
-    <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
+    <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
+    <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1" />
+    <PackageReference Include="Plugin.StoreReview" Version="3.1.0-beta" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.2" />
+    <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.4" />
+    <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.24" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -454,6 +475,12 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Effects\" />
+    <Folder Include="Assets.xcassets\EmptyTrafficChart.imageset\" />
+    <Folder Include="Assets.xcassets\EmptyStarChart.imageset\" />
+    <Folder Include="Assets.xcassets\EmptyOneStarChart.imageset\" />
+  </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
       <UserProperties XamarinHotReloadWrongLinkerErrorInfoBarGitTrendsiOSHideInfoBar="True" />

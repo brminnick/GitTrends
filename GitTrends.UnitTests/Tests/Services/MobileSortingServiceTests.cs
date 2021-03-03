@@ -18,7 +18,7 @@ namespace GitTrends.UnitTests
             const string lastReferer = "t.co";
 
             //Arrange
-            var referringSitesList = new List<MobileReferringSiteModel>
+            IReadOnlyList<MobileReferringSiteModel> referringSitesList = new[]
             {
                 new MobileReferringSiteModel(new ReferringSiteModel(10, 10, "Google")),
                 new MobileReferringSiteModel(new ReferringSiteModel(10, 10, "codetraver.io")),
@@ -37,7 +37,6 @@ namespace GitTrends.UnitTests
             Assert.IsTrue(sortedReferringSitesList.Last().Referrer is lastReferer);
         }
 
-        [TestCase(MobileSortingService.DefaultSortingOption, true)]
         [TestCase(SortingOption.Clones, true)]
         [TestCase(SortingOption.Forks, true)]
         [TestCase(SortingOption.Issues, true)]
@@ -45,7 +44,6 @@ namespace GitTrends.UnitTests
         [TestCase(SortingOption.UniqueClones, true)]
         [TestCase(SortingOption.UniqueViews, true)]
         [TestCase(SortingOption.Views, true)]
-        [TestCase(MobileSortingService.DefaultSortingOption, false)]
         [TestCase(SortingOption.Clones, false)]
         [TestCase(SortingOption.Forks, false)]
         [TestCase(SortingOption.Issues, false)]
@@ -55,6 +53,9 @@ namespace GitTrends.UnitTests
         [TestCase(SortingOption.Views, false)]
         public void SortRepositoriesTests(SortingOption sortingOption, bool isReversed)
         {
+            //Assert
+            Assert.AreEqual(SortingOption.Views, MobileSortingService.DefaultSortingOption);
+
             //Arrange
             Repository topRepository, bottomRepository;
 
@@ -124,7 +125,7 @@ namespace GitTrends.UnitTests
         {
             //Arrange
             bool isReversed_Initial, isReversed_AfterTrue, isReversed_AfterFalse;
-            var sortingService = ServiceCollection.ServiceProvider.GetService<MobileSortingService>();
+            var sortingService = ServiceCollection.ServiceProvider.GetRequiredService<MobileSortingService>();
 
             //Act
             isReversed_Initial = sortingService.IsReversed;
@@ -184,7 +185,7 @@ namespace GitTrends.UnitTests
             //Arrange
             SortingOption currentOption_Initial, currentOption_Final;
 
-            var sortingService = ServiceCollection.ServiceProvider.GetService<MobileSortingService>();
+            var sortingService = ServiceCollection.ServiceProvider.GetRequiredService<MobileSortingService>();
 
             //Act
             currentOption_Initial = sortingService.CurrentOption;
@@ -202,7 +203,7 @@ namespace GitTrends.UnitTests
             //Arrange
             SortingOption currentOption_Initial, currentOption_PlusOne, currentOption_NegativeOne;
 
-            var sortingService = ServiceCollection.ServiceProvider.GetService<MobileSortingService>();
+            var sortingService = ServiceCollection.ServiceProvider.GetRequiredService<MobileSortingService>();
 
             //Act
             currentOption_Initial = sortingService.CurrentOption;

@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using GitHubApiStatus.Extensions;
 using GitTrends.Functions;
 using GitTrends.Shared;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 using Polly;
 using Refit;
 
@@ -13,22 +17,50 @@ namespace GitTrends.Functions
 {
     public class Startup : FunctionsStartup
     {
+        readonly static string _token = Environment.GetEnvironmentVariable("UITestToken_brminnick") ?? string.Empty;
+        readonly static string _storageConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage") ?? string.Empty;
+
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.Services.AddRefitClient<IGitHubAuthApi>()
-              .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubBaseUrl))
-              .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip })
-              .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
+            builder.Services.AddHttpClient();
 
-            builder.Services.AddRefitClient<IGitHubApiV3>()
-              .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubRestApiUrl))
-              .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip })
-              .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
+            builder.Services.AddRefitClient<IGitHubAuthApi>(RefitExtensions.GetNewtonsoftJsonRefitSettings())
+                .ConfigureHttpClient(client =>
+                {
+                    client.BaseAddress = new Uri(GitHubConstants.GitHubBaseUrl);
+                    client.DefaultRequestHeaders.Authorization = getGitHubAuthenticationHeaderValue();
+                })
+                .ConfigurePrimaryHttpMessageHandler(_ => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
+                .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
 
+            builder.Services.AddRefitClient<IGitHubApiV3>(RefitExtensions.GetNewtonsoftJsonRefitSettings())
+                .ConfigureHttpClient(client =>
+                {
+                    client.BaseAddress = new Uri(GitHubConstants.GitHubRestApiUrl);
+                    client.DefaultRequestHeaders.Authorization = getGitHubAuthenticationHeaderValue();
+                })
+                .ConfigurePrimaryHttpMessageHandler(_ => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
+                .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
+
+            builder.Services.AddRefitClient<IGitHubGraphQLApi>(RefitExtensions.GetNewtonsoftJsonRefitSettings())
+                .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubGraphQLApi))
+                .ConfigurePrimaryHttpMessageHandler(_ => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
+                .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
+
+            builder.Services.AddGitHubApiStatusService(getGitHubAuthenticationHeaderValue(), new ProductHeaderValue(nameof(GitTrends)))
+                .ConfigurePrimaryHttpMessageHandler(_ => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
+                .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
+
+            builder.Services.AddSingleton<NuGetService>();
             builder.Services.AddSingleton<GitHubAuthService>();
             builder.Services.AddSingleton<GitHubApiV3Service>();
+            builder.Services.AddSingleton<BlobStorageService>();
+            builder.Services.AddSingleton<GitHubGraphQLApiService>();
+            builder.Services.AddSingleton<CloudBlobClient>(CloudStorageAccount.Parse(_storageConnectionString).CreateCloudBlobClient());
 
             static TimeSpan sleepDurationProvider(int attemptNumber) => TimeSpan.FromSeconds(Math.Pow(2, attemptNumber));
+            static DecompressionMethods getDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip;
+            static AuthenticationHeaderValue getGitHubAuthenticationHeaderValue() => new("bearer", _token);
         }
     }
 }

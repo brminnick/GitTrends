@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Http;
+using GitHubApiStatus;
 using GitTrends.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,39 +18,61 @@ namespace GitTrends.Functions
 {
     class GetTestToken
     {
-        readonly static string _uiTestToken_brminnick = Environment.GetEnvironmentVariable("UITestToken_brminnick") ?? string.Empty;
-        readonly static string _uiTestToken_GitTrends = Environment.GetEnvironmentVariable("UITestToken_GitTrends") ?? string.Empty;
+        readonly static IReadOnlyList<string> _testTokenList = new[]
+        {
+            Environment.GetEnvironmentVariable("UITestToken_brminnick") ?? string.Empty,
+            Environment.GetEnvironmentVariable("UITestToken_GitTrends") ?? string.Empty,
+            Environment.GetEnvironmentVariable("UITestToken_GitTrendsApp") ?? string.Empty,
+            Environment.GetEnvironmentVariable("UITestToken_TheCodeTraveler") ?? string.Empty
+        };
 
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly IGitHubApiStatusService _gitHubApiStatusService;
+        readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
 
-        public GetTestToken(GitHubApiV3Service gitHubApiV3Service) => _gitHubApiV3Service = gitHubApiV3Service;
+        public GetTestToken(GitHubApiV3Service gitHubApiV3Service, IGitHubApiStatusService gitHubApiStatusService, GitHubGraphQLApiService gitHubGraphQLApiService)
+        {
+            _gitHubApiV3Service = gitHubApiV3Service;
+            _gitHubApiStatusService = gitHubApiStatusService;
+            _gitHubGraphQLApiService = gitHubGraphQLApiService;
+        }
 
         [FunctionName(nameof(GetTestToken))]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request, ILogger log)
         {
-            GitHubToken gitHubToken;
-
-            var timeout = TimeSpan.FromSeconds(1);
-            var cancellationTokenSource = new CancellationTokenSource(timeout);
-
-            var gitHubApiResponse_brminnick = await _gitHubApiV3Service.GetGitHubApiResponse(_uiTestToken_brminnick, cancellationTokenSource.Token).ConfigureAwait(false);
-            var brminnickApiRequestsRemaining = GitHubApiService.GetNumberOfApiRequestsRemaining(gitHubApiResponse_brminnick.Headers);
-
-            if (brminnickApiRequestsRemaining > 1000)
+            foreach (var testToken in _testTokenList)
             {
-                gitHubToken = new GitHubToken(_uiTestToken_brminnick, string.Empty, "Bearer");
-            }
-            else
-            {
-                gitHubToken = new GitHubToken(_uiTestToken_GitTrends, string.Empty, "Bearer");
-            }
+                var timeout = TimeSpan.FromSeconds(2);
+                var cancellationTokenSource = new CancellationTokenSource(timeout);
 
-            return new ContentResult
-            {
-                Content = JsonConvert.SerializeObject(gitHubToken),
-                StatusCode = (int)HttpStatusCode.OK,
-                ContentType = "application/json"
+                try
+                {
+                    _gitHubApiStatusService.SetAuthenticationHeaderValue(new AuthenticationHeaderValue("bearer", testToken));
+                    var gitHubApiRateLimits = await _gitHubApiStatusService.GetApiRateLimits(cancellationTokenSource.Token).ConfigureAwait(false);
+
+                    if (gitHubApiRateLimits.RestApi.RemainingRequestCount > 1000
+                        && gitHubApiRateLimits.GraphQLApi.RemainingRequestCount > 1000)
+                    {
+                        var gitHubToken = new GitHubToken(testToken, GitHubConstants.OAuthScope, "Bearer");
+
+                        return new ContentResult
+                        {
+                            Content = JsonConvert.SerializeObject(gitHubToken),
+                            StatusCode = (int)HttpStatusCode.OK,
+                            ContentType = "application/json"
+                        };
+                    }
+                }
+                catch(Exception e)
+                {
+                    return new ObjectResult(e.ToString())
+                    {
+                        StatusCode = (int)HttpStatusCode.InternalServerError
+                    };
+                }
             };
+
+            return new NotFoundObjectResult("No Valid GitHub Token Found");
         }
     }
 }

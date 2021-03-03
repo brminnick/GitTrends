@@ -8,12 +8,13 @@ namespace GitTrends.UnitTests
 {
     public class MockNotificationManager : INotificationManager
     {
-        readonly Dictionary<int, Notification> _pendingNotificationsDitcionary = new Dictionary<int, Notification>();
-        readonly INotificationService _notificationService;
+        readonly Dictionary<int, Notification> _pendingNotificationsDitcionary = new();
+        readonly IDeviceNotificationsService _deviceNotificationsService;
 
         int _badge;
 
-        public MockNotificationManager(INotificationService notificationService) => _notificationService = notificationService;
+        public MockNotificationManager(IDeviceNotificationsService deviceNotificationsService) =>
+            _deviceNotificationsService = deviceNotificationsService;
 
         public int Badge
         {
@@ -21,7 +22,7 @@ namespace GitTrends.UnitTests
             set
             {
                 _badge = value;
-                _notificationService.SetiOSBadgeCount(value);
+                _deviceNotificationsService.SetiOSBadgeCount(value);
             }
         }
 
@@ -46,7 +47,7 @@ namespace GitTrends.UnitTests
 
         public Task<AccessState> RequestAccess()
         {
-            _notificationService.Initialize();
+            _deviceNotificationsService.Initialize();
             return Task.FromResult(AccessState.Available);
         }
 

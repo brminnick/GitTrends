@@ -50,21 +50,23 @@ namespace GitTrends.Droid
             if (Control is null)
                 SetNativeControl(_playerView);
 
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var mediaElementService = scope.Resolve<MediaElementService>();
+            var mediaElementService = ContainerService.Container.Resolve<MediaElementService>();
 
-            if (mediaElementService.OnboardingChart?.ManifestUrl != null)
-                Play(mediaElementService.OnboardingChart.ManifestUrl);
+            if (mediaElementService.OnboardingChart?.ManifestUrl != null
+                && Uri.Parse(mediaElementService.OnboardingChart.ManifestUrl) is Uri uri)
+            {
+                Play(uri);
+            }
         }
 
-        void Play(string url)
+        void Play(in Uri uri)
         {
             var httpDataSourceFactory = new DefaultHttpDataSourceFactory(nameof(GitTrends));
             var ssChunkFactory = new DefaultSsChunkSource.Factory(httpDataSourceFactory);
 
             var ssMediaSourceFactory = new SsMediaSource.Factory(ssChunkFactory, httpDataSourceFactory);
 
-            _player.Prepare(ssMediaSourceFactory.CreateMediaSource(Uri.Parse(url)));
+            _player.Prepare(ssMediaSourceFactory.CreateMediaSource(uri));
         }
     }
 }

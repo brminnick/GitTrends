@@ -8,7 +8,11 @@ using Xamarin.Android.Net;
 
 namespace GitTrends.Droid
 {
-    [Application]
+#if AppStore
+    [Application(Debuggable = false)]
+#else
+    [Application(Debuggable = true)]
+#endif
     public partial class MainApplication : Application
     {
         public MainApplication(IntPtr handle, JniHandleOwnership transfer) : base(handle, transfer)

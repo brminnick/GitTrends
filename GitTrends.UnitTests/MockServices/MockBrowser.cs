@@ -8,9 +8,9 @@ namespace GitTrends.UnitTests
 {
     public class MockBrowser : IBrowser
     {
-        readonly WeakEventManager<Uri> _openAsyncExecutedEventHandler = new WeakEventManager<Uri>();
+        readonly static WeakEventManager<Uri> _openAsyncExecutedEventHandler = new();
 
-        public event EventHandler<Uri> OpenAsyncExecuted
+        public static event EventHandler<Uri> OpenAsyncExecuted
         {
             add => _openAsyncExecutedEventHandler.AddEventHandler(value);
             remove => _openAsyncExecutedEventHandler.RemoveEventHandler(value);
@@ -32,6 +32,6 @@ namespace GitTrends.UnitTests
             return Task.FromResult(true);
         }
 
-        void OnOpenAsyncExecuted(in Uri uri) => _openAsyncExecutedEventHandler.HandleEvent(this, uri, nameof(OpenAsyncExecuted));
+        void OnOpenAsyncExecuted(in Uri uri) => _openAsyncExecutedEventHandler.RaiseEvent(this, uri, nameof(OpenAsyncExecuted));
     }
 }

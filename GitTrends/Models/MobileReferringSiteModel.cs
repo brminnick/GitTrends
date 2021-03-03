@@ -1,18 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using AsyncAwaitBestPractices;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 
 namespace GitTrends
 {
-    public class MobileReferringSiteModel : ReferringSiteModel, INotifyPropertyChanged, IMobileReferringSiteModel
+    public record MobileReferringSiteModel : ReferringSiteModel, IMobileReferringSiteModel, INotifyPropertyChanged
     {
         public const int FavIconSize = 32;
 
-        readonly WeakEventManager _propertyChangedEventManager = new WeakEventManager();
+        readonly AsyncAwaitBestPractices.WeakEventManager _propertyChangedEventManager = new();
 
         ImageSource? _favIcon;
 
@@ -48,7 +47,7 @@ namespace GitTrends
 
             backingStore = value;
 
-            _propertyChangedEventManager.HandleEvent(this, new PropertyChangedEventArgs(propertyName), nameof(INotifyPropertyChanged.PropertyChanged));
+            _propertyChangedEventManager.RaiseEvent(this, new PropertyChangedEventArgs(propertyName), nameof(INotifyPropertyChanged.PropertyChanged));
         }
     }
 }

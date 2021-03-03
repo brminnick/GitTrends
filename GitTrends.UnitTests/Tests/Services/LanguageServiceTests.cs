@@ -20,7 +20,7 @@ namespace GitTrends.UnitTests
 
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 
-            var languageService = ServiceCollection.ServiceProvider.GetService<LanguageService>();
+            var languageService = ServiceCollection.ServiceProvider.GetRequiredService<LanguageService>();
 
             //Act
             try
@@ -67,7 +67,7 @@ namespace GitTrends.UnitTests
             availableLanguages.AddRange(CultureConstants.CulturePickerOptions.Keys.Reverse().ToList());
             availableLanguages.Insert(1, null);
 
-            var languageService = ServiceCollection.ServiceProvider.GetService<LanguageService>();
+            var languageService = ServiceCollection.ServiceProvider.GetRequiredService<LanguageService>();
 
             foreach (var language in availableLanguages)
             {
@@ -133,7 +133,7 @@ namespace GitTrends.UnitTests
 
             //Arrange
             var availableLanguages = CultureConstants.CulturePickerOptions.Keys.ToList();
-            var languageService = ServiceCollection.ServiceProvider.GetService<LanguageService>();
+            var languageService = ServiceCollection.ServiceProvider.GetRequiredService<LanguageService>();
 
             bool didPreferredLanguageChangeFire = false;
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;

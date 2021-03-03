@@ -19,9 +19,9 @@ namespace GitTrends
     {
         const string _getNotificationHubInformationKey = "GetNotificationHubInformation";
 
-        readonly WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new WeakEventManager<(bool isSuccessful, string errorMessage)>();
-        readonly WeakEventManager<NotificationHubInformation> _initializationCompletedEventManager = new WeakEventManager<NotificationHubInformation>();
-        readonly WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new WeakEventManager<SortingOption>();
+        readonly static WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new();
+        readonly static WeakEventManager<NotificationHubInformation> _initializationCompletedEventManager = new();
+        readonly static WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new();
 
         readonly IPreferences _preferences;
         readonly ISecureStorage _secureStorage;
@@ -29,19 +29,19 @@ namespace GitTrends
         readonly IAnalyticsService _analyticsService;
         readonly DeepLinkingService _deepLinkingService;
         readonly INotificationManager _notificationManager;
-        readonly INotificationService _notificationService;
+        readonly IDeviceNotificationsService _notificationService;
         readonly AzureFunctionsApiService _azureFunctionsApiService;
 
         TaskCompletionSource<AccessState>? _settingsResultCompletionSource;
 
-        public NotificationService(IAnalyticsService analyticsService,
-                                    DeepLinkingService deepLinkingService,
-                                    MobileSortingService sortingService,
-                                    AzureFunctionsApiService azureFunctionsApiService,
-                                    IPreferences preferences,
+        public NotificationService(IPreferences preferences,
                                     ISecureStorage secureStorage,
+                                    IAnalyticsService analyticsService,
+                                    MobileSortingService sortingService,
+                                    DeepLinkingService deepLinkingService,
                                     INotificationManager notificationManager,
-                                    INotificationService notificationService)
+                                    IDeviceNotificationsService notificationService,
+                                    AzureFunctionsApiService azureFunctionsApiService)
         {
             _preferences = preferences;
             _secureStorage = secureStorage;
@@ -52,23 +52,22 @@ namespace GitTrends
             _notificationService = notificationService;
             _azureFunctionsApiService = azureFunctionsApiService;
 
-            if (Application.Current is App app)
-                app.Resumed += HandleAppResumed;
+            App.Resumed += HandleAppResumed;
         }
 
-        public event EventHandler<NotificationHubInformation> InitializationCompleted
+        public static event EventHandler<NotificationHubInformation> InitializationCompleted
         {
             add => _initializationCompletedEventManager.AddEventHandler(value);
             remove => _initializationCompletedEventManager.RemoveEventHandler(value);
         }
 
-        public event EventHandler<SortingOption> SortingOptionRequested
+        public static event EventHandler<SortingOption> SortingOptionRequested
         {
             add => _sortingOptionRequestedEventManager.AddEventHandler(value);
             remove => _sortingOptionRequestedEventManager.RemoveEventHandler(value);
         }
 
-        public event EventHandler<(bool isSuccessful, string errorMessage)> RegisterForNotificationsCompleted
+        public static event EventHandler<(bool isSuccessful, string errorMessage)> RegisterForNotificationsCompleted
         {
             add => _registerForNotificationCompletedEventHandler.AddEventHandler(value);
             remove => _registerForNotificationCompletedEventHandler.RemoveEventHandler(value);
@@ -98,13 +97,16 @@ namespace GitTrends
             set => _preferences.Set(nameof(MostRecentTrendingRepositoryName), value);
         }
 
+        public static string CreateSingleRepositoryNotificationMessage(in string repositoryName, in string repositoryOwner) => string.Format(NotificationConstants.SingleRepositoryNotificationMessage, repositoryName, repositoryOwner);
+        public static string CreateMultipleRepositoryNotificationMessage(in int count) => string.Format(NotificationConstants.MultipleRepositoryNotificationMessage, count);
+
         public async Task<bool> AreNotificationsEnabled()
         {
             bool? areNotificationsEnabled = await _notificationService.AreNotificationEnabled().ConfigureAwait(false);
             return areNotificationsEnabled ?? false;
         }
 
-        public async Task Initialize(CancellationToken cancellationToken)
+        public async ValueTask Initialize(CancellationToken cancellationToken)
         {
             var notificationHubInformation = await GetNotificationHubInformation().ConfigureAwait(false);
 
@@ -265,8 +267,8 @@ namespace GitTrends
                 {
                     //Create repository with only Name & Owner, because those are the only metrics that TrendsPage needs to fetch the chart data
                     var repository = new Repository(MostRecentTrendingRepositoryName, string.Empty, 0,
-                                                    new RepositoryOwner(MostRecentTrendingRepositoryOwner, string.Empty),
-                                                    null, string.Empty, new StarGazers(0), false);
+                                                    MostRecentTrendingRepositoryOwner, string.Empty,
+                                                    0, 0, string.Empty, false, default);
 
                     await _deepLinkingService.NavigateToTrendsPage(repository).ConfigureAwait(false);
                 }
@@ -299,9 +301,6 @@ namespace GitTrends
                 throw new ArgumentOutOfRangeException(nameof(badgeCount), $"{badgeCount} must be greater than zero");
             }
         }
-
-        public static string CreateSingleRepositoryNotificationMessage(in string repositoryName, in string repositoryOwner) => string.Format(NotificationConstants.SingleRepositoryNotificationMessage, repositoryName, repositoryOwner);
-        public static string CreateMultipleRepositoryNotificationMessage(in int count) => string.Format(NotificationConstants.MultipleRepositoryNotificationMessage, count);
 
         async ValueTask SendTrendingNotification(IReadOnlyList<Repository> trendingRepositories, DateTimeOffset? notificationDateTime)
         {
@@ -360,11 +359,11 @@ namespace GitTrends
             }
         }
 
-        void OnInitializationCompleted(NotificationHubInformation notificationHubInformation) => _initializationCompletedEventManager.HandleEvent(this, notificationHubInformation, nameof(InitializationCompleted));
+        void OnInitializationCompleted(NotificationHubInformation notificationHubInformation) => _initializationCompletedEventManager.RaiseEvent(this, notificationHubInformation, nameof(InitializationCompleted));
 
-        void OnSortingOptionRequestion(SortingOption sortingOption) => _sortingOptionRequestedEventManager.HandleEvent(this, sortingOption, nameof(SortingOptionRequested));
+        void OnSortingOptionRequestion(SortingOption sortingOption) => _sortingOptionRequestedEventManager.RaiseEvent(this, sortingOption, nameof(SortingOptionRequested));
 
         void OnRegisterForNotificationsCompleted(bool isSuccessful, string errorMessage) =>
-            _registerForNotificationCompletedEventHandler.HandleEvent(this, (isSuccessful, errorMessage), nameof(RegisterForNotificationsCompleted));
+            _registerForNotificationCompletedEventHandler.RaiseEvent(this, (isSuccessful, errorMessage), nameof(RegisterForNotificationsCompleted));
     }
 }

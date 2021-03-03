@@ -36,14 +36,8 @@ namespace GitTrends.Droid
 
             Forms.Init(this, savedInstanceState);
 
-            using var scope = ContainerService.Container.BeginLifetimeScope();
-            var notificationService = scope.Resolve<INotificationService>();
-            var analyticsService = scope.Resolve<IAnalyticsService>();
-            var themeService = scope.Resolve<ThemeService>();
-            var splashScreenPage = scope.Resolve<SplashScreenPage>();
-            var languageService = scope.Resolve<LanguageService>();
-
-            LoadApplication(new App(analyticsService, notificationService, themeService, splashScreenPage, languageService));
+            var app = ContainerService.Container.Resolve<App>();
+            LoadApplication(app);
 
             TryHandleOpenedFromUri(Intent?.Data);
             TryHandleOpenedFromNotification(Intent);
@@ -63,17 +57,15 @@ namespace GitTrends.Droid
 
         static async Task AuthorizeGitHubSession(Android.Net.Uri callbackUri)
         {
-            using var containerScope = ContainerService.Container.BeginLifetimeScope();
-
             try
             {
-                var gitHubAuthenticationService = containerScope.Resolve<GitHubAuthenticationService>();
+                var gitHubAuthenticationService = ContainerService.Container.Resolve<GitHubAuthenticationService>();
 
                 await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString()), CancellationToken.None).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                containerScope.Resolve<IAnalyticsService>().Report(ex);
+                ContainerService.Container.Resolve<IAnalyticsService>().Report(ex);
             }
         }
 
@@ -85,10 +77,8 @@ namespace GitTrends.Droid
                 {
                     var notification = JsonConvert.DeserializeObject<Shiny.Notifications.Notification>(notificationString);
 
-                    using var scope = ContainerService.Container.BeginLifetimeScope();
-                    var analyticsService = scope.Resolve<IAnalyticsService>();
-
-                    var notificationService = scope.Resolve<NotificationService>();
+                    var analyticsService = ContainerService.Container.Resolve<IAnalyticsService>();
+                    var notificationService = ContainerService.Container.Resolve<NotificationService>();
 
                     if (notification.Title is string notificationTitle
                         && notification.Message is string notificationMessage

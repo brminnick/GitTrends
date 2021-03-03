@@ -4,9 +4,9 @@ using Newtonsoft.Json;
 
 namespace GitTrends.Shared
 {
-    public class User
+    public record User
     {
-        public User(RepositoryConnection repositories, string name, string company, DateTimeOffset createdAt, string login, Uri avatarUrl, GitHubFollowers? followers)
+        public User(RepositoryConnection repositories, string name, string company, DateTimeOffset createdAt, string login, Uri avatarUrl)
         {
             RepositoryConnection = repositories;
             Name = name;
@@ -14,7 +14,6 @@ namespace GitTrends.Shared
             AccountCreationDate = createdAt;
             Alias = login;
             AvatarUri = avatarUrl;
-            FollowerCount = followers?.Count ?? 0;
         }
 
         [JsonProperty("repositories")]
@@ -35,25 +34,14 @@ namespace GitTrends.Shared
         [JsonProperty("avatarUrl")]
         public Uri AvatarUri { get; }
 
-        public int FollowerCount { get; }
-
         public override string ToString()
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"{nameof(Name)}: {Name}");
             stringBuilder.AppendLine($"{nameof(Company)}: {Company}");
-            stringBuilder.AppendLine($"{nameof(FollowerCount)}: {FollowerCount}");
             stringBuilder.AppendLine($"{nameof(AccountCreationDate)}: {AccountCreationDate}");
 
             return stringBuilder.ToString();
         }
-    }
-
-    public class GitHubFollowers
-    {
-        public GitHubFollowers(int totalCount) => Count = totalCount;
-
-        [JsonProperty("totalCount")]
-        public int Count { get; }
     }
 }

@@ -6,12 +6,12 @@ namespace GitTrends
 {
     public class WelcomeViewModel : GitHubAuthenticationViewModel
     {
-        public WelcomeViewModel(GitHubAuthenticationService gitHubAuthenticationService,
-                                    DeepLinkingService deepLinkingService,
+        public WelcomeViewModel(IMainThread mainThread,
                                     IAnalyticsService analyticsService,
-                                    IMainThread mainThread,
-                                    GitHubUserService gitHubUserService)
-            : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread, gitHubUserService)
+                                    GitHubUserService gitHubUserService,
+                                    DeepLinkingService deepLinkingService,
+                                    GitHubAuthenticationService gitHubAuthenticationService)
+            : base(mainThread, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
         {
         }
 

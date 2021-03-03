@@ -55,14 +55,14 @@
 		<string>processing</string>
 	</array>
 	<key>CFBundleShortVersionString</key>
-	<string>1.2.0</string>
+	<string>2.1.0</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.minnick.GitTrends.NotifyTrendingRepositories</string>
 		<string>com.minnick.GitTrends.CleanUpDatabase</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>30</string>
+	<string>43</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
@@ -72,6 +72,10 @@
 		<string>es</string>
 		<string>fr</string>
 		<string>pt</string>
+		<string>bs</string>
+		<string>uk</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>GitTrends does not require your location</string>
 </dict>
 </plist>

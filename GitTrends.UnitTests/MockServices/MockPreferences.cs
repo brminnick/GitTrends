@@ -6,7 +6,7 @@ namespace GitTrends.UnitTests
 {
     public class MockPreferences : IPreferences
     {
-        readonly static Lazy<Hashtable> _hashtableHolder = new Lazy<Hashtable>();
+        readonly static Lazy<Hashtable> _hashtableHolder = new();
 
         Hashtable Hashtable => _hashtableHolder.Value;
 
@@ -18,7 +18,7 @@ namespace GitTrends.UnitTests
 
         public bool ContainsKey(string key, string sharedName) => throw new NotImplementedException();
 
-        public string Get(string key, string defaultValue) => Get<string>(key, defaultValue);
+        public string? Get(string key, string defaultValue) => Get<string?>(key, defaultValue);
 
         public bool Get(string key, bool defaultValue) => Get<bool>(key, defaultValue);
 
@@ -76,18 +76,15 @@ namespace GitTrends.UnitTests
 
         public void Set(string key, long value, string sharedName) => throw new NotImplementedException();
 
-
         public void Set(string key, DateTime value, string sharedName) => throw new NotImplementedException();
 
-#pragma warning disable CS8603 // Possible null reference return.
-        T Get<T>(string key, T defaultValue)
+        T? Get<T>(string key, T defaultValue)
         {
             if (Hashtable.ContainsKey(key))
-                return (T)Hashtable[key];
+                return (T?)Hashtable[key];
 
             return defaultValue;
         }
-#pragma warning restore CS8603 // Possible null reference return.
 
         void Set<T>(string key, T value)
         {

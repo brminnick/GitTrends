@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
@@ -16,9 +15,7 @@ namespace GitTrends.UnitTests
 {
     abstract class BaseTest
     {
-        protected const string AuthenticatedGitHubUserAvatarUrl = "https://avatars0.githubusercontent.com/u/13558917?u=f1392f8aefe2d52a87c4d371981cb7153199fa27&v=4";
-        protected const string GitTrendsRepoName = "GitTrends";
-        protected const string GitTrendsRepoOwner = "brminnick";
+        protected const string AuthenticatedGitHubUserAvatarUrl = "https://avatars.githubusercontent.com/u/13558917?u=f1392f8aefe2d52a87c4d371981cb7153199fa27&v=4";
 
         [TearDown]
         public virtual Task TearDown() => Task.CompletedTask;
@@ -26,38 +23,54 @@ namespace GitTrends.UnitTests
         [SetUp]
         public virtual async Task Setup()
         {
+            InitializeServiceCollection();
+
+            FFImageLoading.ImageService.EnableMockImageService = true;
+
             CultureInfo.DefaultThreadCurrentCulture = null;
             CultureInfo.DefaultThreadCurrentUICulture = null;
 
             Device.Info = new MockDeviceInfo();
             Device.PlatformServices = new MockPlatformServices();
 
-            var preferences = ServiceCollection.ServiceProvider.GetService<IPreferences>();
+            var preferences = ServiceCollection.ServiceProvider.GetRequiredService<IPreferences>();
             preferences.Clear();
 
-            var secureStorage = ServiceCollection.ServiceProvider.GetService<ISecureStorage>();
+            var secureStorage = ServiceCollection.ServiceProvider.GetRequiredService<ISecureStorage>();
             secureStorage.RemoveAll();
 
-            var referringSitesDatabase = ServiceCollection.ServiceProvider.GetService<ReferringSitesDatabase>();
+            var referringSitesDatabase = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesDatabase>();
             await referringSitesDatabase.DeleteAllData().ConfigureAwait(false);
 
-            var repositoryDatabase = ServiceCollection.ServiceProvider.GetService<RepositoryDatabase>();
+            var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
             await repositoryDatabase.DeleteAllData().ConfigureAwait(false);
 
-            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
             await gitHubAuthenticationService.LogOut().ConfigureAwait(false);
 
-            var notificationService = ServiceCollection.ServiceProvider.GetService<NotificationService>();
+            var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
             await notificationService.SetAppBadgeCount(0).ConfigureAwait(false);
             notificationService.UnRegister();
 
-            var mockNotificationService = (MockNotificationService)ServiceCollection.ServiceProvider.GetService<INotificationService>();
+            var mockNotificationService = (MockDeviceNotificationsService)ServiceCollection.ServiceProvider.GetRequiredService<IDeviceNotificationsService>();
             mockNotificationService.Reset();
+        }
+
+        protected virtual void InitializeServiceCollection()
+        {
+            var gitHubApiV3Client = RefitExtensions.For<IGitHubApiV3>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubRestApiUrl));
+            var gitHubGraphQLCLient = RefitExtensions.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
+            var azureFunctionsClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
+
+            ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
         }
 
         protected static async Task AuthenticateUser(GitHubUserService gitHubUserService, GitHubGraphQLApiService gitHubGraphQLApiService)
         {
             var token = await Mobile.Common.AzureFunctionsApiService.GetTestToken().ConfigureAwait(false);
+            if (token.IsEmpty() || string.IsNullOrWhiteSpace(token.AccessToken))
+                throw new Exception("Invalid Token");
+
             await gitHubUserService.SaveGitHubToken(token).ConfigureAwait(false);
 
             var (login, name, avatarUri) = await gitHubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false);
@@ -85,9 +98,9 @@ namespace GitTrends.UnitTests
             }
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-                                                        new RepositoryOwner(DemoUserConstants.Alias, gitTrendsAvatarUrl),
-                                                        new IssuesConnection(DemoDataConstants.GetRandomNumber(), Enumerable.Empty<Issue>()),
-                                                        gitTrendsAvatarUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false, downloadedAt, dailyViewsList, dailyClonesList);
+                                                        DemoUserConstants.Alias, gitTrendsAvatarUrl,
+                                                        DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
+                                                        gitTrendsAvatarUrl, false, downloadedAt, false, dailyViewsList, dailyClonesList, DemoDataConstants.GenerateStarredAtDates(DemoDataConstants.GetRandomNumber()));
         }
     }
 }

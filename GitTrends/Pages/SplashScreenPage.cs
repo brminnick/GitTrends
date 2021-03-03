@@ -6,69 +6,71 @@ using Autofac;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    public class SplashScreenPage : BaseContentPage<SplashScreenViewModel>
+    public class SplashScreenPage : BaseContentPage
     {
-        readonly IEnumerator<string> _statusMessageEnumerator;
-        readonly FirstRunService _firstRunService;
-        readonly Image _gitTrendsImage;
-        readonly Label _statusLabel;
-
-        CancellationTokenSource? _animationCancellationToken;
-
-        public SplashScreenPage(IAnalyticsService analyticsService,
-                                SplashScreenViewModel splashScreenViewModel,
-                                IMainThread mainThread,
-                                FirstRunService firstRunService)
-            : base(splashScreenViewModel, analyticsService, mainThread)
+        readonly IEnumerator<string> _statusMessageEnumerator = new List<string>
         {
-            //Remove BaseContentPageBackground
-            RemoveDynamicResource(BackgroundColorProperty);
+            SplashScreenPageConstants.Initializing,
+            SplashScreenPageConstants.ConnectingToServers,
+            SplashScreenPageConstants.Initializing,
+            SplashScreenPageConstants.ConnectingToServers,
+            SplashScreenPageConstants.Initializing,
+            SplashScreenPageConstants.ConnectingToServers,
+            SplashScreenPageConstants.StillWorkingOnIt,
+            SplashScreenPageConstants.LetsTryItLikeThis,
+            SplashScreenPageConstants.MaybeThis,
+            SplashScreenPageConstants.AnotherTry,
+            SplashScreenPageConstants.ItShouldntTakeThisLong,
+            SplashScreenPageConstants.AreYouSureInternetConnectionIsGood
+        }.GetEnumerator();
+
+        readonly Label _loadingLabel;
+        readonly Image _gitTrendsImage;
+        readonly FirstRunService _firstRunService;
+        readonly AppInitializationService _appInitializationService;
+
+        CancellationTokenSource _animationCancellationToken = new();
+
+        public SplashScreenPage(IMainThread mainThread,
+                                    FirstRunService firstRunService,
+                                    IAnalyticsService analyticsService,
+                                    AppInitializationService appInitializationService)
+            : base(analyticsService, mainThread)
+        {
             this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.GitTrendsImageBackgroundColor));
 
             _firstRunService = firstRunService;
+            _appInitializationService = appInitializationService;
 
-            ViewModel.InitializationComplete += HandleInitializationComplete;
-
-            IEnumerable<string> statusMessageList = new[] { SplashScreenPageConstants.Initializing, SplashScreenPageConstants.ConnectingToServers, SplashScreenPageConstants.Initializing, SplashScreenPageConstants.ConnectingToServers, SplashScreenPageConstants.Initializing, SplashScreenPageConstants.ConnectingToServers, SplashScreenPageConstants.StillWorkingOnIt, SplashScreenPageConstants.LetsTryItLikeThis, SplashScreenPageConstants.MaybeThis, SplashScreenPageConstants.AnotherTry, SplashScreenPageConstants.ItShouldntTakeThisLong, SplashScreenPageConstants.AreYouSureInternetConnectionIsGood };
-            _statusMessageEnumerator = statusMessageList.GetEnumerator();
             _statusMessageEnumerator.MoveNext();
 
-            _gitTrendsImage = new Image
+            Content = new Grid
             {
-                AutomationId = SplashScreenPageAutomationIds.GitTrendsImage,
-                Opacity = 0,
-                HorizontalOptions = LayoutOptions.CenterAndExpand,
-                VerticalOptions = LayoutOptions.CenterAndExpand,
-                Aspect = Aspect.AspectFit
-            }  .DynamicResource(Image.SourceProperty, nameof(BaseTheme.GitTrendsImageSource));
+                RowDefinitions = Rows.Define(
+                    (Row.Image, Star),
+                    (Row.Text, Auto),
+                    (Row.BottomPadding, 50)),
 
-            _statusLabel = new Label
-            {
-                //Begin with Label off of the screen
-                TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2,
-                Margin = new Thickness(10, 0),
-                AutomationId = SplashScreenPageAutomationIds.StatusLabel,
-                HorizontalTextAlignment = TextAlignment.Center,
-            }  .DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SplashScreenStatusColor));
+                Children =
+                {
+                    new LoadingLabel().Center().Assign(out _loadingLabel)
+                        .Row(Row.Text),
 
-            var relativeLayout = new RelativeLayout();
-
-            relativeLayout.Children.Add(_statusLabel,
-                Constraint.RelativeToParent(parent => parent.Width / 2 - _statusLabel.GetWidth(parent) / 2),
-                Constraint.RelativeToParent(parent => parent.Height - _statusLabel.GetHeight(parent) - (DeviceDisplay.MainDisplayInfo.Orientation is DisplayOrientation.Landscape ? 25 : 50)));
-
-            relativeLayout.Children.Add(_gitTrendsImage,
-                Constraint.RelativeToParent(parent => parent.Width / 2 - _gitTrendsImage.GetWidth(parent) / 2),
-                Constraint.RelativeToParent(parent => parent.Height / 2 - _gitTrendsImage.GetHeight(parent) / 2));
-
-            Content = relativeLayout;
+                    new GitTrendsImage().Center().Assign(out _gitTrendsImage)
+                        .RowSpan(All<Row>()),
+                }
+            };
         }
+
+        enum Row { Image, Text, BottomPadding }
 
         protected override async void OnAppearing()
         {
@@ -83,66 +85,70 @@ namespace GitTrends
             var pulseImageTask = PulseImage();
 
             //Slide status label into screen
-            await _statusLabel.TranslateTo(-10, 0, 250, Easing.CubicOut);
-            await _statusLabel.TranslateTo(0, 0, 250, Easing.CubicOut);
+            await _loadingLabel.TranslateTo(-10, 0, 250, Easing.CubicOut);
+            await _loadingLabel.TranslateTo(0, 0, 250, Easing.CubicOut);
 
             //Wait for Image to reach an opacity of 1
             await Task.WhenAll(fadeImageTask, pulseImageTask);
+            await Task.Delay(100);
 
-            ViewModel.InitializeAppCommand.Execute(null);
+            AppInitializationService.InitializationCompleted += HandleInitializationCompleted;
 
-            Animate(_animationCancellationToken.Token);
+            if (_appInitializationService.IsInitializationComplete)
+            {
+                AppInitializationService.InitializationCompleted -= HandleInitializationCompleted;
+
+                await HandleInitializationCompleted(true);
+            }
+            else
+            {
+                Animate(_animationCancellationToken.Token);
+            }
         }
 
-        async void Animate(CancellationToken pulseCancellationToken)
+        async void Animate(CancellationToken pulseCancellationToken) => await MainThread.InvokeOnMainThreadAsync(async () =>
         {
-            await MainThread.InvokeOnMainThreadAsync(async () =>
+            while (!pulseCancellationToken.IsCancellationRequested)
             {
-                while (!pulseCancellationToken.IsCancellationRequested)
+                var pulseImageTask = PulseImage();
+                await Task.Delay(TimeSpan.FromMilliseconds(400));
+
+                //Label leaves the screen
+                await _loadingLabel.TranslateTo(10, 0, 100, Easing.CubicInOut);
+                await _loadingLabel.TranslateTo(-DeviceDisplay.MainDisplayInfo.Width / 2, 0, 250, Easing.CubicIn);
+
+                //Move the label to the other side of the screen
+                _loadingLabel.TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2;
+
+                //Update Status Label Text
+                if (!_statusMessageEnumerator.MoveNext())
                 {
-                    var pulseImageTask = PulseImage();
-                    await Task.Delay(TimeSpan.FromMilliseconds(400));
-
-                    //Label leaves the screen
-                    await _statusLabel.TranslateTo(10, 0, 100, Easing.CubicInOut);
-                    await _statusLabel.TranslateTo(-DeviceDisplay.MainDisplayInfo.Width / 2, 0, 250, Easing.CubicIn);
-
-                    //Move the label to the other side of the screen
-                    _statusLabel.TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2;
-
-                    //Update Status Label Text
-                    if (!_statusMessageEnumerator.MoveNext())
-                    {
-                        _statusMessageEnumerator.Reset();
-                        _statusMessageEnumerator.MoveNext();
-                    }
-                    await ChangeLabelText(_statusMessageEnumerator.Current);
-
-                    //Label reappears on the screen
-                    await _statusLabel.TranslateTo(-10, 0, 250, Easing.CubicOut);
-                    await _statusLabel.TranslateTo(0, 0, 250, Easing.CubicOut);
-
-                    await pulseImageTask;
-                    await Task.Delay(TimeSpan.FromMilliseconds(250));
+                    _statusMessageEnumerator.Reset();
+                    _statusMessageEnumerator.MoveNext();
                 }
-            });
-        }
+                await ChangeLabelText(_statusMessageEnumerator.Current);
 
-        Task PulseImage()
+                //Label reappears on the screen
+                await _loadingLabel.TranslateTo(-10, 0, 250, Easing.CubicOut);
+                await _loadingLabel.TranslateTo(0, 0, 250, Easing.CubicOut);
+
+                await pulseImageTask;
+                await Task.Delay(TimeSpan.FromMilliseconds(250));
+            }
+        });
+
+        Task PulseImage() => MainThread.InvokeOnMainThreadAsync(async () =>
         {
-            return MainThread.InvokeOnMainThreadAsync(async () =>
-            {
-                //Image crouches down
-                await _gitTrendsImage.ScaleTo(0.95, 100, Easing.CubicInOut);
-                await Task.Delay(TimeSpan.FromMilliseconds(50));
+            //Image crouches down
+            await _gitTrendsImage.ScaleTo(0.95, 100, Easing.CubicInOut);
+            await Task.Delay(TimeSpan.FromMilliseconds(50));
 
-                //Image jumps
-                await _gitTrendsImage.ScaleTo(1.25, 250, Easing.CubicOut);
+            //Image jumps
+            await _gitTrendsImage.ScaleTo(1.25, 250, Easing.CubicOut);
 
-                //Image crashes back to the screen
-                await _gitTrendsImage.ScaleTo(1, 500, Easing.BounceOut);
-            });
-        }
+            //Image crashes back to the screen
+            await _gitTrendsImage.ScaleTo(1, 500, Easing.BounceOut);
+        });
 
         Task ChangeLabelText(string text) => ChangeLabelText(new FormattedString
         {
@@ -174,23 +180,24 @@ namespace GitTrends
             }
         });
 
-        Task ChangeLabelText(FormattedString formattedString)
+        Task ChangeLabelText(FormattedString formattedString) => MainThread.InvokeOnMainThreadAsync(async () =>
         {
-            return MainThread.InvokeOnMainThreadAsync(async () =>
-            {
-                await _statusLabel.FadeTo(0, 250, Easing.CubicOut);
+            await _loadingLabel.FadeTo(0, 250, Easing.CubicOut);
 
-                _statusLabel.Text = null;
-                _statusLabel.FormattedText = formattedString;
+            _loadingLabel.Text = null;
+            _loadingLabel.FormattedText = formattedString;
 
-                await _statusLabel.FadeTo(1, 250, Easing.CubicIn);
-            });
-        }
+            await _loadingLabel.FadeTo(1, 250, Easing.CubicIn);
+        });
 
-        async void HandleInitializationComplete(object sender, InitializationCompleteEventArgs e)
+        async void HandleInitializationCompleted(object sender, InitializationCompleteEventArgs e) =>
+            await HandleInitializationCompleted(e.IsInitializationSuccessful).ConfigureAwait(false);
+
+        async Task HandleInitializationCompleted(bool isInitializationSuccessful)
         {
-            _animationCancellationToken?.Cancel();
-            if (e.IsInitializationSuccessful)
+            _animationCancellationToken.Cancel();
+
+            if (isInitializationSuccessful)
             {
 #if DEBUG
                 await ChangeLabelText(SplashScreenPageConstants.PreviewMode, SplashScreenPageConstants.WarningsMayAppear);
@@ -216,8 +223,7 @@ namespace GitTrends
                     var explodeImageTask = Task.WhenAll(Content.ScaleTo(100, 250, Easing.CubicOut), Content.FadeTo(0, 250, Easing.CubicIn));
                     BackgroundColor = (Color)Application.Current.Resources[nameof(BaseTheme.PageBackgroundColor)];
 
-                    var scope = ContainerService.Container.BeginLifetimeScope();
-                    var repositoryPage = scope.Resolve<RepositoryPage>();
+                    var repositoryPage = ContainerService.Container.Resolve<RepositoryPage>();
 
                     if (_firstRunService.IsFirstRun)
                         repositoryPage.Appearing += HandleRepositoryPageAppearing;
@@ -233,10 +239,36 @@ namespace GitTrends
                         //Yield the UI thread to allow MainPage to be set
                         await Task.Delay(TimeSpan.FromMilliseconds(500));
 
-                        var onboardingCarouselPage = scope.Resolve<OnboardingCarouselPage>();
+                        var onboardingCarouselPage = ContainerService.Container.Resolve<OnboardingCarouselPage>();
                         await repositoryPage.Navigation.PushModalAsync(onboardingCarouselPage);
                     }
                 });
+            }
+        }
+
+        class GitTrendsImage : Image
+        {
+            public GitTrendsImage()
+            {
+                Opacity = 0;
+                Aspect = Aspect.AspectFit;
+                AutomationId = SplashScreenPageAutomationIds.GitTrendsImage;
+
+                this.CenterExpand().DynamicResource(SourceProperty, nameof(BaseTheme.GitTrendsImageSource));
+            }
+        }
+
+        class LoadingLabel : Label
+        {
+            public LoadingLabel()
+            {
+                //Begin with Label off of the screen
+                TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2;
+
+                Margin = new Thickness(10, 0);
+                HorizontalTextAlignment = TextAlignment.Center;
+                AutomationId = SplashScreenPageAutomationIds.StatusLabel;
+                this.DynamicResource(TextColorProperty, nameof(BaseTheme.SplashScreenStatusColor));
             }
         }
     }

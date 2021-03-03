@@ -21,15 +21,15 @@ namespace GitTrends.UnitTests
             MobileReferringSiteModel expiredReferringSite_Initial, unexpiredReferringSite_Initial;
             Repository expiredRepository_Initial, unexpiredRepository_Initial, expiredRepository_Final, unexpiredRepository_Final;
 
-            var backgroundFetchService = ServiceCollection.ServiceProvider.GetService<BackgroundFetchService>();
-            var referringSitesDatabase = ServiceCollection.ServiceProvider.GetService<ReferringSitesDatabase>();
-            var repositoryDatabase = ServiceCollection.ServiceProvider.GetService<RepositoryDatabase>();
+            var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
+            var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+            var referringSitesDatabase = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesDatabase>();
 
-            expiredRepository_Initial = CreateExpiredRepository(DateTimeOffset.UtcNow.Subtract(repositoryDatabase.ExpiresAt), "https://github.com/brminnick/gittrends");
-            unexpiredRepository_Initial = CreateExpiredRepository(DateTimeOffset.UtcNow, "https://github.com/brminnick/gitstatus");
+            expiredRepository_Initial = CreateRepository(DateTimeOffset.UtcNow.Subtract(repositoryDatabase.ExpiresAt), "https://github.com/brminnick/gittrends");
+            unexpiredRepository_Initial = CreateRepository(DateTimeOffset.UtcNow, "https://github.com/brminnick/gitstatus");
 
-            expiredReferringSite_Initial = CreateExpiredMobileReferringSite(DateTimeOffset.UtcNow.Subtract(referringSitesDatabase.ExpiresAt), "Google");
-            unexpiredReferringSite_Initial = CreateExpiredMobileReferringSite(DateTimeOffset.UtcNow, "codetraveler.io");
+            expiredReferringSite_Initial = CreateMobileReferringSite(DateTimeOffset.UtcNow.Subtract(referringSitesDatabase.ExpiresAt), "Google");
+            unexpiredReferringSite_Initial = CreateMobileReferringSite(DateTimeOffset.UtcNow, "codetraveler.io");
 
             await repositoryDatabase.SaveRepository(expiredRepository_Initial).ConfigureAwait(false);
             await repositoryDatabase.SaveRepository(unexpiredRepository_Initial).ConfigureAwait(false);
@@ -71,12 +71,16 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(unexpiredRepository_Initial.DailyViewsList.Sum(x => x.TotalViews), unexpiredRepository_Final.DailyViewsList.Sum(x => x.TotalViews));
             Assert.AreEqual(unexpiredRepository_Initial.DailyViewsList.Sum(x => x.TotalUniqueViews), unexpiredRepository_Final.DailyViewsList.Sum(x => x.TotalUniqueViews));
 
+            Assert.AreEqual(2, repositoryDatabaseCount_Final);
             Assert.AreEqual(1, referringSitesDatabaseCount_Final);
+
+            Assert.IsTrue(unexpiredRepository_Initial.IsFavorite);
+            Assert.IsTrue(unexpiredRepository_Final.IsFavorite);
 
             static async Task<int> getRepositoryDatabaseCount(RepositoryDatabase repositoryDatabase)
             {
                 var repositories = await repositoryDatabase.GetRepositories().ConfigureAwait(false);
-                return repositories.Count();
+                return repositories.Count;
             }
 
             static async Task<int> getReferringSitesDatabaseCount(ReferringSitesDatabase referringSitesDatabase, params string[] repositoryUrl)
@@ -96,7 +100,7 @@ namespace GitTrends.UnitTests
         public async Task NotifyTrendingRepositoriesTest_NotLoggedIn()
         {
             //Arrange
-            var backgroundFetchService = ServiceCollection.ServiceProvider.GetService<BackgroundFetchService>();
+            var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
 
             //Act
             var result = await backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
@@ -109,18 +113,18 @@ namespace GitTrends.UnitTests
         public async Task NotifyTrendingRepositoriesTest_DemoUser()
         {
             //Arrange
-            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetService<GitHubAuthenticationService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
-            var backgroundFetchService = ServiceCollection.ServiceProvider.GetService<BackgroundFetchService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
 
             //Act
             var result = await backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
 
             //Assert
             Assert.IsTrue(gitHubUserService.IsDemoUser);
-            Assert.IsTrue(gitHubUserService.IsAuthenticated);
+            Assert.IsFalse(gitHubUserService.IsAuthenticated);
             Assert.IsFalse(result);
         }
 
@@ -128,9 +132,9 @@ namespace GitTrends.UnitTests
         public async Task NotifyTrendingRepositoriesTest_AuthenticatedUser()
         {
             //Arrange
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetService<GitHubUserService>();
-            var backgroundFetchService = ServiceCollection.ServiceProvider.GetService<BackgroundFetchService>();
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetService<GitHubGraphQLApiService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
@@ -143,10 +147,11 @@ namespace GitTrends.UnitTests
             Assert.IsTrue(result);
         }
 
-        static Repository CreateExpiredRepository(DateTimeOffset downloadedAt, string repositoryUrl)
+        static Repository CreateRepository(DateTimeOffset downloadedAt, string repositoryUrl)
         {
             const string gitTrendsAvatarUrl = "https://avatars3.githubusercontent.com/u/61480020?s=400&u=b1a900b5fa1ede22af9d2d9bfd6c49a072e659ba&v=4";
 
+            var starredAtList = new List<DateTimeOffset>();
             var dailyViewsList = new List<DailyViewsModel>();
             var dailyClonesList = new List<DailyClonesModel>();
 
@@ -155,17 +160,17 @@ namespace GitTrends.UnitTests
                 var count = DemoDataConstants.GetRandomNumber();
                 var uniqeCount = count / 2; //Ensures uniqueCount is always less than count
 
+                starredAtList.Add(DemoDataConstants.GetRandomDate());
                 dailyViewsList.Add(new DailyViewsModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
                 dailyClonesList.Add(new DailyClonesModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
             }
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-                                                        new RepositoryOwner(DemoUserConstants.Alias, gitTrendsAvatarUrl),
-                                                        new IssuesConnection(DemoDataConstants.GetRandomNumber(), Enumerable.Empty<Issue>()),
-                                                        repositoryUrl, new StarGazers(DemoDataConstants.GetRandomNumber()), false, downloadedAt, dailyViewsList, dailyClonesList);
+                                                        DemoUserConstants.Alias, gitTrendsAvatarUrl, DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
+                                                        repositoryUrl, false, downloadedAt, true, dailyViewsList, dailyClonesList, starredAtList);
         }
 
-        static MobileReferringSiteModel CreateExpiredMobileReferringSite(DateTimeOffset downloadedAt, string referrer)
+        static MobileReferringSiteModel CreateMobileReferringSite(DateTimeOffset downloadedAt, string referrer)
         {
             return new MobileReferringSiteModel(new ReferringSiteModel(DemoDataConstants.GetRandomNumber(),
                                                 DemoDataConstants.GetRandomNumber(),

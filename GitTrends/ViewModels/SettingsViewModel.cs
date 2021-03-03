@@ -11,13 +11,12 @@ using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Shiny;
 using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
     public class SettingsViewModel : GitHubAuthenticationViewModel
     {
-        readonly WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new WeakEventManager<AccessState?>();
+        readonly static WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new();
 
         readonly ThemeService _themeService;
         readonly LanguageService _languageService;
@@ -26,7 +25,11 @@ namespace GitTrends
         readonly NotificationService _notificationService;
         readonly TrendsChartSettingsService _trendsChartSettingsService;
 
+        IReadOnlyList<string> _themePickerItemsSource = Array.Empty<string>();
+        IReadOnlyList<string> _perferredChartsItemsSource = Array.Empty<string>();
+
         string _titleText = string.Empty;
+        string _aboutLabelText = string.Empty;
         string _themeLabelText = string.Empty;
         string _gitHubButtonText = string.Empty;
         string _languageLabelText = string.Empty;
@@ -41,21 +44,21 @@ namespace GitTrends
         bool _isRegisterForNotificationsSwitchEnabled = true;
         bool _isRegisterForNotificationsSwitchToggled;
 
-        int _preferredChartsSelectedIndex;
         int _themePickerSelectedIndex;
         int _languagePickerSelectedIndex;
+        int _preferredChartsSelectedIndex;
 
-        public SettingsViewModel(GitHubAuthenticationService gitHubAuthenticationService,
+        public SettingsViewModel(IMainThread mainThread,
                                     ThemeService themeService,
-                                    TrendsChartSettingsService trendsChartSettingsService,
+                                    LanguageService languageService,
+                                    IVersionTracking versionTracking,
                                     IAnalyticsService analyticsService,
+                                    GitHubUserService gitHubUserService,
                                     DeepLinkingService deepLinkingService,
                                     NotificationService notificationService,
-                                    IMainThread mainThread,
-                                    GitHubUserService gitHubUserService,
-                                    LanguageService languageService,
-                                    IVersionTracking versionTracking)
-                : base(gitHubAuthenticationService, deepLinkingService, analyticsService, mainThread, gitHubUserService)
+                                    TrendsChartSettingsService trendsChartSettingsService,
+                                    GitHubAuthenticationService gitHubAuthenticationService)
+                : base(mainThread, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
         {
             _themeService = themeService;
             _versionTracking = versionTracking;
@@ -67,25 +70,28 @@ namespace GitTrends
             CopyrightLabelTappedCommand = new AsyncCommand(ExecuteCopyrightLabelTappedCommand);
             GitHubUserViewTappedCommand = new AsyncCommand(ExecuteGitHubUserViewTappedCommand, _ => IsNotAuthenticating);
 
-            gitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+            App.Resumed += HandleResumed;
+
+            GitHubUserService.NameChanged += HandleNameChanged;
+            GitHubUserService.AliasChanged += HandleAliasChanged;
+            GitHubUserService.AvatarUrlChanged += HandleAvatarUrlChanged;
+
             ThemeService.PreferenceChanged += HandlePreferenceChanged;
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
+            GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+
+            InitializeText();
 
             ThemePickerSelectedIndex = (int)themeService.Preference;
             PreferredChartsSelectedIndex = (int)trendsChartSettingsService.CurrentTrendsChartOption;
             LanguagePickerSelectedIndex = CultureConstants.CulturePickerOptions.Keys.ToList().IndexOf(languageService.PreferredLanguage ?? string.Empty);
 
-            if (Application.Current is App app)
-                app.Resumed += HandleResumed;
-
             initializeIsRegisterForNotificationsSwitch().SafeFireAndForget();
-
-            InitializeText();
 
             async Task initializeIsRegisterForNotificationsSwitch() => IsRegisterForNotificationsSwitchToggled = notificationService.ShouldSendNotifications && await notificationService.AreNotificationsEnabled().ConfigureAwait(false);
         }
 
-        public event EventHandler<AccessState?> SetNotificationsPreferenceCompleted
+        public static event EventHandler<AccessState?> SetNotificationsPreferenceCompleted
         {
             add => _setNotificationsPreferenceCompletedEventManager.AddEventHandler(value);
             remove => _setNotificationsPreferenceCompletedEventManager.RemoveEventHandler(value);
@@ -93,11 +99,28 @@ namespace GitTrends
 
         public ICommand CopyrightLabelTappedCommand { get; }
         public IAsyncCommand GitHubUserViewTappedCommand { get; }
-        public IReadOnlyList<string> ThemePickerItemsSource { get; } = Enum.GetNames(typeof(PreferredTheme));
         public IReadOnlyList<string> LanguagePickerItemsSource { get; } = CultureConstants.CulturePickerOptions.Values.ToList();
 
         public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText == GitHubLoginButtonConstants.Disconnect;
         public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginLabelText == GitHubLoginButtonConstants.ConnectToGitHub;
+
+        public IReadOnlyList<string> ThemePickerItemsSource
+        {
+            get => _themePickerItemsSource;
+            set => SetProperty(ref _themePickerItemsSource, value);
+        }
+
+        public IReadOnlyList<string> PreferredChartsItemsSource
+        {
+            get => _perferredChartsItemsSource;
+            set => SetProperty(ref _perferredChartsItemsSource, value);
+        }
+
+        public string AboutLabelText
+        {
+            get => _aboutLabelText;
+            set => SetProperty(ref _aboutLabelText, value);
+        }
 
         public bool ShouldShowClonesByDefaultSwitchValue
         {
@@ -197,12 +220,6 @@ namespace GitTrends
             set => SetProperty(ref _languageLabelText, value);
         }
 
-        public int LanguagePickerSelectedIndex
-        {
-            get => _languagePickerSelectedIndex;
-            set => SetProperty(ref _languagePickerSelectedIndex, value, () => _languageService.PreferredLanguage = CultureConstants.CulturePickerOptions.Skip(value).First().Key);
-        }
-
         public string TitleText
         {
             get => _titleText;
@@ -212,7 +229,27 @@ namespace GitTrends
         public int ThemePickerSelectedIndex
         {
             get => _themePickerSelectedIndex;
-            set => SetProperty(ref _themePickerSelectedIndex, value, () => _themeService.Preference = (PreferredTheme)value);
+            set => SetProperty(ref _themePickerSelectedIndex, value, () =>
+            {
+                if (Enum.IsDefined(typeof(PreferredTheme), value))
+                    _themeService.Preference = (PreferredTheme)value;
+            });
+        }
+
+        public int PreferredChartsSelectedIndex
+        {
+            get => _preferredChartsSelectedIndex;
+            set => SetProperty(ref _preferredChartsSelectedIndex, value, () =>
+            {
+                if (Enum.IsDefined(typeof(TrendsChartOption), value))
+                    _trendsChartSettingsService.CurrentTrendsChartOption = (TrendsChartOption)value;
+            });
+        }
+
+        public int LanguagePickerSelectedIndex
+        {
+            get => _languagePickerSelectedIndex;
+            set => SetProperty(ref _languagePickerSelectedIndex, value, () => _languageService.PreferredLanguage = CultureConstants.CulturePickerOptions.Skip(value).First().Key);
         }
 
         public bool IsRegisterForNotificationsSwitchEnabled
@@ -233,16 +270,6 @@ namespace GitTrends
             set => SetProperty(ref _registerForNotificationsLabelText, value);
         }
 
-        public int PreferredChartsSelectedIndex
-        {
-            get => _preferredChartsSelectedIndex;
-            set
-            {
-                _trendsChartSettingsService.CurrentTrendsChartOption = (TrendsChartOption)value;
-                SetProperty(ref _preferredChartsSelectedIndex, value);
-            }
-        }
-
         protected override async void NotifyIsAuthenticatingPropertyChanged()
         {
             base.NotifyIsAuthenticatingPropertyChanged();
@@ -254,7 +281,7 @@ namespace GitTrends
         {
             AnalyticsService.Track("Login Button Tapped", nameof(gitHubUserService.IsAuthenticated), gitHubUserService.IsAuthenticated.ToString());
 
-            if (gitHubUserService.IsAuthenticated)
+            if (gitHubUserService.IsAuthenticated || gitHubUserService.IsDemoUser)
             {
                 await gitHubAuthenticationService.LogOut().ConfigureAwait(false);
 
@@ -268,19 +295,33 @@ namespace GitTrends
 
         protected override async Task ExecuteDemoButtonCommand(string? buttonText)
         {
+            var demoUserActivatedTCS = new TaskCompletionSource<object?>();
+            GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
+
             try
             {
                 await base.ExecuteDemoButtonCommand(buttonText).ConfigureAwait(false);
 
                 AnalyticsService.Track("Settings Try Demo Button Tapped");
                 await GitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-                SetGitHubValues();
+                await demoUserActivatedTCS.Task.ConfigureAwait(false);
             }
             finally
             {
                 IsAuthenticating = false;
             }
+
+            void HandleDemoUserActivated(object sender, EventArgs e)
+            {
+                GitHubAuthenticationService.DemoUserActivated -= HandleDemoUserActivated;
+
+                SetGitHubValues();
+
+                demoUserActivatedTCS.SetResult(null);
+            }
         }
+
+
 
         void ExecutePreferredChartsChangedCommand(TrendsChartOption trendsChartOption)
         {
@@ -323,9 +364,12 @@ namespace GitTrends
             return _deepLinkingService.OpenApp("twitter://user?id=3418408341", "https://twitter.com/intent/user?user_id=3418408341");
         }
 
-        void HandlePreferenceChanged(object sender, PreferredTheme e) => UpdateGitHubAvatarImage();
+        void HandleNameChanged(object sender, string e) => SetGitHubValues();
+        void HandleAliasChanged(object sender, string e) => SetGitHubValues();
+        void HandleAvatarUrlChanged(object sender, string e) => SetGitHubValues();
         void HandlePreferredLanguageChanged(object sender, string? e) => InitializeText();
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => SetGitHubValues();
+        void HandlePreferenceChanged(object sender, PreferredTheme e) => UpdateGitHubAvatarImage();
 
         async void HandleResumed(object sender, EventArgs e)
         {
@@ -333,19 +377,26 @@ namespace GitTrends
             IsRegisterForNotificationsSwitchEnabled = true;
         }
 
-
         void InitializeText()
         {
+            //Changing the Picker.ItemSource resets the Selected Index to -1
+            var originalThemePickerIndex = ThemePickerSelectedIndex;
+            var originalPreferredChartsIndex = PreferredChartsSelectedIndex;
+
             TitleText = PageTitles.SettingsPage;
+            AboutLabelText = PageTitles.AboutPage;
+            ThemeLabelText = SettingsPageConstants.Theme;
+            LanguageLabelText = SettingsPageConstants.Language;
             TryDemoButtonText = GitHubLoginButtonConstants.TryDemo;
             CopyrightLabelText = $"{getVersionNumberText(_versionTracking)}\n{SettingsPageConstants.CreatedBy}";
             PreferredChartsLabelText = SettingsPageConstants.PreferredChartSettingsLabelText;
-
-            LanguageLabelText = SettingsPageConstants.Language;
-
             RegisterForNotificationsLabelText = SettingsPageConstants.RegisterForNotifications;
 
-            ThemeLabelText = SettingsPageConstants.Theme;
+            ThemePickerItemsSource = ThemePickerConstants.ThemePickerTitles.Values.ToList();
+            PreferredChartsItemsSource = TrendsChartConstants.TrendsChartTitles.Values.ToList();
+
+            ThemePickerSelectedIndex = originalThemePickerIndex;
+            PreferredChartsSelectedIndex = originalPreferredChartsIndex;
 
             SetGitHubValues();
 
@@ -371,10 +422,11 @@ namespace GitTrends
 
         void SetGitHubValues()
         {
-            GitHubAliasLabelText = GitHubUserService.IsAuthenticated ? $"@{GitHubUserService.Alias}" : string.Empty;
-            GitHubNameLabelText = GitHubUserService.IsAuthenticated ? GitHubUserService.Name : GitHubLoginButtonConstants.NotLoggedIn;
-            LoginLabelText = GitHubUserService.IsAuthenticated ? GitHubLoginButtonConstants.Disconnect : GitHubLoginButtonConstants.ConnectToGitHub;
-            GitHubAvatarImageSource = GitHubUserService.IsAuthenticated ? GitHubUserService.AvatarUrl : BaseTheme.GetDefaultProfileImageSource();
+            LoginLabelText = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? GitHubLoginButtonConstants.Disconnect : GitHubLoginButtonConstants.ConnectToGitHub;
+
+            GitHubAliasLabelText = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? $"@{GitHubUserService.Alias}" : string.Empty;
+            GitHubNameLabelText = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? GitHubUserService.Name : GitHubLoginButtonConstants.NotLoggedIn;
+            GitHubAvatarImageSource = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? GitHubUserService.AvatarUrl : BaseTheme.GetDefaultProfileImageSource();
         }
 
         Task ExecuteGitHubUserViewTappedCommand()
@@ -393,6 +445,6 @@ namespace GitTrends
             }
         }
 
-        void OnSetNotificationsCompleted(AccessState? accessState) => _setNotificationsPreferenceCompletedEventManager.HandleEvent(this, accessState, nameof(SetNotificationsPreferenceCompleted));
+        void OnSetNotificationsCompleted(AccessState? accessState) => _setNotificationsPreferenceCompletedEventManager.RaiseEvent(this, accessState, nameof(SetNotificationsPreferenceCompleted));
     }
 }

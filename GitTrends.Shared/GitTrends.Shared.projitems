@@ -24,16 +24,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DailyClonesModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DailyViewsModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GitHubToken.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\GitHubUserResponse.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\GitHubViewerResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Issue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\IssueConnection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ReferringSiteModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Repository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryClonesModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryConnection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryConnectionResponse.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryViewsModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\User.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Base\BaseDailyModel.cs" />
@@ -51,7 +47,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Base\BaseTotalCountModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\RepositoryService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\StreamingUrl.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\GitHubApiService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IDailyClonesModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IDailyViewsModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\NotificationHubInformation.cs" />
@@ -61,5 +56,18 @@
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGitHubGraphQLAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IAnalyticsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IReferringSiteModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitHubUserResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitHubViewerResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\StarGazerQueryResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\GraphQLException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryConnectionResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\StarGazers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryContributor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryFile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\NuGetPackageModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\GetRepositoryResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StringExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RefitExtensions.cs" />
   </ItemGroup>
 </Project>

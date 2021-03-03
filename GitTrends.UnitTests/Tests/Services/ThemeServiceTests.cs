@@ -13,7 +13,7 @@ namespace GitTrends.UnitTests
             PreferredTheme preferredTheme_Initial, preferredTheme_Final;
             const PreferredTheme expectedFinalPreferredTheme = PreferredTheme.Dark;
 
-            var themeService = ServiceCollection.ServiceProvider.GetService<ThemeService>();
+            var themeService = ServiceCollection.ServiceProvider.GetRequiredService<ThemeService>();
 
             //Act
             preferredTheme_Initial = themeService.Preference;

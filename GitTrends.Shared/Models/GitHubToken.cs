@@ -2,7 +2,7 @@
 
 namespace GitTrends.Shared
 {
-    public class GitHubToken
+    public record GitHubToken
     {
         public GitHubToken(string access_token, string scope, string token_type) =>
             (AccessToken, Scope, TokenType) = (access_token, scope, token_type);
@@ -21,11 +21,8 @@ namespace GitTrends.Shared
 
     public static class GitHubTokenExtensions
     {
-        public static bool IsEmpty(this GitHubToken gitHubToken)
-        {
-            return gitHubToken.AccessToken == string.Empty
-                    && gitHubToken.Scope == string.Empty
-                    && gitHubToken.TokenType == string.Empty;
-        }
+        public static bool IsEmpty(this GitHubToken gitHubToken) => gitHubToken.AccessToken == string.Empty
+                                                                    && gitHubToken.Scope == string.Empty
+                                                                    && gitHubToken.TokenType == string.Empty;
     }
 }

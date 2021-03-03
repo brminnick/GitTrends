@@ -2,10 +2,10 @@
 
 namespace GitTrends
 {
-    public interface INotificationService
+    public interface IDeviceNotificationsService
     {
+        void Initialize();
         Task SetiOSBadgeCount(int count);
         Task<bool?> AreNotificationEnabled();
-        void Initialize();
     }
 }
