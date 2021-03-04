@@ -13,7 +13,7 @@
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
 	<data name="SortToolbarItemText" xml:space="preserve">
-		<value>Sort</value>
+		<value>Sorter</value>
   </data>
 	<data name="DisplayingDataFrom" xml:space="preserve">
     <value>Viser data fra</value>
@@ -22,6 +22,6 @@
     <value>Sjekk internettilkoblingen din og prøv igjen</value>
   </data>
 	<data name="TOTAL" xml:space="preserve">
-    <value>TOTAL</value>
+    <value>TOTALT</value>
   </data>
 </root>
