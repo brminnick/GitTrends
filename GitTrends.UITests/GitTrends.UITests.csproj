@@ -10,6 +10,7 @@
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <Nullable>enable</Nullable>
+        <WarningsAsErrors>nullable</WarningsAsErrors>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
