@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="SkipText" xml:space="preserve">
+    <value>ATLA</value>
+  </data>
+  <data name="TryDemoText" xml:space="preserve">
+    <value>DEMO'YU DENE</value>
+  </data>
+  <data name="ChartPage_Title" xml:space="preserve">
+    <value>Depolarınız hakkında genel bilgi alın</value>
+  </data>
+  <data name="ChartPage_Body_ShowAllTraffic" xml:space="preserve">
+    <value>Grafikler, deponuzla ilgili tüm trafiği gösterir:</value>
+  </data>
+  <data name="ChartPage_Body_ZoomInOut" xml:space="preserve">
+    <value>Bilmek istediğinizi kesin bir şekilde görmek için yakınlaştırın/uzaklaştırın</value>
+  </data>
+  <data name="ChartPage_Body_LongPress" xml:space="preserve">
+    <value>Kesin sayısal değerleri görmek için grafiğe uzun basın</value>
+  </data>
+  <data name="ConnectToGitHubPage_Title" xml:space="preserve">
+    <value>Github'a bağlan</value>
+  </data>
+  <data name="ConnectToGitHubPage_Body_GetStarted" xml:space="preserve">
+    <value>GitHub hesabınızı bağlayarak başlayın veya GitTrends'i gezmek için demo modunu deneyin!</value>
+  </data>
+  <data name="GitTrendsPage_Title" xml:space="preserve">
+    <value>GitTrends'e Hoşgeldiniz</value>
+  </data>
+  <data name="GitTrendsPage_Body_GitTrendsHelps" xml:space="preserve">
+    <value>GitTrends, GitHub depolarınızı izlemenize yardımcı olur:</value>
+  </data>
+  <data name="GitTrendsPage_Body_MonitorGitHubRepos" xml:space="preserve">
+    <value>GitHub Repo Görüntülenmeleri, Klonları, Kolları, Yıldızları ve Konuları İzleyin</value>
+  </data>
+  <data name="GitTrendsPage_Body_DiscoverReferringSites" xml:space="preserve">
+    <value>Atıfta Bulunan Siteleri Keşfedin</value>
+  </data>
+  <data name="NotificationsPage_Title" xml:space="preserve">
+    <value>Depolar populer olunca haberdar olun</value>
+  </data>
+  <data name="NotificationsPage_Body_MoreTrafficThanUsual" xml:space="preserve">
+    <value>GitTrends, GitHub depolarınız normalden daha fazla trafik aldığında sizi bilgilendirecektir.</value>
+  </data>
+  <data name="EnableNotifications" xml:space="preserve">
+    <value>Bildirimleri Etkinleştir</value>
+  </data>
+</root> 
