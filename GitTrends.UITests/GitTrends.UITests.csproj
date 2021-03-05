@@ -29,7 +29,7 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Xamarin.UITest" Version="3.0.14" />
+        <PackageReference Include="Xamarin.UITest" Version="3.0.15" />
         <PackageReference Include="NUnit" Version="3.13.1" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     </ItemGroup>
