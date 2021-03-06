@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace GitTrends.Shared
 {
@@ -21,5 +22,7 @@ namespace GitTrends.Shared
             var textInfo = new CultureInfo("en-US", false).TextInfo;
             return textInfo.ToTitleCase(result);
         }
+
+        public static string RemoveEmoji(this string text) => Regex.Replace(text, @"\p{Cs}", "");
     }
 }

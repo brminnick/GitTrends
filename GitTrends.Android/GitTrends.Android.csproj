@@ -19,10 +19,6 @@
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <MandroidI18n>cjk;mideast;other;rare;west</MandroidI18n>
-    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <WarningsAsErrors>nullable</WarningsAsErrors>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <AndroidSupportedAbis>armeabi-v7a;arm64-v8a;x86;x86_64</AndroidSupportedAbis>

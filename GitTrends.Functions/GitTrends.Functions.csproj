@@ -3,10 +3,6 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <AzureFunctionsVersion>v3</AzureFunctionsVersion>
-        <LangVersion>latest</LangVersion>
-        <Nullable>enable</Nullable>
-        <WarningsAsErrors>nullable</WarningsAsErrors>
-        <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
         <Configurations>AppStore;Debug;Release</Configurations>
         <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
     </PropertyGroup>

@@ -2,10 +2,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
-        <WarningsAsErrors>nullable</WarningsAsErrors>
-        <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <Configurations>Debug;Release;AppStore</Configurations>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

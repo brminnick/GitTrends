@@ -3,11 +3,6 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Nullable>Enable</Nullable>
-    <WarningsAsErrors>nullable</WarningsAsErrors>
-    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-    <LangVersion>preview</LangVersion>
-    <GenerateErrorForMissingTargetingPacks>false</GenerateErrorForMissingTargetingPacks>
   </PropertyGroup>
 
   <ItemGroup>

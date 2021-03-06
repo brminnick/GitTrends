@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
+using GitTrends.Shared;
 
 namespace GitTrends.Mobile.Common
 {
@@ -35,7 +35,5 @@ namespace GitTrends.Mobile.Common
 
             return culturePickerOptions;
         }
-
-        static string RemoveEmoji(this string text) => Regex.Replace(text, @"\p{Cs}", "");
     }
 }
