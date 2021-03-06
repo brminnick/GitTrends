@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
 	<resheader name="resmimetype">
 		<value>text/microsoft-resx</value>
@@ -49,7 +49,7 @@
     <value>Endişelenmeyin! İyi çalışmaya devam edin, yıldızlar gelecektir!</value>
   </data>
   <data name="ZeroStarsEmptyDataViewDescription2" xml:space="preserve">
-    <value>Topluluğu harika çalışmanıza göz atmaya davet edin!</value>
+    <value>Harika çalışmanıza göz atmaları için topluluğu davet edin!</value>
   </data>
   <data name="ZeroStarsEmptyDataViewDescription3" xml:space="preserve">
     <value>Güncellemeleri arkadaşlarınızla paylaşın ve ilk yıldızınızı alın!</value>

@@ -15,16 +15,16 @@
 	<data name="CloseButtonText" xml:space="preserve">
     <value>Kapat</value>
   </data>
-	<data name="ErrorPullToRefreshEventArgs" xml:space="preserve">
-    <value>Atıfta bulunulan sitelere ulaşılamıyor. İnternet bağlantınızı kontrol edin ve tekrar deneyin.</value>
+  <data name="ErrorPullToRefreshEventArgs" xml:space="preserve">
+    <value>Yönlendiren siteler alınamıyor. İnternet bağlantınızı kontrol edin ve tekrar deneyin.</value>
   </data>
-	<data name="Site" xml:space="preserve">
+  <data name="Site" xml:space="preserve">
     <value>SİTE</value>
   </data>
-	<data name="Referrals" xml:space="preserve">
+  <data name="Referrals" xml:space="preserve">
     <value>REFERANSLAR</value>
   </data>
-	<data name="Unique" xml:space="preserve">
-    <value>ÖZGÜN</value>
+  <data name="Unique" xml:space="preserve">
+    <value>BENZERSİZ</value>
   </data>
 </root>

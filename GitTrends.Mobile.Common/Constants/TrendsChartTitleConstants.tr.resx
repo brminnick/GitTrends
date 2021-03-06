@@ -12,34 +12,34 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-	<data name="StarsTitle" xml:space="preserve">
+	 <data name="StarsTitle" xml:space="preserve">
     <value>Yıldızlar</value>
   </data>
-	<data name="TotalViewsTitle" xml:space="preserve">
-    <value>Görünümler</value>
+  <data name="TotalViewsTitle" xml:space="preserve">
+    <value>Görüntüleme</value>
   </data>
-	<data name="UniqueViewsTitle" xml:space="preserve">
-    <value>Özgün Görünümler</value>
+  <data name="UniqueViewsTitle" xml:space="preserve">
+    <value>Benzersiz Görüntüleme</value>
   </data>
-	<data name="TotalClonesTitle" xml:space="preserve">
+  <data name="TotalClonesTitle" xml:space="preserve">
     <value>Klonlar</value>
   </data>
-	<data name="UniqueClonesTitle" xml:space="preserve">
-    <value>Özgün Klonlar</value>
+  <data name="UniqueClonesTitle" xml:space="preserve">
+    <value>Benzersiz Klonlar</value>
   </data>
-	<data name="All" xml:space="preserve">
+  <data name="All" xml:space="preserve">
     <value>Hepsi</value>
   </data>
-	<data name="NoUniques" xml:space="preserve">
-    <value>Özgünler Hariç</value>
+  <data name="NoUniques" xml:space="preserve">
+    <value>Benzersiz olmayan</value>
   </data>
-	<data name="JustUniques" xml:space="preserve">
-    <value>Sadece Özgünler</value>
+  <data name="JustUniques" xml:space="preserve">
+    <value>Sadece benzersiz olanlar</value>
   </data>
-	<data name="KeepItUp" xml:space="preserve">
-    <value>Aynen Böyle Devam!</value>
+  <data name="KeepItUp" xml:space="preserve">
+    <value>Aynen böyle devam!</value>
   </data>
-	<data name="YouGotThis" xml:space="preserve">
-    <value>Anladın!</value>
+  <data name="YouGotThis" xml:space="preserve">
+    <value>Yapabilirsin!</value>
   </data>
 </root>

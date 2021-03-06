@@ -16,16 +16,16 @@
     <value>Depolarınız Trend oldu</value>
   </data>
   <data name="By" xml:space="preserve">
-    <value>ile</value>
+    <value>by</value>
   </data>
   <data name="IsTrending" xml:space="preserve">
-    <value>Pupuler Oluyor</value>
+    <value>Trend Olan</value>
   </data>
   <data name="SingleRepositoryNotificationMessage" xml:space="preserve">
-    <value>{0} deponuzdan {1} tanesi populer oluyor</value>
+    <value>{0} deponuzdan {1} tanesi trend</value>
   </data>
   <data name="MultipleRepositoryNotificationMessage" xml:space="preserve">
-    <value>{0} Populer Olan Deponuz Var</value>
+    <value>{0} Trend Deponuz var</value>
   </data>
   <data name="NotificationsDisabled" xml:space="preserve">
     <value>Bildirimler Devre Dışı</value>
@@ -34,16 +34,16 @@
     <value>Bildirimler Desteklenmiyor</value>
   </data>
   <data name="HandleNotification_SingleTrendingRepository_Title" xml:space="preserve">
-    <value>{0} Populer Oluyor</value>
+    <value>{0} tane trend</value>
   </data>
   <data name="HandleNotification_SingleTrendingRepository_Message" xml:space="preserve">
-    <value>Haydi grafiğine de bakalım</value>
+    <value>Grafiğini kontrol edelim</value>
   </data>
   <data name="HandleNotification_SingleTrendingRepository_Accept" xml:space="preserve">
-    <value>Haydi Devam Edelim</value>
+    <value>Hadi gidelim</value>
   </data>
   <data name="HandleNotification_SingleTrendingRepository_Decline" xml:space="preserve">
-    <value>Şu Anda Değil</value>
+    <value>Şimdi olmaz</value>
   </data>
   <data name="HandleNotification_MultipleTrendingRepository_Sorted_Message" xml:space="preserve">
     <value>Daha fazla ayrıntı görmek için "Trend" etiketli depolara dokunun!</value>
