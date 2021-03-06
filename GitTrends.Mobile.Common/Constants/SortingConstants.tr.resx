@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="ActionSheetTitle" xml:space="preserve">
+    <value>Göre Sırala</value>
+  </data>
+	<data name="CancelText" xml:space="preserve">
+		<value>Vazgeç</value>
+  </data>
+	<data name="Stars" xml:space="preserve">
+    <value>Yıldızlar</value>
+  </data>
+	<data name="Forks" xml:space="preserve">
+    <value>Kollar</value>
+  </data>
+	<data name="Issues" xml:space="preserve">
+    <value>Konular</value>
+  </data>
+	<data name="Views" xml:space="preserve">
+    <value>Görüntüleme</value>
+  </data>
+	<data name="Clones" xml:space="preserve">
+    <value>Klonlar</value>
+  </data>
+	<data name="UniqueViews" xml:space="preserve">
+    <value>Özgün Görüntülemeler</value>
+  </data>
+	<data name="UniqueClones" xml:space="preserve">
+		<value>Özgün Klonlar</value>
+  </data>
+</root>
