@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using GitTrends.Shared;
 
@@ -7,7 +6,7 @@ namespace GitTrends.Mobile.Common
 {
     public class TimedEvent : ITimedEvent
     {
-        readonly Stopwatch _stopwatch = new Stopwatch();
+        readonly Stopwatch _stopwatch = new();
         readonly string _trackIdentifier;
         readonly IAnalyticsService _analyticsService;
 
@@ -28,7 +27,7 @@ namespace GitTrends.Mobile.Common
 
             Data.Add("Timed Event", $"{_stopwatch.Elapsed:ss\\.fff}s");
 
-            _analyticsService.Track($"{_trackIdentifier} [Timed Event]", Data);
+            _analyticsService.Track($"{_trackIdentifier} [Timed Event]", new Dictionary<string, string>(Data));
         }
     }
 }
