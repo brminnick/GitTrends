@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="PleaseLoginAgain" xml:space="preserve">
+    <value>Vennligst logg inn igjen</value>
+  </data>
+	<data name="SwipeDownToRefresh_Repositories" xml:space="preserve">
+    <value>Sveip ned for å hente repos</value>
+  </data>
+	<data name="SwipeDownToRefresh_ReferringSites" xml:space="preserve">
+    <value>Sveip ned for å hente refererende sider</value>
+  </data>
+	<data name="LoginExpired" xml:space="preserve">
+    <value>GitHub-innlogging utløpt</value>
+  </data>
+	<data name="NoFilterMatch" xml:space="preserve">
+    <value>Ingen repo funnet</value>
+  </data>
+	<data name="NoRepositoriesFound" xml:space="preserve">
+    <value>Din liste av repos er tom</value>
+  </data>
+	<data name="ClearSearchBarTryAgain" xml:space="preserve">
+    <value>Tøm søkefeltet og prøv igjen</value>
+  </data>
+	<data name="NoReferralsYet" xml:space="preserve">
+    <value>Ingen henvisninger enda</value>
+  </data>
+	<data name="Uninitialized" xml:space="preserve">
+    <value>Data ikke hentet</value>
+  </data>
+	<data name="UnableToRetrieveData" xml:space="preserve">
+    <value>Klarte ikke å hente data</value>
+  </data>
+	<data name="NoTrafficYet" xml:space="preserve">
+    <value>Ingen trafikk enda</value>
+  </data>
+	<data name="ZeroStarsEmptyDataViewDescription1" xml:space="preserve">
+    <value>Null stress! Fortsett det gode arbeidet så vil stjernene komme!</value>
+  </data>
+	<data name="ZeroStarsEmptyDataViewDescription2" xml:space="preserve">
+    <value>Inviter miljøet til å sjekke ut det bra arbeidet ditt!</value>
+  </data>
+	<data name="ZeroStarsEmptyDataViewDescription3" xml:space="preserve">
+    <value>Del oppdateringer med venner for å få din første stjerne!</value>
+  </data>
+	<data name="Congratulations" xml:space="preserve">
+    <value>Gratulerer!</value>
+  </data>
+	<data name="NoStarsYet" xml:space="preserve">
+    <value>Ingen stjerner enda</value>
+  </data>
+	<data name="FirstStar" xml:space="preserve">
+    <value>Du har fått din første stjerne</value>
+  </data>
+</root>
