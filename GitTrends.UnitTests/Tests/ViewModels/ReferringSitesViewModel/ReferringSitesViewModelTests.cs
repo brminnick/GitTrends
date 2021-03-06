@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
 namespace GitTrends.UnitTests
 {
+    [NonParallelizable]
     class ReferringSitesViewModelTests : BaseTest
     {
         [Test]

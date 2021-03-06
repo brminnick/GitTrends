@@ -12,6 +12,7 @@ using RichardSzalay.MockHttp;
 
 namespace GitTrends.UnitTests
 {
+    [NonParallelizable]
     class RepositoryViewModelTests_ServerError : BaseTest
     {
         [Test]

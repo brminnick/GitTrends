@@ -10,6 +10,7 @@ using NUnit.Framework;
 
 namespace GitTrends.UnitTests
 {
+    [NonParallelizable]
     class RepositoryViewModelTests : BaseTest
     {
         [Test]

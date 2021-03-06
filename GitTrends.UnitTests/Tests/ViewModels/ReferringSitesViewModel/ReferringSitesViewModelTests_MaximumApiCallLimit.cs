@@ -13,6 +13,7 @@ using RichardSzalay.MockHttp;
 
 namespace GitTrends.UnitTests
 {
+    [NonParallelizable]
     class ReferringSitesViewModelTests_MaximumApiCallLimit : BaseTest
     {
         [Test]
