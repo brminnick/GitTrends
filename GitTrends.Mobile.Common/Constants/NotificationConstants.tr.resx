@@ -52,12 +52,12 @@
     <value>Teşekkürler</value>
   </data>
   <data name="HandleNotification_MultipleTrendingRepositor_Unsorted_Message" xml:space="preserve">
-    <value>Hangileri olduğunu görmek için tersten sıralayın</value>
+    <value>Hangileri Olduğunu Görmek İçin Tersten Sıralayın</value>
   </data>
   <data name="HandleNotification_MultipleTrendingRepositor_Unsorted_Accept" xml:space="preserve">
-    <value>Tersten sıralama</value>
+    <value>Tersten Sıralama</value>
   </data>
   <data name="HandleNotification_MultipleTrendingRepositor_Unsorted_Decline" xml:space="preserve">
     <value>Şimdi değil</value>
   </data>
-</root>
+</root> 

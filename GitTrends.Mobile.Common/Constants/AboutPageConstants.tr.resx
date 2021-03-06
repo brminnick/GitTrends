@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
 	<resheader name="resmimetype">
 		<value>text/microsoft-resx</value>
@@ -19,7 +19,7 @@
     <value>Yıldızlar</value>
   </data>
   <data name="Forks" xml:space="preserve">
-    <value>Forklar</value>
+    <value>Kollar</value>
   </data>
   <data name="Watching" xml:space="preserve">
     <value>İzleyenler</value>
@@ -37,9 +37,9 @@
     <value>GitTrends'i mümkün kılan tüm harika kütüphane ve platformlara teşekkürler!</value>
   </data>
   <data name="GitHubButton" xml:space="preserve">
-    <value>GitHub'ta gör</value>
+    <value>GitHub'ta Gör</value>
   </data>
   <data name="RequestFeatureButton" xml:space="preserve">
-    <value>Özellik talebinde bulun</value>
+    <value>Özellik Talep Et</value>
   </data>
-</root>
+</root> 

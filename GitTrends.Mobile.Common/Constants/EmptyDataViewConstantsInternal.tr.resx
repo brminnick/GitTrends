@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
 	<resheader name="resmimetype">
 		<value>text/microsoft-resx</value>
@@ -22,10 +22,10 @@
     <value>İlişkili siteleri almak için aşağı kaydırın</value>
   </data>
   <data name="LoginExpired" xml:space="preserve">
-    <value>GitHub Girişinin Süresi Doldu</value>
+    <value>GitHub Girişinin Süresi Bitti</value>
   </data>
   <data name="NoFilterMatch" xml:space="preserve">
-    <value>Eşleşen bir depo bulunamadı</value>
+    <value>Eşleşen Depo Bulunamadı</value>
   </data>
   <data name="NoRepositoriesFound" xml:space="preserve">
     <value>Kod depoları listeniz boş</value>
@@ -61,6 +61,6 @@
     <value>Henüz Yıldız Yok</value>
   </data>
   <data name="FirstStar" xml:space="preserve">
-    <value>İlk yıldızını kazandın</value>
+    <value>İlk yıldızınızı kazandınız!</value>
   </data>
-</root>
+</root> 

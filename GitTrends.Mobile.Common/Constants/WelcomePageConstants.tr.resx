@@ -13,12 +13,12 @@
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
 	<data name="TryDemo" xml:space="preserve">
-    <value>Demoyu Deneyin</value>
+    <value>Demoyu Dene</value>
   </data>
-  <data name="WelcomeToGitTrends" xml:space="preserve">
-    <value>GitTrends'e hoşgeldiniz</value>
+	<data name="WelcomeToGitTrends" xml:space="preserve">
+    <value>GitTrends'e Hoş Geldin</value>
   </data>
-  <data name="MonitorYourRepos" xml:space="preserve">
+	<data name="MonitorYourRepos" xml:space="preserve">
     <value>GitHub depolarınızı kolaylıkla izleyin</value>
   </data>
 </root>

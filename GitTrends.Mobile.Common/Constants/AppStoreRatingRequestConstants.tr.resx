@@ -13,15 +13,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="iOS" xml:space="preserve">
-    <value>O halde App Store'da bir incelemeye ne dersiniz?</value>
+    <value>App Store'da bir incelemeye ne dersiniz?</value>
   </data>
   <data name="Android" xml:space="preserve">
-    <value>O halde Google Play Store'da bir incelemeye ne dersiniz?</value>
+    <value>Google Play Store'da bir incelemeye ne dersiniz?</value>
   </data>
   <data name="Windows" xml:space="preserve">
-    <value>O halde Microsoft Store'da bir incelemeye ne dersiniz?</value>
+    <value>Microsoft Store'da bir incelemeye ne dersiniz?</value>
   </data>
   <data name="Other" xml:space="preserve">
     <value>Bir inceleme yayınlamaya ne dersiniz?</value>
   </data>
-</root>
+</root> 

@@ -13,15 +13,15 @@
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
 	<data name="Disconnect" xml:space="preserve">
-    <value>Bağlantıyı kes</value>
+    <value>Bağlantıyı Kes</value>
   </data>
-  <data name="ConnectToGitHub" xml:space="preserve">
-    <value>GitHub'a bağlanın</value>
+	<data name="ConnectToGitHub" xml:space="preserve">
+    <value>GitHub'a Bağlan</value>
   </data>
-  <data name="NotLoggedIn" xml:space="preserve">
-    <value>Giriş yapmadınız</value>
+	<data name="NotLoggedIn" xml:space="preserve">
+    <value>Giriş Yapmadınız</value>
   </data>
-  <data name="TryDemo" xml:space="preserve">
+	<data name="TryDemo" xml:space="preserve">
     <value>Demoyu Deneyin</value>
   </data>
 </root>

@@ -25,7 +25,7 @@
     <value>Grafikler, deponuzla ilgili tüm trafiği gösterir:</value>
   </data>
   <data name="ChartPage_Body_ZoomInOut" xml:space="preserve">
-    <value>Bilmek istediğiniz bilgileri doğru bir şekilde görmek için yakınlaştırın / uzaklaştırın</value>
+    <value>Bilmek istediğinizi kesin bir şekilde görmek için yakınlaştırın/uzaklaştırın</value>
   </data>
   <data name="ChartPage_Body_LongPress" xml:space="preserve">
     <value>Kesin sayısal değerleri görmek için grafiğe uzun basın</value>
@@ -43,13 +43,13 @@
     <value>GitTrends, GitHub depolarınızı izlemenize yardımcı olur:</value>
   </data>
   <data name="GitTrendsPage_Body_MonitorGitHubRepos" xml:space="preserve">
-    <value>GitHub Repo Görüntülenmeleri, Klonları, Forkları, Yıldızları ve Sorunları İzleyin</value>
+    <value>GitHub Repo Görüntülenmeleri, Klonları, Kolları, Yıldızları ve Konuları İzleyin</value>
   </data>
   <data name="GitTrendsPage_Body_DiscoverReferringSites" xml:space="preserve">
-    <value>İlişkili Siteleri Keşfedin</value>
+    <value>Atıfta Bulunan Siteleri Keşfedin</value>
   </data>
   <data name="NotificationsPage_Title" xml:space="preserve">
-    <value>Depolar trend olunca haberdar olun</value>
+    <value>Depolar populer olunca haberdar olun</value>
   </data>
   <data name="NotificationsPage_Body_MoreTrafficThanUsual" xml:space="preserve">
     <value>GitTrends, GitHub depolarınız normalden daha fazla trafik aldığında sizi bilgilendirecektir.</value>

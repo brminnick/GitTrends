@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
 	<resheader name="resmimetype">
 		<value>text/microsoft-resx</value>
@@ -12,16 +12,16 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-	 <data name="SortToolbarItemText" xml:space="preserve">
+	<data name="SortToolbarItemText" xml:space="preserve">
     <value>Sırala</value>
   </data>
-  <data name="DisplayingDataFrom" xml:space="preserve">
-    <value>Verileri görüntüle</value>
+	<data name="DisplayingDataFrom" xml:space="preserve">
+    <value>Verilerin görüntülendiği kaynak</value>
   </data>
-  <data name="CheckInternetConnectionTryAgain" xml:space="preserve">
+	<data name="CheckInternetConnectionTryAgain" xml:space="preserve">
     <value>İnternet bağlantınızı kontrol edin ve tekrar deneyin</value>
   </data>
-  <data name="TOTAL" xml:space="preserve">
+	<data name="TOTAL" xml:space="preserve">
     <value>TOPLAM</value>
   </data>
 </root>

@@ -15,10 +15,10 @@
 	<data name="Default" xml:space="preserve">
     <value>Varsayılan</value>
   </data>
-  <data name="Light" xml:space="preserve">
+	<data name="Light" xml:space="preserve">
     <value>Açık</value>
   </data>
-  <data name="Dark" xml:space="preserve">
+	<data name="Dark" xml:space="preserve">
     <value>Koyu</value>
   </data>
 </root>

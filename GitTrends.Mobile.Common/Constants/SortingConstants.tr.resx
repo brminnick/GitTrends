@@ -12,31 +12,31 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-  <data name="ActionSheetTitle" xml:space="preserve">
-    <value>Sırala</value>
+	<data name="ActionSheetTitle" xml:space="preserve">
+    <value>Göre Sırala</value>
   </data>
-  <data name="CancelText" xml:space="preserve">
-    <value>İptal et</value>
+	<data name="CancelText" xml:space="preserve">
+		<value>Vazgeç</value>
   </data>
-  <data name="Stars" xml:space="preserve">
+	<data name="Stars" xml:space="preserve">
     <value>Yıldızlar</value>
   </data>
-  <data name="Forks" xml:space="preserve">
-    <value>Forklar</value>
+	<data name="Forks" xml:space="preserve">
+    <value>Kollar</value>
   </data>
-  <data name="Issues" xml:space="preserve">
-    <value>Sorunlar</value>
+	<data name="Issues" xml:space="preserve">
+    <value>Konular</value>
   </data>
-  <data name="Views" xml:space="preserve">
+	<data name="Views" xml:space="preserve">
     <value>Görüntüleme</value>
   </data>
-  <data name="Clones" xml:space="preserve">
+	<data name="Clones" xml:space="preserve">
     <value>Klonlar</value>
   </data>
-  <data name="UniqueViews" xml:space="preserve">
-    <value>Benzersiz Görüntüleme</value>
+	<data name="UniqueViews" xml:space="preserve">
+    <value>Özgün Görüntülemeler</value>
   </data>
-  <data name="UniqueClones" xml:space="preserve">
-    <value>Benzersiz Klonlar</value>
+	<data name="UniqueClones" xml:space="preserve">
+		<value>Özgün Klonlar</value>
   </data>
 </root>
