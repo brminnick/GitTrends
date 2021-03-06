@@ -56,6 +56,6 @@ namespace GitTrends
 
         Task SetSvgColorAsync() => MainThread.InvokeOnMainThreadAsync(SetSvgColor);
 
-        void SetSvgColor() => ReplaceStringMap = SvgService.GetColorStringMap(GetTextColor());
+        void SetSvgColor() => ReplaceStringMap = new(SvgService.GetColorStringMap(GetTextColor()));
     }
 }

@@ -15,9 +15,9 @@ namespace GitTrends
 
         public static string GetFullPath(in string fileName) => $"resource://{GetResourcePath(fileName)}";
 
-        internal static Dictionary<string, string> GetColorStringMap(in Xamarin.Forms.Color color) => GetColorStringMap(color.ToHex());
+        internal static IReadOnlyDictionary<string, string> GetColorStringMap(in Xamarin.Forms.Color color) => GetColorStringMap(color.ToHex());
 
-        public static Dictionary<string, string> GetColorStringMap(in string hex)
+        public static IReadOnlyDictionary<string, string> GetColorStringMap(in string hex)
         {
             if (!hex.StartsWith("#"))
                 throw new ArgumentException($"{nameof(hex)} must begin with `#`");
