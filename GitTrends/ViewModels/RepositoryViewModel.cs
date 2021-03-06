@@ -39,6 +39,9 @@ namespace GitTrends
         string _emptyDataViewTitle = string.Empty;
         string _emptyDataViewDescription = string.Empty;
 
+        
+
+
         IReadOnlyList<Repository> _repositoryList = Array.Empty<Repository>();
         IReadOnlyList<Repository> _visibleRepositoryList = Array.Empty<Repository>();
 
@@ -107,6 +110,14 @@ namespace GitTrends
             set => SetProperty(ref _emptyDataViewTitle, value);
         }
 
+        // Select the size of the button according the length of his text
+        public FloatingActionButtonSize TotalButtonSize => TotalButtonText.Length switch
+        {
+            <= 3 => FloatingActionButtonSize.Mini,
+            <= 5 => FloatingActionButtonSize.Normal,
+            > 5 => FloatingActionButtonSize.Large
+        };
+
         public string EmptyDataViewDescription
         {
             get => _emptyDataViewDescription;
@@ -118,7 +129,14 @@ namespace GitTrends
             get => _isRefreshing;
             set => SetProperty(ref _isRefreshing, value);
         }
+        string _totalButtonText = RepositoryPageConstants.TOTAL;
 
+        
+        public string TotalButtonText
+        {
+            get => _totalButtonText;
+            set => SetProperty(ref _totalButtonText, value);
+        }
         public string TitleText
         {
             get => _titleText;
@@ -134,7 +152,7 @@ namespace GitTrends
             }
         }
 
-        static IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IReadOnlyList<Repository> repositories, string searchBarText)
+        static IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IEnumerable<Repository> repositories, string searchBarText)
         {
             if (string.IsNullOrWhiteSpace(searchBarText))
                 return repositories;
@@ -193,7 +211,7 @@ namespace GitTrends
                 }
 
                 //Add Remaining Repositories to VisibleRepositoryList
-                AddRepositoriesToCollection(completedRepositories, _searchBarText, true);
+                AddRepositoriesToCollection(completedRepositories, _searchBarText);
 
                 if (!_gitHubUserService.IsDemoUser)
                 {
@@ -205,7 +223,7 @@ namespace GitTrends
                 RefreshState = RefreshState.Succeeded;
             }
             catch (Exception e) when ((e is ApiException exception && exception.StatusCode is HttpStatusCode.Unauthorized)
-                                        || (e is HttpRequestException && finalResponse != null && finalResponse.StatusCode is HttpStatusCode.Unauthorized))
+                                        || (e is HttpRequestException && finalResponse?.StatusCode is HttpStatusCode.Unauthorized))
             {
                 var loginExpiredEventArgs = new LoginExpiredPullToRefreshEventArgs();
 
@@ -283,6 +301,8 @@ namespace GitTrends
                 IsFavorite = repository.IsFavorite.HasValue ? !repository.IsFavorite : true
             };
 
+            AnalyticsService.Track("IsFavorite Toggled", nameof(Repository.IsFavorite), updatedRepository.IsFavorite.ToString());
+
             var updatedRepositoryList = new List<Repository>(_visibleRepositoryList);
             updatedRepositoryList.Remove(repository);
             updatedRepositoryList.Add(updatedRepository);
@@ -336,14 +356,10 @@ namespace GitTrends
             UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
-        void AddRepositoriesToCollection(in IReadOnlyList<Repository> repositories, in string searchBarText, in bool shouldUpdateVisibleRepositoryList = true, in bool shouldRemoveRepoisitoriesWithoutViewsClonesData = false)
+        void AddRepositoriesToCollection(in IEnumerable<Repository> repositories, in string searchBarText, in bool shouldUpdateVisibleRepositoryList = true)
         {
             var updatedRepositoryList = _repositoryList.Concat(repositories);
-
-            if (shouldRemoveRepoisitoriesWithoutViewsClonesData)
-                _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).Where(x => x.DailyClonesList?.Count > 1 || x.DailyViewsList?.Count > 1).ToList();
-            else
-                _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
+            _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
             if (shouldUpdateVisibleRepositoryList)
                 UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
@@ -392,9 +408,9 @@ namespace GitTrends
         {
             RefreshState = pullToRefreshFailedEventArgs switch
             {
-                ErrorPullToRefreshEventArgs _ => RefreshState.Error,
-                MaximumApiRequestsReachedEventArgs _ => RefreshState.MaximumApiLimit,
-                LoginExpiredPullToRefreshEventArgs _ => RefreshState.LoginExpired,
+                ErrorPullToRefreshEventArgs => RefreshState.Error,
+                MaximumApiRequestsReachedEventArgs => RefreshState.MaximumApiLimit,
+                LoginExpiredPullToRefreshEventArgs => RefreshState.LoginExpired,
                 _ => throw new NotSupportedException()
             };
 

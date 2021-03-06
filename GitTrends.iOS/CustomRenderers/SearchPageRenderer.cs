@@ -141,10 +141,16 @@ namespace GitTrends.iOS
             {
                 Element.SizeChanged -= HandleSizeChanged;
 
-                page.Padding = new Thickness(page.Padding.Left,
-                                                page.Padding.Top,
-                                                page.Padding.Right,
-                                                page.Padding.Bottom + _searchController.SearchBar.Frame.Height);
+                if (NavigationController.NavigationBar.PrefersLargeTitles is true)
+                {
+                    var statusBarSize = UIApplication.SharedApplication.StatusBarFrame.Size;
+                    var statusBarHeight = Math.Min(statusBarSize.Height, statusBarSize.Width);
+
+                    page.Padding = new Thickness(page.Padding.Left,
+                                                    page.Padding.Top,
+                                                    page.Padding.Right,
+                                                    page.Padding.Bottom + statusBarHeight);
+                }
             }
         }
     }

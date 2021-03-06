@@ -12,7 +12,34 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-	<data name="About" xml:space="preserve">
-    <value>Over</value>
+  <data name="DescriptionText" xml:space="preserve">
+    <value>GitTrends is een open-source app gebouwd in C# met behulp van Xamarin.Forms die je hebt bij het monitoren van je GitHub repositories!</value>
+  </data>
+  <data name="Stars" xml:space="preserve">
+    <value>Stars</value>
+  </data>
+  <data name="Forks" xml:space="preserve">
+    <value>Forks</value>
+  </data>
+  <data name="Watching" xml:space="preserve">
+    <value>Watching</value>
+  </data>
+  <data name="CollaboratorsTitle" xml:space="preserve">
+    <value>Collaborators</value>
+  </data>
+  <data name="CollaboratorsDescription" xml:space="preserve">
+    <value>Dank aan al onze geweldige open-source contributors. Tap op een contributor voor meer informatie!</value>
+  </data>
+  <data name="LibrariesTitle" xml:space="preserve">
+    <value>Libraries</value>
+  </data>
+  <data name="LibrariesDescription" xml:space="preserve">
+    <value>Dank aan alle geweldige libraries en frameworks die GitTrends mogelijk maken!</value>
+  </data>
+  <data name="GitHubButton" xml:space="preserve">
+    <value>Bekijk op GitHub</value>
+  </data>
+  <data name="RequestFeatureButton" xml:space="preserve">
+    <value>Feature Aanvragen</value>
   </data>
 </root>

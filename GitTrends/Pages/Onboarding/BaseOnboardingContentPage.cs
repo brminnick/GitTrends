@@ -36,13 +36,13 @@ namespace GitTrends
             Content = new Grid
             {
                 RowDefinitions = Rows.Define(
-                    (Row.Image, StarGridLength(GetImageRowStarHeight())),
-                    (Row.Description, StarGridLength(GetDescriptionRowStarHeight())),
-                    (Row.Indicator, AbsoluteGridLength(44))),
+                    (Row.Image, Stars(GetImageRowStarHeight())),
+                    (Row.Description, Stars(GetDescriptionRowStarHeight())),
+                    (Row.Indicator, 44)),
 
                 ColumnDefinitions = Columns.Define(
-                    (Column.Indicator, StarGridLength(1)),
-                    (Column.Button, StarGridLength(1))),
+                    (Column.Indicator, Stars(1)),
+                    (Column.Button, Stars(1))),
 
                 Children =
                 {
@@ -166,9 +166,6 @@ namespace GitTrends
 
                 Margin = new Thickness(30, 0, 0, 0);
 
-#if AppStore
-#error IdicatorView Regression https://github.com/xamarin/Xamarin.Forms/issues/12028
-#endif
                 HorizontalOptions = LayoutOptions.Start;
                 AutomationId = OnboardingAutomationIds.PageIndicator;
 

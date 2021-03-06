@@ -58,7 +58,7 @@ namespace GitTrends.UnitTests
 
             if (shouldIncludeViewsClonesData)
             {
-                await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(new[] { repository }, CancellationToken.None))
+                 await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(new[] { repository }, CancellationToken.None).ConfigureAwait(false))
                 {
                     repository = completedReposiory;
                 }

@@ -37,14 +37,14 @@ namespace GitTrends
                 RowSpacing = 16,
 
                 RowDefinitions = Rows.Define(
-                        (Row.Description, AbsoluteGridLength(65)),
-                        (Row.Button, AbsoluteGridLength(42)),
-                        (Row.ActivityIndicator, AbsoluteGridLength(42))),
+                        (Row.Description, 65),
+                        (Row.Button, 42),
+                        (Row.ActivityIndicator, 42)),
 
                 Children =
                 {
                     new BodyLabel(OnboardingConstants.ConnectToGitHubPage_Body_GetStarted).Row(Row.Description),
-                    new ConnectToGitHubView(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None, new Xamarin.Essentials.BrowserLaunchOptions
+                    new ConnectToGitHubButton(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None, new Xamarin.Essentials.BrowserLaunchOptions
                     {
                         PreferredControlColor = Color.White,
                         PreferredToolbarColor = Color.FromHex(BaseTheme.CoralColorHex).MultiplyAlpha(0.75),

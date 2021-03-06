@@ -12,7 +12,34 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-	<data name="About" xml:space="preserve">
-    <value>О приложении</value>
+  <data name="CollaboratorsDescription" xml:space="preserve">
+    <value>Спасибо всем нашим соавторам. Нажмите на автора, чтобы узнать больше!</value>
+  </data>
+  <data name="CollaboratorsTitle" xml:space="preserve">
+    <value>Соавторы</value>
+  </data>
+  <data name="DescriptionText" xml:space="preserve">
+    <value>GitTrends - это приложение с открытым исходным кодом, созданное на C# с использованием Xamarin.Forms, которое помогает следить за Вашими репозиториями на GitHub!</value>
+  </data>
+  <data name="Forks" xml:space="preserve">
+    <value>Ветки</value>
+  </data>
+  <data name="GitHubButton" xml:space="preserve">
+    <value>Посмотреть на GitHub</value>
+  </data>
+  <data name="LibrariesDescription" xml:space="preserve">
+    <value>Спасибо за великолепные библиотеки и фреймворки которые помогли воплотить GitTrends в жизнь!</value>
+  </data>
+  <data name="LibrariesTitle" xml:space="preserve">
+    <value>Библиотеки</value>
+  </data>
+  <data name="RequestFeatureButton" xml:space="preserve">
+    <value>Запрос функционала</value>
+  </data>
+  <data name="Stars" xml:space="preserve">
+    <value>Звезды</value>
+  </data>
+  <data name="Watching" xml:space="preserve">
+    <value>Наблюдатели</value>
   </data>
 </root>

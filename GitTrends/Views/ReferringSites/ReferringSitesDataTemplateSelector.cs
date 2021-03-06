@@ -29,14 +29,14 @@ namespace GitTrends
                 {
                     RowSpacing = 0;
                     RowDefinitions = Rows.Define(
-                        (Row.TopPadding, AbsoluteGridLength(TopPadding)),
-                        (Row.Card, StarGridLength(1)),
-                        (Row.BottomPadding, AbsoluteGridLength(BottomPadding)));
+                        (Row.TopPadding, TopPadding),
+                        (Row.Card, Stars(1)),
+                        (Row.BottomPadding, BottomPadding));
 
                     ColumnDefinitions = Columns.Define(
-                        (Column.LeftPadding, AbsoluteGridLength(16)),
-                        (Column.Card, StarGridLength(1)),
-                        (Column.RightPadding, AbsoluteGridLength(16)));
+                        (Column.LeftPadding, 16),
+                        (Column.Card, Stars(1)),
+                        (Column.RightPadding, 16));
 
                     Children.Add(new CardViewFrame(mobileReferringSite).Row(Row.Card).Column(Column.Card));
 
@@ -77,18 +77,18 @@ namespace GitTrends
                         ColumnSpacing = 0;
 
                         RowDefinitions = Rows.Define(
-                            (Row.Title, AbsoluteGridLength(_favIconHeight / 2 - rowSpacing / 2)),
-                            (Row.Description, AbsoluteGridLength(_favIconHeight / 2 - rowSpacing / 2)));
+                            (Row.Title, _favIconHeight / 2 - rowSpacing / 2),
+                            (Row.Description, _favIconHeight / 2 - rowSpacing / 2));
 
                         ColumnDefinitions = Columns.Define(
-                            (Column.FavIcon, AbsoluteGridLength(_favIconWidth)),
-                            (Column.FavIconPadding, AbsoluteGridLength(16)),
-                            (Column.Site, StarGridLength(1)),
-                            (Column.SitePadding, AbsoluteGridLength(8)),
+                            (Column.FavIcon, _favIconWidth),
+                            (Column.FavIconPadding, 16),
+                            (Column.Site, Star),
+                            (Column.SitePadding, 8),
                             (Column.Referrals, Auto),
-                            (Column.ReferralPadding, AbsoluteGridLength(separatorPadding)),
-                            (Column.Separator, AbsoluteGridLength(1)),
-                            (Column.UniquePadding, AbsoluteGridLength(separatorPadding)),
+                            (Column.ReferralPadding, separatorPadding),
+                            (Column.Separator, 1),
+                            (Column.UniquePadding, separatorPadding),
                             (Column.Uniques, Auto));
 
                         Children.Add(new FavIconImage()
@@ -156,7 +156,7 @@ namespace GitTrends
                             VerticalTextAlignment = TextAlignment.End;
 
                             this.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
-                            SetBinding(WidthRequestProperty, new Binding(nameof(Width), source: titleLabel));
+                            this.Bind(WidthRequestProperty, nameof(Width), source: titleLabel);
                         }
                     }
 

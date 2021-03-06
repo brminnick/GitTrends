@@ -8,7 +8,6 @@ using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using Refit;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
@@ -16,7 +15,7 @@ namespace GitTrends.UnitTests
 {
     abstract class BaseTest
     {
-        protected const string AuthenticatedGitHubUserAvatarUrl = "https://avatars0.githubusercontent.com/u/13558917?u=f1392f8aefe2d52a87c4d371981cb7153199fa27&v=4";
+        protected const string AuthenticatedGitHubUserAvatarUrl = "https://avatars.githubusercontent.com/u/13558917?u=f1392f8aefe2d52a87c4d371981cb7153199fa27&v=4";
 
         [TearDown]
         public virtual Task TearDown() => Task.CompletedTask;
@@ -59,9 +58,9 @@ namespace GitTrends.UnitTests
 
         protected virtual void InitializeServiceCollection()
         {
-            var gitHubApiV3Client = RestService.For<IGitHubApiV3>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubRestApiUrl));
-            var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
-            var azureFunctionsClient = RestService.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
+            var gitHubApiV3Client = RefitExtensions.For<IGitHubApiV3>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubRestApiUrl));
+            var gitHubGraphQLCLient = RefitExtensions.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
+            var azureFunctionsClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
 
             ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
         }
@@ -69,6 +68,9 @@ namespace GitTrends.UnitTests
         protected static async Task AuthenticateUser(GitHubUserService gitHubUserService, GitHubGraphQLApiService gitHubGraphQLApiService)
         {
             var token = await Mobile.Common.AzureFunctionsApiService.GetTestToken().ConfigureAwait(false);
+            if (token.IsEmpty() || string.IsNullOrWhiteSpace(token.AccessToken))
+                throw new Exception("Invalid Token");
+
             await gitHubUserService.SaveGitHubToken(token).ConfigureAwait(false);
 
             var (login, name, avatarUri) = await gitHubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false);
@@ -97,7 +99,7 @@ namespace GitTrends.UnitTests
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
                                                         DemoUserConstants.Alias, gitTrendsAvatarUrl,
-                                                        DemoDataConstants.GetRandomNumber(),
+                                                        DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
                                                         gitTrendsAvatarUrl, false, downloadedAt, false, dailyViewsList, dailyClonesList, DemoDataConstants.GenerateStarredAtDates(DemoDataConstants.GetRandomNumber()));
         }
     }

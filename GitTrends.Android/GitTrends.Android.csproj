@@ -22,6 +22,7 @@
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <WarningsAsErrors>nullable</WarningsAsErrors>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <AndroidSupportedAbis>armeabi-v7a;arm64-v8a;x86;x86_64</AndroidSupportedAbis>
@@ -46,35 +47,34 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
-    <AotAssemblies>true</AotAssemblies>
-    <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
-    <AndroidDexTool>d8</AndroidDexTool>
-    <AndroidLinkTool>r8</AndroidLinkTool>
-    <AndroidUseAapt2>true</AndroidUseAapt2>
-    <EnableLLVM>true</EnableLLVM>
-    <AndroidPackageFormat>aab</AndroidPackageFormat>
-    <AndroidTlsProvider>btls</AndroidTlsProvider>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
-    <DebugType>
-    </DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\AppStore</OutputPath>
-    <DefineConstants>AppStore</DefineConstants>
-    <WarningLevel>4</WarningLevel>
-    <JavaMaximumHeapSize>
-    </JavaMaximumHeapSize>
-    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
-    <AndroidUseAapt2>true</AndroidUseAapt2>
-    <LangVersion>latest</LangVersion>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
-    <AndroidPackageFormat>aab</AndroidPackageFormat>
     <AotAssemblies>true</AotAssemblies>
     <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
+    <AndroidUseAapt2>true</AndroidUseAapt2>
     <EnableLLVM>true</EnableLLVM>
+    <AndroidPackageFormat>aab</AndroidPackageFormat>
     <AndroidTlsProvider>btls</AndroidTlsProvider>
+    <AndroidDexTool>d8</AndroidDexTool>
+    <AndroidLinkTool>r8</AndroidLinkTool>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
+    <DebugType></DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\AppStore</OutputPath>
+    <DefineConstants>AppStore</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <AotAssemblies>true</AotAssemblies>
+    <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
+    <AndroidUseAapt2>true</AndroidUseAapt2>
+    <EnableLLVM>true</EnableLLVM>
+    <AndroidPackageFormat>aab</AndroidPackageFormat>
+    <AndroidTlsProvider>btls</AndroidTlsProvider>
+    <AndroidDexTool>d8</AndroidDexTool>
     <AndroidLinkTool>r8</AndroidLinkTool>
   </PropertyGroup>
   <ItemGroup>
@@ -85,28 +85,30 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.1791-pre5" />
-    <PackageReference Include="Refit" Version="5.2.4" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="5.0.2" />
     <PackageReference Include="Polly" Version="7.2.1" />
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.3.0.35" />
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
     <PackageReference Include="Autofac" Version="6.1.0" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.0.0" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.0.0" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.1.0" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.1.0" />
     <PackageReference Include="Shiny.Notifications" Version="1.2.0.1755" />
     <PackageReference Include="Xam.Plugins.Android.ExoPlayer" Version="2.11.8" />
-    <PackageReference Include="Xamarin.Firebase.Messaging" Version="120.2.4" />
+    <PackageReference Include="Xamarin.Firebase.Messaging" Version="121.0.1" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
-    <PackageReference Include="Xamarin.GooglePlayServices.Base" Version="117.4.0" />
+    <PackageReference Include="Xamarin.GooglePlayServices.Base" Version="117.6.0" />
     <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
-    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.2.1.1" />
-    <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-rc1" />
+    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.3.0.1" />
+    <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1" />
     <PackageReference Include="Xamarin.Build.Download" Version="0.10.0" />
-    <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.3" />
+    <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.4" />
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.3" />
+    <PackageReference Include="Plugin.StoreReview" Version="3.1.0-beta" />
     <PackageReference Include="Xamarin.Google.Dagger" Version="2.27.0" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.2" />
+    <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.24" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
@@ -775,7 +777,7 @@
       <Name>GitTrends</Name>
     </ProjectReference>
     <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj">
-      <Project>{4EF65986-3519-49ED-9AC5-A4E4EF20A1D6}</Project>
+      <Project>{936AEAD4-A683-44AD-A903-F3196454C244}</Project>
       <Name>GitTrends.Mobile.Common</Name>
     </ProjectReference>
   </ItemGroup>

@@ -36,14 +36,8 @@ namespace GitTrends.Droid
 
             Forms.Init(this, savedInstanceState);
 
-            var themeService = ContainerService.Container.Resolve<ThemeService>();
-            var languageService = ContainerService.Container.Resolve<LanguageService>();
-            var splashScreenPage = ContainerService.Container.Resolve<SplashScreenPage>();
-            var analyticsService = ContainerService.Container.Resolve<IAnalyticsService>();
-            var notificationService = ContainerService.Container.Resolve<NotificationService>();
-            var deviceNotificationsService = ContainerService.Container.Resolve<IDeviceNotificationsService>();
-
-            LoadApplication(new App(themeService, languageService, splashScreenPage, analyticsService, notificationService, deviceNotificationsService));
+            var app = ContainerService.Container.Resolve<App>();
+            LoadApplication(app);
 
             TryHandleOpenedFromUri(Intent?.Data);
             TryHandleOpenedFromNotification(Intent);

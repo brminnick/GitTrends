@@ -63,14 +63,14 @@ namespace GitTrends
                     RowSpacing = 0,
 
                     RowDefinitions = Rows.Define(
-                        (CardViewRow.TopPadding, AbsoluteGridLength(TopPadding)),
+                        (CardViewRow.TopPadding, TopPadding),
                         (CardViewRow.Card, Star),
-                        (CardViewRow.BottomPadding, AbsoluteGridLength(BottomPadding))),
+                        (CardViewRow.BottomPadding, BottomPadding)),
 
                     ColumnDefinitions = Columns.Define(
-                        (CardViewColumn.LeftPadding, AbsoluteGridLength(IsSmallScreen ? 8 : 16)),
+                        (CardViewColumn.LeftPadding, IsSmallScreen ? 8 : 16),
                         (CardViewColumn.Card, Star),
-                        (CardViewColumn.RightPadding, AbsoluteGridLength(IsSmallScreen ? 8 : 16))),
+                        (CardViewColumn.RightPadding, IsSmallScreen ? 8 : 16)),
 
                     Children =
                     {
@@ -105,27 +105,27 @@ namespace GitTrends
                         this.FillExpand();
 
                         RowDefinitions = Rows.Define(
-                            (Row.Title, AbsoluteGridLength(25)),
-                            (Row.Description, AbsoluteGridLength(40)),
-                            (Row.DescriptionPadding, AbsoluteGridLength(4)),
-                            (Row.Separator, AbsoluteGridLength(1)),
-                            (Row.SeparatorPadding, AbsoluteGridLength(4)),
-                            (Row.Statistics, AbsoluteGridLength(_statisticsRowHeight)));
+                            (Row.Title, 25),
+                            (Row.Description, 40),
+                            (Row.DescriptionPadding, 4),
+                            (Row.Separator, 1),
+                            (Row.SeparatorPadding, 4),
+                            (Row.Statistics, _statisticsRowHeight));
 
                         ColumnDefinitions = Columns.Define(
-                            (Column.Avatar, AbsoluteGridLength(IsSmallScreen ? _circleImageHeight - 4 : _circleImageHeight)),
-                            (Column.AvatarPadding, AbsoluteGridLength(IsSmallScreen ? 4 : 16)),
-                            (Column.Trending, StarGridLength(1)),
-                            (Column.Emoji1, AbsoluteGridLength(_emojiColumnSize)),
-                            (Column.Statistic1, AbsoluteGridLength(_statsColumnSize)),
-                            (Column.Emoji2, AbsoluteGridLength(_emojiColumnSize)),
-                            (Column.Statistic2, AbsoluteGridLength(_statsColumnSize)),
-                            (Column.Emoji3, AbsoluteGridLength(_emojiColumnSize)),
-                            (Column.Statistic3, AbsoluteGridLength(_statsColumnSize)));
+                            (Column.Avatar, IsSmallScreen ? _circleImageHeight - 4 : _circleImageHeight),
+                            (Column.AvatarPadding, IsSmallScreen ? 4 : 16),
+                            (Column.Trending, Star),
+                            (Column.Emoji1, _emojiColumnSize),
+                            (Column.Statistic1, _statsColumnSize),
+                            (Column.Emoji2, _emojiColumnSize),
+                            (Column.Statistic2, _statsColumnSize),
+                            (Column.Emoji3, _emojiColumnSize),
+                            (Column.Statistic3, _statsColumnSize));
 
                         Children.Add(new AvatarImage(repository.OwnerAvatarUrl, _circleImageHeight)
                                         .Row(Row.Title).Column(Column.Avatar).RowSpan(2)
-                                        .DynamicResources((BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
+                                        .DynamicResources((CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
                                                             (CircleImage.ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
                                                             (CircleImage.LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource))));
 

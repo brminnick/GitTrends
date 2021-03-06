@@ -9,7 +9,7 @@ on:
       - "*"
 
 jobs:
-  build:
+  Build_AzureFunctions:
     runs-on: ubuntu-latest
 
     steps:

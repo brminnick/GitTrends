@@ -4,6 +4,7 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
+        <WarningsAsErrors>nullable</WarningsAsErrors>
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <Configurations>Debug;Release;AppStore</Configurations>
     </PropertyGroup>
@@ -106,6 +107,10 @@
         <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.resx">
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>GitHubLoginButtonConstants.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\PageTitles.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>PageTitles.Designer.cs</LastGenOutput>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.de.resx">
             <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
@@ -594,9 +599,6 @@
         <Compile Update="Constants\NotificationConstants.Designer.cs">
             <DependentUpon>NotificationConstants.resx</DependentUpon>
         </Compile>
-        <Compile Update="Constants\ThemeConstants.Designer.cs">
-            <DependentUpon>ThemeConstants.resx</DependentUpon>
-        </Compile>
         <Compile Update="Constants\EmptyDataViewConstantsInternal.Designer.cs">
             <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
         </Compile>
@@ -687,6 +689,9 @@
         <Compile Update="Constants\AboutPageConstants.bs.Designer.cs">
           <DependentUpon>AboutPageConstants.bs.resx</DependentUpon>
         </Compile>
+        <Compile Update="Constants\ThemeConstants.Designer.cs">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </Compile>
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Enums\" />
@@ -695,10 +700,10 @@
         <Folder Include="Services\" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="refit" Version="5.2.4" />
         <PackageReference Include="Polly" Version="7.2.1" />
-        <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.0-rc1" />
-        <PackageReference Include="GitHubApiStatus" Version="2.0.0-pre9" />
+        <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1" />
+        <PackageReference Include="GitHubApiStatus" Version="2.0.1" />
+        <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.24" />
     </ItemGroup>
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
 </Project>

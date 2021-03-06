@@ -1,18 +1,45 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-    <resheader name="resmimetype">
-        <value>text/microsoft-resx</value>
-    </resheader>
-    <resheader name="version">
-        <value>2.0</value>
-    </resheader>
-    <resheader name="reader">
-        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-    <resheader name="writer">
-        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-   <data name="About" xml:space="preserve">
-    <value>O aplikaciji</value>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+  <data name="DescriptionText" xml:space="preserve">
+    <value>GitTrends je open-source aplikacija kreirana sa C# pomoću Xamarin.Forms koji vam pomaže nadgledati vaše GitHub repozitorije!</value>
+  </data>
+  <data name="Stars" xml:space="preserve">
+    <value>Stars</value>
+  </data>
+  <data name="Forks" xml:space="preserve">
+    <value>Forks</value>
+  </data>
+  <data name="Watching" xml:space="preserve">
+    <value>Watching</value>
+  </data>
+  <data name="CollaboratorsTitle" xml:space="preserve">
+    <value>Saradnici</value>
+  </data>
+  <data name="CollaboratorsDescription" xml:space="preserve">
+    <value>Hvala svim našim izvrsnim open-source saradnicima. Odaberite neke i saznajte više detalja o njima!</value>
+  </data>
+  <data name="LibrariesTitle" xml:space="preserve">
+    <value>Biblioteke</value>
+  </data>
+  <data name="LibrariesDescription" xml:space="preserve">
+    <value>Hvala svima na nevjerovatnim bibliotekama i frameworksima pomoću kojih smo kreirali GitTrends!</value>
+  </data>
+  <data name="GitHubButton" xml:space="preserve">
+    <value>Pogledaj na GitHub-u</value>
+  </data>
+  <data name="RequestFeatureButton" xml:space="preserve">
+    <value>Zatraži novu funkcionalnost</value>
   </data>
 </root>

@@ -21,6 +21,8 @@ namespace GitTrends.UITests
 
         public long ForkCount { get; init; }
 
+        public long WatchersCount { get; init; }
+
         public string OwnerAvatarUrl { get; init; } = string.Empty;
 
         public string Url { get; init; } = string.Empty;
