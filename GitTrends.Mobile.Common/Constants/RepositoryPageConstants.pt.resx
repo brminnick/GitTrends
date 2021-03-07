@@ -21,4 +21,7 @@
 	<data name="SortToolbarItemText" xml:space="preserve">
     <value>Ordenar</value>
   </data>
+  <data name="TOTAL" xml:space="preserve">
+    <value>Ukupno</value>
+  </data>
 </root>

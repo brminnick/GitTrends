@@ -23,9 +23,9 @@ namespace GitTrends.UnitTests
             var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
 
             //GitTrends Refit Services
-            services.AddSingleton(azureFunctionsApi);
             services.AddSingleton(gitHubApiV3);
             services.AddSingleton(gitHubGraphQLApi);
+            services.AddSingleton(azureFunctionsApi);
 
             //GitTrends Services
             services.AddSingleton<AppInitializationService>();
