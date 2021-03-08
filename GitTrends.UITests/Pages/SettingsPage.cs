@@ -222,8 +222,8 @@ namespace GitTrends.UITests
         {
             var rowOffset = App switch
             {
-                iOSApp _ => rowNumber.Equals(totalRows - 1) ? -1 : 1,
-                AndroidApp _ => 0,
+                iOSApp => rowNumber.Equals(totalRows - 1) ? -1 : 1,
+                AndroidApp => 0,
                 _ => throw new NotSupportedException()
             };
 

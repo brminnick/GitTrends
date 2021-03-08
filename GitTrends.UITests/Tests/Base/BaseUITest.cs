@@ -62,8 +62,8 @@ namespace GitTrends.UITests
             return UserType switch
             {
                 UserType.Demo => SetupDemoUser(),
-                UserType.LoggedIn => SetupLoggedInUser(),
                 UserType.Neither => SetupNeither(),
+                UserType.LoggedIn => SetupLoggedInUser(),
                 _ => throw new NotSupportedException()
             };
         }
@@ -95,13 +95,14 @@ namespace GitTrends.UITests
         {
             var token = await AzureFunctionsApiService.GetTestToken().ConfigureAwait(false);
 
-            App.InvokeBackdoorMethod(BackdoorMethodConstants.SetGitHubUser, token.AccessToken);
-
             GitHubToken? currentUserToken = null;
 
             while (currentUserToken is null)
             {
+                App.InvokeBackdoorMethod(BackdoorMethodConstants.SetGitHubUser, token.AccessToken);
+
                 await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
+
                 currentUserToken = App.InvokeBackdoorMethod<GitHubToken?>(BackdoorMethodConstants.GetGitHubToken);
             }
 

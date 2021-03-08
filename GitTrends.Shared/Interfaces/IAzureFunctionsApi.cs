@@ -27,5 +27,8 @@ namespace GitTrends.Shared
 
         [Get("/GetLibraries")]
         Task<IReadOnlyList<NuGetPackageModel>> GetLibraries();
+
+        [Get("/GetGitTrendsStatistics")]
+        Task<GitTrendsStatisticsDTO> GetGitTrendsStatistics();
     }
 }

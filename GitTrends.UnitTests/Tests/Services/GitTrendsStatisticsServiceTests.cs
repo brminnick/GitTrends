@@ -14,14 +14,12 @@ namespace GitTrends.UnitTests
         public async Task InitializeContributorsTest()
         {
             //Arrange
-            DateTimeOffset beforeTest, afterTest;
             IReadOnlyList<Contributor> contributors_Initial, contributors_Final;
             long? watchers_Initial, watchers_Final, stars_Initial, stars_Final, forks_Initial, forks_Final;
 
             var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
 
             //Act
-            beforeTest = DateTimeOffset.UtcNow;
             stars_Initial = gitTrendsStatisticsService.Stars;
             forks_Initial = gitTrendsStatisticsService.Forks;
             watchers_Initial = gitTrendsStatisticsService.Watchers;
@@ -29,7 +27,6 @@ namespace GitTrends.UnitTests
 
             await gitTrendsStatisticsService.Initialize(CancellationToken.None).ConfigureAwait(false);
 
-            afterTest = DateTimeOffset.UtcNow;
             stars_Final = gitTrendsStatisticsService.Stars;
             forks_Final = gitTrendsStatisticsService.Forks;
             watchers_Final = gitTrendsStatisticsService.Watchers;
@@ -61,8 +58,6 @@ namespace GitTrends.UnitTests
                 Assert.IsTrue(isAvatarUrlValid);
                 Assert.IsTrue(isGitHubUrlValid);
                 Assert.Greater(contributor.ContributionCount, 0);
-                Assert.Greater(afterTest, contributor.DataDownloadedAt);
-                Assert.Less(beforeTest, contributor.DataDownloadedAt);
                 Assert.IsFalse(string.IsNullOrEmpty(contributor.Login));
             }
         }

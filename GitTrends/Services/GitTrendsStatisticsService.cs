@@ -14,18 +14,18 @@ namespace GitTrends
     {
         readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;
-        readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly ImageCachingService _imageCachingService;
+        readonly AzureFunctionsApiService _azureFunctionsApiService;
 
         public GitTrendsStatisticsService(IPreferences preferences,
                                             IAnalyticsService analyticsService,
-                                            GitHubApiV3Service gitHubApiV3Service,
-                                            ImageCachingService imageCachingService)
+                                            ImageCachingService imageCachingService,
+                                            AzureFunctionsApiService azureFunctionsApiService)
         {
             _preferences = preferences;
             _analyticsService = analyticsService;
-            _gitHubApiV3Service = gitHubApiV3Service;
             _imageCachingService = imageCachingService;
+            _azureFunctionsApiService = azureFunctionsApiService;
         }
 
         public Uri? GitHubUri
@@ -99,19 +99,15 @@ namespace GitTrends
 
             async Task initialize()
             {
-                var getRepositoryTask = _gitHubApiV3Service.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, cancellationToken);
-                var getGitTrendsContributorsTask = _gitHubApiV3Service.GetGitTrendsContributors(cancellationToken);
+                var gittrendsStatistics = await _azureFunctionsApiService.GetGitTrendsStatistics(cancellationToken).ConfigureAwait(false);
 
-                await Task.WhenAll(getRepositoryTask, getGitTrendsContributorsTask).ConfigureAwait(false);
+                Stars = gittrendsStatistics.Stars;
+                Forks = gittrendsStatistics.Forks;
+                Watchers = gittrendsStatistics.Watchers;
+                GitHubUri = gittrendsStatistics.GitHubUri;
 
-                var gitTrendsRepository = await getRepositoryTask.ConfigureAwait(false);
+                Contributors = gittrendsStatistics.Contributors;
 
-                Stars = gitTrendsRepository?.StarCount;
-                Forks = gitTrendsRepository?.ForkCount;
-                Watchers = gitTrendsRepository?.WatchersCount;
-                GitHubUri = gitTrendsRepository?.Url is null ? null : new Uri(gitTrendsRepository?.Url);
-
-                Contributors = await getGitTrendsContributorsTask.ConfigureAwait(false);
                 foreach (var contributor in Contributors)
                     _imageCachingService.PreloadImage(contributor.AvatarUrl).SafeFireAndForget(ex => _analyticsService.Report(ex));
             }
