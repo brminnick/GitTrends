@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using GitTrends.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
