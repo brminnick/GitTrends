@@ -24,11 +24,6 @@ namespace GitTrends
             _gitHubUserService = gitHubUserService;
         }
 
-        public Task<GetRepositoryResponse> GetRepository(string owner, string repositoryName, CancellationToken cancellationToken) =>
-            AttemptAndRetry_Mobile(() => _githubApiClient.GetRepository(owner, repositoryName), cancellationToken);
-
-        public Task<IReadOnlyList<Contributor>> GetGitTrendsContributors(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _githubApiClient.GetContributors(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName), cancellationToken);
-
         public Task<RepositoryFile> GetGitTrendsFile(string fileName, CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _githubApiClient.GetGitTrendsFile(fileName), cancellationToken);
 
         public async Task<RepositoryViewsResponseModel> GetRepositoryViewStatistics(string owner, string repo, CancellationToken cancellationToken)

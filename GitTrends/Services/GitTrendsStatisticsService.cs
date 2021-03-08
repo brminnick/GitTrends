@@ -14,16 +14,19 @@ namespace GitTrends
     {
         readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;
+        readonly GitHubUserService _gitHubUserService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly ImageCachingService _imageCachingService;
 
         public GitTrendsStatisticsService(IPreferences preferences,
                                             IAnalyticsService analyticsService,
+                                            GitHubUserService gitHubUserService,
                                             GitHubApiV3Service gitHubApiV3Service,
                                             ImageCachingService imageCachingService)
         {
             _preferences = preferences;
             _analyticsService = analyticsService;
+            _gitHubUserService = gitHubUserService;
             _gitHubApiV3Service = gitHubApiV3Service;
             _imageCachingService = imageCachingService;
         }
@@ -100,7 +103,12 @@ namespace GitTrends
             async Task initialize()
             {
                 var getRepositoryTask = _gitHubApiV3Service.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, cancellationToken);
-                var getGitTrendsContributorsTask = _gitHubApiV3Service.GetGitTrendsContributors(cancellationToken);
+
+                var getGitTrendsContributorsTask = _gitHubUserService.IsAuthenticated switch
+                {
+                    true => _gitHubApiV3Service.GetGitTrendsContributors(cancellationToken),
+                    false => _gitHubApiV3Service.GetGitTrendsContributors_Unauthenticated(cancellationToken)
+                };
 
                 await Task.WhenAll(getRepositoryTask, getGitTrendsContributorsTask).ConfigureAwait(false);
 

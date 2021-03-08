@@ -1,41 +1,51 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
+using GitTrends.Shared;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
-using GitTrends.Shared;
 
 namespace GitTrends.Functions
 {
     class BlobStorageService
     {
         const string _libraryContainerName = "librarycache";
+        const string _gitTrendsStatisticsContainerName = "gittrendsstatistics";
+
         readonly CloudBlobClient _blobClient;
 
         public BlobStorageService(CloudBlobClient cloudBlobClient) => _blobClient = cloudBlobClient;
 
-        public Task UploadNuGetLibraries(IEnumerable<NuGetPackageModel> nuGetPackageModels, string blobName)
+        public Task UploadNuGetLibraries(IEnumerable<NuGetPackageModel> nuGetPackageModels, string blobName) => UploadValue(nuGetPackageModels, blobName, _libraryContainerName);
+
+        public Task UploadStatistics(GitTrendsStatisticsDTO gitTrendsStatistics, string blobName) => UploadValue(gitTrendsStatistics, blobName, _gitTrendsStatisticsContainerName);
+
+        public Task<GitTrendsStatisticsDTO> GetGitTrendsStatistics() => GetLatestValue<GitTrendsStatisticsDTO>(_gitTrendsStatisticsContainerName);
+
+        public Task<IReadOnlyList<NuGetPackageModel>> GetNuGetLibraries() => GetLatestValue<IReadOnlyList<NuGetPackageModel>>(_libraryContainerName);
+
+        async Task UploadValue<T>(T data, string blobName, string containerName)
         {
-            var container = GetBlobContainer(_libraryContainerName);
-            container.CreateIfNotExistsAsync().ConfigureAwait(false);
+            var container = GetBlobContainer(containerName);
+            await container.CreateIfNotExistsAsync().ConfigureAwait(false);
 
             var blob = container.GetBlockBlobReference(blobName);
-            return blob.UploadTextAsync(JsonConvert.SerializeObject(nuGetPackageModels));
+            await blob.UploadTextAsync(JsonConvert.SerializeObject(data)).ConfigureAwait(false);
         }
 
-        public async Task<IReadOnlyList<NuGetPackageModel>> GetNuGetLibraries()
+        async Task<T> GetLatestValue<T>(string containerName)
         {
             var blobList = new List<CloudBlockBlob>();
-            await foreach (var blob in GetBlobs<CloudBlockBlob>(_libraryContainerName).ConfigureAwait(false))
+            await foreach (var blob in GetBlobs<CloudBlockBlob>(containerName).ConfigureAwait(false))
             {
                 blobList.Add(blob);
             }
 
-            var nugetPackageModelBlob = blobList.OrderByDescending(x => x.Properties.Created).First();
-            var serializedNuGetPackageList = await nugetPackageModelBlob.DownloadTextAsync().ConfigureAwait(false);
+            var newestBlob = blobList.OrderByDescending(x => x.Properties.Created).First();
+            var serializedBlobContents = await newestBlob.DownloadTextAsync().ConfigureAwait(false);
 
-            return JsonConvert.DeserializeObject<IReadOnlyList<NuGetPackageModel>>(serializedNuGetPackageList) ?? throw new NullReferenceException();
+            return JsonConvert.DeserializeObject<T>(serializedBlobContents) ?? throw new NullReferenceException();
         }
 
         async IAsyncEnumerable<T> GetBlobs<T>(string containerName, string prefix = "", int? maxresultsPerQuery = null, BlobListingDetails blobListingDetails = BlobListingDetails.None) where T : ICloudBlob
