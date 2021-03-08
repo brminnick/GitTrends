@@ -82,11 +82,9 @@ namespace GitTrends.UITests
 
         protected async Task SetupLoggedInUser()
         {
-            var loginToGitHubTask = LoginToGitHub();
-
             await OnboardingPage.WaitForPageToLoad().ConfigureAwait(false);
 
-            await loginToGitHubTask.ConfigureAwait(false);
+            await LoginToGitHub().ConfigureAwait(false);
 
             OnboardingPage.PopPage();
 
