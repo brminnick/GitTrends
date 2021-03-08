@@ -10,6 +10,7 @@ using RichardSzalay.MockHttp;
 
 namespace GitTrends.UnitTests
 {
+    [NonParallelizable]
     class RepositoryViewModelTests_MaximumApiCallLimit_GraphQLApi : RepositoryViewModelTests_MaximumApiCallLimit
     {
         [Test]
