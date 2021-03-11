@@ -3,10 +3,9 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using GitTrends.Shared;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Pipeline;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
@@ -19,17 +18,25 @@ namespace GitTrends.Functions
         readonly static string _clientSecret = Environment.GetEnvironmentVariable("GitTrendsClientSecret") ?? string.Empty;
         readonly static string _clientId = Environment.GetEnvironmentVariable("GitTrendsClientId") ?? string.Empty;
 
+        readonly static JsonSerializer serializer = new();
+
         readonly GitHubAuthService _gitHubAuthService;
 
         public GenerateGitHubOAuthToken(GitHubAuthService gitHubAuthService) => _gitHubAuthService = gitHubAuthService;
 
         [FunctionName(nameof(GenerateGitHubOAuthToken))]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req, FunctionExecutionContext executionContext)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req, FunctionContext functionContext)
         {
-            var logger = executionContext.Logger;
+            var logger = functionContext.GetLogger<GenerateGitHubOAuthToken>();
             logger.LogInformation("Received request for OAuth Token");
 
-            var generateTokenDTO = JsonConvert.DeserializeObject<GenerateTokenDTO>(req.Body);
+
+            using var streamReader = new StreamReader(req.Body);
+            using var jsonTextReader = new JsonTextReader(streamReader);
+            var generateTokenDTO = serializer.Deserialize<GenerateTokenDTO>(jsonTextReader);
+
+            if (generateTokenDTO is null)
+                return new BadRequestObjectResult($"Invalid {nameof(GenerateTokenDTO)}");
 
             var token = await _gitHubAuthService.GetGitHubToken(_clientId, _clientSecret, generateTokenDTO.LoginCode, generateTokenDTO.State).ConfigureAwait(false);
 

@@ -2,7 +2,7 @@
 using GitTrends.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Pipeline;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
@@ -12,9 +12,9 @@ namespace GitTrends.Functions
     public static class GetSyncfusionInformation
     {
         [FunctionName(nameof(GetSyncfusionInformation))]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = nameof(GetSyncfusionInformation) + "/{licenseVersion:long}")] HttpRequestData req, FunctionExecutionContext executionContext, long licenseVersion)
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = nameof(GetSyncfusionInformation) + "/{licenseVersion:long}")] HttpRequestData req, FunctionContext functionContext, long licenseVersion)
         {
-            var logger = executionContext.Logger;
+            var logger = functionContext.GetLogger(nameof(GetSyncfusionInformation));
             logger.LogInformation("Received request for Syncfusion Information");
 
             var licenseKey = Environment.GetEnvironmentVariable($"SyncfusionLicense{licenseVersion}", EnvironmentVariableTarget.Process);

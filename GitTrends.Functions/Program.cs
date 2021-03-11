@@ -5,7 +5,6 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using GitHubApiStatus.Extensions;
 using GitTrends.Shared;
-using Microsoft.Azure.Functions.Worker.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,7 +24,7 @@ namespace GitTrends.Functions
                 {
                     configurationBuilder.AddCommandLine(args);
                 })
-                .ConfigureFunctionsWorker((hostBuilderContext, workerApplicationBuilder) =>
+                .ConfigureFunctionsWorkerDefaults((hostBuilderContext, workerApplicationBuilder) =>
                 {
                     workerApplicationBuilder.UseFunctionExecutionMiddleware();
                 })
@@ -33,17 +32,17 @@ namespace GitTrends.Functions
                 {
                     services.AddLogging();
 
-                    services.AddRefitClient<IGitHubAuthApi>()
+                    services.AddRefitClient<IGitHubAuthApi>(RefitExtensions.GetNewtonsoftJsonRefitSettings())
                         .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubBaseUrl))
                         .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
                         .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
 
-                    services.AddRefitClient<IGitHubApiV3>()
+                    services.AddRefitClient<IGitHubApiV3>(RefitExtensions.GetNewtonsoftJsonRefitSettings())
                         .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubRestApiUrl))
                         .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
                         .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));
 
-                    services.AddRefitClient<IGitHubGraphQLApi>()
+                    services.AddRefitClient<IGitHubGraphQLApi>(RefitExtensions.GetNewtonsoftJsonRefitSettings())
                         .ConfigureHttpClient(client => client.BaseAddress = new Uri(GitHubConstants.GitHubGraphQLApi))
                         .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = getDecompressionMethods() })
                         .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider));

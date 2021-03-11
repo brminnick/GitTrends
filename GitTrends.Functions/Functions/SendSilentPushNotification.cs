@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Azure.Functions.Worker.Pipeline;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.NotificationHubs;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -23,17 +23,17 @@ namespace GitTrends.Functions
         static NotificationHubClient DebugClient => _debugClientHolder.Value;
 
         [FunctionName(nameof(SendSilentPushNotification))]
-        public static Task Run([TimerTrigger(_runEveryHourCron)] TimerInfo myTimer, FunctionExecutionContext executionContext)
+        public static Task Run([TimerTrigger(_runEveryHourCron)] TimerInfo myTimer, FunctionContext functionContext)
         {
-            var logger = executionContext.Logger;
+            var logger = functionContext.GetLogger<SendSilentPushNotification>();
 
             return Task.WhenAll(TrySendAppleSilentNotification(Client, logger), TrySendFcmSilentNotification(Client, logger));
         }
 
         [FunctionName(nameof(SendSilentPushNotification) + "Debug")]
-        public static Task RunDebug([TimerTrigger(_runEveryHourCron, RunOnStartup = true)] TimerInfo myTimer, FunctionExecutionContext executionContext)
+        public static Task RunDebug([TimerTrigger(_runEveryHourCron, RunOnStartup = true)] TimerInfo myTimer, FunctionContext functionContext)
         {
-            var logger = executionContext.Logger;
+            var logger = functionContext.GetLogger<SendSilentPushNotification>();
 
             logger.LogInformation(_notificationHubFullConnectionString);
             logger.LogInformation(_notificationHubFullConnectionString_Debug);

@@ -3,7 +3,7 @@ namespace GitTrends.Functions
 {
     public class TimerInfo
     {
-        public MyScheduleStatus? ScheduleStatus { get; set; }
+        public ScheduleStatus? ScheduleStatus { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this timer invocation
@@ -12,7 +12,7 @@ namespace GitTrends.Functions
         public bool IsPastDue { get; set; }
     }
 
-    public class MyScheduleStatus
+    public class ScheduleStatus
     {
         /// <summary>
         /// Gets or sets the last recorded schedule occurrence.

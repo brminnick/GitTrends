@@ -72,18 +72,22 @@ namespace GitTrends.Functions
                 }
 
                 if (metadatas?.Any() is not true)
-                    package.PackageInfoTCS.SetResult(null);
-
-                var metadataIconUri = metadatas.Last().IconUrl;
-
-                var isIconUrlValid = await isUriValid(metadataIconUri).ConfigureAwait(false);
-                var iconUri = isIconUrlValid switch
                 {
-                    true => metadataIconUri,
-                    false => new Uri(defaultNuGetIcon)
-                };
+                    package.PackageInfoTCS.SetResult(null);
+                }
+                else
+                {
+                    var metadataIconUri = metadatas.Last().IconUrl;
 
-                package.PackageInfoTCS.SetResult((package.PackageName, iconUri, metadatas.Last().PackageDetailsUrl));
+                    var isIconUrlValid = await isUriValid(metadataIconUri).ConfigureAwait(false);
+                    var iconUri = isIconUrlValid switch
+                    {
+                        true => metadataIconUri,
+                        false => new Uri(defaultNuGetIcon)
+                    };
+
+                    package.PackageInfoTCS.SetResult((package.PackageName, iconUri, metadatas.Last().PackageDetailsUrl));
+                }
             });
 
             var remainingTasks = getInstalledPackageInfoTCSList.Select(x => x.PackageInfoTCS.Task).ToList();
@@ -112,12 +116,12 @@ namespace GitTrends.Functions
             }
         }
 
-        IReadOnlyList<string> GetNuGetPackageNames(string csProjSourceCode)
+        static IReadOnlyList<string> GetNuGetPackageNames(string csProjSourceCode)
         {
             var doc = XDocument.Parse(csProjSourceCode);
-            var nugetPackageNames = doc.XPathSelectElements("//PackageReference").Select(pr => pr.Attribute("Include").Value);
+            var nugetPackageNames = doc.XPathSelectElements("//PackageReference").Select(pr => pr.Attribute("Include")?.Value);
 
-            return nugetPackageNames.ToList();
+            return nugetPackageNames?.OfType<string>().ToArray() ?? Array.Empty<string>();
         }
 
         async IAsyncEnumerable<string> GetCsprojFiles([EnumeratorCancellation] CancellationToken cancellationToken)
