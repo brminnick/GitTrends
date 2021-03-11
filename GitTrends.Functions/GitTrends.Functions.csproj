@@ -6,10 +6,6 @@
         <OutputType>Exe</OutputType>
         <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
     </PropertyGroup>
-    <Target Name="CopyRuntimes" AfterTargets="AfterBuild" Condition=" '$(OS)' == 'UNIX' ">
-        <!-- To workaround a bug where the files aren't copied correctly for non-Windows platforms -->
-        <Exec Command="rm -rf $(OutDir)bin/runtimes/* &amp;&amp; mkdir -p $(OutDir)bin/runtimes &amp;&amp; cp -R $(OutDir)runtimes/* $(OutDir)bin/runtimes/" />
-    </Target>
     <ItemGroup>
         <PackageReference Include="GitHubApiStatus.Extensions" Version="2.0.1" />
         <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="5.0.1" />
@@ -33,6 +29,7 @@
         </None>
         <None Update="local.settings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>Never</CopyToPublishDirectory>
         </None>
     </ItemGroup>
     <ItemGroup>

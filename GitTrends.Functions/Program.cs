@@ -24,10 +24,7 @@ namespace GitTrends.Functions
                 {
                     configurationBuilder.AddCommandLine(args);
                 })
-                .ConfigureFunctionsWorkerDefaults((hostBuilderContext, workerApplicationBuilder) =>
-                {
-                    workerApplicationBuilder.UseFunctionExecutionMiddleware();
-                })
+                .ConfigureFunctionsWorkerDefaults()
                 .ConfigureServices(services =>
                 {
                     services.AddLogging();
