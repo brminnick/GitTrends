@@ -3,11 +3,8 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using GitTrends.Shared;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -24,30 +21,32 @@ namespace GitTrends.Functions
 
         public GenerateGitHubOAuthToken(GitHubAuthService gitHubAuthService) => _gitHubAuthService = gitHubAuthService;
 
-        [FunctionName(nameof(GenerateGitHubOAuthToken))]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req, FunctionContext functionContext)
+        [Function(nameof(GenerateGitHubOAuthToken))]
+        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req, FunctionContext functionContext)
         {
             var logger = functionContext.GetLogger<GenerateGitHubOAuthToken>();
             logger.LogInformation("Received request for OAuth Token");
-
 
             using var streamReader = new StreamReader(req.Body);
             using var jsonTextReader = new JsonTextReader(streamReader);
             var generateTokenDTO = serializer.Deserialize<GenerateTokenDTO>(jsonTextReader);
 
             if (generateTokenDTO is null)
-                return new BadRequestObjectResult($"Invalid {nameof(GenerateTokenDTO)}");
+            {
+                var badRequestResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+                await badRequestResponse.WriteStringAsync($"Invalid {nameof(GenerateTokenDTO)}").ConfigureAwait(false);
+
+                return badRequestResponse;
+            }
 
             var token = await _gitHubAuthService.GetGitHubToken(_clientId, _clientSecret, generateTokenDTO.LoginCode, generateTokenDTO.State).ConfigureAwait(false);
 
             logger.LogInformation("Token Retrieved");
 
-            return new ContentResult
-            {
-                Content = JsonConvert.SerializeObject(token),
-                StatusCode = (int)HttpStatusCode.OK,
-                ContentType = "application/json"
-            };
+            var okResponse = req.CreateResponse(HttpStatusCode.OK);
+            await okResponse.WriteAsJsonAsync(token).ConfigureAwait(false);
+
+            return okResponse;
         }
     }
 }

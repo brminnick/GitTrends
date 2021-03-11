@@ -1,10 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
 using GitTrends.Shared;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 
 namespace GitTrends.Functions
@@ -13,16 +11,24 @@ namespace GitTrends.Functions
     {
         readonly static string _chartVideoManifestUrl = Environment.GetEnvironmentVariable("ChartVideoManifestUrl") ?? string.Empty;
 
-        [FunctionName(nameof(GetChartStreamingUrl))]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req, FunctionContext functionContext)
+        [Function(nameof(GetChartStreamingUrl))]
+        public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req, FunctionContext functionContext)
         {
             var logger = functionContext.GetLogger(nameof(GetChartStreamingUrl));
             logger.LogInformation("Retrieving Chart Video");
 
             if (string.IsNullOrWhiteSpace(_chartVideoManifestUrl))
-                return new NotFoundObjectResult($"Chart Video Url not found");
+            {
+                var notFoundResponse = req.CreateResponse(System.Net.HttpStatusCode.NotFound);
+                await notFoundResponse.WriteStringAsync("Chart Video Url not found").ConfigureAwait(false);
 
-            return new OkObjectResult(new StreamingManifest(_chartVideoManifestUrl));
+                return notFoundResponse;
+            }
+
+            var okResponse = req.CreateResponse(System.Net.HttpStatusCode.OK);
+            await okResponse.WriteAsJsonAsync(new StreamingManifest(_chartVideoManifestUrl)).ConfigureAwait(false);
+
+            return okResponse;
         }
     }
 }

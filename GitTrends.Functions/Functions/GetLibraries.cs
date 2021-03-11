@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using GitTrends.Shared;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+﻿using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 
 namespace GitTrends.Functions
@@ -14,7 +11,15 @@ namespace GitTrends.Functions
 
         public GetLibraries(BlobStorageService blobStorageService) => _blobStorageService = blobStorageService;
 
-        [FunctionName(nameof(GetLibraries))]
-        public Task<IReadOnlyList<NuGetPackageModel>> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest request, ILogger log) => _blobStorageService.GetNuGetLibraries();
+        [Function(nameof(GetLibraries))]
+        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData request, ILogger log)
+        {
+            var nuGetLibraries = await _blobStorageService.GetNuGetLibraries().ConfigureAwait(false);
+
+            var response = request.CreateResponse(System.Net.HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(nuGetLibraries).ConfigureAwait(false);
+
+            return response;
+        }
     }
 }

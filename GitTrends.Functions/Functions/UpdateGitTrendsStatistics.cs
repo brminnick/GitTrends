@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
 namespace GitTrends.Functions
@@ -15,7 +15,7 @@ namespace GitTrends.Functions
         public UpdateGitTrendsStatistics(GitHubApiV3Service gitHubApiV3Service, BlobStorageService blobStorageService) =>
            (_gitHubApiV3Service, _blobStorageService) = (gitHubApiV3Service, blobStorageService);
 
-        [FunctionName(nameof(UpdateGitTrendsStatistics))]
+        [Function(nameof(UpdateGitTrendsStatistics))]
         public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, ILogger log)
         {
             var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(2));

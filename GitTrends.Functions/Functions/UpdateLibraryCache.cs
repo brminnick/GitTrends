@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
 namespace GitTrends.Functions
@@ -17,7 +17,7 @@ namespace GitTrends.Functions
         public UpdateLibraryCache(NuGetService nuGetService, BlobStorageService blobStorageService) =>
             (_nuGetService, _blobStorageService) = (nuGetService, blobStorageService);
 
-        [FunctionName(nameof(UpdateLibraryCache))]
+        [Function(nameof(UpdateLibraryCache))]
         public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, ILogger log)
         {
             var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
