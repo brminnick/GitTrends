@@ -21,4 +21,7 @@
 	<data name="ReferringSitesPage" xml:space="preserve">
     <value>Referirajući sajtovi</value>
   </data>
+	<data name="AboutPage" xml:space="preserve">
+    <value>O aplikaciji</value>
+  </data>
 </root>

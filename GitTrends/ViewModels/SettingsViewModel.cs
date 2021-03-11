@@ -384,7 +384,7 @@ namespace GitTrends
             var originalPreferredChartsIndex = PreferredChartsSelectedIndex;
 
             TitleText = PageTitles.SettingsPage;
-            AboutLabelText = AboutPageConstants.About;
+            AboutLabelText = PageTitles.AboutPage;
             ThemeLabelText = SettingsPageConstants.Theme;
             LanguageLabelText = SettingsPageConstants.Language;
             TryDemoButtonText = GitHubLoginButtonConstants.TryDemo;

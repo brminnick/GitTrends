@@ -39,6 +39,9 @@ namespace GitTrends
         string _emptyDataViewTitle = string.Empty;
         string _emptyDataViewDescription = string.Empty;
 
+        
+
+
         IReadOnlyList<Repository> _repositoryList = Array.Empty<Repository>();
         IReadOnlyList<Repository> _visibleRepositoryList = Array.Empty<Repository>();
 
@@ -107,6 +110,14 @@ namespace GitTrends
             set => SetProperty(ref _emptyDataViewTitle, value);
         }
 
+        // Select the size of the button according the length of his text
+        public FloatingActionButtonSize TotalButtonSize => TotalButtonText.Length switch
+        {
+            <= 3 => FloatingActionButtonSize.Mini,
+            <= 5 => FloatingActionButtonSize.Normal,
+            > 5 => FloatingActionButtonSize.Large
+        };
+
         public string EmptyDataViewDescription
         {
             get => _emptyDataViewDescription;
@@ -118,7 +129,14 @@ namespace GitTrends
             get => _isRefreshing;
             set => SetProperty(ref _isRefreshing, value);
         }
+        string _totalButtonText = RepositoryPageConstants.TOTAL;
 
+        
+        public string TotalButtonText
+        {
+            get => _totalButtonText;
+            set => SetProperty(ref _totalButtonText, value);
+        }
         public string TitleText
         {
             get => _titleText;
@@ -390,9 +408,9 @@ namespace GitTrends
         {
             RefreshState = pullToRefreshFailedEventArgs switch
             {
-                ErrorPullToRefreshEventArgs _ => RefreshState.Error,
-                MaximumApiRequestsReachedEventArgs _ => RefreshState.MaximumApiLimit,
-                LoginExpiredPullToRefreshEventArgs _ => RefreshState.LoginExpired,
+                ErrorPullToRefreshEventArgs => RefreshState.Error,
+                MaximumApiRequestsReachedEventArgs => RefreshState.MaximumApiLimit,
+                LoginExpiredPullToRefreshEventArgs => RefreshState.LoginExpired,
                 _ => throw new NotSupportedException()
             };
 

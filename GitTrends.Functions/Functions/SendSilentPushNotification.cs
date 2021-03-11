@@ -86,7 +86,7 @@ namespace GitTrends.Functions
         class ApplePushNotification
         {
             [JsonProperty("aps")]
-            public ApplePushNotificationBody Content { get; } = new ApplePushNotificationBody();
+            public ApplePushNotificationBody Content { get; } = new();
         }
 
         class ApplePushNotificationBody
@@ -98,13 +98,13 @@ namespace GitTrends.Functions
         class FcmPushNotification
         {
             [JsonProperty("message")]
-            public FcmPushNotificationBody Message { get; } = new FcmPushNotificationBody();
+            public FcmPushNotificationBody Message { get; } = new();
         }
 
         class FcmPushNotificationBody
         {
             [JsonProperty("data")]
-            public Dictionary<string, string> Data { get; } = new Dictionary<string, string>();
+            public IReadOnlyDictionary<string, string> Data { get; } = new Dictionary<string, string>();
         }
     }
 }

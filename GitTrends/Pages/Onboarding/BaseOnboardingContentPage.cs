@@ -36,13 +36,13 @@ namespace GitTrends
             Content = new Grid
             {
                 RowDefinitions = Rows.Define(
-                    (Row.Image, StarGridLength(GetImageRowStarHeight())),
-                    (Row.Description, StarGridLength(GetDescriptionRowStarHeight())),
-                    (Row.Indicator, AbsoluteGridLength(44))),
+                    (Row.Image, Stars(GetImageRowStarHeight())),
+                    (Row.Description, Stars(GetDescriptionRowStarHeight())),
+                    (Row.Indicator, 44)),
 
                 ColumnDefinitions = Columns.Define(
-                    (Column.Indicator, StarGridLength(1)),
-                    (Column.Button, StarGridLength(1))),
+                    (Column.Indicator, Stars(1)),
+                    (Column.Button, Stars(1))),
 
                 Children =
                 {

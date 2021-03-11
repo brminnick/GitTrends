@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Newtonsoft.Json;
 using Refit;
 using Xamarin.Essentials.Interfaces;
 
@@ -17,7 +18,10 @@ namespace GitTrends
         readonly IGitHubGraphQLApi _githubApiClient;
         readonly GitHubUserService _gitHubUserService;
 
-        public GitHubGraphQLApiService(IAnalyticsService analyticsService, IMainThread mainThread, GitHubUserService gitHubUserService, IGitHubGraphQLApi gitHubGraphQLApi) : base(analyticsService, mainThread)
+        public GitHubGraphQLApiService(IMainThread mainThread,
+                                        IAnalyticsService analyticsService,
+                                        IGitHubGraphQLApi gitHubGraphQLApi,
+                                        GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
         {
             _githubApiClient = gitHubGraphQLApi;
             _gitHubUserService = gitHubUserService;
@@ -49,6 +53,7 @@ namespace GitTrends
                                     repositoryResult.Repository.Owner.Login,
                                     repositoryResult.Repository.Owner.AvatarUrl,
                                     repositoryResult.Repository.Issues.IssuesCount,
+                                    repositoryResult.Repository.Watchers.TotalCount,
                                     repositoryResult.Repository.Url.ToString(),
                                     repositoryResult.Repository.IsFork,
                                     DateTimeOffset.UtcNow,
@@ -90,7 +95,7 @@ namespace GitTrends
                 {
                     var demoRepo = new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
                                                 DemoUserConstants.Alias, _gitHubUserService.AvatarUrl,
-                                                DemoDataConstants.GetRandomNumber(), _gitHubUserService.AvatarUrl, false, DateTimeOffset.UtcNow);
+                                                DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(), _gitHubUserService.AvatarUrl, false, DateTimeOffset.UtcNow);
                     yield return demoRepo;
                 }
 
@@ -109,7 +114,7 @@ namespace GitTrends
                     {
                         if (repository is not null)
                             yield return new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
-                                                        repository.Issues.IssuesCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt);
+                                                        repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt);
                     }
                 }
                 while (repositoryConnection?.PageInfo?.HasNextPage is true);
@@ -159,8 +164,11 @@ namespace GitTrends
 
             await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
 
-            if (response.Content.Errors != null)
+            if (response?.Content?.Errors != null)
                 throw new GraphQLException<T>(response.Content.Data, response.Content.Errors, response.StatusCode, response.Headers);
+
+            if (response?.Content is null)
+                throw new JsonSerializationException();
 
             return response.Content.Data;
         }

@@ -2,9 +2,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
-        <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
         <Configurations>Debug;Release;AppStore</Configurations>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -26,6 +23,9 @@
         <NoStdLib>false</NoStdLib>
     </PropertyGroup>
     <ItemGroup>
+	    <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.tr.resx">
+            <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.bs.resx">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
         </EmbeddedResource>
@@ -106,6 +106,10 @@
         <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.resx">
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>GitHubLoginButtonConstants.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\PageTitles.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>PageTitles.Designer.cs</LastGenOutput>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.de.resx">
             <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
@@ -225,6 +229,9 @@
         <EmbeddedResource Update="Constants\SettingsPageConstants.de.resx">
             <DependentUpon>SettingsPageConstants.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Constants\SettingsPageConstants.tr.resx">
+            <DependentUpon>SettingsPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\TrendsChartTitleConstants.resx">
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>TrendsChartTitleConstants.Designer.cs</LastGenOutput>
@@ -262,6 +269,9 @@
         <EmbeddedResource Update="Constants\DemoUserConstants.de.resx">
             <DependentUpon>DemoUserConstants.resx</DependentUpon>
         </EmbeddedResource>
+		<EmbeddedResource Update="Constants\DemoUserConstants.tr.resx">
+            <DependentUpon>DemoUserConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\WelcomePageConstants.resx">
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>WelcomePageConstants.Designer.cs</LastGenOutput>
@@ -295,7 +305,13 @@
         <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.nl.resx">
             <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
         </EmbeddedResource>
+		<EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.tr.resx">
+            <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.nl.resx">
+            <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
+        </EmbeddedResource>
+		<EmbeddedResource Update="Constants\GitHubLoginButtonConstants.tr.resx">
             <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\OnboardingConstants.nl.resx">
@@ -334,6 +350,9 @@
         <EmbeddedResource Update="Constants\NotificationConstants.nl.resx">
             <DependentUpon>NotificationConstants.resx</DependentUpon>
         </EmbeddedResource>
+		<EmbeddedResource Update="Constants\NotificationConstants.tr.resx">
+            <DependentUpon>NotificationConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.en.resx">
             <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
         </EmbeddedResource>
@@ -352,13 +371,76 @@
         <EmbeddedResource Update="Constants\OnboardingConstants.en.resx">
             <DependentUpon>OnboardingConstants.resx</DependentUpon>
         </EmbeddedResource>
+		<EmbeddedResource Update="Constants\OnboardingConstants.tr.resx">
+            <DependentUpon>OnboardingConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\PageTitles.en.resx">
             <DependentUpon>PageTitles.resx</DependentUpon>
+        </EmbeddedResource>
+		<EmbeddedResource Update="Constants\PageTitles.tr.resx">
+            <DependentUpon>PageTitles.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.nb.resx">
+            <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.nb.resx">
+            <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\DemoUserConstants.nb.resx">
+            <DependentUpon>DemoUserConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.nb.resx">
+            <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.nb.resx">
+            <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\NotificationConstants.nb.resx">
+            <DependentUpon>NotificationConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\OnboardingConstants.nb.resx">
+            <DependentUpon>OnboardingConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\PageTitles.nb.resx">
+            <DependentUpon>PageTitles.resx</DependentUpon>
+        </EmbeddedResource>
+         <EmbeddedResource Update="Constants\PullToRefreshFailedConstants.nb.resx">
+            <DependentUpon>PullToRefreshFailedConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ReferringSitesPageConstants.nb.resx">
+            <DependentUpon>ReferringSitesPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\RepositoryPageConstants.nb.resx">
+            <DependentUpon>RepositoryPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ReviewServiceConstants.nb.resx">
+            <DependentUpon>ReviewServiceConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\SettingsPageConstants.nb.resx">
+            <DependentUpon>SettingsPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\SortingConstants.nb.resx">
+            <DependentUpon>SortingConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\SplashScreenPageConstants.nb.resx">
+            <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.nb.resx">
+            <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\TrendsChartTitleConstants.nb.resx">
+            <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\WelcomePageConstants.nb.resx">
+            <DependentUpon>WelcomePageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\PullToRefreshFailedConstants.de.resx">
             <DependentUpon>PullToRefreshFailedConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\PullToRefreshFailedConstants.en.resx">
+            <DependentUpon>PullToRefreshFailedConstants.resx</DependentUpon>
+        </EmbeddedResource>
+		<EmbeddedResource Update="Constants\PullToRefreshFailedConstants.tr.resx">
             <DependentUpon>PullToRefreshFailedConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\PullToRefreshFailedConstants.es.resx">
@@ -379,19 +461,37 @@
         <EmbeddedResource Update="Constants\ReferringSitesPageConstants.en.resx">
             <DependentUpon>ReferringSitesPageConstants.resx</DependentUpon>
         </EmbeddedResource>
+		<EmbeddedResource Update="Constants\ReferringSitesPageConstants.tr.resx">
+            <DependentUpon>ReferringSitesPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\RepositoryPageConstants.en.resx">
+            <DependentUpon>RepositoryPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+		<EmbeddedResource Update="Constants\RepositoryPageConstants.tr.resx">
             <DependentUpon>RepositoryPageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\ReviewServiceConstants.en.resx">
             <DependentUpon>ReviewServiceConstants.resx</DependentUpon>
         </EmbeddedResource>
+		<EmbeddedResource Update="Constants\ReviewServiceConstants.tr.resx">
+            <DependentUpon>ReviewServiceConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\SettingsPageConstants.en.resx">
+            <DependentUpon>SettingsPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+		<EmbeddedResource Update="Constants\SettingsPageConstants.tr.resx">
             <DependentUpon>SettingsPageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\SortingConstants.en.resx">
             <DependentUpon>SortingConstants.resx</DependentUpon>
         </EmbeddedResource>
+		<EmbeddedResource Update="Constants\SortingConstants.tr.resx">
+            <DependentUpon>SortingConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\SplashScreenPageConstants.en.resx">
+            <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+		<EmbeddedResource Update="Constants\SplashScreenPageConstants.tr.resx">
             <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\TrendsChartTitleConstants.en.resx">
@@ -501,6 +601,9 @@
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>AboutPageConstants.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+		<EmbeddedResource Update="Constants\AboutPageConstants.tr.resx">
+            <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\AboutPageConstants.en.resx">
             <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
@@ -511,6 +614,9 @@
             <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\AboutPageConstants.de.resx">
+            <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.tr.resx">
             <DependentUpon>AboutPageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\AboutPageConstants.pt.resx">
@@ -538,6 +644,9 @@
         <EmbeddedResource Update="Constants\ThemeConstants.de.resx">
           <DependentUpon>ThemeConstants.resx</DependentUpon>
         </EmbeddedResource>
+		<EmbeddedResource Update="Constants\ThemeConstants.tr.resx">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\ThemeConstants.fr.resx">
           <DependentUpon>ThemeConstants.resx</DependentUpon>
         </EmbeddedResource>
@@ -549,6 +658,57 @@
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\ThemeConstants.nl.resx">
           <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AboutPageConstants.tr.resx">
+          <DependentUpon>AboutPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.tr.resx">
+          <DependentUpon>AppStoreRatingRequestConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\DemoUserConstants.tr.resx">
+          <DependentUpon>DemoUserConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.tr.resx">
+          <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\GitHubLoginButtonConstants.tr.resx">
+          <DependentUpon>GitHubLoginButtonConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\NotificationConstants.tr.resx">
+          <DependentUpon>NotificationConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\OnboardingConstants.tr.resx">
+          <DependentUpon>OnboardingConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\PageTitles.tr.resx">
+          <DependentUpon>PageTitles.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\PullToRefreshFailedConstants.tr.resx">
+          <DependentUpon>PullToRefreshFailedConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ReferringSitesPageConstants.tr.resx">
+          <DependentUpon>ReferringSitesPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\RepositoryPageConstants.tr.resx">
+          <DependentUpon>RepositoryPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ReviewServiceConstants.tr.resx">
+          <DependentUpon>ReviewServiceConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\SortingConstants.tr.resx">
+          <DependentUpon>SortingConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\SplashScreenPageConstants.tr.resx">
+          <DependentUpon>SplashScreenPageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\ThemeConstants.tr.resx">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\TrendsChartTitleConstants.tr.resx">
+          <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Constants\WelcomePageConstants.tr.resx">
+          <DependentUpon>WelcomePageConstants.resx</DependentUpon>
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
@@ -593,9 +753,6 @@
         </Compile>
         <Compile Update="Constants\NotificationConstants.Designer.cs">
             <DependentUpon>NotificationConstants.resx</DependentUpon>
-        </Compile>
-        <Compile Update="Constants\ThemeConstants.Designer.cs">
-            <DependentUpon>ThemeConstants.resx</DependentUpon>
         </Compile>
         <Compile Update="Constants\EmptyDataViewConstantsInternal.Designer.cs">
             <DependentUpon>EmptyDataViewConstantsInternal.resx</DependentUpon>
@@ -645,7 +802,13 @@
         <EmbeddedResource Update="Constants\TrendsChartTitleConstants.uk.resx">
             <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
         </EmbeddedResource>
+		<EmbeddedResource Update="Constants\TrendsChartTitleConstants.tr.resx">
+            <DependentUpon>TrendsChartTitleConstants.resx</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Update="Constants\WelcomePageConstants.uk.resx">
+            <DependentUpon>WelcomePageConstants.resx</DependentUpon>
+        </EmbeddedResource>
+		<EmbeddedResource Update="Constants\WelcomePageConstants.tr.resx">
             <DependentUpon>WelcomePageConstants.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Constants\ThemeConstants.en.resx">
@@ -687,6 +850,9 @@
         <Compile Update="Constants\AboutPageConstants.bs.Designer.cs">
           <DependentUpon>AboutPageConstants.bs.resx</DependentUpon>
         </Compile>
+        <Compile Update="Constants\ThemeConstants.Designer.cs">
+          <DependentUpon>ThemeConstants.resx</DependentUpon>
+        </Compile>
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Enums\" />
@@ -695,10 +861,10 @@
         <Folder Include="Services\" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="refit" Version="5.2.4" />
         <PackageReference Include="Polly" Version="7.2.1" />
         <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1" />
-        <PackageReference Include="GitHubApiStatus" Version="2.0.0" />
+        <PackageReference Include="GitHubApiStatus" Version="2.0.1" />
+        <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.24" />
     </ItemGroup>
     <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
 </Project>

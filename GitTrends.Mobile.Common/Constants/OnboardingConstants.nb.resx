@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="SkipText" xml:space="preserve">
+    <value>SKIP</value>
+  </data>
+	<data name="TryDemoText" xml:space="preserve">
+    <value>PRØV DEMO</value>
+  </data>
+	<data name="ChartPage_Title" xml:space="preserve">
+    <value>Få en oversikt over 
+dine repos</value>
+  </data>
+	<data name="ChartPage_Body_ShowAllTraffic" xml:space="preserve">
+    <value>Diagrammer viser all trafikk relatert til ditt repo:</value>
+  </data>
+	<data name="ChartPage_Body_ZoomInOut" xml:space="preserve">
+    <value>Zoom inn/ut for å se nøyaktig det du trenger å vite</value>
+  </data>
+	<data name="ChartPage_Body_LongPress" xml:space="preserve">
+    <value>"Long press" på diagrammet for å se presise numeriske verdier</value>
+  </data>
+	<data name="ConnectToGitHubPage_Title" xml:space="preserve">
+    <value>Koble til 
+GitHub</value>
+  </data>
+	<data name="ConnectToGitHubPage_Body_GetStarted" xml:space="preserve">
+    <value>Start med å koble til din GitHub-konto, eller prøv demo-modus for en omvisning av GitTrends!</value>
+  </data>
+	<data name="GitTrendsPage_Title" xml:space="preserve">
+    <value>Velkommen til
+GitTrends</value>
+  </data>
+	<data name="GitTrendsPage_Body_GitTrendsHelps" xml:space="preserve">
+    <value>GitTrends hjelper deg å monitorere dine GitHub repos:</value>
+  </data>
+	<data name="GitTrendsPage_Body_MonitorGitHubRepos" xml:space="preserve">
+    <value>Monitorer GitHub Repo Visninger, Clones, Forks, Stjerner og Feil</value>
+  </data>
+	<data name="GitTrendsPage_Body_DiscoverReferringSites" xml:space="preserve">
+    <value>Utforsk henvisende sider</value>
+  </data>
+	<data name="NotificationsPage_Title" xml:space="preserve">
+    <value>Bli varslet når
+repoer trender</value>
+  </data>
+	<data name="NotificationsPage_Body_MoreTrafficThanUsual" xml:space="preserve">
+    <value>GitTrends varsler deg når dine GitHub-repoer mottar mer trafikk enn normalt.</value>
+  </data>
+	<data name="EnableNotifications" xml:space="preserve">
+    <value>Aktiver varsler</value>
+  </data>
+</root>

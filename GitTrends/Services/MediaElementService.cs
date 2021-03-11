@@ -18,9 +18,9 @@ namespace GitTrends
                                     IAnalyticsService analyticsService,
                                     AzureFunctionsApiService azureFunctionsApiService)
         {
-            _azureFunctionsApiService = azureFunctionsApiService;
-            _analyticsService = analyticsService;
             _preferences = preferences;
+            _analyticsService = analyticsService;
+            _azureFunctionsApiService = azureFunctionsApiService;
         }
 
         public StreamingManifest? OnboardingChart

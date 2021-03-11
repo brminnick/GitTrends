@@ -47,9 +47,63 @@ namespace GitTrends.Mobile.Common.Constants {
             }
         }
         
-        public static string About {
+        public static string DescriptionText {
             get {
-                return ResourceManager.GetString("About", resourceCulture);
+                return ResourceManager.GetString("DescriptionText", resourceCulture);
+            }
+        }
+        
+        public static string Stars {
+            get {
+                return ResourceManager.GetString("Stars", resourceCulture);
+            }
+        }
+        
+        public static string Forks {
+            get {
+                return ResourceManager.GetString("Forks", resourceCulture);
+            }
+        }
+        
+        public static string Watching {
+            get {
+                return ResourceManager.GetString("Watching", resourceCulture);
+            }
+        }
+        
+        public static string CollaboratorsTitle {
+            get {
+                return ResourceManager.GetString("CollaboratorsTitle", resourceCulture);
+            }
+        }
+        
+        public static string CollaboratorsDescription {
+            get {
+                return ResourceManager.GetString("CollaboratorsDescription", resourceCulture);
+            }
+        }
+        
+        public static string LibrariesTitle {
+            get {
+                return ResourceManager.GetString("LibrariesTitle", resourceCulture);
+            }
+        }
+        
+        public static string LibrariesDescription {
+            get {
+                return ResourceManager.GetString("LibrariesDescription", resourceCulture);
+            }
+        }
+        
+        public static string GitHubButton {
+            get {
+                return ResourceManager.GetString("GitHubButton", resourceCulture);
+            }
+        }
+        
+        public static string RequestFeatureButton {
+            get {
+                return ResourceManager.GetString("RequestFeatureButton", resourceCulture);
             }
         }
     }

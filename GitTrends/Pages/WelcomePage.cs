@@ -51,11 +51,11 @@ namespace GitTrends
                 RowSpacing = 24,
 
                 RowDefinitions = Rows.Define(
-                    (Row.WelcomeLabel, StarGridLength(2)),
-                    (Row.Image, StarGridLength(4)),
-                    (Row.GitHubButton, StarGridLength(2)),
-                    (Row.DemoButton, StarGridLength(1)),
-                    (Row.VersionLabel, StarGridLength(1))),
+                    (Row.WelcomeLabel, Stars(2)),
+                    (Row.Image, Stars(4)),
+                    (Row.GitHubButton, Stars(2)),
+                    (Row.DemoButton, Stars(1)),
+                    (Row.VersionLabel, Stars(1))),
 
                 Children =
                 {
@@ -63,7 +63,7 @@ namespace GitTrends
                         .Row(Row.WelcomeLabel),
                     new Image { Source = "WelcomeImage" }.Center()
                         .Row(Row.Image),
-                    new ConnectToGitHubButton(_connectToGitHubCancellationTokenSource.Token, browserLaunchOptions)
+                    new ConnectToGitHubButton(WelcomePageAutomationIds.ConnectToGitHubButton, _connectToGitHubCancellationTokenSource.Token, browserLaunchOptions).CenterHorizontal().Bottom()
                         .Row(Row.GitHubButton),
                     new DemoLabel()
                         .Row(Row.DemoButton),
@@ -115,15 +115,6 @@ namespace GitTrends
 
                 this.Bind(IsVisibleProperty, nameof(WelcomeViewModel.IsAuthenticating));
                 this.Bind(IsRunningProperty, nameof(WelcomeViewModel.IsAuthenticating));
-            }
-        }
-
-        class ConnectToGitHubButton : ConnectToGitHubView
-        {
-            public ConnectToGitHubButton(CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions browserLaunchOptions) : base(WelcomePageAutomationIds.ConnectToGitHubButton, cancellationToken, browserLaunchOptions)
-            {
-                HorizontalOptions = LayoutOptions.Center;
-                VerticalOptions = LayoutOptions.End;
             }
         }
 

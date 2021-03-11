@@ -12,7 +12,34 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-	<data name="About" xml:space="preserve">
-    <value>Sobre</value>
+	<data name="DescriptionText" xml:space="preserve">
+    <value>Git trends é um app open-source, construído em C# usando Xamarin.Forms que ajuda a monitorar seus repositórios GitHub!</value>
+  </data>
+	<data name="Stars" xml:space="preserve">
+    <value>Stars</value>
+  </data>
+	<data name="Forks" xml:space="preserve">
+    <value>Forks</value>
+  </data>
+	<data name="Watching" xml:space="preserve">
+    <value>Visualizando</value>
+  </data>
+	<data name="CollaboratorsTitle" xml:space="preserve">
+    <value>Colaboradores</value>
+  </data>
+	<data name="CollaboratorsDescription" xml:space="preserve">
+    <value>Muito Obrigado a todos por nossos incríveis contribuintes open-source. Toque no contribuintes para saber mais!</value>
+  </data>
+	<data name="LibrariesTitle" xml:space="preserve">
+    <value>Bibliotecas</value>
+  </data>
+	<data name="LibrariesDescription" xml:space="preserve">
+    <value>Muito Obrigado a todos pelos Frameworks e bibliotecas que fazem GitTrends possível!</value>
+  </data>
+  <data name="GitHubButton" xml:space="preserve">
+    <value>Visualizar no GitHub</value>
+  </data>
+  <data name="RequestFeatureButton" xml:space="preserve">
+    <value>Requerer Funcionalidade</value>
   </data>
 </root>

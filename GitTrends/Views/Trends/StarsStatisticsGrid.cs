@@ -20,16 +20,16 @@ namespace GitTrends
             RowSpacing = 8;
 
             RowDefinitions = Rows.Define(
-                (Row.TopLine, AbsoluteGridLength(1)),
-                (Row.Total, AbsoluteGridLength(_textRowHeight)),
-                (Row.Stars, StarGridLength(1)),
-                (Row.Message, AbsoluteGridLength(_textRowHeight)),
-                (Row.BottomLine, AbsoluteGridLength(1)));
+                (Row.TopLine, 1),
+                (Row.Total, _textRowHeight),
+                (Row.Stars, Stars(1)),
+                (Row.Message, _textRowHeight),
+                (Row.BottomLine, 1));
 
             ColumnDefinitions = Columns.Define(
-                (Column.LeftStar, StarGridLength(1)),
-                (Column.Text, StarGridLength(1)),
-                (Column.RightStar, StarGridLength(1)));
+                (Column.LeftStar, Stars(1)),
+                (Column.Text, Stars(1)),
+                (Column.RightStar, Stars(1)));
 
             Children.Add(new SeparatorLine()
                             .Row(Row.TopLine).ColumnSpan(All<Column>()));

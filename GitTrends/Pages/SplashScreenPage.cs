@@ -10,12 +10,11 @@ using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    public class SplashScreenPage : BaseContentPage<SplashScreenViewModel>
+    public class SplashScreenPage : BaseContentPage
     {
         readonly IEnumerator<string> _statusMessageEnumerator = new List<string>
         {
@@ -36,22 +35,20 @@ namespace GitTrends
         readonly Label _loadingLabel;
         readonly Image _gitTrendsImage;
         readonly FirstRunService _firstRunService;
+        readonly AppInitializationService _appInitializationService;
 
-        CancellationTokenSource? _animationCancellationToken;
+        CancellationTokenSource _animationCancellationToken = new();
 
         public SplashScreenPage(IMainThread mainThread,
                                     FirstRunService firstRunService,
                                     IAnalyticsService analyticsService,
-                                    SplashScreenViewModel splashScreenViewModel)
-            : base(splashScreenViewModel, analyticsService, mainThread)
+                                    AppInitializationService appInitializationService)
+            : base(analyticsService, mainThread)
         {
-            //Remove BaseContentPageBackground
-            RemoveDynamicResource(BackgroundColorProperty);
             this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.GitTrendsImageBackgroundColor));
 
             _firstRunService = firstRunService;
-
-            SplashScreenViewModel.InitializationCompleted += HandleInitializationCompleted;
+            _appInitializationService = appInitializationService;
 
             _statusMessageEnumerator.MoveNext();
 
@@ -60,7 +57,7 @@ namespace GitTrends
                 RowDefinitions = Rows.Define(
                     (Row.Image, Star),
                     (Row.Text, Auto),
-                    (Row.BottomPadding, AbsoluteGridLength(50))),
+                    (Row.BottomPadding, 50)),
 
                 Children =
                 {
@@ -93,10 +90,20 @@ namespace GitTrends
 
             //Wait for Image to reach an opacity of 1
             await Task.WhenAll(fadeImageTask, pulseImageTask);
+            await Task.Delay(100);
 
-            ViewModel.InitializeAppCommand.Execute(null);
+            AppInitializationService.InitializationCompleted += HandleInitializationCompleted;
 
-            Animate(_animationCancellationToken.Token);
+            if (_appInitializationService.IsInitializationComplete)
+            {
+                AppInitializationService.InitializationCompleted -= HandleInitializationCompleted;
+
+                await HandleInitializationCompleted(true);
+            }
+            else
+            {
+                Animate(_animationCancellationToken.Token);
+            }
         }
 
         async void Animate(CancellationToken pulseCancellationToken) => await MainThread.InvokeOnMainThreadAsync(async () =>
@@ -183,10 +190,14 @@ namespace GitTrends
             await _loadingLabel.FadeTo(1, 250, Easing.CubicIn);
         });
 
-        async void HandleInitializationCompleted(object sender, InitializationCompleteEventArgs e)
+        async void HandleInitializationCompleted(object sender, InitializationCompleteEventArgs e) =>
+            await HandleInitializationCompleted(e.IsInitializationSuccessful).ConfigureAwait(false);
+
+        async Task HandleInitializationCompleted(bool isInitializationSuccessful)
         {
-            _animationCancellationToken?.Cancel();
-            if (e.IsInitializationSuccessful)
+            _animationCancellationToken.Cancel();
+
+            if (isInitializationSuccessful)
             {
 #if DEBUG
                 await ChangeLabelText(SplashScreenPageConstants.PreviewMode, SplashScreenPageConstants.WarningsMayAppear);

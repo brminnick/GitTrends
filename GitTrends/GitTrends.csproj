@@ -2,9 +2,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-        <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
         <Configurations>Debug;Release;AppStore</Configurations>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -25,75 +22,22 @@
       <NoStdLib>false</NoStdLib>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Refit" Version="5.2.4" />
         <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="5.0.2" />
-        <PackageReference Include="Polly" Version="7.2.1" />
         <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.3.0.35" />
         <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
         <PackageReference Include="Autofac" Version="6.1.0" />
         <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.1.4" />
-        <PackageReference Include="HtmlAgilityPack" Version="1.11.30" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.31" />
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.1.0" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.1.0" />
-        <PackageReference Include="Xamarin.Forms" Version="5.0.0.1905" />
+        <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
         <PackageReference Include="Shiny.Notifications" Version="1.2.0.1755" />
         <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
-        <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1" />
-        <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.3" />
-        <PackageReference Include="Xamarin.CommunityToolkit.Markup" Version="1.0.2" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="EventArgs\" />
-      <Folder Include="Views\" />
-      <Folder Include="Views\Repository\" />
-      <Folder Include="Views\Base\" />
-      <Folder Include="Database\" />
-      <Folder Include="Resources\" />
-      <Folder Include="Views\Settings\" />
-      <Folder Include="Themes\" />
-      <Folder Include="Views\ReferringSites\" />
-      <Folder Include="Models\" />
-      <Folder Include="Views\Settings\Base\" />
-      <Folder Include="Pages\Onboarding\" />
-      <Folder Include="Resources\SVGs\" />
-      <Folder Include="Resources\Fonts\" />
-      <Folder Include="Views\Trends\" />
-      <Folder Include="Constants\" />
-      <Folder Include="Interfaces\" />
-      <Folder Include="Effects\" />
-      <Folder Include="Pages\Trends\" />
-    </ItemGroup>
-    <ItemGroup>
-      <None Remove="repo_forked.svg" />
-      <None Remove="Resources\SVGs\chart.svg" />
-      <None Remove="Resources\SVGs\issue_opened.svg" />
-      <None Remove="Resources\SVGs\megaphone.svg" />
-      <None Remove="Resources\SVGs\repo_forked.svg" />
-      <None Remove="Resources\SVGs\star.svg" />
-      <None Remove="Resources\SVGs\total_clones.svg" />
-      <None Remove="Resources\SVGs\total_views.svg" />
-      <None Remove="Resources\SVGs\trending_tag.svg" />
-      <None Remove="Resources\SVGs\unique_clones.svg" />
-      <None Remove="Resources\SVGs\unique_views.svg" />
-      <None Remove="Resources\Fonts\FontAwesomeBrands.ttf" />
-      <None Remove="Resources\Fonts\Roboto-Bold.ttf" />
-      <None Remove="Resources\Fonts\Roboto-Medium.ttf" />
-      <None Remove="Resources\Fonts\Roboto-Regular.ttf" />
-      <None Remove="Resources\SVGs\zoom_gesture.svg" />
-      <None Remove="Resources\SVGs\longpress_gesture.svg" />
-      <None Remove="Resources\Fonts\Font Awesome 5 Free-Solid-900.otf" />
-      <None Remove="Resources\SVGs\bell.svg" />
-      <None Remove="Resources\SVGs\check.svg" />
-      <None Remove="Resources\SVGs\error.svg" />
-      <None Remove="Resources\SVGs\github.svg" />
-      <None Remove="Resources\SVGs\darkmode.svg" />
-      <None Remove="Resources\SVGs\logout.svg" />
-      <None Remove="Resources\SVGs\right_arrow.svg" />
-      <None Remove="Resources\SVGs\language.svg" />
-      <None Remove="Resources\SVGs\about.svg" />
-      <None Remove="Resources\SVGs\favorite_tag.svg" />
-      <None Remove="Resources\SVGs\star_outline.svg" />
+        <PackageReference Include="Plugin.StoreReview" Version="3.1.0-beta" />
+        <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.4" />
+        <PackageReference Include="Xamarin.CommunityToolkit.Markup" Version="1.0.3" />
+        <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.2" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="Resources\SVGs\chart.svg" />
@@ -124,6 +68,7 @@
       <EmbeddedResource Include="Resources\SVGs\about.svg" />
       <EmbeddedResource Include="Resources\SVGs\favorite_tag.svg" />
       <EmbeddedResource Include="Resources\SVGs\star_outline.svg" />
+      <EmbeddedResource Include="Resources\SVGs\sparkle.svg" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj" />

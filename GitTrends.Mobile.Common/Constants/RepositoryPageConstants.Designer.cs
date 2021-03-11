@@ -64,5 +64,11 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("CheckInternetConnectionTryAgain", resourceCulture);
             }
         }
+        
+        public static string TOTAL {
+            get {
+                return ResourceManager.GetString("TOTAL", resourceCulture);
+            }
+        }
     }
 }

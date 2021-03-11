@@ -21,4 +21,7 @@
 	<data name="SortToolbarItemText" xml:space="preserve">
     <value>Сортувати</value>
   </data>
+	<data name="TOTAL" xml:space="preserve">
+    <value>ВСЬОГО</value>
+  </data>
 </root>

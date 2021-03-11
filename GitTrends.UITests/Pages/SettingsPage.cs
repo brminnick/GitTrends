@@ -188,10 +188,12 @@ namespace GitTrends.UITests
 
         public Task SelectLanguage(string? languagePickerOption)
         {
-            var languageIndex = CultureConstants.CulturePickerOptions.Values.ToList().IndexOf(languagePickerOption ?? string.Empty);
-            var totalRows = CultureConstants.CulturePickerOptions.Values.Count;
+            var languageValueList = CultureConstants.CulturePickerOptions.Values.ToList();
 
-            var culture = CultureConstants.CulturePickerOptions.Where(x => x.Value == languagePickerOption).First().Key;
+            var languageIndex = languageValueList.IndexOf(languagePickerOption ?? string.Empty);
+            var totalRows = languageValueList.Count;
+
+            var culture = CultureConstants.CulturePickerOptions.Where(x => x.Value == languagePickerOption).Single().Key;
 
             CultureInfo.CurrentCulture = getCultureInfo(culture);
             CultureInfo.CurrentUICulture = getCultureInfo(culture);
@@ -220,8 +222,8 @@ namespace GitTrends.UITests
         {
             var rowOffset = App switch
             {
-                iOSApp _ => rowNumber.Equals(totalRows - 1) ? -1 : 1,
-                AndroidApp _ => 0,
+                iOSApp => rowNumber.Equals(totalRows - 1) ? -1 : 1,
+                AndroidApp => 0,
                 _ => throw new NotSupportedException()
             };
 

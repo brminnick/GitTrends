@@ -35,13 +35,13 @@ namespace GitTrends
 
                 RowDefinitions = Rows.Define(
                     (Row.Title, Auto),
-                    (Row.Connect, AbsoluteGridLength(24)),
-                    (Row.MonitorImage, AbsoluteGridLength(24)),
-                    (Row.MonitorDescription, AbsoluteGridLength(2)),
-                    (Row.Discover, AbsoluteGridLength(24))),
+                    (Row.Connect, 24),
+                    (Row.MonitorImage, 24),
+                    (Row.MonitorDescription, 2),
+                    (Row.Discover, 24)),
 
                 ColumnDefinitions = Columns.Define(
-                    (Column.Image, AbsoluteGridLength(56)),
+                    (Column.Image, 56),
                     (Column.Description, Star)),
 
                 Children =

@@ -1,6 +1,5 @@
 ﻿using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -28,8 +27,8 @@ namespace GitTrends
             RowSpacing = 24;
 
             RowDefinitions = Rows.Define(
-                (Row.Text, StarGridLength(1)),
-                (Row.Image, StarGridLength(2)));
+                (Row.Text, Stars(1)),
+                (Row.Image, Stars(2)));
 
             Children.Add(new TextLabel
             (

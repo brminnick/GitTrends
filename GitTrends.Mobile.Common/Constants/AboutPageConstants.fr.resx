@@ -1,18 +1,45 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="About" xml:space="preserve">
-    <value>à propos</value>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+  <data name="CollaboratorsDescription" xml:space="preserve">
+    <value>Merci à tous les contributeurs open-source. Appuyez sur un des contributeurs pour en savoir plus!</value>
+  </data>
+  <data name="CollaboratorsTitle" xml:space="preserve">
+    <value>collaborateurs</value>
+  </data>
+  <data name="DescriptionText" xml:space="preserve">
+    <value>GitTrends est une application open-source fait en C# avec Xamarin Forms qui aide a superviser for repositories sur GitHub!</value>
+  </data>
+  <data name="Forks" xml:space="preserve">
+    <value>Forks</value>
+  </data>
+  <data name="GitHubButton" xml:space="preserve">
+    <value>Regarder sur Github</value>
+  </data>
+  <data name="LibrariesDescription" xml:space="preserve">
+    <value>Merci à tous les super librairies et frameworks qui a permis a GitTrends d'êtres réalisé</value>
+  </data>
+  <data name="LibrariesTitle" xml:space="preserve">
+    <value>Librairies</value>
+  </data>
+  <data name="RequestFeatureButton" xml:space="preserve">
+    <value>demandez une fonctionalité</value>
+  </data>
+  <data name="Stars" xml:space="preserve">
+    <value>Stars</value>
+  </data>
+  <data name="Watching" xml:space="preserve">
+    <value>Vues</value>
   </data>
 </root>

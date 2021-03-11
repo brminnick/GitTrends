@@ -8,9 +8,6 @@
         <RootNamespace>GitTrends.UITests</RootNamespace>
         <AssemblyName>GitTrends.UITests</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-        <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-        <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <DebugSymbols>true</DebugSymbols>
@@ -28,8 +25,8 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Xamarin.UITest" Version="3.0.13" />
-        <PackageReference Include="NUnit" Version="3.13.0" />
+        <PackageReference Include="Xamarin.UITest" Version="3.0.15" />
+        <PackageReference Include="NUnit" Version="3.13.1" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     </ItemGroup>
     <ItemGroup>
