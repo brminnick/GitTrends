@@ -458,7 +458,7 @@
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
     <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1" />
-    <PackageReference Include="Plugin.StoreReview" Version="3.1.0-beta" />
+    <PackageReference Include="Plugin.StoreReview" Version="3.1.0" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.2" />
     <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.4" />
     <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.24" />
