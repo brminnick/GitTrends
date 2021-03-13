@@ -228,6 +228,48 @@ namespace GitTrends.UnitTests
             AssertRepositoriesReversedSorted(repositoryViewModel.VisibleRepositoryList, sortingOption);
         }
 
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task ToggleIsFavoriteCommandTest(bool isDemo)
+        {
+            //Arrange
+            IReadOnlyList<string> favoriteUrls;
+            Repository repository_initial, repository_favorite, repository_final;
+
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
+
+            var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
+
+            //Act
+            if (isDemo)
+                await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
+            else
+                await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService);
+
+            await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
+            repository_initial = repositoryViewModel.VisibleRepositoryList.First();
+
+            await repositoryViewModel.ToggleIsFavoriteCommand.ExecuteAsync(repository_initial).ConfigureAwait(false);
+            repository_favorite = repositoryViewModel.VisibleRepositoryList.First();
+            favoriteUrls = await repositoryDatabase.GetFavoritesUrls().ConfigureAwait(false);
+
+            await repositoryViewModel.ToggleIsFavoriteCommand.ExecuteAsync(repository_favorite).ConfigureAwait(false);
+            repository_final = repositoryViewModel.VisibleRepositoryList.First();
+
+            //Assert
+            Assert.IsNull(repository_initial.IsFavorite);
+            Assert.True(repository_favorite.IsFavorite);
+            Assert.IsFalse(repository_final.IsFavorite);
+
+            if (!isDemo)
+                Assert.AreEqual(favoriteUrls.First(), repository_favorite.Url);
+            else
+                Assert.IsEmpty(favoriteUrls);
+        }
+
         static void AssertRepositoriesReversedSorted(in IEnumerable<Repository> repositories, in SortingOption sortingOption)
         {
             var topRepository = repositories.First();

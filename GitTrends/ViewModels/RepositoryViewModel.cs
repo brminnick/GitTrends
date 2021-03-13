@@ -39,9 +39,6 @@ namespace GitTrends
         string _emptyDataViewTitle = string.Empty;
         string _emptyDataViewDescription = string.Empty;
 
-        
-
-
         IReadOnlyList<Repository> _repositoryList = Array.Empty<Repository>();
         IReadOnlyList<Repository> _visibleRepositoryList = Array.Empty<Repository>();
 
@@ -78,7 +75,11 @@ namespace GitTrends
 
             PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(gitHubUserService.Alias));
 
-            ToggleIsFavoriteCommand = new AsyncValueCommand<Repository>(repository => ExecuteToggleIsFavoriteCommand(repository));
+            ToggleIsFavoriteCommand = new AsyncCommand<Repository>(repository => repository switch
+            {
+                null => Task.CompletedTask,
+                _ => ExecuteToggleIsFavoriteCommand(repository)
+            });
 
             NotificationService.SortingOptionRequested += HandleSortingOptionRequested;
 
@@ -96,7 +97,7 @@ namespace GitTrends
         public ICommand SortRepositoriesCommand { get; }
         public ICommand FilterRepositoriesCommand { get; }
         public IAsyncCommand PullToRefreshCommand { get; }
-        public AsyncValueCommand<Repository> ToggleIsFavoriteCommand { get; }
+        public AsyncCommand<Repository> ToggleIsFavoriteCommand { get; }
 
         public IReadOnlyList<Repository> VisibleRepositoryList
         {
@@ -131,7 +132,7 @@ namespace GitTrends
         }
         string _totalButtonText = RepositoryPageConstants.TOTAL;
 
-        
+
         public string TotalButtonText
         {
             get => _totalButtonText;
@@ -294,7 +295,7 @@ namespace GitTrends
             void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();
         }
 
-        async ValueTask ExecuteToggleIsFavoriteCommand(Repository repository)
+        async Task ExecuteToggleIsFavoriteCommand(Repository repository)
         {
             var updatedRepository = repository with
             {

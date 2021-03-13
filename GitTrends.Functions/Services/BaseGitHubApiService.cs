@@ -19,7 +19,7 @@ namespace GitTrends.Functions
         {
             var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(3));
 
-            var rateLimits = await _gitHubApiStatusService.GetApiRateLimits(cancellationTokenSource.Token).ConfigureAwait(false);
+            var rateLimits = await _gitHubApiStatusService.GetApiRateLimits(cancellationTokenSource.Token);
             var parentClasName = GetType().Name;
 
             int remainingRequestCount = parentClasName switch
