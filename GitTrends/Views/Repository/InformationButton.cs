@@ -35,16 +35,16 @@ namespace GitTrends
             ColumnDefinitions = Columns.Define(Diameter);
 
             Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic1, floatingActionButtonSize: FloatingActionButtonSize.Mini).Center().Assign(out _statistic1FloatingActionButton)
-                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic1)));
+                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => repositories is null ? string.Empty : StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic1)));
 
             Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic2, floatingActionButtonSize: FloatingActionButtonSize.Mini).Center().Assign(out _statistic2FloatingActionButton)
-                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic2)));
+                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => repositories is null ? string.Empty : StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic2)));
 
             Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic3, floatingActionButtonSize: FloatingActionButtonSize.Mini).Center().Assign(out _statistic3FloatingActionButton)
-                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic3)));
+                            .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => repositories is null ? string.Empty : StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic3)));
 
             Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Information, new AsyncCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium }.Center().Assign(out _totalButton)
-                            .Bind(FloatingActionTextButton.SizeProperty, nameof(RepositoryViewModel.TotalButtonSize))
+                            .Bind(FloatingActionButtonView.SizeProperty, nameof(RepositoryViewModel.TotalButtonSize))
                             .Bind(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.TotalButtonText)));
 
             SetBinding(IsVisibleProperty, new MultiBinding
