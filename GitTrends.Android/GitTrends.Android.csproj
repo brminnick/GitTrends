@@ -84,7 +84,7 @@
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="5.1.0" />
     <PackageReference Include="Polly" Version="7.2.1" />
-    <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.3.0.35" />
+    <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.4.0.48" />
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
     <PackageReference Include="Autofac" Version="6.1.0" />
@@ -104,7 +104,7 @@
     <PackageReference Include="Plugin.StoreReview" Version="3.1.0" />
     <PackageReference Include="Xamarin.Google.Dagger" Version="2.27.0" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.2" />
-    <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.24" />
+    <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.38" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
