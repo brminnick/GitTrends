@@ -279,7 +279,7 @@ namespace GitTrends
 
         protected override async Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, GitHubUserService gitHubUserService, CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions)
         {
-            AnalyticsService.Track("Login Button Tapped", nameof(gitHubUserService.IsAuthenticated), gitHubUserService.IsAuthenticated.ToString());
+            AnalyticsService.Track($"{nameof(SettingsViewModel)}.{nameof(ExecuteConnectToGitHubButtonCommand)}", nameof(gitHubUserService.IsAuthenticated), gitHubUserService.IsAuthenticated.ToString());
 
             if (gitHubUserService.IsAuthenticated || gitHubUserService.IsDemoUser)
             {

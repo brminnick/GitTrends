@@ -89,7 +89,7 @@ namespace GitTrends
         enum Row { Title, TitleShadow, List }
         enum Column { Title, Button }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
 
@@ -97,7 +97,7 @@ namespace GitTrends
                 && collectionView.ItemsSource.IsNullOrEmpty())
             {
                 _refreshView.IsRefreshing = true;
-                _reviewService.TryRequestReviewPrompt();
+                await _reviewService.TryRequestReviewPrompt();
             }
         }
 

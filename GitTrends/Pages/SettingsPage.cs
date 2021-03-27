@@ -178,12 +178,16 @@ namespace GitTrends
 
         async void HandleAboutRowTapped(object sender, EventArgs e)
         {
+            AnalyticsService.Track("About Button Tapped");
+
             var aboutPage = ContainerService.Container.Resolve<AboutPage>();
             await Navigation.PushAsync(aboutPage);
         }
 
         async void HandleLoginRowTapped(object sender, EventArgs e)
         {
+            AnalyticsService.Track("Login Button Tapped", nameof(ViewModel.IsNotAuthenticating), ViewModel.IsNotAuthenticating.ToString());
+
             if (ViewModel.IsNotAuthenticating)
             {
                 var loginRowViews = _contentGrid.Children.OfType<ILoginRowView>().Cast<View>();

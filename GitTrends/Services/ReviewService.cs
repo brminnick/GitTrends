@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using GitTrends.Shared;
 using Plugin.StoreReview.Abstractions;
 using Xamarin.Essentials.Interfaces;
@@ -59,16 +60,16 @@ namespace GitTrends
             set => _preferences.Set(nameof(MostRecentReviewedBuildString), value);
         }
 
-        public void TryRequestReviewPrompt()
+        public async ValueTask TryRequestReviewPrompt()
         {
             if (ShouldDisplayReviewRequest())
             {
                 _analyticsService.Track("Review Request Triggered", nameof(Device.RuntimePlatform), Device.RuntimePlatform);
 
 #if AppStore
-                _storeReview.RequestReview(false);
+                await _storeReview.RequestReview(false).ConfigureAwait(false);
 #else
-                _storeReview.RequestReview(true);
+                await _storeReview.RequestReview(true).ConfigureAwait(false);
 #endif
 
                 OnReviewRequested();
