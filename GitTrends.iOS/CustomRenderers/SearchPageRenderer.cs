@@ -71,37 +71,38 @@ namespace GitTrends.iOS
 
         async Task UpdateBarButtonItems(UIViewController parentViewController, Page page)
         {
-            var (leftBarButtonItem, rightBarButtonItems) = await GetToolbarItems(page.ToolbarItems);
+            var (leftBarButtonItems, rightBarButtonItems) = await GetToolbarItems(page.ToolbarItems);
 
-            if (leftBarButtonItem != null)
-                parentViewController.NavigationItem.LeftBarButtonItems = new UIBarButtonItem[] { leftBarButtonItem };
-            else
-                parentViewController.NavigationItem.LeftBarButtonItems = Array.Empty<UIBarButtonItem>();
+            parentViewController.NavigationItem.LeftBarButtonItems = leftBarButtonItems.Any() switch
+            {
+                true => leftBarButtonItems.ToArray(),
+                false => Array.Empty<UIBarButtonItem>()
+            };
 
-            if (rightBarButtonItems.Any())
-                parentViewController.NavigationItem.RightBarButtonItems = rightBarButtonItems.ToArray();
-            else
-                parentViewController.NavigationItem.RightBarButtonItems = Array.Empty<UIBarButtonItem>();
+            parentViewController.NavigationItem.RightBarButtonItems = rightBarButtonItems.Any() switch
+            {
+                true => rightBarButtonItems.ToArray(),
+                false => Array.Empty<UIBarButtonItem>()
+            };
         }
 
-        async Task<(UIBarButtonItem? LeftBarButtonItem, List<UIBarButtonItem> RightBarButtonItems)> GetToolbarItems(IEnumerable<ToolbarItem> items)
+        async Task<(IReadOnlyList<UIBarButtonItem>? LeftBarButtonItem, IReadOnlyList<UIBarButtonItem> RightBarButtonItems)> GetToolbarItems(IEnumerable<ToolbarItem> items)
         {
-            UIBarButtonItem? leftBarButtonItem = null;
-
-            var leftToolbarItem = items.SingleOrDefault(x => x.Priority is 1);
-
-            if (leftToolbarItem != null)
-                leftBarButtonItem = await GetUIBarButtonItem(leftToolbarItem);
+            var leftBarButtonItems = new List<UIBarButtonItem>();
+            foreach (var item in items.Where(x => x.Priority is 1))
+            {
+                var barButtonItem = await GetUIBarButtonItem(item);
+                leftBarButtonItems.Add(barButtonItem);
+            }
 
             var rightBarButtonItems = new List<UIBarButtonItem>();
-
             foreach (var item in items.Where(x => x.Priority != 1))
             {
                 var barButtonItem = await GetUIBarButtonItem(item);
                 rightBarButtonItems.Add(barButtonItem);
             }
 
-            return (leftBarButtonItem, rightBarButtonItems);
+            return (leftBarButtonItems, rightBarButtonItems);
         }
 
         static async Task<UIBarButtonItem> GetUIBarButtonItem(ToolbarItem toolbarItem)
