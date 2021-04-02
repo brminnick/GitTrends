@@ -74,6 +74,7 @@
 		<string>pt</string>
 		<string>bs</string>
 		<string>uk</string>
+		<string>cs</string>
 	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>GitTrends does not require your location</string>
