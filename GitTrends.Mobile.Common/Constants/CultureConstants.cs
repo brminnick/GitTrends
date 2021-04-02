@@ -7,8 +7,10 @@ namespace GitTrends.Mobile.Common
     public static class CultureConstants
     {
         static readonly IReadOnlyDictionary<string, string> _cultureOptions = new Dictionary<string, string>
+        
         {
             {"bs", "🇧🇦 Bosanski" },
+            {"cs": "🇨🇿 Čeština"}
             {"de", "🇩🇪 Deutsch" },
             {"en", "🇺🇸 English" },
             {"es", "🇪🇸 Español" },
