@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="PleaseLoginAgain" xml:space="preserve">
+    <value>Prosím přihlašte se znovu</value>
+  </data>
+	<data name="SwipeDownToRefresh_Repositories" xml:space="preserve">
+    <value>Potáhněte dolů pro načtení repozitářů</value>
+  </data>
+	<data name="SwipeDownToRefresh_ReferringSites" xml:space="preserve">
+    <value>Potáhněte dolů pro načtení odkazujících stránek</value>
+  </data>
+	<data name="LoginExpired" xml:space="preserve">
+    <value>GitHub přihlášení vypršelo</value>
+  </data>
+	<data name="NoFilterMatch" xml:space="preserve">
+    <value>Žádný odpovídající repozitář byl nalezen.</value>
+  </data>
+	<data name="NoRepositoriesFound" xml:space="preserve">
+    <value>Váš seznam repozitářů je prázdný</value>
+  </data>
+	<data name="ClearSearchBarTryAgain" xml:space="preserve">
+    <value>Vymazat hledání a vyhledat znovu</value>
+  </data>
+	<data name="NoReferralsYet" xml:space="preserve">
+    <value>Žádné odkazy, zatím</value>
+  </data>
+	<data name="Uninitialized" xml:space="preserve">
+    <value>Data nebyla shromáždena</value>
+  </data>
+	<data name="UnableToRetrieveData" xml:space="preserve">
+    <value>Nemohli jsme shromáždit data</value>
+  </data>
+	<data name="NoTrafficYet" xml:space="preserve">
+    <value>Zatím žádná aktivita</value>
+  </data>
+	<data name="ZeroStarsEmptyDataViewDescription1" xml:space="preserve">
+    <value>Bez obav! Pokračujte s dobrou prací a nechte hvězdy přijít samy!</value>
+  </data>
+	<data name="ZeroStarsEmptyDataViewDescription2" xml:space="preserve">
+    <value>Přizvete komunitu, aby se podívala na vaši úžasnou práci!</value>
+  </data>
+	<data name="ZeroStarsEmptyDataViewDescription3" xml:space="preserve">
+    <value>Sdílejte aktualizace s přáteli a získejte svou první hvězdu!</value>
+  </data>
+	<data name="Congratulations" xml:space="preserve">
+    <value>Gratulujeme!</value>
+  </data>
+	<data name="NoStarsYet" xml:space="preserve">
+    <value>Zatím žádné hvězdy</value>
+  </data>
+	<data name="FirstStar" xml:space="preserve">
+    <value>Dostali jste svou první hvězdu!</value>
+  </data>
+</root>
