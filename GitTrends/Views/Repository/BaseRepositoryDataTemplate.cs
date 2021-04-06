@@ -251,7 +251,7 @@ namespace GitTrends
 
                             public IsVisibleConverter(Func<double, bool> isWidthValid) => _isWidthValid = isWidthValid;
 
-                            public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+                            public object? Convert(object?[]? values, Type? targetType, object? parameter, CultureInfo? culture)
                             {
                                 if (values is null || !values.Any())
                                     return false;
@@ -259,8 +259,8 @@ namespace GitTrends
                                 if (values[0] is null || values[1] is null)
                                     return false;
 
-                                var isTrending = (bool)values[0];
-                                var width = (double)values[1];
+                                var isTrending = (bool)(values[0] ?? throw new NotSupportedException("Value cannot be null"));
+                                var width = (double)(values[1] ?? throw new NotSupportedException("Value cannot be null"));
                                 var isFavorite = (bool?)values[2];
 
                                 // When `Width is -1`, Xamarin.Forms hasn't inflated the View
@@ -269,7 +269,7 @@ namespace GitTrends
                                         && (width is -1 || _isWidthValid(width));
                             }
 
-                            public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
+                            public object?[]? ConvertBack(object? value, Type?[]? targetTypes, object? parameter, CultureInfo? culture) => throw new NotImplementedException();
                         }
                     }
                 }
