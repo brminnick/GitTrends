@@ -150,7 +150,7 @@ namespace GitTrends
             {
                 repositoryConnectionResponse = await ExecuteGraphQLRequest(() => _githubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
             }
-            catch (GraphQLException<RepositoryConnectionResponse> e) when (e.GraphQLData != null && e.ContainsSamlOrganizationAthenticationError())
+            catch (GraphQLException<RepositoryConnectionResponse> e) when (e.ContainsSamlOrganizationAthenticationError())
             {
                 repositoryConnectionResponse = e.GraphQLData;
             }

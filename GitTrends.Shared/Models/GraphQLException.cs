@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -28,7 +29,7 @@ namespace GitTrends.Shared
             ResponseHeaders = responseHeaders;
         }
 
-        public GraphQLError[] Errors { get; }
+        public IReadOnlyList<GraphQLError> Errors { get; }
         public HttpStatusCode StatusCode { get; }
         public HttpResponseHeaders ResponseHeaders { get; }
     }

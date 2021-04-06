@@ -43,7 +43,7 @@ namespace GitTrends.UITests
 
             //Assert
             Assert.IsTrue(isLoggedIn_Initial);
-            Assert.IsTrue(isLoggedIn_Final);
+            Assert.IsFalse(isLoggedIn_Final);
         }
 
         [Test]
@@ -92,11 +92,7 @@ namespace GitTrends.UITests
 
             //Assert
             Assert.IsFalse(shouldSendNotifications_Initial);
-
-            if (App is AndroidApp)
-                Assert.IsTrue(areNotificationsEnabled_Initial);
-            else
-                Assert.IsFalse(areNotificationsEnabled_Initial);
+            Assert.IsTrue(areNotificationsEnabled_Initial);
 
             Assert.IsTrue(shouldSendNotifications_Final);
             Assert.IsTrue(areNotificationsEnabled_Final);
