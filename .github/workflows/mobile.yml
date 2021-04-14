@@ -33,7 +33,7 @@ jobs:
         
       - name: Restore NuGet 
         run: |
-          nuget restore
+          nuget restore **/**.sln
         
       - name: Inject API Keys
         run: |
