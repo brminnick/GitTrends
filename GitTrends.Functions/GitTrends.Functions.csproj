@@ -24,7 +24,7 @@
         <PackageReference Include="Refit.HttpClientFactory" Version="6.0.38" />
         <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
         <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1" />
-        <PackageReference Include="NuGet.Protocol" Version="5.9.0" />
+        <PackageReference Include="NuGet.Protocol" Version="5.9.1" />
         <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.38" />
     </ItemGroup>
     <ItemGroup>
