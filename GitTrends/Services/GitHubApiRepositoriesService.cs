@@ -72,7 +72,7 @@ namespace GitTrends
 
                 return (null, null, null);
             }
-            catch (GraphQLException<StarGazers> e) when (e.ContainsSamlOrganizationAthenticationError())
+            catch (GraphQLException<StarGazers> e) when (e.ContainsSamlOrganizationAthenticationError(out var ssoValues))
             {
                 reportException(e);
 
