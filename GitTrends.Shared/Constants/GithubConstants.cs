@@ -1,8 +1,9 @@
-﻿namespace GitTrends.Shared
+﻿using System.Web;
+
+namespace GitTrends.Shared
 {
     public static class GitHubConstants
     {
-        public const string OAuthScope = "public_repo%20read:user";
         public const string GitHubBaseUrl = "https://github.com";
         public const string GitHubRestApiUrl = "https://api.github.com";
         public const string GitHubGraphQLApi = "https://api.github.com/graphql";
@@ -10,5 +11,7 @@
 
         public const string GitTrendsRepoName = nameof(GitTrends);
         public const string GitTrendsRepoOwner = "brminnick";
+
+        public static string OAuthScope { get; } = HttpUtility.UrlEncode("public_repo read:user");
     }
 }
