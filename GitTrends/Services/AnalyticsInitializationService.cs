@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using GitTrends.Shared;
 using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
@@ -13,30 +13,45 @@ namespace GitTrends
         const string _iOSDebugKey = "0e194e2a-3aad-41c5-a6bc-61900e185075";
         const string _androidDebugKey = "272973ed-d3cc-4ee0-b4f2-5b5d01ad487d";
 
+        readonly IDeviceInfo _deviceInfo;
         readonly IPreferences _preferences;
+        readonly IAnalyticsService _analyticsService;
         readonly AzureFunctionsApiService _azureFunctionsApiService;
 
-        public AnalyticsInitializationService(IPreferences preferences, AzureFunctionsApiService azureFunctionsApiService)
+        public AnalyticsInitializationService(IDeviceInfo deviceInfo,
+                                                IPreferences preferences,
+                                                IAnalyticsService analyticsService,
+                                                AzureFunctionsApiService azureFunctionsApiService)
         {
+            _deviceInfo = deviceInfo;
             _preferences = preferences;
+            _analyticsService = analyticsService;
             _azureFunctionsApiService = azureFunctionsApiService;
 
             if (!string.IsNullOrWhiteSpace(ApiKey))
-                AppCenter.Start(ApiKey, typeof(Analytics), typeof(Crashes));
+                _analyticsService.Start(ApiKey);
         }
 
-        string ApiKey => Xamarin.Forms.Device.RuntimePlatform switch
+        string ApiKey
         {
+            get
+            {
 #if AppStore
+                if (_deviceInfo.Platform == DevicePlatform.iOS)
+                    return iOSApiKey;
 
-            Xamarin.Forms.Device.iOS => iOSApiKey,
-            Xamarin.Forms.Device.Android => AndroidApiKey,
+                if (_deviceInfo.Platform == DevicePlatform.Android)
+                    return AndroidApiKey;
 #else
-            Xamarin.Forms.Device.iOS => _iOSDebugKey,
-            Xamarin.Forms.Device.Android => _androidDebugKey,
+                if (_deviceInfo.Platform == DevicePlatform.iOS)
+                    return _iOSDebugKey;
+
+                if (_deviceInfo.Platform == DevicePlatform.Android)
+                    return _androidDebugKey;
 #endif
-            _ => throw new NotSupportedException()
-        };
+                throw new NotSupportedException();
+            }
+        }
 
         string AndroidApiKey
         {
@@ -62,10 +77,10 @@ namespace GitTrends
                 iOSApiKey = appCenterApiKeys.iOS;
             }
 
-            var isConfigured = AppCenter.Configured;
+            var isConfigured = _analyticsService.Configured;
 
             if (!isConfigured)
-                AppCenter.Start(ApiKey, typeof(Analytics), typeof(Crashes));
+                _analyticsService.Start(ApiKey);
         }
     }
 }

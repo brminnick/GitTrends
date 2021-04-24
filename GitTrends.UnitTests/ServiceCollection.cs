@@ -28,6 +28,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton(azureFunctionsApi);
 
             //GitTrends Services
+            services.AddSingleton<AnalyticsInitializationService>();
             services.AddSingleton<AppInitializationService>();
             services.AddSingleton<AzureFunctionsApiService>();
             services.AddSingleton<BackgroundFetchService>();
@@ -67,6 +68,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<IAnalyticsService, MockAnalyticsService>();
             services.AddSingleton<IAppInfo, MockAppInfo>();
             services.AddSingleton<IBrowser, MockBrowser>();
+            services.AddSingleton<IDeviceInfo, MockDeviceInfo>();
             services.AddSingleton<IDeviceNotificationsService, MockDeviceNotificationsService>();
             services.AddSingleton<IFileSystem, MockFileSystem>();
             services.AddSingleton<IEmail, MockEmail>();

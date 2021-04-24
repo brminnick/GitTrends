@@ -9,6 +9,10 @@ namespace GitTrends.UnitTests
 {
     class MockAnalyticsService : IAnalyticsService
     {
+        public bool Configured { get; private set; }
+
+        public void Start(string apiKey) => Configured = true;
+
         public void Track(string trackIdentifier, IDictionary<string, string>? table = null)
         {
             PrintHeader();

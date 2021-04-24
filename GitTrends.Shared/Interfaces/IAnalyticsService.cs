@@ -6,6 +6,10 @@ namespace GitTrends.Shared
 {
     public interface IAnalyticsService
     {
+        bool Configured { get; }
+
+        void Start(string apiKey);
+
         void Track(string trackIdentifier, IDictionary<string, string>? table = null);
 
         void Track(string trackIdentifier, string key, string value);

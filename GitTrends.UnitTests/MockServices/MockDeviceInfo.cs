@@ -1,14 +1,27 @@
-﻿using Xamarin.Forms;
-using Xamarin.Forms.Internals;
+﻿using System;
+using Xamarin.Essentials;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends.UnitTests
 {
-    class MockDeviceInfo : DeviceInfo
+    class MockDeviceInfo : IDeviceInfo
     {
-        public override Size PixelScreenSize => new Size(0, 0);
+        public MockDeviceInfo() => Version = new Version(VersionString);
 
-        public override Size ScaledScreenSize => new Size(0, 0);
+        public string Model { get; } = "Test";
 
-        public override double ScalingFactor => 1;
+        public string Manufacturer { get; } = "Test";
+
+        public string Name { get; } = "Test";
+
+        public string VersionString { get; } = "1.0";
+
+        public Version Version { get; }
+
+        public DevicePlatform Platform { get; } = DevicePlatform.Android;
+
+        public DeviceIdiom Idiom { get; } = DeviceIdiom.Phone;
+
+        public DeviceType DeviceType { get; } = DeviceType.Unknown;
     }
 }

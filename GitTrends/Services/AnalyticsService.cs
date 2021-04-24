@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
+using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 
@@ -11,6 +12,10 @@ namespace GitTrends
 {
     public class AnalyticsService : IAnalyticsService
     {
+        public bool Configured => AppCenter.Configured;
+
+        public void Start(string apiKey) =>
+            AppCenter.Start(apiKey, typeof(Analytics), typeof(Crashes));
 
         public void Track(string trackIdentifier, IDictionary<string, string>? table = null) =>
             Analytics.TrackEvent(trackIdentifier, table);
