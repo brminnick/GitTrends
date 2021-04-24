@@ -56,7 +56,7 @@ namespace GitTrends.Shared
 
                         var isValidUri = Uri.TryCreate(urlString, UriKind.Absolute, out var uri);
 
-                        if (isValidUri)
+                        if (isValidUri && uri != null)
                             ssoUriList.Add(uri);
                     }
                 }
