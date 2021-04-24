@@ -264,10 +264,10 @@ namespace GitTrends.UnitTests
             Assert.True(repository_favorite.IsFavorite);
             Assert.IsFalse(repository_final.IsFavorite);
 
-            if (!isDemo)
-                Assert.AreEqual(favoriteUrls.First(), repository_favorite.Url);
-            else
+            if (isDemo)
                 Assert.IsEmpty(favoriteUrls);
+            else
+                Assert.AreEqual(favoriteUrls.First(), repository_favorite.Url);
         }
 
         static void AssertRepositoriesReversedSorted(in IEnumerable<Repository> repositories, in SortingOption sortingOption)
