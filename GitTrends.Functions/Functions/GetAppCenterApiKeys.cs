@@ -14,7 +14,7 @@ namespace GitTrends.Functions
         readonly static string _android = Environment.GetEnvironmentVariable("AppCenterApiKey_Android") ?? string.Empty;
 
         [FunctionName(nameof(GetAppCenterApiKeys))]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest request, ILogger log)
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request, ILogger log)
         {
             log.LogInformation("Retrieving Client Id");
 
