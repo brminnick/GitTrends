@@ -2,7 +2,7 @@
 set -e
 
 AzureConstantsFile=`find "$APPCENTER_SOURCE_DIRECTORY" -name AzureConstants.cs | head -1`
-echo CognitiveServicesConstantsFile = $AzureConstantsFile
+echo AzureConstantsFile = $AzureConstantsFile
 
 echo "Injecting API Keys"
 
