@@ -21,7 +21,6 @@ namespace GitTrends.Functions
         readonly static IReadOnlyList<string> _testTokenList = new[]
         {
             Environment.GetEnvironmentVariable("UITestToken_brminnick") ?? string.Empty,
-            Environment.GetEnvironmentVariable("UITestToken_GitTrends") ?? string.Empty,
             Environment.GetEnvironmentVariable("UITestToken_GitTrendsApp") ?? string.Empty,
             Environment.GetEnvironmentVariable("UITestToken_TheCodeTraveler") ?? string.Empty
         };

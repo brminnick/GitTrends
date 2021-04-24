@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,6 +60,7 @@ namespace GitTrends.UnitTests
             Assert.Greater(syncFusionDTO.LicenseVersion, 0);
         }
 
+        [Test]
         public async Task GetChartStreamingUrl()
         {
             //Arrange
@@ -76,6 +76,22 @@ namespace GitTrends.UnitTests
             Assert.IsNotNull(streamingManifest.ManifestUrl);
             Assert.IsFalse(string.IsNullOrWhiteSpace(streamingManifest.HlsUrl));
             Assert.IsFalse(string.IsNullOrWhiteSpace(streamingManifest.ManifestUrl));
+        }
+
+        [Test]
+        public async Task GetAppCenterApiKeys()
+        {
+            //Arrange
+            AppCenterApiKeyDTO? appCenterApiKeyDTO;
+            var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
+
+            //Act
+            appCenterApiKeyDTO = await azureFunctionsApiService.GetAppCenterApiKeys(CancellationToken.None).ConfigureAwait(false);
+
+            //Assert
+            Assert.IsNotNull(appCenterApiKeyDTO);
+            Assert.IsNotNull(appCenterApiKeyDTO.iOS);
+            Assert.IsNotNull(appCenterApiKeyDTO.Android);
         }
 
         [Test]

@@ -28,6 +28,7 @@ namespace GitTrends
             //Register Xamarin.Essentials
             builder.RegisterType<AppInfoImplementation>().As<IAppInfo>().SingleInstance();
             builder.RegisterType<BrowserImplementation>().As<IBrowser>().SingleInstance();
+            builder.RegisterType<DeviceInfoImplementation>().As<IDeviceInfo>().SingleInstance();
             builder.RegisterType<EmailImplementation>().As<IEmail>().SingleInstance();
             builder.RegisterType<FileSystemImplementation>().As<IFileSystem>().SingleInstance();
             builder.RegisterType<LauncherImplementation>().As<ILauncher>().SingleInstance();
@@ -39,6 +40,7 @@ namespace GitTrends
             //Register Services
             builder.RegisterType<App>().AsSelf().SingleInstance();
             builder.RegisterType<AnalyticsService>().As<IAnalyticsService>().SingleInstance();
+            builder.RegisterType<AnalyticsInitializationService>().AsSelf().SingleInstance();
             builder.RegisterType<AppInitializationService>().AsSelf().SingleInstance();
             builder.RegisterType<AzureFunctionsApiService>().AsSelf().SingleInstance();
             builder.RegisterType<BackgroundFetchService>().AsSelf().SingleInstance();
@@ -99,7 +101,7 @@ namespace GitTrends
             //Register Refit Services
             IGitHubApiV3 gitHubV3ApiClient = RefitExtensions.For<IGitHubApiV3>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubRestApiUrl));
             IGitHubGraphQLApi gitHubGraphQLApiClient = RefitExtensions.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
-            IAzureFunctionsApi azureFunctionsApiClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl)); 
+            IAzureFunctionsApi azureFunctionsApiClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
 
             builder.RegisterInstance(gitHubV3ApiClient).SingleInstance();
             builder.RegisterInstance(gitHubGraphQLApiClient).SingleInstance();

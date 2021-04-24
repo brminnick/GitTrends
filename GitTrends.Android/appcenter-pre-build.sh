@@ -2,11 +2,13 @@
 set -e
 
 AzureConstantsFile=`find "$APPCENTER_SOURCE_DIRECTORY" -name AzureConstants.cs | head -1`
-echo CognitiveServicesConstantsFile = $AzureConstantsFile
+echo AzureConstantsFile = $AzureConstantsFile
 
 echo "Injecting API Keys"
 
 sed -i '' "s/GetTestTokenApiKey = \"\"/GetTestTokenApiKey = \"$GetTestTokenApiKey\"/g" "$AzureConstantsFile"
+
+sed -i '' "s/GetAppCenterApiKeysKey = \"\"/GetAppCenterApiKeysKey = \"$GetAppCenterApiKeysKey\"/g" "$AzureConstantsFile"
 
 sed -i '' "s/GetSyncFusionInformationApiKey = \"\"/GetSyncFusionInformationApiKey = \"$GetSyncFusionInformationApiKey\"/g" "$AzureConstantsFile"
 

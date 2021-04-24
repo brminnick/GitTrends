@@ -7,10 +7,10 @@
         <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
-      <IntermediateOutputPath>obj\AppStore</IntermediateOutputPath>
+      <IntermediateOutputPath>obj\AppStore\netcoreapp3.1</IntermediateOutputPath>
       <DebugType></DebugType>
       <Optimize>false</Optimize>
-      <OutputPath>bin\AppStore</OutputPath>
+      <OutputPath>bin\AppStore\netcoreapp3.1</OutputPath>
       <DefineConstants></DefineConstants>
       <NoWarn></NoWarn>
       <LangVersion>Default</LangVersion>
