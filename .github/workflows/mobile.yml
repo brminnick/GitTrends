@@ -53,6 +53,7 @@ jobs:
       runs-on: macos-latest
       env:
         GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}
+        GetAppCenterApiKeysKey: ${{ secrets.GetAppCenterApiKeysKey}}
         GetSyncFusionInformationApiKey: ${{ secrets.GetSyncFusionInformationApiKey }}
         GetNotificationHubInformationApiKey: ${{ secrets.GetNotificationHubInformationApiKey }}
         APPCENTER_SOURCE_DIRECTORY: .
