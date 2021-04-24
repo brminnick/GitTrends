@@ -70,5 +70,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)StringExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RefitExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitTrendsStatisticsDTO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\AppCenterApiKeyDTO.cs" />
   </ItemGroup>
 </Project>

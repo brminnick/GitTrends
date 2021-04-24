@@ -39,6 +39,7 @@ namespace GitTrends
             //Register Services
             builder.RegisterType<App>().AsSelf().SingleInstance();
             builder.RegisterType<AnalyticsService>().As<IAnalyticsService>().SingleInstance();
+            builder.RegisterType<AnalyticsInitializationService>().AsSelf().SingleInstance();
             builder.RegisterType<AppInitializationService>().AsSelf().SingleInstance();
             builder.RegisterType<AzureFunctionsApiService>().AsSelf().SingleInstance();
             builder.RegisterType<BackgroundFetchService>().AsSelf().SingleInstance();
