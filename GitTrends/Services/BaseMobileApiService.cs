@@ -21,13 +21,13 @@ namespace GitTrends
 
         protected string GetGitHubBearerTokenHeader(GitHubToken token) => $"{token.TokenType} {token.AccessToken}";
 
-        protected async Task<T> AttemptAndRetry_Mobile<T>(Func<Task<T>> action, CancellationToken cancellationToken, int numRetries = 3, IDictionary<string, string>? properties = null, [CallerMemberName] string callerName = "")
+        protected async Task<T> AttemptAndRetry_Mobile<T>(Func<Task<T>> action, CancellationToken cancellationToken, int numRetries = 3, [CallerMemberName] string callerName = "")
         {
             await UpdateActivityIndicatorStatus(true).ConfigureAwait(false);
 
             try
             {
-                using var timedEvent = AnalyticsService.TrackTime(callerName, properties);
+                using var timedEvent = AnalyticsService.TrackTime(callerName);
                 return await AttemptAndRetry(action, cancellationToken, numRetries).ConfigureAwait(false);
             }
             finally
