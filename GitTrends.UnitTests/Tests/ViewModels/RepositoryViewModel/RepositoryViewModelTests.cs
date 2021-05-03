@@ -247,10 +247,11 @@ namespace GitTrends.UnitTests
             if (isDemo)
                 await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
             else
-                await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService);
+                await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
             await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
             repository_initial = repositoryViewModel.VisibleRepositoryList.First();
+
 
             await repositoryViewModel.ToggleIsFavoriteCommand.ExecuteAsync(repository_initial).ConfigureAwait(false);
             repository_favorite = repositoryViewModel.VisibleRepositoryList.First();

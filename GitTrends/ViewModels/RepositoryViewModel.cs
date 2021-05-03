@@ -288,7 +288,7 @@ namespace GitTrends
 
                 IsRefreshing = false;
 
-                SaveRepositoriesToDatabase(_repositoryList).SafeFireAndForget();
+                await SaveRepositoriesToDatabase(_repositoryList).ConfigureAwait(false);
             }
 
             void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
