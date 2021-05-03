@@ -54,7 +54,7 @@ namespace GitTrends.UnitTests
 
             void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
             {
-                ReferringSitesViewModel.PullToRefreshFailed -= HandlePullToRefreshFailed;
+                RepositoryViewModel.PullToRefreshFailed -= HandlePullToRefreshFailed;
                 pullToRefreshFailedTCS.SetResult(e);
             }
         }

@@ -190,8 +190,11 @@ namespace GitTrends
             await _loadingLabel.FadeTo(1, 250, Easing.CubicIn);
         });
 
-        async void HandleInitializationCompleted(object sender, InitializationCompleteEventArgs e) =>
+        async void HandleInitializationCompleted(object sender, InitializationCompleteEventArgs e)
+        {
+            AppInitializationService.InitializationCompleted -= HandleInitializationCompleted;
             await HandleInitializationCompleted(e.IsInitializationSuccessful).ConfigureAwait(false);
+        }
 
         async Task HandleInitializationCompleted(bool isInitializationSuccessful)
         {
