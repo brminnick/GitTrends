@@ -22,15 +22,12 @@ namespace GitTrends.Droid
 
         public override void OnCreate()
         {
+            this.ShinyOnCreate(new ShinyStartup());
             base.OnCreate();
 
             AndroidOptions.DefaultSmallIconResourceName = nameof(Resource.Drawable.icon);
             AndroidOptions.DefaultColorResourceName = nameof(Resource.Color.colorPrimary);
-            AndroidOptions.DefaultChannel = nameof(GitTrends);
-            AndroidOptions.DefaultChannelDescription = "GitTrends Notifications";
             AndroidOptions.DefaultLaunchActivityFlags = AndroidActivityFlags.FromBackground;
-            AndroidOptions.DefaultNotificationImportance = AndroidNotificationImportance.High;
-            AndroidShinyHost.Init(this, platformBuild: services => services.UseNotifications());
 
             Xamarin.Essentials.Platform.Init(this);
 

@@ -18,7 +18,7 @@ namespace GitTrends.iOS
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
-            iOSShinyHost.Init(platformBuild: services => services.UseNotifications());
+            this.ShinyFinishedLaunching(new ShinyStartup());
 
             global::Xamarin.Forms.Forms.Init();
             Sharpnado.MaterialFrame.iOS.iOSMaterialFrameRenderer.Init();

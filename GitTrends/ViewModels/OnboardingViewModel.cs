@@ -101,18 +101,11 @@ namespace GitTrends
 
             _analyticsService.Track("Onboarding Notification Button Tapped", "Result", result.ToString());
 
-            static bool isNotificationResultSuccessful(in AccessState result)
+            static bool isNotificationResultSuccessful(in AccessState result) => result switch
             {
-                switch (result)
-                {
-                    case AccessState.Available:
-                    case AccessState.Restricted:
-                        return true;
-
-                    default:
-                        return false;
-                }
-            }
+                AccessState.Available or AccessState.Restricted => true,
+                _ => false,
+            };
         }
 
         void OnSkipButtonTapped() => _skipButtonTappedEventManager.RaiseEvent(null, EventArgs.Empty, nameof(SkipButtonTapped));

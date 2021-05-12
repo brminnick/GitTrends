@@ -20,14 +20,16 @@ namespace GitTrends.Droid
     {
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
-            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-            AndroidShinyHost.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+
+            this.ShinyOnRequestPermissionsResult(requestCode, permissions, grantResults);
+            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            this.ShinyOnCreate();
+
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
@@ -80,9 +82,9 @@ namespace GitTrends.Droid
                     var analyticsService = ContainerService.Container.Resolve<IAnalyticsService>();
                     var notificationService = ContainerService.Container.Resolve<NotificationService>();
 
-                    if (notification.Title is string notificationTitle
-                        && notification.Message is string notificationMessage
-                        && notification.BadgeCount is int badgeCount
+                    if (notification?.Title is string notificationTitle
+                        && notification?.Message is string notificationMessage
+                        && notification?.BadgeCount is int badgeCount
                         && badgeCount > 0)
                     {
                         await notificationService.HandleNotification(notificationTitle, notificationMessage, badgeCount).ConfigureAwait(false);
