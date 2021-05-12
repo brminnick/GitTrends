@@ -21,8 +21,6 @@ namespace GitTrends
 
         static IContainer CreateContainer()
         {
-            Device.SetFlags(new[] { "Markup_Experimental", "IndicatorView_Experimental", "AppTheme_Experimental", "SwipeView_Experimental" });
-
             var builder = new ContainerBuilder();
 
             //Register Xamarin.Essentials

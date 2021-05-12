@@ -13,10 +13,10 @@
       <Optimize>true</Optimize>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
-      <IntermediateOutputPath>obj\AppStore\netstandard2.1</IntermediateOutputPath>
+      <IntermediateOutputPath>obj\AppStore\netstandard2.1\netstandard2.1</IntermediateOutputPath>
       <DebugType></DebugType>
       <Optimize>true</Optimize>
-      <OutputPath>bin\AppStore\netstandard2.1</OutputPath>
+      <OutputPath>bin\AppStore\netstandard2.1\netstandard2.1</OutputPath>
       <DefineConstants>AppStore</DefineConstants>
       <NoWarn>1701;1702</NoWarn>
       <NoStdLib>false</NoStdLib>
@@ -32,7 +32,7 @@
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.2.0" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.2.0" />
         <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
-        <PackageReference Include="Shiny.Notifications" Version="1.2.0.1755" />
+        <PackageReference Include="Shiny.Notifications" Version="2.0.0.2639" />
         <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
         <PackageReference Include="Plugin.StoreReview" Version="3.1.0" />
         <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.4" />
