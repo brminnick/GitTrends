@@ -54,9 +54,9 @@ namespace GitTrends
 
         async Task<(RepositoryViewsResponseModel? ViewsResponse, RepositoryClonesResponseModel? ClonesResponse, StarGazers? StarGazerResponse)> GetRepositoryStatistics(Repository repository, CancellationToken cancellationToken)
         {
+            var getStarGazrsTask = _gitHubGraphQLApiService.GetStarGazers(repository.Name, repository.OwnerLogin, cancellationToken);
             var getViewStatisticsTask = _gitHubApiV3Service.GetRepositoryViewStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
             var getCloneStatisticsTask = _gitHubApiV3Service.GetRepositoryCloneStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
-            var getStarGazrsTask = _gitHubGraphQLApiService.GetStarGazers(repository.Name, repository.OwnerLogin, cancellationToken);
 
             try
             {
@@ -72,7 +72,7 @@ namespace GitTrends
 
                 return (null, null, null);
             }
-            catch (GraphQLException<StarGazers> e) when (e.ContainsSamlOrganizationAthenticationError())
+            catch (GraphQLException<StarGazers> e) when (e.ContainsSamlOrganizationAthenticationError(out var ssoValues))
             {
                 reportException(e);
 

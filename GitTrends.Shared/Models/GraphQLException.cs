@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -28,8 +29,45 @@ namespace GitTrends.Shared
             ResponseHeaders = responseHeaders;
         }
 
-        public GraphQLError[] Errors { get; }
+        public IReadOnlyList<GraphQLError> Errors { get; }
         public HttpStatusCode StatusCode { get; }
         public HttpResponseHeaders ResponseHeaders { get; }
+    }
+
+    public static class GraphQLExceptionExtensions
+    {
+        public static bool ContainsSamlOrganizationAthenticationError<T>(this GraphQLException<T> graphQLException, out IReadOnlyList<Uri> ssoUris)
+        {
+            var doesContainError = graphQLException.ResponseHeaders.TryGetValues("x-github-sso", out var values);
+
+            if (doesContainError)
+            {
+                var ssoUriList = new List<Uri>();
+
+                foreach (var value in values)
+                {
+                    var semicolonSeparatedValues = value.Split(';');
+
+                    foreach (var semicolonSeparatedValue in semicolonSeparatedValues)
+                    {
+                        var urlStartIndex = semicolonSeparatedValue.IndexOf("http");
+                        var urlString = urlStartIndex < 0 ? string.Empty : semicolonSeparatedValue.Substring(urlStartIndex);
+
+                        var isValidUri = Uri.TryCreate(urlString, UriKind.Absolute, out var uri);
+
+                        if (isValidUri && uri != null)
+                            ssoUriList.Add(uri);
+                    }
+                }
+
+                ssoUris = ssoUriList;
+            }
+            else
+            {
+                ssoUris = Array.Empty<Uri>();
+            }
+
+            return doesContainError;
+        }
     }
 }

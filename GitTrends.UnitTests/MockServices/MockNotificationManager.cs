@@ -8,6 +8,7 @@ namespace GitTrends.UnitTests
 {
     public class MockNotificationManager : INotificationManager
     {
+        readonly Dictionary<string, Channel> _channelsDictionary = new();
         readonly Dictionary<int, Notification> _pendingNotificationsDitcionary = new();
         readonly IDeviceNotificationsService _deviceNotificationsService;
 
@@ -40,11 +41,6 @@ namespace GitTrends.UnitTests
 
         public Task<IEnumerable<Notification>> GetPending() => Task.FromResult(_pendingNotificationsDitcionary.Values.AsEnumerable());
 
-        public void RegisterCategory(NotificationCategory category)
-        {
-
-        }
-
         public Task<AccessState> RequestAccess()
         {
             _deviceNotificationsService.Initialize();
@@ -54,6 +50,26 @@ namespace GitTrends.UnitTests
         public Task Send(Notification notification)
         {
             _pendingNotificationsDitcionary.Add(notification.Id, notification);
+            return Task.CompletedTask;
+        }
+
+        public Task AddChannel(Channel channel)
+        {
+            _channelsDictionary.Add(channel.Identifier, channel);
+            return Task.CompletedTask;
+        }
+
+        public Task ClearChannels()
+        {
+            _channelsDictionary.Clear();
+            return Task.CompletedTask;
+        }
+
+        public Task<IList<Channel>> GetChannels() => Task.FromResult((IList<Channel>)_channelsDictionary.Values.ToList());
+
+        public Task RemoveChannel(string channelId)
+        {
+            _channelsDictionary.Remove(channelId);
             return Task.CompletedTask;
         }
     }

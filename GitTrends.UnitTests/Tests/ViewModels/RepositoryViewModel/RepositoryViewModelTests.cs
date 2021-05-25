@@ -247,10 +247,11 @@ namespace GitTrends.UnitTests
             if (isDemo)
                 await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
             else
-                await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService);
+                await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
             await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
             repository_initial = repositoryViewModel.VisibleRepositoryList.First();
+
 
             await repositoryViewModel.ToggleIsFavoriteCommand.ExecuteAsync(repository_initial).ConfigureAwait(false);
             repository_favorite = repositoryViewModel.VisibleRepositoryList.First();
@@ -264,10 +265,10 @@ namespace GitTrends.UnitTests
             Assert.True(repository_favorite.IsFavorite);
             Assert.IsFalse(repository_final.IsFavorite);
 
-            if (!isDemo)
-                Assert.AreEqual(favoriteUrls.First(), repository_favorite.Url);
-            else
+            if (isDemo)
                 Assert.IsEmpty(favoriteUrls);
+            else
+                Assert.AreEqual(favoriteUrls.First(), repository_favorite.Url);
         }
 
         static void AssertRepositoriesReversedSorted(in IEnumerable<Repository> repositories, in SortingOption sortingOption)

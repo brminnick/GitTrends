@@ -111,15 +111,15 @@ namespace GitTrends
             var notificationHubInformation = await GetNotificationHubInformation().ConfigureAwait(false);
 
             if (notificationHubInformation.IsEmpty())
-            {
-                await initalize().ConfigureAwait(false);
-            }
+                await initalizeNotificationHub().ConfigureAwait(false);
             else
-            {
-                initalize().SafeFireAndForget();
-            }
+                initalizeNotificationHub().SafeFireAndForget();
 
-            async Task initalize()
+            var channels = await _notificationManager.GetChannels().ConfigureAwait(false);
+            if (!channels.Any())
+                await initializeChannel().ConfigureAwait(false);
+
+            async Task initalizeNotificationHub()
             {
                 try
                 {
@@ -135,6 +135,13 @@ namespace GitTrends
                     OnInitializationCompleted(notificationHubInformation);
                 }
             }
+
+            Task initializeChannel() => _notificationManager.AddChannel(new Channel
+            {
+                Identifier = nameof(GitTrends),
+                Description = "GitTrends Notifications",
+                Importance = ChannelImportance.High,
+            });
         }
 
         public async Task<NotificationHubInformation> GetNotificationHubInformation()
@@ -204,7 +211,7 @@ namespace GitTrends
             }
             finally
             {
-                if (finalNotificationRequestResult is AccessState.Available || finalNotificationRequestResult is AccessState.Restricted)
+                if (finalNotificationRequestResult is AccessState.Available or AccessState.Restricted)
                     OnRegisterForNotificationsCompleted(true, string.Empty);
                 else
                     OnRegisterForNotificationsCompleted(false, errorMessage);

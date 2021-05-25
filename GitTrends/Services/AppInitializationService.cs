@@ -19,6 +19,7 @@ namespace GitTrends
         readonly NotificationService _notificationService;
         readonly GitTrendsStatisticsService _gitTrendsStatisticsService;
         readonly IDeviceNotificationsService _deviceNotificationsService;
+        readonly AnalyticsInitializationService _analyticsInitializationService;
 
         public AppInitializationService(ThemeService themeService,
                                         LanguageService languageService,
@@ -28,7 +29,8 @@ namespace GitTrends
                                         MediaElementService mediaElementService,
                                         NotificationService notificationService,
                                         GitTrendsStatisticsService gitTrendsStatisticsService,
-                                        IDeviceNotificationsService deviceNotificationService)
+                                        IDeviceNotificationsService deviceNotificationService,
+                                        AnalyticsInitializationService analyticsInitializationService)
         {
             _themeService = themeService;
             _languageService = languageService;
@@ -39,6 +41,7 @@ namespace GitTrends
             _notificationService = notificationService;
             _deviceNotificationsService = deviceNotificationService;
             _gitTrendsStatisticsService = gitTrendsStatisticsService;
+            _analyticsInitializationService = analyticsInitializationService;
         }
 
         public static event EventHandler<InitializationCompleteEventArgs> InitializationCompleted
@@ -67,6 +70,7 @@ namespace GitTrends
                 var initializeLibrariesServiceValueTask = _librariesService.Initialize(cancellationToken);
                 var initializeNotificationServiceValueTask = _notificationService.Initialize(cancellationToken);
                 var initializeGitTrendsStatisticsValueTask = _gitTrendsStatisticsService.Initialize(cancellationToken);
+                var initializeAnalyticsInitializationServiceTask = _analyticsInitializationService.Initialize(cancellationToken);
 #if DEBUG
                 initializeSyncFusionServiceTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
                 initializeLibrariesServiceValueTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
@@ -76,9 +80,9 @@ namespace GitTrends
                 await initializeLibrariesServiceValueTask.ConfigureAwait(false);
                 await initializeNotificationServiceValueTask.ConfigureAwait(false);
 #endif
-
                 await intializeOnboardingChartValueTask.ConfigureAwait(false);
                 await initializeGitTrendsStatisticsValueTask.ConfigureAwait(false);
+                await initializeAnalyticsInitializationServiceTask.ConfigureAwait(false);
                 #endregion
 
                 isInitializationSuccessful = true;

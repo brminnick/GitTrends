@@ -39,7 +39,7 @@ namespace GitTrends
 
                 return serializedInstalledNuGetPackages is null
                     ? Array.Empty<NuGetPackageModel>()
-                    : JsonConvert.DeserializeObject<IReadOnlyList<NuGetPackageModel>>(serializedInstalledNuGetPackages);
+                    : JsonConvert.DeserializeObject<IReadOnlyList<NuGetPackageModel>>(serializedInstalledNuGetPackages) ?? throw new JsonException();
             }
             private set
             {

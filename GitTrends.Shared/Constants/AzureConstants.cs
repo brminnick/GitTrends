@@ -6,6 +6,7 @@
 #error Missing API Keys
 #endif
         public const string GetTestTokenApiKey = "";
+        public const string GetAppCenterApiKeysKey = "";
         public const string GetSyncFusionInformationApiKey = "";
         public const string GetNotificationHubInformationApiKey = "";
         public const string AzureFunctionsApiUrl = "https://gittrendsfunctions.azurewebsites.net/api";

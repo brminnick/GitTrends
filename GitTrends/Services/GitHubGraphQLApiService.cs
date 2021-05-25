@@ -150,7 +150,7 @@ namespace GitTrends
             {
                 repositoryConnectionResponse = await ExecuteGraphQLRequest(() => _githubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
             }
-            catch (GraphQLException<RepositoryConnectionResponse> e) when (e.GraphQLData != null && e.ContainsSamlOrganizationAthenticationError())
+            catch (GraphQLException<RepositoryConnectionResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out var ssoUriValues))
             {
                 repositoryConnectionResponse = e.GraphQLData;
             }
@@ -172,10 +172,5 @@ namespace GitTrends
 
             return response.Content.Data;
         }
-    }
-
-    public static class GraphQLExceptionExtensions
-    {
-        public static bool ContainsSamlOrganizationAthenticationError<T>(this GraphQLException<T> graphQLException) => graphQLException.Errors.Any(x => x.Message.Contains("SAML", StringComparison.OrdinalIgnoreCase) && x.Message.Contains("organization", StringComparison.OrdinalIgnoreCase));
     }
 }

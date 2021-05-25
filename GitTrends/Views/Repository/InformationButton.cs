@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -95,15 +93,15 @@ namespace GitTrends
 
         class InformationMultiValueConverter : IMultiValueConverter
         {
-            public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+            public object? Convert(object?[]? values, Type? targetType, object? parameter, CultureInfo? culture)
             {
-                if (values[0] is bool isRefreshing && values[1] is IReadOnlyList<Repository> repositoryList)
+                if (values?[0] is bool isRefreshing && values[1] is IReadOnlyList<Repository> repositoryList)
                     return !isRefreshing && repositoryList.Any();
 
                 return false;
             }
 
-            public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
+            public object?[]? ConvertBack(object? value, Type?[]? targetTypes, object? parameter, CultureInfo? culture) => throw new NotImplementedException();
         }
 
         class FloatingActionTextButton : FloatingActionButtonView
@@ -117,8 +115,7 @@ namespace GitTrends
             public FloatingActionTextButton(in MobileSortingService mobileSortingService,
                                             in FloatingActionButtonType floatingActionButtonType,
                                             in ICommand? command = null,
-                                            in FloatingActionButtonSize floatingActionButtonSize = FloatingActionButtonSize.None
-                                            )
+                                            in FloatingActionButtonSize floatingActionButtonSize = FloatingActionButtonSize.None)
             {
                 _mobileSortingService = mobileSortingService;
                 _floatingActionButtonType = floatingActionButtonType;
@@ -136,7 +133,6 @@ namespace GitTrends
                 {
                     FloatingActionButtonSize.Mini => 10,
                     FloatingActionButtonSize.Normal or FloatingActionButtonSize.Large => 13,
-
                     _ => throw new NotImplementedException(),
                 };
 

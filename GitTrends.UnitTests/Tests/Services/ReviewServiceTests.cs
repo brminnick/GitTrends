@@ -29,11 +29,11 @@ namespace GitTrends.UnitTests
             //Act
             for (int i = 0; i < ReviewService.MinimumReviewRequests; i++)
             {
-                reviewService.TryRequestReviewPrompt();
+                await reviewService.TryRequestReviewPrompt().ConfigureAwait(false);
                 Assert.IsFalse(didReviewRequestedFire_ReviewService);
             }
 
-            reviewService.TryRequestReviewPrompt();
+            await reviewService.TryRequestReviewPrompt().ConfigureAwait(false);
             await reviewRequestedTCS_ReviewService.Task.ConfigureAwait(false);
             var storeReviewResult = await reviewRequestedTCS_StoreReview.Task.ConfigureAwait(false);
 
@@ -62,7 +62,7 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public void TryRequestReviewPromptTest_InvalidAppInstallDays()
+        public async Task TryRequestReviewPromptTest_InvalidAppInstallDays()
         {
             //Arrange
             bool didReviewRequestedFire = false;
@@ -75,7 +75,7 @@ namespace GitTrends.UnitTests
             //Act
             for (int i = 0; i < ReviewService.MinimumReviewRequests; i++)
             {
-                reviewService.TryRequestReviewPrompt();
+                await reviewService.TryRequestReviewPrompt().ConfigureAwait(false);
                 Assert.IsFalse(didReviewRequestedFire);
             }
 
@@ -102,7 +102,7 @@ namespace GitTrends.UnitTests
             var reviewService = ServiceCollection.ServiceProvider.GetRequiredService<ReviewService>();
 
             //Act
-            reviewService.TryRequestReviewPrompt();
+            await reviewService.TryRequestReviewPrompt().ConfigureAwait(false);
 
             //Assert
             Assert.IsFalse(didReviewRequestedFire);

@@ -30,7 +30,7 @@ namespace GitTrends.UnitTests
             CultureInfo.DefaultThreadCurrentCulture = null;
             CultureInfo.DefaultThreadCurrentUICulture = null;
 
-            Device.Info = new MockDeviceInfo();
+            Device.Info = new XamarinFormsDeviceInfo();
             Device.PlatformServices = new MockPlatformServices();
 
             var preferences = ServiceCollection.ServiceProvider.GetRequiredService<IPreferences>();

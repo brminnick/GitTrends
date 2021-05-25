@@ -15,9 +15,9 @@ namespace GitTrends
         readonly ISecureStorage _secureStorage;
         readonly AzureFunctionsApiService _azureFunctionsApiService;
 
-        public SyncfusionService(AzureFunctionsApiService azureFunctionsApiService,
+        public SyncfusionService(ISecureStorage secureStorage,
                                     IAnalyticsService analyticsService,
-                                    ISecureStorage secureStorage)
+                                    AzureFunctionsApiService azureFunctionsApiService)
         {
             _secureStorage = secureStorage;
             _analyticsService = analyticsService;

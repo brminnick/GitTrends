@@ -16,8 +16,7 @@ namespace GitTrends.Shared
                     resultBuilder.Append(c);
             }
 
-            string result = resultBuilder.ToString();
-            result = result.ToLower();
+            var result = resultBuilder.ToString().ToLower();
 
             var textInfo = new CultureInfo("en-US", false).TextInfo;
             return textInfo.ToTitleCase(result);

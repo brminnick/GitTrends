@@ -167,7 +167,7 @@ namespace GitTrends
 
             //Allow RepositoryPage to appear briefly before loading 
             await Task.Delay(TimeSpan.FromMilliseconds(250));
-            await Navigation.PushModalAsync(welcomePage);
+            await MainThread.InvokeOnMainThreadAsync(() => Navigation.PushModalAsync(welcomePage));
         }
 
         Task NavigateToSettingsPage()
@@ -176,7 +176,7 @@ namespace GitTrends
             return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(settingsPage));
         }
 
-        Task NavigateToTrendsPage(Repository repository)
+        Task NavigateToTrendsPage(in Repository repository)
         {
             var trendsCarouselPage = ContainerService.Container.Resolve<TrendsCarouselPage>(new TypedParameter(typeof(Repository), repository));
             return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsCarouselPage));
@@ -199,34 +199,31 @@ namespace GitTrends
                 ViewModel.SortRepositoriesCommand.Execute(MobileSortingService.SortingOptionsDictionary.First(x => x.Value == selection).Key);
         }
 
-        void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs eventArgs)
+        async void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs eventArgs) => await MainThread.InvokeOnMainThreadAsync(async () =>
         {
-            MainThread.BeginInvokeOnMainThread(async () =>
+            if (Application.Current is App
+                && !Application.Current.MainPage.Navigation.ModalStack.Any()
+                && Application.Current.MainPage.Navigation.NavigationStack.Last() is RepositoryPage)
             {
-                if (Application.Current is App
-                    && !Application.Current.MainPage.Navigation.ModalStack.Any()
-                    && Application.Current.MainPage.Navigation.NavigationStack.Last() is RepositoryPage)
+                switch (eventArgs)
                 {
-                    switch (eventArgs)
-                    {
-                        case MaximumApiRequestsReachedEventArgs:
-                            var isAccepted = await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Accept, eventArgs.Cancel);
-                            if (isAccepted)
-                                await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs);
-                            break;
+                    case MaximumApiRequestsReachedEventArgs:
+                        var isAccepted = await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Accept, eventArgs.Cancel);
+                        if (isAccepted)
+                            await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs);
+                        break;
 
-                        case LoginExpiredPullToRefreshEventArgs:
-                            await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Cancel);
-                            await NavigateToSettingsPage();
-                            break;
+                    case LoginExpiredPullToRefreshEventArgs:
+                        await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Cancel);
+                        await NavigateToWelcomePage();
+                        break;
 
-                        default:
-                            await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Cancel);
-                            break;
-                    }
+                    default:
+                        await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Cancel);
+                        break;
                 }
-            });
-        }
+            }
+        });
 
         void HandlePreferredLanguageChanged(object sender, string? e)
         {

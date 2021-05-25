@@ -10,16 +10,17 @@ namespace GitTrends.UITests
     class OnboardingPage : BaseCarouselPage
     {
         readonly Query _connectToGitHubButton, _enableNotificationsButton, _nextButton,
-            _pageIndicator, _titleLabel, _activityIndicator;
+            _pageIndicator, _titleLabel, _activityIndicator, _onboardingPage;
 
         public OnboardingPage(IApp app) : base(app, BackdoorMethodConstants.GetCurrentOnboardingPageNumber)
         {
+            _activityIndicator = GenerateMarkedQuery(OnboardingAutomationIds.IsAuthenticatingActivityIndicator);
             _connectToGitHubButton = GenerateMarkedQuery(OnboardingAutomationIds.ConnectToGitHubButton);
             _enableNotificationsButton = GenerateMarkedQuery(OnboardingAutomationIds.EnableNotificationsButton);
+            _onboardingPage = GenerateMarkedQuery(OnboardingAutomationIds.OnboardingPage);
             _nextButton = GenerateMarkedQuery(OnboardingAutomationIds.NextButon);
             _pageIndicator = GenerateMarkedQuery(OnboardingAutomationIds.PageIndicator);
             _titleLabel = GenerateMarkedQuery(OnboardingAutomationIds.TitleLabel);
-            _activityIndicator = GenerateMarkedQuery(OnboardingAutomationIds.IsAuthenticatingActivityIndicator);
         }
 
         public string TitleLabelText => GetText(_titleLabel);
@@ -28,7 +29,7 @@ namespace GitTrends.UITests
 
         public override Task WaitForPageToLoad(TimeSpan? timeout = null)
         {
-            App.WaitForElement(_pageIndicator, timeout: timeout);
+            App.WaitForElement(_onboardingPage, timeout: timeout);
             App.WaitForNoElement(_activityIndicator, timeout: timeout);
 
             switch (CurrentPageNumber)

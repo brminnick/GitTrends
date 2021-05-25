@@ -81,7 +81,7 @@ namespace GitTrends.UITests
         public override async Task WaitForPageToLoad(TimeSpan? timeout = null)
         {
             await base.WaitForPageToLoad(timeout).ConfigureAwait(false);
-            DismissSyncfusionLicensePopup();
+            TryDismissSyncfusionLicensePopup();
         }
 
         public void WaitForNoOperatingSystemNotificationDiaglog(TimeSpan? timeout = null)
@@ -109,7 +109,7 @@ namespace GitTrends.UITests
             var index = (int)trendsChartOption;
             var totalRows = Enum.GetNames(typeof(TrendsChartOption)).Count();
 
-            return SelectFromPicker(index, totalRows, trendsChartOption.ToString(), _preferredChartsPicker, _preferredChartsPickerContainer);
+            return SelectFromPicker(index, totalRows, TrendsChartConstants.TrendsChartTitles[trendsChartOption], _preferredChartsPicker, _preferredChartsPickerContainer);
         }
 
         public void TapGitHubUserView()
@@ -262,7 +262,7 @@ namespace GitTrends.UITests
                         iosApp.WaitForElement(x => x.Class("UIPickerView"));
                         iosApp.Query(x => x.Class("UIPickerView").Invoke("selectRow", rowNumber + rowOffset, "inComponent", 0, "animated", true));
 
-                        iosApp.Tap(selection.ToString());
+                        iosApp.Tap(selection);
                         break;
 
                     case AndroidApp androidApp:

@@ -60,7 +60,7 @@ namespace GitTrends.UITests
             App.Screenshot("Browser Opened");
         }
 
-        public void DismissSyncfusionLicensePopup()
+        public bool TryDismissSyncfusionLicensePopup()
         {
             try
             {
@@ -68,9 +68,12 @@ namespace GitTrends.UITests
                 App.Tap("Ok");
 
                 App.Screenshot("Syncfusion License Popup Dismissed");
+
+                return true;
             }
             catch
             {
+                return false;
             }
         }
 

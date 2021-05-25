@@ -36,6 +36,7 @@ namespace GitTrends
         bool _isRefreshing;
         string _titleText = string.Empty;
         string _searchBarText = string.Empty;
+        string _totalButtonText = string.Empty;
         string _emptyDataViewTitle = string.Empty;
         string _emptyDataViewDescription = string.Empty;
 
@@ -56,7 +57,7 @@ namespace GitTrends
         {
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 
-            SetTitleText();
+            UpdateText();
 
             _imageService = imageService;
             _gitHubUserService = gitHubUserService;
@@ -114,9 +115,9 @@ namespace GitTrends
         // Select the size of the button according the length of his text
         public FloatingActionButtonSize TotalButtonSize => TotalButtonText.Length switch
         {
-            <= 3 => FloatingActionButtonSize.Mini,
-            <= 5 => FloatingActionButtonSize.Normal,
-            > 5 => FloatingActionButtonSize.Large
+            (<= 3) => FloatingActionButtonSize.Mini,
+            (<= 5) => FloatingActionButtonSize.Normal,
+            (> 5) => FloatingActionButtonSize.Large
         };
 
         public string EmptyDataViewDescription
@@ -130,14 +131,13 @@ namespace GitTrends
             get => _isRefreshing;
             set => SetProperty(ref _isRefreshing, value);
         }
-        string _totalButtonText = RepositoryPageConstants.TOTAL;
-
 
         public string TotalButtonText
         {
             get => _totalButtonText;
-            set => SetProperty(ref _totalButtonText, value);
+            set => SetProperty(ref _totalButtonText, value, () => OnPropertyChanged(nameof(TotalButtonSize)));
         }
+
         public string TitleText
         {
             get => _titleText;
@@ -223,7 +223,7 @@ namespace GitTrends
 
                 RefreshState = RefreshState.Succeeded;
             }
-            catch (Exception e) when ((e is ApiException exception && exception.StatusCode is HttpStatusCode.Unauthorized)
+            catch (Exception e) when ((e is ApiException { StatusCode: HttpStatusCode.Unauthorized })
                                         || (e is HttpRequestException && finalResponse?.StatusCode is HttpStatusCode.Unauthorized))
             {
                 var loginExpiredEventArgs = new LoginExpiredPullToRefreshEventArgs();
@@ -288,7 +288,7 @@ namespace GitTrends
 
                 IsRefreshing = false;
 
-                SaveRepositoriesToDatabase(_repositoryList).SafeFireAndForget();
+                await SaveRepositoriesToDatabase(_repositoryList).ConfigureAwait(false);
             }
 
             void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
@@ -392,9 +392,13 @@ namespace GitTrends
                 UpdateVisibleRepositoryList(_searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
         }
 
-        void HandlePreferredLanguageChanged(object sender, string? e) => SetTitleText();
+        void HandlePreferredLanguageChanged(object sender, string? e) => UpdateText();
 
-        void SetTitleText() => TitleText = PageTitles.RepositoryPage;
+        void UpdateText()
+        {
+            TitleText = PageTitles.RepositoryPage;
+            TotalButtonText = RepositoryPageConstants.TOTAL;
+        }
 
         //Work-around because ContentPage.OnAppearing does not fire after `ContentPage.PushModalAsync()`
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsRefreshing |= e.IsSessionAuthorized;

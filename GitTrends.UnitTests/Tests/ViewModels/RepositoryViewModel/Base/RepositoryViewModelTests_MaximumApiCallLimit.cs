@@ -7,6 +7,7 @@ using NUnit.Framework;
 
 namespace GitTrends.UnitTests
 {
+    [NonParallelizable]
     abstract class RepositoryViewModelTests_MaximumApiCallLimit : BaseTest
     {
         protected async Task ExecutePullToRefreshCommandTestMaximumApiLimitTest(TaskCompletionSource<PullToRefreshFailedEventArgs> pullToRefreshFailedTCS)
@@ -53,7 +54,7 @@ namespace GitTrends.UnitTests
 
             void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
             {
-                ReferringSitesViewModel.PullToRefreshFailed -= HandlePullToRefreshFailed;
+                RepositoryViewModel.PullToRefreshFailed -= HandlePullToRefreshFailed;
                 pullToRefreshFailedTCS.SetResult(e);
             }
         }

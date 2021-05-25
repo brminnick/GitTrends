@@ -70,7 +70,7 @@ namespace GitTrends.UITests
 
             App.WaitForNoElement(_activityIndicator, timeout: timespan);
 
-            DismissSyncfusionLicensePopup();
+            TryDismissSyncfusionLicensePopup();
 
             switch (CurrentPageNumber)
             {

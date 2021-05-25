@@ -1,9 +1,8 @@
 ﻿using GitTrends.Mobile.Common;
 using GitTrends.Shared;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.CommunityToolkit.Markup;
-using static GitTrends.MarkupExtensions;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
@@ -20,6 +19,7 @@ namespace GitTrends
             //Don't Use BaseTheme.PageBackgroundColor
             RemoveDynamicResource(BackgroundColorProperty);
 
+            AutomationId = OnboardingAutomationIds.OnboardingPage;
             BackgroundColor = backgroundColor;
 
             var descriptionLayout = new StackLayout

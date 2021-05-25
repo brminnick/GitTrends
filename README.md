@@ -26,10 +26,6 @@
   </a>
 </p>
 
-<p align="center">
-<a href="https://www.buymeacoffee.com/bminnick" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-green.png" alt="Buy Me A Coffee" style="height: 35px !important;width: 150px !important;" ></a>
-</p>
-
 I created GitTrends because I love contributing to open source libraries, but I had trouble keeping track of which repos were receiving traffic and which ones were not. For example, I recently discovered that a repo I hadn't updated in +2 years was still getting 10-20 views per week. 
 
 With GitTrends, I can now stay on top of which repos are trending and ensure its code doesn't go stale!
