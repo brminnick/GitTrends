@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Net;
+using System.Threading.Tasks;
 using GitTrends.Shared;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 
 namespace GitTrends.Functions
@@ -13,18 +14,34 @@ namespace GitTrends.Functions
         readonly static string _iOS = Environment.GetEnvironmentVariable("AppCenterApiKey_iOS") ?? string.Empty;
         readonly static string _android = Environment.GetEnvironmentVariable("AppCenterApiKey_Android") ?? string.Empty;
 
-        [FunctionName(nameof(GetAppCenterApiKeys))]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request, ILogger log)
+        [Function(nameof(GetAppCenterApiKeys))]
+        public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData req, FunctionContext context)
         {
+            var log = context.GetLogger(nameof(GetAppCenterApiKeys));
+
             log.LogInformation("Retrieving Client Id");
 
             if (string.IsNullOrWhiteSpace(_iOS))
-                return new NotFoundObjectResult($"{nameof(_iOS)} Not Found");
+            {
+                var notFoundResponse = req.CreateResponse(HttpStatusCode.NotFound);
+                await notFoundResponse.WriteStringAsync($"{nameof(_iOS)} Not Found").ConfigureAwait(false);
 
-            if (string.IsNullOrWhiteSpace(_android))
-                return new NotFoundObjectResult($"{nameof(_android)} Not Found");
+                return notFoundResponse;
+            }
+            else if (string.IsNullOrWhiteSpace(_android))
+            {
+                var notFoundResponse = req.CreateResponse(HttpStatusCode.NotFound);
+                await notFoundResponse.WriteStringAsync($"{nameof(_android)} Not Found").ConfigureAwait(false);
 
-            return new OkObjectResult(new AppCenterApiKeyDTO(_iOS, _android));
+                return notFoundResponse;
+            }
+            else
+            {
+                var response = req.CreateResponse(HttpStatusCode.OK);
+                await response.WriteAsJsonAsync(new AppCenterApiKeyDTO(_iOS, _android)).ConfigureAwait(false);
+
+                return response;
+            }
         }
     }
 }

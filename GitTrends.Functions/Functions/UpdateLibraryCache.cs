@@ -18,8 +18,9 @@ namespace GitTrends.Functions
             (_nuGetService, _blobStorageService) = (nuGetService, blobStorageService);
 
         [Function(nameof(UpdateLibraryCache))]
-        public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, FunctionContext context)
         {
+            var log = context.GetLogger<UpdateLibraryCache>();
             var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
 
             log.LogInformation("Retrieving NuGet Packages");

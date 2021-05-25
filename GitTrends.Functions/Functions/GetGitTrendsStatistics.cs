@@ -1,8 +1,6 @@
 ﻿using System.Threading.Tasks;
-using GitTrends.Shared;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Logging;
 
 namespace GitTrends.Functions
 {
@@ -13,8 +11,9 @@ namespace GitTrends.Functions
         public GetGitTrendsStatistics(BlobStorageService blobStorageService) => _blobStorageService = blobStorageService;
 
         [Function(nameof(GetGitTrendsStatistics))]
-        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData request, ILogger log)
+        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData request, FunctionContext context)
         {
+            var log = context.GetLogger<GetGitTrendsStatistics>();
             var gitTrendsStatistics = await _blobStorageService.GetGitTrendsStatistics().ConfigureAwait(false);
 
             var response = request.CreateResponse(System.Net.HttpStatusCode.OK);
