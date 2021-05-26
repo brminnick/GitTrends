@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.NotificationHubs;
-using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -15,24 +15,31 @@ namespace GitTrends.Functions
         readonly static string _notificationHubFullConnectionString_Debug = Environment.GetEnvironmentVariable("NotificationHubFullConnectionString_Debug") ?? string.Empty;
         readonly static string _notificationHubFullConnectionString = Environment.GetEnvironmentVariable("NotificationHubFullConnectionString") ?? string.Empty;
 
-        readonly static Lazy<NotificationHubClient> _clientHolder = new Lazy<NotificationHubClient>(NotificationHubClient.CreateClientFromConnectionString(_notificationHubFullConnectionString, GetNotificationHubInformation.NotificationHubName));
-        readonly static Lazy<NotificationHubClient> _debugClientHolder = new Lazy<NotificationHubClient>(NotificationHubClient.CreateClientFromConnectionString(_notificationHubFullConnectionString_Debug, GetNotificationHubInformation.NotificationHubName_Debug));
+        readonly static Lazy<NotificationHubClient> _clientHolder = new(NotificationHubClient.CreateClientFromConnectionString(_notificationHubFullConnectionString, GetNotificationHubInformation.NotificationHubName));
+        readonly static Lazy<NotificationHubClient> _debugClientHolder = new(NotificationHubClient.CreateClientFromConnectionString(_notificationHubFullConnectionString_Debug, GetNotificationHubInformation.NotificationHubName_Debug));
 
         static NotificationHubClient Client => _clientHolder.Value;
         static NotificationHubClient DebugClient => _debugClientHolder.Value;
 
-        [FunctionName(nameof(SendSilentPushNotification))]
-        public static Task Run([TimerTrigger(_runEveryHourCron)] TimerInfo myTimer, ILogger log) => Task.WhenAll(TrySendAppleSilentNotification(Client, log), TrySendFcmSilentNotification(Client, log));
-
-        [FunctionName(nameof(SendSilentPushNotification) + "Debug")]
-        public static async Task RunDebug([TimerTrigger(_runEveryHourCron, RunOnStartup = true)] TimerInfo myTimer, ILogger log)
+        [Function(nameof(SendSilentPushNotification))]
+        public static Task Run([TimerTrigger(_runEveryHourCron)] TimerInfo myTimer, FunctionContext functionContext)
         {
-            log.LogInformation(_notificationHubFullConnectionString);
-            log.LogInformation(_notificationHubFullConnectionString_Debug);
-            log.LogInformation(GetNotificationHubInformation.NotificationHubName);
-            log.LogInformation(GetNotificationHubInformation.NotificationHubName_Debug);
+            var logger = functionContext.GetLogger<SendSilentPushNotification>();
 
-            await Task.WhenAll(TrySendAppleSilentNotification(DebugClient, log), TrySendFcmSilentNotification(DebugClient, log)).ConfigureAwait(false);
+            return Task.WhenAll(TrySendAppleSilentNotification(Client, logger), TrySendFcmSilentNotification(Client, logger));
+        }
+
+        [Function(nameof(SendSilentPushNotification) + "Debug")]
+        public static Task RunDebug([TimerTrigger(_runEveryHourCron, RunOnStartup = true)] TimerInfo myTimer, FunctionContext functionContext)
+        {
+            var logger = functionContext.GetLogger<SendSilentPushNotification>();
+
+            logger.LogInformation(_notificationHubFullConnectionString);
+            logger.LogInformation(_notificationHubFullConnectionString_Debug);
+            logger.LogInformation(GetNotificationHubInformation.NotificationHubName);
+            logger.LogInformation(GetNotificationHubInformation.NotificationHubName_Debug);
+
+            return Task.WhenAll(TrySendAppleSilentNotification(DebugClient, logger), TrySendFcmSilentNotification(DebugClient, logger));
         }
 
         static async Task TrySendAppleSilentNotification(NotificationHubClient client, ILogger log)

@@ -3,10 +3,8 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using GitTrends.Shared;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -17,30 +15,41 @@ namespace GitTrends.Functions
         readonly static string _clientSecret = Environment.GetEnvironmentVariable("GitTrendsClientSecret") ?? string.Empty;
         readonly static string _clientId = Environment.GetEnvironmentVariable("GitTrendsClientId") ?? string.Empty;
 
+        readonly static JsonSerializer serializer = new();
+
         readonly GitHubAuthService _gitHubAuthService;
 
         public GenerateGitHubOAuthToken(GitHubAuthService gitHubAuthService) => _gitHubAuthService = gitHubAuthService;
 
-        [FunctionName(nameof(GenerateGitHubOAuthToken))]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest httpRequest, ILogger log)
+        [Function(nameof(GenerateGitHubOAuthToken))]
+        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req, FunctionContext functionContext)
         {
-            log.LogInformation("Received request for OAuth Token");
+            var logger = functionContext.GetLogger<GenerateGitHubOAuthToken>();
+            logger.LogInformation("Received request for OAuth Token");
 
-            using var reader = new StreamReader(httpRequest.Body);
-            var body = await reader.ReadToEndAsync().ConfigureAwait(false);
+            using var streamReader = new StreamReader(req.Body);
+            using var jsonTextReader = new JsonTextReader(streamReader);
+            var generateTokenDTO = serializer.Deserialize<GenerateTokenDTO>(jsonTextReader);
 
-            var generateTokenDTO = JsonConvert.DeserializeObject<GenerateTokenDTO>(body);
+            if (generateTokenDTO is null)
+            {
+                var badRequestResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+                await badRequestResponse.WriteStringAsync($"Invalid {nameof(GenerateTokenDTO)}").ConfigureAwait(false);
+
+                return badRequestResponse;
+            }
 
             var token = await _gitHubAuthService.GetGitHubToken(_clientId, _clientSecret, generateTokenDTO.LoginCode, generateTokenDTO.State).ConfigureAwait(false);
 
-            log.LogInformation("Token Retrieved");
+            logger.LogInformation("Token Retrieved");
 
-            return new ContentResult
-            {
-                Content = JsonConvert.SerializeObject(token),
-                StatusCode = (int)HttpStatusCode.OK,
-                ContentType = "application/json"
-            };
+            var okResponse = req.CreateResponse(HttpStatusCode.OK);
+
+            var tokenJson = JsonConvert.SerializeObject(token);
+
+            await okResponse.WriteStringAsync(tokenJson).ConfigureAwait(false);
+
+            return okResponse;
         }
     }
 }

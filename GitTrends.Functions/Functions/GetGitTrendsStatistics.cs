@@ -1,9 +1,7 @@
 ﻿using System.Threading.Tasks;
-using GitTrends.Shared;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
+using Newtonsoft.Json;
 
 namespace GitTrends.Functions
 {
@@ -13,7 +11,19 @@ namespace GitTrends.Functions
 
         public GetGitTrendsStatistics(BlobStorageService blobStorageService) => _blobStorageService = blobStorageService;
 
-        [FunctionName(nameof(GetGitTrendsStatistics))]
-        public Task<GitTrendsStatisticsDTO> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest request, ILogger log) => _blobStorageService.GetGitTrendsStatistics();
+        [Function(nameof(GetGitTrendsStatistics))]
+        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData request, FunctionContext context)
+        {
+            var log = context.GetLogger<GetGitTrendsStatistics>();
+            var gitTrendsStatistics = await _blobStorageService.GetGitTrendsStatistics().ConfigureAwait(false);
+
+            var response = request.CreateResponse(System.Net.HttpStatusCode.OK);
+
+            var gitTrendsStatisticsDtoJson = JsonConvert.SerializeObject(gitTrendsStatistics);
+
+            await response.WriteStringAsync(gitTrendsStatisticsDtoJson).ConfigureAwait(false);
+
+            return response;
+        }
     }
 }

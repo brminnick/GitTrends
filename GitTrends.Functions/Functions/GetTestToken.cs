@@ -4,14 +4,10 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Http;
 using GitHubApiStatus;
 using GitTrends.Shared;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Newtonsoft.Json;
 
 namespace GitTrends.Functions
@@ -36,8 +32,8 @@ namespace GitTrends.Functions
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
         }
 
-        [FunctionName(nameof(GetTestToken))]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request, ILogger log)
+        [Function(nameof(GetTestToken))]
+        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData req, FunctionContext functionContext)
         {
             foreach (var testToken in _testTokenList)
             {
@@ -54,24 +50,28 @@ namespace GitTrends.Functions
                     {
                         var gitHubToken = new GitHubToken(testToken, GitHubConstants.OAuthScope, "Bearer");
 
-                        return new ContentResult
-                        {
-                            Content = JsonConvert.SerializeObject(gitHubToken),
-                            StatusCode = (int)HttpStatusCode.OK,
-                            ContentType = "application/json"
-                        };
+                        var okResponse = req.CreateResponse(HttpStatusCode.OK);
+
+                        var gitHubTokenJson = JsonConvert.SerializeObject(gitHubToken);
+
+                        await okResponse.WriteStringAsync(gitHubTokenJson).ConfigureAwait(false);
+
+                        return okResponse;
                     }
                 }
                 catch(Exception e)
                 {
-                    return new ObjectResult(e.ToString())
-                    {
-                        StatusCode = (int)HttpStatusCode.InternalServerError
-                    };
+                    var errorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
+                    await errorResponse.WriteStringAsync(e.ToString()).ConfigureAwait(false);
+
+                    return errorResponse;
                 }
             };
 
-            return new NotFoundObjectResult("No Valid GitHub Token Found");
+            var notFoundResponse = req.CreateResponse(HttpStatusCode.NotFound);
+            await notFoundResponse.WriteStringAsync("No Valid GitHub Token Found").ConfigureAwait(false);
+
+            return notFoundResponse;
         }
     }
 }

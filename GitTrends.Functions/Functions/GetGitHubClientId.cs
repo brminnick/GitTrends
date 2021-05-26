@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 using GitTrends.Shared;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace GitTrends.Functions
 {
@@ -12,15 +12,27 @@ namespace GitTrends.Functions
     {
         readonly static string _clientId = Environment.GetEnvironmentVariable("GitTrendsClientId") ?? string.Empty;
 
-        [FunctionName(nameof(GetGitHubClientId))]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest request, ILogger log)
+        [Function(nameof(GetGitHubClientId))]
+        public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req, FunctionContext functionContext)
         {
-            log.LogInformation("Retrieving Client Id");
+            var logger = functionContext.GetLogger(nameof(GetGitHubClientId));
+            logger.LogInformation("Retrieving Client Id");
 
             if (string.IsNullOrWhiteSpace(_clientId))
-                return new NotFoundObjectResult("Client ID Not Found");
+            {
+                var notFoundResponse = req.CreateResponse(System.Net.HttpStatusCode.NotFound);
+                await notFoundResponse.WriteStringAsync("Client ID Not Found").ConfigureAwait(false);
 
-            return new OkObjectResult(new GetGitHubClientIdDTO(_clientId));
+                return notFoundResponse;
+            }
+
+            var okResponse = req.CreateResponse(System.Net.HttpStatusCode.OK);
+
+            var getGitHubClientDtoJson = JsonConvert.SerializeObject(new GetGitHubClientIdDTO(_clientId));
+
+            await okResponse.WriteStringAsync(getGitHubClientDtoJson).ConfigureAwait(false);
+
+            return okResponse;
         }
     }
 }

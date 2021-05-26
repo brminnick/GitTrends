@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 using GitTrends.Shared;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace GitTrends.Functions
 {
@@ -12,15 +12,27 @@ namespace GitTrends.Functions
     {
         readonly static string _chartVideoManifestUrl = Environment.GetEnvironmentVariable("ChartVideoManifestUrl") ?? string.Empty;
 
-        [FunctionName(nameof(GetChartStreamingUrl))]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest httpRequest, ILogger log)
+        [Function(nameof(GetChartStreamingUrl))]
+        public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req, FunctionContext functionContext)
         {
-            log.LogInformation("Retrieving Chart Video");
+            var logger = functionContext.GetLogger(nameof(GetChartStreamingUrl));
+            logger.LogInformation("Retrieving Chart Video");
 
             if (string.IsNullOrWhiteSpace(_chartVideoManifestUrl))
-                return new NotFoundObjectResult($"Chart Video Url not found");
+            {
+                var notFoundResponse = req.CreateResponse(System.Net.HttpStatusCode.NotFound);
+                await notFoundResponse.WriteStringAsync("Chart Video Url not found").ConfigureAwait(false);
 
-            return new OkObjectResult(new StreamingManifest(_chartVideoManifestUrl));
+                return notFoundResponse;
+            }
+
+            var okResponse = req.CreateResponse(System.Net.HttpStatusCode.OK);
+
+            var streamingManifestJson = JsonConvert.SerializeObject(new StreamingManifest(_chartVideoManifestUrl));
+
+            await okResponse.WriteStringAsync(streamingManifestJson).ConfigureAwait(false);
+
+            return okResponse;
         }
     }
 }
