@@ -44,7 +44,10 @@ namespace GitTrends.Functions
             logger.LogInformation("Token Retrieved");
 
             var okResponse = req.CreateResponse(HttpStatusCode.OK);
-            await okResponse.WriteAsJsonAsync(token).ConfigureAwait(false);
+
+            var tokenJson = JsonConvert.SerializeObject(token);
+
+            await okResponse.WriteStringAsync(tokenJson).ConfigureAwait(false);
 
             return okResponse;
         }

@@ -8,6 +8,7 @@ using GitHubApiStatus;
 using GitTrends.Shared;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Newtonsoft.Json;
 
 namespace GitTrends.Functions
 {
@@ -50,7 +51,10 @@ namespace GitTrends.Functions
                         var gitHubToken = new GitHubToken(testToken, GitHubConstants.OAuthScope, "Bearer");
 
                         var okResponse = req.CreateResponse(HttpStatusCode.OK);
-                        await okResponse.WriteAsJsonAsync(gitHubToken).ConfigureAwait(false);
+
+                        var gitHubTokenJson = JsonConvert.SerializeObject(gitHubToken);
+
+                        await okResponse.WriteStringAsync(gitHubTokenJson).ConfigureAwait(false);
 
                         return okResponse;
                     }

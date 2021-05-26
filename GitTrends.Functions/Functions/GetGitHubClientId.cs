@@ -4,6 +4,7 @@ using GitTrends.Shared;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace GitTrends.Functions
 {
@@ -26,7 +27,10 @@ namespace GitTrends.Functions
             }
 
             var okResponse = req.CreateResponse(System.Net.HttpStatusCode.OK);
-            await okResponse.WriteAsJsonAsync(new GetGitHubClientIdDTO(_clientId)).ConfigureAwait(false);
+
+            var getGitHubClientDtoJson = JsonConvert.SerializeObject(new GetGitHubClientIdDTO(_clientId));
+
+            await okResponse.WriteStringAsync(getGitHubClientDtoJson).ConfigureAwait(false);
 
             return okResponse;
         }

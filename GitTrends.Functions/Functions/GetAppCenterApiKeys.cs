@@ -6,6 +6,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace GitTrends.Functions
 {
@@ -38,7 +39,10 @@ namespace GitTrends.Functions
             else
             {
                 var response = req.CreateResponse(HttpStatusCode.OK);
-                await response.WriteAsJsonAsync(new AppCenterApiKeyDTO(_iOS, _android)).ConfigureAwait(false);
+
+                var appCenterApiKeyDtoJson = JsonConvert.SerializeObject(new AppCenterApiKeyDTO(_iOS, _android));
+
+                await response.WriteStringAsync(appCenterApiKeyDtoJson).ConfigureAwait(false);
 
                 return response;
             }

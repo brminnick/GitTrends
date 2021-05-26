@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Newtonsoft.Json;
 
 namespace GitTrends.Functions
 {
@@ -17,7 +18,10 @@ namespace GitTrends.Functions
             var gitTrendsStatistics = await _blobStorageService.GetGitTrendsStatistics().ConfigureAwait(false);
 
             var response = request.CreateResponse(System.Net.HttpStatusCode.OK);
-            await response.WriteAsJsonAsync(gitTrendsStatistics).ConfigureAwait(false);
+
+            var gitTrendsStatisticsDtoJson = JsonConvert.SerializeObject(gitTrendsStatistics);
+
+            await response.WriteStringAsync(gitTrendsStatisticsDtoJson).ConfigureAwait(false);
 
             return response;
         }

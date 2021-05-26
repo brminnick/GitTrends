@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using GitTrends.Shared;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Newtonsoft.Json;
 
 namespace GitTrends.Functions
 {
@@ -18,7 +19,10 @@ namespace GitTrends.Functions
         public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData req, FunctionContext functionContext)
         {
             var response = req.CreateResponse(System.Net.HttpStatusCode.OK);
-            await response.WriteAsJsonAsync(new NotificationHubInformation(NotificationHubName, _notificationHubConnectionString, NotificationHubName_Debug, _notificationHubConnectionString_Debug)).ConfigureAwait(false);
+
+            var notificationHubInformationJson = JsonConvert.SerializeObject(new NotificationHubInformation(NotificationHubName, _notificationHubConnectionString, NotificationHubName_Debug, _notificationHubConnectionString_Debug));
+
+            await response.WriteStringAsync(notificationHubInformationJson).ConfigureAwait(false);
 
             return response;
         }

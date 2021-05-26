@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Newtonsoft.Json;
 
 namespace GitTrends.Functions
 {
@@ -17,7 +18,10 @@ namespace GitTrends.Functions
             var nuGetLibraries = await _blobStorageService.GetNuGetLibraries().ConfigureAwait(false);
 
             var response = request.CreateResponse(System.Net.HttpStatusCode.OK);
-            await response.WriteAsJsonAsync(nuGetLibraries).ConfigureAwait(false);
+
+            var nuGetLibrariesJson = JsonConvert.SerializeObject(nuGetLibraries);
+
+            await response.WriteStringAsync(nuGetLibrariesJson).ConfigureAwait(false);
 
             return response;
         }
