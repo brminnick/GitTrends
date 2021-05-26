@@ -30,7 +30,7 @@ namespace GitTrends.Functions
 
             var streamingManifestJson = JsonConvert.SerializeObject(new StreamingManifest(_chartVideoManifestUrl));
 
-            await okResponse.WriteAsJsonAsync(streamingManifestJson).ConfigureAwait(false);
+            await okResponse.WriteStringAsync(streamingManifestJson).ConfigureAwait(false);
 
             return okResponse;
         }
