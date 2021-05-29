@@ -23,10 +23,7 @@ namespace GitTrends.Functions
         static Task Main(string[] args)
         {
             var host = new HostBuilder()
-                .ConfigureAppConfiguration(configurationBuilder =>
-                {
-                    configurationBuilder.AddCommandLine(args);
-                })
+                .ConfigureAppConfiguration(configurationBuilder =>configurationBuilder.AddCommandLine(args))
                 .ConfigureFunctionsWorkerDefaults()
                 .ConfigureServices(services =>
                 {

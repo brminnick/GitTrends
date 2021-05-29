@@ -29,13 +29,13 @@ namespace GitTrends.UnitTests
         protected static HttpClient CreateMaximumApiLimitHttpClient(string url)
         {
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            var repositoryConnectionResponse = new GraphQLResponse<RepositoryConnectionResponse>(null, new[] { new GraphQLError(string.Empty, Array.Empty<GraphQLLocation>()) });
+            var gitHubUserResponse = new GraphQLResponse<GitHubUserResponse>(null, new[] { new GraphQLError(string.Empty, Array.Empty<GraphQLLocation>()) });
             var viewerLoginResponse = new GraphQLResponse<GitHubViewerResponse>(new GitHubViewerResponse(new User(null, "Brandon Minnick", string.Empty, default, GitHubConstants.GitTrendsRepoOwner, new Uri(AuthenticatedGitHubUserAvatarUrl))), null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             var errorResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent(JsonConvert.SerializeObject(repositoryConnectionResponse))
+                Content = new StringContent(JsonConvert.SerializeObject(gitHubUserResponse))
             };
             errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitRemainingHeader, "0");
             errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitResetHeader, DateTimeOffset.UtcNow.AddMinutes(50).ToUnixTimeSeconds().ToString());

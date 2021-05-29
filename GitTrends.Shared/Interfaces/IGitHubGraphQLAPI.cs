@@ -10,7 +10,7 @@ namespace GitTrends.Shared
         Task<ApiResponse<GraphQLResponse<RepositoryResponse>>> RepositoryQuery([Body] RepositoryQueryContent request, [Header("Authorization")] string authorization);
 
         [Post("")]
-        Task<ApiResponse<GraphQLResponse<RepositoryConnectionResponse>>> RepositoryConnectionQuery([Body] RepositoryConnectionQueryContent request, [Header("Authorization")] string authorization);
+        Task<ApiResponse<GraphQLResponse<GitHubUserResponse>>> RepositoryConnectionQuery([Body] RepositoryConnectionQueryContent request, [Header("Authorization")] string authorization);
 
         [Post("")]
         Task<ApiResponse<GraphQLResponse<GitHubViewerResponse>>> ViewerLoginQuery([Body] ViewerLoginQueryContent request, [Header("Authorization")] string authorization);

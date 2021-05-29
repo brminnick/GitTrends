@@ -61,7 +61,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\StarGazerQueryResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GraphQLException.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryConnectionResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\StarGazers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryContributor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryFile.cs" />

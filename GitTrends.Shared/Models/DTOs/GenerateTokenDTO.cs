@@ -9,5 +9,5 @@ namespace GitTrends.Shared
 namespace System.Runtime.CompilerServices
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public class IsExternalInit { }
+    public record IsExternalInit { }
 }

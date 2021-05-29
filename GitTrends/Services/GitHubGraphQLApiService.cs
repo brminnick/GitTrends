@@ -94,8 +94,8 @@ namespace GitTrends
                 for (int i = 0; i < DemoDataConstants.RepoCount; i++)
                 {
                     var demoRepo = new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-                                                DemoUserConstants.Alias, _gitHubUserService.AvatarUrl,
-                                                DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(), _gitHubUserService.AvatarUrl, false, DateTimeOffset.UtcNow);
+                                                DemoUserConstants.Alias, _gitHubUserService.AvatarUrl, DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
+                                                _gitHubUserService.AvatarUrl, false, DateTimeOffset.UtcNow);
                     yield return demoRepo;
                 }
 
@@ -142,20 +142,20 @@ namespace GitTrends
 
         async Task<RepositoryConnection> GetRepositoryConnection(string repositoryOwner, string? endCursor, CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
         {
-            RepositoryConnectionResponse repositoryConnectionResponse;
+            GitHubUserResponse? githubUserResponse;
 
             var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
 
             try
             {
-                repositoryConnectionResponse = await ExecuteGraphQLRequest(() => _githubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+                githubUserResponse = await ExecuteGraphQLRequest(() => _githubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
             }
-            catch (GraphQLException<RepositoryConnectionResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out var ssoUriValues))
+            catch (GraphQLException<GitHubUserResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out var ssoUriValues))
             {
-                repositoryConnectionResponse = e.GraphQLData;
+                githubUserResponse = e.GraphQLData;
             }
 
-            return repositoryConnectionResponse.GitHubUser.RepositoryConnection;
+            return githubUserResponse.User.RepositoryConnection;
         }
 
         async Task<T> ExecuteGraphQLRequest<T>(Func<Task<ApiResponse<GraphQLResponse<T>>>> action, CancellationToken cancellationToken, int numRetries = 2, [CallerMemberName] string callerName = "")
