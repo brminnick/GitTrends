@@ -76,5 +76,11 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("CreatedBy", resourceCulture);
             }
         }
+        
+        public static string IncludeOrganziations {
+            get {
+                return ResourceManager.GetString("IncludeOrganziations", resourceCulture);
+            }
+        }
     }
 }

@@ -27,4 +27,7 @@
 	<data name="CreatedBy" xml:space="preserve">
     <value>Created by Code Traveler LLC</value>
   </data>
+	<data name="IncludeOrganziations" xml:space="preserve">
+    <value>Include Organizations</value>
+  </data>
 </root>

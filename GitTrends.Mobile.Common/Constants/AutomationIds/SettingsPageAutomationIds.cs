@@ -34,6 +34,11 @@
         public const string RegisterForNotificationsSwitch = nameof(SettingsPageAutomationIds) + nameof(RegisterForNotificationsSwitch);
         #endregion
 
+        #region IncludeOrganizations Row
+        public const string IncludeOrganizationsTitleLabel = nameof(SettingsPageAutomationIds) + nameof(IncludeOrganizationsTitleLabel);
+        public const string IncludeOrganizationsSwitch = nameof(SettingsPageAutomationIds) + nameof(IncludeOrganizationsSwitch);
+        #endregion
+
         #region Theme Row
         public const string ThemeTitleLabel = nameof(SettingsPageAutomationIds) + nameof(ThemeTitleLabel);
         public const string ThemePicker = nameof(SettingsPageAutomationIds) + nameof(ThemePicker);

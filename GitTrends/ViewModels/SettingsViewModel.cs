@@ -40,9 +40,11 @@ namespace GitTrends
         string _gitHubUserNameLabelText = string.Empty;
         string _preferredChartsLabelText = string.Empty;
         string _registerForNotificationsLabelText = string.Empty;
+        string _shouldIncludeOrganizationsLabelText = string.Empty;
 
         bool _isRegisterForNotificationsSwitchEnabled = true;
         bool _isRegisterForNotificationsSwitchToggled;
+        bool _isShouldIncludeOrganizationsSwitchToggled;
 
         int _themePickerSelectedIndex;
         int _languagePickerSelectedIndex;
@@ -270,6 +272,18 @@ namespace GitTrends
             set => SetProperty(ref _registerForNotificationsLabelText, value);
         }
 
+        public bool IsShouldIncludeOrganizationsSwitchToggled
+        {
+            get => GitHubUserService.ShouldIncludeOrganizations;
+            set => SetProperty(ref _isShouldIncludeOrganizationsSwitchToggled, value, () => GitHubUserService.ShouldIncludeOrganizations = value);
+        }
+
+        public string ShouldIncludeOrganizationsLabelText
+        {
+            get => _shouldIncludeOrganizationsLabelText;
+            set => SetProperty(ref _shouldIncludeOrganizationsLabelText, value);
+        }
+
         protected override async void NotifyIsAuthenticatingPropertyChanged()
         {
             base.NotifyIsAuthenticatingPropertyChanged();
@@ -391,6 +405,7 @@ namespace GitTrends
             CopyrightLabelText = $"{getVersionNumberText(_versionTracking)}\n{SettingsPageConstants.CreatedBy}";
             PreferredChartsLabelText = SettingsPageConstants.PreferredChartSettingsLabelText;
             RegisterForNotificationsLabelText = SettingsPageConstants.RegisterForNotifications;
+            ShouldIncludeOrganizationsLabelText = SettingsPageConstants.IncludeOrganziations;
 
             ThemePickerItemsSource = ThemePickerConstants.ThemePickerTitles.Values.ToList();
             PreferredChartsItemsSource = TrendsChartConstants.TrendsChartTitles.Values.ToList();

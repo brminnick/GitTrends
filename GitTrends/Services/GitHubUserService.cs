@@ -16,6 +16,7 @@ namespace GitTrends
         readonly static WeakEventManager<string> _nameChangedEventManager = new();
         readonly static WeakEventManager<string> _aliasChangedEventManager = new();
         readonly static WeakEventManager<string> _avatarUrlChangedEventManager = new();
+        readonly static WeakEventManager<bool> _shouldIncludeOrganizationsChangedEventManager = new();
 
         readonly IPreferences _preferences;
         readonly ISecureStorage _secureStorage;
@@ -50,6 +51,12 @@ namespace GitTrends
         {
             add => _avatarUrlChangedEventManager.AddEventHandler(value);
             remove => _avatarUrlChangedEventManager.RemoveEventHandler(value);
+        }
+
+        public static event EventHandler<bool> ShouldIncludeOrganizationsChanged
+        {
+            add => _shouldIncludeOrganizationsChangedEventManager.AddEventHandler(value);
+            remove => _shouldIncludeOrganizationsChangedEventManager.RemoveEventHandler(value);
         }
 
         public bool IsDemoUser
@@ -99,6 +106,19 @@ namespace GitTrends
                 {
                     _preferences.Set(nameof(AvatarUrl), value);
                     OnAvatarUrlChanged(value);
+                }
+            }
+        }
+
+        public bool ShouldIncludeOrganizations
+        {
+            get => _preferences.Get(nameof(ShouldIncludeOrganizations), true);
+            set
+            {
+                if (ShouldIncludeOrganizations != value)
+                {
+                    _preferences.Set(nameof(ShouldIncludeOrganizations), value);
+                    OnShouldIncludeOrganizationsChanged(value);
                 }
             }
         }
@@ -171,5 +191,6 @@ namespace GitTrends
         void OnNameChanged(in string name) => _nameChangedEventManager.RaiseEvent(this, name, nameof(NameChanged));
         void OnAliasChanged(in string alias) => _aliasChangedEventManager.RaiseEvent(this, alias, nameof(AliasChanged));
         void OnAvatarUrlChanged(in string avatarUrl) => _avatarUrlChangedEventManager.RaiseEvent(this, avatarUrl, nameof(AvatarUrlChanged));
+        void OnShouldIncludeOrganizationsChanged(in bool shouldIncludeOrganizations) => _shouldIncludeOrganizationsChangedEventManager.RaiseEvent(this, shouldIncludeOrganizations, nameof(ShouldIncludeOrganizationsChanged));
     }
 }
