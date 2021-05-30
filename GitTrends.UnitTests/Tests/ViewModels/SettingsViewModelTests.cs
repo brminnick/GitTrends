@@ -8,7 +8,6 @@ using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Shiny;
-using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends.UnitTests
 {
