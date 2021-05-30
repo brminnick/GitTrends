@@ -104,20 +104,18 @@ namespace GitTrends
             }
             else
             {
-                RepositoryConnection? repositoryConnection = null;
-
-                do
+                await foreach (var repository in GetOwnedRepositories(repositoryOwner, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false))
                 {
-                    repositoryConnection = await GetRepositoryConnection(repositoryOwner, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
+                    yield return repository;
+                }
 
-                    foreach (var repository in repositoryConnection.RepositoryList)
+                if (_gitHubUserService.ShouldIncludeOrganizations)
+                {
+                    await foreach (var repository in GetOrganizationRepositories(cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false))
                     {
-                        if (repository is not null)
-                            yield return new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
-                                                        repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt);
+                        yield return repository;
                     }
                 }
-                while (repositoryConnection?.PageInfo?.HasNextPage is true);
             }
         }
 
@@ -140,7 +138,70 @@ namespace GitTrends
             } while (starGazerResponse?.Repository.StarGazers.StarredAt.Count == numberOfStarGazersPerRequest);
         }
 
-        async Task<RepositoryConnection> GetRepositoryConnection(string repositoryOwner, string? endCursor, CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
+        async IAsyncEnumerable<Repository> GetOwnedRepositories(string repositoryOwner, [EnumeratorCancellation] CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
+        {
+            RepositoryConnection? repositoryConnection = null;
+
+            do
+            {
+                repositoryConnection = await GetUserRepositoryConnection(repositoryOwner, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
+
+                foreach (var repository in repositoryConnection.RepositoryList)
+                {
+                    if (repository is not null)
+                        yield return new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
+                                                    repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt);
+                }
+            }
+            while (repositoryConnection?.PageInfo?.HasNextPage is true);
+        }
+
+        async IAsyncEnumerable<Repository> GetOrganizationRepositories([EnumeratorCancellation] CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
+        {
+            var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
+
+            RepositoryConnection? repositoryConnection = null;
+
+            await foreach (var organization in GetOrganizationNames(token, cancellationToken).ConfigureAwait(false))
+            {
+                do
+                {
+                    repositoryConnection = await GetOrganizationRepositoryConnection(organization, token, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
+
+                    foreach (var repository in repositoryConnection.RepositoryList)
+                    {
+                        if (repository is not null)
+                            yield return new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
+                                                        repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt);
+                    }
+                }
+                while (repositoryConnection?.PageInfo?.HasNextPage is true);
+            }
+        }
+
+        async IAsyncEnumerable<string> GetOrganizationNames(GitHubToken token, [EnumeratorCancellation] CancellationToken cancellationToken)
+        {
+            GitHubViewerOrganizationResponse? gitHubViewerOrganizationResponse = null;
+
+            do
+            {
+                try
+                {
+                    gitHubViewerOrganizationResponse = await ExecuteGraphQLRequest(() => _githubApiClient.ViewerOrganizationsQuery(new ViewerOrganizationsQueryContent(GetEndCursorString(gitHubViewerOrganizationResponse?.Viewer.Organizations.PageInfo.EndCursor)), GetGitHubBearerTokenHeader(token)), cancellationToken);
+                }
+                catch(Exception e)
+                {
+                    throw;
+                }
+
+                foreach (var repository in gitHubViewerOrganizationResponse.Viewer.Organizations.Nodes)
+                {
+                    yield return repository.Name;
+                }
+            } while (gitHubViewerOrganizationResponse?.Viewer.Organizations.PageInfo.HasNextPage is true);
+        }
+
+        async Task<RepositoryConnection> GetUserRepositoryConnection(string repositoryOwner, string? endCursor, CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
         {
             GitHubUserResponse? githubUserResponse;
 
@@ -148,7 +209,7 @@ namespace GitTrends
 
             try
             {
-                githubUserResponse = await ExecuteGraphQLRequest(() => _githubApiClient.RepositoryConnectionQuery(new RepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+                githubUserResponse = await ExecuteGraphQLRequest(() => _githubApiClient.UserRepositoryConnectionQuery(new UserRepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
             }
             catch (GraphQLException<GitHubUserResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out var ssoUriValues))
             {
@@ -156,6 +217,22 @@ namespace GitTrends
             }
 
             return githubUserResponse.User.RepositoryConnection;
+        }
+
+        async Task<RepositoryConnection> GetOrganizationRepositoryConnection(string organization, GitHubToken token, string? endCursor, CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
+        {
+            GitHubOrganizationResponse? githubOrganizationResponse;
+
+            try
+            {
+                githubOrganizationResponse = await ExecuteGraphQLRequest(() => _githubApiClient.OrganizationRepositoryConnectionQuery(new OrganizationRepositoryConnectionQueryContent(organization, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+            }
+            catch (GraphQLException<GitHubOrganizationResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out var ssoUriValues))
+            {
+                githubOrganizationResponse = e.GraphQLData;
+            }
+
+            return githubOrganizationResponse.Organization.RepositoryConnection;
         }
 
         async Task<T> ExecuteGraphQLRequest<T>(Func<Task<ApiResponse<GraphQLResponse<T>>>> action, CancellationToken cancellationToken, int numRetries = 2, [CallerMemberName] string callerName = "")

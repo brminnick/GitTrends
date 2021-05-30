@@ -12,6 +12,6 @@ namespace GitTrends.Shared
         public const string GitTrendsRepoName = nameof(GitTrends);
         public const string GitTrendsRepoOwner = "brminnick";
 
-        public static string OAuthScope { get; } = HttpUtility.UrlEncode("public_repo read:user");
+        public static string OAuthScope { get; } = HttpUtility.UrlEncode("public_repo read:user read:org");
     }
 }

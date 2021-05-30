@@ -57,7 +57,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IAnalyticsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IReferringSiteModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitHubUserResponse.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitHubViewerResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\RepositoryResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\StarGazerQueryResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GraphQLException.cs" />
@@ -70,5 +69,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)RefitExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitTrendsStatisticsDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\AppCenterApiKeyDTO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitHubViewerLoginResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitHubViewerOrganizationResponse.cs" />
   </ItemGroup>
 </Project>
