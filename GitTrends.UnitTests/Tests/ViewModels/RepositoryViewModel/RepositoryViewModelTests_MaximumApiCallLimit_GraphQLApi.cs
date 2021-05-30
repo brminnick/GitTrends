@@ -30,7 +30,7 @@ namespace GitTrends.UnitTests
         {
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             var gitHubUserResponse = new GraphQLResponse<GitHubUserResponse>(null, new[] { new GraphQLError(string.Empty, Array.Empty<GraphQLLocation>()) });
-            var viewerLoginResponse = new GraphQLResponse<GitHubViewerResponse>(new GitHubViewerResponse(new User(null, "Brandon Minnick", string.Empty, default, GitHubConstants.GitTrendsRepoOwner, new Uri(AuthenticatedGitHubUserAvatarUrl))), null);
+            var viewerLoginResponse = new GraphQLResponse<GitHubViewerLoginResponse>(new GitHubViewerLoginResponse(new User(null, "Brandon Minnick", string.Empty, default, GitHubConstants.GitTrendsRepoOwner, new Uri(AuthenticatedGitHubUserAvatarUrl))), null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             var errorResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
@@ -45,7 +45,7 @@ namespace GitTrends.UnitTests
                 Content = new StringContent(JsonConvert.SerializeObject(viewerLoginResponse))
             };
 
-            var repositoryConnectionQueryContent = new RepositoryConnectionQueryContent(GitHubConstants.GitTrendsRepoOwner, string.Empty);
+            var repositoryConnectionQueryContent = new UserRepositoryConnectionQueryContent(GitHubConstants.GitTrendsRepoOwner, string.Empty);
             var viewerLoginQueryContent = new ViewerLoginQueryContent();
 
             var httpMessageHandler = new MockHttpMessageHandler();

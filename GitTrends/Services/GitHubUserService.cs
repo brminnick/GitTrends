@@ -134,6 +134,12 @@ namespace GitTrends
                 if (token is null)
                     return GitHubToken.Empty;
 
+                if (!token.Scope.Contains("org", StringComparison.OrdinalIgnoreCase))
+                {
+                    InvalidateToken();
+                    return GitHubToken.Empty;
+                }
+
                 if (!_gitHubApiStatusService.IsProductHeaderValueValid)
                     _gitHubApiStatusService.AddProductHeaderValue(getProductHeaderValue());
 

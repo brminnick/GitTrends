@@ -185,14 +185,7 @@ namespace GitTrends
 
             do
             {
-                try
-                {
-                    gitHubViewerOrganizationResponse = await ExecuteGraphQLRequest(() => _githubApiClient.ViewerOrganizationsQuery(new ViewerOrganizationsQueryContent(GetEndCursorString(gitHubViewerOrganizationResponse?.Viewer.Organizations.PageInfo.EndCursor)), GetGitHubBearerTokenHeader(token)), cancellationToken);
-                }
-                catch(Exception e)
-                {
-                    throw;
-                }
+                gitHubViewerOrganizationResponse = await ExecuteGraphQLRequest(() => _githubApiClient.ViewerOrganizationsQuery(new ViewerOrganizationsQueryContent(GetEndCursorString(gitHubViewerOrganizationResponse?.Viewer.Organizations.PageInfo.EndCursor)), GetGitHubBearerTokenHeader(token)), cancellationToken);
 
                 foreach (var repository in gitHubViewerOrganizationResponse.Viewer.Organizations.Nodes)
                 {
