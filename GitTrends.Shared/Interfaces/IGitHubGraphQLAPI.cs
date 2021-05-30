@@ -45,7 +45,7 @@ namespace GitTrends.Shared
     public record ViewerOrganizationsQueryContent : GraphQLRequest
     {
         public ViewerOrganizationsQueryContent(string? endCursorString, int numberOfRepositoriesPerRequest = 100)
-            : base("query { viewer { organizations(first:" + numberOfRepositoriesPerRequest + endCursorString + ") { nodes { name }, pageInfo { endCursor, hasNextPage, startCursor, hasPreviousPage } } } }")
+            : base("query { viewer { organizations(first:" + numberOfRepositoriesPerRequest + endCursorString + ") { nodes { login }, pageInfo { endCursor, hasNextPage, startCursor, hasPreviousPage } } } }")
         {
 
         }

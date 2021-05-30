@@ -8,5 +8,5 @@ namespace GitTrends.Shared
 
     public record OrganizationNamesResponse(IReadOnlyList<OrganizationRepositoryName> Nodes, PageInfo PageInfo);
 
-    public record OrganizationRepositoryName(string Name);
+    public record OrganizationRepositoryName(string Login);
 }

@@ -189,7 +189,8 @@ namespace GitTrends
 
                 foreach (var repository in gitHubViewerOrganizationResponse.Viewer.Organizations.Nodes)
                 {
-                    yield return repository.Name;
+                    if (!string.IsNullOrWhiteSpace(repository.Login))
+                        yield return repository.Login;
                 }
             } while (gitHubViewerOrganizationResponse?.Viewer.Organizations.PageInfo.HasNextPage is true);
         }
@@ -212,13 +213,13 @@ namespace GitTrends
             return githubUserResponse.User.RepositoryConnection;
         }
 
-        async Task<RepositoryConnection> GetOrganizationRepositoryConnection(string organization, GitHubToken token, string? endCursor, CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
+        async Task<RepositoryConnection> GetOrganizationRepositoryConnection(string organizationLogin, GitHubToken token, string? endCursor, CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
         {
             GitHubOrganizationResponse? githubOrganizationResponse;
 
             try
             {
-                githubOrganizationResponse = await ExecuteGraphQLRequest(() => _githubApiClient.OrganizationRepositoryConnectionQuery(new OrganizationRepositoryConnectionQueryContent(organization, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+                githubOrganizationResponse = await ExecuteGraphQLRequest(() => _githubApiClient.OrganizationRepositoryConnectionQuery(new OrganizationRepositoryConnectionQueryContent(organizationLogin, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
             }
             catch (GraphQLException<GitHubOrganizationResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out var ssoUriValues))
             {
