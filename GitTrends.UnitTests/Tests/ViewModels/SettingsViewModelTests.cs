@@ -175,8 +175,11 @@ namespace GitTrends.UnitTests
             MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
             var settingsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SettingsViewModel>();
+            var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
 
             //Act
+            await gitTrendsStatisticsService.Initialize(CancellationToken.None).ConfigureAwait(false);
+
             isAuthenticating_BeforeCommand = settingsViewModel.IsAuthenticating;
             isNotAuthenticating_BeforeCommand = settingsViewModel.IsNotAuthenticating;
             isDemoButtonVisible_BeforeCommand = settingsViewModel.IsDemoButtonVisible;
@@ -278,6 +281,57 @@ namespace GitTrends.UnitTests
 
                 didOpenAsyncFire = true;
                 openAsyncTCS.SetResult(null);
+            }
+        }
+
+        [Test]
+        public async Task ShouldIncludeOrganizationsSwitchTest()
+        {
+            //Arrange
+            bool isShouldIncludeOrganizationsSwitchEnabled_Initial, isShouldIncludeOrganizationsSwitchEnabled_Final;
+            bool isShouldIncludeOrganizationsSwitchToggled_Initial, isShouldIncludeOrganizationsSwitchToggled_Final;
+
+            var browserOpenAsyncTCS = new TaskCompletionSource<Uri>();
+
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var settingsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SettingsViewModel>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+            var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
+            var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
+
+            MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
+
+            //Act
+            await gitTrendsStatisticsService.Initialize(CancellationToken.None).ConfigureAwait(false);
+
+            var clientIdDTO = await azureFunctionsApiService.GetGitHubClientId(CancellationToken.None).ConfigureAwait(false);
+            var clientId = clientIdDTO.ClientId;
+
+            isShouldIncludeOrganizationsSwitchEnabled_Initial = settingsViewModel.IsShouldIncludeOrganizationsSwitchEnabled;
+            isShouldIncludeOrganizationsSwitchToggled_Initial = settingsViewModel.IsShouldIncludeOrganizationsSwitchToggled;
+
+            await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+            isShouldIncludeOrganizationsSwitchEnabled_Final = settingsViewModel.IsShouldIncludeOrganizationsSwitchEnabled;
+
+            settingsViewModel.IsShouldIncludeOrganizationsSwitchToggled = true;
+            var browserUri = await browserOpenAsyncTCS.Task.ConfigureAwait(false);
+
+            isShouldIncludeOrganizationsSwitchToggled_Final = settingsViewModel.IsShouldIncludeOrganizationsSwitchToggled;
+
+            //Assert
+            Assert.IsFalse(isShouldIncludeOrganizationsSwitchEnabled_Initial);
+            Assert.IsFalse(isShouldIncludeOrganizationsSwitchToggled_Initial);
+
+            Assert.IsTrue(isShouldIncludeOrganizationsSwitchEnabled_Final);
+            Assert.IsTrue(isShouldIncludeOrganizationsSwitchToggled_Final);
+
+            Assert.AreEqual(new Uri($"https://github.com/settings/connections/applications/{clientId}"), browserUri);
+
+            void HandleOpenAsyncExecuted(object? sender, Uri e)
+            {
+                MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
+                browserOpenAsyncTCS.SetResult(e);
             }
         }
     }

@@ -1,8 +1,10 @@
-﻿using System.Threading;
+﻿using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using Refit;
 
 namespace GitTrends.UnitTests
 {
@@ -25,21 +27,17 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public async Task GenerateGitTrendsOAuthToken_InvalidDTO()
+        public void GenerateGitTrendsOAuthToken_InvalidDTO()
         {
             //Arrange
-            GitHubToken? gitHubToken;
             var generateTokenDTO = new GenerateTokenDTO(string.Empty, string.Empty);
             var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
 
             //Act
-            gitHubToken = await azureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO, CancellationToken.None).ConfigureAwait(false);
+            var apiException = Assert.ThrowsAsync<ApiException>(() => azureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO, CancellationToken.None));
 
             //Assert
-            Assert.IsNotNull(gitHubToken);
-            Assert.IsEmpty(GitHubToken.Empty.AccessToken);
-            Assert.IsEmpty(GitHubToken.Empty.Scope);
-            Assert.IsEmpty(GitHubToken.Empty.TokenType);
+            Assert.AreEqual(HttpStatusCode.BadRequest, apiException?.StatusCode);
         }
 
         [Test]
