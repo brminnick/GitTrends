@@ -354,16 +354,18 @@ namespace GitTrends
 
         async ValueTask OnShouldIncludeOrganizationsChanged(bool value)
         {
+
+
             if (value is true) // Ask the user to manually authorize GitHub Organizations
             {
-                var isAccepted = await _deepLinkingService.DisplayAlert("Grant Organization Access", "Organization access must be manually granted via the GitHub Portal", "Ok, Let's Go!", "Already Done");
+                var isAccepted = await _deepLinkingService.DisplayAlert(SettingsPageConstants.GrantOrganizationAccessTitle, SettingsPageConstants.GrantOrganizationAccessDescription, SettingsPageConstants.GrantOrganizationAccessAccept, SettingsPageConstants.GrantOrganizationAccessCancel);
                 if (isAccepted)
                 {
                     if (_gitTrendsStatisticsService.EnableOrganizationsUri is null)
                         throw new InvalidOperationException($"{nameof(GitTrendsStatisticsService)}.{nameof(GitTrendsStatisticsService.EnableOrganizationsUri)} Must Be Initialized");
 
                     _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri).SafeFireAndForget(ex => AnalyticsService.Report(ex));
-                    await _deepLinkingService.DisplayAlert("Scroll to Organization Access", "Scroll to the bottom of the page to enable organization access", "Got it 👍");
+                    await _deepLinkingService.DisplayAlert(SettingsPageConstants.ScrollToOrganizationAccessTitle, SettingsPageConstants.ScrollToOrganizationAccessDescription, SettingsPageConstants.ScrollToOrganizationAccessDismiss);
                 }
             }
         }
