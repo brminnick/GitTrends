@@ -46,7 +46,6 @@ namespace GitTrends
 
         bool _isRegisterForNotificationsSwitchEnabled = true;
         bool _isRegisterForNotificationsSwitchToggled;
-        bool _isShouldIncludeOrganizationsSwitchToggled;
 
         int _themePickerSelectedIndex;
         int _languagePickerSelectedIndex;
@@ -283,25 +282,16 @@ namespace GitTrends
         public bool IsShouldIncludeOrganizationsSwitchToggled
         {
             get => GitHubUserService.ShouldIncludeOrganizations;
-            set => SetProperty(ref _isShouldIncludeOrganizationsSwitchToggled, value, async () =>
+            set
             {
                 if (GitHubUserService.ShouldIncludeOrganizations != value)
                 {
                     GitHubUserService.ShouldIncludeOrganizations = value;
+                    OnPropertyChanged();
 
-                    if (value is true) // Ask the user to manually authorize GitHub Organizations
-                    {
-                        var isAccepted = await _deepLinkingService.DisplayAlert("Grant Organization Access", "Organization access must be manually granted via the GitHub Portal", "Ok, Let's Go!", "Already Done");
-                        if (isAccepted)
-                        {
-                            var gitTrendsClientId = await GetGitTrendsClientId(new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
-
-                            _deepLinkingService.OpenBrowser($"https://github.com/settings/connections/applications/{gitTrendsClientId}").SafeFireAndForget(ex => AnalyticsService.Report(ex));
-                            await _deepLinkingService.DisplayAlert("Scroll to Organization Access", "Scroll to the bottom of the page to enable organization access", "Got it 👍");
-                        }
-                    }
+                    OnShouldIncludeOrganizationsChanged(value).SafeFireAndForget(ex => AnalyticsService.Report(ex));
                 }
-            });
+            }
         }
 
         public string ShouldIncludeOrganizationsLabelText
@@ -362,7 +352,20 @@ namespace GitTrends
             }
         }
 
+        async ValueTask OnShouldIncludeOrganizationsChanged(bool value)
+        {
+            if (value is true) // Ask the user to manually authorize GitHub Organizations
+            {
+                var isAccepted = await _deepLinkingService.DisplayAlert("Grant Organization Access", "Organization access must be manually granted via the GitHub Portal", "Ok, Let's Go!", "Already Done");
+                if (isAccepted)
+                {
+                    var gitTrendsClientId = await GetGitTrendsClientId(new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
 
+                    _deepLinkingService.OpenBrowser($"https://github.com/settings/connections/applications/{gitTrendsClientId}").SafeFireAndForget(ex => AnalyticsService.Report(ex));
+                    await _deepLinkingService.DisplayAlert("Scroll to Organization Access", "Scroll to the bottom of the page to enable organization access", "Got it 👍");
+                }
+            }
+        }
 
         void ExecutePreferredChartsChangedCommand(TrendsChartOption trendsChartOption)
         {
