@@ -66,6 +66,9 @@ namespace GitTrends
         {
             IsAuthenticating = true;
 
+            // Yield from the Main Thread to allow IsAuthenticating indicator to appear
+            await Task.Yield();
+
             try
             {
                 var loginUrl = gitHubAuthenticationService.GetGitHubLoginUrl();

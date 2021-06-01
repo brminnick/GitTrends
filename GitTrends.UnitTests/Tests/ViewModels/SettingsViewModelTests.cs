@@ -174,8 +174,11 @@ namespace GitTrends.UnitTests
             MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
             var settingsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SettingsViewModel>();
+            var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
 
             //Act
+            await gitTrendsStatisticsService.Initialize(CancellationToken.None).ConfigureAwait(false);
+
             isAuthenticating_BeforeCommand = settingsViewModel.IsAuthenticating;
             isNotAuthenticating_BeforeCommand = settingsViewModel.IsNotAuthenticating;
             isDemoButtonVisible_BeforeCommand = settingsViewModel.IsDemoButtonVisible;
@@ -293,10 +296,13 @@ namespace GitTrends.UnitTests
             var settingsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SettingsViewModel>();
             var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
             var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
+            var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
 
             MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
             //Act
+            await gitTrendsStatisticsService.Initialize(CancellationToken.None).ConfigureAwait(false);
+
             var clientIdDTO = await azureFunctionsApiService.GetGitHubClientId(CancellationToken.None).ConfigureAwait(false);
             var clientId = clientIdDTO.ClientId;
 

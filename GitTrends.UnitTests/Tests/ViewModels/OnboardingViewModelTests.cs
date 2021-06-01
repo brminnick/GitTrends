@@ -65,8 +65,11 @@ namespace GitTrends.UnitTests
             MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
             var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
+            var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
 
             //Act
+            await gitTrendsStatisticsService.Initialize(CancellationToken.None).ConfigureAwait(false);
+
             isAuthenticating_BeforeCommand = onboardingViewModel.IsAuthenticating;
             isDemoButtonVisible_BeforeCommand = onboardingViewModel.IsDemoButtonVisible;
 
