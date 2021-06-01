@@ -10,7 +10,7 @@ namespace GitTrends.Functions
 {
     public static class GetGitHubClientId
     {
-        readonly static string _clientId = Environment.GetEnvironmentVariable("GitTrendsClientId") ?? string.Empty;
+        public static string ClientId { get; } = Environment.GetEnvironmentVariable("GitTrendsClientId") ?? string.Empty;
 
         [Function(nameof(GetGitHubClientId))]
         public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req, FunctionContext functionContext)
@@ -18,7 +18,7 @@ namespace GitTrends.Functions
             var logger = functionContext.GetLogger(nameof(GetGitHubClientId));
             logger.LogInformation("Retrieving Client Id");
 
-            if (string.IsNullOrWhiteSpace(_clientId))
+            if (string.IsNullOrWhiteSpace(ClientId))
             {
                 var notFoundResponse = req.CreateResponse(System.Net.HttpStatusCode.NotFound);
                 await notFoundResponse.WriteStringAsync("Client ID Not Found").ConfigureAwait(false);
@@ -28,7 +28,7 @@ namespace GitTrends.Functions
 
             var okResponse = req.CreateResponse(System.Net.HttpStatusCode.OK);
 
-            var getGitHubClientDtoJson = JsonConvert.SerializeObject(new GetGitHubClientIdDTO(_clientId));
+            var getGitHubClientDtoJson = JsonConvert.SerializeObject(new GetGitHubClientIdDTO(ClientId));
 
             await okResponse.WriteStringAsync(getGitHubClientDtoJson).ConfigureAwait(false);
 

@@ -71,5 +71,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\AppCenterApiKeyDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitHubViewerLoginResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitHubViewerOrganizationResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitTrendsEnableOrganizationsUriDTO.cs" />
   </ItemGroup>
 </Project>

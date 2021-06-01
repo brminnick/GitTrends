@@ -68,7 +68,7 @@ namespace GitTrends
 
             try
             {
-                var loginUrl = await gitHubAuthenticationService.GetGitHubLoginUrl(cancellationToken).ConfigureAwait(false);
+                var loginUrl = gitHubAuthenticationService.GetGitHubLoginUrl();
 
                 if (!string.IsNullOrWhiteSpace(loginUrl))
                 {

@@ -33,5 +33,8 @@ namespace GitTrends.Shared
 
         [Get("/GetAppCenterApiKeys")]
         Task<AppCenterApiKeyDTO> GetAppCenterApiKeys([AliasAs("code")] string functionKey = AzureConstants.GetAppCenterApiKeysKey);
+
+        [Get("/GetGitTrendsEnableOrganizationsUri")]
+        Task<GitTrendsEnableOrganizationsUriDTO> GetGitTrendsEnableOrganizationsUri();
     }
 }

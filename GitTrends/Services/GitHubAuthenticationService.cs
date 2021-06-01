@@ -84,13 +84,11 @@ namespace GitTrends
             OnDemoUserActivated();
         }
 
-        public async Task<string> GetGitHubLoginUrl(CancellationToken cancellationToken)
+        public string GetGitHubLoginUrl()
         {
             MostRecentSessionId = Guid.NewGuid().ToString();
 
-            var clientId = await GetGitTrendsClientId(cancellationToken).ConfigureAwait(false);
-
-            return $"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id={clientId}&scope={GitHubConstants.OAuthScope}&state={MostRecentSessionId}";
+            return $"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id={_gitTrendsStatisticsService.ClientId}&scope={GitHubConstants.OAuthScope}&state={MostRecentSessionId}";
         }
 
         public async Task AuthorizeSession(Uri callbackUri, CancellationToken cancellationToken)
@@ -143,12 +141,6 @@ namespace GitTrends
 
             OnLoggedOut();
         }
-
-        async ValueTask<string> GetGitTrendsClientId(CancellationToken cancellationToken) => _gitTrendsStatisticsService.ClientId switch
-        {
-            null => (await _azureFunctionsApiService.GetGitHubClientId(cancellationToken).ConfigureAwait(false)).ClientId,
-            _ => _gitTrendsStatisticsService.ClientId
-        };
 
         void HandlePreferenceChanged(object sender, PreferredTheme e)
         {

@@ -359,9 +359,10 @@ namespace GitTrends
                 var isAccepted = await _deepLinkingService.DisplayAlert("Grant Organization Access", "Organization access must be manually granted via the GitHub Portal", "Ok, Let's Go!", "Already Done");
                 if (isAccepted)
                 {
-                    var gitTrendsClientId = await GetGitTrendsClientId(new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+                    if (_gitTrendsStatisticsService.EnableOrganizationsUri is null)
+                        throw new InvalidOperationException($"{nameof(GitTrendsStatisticsService)}.{nameof(GitTrendsStatisticsService.EnableOrganizationsUri)} Must Be Initialized");
 
-                    _deepLinkingService.OpenBrowser($"https://github.com/settings/connections/applications/{gitTrendsClientId}").SafeFireAndForget(ex => AnalyticsService.Report(ex));
+                    _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri).SafeFireAndForget(ex => AnalyticsService.Report(ex));
                     await _deepLinkingService.DisplayAlert("Scroll to Organization Access", "Scroll to the bottom of the page to enable organization access", "Got it 👍");
                 }
             }
@@ -491,12 +492,6 @@ namespace GitTrends
                 return ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService, _deepLinkingService, GitHubUserService, cancellationTokenSource.Token, null);
             }
         }
-
-        async ValueTask<string> GetGitTrendsClientId(CancellationToken cancellationToken) => _gitTrendsStatisticsService.ClientId switch
-        {
-            null => (await _azureFunctionsApiService.GetGitHubClientId(cancellationToken).ConfigureAwait(false)).ClientId,
-            _ => _gitTrendsStatisticsService.ClientId
-        };
 
         void OnSetNotificationsCompleted(AccessState? accessState) => _setNotificationsPreferenceCompletedEventManager.RaiseEvent(this, accessState, nameof(SetNotificationsPreferenceCompleted));
     }

@@ -9,6 +9,7 @@
     "UnitTestCSProjPath": "/GitTrends.UnitTests/GitTrends.UnitTests.csproj",
     "GitTrendsCSProjPath": "/GitTrends/GitTrends.csproj",
     "FunctionsCSProjPath": "/GitTrends.Functions/GitTrends.Functions.csproj",
-    "MobileCommonCSProjPath": "/GitTrends.Mobile.Common/GitTrends.Mobile.Common.csproj"
+    "MobileCommonCSProjPath": "/GitTrends.Mobile.Common/GitTrends.Mobile.Common.csproj",
+    "EnableOrganizationsUrl": "https://github.com/settings/connections/applications/"
   }
 }

@@ -10,7 +10,9 @@ namespace GitTrends
     {
         readonly IAzureFunctionsApi _azureFunctionsApiClient;
 
-        public AzureFunctionsApiService(IAnalyticsService analyticsService, IMainThread mainThread, IAzureFunctionsApi azureFunctionsApi) : base(analyticsService, mainThread)
+        public AzureFunctionsApiService(IMainThread mainThread,
+                                        IAnalyticsService analyticsService,
+                                        IAzureFunctionsApi azureFunctionsApi) : base(analyticsService, mainThread)
         {
             _azureFunctionsApiClient = azureFunctionsApi;
         }
@@ -23,5 +25,6 @@ namespace GitTrends
         public Task<NotificationHubInformation> GetNotificationHubInformation(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetNotificationHubInformation(), cancellationToken);
         public Task<IReadOnlyList<NuGetPackageModel>> GetLibraries(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetLibraries(), cancellationToken);
         public Task<AppCenterApiKeyDTO> GetAppCenterApiKeys(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetAppCenterApiKeys(), cancellationToken);
+        public Task<GitTrendsEnableOrganizationsUriDTO> GetGitTrendsEnableOrganizationsUri(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetGitTrendsEnableOrganizationsUri(), cancellationToken);
     }
 }

@@ -28,6 +28,20 @@ namespace GitTrends
             _azureFunctionsApiService = azureFunctionsApiService;
         }
 
+        public Uri? EnableOrganizationsUri
+        {
+            get
+            {
+                var url = _preferences.Get(nameof(EnableOrganizationsUri), null);
+                return url is null ? null : new Uri(url);
+            }
+            private set
+            {
+                if (value is not null)
+                    _preferences.Set(nameof(EnableOrganizationsUri), value.ToString());
+            }
+        }
+
         public string? ClientId
         {
             get => _preferences.Get(nameof(ClientId), null);
@@ -102,7 +116,7 @@ namespace GitTrends
 
         public async ValueTask Initialize(CancellationToken cancellationToken)
         {
-            if (ClientId is null || GitHubUri is null || Stars is null || Watchers is null || Forks is null || !Contributors.Any())
+            if (EnableOrganizationsUri is null || ClientId is null || GitHubUri is null || Stars is null || Watchers is null || Forks is null || !Contributors.Any())
                 await initialize().ConfigureAwait(false);
             else
                 initialize().SafeFireAndForget(ex => _analyticsService.Report(ex));
@@ -111,11 +125,13 @@ namespace GitTrends
             {
                 var getClientIdTask = _azureFunctionsApiService.GetGitHubClientId(cancellationToken);
                 var getGitTrendsStatisticsTask = _azureFunctionsApiService.GetGitTrendsStatistics(cancellationToken);
+                var getGitTrendsEnableOrganizationsUriTask = _azureFunctionsApiService.GetGitTrendsEnableOrganizationsUri(cancellationToken);
 
-                await Task.WhenAll(getClientIdTask, getGitTrendsStatisticsTask).ConfigureAwait(false);
+                await Task.WhenAll(getClientIdTask, getGitTrendsStatisticsTask, getGitTrendsEnableOrganizationsUriTask).ConfigureAwait(false);
 
                 var clientId = await getClientIdTask.ConfigureAwait(false);
                 var gittrendsStatistics = await getGitTrendsStatisticsTask.ConfigureAwait(false);
+                var gitTrendsEnableOrganizationsUri = await getGitTrendsEnableOrganizationsUriTask.ConfigureAwait(false);
 
                 Stars = gittrendsStatistics.Stars;
                 Forks = gittrendsStatistics.Forks;
@@ -125,6 +141,8 @@ namespace GitTrends
                 Contributors = gittrendsStatistics.Contributors;
 
                 ClientId = clientId.ClientId;
+
+                EnableOrganizationsUri = gitTrendsEnableOrganizationsUri.Uri;
 
                 foreach (var contributor in Contributors)
                     _imageCachingService.PreloadImage(contributor.AvatarUrl).SafeFireAndForget(ex => _analyticsService.Report(ex));

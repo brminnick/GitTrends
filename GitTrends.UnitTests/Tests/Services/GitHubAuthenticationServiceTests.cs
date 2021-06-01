@@ -139,7 +139,7 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public async Task GetGitHubLoginUrlTest()
+        public void GetGitHubLoginUrlTest()
         {
             //Arrange
             string gitHubLoginUrl, scope, state;
@@ -147,7 +147,7 @@ namespace GitTrends.UnitTests
             var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
 
             //Act
-            gitHubLoginUrl = await gitHubAuthenticationService.GetGitHubLoginUrl(CancellationToken.None).ConfigureAwait(false);
+            gitHubLoginUrl = gitHubAuthenticationService.GetGitHubLoginUrl();
 
             scope = HttpUtility.ParseQueryString(gitHubLoginUrl).Get(nameof(scope));
             state = HttpUtility.ParseQueryString(gitHubLoginUrl).Get(nameof(state));
