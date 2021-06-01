@@ -112,7 +112,7 @@ namespace GitTrends
 
         public bool ShouldIncludeOrganizations
         {
-            get => _preferences.Get(nameof(ShouldIncludeOrganizations), true);
+            get => _preferences.Get(nameof(ShouldIncludeOrganizations), false);
             set
             {
                 if (ShouldIncludeOrganizations != value)
@@ -162,7 +162,7 @@ namespace GitTrends
             }
 
             static AuthenticationHeaderValue getAuthenticationHeaderValue(in GitHubToken token) => new(token.TokenType, token.AccessToken);
-            static ProductHeaderValue getProductHeaderValue() => new($"{nameof(GitTrends)}");
+            static ProductHeaderValue getProductHeaderValue() => new(nameof(GitTrends));
         }
 
         public async Task SaveGitHubToken(GitHubToken token)

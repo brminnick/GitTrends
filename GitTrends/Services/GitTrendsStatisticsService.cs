@@ -28,6 +28,16 @@ namespace GitTrends
             _azureFunctionsApiService = azureFunctionsApiService;
         }
 
+        public string? ClientId
+        {
+            get => _preferences.Get(nameof(ClientId), null);
+            private set
+            {
+                if (value is not null)
+                    _preferences.Set(nameof(ClientId), value.ToString());
+            }
+        }
+
         public Uri? GitHubUri
         {
             get
@@ -92,14 +102,20 @@ namespace GitTrends
 
         public async ValueTask Initialize(CancellationToken cancellationToken)
         {
-            if (GitHubUri is null || Stars is null || Watchers is null || Forks is null || !Contributors.Any())
+            if (ClientId is null || GitHubUri is null || Stars is null || Watchers is null || Forks is null || !Contributors.Any())
                 await initialize().ConfigureAwait(false);
             else
                 initialize().SafeFireAndForget(ex => _analyticsService.Report(ex));
 
             async Task initialize()
             {
-                var gittrendsStatistics = await _azureFunctionsApiService.GetGitTrendsStatistics(cancellationToken).ConfigureAwait(false);
+                var getClientIdTask = _azureFunctionsApiService.GetGitHubClientId(cancellationToken);
+                var getGitTrendsStatisticsTask = _azureFunctionsApiService.GetGitTrendsStatistics(cancellationToken);
+
+                await Task.WhenAll(getClientIdTask, getGitTrendsStatisticsTask).ConfigureAwait(false);
+
+                var clientId = await getClientIdTask.ConfigureAwait(false);
+                var gittrendsStatistics = await getGitTrendsStatisticsTask.ConfigureAwait(false);
 
                 Stars = gittrendsStatistics.Stars;
                 Forks = gittrendsStatistics.Forks;
@@ -107,6 +123,8 @@ namespace GitTrends
                 GitHubUri = gittrendsStatistics.GitHubUri;
 
                 Contributors = gittrendsStatistics.Contributors;
+
+                ClientId = clientId.ClientId;
 
                 foreach (var contributor in Contributors)
                     _imageCachingService.PreloadImage(contributor.AvatarUrl).SafeFireAndForget(ex => _analyticsService.Report(ex));

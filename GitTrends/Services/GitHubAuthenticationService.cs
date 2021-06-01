@@ -23,13 +23,15 @@ namespace GitTrends
         readonly RepositoryDatabase _repositoryDatabase;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
         readonly AzureFunctionsApiService _azureFunctionsApiService;
+        readonly GitTrendsStatisticsService _gitTrendsStatisticsService;
 
         public GitHubAuthenticationService(IPreferences preferences,
                                             IAnalyticsService analyticsService,
                                             GitHubUserService gitHubUserService,
                                             RepositoryDatabase repositoryDatabase,
                                             GitHubGraphQLApiService gitHubGraphQLApiService,
-                                            AzureFunctionsApiService azureFunctionsApiService)
+                                            AzureFunctionsApiService azureFunctionsApiService,
+                                            GitTrendsStatisticsService gitTrendsStatisticsService)
         {
             _preferences = preferences;
             _analyticsService = analyticsService;
@@ -37,6 +39,7 @@ namespace GitTrends
             _repositoryDatabase = repositoryDatabase;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _azureFunctionsApiService = azureFunctionsApiService;
+            _gitTrendsStatisticsService = gitTrendsStatisticsService;
 
             ThemeService.PreferenceChanged += HandlePreferenceChanged;
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
@@ -85,9 +88,9 @@ namespace GitTrends
         {
             MostRecentSessionId = Guid.NewGuid().ToString();
 
-            var clientIdDTO = await _azureFunctionsApiService.GetGitHubClientId(cancellationToken).ConfigureAwait(false);
+            var clientId = await GetGitTrendsClientId(cancellationToken).ConfigureAwait(false);
 
-            return $"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id={clientIdDTO.ClientId}&scope={GitHubConstants.OAuthScope}&state={MostRecentSessionId}";
+            return $"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id={clientId}&scope={GitHubConstants.OAuthScope}&state={MostRecentSessionId}";
         }
 
         public async Task AuthorizeSession(Uri callbackUri, CancellationToken cancellationToken)
@@ -140,6 +143,12 @@ namespace GitTrends
 
             OnLoggedOut();
         }
+
+        async ValueTask<string> GetGitTrendsClientId(CancellationToken cancellationToken) => _gitTrendsStatisticsService.ClientId switch
+        {
+            null => (await _azureFunctionsApiService.GetGitHubClientId(cancellationToken).ConfigureAwait(false)).ClientId,
+            _ => _gitTrendsStatisticsService.ClientId
+        };
 
         void HandlePreferenceChanged(object sender, PreferredTheme e)
         {
