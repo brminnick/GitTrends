@@ -121,6 +121,7 @@ namespace GitTrends.UnitTests
             List<Repository> repositories = new List<Repository>();
             var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
             var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            gitHubUserService.ShouldIncludeOrganizations = true;
 
             //Act
             await AuthenticateUser(gitHubUserService, githubGraphQLApiService).ConfigureAwait(false);
@@ -131,7 +132,7 @@ namespace GitTrends.UnitTests
             }
 
             //Assert
-            Assert.GreaterOrEqual(300, repositories.Count);
+            Assert.GreaterOrEqual(0, repositories.Count);
 
             var gitTrendsRepository = repositories.Single(x => x.Name is GitHubConstants.GitTrendsRepoName
                                                                 && x.OwnerLogin is GitHubConstants.GitTrendsRepoOwner);
