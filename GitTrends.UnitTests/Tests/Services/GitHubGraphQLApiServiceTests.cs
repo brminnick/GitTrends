@@ -132,7 +132,7 @@ namespace GitTrends.UnitTests
             }
 
             //Assert
-            Assert.GreaterOrEqual(0, repositories.Count);
+            Assert.GreaterOrEqual(repositories.Count, 0);
 
             var gitTrendsRepository = repositories.Single(x => x.Name is GitHubConstants.GitTrendsRepoName
                                                                 && x.OwnerLogin is GitHubConstants.GitTrendsRepoOwner);

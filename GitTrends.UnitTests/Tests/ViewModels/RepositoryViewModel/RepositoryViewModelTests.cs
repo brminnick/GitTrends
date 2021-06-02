@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
@@ -67,6 +68,111 @@ namespace GitTrends.UnitTests
 
                 Assert.Less(beforePullToRefresh, repository.DataDownloadedAt);
                 Assert.Greater(afterPullToRefresh, repository.DataDownloadedAt);
+            }
+        }
+
+        [Test]
+        public async Task PullToRefreshCommandTest_ShouldIncludeOrganizationsChanged()
+        {
+            //Arrange
+            var handlePullToRefreshFailedTCS = new TaskCompletionSource<PullToRefreshFailedEventArgs>();
+
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+            RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
+
+            //Act
+            await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+            var pullToRefreshCommandTask = repositoryViewModel.PullToRefreshCommand.ExecuteAsync();
+            gitHubUserService.ShouldIncludeOrganizations = !gitHubUserService.ShouldIncludeOrganizations;
+
+            await pullToRefreshCommandTask.ConfigureAwait(false);
+            var handlePullToRefreshFailedResult = await handlePullToRefreshFailedTCS.Task.ConfigureAwait(false);
+
+            //Assert
+            Assert.IsEmpty(repositoryViewModel.VisibleRepositoryList);
+            Assert.IsInstanceOf<ErrorPullToRefreshEventArgs>(handlePullToRefreshFailedResult);
+
+            void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
+            {
+                RepositoryViewModel.PullToRefreshFailed -= HandlePullToRefreshFailed;
+                handlePullToRefreshFailedTCS.SetResult(e);
+            }
+        }
+
+        [Test]
+        public async Task PullToRefreshCommandTest_LoggedOut()
+        {
+            //Arrange
+            var handlePullToRefreshFailedTCS = new TaskCompletionSource<PullToRefreshFailedEventArgs>();
+
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
+
+            RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
+
+            //Act
+            await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+            var pullToRefreshCommandTask = repositoryViewModel.PullToRefreshCommand.ExecuteAsync();
+            await gitHubAuthenticationService.LogOut().ConfigureAwait(false);
+
+            await pullToRefreshCommandTask.ConfigureAwait(false);
+            var handlePullToRefreshFailedResult = await handlePullToRefreshFailedTCS.Task.ConfigureAwait(false);
+
+            //Assert
+            Assert.IsEmpty(repositoryViewModel.VisibleRepositoryList);
+            Assert.IsInstanceOf<LoginExpiredPullToRefreshEventArgs>(handlePullToRefreshFailedResult);
+
+            void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
+            {
+                RepositoryViewModel.PullToRefreshFailed -= HandlePullToRefreshFailed;
+                handlePullToRefreshFailedTCS.SetResult(e);
+            }
+        }
+
+        [Test]
+        public async Task PullToRefreshCommandTest_AuthorizeSessionStarted()
+        {
+            //Arrange
+            var handlePullToRefreshFailedTCS = new TaskCompletionSource<PullToRefreshFailedEventArgs>();
+
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
+
+            RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
+
+            //Act
+            await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+            var pullToRefreshCommandTask = repositoryViewModel.PullToRefreshCommand.ExecuteAsync();
+            try
+            {
+                await gitHubAuthenticationService.AuthorizeSession(new Uri("https://gittrends"), CancellationToken.None).ConfigureAwait(false);
+            }
+            catch
+            {
+
+            }
+
+            await pullToRefreshCommandTask.ConfigureAwait(false);
+            var handlePullToRefreshFailedResult = await handlePullToRefreshFailedTCS.Task.ConfigureAwait(false);
+
+            //Assert
+            Assert.IsEmpty(repositoryViewModel.VisibleRepositoryList);
+            Assert.IsInstanceOf<ErrorPullToRefreshEventArgs>(handlePullToRefreshFailedResult);
+
+            void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
+            {
+                RepositoryViewModel.PullToRefreshFailed -= HandlePullToRefreshFailed;
+                handlePullToRefreshFailedTCS.SetResult(e);
             }
         }
 

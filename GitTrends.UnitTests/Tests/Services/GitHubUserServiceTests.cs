@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Web;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -121,7 +122,7 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public async Task SaveGitHubTokenTest()
+        public async Task SaveGitHubTokenTest_ValidToken()
         {
             //Arrange
             var gitHubToken = new GitHubToken(_token, _scope, _tokenType);
@@ -142,6 +143,25 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
+        public async Task SaveGitHubTokenTest_InvalidScopes()
+        {
+            //Arrange
+            var scopes_MissingOrg = HttpUtility.UrlEncode("public_repo read:user");
+
+            var gitHubToken = new GitHubToken(_token, scopes_MissingOrg, _tokenType);
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+
+            //Act
+            await gitHubUserService.SaveGitHubToken(gitHubToken).ConfigureAwait(false);
+            var retrievedToken = await gitHubUserService.GetGitHubToken().ConfigureAwait(false);
+
+            //Assert
+            Assert.AreEqual(GitHubToken.Empty.AccessToken, retrievedToken.AccessToken);
+            Assert.AreEqual(GitHubToken.Empty.Scope, retrievedToken.Scope);
+            Assert.AreEqual(GitHubToken.Empty.TokenType, retrievedToken.TokenType);
+        }
+
+        [Test]
         public async Task InvalidateTokenTest()
         {
             //Arrange
@@ -149,7 +169,7 @@ namespace GitTrends.UnitTests
             var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
             //Act
-            await SaveGitHubTokenTest().ConfigureAwait(false);
+            await SaveGitHubTokenTest_ValidToken().ConfigureAwait(false);
 
             token_BeforeInvalidation = await gitHubUserService.GetGitHubToken().ConfigureAwait(false);
 
@@ -165,6 +185,36 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(GitHubToken.Empty.AccessToken, token_AfterInvalidation.AccessToken);
             Assert.AreEqual(GitHubToken.Empty.Scope, token_AfterInvalidation.Scope);
             Assert.AreEqual(GitHubToken.Empty.TokenType, token_AfterInvalidation.TokenType);
+        }
+
+        [Test]
+        public async Task ShouldIncludeOrganizationsTest()
+        {
+            //Arrange
+            bool shouldIncludeOrganizations_Initial, shouldIncludeOrganizations_Final;
+            var shouldIncludeOrganizationsChangedTCS = new TaskCompletionSource<bool>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+
+            GitHubUserService.ShouldIncludeOrganizationsChanged += HandleShouldIncludeOrganizationsChanged;
+
+            //Act
+            shouldIncludeOrganizations_Initial = gitHubUserService.ShouldIncludeOrganizations;
+
+            gitHubUserService.ShouldIncludeOrganizations = !gitHubUserService.ShouldIncludeOrganizations;
+            var shouldIncludeOrganziationsChangedResult = await shouldIncludeOrganizationsChangedTCS.Task.ConfigureAwait(false);
+
+            shouldIncludeOrganizations_Final = gitHubUserService.ShouldIncludeOrganizations;
+
+            //Assert
+            Assert.IsFalse(shouldIncludeOrganizations_Initial);
+            Assert.IsTrue(shouldIncludeOrganziationsChangedResult);
+            Assert.IsTrue(shouldIncludeOrganizations_Final);
+
+            void HandleShouldIncludeOrganizationsChanged(object? sender, bool e)
+            {
+                GitHubUserService.ShouldIncludeOrganizationsChanged -= HandleShouldIncludeOrganizationsChanged;
+                shouldIncludeOrganizationsChangedTCS.SetResult(e);
+            }
         }
     }
 }
