@@ -65,8 +65,5 @@ jobs:
       run: |   
         UnitTestProject=`find . -name GitTrends.UnitTests.csproj`
         echo $UnitTestProject
-
-        UnitTestDirectory=`dirname $UnitTestProject`
-        echo $UnitTestDirectory
         
-        dotnet test  -c Release $UnitTestDirectory
+        dotnet test  -c Release $UnitTestProject
