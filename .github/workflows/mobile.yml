@@ -48,8 +48,11 @@ jobs:
 
     steps:          
     - name: Build Android App
-      run: |                    
-        mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /p:Configuration=Release     
+      run: |
+        AndroidProject=`find . -name GitTrends.Android.csproj`
+        echo $AndroidProject
+
+        mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll $AndroidProject /verbosity:normal /p:Configuration=Release     
         
     # - name: Build iOS App
     #   run: |                    
