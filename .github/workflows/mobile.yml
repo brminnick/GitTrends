@@ -9,65 +9,83 @@ on:
       - "*"
 
 jobs:
-  Setup:
-    runs-on: macos-latest
-    
-    env:
-      GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}
-      GetAppCenterApiKeysKey: ${{ secrets.GetAppCenterApiKeysKey}}
-      GetSyncFusionInformationApiKey: ${{ secrets.GetSyncFusionInformationApiKey }}
-      GetNotificationHubInformationApiKey: ${{ secrets.GetNotificationHubInformationApiKey }}
-      APPCENTER_SOURCE_DIRECTORY: .
-      WorkingDirectory: .
 
-    steps:
-    - uses: actions/checkout@v1
-      
-    - name: Setup .NET v5.0
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '5.0.x'
+    Build_Android:
+      runs-on: macos-latest
+      env:
+        GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}
+        GetAppCenterApiKeysKey: ${{ secrets.GetAppCenterApiKeysKey}}
+        GetSyncFusionInformationApiKey: ${{ secrets.GetSyncFusionInformationApiKey }}
+        GetNotificationHubInformationApiKey: ${{ secrets.GetNotificationHubInformationApiKey }}
+        APPCENTER_SOURCE_DIRECTORY: .
+
+      steps:
+      - uses: actions/checkout@v1
         
-    - name: Setup .NET Core v3.1
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '3.1.x'
-      
-    - name: Restore NuGet 
-      run: |
-        nuget restore
-      
-    - name: Inject API Keys
-      run: |
-        chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
-        ./GitTrends.Android/appcenter-pre-build.sh
-
-  Build_Android:
-    runs-on: macos-latest
-    
-    needs: Setup
-
-    steps:          
-    - name: Build Android App
-      run: |
-        AndroidProject=`find $WorkingDirectory -name GitTrends.Android.csproj`
-        echo $AndroidProject
-
-        mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll $AndroidProject /verbosity:normal /p:Configuration=Release     
+      - name: Setup .NET v5.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+          
+      - name: Setup .NET Core v3.1
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
         
-    # - name: Build iOS App
-    #   run: |                    
-    #     mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /p:Configuration=Debug /p:Platform=iPhoneSimulator
-
-  UnitTest_GitTrends:
-    runs-on: macos-latest
-    
-    needs: Setup
-    
-    steps:
-    - name: Run Unit Tests
-      run: |   
-        UnitTestProject=`find $WorkingDirectory -name GitTrends.UnitTests.csproj`
-        echo $UnitTestProject
+      - name: Restore NuGet 
+        run: |
+          nuget restore
         
-        dotnet test  -c Release $UnitTestProject
+      - name: Inject API Keys
+        run: |
+          chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
+          ./GitTrends.Android/appcenter-pre-build.sh
+          
+      - name: Build Android App
+        run: |                    
+          mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /p:Configuration=Release     
+          
+      # - name: Build iOS App
+      #   run: |                    
+      #     mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /p:Configuration=Debug /p:Platform=iPhoneSimulator
+  
+    UnitTest_GitTrends:
+      runs-on: macos-latest
+      env:
+        GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}
+        GetAppCenterApiKeysKey: ${{ secrets.GetAppCenterApiKeysKey}}
+        GetSyncFusionInformationApiKey: ${{ secrets.GetSyncFusionInformationApiKey }}
+        GetNotificationHubInformationApiKey: ${{ secrets.GetNotificationHubInformationApiKey }}
+        APPCENTER_SOURCE_DIRECTORY: .
+
+      steps:
+      - uses: actions/checkout@v1
+        
+      - name: Setup .NET v5.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+          
+      - name: Setup .NET Core v3.1
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+        
+      - name: Restore NuGet 
+        run: |
+          nuget restore
+        
+      - name: Inject API Keys
+        run: |
+          chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
+          ./GitTrends.Android/appcenter-pre-build.sh
+          
+      - name: Run Unit Tests
+        run: |   
+          UnitTestProject=`find . -name GitTrends.UnitTests.csproj`
+          echo $UnitTestProject
+
+          UnitTestDirectory=`dirname $UnitTestProject`
+          echo $UnitTestDirectory
+          
+          dotnet test  -c Release $UnitTestDirectory
