@@ -59,7 +59,8 @@ jobs:
     runs-on: macos-latest
     
     needs: Setup
-        
+    
+    steps:
     - name: Run Unit Tests
       run: |   
         UnitTestProject=`find . -name GitTrends.UnitTests.csproj`
