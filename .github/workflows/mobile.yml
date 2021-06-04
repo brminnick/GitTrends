@@ -50,7 +50,7 @@ jobs:
     steps:          
     - name: Build Android App
       run: |
-        AndroidProject=`find ${{env.WorkingDirectory}} -name GitTrends.Android.csproj`
+        AndroidProject=`find $WorkingDirectory -name GitTrends.Android.csproj`
         echo $AndroidProject
 
         mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll $AndroidProject /verbosity:normal /p:Configuration=Release     
@@ -67,7 +67,7 @@ jobs:
     steps:
     - name: Run Unit Tests
       run: |   
-        UnitTestProject=`find ${{env.WorkingDirectory}} -name GitTrends.UnitTests.csproj`
+        UnitTestProject=`find $WorkingDirectory -name GitTrends.UnitTests.csproj`
         echo $UnitTestProject
         
         dotnet test  -c Release $UnitTestProject
