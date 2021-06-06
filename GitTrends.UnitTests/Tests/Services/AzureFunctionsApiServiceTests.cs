@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
@@ -11,7 +12,7 @@ namespace GitTrends.UnitTests
     class AzureFunctionsApiServiceTests : BaseTest
     {
         [Test]
-        public async Task GetGitHubClientId()
+        public async Task GetGitHubClientIdTest()
         {
             //Arrange
             GetGitHubClientIdDTO? tokenDTO;
@@ -27,7 +28,7 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public void GenerateGitTrendsOAuthToken_InvalidDTO()
+        public void GenerateGitTrendsOAuthTokenTest_InvalidDTO()
         {
             //Arrange
             var generateTokenDTO = new GenerateTokenDTO(string.Empty, string.Empty);
@@ -41,7 +42,7 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public async Task GetSyncfusionInformation()
+        public async Task GetSyncfusionInformationTest()
         {
             //Arrange
             SyncFusionDTO? syncFusionDTO;
@@ -59,7 +60,7 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public async Task GetChartStreamingUrl()
+        public async Task GetChartStreamingUrlTest()
         {
             //Arrange
             StreamingManifest? streamingManifest;
@@ -77,23 +78,7 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public async Task GetAppCenterApiKeys()
-        {
-            //Arrange
-            AppCenterApiKeyDTO? appCenterApiKeyDTO;
-            var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
-
-            //Act
-            appCenterApiKeyDTO = await azureFunctionsApiService.GetAppCenterApiKeys(CancellationToken.None).ConfigureAwait(false);
-
-            //Assert
-            Assert.IsNotNull(appCenterApiKeyDTO);
-            Assert.IsNotNull(appCenterApiKeyDTO.iOS);
-            Assert.IsNotNull(appCenterApiKeyDTO.Android);
-        }
-
-        [Test]
-        public async Task GetNotificationHubInformation()
+        public async Task GetNotificationHubInformationTest()
         {
             //Arrange
             NotificationHubInformation? notificationHubInformation;
@@ -113,6 +98,89 @@ namespace GitTrends.UnitTests
             Assert.IsFalse(string.IsNullOrWhiteSpace(notificationHubInformation.ConnectionString_Debug));
             Assert.IsFalse(string.IsNullOrWhiteSpace(notificationHubInformation.Name));
             Assert.IsFalse(string.IsNullOrWhiteSpace(notificationHubInformation.Name_Debug));
+        }
+
+        [Test]
+        public async Task GetLibrariesTest()
+        {
+            //Arrange
+            IReadOnlyList<NuGetPackageModel> nugetPackageModels;
+            var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
+
+            //Act
+            nugetPackageModels = await azureFunctionsApiService.GetLibraries(CancellationToken.None).ConfigureAwait(false);
+
+            //Assert
+            Assert.IsNotNull(nugetPackageModels);
+            Assert.IsNotEmpty(nugetPackageModels);
+
+            foreach (var nugetPackage in nugetPackageModels)
+            {
+                Assert.IsNotNull(nugetPackage.IconUri);
+                Assert.IsTrue(nugetPackage.IconUri.IsAbsoluteUri);
+                Assert.IsTrue(nugetPackage.IconUri.IsWellFormedOriginalString());
+
+                Assert.IsFalse(string.IsNullOrWhiteSpace(nugetPackage.PackageName));
+
+                Assert.IsNotNull(nugetPackage.WebsiteUri);
+                Assert.IsTrue(nugetPackage.WebsiteUri.IsAbsoluteUri);
+                Assert.IsTrue(nugetPackage.WebsiteUri.IsWellFormedOriginalString());
+            }
+        }
+
+        [Test]
+        public async Task GetGitTrendsStatisticsTest()
+        {
+            //Arrange
+            GitTrendsStatisticsDTO? gitTrendsStatisticsDTO;
+            var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
+
+            //Act
+            gitTrendsStatisticsDTO = await azureFunctionsApiService.GetGitTrendsStatistics(CancellationToken.None).ConfigureAwait(false);
+
+            //Assert
+            Assert.IsNotNull(gitTrendsStatisticsDTO);
+            Assert.IsNotEmpty(gitTrendsStatisticsDTO.Contributors);
+
+            Assert.Greater(gitTrendsStatisticsDTO.Forks, 0);
+            Assert.Greater(gitTrendsStatisticsDTO.Stars, 0);
+            Assert.Greater(gitTrendsStatisticsDTO.Watchers, 0);
+
+            Assert.IsNotNull(gitTrendsStatisticsDTO.GitHubUri);
+            Assert.IsTrue(gitTrendsStatisticsDTO.GitHubUri.IsAbsoluteUri);
+            Assert.IsTrue(gitTrendsStatisticsDTO.GitHubUri.IsWellFormedOriginalString());
+        }
+
+        [Test]
+        public async Task GetAppCenterApiKeysTest()
+        {
+            //Arrange
+            AppCenterApiKeyDTO? appCenterApiKeyDTO;
+            var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
+
+            //Act
+            appCenterApiKeyDTO = await azureFunctionsApiService.GetAppCenterApiKeys(CancellationToken.None).ConfigureAwait(false);
+
+            //Assert
+            Assert.IsNotNull(appCenterApiKeyDTO);
+            Assert.IsNotNull(appCenterApiKeyDTO.iOS);
+            Assert.IsNotNull(appCenterApiKeyDTO.Android);
+        }
+
+        [Test]
+        public async Task GetGitTrendsEnableOrganizationsUriTest()
+        {
+            //Arrange
+            AppCenterApiKeyDTO? appCenterApiKeyDTO;
+            var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
+
+            //Act
+            appCenterApiKeyDTO = await azureFunctionsApiService.GetAppCenterApiKeys(CancellationToken.None).ConfigureAwait(false);
+
+            //Assert
+            Assert.IsNotNull(appCenterApiKeyDTO);
+            Assert.IsNotNull(appCenterApiKeyDTO.iOS);
+            Assert.IsNotNull(appCenterApiKeyDTO.Android);
         }
     }
 }

@@ -13,11 +13,9 @@
 		<DefineConstants>TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_0;</DefineConstants>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
-		<IntermediateOutputPath>obj\AppStore</IntermediateOutputPath>
 		<DebugType>
 		</DebugType>
 		<Optimize>true</Optimize>
-		<OutputPath>bin\AppStore</OutputPath>
 		<DefineConstants>TRACE;NETSTANDARD;NETSTANDARD2_0;AppStore</DefineConstants>
 		<NoWarn>1701;1702</NoWarn>
 		<NoStdLib>false</NoStdLib>

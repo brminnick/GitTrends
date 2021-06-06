@@ -76,5 +76,53 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("CreatedBy", resourceCulture);
             }
         }
+        
+        public static string IncludeOrganziations {
+            get {
+                return ResourceManager.GetString("IncludeOrganziations", resourceCulture);
+            }
+        }
+        
+        public static string GrantOrganizationAccessTitle {
+            get {
+                return ResourceManager.GetString("GrantOrganizationAccessTitle", resourceCulture);
+            }
+        }
+        
+        public static string GrantOrganizationAccessDescription {
+            get {
+                return ResourceManager.GetString("GrantOrganizationAccessDescription", resourceCulture);
+            }
+        }
+        
+        public static string GrantOrganizationAccessAccept {
+            get {
+                return ResourceManager.GetString("GrantOrganizationAccessAccept", resourceCulture);
+            }
+        }
+        
+        public static string GrantOrganizationAccessCancel {
+            get {
+                return ResourceManager.GetString("GrantOrganizationAccessCancel", resourceCulture);
+            }
+        }
+        
+        public static string ScrollToOrganizationAccessTitle {
+            get {
+                return ResourceManager.GetString("ScrollToOrganizationAccessTitle", resourceCulture);
+            }
+        }
+        
+        public static string ScrollToOrganizationAccessDescription {
+            get {
+                return ResourceManager.GetString("ScrollToOrganizationAccessDescription", resourceCulture);
+            }
+        }
+        
+        public static string ScrollToOrganizationAccessDismiss {
+            get {
+                return ResourceManager.GetString("ScrollToOrganizationAccessDismiss", resourceCulture);
+            }
+        }
     }
 }

@@ -15,8 +15,6 @@ namespace GitTrends
 
         public static string GetFullPath(in string fileName) => $"resource://{GetResourcePath(fileName)}";
 
-        internal static IReadOnlyDictionary<string, string> GetColorStringMap(in Xamarin.Forms.Color color) => GetColorStringMap(color.ToHex());
-
         public static IReadOnlyDictionary<string, string> GetColorStringMap(in string hex)
         {
             if (!hex.StartsWith("#"))
@@ -24,5 +22,7 @@ namespace GitTrends
 
             return new Dictionary<string, string> { { "#000000", hex } };
         }
+
+        internal static IReadOnlyDictionary<string, string> GetColorStringMap(in Xamarin.Forms.Color color) => GetColorStringMap(color.ToHex());
     }
 }

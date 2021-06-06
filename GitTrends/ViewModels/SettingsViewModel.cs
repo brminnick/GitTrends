@@ -23,6 +23,8 @@ namespace GitTrends
         readonly IVersionTracking _versionTracking;
         readonly DeepLinkingService _deepLinkingService;
         readonly NotificationService _notificationService;
+        readonly AzureFunctionsApiService _azureFunctionsApiService;
+        readonly GitTrendsStatisticsService _gitTrendsStatisticsService;
         readonly TrendsChartSettingsService _trendsChartSettingsService;
 
         IReadOnlyList<string> _themePickerItemsSource = Array.Empty<string>();
@@ -40,6 +42,7 @@ namespace GitTrends
         string _gitHubUserNameLabelText = string.Empty;
         string _preferredChartsLabelText = string.Empty;
         string _registerForNotificationsLabelText = string.Empty;
+        string _shouldIncludeOrganizationsLabelText = string.Empty;
 
         bool _isRegisterForNotificationsSwitchEnabled = true;
         bool _isRegisterForNotificationsSwitchToggled;
@@ -56,6 +59,8 @@ namespace GitTrends
                                     GitHubUserService gitHubUserService,
                                     DeepLinkingService deepLinkingService,
                                     NotificationService notificationService,
+                                    AzureFunctionsApiService azureFunctionsApiService,
+                                    GitTrendsStatisticsService gitTrendsStatisticsService,
                                     TrendsChartSettingsService trendsChartSettingsService,
                                     GitHubAuthenticationService gitHubAuthenticationService)
                 : base(mainThread, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
@@ -65,6 +70,8 @@ namespace GitTrends
             _languageService = languageService;
             _deepLinkingService = deepLinkingService;
             _notificationService = notificationService;
+            _azureFunctionsApiService = azureFunctionsApiService;
+            _gitTrendsStatisticsService = gitTrendsStatisticsService;
             _trendsChartSettingsService = trendsChartSettingsService;
 
             CopyrightLabelTappedCommand = new AsyncCommand(ExecuteCopyrightLabelTappedCommand);
@@ -103,6 +110,8 @@ namespace GitTrends
 
         public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText == GitHubLoginButtonConstants.Disconnect;
         public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginLabelText == GitHubLoginButtonConstants.ConnectToGitHub;
+
+        public bool IsShouldIncludeOrganizationsSwitchEnabled { get; private set; }
 
         public IReadOnlyList<string> ThemePickerItemsSource
         {
@@ -270,9 +279,31 @@ namespace GitTrends
             set => SetProperty(ref _registerForNotificationsLabelText, value);
         }
 
+        public bool IsShouldIncludeOrganizationsSwitchToggled
+        {
+            get => GitHubUserService.ShouldIncludeOrganizations;
+            set
+            {
+                if (GitHubUserService.ShouldIncludeOrganizations != value)
+                {
+                    GitHubUserService.ShouldIncludeOrganizations = value;
+                    OnPropertyChanged();
+
+                    OnShouldIncludeOrganizationsChanged(value).SafeFireAndForget(ex => AnalyticsService.Report(ex));
+                }
+            }
+        }
+
+        public string ShouldIncludeOrganizationsLabelText
+        {
+            get => _shouldIncludeOrganizationsLabelText;
+            set => SetProperty(ref _shouldIncludeOrganizationsLabelText, value);
+        }
+
         protected override async void NotifyIsAuthenticatingPropertyChanged()
         {
             base.NotifyIsAuthenticatingPropertyChanged();
+
             OnPropertyChanged(nameof(IsAliasLabelVisible));
             await MainThread.InvokeOnMainThreadAsync(GitHubUserViewTappedCommand.RaiseCanExecuteChanged).ConfigureAwait(false);
         }
@@ -321,7 +352,23 @@ namespace GitTrends
             }
         }
 
+        async ValueTask OnShouldIncludeOrganizationsChanged(bool value)
+        {
 
+
+            if (value is true) // Ask the user to manually authorize GitHub Organizations
+            {
+                var isAccepted = await _deepLinkingService.DisplayAlert(SettingsPageConstants.GrantOrganizationAccessTitle, SettingsPageConstants.GrantOrganizationAccessDescription, SettingsPageConstants.GrantOrganizationAccessAccept, SettingsPageConstants.GrantOrganizationAccessCancel);
+                if (isAccepted)
+                {
+                    if (_gitTrendsStatisticsService.EnableOrganizationsUri is null)
+                        throw new InvalidOperationException($"{nameof(GitTrendsStatisticsService)}.{nameof(GitTrendsStatisticsService.EnableOrganizationsUri)} Must Be Initialized");
+
+                    _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri).SafeFireAndForget(ex => AnalyticsService.Report(ex));
+                    await _deepLinkingService.DisplayAlert(SettingsPageConstants.ScrollToOrganizationAccessTitle, SettingsPageConstants.ScrollToOrganizationAccessDescription, SettingsPageConstants.ScrollToOrganizationAccessDismiss);
+                }
+            }
+        }
 
         void ExecutePreferredChartsChangedCommand(TrendsChartOption trendsChartOption)
         {
@@ -391,6 +438,7 @@ namespace GitTrends
             CopyrightLabelText = $"{getVersionNumberText(_versionTracking)}\n{SettingsPageConstants.CreatedBy}";
             PreferredChartsLabelText = SettingsPageConstants.PreferredChartSettingsLabelText;
             RegisterForNotificationsLabelText = SettingsPageConstants.RegisterForNotifications;
+            ShouldIncludeOrganizationsLabelText = SettingsPageConstants.IncludeOrganziations;
 
             ThemePickerItemsSource = ThemePickerConstants.ThemePickerTitles.Values.ToList();
             PreferredChartsItemsSource = TrendsChartConstants.TrendsChartTitles.Values.ToList();
@@ -427,6 +475,8 @@ namespace GitTrends
             GitHubAliasLabelText = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? $"@{GitHubUserService.Alias}" : string.Empty;
             GitHubNameLabelText = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? GitHubUserService.Name : GitHubLoginButtonConstants.NotLoggedIn;
             GitHubAvatarImageSource = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? GitHubUserService.AvatarUrl : BaseTheme.GetDefaultProfileImageSource();
+
+            IsShouldIncludeOrganizationsSwitchEnabled = GitHubUserService.IsAuthenticated;
         }
 
         Task ExecuteGitHubUserViewTappedCommand()

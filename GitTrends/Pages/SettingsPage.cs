@@ -9,7 +9,6 @@ using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -45,8 +44,12 @@ namespace GitTrends
                     RowDefinitions = Rows.Define(
                         (Row.GitHubUser, GitHubUserView.TotalHeight),
                         (Row.GitHubUserSeparator, separatorRowHeight),
+                        (Row.About, settingsRowHeight),
+                        (Row.AboutSeparator, separatorRowHeight),
                         (Row.Login, settingsRowHeight),
                         (Row.LoginSeparator, separatorRowHeight),
+                        (Row.Organizations, settingsRowHeight),
+                        (Row.OrganizationsSeparator, separatorRowHeight),
                         (Row.Notifications, settingsRowHeight),
                         (Row.NotificationsSeparator, separatorRowHeight),
                         (Row.Theme, settingsRowHeight),
@@ -55,8 +58,6 @@ namespace GitTrends
                         (Row.LanguageSeparator, separatorRowHeight),
                         (Row.PreferredCharts, settingsRowHeight),
                         (Row.PreferredChartsSeparator, separatorRowHeight),
-                        (Row.About, settingsRowHeight),
-                        (Row.AboutSeparator, separatorRowHeight),
                         (Row.CopyrightPadding, 20),
                         (Row.Copyright, Star)),
 
@@ -73,6 +74,19 @@ namespace GitTrends
                         new Separator()
                             .Row(Row.GitHubUserSeparator).ColumnSpan(All<Column>()),
 
+                        new AboutRowTappableView(aboutRowTapGesture)
+                            .Row(Row.About).ColumnSpan(All<Column>()),
+                        new AboutRowSvg("about.svg", getSVGIconColor)
+                            .Row(Row.About).Column(Column.Icon),
+                        new AboutTitleLabel(SettingsPageAutomationIds.AboutTitleLabel)
+                            .Row(Row.About).Column(Column.Title)
+                            .Bind(Label.TextProperty, nameof(SettingsViewModel.AboutLabelText)),
+                        new AboutRowSvg("right_arrow.svg", getSVGIconColor).End()
+                            .Row(Row.About).Column(Column.Button),
+
+                        new Separator()
+                            .Row(Row.AboutSeparator).ColumnSpan(All<Column>()),
+
                         new LoginRowTappableView(loginRowTapGesture)
                             .Row(Row.Login).ColumnSpan(All<Column>()),
                         new LoginRowSvg("logout.svg", getSVGIconColor)
@@ -84,6 +98,17 @@ namespace GitTrends
 
                         new Separator()
                             .Row(Row.LoginSeparator).ColumnSpan(All<Column>()),
+
+                        new SvgImage("organization.svg", getSVGIconColor)
+                            .Row(Row.Organizations).Column(Column.Icon),
+                        new SettingsTitleLabel(SettingsPageAutomationIds.IncludeOrganizationsSwitch)
+                            .Row(Row.Organizations).Column(Column.Title)
+                            .Bind(Label.TextProperty, nameof(SettingsViewModel.ShouldIncludeOrganizationsLabelText)),
+                        new IncludeOrganizationsSwitch()
+                            .Row(Row.Organizations).Column(Column.Button),
+
+                        new Separator()
+                            .Row(Row.OrganizationsSeparator).ColumnSpan(All<Column>()),
 
                         new SvgImage("bell.svg", getSVGIconColor)
                             .Row(Row.Notifications).Column(Column.Icon),
@@ -135,19 +160,6 @@ namespace GitTrends
                         new Separator()
                             .Row(Row.PreferredChartsSeparator).ColumnSpan(All<Column>()),
 
-                        new AboutRowTappableView(aboutRowTapGesture)
-                            .Row(Row.About).ColumnSpan(All<Column>()),
-                        new AboutRowSvg("about.svg", getSVGIconColor)
-                            .Row(Row.About).Column(Column.Icon),
-                        new AboutTitleLabel(SettingsPageAutomationIds.AboutTitleLabel)
-                            .Row(Row.About).Column(Column.Title)
-                            .Bind(Label.TextProperty, nameof(SettingsViewModel.AboutLabelText)),
-                        new AboutRowSvg("right_arrow.svg", getSVGIconColor).End()
-                            .Row(Row.About).Column(Column.Button),
-
-                        new Separator()
-                            .Row(Row.AboutSeparator).ColumnSpan(All<Column>()),
-
                         new CopyrightLabel()
                             .Row(Row.Copyright).ColumnSpan(All<Column>())
                     }
@@ -159,7 +171,7 @@ namespace GitTrends
             static Color getSVGIconColor() => (Color)Application.Current.Resources[nameof(BaseTheme.IconColor)];
         }
 
-        enum Row { GitHubUser, GitHubUserSeparator, Login, LoginSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, Language, LanguageSeparator, PreferredCharts, PreferredChartsSeparator, About, AboutSeparator, CopyrightPadding, Copyright }
+        enum Row { GitHubUser, GitHubUserSeparator, About, AboutSeparator, Login, LoginSeparator, Organizations, OrganizationsSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, Language, LanguageSeparator, PreferredCharts, PreferredChartsSeparator, CopyrightPadding, Copyright }
         enum Column { Icon, Title, Button }
 
         protected override void OnAppearing()
@@ -272,6 +284,16 @@ namespace GitTrends
 
                 this.SetBinding(IsToggledProperty, nameof(SettingsViewModel.IsRegisterForNotificationsSwitchToggled));
                 this.SetBinding(IsEnabledProperty, nameof(SettingsViewModel.IsRegisterForNotificationsSwitchEnabled));
+            }
+        }
+
+        class IncludeOrganizationsSwitch : SettingsSwitch
+        {
+            public IncludeOrganizationsSwitch()
+            {
+                AutomationId = SettingsPageAutomationIds.IncludeOrganizationsSwitch;
+
+                this.SetBinding(IsToggledProperty, nameof(SettingsViewModel.IsShouldIncludeOrganizationsSwitchToggled));
             }
         }
 

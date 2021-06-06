@@ -87,6 +87,7 @@ namespace GitTrends
             GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
             GitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
             GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+            GitHubUserService.ShouldIncludeOrganizationsChanged += HandleShouldIncludeOrganizationsChanged;
         }
 
         public static event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
@@ -168,6 +169,7 @@ namespace GitTrends
             var cancellationTokenSource = new CancellationTokenSource();
             GitHubAuthenticationService.LoggedOut += HandleLoggedOut;
             GitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
+            GitHubUserService.ShouldIncludeOrganizationsChanged += HandleShouldIncludeOrganizationsChanged;
 
             AnalyticsService.Track("Refresh Triggered", "Sorting Option", _mobileSortingService.CurrentOption.ToString());
 
@@ -282,6 +284,7 @@ namespace GitTrends
             {
                 GitHubAuthenticationService.LoggedOut -= HandleLoggedOut;
                 GitHubAuthenticationService.AuthorizeSessionStarted -= HandleAuthorizeSessionStarted;
+                GitHubUserService.ShouldIncludeOrganizationsChanged -= HandleShouldIncludeOrganizationsChanged;
 
                 if (cancellationTokenSource.IsCancellationRequested)
                     UpdateListForLoggedOutUser();
@@ -293,6 +296,7 @@ namespace GitTrends
 
             void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
             void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();
+            void HandleShouldIncludeOrganizationsChanged(object sender, bool e) => cancellationTokenSource.Cancel();
         }
 
         async Task ExecuteToggleIsFavoriteCommand(Repository repository)
@@ -402,6 +406,12 @@ namespace GitTrends
 
         //Work-around because ContentPage.OnAppearing does not fire after `ContentPage.PushModalAsync()`
         void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsRefreshing |= e.IsSessionAuthorized;
+
+        async void HandleShouldIncludeOrganizationsChanged(object sender, bool e)
+        {
+            UpdateListForLoggedOutUser();
+            await _repositoryDatabase.DeleteAllData().ConfigureAwait(false);
+        }
 
         void HandleDemoUserActivated(object sender, EventArgs e) => IsRefreshing = true;
 

@@ -4,24 +4,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Polly;
 using Refit;
-using Xamarin.Essentials;
 
 namespace GitTrends.Shared
 {
     public abstract class BaseApiService
     {
-        public static HttpClient CreateHttpClient(in string url)
+        public static HttpClient CreateHttpClient(in string url, HttpClient? client = null)
         {
-            HttpClient client;
-
-            if (DeviceInfo.Platform == DevicePlatform.iOS || DeviceInfo.Platform == DevicePlatform.Android)
-            {
-                client = new HttpClient();
-            }
-            else
-            {
-                client = new HttpClient(new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate });
-            }
+            client ??= new HttpClient(new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate });
 
             client.Timeout = TimeSpan.FromSeconds(5);
             client.BaseAddress = new Uri(url);

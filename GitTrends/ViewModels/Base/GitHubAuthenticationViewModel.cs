@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
-using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
@@ -72,7 +71,7 @@ namespace GitTrends
 
             try
             {
-                var loginUrl = await gitHubAuthenticationService.GetGitHubLoginUrl(cancellationToken).ConfigureAwait(false);
+                var loginUrl = gitHubAuthenticationService.GetGitHubLoginUrl();
 
                 if (!string.IsNullOrWhiteSpace(loginUrl))
                 {

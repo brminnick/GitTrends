@@ -121,6 +121,7 @@ namespace GitTrends.UnitTests
             List<Repository> repositories = new List<Repository>();
             var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
             var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            gitHubUserService.ShouldIncludeOrganizations = true;
 
             //Act
             await AuthenticateUser(gitHubUserService, githubGraphQLApiService).ConfigureAwait(false);
@@ -131,7 +132,7 @@ namespace GitTrends.UnitTests
             }
 
             //Assert
-            Assert.GreaterOrEqual(300, repositories.Count);
+            Assert.GreaterOrEqual(repositories.Count, 0);
 
             var gitTrendsRepository = repositories.Single(x => x.Name is GitHubConstants.GitTrendsRepoName
                                                                 && x.OwnerLogin is GitHubConstants.GitTrendsRepoOwner);
@@ -139,6 +140,64 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(GitHubConstants.GitTrendsRepoName, gitTrendsRepository.Name);
             Assert.AreEqual(GitHubConstants.GitTrendsRepoOwner, gitTrendsRepository.OwnerLogin);
             Assert.AreEqual(AuthenticatedGitHubUserAvatarUrl, gitTrendsRepository.OwnerAvatarUrl);
+
+            Assert.AreEqual(0, repositories.Sum(x => x.TotalViews));
+            Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueViews));
+            Assert.AreEqual(0, repositories.Sum(x => x.TotalClones));
+            Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueClones));
+            Assert.AreEqual(0, repositories.Sum(x => x.StarCount));
+        }
+
+        [Test]
+        public async Task GetOrganizationRepositoriesTest_Demo()
+        {
+            //Arrange
+            List<Repository> repositories = new List<Repository>();
+            var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
+
+            await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
+
+            //Act
+            var apiException = Assert.ThrowsAsync<ApiException>(async () =>
+            {
+                await foreach (var repository in githubGraphQLApiService.GetOrganizationRepositories(CancellationToken.None).ConfigureAwait(false))
+                {
+                    repositories.Add(repository);
+                }
+            });
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.Unauthorized, apiException?.StatusCode);
+            Assert.IsEmpty(repositories);
+        }
+
+        [Test]
+        public async Task GetOrganizationRepositoriesTest_AuthenticatedUser()
+        {
+            //Arrange
+            List<Repository> repositories = new List<Repository>();
+            var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+
+            //Act
+            await AuthenticateUser(gitHubUserService, githubGraphQLApiService).ConfigureAwait(false);
+
+            await foreach (var repository in githubGraphQLApiService.GetOrganizationRepositories(CancellationToken.None).ConfigureAwait(false))
+            {
+                repositories.Add(repository);
+            }
+
+            //Assert
+            if (gitHubUserService.Alias is GitHubConstants.GitTrendsRepoOwner)
+            {
+                Assert.IsNotEmpty(repositories);
+                Assert.GreaterOrEqual(repositories.Count, 100);
+            }
+            else
+            {
+                Assert.IsEmpty(repositories);
+            }
 
             Assert.AreEqual(0, repositories.Sum(x => x.TotalViews));
             Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueViews));
@@ -215,6 +274,46 @@ namespace GitTrends.UnitTests
             Assert.IsFalse(string.IsNullOrWhiteSpace(repository.Description));
 
             Assert.IsFalse(repository.IsFork);
+        }
+
+        [Test]
+        public async Task GetStarGazersTest_DemoUser()
+        {
+            //Arrange
+            StarGazers starGazers;
+
+            var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
+            var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+            await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
+
+            //Act
+            starGazers = await githubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None).ConfigureAwait(false);
+
+            //Assert
+            Assert.IsNotEmpty(starGazers.StarredAt);
+            Assert.Greater(starGazers.StarredAt.Count, 0);
+            Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
+        }
+
+        [Test]
+        public async Task GetStarGazersTest_AuthenticatedUser()
+        {
+            //Arrange
+            StarGazers starGazers;
+
+            var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+
+            await AuthenticateUser(gitHubUserService, githubGraphQLApiService).ConfigureAwait(false);
+
+            //Act
+            starGazers = await githubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None).ConfigureAwait(false);
+
+            //Assert
+            Assert.IsNotEmpty(starGazers.StarredAt);
+            Assert.Greater(starGazers.StarredAt.Count, 400);
+            Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
         }
     }
 }

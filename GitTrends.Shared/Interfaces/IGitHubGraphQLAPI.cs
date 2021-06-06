@@ -10,10 +10,16 @@ namespace GitTrends.Shared
         Task<ApiResponse<GraphQLResponse<RepositoryResponse>>> RepositoryQuery([Body] RepositoryQueryContent request, [Header("Authorization")] string authorization);
 
         [Post("")]
-        Task<ApiResponse<GraphQLResponse<GitHubUserResponse>>> RepositoryConnectionQuery([Body] RepositoryConnectionQueryContent request, [Header("Authorization")] string authorization);
+        Task<ApiResponse<GraphQLResponse<GitHubUserResponse>>> UserRepositoryConnectionQuery([Body] UserRepositoryConnectionQueryContent request, [Header("Authorization")] string authorization);
 
         [Post("")]
-        Task<ApiResponse<GraphQLResponse<GitHubViewerResponse>>> ViewerLoginQuery([Body] ViewerLoginQueryContent request, [Header("Authorization")] string authorization);
+        Task<ApiResponse<GraphQLResponse<GitHubOrganizationResponse>>> OrganizationRepositoryConnectionQuery([Body] OrganizationRepositoryConnectionQueryContent request, [Header("Authorization")] string authorization);
+
+        [Post("")]
+        Task<ApiResponse<GraphQLResponse<GitHubViewerLoginResponse>>> ViewerLoginQuery([Body] ViewerLoginQueryContent request, [Header("Authorization")] string authorization);
+
+        [Post("")]
+        Task<ApiResponse<GraphQLResponse<GitHubViewerOrganizationResponse>>> ViewerOrganizationsQuery([Body] ViewerOrganizationsQueryContent request, [Header("Authorization")] string authorization);
 
         [Post("")]
         Task<ApiResponse<GraphQLResponse<StarGazerResponse>>> StarGazerQuery([Body] StarGazerQueryContent request, [Header("Authorization")] string authorization);
@@ -36,6 +42,15 @@ namespace GitTrends.Shared
         }
     }
 
+    public record ViewerOrganizationsQueryContent : GraphQLRequest
+    {
+        public ViewerOrganizationsQueryContent(string? endCursorString, int numberOfRepositoriesPerRequest = 100)
+            : base("query { viewer { organizations(first:" + numberOfRepositoriesPerRequest + endCursorString + ") { nodes { login }, pageInfo { endCursor, hasNextPage, startCursor, hasPreviousPage } } } }")
+        {
+
+        }
+    }
+
     public record RepositoryQueryContent : GraphQLRequest
     {
         public RepositoryQueryContent(string repositoryOwner, string repositoryName)
@@ -45,10 +60,19 @@ namespace GitTrends.Shared
         }
     }
 
-    public record RepositoryConnectionQueryContent : GraphQLRequest
+    public record UserRepositoryConnectionQueryContent : GraphQLRequest
     {
-        public RepositoryConnectionQueryContent(string repositoryOwner, string endCursorString, int numberOfRepositoriesPerRequest = 100)
+        public UserRepositoryConnectionQueryContent(string repositoryOwner, string endCursorString, int numberOfRepositoriesPerRequest = 100)
             : base("query{ user(login: \"" + repositoryOwner + "\") {repositories(first:" + numberOfRepositoriesPerRequest + endCursorString + ") { nodes { name, description, forkCount, url, owner { avatarUrl, login }, isFork, issues(states:OPEN) { totalCount }, watchers{ totalCount } }, pageInfo { endCursor, hasNextPage, hasPreviousPage, startCursor } } } }")
+        {
+
+        }
+    }
+
+    public record OrganizationRepositoryConnectionQueryContent : GraphQLRequest
+    {
+        public OrganizationRepositoryConnectionQueryContent(string organization, string endCursorString, int numberOfRepositoriesPerRequest = 100)
+            : base("query{ organization(login: \"" + organization + "\") {repositories(first:" + numberOfRepositoriesPerRequest + endCursorString + ") { nodes { name, description, forkCount, url, owner { avatarUrl, login }, isFork, issues(states:OPEN) { totalCount }, watchers{ totalCount } }, pageInfo { endCursor, hasNextPage, hasPreviousPage, startCursor } } } }")
         {
 
         }

@@ -10,18 +10,21 @@ namespace GitTrends
     {
         readonly IAzureFunctionsApi _azureFunctionsApiClient;
 
-        public AzureFunctionsApiService(IAnalyticsService analyticsService, IMainThread mainThread, IAzureFunctionsApi azureFunctionsApi) : base(analyticsService, mainThread)
+        public AzureFunctionsApiService(IMainThread mainThread,
+                                        IAnalyticsService analyticsService,
+                                        IAzureFunctionsApi azureFunctionsApi) : base(analyticsService, mainThread)
         {
             _azureFunctionsApiClient = azureFunctionsApi;
         }
 
-        public Task<GitTrendsStatisticsDTO> GetGitTrendsStatistics(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetGitTrendsStatistics(), cancellationToken);
         public Task<GetGitHubClientIdDTO> GetGitHubClientId(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetGitTrendsClientId(), cancellationToken);
         public Task<GitHubToken> GenerateGitTrendsOAuthToken(GenerateTokenDTO generateTokenDTO, CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GenerateGitTrendsOAuthToken(generateTokenDTO), cancellationToken);
         public Task<SyncFusionDTO> GetSyncfusionInformation(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetSyncfusionInformation(SyncfusionService.AssemblyVersionNumber), cancellationToken);
         public Task<StreamingManifest> GetChartStreamingUrl(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetChartStreamingUrl(), cancellationToken);
         public Task<NotificationHubInformation> GetNotificationHubInformation(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetNotificationHubInformation(), cancellationToken);
         public Task<IReadOnlyList<NuGetPackageModel>> GetLibraries(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetLibraries(), cancellationToken);
+        public Task<GitTrendsStatisticsDTO> GetGitTrendsStatistics(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetGitTrendsStatistics(), cancellationToken);
         public Task<AppCenterApiKeyDTO> GetAppCenterApiKeys(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetAppCenterApiKeys(), cancellationToken);
+        public Task<GitTrendsEnableOrganizationsUriDTO> GetGitTrendsEnableOrganizationsUri(CancellationToken cancellationToken) => AttemptAndRetry_Mobile(() => _azureFunctionsApiClient.GetGitTrendsEnableOrganizationsUri(), cancellationToken);
     }
 }

@@ -30,7 +30,7 @@ namespace GitTrends.Functions
         }
 
         [Function(nameof(SendSilentPushNotification) + "Debug")]
-        public static Task RunDebug([TimerTrigger(_runEveryHourCron, RunOnStartup = true)] TimerInfo myTimer, FunctionContext functionContext)
+        public static Task RunDebug([TimerTrigger(_runEveryHourCron)] TimerInfo myTimer, FunctionContext functionContext)
         {
             var logger = functionContext.GetLogger<SendSilentPushNotification>();
 
