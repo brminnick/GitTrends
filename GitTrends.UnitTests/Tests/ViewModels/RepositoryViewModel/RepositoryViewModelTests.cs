@@ -127,7 +127,7 @@ namespace GitTrends.UnitTests
 
             //Assert
             Assert.IsEmpty(repositoryViewModel.VisibleRepositoryList);
-            Assert.IsInstanceOf<LoginExpiredPullToRefreshEventArgs>(handlePullToRefreshFailedResult);
+            Assert.IsTrue(handlePullToRefreshFailedResult is LoginExpiredPullToRefreshEventArgs or ErrorPullToRefreshEventArgs);
 
             void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
             {
