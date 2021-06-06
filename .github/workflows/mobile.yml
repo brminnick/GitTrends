@@ -9,15 +9,8 @@ on:
       - "*"
 
 jobs:
-
-    Build_Android:
+    Setup:
       runs-on: macos-latest
-      env:
-        GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}
-        GetAppCenterApiKeysKey: ${{ secrets.GetAppCenterApiKeysKey}}
-        GetSyncFusionInformationApiKey: ${{ secrets.GetSyncFusionInformationApiKey }}
-        GetNotificationHubInformationApiKey: ${{ secrets.GetNotificationHubInformationApiKey }}
-        APPCENTER_SOURCE_DIRECTORY: .
 
       steps:
       - uses: actions/checkout@v1
@@ -31,15 +24,18 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '3.1.x'
-        
+
+    Build_Android:
+      runs-on: macos-latest
+
+      needs: Setup
+
+      steps:
+      - uses: actions/checkout@v1
+
       - name: Restore NuGet 
         run: |
           nuget restore
-        
-      - name: Inject API Keys
-        run: |
-          chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
-          ./GitTrends.Android/appcenter-pre-build.sh
           
       - name: Build Android App
         run: |                    
@@ -51,6 +47,7 @@ jobs:
   
     UnitTest_GitTrends:
       runs-on: macos-latest
+
       env:
         GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}
         GetAppCenterApiKeysKey: ${{ secrets.GetAppCenterApiKeysKey}}
@@ -58,23 +55,11 @@ jobs:
         GetNotificationHubInformationApiKey: ${{ secrets.GetNotificationHubInformationApiKey }}
         APPCENTER_SOURCE_DIRECTORY: .
 
+      needs: Setup
+
       steps:
       - uses: actions/checkout@v1
-        
-      - name: Setup .NET v5.0
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '5.0.x'
-          
-      - name: Setup .NET Core v3.1
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '3.1.x'
-        
-      - name: Restore NuGet 
-        run: |
-          nuget restore
-        
+
       - name: Inject API Keys
         run: |
           chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
@@ -84,8 +69,5 @@ jobs:
         run: |   
           UnitTestProject=`find . -name GitTrends.UnitTests.csproj`
           echo $UnitTestProject
-
-          UnitTestDirectory=`dirname $UnitTestProject`
-          echo $UnitTestDirectory
           
-          dotnet test  -c Release $UnitTestDirectory
+          dotnet test  -c Release $UnitTestProject
