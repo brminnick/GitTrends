@@ -22,8 +22,8 @@ namespace GitTrends.UnitTests
             license_final = await syncfusionService.GetLicense().ConfigureAwait(false);
 
             //Assert
-            Assert.IsTrue(string.IsNullOrWhiteSpace(license_initial));
-            Assert.IsFalse(string.IsNullOrWhiteSpace(license_final));
+            Assert.IsNull(license_initial);
+            Assert.IsNotNull(license_final);
             Assert.Greater(SyncfusionService.AssemblyVersionNumber, 0);
         }
     }
