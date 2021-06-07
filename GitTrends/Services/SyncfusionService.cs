@@ -48,10 +48,10 @@ namespace GitTrends
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(syncFusionLicense))
-                Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicense);
-            else
+            if (string.IsNullOrWhiteSpace(syncFusionLicense))
                 throw new SyncFusionLicenseException($"{nameof(syncFusionLicense)} is empty");
+            else
+                Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicense);
         }
 
         public Task<string?> GetLicense() => _secureStorage.GetAsync(SyncfusionLicenseKey);
