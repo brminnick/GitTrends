@@ -16,15 +16,22 @@ namespace GitTrends
     public class SettingsPage : BaseContentPage<SettingsViewModel>
     {
         readonly Grid _contentGrid;
+        readonly DeepLinkingService _deepLinkingService;
+        readonly GitTrendsStatisticsService _gitTrendsStatisticsService;
 
         CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
 
         public SettingsPage(IMainThread mainThread,
                             IAnalyticsService analyticsService,
-                            SettingsViewModel settingsViewModel) : base(settingsViewModel, analyticsService, mainThread, true)
+                            SettingsViewModel settingsViewModel,
+                            DeepLinkingService deepLinkingService,
+                            GitTrendsStatisticsService gitTrendsStatisticsService) : base(settingsViewModel, analyticsService, mainThread, true)
         {
             const int separatorRowHeight = 1;
             const int settingsRowHeight = 38;
+
+            _deepLinkingService = deepLinkingService;
+            _gitTrendsStatisticsService = gitTrendsStatisticsService;
 
             var loginRowTapGesture = new TapGestureRecognizer();
             loginRowTapGesture.Tapped += HandleLoginRowTapped;
@@ -161,7 +168,16 @@ namespace GitTrends
                             .Row(Row.PreferredChartsSeparator).ColumnSpan(All<Column>()),
 
                         new CopyrightLabel()
-                            .Row(Row.Copyright).ColumnSpan(All<Column>())
+                            .Row(Row.Copyright).ColumnSpan(All<Column>()),
+
+                        new OrganizationsCarouselView()
+                            .Row(Row.GitHubUser).Column(Column.Icon)
+                            .RowSpan(All<Row>()).ColumnSpan(All<Column>())
+                            .Invoke(view =>
+                            {
+                                view.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsOrganizationsCarouselViewVisible));
+                                OrganizationsCarouselView.LaunchOrganizationsButtonTapped += HandleLaunchOrganzationsButtonTapped;
+                            })
                     }
                 }
             }.Paddings(bottom: 8);
@@ -210,6 +226,14 @@ namespace GitTrends
 
                 await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(1, 350, Easing.CubicOut)));
             }
+        }
+
+        async void HandleLaunchOrganzationsButtonTapped(object sender, EventArgs e)
+        {
+            if (_gitTrendsStatisticsService.EnableOrganizationsUri is null)
+                throw new InvalidOperationException($"{nameof(GitTrendsStatisticsService)}.{nameof(GitTrendsStatisticsService.EnableOrganizationsUri)} Must Be Initialized");
+
+            await _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri);
         }
 
         class AboutRowTappableView : View

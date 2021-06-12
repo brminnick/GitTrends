@@ -46,6 +46,7 @@ namespace GitTrends
 
         bool _isRegisterForNotificationsSwitchEnabled = true;
         bool _isRegisterForNotificationsSwitchToggled;
+        bool _isOrganizationsCarouselViewVisible;
 
         int _themePickerSelectedIndex;
         int _languagePickerSelectedIndex;
@@ -289,9 +290,15 @@ namespace GitTrends
                     GitHubUserService.ShouldIncludeOrganizations = value;
                     OnPropertyChanged();
 
-                    OnShouldIncludeOrganizationsChanged(value).SafeFireAndForget(ex => AnalyticsService.Report(ex));
+                    IsOrganizationsCarouselViewVisible = true;
                 }
             }
+        }
+
+        public bool IsOrganizationsCarouselViewVisible
+        {
+            get => _isOrganizationsCarouselViewVisible;
+            set => SetProperty(ref _isOrganizationsCarouselViewVisible, value);
         }
 
         public string ShouldIncludeOrganizationsLabelText
@@ -349,24 +356,6 @@ namespace GitTrends
                 SetGitHubValues();
 
                 demoUserActivatedTCS.SetResult(null);
-            }
-        }
-
-        async ValueTask OnShouldIncludeOrganizationsChanged(bool value)
-        {
-
-
-            if (value is true) // Ask the user to manually authorize GitHub Organizations
-            {
-                var isAccepted = await _deepLinkingService.DisplayAlert(SettingsPageConstants.GrantOrganizationAccessTitle, SettingsPageConstants.GrantOrganizationAccessDescription, SettingsPageConstants.GrantOrganizationAccessAccept, SettingsPageConstants.GrantOrganizationAccessCancel);
-                if (isAccepted)
-                {
-                    if (_gitTrendsStatisticsService.EnableOrganizationsUri is null)
-                        throw new InvalidOperationException($"{nameof(GitTrendsStatisticsService)}.{nameof(GitTrendsStatisticsService.EnableOrganizationsUri)} Must Be Initialized");
-
-                    _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri).SafeFireAndForget(ex => AnalyticsService.Report(ex));
-                    await _deepLinkingService.DisplayAlert(SettingsPageConstants.ScrollToOrganizationAccessTitle, SettingsPageConstants.ScrollToOrganizationAccessDescription, SettingsPageConstants.ScrollToOrganizationAccessDismiss);
-                }
             }
         }
 
