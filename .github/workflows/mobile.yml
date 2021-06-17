@@ -53,9 +53,9 @@ jobs:
         run: |
           nuget restore
           
-      - name: Build Android App
+      - name: Build UITest Project
         run: |                    
-          mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.UITests/GitTrends.UITests.csproj /verbosity:normal /p:Configuration=Release   
+          mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.UITests/GitTrends.UITests.csproj   
   
     UnitTest_GitTrends:
       runs-on: macos-latest
