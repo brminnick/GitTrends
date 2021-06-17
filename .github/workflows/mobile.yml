@@ -41,9 +41,21 @@ jobs:
         run: |                    
           mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /p:Configuration=Release     
           
-      # - name: Build iOS App
-      #   run: |                    
-      #     mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.iOS/GitTrends.iOS.csproj /verbosity:normal /p:Configuration=Debug /p:Platform=iPhoneSimulator
+    Build_UITests:
+      runs-on: macos-latest
+
+      needs: Setup
+
+      steps:
+      - uses: actions/checkout@v1
+
+      - name: Restore NuGet 
+        run: |
+          nuget restore
+          
+      - name: Build Android App
+        run: |                    
+          mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.UITests/GitTrends.UITests.csproj /verbosity:normal /p:Configuration=Release   
   
     UnitTest_GitTrends:
       runs-on: macos-latest
