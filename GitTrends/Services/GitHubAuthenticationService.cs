@@ -115,8 +115,8 @@ namespace GitTrends
 
                 var (login, name, avatarUri) = await _gitHubGraphQLApiService.GetCurrentUserInfo(cancellationToken).ConfigureAwait(false);
 
-                _gitHubUserService.Alias = login;
                 _gitHubUserService.Name = name;
+                _gitHubUserService.Alias = login;
                 _gitHubUserService.AvatarUrl = avatarUri.ToString();
 
                 OnAuthorizeSessionCompleted(true);
