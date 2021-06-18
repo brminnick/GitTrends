@@ -31,9 +31,6 @@ namespace GitTrends.Functions
             using var jsonTextReader = new JsonTextReader(streamReader);
             var generateTokenDTO = _serializer.Deserialize<GenerateTokenDTO>(jsonTextReader);
 
-            logger.LogInformation($"{nameof(generateTokenDTO.State)}: {generateTokenDTO?.State ?? null}");
-            logger.LogInformation($"{nameof(generateTokenDTO.LoginCode)}: {generateTokenDTO?.LoginCode ?? null}");
-
             if (generateTokenDTO is null)
             {
                 var badRequestResponse = req.CreateResponse(HttpStatusCode.BadRequest);
