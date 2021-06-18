@@ -69,5 +69,10 @@
       <Reference Include="System" />
       <Reference Include="System.Net.Http" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj">
+        <Name>GitTrends.Mobile.Common</Name>
+      </ProjectReference>
+    </ItemGroup>
     <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
