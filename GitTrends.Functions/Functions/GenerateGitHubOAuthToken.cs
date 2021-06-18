@@ -15,7 +15,7 @@ namespace GitTrends.Functions
         readonly static string _clientSecret = Environment.GetEnvironmentVariable("GitTrendsClientSecret") ?? string.Empty;
         readonly static string _clientId = Environment.GetEnvironmentVariable("GitTrendsClientId") ?? string.Empty;
 
-        readonly static JsonSerializer serializer = new();
+        readonly static JsonSerializer _serializer = new();
 
         readonly GitHubAuthService _gitHubAuthService;
 
@@ -29,7 +29,10 @@ namespace GitTrends.Functions
 
             using var streamReader = new StreamReader(req.Body);
             using var jsonTextReader = new JsonTextReader(streamReader);
-            var generateTokenDTO = serializer.Deserialize<GenerateTokenDTO>(jsonTextReader);
+            var generateTokenDTO = _serializer.Deserialize<GenerateTokenDTO>(jsonTextReader);
+
+            logger.LogInformation($"{nameof(generateTokenDTO.State)}: {generateTokenDTO?.State ?? null}");
+            logger.LogInformation($"{nameof(generateTokenDTO.LoginCode)}: {generateTokenDTO?.LoginCode ?? null}");
 
             if (generateTokenDTO is null)
             {

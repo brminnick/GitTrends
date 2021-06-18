@@ -28,17 +28,21 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public void GenerateGitTrendsOAuthTokenTest_InvalidDTO()
+        public async Task GenerateGitTrendsOAuthTokenTest_InvalidDTO()
         {
             //Arrange
+            GitHubToken? gitHubToken;
             var generateTokenDTO = new GenerateTokenDTO(string.Empty, string.Empty);
             var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
 
             //Act
-            var apiException = Assert.ThrowsAsync<ApiException>(() => azureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO, CancellationToken.None));
+            gitHubToken = await azureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO, CancellationToken.None).ConfigureAwait(false);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.BadRequest, apiException?.StatusCode);
+            Assert.IsNotNull(gitHubToken);
+            Assert.IsEmpty(GitHubToken.Empty.AccessToken);
+            Assert.IsEmpty(GitHubToken.Empty.Scope);
+            Assert.IsEmpty(GitHubToken.Empty.TokenType);
         }
 
         [Test]
