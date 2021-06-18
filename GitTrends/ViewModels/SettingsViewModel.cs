@@ -46,6 +46,7 @@ namespace GitTrends
 
         bool _isRegisterForNotificationsSwitchEnabled = true;
         bool _isRegisterForNotificationsSwitchToggled;
+        bool _isShouldIncludeOrganizationsSwitchEnabled;
 
         int _themePickerSelectedIndex;
         int _languagePickerSelectedIndex;
@@ -111,7 +112,11 @@ namespace GitTrends
         public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText == GitHubLoginButtonConstants.Disconnect;
         public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginLabelText == GitHubLoginButtonConstants.ConnectToGitHub;
 
-        public bool IsShouldIncludeOrganizationsSwitchEnabled { get; private set; }
+        public bool IsShouldIncludeOrganizationsSwitchEnabled
+        {
+            get => _isShouldIncludeOrganizationsSwitchEnabled;
+            set => SetProperty(ref _isShouldIncludeOrganizationsSwitchEnabled, value, () => OnPropertyChanged(nameof(IsShouldIncludeOrganizationsSwitchToggled)));
+        }
 
         public IReadOnlyList<string> ThemePickerItemsSource
         {
@@ -281,10 +286,10 @@ namespace GitTrends
 
         public bool IsShouldIncludeOrganizationsSwitchToggled
         {
-            get => GitHubUserService.ShouldIncludeOrganizations;
+            get => GitHubUserService.ShouldIncludeOrganizations && IsShouldIncludeOrganizationsSwitchEnabled;
             set
             {
-                if (GitHubUserService.ShouldIncludeOrganizations != value)
+                if (IsShouldIncludeOrganizationsSwitchEnabled && GitHubUserService.ShouldIncludeOrganizations != value)
                 {
                     GitHubUserService.ShouldIncludeOrganizations = value;
                     OnPropertyChanged();
