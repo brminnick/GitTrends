@@ -318,6 +318,7 @@ namespace GitTrends
                 AutomationId = SettingsPageAutomationIds.IncludeOrganizationsSwitch;
 
                 this.SetBinding(IsToggledProperty, nameof(SettingsViewModel.IsShouldIncludeOrganizationsSwitchToggled));
+                this.SetBinding(IsEnabledProperty, nameof(SettingsViewModel.IsShouldIncludeOrganizationsSwitchEnabled));
             }
         }
 
