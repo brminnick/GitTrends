@@ -20,7 +20,7 @@ namespace GitTrends.UITests
         bool IsRefreshViewRefreshIndicatorDisplayed => App switch
         {
             AndroidApp androidApp => (bool)androidApp.Query(x => x.Class("RefreshViewRenderer").Invoke("isRefreshing")).First(),
-            IApp iOSApp => iOSApp.Query(x => x.Class("UIRefreshControl")).Any(),
+            iOSApp iOSApp => iOSApp.Query(x => x.Class("UIRefreshControl")).Any(),
             _ => throw new NotSupportedException("Xamarin.UITest only supports Android and iOS"),
         };
 
