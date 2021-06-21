@@ -27,7 +27,7 @@
         <PackageReference Include="Autofac" Version="6.2.0" />
         <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.1.4" />
         <PackageReference Include="HtmlAgilityPack" Version="1.11.34" />
-        <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.2.0" />
+        <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.3.0" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.3.0" />
         <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
         <PackageReference Include="Shiny.Notifications" Version="2.1.0.2741" />
