@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
+using Xamarin.UITest.iOS;
 
 namespace GitTrends.UITests
 {
