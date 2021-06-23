@@ -1,17 +1,17 @@
 ﻿using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms.PancakeView;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
     public class ChartOnboardingPage : BaseOnboardingContentPage
     {
-        public ChartOnboardingPage(IAnalyticsService analyticsService, IMainThread mainThread) : base(analyticsService, mainThread, Color.FromHex(BaseTheme.CoralColorHex), OnboardingConstants.SkipText, 1)
+        public ChartOnboardingPage(IMainThread mainThread, IAnalyticsService analyticsService)
+            : base(OnboardingConstants.SkipText, Color.FromHex(BaseTheme.CoralColorHex), mainThread, 1, analyticsService)
         {
         }
 

@@ -5,7 +5,6 @@ using GitTrends.Shared;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -13,7 +12,7 @@ namespace GitTrends
     public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
     {
         public ConnectToGitHubOnboardingPage(IMainThread mainthread, IAnalyticsService analyticsService)
-                : base(analyticsService, mainthread, Color.FromHex(BaseTheme.CoralColorHex), OnboardingConstants.TryDemoText, 3)
+                : base(OnboardingConstants.TryDemoText, Color.FromHex(BaseTheme.CoralColorHex), mainthread, 3, analyticsService)
         {
             GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
         }

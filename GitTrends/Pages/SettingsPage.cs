@@ -171,8 +171,8 @@ namespace GitTrends
                             .Row(Row.Copyright).ColumnSpan(All<Column>()),
 
                         new OrganizationsCarouselView()
-                            .Row(Row.GitHubUser).Column(Column.Icon)
-                            .RowSpan(All<Row>()).ColumnSpan(All<Column>())
+                            .Row(Row.GitHubUserSeparator).Column(Column.Icon)
+                            .RowSpan(15).ColumnSpan(All<Column>())
                             .Invoke(view =>
                             {
                                 view.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsOrganizationsCarouselViewVisible));

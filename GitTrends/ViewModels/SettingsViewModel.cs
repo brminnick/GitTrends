@@ -295,7 +295,7 @@ namespace GitTrends
                     GitHubUserService.ShouldIncludeOrganizations = value;
                     OnPropertyChanged();
 
-                    IsOrganizationsCarouselViewVisible = true;
+                    IsOrganizationsCarouselViewVisible = value;
                 }
             }
         }

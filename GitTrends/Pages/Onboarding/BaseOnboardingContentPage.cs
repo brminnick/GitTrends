@@ -10,11 +10,11 @@ namespace GitTrends
 {
     public abstract class BaseOnboardingContentPage : BaseContentPage
     {
-        protected BaseOnboardingContentPage(in IAnalyticsService analyticsService,
-                                            in IMainThread mainThread,
+        protected BaseOnboardingContentPage(in string nextButtonText,
                                             in Color backgroundColor,
-                                            in string nextButtonText,
-                                            in int carouselPositionIndex) : base(analyticsService, mainThread)
+                                            in IMainThread mainThread,
+                                            in int carouselPositionIndex,
+                                            in IAnalyticsService analyticsService) : base(analyticsService, mainThread)
         {
             //Don't Use BaseTheme.PageBackgroundColor
             RemoveDynamicResource(BackgroundColorProperty);
@@ -148,7 +148,7 @@ namespace GitTrends
             }
         }
 
-        class OpacityOverlay : BoxView
+        class OpacityOverlay : View
         {
             public OpacityOverlay() => BackgroundColor = Color.White.MultiplyAlpha(0.25);
         }
