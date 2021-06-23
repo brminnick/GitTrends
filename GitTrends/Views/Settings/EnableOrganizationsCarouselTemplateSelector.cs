@@ -17,17 +17,14 @@ namespace GitTrends
 
             }
 
-            enum Row { Image, Title, Description, Indicator }
+            enum Row { Image, Title, Description }
 
             static Grid CreateItemsGrid(IncludeOrganizationsCarouselModel includeOrganizationsModel) => new()
             {
-                BackgroundColor = includeOrganizationsModel.BackgroundColor,
-
                 RowDefinitions = Rows.Define(
                     (Row.Image, Stars(4)),
                     (Row.Title, Stars(1) ),
-                    (Row.Description, Stars(2)),
-                    (Row.Indicator, Stars(1))),
+                    (Row.Description, Stars(2))),
 
                 Children =
                 {
@@ -44,10 +41,7 @@ namespace GitTrends
                         .Row(Row.Title),
 
                     new DescriptionLabel(includeOrganizationsModel.Text)
-                        .Row(Row.Description),
-
-                    new EnableOrganizationsCarouselIndicatorView(includeOrganizationsModel.PositionNumber)
-                        .Row(Row.Indicator)
+                        .Row(Row.Description)
                 }
             };
 
@@ -66,6 +60,8 @@ namespace GitTrends
                     LineHeight = 1.12;
                     FontFamily = FontFamilyConstants.RobotoBold;
                     AutomationId = SettingsPageAutomationIds.EnableOrangizationsCarouselTitle;
+
+                    Padding = new Thickness(12, 0);
                 }
             }
 
@@ -81,28 +77,8 @@ namespace GitTrends
                     FontFamily = FontFamilyConstants.RobotoRegular;
                     VerticalTextAlignment = TextAlignment.Start;
                     AutomationId = SettingsPageAutomationIds.EnableOrangizationsCarouselDescription;
-                }
-            }
 
-            class EnableOrganizationsCarouselIndicatorView : IndicatorView
-            {
-                const int _pageCount = 3;
-
-                public EnableOrganizationsCarouselIndicatorView(in int position)
-                {
-                    Count = _pageCount;
-                    Position = position >= 0 && position < _pageCount
-                                ? position
-                                : throw new ArgumentOutOfRangeException(nameof(position), $"{nameof(position)} must be less than {_pageCount} and greater than 0");
-
-                    IsEnabled = false;
-
-                    SelectedIndicatorColor = Color.White;
-                    IndicatorColor = Color.White.MultiplyAlpha(0.25);
-
-                    AutomationId = SettingsPageAutomationIds.EnableOrangizationsPageIndicator;
-
-                    this.Center();
+                    Padding = new Thickness(12, 0);
                 }
             }
         }

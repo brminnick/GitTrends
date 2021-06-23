@@ -17,7 +17,7 @@ namespace GitTrends
     {
         readonly Grid _contentGrid;
         readonly DeepLinkingService _deepLinkingService;
-        readonly OrganizationsCarouselView _organizationsCarouselView;
+        readonly OrganizationsCarouselFrame _organizationsCarouselFrame;
         readonly GitTrendsStatisticsService _gitTrendsStatisticsService;
 
         CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
@@ -173,9 +173,9 @@ namespace GitTrends
                         new CopyrightLabel()
                             .Row(Row.Copyright).ColumnSpan(All<Column>()),
 
-                        new OrganizationsCarouselView().Assign(out _organizationsCarouselView)
-                            .Row(Row.GitHubUserSeparator).Column(Column.Icon)
-                            .RowSpan(15).ColumnSpan(All<Column>())
+                        new OrganizationsCarouselFrame().Assign(out _organizationsCarouselFrame)
+                            .Row(Row.GitHubUser).Column(Column.Icon)
+                            .RowSpan(All<Row>()).ColumnSpan(All<Column>())
                     }
                 }
             }.Paddings(bottom: 8);
@@ -237,9 +237,9 @@ namespace GitTrends
         async void HandleOrganizationsCarouselViewVisiblilityChanged(object sender, bool isVisible) => await MainThread.InvokeOnMainThreadAsync(async () =>
         {
             if (isVisible)
-                await _organizationsCarouselView.FadeTo(1, 250);
+                await _organizationsCarouselFrame.FadeTo(1, 250);
             else
-                await _organizationsCarouselView.FadeTo(0, 250);
+                await _organizationsCarouselFrame.FadeTo(0, 250);
         });
 
         class AboutRowTappableView : View
