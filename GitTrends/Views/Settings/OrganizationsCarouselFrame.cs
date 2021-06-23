@@ -1,4 +1,5 @@
 ﻿using GitTrends.Mobile.Common;
+using GitTrends.Shared;
 using Sharpnado.MaterialFrame;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
@@ -10,9 +11,12 @@ namespace GitTrends
         const int _cornerRadius = 12;
 
         readonly IndicatorView _indicatorView;
+        readonly IAnalyticsService _analyticsService;
 
-        public OrganizationsCarouselFrame()
+        public OrganizationsCarouselFrame(IAnalyticsService analyticsService)
         {
+            _analyticsService = analyticsService;
+
             Opacity = 0; // Keep this view hidden until user toggles the IncludeOrganizations Switch
             Padding = 0;
             CornerRadius = _cornerRadius;
@@ -48,6 +52,8 @@ namespace GitTrends
         {
             LightThemeBackgroundColor = GetBackgroundColor(e.CurrentPosition);
             _indicatorView.Position = e.CurrentPosition;
+
+            _analyticsService.Track($"{nameof(OrganizationsCarouselView)} Page {e.CurrentPosition} Appeared");
         }
 
         class OrganizationsCarouselView : CarouselView

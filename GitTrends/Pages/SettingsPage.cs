@@ -173,7 +173,7 @@ namespace GitTrends
                         new CopyrightLabel()
                             .Row(Row.Copyright).ColumnSpan(All<Column>()),
 
-                        new OrganizationsCarouselFrame().Assign(out _organizationsCarouselFrame)
+                        new OrganizationsCarouselFrame(analyticsService).Assign(out _organizationsCarouselFrame)
                             .Row(Row.GitHubUser).Column(Column.Icon)
                             .RowSpan(All<Row>()).ColumnSpan(All<Column>())
                     }
@@ -237,9 +237,15 @@ namespace GitTrends
         async void HandleOrganizationsCarouselViewVisiblilityChanged(object sender, bool isVisible) => await MainThread.InvokeOnMainThreadAsync(async () =>
         {
             if (isVisible)
+            {
                 await _organizationsCarouselFrame.FadeTo(1, 250);
+                AnalyticsService.Track($"OrganizationsCarouselView Page 1 Appeared");
+            }
             else
+            {
                 await _organizationsCarouselFrame.FadeTo(0, 250);
+                AnalyticsService.Track($"OrganizationsCarouselView Dismissed");
+            }
         });
 
         class AboutRowTappableView : View
