@@ -17,6 +17,7 @@ namespace GitTrends
     public class SettingsViewModel : GitHubAuthenticationViewModel
     {
         readonly static WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new();
+        readonly static WeakEventManager<bool> _organizationsCarouselViewVisiblilityChangedEventManager = new();
 
         readonly ThemeService _themeService;
         readonly LanguageService _languageService;
@@ -46,7 +47,6 @@ namespace GitTrends
 
         bool _isRegisterForNotificationsSwitchEnabled = true;
         bool _isRegisterForNotificationsSwitchToggled;
-        bool _isOrganizationsCarouselViewVisible;
         bool _isShouldIncludeOrganizationsSwitchEnabled;
 
         int _themePickerSelectedIndex;
@@ -104,6 +104,12 @@ namespace GitTrends
         {
             add => _setNotificationsPreferenceCompletedEventManager.AddEventHandler(value);
             remove => _setNotificationsPreferenceCompletedEventManager.RemoveEventHandler(value);
+        }
+
+        public static event EventHandler<bool> OrganizationsCarouselViewVisiblilityChanged
+        {
+            add => _organizationsCarouselViewVisiblilityChangedEventManager.AddEventHandler(value);
+            remove => _organizationsCarouselViewVisiblilityChangedEventManager.RemoveEventHandler(value);
         }
 
         public ICommand CopyrightLabelTappedCommand { get; }
@@ -295,15 +301,9 @@ namespace GitTrends
                     GitHubUserService.ShouldIncludeOrganizations = value;
                     OnPropertyChanged();
 
-                    IsOrganizationsCarouselViewVisible = value;
+                    OnOrganizationsCarouselViewVisiblilityChanged(value);
                 }
             }
-        }
-
-        public bool IsOrganizationsCarouselViewVisible
-        {
-            get => _isOrganizationsCarouselViewVisible;
-            set => SetProperty(ref _isOrganizationsCarouselViewVisible, value);
         }
 
         public string ShouldIncludeOrganizationsLabelText
@@ -490,5 +490,6 @@ namespace GitTrends
         }
 
         void OnSetNotificationsCompleted(AccessState? accessState) => _setNotificationsPreferenceCompletedEventManager.RaiseEvent(this, accessState, nameof(SetNotificationsPreferenceCompleted));
+        void OnOrganizationsCarouselViewVisiblilityChanged(bool isVisible) => _organizationsCarouselViewVisiblilityChangedEventManager.RaiseEvent(this, isVisible, nameof(OrganizationsCarouselViewVisiblilityChanged));
     }
 }

@@ -17,6 +17,7 @@ namespace GitTrends
     {
         readonly Grid _contentGrid;
         readonly DeepLinkingService _deepLinkingService;
+        readonly OrganizationsCarouselView _organizationsCarouselView;
         readonly GitTrendsStatisticsService _gitTrendsStatisticsService;
 
         CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
@@ -29,6 +30,8 @@ namespace GitTrends
         {
             const int separatorRowHeight = 1;
             const int settingsRowHeight = 38;
+
+            SettingsViewModel.OrganizationsCarouselViewVisiblilityChanged += HandleOrganizationsCarouselViewVisiblilityChanged;
 
             _deepLinkingService = deepLinkingService;
             _gitTrendsStatisticsService = gitTrendsStatisticsService;
@@ -170,14 +173,9 @@ namespace GitTrends
                         new CopyrightLabel()
                             .Row(Row.Copyright).ColumnSpan(All<Column>()),
 
-                        new OrganizationsCarouselView()
+                        new OrganizationsCarouselView().Assign(out _organizationsCarouselView)
                             .Row(Row.GitHubUserSeparator).Column(Column.Icon)
                             .RowSpan(15).ColumnSpan(All<Column>())
-                            .Invoke(view =>
-                            {
-                                view.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.IsOrganizationsCarouselViewVisible));
-                                OrganizationsCarouselView.LaunchOrganizationsButtonTapped += HandleLaunchOrganzationsButtonTapped;
-                            })
                     }
                 }
             }.Paddings(bottom: 8);
@@ -235,6 +233,14 @@ namespace GitTrends
 
             await _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri);
         }
+
+        async void HandleOrganizationsCarouselViewVisiblilityChanged(object sender, bool isVisible) => await MainThread.InvokeOnMainThreadAsync(async () =>
+        {
+            if (isVisible)
+                await _organizationsCarouselView.FadeTo(1, 250);
+            else
+                await _organizationsCarouselView.FadeTo(0, 250);
+        });
 
         class AboutRowTappableView : View
         {
