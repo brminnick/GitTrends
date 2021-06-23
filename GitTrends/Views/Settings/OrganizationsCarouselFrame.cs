@@ -21,8 +21,6 @@ namespace GitTrends
 
             Elevation = 8;
 
-            Content = new Label { Text = "Brandon" }.Center();
-
             Content = new StackLayout
             {
                 IsClippedToBounds = true,
