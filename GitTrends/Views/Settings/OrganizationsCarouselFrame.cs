@@ -1,21 +1,21 @@
 ﻿using GitTrends.Mobile.Common;
 using Sharpnado.MaterialFrame;
-using SkiaSharp;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
-using Xamarin.Forms.PancakeView;
 
 namespace GitTrends
 {
     class OrganizationsCarouselFrame : MaterialFrame
     {
+        const int _cornerRadius = 12;
+
         readonly IndicatorView _indicatorView;
 
         public OrganizationsCarouselFrame()
         {
-            Opacity = 0;
+            Opacity = 0; // Keep this view hidden until user toggles the IncludeOrganizations Switch
             Padding = 0;
-            CornerRadius = 10;
+            CornerRadius = _cornerRadius;
             Margin = new Thickness(16, 32);
             LightThemeBackgroundColor = GetBackgroundColor(0);
 
@@ -35,7 +35,7 @@ namespace GitTrends
                         .Assign(out _indicatorView)
                         .Bottom()
                 }
-            }.FillExpand();
+            }.Padding(-_cornerRadius); // Use negative padding to ensure the StackLayout stretches past the rounded corners
         }
 
         enum Row { CarouselView, Indicator }
@@ -75,7 +75,7 @@ namespace GitTrends
                 Count = 3;
                 IsEnabled = false;
                 SelectedIndicatorColor = Color.White;
-                IndicatorColor = Color.White.MultiplyAlpha(0.25);
+                IndicatorColor = SelectedIndicatorColor.MultiplyAlpha(0.25);
 
                 WidthRequest = 112;
                 HeightRequest = 50;

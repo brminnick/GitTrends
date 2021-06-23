@@ -61,7 +61,7 @@ namespace GitTrends
                     FontFamily = FontFamilyConstants.RobotoBold;
                     AutomationId = SettingsPageAutomationIds.EnableOrangizationsCarouselTitle;
 
-                    Padding = new Thickness(12, 0);
+                    Padding = new Thickness(24, 0);
                 }
             }
 
@@ -78,7 +78,7 @@ namespace GitTrends
                     VerticalTextAlignment = TextAlignment.Start;
                     AutomationId = SettingsPageAutomationIds.EnableOrangizationsCarouselDescription;
 
-                    Padding = new Thickness(12, 0);
+                    Padding = new Thickness(24, 0);
                 }
             }
         }
