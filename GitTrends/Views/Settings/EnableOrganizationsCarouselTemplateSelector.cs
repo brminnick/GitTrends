@@ -1,5 +1,4 @@
-﻿using System;
-using GitTrends.Mobile.Common;
+﻿using GitTrends.Mobile.Common;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
@@ -23,18 +22,15 @@ namespace GitTrends
             {
                 RowDefinitions = Rows.Define(
                     (Row.Image, Stars(4)),
-                    (Row.Title, Stars(1) ),
+                    (Row.Title, Stars(1)),
                     (Row.Description, Stars(2))),
 
                 Children =
                 {
-                    new OpacityOverlay()
-                        .Row(Row.Image),
-
-                    includeOrganizationsModel.SvgFileName is not null
-                        ? new SvgImage(includeOrganizationsModel.SvgFileName, () => Color.White, 24, 24)
+                    includeOrganizationsModel.Url is not null
+                        ? new VideoPlayerView()
                             .Row(Row.Image)
-                        : new Image { Source = includeOrganizationsModel.ImageSource }
+                        : new Image { Source = includeOrganizationsModel.ImageSource, Aspect = Aspect.AspectFit }.Margin(24, 12)
                             .Row(Row.Image),
 
                     new TitleLabel(includeOrganizationsModel.Title)
@@ -44,11 +40,6 @@ namespace GitTrends
                         .Row(Row.Description)
                 }
             };
-
-            class OpacityOverlay : View
-            {
-                public OpacityOverlay() => BackgroundColor = Color.White.MultiplyAlpha(0.25);
-            }
 
             class TitleLabel : Label
             {

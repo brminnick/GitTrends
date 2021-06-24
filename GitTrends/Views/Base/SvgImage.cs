@@ -11,10 +11,10 @@ namespace GitTrends
 {
     public class SvgImage : SvgCachedImage
     {
-        public static readonly BindableProperty GetTextColorProperty =
-            BindableProperty.Create(nameof(GetTextColorProperty), typeof(Func<Color>), typeof(SvgImage), (Func<Color>)(() => Color.Default), propertyChanged: HandleGetTextColorPropertyChanged);
+        public static readonly BindableProperty GetColorProperty =
+            BindableProperty.Create(nameof(GetColorProperty), typeof(Func<Color>), typeof(SvgImage), (Func<Color>)(() => Color.Default), propertyChanged: HandleGetTextColorPropertyChanged);
 
-        public SvgImage(in string svgFileName, in Func<Color> getTextColor, double widthRequest = 24, double heightRequest = 24)
+        public SvgImage(in string svgFileName, in Func<Color> getColor, double widthRequest = 24, double heightRequest = 24)
         {
             if (!svgFileName.EndsWith(".svg"))
                 throw new ArgumentException($"{nameof(svgFileName)} must end with .svg", nameof(svgFileName));
@@ -23,7 +23,7 @@ namespace GitTrends
 
             this.FillExpand();
 
-            GetTextColor = getTextColor;
+            GetColor = getColor;
 
             Source = SvgService.GetFullPath(svgFileName);
 
@@ -31,17 +31,17 @@ namespace GitTrends
             HeightRequest = heightRequest;
         }
 
-        public Func<Color> GetTextColor
+        public Func<Color> GetColor
         {
-            get => (Func<Color>)GetValue(GetTextColorProperty);
+            get => (Func<Color>)GetValue(GetColorProperty);
             set
             {
                 SetSvgColorAsync().SafeFireAndForget();
 
-                if (value() != GetTextColor())
+                if (value() != GetColor())
                 {
-                    SetValue(GetTextColorProperty, value);
-                    OnPropertyChanged(nameof(GetTextColor));
+                    SetValue(GetColorProperty, value);
+                    OnPropertyChanged(nameof(GetColor));
                 }
             }
         }
@@ -49,13 +49,13 @@ namespace GitTrends
         static void HandleGetTextColorPropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {
             var svgImage = (SvgImage)bindable;
-            svgImage.GetTextColor = (Func<Color>)newValue;
+            svgImage.GetColor = (Func<Color>)newValue;
         }
 
         void HandlePreferenceChanged(object sender, PreferredTheme e) => SetSvgColor();
 
         Task SetSvgColorAsync() => MainThread.InvokeOnMainThreadAsync(SetSvgColor);
 
-        void SetSvgColor() => ReplaceStringMap = new(SvgService.GetColorStringMap(GetTextColor()));
+        void SetSvgColor() => ReplaceStringMap = new(SvgService.GetColorStringMap(GetColor()));
     }
 }

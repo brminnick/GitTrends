@@ -162,7 +162,7 @@ namespace GitTrends
                         new SettingsTitleLabel(SettingsPageAutomationIds.PreferredChartTitleLabel)
                             .Row(Row.PreferredCharts).Column(Column.Title)
                             .Bind(Label.TextProperty, nameof(SettingsViewModel.PreferredChartsLabelText)),
-                        new SettingsPicker(SettingsPageAutomationIds.PreferredChartsPicker, 100).Assign(out Picker preferredChartsPicker)
+                        new SettingsPicker(SettingsPageAutomationIds.PreferredChartsPicker, 100)
                             .Row(Row.PreferredCharts).Column(Column.Button)
                             .Bind(Picker.ItemsSourceProperty, nameof(SettingsViewModel.PreferredChartsItemsSource))
                             .Bind(Picker.SelectedIndexProperty, nameof(SettingsViewModel.PreferredChartsSelectedIndex)),
@@ -175,7 +175,7 @@ namespace GitTrends
 
                         new OrganizationsCarouselFrame(analyticsService).Assign(out _organizationsCarouselFrame)
                             .Row(Row.GitHubUser).Column(Column.Icon)
-                            .RowSpan(All<Row>()).ColumnSpan(All<Column>())
+                            .RowSpan(14).ColumnSpan(All<Column>())
                     }
                 }
             }.Paddings(bottom: 8);
@@ -238,12 +238,12 @@ namespace GitTrends
         {
             if (isVisible)
             {
-                await _organizationsCarouselFrame.FadeTo(1, 250);
+                await _organizationsCarouselFrame.FadeTo(1);
                 AnalyticsService.Track($"OrganizationsCarouselView Page 1 Appeared");
             }
             else
             {
-                await _organizationsCarouselFrame.FadeTo(0, 250);
+                await _organizationsCarouselFrame.FadeTo(0);
                 AnalyticsService.Track($"OrganizationsCarouselView Dismissed");
             }
         });

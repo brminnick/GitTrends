@@ -3,6 +3,8 @@ using GitTrends.Shared;
 using Sharpnado.MaterialFrame;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
+using Xamarin.Forms.PancakeView;
+using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -19,30 +21,42 @@ namespace GitTrends
 
             Opacity = 0; // Keep this view hidden until user toggles the IncludeOrganizations Switch
             Padding = 0;
+
             CornerRadius = _cornerRadius;
+
             Margin = new Thickness(16, 32);
+
             LightThemeBackgroundColor = GetBackgroundColor(0);
 
             Elevation = 8;
 
-            Content = new StackLayout
+            Content = new Grid
             {
+                RowDefinitions = Rows.Define(
+                    (Row.Overlay, Stars(4)),
+                    (Row.CarouselView, Stars(3)),
+                    (Row.Indicator, Star)),
+
                 IsClippedToBounds = true,
 
                 Children =
                 {
+                    new OpacityOverlay()
+                        .Row(Row.Overlay),
+
                     new OrganizationsCarouselView()
+                        .Row(Row.Overlay).RowSpan(2)
                         .Invoke(view => view.PositionChanged += HandlePositionChanged)
                         .FillExpand(),
 
                     new EnableOrganizationsCarouselIndicatorView()
+                        .Row(Row.Indicator)
                         .Assign(out _indicatorView)
-                        .Bottom()
                 }
-            }.Padding(-_cornerRadius); // Use negative padding to ensure the StackLayout stretches past the rounded corners
+            };
         }
 
-        enum Row { CarouselView, Indicator }
+        enum Row { Overlay, CarouselView, Indicator }
 
         static Color GetBackgroundColor(int position) => position % 2 is 0
                                                             ? Color.FromHex(BaseTheme.LightTealColorHex) // Even-numbered Pages are Teal
@@ -56,6 +70,15 @@ namespace GitTrends
             _analyticsService.Track($"{nameof(OrganizationsCarouselView)} Page {e.CurrentPosition} Appeared");
         }
 
+        class OpacityOverlay : PancakeView
+        {
+            public OpacityOverlay()
+            {
+                BackgroundColor = Color.White.MultiplyAlpha(0.25);
+                CornerRadius = new CornerRadius(10, 10, 0, 0);
+            }
+        }
+
         class OrganizationsCarouselView : CarouselView
         {
             public OrganizationsCarouselView()
@@ -65,8 +88,8 @@ namespace GitTrends
 
                 ItemsSource = new[]
                 {
-                    new IncludeOrganizationsCarouselModel("Title 1", "Text 1", 0, null, null),
-                    new IncludeOrganizationsCarouselModel("Title 2", "Text 2", 1, null, null),
+                    new IncludeOrganizationsCarouselModel("Title 1", "Text 1", 0, "Business", null),
+                    new IncludeOrganizationsCarouselModel("Title 2", "Text 2", 1, "Inspectocat", null),
                     new IncludeOrganizationsCarouselModel("Title 3", "Text 3", 2, null, null),
                 };
 
@@ -90,7 +113,7 @@ namespace GitTrends
 
                 AutomationId = SettingsPageAutomationIds.EnableOrangizationsPageIndicator;
 
-                this.Center().Margins(bottom: 24);
+                this.Center().Margins(bottom: 12);
             }
         }
     }

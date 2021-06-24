@@ -433,6 +433,14 @@
     <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart%403x.png">
       <Visible>false</Visible>
     </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Business.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\Business.imageset\Business.png" />
+    <ImageAsset Include="Assets.xcassets\Business.imageset\Business%402x.png" />
+    <ImageAsset Include="Assets.xcassets\Business.imageset\Business%403x.png" />
+    <ImageAsset Include="Assets.xcassets\Inspectocat.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\Inspectocat.imageset\inspectocat.png" />
+    <ImageAsset Include="Assets.xcassets\Inspectocat.imageset\inspectocat%402x.png" />
+    <ImageAsset Include="Assets.xcassets\Inspectocat.imageset\inspectocat%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -481,6 +489,8 @@
     <Folder Include="Assets.xcassets\EmptyTrafficChart.imageset\" />
     <Folder Include="Assets.xcassets\EmptyStarChart.imageset\" />
     <Folder Include="Assets.xcassets\EmptyOneStarChart.imageset\" />
+    <Folder Include="Assets.xcassets\Business.imageset\" />
+    <Folder Include="Assets.xcassets\Inspectocat.imageset\" />
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
