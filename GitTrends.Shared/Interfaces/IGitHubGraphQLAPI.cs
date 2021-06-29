@@ -7,22 +7,22 @@ namespace GitTrends.Shared
     public interface IGitHubGraphQLApi
     {
         [Post("")]
-        Task<ApiResponse<GraphQLResponse<RepositoryResponse>>> RepositoryQuery([Body] RepositoryQueryContent request, [Header("Authorization")] string authorization);
+        Task<ApiResponse<GraphQLResponse<RepositoryResponse>>> RepositoryQuery([Body(true)] RepositoryQueryContent request, [Header("Authorization")] string authorization);
 
         [Post("")]
-        Task<ApiResponse<GraphQLResponse<GitHubUserResponse>>> UserRepositoryConnectionQuery([Body] UserRepositoryConnectionQueryContent request, [Header("Authorization")] string authorization);
+        Task<ApiResponse<GraphQLResponse<GitHubUserResponse>>> UserRepositoryConnectionQuery([Body(true)] UserRepositoryConnectionQueryContent request, [Header("Authorization")] string authorization);
 
         [Post("")]
-        Task<ApiResponse<GraphQLResponse<GitHubOrganizationResponse>>> OrganizationRepositoryConnectionQuery([Body] OrganizationRepositoryConnectionQueryContent request, [Header("Authorization")] string authorization);
+        Task<ApiResponse<GraphQLResponse<GitHubOrganizationResponse>>> OrganizationRepositoryConnectionQuery([Body(true)] OrganizationRepositoryConnectionQueryContent request, [Header("Authorization")] string authorization);
 
         [Post("")]
-        Task<ApiResponse<GraphQLResponse<GitHubViewerLoginResponse>>> ViewerLoginQuery([Body] ViewerLoginQueryContent request, [Header("Authorization")] string authorization);
+        Task<ApiResponse<GraphQLResponse<GitHubViewerLoginResponse>>> ViewerLoginQuery([Body(true)] ViewerLoginQueryContent request, [Header("Authorization")] string authorization);
 
         [Post("")]
-        Task<ApiResponse<GraphQLResponse<GitHubViewerOrganizationResponse>>> ViewerOrganizationsQuery([Body] ViewerOrganizationsQueryContent request, [Header("Authorization")] string authorization);
+        Task<ApiResponse<GraphQLResponse<GitHubViewerOrganizationResponse>>> ViewerOrganizationsQuery([Body(true)] ViewerOrganizationsQueryContent request, [Header("Authorization")] string authorization);
 
         [Post("")]
-        Task<ApiResponse<GraphQLResponse<StarGazerResponse>>> StarGazerQuery([Body] StarGazerQueryContent request, [Header("Authorization")] string authorization);
+        Task<ApiResponse<GraphQLResponse<StarGazerResponse>>> StarGazerQuery([Body(true)] StarGazerQueryContent request, [Header("Authorization")] string authorization);
     }
 
     public record StarGazerQueryContent : GraphQLRequest
