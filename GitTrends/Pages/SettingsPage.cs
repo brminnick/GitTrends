@@ -226,14 +226,6 @@ namespace GitTrends
             }
         }
 
-        async void HandleLaunchOrganzationsButtonTapped(object sender, EventArgs e)
-        {
-            if (_gitTrendsStatisticsService.EnableOrganizationsUri is null)
-                throw new InvalidOperationException($"{nameof(GitTrendsStatisticsService)}.{nameof(GitTrendsStatisticsService.EnableOrganizationsUri)} Must Be Initialized");
-
-            await _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri);
-        }
-
         async void HandleOrganizationsCarouselViewVisiblilityChanged(object sender, bool isVisible) => await MainThread.InvokeOnMainThreadAsync(async () =>
         {
             if (isVisible)

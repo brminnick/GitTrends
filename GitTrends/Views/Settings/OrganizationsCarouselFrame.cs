@@ -32,10 +32,12 @@ namespace GitTrends
 
             Content = new Grid
             {
+                RowSpacing = 0, // Must be zero to match EnableOrganizationsCarouselTemplateSelector's Grid
+
                 RowDefinitions = Rows.Define(
-                    (Row.Overlay, Stars(4)),
+                    (Row.Overlay, Stars(4)), // Must be 1/2 of total height to match EnableOrganizationsCarouselTemplateSelector's Grid
                     (Row.CarouselView, Stars(3)),
-                    (Row.Indicator, Star)),
+                    (Row.Indicator, Star)), // Must be 1/8 of total height to match EnableOrganizationsCarouselTemplateSelector's Grid
 
                 IsClippedToBounds = true,
 
@@ -45,7 +47,7 @@ namespace GitTrends
                         .Row(Row.Overlay),
 
                     new OrganizationsCarouselView()
-                        .Row(Row.Overlay).RowSpan(2)
+                        .Row(Row.Overlay).RowSpan(All<Row>())
                         .Invoke(view => view.PositionChanged += HandlePositionChanged)
                         .FillExpand(),
 

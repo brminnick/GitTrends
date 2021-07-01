@@ -50,6 +50,7 @@
         #endregion
 
         #region EnableOrganizationsCarouselView
+        public const string GitHubButton = nameof(SettingsPageAutomationIds) + nameof(GitHubButton);
         public const string EnableOrangizationsCarouselTitle = nameof(SettingsPageAutomationIds) + nameof(EnableOrangizationsCarouselTitle);
         public const string EnableOrangizationsPageIndicator = nameof(SettingsPageAutomationIds) + nameof(EnableOrangizationsPageIndicator);
         public const string EnableOrangizationsCarouselDescription = nameof(SettingsPageAutomationIds) + nameof(EnableOrangizationsCarouselDescription);

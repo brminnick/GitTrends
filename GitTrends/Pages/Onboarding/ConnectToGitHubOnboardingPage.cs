@@ -43,12 +43,17 @@ namespace GitTrends
                 Children =
                 {
                     new BodyLabel(OnboardingConstants.ConnectToGitHubPage_Body_GetStarted).Row(Row.Description),
-                    new ConnectToGitHubButton(OnboardingAutomationIds.ConnectToGitHubButton, CancellationToken.None, new Xamarin.Essentials.BrowserLaunchOptions
-                    {
-                        PreferredControlColor = Color.White,
-                        PreferredToolbarColor = Color.FromHex(BaseTheme.CoralColorHex).MultiplyAlpha(0.75),
-                        Flags = Xamarin.Essentials.BrowserLaunchFlags.PresentAsFormSheet,
-                    }).Row(Row.Button),
+
+                    new GitHubButton(OnboardingAutomationIds.ConnectToGitHubButton, GitHubLoginButtonConstants.ConnectToGitHub)
+                        .Row(Row.Button)
+                        .Bind(GitHubButton.CommandProperty, nameof(OnboardingViewModel.ConnectToGitHubButtonCommand))
+                        .Invoke(button => button.CommandParameter = (CancellationToken.None, new Xamarin.Essentials.BrowserLaunchOptions
+                        {
+                            PreferredControlColor = Color.White,
+                            PreferredToolbarColor = Color.FromHex(BaseTheme.CoralColorHex).MultiplyAlpha(0.75),
+                            Flags = Xamarin.Essentials.BrowserLaunchFlags.PresentAsFormSheet,
+                        })),
+
                     new IsAuthenticatingIndicator().Row(Row.ActivityIndicator)
                 }
             }

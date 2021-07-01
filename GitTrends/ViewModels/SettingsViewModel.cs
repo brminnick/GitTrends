@@ -10,6 +10,7 @@ using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Shiny;
+using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
@@ -78,6 +79,7 @@ namespace GitTrends
 
             CopyrightLabelTappedCommand = new AsyncCommand(ExecuteCopyrightLabelTappedCommand);
             GitHubUserViewTappedCommand = new AsyncCommand(ExecuteGitHubUserViewTappedCommand, _ => IsNotAuthenticating);
+            ManageOrganizationsButtonCommand = new AsyncCommand<(CancellationToken CancellationToken, BrowserLaunchOptions? BrowserLaunchOptions)>(tuple => ExecuteManageOrganizationsButtonCommand(tuple.CancellationToken, tuple.BrowserLaunchOptions));
 
             App.Resumed += HandleResumed;
 
@@ -90,6 +92,7 @@ namespace GitTrends
             GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
             InitializeText();
+
 
             ThemePickerSelectedIndex = (int)themeService.Preference;
             PreferredChartsSelectedIndex = (int)trendsChartSettingsService.CurrentTrendsChartOption;
@@ -115,6 +118,7 @@ namespace GitTrends
         public ICommand CopyrightLabelTappedCommand { get; }
         public IAsyncCommand GitHubUserViewTappedCommand { get; }
         public IReadOnlyList<string> LanguagePickerItemsSource { get; } = CultureConstants.CulturePickerOptions.Values.ToList();
+        public IAsyncCommand<(CancellationToken CancellationToken, BrowserLaunchOptions? BrowserLaunchOptions)> ManageOrganizationsButtonCommand { get; }
 
         public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText == GitHubLoginButtonConstants.Disconnect;
         public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginLabelText == GitHubLoginButtonConstants.ConnectToGitHub;
@@ -362,6 +366,14 @@ namespace GitTrends
 
                 demoUserActivatedTCS.SetResult(null);
             }
+        }
+
+        Task ExecuteManageOrganizationsButtonCommand(CancellationToken cancellationToken, BrowserLaunchOptions? browserLaunchOptions)
+        {
+            if (_gitTrendsStatisticsService.EnableOrganizationsUri is null)
+                throw new InvalidOperationException($"{nameof(GitTrendsStatisticsService)}.{nameof(GitTrendsStatisticsService.EnableOrganizationsUri)} Must Be Initialized");
+
+            return _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri);
         }
 
         void ExecutePreferredChartsChangedCommand(TrendsChartOption trendsChartOption)

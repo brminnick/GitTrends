@@ -12,7 +12,7 @@ namespace GitTrends
     public class SvgImage : SvgCachedImage
     {
         public static readonly BindableProperty GetColorProperty =
-            BindableProperty.Create(nameof(GetColorProperty), typeof(Func<Color>), typeof(SvgImage), (Func<Color>)(() => Color.Default), propertyChanged: HandleGetTextColorPropertyChanged);
+            BindableProperty.Create(nameof(GetColor), typeof(Func<Color>), typeof(SvgImage), (Func<Color>)(() => Color.Default), propertyChanged: HandleGetTextColorPropertyChanged);
 
         public SvgImage(in string svgFileName, in Func<Color> getColor, double widthRequest = 24, double heightRequest = 24)
         {
