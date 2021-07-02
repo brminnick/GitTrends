@@ -34,7 +34,7 @@
         <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
         <PackageReference Include="Plugin.StoreReview" Version="3.2.0-beta" />
         <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.4" />
-        <PackageReference Include="Xamarin.CommunityToolkit.Markup" Version="1.2.0-pre2" />
+        <PackageReference Include="Xamarin.CommunityToolkit.Markup" Version="1.2.0" />
         <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.2" />
     </ItemGroup>
     <ItemGroup>
