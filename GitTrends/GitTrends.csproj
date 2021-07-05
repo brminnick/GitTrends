@@ -20,7 +20,7 @@
       <NoStdLib>false</NoStdLib>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.0-pre1" />
+        <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.0" />
         <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="19.1.0.66" />
         <PackageReference Include="sqlite-net-pcl" Version="1.8.0-beta" />
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
