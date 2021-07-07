@@ -469,7 +469,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
-    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.0-pre1" />
+    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.0" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="19.1.0.66" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.0-beta" />
@@ -478,7 +478,7 @@
     <PackageReference Include="Xamarin.TestCloud.Agent" Version="0.22.2" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.3.0" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.3.0" />
-    <PackageReference Include="Shiny.Notifications" Version="2.1.0.2757" />
+    <PackageReference Include="Shiny.Notifications" Version="2.1.0.2769" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
     <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1" />

@@ -82,7 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
-    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.0-pre1" />
+    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.0" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="19.1.0.66" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.0-beta" />
@@ -90,7 +90,7 @@
     <PackageReference Include="Autofac" Version="6.2.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.3.0" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.3.0" />
-    <PackageReference Include="Shiny.Notifications" Version="2.1.0.2757" />
+    <PackageReference Include="Shiny.Notifications" Version="2.1.0.2769" />
     <PackageReference Include="Xam.Plugins.Android.ExoPlayer" Version="2.11.8" />
     <PackageReference Include="Xamarin.Firebase.Messaging" Version="122.0.0" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
