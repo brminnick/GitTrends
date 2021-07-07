@@ -30,35 +30,28 @@ namespace GitTrends
 
             Elevation = 8;
 
-            Content = new Grid
+            Content = new EnableOrganizationsGrid
             {
                 RowSpacing = 0, // Must be zero to match EnableOrganizationsCarouselTemplateSelector's Grid
-
-                RowDefinitions = Rows.Define(
-                    (Row.Overlay, Stars(4)), // Must be 1/2 of total height to match EnableOrganizationsCarouselTemplateSelector's Grid
-                    (Row.CarouselView, Stars(3)),
-                    (Row.Indicator, Star)), // Must be 1/8 of total height to match EnableOrganizationsCarouselTemplateSelector's Grid
 
                 IsClippedToBounds = true,
 
                 Children =
                 {
                     new OpacityOverlay()
-                        .Row(Row.Overlay),
+                        .Row(EnableOrganizationsGrid.Row.Image),
 
                     new OrganizationsCarouselView()
-                        .Row(Row.Overlay).RowSpan(All<Row>())
+                        .Row(EnableOrganizationsGrid.Row.Image).RowSpan(All<EnableOrganizationsGrid.Row>())
                         .Invoke(view => view.PositionChanged += HandlePositionChanged)
                         .FillExpand(),
 
                     new EnableOrganizationsCarouselIndicatorView()
-                        .Row(Row.Indicator)
+                        .Row(EnableOrganizationsGrid.Row.IndicatorView)
                         .Assign(out _indicatorView)
                 }
             };
         }
-
-        enum Row { Overlay, CarouselView, Indicator }
 
         static Color GetBackgroundColor(int position) => position % 2 is 0
                                                             ? Color.FromHex(BaseTheme.LightTealColorHex) // Even-numbered Pages are Teal
