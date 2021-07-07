@@ -10,8 +10,8 @@ namespace GitTrends
             RowSpacing = 0;
 
             RowDefinitions = Rows.Define(
-                (Row.Image, Stars(8)),
-                (Row.Title, Stars(1)),
+                (Row.Image, Stars(10)),
+                (Row.Title, Stars(2)),
                 (Row.Description, Stars(3)),
                 (Row.GitHubButton, Stars(2)),
                 (Row.IndicatorView, Stars(2)));

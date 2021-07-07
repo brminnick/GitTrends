@@ -15,8 +15,8 @@ namespace GitTrends
 {
     public class SettingsViewModel : GitHubAuthenticationViewModel
     {
-        readonly static WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new();
         readonly static WeakEventManager<bool> _organizationsCarouselViewVisiblilityChangedEventManager = new();
+        readonly static WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new();
 
         readonly ThemeService _themeService;
         readonly LanguageService _languageService;
@@ -371,6 +371,8 @@ namespace GitTrends
                 throw new InvalidOperationException($"{nameof(GitTrendsStatisticsService)}.{nameof(GitTrendsStatisticsService.EnableOrganizationsUri)} Must Be Initialized");
 
             AnalyticsService.Track("Manage Organizations Button Tapped");
+
+            OnOrganizationsCarouselViewVisiblilityChanged(false);
 
             return _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri);
         }

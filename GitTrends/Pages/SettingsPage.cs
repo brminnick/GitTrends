@@ -29,6 +29,7 @@ namespace GitTrends
             const int separatorRowHeight = 1;
             const int settingsRowHeight = 38;
 
+
             SettingsViewModel.OrganizationsCarouselViewVisiblilityChanged += HandleOrganizationsCarouselViewVisiblilityChanged;
 
             var loginRowTapGesture = new TapGestureRecognizer();
@@ -168,7 +169,7 @@ namespace GitTrends
                         new CopyrightLabel()
                             .Row(Row.Copyright).ColumnSpan(All<Column>()),
 
-                        new OrganizationsCarouselFrame(deviceInfo, analyticsService, mediaElementService).Assign(out _organizationsCarouselFrame)
+                        new OrganizationsCarouselFrame(deviceInfo, mainThread, analyticsService, mediaElementService).Assign(out _organizationsCarouselFrame)
                             .Row(Row.GitHubUser).Column(Column.Icon)
                             .RowSpan(14).ColumnSpan(All<Column>())
                     }
@@ -225,12 +226,12 @@ namespace GitTrends
         {
             if (isVisible)
             {
-                await _organizationsCarouselFrame.FadeTo(1);
+                await _organizationsCarouselFrame.Reveal(true);
                 AnalyticsService.Track($"OrganizationsCarouselView Page 1 Appeared");
             }
             else
             {
-                await _organizationsCarouselFrame.FadeTo(0);
+                await _organizationsCarouselFrame.Dismiss(true);
                 AnalyticsService.Track($"OrganizationsCarouselView Dismissed");
             }
         });

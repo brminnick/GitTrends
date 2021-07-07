@@ -1,4 +1,6 @@
-﻿using GitTrends.Mobile.Common;
+﻿using System.Threading.Tasks;
+using AsyncAwaitBestPractices;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Sharpnado.MaterialFrame;
 using Xamarin.CommunityToolkit.Markup;
@@ -13,16 +15,18 @@ namespace GitTrends
     {
         const int _cornerRadius = 12;
 
+        readonly IMainThread _mainThread;
         readonly IndicatorView _indicatorView;
         readonly IAnalyticsService _analyticsService;
 
         public OrganizationsCarouselFrame(IDeviceInfo deviceInfo,
+                                            IMainThread mainThread,
                                             IAnalyticsService analyticsService,
                                             MediaElementService mediaElementService)
         {
+            _mainThread = mainThread;
             _analyticsService = analyticsService;
 
-            Opacity = 0; // Keep this view hidden until user toggles the IncludeOrganizations Switch
             Padding = 0;
 
             CornerRadius = _cornerRadius;
@@ -52,7 +56,29 @@ namespace GitTrends
                         .Assign(out _indicatorView)
                 }
             };
+
+            Dismiss(false).SafeFireAndForget(ex => analyticsService.Report(ex));
         }
+
+        public Task Reveal(bool shouldAnimate) => _mainThread.InvokeOnMainThreadAsync(async () =>
+        {
+            if (shouldAnimate)
+                await this.FadeTo(1);
+            else
+                Opacity = 1;
+
+            InputTransparent = Content.InputTransparent = false;
+        });
+
+        public Task Dismiss(bool shouldAnimate) => _mainThread.InvokeOnMainThreadAsync(async () =>
+        {
+            InputTransparent = Content.InputTransparent = true;
+
+            if (shouldAnimate)
+                await this.FadeTo(0, 1500);
+            else
+                Opacity = 0;
+        });
 
         static Color GetBackgroundColor(int position) => position % 2 is 0
                                                             ? Color.FromHex(BaseTheme.LightTealColorHex) // Even-numbered Pages are Teal
