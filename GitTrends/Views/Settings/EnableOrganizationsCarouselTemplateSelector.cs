@@ -37,8 +37,11 @@ namespace GitTrends
 
                     new GitHubButton(SettingsPageAutomationIds.GitHubButton, SettingsPageConstants.ManageOrganizations)
                         .Row(EnableOrganizationsGrid.Row.GitHubButton)
-                        .Bind(GitHubButton.CommandProperty, nameof(SettingsViewModel.ManageOrganizationsButtonCommand), source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(SettingsViewModel))),
-
+                        .Bind(GitHubButton.CommandProperty, nameof(SettingsViewModel.ManageOrganizationsButtonCommand), source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(SettingsViewModel)))
+                        .Bind<GitHubButton, int, bool>(GitHubButton.IsVisibleProperty, nameof(CarouselView.Position), convert: position => position is 2, source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(CarouselView))),
+#if AppStore
+#error: GitHubButton appears before CarouselView has finished swiping (ie The user can see it appear on the Inspectocat page)
+#endif
                     new BoxView()
                         .Row(EnableOrganizationsGrid.Row.IndicatorView)
                 }

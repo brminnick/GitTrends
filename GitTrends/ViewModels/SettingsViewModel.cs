@@ -115,7 +115,7 @@ namespace GitTrends
             remove => _organizationsCarouselViewVisiblilityChangedEventManager.RemoveEventHandler(value);
         }
 
-        public ICommand CopyrightLabelTappedCommand { get; }
+        public IAsyncCommand CopyrightLabelTappedCommand { get; }
         public IAsyncCommand GitHubUserViewTappedCommand { get; }
         public IAsyncCommand ManageOrganizationsButtonCommand { get; }
         public IReadOnlyList<string> LanguagePickerItemsSource { get; } = CultureConstants.CulturePickerOptions.Values.ToList();

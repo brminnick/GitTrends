@@ -268,7 +268,7 @@ namespace GitTrends.UnitTests
             MockLauncher.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
             //Act
-            settingsViewModel.CopyrightLabelTappedCommand.Execute(null);
+            await settingsViewModel.CopyrightLabelTappedCommand.ExecuteAsync().ConfigureAwait(false);
             await openAsyncTCS.Task.ConfigureAwait(false);
 
             //Assert
