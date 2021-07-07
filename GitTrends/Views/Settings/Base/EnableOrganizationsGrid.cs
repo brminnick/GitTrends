@@ -7,6 +7,8 @@ namespace GitTrends
     {
         public EnableOrganizationsGrid()
         {
+            RowSpacing = 0;
+
             RowDefinitions = Rows.Define(
                 (Row.Image, Stars(8)),
                 (Row.Title, Stars(1)),

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Autofac;
 using AVFoundation;
 using AVKit;
@@ -17,43 +18,60 @@ namespace GitTrends.iOS
     public class MediaElementCustomRenderer : ViewRenderer<VideoPlayerView, UIView>
     {
         readonly static AVQueuePlayer _queuePlayer = new() { Volume = 0 };
-        readonly static AVPlayerItem _onboardingChartItem = CreateOnboardingChartItem();
-        readonly static AVPlayerLooper _avPlayerLooper = CreateAVPlayerLooper();
         readonly static AVPlayerViewController _avPlayerViewController = new();
+
+        static AVPlayerLooper? _avPlayerLooper;
+        static AVPlayerItem? _onboardingChartItem;
 
         protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayerView> e)
         {
             base.OnElementChanged(e);
 
-            if (e.NewElement != null && _avPlayerViewController.View != null)
+            if (e.NewElement is not null
+                && _avPlayerViewController.View is not null
+                && Element.Uri is not null)
             {
-                _avPlayerViewController.View.BackgroundColor = Color.White.ToUIColor();
-
-                SetNativeControl(_avPlayerViewController.View);
-
-                _avPlayerViewController.ShowsPlaybackControls = false;
-                _avPlayerViewController.VideoGravity = AVLayerVideoGravity.ResizeAspect;
-
-                var audioSession = AVAudioSession.SharedInstance();
-                audioSession.SetCategory(AVAudioSession.CategoryPlayback);
-                audioSession.SetMode(AVAudioSession.ModeMoviePlayback, out _);
-                audioSession.SetActive(false);
-
-                _avPlayerViewController.Player = _queuePlayer;
-                _avPlayerViewController.Player.Play();
+                Play(Element.Uri, _avPlayerViewController.View);
             }
         }
 
-        static AVPlayerLooper CreateAVPlayerLooper() => new AVPlayerLooper(_queuePlayer, _onboardingChartItem, CMTimeRange.InvalidRange);
-
-        static AVPlayerItem CreateOnboardingChartItem()
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            var mediaElementService = ContainerService.Container.Resolve<MediaElementService>();
+            base.OnElementPropertyChanged(sender, e);
 
-            if (mediaElementService.OnboardingChart?.HlsUrl is null)
-                throw new NullReferenceException();
+            if (e.PropertyName is nameof(Element.Uri)
+                && _avPlayerViewController.View is not null
+                && Element.Uri is not null)
+            {
+                Play(Element.Uri, _avPlayerViewController.View);
+            }
+        }
 
-            var asset = AVUrlAsset.Create(NSUrl.FromString(mediaElementService.OnboardingChart.HlsUrl));
+        static AVPlayerLooper CreateAVPlayerLooper(AVPlayerItem onboardingChartItem) => new(_queuePlayer, onboardingChartItem, CMTimeRange.InvalidRange);
+
+        void Play(Uri videoUri, UIView avPlayerViewControllerView)
+        {
+            _onboardingChartItem = CreatePlayerItem(videoUri);
+            _avPlayerLooper = CreateAVPlayerLooper(_onboardingChartItem);
+            avPlayerViewControllerView.BackgroundColor = Color.White.ToUIColor();
+
+            SetNativeControl(avPlayerViewControllerView);
+
+            _avPlayerViewController.ShowsPlaybackControls = false;
+            _avPlayerViewController.VideoGravity = AVLayerVideoGravity.ResizeAspect;
+
+            var audioSession = AVAudioSession.SharedInstance();
+            audioSession.SetCategory(AVAudioSession.CategoryPlayback);
+            audioSession.SetMode(AVAudioSession.ModeMoviePlayback, out _);
+            audioSession.SetActive(false);
+
+            _avPlayerViewController.Player = _queuePlayer;
+            _avPlayerViewController.Player.Play();
+        }
+
+        AVPlayerItem CreatePlayerItem(Uri uri)
+        {
+            var asset = AVUrlAsset.Create(NSUrl.FromString(uri.ToString()));
 
             return new AVPlayerItem(asset)
             {

@@ -17,11 +17,11 @@ namespace GitTrends.UnitTests
             var mediaElementService = ServiceCollection.ServiceProvider.GetRequiredService<MediaElementService>();
 
             //Act
-            streamingManifest_BeforeInitialization = mediaElementService.OnboardingChart;
+            streamingManifest_BeforeInitialization = mediaElementService.OnboardingChartManifest;
 
             await mediaElementService.InitializeOnboardingChart(CancellationToken.None).ConfigureAwait(false);
 
-            streamingManifest_AfterInitialization = mediaElementService.OnboardingChart;
+            streamingManifest_AfterInitialization = mediaElementService.OnboardingChartManifest;
 
             //Assert
             Assert.IsNull(streamingManifest_BeforeInitialization);

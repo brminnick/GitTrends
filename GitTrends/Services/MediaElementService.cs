@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
@@ -10,6 +11,8 @@ namespace GitTrends
 {
     public class MediaElementService
     {
+        readonly static WeakEventManager<StreamingManifest?> _streamingManifestChangedEventManager = new();
+
         readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;
         readonly AzureFunctionsApiService _azureFunctionsApiService;
@@ -23,15 +26,47 @@ namespace GitTrends
             _azureFunctionsApiService = azureFunctionsApiService;
         }
 
-        public StreamingManifest? OnboardingChart
+        public static event EventHandler<StreamingManifest?> OnboardingChartManifestChanged
         {
-            get => GetOnboardingChart();
-            private set => _preferences.Set(nameof(OnboardingChart), JsonConvert.SerializeObject(value));
+            add => _streamingManifestChangedEventManager.AddEventHandler(value);
+            remove => _streamingManifestChangedEventManager.RemoveEventHandler(value);
+        }
+
+        public static event EventHandler<StreamingManifest?> EnableOrganizationsManifestChanged
+        {
+            add => _streamingManifestChangedEventManager.AddEventHandler(value);
+            remove => _streamingManifestChangedEventManager.RemoveEventHandler(value);
+        }
+
+        public StreamingManifest? OnboardingChartManifest
+        {
+            get => GetStreamingManifest();
+            private set
+            {
+                if (value != OnboardingChartManifest)
+                {
+                    SetStreamingManifest(value);
+                    OnOnboardingChartStreamingManifestChanged(value);
+                }
+            }
+        }
+
+        public StreamingManifest? EnableOrganizationsManifest
+        {
+            get => GetStreamingManifest();
+            private set
+            {
+                if (value != EnableOrganizationsManifest)
+                {
+                    SetStreamingManifest(value);
+                    OnEnableOrganizationsStreamingManifestChanged(value);
+                }
+            }
         }
 
         public async ValueTask InitializeOnboardingChart(CancellationToken cancellationToken)
         {
-            if (OnboardingChart is null)
+            if (OnboardingChartManifest is null || EnableOrganizationsManifest is null)
                 await initializeOnboardingChart(cancellationToken).ConfigureAwait(false);
 
             initializeOnboardingChart(cancellationToken).SafeFireAndForget();
@@ -40,8 +75,10 @@ namespace GitTrends
             {
                 try
                 {
-                    var chartVideoStreamingUrl = await _azureFunctionsApiService.GetChartStreamingUrl(cancellationToken).ConfigureAwait(false);
-                    OnboardingChart = chartVideoStreamingUrl;
+                    var streamingManifests = await _azureFunctionsApiService.GetStreamingManifests(cancellationToken).ConfigureAwait(false);
+
+                    OnboardingChartManifest = streamingManifests[StreamingConstants.Chart];
+                    EnableOrganizationsManifest = streamingManifests[StreamingConstants.EnableOrganizations];
                 }
                 catch (Exception e)
                 {
@@ -50,11 +87,11 @@ namespace GitTrends
             }
         }
 
-        StreamingManifest? GetOnboardingChart()
+        StreamingManifest? GetStreamingManifest([CallerMemberName] string key = "")
         {
             try
             {
-                return JsonConvert.DeserializeObject<StreamingManifest?>(_preferences.Get(nameof(OnboardingChart), null));
+                return JsonConvert.DeserializeObject<StreamingManifest?>(_preferences.Get(key, null));
             }
             catch (ArgumentNullException)
             {
@@ -65,5 +102,10 @@ namespace GitTrends
                 return null;
             }
         }
+
+        void SetStreamingManifest(StreamingManifest? streamingManifest, [CallerMemberName] string key = "") => _preferences.Set(key, JsonConvert.SerializeObject(streamingManifest));
+
+        void OnOnboardingChartStreamingManifestChanged(StreamingManifest? onboardingChartStreamingManifest) => _streamingManifestChangedEventManager.RaiseEvent(this, onboardingChartStreamingManifest, nameof(OnboardingChartManifestChanged));
+        void OnEnableOrganizationsStreamingManifestChanged(StreamingManifest? enableOrganizationsStreamingManifest) => _streamingManifestChangedEventManager.RaiseEvent(this, enableOrganizationsStreamingManifest, nameof(EnableOrganizationsManifestChanged));
     }
 }

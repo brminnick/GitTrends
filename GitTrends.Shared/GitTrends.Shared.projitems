@@ -72,5 +72,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitHubViewerLoginResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitHubViewerOrganizationResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitTrendsEnableOrganizationsUriDTO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\StreamingConstants.cs" />
   </ItemGroup>
 </Project>

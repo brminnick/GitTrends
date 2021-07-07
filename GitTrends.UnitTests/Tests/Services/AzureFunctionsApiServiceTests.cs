@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,21 +66,23 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public async Task GetChartStreamingUrlTest()
+        public async Task GetStreamingManifestsTest()
         {
             //Arrange
-            StreamingManifest? streamingManifest;
+            IReadOnlyDictionary<string, StreamingManifest> streamingManifests;
             var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
 
             //Act
-            streamingManifest = await azureFunctionsApiService.GetChartStreamingUrl(CancellationToken.None).ConfigureAwait(false);
+            streamingManifests = await azureFunctionsApiService.GetStreamingManifests(CancellationToken.None).ConfigureAwait(false);
 
             //Assert
-            Assert.IsNotNull(streamingManifest);
-            Assert.IsNotNull(streamingManifest.HlsUrl);
-            Assert.IsNotNull(streamingManifest.ManifestUrl);
-            Assert.IsFalse(string.IsNullOrWhiteSpace(streamingManifest.HlsUrl));
-            Assert.IsFalse(string.IsNullOrWhiteSpace(streamingManifest.ManifestUrl));
+            Assert.IsNotNull(streamingManifests);
+
+            Assert.IsTrue(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.Chart].HlsUrl, UriKind.Absolute));
+            Assert.IsTrue(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.Chart].ManifestUrl, UriKind.Absolute));
+
+            Assert.IsTrue(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.EnableOrganizations].HlsUrl, UriKind.Absolute));
+            Assert.IsTrue(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.EnableOrganizations].ManifestUrl, UriKind.Absolute));
         }
 
         [Test]

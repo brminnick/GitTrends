@@ -26,6 +26,7 @@ namespace GitTrends
                             IAnalyticsService analyticsService,
                             SettingsViewModel settingsViewModel,
                             DeepLinkingService deepLinkingService,
+                            MediaElementService mediaElementService,
                             GitTrendsStatisticsService gitTrendsStatisticsService) : base(settingsViewModel, analyticsService, mainThread, true)
         {
             const int separatorRowHeight = 1;
@@ -173,7 +174,7 @@ namespace GitTrends
                         new CopyrightLabel()
                             .Row(Row.Copyright).ColumnSpan(All<Column>()),
 
-                        new OrganizationsCarouselFrame(analyticsService).Assign(out _organizationsCarouselFrame)
+                        new OrganizationsCarouselFrame(analyticsService,mediaElementService).Assign(out _organizationsCarouselFrame)
                             .Row(Row.GitHubUser).Column(Column.Icon)
                             .RowSpan(14).ColumnSpan(All<Column>())
                     }

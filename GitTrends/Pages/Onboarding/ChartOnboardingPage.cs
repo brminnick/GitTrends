@@ -1,4 +1,5 @@
-﻿using GitTrends.Mobile.Common.Constants;
+﻿using System;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
@@ -10,26 +11,47 @@ namespace GitTrends
 {
     public class ChartOnboardingPage : BaseOnboardingContentPage
     {
-        public ChartOnboardingPage(IMainThread mainThread, IAnalyticsService analyticsService)
+        readonly MediaElementService _mediaElementService;
+
+        public ChartOnboardingPage(IMainThread mainThread,
+                                    IAnalyticsService analyticsService,
+                                    MediaElementService mediaElementService)
             : base(OnboardingConstants.SkipText, Color.FromHex(BaseTheme.CoralColorHex), mainThread, 1, analyticsService)
         {
+            _mediaElementService = mediaElementService;
         }
 
         enum Row { Title, Zoom, LongPress }
         enum Column { Image, Description }
 
-        protected override View CreateImageView() => new PancakeView
+        protected override View CreateImageView()
         {
-            CornerRadius = 4,
-            Border = new Border { Color = Color.FromHex("E0E0E0") },
-            BackgroundColor = Color.White,
-            Padding = new Thickness(5),
+            var videoPlayerView = new VideoPlayerView
+            {
+                Uri = new Uri(_mediaElementService.OnboardingChartManifest?.HlsUrl)
+            };
 
-            //On iOS, use custom renderer for MediaElement until MediaElement.Dispose bug is fixed: https://github.com/xamarin/Xamarin.Forms/issues/9525#issuecomment-619156536
-            //On Android, use Custom Renderer for ExoPlayer because Xamarin.Forms.MediaElement uses Android.VideoView
-            Content = new VideoPlayerView(),
+            MediaElementService.OnboardingChartManifestChanged += HandleOnboardingChartManifestChanged;
 
-        };
+            return new PancakeView
+            {
+                CornerRadius = 4,
+                Border = new Border { Color = Color.FromHex("E0E0E0") },
+                BackgroundColor = Color.White,
+                Padding = new Thickness(5),
+                Content = videoPlayerView
+            };
+
+            void HandleOnboardingChartManifestChanged(object sender, StreamingManifest? e)
+            {
+                if (e is not null)
+                {
+                    MediaElementService.OnboardingChartManifestChanged -= HandleOnboardingChartManifestChanged;
+                    videoPlayerView.Uri = new Uri(e.HlsUrl);
+                }
+            }
+
+        }
 
         protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ChartPage_Title);
 

@@ -15,7 +15,8 @@ namespace GitTrends
         readonly IndicatorView _indicatorView;
         readonly IAnalyticsService _analyticsService;
 
-        public OrganizationsCarouselFrame(IAnalyticsService analyticsService)
+        public OrganizationsCarouselFrame(IAnalyticsService analyticsService,
+                                            MediaElementService mediaElementService)
         {
             _analyticsService = analyticsService;
 
@@ -32,8 +33,6 @@ namespace GitTrends
 
             Content = new EnableOrganizationsGrid
             {
-                RowSpacing = 0, // Must be zero to match EnableOrganizationsCarouselTemplateSelector's Grid
-
                 IsClippedToBounds = true,
 
                 Children =
@@ -41,7 +40,7 @@ namespace GitTrends
                     new OpacityOverlay()
                         .Row(EnableOrganizationsGrid.Row.Image),
 
-                    new OrganizationsCarouselView()
+                    new OrganizationsCarouselView(mediaElementService)
                         .Row(EnableOrganizationsGrid.Row.Image).RowSpan(All<EnableOrganizationsGrid.Row>())
                         .Invoke(view => view.PositionChanged += HandlePositionChanged)
                         .FillExpand(),
@@ -76,7 +75,7 @@ namespace GitTrends
 
         class OrganizationsCarouselView : CarouselView
         {
-            public OrganizationsCarouselView()
+            public OrganizationsCarouselView(MediaElementService mediaElementService)
             {
                 Loop = false;
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Never;
@@ -85,7 +84,7 @@ namespace GitTrends
                 {
                     new IncludeOrganizationsCarouselModel("Title 1", "Text 1", 0, "Business", null),
                     new IncludeOrganizationsCarouselModel("Title 2", "Text 2", 1, "Inspectocat", null),
-                    new IncludeOrganizationsCarouselModel("Title 3", "Text 3", 2, null, null),
+                    new IncludeOrganizationsCarouselModel("Title 3", "Text 3", 2, null, mediaElementService.EnableOrganizationsManifest?.HlsUrl),
                 };
 
                 ItemTemplate = new EnableOrganizationsCarouselTemplateSelector();

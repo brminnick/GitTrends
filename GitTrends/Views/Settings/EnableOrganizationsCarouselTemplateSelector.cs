@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using Xamarin.CommunityToolkit.Markup;
@@ -19,12 +20,10 @@ namespace GitTrends
 
             static EnableOrganizationsGrid CreateItemsGrid(IncludeOrganizationsCarouselModel includeOrganizationsModel) => new()
             {
-                RowSpacing = 0, // Must be zero to match OrganizationsCarouselFrame's Grid
-
                 Children =
                 {
                     includeOrganizationsModel.Url is not null
-                        ? new VideoPlayerView()
+                        ? new VideoPlayerView { Uri = new Uri(includeOrganizationsModel.Url) }.Margin(24, 12)
                             .Row(EnableOrganizationsGrid.Row.Image)
                         : new Image { Source = includeOrganizationsModel.ImageSource, Aspect = Aspect.AspectFit }.Margin(24, 12)
                             .Row(EnableOrganizationsGrid.Row.Image),

@@ -1,7 +1,7 @@
-﻿using Android.Content;
+﻿using System.ComponentModel;
+using Android.Content;
 using Android.Net;
 using Android.Views.Animations;
-using Autofac;
 using Com.Google.Android.Exoplayer2;
 using Com.Google.Android.Exoplayer2.Source.Smoothstreaming;
 using Com.Google.Android.Exoplayer2.UI;
@@ -28,8 +28,8 @@ namespace GitTrends.Droid
 
             _playerView = new PlayerView(context)
             {
-                UseController = false,
                 Player = _player,
+                UseController = false,
                 ControllerAutoShow = false
             };
         }
@@ -50,10 +50,20 @@ namespace GitTrends.Droid
             if (Control is null)
                 SetNativeControl(_playerView);
 
-            var mediaElementService = ContainerService.Container.Resolve<MediaElementService>();
+            if (Element.Uri is not null
+                && Uri.Parse(Element.Uri.ToString()) is Uri uri)
+            {
+                Play(uri);
+            }
+        }
 
-            if (mediaElementService.OnboardingChart?.ManifestUrl != null
-                && Uri.Parse(mediaElementService.OnboardingChart.ManifestUrl) is Uri uri)
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(sender, e);
+
+            if (e.PropertyName is nameof(Element.Uri)
+                && Element.Uri is not null
+                && Uri.Parse(Element.Uri.ToString()) is Uri uri)
             {
                 Play(uri);
             }
