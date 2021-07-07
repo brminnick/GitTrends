@@ -433,14 +433,30 @@
     <ImageAsset Include="Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart%403x.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\Business.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\Business.imageset\Business.png" />
-    <ImageAsset Include="Assets.xcassets\Business.imageset\Business%402x.png" />
-    <ImageAsset Include="Assets.xcassets\Business.imageset\Business%403x.png" />
-    <ImageAsset Include="Assets.xcassets\Inspectocat.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\Inspectocat.imageset\inspectocat.png" />
-    <ImageAsset Include="Assets.xcassets\Inspectocat.imageset\inspectocat%402x.png" />
-    <ImageAsset Include="Assets.xcassets\Inspectocat.imageset\inspectocat%403x.png" />
+    <ImageAsset Include="Assets.xcassets\Business.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Business.imageset\Business.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Business.imageset\Business%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Business.imageset\Business%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Inspectocat.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Inspectocat.imageset\inspectocat.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Inspectocat.imageset\inspectocat%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Inspectocat.imageset\inspectocat%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
