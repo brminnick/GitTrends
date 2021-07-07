@@ -23,7 +23,7 @@ namespace GitTrends
                 Children =
                 {
                     includeOrganizationsModel.Url is not null
-                        ? new VideoPlayerView { Uri = new Uri(includeOrganizationsModel.Url) }.Margin(24, 12)
+                        ? new VideoPlayerView(includeOrganizationsModel.Url).Margin(24, 12)
                             .Row(EnableOrganizationsGrid.Row.Image)
                         : new Image { Source = includeOrganizationsModel.ImageSource, Aspect = Aspect.AspectFit }.Margin(24, 12)
                             .Row(EnableOrganizationsGrid.Row.Image),

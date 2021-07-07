@@ -50,8 +50,8 @@ namespace GitTrends.Droid
             if (Control is null)
                 SetNativeControl(_playerView);
 
-            if (Element.Uri is not null
-                && Uri.Parse(Element.Uri.ToString()) is Uri uri)
+            if (Element.Url is not null
+                && Uri.Parse(Element.Url) is Uri uri)
             {
                 Play(uri);
             }
@@ -61,9 +61,9 @@ namespace GitTrends.Droid
         {
             base.OnElementPropertyChanged(sender, e);
 
-            if (e.PropertyName is nameof(Element.Uri)
-                && Element.Uri is not null
-                && Uri.Parse(Element.Uri.ToString()) is Uri uri)
+            if (e.PropertyName is nameof(Element.Url)
+                && Element.Url is not null
+                && Uri.Parse(Element.Url) is Uri uri)
             {
                 Play(uri);
             }

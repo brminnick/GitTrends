@@ -64,7 +64,7 @@ namespace GitTrends
             }
         }
 
-        public async ValueTask InitializeOnboardingChart(CancellationToken cancellationToken)
+        public async ValueTask InitializeManifests(CancellationToken cancellationToken)
         {
             if (OnboardingChartManifest is null || EnableOrganizationsManifest is null)
                 await initializeOnboardingChart(cancellationToken).ConfigureAwait(false);

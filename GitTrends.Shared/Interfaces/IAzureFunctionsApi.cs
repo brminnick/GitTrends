@@ -20,7 +20,7 @@ namespace GitTrends.Shared
         Task<GitHubToken> GetTestToken([AliasAs("code")] string functionKey = AzureConstants.GetTestTokenApiKey);
 
         [Get("/GetStreamingManifests")]
-        Task<IReadOnlyDictionary<string, StreamingManifest>> GetStreamingManifests();
+        Task<Dictionary<string, StreamingManifest>> GetStreamingManifests(); // On iOS, Newtonsoft.Json Cannot Deserialize to IReadOnlyDictionary
 
         [Get("/GetNotificationHubInformation")]
         Task<NotificationHubInformation> GetNotificationHubInformation([AliasAs("code")] string functionKey = AzureConstants.GetNotificationHubInformationApiKey);

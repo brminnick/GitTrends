@@ -11,8 +11,11 @@ namespace GitTrends
 {
     public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
     {
-        public ConnectToGitHubOnboardingPage(IMainThread mainthread, IAnalyticsService analyticsService)
-                : base(OnboardingConstants.TryDemoText, Color.FromHex(BaseTheme.CoralColorHex), mainthread, 3, analyticsService)
+        public ConnectToGitHubOnboardingPage(IDeviceInfo deviceInfo,
+                                                IMainThread mainthread,
+                                                IAnalyticsService analyticsService,
+                                                MediaElementService mediaElementService)
+                : base(OnboardingConstants.TryDemoText, deviceInfo, Color.FromHex(BaseTheme.CoralColorHex), mainthread, 3, analyticsService, mediaElementService)
         {
             GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
         }

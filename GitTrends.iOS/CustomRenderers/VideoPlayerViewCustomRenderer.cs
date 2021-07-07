@@ -29,9 +29,9 @@ namespace GitTrends.iOS
 
             if (e.NewElement is not null
                 && _avPlayerViewController.View is not null
-                && Element.Uri is not null)
+                && Element.Url is not null)
             {
-                Play(Element.Uri, _avPlayerViewController.View);
+                Play(Element.Url, _avPlayerViewController.View);
             }
         }
 
@@ -39,19 +39,19 @@ namespace GitTrends.iOS
         {
             base.OnElementPropertyChanged(sender, e);
 
-            if (e.PropertyName is nameof(Element.Uri)
+            if (e.PropertyName is nameof(Element.Url)
                 && _avPlayerViewController.View is not null
-                && Element.Uri is not null)
+                && Element.Url is not null)
             {
-                Play(Element.Uri, _avPlayerViewController.View);
+                Play(Element.Url, _avPlayerViewController.View);
             }
         }
 
         static AVPlayerLooper CreateAVPlayerLooper(AVPlayerItem onboardingChartItem) => new(_queuePlayer, onboardingChartItem, CMTimeRange.InvalidRange);
 
-        void Play(Uri videoUri, UIView avPlayerViewControllerView)
+        void Play(string videoUrl, UIView avPlayerViewControllerView)
         {
-            _onboardingChartItem = CreatePlayerItem(videoUri);
+            _onboardingChartItem = CreatePlayerItem(videoUrl);
             _avPlayerLooper = CreateAVPlayerLooper(_onboardingChartItem);
             avPlayerViewControllerView.BackgroundColor = Color.White.ToUIColor();
 
@@ -69,9 +69,9 @@ namespace GitTrends.iOS
             _avPlayerViewController.Player.Play();
         }
 
-        AVPlayerItem CreatePlayerItem(Uri uri)
+        AVPlayerItem CreatePlayerItem(string url)
         {
-            var asset = AVUrlAsset.Create(NSUrl.FromString(uri.ToString()));
+            var asset = AVUrlAsset.Create(NSUrl.FromString(url));
 
             return new AVPlayerItem(asset)
             {

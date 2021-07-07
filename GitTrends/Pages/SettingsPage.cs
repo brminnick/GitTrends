@@ -16,26 +16,20 @@ namespace GitTrends
     public class SettingsPage : BaseContentPage<SettingsViewModel>
     {
         readonly Grid _contentGrid;
-        readonly DeepLinkingService _deepLinkingService;
         readonly OrganizationsCarouselFrame _organizationsCarouselFrame;
-        readonly GitTrendsStatisticsService _gitTrendsStatisticsService;
 
         CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
 
-        public SettingsPage(IMainThread mainThread,
+        public SettingsPage(IDeviceInfo deviceInfo,
+                            IMainThread mainThread,
                             IAnalyticsService analyticsService,
                             SettingsViewModel settingsViewModel,
-                            DeepLinkingService deepLinkingService,
-                            MediaElementService mediaElementService,
-                            GitTrendsStatisticsService gitTrendsStatisticsService) : base(settingsViewModel, analyticsService, mainThread, true)
+                            MediaElementService mediaElementService) : base(settingsViewModel, analyticsService, mainThread, true)
         {
             const int separatorRowHeight = 1;
             const int settingsRowHeight = 38;
 
             SettingsViewModel.OrganizationsCarouselViewVisiblilityChanged += HandleOrganizationsCarouselViewVisiblilityChanged;
-
-            _deepLinkingService = deepLinkingService;
-            _gitTrendsStatisticsService = gitTrendsStatisticsService;
 
             var loginRowTapGesture = new TapGestureRecognizer();
             loginRowTapGesture.Tapped += HandleLoginRowTapped;
@@ -174,7 +168,7 @@ namespace GitTrends
                         new CopyrightLabel()
                             .Row(Row.Copyright).ColumnSpan(All<Column>()),
 
-                        new OrganizationsCarouselFrame(analyticsService,mediaElementService).Assign(out _organizationsCarouselFrame)
+                        new OrganizationsCarouselFrame(deviceInfo, analyticsService, mediaElementService).Assign(out _organizationsCarouselFrame)
                             .Row(Row.GitHubUser).Column(Column.Icon)
                             .RowSpan(14).ColumnSpan(All<Column>())
                     }

@@ -66,7 +66,7 @@ namespace GitTrends.UnitTests
         public async Task GetStreamingManifestsTest()
         {
             //Arrange
-            IReadOnlyDictionary<string, StreamingManifest> streamingManifests;
+            IReadOnlyDictionary<string, StreamingManifest>? streamingManifests;
             var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
 
             //Act

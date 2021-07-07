@@ -10,8 +10,11 @@ namespace GitTrends
 {
     public class GitTrendsOnboardingPage : BaseOnboardingContentPage
     {
-        public GitTrendsOnboardingPage(IMainThread mainThread, IAnalyticsService analyticsService)
-            : base(OnboardingConstants.SkipText, Color.FromHex(BaseTheme.LightTealColorHex), mainThread, 0, analyticsService)
+        public GitTrendsOnboardingPage(IDeviceInfo deviceInfo,
+                                        IMainThread mainThread,
+                                        IAnalyticsService analyticsService,
+                                        MediaElementService mediaElementService)
+            : base(OnboardingConstants.SkipText, deviceInfo, Color.FromHex(BaseTheme.LightTealColorHex), mainThread, 0, analyticsService, mediaElementService)
         {
         }
 

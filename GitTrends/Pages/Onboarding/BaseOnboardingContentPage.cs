@@ -11,11 +11,16 @@ namespace GitTrends
     public abstract class BaseOnboardingContentPage : BaseContentPage
     {
         protected BaseOnboardingContentPage(in string nextButtonText,
+                                            in IDeviceInfo deviceInfo,
                                             in Color backgroundColor,
                                             in IMainThread mainThread,
                                             in int carouselPositionIndex,
-                                            in IAnalyticsService analyticsService) : base(analyticsService, mainThread)
+                                            in IAnalyticsService analyticsService,
+                                            in MediaElementService mediaElementService) : base(analyticsService, mainThread)
         {
+            DeviceInfo = deviceInfo;
+            MediaElementService = mediaElementService;
+
             //Don't Use BaseTheme.PageBackgroundColor
             RemoveDynamicResource(BackgroundColorProperty);
 
@@ -70,6 +75,9 @@ namespace GitTrends
         protected abstract View CreateImageView();
         protected abstract TitleLabel CreateDescriptionTitleLabel();
         protected abstract View CreateDescriptionBodyView();
+
+        protected IDeviceInfo DeviceInfo { get; }
+        protected MediaElementService MediaElementService { get; }
 
         static int GetImageRowStarHeight()
         {

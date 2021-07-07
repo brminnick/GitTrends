@@ -1,5 +1,4 @@
-﻿using System;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -7,14 +6,18 @@ namespace GitTrends
     //On Android, use Custom Renderer for ExoPlayer because Xamarin.Forms.MediaElement uses Android.VideoView
     public class VideoPlayerView : View
     {
-        public readonly BindableProperty UriProperty = BindableProperty.Create(nameof(Uri), typeof(Uri), typeof(VideoPlayerView));
+        public readonly BindableProperty UrlProperty = BindableProperty.Create(nameof(Url), typeof(string), typeof(VideoPlayerView));
 
-        public VideoPlayerView() => BackgroundColor = Color.Transparent;
-
-        public Uri? Uri
+        public VideoPlayerView(string? uri)
         {
-            get => (Uri?)GetValue(UriProperty);
-            set => SetValue(UriProperty, value);
+            BackgroundColor = Color.Transparent;
+            Url = uri;
+        }
+
+        public string? Url
+        {
+            get => (string?)GetValue(UrlProperty);
+            set => SetValue(UrlProperty, value);
         }
     }
 }

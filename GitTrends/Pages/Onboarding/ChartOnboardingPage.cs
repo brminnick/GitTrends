@@ -1,5 +1,4 @@
-﻿using System;
-using GitTrends.Mobile.Common.Constants;
+﻿using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
@@ -11,47 +10,29 @@ namespace GitTrends
 {
     public class ChartOnboardingPage : BaseOnboardingContentPage
     {
-        readonly MediaElementService _mediaElementService;
 
-        public ChartOnboardingPage(IMainThread mainThread,
+        public ChartOnboardingPage(IDeviceInfo deviceInfo,
+                                    IMainThread mainThread,
                                     IAnalyticsService analyticsService,
                                     MediaElementService mediaElementService)
-            : base(OnboardingConstants.SkipText, Color.FromHex(BaseTheme.CoralColorHex), mainThread, 1, analyticsService)
+            : base(OnboardingConstants.SkipText, deviceInfo, Color.FromHex(BaseTheme.CoralColorHex), mainThread, 1, analyticsService, mediaElementService)
         {
-            _mediaElementService = mediaElementService;
+
         }
 
         enum Row { Title, Zoom, LongPress }
         enum Column { Image, Description }
 
-        protected override View CreateImageView()
+        protected override View CreateImageView() => new PancakeView
         {
-            var videoPlayerView = new VideoPlayerView
-            {
-                Uri = new Uri(_mediaElementService.OnboardingChartManifest?.HlsUrl)
-            };
-
-            MediaElementService.OnboardingChartManifestChanged += HandleOnboardingChartManifestChanged;
-
-            return new PancakeView
-            {
-                CornerRadius = 4,
-                Border = new Border { Color = Color.FromHex("E0E0E0") },
-                BackgroundColor = Color.White,
-                Padding = new Thickness(5),
-                Content = videoPlayerView
-            };
-
-            void HandleOnboardingChartManifestChanged(object sender, StreamingManifest? e)
-            {
-                if (e is not null)
-                {
-                    MediaElementService.OnboardingChartManifestChanged -= HandleOnboardingChartManifestChanged;
-                    videoPlayerView.Uri = new Uri(e.HlsUrl);
-                }
-            }
-
-        }
+            CornerRadius = 4,
+            Border = new Border { Color = Color.FromHex("E0E0E0") },
+            BackgroundColor = Color.White,
+            Padding = new Thickness(5),
+            Content = DeviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS
+                        ? new VideoPlayerView(MediaElementService.OnboardingChartManifest?.HlsUrl)
+                        : new VideoPlayerView(MediaElementService.OnboardingChartManifest?.ManifestUrl)
+        };
 
         protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ChartPage_Title);
 
