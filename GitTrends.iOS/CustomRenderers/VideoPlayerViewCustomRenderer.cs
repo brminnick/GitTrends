@@ -17,11 +17,10 @@ namespace GitTrends.iOS
 {
     public class MediaElementCustomRenderer : ViewRenderer<VideoPlayerView, UIView>
     {
-        readonly static AVQueuePlayer _queuePlayer = new() { Volume = 0 };
         readonly static AVPlayerViewController _avPlayerViewController = new();
 
         static AVPlayerLooper? _avPlayerLooper;
-        static AVPlayerItem? _onboardingChartItem;
+        static AVPlayerItem? _playerItem;
 
         protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayerView> e)
         {
@@ -47,12 +46,24 @@ namespace GitTrends.iOS
             }
         }
 
-        static AVPlayerLooper CreateAVPlayerLooper(AVPlayerItem onboardingChartItem) => new(_queuePlayer, onboardingChartItem, CMTimeRange.InvalidRange);
+        static AVPlayerLooper CreateAVPlayerLooper(AVQueuePlayer queuePlayer, AVPlayerItem onboardingChartItem) => new(queuePlayer, onboardingChartItem, CMTimeRange.InvalidRange);
+
+        static AVPlayerItem CreatePlayerItem(string url)
+        {
+            var asset = AVUrlAsset.Create(NSUrl.FromString(url));
+
+            return new AVPlayerItem(asset)
+            {
+                PreferredForwardBufferDuration = 1,
+            };
+        }
 
         void Play(string videoUrl, UIView avPlayerViewControllerView)
         {
-            _onboardingChartItem = CreatePlayerItem(videoUrl);
-            _avPlayerLooper = CreateAVPlayerLooper(_onboardingChartItem);
+            var queuePlayer = new AVQueuePlayer() { Volume = 0 };
+
+            _playerItem = CreatePlayerItem(videoUrl);
+            _avPlayerLooper = CreateAVPlayerLooper(queuePlayer, _playerItem);
             avPlayerViewControllerView.BackgroundColor = Color.White.ToUIColor();
 
             SetNativeControl(avPlayerViewControllerView);
@@ -65,18 +76,8 @@ namespace GitTrends.iOS
             audioSession.SetMode(AVAudioSession.ModeMoviePlayback, out _);
             audioSession.SetActive(false);
 
-            _avPlayerViewController.Player = _queuePlayer;
+            _avPlayerViewController.Player = queuePlayer;
             _avPlayerViewController.Player.Play();
-        }
-
-        AVPlayerItem CreatePlayerItem(string url)
-        {
-            var asset = AVUrlAsset.Create(NSUrl.FromString(url));
-
-            return new AVPlayerItem(asset)
-            {
-                PreferredForwardBufferDuration = 1,
-            };
         }
     }
 }
