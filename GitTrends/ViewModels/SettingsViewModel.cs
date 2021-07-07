@@ -79,7 +79,7 @@ namespace GitTrends
 
             CopyrightLabelTappedCommand = new AsyncCommand(ExecuteCopyrightLabelTappedCommand);
             GitHubUserViewTappedCommand = new AsyncCommand(ExecuteGitHubUserViewTappedCommand, _ => IsNotAuthenticating);
-            ManageOrganizationsButtonCommand = new AsyncCommand<(CancellationToken CancellationToken, BrowserLaunchOptions? BrowserLaunchOptions)>(tuple => ExecuteManageOrganizationsButtonCommand(tuple.CancellationToken, tuple.BrowserLaunchOptions));
+            ManageOrganizationsButtonCommand = new AsyncCommand(ExecuteManageOrganizationsButtonCommand);
 
             App.Resumed += HandleResumed;
 
@@ -117,8 +117,8 @@ namespace GitTrends
 
         public ICommand CopyrightLabelTappedCommand { get; }
         public IAsyncCommand GitHubUserViewTappedCommand { get; }
+        public IAsyncCommand ManageOrganizationsButtonCommand { get; }
         public IReadOnlyList<string> LanguagePickerItemsSource { get; } = CultureConstants.CulturePickerOptions.Values.ToList();
-        public IAsyncCommand<(CancellationToken CancellationToken, BrowserLaunchOptions? BrowserLaunchOptions)> ManageOrganizationsButtonCommand { get; }
 
         public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText == GitHubLoginButtonConstants.Disconnect;
         public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginLabelText == GitHubLoginButtonConstants.ConnectToGitHub;
@@ -368,10 +368,12 @@ namespace GitTrends
             }
         }
 
-        Task ExecuteManageOrganizationsButtonCommand(CancellationToken cancellationToken, BrowserLaunchOptions? browserLaunchOptions)
+        Task ExecuteManageOrganizationsButtonCommand()
         {
             if (_gitTrendsStatisticsService.EnableOrganizationsUri is null)
                 throw new InvalidOperationException($"{nameof(GitTrendsStatisticsService)}.{nameof(GitTrendsStatisticsService.EnableOrganizationsUri)} Must Be Initialized");
+
+            AnalyticsService.Track("Manage Organizations Button Tapped");
 
             return _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri);
         }

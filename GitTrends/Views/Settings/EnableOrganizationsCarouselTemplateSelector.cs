@@ -37,8 +37,7 @@ namespace GitTrends
 
                     new GitHubButton(SettingsPageAutomationIds.GitHubButton, SettingsPageConstants.ManageOrganizations)
                         .Row(EnableOrganizationsGrid.Row.GitHubButton)
-                        .Bind(GitHubButton.CommandProperty, nameof(SettingsViewModel.ManageOrganizationsButtonCommand), source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(SettingsViewModel)))
-                        .Invoke(button => button.CommandParameter = (CancellationToken.None, (Xamarin.Essentials.BrowserLaunchOptions?)null)),
+                        .Bind(GitHubButton.CommandProperty, nameof(SettingsViewModel.ManageOrganizationsButtonCommand), source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(SettingsViewModel))),
 
                     new BoxView()
                         .Row(EnableOrganizationsGrid.Row.IndicatorView)
