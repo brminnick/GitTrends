@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using Refit;
 
 namespace GitTrends.UnitTests
 {
@@ -83,6 +80,9 @@ namespace GitTrends.UnitTests
 
             Assert.IsTrue(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.EnableOrganizations].HlsUrl, UriKind.Absolute));
             Assert.IsTrue(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.EnableOrganizations].ManifestUrl, UriKind.Absolute));
+
+            Assert.AreNotEqual(streamingManifests[StreamingConstants.Chart].HlsUrl, streamingManifests[StreamingConstants.EnableOrganizations].HlsUrl);
+            Assert.AreNotEqual(streamingManifests[StreamingConstants.Chart].ManifestUrl, streamingManifests[StreamingConstants.EnableOrganizations].ManifestUrl);
         }
 
         [Test]
