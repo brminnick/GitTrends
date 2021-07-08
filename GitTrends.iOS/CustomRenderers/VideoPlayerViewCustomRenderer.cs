@@ -1,9 +1,6 @@
-﻿using System;
-using System.ComponentModel;
-using Autofac;
+﻿using System.ComponentModel;
 using AVFoundation;
 using AVKit;
-using CoreGraphics;
 using CoreMedia;
 using Foundation;
 using GitTrends;

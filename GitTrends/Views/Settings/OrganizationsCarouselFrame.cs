@@ -97,7 +97,7 @@ namespace GitTrends
             public OpacityOverlay()
             {
                 BackgroundColor = Color.White.MultiplyAlpha(0.25);
-                CornerRadius = new CornerRadius(10, 10, 0, 0);
+                CornerRadius = new CornerRadius(_cornerRadius, _cornerRadius, 0, 0);
             }
         }
 
