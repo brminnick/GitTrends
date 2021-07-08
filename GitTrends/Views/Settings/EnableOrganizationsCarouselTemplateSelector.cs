@@ -1,6 +1,4 @@
-﻿using System;
-using System.Globalization;
-using GitTrends.Mobile.Common;
+﻿using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
