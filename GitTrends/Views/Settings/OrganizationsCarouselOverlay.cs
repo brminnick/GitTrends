@@ -17,8 +17,7 @@ namespace GitTrends
     {
         readonly IMainThread _mainThread;
 
-        public OrganizationsCarouselOverlay(IDeviceInfo deviceInfo,
-                                                IMainThread mainThread,
+        public OrganizationsCarouselOverlay(IMainThread mainThread,
                                                 IAnalyticsService analyticsService,
                                                 MediaElementService mediaElementService)
         {
@@ -42,7 +41,7 @@ namespace GitTrends
                             .Row(Row.CloseButton).Column(Column.Right));
 
 
-            Children.Add(new OrganizationsCarouselFrame(deviceInfo, analyticsService, mediaElementService)
+            Children.Add(new OrganizationsCarouselFrame(analyticsService, mediaElementService)
                             .Row(Row.CarouselFrame).Column(Column.Center));
 
             Dismiss(false).SafeFireAndForget(ex => analyticsService.Report(ex));
@@ -106,8 +105,7 @@ namespace GitTrends
             readonly IndicatorView _indicatorView;
             readonly IAnalyticsService _analyticsService;
 
-            public OrganizationsCarouselFrame(IDeviceInfo deviceInfo,
-                                                IAnalyticsService analyticsService,
+            public OrganizationsCarouselFrame(IAnalyticsService analyticsService,
                                                 MediaElementService mediaElementService)
             {
                 _analyticsService = analyticsService;
@@ -129,7 +127,7 @@ namespace GitTrends
                         new OpacityOverlay()
                             .Row(EnableOrganizationsGrid.Row.Image),
 
-                        new OrganizationsCarouselView(deviceInfo, mediaElementService)
+                        new OrganizationsCarouselView(mediaElementService)
                             .Row(EnableOrganizationsGrid.Row.Image).RowSpan(All<EnableOrganizationsGrid.Row>())
                             .Invoke(view => view.PositionChanged += HandlePositionChanged)
                             .FillExpand(),
@@ -164,8 +162,7 @@ namespace GitTrends
 
             class OrganizationsCarouselView : CarouselView
             {
-                public OrganizationsCarouselView(IDeviceInfo deviceInfo,
-                                                    MediaElementService mediaElementService)
+                public OrganizationsCarouselView(MediaElementService mediaElementService)
                 {
                     Loop = false;
                     HorizontalScrollBarVisibility = ScrollBarVisibility.Never;
@@ -174,9 +171,7 @@ namespace GitTrends
                     {
                         new IncludeOrganizationsCarouselModel("Title 1", "Text 1", 0, "Business", null),
                         new IncludeOrganizationsCarouselModel("Title 2", "Text 2", 1, "Inspectocat", null),
-                        new IncludeOrganizationsCarouselModel("Title 3", "Text 3", 2, null, deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS
-                                                                                        ? mediaElementService.EnableOrganizationsManifest?.HlsUrl
-                                                                                        : mediaElementService.EnableOrganizationsManifest?.ManifestUrl),
+                        new IncludeOrganizationsCarouselModel("Title 3", "Text 3", 2, null, mediaElementService.EnableOrganizationsUrl),
                     };
 
                     ItemTemplate = new EnableOrganizationsCarouselTemplateSelector();

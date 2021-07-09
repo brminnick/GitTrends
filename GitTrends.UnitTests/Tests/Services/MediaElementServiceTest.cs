@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends.UnitTests
 {
@@ -16,13 +17,20 @@ namespace GitTrends.UnitTests
             StreamingManifest? onboardingChartStreamingManifest_BeforeInitialization, onboardingChartStreamingManifest_EventHandlerResult, onboardingChartStreamingManifest_AfterInitialization,
                                 enableOrganizationsStreamingManifest_BeforeInitialization, enableOrganizationsStreamingManifest_EventHandlerResult, enableOrganizationsStreamingManifest_AfterInitialization;
 
+            string enableOrganizationsUrl_Final, onboardingChartUrl_Final;
+
             var onboardingChartManifestChangedTCS = new TaskCompletionSource<StreamingManifest?>();
             var enableOrganizationsManifestChangedTCS = new TaskCompletionSource<StreamingManifest?>();
 
+            var deviceInfo = ServiceCollection.ServiceProvider.GetRequiredService<IDeviceInfo>();
             var mediaElementService = ServiceCollection.ServiceProvider.GetRequiredService<MediaElementService>();
 
             MediaElementService.OnboardingChartManifestChanged += HandleOnboardingChartManifestChanged;
             MediaElementService.EnableOrganizationsManifestChanged += HandleEnableOrganizationsManifestChanged;
+
+            //Assert
+            Assert.Throws<ArgumentNullException>(() => _ = mediaElementService.OnboardingChartUrl);
+            Assert.Throws<ArgumentNullException>(() => _ = mediaElementService.EnableOrganizationsUrl);
 
             //Act
             onboardingChartStreamingManifest_BeforeInitialization = mediaElementService.OnboardingChartManifest;
@@ -33,6 +41,8 @@ namespace GitTrends.UnitTests
             onboardingChartStreamingManifest_EventHandlerResult = await onboardingChartManifestChangedTCS.Task.ConfigureAwait(false);
             enableOrganizationsStreamingManifest_EventHandlerResult = await enableOrganizationsManifestChangedTCS.Task.ConfigureAwait(false);
 
+            onboardingChartUrl_Final = mediaElementService.OnboardingChartUrl;
+            enableOrganizationsUrl_Final = mediaElementService.EnableOrganizationsUrl;
             onboardingChartStreamingManifest_AfterInitialization = mediaElementService.OnboardingChartManifest;
             enableOrganizationsStreamingManifest_AfterInitialization = mediaElementService.EnableOrganizationsManifest;
 
@@ -47,15 +57,29 @@ namespace GitTrends.UnitTests
             Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_AfterInitialization?.HlsUrl, UriKind.Absolute));
             Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl, UriKind.Absolute));
 
+            if (deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.Android)
+                Assert.AreEqual(onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl, onboardingChartUrl_Final);
+            else if (deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.Android)
+                Assert.AreEqual(onboardingChartStreamingManifest_AfterInitialization?.HlsUrl, onboardingChartUrl_Final);
+            else
+                throw new InvalidOperationException($"{deviceInfo.Platform} Not Under Test");
+
             Assert.IsNull(enableOrganizationsStreamingManifest_BeforeInitialization);
             Assert.IsNotNull(enableOrganizationsStreamingManifest_EventHandlerResult);
             Assert.IsNotNull(enableOrganizationsStreamingManifest_AfterInitialization);
 
             Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_EventHandlerResult?.HlsUrl, UriKind.Absolute));
             Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_EventHandlerResult?.ManifestUrl, UriKind.Absolute));
-                                                    
+
             Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl, UriKind.Absolute));
             Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl, UriKind.Absolute));
+
+            if (deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.Android)
+                Assert.AreEqual(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl, onboardingChartUrl_Final);
+            else if (deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.Android)
+                Assert.AreEqual(enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl, onboardingChartUrl_Final);
+            else
+                throw new InvalidOperationException($"{deviceInfo.Platform} Not Under Test");
 
             Assert.AreEqual(enableOrganizationsStreamingManifest_EventHandlerResult?.HlsUrl, enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl);
             Assert.AreEqual(onboardingChartStreamingManifest_EventHandlerResult?.HlsUrl, onboardingChartStreamingManifest_AfterInitialization?.HlsUrl);

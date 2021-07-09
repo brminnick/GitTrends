@@ -13,14 +13,17 @@ namespace GitTrends
     {
         readonly static WeakEventManager<StreamingManifest?> _streamingManifestChangedEventManager = new();
 
+        readonly IDeviceInfo _deviceInfo;
         readonly IPreferences _preferences;
         readonly IAnalyticsService _analyticsService;
         readonly AzureFunctionsApiService _azureFunctionsApiService;
 
-        public MediaElementService(IPreferences preferences,
+        public MediaElementService(IDeviceInfo deviceInfo,
+                                    IPreferences preferences,
                                     IAnalyticsService analyticsService,
                                     AzureFunctionsApiService azureFunctionsApiService)
         {
+            _deviceInfo = deviceInfo;
             _preferences = preferences;
             _analyticsService = analyticsService;
             _azureFunctionsApiService = azureFunctionsApiService;
@@ -37,6 +40,10 @@ namespace GitTrends
             add => _streamingManifestChangedEventManager.AddEventHandler(value);
             remove => _streamingManifestChangedEventManager.RemoveEventHandler(value);
         }
+
+        public string OnboardingChartUrl => GetOnboardingChartUrl();
+
+        public string EnableOrganizationsUrl => GetEnableOrganizationsUrl();
 
         public StreamingManifest? OnboardingChartManifest
         {
@@ -85,6 +92,32 @@ namespace GitTrends
                     _analyticsService.Report(e);
                 }
             }
+        }
+
+        string GetOnboardingChartUrl()
+        {
+            if (OnboardingChartManifest is null)
+                throw new ArgumentNullException(nameof(OnboardingChartManifest));
+
+            if (_deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.Android)
+                return OnboardingChartManifest.ManifestUrl;
+            else if (_deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS)
+                return OnboardingChartManifest.HlsUrl;
+            else
+                throw new NotSupportedException("Platform Not Supported");
+        }
+
+        string GetEnableOrganizationsUrl()
+        {
+            if (EnableOrganizationsManifest is null)
+                throw new ArgumentNullException(nameof(EnableOrganizationsManifest));
+
+            if (_deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.Android)
+                return EnableOrganizationsManifest.ManifestUrl;
+            else if (_deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS)
+                return EnableOrganizationsManifest.HlsUrl;
+            else
+                throw new NotSupportedException("Platform Not Supported");
         }
 
         StreamingManifest? GetStreamingManifest([CallerMemberName] string key = "")

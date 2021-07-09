@@ -20,8 +20,7 @@ namespace GitTrends
 
         CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
 
-        public SettingsPage(IDeviceInfo deviceInfo,
-                            IMainThread mainThread,
+        public SettingsPage(IMainThread mainThread,
                             IAnalyticsService analyticsService,
                             SettingsViewModel settingsViewModel,
                             MediaElementService mediaElementService) : base(settingsViewModel, analyticsService, mainThread, true)
@@ -173,7 +172,7 @@ namespace GitTrends
                         }.Assign(out _contentGrid)
                     }.Paddings(left: 28, right: 28, bottom: 8),
 
-                    new OrganizationsCarouselOverlay(deviceInfo, mainThread, analyticsService, mediaElementService).Assign(out _organizationsCarouselOverlay),
+                    new OrganizationsCarouselOverlay(mainThread, analyticsService, mediaElementService).Assign(out _organizationsCarouselOverlay),
                 }
             };
 
