@@ -32,17 +32,16 @@ namespace GitTrends
             RowDefinitions = Rows.Define(Diameter);
             ColumnDefinitions = Columns.Define(Diameter);
 
-            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic1, floatingActionButtonSize: FloatingActionButtonSize.Mini).Center().Assign(out _statistic1FloatingActionButton)
+            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic1, FloatingActionButtonSize.Mini).Center().Assign(out _statistic1FloatingActionButton)
                             .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => repositories is null ? string.Empty : StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic1)));
 
-            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic2, floatingActionButtonSize: FloatingActionButtonSize.Mini).Center().Assign(out _statistic2FloatingActionButton)
+            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic2, FloatingActionButtonSize.Mini).Center().Assign(out _statistic2FloatingActionButton)
                             .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => repositories is null ? string.Empty : StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic2)));
 
-            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic3, floatingActionButtonSize: FloatingActionButtonSize.Mini).Center().Assign(out _statistic3FloatingActionButton)
+            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic3, FloatingActionButtonSize.Mini).Center().Assign(out _statistic3FloatingActionButton)
                             .Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => repositories is null ? string.Empty : StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic3)));
 
-            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Information, new AsyncCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium }.Center().Assign(out _totalButton)
-                            .Bind(FloatingActionButtonView.SizeProperty, nameof(RepositoryViewModel.TotalButtonSize))
+            Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Information, FloatingActionButtonSize.Normal, new AsyncCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium }.Center().Assign(out _totalButton)
                             .Bind(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.TotalButtonText)));
 
             SetBinding(IsVisibleProperty, new MultiBinding
@@ -113,34 +112,35 @@ namespace GitTrends
             readonly FloatingActionButtonType _floatingActionButtonType;
 
             public FloatingActionTextButton(in MobileSortingService mobileSortingService,
-                                            in FloatingActionButtonType floatingActionButtonType,
-                                            in ICommand? command = null,
-                                            in FloatingActionButtonSize floatingActionButtonSize = FloatingActionButtonSize.None)
+                                            FloatingActionButtonType floatingActionButtonType,
+                                            in FloatingActionButtonSize floatingActionButtonSize,
+                                            in ICommand? command = null)
             {
                 _mobileSortingService = mobileSortingService;
                 _floatingActionButtonType = floatingActionButtonType;
 
                 ThemeService.PreferenceChanged += HandlePreferenceChanged;
 
-                // Override the size if the it's been specified in argument
-                if (floatingActionButtonSize != FloatingActionButtonSize.None)
-                    Size = floatingActionButtonSize;
-
+                Size = floatingActionButtonSize;
 
                 Command = command;
 
-                var fontSize = Size switch
-                {
-                    FloatingActionButtonSize.Mini => 10,
-                    FloatingActionButtonSize.Normal or FloatingActionButtonSize.Large => 13,
-                    _ => throw new NotImplementedException(),
-                };
-
-                Content = new TextLabel(floatingActionButtonType).Center().TextCenter().Font(size: fontSize)
+                Content = new TextLabel(floatingActionButtonType).Center().TextCenter()
                                 .Bind(Label.TextProperty, nameof(Text), source: this)
-                                .Bind(Label.FontFamilyProperty, nameof(FontFamily), source: this);
+                                .Bind(Label.FontFamilyProperty, nameof(FontFamily), source: this)
+                                .Bind<Label, string, double>(Label.FontSizeProperty, nameof(Text), source: this, convert: text => convertFontSize(text, floatingActionButtonType));
+
 
                 this.Bind<FloatingActionButtonView, IReadOnlyList<Repository>, Color>(FloatingActionButtonBackgroundColorProperty, nameof(RepositoryViewModel.VisibleRepositoryList), convert: repositories => GetBackgroundColor());
+
+                static double convertFontSize(in string? text, in FloatingActionButtonType floatingActionButtonType) => (floatingActionButtonType, text?.Length) switch
+                {
+                    (_, null) => (double)Label.FontSizeProperty.DefaultValue,
+                    (FloatingActionButtonType.Information, <= 5) => 13,
+                    (FloatingActionButtonType.Information, <= 8) => 10, 
+                    (FloatingActionButtonType.Information, > 8) => 7.5,
+                    (_, _) => 10
+                };
             }
 
             public string Text
@@ -182,7 +182,16 @@ namespace GitTrends
                 public TextLabel(in FloatingActionButtonType floatingActionButtonType)
                 {
                     TextColor = Color.Black;
+                    TextTransform = TextTransform.Uppercase;
+
+                    FontFamily = FontFamilyConstants.RobotoBold;
+
                     InputTransparent = true;
+
+                    LineBreakMode = LineBreakMode.TailTruncation;
+
+                    Padding = new Thickness(4, 0);
+
                     AutomationId = RepositoryPageAutomationIds.GetFloatingActionTextButtonLabelAutomationId(floatingActionButtonType);
                 }
             }
