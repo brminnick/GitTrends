@@ -140,7 +140,7 @@ namespace GitTrends
                     (FloatingActionButtonType.Statistic2, _) => 10,
                     (FloatingActionButtonType.Statistic3, _) => 10,
                     (FloatingActionButtonType.Information, <= 5) => 13,
-                    (FloatingActionButtonType.Information, <= 8) => 10, 
+                    (FloatingActionButtonType.Information, <= 8) => 10,
                     (FloatingActionButtonType.Information, > 8) => 7.5,
                     (_, _) => throw new NotImplementedException()
                 };
