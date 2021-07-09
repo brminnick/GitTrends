@@ -136,10 +136,13 @@ namespace GitTrends
                 static double convertFontSize(in string? text, in FloatingActionButtonType floatingActionButtonType) => (floatingActionButtonType, text?.Length) switch
                 {
                     (_, null) => (double)Label.FontSizeProperty.DefaultValue,
+                    (FloatingActionButtonType.Statistic1, _) => 10,
+                    (FloatingActionButtonType.Statistic2, _) => 10,
+                    (FloatingActionButtonType.Statistic3, _) => 10,
                     (FloatingActionButtonType.Information, <= 5) => 13,
                     (FloatingActionButtonType.Information, <= 8) => 10, 
                     (FloatingActionButtonType.Information, > 8) => 7.5,
-                    (_, _) => 10
+                    (_, _) => throw new NotImplementedException()
                 };
             }
 
