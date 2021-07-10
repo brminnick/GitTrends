@@ -80,17 +80,10 @@ namespace GitTrends
 
             async Task initializeOnboardingChart(CancellationToken cancellationToken)
             {
-                try
-                {
-                    var streamingManifests = await _azureFunctionsApiService.GetStreamingManifests(cancellationToken).ConfigureAwait(false);
+                var streamingManifests = await _azureFunctionsApiService.GetStreamingManifests(cancellationToken).ConfigureAwait(false);
 
-                    OnboardingChartManifest = streamingManifests[StreamingConstants.Chart];
-                    EnableOrganizationsManifest = streamingManifests[StreamingConstants.EnableOrganizations];
-                }
-                catch (Exception e)
-                {
-                    _analyticsService.Report(e);
-                }
+                OnboardingChartManifest = streamingManifests[StreamingConstants.Chart];
+                EnableOrganizationsManifest = streamingManifests[StreamingConstants.EnableOrganizations];
             }
         }
 
