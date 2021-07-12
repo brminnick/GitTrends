@@ -35,7 +35,7 @@
         <PackageReference Include="Plugin.StoreReview" Version="3.2.0-beta" />
         <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.4" />
         <PackageReference Include="Xamarin.CommunityToolkit.Markup" Version="1.2.0" />
-        <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.2" />
+        <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.3" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="Resources\SVGs\chart.svg" />
