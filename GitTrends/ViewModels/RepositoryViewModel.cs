@@ -113,14 +113,6 @@ namespace GitTrends
             set => SetProperty(ref _emptyDataViewTitle, value);
         }
 
-        // Select the size of the button according the length of his text
-        public FloatingActionButtonSize TotalButtonSize => TotalButtonText.Length switch
-        {
-            (<= 3) => FloatingActionButtonSize.Mini,
-            (<= 5) => FloatingActionButtonSize.Normal,
-            (> 5) => FloatingActionButtonSize.Large
-        };
-
         public string EmptyDataViewDescription
         {
             get => _emptyDataViewDescription;
@@ -136,7 +128,7 @@ namespace GitTrends
         public string TotalButtonText
         {
             get => _totalButtonText;
-            set => SetProperty(ref _totalButtonText, value, () => OnPropertyChanged(nameof(TotalButtonSize)));
+            set => SetProperty(ref _totalButtonText, value);
         }
 
         public string TitleText
