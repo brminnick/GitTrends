@@ -20,10 +20,23 @@ namespace GitTrends.Shared
         public PageInfo PageInfo { get; }
     }
 
-    public record RepositoryConnectionNode(string Name, string Description, long ForkCount, Uri Url, RepositoryOwner Owner, bool IsFork, IssuesConnection Issues, Watchers Watchers)
+    public record RepositoryConnectionNode(string ViewerPermission, string Name, string Description, long ForkCount, Uri Url, RepositoryOwner Owner, bool IsFork, IssuesConnection Issues, Watchers Watchers)
     {
         public DateTimeOffset DataDownloadedAt { get; } = DateTimeOffset.UtcNow;
+
+        public ViewerPermission Permission
+        {
+            get
+            {
+                if (Enum.TryParse<ViewerPermission>(ViewerPermission, out var permission))
+                    return permission;
+
+                return Shared.ViewerPermission.UNKNOWN;
+            }
+        }
     }
 
     public record RepositoryOwner(string Login, string AvatarUrl);
+
+    public enum ViewerPermission { ADMIN, MAINTAIN, WRITE, TRIAGE, READ, UNKNOWN }
 }

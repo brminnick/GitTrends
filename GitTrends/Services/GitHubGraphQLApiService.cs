@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
@@ -121,24 +122,79 @@ namespace GitTrends
 
         public async IAsyncEnumerable<Repository> GetOrganizationRepositories([EnumeratorCancellation] CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
         {
-            var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
+            var organizationNameList = new List<string>();
 
-            RepositoryConnection? repositoryConnection = null;
+            GitHubToken token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
 
             await foreach (var organization in GetOrganizationNames(token, cancellationToken).ConfigureAwait(false))
             {
+                organizationNameList.Add(organization);
+            }
+
+            var getOrganizationTCSList = new List<(string Organization, TaskCompletionSource<IReadOnlyList<Repository>> TaskCompletionSource)>();
+
+            foreach (var organization in organizationNameList)
+                getOrganizationTCSList.Add((organization, new TaskCompletionSource<IReadOnlyList<Repository>>()));
+
+            // Get Organization Repositories in Parallel
+            Parallel.ForEach(getOrganizationTCSList, async tuple =>
+            {
+                try
+                {
+                    var organizationRepositories = await getOrganizationRepositories(tuple.Organization).ConfigureAwait(false);
+                    tuple.TaskCompletionSource.SetResult(organizationRepositories);
+                }
+                catch (Exception e)
+                {
+                    tuple.TaskCompletionSource.SetException(e);
+                }
+            });
+
+            var remainingTaskList = getOrganizationTCSList.Select(x => x.TaskCompletionSource.Task).ToList();
+
+            while (remainingTaskList.Any())
+            {
+                var finishedTask = await Task.WhenAny(remainingTaskList).ConfigureAwait(false);
+                remainingTaskList.Remove(finishedTask);
+
+                IReadOnlyList<Repository> repositories = Array.Empty<Repository>();
+                try
+                {
+                    repositories = await finishedTask.ConfigureAwait(false);
+                }
+                catch (Exception e)
+                {
+                    AnalyticsService.Report(e);
+#if AppStore
+#error Investigate this 403 Forbidden error on Azure-Samples org
+#endif
+                }
+
+                foreach (var repository in repositories)
+                    yield return repository;
+            }
+
+            async Task<IReadOnlyList<Repository>> getOrganizationRepositories(string repositoryName)
+            {
+                var repositoryList = new List<Repository>();
+
+                RepositoryConnection? repositoryConnection = null;
+
                 do
                 {
-                    repositoryConnection = await GetOrganizationRepositoryConnection(organization, token, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
+                    repositoryConnection = await GetOrganizationRepositoryConnection(repositoryName, token, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
 
-                    foreach (var repository in repositoryConnection.RepositoryList)
+                    // Views + Clones statistics are only available for repositories with write access
+                    foreach (var repository in repositoryConnection.RepositoryList.Where(x => x?.Permission is ViewerPermission.ADMIN or ViewerPermission.MAINTAIN or ViewerPermission.WRITE))
                     {
                         if (repository is not null)
-                            yield return new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
-                                                        repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt);
+                            repositoryList.Add(new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
+                                                        repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt));
                     }
                 }
                 while (repositoryConnection?.PageInfo?.HasNextPage is true);
+
+                return repositoryList;
             }
         }
 
@@ -169,7 +225,8 @@ namespace GitTrends
             {
                 repositoryConnection = await GetUserRepositoryConnection(repositoryOwner, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
 
-                foreach (var repository in repositoryConnection.RepositoryList)
+                // Views + Clones statistics are only available for repositories with write access
+                foreach (var repository in repositoryConnection.RepositoryList.Where(x => x?.Permission is ViewerPermission.ADMIN or ViewerPermission.MAINTAIN or ViewerPermission.WRITE))
                 {
                     if (repository is not null)
                         yield return new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
@@ -190,7 +247,9 @@ namespace GitTrends
                 foreach (var repository in gitHubViewerOrganizationResponse.Viewer.Organizations.Nodes)
                 {
                     if (!string.IsNullOrWhiteSpace(repository.Login))
+                    {
                         yield return repository.Login;
+                    }
                 }
             } while (gitHubViewerOrganizationResponse?.Viewer.Organizations.PageInfo.HasNextPage is true);
         }
@@ -205,7 +264,7 @@ namespace GitTrends
             {
                 githubUserResponse = await ExecuteGraphQLRequest(() => _githubApiClient.UserRepositoryConnectionQuery(new UserRepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
             }
-            catch (GraphQLException<GitHubUserResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out var ssoUriValues))
+            catch (GraphQLException<GitHubUserResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out _))
             {
                 githubUserResponse = e.GraphQLData;
             }
@@ -221,7 +280,7 @@ namespace GitTrends
             {
                 githubOrganizationResponse = await ExecuteGraphQLRequest(() => _githubApiClient.OrganizationRepositoryConnectionQuery(new OrganizationRepositoryConnectionQueryContent(organizationLogin, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
             }
-            catch (GraphQLException<GitHubOrganizationResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out var ssoUriValues))
+            catch (GraphQLException<GitHubOrganizationResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out _))
             {
                 githubOrganizationResponse = e.GraphQLData;
             }
@@ -235,7 +294,7 @@ namespace GitTrends
 
             await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
 
-            if (response?.Content?.Errors != null)
+            if (response?.Content?.Errors is not null)
                 throw new GraphQLException<T>(response.Content.Data, response.Content.Errors, response.StatusCode, response.Headers);
 
             if (response?.Content is null)

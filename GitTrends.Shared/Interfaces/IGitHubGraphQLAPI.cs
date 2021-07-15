@@ -72,7 +72,7 @@ namespace GitTrends.Shared
     public record OrganizationRepositoryConnectionQueryContent : GraphQLRequest
     {
         public OrganizationRepositoryConnectionQueryContent(string organization, string endCursorString, int numberOfRepositoriesPerRequest = 100)
-            : base("query{ organization(login: \"" + organization + "\") {repositories(first:" + numberOfRepositoriesPerRequest + endCursorString + ") { nodes { name, description, forkCount, url, owner { avatarUrl, login }, isFork, issues(states:OPEN) { totalCount }, watchers{ totalCount } }, pageInfo { endCursor, hasNextPage, hasPreviousPage, startCursor } } } }")
+            : base("query{ organization(login: \"" + organization + "\") {repositories(first:" + numberOfRepositoriesPerRequest + endCursorString + ") { nodes { viewerPermission, name, description, forkCount, url, owner { avatarUrl, login }, isFork, issues(states:OPEN) { totalCount }, watchers{ totalCount } }, pageInfo { endCursor, hasNextPage, hasPreviousPage, startCursor } } } }")
         {
 
         }
