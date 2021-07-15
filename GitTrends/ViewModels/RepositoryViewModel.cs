@@ -232,7 +232,7 @@ namespace GitTrends
                 RefreshState = RefreshState.LoginExpired;
             }
             catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximumApiCallLimit(e)
-                                        || (e is HttpRequestException && finalResponse != null && _gitHubApiStatusService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
+                                        || (e is HttpRequestException && finalResponse is not null && finalResponse.Headers.DoesContainGitHubRateLimitHeader() && _gitHubApiStatusService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
             {
                 var responseHeaders = e switch
                 {
