@@ -21,6 +21,7 @@ namespace GitTrends.Shared
                             string url,
                             bool isFork,
                             DateTimeOffset dataDownloadedAt,
+                            RepositoryPermission permission,
                             bool? isFavorite = null,
                             IEnumerable<DailyViewsModel>? views = null,
                             IEnumerable<DailyClonesModel>? clones = null,
@@ -55,6 +56,7 @@ namespace GitTrends.Shared
         public long ForkCount { get; init; }
         public bool IsFork { get; init; }
         public string Url { get; init; }
+        public RepositoryPermission Permission { get; init; }
 
         public bool? IsFavorite { get; init; }
 

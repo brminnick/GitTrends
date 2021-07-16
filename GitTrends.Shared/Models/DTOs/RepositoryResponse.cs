@@ -11,7 +11,11 @@ namespace GitTrends.Shared
                                             RepositoryOwner Owner,
                                             bool IsFork,
                                             IssuesConnection Issues,
-                                            Watchers Watchers);
+                                            Watchers Watchers,
+                                            string ViewerPermission)
+    {
+        public RepositoryPermission Permission => (RepositoryPermission)Enum.Parse(typeof(RepositoryPermission), ViewerPermission);
+    }
 
     public record Watchers(long TotalCount);
 }

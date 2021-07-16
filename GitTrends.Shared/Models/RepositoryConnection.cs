@@ -24,19 +24,17 @@ namespace GitTrends.Shared
     {
         public DateTimeOffset DataDownloadedAt { get; } = DateTimeOffset.UtcNow;
 
-        public ViewerPermission Permission
+        public RepositoryPermission Permission
         {
             get
             {
-                if (Enum.TryParse<ViewerPermission>(ViewerPermission, out var permission))
+                if (Enum.TryParse<RepositoryPermission>(ViewerPermission, out var permission))
                     return permission;
 
-                return Shared.ViewerPermission.UNKNOWN;
+                return RepositoryPermission.UNKNOWN;
             }
         }
     }
 
     public record RepositoryOwner(string Login, string AvatarUrl);
-
-    public enum ViewerPermission { ADMIN, MAINTAIN, WRITE, TRIAGE, READ, UNKNOWN }
 }

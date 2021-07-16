@@ -54,7 +54,7 @@ namespace GitTrends.Shared
     public record RepositoryQueryContent : GraphQLRequest
     {
         public RepositoryQueryContent(string repositoryOwner, string repositoryName)
-            : base("query { repository(owner:\"" + repositoryOwner + "\" name:\"" + repositoryName + "\"){ name, description, forkCount, url, owner { avatarUrl, login }, isFork, issues(states:OPEN) { totalCount }, watchers{ totalCount }}}")
+            : base("query { repository(owner:\"" + repositoryOwner + "\" name:\"" + repositoryName + "\"){ viewerPermission, name, description, forkCount, url, owner { avatarUrl, login }, isFork, issues(states:OPEN) { totalCount }, watchers{ totalCount }}}")
         {
 
         }
@@ -63,7 +63,7 @@ namespace GitTrends.Shared
     public record UserRepositoryConnectionQueryContent : GraphQLRequest
     {
         public UserRepositoryConnectionQueryContent(string repositoryOwner, string endCursorString, int numberOfRepositoriesPerRequest = 100)
-            : base("query{ user(login: \"" + repositoryOwner + "\") {repositories(first:" + numberOfRepositoriesPerRequest + endCursorString + ") { nodes { name, description, forkCount, url, owner { avatarUrl, login }, isFork, issues(states:OPEN) { totalCount }, watchers{ totalCount } }, pageInfo { endCursor, hasNextPage, hasPreviousPage, startCursor } } } }")
+            : base("query{ user(login: \"" + repositoryOwner + "\") {repositories(first:" + numberOfRepositoriesPerRequest + endCursorString + ") { nodes { viewerPermission, name, description, forkCount, url, owner { avatarUrl, login }, isFork, issues(states:OPEN) { totalCount }, watchers{ totalCount } }, pageInfo { endCursor, hasNextPage, hasPreviousPage, startCursor } } } }")
         {
 
         }

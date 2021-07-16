@@ -296,6 +296,8 @@ namespace GitTrends
 
             public long WatchersCount { get; init; }
 
+            public RepositoryPermission Permission { get; init; }
+
             public bool IsFork { get; init; }
 
             public long? TotalViews { get; init; }
@@ -305,6 +307,7 @@ namespace GitTrends
             public long? TotalClones { get; init; }
 
             public long? TotalUniqueClones { get; init; }
+
 
             [Indexed]
             public bool? IsFavorite { get; init; }
@@ -327,6 +330,7 @@ namespace GitTrends
                                         repositoryDatabaseModel.Url,
                                         repositoryDatabaseModel.IsFork,
                                         repositoryDatabaseModel.DataDownloadedAt,
+                                        repositoryDatabaseModel.Permission,
                                         repositoryDatabaseModel.IsFavorite,
                                         viewsList,
                                         clonesList,

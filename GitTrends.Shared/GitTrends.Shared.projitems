@@ -16,6 +16,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)Models\DTOs\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\Interfaces\" />
     <Folder Include="$(MSBuildThisFileDirectory)Interfaces\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Enums\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AzureConstants.cs" />
@@ -73,5 +74,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitHubViewerOrganizationResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitTrendsEnableOrganizationsUriDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\StreamingConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Enums\RepositoryPermission.cs" />
   </ItemGroup>
 </Project>

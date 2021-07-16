@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using GitHubApiStatus;
 using GitTrends.Shared;
 using Refit;
 
@@ -14,16 +15,19 @@ namespace GitTrends
         readonly IAnalyticsService _analyticsService;
         readonly GitHubUserService _gitHubUserService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly GitHubApiStatusService _gitHubApiStatusService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
 
         public GitHubApiRepositoriesService(IAnalyticsService analyticsService,
                                             GitHubUserService gitHubUserService,
                                             GitHubApiV3Service gitHubApiV3Service,
-                                            GitHubGraphQLApiService gitHubGraphQLApiService)
+                                            GitHubGraphQLApiService gitHubGraphQLApiService,
+                                            GitHubApiStatusService gitHubApiStatusService)
         {
             _analyticsService = analyticsService;
             _gitHubUserService = gitHubUserService;
             _gitHubApiV3Service = gitHubApiV3Service;
+            _gitHubApiStatusService = gitHubApiStatusService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
         }
 
@@ -72,7 +76,7 @@ namespace GitTrends
 
                 return (null, null, null);
             }
-            catch (GraphQLException<StarGazers> e) when (e.ContainsSamlOrganizationAthenticationError(out var ssoValues))
+            catch (GraphQLException<StarGazers> e) when (e.ContainsSamlOrganizationAthenticationError(out _))
             {
                 reportException(e);
 
@@ -81,12 +85,16 @@ namespace GitTrends
 
             void reportException(in Exception e)
             {
+#if AppStore
+#error Handle 403 Forbidden Abuse Rate Limit when brminnick's organizations enabled (repeat in 60 seconds? cache results?)
+#endif
                 _analyticsService.Report(e, new Dictionary<string, string>
                 {
                     { nameof(Repository) + nameof(Repository.Name), repository.Name },
                     { nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin },
                     { nameof(GitHubUserService) + nameof(GitHubUserService.Alias), _gitHubUserService.Alias },
                     { nameof(GitHubUserService) + nameof(GitHubUserService.Name), _gitHubUserService.Name },
+                    { nameof(GitHubApiStatusService) + nameof(GitHubApiStatusService.IsAbuseRateLimit),  _gitHubApiStatusService.IsAbuseRateLimit(e, out _).ToString() }
                 });
             }
         }
