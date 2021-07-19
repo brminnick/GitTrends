@@ -7,6 +7,7 @@ using GitTrends.Shared;
 using Plugin.StoreReview;
 using Plugin.StoreReview.Abstractions;
 using Shiny;
+using Shiny.Jobs;
 using Shiny.Notifications;
 using Xamarin.Essentials.Implementation;
 using Xamarin.Essentials.Interfaces;
@@ -66,6 +67,7 @@ namespace GitTrends
             builder.RegisterType<ThemeService>().AsSelf().SingleInstance();
             builder.RegisterType<TrendsChartSettingsService>().AsSelf().SingleInstance();
             builder.RegisterInstance(CrossStoreReview.Current).As<IStoreReview>().SingleInstance();
+            builder.RegisterInstance(ShinyHost.Resolve<IJobManager>()).As<IJobManager>().SingleInstance();
             builder.RegisterInstance(ShinyHost.Resolve<INotificationManager>()).As<INotificationManager>().SingleInstance();
             builder.RegisterInstance(DependencyService.Resolve<IDeviceNotificationsService>()).As<IDeviceNotificationsService>().SingleInstance();
 #if !AppStore

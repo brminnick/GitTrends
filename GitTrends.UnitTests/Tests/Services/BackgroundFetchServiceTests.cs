@@ -41,7 +41,7 @@ namespace GitTrends.UnitTests
             repositoryDatabaseCount_Initial = await getRepositoryDatabaseCount(repositoryDatabase).ConfigureAwait(false);
             referringSitesDatabaseCount_Initial = await getReferringSitesDatabaseCount(referringSitesDatabase, expiredRepository_Initial.Url, unexpiredRepository_Initial.Url).ConfigureAwait(false);
 
-            await backgroundFetchService.CleanUpDatabase().ConfigureAwait(false);
+            await backgroundFetchService.ScheduleCleanUpDatabase().ConfigureAwait(false);
 
             repositoryDatabaseCount_Final = await getRepositoryDatabaseCount(repositoryDatabase).ConfigureAwait(false);
             referringSitesDatabaseCount_Final = await getReferringSitesDatabaseCount(referringSitesDatabase, expiredRepository_Initial.Url, unexpiredRepository_Initial.Url).ConfigureAwait(false);
@@ -103,7 +103,7 @@ namespace GitTrends.UnitTests
             var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
 
             //Act
-            var result = await backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
+            var result = await backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
 
             //Assert
             Assert.IsFalse(result);
@@ -120,7 +120,7 @@ namespace GitTrends.UnitTests
             var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
 
             //Act
-            var result = await backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
+            var result = await backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
 
             //Assert
             Assert.IsTrue(gitHubUserService.IsDemoUser);
@@ -139,7 +139,7 @@ namespace GitTrends.UnitTests
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
             //Act
-            var result = await backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
+            var result = await backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
 
             //Assert
             Assert.IsFalse(gitHubUserService.IsDemoUser);

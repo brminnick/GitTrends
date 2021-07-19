@@ -169,6 +169,7 @@ namespace GitTrends
             {
                 const int minimumBatchCount = 20;
 
+                var getDatabaseRepositoriesTask = _repositoryDatabase.GetRepositories();
                 var favoriteRepositoryUrls = await _repositoryDatabase.GetFavoritesUrls().ConfigureAwait(false);
 
                 var repositoryList = new List<Repository>();
@@ -214,6 +215,15 @@ namespace GitTrends
                     finalResponse = await _gitHubApiV3Service.GetGitHubApiResponse(cancellationTokenSource.Token).ConfigureAwait(false);
                     finalResponse.EnsureSuccessStatusCode();
                 }
+
+                var repositoriesFromDatabase = await getDatabaseRepositoriesTask.ConfigureAwait(false);
+
+                var missingRepositories = _repositoryList.Concat(repositoriesFromDatabase).GroupBy(x => x.Url)
+                                                                                            .Where(g => g.Count() == 1)
+                                                                                            .Select(g => g.First())
+                                                                                            .ToList();
+
+                AddRepositoriesToCollection(missingRepositories, _searchBarText);
 
                 RefreshState = RefreshState.Succeeded;
             }
