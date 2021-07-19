@@ -96,7 +96,7 @@
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
     <PackageReference Include="Xamarin.GooglePlayServices.Base" Version="117.6.0" />
     <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
-    <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1" />
+    <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.7.0" />
     <PackageReference Include="Xamarin.Build.Download" Version="0.10.0" />
     <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.4" />
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.3" />

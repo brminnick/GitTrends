@@ -221,7 +221,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Polly" Version="7.2.2" />
-		<PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.6.1" />
+		<PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.7.0" />
 		<PackageReference Include="GitHubApiStatus" Version="2.0.1" />
 		<PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.38" />
 	</ItemGroup>
