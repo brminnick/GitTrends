@@ -12,7 +12,7 @@ namespace GitTrends
 {
     public class BackgroundFetchService
     {
-        readonly static WeakEventManager<Repository> _retryUpdateRepositorysWithViewsClonesAndStarsDataCompletedEventManager = new();
+        readonly static WeakEventManager<Repository> _scheduleRetryRepositoriesViewsClonesEventManager = new();
 
         readonly IJobManager _jobManager;
         readonly IAnalyticsService _analyticsService;
@@ -52,34 +52,38 @@ namespace GitTrends
             GitHubApiRepositoriesService.AbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData += HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData;
         }
 
-        public static event EventHandler<Repository> RetryUpdateRepositoryWithViewsClonesAndStarsDataCompleted
+        public static event EventHandler<Repository> ScheduleRetryRepositoriesViewsClonesCompleted
         {
-            add => _retryUpdateRepositorysWithViewsClonesAndStarsDataCompletedEventManager.AddEventHandler(value);
-            remove => _retryUpdateRepositorysWithViewsClonesAndStarsDataCompletedEventManager.RemoveEventHandler(value);
+            add => _scheduleRetryRepositoriesViewsClonesEventManager.AddEventHandler(value);
+            remove => _scheduleRetryRepositoriesViewsClonesEventManager.RemoveEventHandler(value);
         }
 
         public string CleanUpDatabaseIdentifier { get; }
         public string NotifyTrendingRepositoriesIdentifier { get; }
         public string RetryRepositoriesViewsClonesIdentifier { get; }
 
-        public async void ScheduleRetryRepositoriesViewsClones(Repository repository, TimeSpan? retryTimeSpan = null)
+        public void ScheduleRetryRepositoriesViewsClones(Repository repository, TimeSpan? delay = null) => _jobManager.RunTask(RetryRepositoriesViewsClonesIdentifier, async cancellationToken =>
         {
-            if (retryTimeSpan is TimeSpan retry)
-                await Task.Delay(retry).ConfigureAwait(false);
-
-            _jobManager.RunTask(RetryRepositoriesViewsClonesIdentifier, async cancellationToken =>
+            _analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClones)} Triggered", new Dictionary<string, string>
             {
-                await foreach (var repository in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(new List<Repository> { repository }, cancellationToken).ConfigureAwait(false))
-                {
-                    if (repository is not null)
-                    {
-                        await _repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
-
-                        OnRetryUpdateRepositoryWithViewsClonesAndStarsDataCompleted(repository);
-                    }
-                }
+                {nameof(delay), delay?.ToString() ?? "null" }
             });
-        }
+
+            if (delay is TimeSpan delayTimeSpan)
+                await Task.Delay(delayTimeSpan).ConfigureAwait(false);
+
+            using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClones)} Executed");
+
+            await foreach (var repository in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(new List<Repository> { repository }, cancellationToken).ConfigureAwait(false))
+            {
+                if (repository is not null)
+                {
+                    await _repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
+
+                    OnScheduleRetryRepositoriesViewsClonesCompleted(repository);
+                }
+            }
+        });
 
         public void ScheduleCleanUpDatabase() => _jobManager.RunTask(CleanUpDatabaseIdentifier, cancellationToken =>
         {
@@ -145,10 +149,10 @@ namespace GitTrends
             return Array.Empty<Repository>();
         }
 
-        void HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData(object sender, (Repository Repository, TimeSpan TimeSpan) data) =>
-            ScheduleRetryRepositoriesViewsClones(data.Repository, data.TimeSpan);
+        void HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData(object sender, (Repository Repository, TimeSpan Delay) data) =>
+            ScheduleRetryRepositoriesViewsClones(data.Repository, data.Delay);
 
-        void OnRetryUpdateRepositoryWithViewsClonesAndStarsDataCompleted(in Repository repository) =>
-            _retryUpdateRepositorysWithViewsClonesAndStarsDataCompletedEventManager.RaiseEvent(this, repository, nameof(RetryUpdateRepositoryWithViewsClonesAndStarsDataCompleted));
+        void OnScheduleRetryRepositoriesViewsClonesCompleted(in Repository repository) =>
+            _scheduleRetryRepositoriesViewsClonesEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesViewsClonesCompleted));
     }
 }

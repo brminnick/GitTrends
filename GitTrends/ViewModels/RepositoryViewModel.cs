@@ -23,10 +23,10 @@ namespace GitTrends
     {
         readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
 
-        readonly ImageCachingService _imageService;
         readonly GitHubUserService _gitHubUserService;
         readonly RepositoryDatabase _repositoryDatabase;
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly ImageCachingService _imageCachingService;
         readonly MobileSortingService _mobileSortingService;
         readonly GitHubApiStatusService _gitHubApiStatusService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
@@ -44,26 +44,27 @@ namespace GitTrends
         IReadOnlyList<Repository> _visibleRepositoryList = Array.Empty<Repository>();
 
         public RepositoryViewModel(IMainThread mainThread,
-                                    ImageCachingService imageService,
                                     IAnalyticsService analyticsService,
                                     GitHubUserService gitHubUserService,
-                                    MobileSortingService sortingService,
                                     RepositoryDatabase repositoryDatabase,
                                     GitHubApiV3Service gitHubApiV3Service,
+                                    ImageCachingService imageCachingService,
+                                    MobileSortingService mobileSortingService,
                                     GitHubApiStatusService gitHubApiStatusService,
                                     GitHubGraphQLApiService gitHubGraphQLApiService,
                                     GitHubAuthenticationService gitHubAuthenticationService,
                                     GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, mainThread)
         {
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
+            BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesCompleted += HandleScheduleRetryRepositoriesViewsClonesCompleted;
 
             UpdateText();
 
-            _imageService = imageService;
             _gitHubUserService = gitHubUserService;
-            _mobileSortingService = sortingService;
             _repositoryDatabase = repositoryDatabase;
             _gitHubApiV3Service = gitHubApiV3Service;
+            _imageCachingService = imageCachingService;
+            _mobileSortingService = mobileSortingService;
             _gitHubApiStatusService = gitHubApiStatusService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _gitHubAuthenticationService = gitHubAuthenticationService;
@@ -214,16 +215,17 @@ namespace GitTrends
                     //Call EnsureSuccessStatusCode to confirm the above API calls executed successfully
                     finalResponse = await _gitHubApiV3Service.GetGitHubApiResponse(cancellationTokenSource.Token).ConfigureAwait(false);
                     finalResponse.EnsureSuccessStatusCode();
+
+                    //Rate Limiting may cause some data to not return successfully from the 
+                    var repositoriesFromDatabase = await getDatabaseRepositoriesTask.ConfigureAwait(false);
+
+                    var missingRepositories = _repositoryList.Concat(repositoriesFromDatabase).Where(x => x.ContainsTrafficData)
+                                                                                                .GroupBy(x => x.Url)
+                                                                                                .Where(g => g.Count() is 1)
+                                                                                                .Select(g => g.First());
+
+                    AddRepositoriesToCollection(missingRepositories, _searchBarText);
                 }
-
-                var repositoriesFromDatabase = await getDatabaseRepositoriesTask.ConfigureAwait(false);
-
-                var missingRepositories = _repositoryList.Concat(repositoriesFromDatabase).GroupBy(x => x.Url)
-                                                                                            .Where(g => g.Count() == 1)
-                                                                                            .Select(g => g.First())
-                                                                                            .ToList();
-
-                AddRepositoriesToCollection(missingRepositories, _searchBarText);
 
                 RefreshState = RefreshState.Succeeded;
             }
@@ -325,7 +327,7 @@ namespace GitTrends
             if (_gitHubUserService.IsDemoUser)
                 return;
 
-            foreach (var repository in repositories)
+            foreach (var repository in repositories.Where(x => x.TotalViews is not null && x.TotalClones is not null && x.TotalUniqueViews is not null && x.TotalUniqueClones is not null && x.StarredAt is not null))
             {
                 try
                 {
@@ -378,7 +380,7 @@ namespace GitTrends
 
             VisibleRepositoryList = MobileSortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
 
-            _imageService.PreloadRepositoryImages(VisibleRepositoryList).SafeFireAndForget(ex => AnalyticsService.Report(ex));
+            _imageCachingService.PreloadRepositoryImages(VisibleRepositoryList).SafeFireAndForget(ex => AnalyticsService.Report(ex));
         }
 
         void UpdateListForLoggedOutUser()
@@ -433,5 +435,7 @@ namespace GitTrends
 
             _pullToRefreshFailedEventManager.RaiseEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
         }
+
+        void HandleScheduleRetryRepositoriesViewsClonesCompleted(object sender, Repository e) => AddRepositoriesToCollection(new List<Repository> { e }, _searchBarText);
     }
 }
