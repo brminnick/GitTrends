@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
@@ -17,14 +18,17 @@ namespace GitTrends
     {
         readonly IGitHubGraphQLApi _githubApiClient;
         readonly GitHubUserService _gitHubUserService;
+        readonly GitHubApiStatusService _gitHubApiStatusService;
 
         public GitHubGraphQLApiService(IMainThread mainThread,
                                         IAnalyticsService analyticsService,
                                         IGitHubGraphQLApi gitHubGraphQLApi,
-                                        GitHubUserService gitHubUserService) : base(analyticsService, mainThread)
+                                        GitHubUserService gitHubUserService,
+                                        GitHubApiStatusService gitHubApiStatusService) : base(analyticsService, mainThread)
         {
             _githubApiClient = gitHubGraphQLApi;
             _gitHubUserService = gitHubUserService;
+            _gitHubApiStatusService = gitHubApiStatusService;
         }
 
         public async Task<(string login, string name, Uri avatarUri)> GetCurrentUserInfo(CancellationToken cancellationToken)
@@ -57,6 +61,7 @@ namespace GitTrends
                                     repositoryResult.Repository.Url.ToString(),
                                     repositoryResult.Repository.IsFork,
                                     DateTimeOffset.UtcNow,
+                                    repositoryResult.Repository.Permission,
                                     starredAt: starGazersResult.StarredAt.Select(x => x.StarredAt));
         }
 
@@ -95,7 +100,7 @@ namespace GitTrends
                 {
                     var demoRepo = new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
                                                 DemoUserConstants.Alias, _gitHubUserService.AvatarUrl, DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
-                                                _gitHubUserService.AvatarUrl, false, DateTimeOffset.UtcNow);
+                                                _gitHubUserService.AvatarUrl, false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
                     yield return demoRepo;
                 }
 
@@ -121,24 +126,63 @@ namespace GitTrends
 
         public async IAsyncEnumerable<Repository> GetOrganizationRepositories([EnumeratorCancellation] CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
         {
-            var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
+            var organizationNameList = new List<string>();
 
-            RepositoryConnection? repositoryConnection = null;
+            var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
 
             await foreach (var organization in GetOrganizationNames(token, cancellationToken).ConfigureAwait(false))
             {
+                organizationNameList.Add(organization);
+            }
+
+            var getOrganizationTaskList = new List<Task<IReadOnlyList<Repository>>>();
+
+            foreach (var organization in organizationNameList)
+                getOrganizationTaskList.Add(getOrganizationRepositories(organization));
+
+            while (getOrganizationTaskList.Any())
+            {
+                var finishedTask = await Task.WhenAny(getOrganizationTaskList).ConfigureAwait(false);
+                getOrganizationTaskList.Remove(finishedTask);
+
+                IReadOnlyList<Repository> repositories = Array.Empty<Repository>();
+                try
+                {
+                    repositories = await finishedTask.ConfigureAwait(false);
+                }
+                catch(ApiException e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryDelta))
+                {
+
+#if AppStore
+#error Queue Retry
+#endif
+                }
+
+                foreach (var repository in repositories)
+                    yield return repository;
+            }
+
+            async Task<IReadOnlyList<Repository>> getOrganizationRepositories(string repositoryName)
+            {
+                var repositoryList = new List<Repository>();
+
+                RepositoryConnection? repositoryConnection = null;
+
                 do
                 {
-                    repositoryConnection = await GetOrganizationRepositoryConnection(organization, token, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
+                    repositoryConnection = await GetOrganizationRepositoryConnection(repositoryName, token, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
 
-                    foreach (var repository in repositoryConnection.RepositoryList)
+                    // Views + Clones statistics are only available for repositories with write access
+                    foreach (var repository in repositoryConnection.RepositoryList.Where(x => x?.Permission is RepositoryPermission.ADMIN or RepositoryPermission.MAINTAIN or RepositoryPermission.WRITE))
                     {
                         if (repository is not null)
-                            yield return new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
-                                                        repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt);
+                            repositoryList.Add(new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
+                                                        repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt, repository.Permission));
                     }
                 }
                 while (repositoryConnection?.PageInfo?.HasNextPage is true);
+
+                return repositoryList;
             }
         }
 
@@ -169,11 +213,12 @@ namespace GitTrends
             {
                 repositoryConnection = await GetUserRepositoryConnection(repositoryOwner, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
 
-                foreach (var repository in repositoryConnection.RepositoryList)
+                // Views + Clones statistics are only available for repositories with write access
+                foreach (var repository in repositoryConnection.RepositoryList.Where(x => x?.Permission is RepositoryPermission.ADMIN or RepositoryPermission.MAINTAIN or RepositoryPermission.WRITE))
                 {
                     if (repository is not null)
                         yield return new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
-                                                    repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt);
+                                                    repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt, repository.Permission);
                 }
             }
             while (repositoryConnection?.PageInfo?.HasNextPage is true);
@@ -190,7 +235,9 @@ namespace GitTrends
                 foreach (var repository in gitHubViewerOrganizationResponse.Viewer.Organizations.Nodes)
                 {
                     if (!string.IsNullOrWhiteSpace(repository.Login))
+                    {
                         yield return repository.Login;
+                    }
                 }
             } while (gitHubViewerOrganizationResponse?.Viewer.Organizations.PageInfo.HasNextPage is true);
         }
@@ -205,7 +252,7 @@ namespace GitTrends
             {
                 githubUserResponse = await ExecuteGraphQLRequest(() => _githubApiClient.UserRepositoryConnectionQuery(new UserRepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
             }
-            catch (GraphQLException<GitHubUserResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out var ssoUriValues))
+            catch (GraphQLException<GitHubUserResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out _))
             {
                 githubUserResponse = e.GraphQLData;
             }
@@ -221,7 +268,7 @@ namespace GitTrends
             {
                 githubOrganizationResponse = await ExecuteGraphQLRequest(() => _githubApiClient.OrganizationRepositoryConnectionQuery(new OrganizationRepositoryConnectionQueryContent(organizationLogin, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
             }
-            catch (GraphQLException<GitHubOrganizationResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out var ssoUriValues))
+            catch (GraphQLException<GitHubOrganizationResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out _))
             {
                 githubOrganizationResponse = e.GraphQLData;
             }
@@ -235,7 +282,7 @@ namespace GitTrends
 
             await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
 
-            if (response?.Content?.Errors != null)
+            if (response?.Content?.Errors is not null)
                 throw new GraphQLException<T>(response.Content.Data, response.Content.Errors, response.StatusCode, response.Headers);
 
             if (response?.Content is null)

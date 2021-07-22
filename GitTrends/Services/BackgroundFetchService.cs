@@ -3,13 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AsyncAwaitBestPractices;
 using GitTrends.Shared;
+using Shiny.Jobs;
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
     public class BackgroundFetchService
     {
+        readonly static WeakEventManager _eventManager = new();
+        readonly static WeakEventManager<bool> _scheduleNotifyTrendingRepositoriesCompletedEventManager = new();
+        readonly static WeakEventManager<Repository> _scheduleRetryRepositoriesViewsClonesEventManager = new();
+
+        readonly IJobManager _jobManager;
         readonly IAnalyticsService _analyticsService;
         readonly GitHubUserService _gitHubUserService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
@@ -20,8 +27,9 @@ namespace GitTrends
         readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
         public BackgroundFetchService(IAppInfo appInfo,
-                                        GitHubUserService gitHubUserService,
+                                        IJobManager jobManager,
                                         IAnalyticsService analyticsService,
+                                        GitHubUserService gitHubUserService,
                                         GitHubApiV3Service gitHubApiV3Service,
                                         RepositoryDatabase repositoryDatabase,
                                         NotificationService notificationService,
@@ -29,6 +37,7 @@ namespace GitTrends
                                         GitHubGraphQLApiService gitHubGraphQLApiService,
                                         GitHubApiRepositoriesService gitHubApiRepositoriesService)
         {
+            _jobManager = jobManager;
             _analyticsService = analyticsService;
             _gitHubUserService = gitHubUserService;
             _gitHubApiV3Service = gitHubApiV3Service;
@@ -38,40 +47,92 @@ namespace GitTrends
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
 
-            CleanUpDatabaseIdentifier = $"{appInfo.PackageName}.{nameof(CleanUpDatabase)}";
-            NotifyTrendingRepositoriesIdentifier = $"{appInfo.PackageName}.{nameof(NotifyTrendingRepositories)}";
+            CleanUpDatabaseIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleCleanUpDatabase)}";
+            NotifyTrendingRepositoriesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleNotifyTrendingRepositories)}";
+            RetryRepositoriesViewsClonesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleRetryRepositoriesViewsClones)}";
+
+            GitHubApiRepositoriesService.AbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData += HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData;
+        }
+
+        public static event EventHandler DatabaseCleanupCompleted
+        {
+            add => _eventManager.AddEventHandler(value);
+            remove => _eventManager.RemoveEventHandler(value);
+        }
+
+        public static event EventHandler<bool> ScheduleNotifyTrendingRepositoriesCompleted
+        {
+            add => _scheduleNotifyTrendingRepositoriesCompletedEventManager.AddEventHandler(value);
+            remove => _scheduleNotifyTrendingRepositoriesCompletedEventManager.RemoveEventHandler(value);
+        }
+
+        public static event EventHandler<Repository> ScheduleRetryRepositoriesViewsClonesCompleted
+        {
+            add => _scheduleRetryRepositoriesViewsClonesEventManager.AddEventHandler(value);
+            remove => _scheduleRetryRepositoriesViewsClonesEventManager.RemoveEventHandler(value);
         }
 
         public string CleanUpDatabaseIdentifier { get; }
         public string NotifyTrendingRepositoriesIdentifier { get; }
+        public string RetryRepositoriesViewsClonesIdentifier { get; }
 
-        public async Task CleanUpDatabase()
+        public void ScheduleRetryRepositoriesViewsClones(Repository repository, TimeSpan? delay = null) => _jobManager.RunTask(RetryRepositoriesViewsClonesIdentifier, async cancellationToken =>
         {
-            using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(CleanUpDatabase)} Triggered");
+            _analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClones)} Triggered", new Dictionary<string, string>
+            {
+                {nameof(delay), delay?.ToString() ?? "null" }
+            });
+
+            if (delay is TimeSpan delayTimeSpan)
+                await Task.Delay(delayTimeSpan).ConfigureAwait(false);
+
+            using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClones)} Executed");
+
+            await foreach (var repository in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(new List<Repository> { repository }, cancellationToken).ConfigureAwait(false))
+            {
+                if (repository is not null)
+                {
+                    await _repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
+
+                    OnScheduleRetryRepositoriesViewsClonesCompleted(repository);
+                }
+            }
+        });
+
+        public void ScheduleCleanUpDatabase() => _jobManager.RunTask(CleanUpDatabaseIdentifier, async cancellationToken =>
+        {
+            using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleCleanUpDatabase)} Triggered");
 
             await Task.WhenAll(_referringSitesDatabase.DeleteExpiredData(), _repositoryDatabase.DeleteExpiredData()).ConfigureAwait(false);
-        }
 
-        public async Task<bool> NotifyTrendingRepositories(CancellationToken cancellationToken)
+            OnDatabaseCleanupCompleted();
+        });
+
+        public void ScheduleNotifyTrendingRepositories(CancellationToken cancellationToken) => _jobManager.RunTask(NotifyTrendingRepositoriesIdentifier, async cancellationToken =>
         {
             try
             {
-                using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(NotifyTrendingRepositories)} Triggered");
+                using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleNotifyTrendingRepositories)} Triggered");
 
                 if (!_gitHubUserService.IsAuthenticated || _gitHubUserService.IsDemoUser)
-                    return false;
+                {
+                    OnScheduleNotifyTrendingRepositoriesCompleted(false);
+                }
+                else
+                {
+                    var trendingRepositories = await GetTrendingRepositories(cancellationToken).ConfigureAwait(false);
+                    await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
 
-                var trendingRepositories = await GetTrendingRepositories(cancellationToken).ConfigureAwait(false);
-                await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
-
-                return true;
+                    OnScheduleNotifyTrendingRepositoriesCompleted(true);
+                }
             }
             catch (Exception e)
             {
                 _analyticsService.Report(e);
-                return false;
+                OnScheduleNotifyTrendingRepositoriesCompleted(false);
             }
-        }
+
+        });
 
         async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
         {
@@ -111,5 +172,15 @@ namespace GitTrends
 
             return Array.Empty<Repository>();
         }
+
+        void HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData(object sender, (Repository Repository, TimeSpan Delay) data) =>
+            ScheduleRetryRepositoriesViewsClones(data.Repository, data.Delay);
+
+        void OnScheduleRetryRepositoriesViewsClonesCompleted(in Repository repository) =>
+            _scheduleRetryRepositoriesViewsClonesEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesViewsClonesCompleted));
+
+        void OnDatabaseCleanupCompleted() => _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(DatabaseCleanupCompleted));
+
+        void OnScheduleNotifyTrendingRepositoriesCompleted(bool result) => _scheduleNotifyTrendingRepositoriesCompletedEventManager.RaiseEvent(this, result, nameof(ScheduleNotifyTrendingRepositoriesCompleted));
     }
 }

@@ -275,7 +275,7 @@ namespace GitTrends
                     //Create repository with only Name & Owner, because those are the only metrics that TrendsPage needs to fetch the chart data
                     var repository = new Repository(MostRecentTrendingRepositoryName, string.Empty, 0,
                                                     MostRecentTrendingRepositoryOwner, string.Empty,
-                                                    0, 0, string.Empty, false, default);
+                                                    0, 0, string.Empty, false, default, RepositoryPermission.UNKNOWN);
 
                     await _deepLinkingService.NavigateToTrendsPage(repository).ConfigureAwait(false);
                 }

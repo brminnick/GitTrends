@@ -30,25 +30,7 @@
 	<data name="IncludeOrganziations" xml:space="preserve">
     <value>Include Organizations</value>
   </data>
-	<data name="GrantOrganizationAccessTitle" xml:space="preserve">
-    <value>Grant Organization Access</value>
-  </data>
-	<data name="GrantOrganizationAccessDescription" xml:space="preserve">
-    <value>Organization access must be manually granted via the GitHub Portal</value>
-  </data>
-	<data name="GrantOrganizationAccessAccept" xml:space="preserve">
-    <value>Ok, Let's Go!</value>
-  </data>
-	<data name="GrantOrganizationAccessCancel" xml:space="preserve">
-    <value>Already Done</value>
-  </data>
-	<data name="ScrollToOrganizationAccessTitle" xml:space="preserve">
-    <value>Scroll to Organization Access</value>
-  </data>
-	<data name="ScrollToOrganizationAccessDescription" xml:space="preserve">
-    <value>Scroll to the bottom of the page then enable organization access</value>
-  </data>
-	<data name="ScrollToOrganizationAccessDismiss" xml:space="preserve">
-    <value>Got it 👍</value>
+	<data name="ManageOrganizations" xml:space="preserve">
+    <value>Manage Organizations</value>
   </data>
 </root>

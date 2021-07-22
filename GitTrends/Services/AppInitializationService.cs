@@ -66,7 +66,7 @@ namespace GitTrends
 
                 #region Then, Initialize Services Requiring API Response
                 var initializeSyncFusionServiceTask = _syncfusionService.Initialize(cancellationToken);
-                var intializeOnboardingChartValueTask = _mediaElementService.InitializeOnboardingChart(cancellationToken);
+                var intializeOnboardingChartValueTask = _mediaElementService.InitializeManifests(cancellationToken);
                 var initializeLibrariesServiceValueTask = _librariesService.Initialize(cancellationToken);
                 var initializeNotificationServiceValueTask = _notificationService.Initialize(cancellationToken);
                 var initializeGitTrendsStatisticsValueTask = _gitTrendsStatisticsService.Initialize(cancellationToken);

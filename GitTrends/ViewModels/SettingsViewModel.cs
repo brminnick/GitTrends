@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Common;
@@ -16,6 +15,7 @@ namespace GitTrends
 {
     public class SettingsViewModel : GitHubAuthenticationViewModel
     {
+        readonly static WeakEventManager<bool> _organizationsCarouselViewVisiblilityChangedEventManager = new();
         readonly static WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new();
 
         readonly ThemeService _themeService;
@@ -77,6 +77,7 @@ namespace GitTrends
 
             CopyrightLabelTappedCommand = new AsyncCommand(ExecuteCopyrightLabelTappedCommand);
             GitHubUserViewTappedCommand = new AsyncCommand(ExecuteGitHubUserViewTappedCommand, _ => IsNotAuthenticating);
+            ManageOrganizationsButtonCommand = new AsyncCommand(ExecuteManageOrganizationsButtonCommand);
 
             App.Resumed += HandleResumed;
 
@@ -105,8 +106,15 @@ namespace GitTrends
             remove => _setNotificationsPreferenceCompletedEventManager.RemoveEventHandler(value);
         }
 
-        public ICommand CopyrightLabelTappedCommand { get; }
+        public static event EventHandler<bool> OrganizationsCarouselViewVisiblilityChanged
+        {
+            add => _organizationsCarouselViewVisiblilityChangedEventManager.AddEventHandler(value);
+            remove => _organizationsCarouselViewVisiblilityChangedEventManager.RemoveEventHandler(value);
+        }
+
+        public IAsyncCommand CopyrightLabelTappedCommand { get; }
         public IAsyncCommand GitHubUserViewTappedCommand { get; }
+        public IAsyncCommand ManageOrganizationsButtonCommand { get; }
         public IReadOnlyList<string> LanguagePickerItemsSource { get; } = CultureConstants.CulturePickerOptions.Values.ToList();
 
         public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText == GitHubLoginButtonConstants.Disconnect;
@@ -294,7 +302,7 @@ namespace GitTrends
                     GitHubUserService.ShouldIncludeOrganizations = value;
                     OnPropertyChanged();
 
-                    OnShouldIncludeOrganizationsChanged(value).SafeFireAndForget(ex => AnalyticsService.Report(ex));
+                    OnOrganizationsCarouselViewVisiblilityChanged(value);
                 }
             }
         }
@@ -357,22 +365,16 @@ namespace GitTrends
             }
         }
 
-        async ValueTask OnShouldIncludeOrganizationsChanged(bool value)
+        Task ExecuteManageOrganizationsButtonCommand()
         {
+            if (_gitTrendsStatisticsService.EnableOrganizationsUri is null)
+                throw new InvalidOperationException($"{nameof(GitTrendsStatisticsService)}.{nameof(GitTrendsStatisticsService.EnableOrganizationsUri)} Must Be Initialized");
 
+            AnalyticsService.Track("Manage Organizations Button Tapped");
 
-            if (value is true) // Ask the user to manually authorize GitHub Organizations
-            {
-                var isAccepted = await _deepLinkingService.DisplayAlert(SettingsPageConstants.GrantOrganizationAccessTitle, SettingsPageConstants.GrantOrganizationAccessDescription, SettingsPageConstants.GrantOrganizationAccessAccept, SettingsPageConstants.GrantOrganizationAccessCancel);
-                if (isAccepted)
-                {
-                    if (_gitTrendsStatisticsService.EnableOrganizationsUri is null)
-                        throw new InvalidOperationException($"{nameof(GitTrendsStatisticsService)}.{nameof(GitTrendsStatisticsService.EnableOrganizationsUri)} Must Be Initialized");
+            OnOrganizationsCarouselViewVisiblilityChanged(false);
 
-                    _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri).SafeFireAndForget(ex => AnalyticsService.Report(ex));
-                    await _deepLinkingService.DisplayAlert(SettingsPageConstants.ScrollToOrganizationAccessTitle, SettingsPageConstants.ScrollToOrganizationAccessDescription, SettingsPageConstants.ScrollToOrganizationAccessDismiss);
-                }
-            }
+            return _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri);
         }
 
         void ExecutePreferredChartsChangedCommand(TrendsChartOption trendsChartOption)
@@ -501,5 +503,6 @@ namespace GitTrends
         }
 
         void OnSetNotificationsCompleted(AccessState? accessState) => _setNotificationsPreferenceCompletedEventManager.RaiseEvent(this, accessState, nameof(SetNotificationsPreferenceCompleted));
+        void OnOrganizationsCarouselViewVisiblilityChanged(bool isVisible) => _organizationsCarouselViewVisiblilityChangedEventManager.RaiseEvent(this, isVisible, nameof(OrganizationsCarouselViewVisiblilityChanged));
     }
 }

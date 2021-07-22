@@ -60,14 +60,21 @@ namespace GitTrends
                 {
                     new WelcomeLabel()
                         .Row(Row.WelcomeLabel),
+
                     new Image { Source = "WelcomeImage" }.Center()
                         .Row(Row.Image),
-                    new ConnectToGitHubButton(WelcomePageAutomationIds.ConnectToGitHubButton, _connectToGitHubCancellationTokenSource.Token, browserLaunchOptions).CenterHorizontal().Bottom()
-                        .Row(Row.GitHubButton),
+
+                    new GitHubButton(WelcomePageAutomationIds.ConnectToGitHubButton, GitHubLoginButtonConstants.ConnectToGitHub).CenterHorizontal().Bottom()
+                        .Row(Row.GitHubButton)
+                        .Bind(GitHubButton.CommandProperty, nameof(WelcomeViewModel.ConnectToGitHubButtonCommand))
+                        .Invoke(button => button.CommandParameter = (_connectToGitHubCancellationTokenSource.Token, browserLaunchOptions)),
+
                     new DemoLabel()
                         .Row(Row.DemoButton),
+
                     new ConnectToGitHubActivityIndicator()
                         .Row(Row.DemoButton),
+
                     new VersionNumberLabel(_appInfo)
                         .Row(Row.VersionLabel)
                 }
