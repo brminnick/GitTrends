@@ -12,6 +12,8 @@ namespace GitTrends
 {
     public class BackgroundFetchService
     {
+        readonly static WeakEventManager _eventManager = new();
+        readonly static WeakEventManager<bool> _scheduleNotifyTrendingRepositoriesCompletedEventManager = new();
         readonly static WeakEventManager<Repository> _scheduleRetryRepositoriesViewsClonesEventManager = new();
 
         readonly IJobManager _jobManager;
@@ -52,6 +54,18 @@ namespace GitTrends
             GitHubApiRepositoriesService.AbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData += HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData;
         }
 
+        public static event EventHandler DatabaseCleanupCompleted
+        {
+            add => _eventManager.AddEventHandler(value);
+            remove => _eventManager.RemoveEventHandler(value);
+        }
+
+        public static event EventHandler<bool> ScheduleNotifyTrendingRepositoriesCompleted
+        {
+            add => _scheduleNotifyTrendingRepositoriesCompletedEventManager.AddEventHandler(value);
+            remove => _scheduleNotifyTrendingRepositoriesCompletedEventManager.RemoveEventHandler(value);
+        }
+
         public static event EventHandler<Repository> ScheduleRetryRepositoriesViewsClonesCompleted
         {
             add => _scheduleRetryRepositoriesViewsClonesEventManager.AddEventHandler(value);
@@ -85,11 +99,13 @@ namespace GitTrends
             }
         });
 
-        public void ScheduleCleanUpDatabase() => _jobManager.RunTask(CleanUpDatabaseIdentifier, cancellationToken =>
+        public void ScheduleCleanUpDatabase() => _jobManager.RunTask(CleanUpDatabaseIdentifier, async cancellationToken =>
         {
             using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleCleanUpDatabase)} Triggered");
 
-            return Task.WhenAll(_referringSitesDatabase.DeleteExpiredData(), _repositoryDatabase.DeleteExpiredData());
+            await Task.WhenAll(_referringSitesDatabase.DeleteExpiredData(), _repositoryDatabase.DeleteExpiredData()).ConfigureAwait(false);
+
+            OnDatabaseCleanupCompleted();
         });
 
         public void ScheduleNotifyTrendingRepositories(CancellationToken cancellationToken) => _jobManager.RunTask(NotifyTrendingRepositoriesIdentifier, async cancellationToken =>
@@ -99,15 +115,23 @@ namespace GitTrends
                 using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleNotifyTrendingRepositories)} Triggered");
 
                 if (!_gitHubUserService.IsAuthenticated || _gitHubUserService.IsDemoUser)
-                    return;
+                {
+                    OnScheduleNotifyTrendingRepositoriesCompleted(false);
+                }
+                else
+                {
+                    var trendingRepositories = await GetTrendingRepositories(cancellationToken).ConfigureAwait(false);
+                    await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
 
-                var trendingRepositories = await GetTrendingRepositories(cancellationToken).ConfigureAwait(false);
-                await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
+                    OnScheduleNotifyTrendingRepositoriesCompleted(true);
+                }
             }
             catch (Exception e)
             {
                 _analyticsService.Report(e);
+                OnScheduleNotifyTrendingRepositoriesCompleted(false);
             }
+
         });
 
         async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
@@ -154,5 +178,9 @@ namespace GitTrends
 
         void OnScheduleRetryRepositoriesViewsClonesCompleted(in Repository repository) =>
             _scheduleRetryRepositoriesViewsClonesEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesViewsClonesCompleted));
+
+        void OnDatabaseCleanupCompleted() => _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(DatabaseCleanupCompleted));
+
+        void OnScheduleNotifyTrendingRepositoriesCompleted(bool result) => _scheduleNotifyTrendingRepositoriesCompletedEventManager.RaiseEvent(this, result, nameof(ScheduleNotifyTrendingRepositoriesCompleted));
     }
 }

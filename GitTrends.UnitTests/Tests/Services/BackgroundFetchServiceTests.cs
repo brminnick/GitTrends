@@ -13,10 +13,72 @@ namespace GitTrends.UnitTests
 {
     class BackgroundFetchServiceTests : BaseTest
     {
+        const string _gitTrendsAvatarUrl = "https://avatars3.githubusercontent.com/u/61480020?s=400&u=b1a900b5fa1ede22af9d2d9bfd6c49a072e659ba&v=4";
+
+        [Test]
+        public async Task ScheduleRetryRepositoriesViewsClonesTest_AuthenticatedUser()
+        {
+            //Arrange
+            Repository repository_Initial, repository_Final;
+
+            var scheduleRetryRepositoriesViewsClonesCompletedTCS = new TaskCompletionSource<Repository>();
+            BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesCompleted += HandleScheduleRetryRepositoriesViewsClonesCompleted;
+
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+            await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+            repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
+                                                _gitTrendsAvatarUrl, 1, 2, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+
+            //Act
+            backgroundFetchService.ScheduleRetryRepositoriesViewsClones(repository_Initial);
+            repository_Final = await scheduleRetryRepositoriesViewsClonesCompletedTCS.Task.ConfigureAwait(false);
+
+            //Assert
+            Assert.IsFalse(repository_Initial.ContainsTrafficData);
+            Assert.IsTrue(repository_Final.ContainsTrafficData);
+
+            Assert.IsNull(repository_Initial.DailyClonesList);
+            Assert.IsNull(repository_Initial.DailyViewsList);
+            Assert.IsNull(repository_Initial.StarredAt);
+            Assert.IsNull(repository_Initial.TotalClones);
+            Assert.IsNull(repository_Initial.TotalUniqueClones);
+            Assert.IsNull(repository_Initial.TotalUniqueViews);
+            Assert.IsNull(repository_Initial.TotalViews);
+
+            Assert.IsNotNull(repository_Final.DailyClonesList);
+            Assert.IsNotNull(repository_Final.DailyViewsList);
+            Assert.IsNotNull(repository_Final.StarredAt);
+            Assert.IsNotNull(repository_Final.TotalClones);
+            Assert.IsNotNull(repository_Final.TotalUniqueClones);
+            Assert.IsNotNull(repository_Final.TotalUniqueViews);
+            Assert.IsNotNull(repository_Final.TotalViews);
+
+            Assert.AreEqual(repository_Initial.Name, repository_Final.Name);
+            Assert.AreEqual(repository_Initial.Description, repository_Final.Description);
+            Assert.AreEqual(repository_Initial.ForkCount, repository_Final.ForkCount);
+            Assert.AreEqual(repository_Initial.IsFavorite, repository_Final.IsFavorite);
+            Assert.AreEqual(repository_Initial.IsFork, repository_Final.IsFork);
+            Assert.AreEqual(repository_Initial.IssuesCount, repository_Final.IssuesCount);
+            Assert.AreEqual(repository_Initial.IsTrending, repository_Final.IsTrending);
+
+            void HandleScheduleRetryRepositoriesViewsClonesCompleted(object? sender, Repository e)
+            {
+                BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesCompleted -= HandleScheduleRetryRepositoriesViewsClonesCompleted;
+                scheduleRetryRepositoriesViewsClonesCompletedTCS.SetResult(e);
+            }
+        }
+
         [Test]
         public async Task CleanUpDatabaseTest()
         {
             //Arrange
+            var databaseCleanupCompletedTCS = new TaskCompletionSource<object?>();
+            BackgroundFetchService.DatabaseCleanupCompleted += HandleDatabaseCompleted;
+
             int repositoryDatabaseCount_Initial, repositoryDatabaseCount_Final, referringSitesDatabaseCount_Initial, referringSitesDatabaseCount_Final;
             MobileReferringSiteModel expiredReferringSite_Initial, unexpiredReferringSite_Initial;
             Repository expiredRepository_Initial, unexpiredRepository_Initial, expiredRepository_Final, unexpiredRepository_Final;
@@ -41,7 +103,8 @@ namespace GitTrends.UnitTests
             repositoryDatabaseCount_Initial = await getRepositoryDatabaseCount(repositoryDatabase).ConfigureAwait(false);
             referringSitesDatabaseCount_Initial = await getReferringSitesDatabaseCount(referringSitesDatabase, expiredRepository_Initial.Url, unexpiredRepository_Initial.Url).ConfigureAwait(false);
 
-            await backgroundFetchService.ScheduleCleanUpDatabase().ConfigureAwait(false);
+            backgroundFetchService.ScheduleCleanUpDatabase();
+            await databaseCleanupCompletedTCS.Task.ConfigureAwait(false);
 
             repositoryDatabaseCount_Final = await getRepositoryDatabaseCount(repositoryDatabase).ConfigureAwait(false);
             referringSitesDatabaseCount_Final = await getReferringSitesDatabaseCount(referringSitesDatabase, expiredRepository_Initial.Url, unexpiredRepository_Initial.Url).ConfigureAwait(false);
@@ -94,25 +157,45 @@ namespace GitTrends.UnitTests
                 }
                 return referringSitesCount;
             }
+
+            void HandleDatabaseCompleted(object? sender, EventArgs e)
+            {
+                BackgroundFetchService.DatabaseCleanupCompleted -= HandleDatabaseCompleted;
+                databaseCleanupCompletedTCS.SetResult(null);
+            }
         }
 
         [Test]
         public async Task NotifyTrendingRepositoriesTest_NotLoggedIn()
         {
             //Arrange
+            var scheduleNotifyTrendingRepositoriesCompletedTCS = new TaskCompletionSource<bool>();
+            BackgroundFetchService.ScheduleNotifyTrendingRepositoriesCompleted += HandleScheduleNotifyTrendingRepositoriesCompleted;
+
             var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
 
             //Act
-            var result = await backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
+            backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None);
+            var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
 
             //Assert
             Assert.IsFalse(result);
+
+            void HandleScheduleNotifyTrendingRepositoriesCompleted(object? sender, bool e)
+            {
+                BackgroundFetchService.ScheduleNotifyTrendingRepositoriesCompleted -= HandleScheduleNotifyTrendingRepositoriesCompleted;
+                scheduleNotifyTrendingRepositoriesCompletedTCS.SetResult(e);
+            }
         }
+
 
         [Test]
         public async Task NotifyTrendingRepositoriesTest_DemoUser()
         {
             //Arrange
+            var scheduleNotifyTrendingRepositoriesCompletedTCS = new TaskCompletionSource<bool>();
+            BackgroundFetchService.ScheduleNotifyTrendingRepositoriesCompleted += HandleScheduleNotifyTrendingRepositoriesCompleted;
+
             var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
             await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
@@ -120,18 +203,28 @@ namespace GitTrends.UnitTests
             var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
 
             //Act
-            var result = await backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
+            backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None);
+            var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
 
             //Assert
             Assert.IsTrue(gitHubUserService.IsDemoUser);
             Assert.IsFalse(gitHubUserService.IsAuthenticated);
             Assert.IsFalse(result);
+
+            void HandleScheduleNotifyTrendingRepositoriesCompleted(object? sender, bool e)
+            {
+                BackgroundFetchService.ScheduleNotifyTrendingRepositoriesCompleted -= HandleScheduleNotifyTrendingRepositoriesCompleted;
+                scheduleNotifyTrendingRepositoriesCompletedTCS.SetResult(e);
+            }
         }
 
         [Test]
         public async Task NotifyTrendingRepositoriesTest_AuthenticatedUser()
         {
             //Arrange
+            var scheduleNotifyTrendingRepositoriesCompletedTCS = new TaskCompletionSource<bool>();
+            BackgroundFetchService.ScheduleNotifyTrendingRepositoriesCompleted += HandleScheduleNotifyTrendingRepositoriesCompleted;
+
             var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
             var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
             var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
@@ -139,18 +232,23 @@ namespace GitTrends.UnitTests
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
             //Act
-            var result = await backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None).ConfigureAwait(false);
+            backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None);
+            var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
 
             //Assert
             Assert.IsFalse(gitHubUserService.IsDemoUser);
             Assert.IsTrue(gitHubUserService.IsAuthenticated);
             Assert.IsTrue(result);
+
+            void HandleScheduleNotifyTrendingRepositoriesCompleted(object? sender, bool e)
+            {
+                BackgroundFetchService.ScheduleNotifyTrendingRepositoriesCompleted -= HandleScheduleNotifyTrendingRepositoriesCompleted;
+                scheduleNotifyTrendingRepositoriesCompletedTCS.SetResult(e);
+            }
         }
 
         static Repository CreateRepository(DateTimeOffset downloadedAt, string repositoryUrl)
         {
-            const string gitTrendsAvatarUrl = "https://avatars3.githubusercontent.com/u/61480020?s=400&u=b1a900b5fa1ede22af9d2d9bfd6c49a072e659ba&v=4";
-
             var starredAtList = new List<DateTimeOffset>();
             var dailyViewsList = new List<DailyViewsModel>();
             var dailyClonesList = new List<DailyClonesModel>();
@@ -166,8 +264,8 @@ namespace GitTrends.UnitTests
             }
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-                                                        DemoUserConstants.Alias, gitTrendsAvatarUrl, DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
-                                                        repositoryUrl, false, downloadedAt, true, dailyViewsList, dailyClonesList, starredAtList);
+                                                        DemoUserConstants.Alias, _gitTrendsAvatarUrl, DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
+                                                        repositoryUrl, false, downloadedAt, RepositoryPermission.ADMIN, true, dailyViewsList, dailyClonesList, starredAtList);
         }
 
         static MobileReferringSiteModel CreateMobileReferringSite(DateTimeOffset downloadedAt, string referrer)
