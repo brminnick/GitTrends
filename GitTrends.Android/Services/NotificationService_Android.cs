@@ -75,13 +75,14 @@ namespace GitTrends.Droid
             }
         }
 
-        public override async void OnMessageReceived(RemoteMessage message)
+        public override void OnMessageReceived(RemoteMessage message)
         {
             base.OnMessageReceived(message);
 
             var backgroundFetchService = ContainerService.Container.Resolve<BackgroundFetchService>();
 
-            await Task.WhenAll(backgroundFetchService.CleanUpDatabase(), backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None));
+            backgroundFetchService.ScheduleCleanUpDatabase();
+            backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None);
         }
 
         Task RegisterWithNotificationHub(in NotificationHubInformation notificationHubInformation, in string token)

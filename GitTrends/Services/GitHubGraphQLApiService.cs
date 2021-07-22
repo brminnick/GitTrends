@@ -150,14 +150,11 @@ namespace GitTrends
                 {
                     repositories = await finishedTask.ConfigureAwait(false);
                 }
-                catch (Exception e)
+                catch(ApiException e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryDelta))
                 {
-                    AnalyticsService.Report(e, new Dictionary<string, string>
-                    {
-                        { nameof(GitHubApiStatusService) + nameof(GitHubApiStatusService.IsAbuseRateLimit),  _gitHubApiStatusService.IsAbuseRateLimit(e, out _).ToString() }
-                    });
+
 #if AppStore
-#error Investigate this 403 Forbidden error on Azure-Samples org (Abuse Rate Limit)
+#error Queue Retry
 #endif
                 }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using AsyncAwaitBestPractices;
 using GitHubApiStatus;
 using GitTrends.Shared;
 using Refit;
@@ -12,6 +13,8 @@ namespace GitTrends
 {
     public class GitHubApiRepositoriesService
     {
+        readonly static WeakEventManager<(Repository Repository, TimeSpan RetryTimeSpan)> _abuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsDataEventManager = new();
+
         readonly IAnalyticsService _analyticsService;
         readonly GitHubUserService _gitHubUserService;
         readonly GitHubApiV3Service _gitHubApiV3Service;
@@ -21,14 +24,20 @@ namespace GitTrends
         public GitHubApiRepositoriesService(IAnalyticsService analyticsService,
                                             GitHubUserService gitHubUserService,
                                             GitHubApiV3Service gitHubApiV3Service,
-                                            GitHubGraphQLApiService gitHubGraphQLApiService,
-                                            GitHubApiStatusService gitHubApiStatusService)
+                                            GitHubApiStatusService gitHubApiStatusService,
+                                            GitHubGraphQLApiService gitHubGraphQLApiService)
         {
             _analyticsService = analyticsService;
             _gitHubUserService = gitHubUserService;
             _gitHubApiV3Service = gitHubApiV3Service;
             _gitHubApiStatusService = gitHubApiStatusService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
+        }
+
+        public static event EventHandler<(Repository Repository, TimeSpan RetryTimeSpan)> AbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData
+        {
+            add => _abuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsDataEventManager.AddEventHandler(value);
+            remove => _abuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsDataEventManager.RemoveEventHandler(value);
         }
 
         public async IAsyncEnumerable<Repository> UpdateRepositoriesWithViewsClonesAndStarsData(IReadOnlyList<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
@@ -70,6 +79,12 @@ namespace GitTrends
                         await getCloneStatisticsTask.ConfigureAwait(false),
                         await getStarGazrsTask.ConfigureAwait(false));
             }
+            catch (ApiException e) when (_gitHubApiStatusService.IsAbuseRateLimit(e.Headers, out var timespan) && timespan is TimeSpan retryTimeSpan)
+            {
+                OnAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsDataEventManager(repository, retryTimeSpan);
+
+                return (null, null, null);
+            }
             catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.Forbidden)
             {
                 reportException(e);
@@ -85,9 +100,6 @@ namespace GitTrends
 
             void reportException(in Exception e)
             {
-#if AppStore
-#error Handle 403 Forbidden Abuse Rate Limit when brminnick's organizations enabled (repeat in 60 seconds? cache results?)
-#endif
                 _analyticsService.Report(e, new Dictionary<string, string>
                 {
                     { nameof(Repository) + nameof(Repository.Name), repository.Name },
@@ -98,5 +110,8 @@ namespace GitTrends
                 });
             }
         }
+
+        void OnAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsDataEventManager(in Repository repository, in TimeSpan retryTimeSpan) =>
+            _abuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsDataEventManager.RaiseEvent(this, (repository, retryTimeSpan), nameof(AbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData));
     }
 }

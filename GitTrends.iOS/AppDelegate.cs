@@ -68,11 +68,12 @@ namespace GitTrends.iOS
             }
         }
 
-        public override async void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
+        public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
         {
             var backgroundFetchService = ContainerService.Container.Resolve<BackgroundFetchService>();
 
-            await Task.WhenAll(backgroundFetchService.CleanUpDatabase(), backgroundFetchService.NotifyTrendingRepositories(CancellationToken.None)).ConfigureAwait(false);
+            backgroundFetchService.ScheduleCleanUpDatabase();
+            backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None);
         }
 
         public override async void ReceivedLocalNotification(UIApplication application, UILocalNotification notification) =>
