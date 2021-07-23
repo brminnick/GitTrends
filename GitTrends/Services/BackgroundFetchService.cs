@@ -76,6 +76,12 @@ namespace GitTrends
         public string NotifyTrendingRepositoriesIdentifier { get; }
         public string RetryRepositoriesViewsClonesIdentifier { get; }
 
+        public void Initialize()
+        {
+            //Required to ensure the service is instantiated in the Dependency Injection Container
+            var temp = DateTime.UtcNow;
+        }
+
         public void ScheduleRetryRepositoriesViewsClones(Repository repository, TimeSpan? delay = null) => _jobManager.RunTask(RetryRepositoriesViewsClonesIdentifier, async cancellationToken =>
         {
             _analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClones)} Triggered", new Dictionary<string, string>

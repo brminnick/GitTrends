@@ -327,7 +327,7 @@ namespace GitTrends
             if (_gitHubUserService.IsDemoUser)
                 return;
 
-            foreach (var repository in repositories.Where(x => x.TotalViews is not null && x.TotalClones is not null && x.TotalUniqueViews is not null && x.TotalUniqueClones is not null && x.StarredAt is not null))
+            foreach (var repository in repositories.Where(x => x.ContainsTrafficData))
             {
                 try
                 {

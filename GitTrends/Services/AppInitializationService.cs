@@ -17,6 +17,7 @@ namespace GitTrends
         readonly SyncfusionService _syncfusionService;
         readonly MediaElementService _mediaElementService;
         readonly NotificationService _notificationService;
+        readonly BackgroundFetchService _backgroundFetchService;
         readonly GitTrendsStatisticsService _gitTrendsStatisticsService;
         readonly IDeviceNotificationsService _deviceNotificationsService;
         readonly AnalyticsInitializationService _analyticsInitializationService;
@@ -28,6 +29,7 @@ namespace GitTrends
                                         SyncfusionService syncFusionService,
                                         MediaElementService mediaElementService,
                                         NotificationService notificationService,
+                                        BackgroundFetchService backgroundFetchService,
                                         GitTrendsStatisticsService gitTrendsStatisticsService,
                                         IDeviceNotificationsService deviceNotificationService,
                                         AnalyticsInitializationService analyticsInitializationService)
@@ -39,6 +41,7 @@ namespace GitTrends
             _syncfusionService = syncFusionService;
             _mediaElementService = mediaElementService;
             _notificationService = notificationService;
+            _backgroundFetchService = backgroundFetchService;
             _deviceNotificationsService = deviceNotificationService;
             _gitTrendsStatisticsService = gitTrendsStatisticsService;
             _analyticsInitializationService = analyticsInitializationService;
@@ -60,6 +63,7 @@ namespace GitTrends
             {
                 #region First, Initialize Services That Dont Require API Response
                 _languageService.Initialize();
+                _backgroundFetchService.Initialize();
                 _deviceNotificationsService.Initialize();
                 await _themeService.Initialize().ConfigureAwait(false);
                 #endregion

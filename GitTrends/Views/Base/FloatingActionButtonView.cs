@@ -7,7 +7,7 @@ namespace GitTrends
 {
     class FloatingActionButtonView : AbsoluteLayout
     {
-        const int _fabDiameterMini = 40;
+        const int _fabDiameterMini = 45;
         const int _fabDiameterNormal = 56;
 
         const int _shadowDiameterMini = _fabDiameterMini + 1;
@@ -98,8 +98,8 @@ namespace GitTrends
 
             floatingActionButtonView.FloatingActionButton.WidthRequest = floatingActionButtonView.FloatingActionButton.HeightRequest = size switch
             {
-                FloatingActionButtonSize.Normal => _fabDiameterNormal,
                 FloatingActionButtonSize.Mini => _fabDiameterMini,
+                FloatingActionButtonSize.Normal => _fabDiameterNormal,
                 _ => throw new NotImplementedException()
             };
         }
