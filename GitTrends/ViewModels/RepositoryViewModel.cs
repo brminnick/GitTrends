@@ -220,15 +220,19 @@ namespace GitTrends
                     //Rate Limiting may cause some data to not return successfully from the 
                     var repositoriesFromDatabase = await getDatabaseRepositoriesTask.ConfigureAwait(false);
 
-                    var missingRepositories = _repositoryList.Concat(repositoriesFromDatabase).Where(x => x.ContainsTrafficData)
-                                                                                                .GroupBy(x => x.Url)
-                                                                                                .Where(g => g.Count() is 1)
-                                                                                                .Select(g => g.First());
+                    var missingRepositories = _gitHubUserService.ShouldIncludeOrganizations switch
+                    {
+                        true => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsTrafficData),
+                        false => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsTrafficData && x.OwnerLogin == _gitHubUserService.Alias)
+                    };
 
                     AddRepositoriesToCollection(missingRepositories, _searchBarText);
                 }
 
                 RefreshState = RefreshState.Succeeded;
+
+                static IReadOnlyList<Repository> getDistictRepositories(in IEnumerable<Repository> repositoriesList1, in IEnumerable<Repository> repositoriesList2, Func<Repository, bool> filter) =>
+                    repositoriesList1.Concat(repositoriesList2).Where(filter).GroupBy(x => x.Url).Where(g => g.Count() is 1).Select(g => g.First()).ToList();
             }
             catch (Exception e) when ((e is ApiException { StatusCode: HttpStatusCode.Unauthorized })
                                         || (e is HttpRequestException && finalResponse?.StatusCode is HttpStatusCode.Unauthorized))
@@ -368,6 +372,9 @@ namespace GitTrends
 
         void AddRepositoriesToCollection(in IEnumerable<Repository> repositories, in string searchBarText, in bool shouldUpdateVisibleRepositoryList = true)
         {
+            if (!repositories.Any())
+                return;
+
             var updatedRepositoryList = _repositoryList.Concat(repositories);
             _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
