@@ -37,8 +37,9 @@ namespace GitTrends.Shared
             OwnerLogin = ownerLogin;
             OwnerAvatarUrl = ownerAvatarUrl;
             IssuesCount = issuesCount;
-            Url = url;
             IsFork = isFork;
+            Url = url;
+            Permission = permission;
 
             StarredAt = starredAt?.ToList();
             DailyViewsList = views?.ToList();

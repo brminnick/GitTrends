@@ -166,11 +166,12 @@ namespace GitTrends
 
             AnalyticsService.Track("Refresh Triggered", "Sorting Option", _mobileSortingService.CurrentOption.ToString());
 
+            var getDatabaseRepositoriesTask = _repositoryDatabase.GetRepositories();
+
             try
             {
                 const int minimumBatchCount = 20;
 
-                var getDatabaseRepositoriesTask = _repositoryDatabase.GetRepositories();
                 var favoriteRepositoryUrls = await _repositoryDatabase.GetFavoritesUrls().ConfigureAwait(false);
 
                 var repositoryList = new List<Repository>();
@@ -269,7 +270,7 @@ namespace GitTrends
                     { nameof(delta), delta.ToString() }
                 });
 
-                var repositoryDatabaseList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
+                var repositoryDatabaseList = await getDatabaseRepositoriesTask.ConfigureAwait(false);
                 SetRepositoriesCollection(repositoryDatabaseList, _searchBarText);
 
                 if (repositoryDatabaseList.Any())
