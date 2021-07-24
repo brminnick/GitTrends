@@ -33,9 +33,8 @@ namespace GitTrends
                 (Column.Center, Stars(8)),
                 (Column.Right, Star));
 
-            Children.Add(new BoxView { BackgroundColor = Color.White.MultiplyAlpha(0.25) }
+            Children.Add(new BackgroundOverlay()
                             .RowSpan(All<Row>()).ColumnSpan(All<Column>()));
-
 
             Children.Add(new CloseButton(() => Dismiss(true), analyticsService)
                             .Row(Row.CloseButton).Column(Column.Right));
@@ -70,6 +69,30 @@ namespace GitTrends
                 Opacity = 0;
         });
 
+        class BackgroundOverlay : BoxView
+        {
+            public BackgroundOverlay()
+            {
+                SetBackgroundColor();
+                ThemeService.PreferenceChanged += HandlePreferenceChanged;
+            }
+
+            void HandlePreferenceChanged(object sender, PreferredTheme e) => SetBackgroundColor();
+
+            void SetBackgroundColor()
+            {
+                var pageBackgroundColor = (Color)Application.Current.Resources[nameof(BaseTheme.PageBackgroundColor)];
+                var overlayBackgroundColor = Application.Current.Resources switch
+                {
+                    LightTheme => pageBackgroundColor.MultiplyAlpha(0.75),
+                    DarkTheme => pageBackgroundColor.MultiplyAlpha(0.75),
+                    _ => throw new NotSupportedException()
+                };
+
+                BackgroundColor = overlayBackgroundColor;
+            }
+        }
+
         class CloseButton : BounceButton
         {
             public CloseButton(Func<Task> dismissOverlay, IAnalyticsService analyticsService)
@@ -81,11 +104,11 @@ namespace GitTrends
 
                     analyticsService.Track($"{nameof(OrganizationsCarouselOverlay)} Close Button Tapped");
 
-                    // Make the button disappear before OrganizationsCarouselFrame
-                    await Task.WhenAll(dismissOverlay(), this.FadeTo(0));
+                // Make the button disappear before OrganizationsCarouselFrame
+                await Task.WhenAll(dismissOverlay(), this.FadeTo(0));
 
-                    //Ensure the Button is visible and reenabled when it next appears
-                    Opacity = 1;
+                //Ensure the Button is visible and reenabled when it next appears
+                Opacity = 1;
                     IsEnabled = true;
                 });
 
@@ -155,20 +178,9 @@ namespace GitTrends
             {
                 public OpacityOverlay()
                 {
-                    SetBackgroundColor();
+                    BackgroundColor = Color.White.MultiplyAlpha(0.25);
                     CornerRadius = new CornerRadius(_cornerRadius, _cornerRadius, 0, 0);
-
-                    ThemeService.PreferenceChanged += HandlePreferenceChanged;
                 }
-
-                void HandlePreferenceChanged(object sender, PreferredTheme e) => SetBackgroundColor();
-
-                void SetBackgroundColor() => BackgroundColor = Application.Current.Resources switch
-                {
-                    LightTheme => Color.White.MultiplyAlpha(0.25),
-                    DarkTheme => Color.White.MultiplyAlpha(0.1),
-                    _ => throw new NotSupportedException()
-                };
             }
 
             class OrganizationsCarouselView : CarouselView
