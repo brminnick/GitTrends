@@ -93,7 +93,7 @@ namespace GitTrends
                 throw new ArgumentNullException(nameof(OnboardingChartManifest));
 
             if (_deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.Android)
-                return OnboardingChartManifest.ManifestUrl;
+                return OnboardingChartManifest.DashUrl;
             else if (_deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS)
                 return OnboardingChartManifest.HlsUrl;
             else
@@ -106,7 +106,7 @@ namespace GitTrends
                 throw new ArgumentNullException(nameof(EnableOrganizationsManifest));
 
             if (_deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.Android)
-                return EnableOrganizationsManifest.ManifestUrl;
+                return EnableOrganizationsManifest.DashUrl;
             else if (_deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS)
                 return EnableOrganizationsManifest.HlsUrl;
             else

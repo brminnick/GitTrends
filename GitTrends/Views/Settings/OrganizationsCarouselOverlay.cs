@@ -155,9 +155,20 @@ namespace GitTrends
             {
                 public OpacityOverlay()
                 {
-                    BackgroundColor = Color.White.MultiplyAlpha(0.25);
+                    SetBackgroundColor();
                     CornerRadius = new CornerRadius(_cornerRadius, _cornerRadius, 0, 0);
+
+                    ThemeService.PreferenceChanged += HandlePreferenceChanged;
                 }
+
+                void HandlePreferenceChanged(object sender, PreferredTheme e) => SetBackgroundColor();
+
+                void SetBackgroundColor() => BackgroundColor = Application.Current.Resources switch
+                {
+                    LightTheme => Color.White.MultiplyAlpha(0.25),
+                    DarkTheme => Color.White.MultiplyAlpha(0.1),
+                    _ => throw new NotSupportedException()
+                };
             }
 
             class OrganizationsCarouselView : CarouselView

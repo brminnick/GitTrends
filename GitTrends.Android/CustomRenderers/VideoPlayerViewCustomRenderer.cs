@@ -3,7 +3,7 @@ using Android.Content;
 using Android.Net;
 using Android.Views.Animations;
 using Com.Google.Android.Exoplayer2;
-using Com.Google.Android.Exoplayer2.Source.Smoothstreaming;
+using Com.Google.Android.Exoplayer2.Source.Dash;
 using Com.Google.Android.Exoplayer2.UI;
 using Com.Google.Android.Exoplayer2.Upstream;
 using GitTrends;
@@ -48,7 +48,10 @@ namespace GitTrends.Droid
             base.OnElementChanged(e);
 
             if (Control is null)
+            {
                 SetNativeControl(_playerView);
+                SetBackgroundColor(Color.Transparent.ToAndroid());
+            }
 
             if (Element.Url is not null
                 && Uri.Parse(Element.Url) is Uri uri)
@@ -72,9 +75,9 @@ namespace GitTrends.Droid
         void Play(in Uri uri)
         {
             var httpDataSourceFactory = new DefaultHttpDataSourceFactory(nameof(GitTrends));
-            var ssChunkFactory = new DefaultSsChunkSource.Factory(httpDataSourceFactory);
+            var ssChunkFactory = new DefaultDashChunkSource.Factory(httpDataSourceFactory);
 
-            var ssMediaSourceFactory = new SsMediaSource.Factory(ssChunkFactory, httpDataSourceFactory);
+            var ssMediaSourceFactory = new DashMediaSource.Factory(ssChunkFactory, httpDataSourceFactory);
 
             _player.Prepare(ssMediaSourceFactory.CreateMediaSource(uri));
         }
