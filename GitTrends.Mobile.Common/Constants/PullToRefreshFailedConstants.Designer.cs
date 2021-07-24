@@ -76,5 +76,23 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("LearnMore", resourceCulture);
             }
         }
+        
+        public static string AbuseLimitReached {
+            get {
+                return ResourceManager.GetString("AbuseLimitReached", resourceCulture);
+            }
+        }
+        
+        public static string GitHubApiAbuseLimit {
+            get {
+                return ResourceManager.GetString("GitHubApiAbuseLimit", resourceCulture);
+            }
+        }
+        
+        public static string AbuseLimitAutomaticRetry {
+            get {
+                return ResourceManager.GetString("AbuseLimitAutomaticRetry", resourceCulture);
+            }
+        }
     }
 }

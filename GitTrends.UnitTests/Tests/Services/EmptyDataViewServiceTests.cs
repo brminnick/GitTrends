@@ -25,7 +25,8 @@ namespace GitTrends.UnitTests
 
         [TestCase(int.MinValue)]
         [TestCase(-1)]
-        [TestCase(5)]
+        [TestCase(6)]
+        [TestCase(RefreshState.AbuseLimit)]
         [TestCase(int.MaxValue)]
         public void GetReferringSitesTitleTextTest_InvalidRefreshState(RefreshState refreshState)
         {
@@ -56,7 +57,8 @@ namespace GitTrends.UnitTests
 
         [TestCase(int.MinValue)]
         [TestCase(-1)]
-        [TestCase(5)]
+        [TestCase(6)]
+        [TestCase(RefreshState.AbuseLimit)]
         [TestCase(int.MaxValue)]
         public void GetReferringSitesTitleDescriptionTest_InvalidRefreshState(RefreshState refreshState)
         {
@@ -78,6 +80,8 @@ namespace GitTrends.UnitTests
         [TestCase(RefreshState.Error, false, "No Matching Repository Found")]
         [TestCase(RefreshState.MaximumApiLimit, true, "Unable to retrieve data")]
         [TestCase(RefreshState.MaximumApiLimit, false, "Unable to retrieve data")]
+        [TestCase(RefreshState.AbuseLimit, true, "Your repositories list is empty")]
+        [TestCase(RefreshState.AbuseLimit, false, "No Matching Repository Found")]
         public void GetRepositoresTitleTextTest_ValidRefreshState(RefreshState refreshState, bool isRepositoryListEmpty, string expectedResult)
         {
             //Arrange
@@ -94,8 +98,8 @@ namespace GitTrends.UnitTests
         [TestCase(int.MinValue, false)]
         [TestCase(-1, true)]
         [TestCase(-1, false)]
-        [TestCase(5, true)]
-        [TestCase(5, false)]
+        [TestCase(6, true)]
+        [TestCase(6, false)]
         [TestCase(int.MaxValue, true)]
         [TestCase(int.MaxValue, false)]
         public void GetRepositoryTitleTextTest_InvalidRefreshState(RefreshState refreshState, bool isRepositoryListEmpty)
@@ -118,6 +122,8 @@ namespace GitTrends.UnitTests
         [TestCase(RefreshState.Error, false, "Clear search bar and try again")]
         [TestCase(RefreshState.MaximumApiLimit, true, "Swipe down to retrieve repositories")]
         [TestCase(RefreshState.MaximumApiLimit, false, "Swipe down to retrieve repositories")]
+        [TestCase(RefreshState.AbuseLimit, true, "")]
+        [TestCase(RefreshState.AbuseLimit, false, "Clear search bar and try again")]
         public void GetRepositoryDescriptionText_ValidRefreshState(RefreshState refreshState, bool isRepositoryListEmpty, string expectedResult)
         {
             //Arrange
@@ -134,8 +140,8 @@ namespace GitTrends.UnitTests
         [TestCase(int.MinValue, false)]
         [TestCase(-1, true)]
         [TestCase(-1, false)]
-        [TestCase(5, true)]
-        [TestCase(5, false)]
+        [TestCase(6, true)]
+        [TestCase(6, false)]
         [TestCase(int.MaxValue, true)]
         [TestCase(int.MaxValue, false)]
         public void GetRepositoryTitleDescriptionTest_InvalidRefreshState(RefreshState refreshState, bool isRepositoryListEmpty)
@@ -167,7 +173,8 @@ namespace GitTrends.UnitTests
 
         [TestCase(int.MinValue)]
         [TestCase(-1)]
-        [TestCase(5)]
+        [TestCase(RefreshState.AbuseLimit)]
+        [TestCase(6)]
         [TestCase(int.MaxValue)]
         public void GetViewsClonesTitleText_InvalidRefreshState(RefreshState refreshState)
         {
@@ -212,9 +219,12 @@ namespace GitTrends.UnitTests
         [TestCase(-1, 0)]
         [TestCase(-1, 1)]
         [TestCase(-1, 2)]
-        [TestCase(5, 0)]
-        [TestCase(5, 1)]
-        [TestCase(5, 2)]
+        [TestCase(RefreshState.AbuseLimit, 0)]
+        [TestCase(RefreshState.AbuseLimit, 1)]
+        [TestCase(RefreshState.AbuseLimit, 2)]
+        [TestCase(6, 0)]
+        [TestCase(6, 1)]
+        [TestCase(6, 2)]
         [TestCase(int.MaxValue, 0)]
         [TestCase(int.MaxValue, 1)]
         [TestCase(int.MaxValue, 2)]
@@ -247,7 +257,8 @@ namespace GitTrends.UnitTests
 
         [TestCase(int.MinValue)]
         [TestCase(-1)]
-        [TestCase(5)]
+        [TestCase(RefreshState.AbuseLimit)]
+        [TestCase(6)]
         [TestCase(int.MaxValue)]
         public void GetViewsClonesImage_InvalidRefreshState(RefreshState refreshState)
         {
@@ -292,9 +303,12 @@ namespace GitTrends.UnitTests
         [TestCase(-1, 0)]
         [TestCase(-1, 1)]
         [TestCase(-1, 2)]
-        [TestCase(5, 0)]
-        [TestCase(5, 1)]
-        [TestCase(5, 2)]
+        [TestCase(RefreshState.AbuseLimit, 0)]
+        [TestCase(RefreshState.AbuseLimit, 1)]
+        [TestCase(RefreshState.AbuseLimit, 2)]
+        [TestCase(6, 0)]
+        [TestCase(6, 1)]
+        [TestCase(6, 2)]
         [TestCase(int.MaxValue, 0)]
         [TestCase(int.MaxValue, 1)]
         [TestCase(int.MaxValue, 2)]

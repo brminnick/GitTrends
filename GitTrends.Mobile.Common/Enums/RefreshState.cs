@@ -1,4 +1,4 @@
 ﻿namespace GitTrends.Mobile.Common
 {
-    public enum RefreshState { Uninitialized, Succeeded, LoginExpired, MaximumApiLimit, Error }
+    public enum RefreshState { Uninitialized, Succeeded, LoginExpired, MaximumApiLimit, AbuseLimit, Error }
 }

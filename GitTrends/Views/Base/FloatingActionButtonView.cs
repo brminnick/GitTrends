@@ -7,7 +7,7 @@ namespace GitTrends
 {
     class FloatingActionButtonView : AbsoluteLayout
     {
-        const int _fabDiameterMini = 45;
+        const int _fabDiameterMini = 42;
         const int _fabDiameterNormal = 56;
 
         const int _shadowDiameterMini = _fabDiameterMini + 1;

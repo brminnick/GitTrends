@@ -38,8 +38,8 @@ namespace GitTrends.Mobile.Common
         public static string GetRepositoryTitleText(in RefreshState refreshState, in bool isRepositoryListEmpty) => refreshState switch
         {
             RefreshState.Uninitialized => EmptyDataViewConstantsInternal.Uninitialized,
-            RefreshState.Succeeded when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.NoFilterMatch,
-            RefreshState.Succeeded => EmptyDataViewConstantsInternal.NoRepositoriesFound,
+            RefreshState.Succeeded or RefreshState.AbuseLimit when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.NoFilterMatch,
+            RefreshState.Succeeded or RefreshState.AbuseLimit => EmptyDataViewConstantsInternal.NoRepositoriesFound,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.LoginExpired,
             RefreshState.Error when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.NoFilterMatch,
             RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
@@ -50,8 +50,8 @@ namespace GitTrends.Mobile.Common
         public static string GetRepositoryDescriptionText(in RefreshState refreshState, in bool isRepositoryListEmpty) => refreshState switch
         {
             RefreshState.Uninitialized => EmptyDataViewConstantsInternal.SwipeDownToRefresh_Repositories,
-            RefreshState.Succeeded when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.ClearSearchBarTryAgain,
-            RefreshState.Succeeded => string.Empty,
+            RefreshState.Succeeded or RefreshState.AbuseLimit when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.ClearSearchBarTryAgain,
+            RefreshState.Succeeded or RefreshState.AbuseLimit => string.Empty,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.PleaseLoginAgain,
             RefreshState.Error when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.ClearSearchBarTryAgain,
             RefreshState.Error => EmptyDataViewConstantsInternal.SwipeDownToRefresh_Repositories,

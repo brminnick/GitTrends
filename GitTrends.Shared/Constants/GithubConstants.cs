@@ -7,6 +7,7 @@ namespace GitTrends.Shared
         public const string GitHubBaseUrl = "https://github.com";
         public const string GitHubRestApiUrl = "https://api.github.com";
         public const string GitHubGraphQLApi = "https://api.github.com/graphql";
+        public const string GitHubApiAbuseDocs = "https://docs.github.com/rest/overview/resources-in-the-rest-api#abuse-rate-limits";
         public const string GitHubRateLimitingDocs = "https://docs.github.com/rest/reference/rate-limit";
 
         public const string GitTrendsRepoName = nameof(GitTrends);
