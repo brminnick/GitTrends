@@ -34,6 +34,9 @@
 		<value>The GitHub API will sometimes throttle our API requests</value>
 	</data>
 	<data name="AbuseLimitAutomaticRetry" space="preserve">
-		<value>We will automatically retry in the background in {0} seconds</value>
+		<value>We will automatically retrive the data in the background in approximately {0} seconds</value>
+	</data>
+	<data name="AbuseLimitManualRetry" space="preserve">
+		<value>Close GitTrends and retry again in approximately {0} seconds</value>
 	</data>
 </root>

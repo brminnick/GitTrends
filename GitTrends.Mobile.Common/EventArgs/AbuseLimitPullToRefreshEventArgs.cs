@@ -5,12 +5,12 @@ namespace GitTrends.Mobile.Common
 {
     public class AbuseLimitPullToRefreshEventArgs : PullToRefreshFailedEventArgs
     {
-        public AbuseLimitPullToRefreshEventArgs(TimeSpan retry, bool shouldIncludRetryMessage)
+        public AbuseLimitPullToRefreshEventArgs(TimeSpan retry, bool willRetryAutomatically)
             : base(PullToRefreshFailedConstants.AbuseLimitReached,
-                    shouldIncludRetryMessage switch
+                    willRetryAutomatically switch
                     {
                         true => $"{PullToRefreshFailedConstants.GitHubApiAbuseLimit}.\n\n{string.Format(PullToRefreshFailedConstants.AbuseLimitAutomaticRetry, retry.TotalSeconds)}.",
-                        false => PullToRefreshFailedConstants.GitHubApiLimit
+                        false => $"{PullToRefreshFailedConstants.GitHubApiAbuseLimit}.\n\n{string.Format(PullToRefreshFailedConstants.AbuseLimitManualRetry, retry.TotalSeconds)}.",
                     },
                     "OK", PullToRefreshFailedConstants.LearnMore)
         {

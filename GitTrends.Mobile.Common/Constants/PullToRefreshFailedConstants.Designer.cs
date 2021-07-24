@@ -94,5 +94,11 @@ namespace GitTrends.Mobile.Common.Constants {
                 return ResourceManager.GetString("AbuseLimitAutomaticRetry", resourceCulture);
             }
         }
+        
+        public static string AbuseLimitManualRetry {
+            get {
+                return ResourceManager.GetString("AbuseLimitManualRetry", resourceCulture);
+            }
+        }
     }
 }
