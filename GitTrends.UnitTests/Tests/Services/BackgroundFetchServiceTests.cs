@@ -92,6 +92,75 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
+        public async Task ScheduleRetryOrganizationsRepositoriesTest_AuthenticatedUser()
+        {
+            //Arrange
+            string organizationName_Initial = nameof(GitTrends), organizationName_Final;
+            Repository repository_Final, repository_Database;
+
+            var scheduleRetryOrganizationsRepositoriesCompletedTCS = new TaskCompletionSource<string>();
+            var scheduleRetryRepositoriesViewsClonesCompletedTCS = new TaskCompletionSource<Repository>();
+            BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesCompleted += HandleScheduleRetryRepositoriesViewsClonesCompleted;
+            BackgroundFetchService.ScheduleRetryOrganizationsRepositoriesCompleted += HandleScheduleRetryOrganizationsRepositoriesCompleted;
+
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
+            var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+            await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+            //Act
+            backgroundFetchService.ScheduleRetryOrganizationsRepositories(organizationName_Initial);
+            organizationName_Final = await scheduleRetryOrganizationsRepositoriesCompletedTCS.Task.ConfigureAwait(false);
+
+            repository_Final = await scheduleRetryRepositoriesViewsClonesCompletedTCS.Task.ConfigureAwait(false);
+            repository_Database = await repositoryDatabase.GetRepository(repository_Final.Url).ConfigureAwait(false) ?? throw new NullReferenceException();
+
+            //Assert
+            Assert.AreEqual(organizationName_Initial, organizationName_Final);
+
+            Assert.IsTrue(repository_Final.ContainsTrafficData);
+            Assert.IsTrue(repository_Database.ContainsTrafficData);
+
+            Assert.IsNotNull(repository_Final.DailyClonesList);
+            Assert.IsNotNull(repository_Final.DailyViewsList);
+            Assert.IsNotNull(repository_Final.StarredAt);
+            Assert.IsNotNull(repository_Final.TotalClones);
+            Assert.IsNotNull(repository_Final.TotalUniqueClones);
+            Assert.IsNotNull(repository_Final.TotalUniqueViews);
+            Assert.IsNotNull(repository_Final.TotalViews);
+
+            Assert.IsNotNull(repository_Database.DailyClonesList);
+            Assert.IsNotNull(repository_Database.DailyViewsList);
+            Assert.IsNotNull(repository_Database.StarredAt);
+            Assert.IsNotNull(repository_Database.TotalClones);
+            Assert.IsNotNull(repository_Database.TotalUniqueClones);
+            Assert.IsNotNull(repository_Database.TotalUniqueViews);
+            Assert.IsNotNull(repository_Database.TotalViews);
+
+            Assert.AreEqual(repository_Final.Name, repository_Database.Name);
+            Assert.AreEqual(repository_Final.Description, repository_Database.Description);
+            Assert.AreEqual(repository_Final.ForkCount, repository_Database.ForkCount);
+            Assert.AreEqual(repository_Final.IsFavorite, repository_Database.IsFavorite);
+            Assert.AreEqual(repository_Final.IsFork, repository_Database.IsFork);
+            Assert.AreEqual(repository_Final.IssuesCount, repository_Database.IssuesCount);
+            Assert.AreEqual(repository_Final.IsTrending, repository_Database.IsTrending);
+
+            void HandleScheduleRetryRepositoriesViewsClonesCompleted(object? sender, Repository e)
+            {
+                BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesCompleted -= HandleScheduleRetryRepositoriesViewsClonesCompleted;
+                scheduleRetryRepositoriesViewsClonesCompletedTCS.SetResult(e);
+            }
+
+            void HandleScheduleRetryOrganizationsRepositoriesCompleted(object? sender, string e)
+            {
+                BackgroundFetchService.ScheduleRetryOrganizationsRepositoriesCompleted -= HandleScheduleRetryOrganizationsRepositoriesCompleted;
+                scheduleRetryOrganizationsRepositoriesCompletedTCS.SetResult(e);
+            }
+        }
+
+        [Test]
         public async Task CleanUpDatabaseTest()
         {
             //Arrange

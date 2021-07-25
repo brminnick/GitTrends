@@ -14,6 +14,7 @@ namespace GitTrends
     {
         readonly static WeakEventManager _eventManager = new();
         readonly static WeakEventManager<bool> _scheduleNotifyTrendingRepositoriesCompletedEventManager = new();
+        readonly static WeakEventManager<string> _scheduleRetryOrganizationsRepositoriesCompletedEventManager = new();
         readonly static WeakEventManager<Repository> _scheduleRetryRepositoriesViewsClonesEventManager = new();
 
         readonly IJobManager _jobManager;
@@ -50,7 +51,9 @@ namespace GitTrends
             CleanUpDatabaseIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleCleanUpDatabase)}";
             NotifyTrendingRepositoriesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleNotifyTrendingRepositories)}";
             RetryRepositoriesViewsClonesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleRetryRepositoriesViewsClones)}";
+            RetryRetryOrganizationsReopsitoriesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleRetryOrganizationsRepositories)}";
 
+            GitHubGraphQLApiService.AbuseRateLimitFound_GetOrganizationRepositories += HandleAbuseRateLimitFound_GetOrganizationRepositories;
             GitHubApiRepositoriesService.AbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData += HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData;
         }
 
@@ -66,31 +69,57 @@ namespace GitTrends
             remove => _scheduleNotifyTrendingRepositoriesCompletedEventManager.RemoveEventHandler(value);
         }
 
+        public static event EventHandler<string> ScheduleRetryOrganizationsRepositoriesCompleted
+        {
+            add => _scheduleRetryOrganizationsRepositoriesCompletedEventManager.AddEventHandler(value);
+            remove => _scheduleRetryOrganizationsRepositoriesCompletedEventManager.RemoveEventHandler(value);
+        }
+
         public static event EventHandler<Repository> ScheduleRetryRepositoriesViewsClonesCompleted
         {
             add => _scheduleRetryRepositoriesViewsClonesEventManager.AddEventHandler(value);
             remove => _scheduleRetryRepositoriesViewsClonesEventManager.RemoveEventHandler(value);
         }
 
+
         public string CleanUpDatabaseIdentifier { get; }
         public string NotifyTrendingRepositoriesIdentifier { get; }
         public string RetryRepositoriesViewsClonesIdentifier { get; }
+        public string RetryRetryOrganizationsReopsitoriesIdentifier { get; }
 
         public void Initialize()
         {
-            //Required to ensure the service is instantiated in the Dependency Injection Container
+            //Required to ensure the service is instantiated in the Dependency Injection Container and event in the constructor are subscribed
             var temp = DateTime.UtcNow;
         }
+
+        public void ScheduleRetryOrganizationsRepositories(string organizationName, TimeSpan? delay = null) => _jobManager.RunTask(RetryRetryOrganizationsReopsitoriesIdentifier, async cancellationToken =>
+        {
+            _analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryOrganizationsRepositories)} Triggered", new Dictionary<string, string>
+            {
+                { nameof(delay), delay?.ToString() ?? "null" }
+            });
+
+            if (delay is not null)
+                await Task.Delay(delay.Value).ConfigureAwait(false);
+
+            var repositories = await _gitHubGraphQLApiService.GetOrganizationRepositories(organizationName, cancellationToken).ConfigureAwait(false);
+
+            foreach (var repository in repositories)
+                ScheduleRetryRepositoriesViewsClones(repository);
+
+            OnScheduleRetryOrganizationsRepositoriesCompleted(organizationName);
+        });
 
         public void ScheduleRetryRepositoriesViewsClones(Repository repository, TimeSpan? delay = null) => _jobManager.RunTask(RetryRepositoriesViewsClonesIdentifier, async cancellationToken =>
         {
             _analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClones)} Triggered", new Dictionary<string, string>
             {
-                {nameof(delay), delay?.ToString() ?? "null" }
+                { nameof(delay), delay?.ToString() ?? "null" }
             });
 
-            if (delay is TimeSpan delayTimeSpan)
-                await Task.Delay(delayTimeSpan).ConfigureAwait(false);
+            if (delay is not null)
+                await Task.Delay(delay.Value).ConfigureAwait(false);
 
             using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClones)} Executed");
 
@@ -182,11 +211,16 @@ namespace GitTrends
         void HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData(object sender, (Repository Repository, TimeSpan Delay) data) =>
             ScheduleRetryRepositoriesViewsClones(data.Repository, data.Delay);
 
+        void HandleAbuseRateLimitFound_GetOrganizationRepositories(object sender, (string OrganizationName, TimeSpan RetryTimeSpan) data) =>
+            ScheduleRetryOrganizationsRepositories(data.OrganizationName, data.RetryTimeSpan);
+
         void OnScheduleRetryRepositoriesViewsClonesCompleted(in Repository repository) =>
             _scheduleRetryRepositoriesViewsClonesEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesViewsClonesCompleted));
 
         void OnDatabaseCleanupCompleted() => _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(DatabaseCleanupCompleted));
 
         void OnScheduleNotifyTrendingRepositoriesCompleted(bool result) => _scheduleNotifyTrendingRepositoriesCompletedEventManager.RaiseEvent(this, result, nameof(ScheduleNotifyTrendingRepositoriesCompleted));
+
+        void OnScheduleRetryOrganizationsRepositoriesCompleted(string organizationName) => _scheduleRetryOrganizationsRepositoriesCompletedEventManager.RaiseEvent(this, organizationName, nameof(ScheduleRetryOrganizationsRepositoriesCompleted));
     }
 }

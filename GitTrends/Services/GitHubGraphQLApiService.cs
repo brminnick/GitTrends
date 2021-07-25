@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using AsyncAwaitBestPractices;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
@@ -16,6 +17,8 @@ namespace GitTrends
 {
     public class GitHubGraphQLApiService : BaseMobileApiService
     {
+        readonly static WeakEventManager<(string, TimeSpan)> _abuseRateLimitFound_GetOrganizationRepositoriesEventManager = new();
+
         readonly IGitHubGraphQLApi _githubApiClient;
         readonly GitHubUserService _gitHubUserService;
         readonly GitHubApiStatusService _gitHubApiStatusService;
@@ -29,6 +32,12 @@ namespace GitTrends
             _githubApiClient = gitHubGraphQLApi;
             _gitHubUserService = gitHubUserService;
             _gitHubApiStatusService = gitHubApiStatusService;
+        }
+
+        public static event EventHandler<(string OrganizationName, TimeSpan RetryTimeSpan)> AbuseRateLimitFound_GetOrganizationRepositories
+        {
+            add => _abuseRateLimitFound_GetOrganizationRepositoriesEventManager.AddEventHandler(value);
+            remove => _abuseRateLimitFound_GetOrganizationRepositoriesEventManager.RemoveEventHandler(value);
         }
 
         public async Task<(string login, string name, Uri avatarUri)> GetCurrentUserInfo(CancellationToken cancellationToken)
@@ -116,7 +125,7 @@ namespace GitTrends
 
                 if (_gitHubUserService.ShouldIncludeOrganizations)
                 {
-                    await foreach (var repository in GetOrganizationRepositories(cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false))
+                    await foreach (var repository in GetViewerOrganizationRepositories(cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false))
                     {
                         yield return repository;
                     }
@@ -124,7 +133,7 @@ namespace GitTrends
             }
         }
 
-        public async IAsyncEnumerable<Repository> GetOrganizationRepositories([EnumeratorCancellation] CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
+        public async IAsyncEnumerable<Repository> GetViewerOrganizationRepositories([EnumeratorCancellation] CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
         {
             var organizationNameList = new List<string>();
 
@@ -138,39 +147,32 @@ namespace GitTrends
             var getOrganizationTaskList = new List<Task<IReadOnlyList<Repository>>>();
 
             foreach (var organization in organizationNameList)
-                getOrganizationTaskList.Add(getOrganizationRepositories(organization));
+                getOrganizationTaskList.Add(GetOrganizationRepositories(organization, cancellationToken, numberOfRepositoriesPerRequest));
 
             while (getOrganizationTaskList.Any())
             {
                 var finishedTask = await Task.WhenAny(getOrganizationTaskList).ConfigureAwait(false);
                 getOrganizationTaskList.Remove(finishedTask);
 
-                IReadOnlyList<Repository> repositories = Array.Empty<Repository>();
-                try
-                {
-                    repositories = await finishedTask.ConfigureAwait(false);
-                }
-                catch(ApiException e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryDelta))
-                {
-
-#if AppStore
-#error Queue Retry
-#endif
-                }
+                var repositories = await finishedTask.ConfigureAwait(false);
 
                 foreach (var repository in repositories)
                     yield return repository;
             }
+        }
 
-            async Task<IReadOnlyList<Repository>> getOrganizationRepositories(string repositoryName)
+        public async Task<IReadOnlyList<Repository>> GetOrganizationRepositories(string organization, CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
+        {
+            var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
+
+            var repositoryList = new List<Repository>();
+            RepositoryConnection? repositoryConnection = null;
+
+            try
             {
-                var repositoryList = new List<Repository>();
-
-                RepositoryConnection? repositoryConnection = null;
-
                 do
                 {
-                    repositoryConnection = await GetOrganizationRepositoryConnection(repositoryName, token, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
+                    repositoryConnection = await GetOrganizationRepositoryConnection(organization, token, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
 
                     // Views + Clones statistics are only available for repositories with write access
                     foreach (var repository in repositoryConnection.RepositoryList.Where(x => x?.Permission is RepositoryPermission.ADMIN or RepositoryPermission.MAINTAIN or RepositoryPermission.WRITE))
@@ -181,9 +183,16 @@ namespace GitTrends
                     }
                 }
                 while (repositoryConnection?.PageInfo?.HasNextPage is true);
-
-                return repositoryList;
             }
+            catch (ApiException e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryDelta))
+            {
+                if (retryDelta is null)
+                    throw new InvalidOperationException($"{ nameof(retryDelta)} cannot be null");
+
+                OnAbuseRateLimitFound_GetOrganizationRepositories(organization, retryDelta.Value);
+            }
+
+            return repositoryList;
         }
 
         static string GetEndCursorString(string? endCursor) => string.IsNullOrWhiteSpace(endCursor) ? string.Empty : "after: \"" + endCursor + "\"";
@@ -290,5 +299,8 @@ namespace GitTrends
 
             return response.Content.Data;
         }
+
+        void OnAbuseRateLimitFound_GetOrganizationRepositories(in string organizationName, TimeSpan delta) =>
+            _abuseRateLimitFound_GetOrganizationRepositoriesEventManager.RaiseEvent(this, (organizationName, delta), nameof(AbuseRateLimitFound_GetOrganizationRepositories));
     }
 }
