@@ -82,14 +82,7 @@ namespace GitTrends
             void SetBackgroundColor()
             {
                 var pageBackgroundColor = (Color)Application.Current.Resources[nameof(BaseTheme.PageBackgroundColor)];
-                var overlayBackgroundColor = Application.Current.Resources switch
-                {
-                    LightTheme => pageBackgroundColor.MultiplyAlpha(0.75),
-                    DarkTheme => pageBackgroundColor.MultiplyAlpha(0.75),
-                    _ => throw new NotSupportedException()
-                };
-
-                BackgroundColor = overlayBackgroundColor;
+                BackgroundColor = pageBackgroundColor.MultiplyAlpha(0.75);
             }
         }
 

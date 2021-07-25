@@ -1,4 +1,5 @@
-﻿using GitTrends.Mobile.Common;
+﻿using System.Runtime.CompilerServices;
+using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
@@ -7,16 +8,16 @@ namespace GitTrends
 {
     class EnableOrganizationsCarouselTemplateSelector : DataTemplateSelector
     {
-        protected override DataTemplate OnSelectTemplate(object item, BindableObject container) => new EnableOrganizationsCarouselTemplate((IncludeOrganizationsCarouselModel)item);
+        protected override DataTemplate OnSelectTemplate(object item, BindableObject container) => new EnableOrganizationsCarouselTemplate((IncludeOrganizationsCarouselModel)item, (CarouselView)container);
 
         class EnableOrganizationsCarouselTemplate : DataTemplate
         {
-            public EnableOrganizationsCarouselTemplate(IncludeOrganizationsCarouselModel includeOrganizationsModel) : base(() => CreateItemsGrid(includeOrganizationsModel))
+            public EnableOrganizationsCarouselTemplate(IncludeOrganizationsCarouselModel includeOrganizationsModel, CarouselView organizationsCarouselView) : base(() => CreateItemsGrid(includeOrganizationsModel, organizationsCarouselView))
             {
 
             }
 
-            static EnableOrganizationsGrid CreateItemsGrid(IncludeOrganizationsCarouselModel includeOrganizationsModel) => new()
+            static EnableOrganizationsGrid CreateItemsGrid(IncludeOrganizationsCarouselModel includeOrganizationsModel, CarouselView organizationsCarouselView) => new()
             {
                 Children =
                 {
@@ -32,15 +33,33 @@ namespace GitTrends
                     new DescriptionLabel(includeOrganizationsModel.Text)
                         .Row(EnableOrganizationsGrid.Row.Description),
 
-                    new GitHubButton(SettingsPageAutomationIds.GitHubButton, SettingsPageConstants.ManageOrganizations)
+                    new GitHubButton(SettingsPageAutomationIds.GitHubButton, SettingsPageConstants.ManageOrganizations) { IsVisible = false }
                         .Row(EnableOrganizationsGrid.Row.GitHubButton)
                         .Bind(GitHubButton.CommandProperty, nameof(SettingsViewModel.ManageOrganizationsButtonCommand), source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(SettingsViewModel)))
-                        .Bind<GitHubButton, int, bool>(GitHubButton.IsVisibleProperty, nameof(CarouselView.Position), convert: position => position is 2, source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(CarouselView))),
-#if AppStore
-#error: GitHubButton appears before CarouselView has finished swiping (ie The user can see it appear on the Inspectocat page)
-#endif
+                        .Invoke(button =>
+                        {
+                            organizationsCarouselView.Scrolled += async (s, e) =>
+                            {
+                                var shouldDisplayButton = e.CenterItemIndex is 2
+                                                            && organizationsCarouselView.Position is 2
+                                                            && organizationsCarouselView.IsDragging is false;
+                                if(shouldDisplayButton)
+                                {
+                                    button.Opacity = 0;
+                                    button.IsVisible = true;
+                                    await button.FadeTo(1, 1000);
+                                }
+                                else
+                                {
+                                    button.IsVisible = false;
+                                }
+                            };
+                        }),
+
                     new BoxView()
                         .Row(EnableOrganizationsGrid.Row.IndicatorView)
+
+
                 }
             };
 
