@@ -17,6 +17,8 @@ namespace GitTrends.UnitTests
             PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs;
             IReadOnlyList<Repository> visibleRepositoryList_Initial, visibleRepositoryList_Final;
 
+            int gitHubApiAbuseLimitCount_Initial, gitHubApiAbuseLimitCount_Final;
+
             string emptyDataViewTitle_Initial, emptyDataViewTitle_Final;
             string emptyDataViewDescription_Initial, emptyDataViewDescription_Final;
 
@@ -28,6 +30,8 @@ namespace GitTrends.UnitTests
 
             //Act
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+            gitHubApiAbuseLimitCount_Initial = gitHubUserService.GitHubApiAbuseLimitCount;
 
             emptyDataViewTitle_Initial = repositoryViewModel.EmptyDataViewTitle;
             visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
@@ -41,6 +45,8 @@ namespace GitTrends.UnitTests
 
             pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
 
+            gitHubApiAbuseLimitCount_Final = gitHubUserService.GitHubApiAbuseLimitCount;
+
             //Assert
             Assert.IsEmpty(visibleRepositoryList_Initial);
 
@@ -51,6 +57,8 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.AbuseLimit, !visibleRepositoryList_Final.Any()), emptyDataViewDescription_Final);
 
             Assert.IsInstanceOf<AbuseLimitPullToRefreshEventArgs>(pullToRefreshFailedEventArgs);
+            Assert.AreEqual(0, gitHubApiAbuseLimitCount_Initial);
+            Assert.Greater(gitHubApiAbuseLimitCount_Final, 0);
 
             void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
             {

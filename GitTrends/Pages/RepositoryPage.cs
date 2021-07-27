@@ -212,7 +212,7 @@ namespace GitTrends
                         if (isAccepted)
                             await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs);
                         break;
-                    case AbuseLimitPullToRefreshEventArgs:
+                    case AbuseLimitPullToRefreshEventArgs when _gitHubUserService.GitHubApiAbuseLimitCount <= 1:
                         var isAlertAccepted = await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Accept, eventArgs.Cancel);
                         if (isAlertAccepted)
                             await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubApiAbuseDocs);
@@ -226,9 +226,6 @@ namespace GitTrends
                     case ErrorPullToRefreshEventArgs:
                         await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Cancel);
                         break;
-
-                    default:
-                        throw new NotSupportedException();
                 }
             }
         });
