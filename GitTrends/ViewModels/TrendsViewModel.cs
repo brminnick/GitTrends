@@ -308,6 +308,17 @@ namespace GitTrends
 
                 refreshState = RefreshState.MaximumApiLimit;
             }
+            catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan))
+            {
+                if (retryTimeSpan is null)
+                    throw new InvalidOperationException($"{nameof(retryTimeSpan)} cannot be null");
+
+                await Task.Delay(retryTimeSpan.Value).ConfigureAwait(false);
+
+#if APPSTORE
+#error Handle Abuse Rate Limit
+#endif
+            }
             catch (Exception e)
             {
                 AnalyticsService.Report(e);

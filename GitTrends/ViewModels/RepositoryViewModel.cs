@@ -213,7 +213,7 @@ namespace GitTrends
 
                 if (!_gitHubUserService.IsDemoUser)
                 {
-                    //Rate Limiting may cause some data to not return successfully from the 
+                    //Rate Limiting may cause some data to not return successfully from the GitHub API
                     var repositoriesFromDatabase = await getDatabaseRepositoriesTask.ConfigureAwait(false);
 
                     var missingRepositories = _gitHubUserService.ShouldIncludeOrganizations switch
@@ -230,9 +230,6 @@ namespace GitTrends
                 }
 
                 RefreshState = RefreshState.Succeeded;
-
-                static IReadOnlyList<Repository> getDistictRepositories(in IEnumerable<Repository> repositoriesList1, in IEnumerable<Repository> repositoriesList2, Func<Repository, bool> filter) =>
-                    repositoriesList1.Concat(repositoriesList2).Where(filter).GroupBy(x => x.Url).Where(g => g.Count() is 1).Select(g => g.First()).ToList();
             }
             catch (Exception e) when ((e is ApiException { StatusCode: HttpStatusCode.Unauthorized })
                                         || (e is HttpRequestException && finalResponse?.StatusCode is HttpStatusCode.Unauthorized))
@@ -253,6 +250,17 @@ namespace GitTrends
             {
                 if (retryTimeSpan is null)
                     throw new InvalidOperationException($"{nameof(retryTimeSpan)} cannot be null");
+
+                //Rate Limiting may cause some data to not return successfully from the GitHub API
+                var repositoriesFromDatabase = await getDatabaseRepositoriesTask.ConfigureAwait(false);
+
+                var missingRepositories = _gitHubUserService.ShouldIncludeOrganizations switch
+                {
+                    true => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsTrafficData),
+                    false => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsTrafficData && x.OwnerLogin == _gitHubUserService.Alias)
+                };
+
+                AddRepositoriesToCollection(missingRepositories, _searchBarText);
 
                 var abuseLimit = new AbuseLimitPullToRefreshEventArgs(retryTimeSpan.Value, VisibleRepositoryList.Any());
                 OnPullToRefreshFailed(abuseLimit);
@@ -303,6 +311,9 @@ namespace GitTrends
 
                 await SaveRepositoriesToDatabase(_repositoryList).ConfigureAwait(false);
             }
+
+            static IReadOnlyList<Repository> getDistictRepositories(in IEnumerable<Repository> repositoriesList1, in IEnumerable<Repository> repositoriesList2, Func<Repository, bool> filter) =>
+                    repositoriesList1.Concat(repositoriesList2).Where(filter).GroupBy(x => x.Url).Where(g => g.Count() is 1).Select(g => g.First()).ToList();
 
             void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
             void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();
