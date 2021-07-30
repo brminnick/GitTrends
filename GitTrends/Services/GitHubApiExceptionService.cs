@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using GitHubApiStatus;
 using GitTrends.Shared;
@@ -28,7 +29,7 @@ namespace GitTrends
             };
         }
 
-        public static bool IsAbuseRateLimit(this IGitHubApiStatusService gitHubApiStatusService, in Exception exception, out TimeSpan? delta)
+        public static bool IsAbuseRateLimit(this IGitHubApiStatusService gitHubApiStatusService, in Exception exception, [NotNullWhen(true)] out TimeSpan? delta)
         {
             delta = null;
 

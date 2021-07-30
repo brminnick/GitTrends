@@ -155,55 +155,81 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public async Task GetStarGazers_ValidRepo()
+        public async Task GetReferringSitesTest_ValidRepo_Authenticated()
         {
-            //Arrange
-            StarGazers starGazers;
+            // Arrange
+            var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
 
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
-
-            //Act
-            starGazers = await gitHubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None).ConfigureAwait(false); ;
-
-            //Assert
-            Assert.NotNull(starGazers);
-            Assert.Greater(starGazers.TotalCount, 250);
-            Assert.IsNotEmpty(starGazers.StarredAt);
-            Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
+            throw new NotImplementedException();
         }
 
         [Test]
-        public void GetStarGazers_InvalidRepo()
+        public async Task GetReferringSitesTest_ValidRepo_NotAuthenticated()
         {
-            //Arrange
-            const string fakeRepoName = "abc123321";
-            const string fakeRepoOwner = "zxcvbnmlkjhgfdsa1234567890";
+            // Arrange
+            var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
 
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
-
-            //Act
-            var graphQLException = Assert.ThrowsAsync<GraphQLException<StarGazerResponse>>(() => gitHubGraphQLApiService.GetStarGazers(fakeRepoName, fakeRepoOwner, CancellationToken.None));
-
-            //Assert
-            Assert.AreEqual(HttpStatusCode.OK, graphQLException?.StatusCode);
-            Assert.IsTrue(graphQLException?.Errors.First().Message.Contains("Could not resolve to a Repository", StringComparison.OrdinalIgnoreCase));
-
-            //"Could not resolve to a Repository with the name 'zxcvbnmlkjhgfdsa1234567890/abc123321'."
+            throw new NotImplementedException();
         }
 
         [Test]
-        public void GetStarGazers_Unauthenticated()
+        public async Task GetReferringSitesTest_ValidRepo_DemoUser()
         {
-            //Arrange
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+            // Arrange
+            var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
 
-            //Act
-            gitHubUserService.InvalidateToken();
-            var apiException = Assert.ThrowsAsync<ApiException>(() => gitHubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None));
+            // Act 
+            throw new NotImplementedException();
+        }
 
-            //Assert
-            Assert.AreEqual(HttpStatusCode.Unauthorized, apiException?.StatusCode);
+        [Test]
+        public async Task GetReferringSitesTest_InvalidRepo()
+        {
+            // Arrange
+            var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
+
+            // Act 
+            throw new NotImplementedException();
+        }
+
+        [Test]
+        public async Task GetMobileReferringSiteTest_ValidRepo_Authenticated()
+        {
+            // Arrange
+            var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
+
+            // Act 
+            throw new NotImplementedException();
+        }
+
+        [Test]
+        public async Task GetMobileReferringSiteTest_ValidRepo_NotAuthenticated()
+        {
+            // Arrange
+            var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
+
+            // Act 
+            throw new NotImplementedException();
+        }
+
+        [Test]
+        public async Task GetMobileReferringSiteTest_ValidRepo_DemoUser()
+        {
+            // Arrange
+            var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
+
+            // Act 
+            throw new NotImplementedException();
+        }
+
+        [Test]
+        public async Task GetMobileReferringSiteTest_InvalidRepo()
+        {
+            // Arrange
+            var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
+
+            // Act 
+            throw new NotImplementedException();
         }
     }
 }

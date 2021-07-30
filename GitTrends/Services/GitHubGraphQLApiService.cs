@@ -186,9 +186,6 @@ namespace GitTrends
             }
             catch (ApiException e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryDelta))
             {
-                if (retryDelta is null)
-                    throw new InvalidOperationException($"{ nameof(retryDelta)} cannot be null");
-
                 OnAbuseRateLimitFound_GetOrganizationRepositories(organization, retryDelta.Value);
             }
 

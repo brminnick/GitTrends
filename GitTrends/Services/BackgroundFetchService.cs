@@ -16,6 +16,7 @@ namespace GitTrends
         readonly static WeakEventManager<bool> _scheduleNotifyTrendingRepositoriesCompletedEventManager = new();
         readonly static WeakEventManager<string> _scheduleRetryOrganizationsRepositoriesCompletedEventManager = new();
         readonly static WeakEventManager<Repository> _scheduleRetryRepositoriesViewsClonesEventManager = new();
+        readonly static WeakEventManager<MobileReferringSiteModel> _scheduleRetryGetReferringSiteCompletedEventManager = new();
 
         readonly IJobManager _jobManager;
         readonly IAnalyticsService _analyticsService;
@@ -49,10 +50,12 @@ namespace GitTrends
             _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
 
             CleanUpDatabaseIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleCleanUpDatabase)}";
+            RetryGetReferringSitesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleRetryGetReferringSites)}";
             NotifyTrendingRepositoriesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleNotifyTrendingRepositories)}";
             RetryRepositoriesViewsClonesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleRetryRepositoriesViewsClones)}";
             RetryRetryOrganizationsReopsitoriesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleRetryOrganizationsRepositories)}";
 
+            GitHubApiRepositoriesService.AbuseRateLimitFound_GetReferringSites += HandleAbuseRateLimitFound_GetReferringSites;
             GitHubGraphQLApiService.AbuseRateLimitFound_GetOrganizationRepositories += HandleAbuseRateLimitFound_GetOrganizationRepositories;
             GitHubApiRepositoriesService.AbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData += HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData;
         }
@@ -61,6 +64,12 @@ namespace GitTrends
         {
             add => _eventManager.AddEventHandler(value);
             remove => _eventManager.RemoveEventHandler(value);
+        }
+
+        public static event EventHandler<MobileReferringSiteModel> ScheduleRetryGetReferringSiteCompleted
+        {
+            add => _scheduleRetryGetReferringSiteCompletedEventManager.AddEventHandler(value);
+            remove => _scheduleRetryGetReferringSiteCompletedEventManager.RemoveEventHandler(value);
         }
 
         public static event EventHandler<bool> ScheduleNotifyTrendingRepositoriesCompleted
@@ -83,6 +92,7 @@ namespace GitTrends
 
 
         public string CleanUpDatabaseIdentifier { get; }
+        public string RetryGetReferringSitesIdentifier { get; }
         public string NotifyTrendingRepositoriesIdentifier { get; }
         public string RetryRepositoriesViewsClonesIdentifier { get; }
         public string RetryRetryOrganizationsReopsitoriesIdentifier { get; }
@@ -95,10 +105,7 @@ namespace GitTrends
 
         public void ScheduleRetryOrganizationsRepositories(string organizationName, TimeSpan? delay = null) => _jobManager.RunTask(RetryRetryOrganizationsReopsitoriesIdentifier, async cancellationToken =>
         {
-            _analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryOrganizationsRepositories)} Triggered", new Dictionary<string, string>
-            {
-                { nameof(delay), delay?.ToString() ?? "null" }
-            });
+            _analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryOrganizationsRepositories)} Triggered", nameof(delay), delay?.ToString() ?? "null");
 
             if (delay is not null)
                 await Task.Delay(delay.Value).ConfigureAwait(false);
@@ -113,10 +120,7 @@ namespace GitTrends
 
         public void ScheduleRetryRepositoriesViewsClones(Repository repository, TimeSpan? delay = null) => _jobManager.RunTask(RetryRepositoriesViewsClonesIdentifier, async cancellationToken =>
         {
-            _analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClones)} Triggered", new Dictionary<string, string>
-            {
-                { nameof(delay), delay?.ToString() ?? "null" }
-            });
+            _analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClones)} Triggered", nameof(delay), delay?.ToString() ?? "null");
 
             if (delay is not null)
                 await Task.Delay(delay.Value).ConfigureAwait(false);
@@ -131,6 +135,29 @@ namespace GitTrends
 
                     OnScheduleRetryRepositoriesViewsClonesCompleted(repository);
                 }
+            }
+        });
+
+        public void ScheduleRetryGetReferringSites(Repository repository, TimeSpan? delay = null) => _jobManager.RunTask(RetryGetReferringSitesIdentifier, async cancellationToken =>
+        {
+            _analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryGetReferringSites)} Triggered", nameof(delay), delay?.ToString() ?? "null");
+
+            if (delay is not null)
+                await Task.Delay(delay.Value).ConfigureAwait(false);
+
+            try
+            {
+                var referringSites = await _gitHubApiRepositoriesService.GetReferringSites(repository, cancellationToken).ConfigureAwait(false);
+
+                await foreach (var mobileReferringSite in _gitHubApiRepositoriesService.GetMobileReferringSites(referringSites, repository.Url, CancellationToken.None))
+                {
+                    await _referringSitesDatabase.SaveReferringSite(mobileReferringSite, repository.Url).ConfigureAwait(false);
+                    OnScheduleRetryGetReferringSitesCompleted(mobileReferringSite);
+                }
+            }
+            catch (Exception e)
+            {
+                _analyticsService.Report(e);
             }
         });
 
@@ -166,7 +193,6 @@ namespace GitTrends
                 _analyticsService.Report(e);
                 OnScheduleNotifyTrendingRepositoriesCompleted(false);
             }
-
         });
 
         async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
@@ -214,13 +240,21 @@ namespace GitTrends
         void HandleAbuseRateLimitFound_GetOrganizationRepositories(object sender, (string OrganizationName, TimeSpan RetryTimeSpan) data) =>
             ScheduleRetryOrganizationsRepositories(data.OrganizationName, data.RetryTimeSpan);
 
+        void HandleAbuseRateLimitFound_GetReferringSites(object sender, (Repository Repository, TimeSpan RetryTimeSpan) data) =>
+            ScheduleRetryGetReferringSites(data.Repository, data.RetryTimeSpan);
+
         void OnScheduleRetryRepositoriesViewsClonesCompleted(in Repository repository) =>
             _scheduleRetryRepositoriesViewsClonesEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesViewsClonesCompleted));
 
         void OnDatabaseCleanupCompleted() => _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(DatabaseCleanupCompleted));
 
-        void OnScheduleNotifyTrendingRepositoriesCompleted(bool result) => _scheduleNotifyTrendingRepositoriesCompletedEventManager.RaiseEvent(this, result, nameof(ScheduleNotifyTrendingRepositoriesCompleted));
+        void OnScheduleNotifyTrendingRepositoriesCompleted(in bool result) =>
+            _scheduleNotifyTrendingRepositoriesCompletedEventManager.RaiseEvent(this, result, nameof(ScheduleNotifyTrendingRepositoriesCompleted));
 
-        void OnScheduleRetryOrganizationsRepositoriesCompleted(string organizationName) => _scheduleRetryOrganizationsRepositoriesCompletedEventManager.RaiseEvent(this, organizationName, nameof(ScheduleRetryOrganizationsRepositoriesCompleted));
+        void OnScheduleRetryOrganizationsRepositoriesCompleted(in string organizationName) =>
+            _scheduleRetryOrganizationsRepositoriesCompletedEventManager.RaiseEvent(this, organizationName, nameof(ScheduleRetryOrganizationsRepositoriesCompleted));
+
+        void OnScheduleRetryGetReferringSitesCompleted(in MobileReferringSiteModel referringSite) =>
+            _scheduleRetryGetReferringSiteCompletedEventManager.RaiseEvent(this, referringSite, nameof(ScheduleRetryGetReferringSiteCompleted));
     }
 }

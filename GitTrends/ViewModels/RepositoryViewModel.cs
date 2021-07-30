@@ -174,6 +174,10 @@ namespace GitTrends
 
                 var favoriteRepositoryUrls = await _repositoryDatabase.GetFavoritesUrls().ConfigureAwait(false);
 
+#if APPSTORE
+#error Pull repositories from database. Only update from GitHub if over 12 hours old
+#endif
+
                 var repositoryList = new List<Repository>();
                 await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
@@ -248,9 +252,6 @@ namespace GitTrends
             catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan)
                                         || (e is HttpRequestException && finalResponse is not null && _gitHubApiStatusService.IsAbuseRateLimit(finalResponse.Headers, out retryTimeSpan)))
             {
-                if (retryTimeSpan is null)
-                    throw new InvalidOperationException($"{nameof(retryTimeSpan)} cannot be null");
-
                 //Rate Limiting may cause some data to not return successfully from the GitHub API
                 var repositoriesFromDatabase = await getDatabaseRepositoriesTask.ConfigureAwait(false);
 

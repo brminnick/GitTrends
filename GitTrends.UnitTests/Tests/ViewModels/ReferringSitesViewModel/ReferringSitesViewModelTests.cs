@@ -21,6 +21,9 @@ namespace GitTrends.UnitTests
             bool isEmptyDataViewEnabled_Initial, isEmptyDataViewEnabled_DuringRefresh, isEmptyDataViewEnabled_Final;
             IReadOnlyList<MobileReferringSiteModel> mobileReferringSites_Initial, mobileReferringSites_DuringRefresh, mobileReferringSites_Final;
 
+            var mockGitTrendsRepository = new Repository(GitHubConstants.GitTrendsRepoName, "", 0, GitHubConstants.GitTrendsRepoOwner, AuthenticatedGitHubUserAvatarUrl, 0, 0,
+                $"https://github.com/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+
             bool didPullToRefreshFailedFire = false;
             var pullToRefreshFailedTCS = new TaskCompletionSource<PullToRefreshFailedEventArgs>();
 
@@ -34,7 +37,7 @@ namespace GitTrends.UnitTests
             isEmptyDataViewEnabled_Initial = referringSitesViewModel.IsEmptyDataViewEnabled;
             emptyDataViewDescription_Initial = referringSitesViewModel.EmptyDataViewDescription;
 
-            var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, $"https://github.com/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", CancellationToken.None));
+            var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((mockGitTrendsRepository, CancellationToken.None));
 
             isEmptyDataViewEnabled_DuringRefresh = referringSitesViewModel.IsEmptyDataViewEnabled;
             mobileReferringSites_DuringRefresh = referringSitesViewModel.MobileReferringSitesList;
@@ -85,6 +88,9 @@ namespace GitTrends.UnitTests
             bool isEmptyDataViewEnabled_Initial, isEmptyDataViewEnabled_DuringRefresh, isEmptyDataViewEnabled_Final;
             IReadOnlyList<MobileReferringSiteModel> mobileReferringSites_Initial, mobileReferringSites_DuringRefresh, mobileReferringSites_Final;
 
+            var mockGitTrendsRepository = new Repository(GitHubConstants.GitTrendsRepoName, "", 0, GitHubConstants.GitTrendsRepoOwner, AuthenticatedGitHubUserAvatarUrl, 0, 0,
+                $"https://github.com/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+
             var referringSitesViewModel = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesViewModel>();
             var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
             var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
@@ -98,7 +104,7 @@ namespace GitTrends.UnitTests
             mobileReferringSites_Initial = referringSitesViewModel.MobileReferringSitesList;
             emptyDataViewDescription_Initial = referringSitesViewModel.EmptyDataViewDescription;
 
-            var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, $"https://github.com/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", CancellationToken.None));
+            var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((mockGitTrendsRepository, CancellationToken.None));
 
             isEmptyDataViewEnabled_DuringRefresh = referringSitesViewModel.IsEmptyDataViewEnabled;
             mobileReferringSites_DuringRefresh = referringSitesViewModel.MobileReferringSitesList;
@@ -132,6 +138,6 @@ namespace GitTrends.UnitTests
                 Assert.Less(currentTime_Initial, referringSite.DownloadedAt);
                 Assert.Greater(currentTime_Final, referringSite.DownloadedAt);
             }
-        }       
+        }
     }
 }

@@ -315,12 +315,9 @@ namespace GitTrends
 
                 refreshState = RefreshState.MaximumApiLimit;
             }
-            catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan))
+            catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan) && retryTimeSpan is not null)
             {
-                if (retryTimeSpan is null)
-                    throw new InvalidOperationException($"{nameof(retryTimeSpan)} cannot be null");
-
-                _backgroundFetchService.ScheduleRetryRepositoriesViewsClones(repository, retryTimeSpan);
+                _backgroundFetchService.ScheduleRetryRepositoriesViewsClones(repository, retryTimeSpan.Value);
 
                 var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
 

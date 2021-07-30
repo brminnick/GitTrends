@@ -307,6 +307,12 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
+        public async Task ScheduleRetryGetReferringSitesTest()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Test]
         public async Task NotifyTrendingRepositoriesTest_AuthenticatedUser()
         {
             //Arrange
