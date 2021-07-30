@@ -5,13 +5,14 @@ using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 
 namespace GitTrends.UnitTests
 {
     [NonParallelizable]
     abstract class RepositoryViewModelTests_AbuseLimit : BaseTest
     {
-        protected async Task ExecutePullToRefreshCommandTestMaximumApiLimitTest(TaskCompletionSource<PullToRefreshFailedEventArgs> pullToRefreshFailedTCS)
+        protected async Task ExecutePullToRefreshCommandTestAbuseLimit()
         {
             //Arrange
             PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs;
@@ -25,6 +26,8 @@ namespace GitTrends.UnitTests
             var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
             var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
             var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+            var pullToRefreshFailedTCS = new TaskCompletionSource<PullToRefreshFailedEventArgs>();
 
             RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 

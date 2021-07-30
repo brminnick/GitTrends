@@ -14,19 +14,18 @@ namespace GitTrends.UnitTests
     class RepositoryViewModelTests_AbuseApiLimit_GraphQLApi : RepositoryViewModelTests_AbuseLimit
     {
         [Test]
-        public Task PullToRefreshCommandTest_MaximumApiLimit_GraphQLApi() =>
-            ExecutePullToRefreshCommandTestMaximumApiLimitTest(new TaskCompletionSource<Mobile.Common.PullToRefreshFailedEventArgs>());
+        public Task PullToRefreshCommandTest_MaximumApiLimit_GraphQLApi() => ExecutePullToRefreshCommandTestAbuseLimit();
 
         protected override void InitializeServiceCollection()
         {
             var gitHubApiV3Client = RefitExtensions.For<IGitHubApiV3>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubRestApiUrl));
-            var gitHubGraphQLCLient = RefitExtensions.For<IGitHubGraphQLApi>(CreateMaximumApiLimitHttpClient(GitHubConstants.GitHubGraphQLApi));
+            var gitHubGraphQLCLient = RefitExtensions.For<IGitHubGraphQLApi>(CreateAbuseApiLimitHttpClient(GitHubConstants.GitHubGraphQLApi));
             var azureFunctionsClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
 
             ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
         }
 
-        protected static HttpClient CreateMaximumApiLimitHttpClient(string url)
+        protected static HttpClient CreateAbuseApiLimitHttpClient(string url)
         {
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             var gitHubUserResponse = new GraphQLResponse<GitHubUserResponse>(null, new[] { new GraphQLError(string.Empty, Array.Empty<GraphQLLocation>()) });

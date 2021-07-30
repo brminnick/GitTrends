@@ -20,7 +20,7 @@ namespace GitTrends.Mobile.Common
             RefreshState.Uninitialized => EmptyDataViewConstantsInternal.Uninitialized,
             RefreshState.Succeeded => EmptyDataViewConstantsInternal.NoReferralsYet,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.LoginExpired,
-            RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
+            RefreshState.Error or RefreshState.AbuseLimit => EmptyDataViewConstantsInternal.UnableToRetrieveData,
             RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.UnableToRetrieveData,
             _ => throw new NotSupportedException()
         };
@@ -30,7 +30,7 @@ namespace GitTrends.Mobile.Common
             RefreshState.Uninitialized => EmptyDataViewConstantsInternal.SwipeDownToRefresh_ReferringSites,
             RefreshState.Succeeded => string.Empty,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.PleaseLoginAgain,
-            RefreshState.Error => EmptyDataViewConstantsInternal.SwipeDownToRefresh_ReferringSites,
+            RefreshState.Error or RefreshState.AbuseLimit => EmptyDataViewConstantsInternal.SwipeDownToRefresh_ReferringSites,
             RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.SwipeDownToRefresh_ReferringSites,
             _ => throw new NotSupportedException()
         };

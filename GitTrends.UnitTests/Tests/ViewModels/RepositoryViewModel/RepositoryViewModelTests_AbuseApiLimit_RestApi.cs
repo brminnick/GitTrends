@@ -12,19 +12,18 @@ namespace GitTrends.UnitTests
     class RepositoryViewModelTests_AbuseLimit_RestApi : RepositoryViewModelTests_AbuseLimit
     {
         [Test]
-        public Task PullToRefreshCommandTest_MaximumApiLimit_RestLApi() =>
-            ExecutePullToRefreshCommandTestMaximumApiLimitTest(new TaskCompletionSource<Mobile.Common.PullToRefreshFailedEventArgs>());
+        public Task PullToRefreshCommandTest_MaximumApiLimit_RestLApi() => ExecutePullToRefreshCommandTestAbuseLimit();
 
         protected override void InitializeServiceCollection()
         {
-            var gitHubApiV3Client = RefitExtensions.For<IGitHubApiV3>(CreateMaximumApiLimitHttpClient(GitHubConstants.GitHubRestApiUrl));
+            var gitHubApiV3Client = RefitExtensions.For<IGitHubApiV3>(CreateAbuseApiLimitHttpClient(GitHubConstants.GitHubRestApiUrl));
             var gitHubGraphQLCLient = RefitExtensions.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
             var azureFunctionsClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
 
             ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
         }
 
-        protected static HttpClient CreateMaximumApiLimitHttpClient(string url)
+        protected static HttpClient CreateAbuseApiLimitHttpClient(string url)
         {
             var responseMessage = new HttpResponseMessage(HttpStatusCode.Forbidden);
             responseMessage.Headers.RetryAfter = new RetryConditionHeaderValue(TimeSpan.FromMinutes(1));

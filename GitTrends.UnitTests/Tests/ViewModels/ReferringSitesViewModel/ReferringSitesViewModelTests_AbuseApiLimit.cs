@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
@@ -12,11 +13,10 @@ using RichardSzalay.MockHttp;
 
 namespace GitTrends.UnitTests
 {
-    [NonParallelizable]
-    class ReferringSitesViewModelTests_ServerError : BaseTest
+    class ReferringSitesViewModelTests_AbuseApiLimit : BaseTest
     {
         [Test]
-        public async Task PullToRefreshTest_ServerError()
+        public async Task PullToRefreshTest_AbuseApiLimit()
         {
             //Arrange
             PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs;
@@ -66,13 +66,13 @@ namespace GitTrends.UnitTests
             Assert.IsEmpty(mobileReferringSites_DuringRefresh);
             Assert.IsEmpty(mobileReferringSites_Final);
 
-            Assert.AreEqual(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Error), emptyDataViewTitle_Final);
+            Assert.AreEqual(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.AbuseLimit), emptyDataViewTitle_Final);
             Assert.AreEqual(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Uninitialized), emptyDataViewTitle_Initial);
 
-            Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Error), emptyDataViewDescription_Final);
+            Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.AbuseLimit), emptyDataViewDescription_Final);
             Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Uninitialized), emptyDataViewDescription_Initial);
 
-            Assert.IsInstanceOf<ErrorPullToRefreshEventArgs>(pullToRefreshFailedEventArgs);
+            Assert.IsInstanceOf< AbuseLimitPullToRefreshEventArgs>(pullToRefreshFailedEventArgs);
 
             void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
             {
@@ -83,16 +83,17 @@ namespace GitTrends.UnitTests
 
         protected override void InitializeServiceCollection()
         {
-            var gitHubApiV3Client = RefitExtensions.For<IGitHubApiV3>(CreateMaximumApiLimitHttpClient(GitHubConstants.GitHubRestApiUrl));
+            var gitHubApiV3Client = RefitExtensions.For<IGitHubApiV3>(CreateAbuseApiLimitHttpClient(GitHubConstants.GitHubRestApiUrl));
             var gitHubGraphQLCLient = RefitExtensions.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
             var azureFunctionsClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
 
             ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
         }
 
-        static HttpClient CreateMaximumApiLimitHttpClient(string url)
+        protected static HttpClient CreateAbuseApiLimitHttpClient(string url)
         {
-            var responseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+            var responseMessage = new HttpResponseMessage(HttpStatusCode.Forbidden);
+            responseMessage.Headers.RetryAfter = new RetryConditionHeaderValue(TimeSpan.FromMinutes(1));
 
             var httpMessageHandler = new MockHttpMessageHandler();
             httpMessageHandler.When($"{url}/*").Respond(request => responseMessage);

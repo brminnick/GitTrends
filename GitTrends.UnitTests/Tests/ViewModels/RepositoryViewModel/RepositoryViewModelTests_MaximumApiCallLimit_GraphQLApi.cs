@@ -14,8 +14,7 @@ namespace GitTrends.UnitTests
     class RepositoryViewModelTests_MaximumApiCallLimit_GraphQLApi : RepositoryViewModelTests_MaximumApiCallLimit
     {
         [Test]
-        public Task PullToRefreshCommandTest_MaximumApiLimit_GraphQLApi() =>
-            ExecutePullToRefreshCommandTestMaximumApiLimitTest(new TaskCompletionSource<Mobile.Common.PullToRefreshFailedEventArgs>());
+        public Task PullToRefreshCommandTest_MaximumApiLimit_GraphQLApi() => ExecutePullToRefreshCommandTestMaximumApiLimitTest();
 
         protected override void InitializeServiceCollection()
         {

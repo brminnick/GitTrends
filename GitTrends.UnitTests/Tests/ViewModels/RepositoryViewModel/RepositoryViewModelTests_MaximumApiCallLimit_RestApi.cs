@@ -13,8 +13,7 @@ namespace GitTrends.UnitTests
     class RepositoryViewModelTests_MaximumApiCallLimit_RestApi : RepositoryViewModelTests_MaximumApiCallLimit
     {
         [Test]
-        public Task PullToRefreshCommandTest_MaximumApiLimit_RestLApi() =>
-            ExecutePullToRefreshCommandTestMaximumApiLimitTest(new TaskCompletionSource<Mobile.Common.PullToRefreshFailedEventArgs>());
+        public Task PullToRefreshCommandTest_MaximumApiLimit_RestLApi() => ExecutePullToRefreshCommandTestMaximumApiLimitTest();
 
         protected override void InitializeServiceCollection()
         {

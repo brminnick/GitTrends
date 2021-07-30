@@ -73,7 +73,7 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.MaximumApiLimit), emptyDataViewDescription_Final);
             Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Uninitialized), emptyDataViewDescription_Initial);
 
-            Assert.IsTrue(pullToRefreshFailedEventArgs is MaximumApiRequestsReachedEventArgs);
+            Assert.IsInstanceOf<MaximumApiRequestsReachedEventArgs>(pullToRefreshFailedEventArgs);
 
             void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
             {
