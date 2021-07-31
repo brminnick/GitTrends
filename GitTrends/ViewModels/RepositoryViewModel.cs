@@ -158,6 +158,7 @@ namespace GitTrends
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
             HttpResponseMessage? finalResponse = null;
+            IReadOnlyList<Repository> repositoriesFromDatabase = Array.Empty<Repository>();
 
             var cancellationTokenSource = new CancellationTokenSource();
             GitHubAuthenticationService.LoggedOut += HandleLoggedOut;
@@ -166,17 +167,13 @@ namespace GitTrends
 
             AnalyticsService.Track("Refresh Triggered", "Sorting Option", _mobileSortingService.CurrentOption.ToString());
 
-            var getDatabaseRepositoriesTask = _repositoryDatabase.GetRepositories();
 
             try
             {
                 const int minimumBatchCount = 100;
 
+                var repositoriesFromDatabaseTask = _repositoryDatabase.GetRepositories();
                 var favoriteRepositoryUrls = await _repositoryDatabase.GetFavoritesUrls().ConfigureAwait(false);
-
-#if APPSTORE
-#error Pull repositories from database. Only update from GitHub if over 12 hours old
-#endif
 
                 var repositoryList = new List<Repository>();
                 await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
@@ -199,8 +196,15 @@ namespace GitTrends
                 //Add Remaining Repositories to _repositoryList
                 AddRepositoriesToCollection(repositoryList, _searchBarText);
 
+                repositoriesFromDatabase = await repositoriesFromDatabaseTask.ConfigureAwait(false);
+
+                IReadOnlyList<Repository> repositoriesToUpdate = repositoriesFromDatabase.Where(x => _gitHubUserService.ShouldIncludeOrganizations || x.OwnerLogin == _gitHubUserService.Alias) // Only include organization repositories if `ShouldIncludeOrganizations` is true
+                                            .Where(x => x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12))) // Cached repositories that haven't been updated in 12 hours 
+                                            .Concat(_repositoryList) // Add downloaded repositories
+                                            .GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.ContainsTrafficData) ?? x.First()).ToList(); // Remove duplicate repositories
+
                 var completedRepositories = new List<Repository>();
-                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(_repositoryList, cancellationTokenSource.Token).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(repositoriesToUpdate, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     completedRepositories.Add(retrievedRepositoryWithViewsAndClonesData);
 
@@ -218,8 +222,6 @@ namespace GitTrends
                 if (!_gitHubUserService.IsDemoUser)
                 {
                     //Rate Limiting may cause some data to not return successfully from the GitHub API
-                    var repositoriesFromDatabase = await getDatabaseRepositoriesTask.ConfigureAwait(false);
-
                     var missingRepositories = _gitHubUserService.ShouldIncludeOrganizations switch
                     {
                         true => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsTrafficData),
@@ -246,15 +248,11 @@ namespace GitTrends
                 await _repositoryDatabase.DeleteAllData().ConfigureAwait(false);
 
                 SetRepositoriesCollection(Array.Empty<Repository>(), _searchBarText);
-
-                RefreshState = RefreshState.LoginExpired;
             }
             catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan)
                                         || (e is HttpRequestException && finalResponse is not null && _gitHubApiStatusService.IsAbuseRateLimit(finalResponse.Headers, out retryTimeSpan)))
             {
                 //Rate Limiting may cause some data to not return successfully from the GitHub API
-                var repositoriesFromDatabase = await getDatabaseRepositoriesTask.ConfigureAwait(false);
-
                 var missingRepositories = _gitHubUserService.ShouldIncludeOrganizations switch
                 {
                     true => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsTrafficData),
@@ -286,12 +284,11 @@ namespace GitTrends
             {
                 AnalyticsService.Report(e);
 
-                var repositoryDatabaseList = await getDatabaseRepositoriesTask.ConfigureAwait(false);
-                SetRepositoriesCollection(repositoryDatabaseList, _searchBarText);
+                SetRepositoriesCollection(repositoriesFromDatabase, _searchBarText);
 
-                if (repositoryDatabaseList.Any())
+                if (repositoriesFromDatabase.Any())
                 {
-                    var dataDownloadedAt = repositoryDatabaseList.Max(x => x.DataDownloadedAt);
+                    var dataDownloadedAt = repositoriesFromDatabase.Max(x => x.DataDownloadedAt);
                     OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"{RepositoryPageConstants.DisplayingDataFrom} {dataDownloadedAt.ToLocalTime():dd MMMM @ HH:mm}\n\n{RepositoryPageConstants.CheckInternetConnectionTryAgain}."));
                 }
                 else

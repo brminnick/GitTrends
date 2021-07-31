@@ -199,7 +199,8 @@ namespace GitTrends
         {
             if (!_gitHubUserService.IsDemoUser && !string.IsNullOrEmpty(_gitHubUserService.Alias))
             {
-                var favoriteRepositoryUrls = await _repositoryDatabase.GetFavoritesUrls().ConfigureAwait(false);
+                var repositoriesFromDatabase = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
+                IReadOnlyList<string> favoriteRepositoryUrls = repositoriesFromDatabase.Where(x => x.IsFavorite is true).Select(x => x.Url).ToList();
 
                 var retrievedRepositoryList = new List<Repository>();
                 await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(_gitHubUserService.Alias, cancellationToken).ConfigureAwait(false))
@@ -209,11 +210,16 @@ namespace GitTrends
                     else
                         retrievedRepositoryList.Add(repository);
                 }
-
                 var retrievedRepositoryList_NoDuplicatesNoForks = RepositoryService.RemoveForksAndDuplicates(retrievedRepositoryList);
 
+                IReadOnlyList<Repository> repositoriesToUpdate = repositoriesFromDatabase.Where(x => _gitHubUserService.ShouldIncludeOrganizations || x.OwnerLogin == _gitHubUserService.Alias) // Only include organization repositories if `ShouldIncludeOrganizations` is true
+                                            .Where(x => x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12))) // Cached repositories that haven't been updated in 12 hours 
+                                            .Concat(retrievedRepositoryList_NoDuplicatesNoForks) // Add downloaded repositories
+                                            .GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.ContainsTrafficData) ?? x.First()).ToList(); // Remove duplicate repositories
+
+
                 var trendingRepositories = new List<Repository>();
-                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(retrievedRepositoryList_NoDuplicatesNoForks.ToList(), cancellationToken).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(repositoriesToUpdate, cancellationToken).ConfigureAwait(false))
                 {
                     try
                     {
