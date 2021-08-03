@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
@@ -123,10 +122,6 @@ namespace GitTrends
                 {
                     var referringSite = MobileReferringSitesList.Single(x => x.Referrer == mobileReferringSite.Referrer);
                     referringSite.FavIcon = mobileReferringSite.FavIcon;
-#if APPSTORE
-👆 Try removing referringSite.FavIcon to see if the icon still updates on the UI
-The UI should may without this code because MobileReferringSiteModel implements INotifyPropertyChanged
-#endif
 
                     if (string.IsNullOrWhiteSpace(mobileReferringSite.FavIconImageUrl))
                         await _referringSitesDatabase.SaveReferringSite(referringSite, repository.Url).ConfigureAwait(false);

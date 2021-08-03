@@ -167,7 +167,6 @@ namespace GitTrends
 
             AnalyticsService.Track("Refresh Triggered", "Sorting Option", _mobileSortingService.CurrentOption.ToString());
 
-
             try
             {
                 const int minimumBatchCount = 100;
