@@ -18,7 +18,7 @@ namespace GitTrends.UITests
         public static T InvokeBackdoorMethod<T>(this IApp app, string backdoorMethodName, string parameter = "")
         {
             var result = app.InvokeBackdoorMethod(backdoorMethodName, parameter).ToString();
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(result);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(result) ?? throw new NullReferenceException();
         }
     }
 }
