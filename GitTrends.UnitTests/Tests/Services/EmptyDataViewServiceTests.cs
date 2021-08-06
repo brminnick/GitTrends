@@ -26,7 +26,6 @@ namespace GitTrends.UnitTests
         [TestCase(int.MinValue)]
         [TestCase(-1)]
         [TestCase(6)]
-        [TestCase(RefreshState.AbuseLimit)]
         [TestCase(int.MaxValue)]
         public void GetReferringSitesTitleTextTest_InvalidRefreshState(RefreshState refreshState)
         {
@@ -58,7 +57,6 @@ namespace GitTrends.UnitTests
         [TestCase(int.MinValue)]
         [TestCase(-1)]
         [TestCase(6)]
-        [TestCase(RefreshState.AbuseLimit)]
         [TestCase(int.MaxValue)]
         public void GetReferringSitesTitleDescriptionTest_InvalidRefreshState(RefreshState refreshState)
         {
