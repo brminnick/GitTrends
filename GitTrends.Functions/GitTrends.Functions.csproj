@@ -11,7 +11,7 @@
         <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="5.0.1" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.0.4" OutputItemType="Analyzer" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.4.0" />
-        <PackageReference Include="Refit.HttpClientFactory" Version="6.0.38" />
+        <PackageReference Include="Refit.HttpClientFactory" Version="6.0.94" />
         <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="5.0.1" />
         <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
         <PackageReference Include="NuGet.Protocol" Version="5.10.0" />
