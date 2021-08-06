@@ -223,7 +223,7 @@
 		<PackageReference Include="Polly" Version="7.2.2" />
 		<PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.7.0" />
 		<PackageReference Include="GitHubApiStatus" Version="2.0.1" />
-		<PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.38" />
+		<PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.94" />
 	</ItemGroup>
 	<Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
 </Project>
