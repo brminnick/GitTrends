@@ -13,8 +13,6 @@ namespace GitTrends.UnitTests
 {
     class BackgroundFetchServiceTests : BaseTest
     {
-        const string _gitTrendsAvatarUrl = "https://avatars3.githubusercontent.com/u/61480020?s=400&u=b1a900b5fa1ede22af9d2d9bfd6c49a072e659ba&v=4";
-
         [Test]
         public async Task ScheduleRetryRepositoriesViewsClonesTest_AuthenticatedUser()
         {
@@ -32,7 +30,7 @@ namespace GitTrends.UnitTests
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
             repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
-                                                _gitTrendsAvatarUrl, 1, 2, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+                                                GitHubConstants.GitTrendsAvatarUrl, 1, 2, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
 
             //Act
             backgroundFetchService.ScheduleRetryRepositoriesViewsClones(repository_Initial);
@@ -169,7 +167,7 @@ namespace GitTrends.UnitTests
             IReadOnlyList<MobileReferringSiteModel> mobileReferringSitesList_Initial, mobileReferringSitesList_Final;
 
             Repository repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
-                                                _gitTrendsAvatarUrl, 1, 2, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+                                                GitHubConstants.GitTrendsAvatarUrl, 1, 2, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
 
             var mobileReferringSiteRetrievedTCS = new TaskCompletionSource<MobileReferringSiteModel>();
             var scheduleRetryGetReferringSiteCompletedTCS = new TaskCompletionSource<Repository>();
@@ -247,7 +245,7 @@ namespace GitTrends.UnitTests
 
             Assert.AreEqual(0, mobileReferringSitesList_Initial.Count);
             Assert.Greater(mobileReferringSitesList_Final.Count, mobileReferringSitesList_Initial.Count);
-            foreach(var mobileReferringSite in mobileReferringSitesList_Final)
+            foreach (var mobileReferringSite in mobileReferringSitesList_Final)
             {
                 Assert.IsNotNull(mobileReferringSite.FavIcon);
                 Assert.IsNotNull(mobileReferringSite.FavIconImageUrl);
@@ -466,7 +464,7 @@ namespace GitTrends.UnitTests
             }
 
             return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-                                                        DemoUserConstants.Alias, _gitTrendsAvatarUrl, DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
+                                                        DemoUserConstants.Alias, GitHubConstants.GitTrendsAvatarUrl, DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
                                                         repositoryUrl, false, downloadedAt, RepositoryPermission.ADMIN, true, dailyViewsList, dailyClonesList, starredAtList);
         }
 
