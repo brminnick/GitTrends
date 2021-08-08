@@ -38,7 +38,7 @@ namespace GitTrends.UnitTests
             backgroundFetchService.ScheduleRetryRepositoriesViewsClones(repository_Initial);
             repository_Final = await scheduleRetryRepositoriesViewsClonesCompletedTCS.Task.ConfigureAwait(false);
             repository_Database = await repositoryDatabase.GetRepository(repository_Initial.Url).ConfigureAwait(false) ?? throw new NullReferenceException();
-             
+
             //Assert
             Assert.IsFalse(repository_Initial.ContainsTrafficData);
             Assert.IsTrue(repository_Final.ContainsTrafficData);
@@ -157,6 +157,120 @@ namespace GitTrends.UnitTests
             {
                 BackgroundFetchService.ScheduleRetryOrganizationsRepositoriesCompleted -= HandleScheduleRetryOrganizationsRepositoriesCompleted;
                 scheduleRetryOrganizationsRepositoriesCompletedTCS.SetResult(e);
+            }
+        }
+
+        [Test]
+        public async Task ScheduleRetryGetReferringSitesTest_AuthenticatedUser()
+        {
+            //Arrange
+            Repository repository_Final;
+            MobileReferringSiteModel mobileReferringSiteModel, mobileReferringSiteModel_Database;
+            IReadOnlyList<MobileReferringSiteModel> mobileReferringSitesList_Initial, mobileReferringSitesList_Final;
+
+            Repository repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
+                                                _gitTrendsAvatarUrl, 1, 2, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+
+            var mobileReferringSiteRetrievedTCS = new TaskCompletionSource<MobileReferringSiteModel>();
+            var scheduleRetryGetReferringSiteCompletedTCS = new TaskCompletionSource<Repository>();
+
+            BackgroundFetchService.MobileReferringSiteRetrieved += HandleMobileReferringSiteRetrieved;
+            BackgroundFetchService.ScheduleRetryGetReferringSitesCompleted += HandleScheduleRetryGetReferringSitesCompleted;
+
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+            var referringSitesDatabase = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesDatabase>();
+            var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+            var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+            var referringSitesViewModel = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesViewModel>();
+
+            await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+            //Act
+            mobileReferringSitesList_Initial = referringSitesViewModel.MobileReferringSitesList;
+            backgroundFetchService.ScheduleRetryGetReferringSites(repository_Initial);
+
+            mobileReferringSiteModel = await mobileReferringSiteRetrievedTCS.Task.ConfigureAwait(false);
+            repository_Final = await scheduleRetryGetReferringSiteCompletedTCS.Task.ConfigureAwait(false);
+
+            mobileReferringSitesList_Final = referringSitesViewModel.MobileReferringSitesList;
+
+            IReadOnlyList<MobileReferringSiteModel> mobileReferringSiteModelsFromDatabase = await referringSitesDatabase.GetReferringSites(repository_Initial.Url.ToString()).ConfigureAwait(false);
+            mobileReferringSiteModel_Database = mobileReferringSiteModelsFromDatabase.Single(x => x.ReferrerUri is not null && x.ReferrerUri == mobileReferringSiteModel.ReferrerUri);
+
+            // Assert
+            Assert.IsNotNull(mobileReferringSiteModel.FavIcon);
+            Assert.IsNotNull(mobileReferringSiteModel.FavIconImageUrl);
+            Assert.IsNotEmpty(mobileReferringSiteModel.FavIconImageUrl);
+            Assert.IsTrue(mobileReferringSiteModel.IsReferrerUriValid);
+            Assert.IsNotNull(mobileReferringSiteModel.Referrer);
+            Assert.IsNotEmpty(mobileReferringSiteModel.Referrer);
+            Assert.IsNotNull(mobileReferringSiteModel.ReferrerUri);
+            Assert.IsTrue(Uri.IsWellFormedUriString(mobileReferringSiteModel.ReferrerUri?.ToString(), UriKind.Absolute));
+            Assert.Greater(mobileReferringSiteModel.TotalCount, 0);
+            Assert.Greater(mobileReferringSiteModel.TotalUniqueCount, 0);
+
+            Assert.AreEqual(mobileReferringSiteModel.ToString(), mobileReferringSiteModel_Database.ToString());
+
+            Assert.AreEqual(mobileReferringSiteModel.DownloadedAt, mobileReferringSiteModel_Database.DownloadedAt);
+            Assert.AreEqual(mobileReferringSiteModel.FavIcon?.ToString(), mobileReferringSiteModel_Database.FavIcon?.ToString());
+            Assert.AreEqual(mobileReferringSiteModel.FavIconImageUrl, mobileReferringSiteModel_Database.FavIconImageUrl);
+            Assert.AreEqual(mobileReferringSiteModel.IsReferrerUriValid, mobileReferringSiteModel_Database.IsReferrerUriValid);
+            Assert.AreEqual(mobileReferringSiteModel.Referrer, mobileReferringSiteModel_Database.Referrer);
+            Assert.AreEqual(mobileReferringSiteModel.ReferrerUri?.ToString(), mobileReferringSiteModel_Database.ReferrerUri?.ToString());
+            Assert.AreEqual(mobileReferringSiteModel.TotalCount, mobileReferringSiteModel_Database.TotalCount);
+            Assert.AreEqual(mobileReferringSiteModel.TotalUniqueCount, mobileReferringSiteModel_Database.TotalUniqueCount);
+
+            Assert.AreEqual(repository_Initial.ToString(), repository_Final.ToString());
+
+            Assert.AreEqual(repository_Initial.ContainsTrafficData, repository_Final.ContainsTrafficData);
+            Assert.AreEqual(repository_Initial.DailyClonesList?.Count, repository_Final.DailyClonesList?.Count);
+            Assert.AreEqual(repository_Initial.DailyViewsList?.Count, repository_Final.DailyViewsList?.Count);
+            Assert.AreEqual(repository_Initial.DataDownloadedAt, repository_Final.DataDownloadedAt);
+            Assert.AreEqual(repository_Initial.Description, repository_Final.Description);
+            Assert.AreEqual(repository_Initial.ForkCount, repository_Final.ForkCount);
+            Assert.AreEqual(repository_Initial.IsFavorite, repository_Final.IsFavorite);
+            Assert.AreEqual(repository_Initial.IsFork, repository_Final.IsFork);
+            Assert.AreEqual(repository_Initial.IssuesCount, repository_Final.IssuesCount);
+            Assert.AreEqual(repository_Initial.IsTrending, repository_Final.IsTrending);
+            Assert.AreEqual(repository_Initial.Name, repository_Final.Name);
+            Assert.AreEqual(repository_Initial.OwnerAvatarUrl, repository_Final.OwnerAvatarUrl);
+            Assert.AreEqual(repository_Initial.OwnerLogin, repository_Final.OwnerLogin);
+            Assert.AreEqual(repository_Initial.Permission, repository_Final.Permission);
+            Assert.AreEqual(repository_Initial.StarCount, repository_Final.StarCount);
+            Assert.AreEqual(repository_Initial.StarredAt, repository_Final.StarredAt);
+            Assert.AreEqual(repository_Initial.TotalClones, repository_Final.TotalClones);
+            Assert.AreEqual(repository_Initial.TotalUniqueClones, repository_Final.TotalUniqueClones);
+            Assert.AreEqual(repository_Initial.TotalUniqueViews, repository_Final.TotalUniqueViews);
+            Assert.AreEqual(repository_Initial.TotalViews, repository_Final.TotalViews);
+            Assert.AreEqual(repository_Initial.Url, repository_Final.Url);
+            Assert.AreEqual(repository_Initial.WatchersCount, repository_Final.WatchersCount);
+
+            Assert.AreEqual(0, mobileReferringSitesList_Initial.Count);
+            Assert.Greater(mobileReferringSitesList_Final.Count, mobileReferringSitesList_Initial.Count);
+            foreach(var mobileReferringSite in mobileReferringSitesList_Final)
+            {
+                Assert.IsNotNull(mobileReferringSite.FavIcon);
+                Assert.IsNotNull(mobileReferringSite.FavIconImageUrl);
+                Assert.IsNotEmpty(mobileReferringSite.FavIconImageUrl);
+                Assert.IsTrue(mobileReferringSite.IsReferrerUriValid);
+                Assert.IsNotNull(mobileReferringSite.Referrer);
+                Assert.IsNotEmpty(mobileReferringSite.Referrer);
+                Assert.IsNotNull(mobileReferringSite.ReferrerUri);
+                Assert.IsTrue(Uri.IsWellFormedUriString(mobileReferringSite.ReferrerUri?.ToString(), UriKind.Absolute));
+                Assert.Greater(mobileReferringSite.TotalCount, 0);
+                Assert.Greater(mobileReferringSite.TotalUniqueCount, 0);
+            }
+
+            void HandleMobileReferringSiteRetrieved(object? sender, MobileReferringSiteModel e)
+            {
+                BackgroundFetchService.MobileReferringSiteRetrieved -= HandleMobileReferringSiteRetrieved;
+                mobileReferringSiteRetrievedTCS.TrySetResult(e);
+            }
+
+            void HandleScheduleRetryGetReferringSitesCompleted(object? sender, Repository e)
+            {
+                BackgroundFetchService.ScheduleRetryGetReferringSitesCompleted -= HandleScheduleRetryGetReferringSitesCompleted;
+                scheduleRetryGetReferringSiteCompletedTCS.SetResult(e);
             }
         }
 
@@ -304,12 +418,6 @@ namespace GitTrends.UnitTests
                 BackgroundFetchService.ScheduleNotifyTrendingRepositoriesCompleted -= HandleScheduleNotifyTrendingRepositoriesCompleted;
                 scheduleNotifyTrendingRepositoriesCompletedTCS.SetResult(e);
             }
-        }
-
-        [Test]
-        public async Task ScheduleRetryGetReferringSitesTest()
-        {
-            throw new NotImplementedException();
         }
 
         [Test]

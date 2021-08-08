@@ -15,10 +15,10 @@ namespace GitTrends
         readonly static WeakEventManager _eventManager = new();
         readonly static WeakEventManager<bool> _scheduleNotifyTrendingRepositoriesCompletedEventManager = new();
         readonly static WeakEventManager<string> _scheduleRetryOrganizationsRepositoriesCompletedEventManager = new();
-        readonly static WeakEventManager<Repository> _scheduleRetryRepositoriesViewsClonesEventManager = new();
-        readonly static WeakEventManager<MobileReferringSiteModel> _scheduleRetryGetReferringSiteCompletedEventManager = new();
+        readonly static WeakEventManager<Repository> _repostoryEventManager = new();
+        readonly static WeakEventManager<MobileReferringSiteModel> _mobileReferringSiteRetrievedEventManager = new();
 
-        readonly List<string> _queuedJobs = new();
+        readonly HashSet<string> _queuedJobs = new();
 
         readonly IJobManager _jobManager;
         readonly IAnalyticsService _analyticsService;
@@ -69,10 +69,10 @@ namespace GitTrends
             remove => _eventManager.RemoveEventHandler(value);
         }
 
-        public static event EventHandler<MobileReferringSiteModel> ScheduleRetryGetReferringSiteCompleted
+        public static event EventHandler<MobileReferringSiteModel> MobileReferringSiteRetrieved
         {
-            add => _scheduleRetryGetReferringSiteCompletedEventManager.AddEventHandler(value);
-            remove => _scheduleRetryGetReferringSiteCompletedEventManager.RemoveEventHandler(value);
+            add => _mobileReferringSiteRetrievedEventManager.AddEventHandler(value);
+            remove => _mobileReferringSiteRetrievedEventManager.RemoveEventHandler(value);
         }
 
         public static event EventHandler<bool> ScheduleNotifyTrendingRepositoriesCompleted
@@ -89,11 +89,17 @@ namespace GitTrends
 
         public static event EventHandler<Repository> ScheduleRetryRepositoriesViewsClonesCompleted
         {
-            add => _scheduleRetryRepositoriesViewsClonesEventManager.AddEventHandler(value);
-            remove => _scheduleRetryRepositoriesViewsClonesEventManager.RemoveEventHandler(value);
+            add => _repostoryEventManager.AddEventHandler(value);
+            remove => _repostoryEventManager.RemoveEventHandler(value);
         }
 
-        public IReadOnlyList<string> QueuedJobs => _queuedJobs;
+        public static event EventHandler<Repository> ScheduleRetryGetReferringSitesCompleted
+        {
+            add => _repostoryEventManager.AddEventHandler(value);
+            remove => _repostoryEventManager.RemoveEventHandler(value);
+        }
+
+        public IReadOnlyList<string> QueuedJobs => _queuedJobs.ToList();
 
         public string CleanUpDatabaseIdentifier { get; }
         public string RetryGetReferringSitesIdentifier { get; }
@@ -167,10 +173,10 @@ namespace GitTrends
                 {
                     var referringSites = await _gitHubApiRepositoriesService.GetReferringSites(repository, cancellationToken).ConfigureAwait(false);
 
-                    await foreach (var mobileReferringSite in _gitHubApiRepositoriesService.GetMobileReferringSites(referringSites, repository.Url, CancellationToken.None))
+                    await foreach (var mobileReferringSite in _gitHubApiRepositoriesService.GetMobileReferringSites(referringSites, repository.Url, new CancellationTokenSource(TimeSpan.FromMinutes(1)).Token).ConfigureAwait(false))
                     {
                         await _referringSitesDatabase.SaveReferringSite(mobileReferringSite, repository.Url).ConfigureAwait(false);
-                        OnScheduleRetryGetReferringSitesCompleted(mobileReferringSite);
+                        OnMobileReferringSiteRetrieved(mobileReferringSite);
                     }
                 }
                 catch (Exception e)
@@ -179,7 +185,7 @@ namespace GitTrends
                 }
                 finally
                 {
-                    _queuedJobs.Remove(GetRetryGetReferringSitesIdentifier(repository));
+                    OnScheduleRetryGetReferringSitesCompleted(repository);
                 }
             });
         }
@@ -298,7 +304,7 @@ namespace GitTrends
         void OnScheduleRetryRepositoriesViewsClonesCompleted(in Repository repository)
         {
             _queuedJobs.Remove(GetRetryRepositoriesViewsClonesIdentifier(repository));
-            _scheduleRetryRepositoriesViewsClonesEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesViewsClonesCompleted));
+            _repostoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesViewsClonesCompleted));
         }
 
         void OnDatabaseCleanupCompleted()
@@ -319,7 +325,13 @@ namespace GitTrends
             _scheduleRetryOrganizationsRepositoriesCompletedEventManager.RaiseEvent(this, organizationName, nameof(ScheduleRetryOrganizationsRepositoriesCompleted));
         }
 
-        void OnScheduleRetryGetReferringSitesCompleted(in MobileReferringSiteModel referringSite) =>
-            _scheduleRetryGetReferringSiteCompletedEventManager.RaiseEvent(this, referringSite, nameof(ScheduleRetryGetReferringSiteCompleted));
+        void OnScheduleRetryGetReferringSitesCompleted(in Repository repository)
+        {
+            _queuedJobs.Remove(GetRetryGetReferringSitesIdentifier(repository));
+            _repostoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryGetReferringSitesCompleted));
+        }
+
+        void OnMobileReferringSiteRetrieved(in MobileReferringSiteModel referringSite) =>
+            _mobileReferringSiteRetrievedEventManager.RaiseEvent(this, referringSite, nameof(MobileReferringSiteRetrieved));
     }
 }

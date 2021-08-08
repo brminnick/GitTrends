@@ -53,6 +53,8 @@ namespace GitTrends
             _gitHubAuthenticationService = gitHubAuthenticationService;
             _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
 
+            BackgroundFetchService.MobileReferringSiteRetrieved += HandleMobileReferringSiteRetrieved;
+
             RefreshState = RefreshState.Uninitialized;
 
             RefreshCommand = new AsyncCommand<(Repository Repository, CancellationToken Token)>(tuple => ExecuteRefreshCommand(tuple.Repository, tuple.Token));
@@ -196,5 +198,11 @@ namespace GitTrends
 
         void OnAbuseRateLimitFound_GetReferringSites(in Repository repository) =>
             _abuseRateLimitFound_GetReferringSites_EventManager.RaiseEvent(this, repository, nameof(AbuseRateLimitFound_GetReferringSites));
+
+        void HandleMobileReferringSiteRetrieved(object sender, MobileReferringSiteModel e)
+        {
+            var updatedReferringSitesList = MobileReferringSitesList.Concat(new List<MobileReferringSiteModel> { e });
+            MobileReferringSitesList = MobileSortingService.SortReferringSites(updatedReferringSitesList).ToList();
+        }
     }
 }
