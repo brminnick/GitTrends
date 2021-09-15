@@ -33,7 +33,7 @@
         <PackageReference Include="Shiny.Notifications" Version="2.2.0.2829" />
         <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
         <PackageReference Include="Plugin.StoreReview" Version="3.2.0-beta" />
-        <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.4" />
+        <PackageReference Include="Sharpnado.MaterialFrame" Version="1.2.0" />
         <PackageReference Include="Xamarin.CommunityToolkit.Markup" Version="1.3.0-pre2" />
         <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.3" />
     </ItemGroup>
