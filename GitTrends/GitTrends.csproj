@@ -22,7 +22,7 @@
     <ItemGroup>
         <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.0" />
         <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="19.1.0.66" />
-        <PackageReference Include="sqlite-net-pcl" Version="1.8.0-beta" />
+        <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
         <PackageReference Include="Autofac" Version="6.2.0" />
         <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.1.4" />
