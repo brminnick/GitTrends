@@ -472,7 +472,7 @@
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.0" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="19.1.0.66" />
-    <PackageReference Include="sqlite-net-pcl" Version="1.8.0-beta" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
     <PackageReference Include="Autofac" Version="6.2.0" />
     <PackageReference Include="Xamarin.TestCloud.Agent" Version="0.22.2" />
@@ -484,7 +484,7 @@
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.7.0" />
     <PackageReference Include="Plugin.StoreReview" Version="3.2.0-beta" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.3" />
-    <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.4" />
+    <PackageReference Include="Sharpnado.MaterialFrame" Version="1.2.0" />
     <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.94" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
