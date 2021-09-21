@@ -88,7 +88,7 @@
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
     <PackageReference Include="Autofac" Version="6.2.0" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.3.0" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.4.0" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.4.0" />
     <PackageReference Include="Shiny.Notifications" Version="2.2.0.2829" />
     <PackageReference Include="Xam.Plugins.Android.ExoPlayer" Version="2.11.8" />
