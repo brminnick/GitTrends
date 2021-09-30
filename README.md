@@ -84,3 +84,7 @@ Cloud Backend
 ⭐️ [Star the GitHub Repo](https://github.com/brminnick/GitTrends/) <br/>
 ⭐️ [Rate the iOS App](https://apps.apple.com/us/app/gittrends-github-insights/id1500300399) <br/>
 ⭐️ [Rate the Android App](https://play.google.com/store/apps/details?id=com.minnick.gittrends) <br/>
+
+## Code of Conduct
+
+Although this project is not a member of the .NET Foundation, we adhere to the [.NET Foundation Code of Conduct](https://dotnetfoundation.org/about/code-of-conduct).
