@@ -20,13 +20,13 @@
       <NoStdLib>false</NoStdLib>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.0" />
+        <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.1" />
         <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="19.1.0.66" />
         <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
         <PackageReference Include="Autofac" Version="6.2.0" />
         <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.1.4" />
-        <PackageReference Include="HtmlAgilityPack" Version="1.11.36" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.37" />
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.4.0" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.4.0" />
         <PackageReference Include="Xamarin.Forms" Version="5.0.0.2125" />
