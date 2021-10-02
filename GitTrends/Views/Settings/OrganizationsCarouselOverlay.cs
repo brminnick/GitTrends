@@ -17,12 +17,14 @@ namespace GitTrends
     class OrganizationsCarouselOverlay : Grid
     {
         readonly IMainThread _mainThread;
+        readonly IAnalyticsService _analyticsService;
 
         public OrganizationsCarouselOverlay(IMainThread mainThread,
                                                 IAnalyticsService analyticsService,
                                                 MediaElementService mediaElementService)
         {
             _mainThread = mainThread;
+            _analyticsService = analyticsService;
 
             RowDefinitions = Rows.Define(
                 (Row.CloseButton, Star),
@@ -58,6 +60,8 @@ namespace GitTrends
                 Opacity = 1;
 
             InputTransparent = false;
+
+            _analyticsService.Track($"{nameof(OrganizationsCarouselOverlay)} Appeared");
         });
 
         public Task Dismiss(bool shouldAnimate) => _mainThread.InvokeOnMainThreadAsync(async () =>
@@ -68,6 +72,8 @@ namespace GitTrends
                 await this.FadeTo(0, 1000);
             else
                 Opacity = 0;
+
+            _analyticsService.Track($"{nameof(OrganizationsCarouselOverlay)} Dismissed");
         });
 
         class BackgroundOverlay : BoxView
@@ -144,7 +150,7 @@ namespace GitTrends
                         new OpacityOverlay()
                             .Row(EnableOrganizationsGrid.Row.Image),
 
-                        new OrganizationsCarouselView(mediaElementService)
+                        new OrganizationsCarouselView(analyticsService, mediaElementService)
                             .Row(EnableOrganizationsGrid.Row.Image).RowSpan(All<EnableOrganizationsGrid.Row>())
                             .Invoke(view => view.PositionChanged += HandlePositionChanged)
                             .FillExpand(),
@@ -179,8 +185,12 @@ namespace GitTrends
 
             class OrganizationsCarouselView : CarouselView
             {
-                public OrganizationsCarouselView(MediaElementService mediaElementService)
+                readonly IAnalyticsService _analyticsService;
+
+                public OrganizationsCarouselView(IAnalyticsService analyticsService, MediaElementService mediaElementService)
                 {
+                    _analyticsService = analyticsService;
+
                     Loop = false;
                     HorizontalScrollBarVisibility = ScrollBarVisibility.Never;
 
@@ -192,6 +202,13 @@ namespace GitTrends
                     };
 
                     ItemTemplate = new EnableOrganizationsCarouselTemplateSelector();
+                }
+
+                protected override void OnPositionChanged(PositionChangedEventArgs args)
+                {
+                    base.OnPositionChanged(args);
+
+                    _analyticsService.Track($"{GetType().Name} Page {args.CurrentPosition} Appeared");
                 }
             }
 

@@ -225,15 +225,9 @@ namespace GitTrends
         async void HandleOrganizationsCarouselViewVisiblilityChanged(object sender, bool isVisible) => await MainThread.InvokeOnMainThreadAsync(async () =>
         {
             if (isVisible)
-            {
                 await _organizationsCarouselOverlay.Reveal(true);
-                AnalyticsService.Track($"OrganizationsCarouselView Page 1 Appeared");
-            }
             else
-            {
                 await _organizationsCarouselOverlay.Dismiss(true);
-                AnalyticsService.Track($"OrganizationsCarouselView Dismissed");
-            }
         });
 
         class AboutRowTappableView : View
