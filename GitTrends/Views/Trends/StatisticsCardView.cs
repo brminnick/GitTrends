@@ -2,7 +2,6 @@
 using Sharpnado.MaterialFrame;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -74,17 +73,12 @@ namespace GitTrends
 
             class RepositoryStatSVGImage : SvgImage
             {
-
                 public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor)
                     : base(svgFileName, () => (Color)Application.Current.Resources[baseThemeColor], 32, 32)
-                {
-                    GetColor = () => (Color)Application.Current.Resources[baseThemeColor];
-
+                { 
                     VerticalOptions = LayoutOptions.CenterAndExpand;
                     HorizontalOptions = LayoutOptions.EndAndExpand;
                 }
-
-                public Func<Color> GetColor { get; }
 
             }
 

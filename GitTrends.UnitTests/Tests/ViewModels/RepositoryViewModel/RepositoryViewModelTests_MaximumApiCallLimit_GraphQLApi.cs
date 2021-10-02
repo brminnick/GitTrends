@@ -36,6 +36,7 @@ namespace GitTrends.UnitTests
             {
                 Content = new StringContent(JsonConvert.SerializeObject(gitHubUserResponse))
             };
+            errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitHeader, "5000");
             errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitRemainingHeader, "0");
             errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitResetHeader, DateTimeOffset.UtcNow.AddMinutes(50).ToUnixTimeSeconds().ToString());
 

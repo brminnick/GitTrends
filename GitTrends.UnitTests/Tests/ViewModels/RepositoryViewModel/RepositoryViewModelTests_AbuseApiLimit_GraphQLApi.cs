@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using GitHubApiStatus;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -36,6 +37,7 @@ namespace GitTrends.UnitTests
             {
                 Content = new StringContent(JsonConvert.SerializeObject(gitHubUserResponse))
             };
+            errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitHeader, "5000");
             errorResponseMessage.Headers.RetryAfter = new RetryConditionHeaderValue(TimeSpan.FromMinutes(1));
 
             var viewerLoginResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)

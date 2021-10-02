@@ -217,7 +217,8 @@ namespace GitTrends.UnitTests
             }
             else
             {
-                Assert.IsEmpty(repositories);
+                Assert.IsNotEmpty(repositories);
+                Assert.GreaterOrEqual(repositories.Count, 1);
             }
 
             Assert.AreEqual(0, repositories.Sum(x => x.TotalViews));
@@ -396,7 +397,10 @@ namespace GitTrends.UnitTests
             //Arrange
             StarGazers starGazers;
 
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
             var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+            await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
             //Act
             starGazers = await gitHubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None).ConfigureAwait(false); ;
@@ -409,13 +413,16 @@ namespace GitTrends.UnitTests
         }
 
         [Test]
-        public void GetStarGazers_InvalidRepo()
+        public async Task GetStarGazers_InvalidRepo()
         {
             //Arrange
             const string fakeRepoName = "abc123321";
             const string fakeRepoOwner = "zxcvbnmlkjhgfdsa1234567890";
 
+            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
             var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+            await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
             //Act
             var graphQLException = Assert.ThrowsAsync<GraphQLException<StarGazerResponse>>(() => gitHubGraphQLApiService.GetStarGazers(fakeRepoName, fakeRepoOwner, CancellationToken.None));

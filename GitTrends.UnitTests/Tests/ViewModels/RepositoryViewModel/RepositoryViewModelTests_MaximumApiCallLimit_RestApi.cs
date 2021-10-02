@@ -27,6 +27,7 @@ namespace GitTrends.UnitTests
         protected static HttpClient CreateMaximumApiLimitHttpClient(string url)
         {
             var responseMessage = new HttpResponseMessage(HttpStatusCode.Forbidden);
+            responseMessage.Headers.Add(GitHubApiStatusService.RateLimitHeader, "5000");
             responseMessage.Headers.Add(GitHubApiStatusService.RateLimitRemainingHeader, "0");
             responseMessage.Headers.Add(GitHubApiStatusService.RateLimitResetHeader, DateTimeOffset.UtcNow.AddMinutes(50).ToUnixTimeSeconds().ToString());
 
