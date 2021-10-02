@@ -63,6 +63,7 @@ Mobile App
 - [PancakeView](https://github.com/sthewissen/Xamarin.Forms.PancakeView) - An extended ContentView for Xamarin.Forms with rounded corners, borders, shadows and more!
 - [Undraw.co](https://undraw.co/) - Open-source illustrations for any idea you can imagine and create
 - [Empty States](https://emptystat.es/tags/mobile) - A curated gallery showcasing designs where no data is available in the UI
+- [GitHub Octocat Ocodex](https://octodex.github.com/inspectocat/) - A gallery of custom Octocats
 
 Cloud Backend
 - [.NET Core](https://docs.microsoft.com/dotnet/core/?WT.mc_id=mobile-0000-bramin) - an [open-source](https://github.com/dotnet/core), general-purpose development platform maintained by Microsoft and the .NET community on [GitHub](https://github.com/dotnet/core)
