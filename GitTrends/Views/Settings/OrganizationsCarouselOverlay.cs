@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Sharpnado.MaterialFrame;
 using Xamarin.CommunityToolkit.Markup;
@@ -185,9 +186,9 @@ namespace GitTrends
 
                     ItemsSource = new[]
                     {
-                        new IncludeOrganizationsCarouselModel("Title 1", "Text 1", 0, "Business", null),
-                        new IncludeOrganizationsCarouselModel("Title 2", "Text 2", 1, "Inspectocat", null),
-                        new IncludeOrganizationsCarouselModel("Title 3", "Text 3", 2, null, mediaElementService.EnableOrganizationsUrl),
+                        new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.GitHubOrganizationsTitle, ManageOrganizationsConstants.GitHubOrganizationsDescription, 0, "Business", null),
+                        new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.GitTrendsAccessTitle, ManageOrganizationsConstants.GitTrendsAccessDescription, 1, "Inspectocat", null),
+                        new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.EnableOrganizationsTitle, ManageOrganizationsConstants.EnableOrganizationsDescription, 2, null, mediaElementService.EnableOrganizationsUrl),
                     };
 
                     ItemTemplate = new EnableOrganizationsCarouselTemplateSelector();

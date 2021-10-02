@@ -1,8 +1,8 @@
-﻿using System.Runtime.CompilerServices;
-using GitTrends.Mobile.Common;
+﻿using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
+using static GitTrends.XamarinFormsService;
 
 namespace GitTrends
 {
@@ -30,10 +30,17 @@ namespace GitTrends
                     new TitleLabel(includeOrganizationsModel.Title)
                         .Row(EnableOrganizationsGrid.Row.Title),
 
-                    new DescriptionLabel(includeOrganizationsModel.Text)
-                        .Row(EnableOrganizationsGrid.Row.Description),
+                    IsSmallScreen
+                        ? new ScrollView
+                          {
+                            Margin = 0,
+                            Padding = 0,
+                            Content = new DescriptionLabel(includeOrganizationsModel.Text)
+                          }.Row(EnableOrganizationsGrid.Row.Description)
 
-                    new GitHubButton(SettingsPageAutomationIds.GitHubButton, SettingsPageConstants.ManageOrganizations) { IsVisible = false }
+                        : new DescriptionLabel(includeOrganizationsModel.Text).Row(EnableOrganizationsGrid.Row.Description),
+
+                    new GitHubButton(SettingsPageAutomationIds.GitHubButton, SettingsPageConstants.ManageOrganizations) { IsVisible = false, IsEnabled = false }
                         .Row(EnableOrganizationsGrid.Row.GitHubButton)
                         .Bind(GitHubButton.CommandProperty, nameof(SettingsViewModel.ManageOrganizationsButtonCommand), source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(SettingsViewModel)))
                         .Invoke(button =>
@@ -47,7 +54,8 @@ namespace GitTrends
                                 {
                                     button.Opacity = 0;
                                     button.IsVisible = true;
-                                    await button.FadeTo(1, 1000);
+                                    await button.FadeTo(1, 2000, Easing.CubicIn);
+                                    button.IsEnabled = true;
                                 }
                                 else
                                 {
@@ -58,8 +66,6 @@ namespace GitTrends
 
                     new BoxView()
                         .Row(EnableOrganizationsGrid.Row.IndicatorView)
-
-
                 }
             };
 
@@ -68,10 +74,15 @@ namespace GitTrends
                 public TitleLabel(in string text)
                 {
                     Text = text;
-                    FontSize = 34;
                     TextColor = Color.White;
-                    LineHeight = 1.12;
+
+                    FontSize = IsSmallScreen ? 28 : 34;
                     FontFamily = FontFamilyConstants.RobotoBold;
+
+                    MaxLines = 1;
+                    LineHeight = 1.12;
+                    LineBreakMode = LineBreakMode.TailTruncation;
+
                     AutomationId = SettingsPageAutomationIds.EnableOrangizationsCarouselTitle;
 
                     Padding = new Thickness(24, 5);
@@ -83,12 +94,18 @@ namespace GitTrends
                 public DescriptionLabel(in string text)
                 {
                     Text = text;
-                    FontSize = 15;
                     TextColor = Color.White;
-                    LineHeight = 1.021;
-                    LineBreakMode = LineBreakMode.WordWrap;
+
+                    FontSize = 15;
                     FontFamily = FontFamilyConstants.RobotoRegular;
+
+                    LineHeight = 1.021;
+
                     VerticalTextAlignment = TextAlignment.Start;
+
+                    MaxLines = IsSmallScreen ? -1 : 3;
+                    LineBreakMode = IsSmallScreen ? LineBreakMode.WordWrap : LineBreakMode.TailTruncation;
+
                     AutomationId = SettingsPageAutomationIds.EnableOrangizationsCarouselDescription;
 
                     Padding = new Thickness(24, 5);

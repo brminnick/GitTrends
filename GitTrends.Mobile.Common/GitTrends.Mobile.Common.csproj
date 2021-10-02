@@ -97,6 +97,10 @@
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>WelcomePageConstants.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
+		<EmbeddedResource Update="Constants\ManageOrganizationsConstants.resx">
+		  <Generator>PublicResXFileCodeGenerator</Generator>
+		  <LastGenOutput>ManageOrganizationsConstants.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.*.resx">
@@ -152,6 +156,9 @@
 		</EmbeddedResource>
 		<EmbeddedResource Update="Constants\WelcomePageConstants.*.resx">
 			<DependentUpon>WelcomePageConstants.resx</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Constants\ManageOrganizationsConstants.*.resx">
+			<DependentUpon>ManageOrganizationsConstants.resx</DependentUpon>
 		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
@@ -211,6 +218,9 @@
 		</Compile>
 		<Compile Update="Constants\WelcomePageConstants.Designer.cs">
 			<DependentUpon>WelcomePageConstants.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Constants\ManageOrganizationsConstants.Designer.cs">
+		  <DependentUpon>ManageOrganizationsConstants.resx</DependentUpon>
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
