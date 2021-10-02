@@ -254,8 +254,8 @@ namespace GitTrends
                 //Rate Limiting may cause some data to not return successfully from the GitHub API
                 var missingRepositories = _gitHubUserService.ShouldIncludeOrganizations switch
                 {
-                    true => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsTrafficData),
-                    false => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsTrafficData && x.OwnerLogin == _gitHubUserService.Alias)
+                    true => getDistictRepositories(_repositoryList, repositoriesFromDatabase),
+                    false => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.OwnerLogin == _gitHubUserService.Alias)
                 };
 
                 AddRepositoriesToCollection(missingRepositories, _searchBarText);
@@ -309,8 +309,8 @@ namespace GitTrends
                 await SaveRepositoriesToDatabase(_repositoryList).ConfigureAwait(false);
             }
 
-            static IReadOnlyList<Repository> getDistictRepositories(in IEnumerable<Repository> repositoriesList1, in IEnumerable<Repository> repositoriesList2, Func<Repository, bool> filter) =>
-                    repositoriesList1.Concat(repositoriesList2).Where(filter).GroupBy(x => x.Url).Where(g => g.Count() is 1).Select(g => g.First()).ToList();
+            static IReadOnlyList<Repository> getDistictRepositories(in IEnumerable<Repository> repositoriesList1, in IEnumerable<Repository> repositoriesList2, Func<Repository, bool>? filter = null) =>
+                    repositoriesList1.Concat(repositoriesList2).Where(filter ?? (_ =>  true)).GroupBy(x => x.Url).Where(g => g.Count() is 1).Select(g => g.First()).ToList();
 
             void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
             void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();

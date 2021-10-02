@@ -199,7 +199,7 @@ namespace GitTrends
                         {
                             SetBinding(IsVisibleProperty, new MultiBinding
                             {
-                                Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth >= SvgWidthRequest),
+                                Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth >= (SvgWidthRequest + 8 )),
                                 Bindings =
                                 {
                                     new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
@@ -217,7 +217,7 @@ namespace GitTrends
                         {
                             SetBinding(IsVisibleProperty, new MultiBinding
                             {
-                                Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth < SvgWidthRequest),
+                                Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth < (SvgWidthRequest + 8)),
                                 Bindings =
                                 {
                                     new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
