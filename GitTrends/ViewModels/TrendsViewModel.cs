@@ -288,6 +288,13 @@ namespace GitTrends
                     repositoryStars = starGazersResponse.StarredAt.Select(x => x.StarredAt).ToList();
                     repositoryViews = repositoryViewsResponse.DailyViewsList;
                     repositoryClones = repositoryClonesResponse.DailyClonesList;
+
+                    await _repositoryDatabase.SaveRepository(repository with
+                    {
+                        StarredAt = repositoryStars,
+                        DailyViewsList = repositoryViews,
+                        DailyClonesList = repositoryClones
+                    }).ConfigureAwait(false);
                 }
 
                 refreshState = RefreshState.Succeeded;
