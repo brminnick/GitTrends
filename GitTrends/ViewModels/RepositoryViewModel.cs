@@ -158,7 +158,7 @@ namespace GitTrends
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
             HttpResponseMessage? finalResponse = null;
-            IReadOnlyList<Repository> repositoriesFromDatabase = Array.Empty<Repository>();
+            IReadOnlyList<Repository>? repositoriesFromDatabase = null;
 
             var cancellationTokenSource = new CancellationTokenSource();
             GitHubAuthenticationService.LoggedOut += HandleLoggedOut;
@@ -167,11 +167,12 @@ namespace GitTrends
 
             AnalyticsService.Track("Refresh Triggered", "Sorting Option", _mobileSortingService.CurrentOption.ToString());
 
+            var repositoriesFromDatabaseTask = _repositoryDatabase.GetRepositories();
+
             try
             {
                 const int minimumBatchCount = 100;
 
-                var repositoriesFromDatabaseTask = _repositoryDatabase.GetRepositories();
                 var favoriteRepositoryUrls = await _repositoryDatabase.GetFavoritesUrls().ConfigureAwait(false);
 
                 var repositoryList = new List<Repository>();
@@ -200,7 +201,8 @@ namespace GitTrends
                 IReadOnlyList<Repository> repositoriesToUpdate = repositoriesFromDatabase.Where(x => _gitHubUserService.ShouldIncludeOrganizations || x.OwnerLogin == _gitHubUserService.Alias) // Only include organization repositories if `ShouldIncludeOrganizations` is true
                                             .Where(x => x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12))) // Cached repositories that haven't been updated in 12 hours 
                                             .Concat(_repositoryList) // Add downloaded repositories
-                                            .GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.ContainsTrafficData) ?? x.First()).ToList(); // Remove duplicate repositories
+                                            .OrderByDescending(x => x.DataDownloadedAt) // Ensure the newest data is ordered first
+                                            .GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.ContainsTrafficData) ?? x.First()).ToList(); // Remove duplicate repositories, selecting the First repository to ensure the Repository newest data is selected because the First repository has the newest data thanks to `OrderByDescending(x => x.DataDownloadedAt)`
 
                 var completedRepositories = new List<Repository>();
                 await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(repositoriesToUpdate, cancellationTokenSource.Token).ConfigureAwait(false))
@@ -251,6 +253,9 @@ namespace GitTrends
             catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan)
                                         || (e is HttpRequestException && finalResponse is not null && _gitHubApiStatusService.IsAbuseRateLimit(finalResponse.Headers, out retryTimeSpan)))
             {
+                if (repositoriesFromDatabase is null)
+                    repositoriesFromDatabase = await repositoriesFromDatabaseTask.ConfigureAwait(false);
+
                 //Rate Limiting may cause some data to not return successfully from the GitHub API
                 var missingRepositories = _gitHubUserService.ShouldIncludeOrganizations switch
                 {
@@ -283,12 +288,15 @@ namespace GitTrends
             {
                 AnalyticsService.Report(e);
 
+                if (repositoriesFromDatabase is null)
+                    repositoriesFromDatabase = await repositoriesFromDatabaseTask.ConfigureAwait(false);
+
                 SetRepositoriesCollection(repositoriesFromDatabase, _searchBarText);
 
                 if (repositoriesFromDatabase.Any())
                 {
                     var dataDownloadedAt = repositoriesFromDatabase.Max(x => x.DataDownloadedAt);
-                    OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"{RepositoryPageConstants.DisplayingDataFrom} {dataDownloadedAt.ToLocalTime():dd MMMM @ HH:mm}\n\n{RepositoryPageConstants.CheckInternetConnectionTryAgain}."));
+                    OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"{RepositoryPageConstants.DisplayingDataFrom} {dataDownloadedAt.ToLocalTime():dd MMMM @ HH:mm}"));
                 }
                 else
                 {
@@ -310,7 +318,7 @@ namespace GitTrends
             }
 
             static IReadOnlyList<Repository> getDistictRepositories(in IEnumerable<Repository> repositoriesList1, in IEnumerable<Repository> repositoriesList2, Func<Repository, bool>? filter = null) =>
-                    repositoriesList1.Concat(repositoriesList2).Where(filter ?? (_ =>  true)).GroupBy(x => x.Url).Where(g => g.Count() is 1).Select(g => g.First()).ToList();
+                    repositoriesList1.Concat(repositoriesList2).Where(filter ?? (_ => true)).GroupBy(x => x.Url).Where(g => g.Count() is 1).Select(g => g.First()).ToList();
 
             void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
             void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();
