@@ -268,7 +268,7 @@ namespace GitTrends.UnitTests
             MockLauncher.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
             //Act
-            settingsViewModel.CopyrightLabelTappedCommand.Execute(null);
+            await settingsViewModel.CopyrightLabelTappedCommand.ExecuteAsync().ConfigureAwait(false);
             await openAsyncTCS.Task.ConfigureAwait(false);
 
             //Assert
@@ -290,7 +290,7 @@ namespace GitTrends.UnitTests
             bool isShouldIncludeOrganizationsSwitchEnabled_Initial, isShouldIncludeOrganizationsSwitchEnabled_Final;
             bool isShouldIncludeOrganizationsSwitchToggled_Initial, isShouldIncludeOrganizationsSwitchToggled_Final;
 
-            var browserOpenAsyncTCS = new TaskCompletionSource<Uri>();
+            var organizationsCarouselViewVisibilityChangedTCS = new TaskCompletionSource<bool>();
 
             var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
             var settingsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SettingsViewModel>();
@@ -298,7 +298,7 @@ namespace GitTrends.UnitTests
             var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
             var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
 
-            MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
+            SettingsViewModel.OrganizationsCarouselViewVisiblilityChanged += HandleOrganizationsCarouselViewVisiblilityChanged;
 
             //Act
             await gitTrendsStatisticsService.Initialize(CancellationToken.None).ConfigureAwait(false);
@@ -314,7 +314,7 @@ namespace GitTrends.UnitTests
             isShouldIncludeOrganizationsSwitchEnabled_Final = settingsViewModel.IsShouldIncludeOrganizationsSwitchEnabled;
 
             settingsViewModel.IsShouldIncludeOrganizationsSwitchToggled = true;
-            var browserUri = await browserOpenAsyncTCS.Task.ConfigureAwait(false);
+            var organizationsCarouselViewVisiblilityChangedResult = await organizationsCarouselViewVisibilityChangedTCS.Task.ConfigureAwait(false);
 
             isShouldIncludeOrganizationsSwitchToggled_Final = settingsViewModel.IsShouldIncludeOrganizationsSwitchToggled;
 
@@ -325,12 +325,12 @@ namespace GitTrends.UnitTests
             Assert.IsTrue(isShouldIncludeOrganizationsSwitchEnabled_Final);
             Assert.IsTrue(isShouldIncludeOrganizationsSwitchToggled_Final);
 
-            Assert.AreEqual(new Uri($"https://github.com/settings/connections/applications/{clientId}"), browserUri);
+            Assert.IsTrue(organizationsCarouselViewVisiblilityChangedResult);
 
-            void HandleOpenAsyncExecuted(object? sender, Uri e)
+            void HandleOrganizationsCarouselViewVisiblilityChanged(object? sender, bool e)
             {
-                MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
-                browserOpenAsyncTCS.SetResult(e);
+                SettingsViewModel.OrganizationsCarouselViewVisiblilityChanged -= HandleOrganizationsCarouselViewVisiblilityChanged;
+                organizationsCarouselViewVisibilityChangedTCS.SetResult(e);
             }
         }
     }

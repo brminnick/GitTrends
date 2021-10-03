@@ -80,11 +80,8 @@ namespace GitTrends
                 {
                     var baseNavigationPage = await GetBaseNavigationPage();
 
-                    if (baseNavigationPage != null)
-                    {
-                        await baseNavigationPage.PopToRootAsync();
-                        await baseNavigationPage.Navigation.PushAsync(trendsPage);
-                    }
+                    await baseNavigationPage.PopToRootAsync();
+                    await baseNavigationPage.Navigation.PushAsync(trendsPage);
                 });
             }
 

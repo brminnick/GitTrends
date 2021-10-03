@@ -22,7 +22,9 @@ namespace GitTrends
         public const int MinimumChartHeight = 20;
 
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly RepositoryDatabase _repositoryDatabase;
         readonly GitHubApiStatusService _gitHubApiStatusService;
+        readonly BackgroundFetchService _backgroundFetchService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
 
         bool _isFetchingData = true;
@@ -47,13 +49,17 @@ namespace GitTrends
 
         public TrendsViewModel(IMainThread mainThread,
                                 IAnalyticsService analyticsService,
+                                RepositoryDatabase repositoryDatabse,
                                 GitHubApiV3Service gitHubApiV3Service,
                                 GitHubApiStatusService gitHubApiStatusService,
+                                BackgroundFetchService backgroundFetchService,
                                 GitHubGraphQLApiService gitHubGraphQLApiService,
                                 TrendsChartSettingsService trendsChartSettingsService) : base(analyticsService, mainThread)
         {
             _gitHubApiV3Service = gitHubApiV3Service;
+            _repositoryDatabase = repositoryDatabse;
             _gitHubApiStatusService = gitHubApiStatusService;
+            _backgroundFetchService = backgroundFetchService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
 
             IsViewsSeriesVisible = trendsChartSettingsService.ShouldShowViewsByDefault;
@@ -239,7 +245,8 @@ namespace GitTrends
                 StarsHeaderMessageText = TotalStars switch
                 {
                     0 or 1 => TrendsChartTitleConstants.YouGotThis,
-                    _ => TrendsChartTitleConstants.KeepItUp
+                    > 1 => TrendsChartTitleConstants.KeepItUp,
+                    _ => throw new NotSupportedException($"{nameof(TotalStars)} cannot be negative")
                 };
             }
         }
@@ -281,11 +288,18 @@ namespace GitTrends
                     repositoryStars = starGazersResponse.StarredAt.Select(x => x.StarredAt).ToList();
                     repositoryViews = repositoryViewsResponse.DailyViewsList;
                     repositoryClones = repositoryClonesResponse.DailyClonesList;
+
+                    await _repositoryDatabase.SaveRepository(repository with
+                    {
+                        StarredAt = repositoryStars,
+                        DailyViewsList = repositoryViews,
+                        DailyClonesList = repositoryClones
+                    }).ConfigureAwait(false);
                 }
 
                 refreshState = RefreshState.Succeeded;
             }
-            catch (Exception e) when (e is ApiException exception && exception.StatusCode is HttpStatusCode.Unauthorized)
+            catch (Exception e) when (e is ApiException { StatusCode: HttpStatusCode.Unauthorized })
             {
                 repositoryStars = Array.Empty<DateTimeOffset>();
                 repositoryViews = Array.Empty<DailyViewsModel>();
@@ -307,6 +321,29 @@ namespace GitTrends
                 repositoryClones = Array.Empty<DailyClonesModel>();
 
                 refreshState = RefreshState.MaximumApiLimit;
+            }
+            catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan) && retryTimeSpan is not null)
+            {
+                _backgroundFetchService.ScheduleRetryRepositoriesViewsClones(repository, retryTimeSpan.Value);
+
+                var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
+
+                if (repositoryFromDatabase is null)
+                {
+                    repositoryStars = Array.Empty<DateTimeOffset>();
+                    repositoryViews = Array.Empty<DailyViewsModel>();
+                    repositoryClones = Array.Empty<DailyClonesModel>();
+
+                    refreshState = RefreshState.Error;
+                }
+                else
+                {
+                    repositoryStars = repositoryFromDatabase.StarredAt ?? Array.Empty<DateTimeOffset>();
+                    repositoryViews = repositoryFromDatabase.DailyViewsList ?? Array.Empty<DailyViewsModel>();
+                    repositoryClones = repositoryFromDatabase.DailyClonesList ?? Array.Empty<DailyClonesModel>();
+
+                    refreshState = RefreshState.Succeeded;
+                }
             }
             catch (Exception e)
             {

@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using GitHubApiStatus;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.Essentials.Interfaces;
@@ -29,6 +30,8 @@ namespace GitTrends
             _preferences = preferences;
             _secureStorage = secureStorage;
             _gitHubApiStatusService = gitHubApiStatusService;
+
+            RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 
             GitHubAuthenticationService.LoggedOut += HandleLoggedOut;
             GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
@@ -57,6 +60,12 @@ namespace GitTrends
         {
             add => _shouldIncludeOrganizationsChangedEventManager.AddEventHandler(value);
             remove => _shouldIncludeOrganizationsChangedEventManager.RemoveEventHandler(value);
+        }
+
+        public int GitHubApiAbuseLimitCount
+        {
+            get => _preferences.Get(nameof(GitHubApiAbuseLimitCount), 0);
+            private set => _preferences.Set(nameof(GitHubApiAbuseLimitCount), value);
         }
 
         public bool IsDemoUser
@@ -152,7 +161,7 @@ namespace GitTrends
             }
             catch (ArgumentNullException)
             {
-                IsAuthenticated = false; 
+                IsAuthenticated = false;
                 return GitHubToken.Empty;
             }
             catch (JsonReaderException)
@@ -189,6 +198,12 @@ namespace GitTrends
         {
             IsAuthenticated = false;
             IsDemoUser = false;
+        }
+
+        void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)
+        {
+            if (e is AbuseLimitPullToRefreshEventArgs)
+                GitHubApiAbuseLimitCount++;
         }
 
         void HandleDemoUserActivated(object sender, EventArgs e) => IsDemoUser = true;

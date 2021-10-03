@@ -14,8 +14,7 @@ namespace GitTrends.UnitTests
     class RepositoryViewModelTests_MaximumApiCallLimit_GraphQLApi : RepositoryViewModelTests_MaximumApiCallLimit
     {
         [Test]
-        public Task PullToRefreshCommandTest_MaximumApiLimit_GraphQLApi() =>
-            ExecutePullToRefreshCommandTestMaximumApiLimitTest(new TaskCompletionSource<Mobile.Common.PullToRefreshFailedEventArgs>());
+        public Task PullToRefreshCommandTest_MaximumApiLimit_GraphQLApi() => ExecutePullToRefreshCommandTestMaximumApiLimitTest();
 
         protected override void InitializeServiceCollection()
         {
@@ -37,6 +36,7 @@ namespace GitTrends.UnitTests
             {
                 Content = new StringContent(JsonConvert.SerializeObject(gitHubUserResponse))
             };
+            errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitHeader, "5000");
             errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitRemainingHeader, "0");
             errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitResetHeader, DateTimeOffset.UtcNow.AddMinutes(50).ToUnixTimeSeconds().ToString());
 

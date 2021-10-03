@@ -5,14 +5,17 @@ using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.PancakeView;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
     public class NotificationsOnboardingPage : BaseOnboardingContentPage
     {
-        public NotificationsOnboardingPage(IAnalyticsService analyticsService, IMainThread mainThread) : base(analyticsService, mainThread, Color.FromHex(BaseTheme.LightTealColorHex), OnboardingConstants.SkipText, 2)
+        public NotificationsOnboardingPage(IDeviceInfo deviceInfo,
+                                            IMainThread mainThread,
+                                            IAnalyticsService analyticsService,
+                                            MediaElementService mediaElementService)
+            : base(OnboardingConstants.SkipText, deviceInfo, Color.FromHex(BaseTheme.LightTealColorHex), mainThread, 2, analyticsService, mediaElementService)
         {
 
         }

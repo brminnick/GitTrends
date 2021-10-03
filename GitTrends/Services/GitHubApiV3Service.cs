@@ -107,7 +107,13 @@ namespace GitTrends
 
                 for (int i = 0; i < DemoDataConstants.ReferringSitesCount; i++)
                 {
-                    referringSitesList.Add(new ReferringSiteModel(DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomText()));
+                    string referrer;
+                    do
+                    {
+                        referrer = DemoDataConstants.GetRandomText();
+                    } while (Uri.TryCreate("https://" + referrer, UriKind.Absolute, out _));
+
+                    referringSitesList.Add(new ReferringSiteModel(DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(), referrer));
                 }
 
                 return referringSitesList;

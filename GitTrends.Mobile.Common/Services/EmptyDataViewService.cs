@@ -20,7 +20,7 @@ namespace GitTrends.Mobile.Common
             RefreshState.Uninitialized => EmptyDataViewConstantsInternal.Uninitialized,
             RefreshState.Succeeded => EmptyDataViewConstantsInternal.NoReferralsYet,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.LoginExpired,
-            RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
+            RefreshState.Error or RefreshState.AbuseLimit => EmptyDataViewConstantsInternal.UnableToRetrieveData,
             RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.UnableToRetrieveData,
             _ => throw new NotSupportedException()
         };
@@ -30,7 +30,7 @@ namespace GitTrends.Mobile.Common
             RefreshState.Uninitialized => EmptyDataViewConstantsInternal.SwipeDownToRefresh_ReferringSites,
             RefreshState.Succeeded => string.Empty,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.PleaseLoginAgain,
-            RefreshState.Error => EmptyDataViewConstantsInternal.SwipeDownToRefresh_ReferringSites,
+            RefreshState.Error or RefreshState.AbuseLimit => EmptyDataViewConstantsInternal.SwipeDownToRefresh_ReferringSites,
             RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.SwipeDownToRefresh_ReferringSites,
             _ => throw new NotSupportedException()
         };
@@ -38,8 +38,8 @@ namespace GitTrends.Mobile.Common
         public static string GetRepositoryTitleText(in RefreshState refreshState, in bool isRepositoryListEmpty) => refreshState switch
         {
             RefreshState.Uninitialized => EmptyDataViewConstantsInternal.Uninitialized,
-            RefreshState.Succeeded when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.NoFilterMatch,
-            RefreshState.Succeeded => EmptyDataViewConstantsInternal.NoRepositoriesFound,
+            RefreshState.Succeeded or RefreshState.AbuseLimit when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.NoFilterMatch,
+            RefreshState.Succeeded or RefreshState.AbuseLimit => EmptyDataViewConstantsInternal.NoRepositoriesFound,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.LoginExpired,
             RefreshState.Error when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.NoFilterMatch,
             RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
@@ -50,8 +50,8 @@ namespace GitTrends.Mobile.Common
         public static string GetRepositoryDescriptionText(in RefreshState refreshState, in bool isRepositoryListEmpty) => refreshState switch
         {
             RefreshState.Uninitialized => EmptyDataViewConstantsInternal.SwipeDownToRefresh_Repositories,
-            RefreshState.Succeeded when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.ClearSearchBarTryAgain,
-            RefreshState.Succeeded => string.Empty,
+            RefreshState.Succeeded or RefreshState.AbuseLimit when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.ClearSearchBarTryAgain,
+            RefreshState.Succeeded or RefreshState.AbuseLimit => string.Empty,
             RefreshState.LoginExpired => EmptyDataViewConstantsInternal.PleaseLoginAgain,
             RefreshState.Error when !isRepositoryListEmpty => EmptyDataViewConstantsInternal.ClearSearchBarTryAgain,
             RefreshState.Error => EmptyDataViewConstantsInternal.SwipeDownToRefresh_Repositories,

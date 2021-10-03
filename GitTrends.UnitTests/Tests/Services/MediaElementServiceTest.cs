@@ -1,8 +1,10 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends.UnitTests
 {
@@ -12,24 +14,107 @@ namespace GitTrends.UnitTests
         public async Task InitializeOnboardingChartTest()
         {
             //Arrange
-            StreamingManifest? streamingManifest_BeforeInitialization, streamingManifest_AfterInitialization;
+            StreamingManifest? onboardingChartStreamingManifest_BeforeInitialization, onboardingChartStreamingManifest_EventHandlerResult, onboardingChartStreamingManifest_AfterInitialization,
+                                enableOrganizationsStreamingManifest_BeforeInitialization, enableOrganizationsStreamingManifest_EventHandlerResult, enableOrganizationsStreamingManifest_AfterInitialization;
 
+            string enableOrganizationsUrl_Final, onboardingChartUrl_Final;
+
+            var onboardingChartManifestChangedTCS = new TaskCompletionSource<StreamingManifest?>();
+            var enableOrganizationsManifestChangedTCS = new TaskCompletionSource<StreamingManifest?>();
+
+            var deviceInfo = ServiceCollection.ServiceProvider.GetRequiredService<IDeviceInfo>();
             var mediaElementService = ServiceCollection.ServiceProvider.GetRequiredService<MediaElementService>();
 
-            //Act
-            streamingManifest_BeforeInitialization = mediaElementService.OnboardingChart;
-
-            await mediaElementService.InitializeOnboardingChart(CancellationToken.None).ConfigureAwait(false);
-
-            streamingManifest_AfterInitialization = mediaElementService.OnboardingChart;
+            MediaElementService.OnboardingChartManifestChanged += HandleOnboardingChartManifestChanged;
+            MediaElementService.EnableOrganizationsManifestChanged += HandleEnableOrganizationsManifestChanged;
 
             //Assert
-            Assert.IsNull(streamingManifest_BeforeInitialization);
-            Assert.IsNotNull(streamingManifest_AfterInitialization);
+            Assert.Throws<ArgumentNullException>(() => _ = mediaElementService.OnboardingChartUrl);
+            Assert.Throws<ArgumentNullException>(() => _ = mediaElementService.EnableOrganizationsUrl);
 
-            Assert.IsFalse(string.IsNullOrWhiteSpace(streamingManifest_AfterInitialization?.HlsUrl));
-            Assert.IsFalse(string.IsNullOrWhiteSpace(streamingManifest_AfterInitialization?.ManifestUrl));
-            Assert.IsTrue(streamingManifest_AfterInitialization?.HlsUrl.Contains(streamingManifest_AfterInitialization.ManifestUrl));
+            //Act
+            onboardingChartStreamingManifest_BeforeInitialization = mediaElementService.OnboardingChartManifest;
+            enableOrganizationsStreamingManifest_BeforeInitialization = mediaElementService.EnableOrganizationsManifest;
+
+            await mediaElementService.InitializeManifests(CancellationToken.None).ConfigureAwait(false);
+
+            onboardingChartStreamingManifest_EventHandlerResult = await onboardingChartManifestChangedTCS.Task.ConfigureAwait(false);
+            enableOrganizationsStreamingManifest_EventHandlerResult = await enableOrganizationsManifestChangedTCS.Task.ConfigureAwait(false);
+
+            onboardingChartUrl_Final = mediaElementService.OnboardingChartUrl;
+            enableOrganizationsUrl_Final = mediaElementService.EnableOrganizationsUrl;
+            onboardingChartStreamingManifest_AfterInitialization = mediaElementService.OnboardingChartManifest;
+            enableOrganizationsStreamingManifest_AfterInitialization = mediaElementService.EnableOrganizationsManifest;
+
+            //Assert
+            Assert.IsNull(onboardingChartStreamingManifest_BeforeInitialization);
+            Assert.IsNotNull(onboardingChartStreamingManifest_EventHandlerResult);
+            Assert.IsNotNull(onboardingChartStreamingManifest_AfterInitialization);
+
+            Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_EventHandlerResult?.HlsUrl, UriKind.Absolute));
+            Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_EventHandlerResult?.DashUrl, UriKind.Absolute));
+            Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_EventHandlerResult?.ManifestUrl, UriKind.Absolute));
+
+            Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_AfterInitialization?.HlsUrl, UriKind.Absolute));
+            Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_AfterInitialization?.DashUrl, UriKind.Absolute));
+            Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl, UriKind.Absolute));
+
+            if (deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.Android)
+                Assert.AreEqual(onboardingChartStreamingManifest_AfterInitialization?.DashUrl, onboardingChartUrl_Final);
+            else if (deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS)
+                Assert.AreEqual(onboardingChartStreamingManifest_AfterInitialization?.HlsUrl, onboardingChartUrl_Final);
+            else
+                throw new InvalidOperationException($"{deviceInfo.Platform} Not Under Test");
+
+            Assert.IsNull(enableOrganizationsStreamingManifest_BeforeInitialization);
+            Assert.IsNotNull(enableOrganizationsStreamingManifest_EventHandlerResult);
+            Assert.IsNotNull(enableOrganizationsStreamingManifest_AfterInitialization);
+
+            Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_EventHandlerResult?.HlsUrl, UriKind.Absolute));
+            Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_EventHandlerResult?.DashUrl, UriKind.Absolute));
+            Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_EventHandlerResult?.ManifestUrl, UriKind.Absolute));
+
+            Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl, UriKind.Absolute));
+            Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_AfterInitialization?.DashUrl, UriKind.Absolute));
+            Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl, UriKind.Absolute));
+
+            if (deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.Android)
+                Assert.AreEqual(enableOrganizationsStreamingManifest_AfterInitialization?.DashUrl, enableOrganizationsUrl_Final);
+            else if (deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS)
+                Assert.AreEqual(enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl, enableOrganizationsUrl_Final);
+            else
+                throw new InvalidOperationException($"{deviceInfo.Platform} Not Under Test");
+
+            Assert.AreEqual(enableOrganizationsStreamingManifest_EventHandlerResult?.ManifestUrl, enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl);
+            Assert.AreEqual(onboardingChartStreamingManifest_EventHandlerResult?.ManifestUrl, onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl);
+
+            Assert.AreEqual(enableOrganizationsStreamingManifest_EventHandlerResult?.HlsUrl, enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl);
+            Assert.AreEqual(onboardingChartStreamingManifest_EventHandlerResult?.HlsUrl, onboardingChartStreamingManifest_AfterInitialization?.HlsUrl);
+
+            Assert.AreEqual(enableOrganizationsStreamingManifest_EventHandlerResult?.DashUrl, enableOrganizationsStreamingManifest_AfterInitialization?.DashUrl);
+            Assert.AreEqual(onboardingChartStreamingManifest_EventHandlerResult?.DashUrl, onboardingChartStreamingManifest_AfterInitialization?.DashUrl);
+
+            Assert.AreNotEqual(enableOrganizationsStreamingManifest_EventHandlerResult?.ManifestUrl, onboardingChartStreamingManifest_EventHandlerResult?.ManifestUrl);
+            Assert.AreNotEqual(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl, onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl);
+
+            Assert.AreNotEqual(enableOrganizationsStreamingManifest_EventHandlerResult?.HlsUrl, onboardingChartStreamingManifest_EventHandlerResult?.HlsUrl);
+            Assert.AreNotEqual(enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl, onboardingChartStreamingManifest_AfterInitialization?.HlsUrl);
+
+            Assert.AreNotEqual(enableOrganizationsStreamingManifest_EventHandlerResult?.ManifestUrl, onboardingChartStreamingManifest_EventHandlerResult?.ManifestUrl);
+            Assert.AreNotEqual(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl, onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl);
+
+            void HandleOnboardingChartManifestChanged(object? sender, StreamingManifest? e)
+            {
+                MediaElementService.OnboardingChartManifestChanged -= HandleOnboardingChartManifestChanged;
+                onboardingChartManifestChangedTCS.SetResult(e);
+            }
+
+            void HandleEnableOrganizationsManifestChanged(object? sender, StreamingManifest? e)
+            {
+                MediaElementService.EnableOrganizationsManifestChanged -= HandleEnableOrganizationsManifestChanged;
+                enableOrganizationsManifestChangedTCS.SetResult(e);
+            }
         }
+
     }
 }

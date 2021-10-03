@@ -23,10 +23,10 @@ namespace GitTrends
     {
         readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
 
-        readonly ImageCachingService _imageService;
         readonly GitHubUserService _gitHubUserService;
         readonly RepositoryDatabase _repositoryDatabase;
         readonly GitHubApiV3Service _gitHubApiV3Service;
+        readonly ImageCachingService _imageCachingService;
         readonly MobileSortingService _mobileSortingService;
         readonly GitHubApiStatusService _gitHubApiStatusService;
         readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
@@ -44,26 +44,27 @@ namespace GitTrends
         IReadOnlyList<Repository> _visibleRepositoryList = Array.Empty<Repository>();
 
         public RepositoryViewModel(IMainThread mainThread,
-                                    ImageCachingService imageService,
                                     IAnalyticsService analyticsService,
                                     GitHubUserService gitHubUserService,
-                                    MobileSortingService sortingService,
                                     RepositoryDatabase repositoryDatabase,
                                     GitHubApiV3Service gitHubApiV3Service,
+                                    ImageCachingService imageCachingService,
+                                    MobileSortingService mobileSortingService,
                                     GitHubApiStatusService gitHubApiStatusService,
                                     GitHubGraphQLApiService gitHubGraphQLApiService,
                                     GitHubAuthenticationService gitHubAuthenticationService,
                                     GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, mainThread)
         {
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
+            BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesCompleted += HandleScheduleRetryRepositoriesViewsClonesCompleted;
 
             UpdateText();
 
-            _imageService = imageService;
             _gitHubUserService = gitHubUserService;
-            _mobileSortingService = sortingService;
             _repositoryDatabase = repositoryDatabase;
             _gitHubApiV3Service = gitHubApiV3Service;
+            _imageCachingService = imageCachingService;
+            _mobileSortingService = mobileSortingService;
             _gitHubApiStatusService = gitHubApiStatusService;
             _gitHubGraphQLApiService = gitHubGraphQLApiService;
             _gitHubAuthenticationService = gitHubAuthenticationService;
@@ -157,6 +158,7 @@ namespace GitTrends
         async Task ExecutePullToRefreshCommand(string repositoryOwner)
         {
             HttpResponseMessage? finalResponse = null;
+            IReadOnlyList<Repository>? repositoriesFromDatabase = null;
 
             var cancellationTokenSource = new CancellationTokenSource();
             GitHubAuthenticationService.LoggedOut += HandleLoggedOut;
@@ -165,9 +167,11 @@ namespace GitTrends
 
             AnalyticsService.Track("Refresh Triggered", "Sorting Option", _mobileSortingService.CurrentOption.ToString());
 
+            var repositoriesFromDatabaseTask = _repositoryDatabase.GetRepositories();
+
             try
             {
-                const int minimumBatchCount = 20;
+                const int minimumBatchCount = 100;
 
                 var favoriteRepositoryUrls = await _repositoryDatabase.GetFavoritesUrls().ConfigureAwait(false);
 
@@ -183,7 +187,7 @@ namespace GitTrends
                     if (!_gitHubUserService.IsDemoUser && repositoryList.Count > minimumBatchCount)
                     {
                         //Only display the first update to avoid unncessary work on the UIThread
-                        var shouldUpdateVisibleRepositoryList = !VisibleRepositoryList.Any();
+                        var shouldUpdateVisibleRepositoryList = !VisibleRepositoryList.Any() || repositoryList.Count >= minimumBatchCount;
                         AddRepositoriesToCollection(repositoryList, _searchBarText, shouldUpdateVisibleRepositoryList);
                         repositoryList.Clear();
                     }
@@ -192,8 +196,16 @@ namespace GitTrends
                 //Add Remaining Repositories to _repositoryList
                 AddRepositoriesToCollection(repositoryList, _searchBarText);
 
+                repositoriesFromDatabase = await repositoriesFromDatabaseTask.ConfigureAwait(false);
+
+                IReadOnlyList<Repository> repositoriesToUpdate = repositoriesFromDatabase.Where(x => _gitHubUserService.ShouldIncludeOrganizations || x.OwnerLogin == _gitHubUserService.Alias) // Only include organization repositories if `ShouldIncludeOrganizations` is true
+                                            .Where(x => x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12))) // Cached repositories that haven't been updated in 12 hours 
+                                            .Concat(_repositoryList) // Add downloaded repositories
+                                            .OrderByDescending(x => x.DataDownloadedAt) // Ensure the newest data is ordered first
+                                            .GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.ContainsTrafficData) ?? x.First()).ToList(); // Remove duplicate repositories, selecting the First repository to ensure the Repository newest data is selected because the First repository has the newest data thanks to `OrderByDescending(x => x.DataDownloadedAt)`
+
                 var completedRepositories = new List<Repository>();
-                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(_repositoryList, cancellationTokenSource.Token).ConfigureAwait(false))
+                await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(repositoriesToUpdate, cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     completedRepositories.Add(retrievedRepositoryWithViewsAndClonesData);
 
@@ -210,6 +222,15 @@ namespace GitTrends
 
                 if (!_gitHubUserService.IsDemoUser)
                 {
+                    //Rate Limiting may cause some data to not return successfully from the GitHub API
+                    var missingRepositories = _gitHubUserService.ShouldIncludeOrganizations switch
+                    {
+                        true => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsTrafficData),
+                        false => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsTrafficData && x.OwnerLogin == _gitHubUserService.Alias)
+                    };
+
+                    AddRepositoriesToCollection(missingRepositories, _searchBarText);
+
                     //Call EnsureSuccessStatusCode to confirm the above API calls executed successfully
                     finalResponse = await _gitHubApiV3Service.GetGitHubApiResponse(cancellationTokenSource.Token).ConfigureAwait(false);
                     finalResponse.EnsureSuccessStatusCode();
@@ -228,17 +249,33 @@ namespace GitTrends
                 await _repositoryDatabase.DeleteAllData().ConfigureAwait(false);
 
                 SetRepositoriesCollection(Array.Empty<Repository>(), _searchBarText);
+            }
+            catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan)
+                                        || (e is HttpRequestException && finalResponse is not null && _gitHubApiStatusService.IsAbuseRateLimit(finalResponse.Headers, out retryTimeSpan)))
+            {
+                if (repositoriesFromDatabase is null)
+                    repositoriesFromDatabase = await repositoriesFromDatabaseTask.ConfigureAwait(false);
 
-                RefreshState = RefreshState.LoginExpired;
+                //Rate Limiting may cause some data to not return successfully from the GitHub API
+                var missingRepositories = _gitHubUserService.ShouldIncludeOrganizations switch
+                {
+                    true => getDistictRepositories(_repositoryList, repositoriesFromDatabase),
+                    false => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.OwnerLogin == _gitHubUserService.Alias)
+                };
+
+                AddRepositoriesToCollection(missingRepositories, _searchBarText);
+
+                var abuseLimit = new AbuseLimitPullToRefreshEventArgs(retryTimeSpan.Value, VisibleRepositoryList.Any());
+                OnPullToRefreshFailed(abuseLimit);
             }
             catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximumApiCallLimit(e)
-                                        || (e is HttpRequestException && finalResponse != null && _gitHubApiStatusService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
+                                        || (e is HttpRequestException && finalResponse is not null && finalResponse.Headers.DoesContainGitHubRateLimitHeader() && _gitHubApiStatusService.HasReachedMaximimApiCallLimit(finalResponse.Headers)))
             {
                 var responseHeaders = e switch
                 {
                     ApiException exception => exception.Headers,
                     GraphQLException graphQLException => graphQLException.ResponseHeaders,
-                    HttpRequestException when finalResponse != null => finalResponse.Headers,
+                    HttpRequestException when finalResponse is not null => finalResponse.Headers,
                     _ => throw new NotSupportedException()
                 };
 
@@ -246,31 +283,25 @@ namespace GitTrends
                 OnPullToRefreshFailed(maximimApiRequestsReachedEventArgs);
 
                 SetRepositoriesCollection(Array.Empty<Repository>(), _searchBarText);
-
-                RefreshState = RefreshState.MaximumApiLimit;
             }
             catch (Exception e)
             {
-                AnalyticsService.Report(e, new Dictionary<string, string>
-                {
-                    { nameof(IGitHubApiStatusService.IsAbuseRateLimit), _gitHubApiStatusService.IsAbuseRateLimit(e, out var delta).ToString() },
-                    { nameof(delta), delta.ToString() }
-                });
+                AnalyticsService.Report(e);
 
-                var repositoryDatabaseList = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
-                SetRepositoriesCollection(repositoryDatabaseList, _searchBarText);
+                if (repositoriesFromDatabase is null)
+                    repositoriesFromDatabase = await repositoriesFromDatabaseTask.ConfigureAwait(false);
 
-                if (repositoryDatabaseList.Any())
+                SetRepositoriesCollection(repositoriesFromDatabase, _searchBarText);
+
+                if (repositoriesFromDatabase.Any())
                 {
-                    var dataDownloadedAt = repositoryDatabaseList.Max(x => x.DataDownloadedAt);
-                    OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"{RepositoryPageConstants.DisplayingDataFrom} {dataDownloadedAt.ToLocalTime():dd MMMM @ HH:mm}\n\n{RepositoryPageConstants.CheckInternetConnectionTryAgain}."));
+                    var dataDownloadedAt = repositoriesFromDatabase.Max(x => x.DataDownloadedAt);
+                    OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"{RepositoryPageConstants.DisplayingDataFrom} {dataDownloadedAt.ToLocalTime():dd MMMM @ HH:mm}"));
                 }
                 else
                 {
                     OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs(RepositoryPageConstants.CheckInternetConnectionTryAgain));
                 }
-
-                RefreshState = RefreshState.Error;
             }
             finally
             {
@@ -285,6 +316,9 @@ namespace GitTrends
 
                 await SaveRepositoriesToDatabase(_repositoryList).ConfigureAwait(false);
             }
+
+            static IReadOnlyList<Repository> getDistictRepositories(in IEnumerable<Repository> repositoriesList1, in IEnumerable<Repository> repositoriesList2, Func<Repository, bool>? filter = null) =>
+                    repositoriesList1.Concat(repositoriesList2).Where(filter ?? (_ => true)).GroupBy(x => x.Url).Where(g => g.Count() is 1).Select(g => g.First()).ToList();
 
             void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
             void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();
@@ -315,7 +349,7 @@ namespace GitTrends
             if (_gitHubUserService.IsDemoUser)
                 return;
 
-            foreach (var repository in repositories)
+            foreach (var repository in repositories.Where(x => x.ContainsTrafficData))
             {
                 try
                 {
@@ -355,6 +389,9 @@ namespace GitTrends
 
         void AddRepositoriesToCollection(in IEnumerable<Repository> repositories, in string searchBarText, in bool shouldUpdateVisibleRepositoryList = true)
         {
+            if (!repositories.Any())
+                return;
+
             var updatedRepositoryList = _repositoryList.Concat(repositories);
             _repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
 
@@ -368,7 +405,7 @@ namespace GitTrends
 
             VisibleRepositoryList = MobileSortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
 
-            _imageService.PreloadRepositoryImages(VisibleRepositoryList).SafeFireAndForget(ex => AnalyticsService.Report(ex));
+            _imageCachingService.PreloadRepositoryImages(VisibleRepositoryList).SafeFireAndForget(ex => AnalyticsService.Report(ex));
         }
 
         void UpdateListForLoggedOutUser()
@@ -416,12 +453,15 @@ namespace GitTrends
             RefreshState = pullToRefreshFailedEventArgs switch
             {
                 ErrorPullToRefreshEventArgs => RefreshState.Error,
-                MaximumApiRequestsReachedEventArgs => RefreshState.MaximumApiLimit,
+                AbuseLimitPullToRefreshEventArgs => RefreshState.AbuseLimit,
                 LoginExpiredPullToRefreshEventArgs => RefreshState.LoginExpired,
+                MaximumApiRequestsReachedEventArgs => RefreshState.MaximumApiLimit,
                 _ => throw new NotSupportedException()
             };
 
             _pullToRefreshFailedEventManager.RaiseEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
         }
+
+        void HandleScheduleRetryRepositoriesViewsClonesCompleted(object sender, Repository e) => AddRepositoriesToCollection(new List<Repository> { e }, _searchBarText);
     }
 }

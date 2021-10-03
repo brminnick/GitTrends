@@ -1,8 +1,6 @@
-﻿using System;
-using Autofac;
+﻿using System.ComponentModel;
 using AVFoundation;
 using AVKit;
-using CoreGraphics;
 using CoreMedia;
 using Foundation;
 using GitTrends;
@@ -16,49 +14,67 @@ namespace GitTrends.iOS
 {
     public class MediaElementCustomRenderer : ViewRenderer<VideoPlayerView, UIView>
     {
-        readonly static AVQueuePlayer _queuePlayer = new() { Volume = 0 };
-        readonly static AVPlayerItem _onboardingChartItem = CreateOnboardingChartItem();
-        readonly static AVPlayerLooper _avPlayerLooper = CreateAVPlayerLooper();
         readonly static AVPlayerViewController _avPlayerViewController = new();
+
+        static AVPlayerLooper? _avPlayerLooper;
+        static AVPlayerItem? _playerItem;
 
         protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayerView> e)
         {
             base.OnElementChanged(e);
 
-            if (e.NewElement != null && _avPlayerViewController.View != null)
+            if (e.NewElement is not null
+                && _avPlayerViewController.View is not null
+                && Element.Url is not null)
             {
-                _avPlayerViewController.View.BackgroundColor = Color.White.ToUIColor();
-
-                SetNativeControl(_avPlayerViewController.View);
-
-                _avPlayerViewController.ShowsPlaybackControls = false;
-                _avPlayerViewController.VideoGravity = AVLayerVideoGravity.ResizeAspect;
-
-                var audioSession = AVAudioSession.SharedInstance();
-                audioSession.SetCategory(AVAudioSession.CategoryPlayback);
-                audioSession.SetMode(AVAudioSession.ModeMoviePlayback, out _);
-                audioSession.SetActive(false);
-
-                _avPlayerViewController.Player = _queuePlayer;
-                _avPlayerViewController.Player.Play();
+                Play(Element.Url, _avPlayerViewController.View);
             }
         }
 
-        static AVPlayerLooper CreateAVPlayerLooper() => new AVPlayerLooper(_queuePlayer, _onboardingChartItem, CMTimeRange.InvalidRange);
-
-        static AVPlayerItem CreateOnboardingChartItem()
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            var mediaElementService = ContainerService.Container.Resolve<MediaElementService>();
+            base.OnElementPropertyChanged(sender, e);
 
-            if (mediaElementService.OnboardingChart?.HlsUrl is null)
-                throw new NullReferenceException();
+            if (e.PropertyName is nameof(Element.Url)
+                && _avPlayerViewController.View is not null
+                && Element.Url is not null)
+            {
+                Play(Element.Url, _avPlayerViewController.View);
+            }
+        }
 
-            var asset = AVUrlAsset.Create(NSUrl.FromString(mediaElementService.OnboardingChart.HlsUrl));
+        static AVPlayerLooper CreateAVPlayerLooper(AVQueuePlayer queuePlayer, AVPlayerItem onboardingChartItem) => new(queuePlayer, onboardingChartItem, CMTimeRange.InvalidRange);
+
+        static AVPlayerItem CreatePlayerItem(string url)
+        {
+            var asset = AVUrlAsset.Create(NSUrl.FromString(url));
 
             return new AVPlayerItem(asset)
             {
                 PreferredForwardBufferDuration = 1,
             };
+        }
+
+        void Play(string videoUrl, UIView avPlayerViewControllerView)
+        {
+            var queuePlayer = new AVQueuePlayer() { Volume = 0 };
+
+            _playerItem = CreatePlayerItem(videoUrl);
+            _avPlayerLooper = CreateAVPlayerLooper(queuePlayer, _playerItem);
+            avPlayerViewControllerView.BackgroundColor = Color.White.ToUIColor();
+
+            SetNativeControl(avPlayerViewControllerView);
+
+            _avPlayerViewController.ShowsPlaybackControls = false;
+            _avPlayerViewController.VideoGravity = AVLayerVideoGravity.ResizeAspect;
+
+            var audioSession = AVAudioSession.SharedInstance();
+            audioSession.SetCategory(AVAudioSession.CategoryPlayback);
+            audioSession.SetMode(AVAudioSession.ModeMoviePlayback, out _);
+            audioSession.SetActive(false);
+
+            _avPlayerViewController.Player = queuePlayer;
+            _avPlayerViewController.Player.Play();
         }
     }
 }

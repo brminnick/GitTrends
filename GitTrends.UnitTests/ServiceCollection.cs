@@ -4,6 +4,7 @@ using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Plugin.StoreReview.Abstractions;
+using Shiny.Jobs;
 using Shiny.Notifications;
 using Xamarin.Essentials.Interfaces;
 
@@ -73,6 +74,7 @@ namespace GitTrends.UnitTests
             services.AddSingleton<IFileSystem, MockFileSystem>();
             services.AddSingleton<IEmail, MockEmail>();
             services.AddSingleton<ILauncher, MockLauncher>();
+            services.AddSingleton<IJobManager, MockJobManager>();
             services.AddSingleton<IMainThread, MockMainThread>();
             services.AddSingleton<INotificationManager, MockNotificationManager>();
             services.AddSingleton<ISecureStorage, MockSecureStorage>();

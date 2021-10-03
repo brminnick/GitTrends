@@ -10,7 +10,7 @@ namespace GitTrends.Functions
 {
     public class SendSilentPushNotification
     {
-        const string _runEveryHourCron = "0 0 * * * *";
+        const string _runTwicePerDay = "0 0 */12 * * *";
 
         readonly static string _notificationHubFullConnectionString_Debug = Environment.GetEnvironmentVariable("NotificationHubFullConnectionString_Debug") ?? string.Empty;
         readonly static string _notificationHubFullConnectionString = Environment.GetEnvironmentVariable("NotificationHubFullConnectionString") ?? string.Empty;
@@ -22,7 +22,7 @@ namespace GitTrends.Functions
         static NotificationHubClient DebugClient => _debugClientHolder.Value;
 
         [Function(nameof(SendSilentPushNotification))]
-        public static Task Run([TimerTrigger(_runEveryHourCron)] TimerInfo myTimer, FunctionContext functionContext)
+        public static Task Run([TimerTrigger(_runTwicePerDay)] TimerInfo myTimer, FunctionContext functionContext)
         {
             var logger = functionContext.GetLogger<SendSilentPushNotification>();
 
@@ -30,7 +30,7 @@ namespace GitTrends.Functions
         }
 
         [Function(nameof(SendSilentPushNotification) + "Debug")]
-        public static Task RunDebug([TimerTrigger(_runEveryHourCron)] TimerInfo myTimer, FunctionContext functionContext)
+        public static Task RunDebug([TimerTrigger(_runTwicePerDay)] TimerInfo myTimer, FunctionContext functionContext)
         {
             var logger = functionContext.GetLogger<SendSilentPushNotification>();
 

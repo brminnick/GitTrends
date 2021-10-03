@@ -26,6 +26,9 @@ namespace GitTrends.UnitTests
             bool isEmptyDataViewEnabled_Initial, isEmptyDataViewEnabled_DuringRefresh, isEmptyDataViewEnabled_Final;
             IReadOnlyList<MobileReferringSiteModel> mobileReferringSites_Initial, mobileReferringSites_DuringRefresh, mobileReferringSites_Final;
 
+            var mockGitTrendsRepository = new Repository(GitHubConstants.GitTrendsRepoName, "", 0, GitHubConstants.GitTrendsRepoOwner, AuthenticatedGitHubUserAvatarUrl, 0, 0,
+                $"https://github.com/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+
             var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
             var referringSitesViewModel = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesViewModel>();
             var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
@@ -41,7 +44,7 @@ namespace GitTrends.UnitTests
             mobileReferringSites_Initial = referringSitesViewModel.MobileReferringSitesList;
             emptyDataViewDescription_Initial = referringSitesViewModel.EmptyDataViewDescription;
 
-            var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, $"https://github.com/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", CancellationToken.None));
+            var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((mockGitTrendsRepository, CancellationToken.None));
 
             isEmptyDataViewEnabled_DuringRefresh = referringSitesViewModel.IsEmptyDataViewEnabled;
             mobileReferringSites_DuringRefresh = referringSitesViewModel.MobileReferringSitesList;
@@ -70,7 +73,7 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.MaximumApiLimit), emptyDataViewDescription_Final);
             Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Uninitialized), emptyDataViewDescription_Initial);
 
-            Assert.IsTrue(pullToRefreshFailedEventArgs is MaximumApiRequestsReachedEventArgs);
+            Assert.IsInstanceOf<MaximumApiRequestsReachedEventArgs>(pullToRefreshFailedEventArgs);
 
             void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
             {

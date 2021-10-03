@@ -7,7 +7,7 @@ namespace GitTrends.Mobile.Common
     public static class DemoDataConstants
     {
         public const int RepoCount = 50;
-        public const int ReferringSitesCount = 11;
+        public const int ReferringSitesCount = 10;
 
         public const int MaximumRandomNumber = 100;
 
@@ -15,7 +15,7 @@ namespace GitTrends.Mobile.Common
 
         static readonly Random _random = new Random((int)DateTime.Now.Ticks);
 
-        public static int GetRandomNumber() => _random.Next(MaximumRandomNumber);
+        public static int GetRandomNumber() => _random.Next(0, MaximumRandomNumber);
 
         public static string GetRandomText(int? length = null)
         {

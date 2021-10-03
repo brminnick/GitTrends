@@ -38,7 +38,7 @@
 			<LastGenOutput>DemoUserConstants.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Constants\EmptyDataViewConstantsInternal.resx">
-			<Generator>PublicResXFileCodeGenerator</Generator>
+			<Generator>ResXFileCodeGenerator</Generator>
 			<LastGenOutput>EmptyDataViewConstantsInternal.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Constants\NotificationConstants.resx">
@@ -97,6 +97,10 @@
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>WelcomePageConstants.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
+		<EmbeddedResource Update="Constants\ManageOrganizationsConstants.resx">
+		  <Generator>PublicResXFileCodeGenerator</Generator>
+		  <LastGenOutput>ManageOrganizationsConstants.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.*.resx">
@@ -152,6 +156,9 @@
 		</EmbeddedResource>
 		<EmbeddedResource Update="Constants\WelcomePageConstants.*.resx">
 			<DependentUpon>WelcomePageConstants.resx</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Constants\ManageOrganizationsConstants.*.resx">
+			<DependentUpon>ManageOrganizationsConstants.resx</DependentUpon>
 		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
@@ -212,6 +219,9 @@
 		<Compile Update="Constants\WelcomePageConstants.Designer.cs">
 			<DependentUpon>WelcomePageConstants.resx</DependentUpon>
 		</Compile>
+		<Compile Update="Constants\ManageOrganizationsConstants.Designer.cs">
+		  <DependentUpon>ManageOrganizationsConstants.resx</DependentUpon>
+		</Compile>
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Enums\" />
@@ -222,7 +232,7 @@
 	<ItemGroup>
 		<PackageReference Include="Polly" Version="7.2.2" />
 		<PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.7.0" />
-		<PackageReference Include="GitHubApiStatus" Version="2.0.1" />
+		<PackageReference Include="GitHubApiStatus" Version="2.0.2" />
 		<PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.94" />
 	</ItemGroup>
 	<Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />

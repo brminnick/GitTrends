@@ -1,18 +1,23 @@
 ﻿using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
-using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms.PancakeView;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
     public class ChartOnboardingPage : BaseOnboardingContentPage
     {
-        public ChartOnboardingPage(IAnalyticsService analyticsService, IMainThread mainThread) : base(analyticsService, mainThread, Color.FromHex(BaseTheme.CoralColorHex), OnboardingConstants.SkipText, 1)
+
+        public ChartOnboardingPage(IDeviceInfo deviceInfo,
+                                    IMainThread mainThread,
+                                    IAnalyticsService analyticsService,
+                                    MediaElementService mediaElementService)
+            : base(OnboardingConstants.SkipText, deviceInfo, Color.FromHex(BaseTheme.CoralColorHex), mainThread, 1, analyticsService, mediaElementService)
         {
+
         }
 
         enum Row { Title, Zoom, LongPress }
@@ -24,11 +29,7 @@ namespace GitTrends
             Border = new Border { Color = Color.FromHex("E0E0E0") },
             BackgroundColor = Color.White,
             Padding = new Thickness(5),
-
-            //On iOS, use custom renderer for MediaElement until MediaElement.Dispose bug is fixed: https://github.com/xamarin/Xamarin.Forms/issues/9525#issuecomment-619156536
-            //On Android, use Custom Renderer for ExoPlayer because Xamarin.Forms.MediaElement uses Android.VideoView
-            Content = new VideoPlayerView(),
-
+            Content = new VideoPlayerView(MediaElementService.OnboardingChartUrl)
         };
 
         protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ChartPage_Title);

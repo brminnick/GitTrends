@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
@@ -25,6 +24,7 @@ namespace GitTrends
         readonly RefreshView _refreshView;
         readonly ThemeService _themeService;
         readonly ReviewService _reviewService;
+        readonly GitHubUserService _gitHubUserService;
         readonly DeepLinkingService _deepLinkingService;
 
         public ReferringSitesPage(IMainThread mainThread,
@@ -32,6 +32,7 @@ namespace GitTrends
                                     ThemeService themeService,
                                     ReviewService reviewService,
                                     IAnalyticsService analyticsService,
+                                    GitHubUserService gitHubUserService,
                                     DeepLinkingService deepLinkingService,
                                     ReferringSitesViewModel referringSitesViewModel) : base(referringSitesViewModel, analyticsService, mainThread)
         {
@@ -40,6 +41,7 @@ namespace GitTrends
             _repository = repository;
             _themeService = themeService;
             _reviewService = reviewService;
+            _gitHubUserService = gitHubUserService;
             _deepLinkingService = deepLinkingService;
 
             ReferringSitesViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
@@ -127,26 +129,43 @@ namespace GitTrends
             }
         }
 
-        void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs e)
+        void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs eventArgs) => MainThread.BeginInvokeOnMainThread(async () =>
         {
-            MainThread.BeginInvokeOnMainThread(async () =>
+            if (Xamarin.Forms.Application.Current.MainPage.Navigation.ModalStack.LastOrDefault() is ReferringSitesPage
+                || Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack.Last() is ReferringSitesPage)
             {
-                if (Xamarin.Forms.Application.Current.MainPage.Navigation.ModalStack.LastOrDefault() is ReferringSitesPage
-                    || Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack.Last() is ReferringSitesPage)
+                switch (eventArgs)
                 {
-                    if (e.Accept is null)
-                    {
-                        await DisplayAlert(e.Title, e.Message, e.Cancel);
-                    }
-                    else
-                    {
-                        var isAccepted = await DisplayAlert(e.Title, e.Message, e.Accept, e.Cancel);
+                    case MaximumApiRequestsReachedEventArgs:
+                        var isAccepted = await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Accept, eventArgs.Cancel);
                         if (isAccepted)
                             await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs);
-                    }
+                        break;
+
+                    case AbuseLimitPullToRefreshEventArgs when _gitHubUserService.GitHubApiAbuseLimitCount <= 1:
+                        var isAlertAccepted = await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Accept, eventArgs.Cancel);
+                        if (isAlertAccepted)
+                            await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubApiAbuseDocs);
+                        break;
+
+                    case AbuseLimitPullToRefreshEventArgs:
+                        // Don't display error message when GitHubUserService.GitHubApiAbuseLimitCount > 1
+                        break;
+
+                    case LoginExpiredPullToRefreshEventArgs:
+                        await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Cancel);
+                        await Navigation.PopToRootAsync();
+                        break;
+
+                    case ErrorPullToRefreshEventArgs:
+                        await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Cancel);
+                        break;
+
+                    default:
+                        throw new NotSupportedException();
                 }
-            });
-        }
+            }
+        });
 
         async void HandleCloseButtonClicked(object sender, EventArgs e) => await Navigation.PopModalAsync();
 
@@ -156,7 +175,7 @@ namespace GitTrends
             {
                 Content = collectionView;
                 AutomationId = ReferringSitesPageAutomationIds.RefreshView;
-                CommandParameter = (repository.OwnerLogin, repository.Name, repository.Url, cancellationToken);
+                CommandParameter = (repository, cancellationToken);
             }
         }
 

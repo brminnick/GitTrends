@@ -10,12 +10,17 @@ namespace GitTrends
 {
     public abstract class BaseOnboardingContentPage : BaseContentPage
     {
-        protected BaseOnboardingContentPage(in IAnalyticsService analyticsService,
-                                            in IMainThread mainThread,
+        protected BaseOnboardingContentPage(in string nextButtonText,
+                                            in IDeviceInfo deviceInfo,
                                             in Color backgroundColor,
-                                            in string nextButtonText,
-                                            in int carouselPositionIndex) : base(analyticsService, mainThread)
+                                            in IMainThread mainThread,
+                                            in int carouselPositionIndex,
+                                            in IAnalyticsService analyticsService,
+                                            in MediaElementService mediaElementService) : base(analyticsService, mainThread)
         {
+            DeviceInfo = deviceInfo;
+            MediaElementService = mediaElementService;
+
             //Don't Use BaseTheme.PageBackgroundColor
             RemoveDynamicResource(BackgroundColorProperty);
 
@@ -70,6 +75,9 @@ namespace GitTrends
         protected abstract View CreateImageView();
         protected abstract TitleLabel CreateDescriptionTitleLabel();
         protected abstract View CreateDescriptionBodyView();
+
+        protected IDeviceInfo DeviceInfo { get; }
+        protected MediaElementService MediaElementService { get; }
 
         static int GetImageRowStarHeight()
         {
@@ -148,7 +156,7 @@ namespace GitTrends
             }
         }
 
-        class OpacityOverlay : BoxView
+        class OpacityOverlay : View
         {
             public OpacityOverlay() => BackgroundColor = Color.White.MultiplyAlpha(0.25);
         }
