@@ -16,7 +16,7 @@
     <value>Organizations</value>
   </data>
 	<data name="GitHubOrganizationsDescription" xml:space="preserve">
-    <value>GitHub Organizations are shared accounts where teams can collaborate across many projects at once </value>
+    <value>GitHub Organizations are shared accounts where teams can collaborate across many projects </value>
   </data>
 	<data name="GitTrendsAccessTitle" xml:space="preserve">
     <value>Access</value>

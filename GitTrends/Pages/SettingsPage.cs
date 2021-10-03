@@ -23,7 +23,7 @@ namespace GitTrends
         public SettingsPage(IMainThread mainThread,
                             IAnalyticsService analyticsService,
                             SettingsViewModel settingsViewModel,
-                            MediaElementService mediaElementService) : base(settingsViewModel, analyticsService, mainThread, true)
+                            MediaElementService mediaElementService) : base(settingsViewModel, analyticsService, mainThread)
         {
             const int separatorRowHeight = 1;
             const int settingsRowHeight = 38;
