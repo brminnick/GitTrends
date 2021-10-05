@@ -66,20 +66,23 @@ namespace GitTrends
                                 .Bind<TrendsStatisticsLabel, bool, bool>(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData), convert: isFetchingData => !isFetchingData));
                 Children.Add(new RepositoryStatSVGImage(svgImage, svgColorTheme).Assign(out _svgImage)
                                 .Row(Row.Title).Column(Column.Icon).RowSpan(2)
-                                .Bind<SvgImage, bool, Func<Color>>(SvgImage.GetColorProperty, nameof(IsSeriesVisible), source: statisticsCard, convert: convertIsSeriesVisible));
+                                .Bind<SvgImage, bool, Func<Color>>(SvgImage.GetColorProperty, nameof(IsSeriesVisible), convert: convertIsSeriesVisible, source: statisticsCard));
 
-                Func<Color> convertIsSeriesVisible(bool isVisible) => isVisible ? _svgImage.GetColor : () => Color.Gray;
+                Func<Color> convertIsSeriesVisible(bool isVisible) => isVisible ? _svgImage.DefaultColor : () => Color.Gray;
             }
 
             class RepositoryStatSVGImage : SvgImage
             {
                 public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor)
                     : base(svgFileName, () => (Color)Application.Current.Resources[baseThemeColor], 32, 32)
-                { 
+                {
                     VerticalOptions = LayoutOptions.CenterAndExpand;
                     HorizontalOptions = LayoutOptions.EndAndExpand;
+
+                    DefaultColor = () => (Color)Application.Current.Resources[baseThemeColor];
                 }
 
+                public Func<Color> DefaultColor { get; }
             }
 
             class TrendsStatisticsLabel : Label
