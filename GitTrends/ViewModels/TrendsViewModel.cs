@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
@@ -20,6 +21,8 @@ namespace GitTrends
     public class TrendsViewModel : BaseViewModel
     {
         public const int MinimumChartHeight = 20;
+
+        readonly static WeakEventManager<Repository> _repostoryEventManager = new();
 
         readonly GitHubApiV3Service _gitHubApiV3Service;
         readonly RepositoryDatabase _repositoryDatabase;
@@ -81,6 +84,12 @@ namespace GitTrends
         public ICommand UniqueViewsCardTappedCommand { get; }
         public ICommand ClonesCardTappedCommand { get; }
         public ICommand UniqueClonesCardTappedCommand { get; }
+
+        public static event EventHandler<Repository> RepositorySavedToDatabase
+        {
+            add => _repostoryEventManager.AddEventHandler(value);
+            remove => _repostoryEventManager.RemoveEventHandler(value);
+        }
 
         public IAsyncCommand<(Repository Repository, CancellationToken CancellationToken)> FetchDataCommand { get; }
 
@@ -263,13 +272,12 @@ namespace GitTrends
 
             try
             {
-                if ((repository.StarredAt?.Any() ?? false)
-                        && (repository.DailyViewsList?.Any() ?? false)
-                        && (repository.DailyClonesList?.Any() ?? false))
+                if (repository.ContainsTrafficData
+                    && repository.DataDownloadedAt > DateTimeOffset.Now.AddDays(-1))
                 {
-                    repositoryStars = repository.StarredAt;
-                    repositoryViews = repository.DailyViewsList;
-                    repositoryClones = repository.DailyClonesList;
+                    repositoryStars = repository.StarredAt ?? throw new InvalidOperationException($"{nameof(Repository.StarredAt)} cannot be null when {nameof(Repository.ContainsTrafficData)} is true");
+                    repositoryViews = repository.DailyViewsList ?? throw new InvalidOperationException($"{nameof(Repository.DailyViewsList)} cannot be null when {nameof(Repository.ContainsTrafficData)} is true");
+                    repositoryClones = repository.DailyClonesList ?? throw new InvalidOperationException($"{nameof(Repository.DailyClonesList)} cannot be null when {nameof(Repository.ContainsTrafficData)} is true");
                 }
                 else
                 {
@@ -289,12 +297,15 @@ namespace GitTrends
                     repositoryViews = repositoryViewsResponse.DailyViewsList;
                     repositoryClones = repositoryClonesResponse.DailyClonesList;
 
-                    await _repositoryDatabase.SaveRepository(repository with
+                    var updatedRepository = repository with
                     {
                         StarredAt = repositoryStars,
                         DailyViewsList = repositoryViews,
                         DailyClonesList = repositoryClones
-                    }).ConfigureAwait(false);
+                    };
+
+                    await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
+                    OnRepositorySavedToDatabase(updatedRepository);
                 }
 
                 refreshState = RefreshState.Succeeded;
@@ -322,7 +333,7 @@ namespace GitTrends
 
                 refreshState = RefreshState.MaximumApiLimit;
             }
-            catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan) && retryTimeSpan is not null)
+            catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan))
             {
                 _backgroundFetchService.ScheduleRetryRepositoriesViewsClones(repository, retryTimeSpan.Value);
 
@@ -444,6 +455,8 @@ namespace GitTrends
             OnPropertyChanged(nameof(IsViewsClonesChartVisible));
             OnPropertyChanged(nameof(IsViewsClonesEmptyDataViewVisible));
         }
+
+        void OnRepositorySavedToDatabase(in Repository repository) => _repostoryEventManager.RaiseEvent(this, repository, nameof(RepositorySavedToDatabase));
 
         [Conditional("DEBUG")]
         void PrintDays()

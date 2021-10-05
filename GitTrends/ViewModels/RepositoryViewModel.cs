@@ -56,6 +56,7 @@ namespace GitTrends
                                     GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, mainThread)
         {
             LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
+            TrendsViewModel.RepositorySavedToDatabase += HandleRepositorySavedToDatabase;
             BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesCompleted += HandleScheduleRetryRepositoriesViewsClonesCompleted;
 
             UpdateText();
@@ -463,5 +464,6 @@ namespace GitTrends
         }
 
         void HandleScheduleRetryRepositoriesViewsClonesCompleted(object sender, Repository e) => AddRepositoriesToCollection(new List<Repository> { e }, _searchBarText);
+        void HandleRepositorySavedToDatabase(object sender, Repository e) => AddRepositoriesToCollection(new List<Repository> { e }, _searchBarText);
     }
 }
