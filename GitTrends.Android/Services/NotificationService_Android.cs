@@ -81,8 +81,8 @@ namespace GitTrends.Droid
 
             var backgroundFetchService = ContainerService.Container.Resolve<BackgroundFetchService>();
 
-            backgroundFetchService.ScheduleCleanUpDatabase();
-            backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None);
+            backgroundFetchService.TryScheduleCleanUpDatabase();
+            backgroundFetchService.TryScheduleNotifyTrendingRepositories(CancellationToken.None);
         }
 
         Task RegisterWithNotificationHub(in NotificationHubInformation notificationHubInformation, in string token)

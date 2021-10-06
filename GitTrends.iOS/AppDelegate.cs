@@ -72,8 +72,8 @@ namespace GitTrends.iOS
         {
             var backgroundFetchService = ContainerService.Container.Resolve<BackgroundFetchService>();
 
-            backgroundFetchService.ScheduleCleanUpDatabase();
-            backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None);
+            backgroundFetchService.TryScheduleCleanUpDatabase();
+            backgroundFetchService.TryScheduleNotifyTrendingRepositories(CancellationToken.None);
         }
 
         public override async void ReceivedLocalNotification(UIApplication application, UILocalNotification notification) =>
