@@ -5,6 +5,10 @@ namespace GitTrends
 {
     public class ShinyStartup : Shiny.ShinyStartup
     {
-        public override void ConfigureServices(IServiceCollection services, IPlatform platform) => services.UseNotifications();
+        public override void ConfigureServices(IServiceCollection services, IPlatform platform)
+        {
+            services.UseNotifications();
+            services.UseJobForegroundService();
+        }
     }
 }
