@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
@@ -150,7 +149,7 @@ namespace GitTrends
                 HorizontalOptions = LayoutOptions.Start;
                 VerticalOptions = LayoutOptions.Center;
 
-                SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.CardViewsStatsTextColor));
+                SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.PrimaryTextColor));
             }
         }
     }

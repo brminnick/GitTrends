@@ -299,6 +299,7 @@ namespace GitTrends
 
                     var updatedRepository = repository with
                     {
+                        DataDownloadedAt = DateTimeOffset.UtcNow,
                         StarredAt = repositoryStars,
                         DailyViewsList = repositoryViews,
                         DailyClonesList = repositoryClones
@@ -312,24 +313,21 @@ namespace GitTrends
             }
             catch (Exception e) when (e is ApiException { StatusCode: HttpStatusCode.Unauthorized })
             {
-                repositoryStars = Array.Empty<DateTimeOffset>();
-                repositoryViews = Array.Empty<DailyViewsModel>();
-                repositoryClones = Array.Empty<DailyClonesModel>();
+                var repositoryData = await GetNewestRepsitoryData(repository).ConfigureAwait(false);
+
+                repositoryStars = repositoryData.RepositoryStars;
+                repositoryViews = repositoryData.RepositoryViews;
+                repositoryClones = repositoryData.RepositoryClones;
 
                 refreshState = RefreshState.LoginExpired;
             }
             catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximumApiCallLimit(e))
             {
-                var responseHeaders = e switch
-                {
-                    ApiException exception => exception.Headers,
-                    GraphQLException graphQLException => graphQLException.ResponseHeaders,
-                    _ => throw new NotSupportedException()
-                };
+                var repositoryData = await GetNewestRepsitoryData(repository).ConfigureAwait(false);
 
-                repositoryStars = Array.Empty<DateTimeOffset>();
-                repositoryViews = Array.Empty<DailyViewsModel>();
-                repositoryClones = Array.Empty<DailyClonesModel>();
+                repositoryStars = repositoryData.RepositoryStars;
+                repositoryViews = repositoryData.RepositoryViews;
+                repositoryClones = repositoryData.RepositoryClones;
 
                 refreshState = RefreshState.MaximumApiLimit;
             }
@@ -347,11 +345,19 @@ namespace GitTrends
 
                     refreshState = RefreshState.Error;
                 }
-                else
+                else if (repositoryFromDatabase.DataDownloadedAt > repository.DataDownloadedAt) //If data from database is more recent, display data from database
                 {
                     repositoryStars = repositoryFromDatabase.StarredAt ?? Array.Empty<DateTimeOffset>();
                     repositoryViews = repositoryFromDatabase.DailyViewsList ?? Array.Empty<DailyViewsModel>();
                     repositoryClones = repositoryFromDatabase.DailyClonesList ?? Array.Empty<DailyClonesModel>();
+
+                    refreshState = RefreshState.Succeeded;
+                }
+                else //If data passed in as parameter is more recent, display data passed in as parameter
+                {
+                    repositoryStars = repository.StarredAt ?? Array.Empty<DateTimeOffset>();
+                    repositoryViews = repository.DailyViewsList ?? Array.Empty<DailyViewsModel>();
+                    repositoryClones = repository.DailyClonesList ?? Array.Empty<DailyClonesModel>();
 
                     refreshState = RefreshState.Succeeded;
                 }
@@ -360,9 +366,11 @@ namespace GitTrends
             {
                 AnalyticsService.Report(e);
 
-                repositoryStars = Array.Empty<DateTimeOffset>();
-                repositoryViews = Array.Empty<DailyViewsModel>();
-                repositoryClones = Array.Empty<DailyClonesModel>();
+                var repositoryData = await GetNewestRepsitoryData(repository).ConfigureAwait(false);
+
+                repositoryStars = repositoryData.RepositoryStars;
+                repositoryViews = repositoryData.RepositoryViews;
+                repositoryClones = repositoryData.RepositoryClones;
 
                 refreshState = RefreshState.Error;
             }
@@ -390,6 +398,38 @@ namespace GitTrends
 
             PrintDays();
         }
+
+        async Task<(IReadOnlyList<DateTimeOffset> RepositoryStars, IReadOnlyList<DailyViewsModel> RepositoryViews, IReadOnlyList<DailyClonesModel> RepositoryClones)>
+            GetNewestRepsitoryData(Repository repository)
+        {
+            IReadOnlyList<DateTimeOffset> repositoryStars = Array.Empty<DateTimeOffset>();
+            IReadOnlyList<DailyViewsModel> repositoryViews = Array.Empty<DailyViewsModel>();
+            IReadOnlyList<DailyClonesModel> repositoryClones = Array.Empty<DailyClonesModel>();
+
+            var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
+
+            if (repositoryFromDatabase is null)
+            {
+                repositoryStars = Array.Empty<DateTimeOffset>();
+                repositoryViews = Array.Empty<DailyViewsModel>();
+                repositoryClones = Array.Empty<DailyClonesModel>();
+            }
+            else if (repositoryFromDatabase.DataDownloadedAt > repository.DataDownloadedAt) //If data from database is more recent, display data from database
+            {
+                repositoryStars = repositoryFromDatabase.StarredAt ?? Array.Empty<DateTimeOffset>();
+                repositoryViews = repositoryFromDatabase.DailyViewsList ?? Array.Empty<DailyViewsModel>();
+                repositoryClones = repositoryFromDatabase.DailyClonesList ?? Array.Empty<DailyClonesModel>();
+            }
+            else //If data passed in as parameter is more recent, display data passed in as parameter
+            {
+                repositoryStars = repository.StarredAt ?? Array.Empty<DateTimeOffset>();
+                repositoryViews = repository.DailyViewsList ?? Array.Empty<DailyViewsModel>();
+                repositoryClones = repository.DailyClonesList ?? Array.Empty<DailyClonesModel>();
+            }
+
+            return (repositoryStars, repositoryViews, repositoryClones);
+        }
+
 
         IEnumerable<DailyStarsModel> GetDailyStarsList(IReadOnlyList<DateTimeOffset> starredAtDates)
         {

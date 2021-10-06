@@ -48,8 +48,7 @@ namespace GitTrends.Shared
 
         public bool ContainsTrafficData => TotalClones is not null && TotalViews is not null && TotalUniqueClones is not null && TotalUniqueViews is not null && StarCount is not null;
 
-        public DateTimeOffset DataDownloadedAt { get; }
-
+        public DateTimeOffset DataDownloadedAt { get; init; }
         public string OwnerLogin { get; init; }
         public string OwnerAvatarUrl { get; init; }
         public long IssuesCount { get; init; }

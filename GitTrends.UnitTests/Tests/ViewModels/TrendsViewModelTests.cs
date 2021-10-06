@@ -16,7 +16,7 @@ namespace GitTrends.UnitTests
         public async Task FetchDataCommandTest_AuthenticatedUser_OldData()
         {
             //Arrange
-            Repository repository_Initial, repository_RepositorySavedToDatabaseResult;
+            Repository repository_OldData, repository_RepositorySavedToDatabaseResult;
 
             TaskCompletionSource<Repository> repositorySavedToDatabaseTCS = new();
 
@@ -40,16 +40,14 @@ namespace GitTrends.UnitTests
                 repository = completedReposiory;
             }
 
-            repository_Initial = new Repository(repository.Name, repository.Description, repository.ForkCount, repository.OwnerLogin, repository.OwnerAvatarUrl,
-                                                    repository.IssuesCount, repository.WatchersCount, repository.Url, repository.IsFork, DateTimeOffset.UtcNow.AddDays(-1),
-                                                    repository.Permission, repository.IsFavorite, repository.DailyViewsList, repository.DailyClonesList, repository.StarredAt);
+            repository_OldData = repository with { DataDownloadedAt = DateTimeOffset.UtcNow.AddDays(-1) };
 
             //Act
             dailyStarsList_Initial = trendsViewModel.DailyStarsList;
             dailyViewsList_Initial = trendsViewModel.DailyViewsList;
             dailyClonesList_Initial = trendsViewModel.DailyClonesList;
 
-            await trendsViewModel.FetchDataCommand.ExecuteAsync((repository_Initial, CancellationToken.None)).ConfigureAwait(false);
+            await trendsViewModel.FetchDataCommand.ExecuteAsync((repository_OldData, CancellationToken.None)).ConfigureAwait(false);
             repository_RepositorySavedToDatabaseResult = await repositorySavedToDatabaseTCS.Task.ConfigureAwait(false);
 
             dailyStarsList_Final = trendsViewModel.DailyStarsList;
@@ -57,9 +55,9 @@ namespace GitTrends.UnitTests
             dailyClonesList_Final = trendsViewModel.DailyClonesList;
 
             //Assert
-            Assert.IsNotEmpty(repository_Initial.DailyClonesList ?? throw new NullReferenceException());
-            Assert.IsNotEmpty(repository_Initial.DailyViewsList ?? throw new NullReferenceException());
-            Assert.IsNotEmpty(repository_Initial.StarredAt ?? throw new NullReferenceException());
+            Assert.IsNotEmpty(repository_OldData.DailyClonesList ?? throw new NullReferenceException());
+            Assert.IsNotEmpty(repository_OldData.DailyViewsList ?? throw new NullReferenceException());
+            Assert.IsNotEmpty(repository_OldData.StarredAt ?? throw new NullReferenceException());
 
             Assert.IsEmpty(dailyViewsList_Initial);
             Assert.IsEmpty(dailyClonesList_Initial);
