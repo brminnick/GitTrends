@@ -17,6 +17,7 @@ namespace GitTrends.UnitTests
         public async Task ScheduleRetryRepositoriesViewsClonesTest_AuthenticatedUser()
         {
             //Arrange
+            bool wasScheduledSuccessfully_First, wasScheduledSuccessfully_Second;
             Repository repository_Initial, repository_Final, repository_Database;
 
             var scheduleRetryRepositoriesViewsClonesCompletedTCS = new TaskCompletionSource<Repository>();
@@ -33,11 +34,16 @@ namespace GitTrends.UnitTests
                                                 GitHubConstants.GitTrendsAvatarUrl, 1, 2, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
 
             //Act
-            backgroundFetchService.ScheduleRetryRepositoriesViewsClones(repository_Initial);
+            wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryRepositoriesViewsClones(repository_Initial);
+            wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryRepositoriesViewsClones(repository_Initial);
+
             repository_Final = await scheduleRetryRepositoriesViewsClonesCompletedTCS.Task.ConfigureAwait(false);
             repository_Database = await repositoryDatabase.GetRepository(repository_Initial.Url).ConfigureAwait(false) ?? throw new NullReferenceException();
 
             //Assert
+            Assert.IsTrue(wasScheduledSuccessfully_First);
+            Assert.IsFalse(wasScheduledSuccessfully_Second);
+
             Assert.IsFalse(repository_Initial.ContainsTrafficData);
             Assert.IsTrue(repository_Final.ContainsTrafficData);
             Assert.IsTrue(repository_Database.ContainsTrafficData);
@@ -93,6 +99,7 @@ namespace GitTrends.UnitTests
         public async Task ScheduleRetryOrganizationsRepositoriesTest_AuthenticatedUser()
         {
             //Arrange
+            bool wasScheduledSuccessfully_First, wasScheduledSuccessfully_Second;
             string organizationName_Initial = nameof(GitTrends), organizationName_Final;
             Repository repository_Final, repository_Database;
 
@@ -109,13 +116,18 @@ namespace GitTrends.UnitTests
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
             //Act
-            backgroundFetchService.ScheduleRetryOrganizationsRepositories(organizationName_Initial);
+            wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryOrganizationsRepositories(organizationName_Initial);
+            wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryOrganizationsRepositories(organizationName_Initial);
+
             organizationName_Final = await scheduleRetryOrganizationsRepositoriesCompletedTCS.Task.ConfigureAwait(false);
 
             repository_Final = await scheduleRetryRepositoriesViewsClonesCompletedTCS.Task.ConfigureAwait(false);
             repository_Database = await repositoryDatabase.GetRepository(repository_Final.Url).ConfigureAwait(false) ?? throw new NullReferenceException();
 
             //Assert
+            Assert.IsTrue(wasScheduledSuccessfully_First);
+            Assert.IsFalse(wasScheduledSuccessfully_Second);
+
             Assert.AreEqual(organizationName_Initial, organizationName_Final);
 
             Assert.IsTrue(repository_Final.ContainsTrafficData);
@@ -162,6 +174,7 @@ namespace GitTrends.UnitTests
         public async Task ScheduleRetryGetReferringSitesTest_AuthenticatedUser()
         {
             //Arrange
+            bool wasScheduledSuccessfully_First, wasScheduledSuccessfully_Second;
             Repository repository_Final;
             MobileReferringSiteModel mobileReferringSiteModel, mobileReferringSiteModel_Database;
             IReadOnlyList<MobileReferringSiteModel> mobileReferringSitesList_Initial, mobileReferringSitesList_Final;
@@ -185,7 +198,8 @@ namespace GitTrends.UnitTests
 
             //Act
             mobileReferringSitesList_Initial = referringSitesViewModel.MobileReferringSitesList;
-            backgroundFetchService.ScheduleRetryGetReferringSites(repository_Initial);
+            wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryGetReferringSites(repository_Initial);
+            wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryGetReferringSites(repository_Initial);
 
             mobileReferringSiteModel = await mobileReferringSiteRetrievedTCS.Task.ConfigureAwait(false);
             repository_Final = await scheduleRetryGetReferringSiteCompletedTCS.Task.ConfigureAwait(false);
@@ -196,6 +210,9 @@ namespace GitTrends.UnitTests
             mobileReferringSiteModel_Database = mobileReferringSiteModelsFromDatabase.Single(x => x.ReferrerUri is not null && x.ReferrerUri == mobileReferringSiteModel.ReferrerUri);
 
             // Assert
+            Assert.IsTrue(wasScheduledSuccessfully_First);
+            Assert.IsFalse(wasScheduledSuccessfully_Second);
+
             Assert.IsNotNull(mobileReferringSiteModel.FavIcon);
             Assert.IsNotNull(mobileReferringSiteModel.FavIconImageUrl);
             Assert.IsNotEmpty(mobileReferringSiteModel.FavIconImageUrl);
@@ -276,6 +293,7 @@ namespace GitTrends.UnitTests
         public async Task CleanUpDatabaseTest()
         {
             //Arrange
+            bool wasScheduledSuccessfully_First, wasScheduledSuccessfully_Second;
             var databaseCleanupCompletedTCS = new TaskCompletionSource<object?>();
             BackgroundFetchService.DatabaseCleanupCompleted += HandleDatabaseCompleted;
 
@@ -303,7 +321,9 @@ namespace GitTrends.UnitTests
             repositoryDatabaseCount_Initial = await getRepositoryDatabaseCount(repositoryDatabase).ConfigureAwait(false);
             referringSitesDatabaseCount_Initial = await getReferringSitesDatabaseCount(referringSitesDatabase, expiredRepository_Initial.Url, unexpiredRepository_Initial.Url).ConfigureAwait(false);
 
-            backgroundFetchService.ScheduleCleanUpDatabase();
+            wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleCleanUpDatabase();
+            wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleCleanUpDatabase();
+
             await databaseCleanupCompletedTCS.Task.ConfigureAwait(false);
 
             repositoryDatabaseCount_Final = await getRepositoryDatabaseCount(repositoryDatabase).ConfigureAwait(false);
@@ -314,6 +334,9 @@ namespace GitTrends.UnitTests
             unexpiredRepository_Final = finalRepositories.First(x => x.DataDownloadedAt == unexpiredRepository_Initial.DataDownloadedAt);
 
             //Assert
+            Assert.IsTrue(wasScheduledSuccessfully_First);
+            Assert.IsFalse(wasScheduledSuccessfully_Second);
+
             Assert.AreEqual(2, repositoryDatabaseCount_Initial);
             Assert.AreEqual(2, referringSitesDatabaseCount_Initial);
 
@@ -375,7 +398,8 @@ namespace GitTrends.UnitTests
             var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
 
             //Act
-            backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None);
+            backgroundFetchService.TryScheduleNotifyTrendingRepositories(CancellationToken.None);
+
             var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
 
             //Assert
@@ -403,7 +427,8 @@ namespace GitTrends.UnitTests
             var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
 
             //Act
-            backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None);
+            backgroundFetchService.TryScheduleNotifyTrendingRepositories(CancellationToken.None);
+
             var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
 
             //Assert
@@ -422,6 +447,7 @@ namespace GitTrends.UnitTests
         public async Task NotifyTrendingRepositoriesTest_AuthenticatedUser()
         {
             //Arrange
+            bool wasScheduledSuccessfully_First, wasScheduledSuccessfully_Second;
             var scheduleNotifyTrendingRepositoriesCompletedTCS = new TaskCompletionSource<bool>();
             BackgroundFetchService.ScheduleNotifyTrendingRepositoriesCompleted += HandleScheduleNotifyTrendingRepositoriesCompleted;
 
@@ -432,10 +458,15 @@ namespace GitTrends.UnitTests
             await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
             //Act
-            backgroundFetchService.ScheduleNotifyTrendingRepositories(CancellationToken.None);
+            wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleNotifyTrendingRepositories(CancellationToken.None);
+            wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleNotifyTrendingRepositories(CancellationToken.None);
+
             var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
 
             //Assert
+            Assert.IsTrue(wasScheduledSuccessfully_First);
+            Assert.IsFalse(wasScheduledSuccessfully_Second);
+
             Assert.IsFalse(gitHubUserService.IsDemoUser);
             Assert.IsTrue(gitHubUserService.IsAuthenticated);
             Assert.IsTrue(result);

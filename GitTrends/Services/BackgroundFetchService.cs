@@ -113,7 +113,67 @@ namespace GitTrends
             var temp = DateTime.UtcNow;
         }
 
-        public void ScheduleRetryOrganizationsRepositories(string organizationName, TimeSpan? delay = null)
+        public bool TryScheduleRetryOrganizationsRepositories(string organizationName, TimeSpan? delay = null)
+        {
+            lock (RetryOrganizationsReopsitoriesIdentifier)
+            {
+                if (QueuedJobs.Contains(GetRetryOrganizationsRepositoriesIdentifier(organizationName)))
+                    return false;
+
+                ScheduleRetryOrganizationsRepositories(organizationName, delay);
+                return true;
+            }
+        }
+
+        public bool TryScheduleRetryRepositoriesViewsClones(Repository repository, TimeSpan? delay = null)
+        {
+            lock (RetryRepositoriesViewsClonesIdentifier)
+            {
+                if (QueuedJobs.Contains(GetRetryRepositoriesViewsClonesIdentifier(repository)))
+                    return false;
+
+                ScheduleRetryRepositoriesViewsClones(repository, delay);
+                return true;
+            }
+        }
+
+        public bool TryScheduleRetryGetReferringSites(Repository repository, TimeSpan? delay = null)
+        {
+            lock (RetryGetReferringSitesIdentifier)
+            {
+                if (QueuedJobs.Contains(GetRetryGetReferringSitesIdentifier(repository)))
+                    return false;
+
+                ScheduleRetryGetReferringSites(repository, delay);
+                return true;
+            }
+        }
+
+        public bool TryScheduleCleanUpDatabase()
+        {
+            lock (CleanUpDatabaseIdentifier)
+            {
+                if (QueuedJobs.Contains(CleanUpDatabaseIdentifier))
+                    return false;
+
+                ScheduleCleanUpDatabase();
+                return true;
+            }
+        }
+
+        public bool TryScheduleNotifyTrendingRepositories(CancellationToken cancellationToken)
+        {
+            lock (NotifyTrendingRepositoriesIdentifier)
+            {
+                if (QueuedJobs.Contains(NotifyTrendingRepositoriesIdentifier))
+                    return false;
+
+                ScheduleNotifyTrendingRepositories(cancellationToken);
+                return true;
+            }
+        }
+
+        void ScheduleRetryOrganizationsRepositories(string organizationName, TimeSpan? delay)
         {
             _queuedJobs.Add(GetRetryOrganizationsRepositoriesIdentifier(organizationName));
 
@@ -133,7 +193,7 @@ namespace GitTrends
             });
         }
 
-        public void ScheduleRetryRepositoriesViewsClones(Repository repository, TimeSpan? delay = null)
+        void ScheduleRetryRepositoriesViewsClones(Repository repository, TimeSpan? delay = null)
         {
             _queuedJobs.Add(GetRetryRepositoriesViewsClonesIdentifier(repository));
 
@@ -158,7 +218,7 @@ namespace GitTrends
             });
         }
 
-        public void ScheduleRetryGetReferringSites(Repository repository, TimeSpan? delay = null)
+        void ScheduleRetryGetReferringSites(Repository repository, TimeSpan? delay = null)
         {
             _queuedJobs.Add(GetRetryGetReferringSitesIdentifier(repository));
 
@@ -190,7 +250,7 @@ namespace GitTrends
             });
         }
 
-        public void ScheduleCleanUpDatabase()
+        void ScheduleCleanUpDatabase()
         {
             _queuedJobs.Add(CleanUpDatabaseIdentifier);
 
@@ -204,7 +264,7 @@ namespace GitTrends
             });
         }
 
-        public void ScheduleNotifyTrendingRepositories(CancellationToken cancellationToken)
+        void ScheduleNotifyTrendingRepositories(CancellationToken cancellationToken)
         {
             _queuedJobs.Add(NotifyTrendingRepositoriesIdentifier);
 
@@ -283,23 +343,14 @@ namespace GitTrends
             return Array.Empty<Repository>();
         }
 
-        void HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData(object sender, (Repository Repository, TimeSpan RetryTimeSpan) data)
-        {
-            if (!QueuedJobs.Contains(GetRetryRepositoriesViewsClonesIdentifier(data.Repository)))
-                ScheduleRetryRepositoriesViewsClones(data.Repository, data.RetryTimeSpan);
-        }
+        void HandleAbuseRateLimitFound_GetOrganizationRepositories(object sender, (string OrganizationName, TimeSpan RetryTimeSpan) data) =>
+            TryScheduleRetryOrganizationsRepositories(data.OrganizationName, data.RetryTimeSpan);
 
-        void HandleAbuseRateLimitFound_GetOrganizationRepositories(object sender, (string OrganizationName, TimeSpan RetryTimeSpan) data)
-        {
-            if (!QueuedJobs.Contains(GetRetryOrganizationsRepositoriesIdentifier(data.OrganizationName)))
-                ScheduleRetryOrganizationsRepositories(data.OrganizationName, data.RetryTimeSpan);
-        }
+        void HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData(object sender, (Repository Repository, TimeSpan RetryTimeSpan) data) =>
+            TryScheduleRetryRepositoriesViewsClones(data.Repository, data.RetryTimeSpan);
 
-        void HandleAbuseRateLimitFound_GetReferringSites(object sender, (Repository Repository, TimeSpan RetryTimeSpan) data)
-        {
-            if (!QueuedJobs.Contains(GetRetryGetReferringSitesIdentifier(data.Repository)))
-                ScheduleRetryGetReferringSites(data.Repository, data.RetryTimeSpan);
-        }
+        void HandleAbuseRateLimitFound_GetReferringSites(object sender, (Repository Repository, TimeSpan RetryTimeSpan) data) =>
+            TryScheduleRetryGetReferringSites(data.Repository, data.RetryTimeSpan);
 
         void OnScheduleRetryRepositoriesViewsClonesCompleted(in Repository repository)
         {
