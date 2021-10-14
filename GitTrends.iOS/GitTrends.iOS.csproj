@@ -485,7 +485,7 @@
     <PackageReference Include="Plugin.StoreReview" Version="3.2.0-beta" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.3" />
     <PackageReference Include="Sharpnado.MaterialFrame" Version="1.2.0" />
-    <PackageReference Include="Refit.Newtonsoft.Json" Version="6.0.94" />
+    <PackageReference Include="Refit.Newtonsoft.Json" Version="6.1.15" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
