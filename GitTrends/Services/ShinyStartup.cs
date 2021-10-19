@@ -7,8 +7,8 @@ namespace GitTrends
     {
         public override void ConfigureServices(IServiceCollection services, IPlatform platform)
         {
+            services.UseJobs();
             services.UseNotifications();
-            services.UseJobForegroundService();
         }
     }
 }
