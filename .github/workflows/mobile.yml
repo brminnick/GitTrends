@@ -19,6 +19,9 @@ jobs:
         with:
           distribution: 'temurin' # See 'Supported distributions' for available options
           java-version: '17'
+          
+      - name: Maui Check
+        run: 'dotnet tool install -g Redth.Net.Maui.Check --non-interactive --fix'
       
       - name: Install Boots 
         run: |
