@@ -13,7 +13,12 @@ jobs:
       runs-on: macos-latest
 
       steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin' # See 'Supported distributions' for available options
+          java-version: '17'
       
       - name: Install Boots 
         run: |
