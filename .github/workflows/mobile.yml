@@ -14,6 +14,12 @@ jobs:
 
       steps:
       - uses: actions/checkout@v1
+      
+      - name: Install Boots 
+        run: |
+          dotnet tool install --global boots
+          boots https://aka.ms/xamarin-android-commercial-d16-9-macos
+          boots https://download.mono-project.com/archive/6.12.0/macos-10-universal/MonoFramework-MDK-6.12.0.122.macos10.xamarin.universal.pkg
 
       - name: Restore NuGet 
         run: |
