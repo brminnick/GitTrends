@@ -21,7 +21,9 @@ jobs:
           java-version: '17'
           
       - name: Maui Check
-        run: 'dotnet tool install -g Redth.Net.Maui.Check --non-interactive --fix'
+        run: |
+          dotnet tool install -g Redth.Net.Maui.Check
+          maui-check --non-interactive --fix
       
       - name: Install Boots 
         run: |
