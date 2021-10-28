@@ -215,7 +215,10 @@ namespace GitTrends.UnitTests
 
             Assert.IsNotNull(mobileReferringSiteModel.FavIcon);
             Assert.IsNotNull(mobileReferringSiteModel.FavIconImageUrl);
-            Assert.IsNotEmpty(mobileReferringSiteModel.FavIconImageUrl);
+            if (string.Empty == mobileReferringSiteModel.FavIconImageUrl)
+                Assert.AreEqual(FavIconService.DefaultFavIcon, ((Xamarin.Forms.FileImageSource?)mobileReferringSiteModel.FavIcon)?.File);
+            else
+                Assert.IsNotEmpty(mobileReferringSiteModel.FavIconImageUrl);
             Assert.IsTrue(mobileReferringSiteModel.IsReferrerUriValid);
             Assert.IsNotNull(mobileReferringSiteModel.Referrer);
             Assert.IsNotEmpty(mobileReferringSiteModel.Referrer);
@@ -266,7 +269,10 @@ namespace GitTrends.UnitTests
             {
                 Assert.IsNotNull(mobileReferringSite.FavIcon);
                 Assert.IsNotNull(mobileReferringSite.FavIconImageUrl);
-                Assert.IsNotEmpty(mobileReferringSite.FavIconImageUrl);
+                if (string.Empty == mobileReferringSite.FavIconImageUrl)
+                    Assert.AreEqual(FavIconService.DefaultFavIcon, ((Xamarin.Forms.FileImageSource?)mobileReferringSite.FavIcon)?.File);
+                else
+                    Assert.IsNotEmpty(mobileReferringSite.FavIconImageUrl);
                 Assert.IsTrue(mobileReferringSite.IsReferrerUriValid);
                 Assert.IsNotNull(mobileReferringSite.Referrer);
                 Assert.IsNotEmpty(mobileReferringSite.Referrer);
