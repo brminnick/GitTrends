@@ -15,6 +15,14 @@ jobs:
       steps:
       - uses: actions/checkout@v1
 
+      - name: Install Boots
+        run : |
+          dotnet tool install --global boots
+          boots --stable Mono
+          boots --preview Xamarin.Android
+          boots --preview Xamarin.iOS
+          boots --preview Xamarin.Mac
+
       - name: Restore NuGet 
         run: |
           nuget restore
