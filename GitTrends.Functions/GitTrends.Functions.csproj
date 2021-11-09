@@ -14,7 +14,7 @@
         <PackageReference Include="Refit.HttpClientFactory" Version="6.1.15" />
         <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="5.0.1" />
         <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
-        <PackageReference Include="NuGet.Protocol" Version="5.11.0" />
+        <PackageReference Include="NuGet.Protocol" Version="6.0.0" />
         <PackageReference Include="Refit.Newtonsoft.Json" Version="6.1.15" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.1.0" />
