@@ -26,7 +26,7 @@
         <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
         <PackageReference Include="Autofac" Version="6.3.0" />
         <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.1.4" />
-        <PackageReference Include="HtmlAgilityPack" Version="1.11.37" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.38" />
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.4.0" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.4.0" />
         <PackageReference Include="Xamarin.Forms" Version="5.0.0.2196" />
