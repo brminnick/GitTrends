@@ -117,31 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="UnableToConnectToGitHub" xml:space="preserve">
-    <value>Impossível Conectar ao GitHub</value>
+  <data name="EnableOrganizationsDescription" xml:space="preserve">
+    <value>Para habilitar o acesso à Organizações role a tela, localize sua Organização e selecione "Solicitar"</value>
   </data>
-  <data name="UsageLimitExceeded" xml:space="preserve">
-    <value>Limite de Uso Excedido</value>
+  <data name="EnableOrganizationsTitle" xml:space="preserve">
+    <value>Habilitar Acesso</value>
   </data>
-  <data name="GitHubApiLimit" xml:space="preserve">
-    <value>A API do GitHub limita suas requisições a 5.000 requisições por usuário por hora </value>
+  <data name="GitHubOrganizationsDescription" xml:space="preserve">
+    <value>GitHub Organizações são contas compartilhadas onde times podem colaborar através de vários projetos</value>
   </data>
-  <data name="MinutesReset" xml:space="preserve">
-    <value>O limite agendado atual para reset em {0} minutos</value>
+  <data name="GitHubOrganizationsTitle" xml:space="preserve">
+    <value>Organizações</value>
   </data>
-  <data name="LearnMore" xml:space="preserve">
-    <value>Aprenda mais</value>
+  <data name="GitTrendsAccessDescription" xml:space="preserve">
+    <value>Acesso à Organizações deve ser concedido manualmente para cada Organização</value>
   </data>
-  <data name="AbuseLimitAutomaticRetry" xml:space="preserve">
-    <value>Nós iremos automaticamente recuperar os dados em segundo plano em aproximadamente {0} segundos</value>
-  </data>
-  <data name="AbuseLimitManualRetry" xml:space="preserve">
-    <value>Feche GitTrends e tente novamente em aproximadamente {0} segundos</value>
-  </data>
-  <data name="AbuseLimitReached" xml:space="preserve">
-    <value>Limite da API do GitHub Atingido</value>
-  </data>
-  <data name="GitHubApiAbuseLimit" xml:space="preserve">
-    <value>A API do GitHub irá ocasionalmente evitar as suas requisições de API</value>
+  <data name="GitTrendsAccessTitle" xml:space="preserve">
+    <value>Acesso</value>
   </data>
 </root>
