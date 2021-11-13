@@ -108,6 +108,3 @@ csharp_new_line_before_members_in_anonymous_types = true
 
 # CS4014: Because this call is not awaited, execution of the current method continues before the call is completed
 dotnet_diagnostic.CS4014.severity = error
-
-[{GitTrends.Functions, GitTrends.UnitTests, GitTrends.UITests}/**.cs]
-dotnet_diagnostic.CA2007.severity = error
