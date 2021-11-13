@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using GitTrends.Shared;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Xamarin.Essentials.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
-using System.Threading;
-using GitTrends.Shared;
 
 namespace GitTrends.UnitTests
 {
