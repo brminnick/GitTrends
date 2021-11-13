@@ -15,7 +15,7 @@ namespace GitTrends.Shared
         {
             Name = name;
             IsFork = fork;
-            Url = html_url; 
+            Url = html_url;
             ForkCount = forks_count;
             OwnerLogin = owner.Login;
             StarCount = stargazers_count;

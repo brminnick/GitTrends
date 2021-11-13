@@ -1,1 +1,1 @@
-﻿public enum TrendsChartOption  { All, NoUniques, JustUniques }
+﻿public enum TrendsChartOption { All, NoUniques, JustUniques }

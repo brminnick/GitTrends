@@ -104,11 +104,11 @@ namespace GitTrends
 
                     analyticsService.Track($"{nameof(OrganizationsCarouselOverlay)} Close Button Tapped");
 
-                // Make the button disappear before OrganizationsCarouselFrame
-                await Task.WhenAll(dismissOverlay(), this.FadeTo(0));
+                    // Make the button disappear before OrganizationsCarouselFrame
+                    await Task.WhenAll(dismissOverlay(), this.FadeTo(0));
 
-                //Ensure the Button is visible and reenabled when it next appears
-                Opacity = 1;
+                    //Ensure the Button is visible and reenabled when it next appears
+                    Opacity = 1;
                     IsEnabled = true;
                 });
 

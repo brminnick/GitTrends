@@ -72,7 +72,7 @@ namespace GitTrends.UnitTests
             Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.AbuseLimit), emptyDataViewDescription_Final);
             Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Uninitialized), emptyDataViewDescription_Initial);
 
-            Assert.IsInstanceOf< AbuseLimitPullToRefreshEventArgs>(pullToRefreshFailedEventArgs);
+            Assert.IsInstanceOf<AbuseLimitPullToRefreshEventArgs>(pullToRefreshFailedEventArgs);
 
             void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
             {

@@ -19,7 +19,7 @@ namespace GitTrends
             HorizontalOptions = LayoutOptions.CenterAndExpand;
 
             VerticalTextAlignment = TextAlignment.End;
-            HorizontalTextAlignment = TextAlignment.Center;            
+            HorizontalTextAlignment = TextAlignment.Center;
 
             AutomationId = SettingsPageAutomationIds.CopyrightLabel;
 

@@ -3,7 +3,7 @@
 namespace GitTrends.Shared
 {
     public record ReferringSiteModel : BaseTotalCountModel, IReferringSiteModel
-    { 
+    {
         public ReferringSiteModel(in long count, in long uniques, in string referrer, in DateTimeOffset? downloadedAt = null) : base(count, uniques)
         {
             DownloadedAt = downloadedAt ?? DateTimeOffset.UtcNow;
