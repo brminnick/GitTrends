@@ -1,11 +1,11 @@
 ﻿using System;
 namespace GitTrends
 {
-    public class InitializationCompleteEventArgs : EventArgs
-    {
-        public InitializationCompleteEventArgs(bool isInitializationSuccessful) =>
-            IsInitializationSuccessful = isInitializationSuccessful;
+	public class InitializationCompleteEventArgs : EventArgs
+	{
+		public InitializationCompleteEventArgs(bool isInitializationSuccessful) =>
+			IsInitializationSuccessful = isInitializationSuccessful;
 
-        public bool IsInitializationSuccessful { get; }
-    }
+		public bool IsInitializationSuccessful { get; }
+	}
 }

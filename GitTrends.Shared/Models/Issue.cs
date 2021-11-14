@@ -2,5 +2,5 @@
 
 namespace GitTrends.Shared
 {
-    public record Issue(string Title, string Body, DateTimeOffset CreatedAt, string State, DateTimeOffset? ClosedAt = null);
+	public record Issue(string Title, string Body, DateTimeOffset CreatedAt, string State, DateTimeOffset? ClosedAt = null);
 }

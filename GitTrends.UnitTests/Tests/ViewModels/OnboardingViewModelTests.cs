@@ -9,125 +9,125 @@ using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends.UnitTests
 {
-    class OnboardingViewModelTests : BaseTest
-    {
-        [Test]
-        public async Task DemoButtonCommand_Skip()
-        {
-            //Arrange
-            bool didSkipButtonTappedFire = false;
-            var skipButtonTappedTCS = new TaskCompletionSource<object?>();
+	class OnboardingViewModelTests : BaseTest
+	{
+		[Test]
+		public async Task DemoButtonCommand_Skip()
+		{
+			//Arrange
+			bool didSkipButtonTappedFire = false;
+			var skipButtonTappedTCS = new TaskCompletionSource<object?>();
 
-            var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
-            OnboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
+			var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
+			OnboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
 
-            //Act
-            await onboardingViewModel.DemoButtonCommand.ExecuteAsync(OnboardingConstants.SkipText).ConfigureAwait(false);
-            await skipButtonTappedTCS.Task.ConfigureAwait(false);
+			//Act
+			await onboardingViewModel.DemoButtonCommand.ExecuteAsync(OnboardingConstants.SkipText).ConfigureAwait(false);
+			await skipButtonTappedTCS.Task.ConfigureAwait(false);
 
-            //Assert
-            Assert.IsTrue(didSkipButtonTappedFire);
+			//Assert
+			Assert.IsTrue(didSkipButtonTappedFire);
 
-            void HandleSkipButtonTapped(object? sender, EventArgs e)
-            {
-                OnboardingViewModel.SkipButtonTapped -= HandleSkipButtonTapped;
+			void HandleSkipButtonTapped(object? sender, EventArgs e)
+			{
+				OnboardingViewModel.SkipButtonTapped -= HandleSkipButtonTapped;
 
-                didSkipButtonTappedFire = true;
-                skipButtonTappedTCS.SetResult(null);
-            }
-        }
+				didSkipButtonTappedFire = true;
+				skipButtonTappedTCS.SetResult(null);
+			}
+		}
 
-        [Test]
-        public async Task DemoButtonCommand_TryDemo()
-        {
-            //Arrange
-            var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
-            var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+		[Test]
+		public async Task DemoButtonCommand_TryDemo()
+		{
+			//Arrange
+			var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
+			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
-            //Act
-            await onboardingViewModel.DemoButtonCommand.ExecuteAsync(OnboardingConstants.TryDemoText).ConfigureAwait(false);
+			//Act
+			await onboardingViewModel.DemoButtonCommand.ExecuteAsync(OnboardingConstants.TryDemoText).ConfigureAwait(false);
 
-            //Assert
-            Assert.IsTrue(gitHubUserService.IsDemoUser);
-        }
+			//Assert
+			Assert.IsTrue(gitHubUserService.IsDemoUser);
+		}
 
-        [Test]
-        public async Task ConnectToGitHubButtonCommandTest()
-        {
-            //Arrange
-            string openedUrl;
-            bool isAuthenticating_BeforeCommand, isAuthenticating_DuringCommand, isAuthenticating_AfterCommand;
-            bool isDemoButtonVisible_BeforeCommand, isDemoButtonVisible_DuringCommand, isDemoButtonVisible_AfterCommand;
+		[Test]
+		public async Task ConnectToGitHubButtonCommandTest()
+		{
+			//Arrange
+			string openedUrl;
+			bool isAuthenticating_BeforeCommand, isAuthenticating_DuringCommand, isAuthenticating_AfterCommand;
+			bool isDemoButtonVisible_BeforeCommand, isDemoButtonVisible_DuringCommand, isDemoButtonVisible_AfterCommand;
 
-            bool didOpenAsyncFire = false;
-            var openAsyncExecutedTCS = new TaskCompletionSource<Uri>();
+			bool didOpenAsyncFire = false;
+			var openAsyncExecutedTCS = new TaskCompletionSource<Uri>();
 
-            MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
+			MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
-            var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
-            var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
+			var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
+			var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
 
-            //Act
-            await gitTrendsStatisticsService.Initialize(CancellationToken.None).ConfigureAwait(false);
+			//Act
+			await gitTrendsStatisticsService.Initialize(CancellationToken.None).ConfigureAwait(false);
 
-            isAuthenticating_BeforeCommand = onboardingViewModel.IsAuthenticating;
-            isDemoButtonVisible_BeforeCommand = onboardingViewModel.IsDemoButtonVisible;
+			isAuthenticating_BeforeCommand = onboardingViewModel.IsAuthenticating;
+			isDemoButtonVisible_BeforeCommand = onboardingViewModel.IsDemoButtonVisible;
 
-            var connectToGitHubButtonCommandTask = onboardingViewModel.ConnectToGitHubButtonCommand.ExecuteAsync((CancellationToken.None, null));
-            isAuthenticating_DuringCommand = onboardingViewModel.IsAuthenticating;
-            isDemoButtonVisible_DuringCommand = onboardingViewModel.IsDemoButtonVisible;
+			var connectToGitHubButtonCommandTask = onboardingViewModel.ConnectToGitHubButtonCommand.ExecuteAsync((CancellationToken.None, null));
+			isAuthenticating_DuringCommand = onboardingViewModel.IsAuthenticating;
+			isDemoButtonVisible_DuringCommand = onboardingViewModel.IsDemoButtonVisible;
 
-            await connectToGitHubButtonCommandTask.ConfigureAwait(false);
-            var openedUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
-            openedUrl = openedUri.AbsoluteUri;
+			await connectToGitHubButtonCommandTask.ConfigureAwait(false);
+			var openedUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
+			openedUrl = openedUri.AbsoluteUri;
 
-            isAuthenticating_AfterCommand = onboardingViewModel.IsAuthenticating;
-            isDemoButtonVisible_AfterCommand = onboardingViewModel.IsDemoButtonVisible;
+			isAuthenticating_AfterCommand = onboardingViewModel.IsAuthenticating;
+			isDemoButtonVisible_AfterCommand = onboardingViewModel.IsDemoButtonVisible;
 
-            //Assert
-            Assert.IsTrue(didOpenAsyncFire);
+			//Assert
+			Assert.IsTrue(didOpenAsyncFire);
 
-            Assert.IsFalse(isAuthenticating_BeforeCommand);
-            Assert.True(isDemoButtonVisible_BeforeCommand);
+			Assert.IsFalse(isAuthenticating_BeforeCommand);
+			Assert.True(isDemoButtonVisible_BeforeCommand);
 
-            Assert.IsTrue(isAuthenticating_DuringCommand);
-            Assert.False(isDemoButtonVisible_DuringCommand);
+			Assert.IsTrue(isAuthenticating_DuringCommand);
+			Assert.False(isDemoButtonVisible_DuringCommand);
 
-            Assert.IsFalse(isAuthenticating_AfterCommand);
-            Assert.True(isDemoButtonVisible_AfterCommand);
+			Assert.IsFalse(isAuthenticating_AfterCommand);
+			Assert.True(isDemoButtonVisible_AfterCommand);
 
-            Assert.IsTrue(openedUrl.Contains($"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id="));
-            Assert.IsTrue(openedUrl.Contains($"&scope={GitHubConstants.OAuthScope}&state="));
+			Assert.IsTrue(openedUrl.Contains($"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id="));
+			Assert.IsTrue(openedUrl.Contains($"&scope={GitHubConstants.OAuthScope}&state="));
 
-            void HandleOpenAsyncExecuted(object? sender, Uri e)
-            {
-                MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
-                didOpenAsyncFire = true;
+			void HandleOpenAsyncExecuted(object? sender, Uri e)
+			{
+				MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
+				didOpenAsyncFire = true;
 
-                openAsyncExecutedTCS.SetResult(e);
-            }
-        }
+				openAsyncExecutedTCS.SetResult(e);
+			}
+		}
 
-        [Test]
-        public async Task EnableNotificationsButtonTappedTest()
-        {
-            //Arrange
-            const string successSvg = "check.svg";
-            const string bellSvg = "bell.svg";
+		[Test]
+		public async Task EnableNotificationsButtonTappedTest()
+		{
+			//Arrange
+			const string successSvg = "check.svg";
+			const string bellSvg = "bell.svg";
 
-            string notificationStatusSvgImageSource_Initial, notificationStatusSvgImageSource_Final;
-            var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
+			string notificationStatusSvgImageSource_Initial, notificationStatusSvgImageSource_Final;
+			var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
 
-            //Act
-            notificationStatusSvgImageSource_Initial = onboardingViewModel.NotificationStatusSvgImageSource;
+			//Act
+			notificationStatusSvgImageSource_Initial = onboardingViewModel.NotificationStatusSvgImageSource;
 
-            await onboardingViewModel.EnableNotificationsButtonTapped.ExecuteAsync().ConfigureAwait(false);
+			await onboardingViewModel.EnableNotificationsButtonTapped.ExecuteAsync().ConfigureAwait(false);
 
-            notificationStatusSvgImageSource_Final = onboardingViewModel.NotificationStatusSvgImageSource;
+			notificationStatusSvgImageSource_Final = onboardingViewModel.NotificationStatusSvgImageSource;
 
-            //Assert
-            Assert.AreEqual(SvgService.GetFullPath(bellSvg), notificationStatusSvgImageSource_Initial);
-            Assert.AreEqual(SvgService.GetFullPath(successSvg), notificationStatusSvgImageSource_Final);
-        }
-    }
+			//Assert
+			Assert.AreEqual(SvgService.GetFullPath(bellSvg), notificationStatusSvgImageSource_Initial);
+			Assert.AreEqual(SvgService.GetFullPath(successSvg), notificationStatusSvgImageSource_Final);
+		}
+	}
 }

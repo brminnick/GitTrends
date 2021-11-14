@@ -4,22 +4,22 @@ using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
-    public class WelcomeViewModel : GitHubAuthenticationViewModel
-    {
-        public WelcomeViewModel(IMainThread mainThread,
-                                    IAnalyticsService analyticsService,
-                                    GitHubUserService gitHubUserService,
-                                    DeepLinkingService deepLinkingService,
-                                    GitHubAuthenticationService gitHubAuthenticationService)
-            : base(mainThread, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
-        {
-        }
+	public class WelcomeViewModel : GitHubAuthenticationViewModel
+	{
+		public WelcomeViewModel(IMainThread mainThread,
+									IAnalyticsService analyticsService,
+									GitHubUserService gitHubUserService,
+									DeepLinkingService deepLinkingService,
+									GitHubAuthenticationService gitHubAuthenticationService)
+			: base(mainThread, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
+		{
+		}
 
-        protected override async Task ExecuteDemoButtonCommand(string? buttonText)
-        {
-            await base.ExecuteDemoButtonCommand(buttonText).ConfigureAwait(false);
+		protected override async Task ExecuteDemoButtonCommand(string? buttonText)
+		{
+			await base.ExecuteDemoButtonCommand(buttonText).ConfigureAwait(false);
 
-            await GitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-        }
-    }
+			await GitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
+		}
+	}
 }
