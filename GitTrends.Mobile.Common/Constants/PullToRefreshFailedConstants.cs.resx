@@ -27,4 +27,16 @@
 	<data name="LearnMore" space="preserve">
 		<value>Dozvědět se více</value>
 	</data>
+	<data name="AbuseLimitReached" space="preserve">
+		<value>GitHub API Limit Překročen</value>
+	</data>
+	<data name="GitHubApiAbuseLimit" space="preserve">
+		<value>GitHub API někdy limituje naše požadavky</value>
+	</data>
+	<data name="AbuseLimitAutomaticRetry" space="preserve">
+		<value>Automaticky na pozadí zažádáme o nová data za asi {0} vteřin</value>
+	</data>
+	<data name="AbuseLimitManualRetry" space="preserve">
+		<value>Zavřete GitTrends a zkuste to znovu za asi {0} vteřin</value>
+	</data>
 </root>
