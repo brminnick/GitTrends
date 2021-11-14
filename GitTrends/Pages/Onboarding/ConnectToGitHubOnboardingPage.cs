@@ -9,76 +9,76 @@ using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-    public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
-    {
-        public ConnectToGitHubOnboardingPage(IDeviceInfo deviceInfo,
-                                                IMainThread mainthread,
-                                                IAnalyticsService analyticsService,
-                                                MediaElementService mediaElementService)
-                : base(OnboardingConstants.TryDemoText, deviceInfo, Color.FromHex(BaseTheme.CoralColorHex), mainthread, 3, analyticsService, mediaElementService)
-        {
-            GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
-        }
+	public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
+	{
+		public ConnectToGitHubOnboardingPage(IDeviceInfo deviceInfo,
+												IMainThread mainthread,
+												IAnalyticsService analyticsService,
+												MediaElementService mediaElementService)
+				: base(OnboardingConstants.TryDemoText, deviceInfo, Color.FromHex(BaseTheme.CoralColorHex), mainthread, 3, analyticsService, mediaElementService)
+		{
+			GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+		}
 
-        enum Row { Description, Button, ActivityIndicator }
+		enum Row { Description, Button, ActivityIndicator }
 
-        protected override View CreateImageView() => new Image
-        {
-            Source = "ConnectToGitHubOnboarding",
-            HorizontalOptions = LayoutOptions.CenterAndExpand,
-            VerticalOptions = LayoutOptions.CenterAndExpand,
-            Aspect = Aspect.AspectFit
-        };
+		protected override View CreateImageView() => new Image
+		{
+			Source = "ConnectToGitHubOnboarding",
+			HorizontalOptions = LayoutOptions.CenterAndExpand,
+			VerticalOptions = LayoutOptions.CenterAndExpand,
+			Aspect = Aspect.AspectFit
+		};
 
-        protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ConnectToGitHubPage_Title);
+		protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ConnectToGitHubPage_Title);
 
-        protected override View CreateDescriptionBodyView() => new ScrollView
-        {
-            Content = new Grid
-            {
-                RowSpacing = 16,
+		protected override View CreateDescriptionBodyView() => new ScrollView
+		{
+			Content = new Grid
+			{
+				RowSpacing = 16,
 
-                RowDefinitions = Rows.Define(
-                        (Row.Description, 65),
-                        (Row.Button, 42),
-                        (Row.ActivityIndicator, 42)),
+				RowDefinitions = Rows.Define(
+						(Row.Description, 65),
+						(Row.Button, 42),
+						(Row.ActivityIndicator, 42)),
 
-                Children =
-                {
-                    new BodyLabel(OnboardingConstants.ConnectToGitHubPage_Body_GetStarted).Row(Row.Description),
+				Children =
+				{
+					new BodyLabel(OnboardingConstants.ConnectToGitHubPage_Body_GetStarted).Row(Row.Description),
 
-                    new GitHubButton(OnboardingAutomationIds.ConnectToGitHubButton, GitHubLoginButtonConstants.ConnectToGitHub)
-                        .Row(Row.Button)
-                        .Bind(GitHubButton.CommandProperty, nameof(OnboardingViewModel.ConnectToGitHubButtonCommand))
-                        .Invoke(button => button.CommandParameter = (CancellationToken.None, new Xamarin.Essentials.BrowserLaunchOptions
-                        {
-                            PreferredControlColor = Color.White,
-                            PreferredToolbarColor = Color.FromHex(BaseTheme.CoralColorHex).MultiplyAlpha(0.75),
-                            Flags = Xamarin.Essentials.BrowserLaunchFlags.PresentAsFormSheet,
-                        })),
+					new GitHubButton(OnboardingAutomationIds.ConnectToGitHubButton, GitHubLoginButtonConstants.ConnectToGitHub)
+						.Row(Row.Button)
+						.Bind(GitHubButton.CommandProperty, nameof(OnboardingViewModel.ConnectToGitHubButtonCommand))
+						.Invoke(button => button.CommandParameter = (CancellationToken.None, new Xamarin.Essentials.BrowserLaunchOptions
+						{
+							PreferredControlColor = Color.White,
+							PreferredToolbarColor = Color.FromHex(BaseTheme.CoralColorHex).MultiplyAlpha(0.75),
+							Flags = Xamarin.Essentials.BrowserLaunchFlags.PresentAsFormSheet,
+						})),
 
-                    new IsAuthenticatingIndicator().Row(Row.ActivityIndicator)
-                }
-            }
-        };
+					new IsAuthenticatingIndicator().Row(Row.ActivityIndicator)
+				}
+			}
+		};
 
-        void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
-        {
-            if (e.IsSessionAuthorized)
-                MainThread.BeginInvokeOnMainThread(() => Navigation.PopModalAsync());
-        }
+		void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
+		{
+			if (e.IsSessionAuthorized)
+				MainThread.BeginInvokeOnMainThread(() => Navigation.PopModalAsync());
+		}
 
-        class IsAuthenticatingIndicator : ActivityIndicator
-        {
-            public IsAuthenticatingIndicator()
-            {
-                Color = Color.White;
+		class IsAuthenticatingIndicator : ActivityIndicator
+		{
+			public IsAuthenticatingIndicator()
+			{
+				Color = Color.White;
 
-                AutomationId = OnboardingAutomationIds.IsAuthenticatingActivityIndicator;
+				AutomationId = OnboardingAutomationIds.IsAuthenticatingActivityIndicator;
 
-                this.SetBinding(IsVisibleProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
-                this.SetBinding(IsRunningProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
-            }
-        }
-    }
+				this.SetBinding(IsVisibleProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
+				this.SetBinding(IsRunningProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
+			}
+		}
+	}
 }

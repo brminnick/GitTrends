@@ -4,24 +4,24 @@ using Xamarin.Forms.PancakeView;
 
 namespace GitTrends
 {
-    class AvatarImage : CircleImage
-    {
-        public AvatarImage(in ImageSource imageSource, in double diameter) : this(diameter)
-        {
-            ImageSource = imageSource;
-        }
+	class AvatarImage : CircleImage
+	{
+		public AvatarImage(in ImageSource imageSource, in double diameter) : this(diameter)
+		{
+			ImageSource = imageSource;
+		}
 
-        public AvatarImage(in double diameter)
-        {
-            this.CenterExpand();
+		public AvatarImage(in double diameter)
+		{
+			this.CenterExpand();
 
-            WidthRequest = HeightRequest = diameter;
+			WidthRequest = HeightRequest = diameter;
 
-            Border = new Border
-            {
-                Thickness = 1,
-                Color = Color.Black
-            };
-        }
-    }
+			Border = new Border
+			{
+				Thickness = 1,
+				Color = Color.Black
+			};
+		}
+	}
 }

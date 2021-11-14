@@ -5,36 +5,36 @@ using Newtonsoft.Json;
 
 namespace GitTrends.Shared
 {
-    public record RepositoryConnection
-    {
-        public RepositoryConnection(IEnumerable<RepositoryConnectionNode>? nodes, PageInfo pageInfo)
-        {
-            RepositoryList = (nodes ?? Array.Empty<RepositoryConnectionNode>()).ToList();
-            PageInfo = pageInfo;
-        }
+	public record RepositoryConnection
+	{
+		public RepositoryConnection(IEnumerable<RepositoryConnectionNode>? nodes, PageInfo pageInfo)
+		{
+			RepositoryList = (nodes ?? Array.Empty<RepositoryConnectionNode>()).ToList();
+			PageInfo = pageInfo;
+		}
 
-        [JsonProperty("nodes")]
-        public IReadOnlyList<RepositoryConnectionNode?> RepositoryList { get; }
+		[JsonProperty("nodes")]
+		public IReadOnlyList<RepositoryConnectionNode?> RepositoryList { get; }
 
-        [JsonProperty("pageInfo")]
-        public PageInfo PageInfo { get; }
-    }
+		[JsonProperty("pageInfo")]
+		public PageInfo PageInfo { get; }
+	}
 
-    public record RepositoryConnectionNode(string ViewerPermission, string Name, string Description, long ForkCount, Uri Url, RepositoryOwner Owner, bool IsFork, IssuesConnection Issues, Watchers Watchers)
-    {
-        public DateTimeOffset DataDownloadedAt { get; } = DateTimeOffset.UtcNow;
+	public record RepositoryConnectionNode(string ViewerPermission, string Name, string Description, long ForkCount, Uri Url, RepositoryOwner Owner, bool IsFork, IssuesConnection Issues, Watchers Watchers)
+	{
+		public DateTimeOffset DataDownloadedAt { get; } = DateTimeOffset.UtcNow;
 
-        public RepositoryPermission Permission
-        {
-            get
-            {
-                if (Enum.TryParse<RepositoryPermission>(ViewerPermission, out var permission))
-                    return permission;
+		public RepositoryPermission Permission
+		{
+			get
+			{
+				if (Enum.TryParse<RepositoryPermission>(ViewerPermission, out var permission))
+					return permission;
 
-                return RepositoryPermission.UNKNOWN;
-            }
-        }
-    }
+				return RepositoryPermission.UNKNOWN;
+			}
+		}
+	}
 
-    public record RepositoryOwner(string Login, string AvatarUrl);
+	public record RepositoryOwner(string Login, string AvatarUrl);
 }

@@ -1,4 +1,4 @@
 ﻿namespace GitTrends.Shared
 {
-    public record PageInfo(string EndCursor, bool HasNextPage, bool HasPreviousPage, string StartCursor);
+	public record PageInfo(string EndCursor, bool HasNextPage, bool HasPreviousPage, string StartCursor);
 }

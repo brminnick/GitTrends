@@ -7,56 +7,56 @@ using Xamarin.Forms;
 
 namespace GitTrends.UnitTests
 {
-    class FavIconServiceTests : BaseTest
-    {
-        [Test]
-        public async Task GetFavIconImageSourceTest_InvalidUri()
-        {
-            //Arrange
-            Uri invalidUri = new Uri("https://abc123456789.com/");
-            var favIconService = ServiceCollection.ServiceProvider.GetRequiredService<FavIconService>();
+	class FavIconServiceTests : BaseTest
+	{
+		[Test]
+		public async Task GetFavIconImageSourceTest_InvalidUri()
+		{
+			//Arrange
+			Uri invalidUri = new Uri("https://abc123456789.com/");
+			var favIconService = ServiceCollection.ServiceProvider.GetRequiredService<FavIconService>();
 
-            //Act
-            var fileImageSource = (FileImageSource)await favIconService.GetFavIconImageSource(invalidUri, CancellationToken.None).ConfigureAwait(false);
+			//Act
+			var fileImageSource = (FileImageSource)await favIconService.GetFavIconImageSource(invalidUri, CancellationToken.None).ConfigureAwait(false);
 
-            //Assert
-            Assert.IsNotNull(fileImageSource);
-            Assert.AreEqual(fileImageSource.File, FavIconService.DefaultFavIcon);
-        }
+			//Assert
+			Assert.IsNotNull(fileImageSource);
+			Assert.AreEqual(fileImageSource.File, FavIconService.DefaultFavIcon);
+		}
 
 #warning Cached GitHub FavIcon failing, 2021-10-28
-        //[TestCase("https://codetraveler.io", "https://favicons.githubusercontent.com/codetraveler.io")] //Cached GitHub FavIcon
-        [TestCase("http://contiva.atlassian.net", "https://wac-cdn.atlassian.com/assets/img/favicons/atlassian/favicon.png")] //Clear Text Uri
-        [TestCase("https://contiva.atlassian.net/", "https://wac-cdn.atlassian.com/assets/img/favicons/atlassian/favicon.png")] //Icon Url
-        [TestCase("https://chrissainty.com/", "https://chrissainty.com/favicon.png")] //Shortcut icon Url
-        [TestCase("https://forums.xamarin.com/", "https://xamarin.com/apple-touch-icon.png")] //Apple Touch Icon Url
-        [TestCase("https://mondaypunday.com/", "https://mondaypunday.com/favicon.ico")] //FavIcon Url
-        public async Task GetFavIconImageSourceTest_ValidUrl(string url, string expectedFavIconUrl)
-        {
-            //Arrange
-            var favIconService = ServiceCollection.ServiceProvider.GetRequiredService<FavIconService>();
+		//[TestCase("https://codetraveler.io", "https://favicons.githubusercontent.com/codetraveler.io")] //Cached GitHub FavIcon
+		[TestCase("http://contiva.atlassian.net", "https://wac-cdn.atlassian.com/assets/img/favicons/atlassian/favicon.png")] //Clear Text Uri
+		[TestCase("https://contiva.atlassian.net/", "https://wac-cdn.atlassian.com/assets/img/favicons/atlassian/favicon.png")] //Icon Url
+		[TestCase("https://chrissainty.com/", "https://chrissainty.com/favicon.png")] //Shortcut icon Url
+		[TestCase("https://forums.xamarin.com/", "https://xamarin.com/apple-touch-icon.png")] //Apple Touch Icon Url
+		[TestCase("https://mondaypunday.com/", "https://mondaypunday.com/favicon.ico")] //FavIcon Url
+		public async Task GetFavIconImageSourceTest_ValidUrl(string url, string expectedFavIconUrl)
+		{
+			//Arrange
+			var favIconService = ServiceCollection.ServiceProvider.GetRequiredService<FavIconService>();
 
-            //Act
-            var uriImageSource = (UriImageSource)await favIconService.GetFavIconImageSource(new Uri(url), CancellationToken.None).ConfigureAwait(false);
+			//Act
+			var uriImageSource = (UriImageSource)await favIconService.GetFavIconImageSource(new Uri(url), CancellationToken.None).ConfigureAwait(false);
 
-            //Assert
-            Assert.IsNotNull(uriImageSource);
-            Assert.AreEqual(new Uri(expectedFavIconUrl), uriImageSource.Uri);
-        }
+			//Assert
+			Assert.IsNotNull(uriImageSource);
+			Assert.AreEqual(new Uri(expectedFavIconUrl), uriImageSource.Uri);
+		}
 
-        [TestCase("https://www.abbotslangley-pc.gov.uk", "https://www.abbotslangley-pc.gov.uk/wp-content/uploads/2017/09/favicon-1.png")]
-        public async Task GetFavIconImageSourceTest_CountryCodeTopLevelDomains(string url, string expectedFavIconUrl)
-        {
-            //Arrange
-            var favIconService = ServiceCollection.ServiceProvider.GetRequiredService<FavIconService>();
+		[TestCase("https://www.abbotslangley-pc.gov.uk", "https://www.abbotslangley-pc.gov.uk/wp-content/uploads/2017/09/favicon-1.png")]
+		public async Task GetFavIconImageSourceTest_CountryCodeTopLevelDomains(string url, string expectedFavIconUrl)
+		{
+			//Arrange
+			var favIconService = ServiceCollection.ServiceProvider.GetRequiredService<FavIconService>();
 
-            //Act
-            var uriImageSource = (UriImageSource)await favIconService.GetFavIconImageSource(new Uri(url), CancellationToken.None).ConfigureAwait(false);
+			//Act
+			var uriImageSource = (UriImageSource)await favIconService.GetFavIconImageSource(new Uri(url), CancellationToken.None).ConfigureAwait(false);
 
-            //Assert
-            Assert.IsNotNull(uriImageSource);
-            Assert.AreEqual(new Uri(expectedFavIconUrl), uriImageSource.Uri);
-            Assert.IsFalse(uriImageSource.Uri.ToString().Contains("https://favicons.githubusercontent.com"));
-        }
-    }
+			//Assert
+			Assert.IsNotNull(uriImageSource);
+			Assert.AreEqual(new Uri(expectedFavIconUrl), uriImageSource.Uri);
+			Assert.IsFalse(uriImageSource.Uri.ToString().Contains("https://favicons.githubusercontent.com"));
+		}
+	}
 }
