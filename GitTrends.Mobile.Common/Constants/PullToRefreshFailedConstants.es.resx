@@ -27,4 +27,16 @@
 	<data name="LearnMore" space="preserve">
 		<value>Aprende más</value>
 	</data>
+	<data name="AbuseLimitReached" space="preserve">
+		<value>Se alcanzó el límite de solicitudes para la API de GitHub</value>
+	</data>
+	<data name="GitHubApiAbuseLimit" space="preserve">
+		<value>La API de GitHub a veces desacelera nuestras solicitudes de la API</value>
+	</data>
+	<data name="AbuseLimitAutomaticRetry" space="preserve">
+		<value>Recuperaremos automáticamente la data en segundo plano en aproximadamente {0} segundos</value>
+	</data>
+	<data name="AbuseLimitManualRetry" space="preserve">
+		<value>Cierra GitTrends y vuelve a intentarlo en aproximadamente {0} segundos</value>
+	</data>
 </root>
