@@ -28,7 +28,7 @@
     <value>Zugriff erlauben</value>
   </data>
 	<data name="EnableOrganizationsDescription" xml:space="preserve">
-    <value>Erlaube Zufriff für Organisation durch Runterscrollen, Auffinden der Organisation und Auswahl von "Anfordern"</value>
+    <value>Erlaube Zufriff für Organisation durch Runterscrollen, Auffinden der Organisation und Auswahl von "Request"</value>
   </data>
 </root>
 
