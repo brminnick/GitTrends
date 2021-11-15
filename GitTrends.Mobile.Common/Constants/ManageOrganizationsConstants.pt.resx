@@ -13,7 +13,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EnableOrganizationsDescription" xml:space="preserve">
-    <value>Para habilitar o acesso à Organizações role a tela, localize sua Organização e selecione "Solicitar"</value>
+    <value>Para habilitar o acesso à Organizações role a tela, localize sua Organização e selecione "Request"</value>
   </data>
   <data name="EnableOrganizationsTitle" xml:space="preserve">
     <value>Habilitar Acesso</value>
