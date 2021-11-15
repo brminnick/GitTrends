@@ -117,25 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CreatedBy" xml:space="preserve">
-    <value>Створено Code Traveler LLC</value>
+  <data name="EnableOrganizationsDescription" xml:space="preserve">
+    <value>Щоб увімкнути доступ для організації, прокрутіть нижче, оберіть свою організацію та оберіть "Запит"</value>
   </data>
-  <data name="IncludeOrganziations" xml:space="preserve">
-    <value>Включити організації</value>
+  <data name="EnableOrganizationsTitle" xml:space="preserve">
+    <value>Увімкнути доступ</value>
   </data>
-  <data name="Language" xml:space="preserve">
-    <value>Мова</value>
+  <data name="GitHubOrganizationsDescription" xml:space="preserve">
+    <value>Організації GitHub - це облікові записи спільного користування, з якими команда може працювати разом над багатьма проектами</value>
   </data>
-  <data name="ManageOrganizations" xml:space="preserve">
-    <value>Керувати організаціями</value>
+  <data name="GitHubOrganizationsTitle" xml:space="preserve">
+    <value>Організації</value>
   </data>
-  <data name="PreferredChartSettingsLabelText" xml:space="preserve">
-    <value>Вибрані графіки</value>
+  <data name="GitTrendsAccessDescription" xml:space="preserve">
+    <value>Доступ для організації має бути встановлений окремо для кожної організації</value>
   </data>
-  <data name="RegisterForNotifications" xml:space="preserve">
-    <value>Підписатися на сповіщення</value>
-  </data>
-  <data name="Theme" xml:space="preserve">
-    <value>Тема</value>
+  <data name="GitTrendsAccessTitle" xml:space="preserve">
+    <value>Доступ</value>
   </data>
 </root>
