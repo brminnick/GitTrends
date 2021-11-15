@@ -117,31 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="UnableToConnectToGitHub" xml:space="preserve">
-    <value>Klarte ikke å koble til GitHub</value>
+  <data name="GitHubOrganizationsTitle" xml:space="preserve">
+    <value>Organisasjoner</value>
   </data>
-  <data name="UsageLimitExceeded" xml:space="preserve">
-    <value>Bruksgrense nådd</value>
+  <data name="GitHubOrganizationsDescription" xml:space="preserve">
+    <value>GitHub Organisasjoner er delte kontoer der lag kan samarbeide på tvers av flere prosjekter</value>
   </data>
-  <data name="GitHubApiLimit" xml:space="preserve">
-    <value>GitHub API-et begrenser våre API-forespørsler til 5000 forespørsler pr. bruker pr. time</value>
+  <data name="GitTrendsAccessTitle" xml:space="preserve">
+    <value>Tilgang</value>
   </data>
-  <data name="MinutesReset" xml:space="preserve">
-    <value>Den nåværende grensen er anslått til å bli nullstilt om {0} minutt</value>
+  <data name="GitTrendsAccessDescription" xml:space="preserve">
+    <value>Organisasjonstilgang må bli manuelt tillatt for hver organisasjon</value>
   </data>
-  <data name="LearnMore" xml:space="preserve">
-    <value>Lær mer</value>
+  <data name="EnableOrganizationsTitle" xml:space="preserve">
+    <value>Tillat tilgang</value>
   </data>
-  <data name="AbuseLimitAutomaticRetry" xml:space="preserve">
-    <value>Vi vil automatisk hente dataene i bakgrunnen om omtrent {0} sekunder</value>
-  </data>
-  <data name="AbuseLimitManualRetry" xml:space="preserve">
-    <value>Lukk GitTrends og prøv igjen om omtrent {0} sekunder</value>
-  </data>
-  <data name="AbuseLimitReached" xml:space="preserve">
-    <value>GitHub API-grense nådd</value>
-  </data>
-  <data name="GitHubApiAbuseLimit" xml:space="preserve">
-    <value>GitHub API-et vil noen ganger strupe API-forespørslene våre</value>
+  <data name="EnableOrganizationsDescription" xml:space="preserve">
+    <value>Aktiver organisasjonstilgang ved å scrolle ned, finn din organisasjon og velg "Forespør"</value>
   </data>
 </root>
