@@ -445,7 +445,7 @@ namespace GitTrends
 			CopyrightLabelText = $"{getVersionNumberText(_versionTracking)}\n{SettingsPageConstants.CreatedBy}";
 			PreferredChartsLabelText = SettingsPageConstants.PreferredChartSettingsLabelText;
 			RegisterForNotificationsLabelText = SettingsPageConstants.RegisterForNotifications;
-			ShouldIncludeOrganizationsLabelText = SettingsPageConstants.IncludeOrganziations;
+			ShouldIncludeOrganizationsLabelText = SettingsPageConstants.IncludeOrganizations;
 
 			ThemePickerItemsSource = ThemePickerConstants.ThemePickerTitles.Values.ToList();
 			PreferredChartsItemsSource = TrendsChartConstants.TrendsChartTitles.Values.ToList();
