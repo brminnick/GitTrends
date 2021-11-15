@@ -28,6 +28,6 @@
     <value>Разрешить доступ</value>
   </data>
 	<data name="EnableOrganizationsDescription" xml:space="preserve">
-    <value>Чтобы разрешить доступ для Организации прокрутите вниз, найдите свою Организацию и выберите "Запрос"</value>
+    <value>Чтобы разрешить доступ для Организации прокрутите вниз, найдите свою Организацию и выберите "Request"</value>
   </data>
 </root>

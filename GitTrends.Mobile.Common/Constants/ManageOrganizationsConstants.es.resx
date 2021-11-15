@@ -28,6 +28,6 @@
     <value>Habilitar acceso</value>
   </data>
 	<data name="EnableOrganizationsDescription" xml:space="preserve">
-    <value>Habilita el acceso a la organización desplazándote hacia abajo, localizando tu organización y seleccionando "Solicitar"</value>
+    <value>Habilita el acceso a la organización desplazándote hacia abajo, localizando tu organización y seleccionando "Request"</value>
   </data>
 </root>
