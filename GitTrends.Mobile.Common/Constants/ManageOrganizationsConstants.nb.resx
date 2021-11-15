@@ -133,6 +133,6 @@
     <value>Tillat tilgang</value>
   </data>
   <data name="EnableOrganizationsDescription" xml:space="preserve">
-    <value>Aktiver organisasjonstilgang ved å scrolle ned, finn din organisasjon og velg "Forespør"</value>
+    <value>Aktiver organisasjonstilgang ved å scrolle ned, finn din organisasjon og velg "Request"</value>
   </data>
 </root>
