@@ -201,13 +201,13 @@ namespace GitTrends.UnitTests
 			shouldIncludeOrganizations_Initial = gitHubUserService.ShouldIncludeOrganizations;
 
 			gitHubUserService.ShouldIncludeOrganizations = !gitHubUserService.ShouldIncludeOrganizations;
-			var shouldIncludeOrganziationsChangedResult = await shouldIncludeOrganizationsChangedTCS.Task.ConfigureAwait(false);
+			var shouldIncludeOrganizationsChangedResult = await shouldIncludeOrganizationsChangedTCS.Task.ConfigureAwait(false);
 
 			shouldIncludeOrganizations_Final = gitHubUserService.ShouldIncludeOrganizations;
 
 			//Assert
 			Assert.IsFalse(shouldIncludeOrganizations_Initial);
-			Assert.IsTrue(shouldIncludeOrganziationsChangedResult);
+			Assert.IsTrue(shouldIncludeOrganizationsChangedResult);
 			Assert.IsTrue(shouldIncludeOrganizations_Final);
 
 			void HandleShouldIncludeOrganizationsChanged(object? sender, bool e)
