@@ -13,22 +13,22 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 	<data name="GitHubOrganizationsTitle" xml:space="preserve">
-    <value>Organisationen</value>
+    <value>Organisaties</value>
   </data>
 	<data name="GitHubOrganizationsDescription" xml:space="preserve">
-    <value>GitHub-Organisationen sind geteilte Accounts, in denen Teams über mehrere Projekte hinweg miteinander kollaborieren können</value>
+    <value>GitHub Organizations (organisaties) zijn gedeelde accounts waarmee teams gemakkelijk kunnen samenwerken aan projecten</value>
   </data>
 	<data name="GitTrendsAccessTitle" xml:space="preserve">
-    <value>Zugriff</value>
+    <value>Toegang</value>
   </data>
 	<data name="GitTrendsAccessDescription" xml:space="preserve">
-    <value>Organisation-Zugriff muss manuell für jede Organisation gewährt werden</value>
+    <value>Toegang tot een organisatie dient handmatig, voor iedere organisatie te worden toegestaan</value>
   </data>
 	<data name="EnableOrganizationsTitle" xml:space="preserve">
-    <value>Zugriff erlauben</value>
+    <value>Toegang Toestaan</value>
   </data>
 	<data name="EnableOrganizationsDescription" xml:space="preserve">
-    <value>Erlaube Zufriff für Organisation durch Runterscrollen, Auffinden der Organisation und Auswahl von "Request"</value>
+    <value>Sta toegang tot een organisatie toe door naar beneden te scrollen, je gewenste organisatie te localiseren en op "Request" (aanvragen) te drukken</value>
   </data>
 </root>
 
