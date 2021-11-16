@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="GitHubOrganizationsTitle" xml:space="preserve">
+    <value>Organisasjoner</value>
+  </data>
+  <data name="GitHubOrganizationsDescription" xml:space="preserve">
+    <value>GitHub Organisasjoner er delte kontoer der lag kan samarbeide på tvers av flere prosjekter</value>
+  </data>
+  <data name="GitTrendsAccessTitle" xml:space="preserve">
+    <value>Tilgang</value>
+  </data>
+  <data name="GitTrendsAccessDescription" xml:space="preserve">
+    <value>Organisasjonstilgang må bli manuelt tillatt for hver organisasjon</value>
+  </data>
+  <data name="EnableOrganizationsTitle" xml:space="preserve">
+    <value>Tillat tilgang</value>
+  </data>
+  <data name="EnableOrganizationsDescription" xml:space="preserve">
+    <value>Aktiver organisasjonstilgang ved å scrolle ned, finn din organisasjon og velg "Request"</value>
+  </data>
+</root>
