@@ -101,6 +101,9 @@
 		  <Generator>PublicResXFileCodeGenerator</Generator>
 		  <LastGenOutput>ManageOrganizationsConstants.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
+		<EmbeddedResource Condition=" '$(EnableDefaultEmbeddedResourceItems)' == 'true' " Update="Constants\ManageOrganizationsConstants %28copy%29.uk.resx">
+		  <DependentUpon>ManageOrganizationsConstants.resx</DependentUpon>
+		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Update="Constants\AppStoreRatingRequestConstants.*.resx">
