@@ -24,8 +24,6 @@ namespace GitTrends.UnitTests
 			Assert.AreEqual(fileImageSource.File, FavIconService.DefaultFavIcon);
 		}
 
-#warning Cached GitHub FavIcon failing, 2021-10-28
-		//[TestCase("https://codetraveler.io", "https://favicons.githubusercontent.com/codetraveler.io")] //Cached GitHub FavIcon
 		[TestCase("http://contiva.atlassian.net", "https://wac-cdn.atlassian.com/assets/img/favicons/atlassian/favicon.png")] //Clear Text Uri
 		[TestCase("https://contiva.atlassian.net/", "https://wac-cdn.atlassian.com/assets/img/favicons/atlassian/favicon.png")] //Icon Url
 		[TestCase("https://chrissainty.com/", "https://chrissainty.com/favicon.png")] //Shortcut icon Url
