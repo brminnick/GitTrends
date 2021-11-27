@@ -19,9 +19,9 @@
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <MandroidI18n>cjk;mideast;other;rare;west</MandroidI18n>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <NuGetPackageImportStamp></NuGetPackageImportStamp>
     <AndroidSupportedAbis>armeabi-v7a;arm64-v8a;x86;x86_64</AndroidSupportedAbis>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,7 +44,6 @@
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <AotAssemblies>true</AotAssemblies>
     <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
     <AndroidUseAapt2>true</AndroidUseAapt2>
@@ -63,7 +62,6 @@
     <WarningLevel>4</WarningLevel>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <AotAssemblies>true</AotAssemblies>
     <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
     <AndroidUseAapt2>true</AndroidUseAapt2>
