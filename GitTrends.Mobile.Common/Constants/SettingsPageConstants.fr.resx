@@ -135,4 +135,7 @@
   <data name="ManageOrganizations" xml:space="preserve">
     <value>Gérer les organisations</value>
   </data>
+  <data name="IncludeOrganizations" xml:space="preserve">
+    <value>Inclus organisations</value>
+  </data>
 </root>
