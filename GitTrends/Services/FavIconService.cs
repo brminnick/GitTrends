@@ -35,15 +35,7 @@ namespace GitTrends
 			{
 				baseUrl = $"{scheme}://{GetRootDomain(site.Host)}/";
 
-				//Begin fetching the favicons from the website in the background
-				var getFavIconsTask = GetFavIcons(baseUrl, cancellationToken);
-
-				//Prioritize GitHub's cached FavIcon
-				var gitHubCachedFavIcon = await GetFavIconFromGitHubCache(new Uri(baseUrl), cancellationToken).ConfigureAwait(false);
-				if (gitHubCachedFavIcon != null)
-					return gitHubCachedFavIcon.Url;
-
-				var (getAppleTouchIconTask, getShortcutIconTask, getIconTask, getFavIconTask) = await getFavIconsTask.ConfigureAwait(false);
+				var (getAppleTouchIconTask, getShortcutIconTask, getIconTask, getFavIconTask) = await GetFavIcons(baseUrl, cancellationToken).ConfigureAwait(false);
 
 				var appleTouchIconRespnse = await getAppleTouchIconTask.ConfigureAwait(false);
 				if (appleTouchIconRespnse != null)
@@ -129,6 +121,7 @@ namespace GitTrends
 			return (appleTouchIconTask, shortcutIconTask, iconTask, favIconTask);
 		}
 
+		[Obsolete("GitHub has deprecated their FavIcon Cache")]
 		static async Task<FavIconResponseModel?> GetFavIconFromGitHubCache(Uri uri, CancellationToken cancellationToken)
 		{
 			try
