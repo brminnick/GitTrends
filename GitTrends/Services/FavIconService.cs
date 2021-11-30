@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -27,7 +28,7 @@ namespace GitTrends
 
 		public async Task<ImageSource> GetFavIconImageSource(Uri site, CancellationToken cancellationToken)
 		{
-			var scheme = site.Scheme is "http" ? "https" : site.Scheme;
+			var scheme = site.Scheme == Uri.UriSchemeHttp ? Uri.UriSchemeHttps : site.Scheme;
 
 			string baseUrl = string.Empty;
 
