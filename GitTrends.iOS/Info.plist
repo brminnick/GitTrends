@@ -31,12 +31,10 @@
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/AppIcon.appiconset</string>
 	<key>CFBundleURLTypes</key>
-	<dict>
-   		<key>aps-environment</key>
-		<string>development OR production</string>
-	</dict>
 	<array>
 		<dict>
+   			<key>aps-environment</key>
+			<string>development OR production</string>
 			<key>CFBundleURLName</key>
 			<string>com.minnick.GitTrends</string>
 			<key>CFBundleURLSchemes</key>
