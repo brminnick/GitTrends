@@ -26,8 +26,8 @@ jobs:
       - name: Commit files
         if: steps.format.outputs.has-changes == 'true'
         run: |
-          git config --local user.name "brminnick"
-          git config --local user.email "13558917+brminnick@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -a -m 'Automated dotnet-format update'
 
       - name: Create Pull Request
@@ -36,8 +36,8 @@ jobs:
           title: '[housekeeping] Automated PR to fix formatting errors'
           body: |
             Automated PR to fix formatting errors
-          committer: brminnick <13558917+brminnick@users.noreply.github.com>
-          author: brminnick <13558917+brminnick@users.noreply.github.com>
+          committer: GitHub <noreply@github.com>
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           labels: housekeeping
           assignees: brminnick
           reviewers: brminnick
@@ -47,8 +47,8 @@ jobs:
       # - name: Commit files
       #   if: steps.format.outputs.has-changes == 'true'
       #   run: |
-      #     git config --local user.name "brminnick"
-      #     git config --local user.email "13558917+brminnick@users.noreply.github.com"
+      #     git config --local user.name "github-actions[bot]"
+      #     git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
       #     git commit -a -m 'Automated dotnet-format update
       #     Co-authored-by: ${{ github.event.pull_request.user.login }} <${{ github.event.pull_request.user.id }}+${{ github.event.pull_request.user.login }}@users.noreply.github.com>'
 
