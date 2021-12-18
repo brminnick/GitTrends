@@ -11,34 +11,34 @@ using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
-namespace GitTrends
+namespace GitTrends;
+
+public class SettingsPage : BaseContentPage<SettingsViewModel>
 {
-	public class SettingsPage : BaseContentPage<SettingsViewModel>
+	readonly Grid _contentGrid;
+	readonly OrganizationsCarouselOverlay _organizationsCarouselOverlay;
+
+	CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
+
+	public SettingsPage(IMainThread mainThread,
+						IAnalyticsService analyticsService,
+						SettingsViewModel settingsViewModel,
+						MediaElementService mediaElementService) : base(settingsViewModel, analyticsService, mainThread)
 	{
-		readonly Grid _contentGrid;
-		readonly OrganizationsCarouselOverlay _organizationsCarouselOverlay;
+		const int separatorRowHeight = 1;
+		const int settingsRowHeight = 38;
 
-		CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
+		SettingsViewModel.OrganizationsCarouselViewVisiblilityChanged += HandleOrganizationsCarouselViewVisiblilityChanged;
 
-		public SettingsPage(IMainThread mainThread,
-							IAnalyticsService analyticsService,
-							SettingsViewModel settingsViewModel,
-							MediaElementService mediaElementService) : base(settingsViewModel, analyticsService, mainThread)
+		var loginRowTapGesture = new TapGestureRecognizer();
+		loginRowTapGesture.Tapped += HandleLoginRowTapped;
+
+		var aboutRowTapGesture = new TapGestureRecognizer();
+		aboutRowTapGesture.Tapped += HandleAboutRowTapped;
+
+		Content = new Grid
 		{
-			const int separatorRowHeight = 1;
-			const int settingsRowHeight = 38;
-
-			SettingsViewModel.OrganizationsCarouselViewVisiblilityChanged += HandleOrganizationsCarouselViewVisiblilityChanged;
-
-			var loginRowTapGesture = new TapGestureRecognizer();
-			loginRowTapGesture.Tapped += HandleLoginRowTapped;
-
-			var aboutRowTapGesture = new TapGestureRecognizer();
-			aboutRowTapGesture.Tapped += HandleAboutRowTapped;
-
-			Content = new Grid
-			{
-				Children =
+			Children =
 				{
 					new ScrollView
 					{
@@ -174,167 +174,166 @@ namespace GitTrends
 
 					new OrganizationsCarouselOverlay(mainThread, analyticsService, mediaElementService).Assign(out _organizationsCarouselOverlay),
 				}
-			};
+		};
 
-			this.SetBinding(TitleProperty, nameof(SettingsViewModel.TitleText));
+		this.SetBinding(TitleProperty, nameof(SettingsViewModel.TitleText));
 
-			static Color getSVGIconColor() => (Color)Application.Current.Resources[nameof(BaseTheme.IconColor)];
-		}
+		static Color getSVGIconColor() => (Color)Application.Current.Resources[nameof(BaseTheme.IconColor)];
+	}
 
-		enum SettingsRow { GitHubUser, GitHubUserSeparator, About, AboutSeparator, Login, LoginSeparator, Organizations, OrganizationsSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, Language, LanguageSeparator, PreferredCharts, PreferredChartsSeparator, CopyrightPadding, Copyright }
-		enum SettingsColumn { Icon, Title, Button }
+	enum SettingsRow { GitHubUser, GitHubUserSeparator, About, AboutSeparator, Login, LoginSeparator, Organizations, OrganizationsSeparator, Notifications, NotificationsSeparator, Theme, ThemeSeparator, Language, LanguageSeparator, PreferredCharts, PreferredChartsSeparator, CopyrightPadding, Copyright }
+	enum SettingsColumn { Icon, Title, Button }
 
-		protected override void OnAppearing()
+	protected override void OnAppearing()
+	{
+		base.OnAppearing();
+
+		_connectToGitHubCancellationTokenSource = new();
+	}
+
+	protected override void OnDisappearing()
+	{
+		_connectToGitHubCancellationTokenSource.Cancel();
+
+		base.OnDisappearing();
+	}
+
+	async void HandleAboutRowTapped(object sender, EventArgs e)
+	{
+		AnalyticsService.Track("About Button Tapped");
+
+		var aboutPage = ContainerService.Container.Resolve<AboutPage>();
+		await Navigation.PushAsync(aboutPage);
+	}
+
+	async void HandleLoginRowTapped(object sender, EventArgs e)
+	{
+		AnalyticsService.Track("Login Button Tapped", nameof(ViewModel.IsNotAuthenticating), ViewModel.IsNotAuthenticating.ToString());
+
+		if (ViewModel.IsNotAuthenticating)
 		{
-			base.OnAppearing();
+			var loginRowViews = _contentGrid.Children.OfType<ILoginRowView>().Cast<View>();
 
-			_connectToGitHubCancellationTokenSource = new();
+			await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(0.3, 75)));
+
+			ViewModel.ConnectToGitHubButtonCommand.Execute((_connectToGitHubCancellationTokenSource.Token, (BrowserLaunchOptions?)null));
+
+			await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(1, 350, Easing.CubicOut)));
 		}
+	}
 
-		protected override void OnDisappearing()
+	async void HandleOrganizationsCarouselViewVisiblilityChanged(object sender, bool isVisible) => await MainThread.InvokeOnMainThreadAsync(async () =>
+	{
+		if (isVisible)
+			await _organizationsCarouselOverlay.Reveal(true);
+		else
+			await _organizationsCarouselOverlay.Dismiss(true);
+	});
+
+	class AboutRowTappableView : View
+	{
+		public AboutRowTappableView(TapGestureRecognizer tapGestureRecognizer) => GestureRecognizers.Add(tapGestureRecognizer);
+	}
+
+	class LoginRowTappableView : View, ILoginRowView
+	{
+		public LoginRowTappableView(TapGestureRecognizer tapGestureRecognizer) => GestureRecognizers.Add(tapGestureRecognizer);
+	}
+
+	class LoginRowSvg : SvgImage, ILoginRowView
+	{
+		public LoginRowSvg(in string svgFileName, in Func<Color> getTextColor) : base(svgFileName, getTextColor)
 		{
-			_connectToGitHubCancellationTokenSource.Cancel();
-
-			base.OnDisappearing();
+			//Allow LoginRowTappableView to handle taps
+			InputTransparent = true;
 		}
+	}
 
-		async void HandleAboutRowTapped(object sender, EventArgs e)
+	class LoginLabel : TitleLabel, ILoginRowView
+	{
+		public LoginLabel()
 		{
-			AnalyticsService.Track("About Button Tapped");
+			this.FillExpand();
+			HorizontalTextAlignment = TextAlignment.Start;
 
-			var aboutPage = ContainerService.Container.Resolve<AboutPage>();
-			await Navigation.PushAsync(aboutPage);
+			AutomationId = SettingsPageAutomationIds.LoginTitleLabel;
+
+			//Allow LoginRowTappableView to handle taps
+			InputTransparent = true;
+
+			this.SetBinding(TextProperty, nameof(SettingsViewModel.LoginLabelText));
 		}
+	}
 
-		async void HandleLoginRowTapped(object sender, EventArgs e)
+	class AboutTitleLabel : SettingsTitleLabel
+	{
+		public AboutTitleLabel(in string automationId) : base(automationId)
 		{
-			AnalyticsService.Track("Login Button Tapped", nameof(ViewModel.IsNotAuthenticating), ViewModel.IsNotAuthenticating.ToString());
-
-			if (ViewModel.IsNotAuthenticating)
-			{
-				var loginRowViews = _contentGrid.Children.OfType<ILoginRowView>().Cast<View>();
-
-				await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(0.3, 75)));
-
-				ViewModel.ConnectToGitHubButtonCommand.Execute((_connectToGitHubCancellationTokenSource.Token, (BrowserLaunchOptions?)null));
-
-				await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(1, 350, Easing.CubicOut)));
-			}
+			//Allow AboutRowTappableView to handle taps
+			InputTransparent = true;
 		}
+	}
 
-		async void HandleOrganizationsCarouselViewVisiblilityChanged(object sender, bool isVisible) => await MainThread.InvokeOnMainThreadAsync(async () =>
+	class AboutRowSvg : SvgImage
+	{
+		public AboutRowSvg(in string svgFileName, in Func<Color> getTextColor) : base(svgFileName, getTextColor)
 		{
-			if (isVisible)
-				await _organizationsCarouselOverlay.Reveal(true);
-			else
-				await _organizationsCarouselOverlay.Dismiss(true);
-		});
-
-		class AboutRowTappableView : View
-		{
-			public AboutRowTappableView(TapGestureRecognizer tapGestureRecognizer) => GestureRecognizers.Add(tapGestureRecognizer);
+			//Allow AboutRowTappableView to handle taps
+			InputTransparent = true;
+			AutomationId = SettingsPageAutomationIds.AboutButton;
 		}
+	}
 
-		class LoginRowTappableView : View, ILoginRowView
+	class SettingsTitleLabel : TitleLabel
+	{
+		public SettingsTitleLabel(in string automationId) => AutomationId = automationId;
+	}
+
+	class Separator : BoxView
+	{
+		public Separator() => this.DynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
+	}
+
+	class EnableNotificationsSwitch : SettingsSwitch
+	{
+		public EnableNotificationsSwitch()
 		{
-			public LoginRowTappableView(TapGestureRecognizer tapGestureRecognizer) => GestureRecognizers.Add(tapGestureRecognizer);
-		}
+			AutomationId = SettingsPageAutomationIds.RegisterForNotificationsSwitch;
 
-		class LoginRowSvg : SvgImage, ILoginRowView
+			this.SetBinding(IsToggledProperty, nameof(SettingsViewModel.IsRegisterForNotificationsSwitchToggled));
+			this.SetBinding(IsEnabledProperty, nameof(SettingsViewModel.IsRegisterForNotificationsSwitchEnabled));
+		}
+	}
+
+	class IncludeOrganizationsSwitch : SettingsSwitch
+	{
+		public IncludeOrganizationsSwitch()
 		{
-			public LoginRowSvg(in string svgFileName, in Func<Color> getTextColor) : base(svgFileName, getTextColor)
-			{
-				//Allow LoginRowTappableView to handle taps
-				InputTransparent = true;
-			}
-		}
+			AutomationId = SettingsPageAutomationIds.IncludeOrganizationsSwitch;
 
-		class LoginLabel : TitleLabel, ILoginRowView
+			this.SetBinding(IsToggledProperty, nameof(SettingsViewModel.IsShouldIncludeOrganizationsSwitchToggled));
+			this.SetBinding(IsEnabledProperty, nameof(SettingsViewModel.IsShouldIncludeOrganizationsSwitchEnabled));
+		}
+	}
+
+	class SettingsPicker : Picker
+	{
+		public SettingsPicker(in string automationId, in int widthRequest)
 		{
-			public LoginLabel()
-			{
-				this.FillExpand();
-				HorizontalTextAlignment = TextAlignment.Start;
+			FontSize = 12;
+			WidthRequest = widthRequest;
+			AutomationId = automationId;
+			FontFamily = FontFamilyConstants.RobotoMedium;
 
-				AutomationId = SettingsPageAutomationIds.LoginTitleLabel;
+			this.EndExpand();
 
-				//Allow LoginRowTappableView to handle taps
-				InputTransparent = true;
-
-				this.SetBinding(TextProperty, nameof(SettingsViewModel.LoginLabelText));
-			}
+			this.DynamicResources((TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor)),
+									(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)));
 		}
+	}
 
-		class AboutTitleLabel : SettingsTitleLabel
-		{
-			public AboutTitleLabel(in string automationId) : base(automationId)
-			{
-				//Allow AboutRowTappableView to handle taps
-				InputTransparent = true;
-			}
-		}
+	interface ILoginRowView
+	{
 
-		class AboutRowSvg : SvgImage
-		{
-			public AboutRowSvg(in string svgFileName, in Func<Color> getTextColor) : base(svgFileName, getTextColor)
-			{
-				//Allow AboutRowTappableView to handle taps
-				InputTransparent = true;
-				AutomationId = SettingsPageAutomationIds.AboutButton;
-			}
-		}
-
-		class SettingsTitleLabel : TitleLabel
-		{
-			public SettingsTitleLabel(in string automationId) => AutomationId = automationId;
-		}
-
-		class Separator : BoxView
-		{
-			public Separator() => this.DynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
-		}
-
-		class EnableNotificationsSwitch : SettingsSwitch
-		{
-			public EnableNotificationsSwitch()
-			{
-				AutomationId = SettingsPageAutomationIds.RegisterForNotificationsSwitch;
-
-				this.SetBinding(IsToggledProperty, nameof(SettingsViewModel.IsRegisterForNotificationsSwitchToggled));
-				this.SetBinding(IsEnabledProperty, nameof(SettingsViewModel.IsRegisterForNotificationsSwitchEnabled));
-			}
-		}
-
-		class IncludeOrganizationsSwitch : SettingsSwitch
-		{
-			public IncludeOrganizationsSwitch()
-			{
-				AutomationId = SettingsPageAutomationIds.IncludeOrganizationsSwitch;
-
-				this.SetBinding(IsToggledProperty, nameof(SettingsViewModel.IsShouldIncludeOrganizationsSwitchToggled));
-				this.SetBinding(IsEnabledProperty, nameof(SettingsViewModel.IsShouldIncludeOrganizationsSwitchEnabled));
-			}
-		}
-
-		class SettingsPicker : Picker
-		{
-			public SettingsPicker(in string automationId, in int widthRequest)
-			{
-				FontSize = 12;
-				WidthRequest = widthRequest;
-				AutomationId = automationId;
-				FontFamily = FontFamilyConstants.RobotoMedium;
-
-				this.EndExpand();
-
-				this.DynamicResources((TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor)),
-										(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)));
-			}
-		}
-
-		interface ILoginRowView
-		{
-
-		}
 	}
 }

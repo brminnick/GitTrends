@@ -2,55 +2,54 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GitTrends.Mobile.Common
+namespace GitTrends.Mobile.Common;
+
+public static class DemoDataConstants
 {
-	public static class DemoDataConstants
+	public const int RepoCount = 50;
+	public const int ReferringSitesCount = 10;
+
+	public const int MaximumRandomNumber = 100;
+
+	const string _loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum ";
+
+	static readonly Random _random = new Random((int)DateTime.Now.Ticks);
+
+	public static int GetRandomNumber() => _random.Next(0, MaximumRandomNumber);
+
+	public static string GetRandomText(int? length = null)
 	{
-		public const int RepoCount = 50;
-		public const int ReferringSitesCount = 10;
+		var startIndex = _random.Next(_loremIpsum.Length / 2);
 
-		public const int MaximumRandomNumber = 100;
+		var maximumLength = _loremIpsum.Length - 1 - startIndex;
 
-		const string _loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum ";
+		length ??= _random.Next(maximumLength);
 
-		static readonly Random _random = new Random((int)DateTime.Now.Ticks);
+		//Ensure Length is not out of bounds
+		Math.Min(length.Value, maximumLength);
 
-		public static int GetRandomNumber() => _random.Next(0, MaximumRandomNumber);
+		return _loremIpsum.Substring(startIndex, length.Value);
+	}
 
-		public static string GetRandomText(int? length = null)
-		{
-			var startIndex = _random.Next(_loremIpsum.Length / 2);
+	//https://stackoverflow.com/a/194870/5953643
+	public static DateTimeOffset GetRandomDate()
+	{
+		var gitHubFoundedDate = new DateTimeOffset(2008, 2, 8, 0, 0, 0, TimeSpan.Zero);
 
-			var maximumLength = _loremIpsum.Length - 1 - startIndex;
+		int range = (DateTime.Today - gitHubFoundedDate).Days;
 
-			length ??= _random.Next(maximumLength);
+		return gitHubFoundedDate.AddDays(_random.Next(range));
+	}
 
-			//Ensure Length is not out of bounds
-			Math.Min(length.Value, maximumLength);
+	public static IEnumerable<DateTimeOffset> GenerateStarredAtDates(in int starCount)
+	{
+		var starGazerList = new List<DateTimeOffset>();
 
-			return _loremIpsum.Substring(startIndex, length.Value);
-		}
+		var startDate = GetRandomDate();
 
-		//https://stackoverflow.com/a/194870/5953643
-		public static DateTimeOffset GetRandomDate()
-		{
-			var gitHubFoundedDate = new DateTimeOffset(2008, 2, 8, 0, 0, 0, TimeSpan.Zero);
+		for (int i = 0; i < starCount; i++)
+			starGazerList.Add(GetRandomDate());
 
-			int range = (DateTime.Today - gitHubFoundedDate).Days;
-
-			return gitHubFoundedDate.AddDays(_random.Next(range));
-		}
-
-		public static IEnumerable<DateTimeOffset> GenerateStarredAtDates(in int starCount)
-		{
-			var starGazerList = new List<DateTimeOffset>();
-
-			var startDate = GetRandomDate();
-
-			for (int i = 0; i < starCount; i++)
-				starGazerList.Add(GetRandomDate());
-
-			return starGazerList.OrderBy(x => x);
-		}
+		return starGazerList.OrderBy(x => x);
 	}
 }

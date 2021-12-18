@@ -110,5 +110,17 @@ csharp_new_line_before_finally = true
 csharp_new_line_before_members_in_object_initializers = true
 csharp_new_line_before_members_in_anonymous_types = true
 
+# Organize usings
+dotnet_sort_system_directives_first = true
+
+# IDE0160: Use file scoped namespace
+csharp_style_namespace_declarations = file_scoped:error
+
 # CS4014: Because this call is not awaited, execution of the current method continues before the call is completed
 dotnet_diagnostic.CS4014.severity = error
+
+# Remove explicit default access modifiers
+dotnet_style_require_accessibility_modifiers = omit_if_default:error
+
+# CA1063: Implement IDisposable Correctly
+dotnet_diagnostic.CA1063.severity = error

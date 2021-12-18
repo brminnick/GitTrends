@@ -6,43 +6,42 @@ using Shiny;
 using Shiny.Notifications;
 using Xamarin.Android.Net;
 
-namespace GitTrends.Droid
-{
+namespace GitTrends.Droid;
+
 #if AppStore
     [Application(Debuggable = false)]
 #else
-    [Application(Debuggable = true)]
+[Application(Debuggable = true)]
 #endif
-    public partial class MainApplication : Application
-    {
-        public MainApplication(IntPtr handle, JniHandleOwnership transfer) : base(handle, transfer)
-        {
+public partial class MainApplication : Application
+{
+	public MainApplication(IntPtr handle, JniHandleOwnership transfer) : base(handle, transfer)
+	{
 
-        }
+	}
 
-        public override void OnCreate()
-        {
-            this.ShinyOnCreate(new ShinyStartup());
-            base.OnCreate();
+	public override void OnCreate()
+	{
+		this.ShinyOnCreate(new ShinyStartup());
+		base.OnCreate();
 
-            AndroidOptions.DefaultSmallIconResourceName = nameof(Resource.Drawable.icon);
-            AndroidOptions.DefaultColorResourceName = nameof(Resource.Color.colorPrimary);
-            AndroidOptions.DefaultLaunchActivityFlags = AndroidActivityFlags.FromBackground;
+		AndroidOptions.DefaultSmallIconResourceName = nameof(Resource.Drawable.icon);
+		AndroidOptions.DefaultColorResourceName = nameof(Resource.Color.colorPrimary);
+		AndroidOptions.DefaultLaunchActivityFlags = AndroidActivityFlags.FromBackground;
 
-            Xamarin.Essentials.Platform.Init(this);
+		Xamarin.Essentials.Platform.Init(this);
 
-            FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
-            FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageViewHandler();
-            var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
+		FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
+		FFImageLoading.Forms.Platform.CachedImageRenderer.InitImageViewHandler();
+		var ignore = typeof(FFImageLoading.Svg.Forms.SvgCachedImage);
 
-            FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration
-            {
-                HttpHeadersTimeout = 60,
-                HttpClient = new System.Net.Http.HttpClient(new AndroidClientHandler
-                {
-                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-                })
-            });
-        }
-    }
+		FFImageLoading.ImageService.Instance.Initialize(new FFImageLoading.Config.Configuration
+		{
+			HttpHeadersTimeout = 60,
+			HttpClient = new System.Net.Http.HttpClient(new AndroidClientHandler
+			{
+				AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+			})
+		});
+	}
 }

@@ -5,42 +5,42 @@ using GitTrends.Shared;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
 
-namespace GitTrends
+namespace GitTrends;
+
+class RepositoryDataTemplateSelector : DataTemplateSelector
 {
-	class RepositoryDataTemplateSelector : DataTemplateSelector
+	readonly MobileSortingService _sortingService;
+	readonly RepositoryViewModel _repositoryViewModel;
+
+	public RepositoryDataTemplateSelector(in MobileSortingService sortingService, in RepositoryViewModel repositoryViewModel) =>
+		(_sortingService, _repositoryViewModel) = (sortingService, repositoryViewModel);
+
+	protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
 	{
-		readonly MobileSortingService _sortingService;
-		readonly RepositoryViewModel _repositoryViewModel;
+		var repository = (Repository)item;
 
-		public RepositoryDataTemplateSelector(in MobileSortingService sortingService, in RepositoryViewModel repositoryViewModel) =>
-			(_sortingService, _repositoryViewModel) = (sortingService, repositoryViewModel);
+		var sortingCategory = MobileSortingService.GetSortingCategory(_sortingService.CurrentOption);
 
-		protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
+		return sortingCategory switch
 		{
-			var repository = (Repository)item;
+			SortingCategory.Clones => new ClonesDataTemplate(_repositoryViewModel, repository),
+			SortingCategory.Views => new ViewsDataTemplate(_repositoryViewModel, repository),
+			SortingCategory.IssuesForks => new IssuesForksDataTemplate(_repositoryViewModel, repository),
+			_ => throw new NotSupportedException()
+		};
+	}
 
-			var sortingCategory = MobileSortingService.GetSortingCategory(_sortingService.CurrentOption);
+	static bool IsStatisticsLabelVisible(object? item) => item is not null;
 
-			return sortingCategory switch
-			{
-				SortingCategory.Clones => new ClonesDataTemplate(_repositoryViewModel, repository),
-				SortingCategory.Views => new ViewsDataTemplate(_repositoryViewModel, repository),
-				SortingCategory.IssuesForks => new IssuesForksDataTemplate(_repositoryViewModel, repository),
-				_ => throw new NotSupportedException()
-			};
+	class ClonesDataTemplate : BaseRepositoryDataTemplate
+	{
+		public ClonesDataTemplate(in RepositoryViewModel repositoryViewModel, in Repository repository) : base(CreateClonesDataTemplateViews(repository), repositoryViewModel, repository)
+		{
+
 		}
 
-		static bool IsStatisticsLabelVisible(object? item) => item is not null;
-
-		class ClonesDataTemplate : BaseRepositoryDataTemplate
+		static IEnumerable<View> CreateClonesDataTemplateViews(in Repository repository) => new View[]
 		{
-			public ClonesDataTemplate(in RepositoryViewModel repositoryViewModel, in Repository repository) : base(CreateClonesDataTemplateViews(repository), repositoryViewModel, repository)
-			{
-
-			}
-
-			static IEnumerable<View> CreateClonesDataTemplateViews(in Repository repository) => new View[]
-			{
 				new StatisticsSvgImage("total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
 
                 //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
@@ -64,18 +64,18 @@ namespace GitTrends
 
                 //Display an activity indicator while the Data is loading
                 new StatisticsActivityIndicator(!IsStatisticsLabelVisible(repository.StarCount)).Row(Row.Statistics).Column(Column.Statistic3),
-			};
+		};
+	}
+
+	class ViewsDataTemplate : BaseRepositoryDataTemplate
+	{
+		public ViewsDataTemplate(in RepositoryViewModel repositoryViewModel, in Repository repository) : base(CreateViewsDataTemplateViews(repository), repositoryViewModel, repository)
+		{
+
 		}
 
-		class ViewsDataTemplate : BaseRepositoryDataTemplate
+		static IEnumerable<View> CreateViewsDataTemplateViews(in Repository repository) => new View[]
 		{
-			public ViewsDataTemplate(in RepositoryViewModel repositoryViewModel, in Repository repository) : base(CreateViewsDataTemplateViews(repository), repositoryViewModel, repository)
-			{
-
-			}
-
-			static IEnumerable<View> CreateViewsDataTemplateViews(in Repository repository) => new View[]
-			{
 				new StatisticsSvgImage("total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
 
                 //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
@@ -99,18 +99,18 @@ namespace GitTrends
 
                 //Display an activity indicator while the Data is loading
                 new StatisticsActivityIndicator(!IsStatisticsLabelVisible(repository.StarCount)).Row(Row.Statistics).Column(Column.Statistic3),
-			};
+		};
+	}
+
+	class IssuesForksDataTemplate : BaseRepositoryDataTemplate
+	{
+		public IssuesForksDataTemplate(in RepositoryViewModel repositoryViewModel, in Repository repository) : base(CreateIssuesForksDataTemplateViews(repository), repositoryViewModel, repository)
+		{
+
 		}
 
-		class IssuesForksDataTemplate : BaseRepositoryDataTemplate
+		static IEnumerable<View> CreateIssuesForksDataTemplateViews(in Repository repository) => new View[]
 		{
-			public IssuesForksDataTemplate(in RepositoryViewModel repositoryViewModel, in Repository repository) : base(CreateIssuesForksDataTemplateViews(repository), repositoryViewModel, repository)
-			{
-
-			}
-
-			static IEnumerable<View> CreateIssuesForksDataTemplateViews(in Repository repository) => new View[]
-			{
 				new StatisticsSvgImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
 
                 //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
@@ -134,23 +134,22 @@ namespace GitTrends
 
                 //Display an activity indicator while the Data is loading
                 new StatisticsActivityIndicator(!IsStatisticsLabelVisible(repository.IssuesCount)).Row(Row.Statistics).Column(Column.Statistic3),
-			};
-		}
+		};
+	}
 
-		class StatisticsActivityIndicator : ActivityIndicator
+	class StatisticsActivityIndicator : ActivityIndicator
+	{
+		public StatisticsActivityIndicator(bool isVisible)
 		{
-			public StatisticsActivityIndicator(bool isVisible)
-			{
-				IsVisible = isVisible;
-				IsRunning = isVisible;
+			IsVisible = isVisible;
+			IsRunning = isVisible;
 
-				Scale = 0.67;
+			Scale = 0.67;
 
-				HorizontalOptions = LayoutOptions.Start;
-				VerticalOptions = LayoutOptions.Center;
+			HorizontalOptions = LayoutOptions.Start;
+			VerticalOptions = LayoutOptions.Center;
 
-				SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.PrimaryTextColor));
-			}
+			SetDynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.PrimaryTextColor));
 		}
 	}
 }

@@ -12,97 +12,96 @@ using Newtonsoft.Json;
 using Shiny;
 using Xamarin.Forms;
 
-namespace GitTrends.Droid
+namespace GitTrends.Droid;
+
+[Activity(Label = "GitTrends", Icon = "@mipmap/icon", RoundIcon = "@mipmap/icon_round", Theme = "@style/LaunchTheme", LaunchMode = LaunchMode.SingleTop, MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait)]
+[IntentFilter(new string[] { Intent.ActionView }, Categories = new[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataSchemes = new[] { "gittrends" })]
+public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
 {
-    [Activity(Label = "GitTrends", Icon = "@mipmap/icon", RoundIcon = "@mipmap/icon_round", Theme = "@style/LaunchTheme", LaunchMode = LaunchMode.SingleTop, MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait)]
-    [IntentFilter(new string[] { Intent.ActionView }, Categories = new[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataSchemes = new[] { "gittrends" })]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
-    {
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
-        {
-            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+	public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
+	{
+		base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
-            this.ShinyOnRequestPermissionsResult(requestCode, permissions, grantResults);
-            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
+		this.ShinyOnRequestPermissionsResult(requestCode, permissions, grantResults);
+		Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+	}
 
-        protected override void OnCreate(Bundle savedInstanceState)
-        {
-            this.ShinyOnCreate();
+	protected override void OnCreate(Bundle savedInstanceState)
+	{
+		this.ShinyOnCreate();
 
-            TabLayoutResource = Resource.Layout.Tabbar;
-            ToolbarResource = Resource.Layout.Toolbar;
+		TabLayoutResource = Resource.Layout.Tabbar;
+		ToolbarResource = Resource.Layout.Toolbar;
 
-            base.SetTheme(Resource.Style.MainTheme);
-            base.OnCreate(savedInstanceState);
+		base.SetTheme(Resource.Style.MainTheme);
+		base.OnCreate(savedInstanceState);
 
-            Forms.Init(this, savedInstanceState);
+		Forms.Init(this, savedInstanceState);
 
-            var app = ContainerService.Container.Resolve<App>();
-            LoadApplication(app);
+		var app = ContainerService.Container.Resolve<App>();
+		LoadApplication(app);
 
-            TryHandleOpenedFromUri(Intent?.Data);
-            TryHandleOpenedFromNotification(Intent);
-        }
+		TryHandleOpenedFromUri(Intent?.Data);
+		TryHandleOpenedFromNotification(Intent);
+	}
 
-        protected override async void OnNewIntent(Intent intent)
-        {
-            base.OnNewIntent(intent);
+	protected override async void OnNewIntent(Intent intent)
+	{
+		base.OnNewIntent(intent);
 
-            if (intent?.Data is Android.Net.Uri callbackUri)
-            {
-                await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
-            }
+		if (intent?.Data is Android.Net.Uri callbackUri)
+		{
+			await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
+		}
 
-            TryHandleOpenedFromNotification(intent);
-        }
+		TryHandleOpenedFromNotification(intent);
+	}
 
-        static async Task AuthorizeGitHubSession(Android.Net.Uri callbackUri)
-        {
-            try
-            {
-                var gitHubAuthenticationService = ContainerService.Container.Resolve<GitHubAuthenticationService>();
+	static async Task AuthorizeGitHubSession(Android.Net.Uri callbackUri)
+	{
+		try
+		{
+			var gitHubAuthenticationService = ContainerService.Container.Resolve<GitHubAuthenticationService>();
 
-                await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString()), CancellationToken.None).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                ContainerService.Container.Resolve<IAnalyticsService>().Report(ex);
-            }
-        }
+			await gitHubAuthenticationService.AuthorizeSession(new Uri(callbackUri.ToString()), CancellationToken.None).ConfigureAwait(false);
+		}
+		catch (Exception ex)
+		{
+			ContainerService.Container.Resolve<IAnalyticsService>().Report(ex);
+		}
+	}
 
-        async void TryHandleOpenedFromNotification(Intent? intent)
-        {
-            try
-            {
-                if (intent?.GetStringExtra("ShinyNotification") is string notificationString)
-                {
-                    var notification = JsonConvert.DeserializeObject<Shiny.Notifications.Notification>(notificationString);
+	async void TryHandleOpenedFromNotification(Intent? intent)
+	{
+		try
+		{
+			if (intent?.GetStringExtra("ShinyNotification") is string notificationString)
+			{
+				var notification = JsonConvert.DeserializeObject<Shiny.Notifications.Notification>(notificationString);
 
-                    var analyticsService = ContainerService.Container.Resolve<IAnalyticsService>();
-                    var notificationService = ContainerService.Container.Resolve<NotificationService>();
+				var analyticsService = ContainerService.Container.Resolve<IAnalyticsService>();
+				var notificationService = ContainerService.Container.Resolve<NotificationService>();
 
-                    if (notification?.Title is string notificationTitle
-                        && notification?.Message is string notificationMessage
-                        && notification?.BadgeCount is int badgeCount
-                        && badgeCount > 0)
-                    {
-                        await notificationService.HandleNotification(notificationTitle, notificationMessage, badgeCount).ConfigureAwait(false);
-                    }
-                }
-            }
-            catch (ObjectDisposedException)
-            {
+				if (notification?.Title is string notificationTitle
+					&& notification?.Message is string notificationMessage
+					&& notification?.BadgeCount is int badgeCount
+					&& badgeCount > 0)
+				{
+					await notificationService.HandleNotification(notificationTitle, notificationMessage, badgeCount).ConfigureAwait(false);
+				}
+			}
+		}
+		catch (ObjectDisposedException)
+		{
 
-            }
-        }
+		}
+	}
 
-        async void TryHandleOpenedFromUri(Android.Net.Uri? callbackUri)
-        {
-            if (callbackUri != null)
-            {
-                await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
-            }
-        }
-    }
+	async void TryHandleOpenedFromUri(Android.Net.Uri? callbackUri)
+	{
+		if (callbackUri != null)
+		{
+			await AuthorizeGitHubSession(callbackUri).ConfigureAwait(false);
+		}
+	}
 }

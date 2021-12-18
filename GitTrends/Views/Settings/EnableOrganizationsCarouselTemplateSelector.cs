@@ -4,22 +4,22 @@ using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
 using static GitTrends.XamarinFormsService;
 
-namespace GitTrends
+namespace GitTrends;
+
+class EnableOrganizationsCarouselTemplateSelector : DataTemplateSelector
 {
-	class EnableOrganizationsCarouselTemplateSelector : DataTemplateSelector
+	protected override DataTemplate OnSelectTemplate(object item, BindableObject container) => new EnableOrganizationsCarouselTemplate((IncludeOrganizationsCarouselModel)item, (CarouselView)container);
+
+	class EnableOrganizationsCarouselTemplate : DataTemplate
 	{
-		protected override DataTemplate OnSelectTemplate(object item, BindableObject container) => new EnableOrganizationsCarouselTemplate((IncludeOrganizationsCarouselModel)item, (CarouselView)container);
-
-		class EnableOrganizationsCarouselTemplate : DataTemplate
+		public EnableOrganizationsCarouselTemplate(IncludeOrganizationsCarouselModel includeOrganizationsModel, CarouselView organizationsCarouselView) : base(() => CreateItemsGrid(includeOrganizationsModel, organizationsCarouselView))
 		{
-			public EnableOrganizationsCarouselTemplate(IncludeOrganizationsCarouselModel includeOrganizationsModel, CarouselView organizationsCarouselView) : base(() => CreateItemsGrid(includeOrganizationsModel, organizationsCarouselView))
-			{
 
-			}
+		}
 
-			static EnableOrganizationsGrid CreateItemsGrid(IncludeOrganizationsCarouselModel includeOrganizationsModel, CarouselView organizationsCarouselView) => new()
-			{
-				Children =
+		static EnableOrganizationsGrid CreateItemsGrid(IncludeOrganizationsCarouselModel includeOrganizationsModel, CarouselView organizationsCarouselView) => new()
+		{
+			Children =
 				{
 					includeOrganizationsModel.Url is not null
 						? new VideoPlayerView(includeOrganizationsModel.Url).Margin(24, 12)
@@ -67,49 +67,48 @@ namespace GitTrends
 					new BoxView()
 						.Row(EnableOrganizationsGrid.Row.IndicatorView)
 				}
-			};
+		};
 
-			class TitleLabel : Label
+		class TitleLabel : Label
+		{
+			public TitleLabel(in string text)
 			{
-				public TitleLabel(in string text)
-				{
-					Text = text;
-					TextColor = Color.White;
+				Text = text;
+				TextColor = Color.White;
 
-					FontSize = IsSmallScreen ? 28 : 34;
-					FontFamily = FontFamilyConstants.RobotoBold;
+				FontSize = IsSmallScreen ? 28 : 34;
+				FontFamily = FontFamilyConstants.RobotoBold;
 
-					MaxLines = 1;
-					LineHeight = 1.12;
-					LineBreakMode = LineBreakMode.TailTruncation;
+				MaxLines = 1;
+				LineHeight = 1.12;
+				LineBreakMode = LineBreakMode.TailTruncation;
 
-					AutomationId = SettingsPageAutomationIds.EnableOrangizationsCarouselTitle;
+				AutomationId = SettingsPageAutomationIds.EnableOrangizationsCarouselTitle;
 
-					Padding = new Thickness(24, 5);
-				}
+				Padding = new Thickness(24, 5);
 			}
+		}
 
-			class DescriptionLabel : Label
+		class DescriptionLabel : Label
+		{
+			public DescriptionLabel(in string text)
 			{
-				public DescriptionLabel(in string text)
-				{
-					Text = text;
-					TextColor = Color.White;
+				Text = text;
+				TextColor = Color.White;
 
-					FontSize = 15;
-					FontFamily = FontFamilyConstants.RobotoRegular;
+				FontSize = 15;
+				FontFamily = FontFamilyConstants.RobotoRegular;
 
-					LineHeight = 1.021;
+				LineHeight = 1.021;
 
-					VerticalTextAlignment = TextAlignment.Start;
+				VerticalTextAlignment = TextAlignment.Start;
 
-					MaxLines = IsSmallScreen ? -1 : 3;
-					LineBreakMode = IsSmallScreen ? LineBreakMode.WordWrap : LineBreakMode.TailTruncation;
+				MaxLines = IsSmallScreen ? -1 : 3;
+				LineBreakMode = IsSmallScreen ? LineBreakMode.WordWrap : LineBreakMode.TailTruncation;
 
-					AutomationId = SettingsPageAutomationIds.EnableOrangizationsCarouselDescription;
+				AutomationId = SettingsPageAutomationIds.EnableOrangizationsCarouselDescription;
 
-					Padding = new Thickness(24, 5);
-				}
+				Padding = new Thickness(24, 5);
 			}
 		}
 	}

@@ -7,43 +7,43 @@ using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
-namespace GitTrends
+namespace GitTrends;
+
+public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
 {
-	public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
+	public ConnectToGitHubOnboardingPage(IDeviceInfo deviceInfo,
+											IMainThread mainthread,
+											IAnalyticsService analyticsService,
+											MediaElementService mediaElementService)
+			: base(OnboardingConstants.TryDemoText, deviceInfo, Color.FromHex(BaseTheme.CoralColorHex), mainthread, 3, analyticsService, mediaElementService)
 	{
-		public ConnectToGitHubOnboardingPage(IDeviceInfo deviceInfo,
-												IMainThread mainthread,
-												IAnalyticsService analyticsService,
-												MediaElementService mediaElementService)
-				: base(OnboardingConstants.TryDemoText, deviceInfo, Color.FromHex(BaseTheme.CoralColorHex), mainthread, 3, analyticsService, mediaElementService)
+		GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+	}
+
+	enum Row { Description, Button, ActivityIndicator }
+
+	protected override View CreateImageView() => new Image
+	{
+		Source = "ConnectToGitHubOnboarding",
+		HorizontalOptions = LayoutOptions.CenterAndExpand,
+		VerticalOptions = LayoutOptions.CenterAndExpand,
+		Aspect = Aspect.AspectFit
+	};
+
+	protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ConnectToGitHubPage_Title);
+
+	protected override View CreateDescriptionBodyView() => new ScrollView
+	{
+		Content = new Grid
 		{
-			GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
-		}
+			RowSpacing = 16,
 
-		enum Row { Description, Button, ActivityIndicator }
+			RowDefinitions = Rows.Define(
+					(Row.Description, 65),
+					(Row.Button, 42),
+					(Row.ActivityIndicator, 42)),
 
-		protected override View CreateImageView() => new Image
-		{
-			Source = "ConnectToGitHubOnboarding",
-			HorizontalOptions = LayoutOptions.CenterAndExpand,
-			VerticalOptions = LayoutOptions.CenterAndExpand,
-			Aspect = Aspect.AspectFit
-		};
-
-		protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ConnectToGitHubPage_Title);
-
-		protected override View CreateDescriptionBodyView() => new ScrollView
-		{
-			Content = new Grid
-			{
-				RowSpacing = 16,
-
-				RowDefinitions = Rows.Define(
-						(Row.Description, 65),
-						(Row.Button, 42),
-						(Row.ActivityIndicator, 42)),
-
-				Children =
+			Children =
 				{
 					new BodyLabel(OnboardingConstants.ConnectToGitHubPage_Body_GetStarted).Row(Row.Description),
 
@@ -59,26 +59,25 @@ namespace GitTrends
 
 					new IsAuthenticatingIndicator().Row(Row.ActivityIndicator)
 				}
-			}
-		};
-
-		void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
-		{
-			if (e.IsSessionAuthorized)
-				MainThread.BeginInvokeOnMainThread(() => Navigation.PopModalAsync());
 		}
+	};
 
-		class IsAuthenticatingIndicator : ActivityIndicator
+	void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
+	{
+		if (e.IsSessionAuthorized)
+			MainThread.BeginInvokeOnMainThread(() => Navigation.PopModalAsync());
+	}
+
+	class IsAuthenticatingIndicator : ActivityIndicator
+	{
+		public IsAuthenticatingIndicator()
 		{
-			public IsAuthenticatingIndicator()
-			{
-				Color = Color.White;
+			Color = Color.White;
 
-				AutomationId = OnboardingAutomationIds.IsAuthenticatingActivityIndicator;
+			AutomationId = OnboardingAutomationIds.IsAuthenticatingActivityIndicator;
 
-				this.SetBinding(IsVisibleProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
-				this.SetBinding(IsRunningProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
-			}
+			this.SetBinding(IsVisibleProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
+			this.SetBinding(IsRunningProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
 		}
 	}
 }

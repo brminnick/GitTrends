@@ -1,14 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Shiny;
 
-namespace GitTrends
+namespace GitTrends;
+
+public class ShinyStartup : Shiny.ShinyStartup
 {
-	public class ShinyStartup : Shiny.ShinyStartup
+	public override void ConfigureServices(IServiceCollection services, IPlatform platform)
 	{
-		public override void ConfigureServices(IServiceCollection services, IPlatform platform)
-		{
-			services.UseJobs();
-			services.UseNotifications();
-		}
+		services.UseJobs();
+		services.UseNotifications();
 	}
 }

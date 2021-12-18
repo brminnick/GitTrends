@@ -10,43 +10,43 @@ using Xamarin.Forms;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
-namespace GitTrends
+namespace GitTrends;
+
+abstract class BaseRepositoryDataTemplate : DataTemplate
 {
-	abstract class BaseRepositoryDataTemplate : DataTemplate
+	public const int TopPadding = 12;
+	public const int BottomPadding = 4;
+
+	const int _statsColumnSize = 40;
+	const double _statisticsRowHeight = StatisticsLabel.StatisticsFontSize + 4;
+	const double _emojiColumnSize = _statisticsRowHeight;
+	readonly static double _circleImageHeight = IsSmallScreen ? 52 : 62;
+
+	readonly static AsyncAwaitBestPractices.WeakEventManager _tappedWeakEventManager = new();
+
+	protected BaseRepositoryDataTemplate(IEnumerable<View> parentDataTemplateChildren, RepositoryViewModel repositoryViewModel, Repository repository) : base(() => new CardView(parentDataTemplateChildren, repositoryViewModel, repository))
 	{
-		public const int TopPadding = 12;
-		public const int BottomPadding = 4;
 
-		const int _statsColumnSize = 40;
-		const double _statisticsRowHeight = StatisticsLabel.StatisticsFontSize + 4;
-		const double _emojiColumnSize = _statisticsRowHeight;
-		readonly static double _circleImageHeight = IsSmallScreen ? 52 : 62;
+	}
 
-		readonly static AsyncAwaitBestPractices.WeakEventManager _tappedWeakEventManager = new();
+	public static event EventHandler Tapped
+	{
+		add => _tappedWeakEventManager.AddEventHandler(value);
+		remove => _tappedWeakEventManager.RemoveEventHandler(value);
+	}
 
-		protected BaseRepositoryDataTemplate(IEnumerable<View> parentDataTemplateChildren, RepositoryViewModel repositoryViewModel, Repository repository) : base(() => new CardView(parentDataTemplateChildren, repositoryViewModel, repository))
+	protected enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
+	protected enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3 }
+
+	class CardView : ExtendedSwipeView<Repository>
+	{
+		public CardView(in IEnumerable<View> dataTemplateChildren, in RepositoryViewModel repositoryViewModel, in Repository repository)
 		{
+			Tapped += HandleTapped;
 
-		}
+			BackgroundColor = Color.Transparent;
 
-		public static event EventHandler Tapped
-		{
-			add => _tappedWeakEventManager.AddEventHandler(value);
-			remove => _tappedWeakEventManager.RemoveEventHandler(value);
-		}
-
-		protected enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
-		protected enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3 }
-
-		class CardView : ExtendedSwipeView<Repository>
-		{
-			public CardView(in IEnumerable<View> dataTemplateChildren, in RepositoryViewModel repositoryViewModel, in Repository repository)
-			{
-				Tapped += HandleTapped;
-
-				BackgroundColor = Color.Transparent;
-
-				RightItems = new SwipeItems
+			RightItems = new SwipeItems
 				{
 					new SwipeItemView
 					{
@@ -57,219 +57,218 @@ namespace GitTrends
 					}
 				};
 
-				Content = new Grid
-				{
-					RowSpacing = 0,
+			Content = new Grid
+			{
+				RowSpacing = 0,
 
-					RowDefinitions = Rows.Define(
-						(CardViewRow.TopPadding, TopPadding),
-						(CardViewRow.Card, Star),
-						(CardViewRow.BottomPadding, BottomPadding)),
+				RowDefinitions = Rows.Define(
+					(CardViewRow.TopPadding, TopPadding),
+					(CardViewRow.Card, Star),
+					(CardViewRow.BottomPadding, BottomPadding)),
 
-					ColumnDefinitions = Columns.Define(
-						(CardViewColumn.LeftPadding, IsSmallScreen ? 8 : 16),
-						(CardViewColumn.Card, Star),
-						(CardViewColumn.RightPadding, IsSmallScreen ? 8 : 16)),
+				ColumnDefinitions = Columns.Define(
+					(CardViewColumn.LeftPadding, IsSmallScreen ? 8 : 16),
+					(CardViewColumn.Card, Star),
+					(CardViewColumn.RightPadding, IsSmallScreen ? 8 : 16)),
 
-					Children =
+				Children =
 					{
 						new CardViewFrame(dataTemplateChildren, repository).Row(CardViewRow.Card).Column(CardViewColumn.Card)
 					}
-				};
+			};
+		}
+
+		enum CardViewRow { TopPadding, Card, BottomPadding }
+		enum CardViewColumn { LeftPadding, Card, RightPadding }
+
+		void HandleTapped(object sender, EventArgs e) => _tappedWeakEventManager.RaiseEvent(this, e, nameof(BaseRepositoryDataTemplate.Tapped));
+
+		class CardViewFrame : MaterialFrame
+		{
+			public CardViewFrame(in IEnumerable<View> dataTemplateChildren, in Repository repository)
+			{
+				Padding = IsSmallScreen ? new Thickness(8, 16, 6, 8) : new Thickness(16, 16, 12, 8);
+				CornerRadius = 4;
+				HasShadow = false;
+				Elevation = 4;
+
+				Content = new ContentGrid(dataTemplateChildren, repository);
+
+				this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
 			}
 
-			enum CardViewRow { TopPadding, Card, BottomPadding }
-			enum CardViewColumn { LeftPadding, Card, RightPadding }
-
-			void HandleTapped(object sender, EventArgs e) => _tappedWeakEventManager.RaiseEvent(this, e, nameof(BaseRepositoryDataTemplate.Tapped));
-
-			class CardViewFrame : MaterialFrame
+			class ContentGrid : Grid
 			{
-				public CardViewFrame(in IEnumerable<View> dataTemplateChildren, in Repository repository)
+				public ContentGrid(in IEnumerable<View> dataTemplateChildren, in Repository repository)
 				{
-					Padding = IsSmallScreen ? new Thickness(8, 16, 6, 8) : new Thickness(16, 16, 12, 8);
-					CornerRadius = 4;
-					HasShadow = false;
-					Elevation = 4;
+					this.FillExpand();
 
-					Content = new ContentGrid(dataTemplateChildren, repository);
+					RowDefinitions = Rows.Define(
+						(Row.Title, 25),
+						(Row.Description, 40),
+						(Row.DescriptionPadding, 4),
+						(Row.Separator, 1),
+						(Row.SeparatorPadding, 4),
+						(Row.Statistics, _statisticsRowHeight));
 
-					this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
+					ColumnDefinitions = Columns.Define(
+						(Column.Avatar, IsSmallScreen ? _circleImageHeight - 4 : _circleImageHeight),
+						(Column.AvatarPadding, IsSmallScreen ? 4 : 16),
+						(Column.Trending, Star),
+						(Column.Emoji1, _emojiColumnSize),
+						(Column.Statistic1, _statsColumnSize),
+						(Column.Emoji2, _emojiColumnSize),
+						(Column.Statistic2, _statsColumnSize),
+						(Column.Emoji3, _emojiColumnSize),
+						(Column.Statistic3, _statsColumnSize));
+
+					Children.Add(new AvatarImage(repository.OwnerAvatarUrl, _circleImageHeight)
+									.Row(Row.Title).Column(Column.Avatar).RowSpan(2)
+									.DynamicResources((CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
+														(CircleImage.ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
+														(CircleImage.LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource))));
+
+					Children.Add(new NameLabel(repository.Name)
+									.Row(Row.Title).Column(Column.Trending).ColumnSpan(7));
+
+					Children.Add(new DescriptionLabel(repository.Description)
+									.Row(Row.Description).Column(Column.Trending).ColumnSpan(7));
+
+					Children.Add(new Separator()
+									.Row(Row.Separator).Column(Column.Trending).ColumnSpan(7));
+
+					//On large screens, display TrendingImage in the same column as the repository name
+					Children.Add(new LargeScreenTrendingImage(repository.IsTrending, repository.IsFavorite).Assign(out LargeScreenTrendingImage largeScreenTrendingImage)
+									.Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2));
+
+					//On smaller screens, display TrendingImage under the Avatar
+					Children.Add(new SmallScreenTrendingImage(repository.IsTrending, repository.IsFavorite, largeScreenTrendingImage)
+									.Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3));
+
+					foreach (var child in dataTemplateChildren)
+					{
+						Children.Add(child);
+					}
 				}
 
-				class ContentGrid : Grid
+				class NameLabel : PrimaryColorLabel
 				{
-					public ContentGrid(in IEnumerable<View> dataTemplateChildren, in Repository repository)
+					public NameLabel(in string name) : base(20)
 					{
-						this.FillExpand();
+						Text = name;
 
-						RowDefinitions = Rows.Define(
-							(Row.Title, 25),
-							(Row.Description, 40),
-							(Row.DescriptionPadding, 4),
-							(Row.Separator, 1),
-							(Row.SeparatorPadding, 4),
-							(Row.Statistics, _statisticsRowHeight));
-
-						ColumnDefinitions = Columns.Define(
-							(Column.Avatar, IsSmallScreen ? _circleImageHeight - 4 : _circleImageHeight),
-							(Column.AvatarPadding, IsSmallScreen ? 4 : 16),
-							(Column.Trending, Star),
-							(Column.Emoji1, _emojiColumnSize),
-							(Column.Statistic1, _statsColumnSize),
-							(Column.Emoji2, _emojiColumnSize),
-							(Column.Statistic2, _statsColumnSize),
-							(Column.Emoji3, _emojiColumnSize),
-							(Column.Statistic3, _statsColumnSize));
-
-						Children.Add(new AvatarImage(repository.OwnerAvatarUrl, _circleImageHeight)
-										.Row(Row.Title).Column(Column.Avatar).RowSpan(2)
-										.DynamicResources((CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
-															(CircleImage.ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
-															(CircleImage.LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource))));
-
-						Children.Add(new NameLabel(repository.Name)
-										.Row(Row.Title).Column(Column.Trending).ColumnSpan(7));
-
-						Children.Add(new DescriptionLabel(repository.Description)
-										.Row(Row.Description).Column(Column.Trending).ColumnSpan(7));
-
-						Children.Add(new Separator()
-										.Row(Row.Separator).Column(Column.Trending).ColumnSpan(7));
-
-						//On large screens, display TrendingImage in the same column as the repository name
-						Children.Add(new LargeScreenTrendingImage(repository.IsTrending, repository.IsFavorite).Assign(out LargeScreenTrendingImage largeScreenTrendingImage)
-										.Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2));
-
-						//On smaller screens, display TrendingImage under the Avatar
-						Children.Add(new SmallScreenTrendingImage(repository.IsTrending, repository.IsFavorite, largeScreenTrendingImage)
-										.Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3));
-
-						foreach (var child in dataTemplateChildren)
-						{
-							Children.Add(child);
-						}
+						LineBreakMode = LineBreakMode.TailTruncation;
+						HorizontalOptions = LayoutOptions.FillAndExpand;
+						FontFamily = FontFamilyConstants.RobotoBold;
 					}
+				}
 
-					class NameLabel : PrimaryColorLabel
+				class DescriptionLabel : PrimaryColorLabel
+				{
+					public DescriptionLabel(in string description) : base(14)
 					{
-						public NameLabel(in string name) : base(20)
-						{
-							Text = name;
+						Text = description;
 
-							LineBreakMode = LineBreakMode.TailTruncation;
-							HorizontalOptions = LayoutOptions.FillAndExpand;
-							FontFamily = FontFamilyConstants.RobotoBold;
-						}
+						MaxLines = 2;
+						LineHeight = 1.16;
+						FontFamily = FontFamilyConstants.RobotoRegular;
 					}
+				}
 
-					class DescriptionLabel : PrimaryColorLabel
+				abstract class PrimaryColorLabel : Label
+				{
+					protected PrimaryColorLabel(in double fontSize)
 					{
-						public DescriptionLabel(in string description) : base(14)
-						{
-							Text = description;
+						FontSize = fontSize;
+						LineBreakMode = LineBreakMode.TailTruncation;
+						HorizontalTextAlignment = TextAlignment.Start;
+						VerticalTextAlignment = TextAlignment.Start;
 
-							MaxLines = 2;
-							LineHeight = 1.16;
-							FontFamily = FontFamilyConstants.RobotoRegular;
-						}
+						this.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
 					}
+				}
 
-					abstract class PrimaryColorLabel : Label
+				class Separator : BoxView
+				{
+					public Separator() => this.DynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
+				}
+
+				class LargeScreenTrendingImage : TrendingImage
+				{
+					public LargeScreenTrendingImage(bool isTrending, bool? isFavorite) : base(RepositoryPageAutomationIds.LargeScreenTrendingImage, isTrending, isFavorite)
 					{
-						protected PrimaryColorLabel(in double fontSize)
+						SetBinding(IsVisibleProperty, new MultiBinding
 						{
-							FontSize = fontSize;
-							LineBreakMode = LineBreakMode.TailTruncation;
-							HorizontalTextAlignment = TextAlignment.Start;
-							VerticalTextAlignment = TextAlignment.Start;
-
-							this.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
-						}
-					}
-
-					class Separator : BoxView
-					{
-						public Separator() => this.DynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
-					}
-
-					class LargeScreenTrendingImage : TrendingImage
-					{
-						public LargeScreenTrendingImage(bool isTrending, bool? isFavorite) : base(RepositoryPageAutomationIds.LargeScreenTrendingImage, isTrending, isFavorite)
-						{
-							SetBinding(IsVisibleProperty, new MultiBinding
-							{
-								Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth >= (SvgWidthRequest + 8)),
-								Bindings =
+							Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth >= (SvgWidthRequest + 8)),
+							Bindings =
 								{
 									new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
 									new Binding(nameof(Width), BindingMode.OneWay, source: this),
 									new Binding(nameof(Repository.IsFavorite), BindingMode.OneWay)
 								}
-							});
-						}
+						});
 					}
+				}
 
-					class SmallScreenTrendingImage : TrendingImage
+				class SmallScreenTrendingImage : TrendingImage
+				{
+					public SmallScreenTrendingImage(bool isTrending, bool? isFavorite, LargeScreenTrendingImage largeScreenTrendingImage) :
+						base(RepositoryPageAutomationIds.SmallScreenTrendingImage, isTrending, isFavorite)
 					{
-						public SmallScreenTrendingImage(bool isTrending, bool? isFavorite, LargeScreenTrendingImage largeScreenTrendingImage) :
-							base(RepositoryPageAutomationIds.SmallScreenTrendingImage, isTrending, isFavorite)
+						SetBinding(IsVisibleProperty, new MultiBinding
 						{
-							SetBinding(IsVisibleProperty, new MultiBinding
-							{
-								Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth < (SvgWidthRequest + 8)),
-								Bindings =
+							Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth < (SvgWidthRequest + 8)),
+							Bindings =
 								{
 									new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
 									new Binding(nameof(Width), BindingMode.OneWay, source: largeScreenTrendingImage),
 									new Binding(nameof(Repository.IsFavorite), BindingMode.OneWay)
 								}
-							});
-						}
+						});
+					}
+				}
+
+				abstract class TrendingImage : StatisticsSvgImage
+				{
+					public const double SvgWidthRequest = 62;
+					public const double SvgHeightRequest = 16;
+
+					public TrendingImage(string automationId, bool isTrending, bool? isFavorite)
+						: base(isTrending ? "trending_tag.svg" : "favorite_tag.svg",
+								isFavorite is true ? nameof(BaseTheme.CardStarsStatsIconColor) : nameof(BaseTheme.CardTrendingStatsColor),
+								SvgWidthRequest,
+								SvgHeightRequest)
+					{
+						AutomationId = automationId;
+						HorizontalOptions = LayoutOptions.Start;
+						VerticalOptions = LayoutOptions.End;
 					}
 
-					abstract class TrendingImage : StatisticsSvgImage
+					protected class IsVisibleConverter : IMultiValueConverter
 					{
-						public const double SvgWidthRequest = 62;
-						public const double SvgHeightRequest = 16;
+						readonly Func<double, bool> _isWidthValid;
 
-						public TrendingImage(string automationId, bool isTrending, bool? isFavorite)
-							: base(isTrending ? "trending_tag.svg" : "favorite_tag.svg",
-									isFavorite is true ? nameof(BaseTheme.CardStarsStatsIconColor) : nameof(BaseTheme.CardTrendingStatsColor),
-									SvgWidthRequest,
-									SvgHeightRequest)
+						public IsVisibleConverter(Func<double, bool> isWidthValid) => _isWidthValid = isWidthValid;
+
+						public object? Convert(object?[]? values, Type? targetType, object? parameter, CultureInfo? culture)
 						{
-							AutomationId = automationId;
-							HorizontalOptions = LayoutOptions.Start;
-							VerticalOptions = LayoutOptions.End;
+							if (values is null || !values.Any())
+								return false;
+
+							if (values[0] is null || values[1] is null)
+								return false;
+
+							var isTrending = (bool)(values[0] ?? throw new NotSupportedException("Value cannot be null"));
+							var width = (double)(values[1] ?? throw new NotSupportedException("Value cannot be null"));
+							var isFavorite = (bool?)values[2];
+
+							// When `Width is -1`, Xamarin.Forms hasn't inflated the View
+							// Allow Xamarin.Forms to inflate the view, then validate its Width
+							return (isTrending || isFavorite is true)
+									&& (width is -1 || _isWidthValid(width));
 						}
 
-						protected class IsVisibleConverter : IMultiValueConverter
-						{
-							readonly Func<double, bool> _isWidthValid;
-
-							public IsVisibleConverter(Func<double, bool> isWidthValid) => _isWidthValid = isWidthValid;
-
-							public object? Convert(object?[]? values, Type? targetType, object? parameter, CultureInfo? culture)
-							{
-								if (values is null || !values.Any())
-									return false;
-
-								if (values[0] is null || values[1] is null)
-									return false;
-
-								var isTrending = (bool)(values[0] ?? throw new NotSupportedException("Value cannot be null"));
-								var width = (double)(values[1] ?? throw new NotSupportedException("Value cannot be null"));
-								var isFavorite = (bool?)values[2];
-
-								// When `Width is -1`, Xamarin.Forms hasn't inflated the View
-								// Allow Xamarin.Forms to inflate the view, then validate its Width
-								return (isTrending || isFavorite is true)
-										&& (width is -1 || _isWidthValid(width));
-							}
-
-							public object?[]? ConvertBack(object? value, Type?[]? targetTypes, object? parameter, CultureInfo? culture) => throw new NotImplementedException();
-						}
+						public object?[]? ConvertBack(object? value, Type?[]? targetTypes, object? parameter, CultureInfo? culture) => throw new NotImplementedException();
 					}
 				}
 			}

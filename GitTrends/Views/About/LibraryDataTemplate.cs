@@ -4,41 +4,41 @@ using Xamarin.Forms;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
-namespace GitTrends
+namespace GitTrends;
+
+class LibraryDataTemplate : DataTemplate
 {
-	class LibraryDataTemplate : DataTemplate
+	const int _rowSpacing = 4;
+	const int _loginTextHeight = 24;
+	const int _textPadding = 8;
+
+	readonly static int _circleDiameter = IsSmallScreen ? 54 : 64;
+
+	public LibraryDataTemplate() : base(CreateLibraryDataTemplate)
 	{
-		const int _rowSpacing = 4;
-		const int _loginTextHeight = 24;
-		const int _textPadding = 8;
 
-		readonly static int _circleDiameter = IsSmallScreen ? 54 : 64;
+	}
 
-		public LibraryDataTemplate() : base(CreateLibraryDataTemplate)
-		{
+	public static int RowHeight { get; } = _rowSpacing + _circleDiameter + _loginTextHeight;
 
-		}
+	enum Row { Avatar, Login }
+	enum Column { LeftText, Image, RightText, RightPadding }
 
-		public static int RowHeight { get; } = _rowSpacing + _circleDiameter + _loginTextHeight;
+	static Grid CreateLibraryDataTemplate() => new Grid
+	{
+		RowSpacing = 4,
 
-		enum Row { Avatar, Login }
-		enum Column { LeftText, Image, RightText, RightPadding }
+		RowDefinitions = Rows.Define(
+			(Row.Avatar, _circleDiameter),
+			(Row.Login, _loginTextHeight)),
 
-		static Grid CreateLibraryDataTemplate() => new Grid
-		{
-			RowSpacing = 4,
+		ColumnDefinitions = Columns.Define(
+			(Column.LeftText, _textPadding),
+			(Column.Image, _circleDiameter),
+			(Column.RightText, _textPadding),
+			(Column.RightPadding, 0.5)),
 
-			RowDefinitions = Rows.Define(
-				(Row.Avatar, _circleDiameter),
-				(Row.Login, _loginTextHeight)),
-
-			ColumnDefinitions = Columns.Define(
-				(Column.LeftText, _textPadding),
-				(Column.Image, _circleDiameter),
-				(Column.RightText, _textPadding),
-				(Column.RightPadding, 0.5)),
-
-			Children =
+		Children =
 			{
 				new AvatarImage(_circleDiameter){ BackgroundColor = Color.White, Padding = 12 }.FillExpand()
 					.Row(Row.Avatar).Column(Column.Image)
@@ -50,6 +50,5 @@ namespace GitTrends
 					.Bind(Label.TextProperty, nameof(NuGetPackageModel.PackageName), BindingMode.OneTime)
 					.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
 			}
-		}.DynamicResource(VisualElement.BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
-	}
+	}.DynamicResource(VisualElement.BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 }

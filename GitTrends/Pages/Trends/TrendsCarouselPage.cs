@@ -8,57 +8,56 @@ using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
-namespace GitTrends
+namespace GitTrends;
+
+class TrendsCarouselPage : BaseCarouselPage<TrendsViewModel>
 {
-	class TrendsCarouselPage : BaseCarouselPage<TrendsViewModel>
+	readonly CancellationTokenSource _fetchDataCancellationTokenSource = new();
+
+	readonly Repository _repository;
+
+	public TrendsCarouselPage(Repository repository,
+								IMainThread mainThread,
+								StarsTrendsPage starsTrendsPage,
+								TrendsViewModel trendsViewModel,
+								IAnalyticsService analyticsService,
+								ViewsClonesTrendsPage viewsClonesTrendsPage) : base(trendsViewModel, mainThread, analyticsService)
 	{
-		readonly CancellationTokenSource _fetchDataCancellationTokenSource = new();
+		_repository = repository;
 
-		readonly Repository _repository;
+		Title = repository.Name;
 
-		public TrendsCarouselPage(Repository repository,
-									IMainThread mainThread,
-									StarsTrendsPage starsTrendsPage,
-									TrendsViewModel trendsViewModel,
-									IAnalyticsService analyticsService,
-									ViewsClonesTrendsPage viewsClonesTrendsPage) : base(trendsViewModel, mainThread, analyticsService)
+		ToolbarItems.Add(new ToolbarItem
 		{
-			_repository = repository;
+			Text = PageTitles.ReferringSitesPage,
+			IconImageSource = "ReferringSitesIcon",
+			AutomationId = TrendsPageAutomationIds.ReferringSitesButton
+		}.Invoke(referringSitesToolbarItem => referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked));
 
-			Title = repository.Name;
+		Children.Add(viewsClonesTrendsPage);
+		Children.Add(starsTrendsPage);
 
-			ToolbarItems.Add(new ToolbarItem
-			{
-				Text = PageTitles.ReferringSitesPage,
-				IconImageSource = "ReferringSitesIcon",
-				AutomationId = TrendsPageAutomationIds.ReferringSitesButton
-			}.Invoke(referringSitesToolbarItem => referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked));
+		this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 
-			Children.Add(viewsClonesTrendsPage);
-			Children.Add(starsTrendsPage);
+		trendsViewModel.FetchDataCommand.Execute((repository, _fetchDataCancellationTokenSource.Token));
+	}
 
-			this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+	protected override void OnDisappearing()
+	{
+		_fetchDataCancellationTokenSource.Cancel();
 
-			trendsViewModel.FetchDataCommand.Execute((repository, _fetchDataCancellationTokenSource.Token));
-		}
+		base.OnDisappearing();
+	}
 
-		protected override void OnDisappearing()
-		{
-			_fetchDataCancellationTokenSource.Cancel();
+	async void HandleReferringSitesToolbarItemClicked(object sender, EventArgs e)
+	{
+		AnalyticsService.Track("Referring Sites Button Tapped");
 
-			base.OnDisappearing();
-		}
+		var referringSitesPage = ContainerService.Container.Resolve<ReferringSitesPage>(new TypedParameter(typeof(Repository), _repository));
 
-		async void HandleReferringSitesToolbarItemClicked(object sender, EventArgs e)
-		{
-			AnalyticsService.Track("Referring Sites Button Tapped");
-
-			var referringSitesPage = ContainerService.Container.Resolve<ReferringSitesPage>(new TypedParameter(typeof(Repository), _repository));
-
-			if (Device.RuntimePlatform is Device.iOS)
-				await Navigation.PushModalAsync(referringSitesPage);
-			else
-				await Navigation.PushAsync(referringSitesPage);
-		}
+		if (Device.RuntimePlatform is Device.iOS)
+			await Navigation.PushModalAsync(referringSitesPage);
+		else
+			await Navigation.PushAsync(referringSitesPage);
 	}
 }

@@ -1,7 +1,6 @@
-﻿namespace GitTrends.Mobile.Common
+﻿namespace GitTrends.Mobile.Common;
+
+static class FontAwesomeConstants
 {
-	static class FontAwesomeConstants
-	{
-		public const string Bell = "\uf0f3";
-	}
+	public const string Bell = "\uf0f3";
 }

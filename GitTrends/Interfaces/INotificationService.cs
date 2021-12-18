@@ -1,11 +1,10 @@
 ﻿using System.Threading.Tasks;
 
-namespace GitTrends
+namespace GitTrends;
+
+public interface IDeviceNotificationsService
 {
-	public interface IDeviceNotificationsService
-	{
-		void Initialize();
-		Task SetiOSBadgeCount(int count);
-		Task<bool?> AreNotificationEnabled();
-	}
+	void Initialize();
+	Task SetiOSBadgeCount(int count);
+	Task<bool?> AreNotificationEnabled();
 }
