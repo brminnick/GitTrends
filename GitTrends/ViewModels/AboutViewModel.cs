@@ -5,56 +5,57 @@ using AsyncAwaitBestPractices.MVVM;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 
-namespace GitTrends;
-
-public class AboutViewModel : BaseViewModel
+namespace GitTrends
 {
-	public AboutViewModel(IMainThread mainThread,
-							LibrariesService librariesService,
-							IAnalyticsService analyticsService,
-							DeepLinkingService deepLinkingService,
-							GitTrendsStatisticsService gitTrendsStatisticsService) : base(analyticsService, mainThread)
+	public class AboutViewModel : BaseViewModel
 	{
-		if (gitTrendsStatisticsService.Stars.HasValue)
-			Stars = gitTrendsStatisticsService.Stars.Value;
-
-		if (gitTrendsStatisticsService.Watchers.HasValue)
-			Watchers = gitTrendsStatisticsService.Watchers.Value;
-
-		if (gitTrendsStatisticsService.Forks.HasValue)
-			Forks = gitTrendsStatisticsService.Forks.Value;
-
-		InstalledLibraries = librariesService.InstalledLibraries;
-		GitTrendsContributors = gitTrendsStatisticsService.Contributors.OrderByDescending(x => x.ContributionCount).ToList();
-
-		ViewOnGitHubCommand = new AsyncCommand(() =>
+		public AboutViewModel(IMainThread mainThread,
+								LibrariesService librariesService,
+								IAnalyticsService analyticsService,
+								DeepLinkingService deepLinkingService,
+								GitTrendsStatisticsService gitTrendsStatisticsService) : base(analyticsService, mainThread)
 		{
-			if (gitTrendsStatisticsService?.GitHubUri is null)
-				return Task.CompletedTask;
+			if (gitTrendsStatisticsService.Stars.HasValue)
+				Stars = gitTrendsStatisticsService.Stars.Value;
 
-			AnalyticsService.Track("View On GitHub Tapped");
+			if (gitTrendsStatisticsService.Watchers.HasValue)
+				Watchers = gitTrendsStatisticsService.Watchers.Value;
 
-			return deepLinkingService.OpenBrowser(gitTrendsStatisticsService.GitHubUri);
-		});
+			if (gitTrendsStatisticsService.Forks.HasValue)
+				Forks = gitTrendsStatisticsService.Forks.Value;
 
-		RequestFeatureCommand = new AsyncCommand(() =>
-		{
-			if (gitTrendsStatisticsService?.GitHubUri is null)
-				return Task.CompletedTask;
+			InstalledLibraries = librariesService.InstalledLibraries;
+			GitTrendsContributors = gitTrendsStatisticsService.Contributors.OrderByDescending(x => x.ContributionCount).ToList();
 
-			AnalyticsService.Track("Request Feature Tapped");
+			ViewOnGitHubCommand = new AsyncCommand(() =>
+			{
+				if (gitTrendsStatisticsService?.GitHubUri is null)
+					return Task.CompletedTask;
 
-			return deepLinkingService.OpenBrowser(gitTrendsStatisticsService.GitHubUri + "/issues/new?template=feature_request.md");
-		});
+				AnalyticsService.Track("View On GitHub Tapped");
+
+				return deepLinkingService.OpenBrowser(gitTrendsStatisticsService.GitHubUri);
+			});
+
+			RequestFeatureCommand = new AsyncCommand(() =>
+			{
+				if (gitTrendsStatisticsService?.GitHubUri is null)
+					return Task.CompletedTask;
+
+				AnalyticsService.Track("Request Feature Tapped");
+
+				return deepLinkingService.OpenBrowser(gitTrendsStatisticsService.GitHubUri + "/issues/new?template=feature_request.md");
+			});
+		}
+
+		public long? Stars { get; }
+		public long? Forks { get; }
+		public long? Watchers { get; }
+
+		public IReadOnlyList<Contributor> GitTrendsContributors { get; }
+		public IReadOnlyList<NuGetPackageModel> InstalledLibraries { get; }
+
+		public IAsyncCommand ViewOnGitHubCommand { get; }
+		public IAsyncCommand RequestFeatureCommand { get; }
 	}
-
-	public long? Stars { get; }
-	public long? Forks { get; }
-	public long? Watchers { get; }
-
-	public IReadOnlyList<Contributor> GitTrendsContributors { get; }
-	public IReadOnlyList<NuGetPackageModel> InstalledLibraries { get; }
-
-	public IAsyncCommand ViewOnGitHubCommand { get; }
-	public IAsyncCommand RequestFeatureCommand { get; }
 }

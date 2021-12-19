@@ -11,82 +11,83 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace GitTrends.Functions;
-
-class GetTestToken
+namespace GitTrends.Functions
 {
-	readonly static IReadOnlyDictionary<string, string> _testTokenDictionary = new Dictionary<string, string>
+	class GetTestToken
+	{
+		readonly static IReadOnlyDictionary<string, string> _testTokenDictionary = new Dictionary<string, string>
 		{
 			{ "UITestToken_brminnick", Environment.GetEnvironmentVariable("UITestToken_brminnick") ?? string.Empty },
 			{ "UITestToken_GitTrendsApp",  Environment.GetEnvironmentVariable("UITestToken_GitTrendsApp") ?? string.Empty },
 			{ "UITestToken_TheCodeTraveler",  Environment.GetEnvironmentVariable("UITestToken_TheCodeTraveler") ?? string.Empty },
 		};
 
-	readonly GitHubApiV3Service _gitHubApiV3Service;
-	readonly IGitHubApiStatusService _gitHubApiStatusService;
-	readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
+		readonly GitHubApiV3Service _gitHubApiV3Service;
+		readonly IGitHubApiStatusService _gitHubApiStatusService;
+		readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
 
-	public GetTestToken(GitHubApiV3Service gitHubApiV3Service,
-						IGitHubApiStatusService gitHubApiStatusService,
-						GitHubGraphQLApiService gitHubGraphQLApiService)
-	{
-		_gitHubApiV3Service = gitHubApiV3Service;
-		_gitHubApiStatusService = gitHubApiStatusService;
-		_gitHubGraphQLApiService = gitHubGraphQLApiService;
-	}
-
-	[Function(nameof(GetTestToken))]
-	public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData req, FunctionContext functionContext)
-	{
-		var log = functionContext.GetLogger<GetTestToken>();
-
-		foreach (var testTokenPair in _testTokenDictionary)
+		public GetTestToken(GitHubApiV3Service gitHubApiV3Service,
+							IGitHubApiStatusService gitHubApiStatusService,
+							GitHubGraphQLApiService gitHubGraphQLApiService)
 		{
-			log.LogInformation($"Retrieving Rate Limits for {testTokenPair.Key}");
+			_gitHubApiV3Service = gitHubApiV3Service;
+			_gitHubApiStatusService = gitHubApiStatusService;
+			_gitHubGraphQLApiService = gitHubGraphQLApiService;
+		}
 
-			var timeout = TimeSpan.FromSeconds(2);
-			var cancellationTokenSource = new CancellationTokenSource(timeout);
+		[Function(nameof(GetTestToken))]
+		public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData req, FunctionContext functionContext)
+		{
+			var log = functionContext.GetLogger<GetTestToken>();
 
-			try
+			foreach (var testTokenPair in _testTokenDictionary)
 			{
-				_gitHubApiStatusService.SetAuthenticationHeaderValue(new AuthenticationHeaderValue("bearer", testTokenPair.Value));
-				var gitHubApiRateLimits = await _gitHubApiStatusService.GetApiRateLimits(cancellationTokenSource.Token).ConfigureAwait(false);
+				log.LogInformation($"Retrieving Rate Limits for {testTokenPair.Key}");
 
-				log.LogInformation($"\tREST API Rate Limit: {gitHubApiRateLimits.RestApi.RemainingRequestCount}");
-				log.LogInformation($"\tGraphQL API Rate Limit: {gitHubApiRateLimits.GraphQLApi.RemainingRequestCount}");
+				var timeout = TimeSpan.FromSeconds(2);
+				var cancellationTokenSource = new CancellationTokenSource(timeout);
 
-				if (gitHubApiRateLimits.RestApi.RemainingRequestCount > 1000
-					&& gitHubApiRateLimits.GraphQLApi.RemainingRequestCount > 1000)
+				try
 				{
+					_gitHubApiStatusService.SetAuthenticationHeaderValue(new AuthenticationHeaderValue("bearer", testTokenPair.Value));
+					var gitHubApiRateLimits = await _gitHubApiStatusService.GetApiRateLimits(cancellationTokenSource.Token).ConfigureAwait(false);
 
-					var gitHubToken = new GitHubToken(testTokenPair.Value, GitHubConstants.OAuthScope, "Bearer");
+					log.LogInformation($"\tREST API Rate Limit: {gitHubApiRateLimits.RestApi.RemainingRequestCount}");
+					log.LogInformation($"\tGraphQL API Rate Limit: {gitHubApiRateLimits.GraphQLApi.RemainingRequestCount}");
 
-					var okResponse = req.CreateResponse(HttpStatusCode.OK);
+					if (gitHubApiRateLimits.RestApi.RemainingRequestCount > 1000
+						&& gitHubApiRateLimits.GraphQLApi.RemainingRequestCount > 1000)
+					{
 
-					var gitHubTokenJson = JsonConvert.SerializeObject(gitHubToken);
+						var gitHubToken = new GitHubToken(testTokenPair.Value, GitHubConstants.OAuthScope, "Bearer");
 
-					await okResponse.WriteStringAsync(gitHubTokenJson).ConfigureAwait(false);
+						var okResponse = req.CreateResponse(HttpStatusCode.OK);
 
-					return okResponse;
+						var gitHubTokenJson = JsonConvert.SerializeObject(gitHubToken);
+
+						await okResponse.WriteStringAsync(gitHubTokenJson).ConfigureAwait(false);
+
+						return okResponse;
+					}
+
+					log.LogInformation($"\tAPI Limits for {testTokenPair.Key} too low");
+					log.LogInformation($"\tRetrieving next token");
 				}
+				catch (Exception e)
+				{
+					log.LogError(e, e.Message);
 
-				log.LogInformation($"\tAPI Limits for {testTokenPair.Key} too low");
-				log.LogInformation($"\tRetrieving next token");
-			}
-			catch (Exception e)
-			{
-				log.LogError(e, e.Message);
+					var errorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
+					await errorResponse.WriteStringAsync(e.ToString()).ConfigureAwait(false);
 
-				var errorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
-				await errorResponse.WriteStringAsync(e.ToString()).ConfigureAwait(false);
+					return errorResponse;
+				}
+			};
 
-				return errorResponse;
-			}
-		};
+			var notFoundResponse = req.CreateResponse(HttpStatusCode.NotFound);
+			await notFoundResponse.WriteStringAsync("No Valid GitHub Token Found").ConfigureAwait(false);
 
-		var notFoundResponse = req.CreateResponse(HttpStatusCode.NotFound);
-		await notFoundResponse.WriteStringAsync("No Valid GitHub Token Found").ConfigureAwait(false);
-
-		return notFoundResponse;
+			return notFoundResponse;
+		}
 	}
 }

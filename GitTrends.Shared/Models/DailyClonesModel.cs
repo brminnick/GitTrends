@@ -1,18 +1,19 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace GitTrends.Shared;
-
-public record DailyClonesModel : BaseDailyModel, IDailyClonesModel
+namespace GitTrends.Shared
 {
-	public DailyClonesModel(DateTimeOffset timestamp, long count, long uniques) : base(timestamp, count, uniques)
+	public record DailyClonesModel : BaseDailyModel, IDailyClonesModel
 	{
+		public DailyClonesModel(DateTimeOffset timestamp, long count, long uniques) : base(timestamp, count, uniques)
+		{
 
+		}
+
+		[JsonIgnore]
+		public long TotalClones => TotalCount;
+
+		[JsonIgnore]
+		public long TotalUniqueClones => TotalUniqueCount;
 	}
-
-	[JsonIgnore]
-	public long TotalClones => TotalCount;
-
-	[JsonIgnore]
-	public long TotalUniqueClones => TotalUniqueCount;
 }

@@ -5,48 +5,49 @@ using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 
-namespace GitTrends;
-
-public record MobileReferringSiteModel : ReferringSiteModel, IMobileReferringSiteModel, INotifyPropertyChanged
+namespace GitTrends
 {
-	public const int FavIconSize = 32;
-
-	readonly AsyncAwaitBestPractices.WeakEventManager _propertyChangedEventManager = new();
-
-	ImageSource? _favIcon;
-
-	public MobileReferringSiteModel(in ReferringSiteModel referringSiteModel, in ImageSource? favIcon = null)
-		: base(referringSiteModel.TotalCount, referringSiteModel.TotalUniqueCount, referringSiteModel.Referrer, referringSiteModel.DownloadedAt)
+	public record MobileReferringSiteModel : ReferringSiteModel, IMobileReferringSiteModel, INotifyPropertyChanged
 	{
-		FavIcon = favIcon ?? FavIconService.DefaultFavIcon;
-	}
+		public const int FavIconSize = 32;
 
-	event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
-	{
-		add => _propertyChangedEventManager.AddEventHandler(value);
-		remove => _propertyChangedEventManager.RemoveEventHandler(value);
-	}
+		readonly AsyncAwaitBestPractices.WeakEventManager _propertyChangedEventManager = new();
 
-	public string FavIconImageUrl => FavIcon switch
-	{
-		UriImageSource uriImageSource => uriImageSource.Uri.ToString(),
-		_ => string.Empty
-	};
+		ImageSource? _favIcon;
 
-	[JsonIgnore]
-	public ImageSource? FavIcon
-	{
-		get => _favIcon;
-		set => SetProperty(ref _favIcon, value);
-	}
+		public MobileReferringSiteModel(in ReferringSiteModel referringSiteModel, in ImageSource? favIcon = null)
+			: base(referringSiteModel.TotalCount, referringSiteModel.TotalUniqueCount, referringSiteModel.Referrer, referringSiteModel.DownloadedAt)
+		{
+			FavIcon = favIcon ?? FavIconService.DefaultFavIcon;
+		}
 
-	protected void SetProperty<T>(ref T backingStore, in T value, [CallerMemberName] in string propertyName = "")
-	{
-		if (EqualityComparer<T>.Default.Equals(backingStore, value))
-			return;
+		event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+		{
+			add => _propertyChangedEventManager.AddEventHandler(value);
+			remove => _propertyChangedEventManager.RemoveEventHandler(value);
+		}
 
-		backingStore = value;
+		public string FavIconImageUrl => FavIcon switch
+		{
+			UriImageSource uriImageSource => uriImageSource.Uri.ToString(),
+			_ => string.Empty
+		};
 
-		_propertyChangedEventManager.RaiseEvent(this, new PropertyChangedEventArgs(propertyName), nameof(INotifyPropertyChanged.PropertyChanged));
+		[JsonIgnore]
+		public ImageSource? FavIcon
+		{
+			get => _favIcon;
+			set => SetProperty(ref _favIcon, value);
+		}
+
+		protected void SetProperty<T>(ref T backingStore, in T value, [CallerMemberName] in string propertyName = "")
+		{
+			if (EqualityComparer<T>.Default.Equals(backingStore, value))
+				return;
+
+			backingStore = value;
+
+			_propertyChangedEventManager.RaiseEvent(this, new PropertyChangedEventArgs(propertyName), nameof(INotifyPropertyChanged.PropertyChanged));
+		}
 	}
 }

@@ -1,6 +1,7 @@
-﻿namespace GitTrends.iOS;
-
-public class Application
+﻿namespace GitTrends.iOS
 {
-	static void Main(string[] args) => UIKit.UIApplication.Main(args, null, nameof(AppDelegate));
+    public class Application
+    {
+        static void Main(string[] args) => UIKit.UIApplication.Main(args, null, nameof(AppDelegate));
+    }
 }

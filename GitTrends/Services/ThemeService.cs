@@ -8,86 +8,86 @@ using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
-namespace GitTrends;
-
-public class ThemeService
+namespace GitTrends
 {
-	readonly static WeakEventManager<PreferredTheme> _preferenceChangedEventManager = new();
-
-	readonly IMainThread _mainThread;
-	readonly IPreferences _preferences;
-	readonly IAnalyticsService _analyticsService;
-
-	public ThemeService(IAnalyticsService analyticsService, IPreferences preferences, IMainThread mainThread)
+	public class ThemeService
 	{
-		_mainThread = mainThread;
-		_preferences = preferences;
-		_analyticsService = analyticsService;
-	}
+		readonly static WeakEventManager<PreferredTheme> _preferenceChangedEventManager = new();
 
-	public static event EventHandler<PreferredTheme> PreferenceChanged
-	{
-		add => _preferenceChangedEventManager.AddEventHandler(value);
-		remove => _preferenceChangedEventManager.RemoveEventHandler(value);
-	}
+		readonly IMainThread _mainThread;
+		readonly IPreferences _preferences;
+		readonly IAnalyticsService _analyticsService;
 
-	public PreferredTheme Preference
-	{
-		get => (PreferredTheme)_preferences.Get(nameof(Preference), (int)PreferredTheme.Default);
-		set
+		public ThemeService(IAnalyticsService analyticsService, IPreferences preferences, IMainThread mainThread)
 		{
-			_preferences.Set(nameof(Preference), (int)value);
-			SetAppTheme(value).SafeFireAndForget();
+			_mainThread = mainThread;
+			_preferences = preferences;
+			_analyticsService = analyticsService;
 		}
-	}
 
-	internal Task Initialize()
-	{
-		if (Application.Current != null)
-			Application.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
-
-		return SetAppTheme(Preference);
-	}
-
-	Task SetAppTheme(PreferredTheme preferredTheme)
-	{
-		if (Application.Current is null)
-			return Task.CompletedTask;
-
-		return _mainThread.InvokeOnMainThreadAsync(() =>
+		public static event EventHandler<PreferredTheme> PreferenceChanged
 		{
-			BaseTheme theme = preferredTheme switch
-			{
-				PreferredTheme.Dark => new DarkTheme(),
-				PreferredTheme.Light => new LightTheme(),
-				PreferredTheme.Default => Application.Current.RequestedTheme is OSAppTheme.Dark ? new DarkTheme() : new LightTheme(),
-				_ => throw new NotSupportedException()
-			};
+			add => _preferenceChangedEventManager.AddEventHandler(value);
+			remove => _preferenceChangedEventManager.RemoveEventHandler(value);
+		}
 
-			if (Application.Current.Resources.GetType() != theme.GetType())
+		public PreferredTheme Preference
+		{
+			get => (PreferredTheme)_preferences.Get(nameof(Preference), (int)PreferredTheme.Default);
+			set
 			{
-				Application.Current.Resources = theme;
+				_preferences.Set(nameof(Preference), (int)value);
+				SetAppTheme(value).SafeFireAndForget();
+			}
+		}
 
-				_analyticsService.Track("Theme Changed", new Dictionary<string, string>
+		internal Task Initialize()
+		{
+			if (Application.Current != null)
+				Application.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
+
+			return SetAppTheme(Preference);
+		}
+
+		Task SetAppTheme(PreferredTheme preferredTheme)
+		{
+			if (Application.Current is null)
+				return Task.CompletedTask;
+
+			return _mainThread.InvokeOnMainThreadAsync(() =>
+			{
+				BaseTheme theme = preferredTheme switch
 				{
+					PreferredTheme.Dark => new DarkTheme(),
+					PreferredTheme.Light => new LightTheme(),
+					PreferredTheme.Default => Application.Current.RequestedTheme is OSAppTheme.Dark ? new DarkTheme() : new LightTheme(),
+					_ => throw new NotSupportedException()
+				};
+
+				if (Application.Current.Resources.GetType() != theme.GetType())
+				{
+					Application.Current.Resources = theme;
+
+					_analyticsService.Track("Theme Changed", new Dictionary<string, string>
+					{
 						{ nameof(PreferredTheme), preferredTheme.ToString() },
 						{ nameof(Application.Current.RequestedTheme), Application.Current.RequestedTheme.ToString() }
-				});
+					});
 
-				OnPreferenceChanged(preferredTheme);
+					OnPreferenceChanged(preferredTheme);
 
-				EnableDebugRainbows(false);
-			}
-		});
-	}
+					EnableDebugRainbows(false);
+				}
+			});
+		}
 
-	[Conditional("DEBUG")]
-	void EnableDebugRainbows(bool shouldUseDebugRainbows)
-	{
-		Application.Current.Resources.Add(new Style(typeof(ContentPage))
+		[Conditional("DEBUG")]
+		void EnableDebugRainbows(bool shouldUseDebugRainbows)
 		{
-			ApplyToDerivedTypes = true,
-			Setters =
+			Application.Current.Resources.Add(new Style(typeof(ContentPage))
+			{
+				ApplyToDerivedTypes = true,
+				Setters =
 				{
 					new Setter
 					{
@@ -100,14 +100,15 @@ public class ThemeService
 						Value = shouldUseDebugRainbows
 					}
 				}
-		});
-	}
+			});
+		}
 
-	async void HandleRequestedThemeChanged(object sender, AppThemeChangedEventArgs e)
-	{
-		if (Preference is PreferredTheme.Default)
-			await SetAppTheme(PreferredTheme.Default);
-	}
+		async void HandleRequestedThemeChanged(object sender, AppThemeChangedEventArgs e)
+		{
+			if (Preference is PreferredTheme.Default)
+				await SetAppTheme(PreferredTheme.Default);
+		}
 
-	void OnPreferenceChanged(PreferredTheme theme) => _mainThread.InvokeOnMainThreadAsync(() => _preferenceChangedEventManager.RaiseEvent(this, theme, nameof(PreferenceChanged)));
+		void OnPreferenceChanged(PreferredTheme theme) => _mainThread.InvokeOnMainThreadAsync(() => _preferenceChangedEventManager.RaiseEvent(this, theme, nameof(PreferenceChanged)));
+	}
 }

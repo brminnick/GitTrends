@@ -7,43 +7,43 @@ using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
-namespace GitTrends;
-
-public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
+namespace GitTrends
 {
-	public ConnectToGitHubOnboardingPage(IDeviceInfo deviceInfo,
-											IMainThread mainthread,
-											IAnalyticsService analyticsService,
-											MediaElementService mediaElementService)
-			: base(OnboardingConstants.TryDemoText, deviceInfo, Color.FromHex(BaseTheme.CoralColorHex), mainthread, 3, analyticsService, mediaElementService)
+	public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
 	{
-		GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
-	}
-
-	enum Row { Description, Button, ActivityIndicator }
-
-	protected override View CreateImageView() => new Image
-	{
-		Source = "ConnectToGitHubOnboarding",
-		HorizontalOptions = LayoutOptions.CenterAndExpand,
-		VerticalOptions = LayoutOptions.CenterAndExpand,
-		Aspect = Aspect.AspectFit
-	};
-
-	protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ConnectToGitHubPage_Title);
-
-	protected override View CreateDescriptionBodyView() => new ScrollView
-	{
-		Content = new Grid
+		public ConnectToGitHubOnboardingPage(IDeviceInfo deviceInfo,
+												IMainThread mainthread,
+												IAnalyticsService analyticsService,
+												MediaElementService mediaElementService)
+				: base(OnboardingConstants.TryDemoText, deviceInfo, Color.FromHex(BaseTheme.CoralColorHex), mainthread, 3, analyticsService, mediaElementService)
 		{
-			RowSpacing = 16,
+			GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+		}
 
-			RowDefinitions = Rows.Define(
-					(Row.Description, 65),
-					(Row.Button, 42),
-					(Row.ActivityIndicator, 42)),
+		enum Row { Description, Button, ActivityIndicator }
 
-			Children =
+		protected override View CreateImageView() => new Image
+		{
+			Source = "ConnectToGitHubOnboarding",
+			HorizontalOptions = LayoutOptions.CenterAndExpand,
+			VerticalOptions = LayoutOptions.CenterAndExpand,
+			Aspect = Aspect.AspectFit
+		};
+
+		protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ConnectToGitHubPage_Title);
+
+		protected override View CreateDescriptionBodyView() => new ScrollView
+		{
+			Content = new Grid
+			{
+				RowSpacing = 16,
+
+				RowDefinitions = Rows.Define(
+						(Row.Description, 65),
+						(Row.Button, 42),
+						(Row.ActivityIndicator, 42)),
+
+				Children =
 				{
 					new BodyLabel(OnboardingConstants.ConnectToGitHubPage_Body_GetStarted).Row(Row.Description),
 
@@ -59,25 +59,26 @@ public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
 
 					new IsAuthenticatingIndicator().Row(Row.ActivityIndicator)
 				}
-		}
-	};
+			}
+		};
 
-	void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
-	{
-		if (e.IsSessionAuthorized)
-			MainThread.BeginInvokeOnMainThread(() => Navigation.PopModalAsync());
-	}
-
-	class IsAuthenticatingIndicator : ActivityIndicator
-	{
-		public IsAuthenticatingIndicator()
+		void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e)
 		{
-			Color = Color.White;
+			if (e.IsSessionAuthorized)
+				MainThread.BeginInvokeOnMainThread(() => Navigation.PopModalAsync());
+		}
 
-			AutomationId = OnboardingAutomationIds.IsAuthenticatingActivityIndicator;
+		class IsAuthenticatingIndicator : ActivityIndicator
+		{
+			public IsAuthenticatingIndicator()
+			{
+				Color = Color.White;
 
-			this.SetBinding(IsVisibleProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
-			this.SetBinding(IsRunningProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
+				AutomationId = OnboardingAutomationIds.IsAuthenticatingActivityIndicator;
+
+				this.SetBinding(IsVisibleProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
+				this.SetBinding(IsRunningProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
+			}
 		}
 	}
 }

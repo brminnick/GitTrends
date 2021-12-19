@@ -8,34 +8,35 @@ using GitTrends.Shared;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
 
-namespace GitTrends.UnitTests;
-
-class RepositoryViewModelTests_AbuseLimit_RestApi : RepositoryViewModelTests_AbuseLimit
+namespace GitTrends.UnitTests
 {
-	[Test]
-	public Task PullToRefreshCommandTest_MaximumApiLimit_RestLApi() => ExecutePullToRefreshCommandTestAbuseLimit();
-
-	protected override void InitializeServiceCollection()
+	class RepositoryViewModelTests_AbuseLimit_RestApi : RepositoryViewModelTests_AbuseLimit
 	{
-		var gitHubApiV3Client = RefitExtensions.For<IGitHubApiV3>(CreateAbuseApiLimitHttpClient(GitHubConstants.GitHubRestApiUrl));
-		var gitHubGraphQLCLient = RefitExtensions.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
-		var azureFunctionsClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
+		[Test]
+		public Task PullToRefreshCommandTest_MaximumApiLimit_RestLApi() => ExecutePullToRefreshCommandTestAbuseLimit();
 
-		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
-	}
+		protected override void InitializeServiceCollection()
+		{
+			var gitHubApiV3Client = RefitExtensions.For<IGitHubApiV3>(CreateAbuseApiLimitHttpClient(GitHubConstants.GitHubRestApiUrl));
+			var gitHubGraphQLCLient = RefitExtensions.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
+			var azureFunctionsClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
 
-	protected static HttpClient CreateAbuseApiLimitHttpClient(string url)
-	{
-		var errorResponseMessage = new HttpResponseMessage(HttpStatusCode.Forbidden);
-		errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitHeader, "5000");
-		errorResponseMessage.Headers.RetryAfter = new RetryConditionHeaderValue(TimeSpan.FromMinutes(1));
+			ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
+		}
 
-		var httpMessageHandler = new MockHttpMessageHandler();
-		httpMessageHandler.When($"{url}/*").Respond(request => errorResponseMessage);
+		protected static HttpClient CreateAbuseApiLimitHttpClient(string url)
+		{
+			var errorResponseMessage = new HttpResponseMessage(HttpStatusCode.Forbidden);
+			errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitHeader, "5000");
+			errorResponseMessage.Headers.RetryAfter = new RetryConditionHeaderValue(TimeSpan.FromMinutes(1));
 
-		var httpClient = httpMessageHandler.ToHttpClient();
-		httpClient.BaseAddress = new Uri(url);
+			var httpMessageHandler = new MockHttpMessageHandler();
+			httpMessageHandler.When($"{url}/*").Respond(request => errorResponseMessage);
 
-		return httpClient;
+			var httpClient = httpMessageHandler.ToHttpClient();
+			httpClient.BaseAddress = new Uri(url);
+
+			return httpClient;
+		}
 	}
 }

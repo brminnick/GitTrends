@@ -6,48 +6,48 @@ using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
-namespace GitTrends;
-
-public class GitTrendsOnboardingPage : BaseOnboardingContentPage
+namespace GitTrends
 {
-	public GitTrendsOnboardingPage(IDeviceInfo deviceInfo,
-									IMainThread mainThread,
-									IAnalyticsService analyticsService,
-									MediaElementService mediaElementService)
-		: base(OnboardingConstants.SkipText, deviceInfo, Color.FromHex(BaseTheme.LightTealColorHex), mainThread, 0, analyticsService, mediaElementService)
+	public class GitTrendsOnboardingPage : BaseOnboardingContentPage
 	{
-	}
-
-	enum Row { Title, Connect, MonitorImage, MonitorDescription, Discover }
-	enum Column { Image, Description }
-
-	protected override View CreateImageView() => new Image
-	{
-		Source = "GitTrendsWhite",
-		HorizontalOptions = LayoutOptions.Center,
-		VerticalOptions = LayoutOptions.Center
-	};
-
-	protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.GitTrendsPage_Title);
-
-	protected override View CreateDescriptionBodyView() => new ScrollView
-	{
-		Content = new Grid
+		public GitTrendsOnboardingPage(IDeviceInfo deviceInfo,
+										IMainThread mainThread,
+										IAnalyticsService analyticsService,
+										MediaElementService mediaElementService)
+			: base(OnboardingConstants.SkipText, deviceInfo, Color.FromHex(BaseTheme.LightTealColorHex), mainThread, 0, analyticsService, mediaElementService)
 		{
-			RowSpacing = 14,
+		}
 
-			RowDefinitions = Rows.Define(
-				(Row.Title, Auto),
-				(Row.Connect, 24),
-				(Row.MonitorImage, 24),
-				(Row.MonitorDescription, 2),
-				(Row.Discover, 24)),
+		enum Row { Title, Connect, MonitorImage, MonitorDescription, Discover }
+		enum Column { Image, Description }
 
-			ColumnDefinitions = Columns.Define(
-				(Column.Image, 56),
-				(Column.Description, Star)),
+		protected override View CreateImageView() => new Image
+		{
+			Source = "GitTrendsWhite",
+			HorizontalOptions = LayoutOptions.Center,
+			VerticalOptions = LayoutOptions.Center
+		};
 
-			Children =
+		protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.GitTrendsPage_Title);
+
+		protected override View CreateDescriptionBodyView() => new ScrollView
+		{
+			Content = new Grid
+			{
+				RowSpacing = 14,
+
+				RowDefinitions = Rows.Define(
+					(Row.Title, Auto),
+					(Row.Connect, 24),
+					(Row.MonitorImage, 24),
+					(Row.MonitorDescription, 2),
+					(Row.Discover, 24)),
+
+				ColumnDefinitions = Columns.Define(
+					(Column.Image, 56),
+					(Column.Description, Star)),
+
+				Children =
 				{
 					new BodyLabel(OnboardingConstants.GitTrendsPage_Body_GitTrendsHelps).Row(Row.Title).ColumnSpan(All<Column>()),
 
@@ -60,19 +60,20 @@ public class GitTrendsOnboardingPage : BaseOnboardingContentPage
 					new BodySvg("megaphone.svg").Row(Row.Discover).Column(Column.Image),
 					new BodyLabel(OnboardingConstants.GitTrendsPage_Body_DiscoverReferringSites).Row(Row.Discover).Column(Column.Description),
 				}
-		}
-	};
+			}
+		};
 
-	class GitHubLogoLabel : Label
-	{
-		public GitHubLogoLabel()
+		class GitHubLogoLabel : Label
 		{
-			Text = FontAwesomeBrandsConstants.GitHubOctocat;
-			FontSize = 24;
-			TextColor = Color.White;
-			FontFamily = FontFamilyConstants.FontAwesomeBrands;
-			VerticalTextAlignment = TextAlignment.Center;
-			HorizontalTextAlignment = TextAlignment.Center;
+			public GitHubLogoLabel()
+			{
+				Text = FontAwesomeBrandsConstants.GitHubOctocat;
+				FontSize = 24;
+				TextColor = Color.White;
+				FontFamily = FontFamilyConstants.FontAwesomeBrands;
+				VerticalTextAlignment = TextAlignment.Center;
+				HorizontalTextAlignment = TextAlignment.Center;
+			}
 		}
 	}
 }

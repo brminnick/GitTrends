@@ -6,39 +6,40 @@ using GitHubApiStatus;
 using GitTrends.Shared;
 using Refit;
 
-namespace GitTrends;
-
-public static class GitHubApiExceptionService
+namespace GitTrends
 {
-	public static bool HasReachedMaximumApiCallLimit(this IGitHubApiStatusService gitHubApiStatusService, in Exception exception)
+	public static class GitHubApiExceptionService
 	{
-		var doesContainGitHubRateLimitRemainingHeader = exception switch
+		public static bool HasReachedMaximumApiCallLimit(this IGitHubApiStatusService gitHubApiStatusService, in Exception exception)
 		{
-			ApiException apiException => apiException.Headers.DoesContainGitHubRateLimitRemainingHeader(),
-			GraphQLException graphQLException => graphQLException.ResponseHeaders.DoesContainGitHubRateLimitRemainingHeader(),
-			_ => false
-		};
+			var doesContainGitHubRateLimitRemainingHeader = exception switch
+			{
+				ApiException apiException => apiException.Headers.DoesContainGitHubRateLimitRemainingHeader(),
+				GraphQLException graphQLException => graphQLException.ResponseHeaders.DoesContainGitHubRateLimitRemainingHeader(),
+				_ => false
+			};
 
-		if (!doesContainGitHubRateLimitRemainingHeader)
-			return false;
+			if (!doesContainGitHubRateLimitRemainingHeader)
+				return false;
 
-		return exception switch
+			return exception switch
+			{
+				ApiException apiException when apiException.StatusCode is HttpStatusCode.Forbidden => gitHubApiStatusService.HasReachedMaximimApiCallLimit(apiException.Headers),
+				GraphQLException graphQLException => gitHubApiStatusService.HasReachedMaximimApiCallLimit(graphQLException.ResponseHeaders),
+				_ => false
+			};
+		}
+
+		public static bool IsAbuseRateLimit(this IGitHubApiStatusService gitHubApiStatusService, in Exception exception, [NotNullWhen(true)] out TimeSpan? delta)
 		{
-			ApiException apiException when apiException.StatusCode is HttpStatusCode.Forbidden => gitHubApiStatusService.HasReachedMaximimApiCallLimit(apiException.Headers),
-			GraphQLException graphQLException => gitHubApiStatusService.HasReachedMaximimApiCallLimit(graphQLException.ResponseHeaders),
-			_ => false
-		};
-	}
+			delta = null;
 
-	public static bool IsAbuseRateLimit(this IGitHubApiStatusService gitHubApiStatusService, in Exception exception, [NotNullWhen(true)] out TimeSpan? delta)
-	{
-		delta = null;
-
-		return exception switch
-		{
-			ApiException apiException when apiException.StatusCode is HttpStatusCode.Forbidden => gitHubApiStatusService.IsAbuseRateLimit(apiException.Headers, out delta),
-			GraphQLException graphQLException => gitHubApiStatusService.IsAbuseRateLimit(graphQLException.ResponseHeaders, out delta),
-			_ => false
-		};
+			return exception switch
+			{
+				ApiException apiException when apiException.StatusCode is HttpStatusCode.Forbidden => gitHubApiStatusService.IsAbuseRateLimit(apiException.Headers, out delta),
+				GraphQLException graphQLException => gitHubApiStatusService.IsAbuseRateLimit(graphQLException.ResponseHeaders, out delta),
+				_ => false
+			};
+		}
 	}
 }

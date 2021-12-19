@@ -5,27 +5,27 @@ using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
-namespace GitTrends;
-
-abstract class BaseTrendsContentPage : BaseContentPage
+namespace GitTrends
 {
-	public BaseTrendsContentPage(in Color indicatorColor,
-									in IMainThread mainThread,
-									in int carouselPositionIndex,
-									in IAnalyticsService analyticsService) : base(analyticsService, mainThread, true)
+	abstract class BaseTrendsContentPage : BaseContentPage
 	{
-		Content = new Grid
+		public BaseTrendsContentPage(in Color indicatorColor,
+										in IMainThread mainThread,
+										in int carouselPositionIndex,
+										in IAnalyticsService analyticsService) : base(analyticsService, mainThread, true)
 		{
-			ColumnSpacing = 8,
-			RowSpacing = 12,
-			Padding = new Thickness(0, 16),
+			Content = new Grid
+			{
+				ColumnSpacing = 8,
+				RowSpacing = 12,
+				Padding = new Thickness(0, 16),
 
-			RowDefinitions = Rows.Define(
-				(Row.Header, ViewsClonesStatisticsGrid.StatisticsGridHeight),
-				(Row.Indicator, 12),
-				(Row.Chart, Star)),
+				RowDefinitions = Rows.Define(
+					(Row.Header, ViewsClonesStatisticsGrid.StatisticsGridHeight),
+					(Row.Indicator, 12),
+					(Row.Chart, Star)),
 
-			Children =
+				Children =
 				{
 					CreateHeaderView()
 						.Row(Row.Header),
@@ -42,53 +42,54 @@ abstract class BaseTrendsContentPage : BaseContentPage
 					new TrendsChartActivityIndicator()
 						.Row(Row.Chart),
 				}
-		};
-	}
-
-	protected enum Row { Header, Indicator, Chart }
-
-	protected abstract Layout CreateHeaderView();
-	protected abstract BaseChartView CreateChartView();
-	protected abstract EmptyDataView CreateEmptyDataView();
-
-	class TrendsIndicatorView : IndicatorView
-	{
-		public TrendsIndicatorView(in int position, in Color indicatorColor)
-		{
-			Position = position;
-
-			IndicatorSize = 8;
-
-			IsEnabled = false;
-
-			SelectedIndicatorColor = indicatorColor;
-			IndicatorColor = Color.FromHex("#BFBFBF");
-			AutomationId = TrendsPageAutomationIds.IndicatorView;
-
-
-			this.Center();
-
-
-			SetBinding(CountProperty, new Binding(nameof(TrendsCarouselPage.PageCount),
-													source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(TrendsCarouselPage))));
+			};
 		}
-	}
 
-	class TrendsChartActivityIndicator : ActivityIndicator
-	{
-		public TrendsChartActivityIndicator()
+		protected enum Row { Header, Indicator, Chart }
+
+		protected abstract Layout CreateHeaderView();
+		protected abstract BaseChartView CreateChartView();
+		protected abstract EmptyDataView CreateEmptyDataView();
+
+		class TrendsIndicatorView : IndicatorView
 		{
-			//The size of UIActivityIndicator is fixed by iOS, so we'll use Xamarin.Forms.VisualElement.Scale to increase its size
-			//https://stackoverflow.com/a/2638224/5953643
-			if (Device.RuntimePlatform is Device.iOS)
-				Scale = 2;
+			public TrendsIndicatorView(in int position, in Color indicatorColor)
+			{
+				Position = position;
 
-			AutomationId = TrendsPageAutomationIds.ActivityIndicator;
+				IndicatorSize = 8;
 
-			this.CenterExpand()
-				.DynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor))
-				.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData))
-				.Bind(IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
+				IsEnabled = false;
+
+				SelectedIndicatorColor = indicatorColor;
+				IndicatorColor = Color.FromHex("#BFBFBF");
+				AutomationId = TrendsPageAutomationIds.IndicatorView;
+
+
+				this.Center();
+
+
+				SetBinding(CountProperty, new Binding(nameof(TrendsCarouselPage.PageCount),
+														source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(TrendsCarouselPage))));
+			}
+		}
+
+		class TrendsChartActivityIndicator : ActivityIndicator
+		{
+			public TrendsChartActivityIndicator()
+			{
+				//The size of UIActivityIndicator is fixed by iOS, so we'll use Xamarin.Forms.VisualElement.Scale to increase its size
+				//https://stackoverflow.com/a/2638224/5953643
+				if (Device.RuntimePlatform is Device.iOS)
+					Scale = 2;
+
+				AutomationId = TrendsPageAutomationIds.ActivityIndicator;
+
+				this.CenterExpand()
+					.DynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor))
+					.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData))
+					.Bind(IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
+			}
 		}
 	}
 }

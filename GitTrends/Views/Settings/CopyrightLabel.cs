@@ -2,29 +2,30 @@
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
 
-namespace GitTrends;
-
-class CopyrightLabel : Label
+namespace GitTrends
 {
-	public CopyrightLabel()
+	class CopyrightLabel : Label
 	{
-		Opacity = 0.85;
+		public CopyrightLabel()
+		{
+			Opacity = 0.85;
 
-		FontSize = 12;
-		LineHeight = 1.82;
-		FontFamily = FontFamilyConstants.RobotoMedium;
-		LineBreakMode = LineBreakMode.WordWrap;
+			FontSize = 12;
+			LineHeight = 1.82;
+			FontFamily = FontFamilyConstants.RobotoMedium;
+			LineBreakMode = LineBreakMode.WordWrap;
 
-		VerticalOptions = LayoutOptions.EndAndExpand;
-		HorizontalOptions = LayoutOptions.CenterAndExpand;
+			VerticalOptions = LayoutOptions.EndAndExpand;
+			HorizontalOptions = LayoutOptions.CenterAndExpand;
 
-		VerticalTextAlignment = TextAlignment.End;
-		HorizontalTextAlignment = TextAlignment.Center;
+			VerticalTextAlignment = TextAlignment.End;
+			HorizontalTextAlignment = TextAlignment.Center;
 
-		AutomationId = SettingsPageAutomationIds.CopyrightLabel;
+			AutomationId = SettingsPageAutomationIds.CopyrightLabel;
 
-		this.Bind(nameof(SettingsViewModel.CopyrightLabelText))
-			.BindTapGesture(nameof(SettingsViewModel.CopyrightLabelTappedCommand))
-			.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+			this.Bind(nameof(SettingsViewModel.CopyrightLabelText))
+				.BindTapGesture(nameof(SettingsViewModel.CopyrightLabelTappedCommand))
+				.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+		}
 	}
 }

@@ -8,380 +8,381 @@ using GitTrends.Shared;
 using Shiny.Jobs;
 using Xamarin.Essentials.Interfaces;
 
-namespace GitTrends;
-
-public class BackgroundFetchService
+namespace GitTrends
 {
-	readonly static WeakEventManager _eventManager = new();
-	readonly static WeakEventManager<bool> _scheduleNotifyTrendingRepositoriesCompletedEventManager = new();
-	readonly static WeakEventManager<string> _scheduleRetryOrganizationsRepositoriesCompletedEventManager = new();
-	readonly static WeakEventManager<Repository> _repostoryEventManager = new();
-	readonly static WeakEventManager<MobileReferringSiteModel> _mobileReferringSiteRetrievedEventManager = new();
-
-	readonly HashSet<string> _queuedJobs = new();
-
-	readonly IJobManager _jobManager;
-	readonly IAnalyticsService _analyticsService;
-	readonly GitHubUserService _gitHubUserService;
-	readonly GitHubApiV3Service _gitHubApiV3Service;
-	readonly RepositoryDatabase _repositoryDatabase;
-	readonly NotificationService _notificationService;
-	readonly ReferringSitesDatabase _referringSitesDatabase;
-	readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
-	readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
-
-
-	public BackgroundFetchService(IAppInfo appInfo,
-									IJobManager jobManager,
-									IAnalyticsService analyticsService,
-									GitHubUserService gitHubUserService,
-									GitHubApiV3Service gitHubApiV3Service,
-									RepositoryDatabase repositoryDatabase,
-									NotificationService notificationService,
-									ReferringSitesDatabase referringSitesDatabase,
-									GitHubGraphQLApiService gitHubGraphQLApiService,
-									GitHubApiRepositoriesService gitHubApiRepositoriesService)
+	public class BackgroundFetchService
 	{
-		_jobManager = jobManager;
-		_analyticsService = analyticsService;
-		_gitHubUserService = gitHubUserService;
-		_gitHubApiV3Service = gitHubApiV3Service;
-		_repositoryDatabase = repositoryDatabase;
-		_notificationService = notificationService;
-		_referringSitesDatabase = referringSitesDatabase;
-		_gitHubGraphQLApiService = gitHubGraphQLApiService;
-		_gitHubApiRepositoriesService = gitHubApiRepositoriesService;
+		readonly static WeakEventManager _eventManager = new();
+		readonly static WeakEventManager<bool> _scheduleNotifyTrendingRepositoriesCompletedEventManager = new();
+		readonly static WeakEventManager<string> _scheduleRetryOrganizationsRepositoriesCompletedEventManager = new();
+		readonly static WeakEventManager<Repository> _repostoryEventManager = new();
+		readonly static WeakEventManager<MobileReferringSiteModel> _mobileReferringSiteRetrievedEventManager = new();
 
-		CleanUpDatabaseIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleCleanUpDatabase)}";
-		RetryGetReferringSitesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleRetryGetReferringSites)}";
-		NotifyTrendingRepositoriesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleNotifyTrendingRepositories)}";
-		RetryRepositoriesViewsClonesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleRetryRepositoriesViewsClones)}";
-		RetryOrganizationsReopsitoriesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleRetryOrganizationsRepositories)}";
+		readonly HashSet<string> _queuedJobs = new();
 
-		GitHubApiRepositoriesService.AbuseRateLimitFound_GetReferringSites += HandleAbuseRateLimitFound_GetReferringSites;
-		GitHubGraphQLApiService.AbuseRateLimitFound_GetOrganizationRepositories += HandleAbuseRateLimitFound_GetOrganizationRepositories;
-		GitHubApiRepositoriesService.AbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData += HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData;
-	}
+		readonly IJobManager _jobManager;
+		readonly IAnalyticsService _analyticsService;
+		readonly GitHubUserService _gitHubUserService;
+		readonly GitHubApiV3Service _gitHubApiV3Service;
+		readonly RepositoryDatabase _repositoryDatabase;
+		readonly NotificationService _notificationService;
+		readonly ReferringSitesDatabase _referringSitesDatabase;
+		readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
+		readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
-	public static event EventHandler DatabaseCleanupCompleted
-	{
-		add => _eventManager.AddEventHandler(value);
-		remove => _eventManager.RemoveEventHandler(value);
-	}
 
-	public static event EventHandler<MobileReferringSiteModel> MobileReferringSiteRetrieved
-	{
-		add => _mobileReferringSiteRetrievedEventManager.AddEventHandler(value);
-		remove => _mobileReferringSiteRetrievedEventManager.RemoveEventHandler(value);
-	}
-
-	public static event EventHandler<bool> ScheduleNotifyTrendingRepositoriesCompleted
-	{
-		add => _scheduleNotifyTrendingRepositoriesCompletedEventManager.AddEventHandler(value);
-		remove => _scheduleNotifyTrendingRepositoriesCompletedEventManager.RemoveEventHandler(value);
-	}
-
-	public static event EventHandler<string> ScheduleRetryOrganizationsRepositoriesCompleted
-	{
-		add => _scheduleRetryOrganizationsRepositoriesCompletedEventManager.AddEventHandler(value);
-		remove => _scheduleRetryOrganizationsRepositoriesCompletedEventManager.RemoveEventHandler(value);
-	}
-
-	public static event EventHandler<Repository> ScheduleRetryRepositoriesViewsClonesCompleted
-	{
-		add => _repostoryEventManager.AddEventHandler(value);
-		remove => _repostoryEventManager.RemoveEventHandler(value);
-	}
-
-	public static event EventHandler<Repository> ScheduleRetryGetReferringSitesCompleted
-	{
-		add => _repostoryEventManager.AddEventHandler(value);
-		remove => _repostoryEventManager.RemoveEventHandler(value);
-	}
-
-	public IReadOnlyList<string> QueuedJobs => _queuedJobs.ToList();
-
-	public string CleanUpDatabaseIdentifier { get; }
-	public string RetryGetReferringSitesIdentifier { get; }
-	public string NotifyTrendingRepositoriesIdentifier { get; }
-	public string RetryRepositoriesViewsClonesIdentifier { get; }
-	public string RetryOrganizationsReopsitoriesIdentifier { get; }
-
-	public void Initialize()
-	{
-		//Required to ensure the service is instantiated in the Dependency Injection Container and event in the constructor are subscribed
-		var temp = DateTime.UtcNow;
-	}
-
-	public bool TryScheduleRetryOrganizationsRepositories(string organizationName, TimeSpan? delay = null)
-	{
-		lock (RetryOrganizationsReopsitoriesIdentifier)
+		public BackgroundFetchService(IAppInfo appInfo,
+										IJobManager jobManager,
+										IAnalyticsService analyticsService,
+										GitHubUserService gitHubUserService,
+										GitHubApiV3Service gitHubApiV3Service,
+										RepositoryDatabase repositoryDatabase,
+										NotificationService notificationService,
+										ReferringSitesDatabase referringSitesDatabase,
+										GitHubGraphQLApiService gitHubGraphQLApiService,
+										GitHubApiRepositoriesService gitHubApiRepositoriesService)
 		{
-			if (QueuedJobs.Contains(GetRetryOrganizationsRepositoriesIdentifier(organizationName)))
-				return false;
+			_jobManager = jobManager;
+			_analyticsService = analyticsService;
+			_gitHubUserService = gitHubUserService;
+			_gitHubApiV3Service = gitHubApiV3Service;
+			_repositoryDatabase = repositoryDatabase;
+			_notificationService = notificationService;
+			_referringSitesDatabase = referringSitesDatabase;
+			_gitHubGraphQLApiService = gitHubGraphQLApiService;
+			_gitHubApiRepositoriesService = gitHubApiRepositoriesService;
 
-			ScheduleRetryOrganizationsRepositories(organizationName, delay);
-			return true;
+			CleanUpDatabaseIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleCleanUpDatabase)}";
+			RetryGetReferringSitesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleRetryGetReferringSites)}";
+			NotifyTrendingRepositoriesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleNotifyTrendingRepositories)}";
+			RetryRepositoriesViewsClonesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleRetryRepositoriesViewsClones)}";
+			RetryOrganizationsReopsitoriesIdentifier = $"{appInfo.PackageName}.{nameof(ScheduleRetryOrganizationsRepositories)}";
+
+			GitHubApiRepositoriesService.AbuseRateLimitFound_GetReferringSites += HandleAbuseRateLimitFound_GetReferringSites;
+			GitHubGraphQLApiService.AbuseRateLimitFound_GetOrganizationRepositories += HandleAbuseRateLimitFound_GetOrganizationRepositories;
+			GitHubApiRepositoriesService.AbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData += HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData;
 		}
-	}
 
-	public bool TryScheduleRetryRepositoriesViewsClones(Repository repository, TimeSpan? delay = null)
-	{
-		lock (RetryRepositoriesViewsClonesIdentifier)
+		public static event EventHandler DatabaseCleanupCompleted
 		{
-			if (QueuedJobs.Contains(GetRetryRepositoriesViewsClonesIdentifier(repository)))
-				return false;
-
-			ScheduleRetryRepositoriesViewsClones(repository, delay);
-			return true;
+			add => _eventManager.AddEventHandler(value);
+			remove => _eventManager.RemoveEventHandler(value);
 		}
-	}
 
-	public bool TryScheduleRetryGetReferringSites(Repository repository, TimeSpan? delay = null)
-	{
-		lock (RetryGetReferringSitesIdentifier)
+		public static event EventHandler<MobileReferringSiteModel> MobileReferringSiteRetrieved
 		{
-			if (QueuedJobs.Contains(GetRetryGetReferringSitesIdentifier(repository)))
-				return false;
-
-			ScheduleRetryGetReferringSites(repository, delay);
-			return true;
+			add => _mobileReferringSiteRetrievedEventManager.AddEventHandler(value);
+			remove => _mobileReferringSiteRetrievedEventManager.RemoveEventHandler(value);
 		}
-	}
 
-	public bool TryScheduleCleanUpDatabase()
-	{
-		lock (CleanUpDatabaseIdentifier)
+		public static event EventHandler<bool> ScheduleNotifyTrendingRepositoriesCompleted
 		{
-			if (QueuedJobs.Contains(CleanUpDatabaseIdentifier))
-				return false;
-
-			ScheduleCleanUpDatabase();
-			return true;
+			add => _scheduleNotifyTrendingRepositoriesCompletedEventManager.AddEventHandler(value);
+			remove => _scheduleNotifyTrendingRepositoriesCompletedEventManager.RemoveEventHandler(value);
 		}
-	}
 
-	public bool TryScheduleNotifyTrendingRepositories(CancellationToken cancellationToken)
-	{
-		lock (NotifyTrendingRepositoriesIdentifier)
+		public static event EventHandler<string> ScheduleRetryOrganizationsRepositoriesCompleted
 		{
-			if (QueuedJobs.Contains(NotifyTrendingRepositoriesIdentifier))
-				return false;
-
-			ScheduleNotifyTrendingRepositories(cancellationToken);
-			return true;
+			add => _scheduleRetryOrganizationsRepositoriesCompletedEventManager.AddEventHandler(value);
+			remove => _scheduleRetryOrganizationsRepositoriesCompletedEventManager.RemoveEventHandler(value);
 		}
-	}
 
-	void ScheduleRetryOrganizationsRepositories(string organizationName, TimeSpan? delay)
-	{
-		_queuedJobs.Add(GetRetryOrganizationsRepositoriesIdentifier(organizationName));
-
-		_jobManager.RunTask(GetRetryOrganizationsRepositoriesIdentifier(organizationName), async cancellationToken =>
+		public static event EventHandler<Repository> ScheduleRetryRepositoriesViewsClonesCompleted
 		{
-			_analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryOrganizationsRepositories)} Triggered", nameof(delay), delay?.ToString() ?? "null");
+			add => _repostoryEventManager.AddEventHandler(value);
+			remove => _repostoryEventManager.RemoveEventHandler(value);
+		}
 
-			if (delay is not null)
-				await Task.Delay(delay.Value).ConfigureAwait(false);
-
-			var repositories = await _gitHubGraphQLApiService.GetOrganizationRepositories(organizationName, cancellationToken).ConfigureAwait(false);
-
-			foreach (var repository in repositories)
-				ScheduleRetryRepositoriesViewsClones(repository);
-
-			OnScheduleRetryOrganizationsRepositoriesCompleted(organizationName);
-		});
-	}
-
-	void ScheduleRetryRepositoriesViewsClones(Repository repository, TimeSpan? delay = null)
-	{
-		_queuedJobs.Add(GetRetryRepositoriesViewsClonesIdentifier(repository));
-
-		_jobManager.RunTask(GetRetryRepositoriesViewsClonesIdentifier(repository), async cancellationToken =>
+		public static event EventHandler<Repository> ScheduleRetryGetReferringSitesCompleted
 		{
-			_analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClones)} Triggered", nameof(delay), delay?.ToString() ?? "null");
+			add => _repostoryEventManager.AddEventHandler(value);
+			remove => _repostoryEventManager.RemoveEventHandler(value);
+		}
 
-			if (delay is not null)
-				await Task.Delay(delay.Value).ConfigureAwait(false);
+		public IReadOnlyList<string> QueuedJobs => _queuedJobs.ToList();
 
-			using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClones)} Executed");
+		public string CleanUpDatabaseIdentifier { get; }
+		public string RetryGetReferringSitesIdentifier { get; }
+		public string NotifyTrendingRepositoriesIdentifier { get; }
+		public string RetryRepositoriesViewsClonesIdentifier { get; }
+		public string RetryOrganizationsReopsitoriesIdentifier { get; }
 
-			await foreach (var repository in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(new List<Repository> { repository }, cancellationToken).ConfigureAwait(false))
+		public void Initialize()
+		{
+			//Required to ensure the service is instantiated in the Dependency Injection Container and event in the constructor are subscribed
+			var temp = DateTime.UtcNow;
+		}
+
+		public bool TryScheduleRetryOrganizationsRepositories(string organizationName, TimeSpan? delay = null)
+		{
+			lock (RetryOrganizationsReopsitoriesIdentifier)
 			{
-				if (repository is not null)
+				if (QueuedJobs.Contains(GetRetryOrganizationsRepositoriesIdentifier(organizationName)))
+					return false;
+
+				ScheduleRetryOrganizationsRepositories(organizationName, delay);
+				return true;
+			}
+		}
+
+		public bool TryScheduleRetryRepositoriesViewsClones(Repository repository, TimeSpan? delay = null)
+		{
+			lock (RetryRepositoriesViewsClonesIdentifier)
+			{
+				if (QueuedJobs.Contains(GetRetryRepositoriesViewsClonesIdentifier(repository)))
+					return false;
+
+				ScheduleRetryRepositoriesViewsClones(repository, delay);
+				return true;
+			}
+		}
+
+		public bool TryScheduleRetryGetReferringSites(Repository repository, TimeSpan? delay = null)
+		{
+			lock (RetryGetReferringSitesIdentifier)
+			{
+				if (QueuedJobs.Contains(GetRetryGetReferringSitesIdentifier(repository)))
+					return false;
+
+				ScheduleRetryGetReferringSites(repository, delay);
+				return true;
+			}
+		}
+
+		public bool TryScheduleCleanUpDatabase()
+		{
+			lock (CleanUpDatabaseIdentifier)
+			{
+				if (QueuedJobs.Contains(CleanUpDatabaseIdentifier))
+					return false;
+
+				ScheduleCleanUpDatabase();
+				return true;
+			}
+		}
+
+		public bool TryScheduleNotifyTrendingRepositories(CancellationToken cancellationToken)
+		{
+			lock (NotifyTrendingRepositoriesIdentifier)
+			{
+				if (QueuedJobs.Contains(NotifyTrendingRepositoriesIdentifier))
+					return false;
+
+				ScheduleNotifyTrendingRepositories(cancellationToken);
+				return true;
+			}
+		}
+
+		void ScheduleRetryOrganizationsRepositories(string organizationName, TimeSpan? delay)
+		{
+			_queuedJobs.Add(GetRetryOrganizationsRepositoriesIdentifier(organizationName));
+
+			_jobManager.RunTask(GetRetryOrganizationsRepositoriesIdentifier(organizationName), async cancellationToken =>
+			{
+				_analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryOrganizationsRepositories)} Triggered", nameof(delay), delay?.ToString() ?? "null");
+
+				if (delay is not null)
+					await Task.Delay(delay.Value).ConfigureAwait(false);
+
+				var repositories = await _gitHubGraphQLApiService.GetOrganizationRepositories(organizationName, cancellationToken).ConfigureAwait(false);
+
+				foreach (var repository in repositories)
+					ScheduleRetryRepositoriesViewsClones(repository);
+
+				OnScheduleRetryOrganizationsRepositoriesCompleted(organizationName);
+			});
+		}
+
+		void ScheduleRetryRepositoriesViewsClones(Repository repository, TimeSpan? delay = null)
+		{
+			_queuedJobs.Add(GetRetryRepositoriesViewsClonesIdentifier(repository));
+
+			_jobManager.RunTask(GetRetryRepositoriesViewsClonesIdentifier(repository), async cancellationToken =>
+			{
+				_analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClones)} Triggered", nameof(delay), delay?.ToString() ?? "null");
+
+				if (delay is not null)
+					await Task.Delay(delay.Value).ConfigureAwait(false);
+
+				using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClones)} Executed");
+
+				await foreach (var repository in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(new List<Repository> { repository }, cancellationToken).ConfigureAwait(false))
 				{
-					await _repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
+					if (repository is not null)
+					{
+						await _repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
 
-					OnScheduleRetryRepositoriesViewsClonesCompleted(repository);
+						OnScheduleRetryRepositoriesViewsClonesCompleted(repository);
+					}
 				}
-			}
-		});
-	}
+			});
+		}
 
-	void ScheduleRetryGetReferringSites(Repository repository, TimeSpan? delay = null)
-	{
-		_queuedJobs.Add(GetRetryGetReferringSitesIdentifier(repository));
-
-		_jobManager.RunTask(GetRetryGetReferringSitesIdentifier(repository), async cancellationToken =>
+		void ScheduleRetryGetReferringSites(Repository repository, TimeSpan? delay = null)
 		{
-			_analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryGetReferringSites)} Triggered", nameof(delay), delay?.ToString() ?? "null");
+			_queuedJobs.Add(GetRetryGetReferringSitesIdentifier(repository));
 
-			if (delay is not null)
-				await Task.Delay(delay.Value).ConfigureAwait(false);
-
-			try
+			_jobManager.RunTask(GetRetryGetReferringSitesIdentifier(repository), async cancellationToken =>
 			{
-				var referringSites = await _gitHubApiRepositoriesService.GetReferringSites(repository, cancellationToken).ConfigureAwait(false);
+				_analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryGetReferringSites)} Triggered", nameof(delay), delay?.ToString() ?? "null");
 
-				await foreach (var mobileReferringSite in _gitHubApiRepositoriesService.GetMobileReferringSites(referringSites, repository.Url, new CancellationTokenSource(TimeSpan.FromMinutes(1)).Token).ConfigureAwait(false))
-				{
-					await _referringSitesDatabase.SaveReferringSite(mobileReferringSite, repository.Url).ConfigureAwait(false);
-					OnMobileReferringSiteRetrieved(mobileReferringSite);
-				}
-			}
-			catch (Exception e)
-			{
-				_analyticsService.Report(e);
-			}
-			finally
-			{
-				OnScheduleRetryGetReferringSitesCompleted(repository);
-			}
-		});
-	}
+				if (delay is not null)
+					await Task.Delay(delay.Value).ConfigureAwait(false);
 
-	void ScheduleCleanUpDatabase()
-	{
-		_queuedJobs.Add(CleanUpDatabaseIdentifier);
-
-		_jobManager.RunTask(CleanUpDatabaseIdentifier, async cancellationToken =>
-		{
-			using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleCleanUpDatabase)} Triggered");
-
-			await Task.WhenAll(_referringSitesDatabase.DeleteExpiredData(), _repositoryDatabase.DeleteExpiredData()).ConfigureAwait(false);
-
-			OnDatabaseCleanupCompleted();
-		});
-	}
-
-	void ScheduleNotifyTrendingRepositories(CancellationToken cancellationToken)
-	{
-		_queuedJobs.Add(NotifyTrendingRepositoriesIdentifier);
-
-		_jobManager.RunTask(NotifyTrendingRepositoriesIdentifier, async cancellationToken =>
-		{
-			try
-			{
-				using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleNotifyTrendingRepositories)} Triggered");
-
-				if (!_gitHubUserService.IsAuthenticated || _gitHubUserService.IsDemoUser)
-				{
-					OnScheduleNotifyTrendingRepositoriesCompleted(false);
-				}
-				else
-				{
-					var trendingRepositories = await GetTrendingRepositories(cancellationToken).ConfigureAwait(false);
-					await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
-
-					OnScheduleNotifyTrendingRepositoriesCompleted(true);
-				}
-			}
-			catch (Exception e)
-			{
-				_analyticsService.Report(e);
-				OnScheduleNotifyTrendingRepositoriesCompleted(false);
-			}
-		});
-	}
-
-	string GetRetryGetReferringSitesIdentifier(Repository repository) => $"{RetryGetReferringSitesIdentifier}.{repository.Url}";
-	string GetRetryRepositoriesViewsClonesIdentifier(Repository repository) => $"{RetryRepositoriesViewsClonesIdentifier}.{repository.Url}";
-	string GetRetryOrganizationsRepositoriesIdentifier(string organizationName) => $"{RetryOrganizationsReopsitoriesIdentifier}.{organizationName}";
-
-	async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
-	{
-		if (!_gitHubUserService.IsDemoUser && !string.IsNullOrEmpty(_gitHubUserService.Alias))
-		{
-			var repositoriesFromDatabase = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
-			IReadOnlyList<string> favoriteRepositoryUrls = repositoriesFromDatabase.Where(x => x.IsFavorite is true).Select(x => x.Url).ToList();
-
-			var retrievedRepositoryList = new List<Repository>();
-			await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(_gitHubUserService.Alias, cancellationToken).ConfigureAwait(false))
-			{
-				if (favoriteRepositoryUrls.Contains(repository.Url))
-					retrievedRepositoryList.Add(repository with { IsFavorite = true });
-				else
-					retrievedRepositoryList.Add(repository);
-			}
-			var retrievedRepositoryList_NoDuplicatesNoForks = RepositoryService.RemoveForksAndDuplicates(retrievedRepositoryList);
-
-			IReadOnlyList<Repository> repositoriesToUpdate = repositoriesFromDatabase.Where(x => _gitHubUserService.ShouldIncludeOrganizations || x.OwnerLogin == _gitHubUserService.Alias) // Only include organization repositories if `ShouldIncludeOrganizations` is true
-										.Where(x => x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12))) // Cached repositories that haven't been updated in 12 hours 
-										.Concat(retrievedRepositoryList_NoDuplicatesNoForks) // Add downloaded repositories
-										.GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.ContainsTrafficData) ?? x.First()).ToList(); // Remove duplicate repositories
-
-
-			var trendingRepositories = new List<Repository>();
-			await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(repositoriesToUpdate, cancellationToken).ConfigureAwait(false))
-			{
 				try
 				{
-					await _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).ConfigureAwait(false);
+					var referringSites = await _gitHubApiRepositoriesService.GetReferringSites(repository, cancellationToken).ConfigureAwait(false);
+
+					await foreach (var mobileReferringSite in _gitHubApiRepositoriesService.GetMobileReferringSites(referringSites, repository.Url, new CancellationTokenSource(TimeSpan.FromMinutes(1)).Token).ConfigureAwait(false))
+					{
+						await _referringSitesDatabase.SaveReferringSite(mobileReferringSite, repository.Url).ConfigureAwait(false);
+						OnMobileReferringSiteRetrieved(mobileReferringSite);
+					}
 				}
 				catch (Exception e)
 				{
 					_analyticsService.Report(e);
 				}
-
-				if (retrievedRepositoryWithViewsAndClonesData.IsTrending)
-					trendingRepositories.Add(retrievedRepositoryWithViewsAndClonesData);
-			}
-
-			return trendingRepositories;
+				finally
+				{
+					OnScheduleRetryGetReferringSitesCompleted(repository);
+				}
+			});
 		}
 
-		return Array.Empty<Repository>();
+		void ScheduleCleanUpDatabase()
+		{
+			_queuedJobs.Add(CleanUpDatabaseIdentifier);
+
+			_jobManager.RunTask(CleanUpDatabaseIdentifier, async cancellationToken =>
+			{
+				using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleCleanUpDatabase)} Triggered");
+
+				await Task.WhenAll(_referringSitesDatabase.DeleteExpiredData(), _repositoryDatabase.DeleteExpiredData()).ConfigureAwait(false);
+
+				OnDatabaseCleanupCompleted();
+			});
+		}
+
+		void ScheduleNotifyTrendingRepositories(CancellationToken cancellationToken)
+		{
+			_queuedJobs.Add(NotifyTrendingRepositoriesIdentifier);
+
+			_jobManager.RunTask(NotifyTrendingRepositoriesIdentifier, async cancellationToken =>
+			{
+				try
+				{
+					using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleNotifyTrendingRepositories)} Triggered");
+
+					if (!_gitHubUserService.IsAuthenticated || _gitHubUserService.IsDemoUser)
+					{
+						OnScheduleNotifyTrendingRepositoriesCompleted(false);
+					}
+					else
+					{
+						var trendingRepositories = await GetTrendingRepositories(cancellationToken).ConfigureAwait(false);
+						await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
+
+						OnScheduleNotifyTrendingRepositoriesCompleted(true);
+					}
+				}
+				catch (Exception e)
+				{
+					_analyticsService.Report(e);
+					OnScheduleNotifyTrendingRepositoriesCompleted(false);
+				}
+			});
+		}
+
+		string GetRetryGetReferringSitesIdentifier(Repository repository) => $"{RetryGetReferringSitesIdentifier}.{repository.Url}";
+		string GetRetryRepositoriesViewsClonesIdentifier(Repository repository) => $"{RetryRepositoriesViewsClonesIdentifier}.{repository.Url}";
+		string GetRetryOrganizationsRepositoriesIdentifier(string organizationName) => $"{RetryOrganizationsReopsitoriesIdentifier}.{organizationName}";
+
+		async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
+		{
+			if (!_gitHubUserService.IsDemoUser && !string.IsNullOrEmpty(_gitHubUserService.Alias))
+			{
+				var repositoriesFromDatabase = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
+				IReadOnlyList<string> favoriteRepositoryUrls = repositoriesFromDatabase.Where(x => x.IsFavorite is true).Select(x => x.Url).ToList();
+
+				var retrievedRepositoryList = new List<Repository>();
+				await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(_gitHubUserService.Alias, cancellationToken).ConfigureAwait(false))
+				{
+					if (favoriteRepositoryUrls.Contains(repository.Url))
+						retrievedRepositoryList.Add(repository with { IsFavorite = true });
+					else
+						retrievedRepositoryList.Add(repository);
+				}
+				var retrievedRepositoryList_NoDuplicatesNoForks = RepositoryService.RemoveForksAndDuplicates(retrievedRepositoryList);
+
+				IReadOnlyList<Repository> repositoriesToUpdate = repositoriesFromDatabase.Where(x => _gitHubUserService.ShouldIncludeOrganizations || x.OwnerLogin == _gitHubUserService.Alias) // Only include organization repositories if `ShouldIncludeOrganizations` is true
+											.Where(x => x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12))) // Cached repositories that haven't been updated in 12 hours 
+											.Concat(retrievedRepositoryList_NoDuplicatesNoForks) // Add downloaded repositories
+											.GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.ContainsTrafficData) ?? x.First()).ToList(); // Remove duplicate repositories
+
+
+				var trendingRepositories = new List<Repository>();
+				await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(repositoriesToUpdate, cancellationToken).ConfigureAwait(false))
+				{
+					try
+					{
+						await _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).ConfigureAwait(false);
+					}
+					catch (Exception e)
+					{
+						_analyticsService.Report(e);
+					}
+
+					if (retrievedRepositoryWithViewsAndClonesData.IsTrending)
+						trendingRepositories.Add(retrievedRepositoryWithViewsAndClonesData);
+				}
+
+				return trendingRepositories;
+			}
+
+			return Array.Empty<Repository>();
+		}
+
+		void HandleAbuseRateLimitFound_GetOrganizationRepositories(object sender, (string OrganizationName, TimeSpan RetryTimeSpan) data) =>
+			TryScheduleRetryOrganizationsRepositories(data.OrganizationName, data.RetryTimeSpan);
+
+		void HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData(object sender, (Repository Repository, TimeSpan RetryTimeSpan) data) =>
+			TryScheduleRetryRepositoriesViewsClones(data.Repository, data.RetryTimeSpan);
+
+		void HandleAbuseRateLimitFound_GetReferringSites(object sender, (Repository Repository, TimeSpan RetryTimeSpan) data) =>
+			TryScheduleRetryGetReferringSites(data.Repository, data.RetryTimeSpan);
+
+		void OnScheduleRetryRepositoriesViewsClonesCompleted(in Repository repository)
+		{
+			_queuedJobs.Remove(GetRetryRepositoriesViewsClonesIdentifier(repository));
+			_repostoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesViewsClonesCompleted));
+		}
+
+		void OnDatabaseCleanupCompleted()
+		{
+			_queuedJobs.Remove(CleanUpDatabaseIdentifier);
+			_eventManager.RaiseEvent(this, EventArgs.Empty, nameof(DatabaseCleanupCompleted));
+		}
+
+		void OnScheduleNotifyTrendingRepositoriesCompleted(in bool result)
+		{
+			_queuedJobs.Remove(NotifyTrendingRepositoriesIdentifier);
+			_scheduleNotifyTrendingRepositoriesCompletedEventManager.RaiseEvent(this, result, nameof(ScheduleNotifyTrendingRepositoriesCompleted));
+		}
+
+		void OnScheduleRetryOrganizationsRepositoriesCompleted(in string organizationName)
+		{
+			_queuedJobs.Remove(GetRetryOrganizationsRepositoriesIdentifier(organizationName));
+			_scheduleRetryOrganizationsRepositoriesCompletedEventManager.RaiseEvent(this, organizationName, nameof(ScheduleRetryOrganizationsRepositoriesCompleted));
+		}
+
+		void OnScheduleRetryGetReferringSitesCompleted(in Repository repository)
+		{
+			_queuedJobs.Remove(GetRetryGetReferringSitesIdentifier(repository));
+			_repostoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryGetReferringSitesCompleted));
+		}
+
+		void OnMobileReferringSiteRetrieved(in MobileReferringSiteModel referringSite) =>
+			_mobileReferringSiteRetrievedEventManager.RaiseEvent(this, referringSite, nameof(MobileReferringSiteRetrieved));
 	}
-
-	void HandleAbuseRateLimitFound_GetOrganizationRepositories(object sender, (string OrganizationName, TimeSpan RetryTimeSpan) data) =>
-		TryScheduleRetryOrganizationsRepositories(data.OrganizationName, data.RetryTimeSpan);
-
-	void HandleAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData(object sender, (Repository Repository, TimeSpan RetryTimeSpan) data) =>
-		TryScheduleRetryRepositoriesViewsClones(data.Repository, data.RetryTimeSpan);
-
-	void HandleAbuseRateLimitFound_GetReferringSites(object sender, (Repository Repository, TimeSpan RetryTimeSpan) data) =>
-		TryScheduleRetryGetReferringSites(data.Repository, data.RetryTimeSpan);
-
-	void OnScheduleRetryRepositoriesViewsClonesCompleted(in Repository repository)
-	{
-		_queuedJobs.Remove(GetRetryRepositoriesViewsClonesIdentifier(repository));
-		_repostoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesViewsClonesCompleted));
-	}
-
-	void OnDatabaseCleanupCompleted()
-	{
-		_queuedJobs.Remove(CleanUpDatabaseIdentifier);
-		_eventManager.RaiseEvent(this, EventArgs.Empty, nameof(DatabaseCleanupCompleted));
-	}
-
-	void OnScheduleNotifyTrendingRepositoriesCompleted(in bool result)
-	{
-		_queuedJobs.Remove(NotifyTrendingRepositoriesIdentifier);
-		_scheduleNotifyTrendingRepositoriesCompletedEventManager.RaiseEvent(this, result, nameof(ScheduleNotifyTrendingRepositoriesCompleted));
-	}
-
-	void OnScheduleRetryOrganizationsRepositoriesCompleted(in string organizationName)
-	{
-		_queuedJobs.Remove(GetRetryOrganizationsRepositoriesIdentifier(organizationName));
-		_scheduleRetryOrganizationsRepositoriesCompletedEventManager.RaiseEvent(this, organizationName, nameof(ScheduleRetryOrganizationsRepositoriesCompleted));
-	}
-
-	void OnScheduleRetryGetReferringSitesCompleted(in Repository repository)
-	{
-		_queuedJobs.Remove(GetRetryGetReferringSitesIdentifier(repository));
-		_repostoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryGetReferringSitesCompleted));
-	}
-
-	void OnMobileReferringSiteRetrieved(in MobileReferringSiteModel referringSite) =>
-		_mobileReferringSiteRetrievedEventManager.RaiseEvent(this, referringSite, nameof(MobileReferringSiteRetrieved));
 }

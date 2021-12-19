@@ -1,3 +1,4 @@
-﻿namespace GitTrends.Mobile.Common;
-
-public enum FloatingActionButtonType { Information, Statistic1, Statistic2, Statistic3 }
+﻿namespace GitTrends.Mobile.Common
+{
+	public enum FloatingActionButtonType { Information, Statistic1, Statistic2, Statistic3 }
+}

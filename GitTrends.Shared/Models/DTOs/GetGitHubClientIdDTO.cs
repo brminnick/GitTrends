@@ -1,3 +1,4 @@
-﻿namespace GitTrends.Shared;
-
-public record GetGitHubClientIdDTO(string ClientId);
+﻿namespace GitTrends.Shared
+{
+	public record GetGitHubClientIdDTO(string ClientId);
+}

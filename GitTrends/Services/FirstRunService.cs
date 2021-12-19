@@ -1,33 +1,34 @@
 ﻿using System;
 using Xamarin.Essentials.Interfaces;
 
-namespace GitTrends;
-
-public class FirstRunService
+namespace GitTrends
 {
-	readonly IPreferences _preferences;
-
-	public FirstRunService(IPreferences preferences)
+	public class FirstRunService
 	{
-		_preferences = preferences;
+		readonly IPreferences _preferences;
+
+		public FirstRunService(IPreferences preferences)
+		{
+			_preferences = preferences;
 
 #if !AppStore
-		UITestsBackdoorService.PopPageStarted += HandlePagePopped;
+			UITestsBackdoorService.PopPageStarted += HandlePagePopped;
 #endif
-		GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
-		GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
-	}
+			GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+			GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
+		}
 
-	public bool IsFirstRun
-	{
-		get => _preferences.Get(nameof(IsFirstRun), true);
-		private set => _preferences.Set(nameof(IsFirstRun), value);
-	}
+		public bool IsFirstRun
+		{
+			get => _preferences.Get(nameof(IsFirstRun), true);
+			private set => _preferences.Set(nameof(IsFirstRun), value);
+		}
 
-	void HandleDemoUserActivated(object sender, EventArgs e) => IsFirstRun = false;
-	void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsFirstRun = false;
+		void HandleDemoUserActivated(object sender, EventArgs e) => IsFirstRun = false;
+		void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsFirstRun = false;
 
 #if !AppStore
-	void HandlePagePopped(object sender, EventArgs e) => IsFirstRun = false;
+		void HandlePagePopped(object sender, EventArgs e) => IsFirstRun = false;
 #endif
+	}
 }

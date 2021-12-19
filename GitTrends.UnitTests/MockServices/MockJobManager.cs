@@ -6,100 +6,101 @@ using System.Threading.Tasks;
 using Shiny;
 using Shiny.Jobs;
 
-namespace GitTrends.UnitTests;
-
-class MockJobManager : IJobManager
+namespace GitTrends.UnitTests
 {
-	readonly Dictionary<string, JobInfo> _jobDictionary = new();
-
-	public bool IsRunning { get; private set; }
-
-	public IObservable<JobInfo> JobStarted => throw new NotImplementedException();
-
-	public IObservable<JobRunResult> JobFinished => throw new NotImplementedException();
-
-	public Task Cancel(string jobIdentifier)
+	class MockJobManager : IJobManager
 	{
-		if (_jobDictionary.TryGetValue(jobIdentifier, out _))
-			_jobDictionary.Remove(jobIdentifier);
+		readonly Dictionary<string, JobInfo> _jobDictionary = new();
 
-		return Task.CompletedTask;
-	}
+		public bool IsRunning { get; private set; }
 
-	public Task CancelAll()
-	{
-		_jobDictionary.Clear();
-		return Task.CompletedTask;
-	}
+		public IObservable<JobInfo> JobStarted => throw new NotImplementedException();
 
-	public Task<JobInfo?> GetJob(string jobIdentifier)
-	{
-		if (_jobDictionary.TryGetValue(jobIdentifier, out var jobInfo))
-			return Task.FromResult<JobInfo?>(jobInfo);
+		public IObservable<JobRunResult> JobFinished => throw new NotImplementedException();
 
-		return Task.FromResult<JobInfo?>(null);
-	}
-	public Task<IEnumerable<JobInfo>> GetJobs() => Task.FromResult(_jobDictionary.Values.AsEnumerable());
-
-
-	public Task Register(JobInfo jobInfo)
-	{
-		_jobDictionary.Add(jobInfo.Identifier, jobInfo);
-		return Task.CompletedTask;
-	}
-
-	public Task<AccessState> RequestAccess() => Task.FromResult(AccessState.Available);
-
-	public async Task<JobRunResult> Run(string jobIdentifier, CancellationToken cancelToken = default)
-	{
-		var jobInfo = _jobDictionary[jobIdentifier];
-		var jobType = jobInfo.Type;
-
-		var job = (IJob)(Activator.CreateInstance(jobType) ?? throw new NullReferenceException());
-
-		try
+		public Task Cancel(string jobIdentifier)
 		{
-			await job.Run(jobInfo, cancelToken);
-		}
-		catch (Exception e)
-		{
-			return new JobRunResult(jobInfo, e);
+			if (_jobDictionary.TryGetValue(jobIdentifier, out _))
+				_jobDictionary.Remove(jobIdentifier);
+
+			return Task.CompletedTask;
 		}
 
-		return new JobRunResult(jobInfo, null);
-	}
-
-	public async Task<IEnumerable<JobRunResult>> RunAll(CancellationToken cancelToken = default, bool runSequentially = false)
-	{
-		if (runSequentially)
+		public Task CancelAll()
 		{
-			var resultList = new List<JobRunResult>();
+			_jobDictionary.Clear();
+			return Task.CompletedTask;
+		}
 
-			foreach (var job in _jobDictionary)
+		public Task<JobInfo?> GetJob(string jobIdentifier)
+		{
+			if (_jobDictionary.TryGetValue(jobIdentifier, out var jobInfo))
+				return Task.FromResult<JobInfo?>(jobInfo);
+
+			return Task.FromResult<JobInfo?>(null);
+		}
+		public Task<IEnumerable<JobInfo>> GetJobs() => Task.FromResult(_jobDictionary.Values.AsEnumerable());
+
+
+		public Task Register(JobInfo jobInfo)
+		{
+			_jobDictionary.Add(jobInfo.Identifier, jobInfo);
+			return Task.CompletedTask;
+		}
+
+		public Task<AccessState> RequestAccess() => Task.FromResult(AccessState.Available);
+
+		public async Task<JobRunResult> Run(string jobIdentifier, CancellationToken cancelToken = default)
+		{
+			var jobInfo = _jobDictionary[jobIdentifier];
+			var jobType = jobInfo.Type;
+
+			var job = (IJob)(Activator.CreateInstance(jobType) ?? throw new NullReferenceException());
+
+			try
 			{
-				var result = await Run(job.Key, CancellationToken.None);
-				resultList.Add(result);
+				await job.Run(jobInfo, cancelToken);
+			}
+			catch (Exception e)
+			{
+				return new JobRunResult(jobInfo, e);
 			}
 
-			return resultList;
+			return new JobRunResult(jobInfo, null);
 		}
-		else
-		{
-			return await Task.WhenAll(_jobDictionary.Select(x => Run(x.Key)));
-		}
-	}
 
-	public async void RunTask(string taskName, Func<CancellationToken, Task> task)
-	{
-		IsRunning = true;
+		public async Task<IEnumerable<JobRunResult>> RunAll(CancellationToken cancelToken = default, bool runSequentially = false)
+		{
+			if (runSequentially)
+			{
+				var resultList = new List<JobRunResult>();
 
-		try
-		{
-			await task(CancellationToken.None).ConfigureAwait(false);
+				foreach (var job in _jobDictionary)
+				{
+					var result = await Run(job.Key, CancellationToken.None);
+					resultList.Add(result);
+				}
+
+				return resultList;
+			}
+			else
+			{
+				return await Task.WhenAll(_jobDictionary.Select(x => Run(x.Key)));
+			}
 		}
-		finally
+
+		public async void RunTask(string taskName, Func<CancellationToken, Task> task)
 		{
-			IsRunning = false;
+			IsRunning = true;
+
+			try
+			{
+				await task(CancellationToken.None).ConfigureAwait(false);
+			}
+			finally
+			{
+				IsRunning = false;
+			}
 		}
 	}
 }

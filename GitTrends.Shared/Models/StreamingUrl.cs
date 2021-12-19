@@ -1,15 +1,16 @@
-﻿namespace GitTrends.Shared;
-
-public record StreamingManifest
+﻿namespace GitTrends.Shared
 {
-	public StreamingManifest(string manifestUrl)
+	public record StreamingManifest
 	{
-		ManifestUrl = manifestUrl;
-		HlsUrl = manifestUrl + "(format=m3u8-aapl)";
-		DashUrl = manifestUrl + "(format=mpd-time-csf)";
-	}
+		public StreamingManifest(string manifestUrl)
+		{
+			ManifestUrl = manifestUrl;
+			HlsUrl = manifestUrl + "(format=m3u8-aapl)";
+			DashUrl = manifestUrl + "(format=mpd-time-csf)";
+		}
 
-	public string ManifestUrl { get; }
-	public string HlsUrl { get; }
-	public string DashUrl { get; }
+		public string ManifestUrl { get; }
+		public string HlsUrl { get; }
+		public string DashUrl { get; }
+	}
 }

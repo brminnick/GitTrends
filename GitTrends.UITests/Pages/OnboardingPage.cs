@@ -5,88 +5,89 @@ using GitTrends.Mobile.Common.Constants;
 using Xamarin.UITest;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
-namespace GitTrends.UITests;
-
-class OnboardingPage : BaseCarouselPage
+namespace GitTrends.UITests
 {
-	readonly Query _connectToGitHubButton, _enableNotificationsButton, _nextButton,
-		_pageIndicator, _titleLabel, _activityIndicator, _onboardingPage;
-
-	public OnboardingPage(IApp app) : base(app, BackdoorMethodConstants.GetCurrentOnboardingPageNumber)
+	class OnboardingPage : BaseCarouselPage
 	{
-		_activityIndicator = GenerateMarkedQuery(OnboardingAutomationIds.IsAuthenticatingActivityIndicator);
-		_connectToGitHubButton = GenerateMarkedQuery(OnboardingAutomationIds.ConnectToGitHubButton);
-		_enableNotificationsButton = GenerateMarkedQuery(OnboardingAutomationIds.EnableNotificationsButton);
-		_onboardingPage = GenerateMarkedQuery(OnboardingAutomationIds.OnboardingPage);
-		_nextButton = GenerateMarkedQuery(OnboardingAutomationIds.NextButon);
-		_pageIndicator = GenerateMarkedQuery(OnboardingAutomationIds.PageIndicator);
-		_titleLabel = GenerateMarkedQuery(OnboardingAutomationIds.TitleLabel);
-	}
+		readonly Query _connectToGitHubButton, _enableNotificationsButton, _nextButton,
+			_pageIndicator, _titleLabel, _activityIndicator, _onboardingPage;
 
-	public string TitleLabelText => GetText(_titleLabel);
-
-	public bool AreNotificationsEnabeld => App.InvokeBackdoorMethod<bool>(BackdoorMethodConstants.ShouldSendNotifications);
-
-	public override Task WaitForPageToLoad(TimeSpan? timeout = null)
-	{
-		App.WaitForElement(_onboardingPage, timeout: timeout);
-		App.WaitForNoElement(_activityIndicator, timeout: timeout);
-
-		switch (CurrentPageNumber)
+		public OnboardingPage(IApp app) : base(app, BackdoorMethodConstants.GetCurrentOnboardingPageNumber)
 		{
-			case 0:
-				App.WaitForElement(x => x.Text(OnboardingConstants.GitTrendsPage_Title), timeout: timeout);
-				break;
-			case 1:
-				App.WaitForElement(x => x.Text(OnboardingConstants.ChartPage_Title), timeout: timeout);
-				break;
-			case 2:
-				App.WaitForElement(x => x.Text(OnboardingConstants.NotificationsPage_Title), timeout: timeout);
-				break;
-			case 3:
-				App.WaitForElement(x => x.Text(OnboardingConstants.ConnectToGitHubPage_Title), timeout: timeout);
-				break;
-
-			default:
-				throw new NotSupportedException();
+			_activityIndicator = GenerateMarkedQuery(OnboardingAutomationIds.IsAuthenticatingActivityIndicator);
+			_connectToGitHubButton = GenerateMarkedQuery(OnboardingAutomationIds.ConnectToGitHubButton);
+			_enableNotificationsButton = GenerateMarkedQuery(OnboardingAutomationIds.EnableNotificationsButton);
+			_onboardingPage = GenerateMarkedQuery(OnboardingAutomationIds.OnboardingPage);
+			_nextButton = GenerateMarkedQuery(OnboardingAutomationIds.NextButon);
+			_pageIndicator = GenerateMarkedQuery(OnboardingAutomationIds.PageIndicator);
+			_titleLabel = GenerateMarkedQuery(OnboardingAutomationIds.TitleLabel);
 		}
 
-		return Task.CompletedTask;
-	}
+		public string TitleLabelText => GetText(_titleLabel);
 
-	public void WaitForIsAuthenticatingActivityIndicator()
-	{
-		App.WaitForElement(_activityIndicator);
-		App.Screenshot("Activity Indicator Appeared");
-	}
+		public bool AreNotificationsEnabeld => App.InvokeBackdoorMethod<bool>(BackdoorMethodConstants.ShouldSendNotifications);
 
-	public void WaitForNoIsAuthenticatingActivityIndicator()
-	{
-		App.WaitForNoElement(_activityIndicator);
-		App.Screenshot("Activity Indicator Disappeared");
-	}
+		public override Task WaitForPageToLoad(TimeSpan? timeout = null)
+		{
+			App.WaitForElement(_onboardingPage, timeout: timeout);
+			App.WaitForNoElement(_activityIndicator, timeout: timeout);
 
-	public void TapConnectToGitHubButton()
-	{
-		App.Tap(_connectToGitHubButton);
-		App.Screenshot("Tapped Connect To GitHub Button");
-	}
+			switch (CurrentPageNumber)
+			{
+				case 0:
+					App.WaitForElement(x => x.Text(OnboardingConstants.GitTrendsPage_Title), timeout: timeout);
+					break;
+				case 1:
+					App.WaitForElement(x => x.Text(OnboardingConstants.ChartPage_Title), timeout: timeout);
+					break;
+				case 2:
+					App.WaitForElement(x => x.Text(OnboardingConstants.NotificationsPage_Title), timeout: timeout);
+					break;
+				case 3:
+					App.WaitForElement(x => x.Text(OnboardingConstants.ConnectToGitHubPage_Title), timeout: timeout);
+					break;
 
-	public void TapEnableNotificationsButton()
-	{
-		App.Tap(_enableNotificationsButton);
-		App.Screenshot("Tapped Enable Notifications Button");
-	}
+				default:
+					throw new NotSupportedException();
+			}
 
-	public void TapNextButton()
-	{
-		App.Tap(_nextButton);
-		App.Screenshot("Tapped Next Button");
-	}
+			return Task.CompletedTask;
+		}
 
-	public void PopPage()
-	{
-		App.InvokeBackdoorMethod(BackdoorMethodConstants.PopPage);
-		App.Screenshot("Onboarding Page Popped");
+		public void WaitForIsAuthenticatingActivityIndicator()
+		{
+			App.WaitForElement(_activityIndicator);
+			App.Screenshot("Activity Indicator Appeared");
+		}
+
+		public void WaitForNoIsAuthenticatingActivityIndicator()
+		{
+			App.WaitForNoElement(_activityIndicator);
+			App.Screenshot("Activity Indicator Disappeared");
+		}
+
+		public void TapConnectToGitHubButton()
+		{
+			App.Tap(_connectToGitHubButton);
+			App.Screenshot("Tapped Connect To GitHub Button");
+		}
+
+		public void TapEnableNotificationsButton()
+		{
+			App.Tap(_enableNotificationsButton);
+			App.Screenshot("Tapped Enable Notifications Button");
+		}
+
+		public void TapNextButton()
+		{
+			App.Tap(_nextButton);
+			App.Screenshot("Tapped Next Button");
+		}
+
+		public void PopPage()
+		{
+			App.InvokeBackdoorMethod(BackdoorMethodConstants.PopPage);
+			App.Screenshot("Onboarding Page Popped");
+		}
 	}
 }

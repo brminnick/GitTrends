@@ -1,6 +1,7 @@
-﻿namespace GitTrends;
-
-static class FontAwesomeConstants
+﻿namespace GitTrends
 {
-	public const char Information = '\uf129';
+	static class FontAwesomeConstants
+	{
+		public const char Information = '\uf129';
+	}
 }

@@ -3,26 +3,27 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Newtonsoft.Json;
 
-namespace GitTrends.Functions;
-
-class GetLibraries
+namespace GitTrends.Functions
 {
-	readonly BlobStorageService _blobStorageService;
-
-	public GetLibraries(BlobStorageService blobStorageService) => _blobStorageService = blobStorageService;
-
-	[Function(nameof(GetLibraries))]
-	public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData request, FunctionContext context)
+	class GetLibraries
 	{
-		var log = context.GetLogger<GetLibraries>();
-		var nuGetLibraries = await _blobStorageService.GetNuGetLibraries().ConfigureAwait(false);
+		readonly BlobStorageService _blobStorageService;
 
-		var response = request.CreateResponse(System.Net.HttpStatusCode.OK);
+		public GetLibraries(BlobStorageService blobStorageService) => _blobStorageService = blobStorageService;
 
-		var nuGetLibrariesJson = JsonConvert.SerializeObject(nuGetLibraries);
+		[Function(nameof(GetLibraries))]
+		public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData request, FunctionContext context)
+		{
+			var log = context.GetLogger<GetLibraries>();
+			var nuGetLibraries = await _blobStorageService.GetNuGetLibraries().ConfigureAwait(false);
 
-		await response.WriteStringAsync(nuGetLibrariesJson).ConfigureAwait(false);
+			var response = request.CreateResponse(System.Net.HttpStatusCode.OK);
 
-		return response;
+			var nuGetLibrariesJson = JsonConvert.SerializeObject(nuGetLibraries);
+
+			await response.WriteStringAsync(nuGetLibrariesJson).ConfigureAwait(false);
+
+			return response;
+		}
 	}
 }

@@ -3,47 +3,48 @@ using Syncfusion.SfChart.XForms;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
-namespace GitTrends;
-
-abstract class BaseTrendsChart : SfChart
+namespace GitTrends
 {
-	readonly IMainThread _mainThread;
-	readonly ChartZoomPanBehavior _chartZoomPanBehavior = new();
-
-	protected BaseTrendsChart(in IMainThread mainThread, in string automationId)
+	abstract class BaseTrendsChart : SfChart
 	{
-		_mainThread = mainThread;
-		AutomationId = automationId;
+		readonly IMainThread _mainThread;
+		readonly ChartZoomPanBehavior _chartZoomPanBehavior = new();
 
-		Margin = 0;
-		ChartPadding = new Thickness(0, 24, 0, 4);
+		protected BaseTrendsChart(in IMainThread mainThread, in string automationId)
+		{
+			_mainThread = mainThread;
+			AutomationId = automationId;
 
-		BackgroundColor = Color.Transparent;
+			Margin = 0;
+			ChartPadding = new Thickness(0, 24, 0, 4);
 
-		ChartBehaviors = new ChartBehaviorCollection
+			BackgroundColor = Color.Transparent;
+
+			ChartBehaviors = new ChartBehaviorCollection
 			{
 				_chartZoomPanBehavior,
 				new ChartTrackballBehavior()
 			};
-	}
+		}
 
-	protected Task SetZoom(double primaryAxisStart, double primaryAxisEnd, double secondaryAxisStart, double secondaryAxisEnd) => _mainThread.InvokeOnMainThreadAsync(() =>
-	{
-		_chartZoomPanBehavior.ZoomByRange(PrimaryAxis, primaryAxisStart, primaryAxisEnd);
-		_chartZoomPanBehavior.ZoomByRange(SecondaryAxis, secondaryAxisStart, secondaryAxisEnd);
-	});
-
-	protected class TrendsAreaSeries : AreaSeries
-	{
-		public TrendsAreaSeries(in string title, in string xDataTitle, in string yDataTitle, in string colorResource)
+		protected Task SetZoom(double primaryAxisStart, double primaryAxisEnd, double secondaryAxisStart, double secondaryAxisEnd) => _mainThread.InvokeOnMainThreadAsync(() =>
 		{
-			Opacity = 0.9;
-			Label = title;
-			XBindingPath = xDataTitle;
-			YBindingPath = yDataTitle;
-			LegendIcon = ChartLegendIcon.SeriesType;
+			_chartZoomPanBehavior.ZoomByRange(PrimaryAxis, primaryAxisStart, primaryAxisEnd);
+			_chartZoomPanBehavior.ZoomByRange(SecondaryAxis, secondaryAxisStart, secondaryAxisEnd);
+		});
 
-			this.DynamicResource(ColorProperty, colorResource);
+		protected class TrendsAreaSeries : AreaSeries
+		{
+			public TrendsAreaSeries(in string title, in string xDataTitle, in string yDataTitle, in string colorResource)
+			{
+				Opacity = 0.9;
+				Label = title;
+				XBindingPath = xDataTitle;
+				YBindingPath = yDataTitle;
+				LegendIcon = ChartLegendIcon.SeriesType;
+
+				this.DynamicResource(ColorProperty, colorResource);
+			}
 		}
 	}
 }

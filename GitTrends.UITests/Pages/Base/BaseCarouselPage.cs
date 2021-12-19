@@ -4,50 +4,51 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using Xamarin.UITest;
 
-namespace GitTrends.UITests;
-
-abstract class BaseCarouselPage : BasePage
+namespace GitTrends.UITests
 {
-	readonly string _getCurrentPageNumberBackdoorMethodConstant;
-
-	protected BaseCarouselPage(in IApp app, in string getCurrentPageNumberBackdoorMethodConstant) : base(app)
+	abstract class BaseCarouselPage : BasePage
 	{
-		_getCurrentPageNumberBackdoorMethodConstant = getCurrentPageNumberBackdoorMethodConstant;
-	}
+		readonly string _getCurrentPageNumberBackdoorMethodConstant;
 
-	public int CurrentPageNumber => App.InvokeBackdoorMethod<int>(_getCurrentPageNumberBackdoorMethodConstant);
+		protected BaseCarouselPage(in IApp app, in string getCurrentPageNumberBackdoorMethodConstant) : base(app)
+		{
+			_getCurrentPageNumberBackdoorMethodConstant = getCurrentPageNumberBackdoorMethodConstant;
+		}
 
-	public async Task MoveToNextPage()
-	{
-		var initialPageNumber = CurrentPageNumber;
+		public int CurrentPageNumber => App.InvokeBackdoorMethod<int>(_getCurrentPageNumberBackdoorMethodConstant);
 
-		var screenSize = App.Query().First().Rect;
-		App.DragCoordinates(screenSize.Width * 9 / 10, screenSize.CenterY, screenSize.Width * 1 / 10, screenSize.CenterY);
+		public async Task MoveToNextPage()
+		{
+			var initialPageNumber = CurrentPageNumber;
 
-		while (CurrentPageNumber == initialPageNumber)
-			await Task.Delay(TimeSpan.FromMilliseconds(10)).ConfigureAwait(false);
+			var screenSize = App.Query().First().Rect;
+			App.DragCoordinates(screenSize.Width * 9 / 10, screenSize.CenterY, screenSize.Width * 1 / 10, screenSize.CenterY);
 
-		var finalPageNumber = CurrentPageNumber;
+			while (CurrentPageNumber == initialPageNumber)
+				await Task.Delay(TimeSpan.FromMilliseconds(10)).ConfigureAwait(false);
 
-		App.Screenshot($"Moved from Page {initialPageNumber} to Page {finalPageNumber}");
+			var finalPageNumber = CurrentPageNumber;
 
-		Assert.GreaterOrEqual(finalPageNumber, initialPageNumber);
-	}
+			App.Screenshot($"Moved from Page {initialPageNumber} to Page {finalPageNumber}");
 
-	public async Task MoveToPreviousPage()
-	{
-		var initialPageNumber = CurrentPageNumber;
+			Assert.GreaterOrEqual(finalPageNumber, initialPageNumber);
+		}
 
-		var screenSize = App.Query().First().Rect;
-		App.DragCoordinates(screenSize.Width * 1 / 10, screenSize.CenterY, screenSize.Width * 9 / 10, screenSize.CenterY);
+		public async Task MoveToPreviousPage()
+		{
+			var initialPageNumber = CurrentPageNumber;
 
-		while (CurrentPageNumber == initialPageNumber)
-			await Task.Delay(TimeSpan.FromMilliseconds(10)).ConfigureAwait(false);
+			var screenSize = App.Query().First().Rect;
+			App.DragCoordinates(screenSize.Width * 1 / 10, screenSize.CenterY, screenSize.Width * 9 / 10, screenSize.CenterY);
 
-		var finalPageNumber = CurrentPageNumber;
+			while (CurrentPageNumber == initialPageNumber)
+				await Task.Delay(TimeSpan.FromMilliseconds(10)).ConfigureAwait(false);
 
-		App.Screenshot($"Moved from Page {initialPageNumber} to Page {finalPageNumber}");
+			var finalPageNumber = CurrentPageNumber;
 
-		Assert.LessOrEqual(finalPageNumber, initialPageNumber);
+			App.Screenshot($"Moved from Page {initialPageNumber} to Page {finalPageNumber}");
+
+			Assert.LessOrEqual(finalPageNumber, initialPageNumber);
+		}
 	}
 }

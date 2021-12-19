@@ -1,3 +1,4 @@
-﻿namespace GitTrends.Shared;
-
-public record SyncFusionDTO(string LicenseKey, long LicenseVersion);
+﻿namespace GitTrends.Shared
+{
+	public record SyncFusionDTO(string LicenseKey, long LicenseVersion);
+}

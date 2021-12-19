@@ -2,31 +2,32 @@
 using System.Diagnostics;
 using GitTrends.Shared;
 
-namespace GitTrends.Mobile.Common;
-
-public class TimedEvent : ITimedEvent
+namespace GitTrends.Mobile.Common
 {
-	readonly Stopwatch _stopwatch = new();
-	readonly string _trackIdentifier;
-	readonly IAnalyticsService _analyticsService;
-
-	public TimedEvent(in IAnalyticsService analyticsService, string trackIdentifier, IDictionary<string, string>? dictionary)
+	public class TimedEvent : ITimedEvent
 	{
-		Data = dictionary ?? new Dictionary<string, string>();
-		_trackIdentifier = trackIdentifier;
-		_analyticsService = analyticsService;
+		readonly Stopwatch _stopwatch = new();
+		readonly string _trackIdentifier;
+		readonly IAnalyticsService _analyticsService;
 
-		_stopwatch.Start();
-	}
+		public TimedEvent(in IAnalyticsService analyticsService, string trackIdentifier, IDictionary<string, string>? dictionary)
+		{
+			Data = dictionary ?? new Dictionary<string, string>();
+			_trackIdentifier = trackIdentifier;
+			_analyticsService = analyticsService;
 
-	public IDictionary<string, string> Data { get; }
+			_stopwatch.Start();
+		}
 
-	public void Dispose()
-	{
-		_stopwatch.Stop();
+		public IDictionary<string, string> Data { get; }
 
-		Data.Add("Timed Event", $"{_stopwatch.Elapsed:ss\\.fff}s");
+		public void Dispose()
+		{
+			_stopwatch.Stop();
 
-		_analyticsService.Track($"{_trackIdentifier} [Timed Event]", new Dictionary<string, string>(Data));
+			Data.Add("Timed Event", $"{_stopwatch.Elapsed:ss\\.fff}s");
+
+			_analyticsService.Track($"{_trackIdentifier} [Timed Event]", new Dictionary<string, string>(Data));
+		}
 	}
 }

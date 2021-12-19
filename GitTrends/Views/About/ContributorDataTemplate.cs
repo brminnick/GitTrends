@@ -4,41 +4,41 @@ using Xamarin.Forms;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
-namespace GitTrends;
-
-class ContributorDataTemplate : DataTemplate
+namespace GitTrends
 {
-	const int _rowSpacing = 4;
-	const int _loginTextHeight = 25;
-	const int _textPadding = 4;
-
-	readonly static int _circleDiameter = IsSmallScreen ? 54 : 64;
-
-	public ContributorDataTemplate() : base(CreateContributorDataTemplate)
+	class ContributorDataTemplate : DataTemplate
 	{
+		const int _rowSpacing = 4;
+		const int _loginTextHeight = 25;
+		const int _textPadding = 4;
 
-	}
+		readonly static int _circleDiameter = IsSmallScreen ? 54 : 64;
 
-	public static int RowHeight { get; } = _rowSpacing + _circleDiameter + _loginTextHeight;
+		public ContributorDataTemplate() : base(CreateContributorDataTemplate)
+		{
 
-	enum Row { Avatar, Login }
-	enum Column { LeftText, Image, RightText, RightPadding }
+		}
 
-	static Grid CreateContributorDataTemplate() => new Grid
-	{
-		RowSpacing = _rowSpacing,
+		public static int RowHeight { get; } = _rowSpacing + _circleDiameter + _loginTextHeight;
 
-		RowDefinitions = Rows.Define(
-			(Row.Avatar, _circleDiameter),
-			(Row.Login, _loginTextHeight)),
+		enum Row { Avatar, Login }
+		enum Column { LeftText, Image, RightText, RightPadding }
 
-		ColumnDefinitions = Columns.Define(
-			(Column.LeftText, _textPadding),
-			(Column.Image, _circleDiameter),
-			(Column.RightText, _textPadding),
-			(Column.RightPadding, 0.5)),
+		static Grid CreateContributorDataTemplate() => new Grid
+		{
+			RowSpacing = _rowSpacing,
 
-		Children =
+			RowDefinitions = Rows.Define(
+				(Row.Avatar, _circleDiameter),
+				(Row.Login, _loginTextHeight)),
+
+			ColumnDefinitions = Columns.Define(
+				(Column.LeftText, _textPadding),
+				(Column.Image, _circleDiameter),
+				(Column.RightText, _textPadding),
+				(Column.RightPadding, 0.5)),
+
+			Children =
 			{
 				new AvatarImage(_circleDiameter).FillExpand()
 					.Row(Row.Avatar).Column(Column.Image)
@@ -50,5 +50,6 @@ class ContributorDataTemplate : DataTemplate
 					.Bind<Label, string, string>(Label.TextProperty, nameof(Contributor.Login), BindingMode.OneTime, convert: login => $"@{login}")
 					.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
 			}
-	}.DynamicResource(VisualElement.BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+		}.DynamicResource(VisualElement.BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+	}
 }

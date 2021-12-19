@@ -1,25 +1,26 @@
 ﻿using Xamarin.Forms;
 
-namespace GitTrends;
-
-class StatisticsLabel : Label
+namespace GitTrends
 {
-	public const int StatisticsFontSize = 12;
-
-	public StatisticsLabel(in string text, in bool isVisible, in string textColorThemeName)
+	class StatisticsLabel : Label
 	{
-		Text = text;
-		FontSize = StatisticsFontSize;
+		public const int StatisticsFontSize = 12;
 
-		IsVisible = isVisible;
+		public StatisticsLabel(in string text, in bool isVisible, in string textColorThemeName)
+		{
+			Text = text;
+			FontSize = StatisticsFontSize;
 
-		HorizontalOptions = LayoutOptions.FillAndExpand;
+			IsVisible = isVisible;
 
-		HorizontalTextAlignment = TextAlignment.Start;
-		VerticalTextAlignment = TextAlignment.End;
+			HorizontalOptions = LayoutOptions.FillAndExpand;
 
-		LineBreakMode = LineBreakMode.TailTruncation;
+			HorizontalTextAlignment = TextAlignment.Start;
+			VerticalTextAlignment = TextAlignment.End;
 
-		this.DynamicResource(TextColorProperty, textColorThemeName);
+			LineBreakMode = LineBreakMode.TailTruncation;
+
+			this.DynamicResource(TextColorProperty, textColorThemeName);
+		}
 	}
 }

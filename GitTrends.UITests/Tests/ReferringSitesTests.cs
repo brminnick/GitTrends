@@ -6,76 +6,77 @@ using NUnit.Framework;
 using Xamarin.UITest;
 using Xamarin.UITest.iOS;
 
-namespace GitTrends.UITests;
-
-[TestFixture(Platform.Android, UserType.Demo)]
-[TestFixture(Platform.Android, UserType.LoggedIn)]
-[TestFixture(Platform.iOS, UserType.Demo)]
-[TestFixture(Platform.iOS, UserType.LoggedIn)]
-class ReferringSitesTests : BaseUITest
+namespace GitTrends.UITests
 {
-	public ReferringSitesTests(Platform platform, UserType userType) : base(platform, userType)
+	[TestFixture(Platform.Android, UserType.Demo)]
+	[TestFixture(Platform.Android, UserType.LoggedIn)]
+	[TestFixture(Platform.iOS, UserType.Demo)]
+	[TestFixture(Platform.iOS, UserType.LoggedIn)]
+	class ReferringSitesTests : BaseUITest
 	{
-	}
-
-	public override async Task BeforeEachTest()
-	{
-		await base.BeforeEachTest().ConfigureAwait(false);
-
-		IReadOnlyList<ReferringSiteModel> referringSites = Array.Empty<ReferringSiteModel>();
-
-		var repositories = RepositoryPage.VisibleCollection;
-		var repositoriesEnumerator = repositories.GetEnumerator();
-
-		while (!referringSites.Any())
+		public ReferringSitesTests(Platform platform, UserType userType) : base(platform, userType)
 		{
-			repositoriesEnumerator.MoveNext();
-			RepositoryPage.TapRepository(repositoriesEnumerator.Current.Name);
+		}
 
-			await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
-			TrendsPage.TapReferringSitesButton();
+		public override async Task BeforeEachTest()
+		{
+			await base.BeforeEachTest().ConfigureAwait(false);
 
-			await ReferringSitesPage.WaitForPageToLoad().ConfigureAwait(false);
+			IReadOnlyList<ReferringSiteModel> referringSites = Array.Empty<ReferringSiteModel>();
 
-			referringSites = ReferringSitesPage.VisibleCollection;
+			var repositories = RepositoryPage.VisibleCollection;
+			var repositoriesEnumerator = repositories.GetEnumerator();
 
-			if (!referringSites.Any())
+			while (!referringSites.Any())
 			{
-				Assert.IsTrue(ReferringSitesPage.IsEmptyDataViewVisible);
-
-				ReferringSitesPage.ClosePage();
+				repositoriesEnumerator.MoveNext();
+				RepositoryPage.TapRepository(repositoriesEnumerator.Current.Name);
 
 				await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
-				TrendsPage.TapBackButton();
+				TrendsPage.TapReferringSitesButton();
 
-				await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
+				await ReferringSitesPage.WaitForPageToLoad().ConfigureAwait(false);
+
+				referringSites = ReferringSitesPage.VisibleCollection;
+
+				if (!referringSites.Any())
+				{
+					Assert.IsTrue(ReferringSitesPage.IsEmptyDataViewVisible);
+
+					ReferringSitesPage.ClosePage();
+
+					await TrendsPage.WaitForPageToLoad().ConfigureAwait(false);
+					TrendsPage.TapBackButton();
+
+					await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
+				}
 			}
 		}
-	}
 
-	[Test]
-	public async Task ReferringSitesPageDoesLoad()
-	{
-		//Arrange
-		IReadOnlyCollection<ReferringSiteModel> referringSiteList = ReferringSitesPage.VisibleCollection;
-		var referringSite = referringSiteList.First();
-		bool isUrlValid = referringSite.IsReferrerUriValid;
-
-		//Assert
-		Assert.IsTrue(App.Query(referringSite.Referrer).Any());
-
-		//Act
-		if (isUrlValid)
+		[Test]
+		public async Task ReferringSitesPageDoesLoad()
 		{
-			App.Tap(referringSite.Referrer);
-			await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
-		}
+			//Arrange
+			IReadOnlyCollection<ReferringSiteModel> referringSiteList = ReferringSitesPage.VisibleCollection;
+			var referringSite = referringSiteList.First();
+			bool isUrlValid = referringSite.IsReferrerUriValid;
 
-		//Assert
-		if (isUrlValid && App is iOSApp)
-		{
-			SettingsPage.WaitForBrowserToOpen();
-			Assert.IsTrue(ReferringSitesPage.IsBrowserOpen);
+			//Assert
+			Assert.IsTrue(App.Query(referringSite.Referrer).Any());
+
+			//Act
+			if (isUrlValid)
+			{
+				App.Tap(referringSite.Referrer);
+				await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
+			}
+
+			//Assert
+			if (isUrlValid && App is iOSApp)
+			{
+				SettingsPage.WaitForBrowserToOpen();
+				Assert.IsTrue(ReferringSitesPage.IsBrowserOpen);
+			}
 		}
 	}
 }

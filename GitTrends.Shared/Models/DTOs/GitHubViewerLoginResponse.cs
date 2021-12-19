@@ -1,3 +1,4 @@
-﻿namespace GitTrends.Shared;
-
-public record GitHubViewerLoginResponse(User Viewer);
+﻿namespace GitTrends.Shared
+{
+	public record GitHubViewerLoginResponse(User Viewer);
+}

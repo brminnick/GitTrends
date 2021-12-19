@@ -7,46 +7,47 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace GitTrends.Functions;
-
-public static class GetStreamingManifests
+namespace GitTrends.Functions
 {
-	readonly static string _chartVideoManifestUrl = Environment.GetEnvironmentVariable("ChartVideoManifestUrl") ?? string.Empty;
-	readonly static string _enableOrganizationsVideoManifestUrl = Environment.GetEnvironmentVariable("EnableOrganizationsVideoManifestUrl") ?? string.Empty;
-
-	[Function(nameof(GetStreamingManifests))]
-	public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req, FunctionContext functionContext)
+	public static class GetStreamingManifests
 	{
-		var logger = functionContext.GetLogger(nameof(GetStreamingManifests));
-		logger.LogInformation("Retrieving Chart Video");
+		readonly static string _chartVideoManifestUrl = Environment.GetEnvironmentVariable("ChartVideoManifestUrl") ?? string.Empty;
+		readonly static string _enableOrganizationsVideoManifestUrl = Environment.GetEnvironmentVariable("EnableOrganizationsVideoManifestUrl") ?? string.Empty;
 
-		if (string.IsNullOrWhiteSpace(_chartVideoManifestUrl))
+		[Function(nameof(GetStreamingManifests))]
+		public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req, FunctionContext functionContext)
 		{
-			var notFoundResponse = req.CreateResponse(System.Net.HttpStatusCode.NotFound);
-			await notFoundResponse.WriteStringAsync("Chart Video Url Not Found").ConfigureAwait(false);
+			var logger = functionContext.GetLogger(nameof(GetStreamingManifests));
+			logger.LogInformation("Retrieving Chart Video");
 
-			return notFoundResponse;
-		}
+			if (string.IsNullOrWhiteSpace(_chartVideoManifestUrl))
+			{
+				var notFoundResponse = req.CreateResponse(System.Net.HttpStatusCode.NotFound);
+				await notFoundResponse.WriteStringAsync("Chart Video Url Not Found").ConfigureAwait(false);
 
-		if (string.IsNullOrWhiteSpace(_enableOrganizationsVideoManifestUrl))
-		{
-			var notFoundResponse = req.CreateResponse(System.Net.HttpStatusCode.NotFound);
-			await notFoundResponse.WriteStringAsync("Enable Organizations Video Url Not Found").ConfigureAwait(false);
+				return notFoundResponse;
+			}
 
-			return notFoundResponse;
-		}
+			if (string.IsNullOrWhiteSpace(_enableOrganizationsVideoManifestUrl))
+			{
+				var notFoundResponse = req.CreateResponse(System.Net.HttpStatusCode.NotFound);
+				await notFoundResponse.WriteStringAsync("Enable Organizations Video Url Not Found").ConfigureAwait(false);
 
-		IReadOnlyDictionary<string, StreamingManifest> videoModels = new Dictionary<string, StreamingManifest>
+				return notFoundResponse;
+			}
+
+			IReadOnlyDictionary<string, StreamingManifest> videoModels = new Dictionary<string, StreamingManifest>
 			{
 				{ StreamingConstants.Chart, new StreamingManifest(_chartVideoManifestUrl) },
 				{ StreamingConstants.EnableOrganizations, new StreamingManifest(_enableOrganizationsVideoManifestUrl) }
 			};
 
-		var okResponse = req.CreateResponse(System.Net.HttpStatusCode.OK);
+			var okResponse = req.CreateResponse(System.Net.HttpStatusCode.OK);
 
-		var streamingManifestJson = JsonConvert.SerializeObject(videoModels);
-		await okResponse.WriteStringAsync(streamingManifestJson).ConfigureAwait(false);
+			var streamingManifestJson = JsonConvert.SerializeObject(videoModels);
+			await okResponse.WriteStringAsync(streamingManifestJson).ConfigureAwait(false);
 
-		return okResponse;
+			return okResponse;
+		}
 	}
 }

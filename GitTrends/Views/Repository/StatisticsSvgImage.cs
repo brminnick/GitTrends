@@ -1,13 +1,14 @@
 ﻿using Xamarin.Forms;
 
-namespace GitTrends;
-
-class StatisticsSvgImage : SvgImage
+namespace GitTrends
 {
-	public StatisticsSvgImage(in string svgFileName, string baseThemeColor, in double widthRequest = 24, in double heightRequest = 24)
-		: base(svgFileName, () => (Color)Application.Current.Resources[baseThemeColor], widthRequest, heightRequest)
+	class StatisticsSvgImage : SvgImage
 	{
-		VerticalOptions = LayoutOptions.CenterAndExpand;
-		HorizontalOptions = LayoutOptions.EndAndExpand;
+		public StatisticsSvgImage(in string svgFileName, string baseThemeColor, in double widthRequest = 24, in double heightRequest = 24)
+			: base(svgFileName, () => (Color)Application.Current.Resources[baseThemeColor], widthRequest, heightRequest)
+		{
+			VerticalOptions = LayoutOptions.CenterAndExpand;
+			HorizontalOptions = LayoutOptions.EndAndExpand;
+		}
 	}
 }

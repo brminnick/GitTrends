@@ -7,36 +7,37 @@ using GitTrends.Shared;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
 
-namespace GitTrends.UnitTests;
-
-[NonParallelizable]
-class RepositoryViewModelTests_MaximumApiCallLimit_RestApi : RepositoryViewModelTests_MaximumApiCallLimit
+namespace GitTrends.UnitTests
 {
-	[Test]
-	public Task PullToRefreshCommandTest_MaximumApiLimit_RestLApi() => ExecutePullToRefreshCommandTestMaximumApiLimitTest();
-
-	protected override void InitializeServiceCollection()
+	[NonParallelizable]
+	class RepositoryViewModelTests_MaximumApiCallLimit_RestApi : RepositoryViewModelTests_MaximumApiCallLimit
 	{
-		var gitHubApiV3Client = RefitExtensions.For<IGitHubApiV3>(CreateMaximumApiLimitHttpClient(GitHubConstants.GitHubRestApiUrl));
-		var gitHubGraphQLCLient = RefitExtensions.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
-		var azureFunctionsClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
+		[Test]
+		public Task PullToRefreshCommandTest_MaximumApiLimit_RestLApi() => ExecutePullToRefreshCommandTestMaximumApiLimitTest();
 
-		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
-	}
+		protected override void InitializeServiceCollection()
+		{
+			var gitHubApiV3Client = RefitExtensions.For<IGitHubApiV3>(CreateMaximumApiLimitHttpClient(GitHubConstants.GitHubRestApiUrl));
+			var gitHubGraphQLCLient = RefitExtensions.For<IGitHubGraphQLApi>(BaseApiService.CreateHttpClient(GitHubConstants.GitHubGraphQLApi));
+			var azureFunctionsClient = RefitExtensions.For<IAzureFunctionsApi>(BaseApiService.CreateHttpClient(AzureConstants.AzureFunctionsApiUrl));
 
-	protected static HttpClient CreateMaximumApiLimitHttpClient(string url)
-	{
-		var responseMessage = new HttpResponseMessage(HttpStatusCode.Forbidden);
-		responseMessage.Headers.Add(GitHubApiStatusService.RateLimitHeader, "5000");
-		responseMessage.Headers.Add(GitHubApiStatusService.RateLimitRemainingHeader, "0");
-		responseMessage.Headers.Add(GitHubApiStatusService.RateLimitResetHeader, DateTimeOffset.UtcNow.AddMinutes(50).ToUnixTimeSeconds().ToString());
+			ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
+		}
 
-		var httpMessageHandler = new MockHttpMessageHandler();
-		httpMessageHandler.When($"{url}/*").Respond(request => responseMessage);
+		protected static HttpClient CreateMaximumApiLimitHttpClient(string url)
+		{
+			var responseMessage = new HttpResponseMessage(HttpStatusCode.Forbidden);
+			responseMessage.Headers.Add(GitHubApiStatusService.RateLimitHeader, "5000");
+			responseMessage.Headers.Add(GitHubApiStatusService.RateLimitRemainingHeader, "0");
+			responseMessage.Headers.Add(GitHubApiStatusService.RateLimitResetHeader, DateTimeOffset.UtcNow.AddMinutes(50).ToUnixTimeSeconds().ToString());
 
-		var httpClient = httpMessageHandler.ToHttpClient();
-		httpClient.BaseAddress = new Uri(url);
+			var httpMessageHandler = new MockHttpMessageHandler();
+			httpMessageHandler.When($"{url}/*").Respond(request => responseMessage);
 
-		return httpClient;
+			var httpClient = httpMessageHandler.ToHttpClient();
+			httpClient.BaseAddress = new Uri(url);
+
+			return httpClient;
+		}
 	}
 }

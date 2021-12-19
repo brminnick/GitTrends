@@ -1,13 +1,14 @@
 ﻿using Xamarin.UITest;
 
-namespace GitTrends.UITests;
-
-static class AppInitializer
+namespace GitTrends.UITests
 {
-	public static IApp StartApp(Platform platform) => platform switch
+	static class AppInitializer
 	{
-		Platform.Android => ConfigureApp.Android.StartApp(),
-		Platform.iOS => ConfigureApp.iOS.StartApp(),
-		_ => throw new System.NotSupportedException(),
-	};
+		public static IApp StartApp(Platform platform) => platform switch
+		{
+			Platform.Android => ConfigureApp.Android.StartApp(),
+			Platform.iOS => ConfigureApp.iOS.StartApp(),
+			_ => throw new System.NotSupportedException(),
+		};
+	}
 }

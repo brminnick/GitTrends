@@ -9,53 +9,53 @@ using Xamarin.Forms;
 using static GitTrends.XamarinFormsService;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
-namespace GitTrends;
-
-class AboutPage : BaseContentPage<AboutViewModel>
+namespace GitTrends
 {
-	readonly DeepLinkingService _deepLinkingService;
-
-	public AboutPage(IMainThread mainThread,
-						AboutViewModel aboutViewModel,
-						IAnalyticsService analyticsService,
-						DeepLinkingService deepLinkingService) : base(aboutViewModel, analyticsService, mainThread)
+	class AboutPage : BaseContentPage<AboutViewModel>
 	{
-		const int horizontalPadding = 28;
+		readonly DeepLinkingService _deepLinkingService;
 
-		var titleRowHeight = IsSmallScreen ? 16 : 20;
-		var descriptionRowHeight = IsSmallScreen ? 28 : 32;
-
-		_deepLinkingService = deepLinkingService;
-
-		Title = PageTitles.AboutPage;
-
-		Content = new ScrollView
+		public AboutPage(IMainThread mainThread,
+							AboutViewModel aboutViewModel,
+							IAnalyticsService analyticsService,
+							DeepLinkingService deepLinkingService) : base(aboutViewModel, analyticsService, mainThread)
 		{
-			Padding = new Thickness(0, 16, 0, 0),
-			Content = new Grid
+			const int horizontalPadding = 28;
+
+			var titleRowHeight = IsSmallScreen ? 16 : 20;
+			var descriptionRowHeight = IsSmallScreen ? 28 : 32;
+
+			_deepLinkingService = deepLinkingService;
+
+			Title = PageTitles.AboutPage;
+
+			Content = new ScrollView
 			{
-				ColumnSpacing = 2,
-				RowSpacing = 6,
+				Padding = new Thickness(0, 16, 0, 0),
+				Content = new Grid
+				{
+					ColumnSpacing = 2,
+					RowSpacing = 6,
 
-				ColumnDefinitions = Columns.Define(
-					(Column.LeftPadding, horizontalPadding),
-					(Column.Icon, 108),
-					(Column.Statistics, Star),
-					(Column.RightPadding, horizontalPadding)),
+					ColumnDefinitions = Columns.Define(
+						(Column.LeftPadding, horizontalPadding),
+						(Column.Icon, 108),
+						(Column.Statistics, Star),
+						(Column.RightPadding, horizontalPadding)),
 
-				RowDefinitions = Rows.Define(
-					(Row.Title, IsSmallScreen ? 28 : 32),
-					(Row.Description, IsSmallScreen ? 44 : 48),
-					(Row.Statistics, IsSmallScreen ? 28 : 36),
-					(Row.ActionButtons, IsSmallScreen ? 64 : 68),
-					(Row.CollaboratorTitle, titleRowHeight),
-					(Row.CollaboratorDescription, descriptionRowHeight),
-					(Row.CollaboratorCollection, IsSmallScreen ? 84 : 100),
-					(Row.LibrariesTitle, titleRowHeight),
-					(Row.LibrariesDescription, descriptionRowHeight),
-					(Row.LibrariesCollection, Star)),
+					RowDefinitions = Rows.Define(
+						(Row.Title, IsSmallScreen ? 28 : 32),
+						(Row.Description, IsSmallScreen ? 44 : 48),
+						(Row.Statistics, IsSmallScreen ? 28 : 36),
+						(Row.ActionButtons, IsSmallScreen ? 64 : 68),
+						(Row.CollaboratorTitle, titleRowHeight),
+						(Row.CollaboratorDescription, descriptionRowHeight),
+						(Row.CollaboratorCollection, IsSmallScreen ? 84 : 100),
+						(Row.LibrariesTitle, titleRowHeight),
+						(Row.LibrariesDescription, descriptionRowHeight),
+						(Row.LibrariesCollection, Star)),
 
-				Children =
+					Children =
 					{
 						 new Image().CenterExpand().Margins(right: IsSmallScreen ? 8 : 12)
 							.Row(Row.Title).RowSpan(3).Column(Column.Icon)
@@ -112,99 +112,100 @@ class AboutPage : BaseContentPage<AboutViewModel>
 						 .Row(Row.LibrariesCollection).ColumnSpan(All<Column>())
 						 .Invoke(collectionView => collectionView.SelectionChanged += HandleLibrarySelectionChanged),
 					}
-			}
-		};
-	}
-
-	enum Row { Title, Description, Statistics, ActionButtons, CollaboratorTitle, CollaboratorDescription, CollaboratorCollection, LibrariesTitle, LibrariesDescription, LibrariesCollection }
-	enum Column { LeftPadding, Icon, Statistics, RightPadding }
-
-	async void HandleContributorSelectionChanged(object sender, SelectionChangedEventArgs e)
-	{
-		var collectionView = (CollectionView)sender;
-		collectionView.SelectedItem = null;
-
-		if (e.CurrentSelection.FirstOrDefault() is Contributor contributor)
-		{
-			AnalyticsService.Track("Contributor Tapped", nameof(Contributor.Login), contributor.Login);
-
-			await _deepLinkingService.OpenBrowser(contributor.GitHubUrl);
-		}
-	}
-
-	async void HandleLibrarySelectionChanged(object sender, SelectionChangedEventArgs e)
-	{
-		var collectionView = (CollectionView)sender;
-		collectionView.SelectedItem = null;
-
-		if (e.CurrentSelection.FirstOrDefault() is NuGetPackageModel nuGetPackageModel)
-		{
-			AnalyticsService.Track("Library Tapped", nameof(NuGetPackageModel.PackageName), nuGetPackageModel.PackageName);
-
-			await _deepLinkingService.OpenBrowser(nuGetPackageModel.WebsiteUri);
-		}
-	}
-
-	class TitleLabel : Label
-	{
-		public TitleLabel(in string text)
-		{
-			Text = text;
-			LineBreakMode = LineBreakMode.TailTruncation;
-
-			this.Font(FontFamilyConstants.RobotoMedium, IsSmallScreen ? 14 : 16).StartExpand().DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
-		}
-	}
-
-	class DescriptionLabel : Label
-	{
-		public DescriptionLabel(in string text)
-		{
-			Text = text;
-			MaxLines = 2;
-			LineBreakMode = LineBreakMode.TailTruncation;
-
-			this.Font(FontFamilyConstants.RobotoRegular, IsSmallScreen ? 10 : 12).StartExpand().DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
-		}
-	}
-
-	class ButtonLayout : StackLayout
-	{
-		public ButtonLayout()
-		{
-			Spacing = 16;
-
-			Orientation = StackOrientation.Horizontal;
-
-			Margin = new Thickness(0, 16);
-
-			Children.Add(new ViewOnGitHubButton().EndExpand());
-			Children.Add(new RequestFeatureButton().StartExpand());
+				}
+			};
 		}
 
-		class ViewOnGitHubButton : AboutPageButton
+		enum Row { Title, Description, Statistics, ActionButtons, CollaboratorTitle, CollaboratorDescription, CollaboratorCollection, LibrariesTitle, LibrariesDescription, LibrariesCollection }
+		enum Column { LeftPadding, Icon, Statistics, RightPadding }
+
+		async void HandleContributorSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			public ViewOnGitHubButton() : base("github.svg", AboutPageConstants.GitHubButton, AboutPageAutomationIds.ViewOnGitHubButton, Color.FromHex("231F20"), nameof(AboutViewModel.ViewOnGitHubCommand))
+			var collectionView = (CollectionView)sender;
+			collectionView.SelectedItem = null;
+
+			if (e.CurrentSelection.FirstOrDefault() is Contributor contributor)
 			{
+				AnalyticsService.Track("Contributor Tapped", nameof(Contributor.Login), contributor.Login);
+
+				await _deepLinkingService.OpenBrowser(contributor.GitHubUrl);
 			}
 		}
 
-		class RequestFeatureButton : AboutPageButton
+		async void HandleLibrarySelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			public RequestFeatureButton() : base("sparkle.svg", AboutPageConstants.RequestFeatureButton, AboutPageAutomationIds.RequestFeatureButton, Color.FromHex("F97B4F"), nameof(AboutViewModel.RequestFeatureCommand))
+			var collectionView = (CollectionView)sender;
+			collectionView.SelectedItem = null;
+
+			if (e.CurrentSelection.FirstOrDefault() is NuGetPackageModel nuGetPackageModel)
 			{
+				AnalyticsService.Track("Library Tapped", nameof(NuGetPackageModel.PackageName), nuGetPackageModel.PackageName);
+
+				await _deepLinkingService.OpenBrowser(nuGetPackageModel.WebsiteUri);
 			}
 		}
 
-
-		abstract class AboutPageButton : SvgTextLabel
+		class TitleLabel : Label
 		{
-			protected AboutPageButton(in string svgFileName, in string text, in string automationId, in Color backgroundColor, in string commandPropertyBindingPath)
-				: base(svgFileName, text, automationId, IsSmallScreen ? 12 : 14, FontFamilyConstants.RobotoMedium, 4)
+			public TitleLabel(in string text)
 			{
-				BackgroundColor = backgroundColor;
-				Padding = IsSmallScreen ? new Thickness(DeviceInfo.Platform == DevicePlatform.iOS ? 8 : 12, 8) : new Thickness(DeviceInfo.Platform == DevicePlatform.iOS ? 10 : 16, 8);
-				GestureRecognizers.Add(new TapGestureRecognizer().Bind(TapGestureRecognizer.CommandProperty, commandPropertyBindingPath));
+				Text = text;
+				LineBreakMode = LineBreakMode.TailTruncation;
+
+				this.Font(FontFamilyConstants.RobotoMedium, IsSmallScreen ? 14 : 16).StartExpand().DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
+			}
+		}
+
+		class DescriptionLabel : Label
+		{
+			public DescriptionLabel(in string text)
+			{
+				Text = text;
+				MaxLines = 2;
+				LineBreakMode = LineBreakMode.TailTruncation;
+
+				this.Font(FontFamilyConstants.RobotoRegular, IsSmallScreen ? 10 : 12).StartExpand().DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
+			}
+		}
+
+		class ButtonLayout : StackLayout
+		{
+			public ButtonLayout()
+			{
+				Spacing = 16;
+
+				Orientation = StackOrientation.Horizontal;
+
+				Margin = new Thickness(0, 16);
+
+				Children.Add(new ViewOnGitHubButton().EndExpand());
+				Children.Add(new RequestFeatureButton().StartExpand());
+			}
+
+			class ViewOnGitHubButton : AboutPageButton
+			{
+				public ViewOnGitHubButton() : base("github.svg", AboutPageConstants.GitHubButton, AboutPageAutomationIds.ViewOnGitHubButton, Color.FromHex("231F20"), nameof(AboutViewModel.ViewOnGitHubCommand))
+				{
+				}
+			}
+
+			class RequestFeatureButton : AboutPageButton
+			{
+				public RequestFeatureButton() : base("sparkle.svg", AboutPageConstants.RequestFeatureButton, AboutPageAutomationIds.RequestFeatureButton, Color.FromHex("F97B4F"), nameof(AboutViewModel.RequestFeatureCommand))
+				{
+				}
+			}
+
+
+			abstract class AboutPageButton : SvgTextLabel
+			{
+				protected AboutPageButton(in string svgFileName, in string text, in string automationId, in Color backgroundColor, in string commandPropertyBindingPath)
+					: base(svgFileName, text, automationId, IsSmallScreen ? 12 : 14, FontFamilyConstants.RobotoMedium, 4)
+				{
+					BackgroundColor = backgroundColor;
+					Padding = IsSmallScreen ? new Thickness(DeviceInfo.Platform == DevicePlatform.iOS ? 8 : 12, 8) : new Thickness(DeviceInfo.Platform == DevicePlatform.iOS ? 10 : 16, 8);
+					GestureRecognizers.Add(new TapGestureRecognizer().Bind(TapGestureRecognizer.CommandProperty, commandPropertyBindingPath));
+				}
 			}
 		}
 	}

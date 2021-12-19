@@ -1,7 +1,8 @@
 ﻿using GitTrends.Shared;
-namespace GitTrends;
-
-public interface IMobileReferringSiteModel : IReferringSiteModel
+namespace GitTrends
 {
-	public string FavIconImageUrl { get; }
+	public interface IMobileReferringSiteModel : IReferringSiteModel
+	{
+		public string FavIconImageUrl { get; }
+	}
 }

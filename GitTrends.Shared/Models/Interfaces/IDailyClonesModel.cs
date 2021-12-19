@@ -1,14 +1,15 @@
 ﻿using System;
 
-namespace GitTrends.Shared;
-
-public interface IDailyClonesModel
+namespace GitTrends.Shared
 {
-	public DateTime LocalDay { get; }
+	public interface IDailyClonesModel
+	{
+		public DateTime LocalDay { get; }
 
-	public DateTimeOffset Day { get; }
+		public DateTimeOffset Day { get; }
 
-	public long TotalClones { get; }
+		public long TotalClones { get; }
 
-	public long TotalUniqueClones { get; }
+		public long TotalUniqueClones { get; }
+	}
 }

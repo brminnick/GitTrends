@@ -1,8 +1,9 @@
 ﻿using System;
 
-namespace GitTrends;
-
-interface IStarGazerInfo
+namespace GitTrends
 {
-	DateTimeOffset StarredAt { get; }
+	interface IStarGazerInfo
+	{
+		DateTimeOffset StarredAt { get; }
+	}
 }

@@ -1,21 +1,22 @@
 ﻿using Xamarin.Forms;
 
-namespace GitTrends;
-
-abstract class TitleLabel : Label
+namespace GitTrends
 {
-	protected TitleLabel()
+	abstract class TitleLabel : Label
 	{
-		FontSize = 14;
+		protected TitleLabel()
+		{
+			FontSize = 14;
 
-		HorizontalOptions = LayoutOptions.FillAndExpand;
-		VerticalOptions = LayoutOptions.CenterAndExpand;
+			HorizontalOptions = LayoutOptions.FillAndExpand;
+			VerticalOptions = LayoutOptions.CenterAndExpand;
 
-		VerticalTextAlignment = TextAlignment.Center;
+			VerticalTextAlignment = TextAlignment.Center;
 
-		FontFamily = FontFamilyConstants.RobotoMedium;
-		LineBreakMode = LineBreakMode.TailTruncation;
+			FontFamily = FontFamilyConstants.RobotoMedium;
+			LineBreakMode = LineBreakMode.TailTruncation;
 
-		this.DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
+			this.DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
+		}
 	}
 }

@@ -3,43 +3,44 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using Plugin.StoreReview.Abstractions;
 
-namespace GitTrends.UnitTests;
-
-public class MockStoreReview : IStoreReview
+namespace GitTrends.UnitTests
 {
-	readonly static WeakEventManager<bool> _reviewRequestedEventManager = new();
-	readonly static WeakEventManager<string> _storeListingOpenedEventManager = new();
-	readonly static WeakEventManager<string> _storeReviewPageOpenedEventManager = new();
-
-	public static event EventHandler<string> StoreListingOpened
+	public class MockStoreReview : IStoreReview
 	{
-		add => _storeListingOpenedEventManager.AddEventHandler(value);
-		remove => _storeListingOpenedEventManager.RemoveEventHandler(value);
+		readonly static WeakEventManager<bool> _reviewRequestedEventManager = new();
+		readonly static WeakEventManager<string> _storeListingOpenedEventManager = new();
+		readonly static WeakEventManager<string> _storeReviewPageOpenedEventManager = new();
+
+		public static event EventHandler<string> StoreListingOpened
+		{
+			add => _storeListingOpenedEventManager.AddEventHandler(value);
+			remove => _storeListingOpenedEventManager.RemoveEventHandler(value);
+		}
+
+		public static event EventHandler<string> StoreReviewPageOpened
+		{
+			add => _storeReviewPageOpenedEventManager.AddEventHandler(value);
+			remove => _storeReviewPageOpenedEventManager.RemoveEventHandler(value);
+		}
+
+		public static event EventHandler<bool> ReviewRequested
+		{
+			add => _reviewRequestedEventManager.AddEventHandler(value);
+			remove => _reviewRequestedEventManager.RemoveEventHandler(value);
+		}
+
+		public void OpenStoreListing(string appId) => OnStoreListingOpened(appId);
+
+		public void OpenStoreReviewPage(string appId) => OnStoreReviewPageOpened(appId);
+
+		public Task RequestReview(bool testMode)
+		{
+			OnReviewRequested(testMode);
+			return Task.CompletedTask;
+		}
+
+		void OnStoreListingOpened(in string appId) => _storeListingOpenedEventManager.RaiseEvent(this, appId, nameof(StoreListingOpened));
+		void OnStoreReviewPageOpened(in string appId) => _storeReviewPageOpenedEventManager.RaiseEvent(this, appId, nameof(StoreReviewPageOpened));
+		void OnReviewRequested(in bool testMode) => _reviewRequestedEventManager.RaiseEvent(this, testMode, nameof(ReviewRequested));
 	}
-
-	public static event EventHandler<string> StoreReviewPageOpened
-	{
-		add => _storeReviewPageOpenedEventManager.AddEventHandler(value);
-		remove => _storeReviewPageOpenedEventManager.RemoveEventHandler(value);
-	}
-
-	public static event EventHandler<bool> ReviewRequested
-	{
-		add => _reviewRequestedEventManager.AddEventHandler(value);
-		remove => _reviewRequestedEventManager.RemoveEventHandler(value);
-	}
-
-	public void OpenStoreListing(string appId) => OnStoreListingOpened(appId);
-
-	public void OpenStoreReviewPage(string appId) => OnStoreReviewPageOpened(appId);
-
-	public Task RequestReview(bool testMode)
-	{
-		OnReviewRequested(testMode);
-		return Task.CompletedTask;
-	}
-
-	void OnStoreListingOpened(in string appId) => _storeListingOpenedEventManager.RaiseEvent(this, appId, nameof(StoreListingOpened));
-	void OnStoreReviewPageOpened(in string appId) => _storeReviewPageOpenedEventManager.RaiseEvent(this, appId, nameof(StoreReviewPageOpened));
-	void OnReviewRequested(in bool testMode) => _reviewRequestedEventManager.RaiseEvent(this, testMode, nameof(ReviewRequested));
 }
