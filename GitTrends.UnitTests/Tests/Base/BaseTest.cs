@@ -11,6 +11,7 @@ using NUnit.Framework;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
+[assembly: NonParallelizable]
 namespace GitTrends.UnitTests
 {
 	abstract class BaseTest
