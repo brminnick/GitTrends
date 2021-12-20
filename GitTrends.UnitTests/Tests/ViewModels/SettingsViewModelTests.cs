@@ -179,8 +179,8 @@ namespace GitTrends.UnitTests
 			//Act
 			await gitTrendsStatisticsService.Initialize(CancellationToken.None).ConfigureAwait(false);
 
-			isAuthenticating_BeforeCommand = settingsViewModel.IsAuthenticating;
 			isNotAuthenticating_BeforeCommand = settingsViewModel.IsNotAuthenticating;
+			isAuthenticating_BeforeCommand = settingsViewModel.IsAuthenticating;
 			isDemoButtonVisible_BeforeCommand = settingsViewModel.IsDemoButtonVisible;
 
 			var connectToGitHubButtonCommandTask = settingsViewModel.ConnectToGitHubButtonCommand.ExecuteAsync((CancellationToken.None, null));
