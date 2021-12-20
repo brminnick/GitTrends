@@ -184,16 +184,16 @@ namespace GitTrends.UnitTests
 			isDemoButtonVisible_BeforeCommand = settingsViewModel.IsDemoButtonVisible;
 
 			var connectToGitHubButtonCommandTask = settingsViewModel.ConnectToGitHubButtonCommand.ExecuteAsync((CancellationToken.None, null));
-			isAuthenticating_DuringCommand = settingsViewModel.IsAuthenticating;
 			isNotAuthenticating_DuringCommand = settingsViewModel.IsNotAuthenticating;
+			isAuthenticating_DuringCommand = settingsViewModel.IsAuthenticating;
 			isDemoButtonVisible_DuringCommand = settingsViewModel.IsDemoButtonVisible;
 
 			await connectToGitHubButtonCommandTask.ConfigureAwait(false);
 			var openedUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
 			openedUrl = openedUri.AbsoluteUri;
 
-			isAuthenticating_AfterCommand = settingsViewModel.IsAuthenticating;
 			isNotAuthenticating_AfterCommand = settingsViewModel.IsNotAuthenticating;
+			isAuthenticating_AfterCommand = settingsViewModel.IsAuthenticating;
 			isDemoButtonVisible_AfterCommand = settingsViewModel.IsDemoButtonVisible;
 
 			//Assert
