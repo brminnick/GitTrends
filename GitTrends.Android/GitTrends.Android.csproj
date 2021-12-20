@@ -47,7 +47,6 @@
     <AotAssemblies>true</AotAssemblies>
     <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
     <AndroidUseAapt2>true</AndroidUseAapt2>
-    <EnableLLVM>true</EnableLLVM>
     <AndroidPackageFormat>aab</AndroidPackageFormat>
     <AndroidTlsProvider>btls</AndroidTlsProvider>
     <AndroidDexTool>d8</AndroidDexTool>
@@ -65,7 +64,6 @@
     <AotAssemblies>true</AotAssemblies>
     <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
     <AndroidUseAapt2>true</AndroidUseAapt2>
-    <EnableLLVM>true</EnableLLVM>
     <AndroidPackageFormat>aab</AndroidPackageFormat>
     <AndroidTlsProvider>btls</AndroidTlsProvider>
     <AndroidDexTool>d8</AndroidDexTool>
@@ -103,6 +101,8 @@
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.3" />
     <PackageReference Include="Refit.Newtonsoft.Json" Version="6.1.15" />
     <PackageReference Include="Shiny.Jobs" Version="2.3.0.2906" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.3.1.4" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Extensions" Version="2.2.0.10" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
