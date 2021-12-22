@@ -23,6 +23,7 @@ namespace GitTrends
 		readonly static WeakEventManager<NotificationHubInformation> _initializationCompletedEventManager = new();
 		readonly static WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new();
 
+		readonly IDeviceInfo _deviceInfo;
 		readonly IPreferences _preferences;
 		readonly ISecureStorage _secureStorage;
 		readonly MobileSortingService _sortingService;
@@ -34,7 +35,8 @@ namespace GitTrends
 
 		TaskCompletionSource<AccessState>? _settingsResultCompletionSource;
 
-		public NotificationService(IPreferences preferences,
+		public NotificationService(IDeviceInfo deviceInfo,
+									IPreferences preferences,
 									ISecureStorage secureStorage,
 									IAnalyticsService analyticsService,
 									MobileSortingService sortingService,
@@ -43,6 +45,7 @@ namespace GitTrends
 									IDeviceNotificationsService notificationService,
 									AzureFunctionsApiService azureFunctionsApiService)
 		{
+			_deviceInfo = deviceInfo;
 			_preferences = preferences;
 			_secureStorage = secureStorage;
 			_sortingService = sortingService;
@@ -116,8 +119,11 @@ namespace GitTrends
 				initalizeNotificationHub().SafeFireAndForget();
 
 			var channels = await _notificationManager.GetChannels().ConfigureAwait(false);
-			if (!channels.Any())
+			if (!channels.Any()
+				&& (_deviceInfo.Platform != Xamarin.Essentials.DevicePlatform.Android || _deviceInfo.Version.Major >= 8)) // Channels only supported in Android v8.0+
+			{
 				await initializeChannel().ConfigureAwait(false);
+			}
 
 			async Task initalizeNotificationHub()
 			{

@@ -33,7 +33,7 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
-   			<key>aps-environment</key>
+			<key>aps-environment</key>
 			<string>development OR production</string>
 			<key>CFBundleURLName</key>
 			<string>com.minnick.GitTrends</string>
@@ -57,14 +57,14 @@
 		<string>processing</string>
 	</array>
 	<key>CFBundleShortVersionString</key>
-	<string>2.3.0</string>
+	<string>2.3.1</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.minnick.GitTrends.NotifyTrendingRepositories</string>
 		<string>com.minnick.GitTrends.CleanUpDatabase</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>46</string>
+	<string>47</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
