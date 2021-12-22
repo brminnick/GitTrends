@@ -11,7 +11,6 @@ using Newtonsoft.Json;
 using Shiny;
 using Shiny.Notifications;
 using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -237,7 +236,7 @@ namespace GitTrends
 			if (HaveNotificationsBeenRequested)
 			{
 				//INotificationManager.Badge Crashes on iOS
-				if (Device.RuntimePlatform is Device.iOS)
+				if (_deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS)
 					await _notificationService.SetiOSBadgeCount(count).ConfigureAwait(false);
 				else
 					_notificationManager.Badge = count;
@@ -251,16 +250,16 @@ namespace GitTrends
 #if DEBUG
 			await SendTrendingNotification(trendingRepositories, notificationDateTime).ConfigureAwait(false);
 #else
-            var repositoriesToNotify = trendingRepositories.Where(shouldSendNotification).ToList();
-            await SendTrendingNotification(repositoriesToNotify, notificationDateTime).ConfigureAwait(false);
+			var repositoriesToNotify = trendingRepositories.Where(shouldSendNotification).ToList();
+			await SendTrendingNotification(repositoriesToNotify, notificationDateTime).ConfigureAwait(false);
 
-            bool shouldSendNotification(Repository trendingRepository)
-            {
-                var nextNotificationDate = getMostRecentNotificationDate(trendingRepository).AddDays(3);
-                return DateTime.Compare(nextNotificationDate, DateTime.UtcNow) < 1;
+			bool shouldSendNotification(Repository trendingRepository)
+			{
+				var nextNotificationDate = getMostRecentNotificationDate(trendingRepository).AddDays(3);
+				return DateTime.Compare(nextNotificationDate, DateTime.UtcNow) < 1;
 
-                DateTime getMostRecentNotificationDate(Repository repository) => _preferences.Get(repository.Name, default(DateTime));
-            }
+				DateTime getMostRecentNotificationDate(Repository repository) => _preferences.Get(repository.Name, default(DateTime));
+			}
 #endif
 		}
 
@@ -305,7 +304,7 @@ namespace GitTrends
 				}
 
 				if (shouldSortByTrending is true)
-					OnSortingOptionRequestion(_sortingService.CurrentOption);
+					OnSortingOptionRequested(_sortingService.CurrentOption);
 
 				_analyticsService.Track("Multiple Trending Repository Prompt Displayed", nameof(shouldSortByTrending), shouldSortByTrending?.ToString() ?? "null");
 			}
@@ -324,7 +323,7 @@ namespace GitTrends
 				var notification = new Notification
 				{
 					//iOS crashes when ID is not set
-					Id = Device.RuntimePlatform is Device.iOS ? 1 : 0,
+					Id = _deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS ? 1 : 0,
 					Title = NotificationConstants.TrendingRepositoriesNotificationTitle,
 					Message = CreateSingleRepositoryNotificationMessage(trendingRepository.Name, trendingRepository.OwnerLogin),
 					ScheduleDate = notificationDateTime,
@@ -343,7 +342,7 @@ namespace GitTrends
 				var notification = new Notification
 				{
 					//iOS crashes when ID is not set
-					Id = Device.RuntimePlatform is Device.iOS ? 1 : 0,
+					Id = _deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS ? 1 : 0,
 					Title = NotificationConstants.TrendingRepositoriesNotificationTitle,
 					Message = CreateMultipleRepositoryNotificationMessage(trendingRepositories.Count),
 					ScheduleDate = notificationDateTime,
@@ -374,7 +373,7 @@ namespace GitTrends
 
 		void OnInitializationCompleted(NotificationHubInformation notificationHubInformation) => _initializationCompletedEventManager.RaiseEvent(this, notificationHubInformation, nameof(InitializationCompleted));
 
-		void OnSortingOptionRequestion(SortingOption sortingOption) => _sortingOptionRequestedEventManager.RaiseEvent(this, sortingOption, nameof(SortingOptionRequested));
+		void OnSortingOptionRequested(SortingOption sortingOption) => _sortingOptionRequestedEventManager.RaiseEvent(this, sortingOption, nameof(SortingOptionRequested));
 
 		void OnRegisterForNotificationsCompleted(bool isSuccessful, string errorMessage) =>
 			_registerForNotificationCompletedEventHandler.RaiseEvent(this, (isSuccessful, errorMessage), nameof(RegisterForNotificationsCompleted));
