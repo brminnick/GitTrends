@@ -26,10 +26,13 @@ namespace GitTrends.UnitTests
 
 		public Task OpenAsync(Uri uri, BrowserLaunchMode launchMode) => OpenAsync(uri, new BrowserLaunchOptions { LaunchMode = launchMode });
 
-		public Task<bool> OpenAsync(Uri uri, BrowserLaunchOptions options)
+		public async Task<bool> OpenAsync(Uri uri, BrowserLaunchOptions options)
 		{
+			await Task.Delay(TimeSpan.FromSeconds(1));
+
 			OnOpenAsyncExecuted(uri);
-			return Task.FromResult(true);
+
+			return true;
 		}
 
 		void OnOpenAsyncExecuted(in Uri uri) => _openAsyncExecutedEventHandler.RaiseEvent(this, uri, nameof(OpenAsyncExecuted));
