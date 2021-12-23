@@ -75,18 +75,21 @@ namespace GitTrends
 				var initializeNotificationServiceValueTask = _notificationService.Initialize(cancellationToken);
 				var initializeGitTrendsStatisticsValueTask = _gitTrendsStatisticsService.Initialize(cancellationToken);
 				var initializeAnalyticsInitializationServiceTask = _analyticsInitializationService.Initialize(cancellationToken);
-#if DEBUG
+
+				await initializeAnalyticsInitializationServiceTask.ConfigureAwait(false); // Initialize Analaytics Service First
+
+				await intializeOnboardingChartValueTask.ConfigureAwait(false);
+				await initializeGitTrendsStatisticsValueTask.ConfigureAwait(false);
+#if DEBUG	
 				initializeSyncFusionServiceTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
 				initializeLibrariesServiceValueTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
 				initializeNotificationServiceValueTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
 #else
-                await initializeSyncFusionServiceTask.ConfigureAwait(false);
-                await initializeLibrariesServiceValueTask.ConfigureAwait(false);
-                await initializeNotificationServiceValueTask.ConfigureAwait(false);
+				await initializeSyncFusionServiceTask.ConfigureAwait(false);
+				await initializeLibrariesServiceValueTask.ConfigureAwait(false);
+				await initializeNotificationServiceValueTask.ConfigureAwait(false);
 #endif
-				await intializeOnboardingChartValueTask.ConfigureAwait(false);
-				await initializeGitTrendsStatisticsValueTask.ConfigureAwait(false);
-				await initializeAnalyticsInitializationServiceTask.ConfigureAwait(false);
+
 				#endregion
 
 				isInitializationSuccessful = true;

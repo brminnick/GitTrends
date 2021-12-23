@@ -4,14 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using FFImageLoading;
 using GitTrends.Shared;
+using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
 	public class ImageCachingService
 	{
+		readonly IMainThread _mainThread;
 		readonly IAnalyticsService _analyticsService;
 
-		public ImageCachingService(IAnalyticsService analyticsService) => _analyticsService = analyticsService;
+		public ImageCachingService(IMainThread mainThread, IAnalyticsService analyticsService) =>
+			(_mainThread, _analyticsService) = (mainThread, analyticsService);
 
 		public async Task PreloadRepositoryImages(IEnumerable<Repository> repositories)
 		{
@@ -45,7 +48,8 @@ namespace GitTrends
 			}
 		}
 
-		public Task PreloadImage(in string url) => ImageService.Instance.LoadUrl(url).PreloadAsync();
+		// Ensure LoadUrl is always called from same thread: https://github.com/luberda-molinet/FFImageLoading/issues/1492#issuecomment-720711924
+		public Task PreloadImage(string url) => _mainThread.InvokeOnMainThreadAsync(() => ImageService.Instance.LoadUrl(url).PreloadAsync());
 		public Task PreloadImage(in Uri uri) => PreloadImage(uri.ToString());
 	}
 }

@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
-using Microsoft.AppCenter;
 using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
 
