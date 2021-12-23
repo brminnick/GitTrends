@@ -11,8 +11,8 @@ namespace GitTrends
 		readonly static Lazy<long> _assemblyVersionNumberHolder = new(() => long.Parse(System.Reflection.Assembly.GetAssembly(typeof(Syncfusion.CoreAssembly)).GetName().Version.ToString().Replace(".", "")));
 		readonly static Lazy<string> _syncfusionLicenseKeyHolder = new(() => $"{nameof(SyncFusionDTO.LicenseKey)}{_assemblyVersionNumberHolder.Value}");
 
-		readonly IAnalyticsService _analyticsService;
 		readonly ISecureStorage _secureStorage;
+		readonly IAnalyticsService _analyticsService;
 		readonly AzureFunctionsApiService _azureFunctionsApiService;
 
 		public SyncfusionService(ISecureStorage secureStorage,

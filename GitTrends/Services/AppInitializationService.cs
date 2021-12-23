@@ -69,18 +69,21 @@ namespace GitTrends
 				#endregion
 
 				#region Then, Initialize Services Requiring API Response
+				// Initialize Analaytics Service First
+				var initializeAnalyticsInitializationServiceTask = _analyticsInitializationService.Initialize(cancellationToken); 
+
 				var initializeSyncFusionServiceTask = _syncfusionService.Initialize(cancellationToken);
 				var intializeOnboardingChartValueTask = _mediaElementService.InitializeManifests(cancellationToken);
 				var initializeLibrariesServiceValueTask = _librariesService.Initialize(cancellationToken);
 				var initializeNotificationServiceValueTask = _notificationService.Initialize(cancellationToken);
 				var initializeGitTrendsStatisticsValueTask = _gitTrendsStatisticsService.Initialize(cancellationToken);
-				var initializeAnalyticsInitializationServiceTask = _analyticsInitializationService.Initialize(cancellationToken);
 
-				await initializeAnalyticsInitializationServiceTask.ConfigureAwait(false); // Initialize Analaytics Service First
+				// Initialize Analaytics Service First
+				await initializeAnalyticsInitializationServiceTask.ConfigureAwait(false); 
 
 				await intializeOnboardingChartValueTask.ConfigureAwait(false);
 				await initializeGitTrendsStatisticsValueTask.ConfigureAwait(false);
-#if DEBUG	
+#if DEBUG
 				initializeSyncFusionServiceTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
 				initializeLibrariesServiceValueTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
 				initializeNotificationServiceValueTask.SafeFireAndForget(ex => _analyticsService.Report(ex));

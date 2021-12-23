@@ -75,8 +75,8 @@ namespace GitTrends
 		{
 			if (OnboardingChartManifest is null || EnableOrganizationsManifest is null)
 				await initializeOnboardingChart(cancellationToken).ConfigureAwait(false);
-
-			initializeOnboardingChart(cancellationToken).SafeFireAndForget();
+			else
+				initializeOnboardingChart(cancellationToken).SafeFireAndForget(ex => _analyticsService.Report(ex));
 
 			async Task initializeOnboardingChart(CancellationToken cancellationToken)
 			{

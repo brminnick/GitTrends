@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using AsyncAwaitBestPractices;
 using GitTrends.Shared;
-using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
@@ -36,16 +36,16 @@ namespace GitTrends
 			get
 			{
 #if AppStore
-                if (_deviceInfo.Platform == DevicePlatform.iOS)
+                if (_deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS)
                     return iOSApiKey;
 
-                if (_deviceInfo.Platform == DevicePlatform.Android)
+                if (_deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.Android)
                     return AndroidApiKey;
 #else
-				if (_deviceInfo.Platform == DevicePlatform.iOS)
+				if (_deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS)
 					return _iOSDebugKey;
 
-				if (_deviceInfo.Platform == DevicePlatform.Android)
+				if (_deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.Android)
 					return _androidDebugKey;
 #endif
 				throw new NotSupportedException();
@@ -69,17 +69,22 @@ namespace GitTrends
 		public async ValueTask Initialize(CancellationToken cancellationToken)
 		{
 			if (string.IsNullOrWhiteSpace(ApiKey))
+				await initialize().ConfigureAwait(false);
+			else
+				initialize().SafeFireAndForget(ex => _analyticsService.Report(ex));
+
+			async Task initialize()
 			{
 				var appCenterApiKeys = await _azureFunctionsApiService.GetAppCenterApiKeys(cancellationToken).ConfigureAwait(false);
 
 				AndroidApiKey = appCenterApiKeys.Android;
 				iOSApiKey = appCenterApiKeys.iOS;
+
+				var isConfigured = _analyticsService.Configured;
+
+				if (!isConfigured)
+					_analyticsService.Start(ApiKey);
 			}
-
-			var isConfigured = _analyticsService.Configured;
-
-			if (!isConfigured)
-				_analyticsService.Start(ApiKey);
 		}
 	}
 }

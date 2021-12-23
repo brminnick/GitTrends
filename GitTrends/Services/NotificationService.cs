@@ -115,7 +115,7 @@ namespace GitTrends
 			if (notificationHubInformation.IsEmpty())
 				await initalizeNotificationHub().ConfigureAwait(false);
 			else
-				initalizeNotificationHub().SafeFireAndForget();
+				initalizeNotificationHub().SafeFireAndForget(ex => _analyticsService.Report(ex));
 
 			var channels = await _notificationManager.GetChannels().ConfigureAwait(false);
 			if (!channels.Any()
