@@ -70,7 +70,7 @@ namespace GitTrends
 
 				#region Then, Initialize Services Requiring API Response
 				// Initialize Analaytics Service First
-				var initializeAnalyticsInitializationServiceTask = _analyticsInitializationService.Initialize(cancellationToken); 
+				var initializeAnalyticsInitializationServiceTask = _analyticsInitializationService.Initialize(cancellationToken);
 
 				var initializeSyncFusionServiceTask = _syncfusionService.Initialize(cancellationToken);
 				var intializeOnboardingChartValueTask = _mediaElementService.InitializeManifests(cancellationToken);
@@ -79,7 +79,7 @@ namespace GitTrends
 				var initializeGitTrendsStatisticsValueTask = _gitTrendsStatisticsService.Initialize(cancellationToken);
 
 				// Initialize Analaytics Service First
-				await initializeAnalyticsInitializationServiceTask.ConfigureAwait(false); 
+				await initializeAnalyticsInitializationServiceTask.ConfigureAwait(false);
 
 				await intializeOnboardingChartValueTask.ConfigureAwait(false);
 				await initializeGitTrendsStatisticsValueTask.ConfigureAwait(false);
