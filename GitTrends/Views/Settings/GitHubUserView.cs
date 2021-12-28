@@ -46,9 +46,7 @@ namespace GitTrends
 			{
 				this.Center();
 
-				HeightRequest = _imageHeight;
-				WidthRequest = _imageHeight;
-				Aspect = Aspect.AspectFit;
+				HeightRequest = WidthRequest = _imageHeight;
 
 				AutomationId = SettingsPageAutomationIds.GitHubAvatarImage;
 

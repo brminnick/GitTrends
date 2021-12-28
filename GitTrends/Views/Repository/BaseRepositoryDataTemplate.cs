@@ -20,7 +20,8 @@ namespace GitTrends
 		const int _statsColumnSize = 40;
 		const double _statisticsRowHeight = StatisticsLabel.StatisticsFontSize + 4;
 		const double _emojiColumnSize = _statisticsRowHeight;
-		readonly static double _circleImageHeight = IsSmallScreen ? 52 : 62;
+
+		readonly static double _circleImageHeight = IsSmallScreen ? 48 : 62;
 
 		readonly static AsyncAwaitBestPractices.WeakEventManager _tappedWeakEventManager = new();
 
@@ -112,8 +113,8 @@ namespace GitTrends
 							(Row.Statistics, _statisticsRowHeight));
 
 						ColumnDefinitions = Columns.Define(
-							(Column.Avatar, IsSmallScreen ? _circleImageHeight - 4 : _circleImageHeight),
-							(Column.AvatarPadding, IsSmallScreen ? 4 : 16),
+							(Column.Avatar, _circleImageHeight),
+							(Column.AvatarPadding, IsSmallScreen ? 4 : 8),
 							(Column.Trending, Star),
 							(Column.Emoji1, _emojiColumnSize),
 							(Column.Statistic1, _statsColumnSize),

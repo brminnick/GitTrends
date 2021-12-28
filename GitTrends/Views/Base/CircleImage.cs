@@ -26,6 +26,7 @@ namespace GitTrends
 			this.Bind(Frame.BorderColorProperty, nameof(BorderColor), source: this);
 
 			Content = new CachedImage()
+						.Bind(CachedImage.AspectProperty, nameof(Aspect), source: this)
 						.Bind(CachedImage.SourceProperty, nameof(ImageSource), source: this)
 						.Bind(CachedImage.ErrorPlaceholderProperty, nameof(ErrorPlaceholder), source: this)
 						.Bind(CachedImage.LoadingPlaceholderProperty, nameof(LoadingPlaceholder), source: this);
