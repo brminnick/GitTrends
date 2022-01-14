@@ -44,7 +44,7 @@ namespace GitTrends.Droid
         public Task SetiOSBadgeCount(int count) => throw new NotSupportedException();
     }
 
-    [Service, IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
+    [Service(Exported = true), IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
     public class FirebaseService : FirebaseMessagingService
     {
         static TaskCompletionSource<NotificationHubInformation>? _notificationHubInformationTCS;
