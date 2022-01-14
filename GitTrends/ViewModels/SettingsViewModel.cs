@@ -297,8 +297,10 @@ namespace GitTrends
 			get => GitHubUserService.ShouldIncludeOrganizations && IsShouldIncludeOrganizationsSwitchEnabled;
 			set
 			{
-				if (IsShouldIncludeOrganizationsSwitchEnabled && GitHubUserService.ShouldIncludeOrganizations != value)
+				if (IsShouldIncludeOrganizationsSwitchToggled != value)
 				{
+					AnalyticsService.Track("Should Include Organizations Switch Toggled", nameof(IsShouldIncludeOrganizationsSwitchToggled), value.ToString());
+
 					GitHubUserService.ShouldIncludeOrganizations = value;
 					OnPropertyChanged();
 
@@ -460,7 +462,7 @@ namespace GitTrends
 #if DEBUG
 				return $"v{versionTracking.CurrentVersion} (Debug)";
 #elif RELEASE
-                return $"v{versionTracking.CurrentVersion} (Release)";
+				return $"v{versionTracking.CurrentVersion} (Release)";
 #else
                 return $"v{versionTracking.CurrentVersion}";
 #endif
