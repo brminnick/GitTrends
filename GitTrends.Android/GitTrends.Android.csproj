@@ -86,7 +86,7 @@
     <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.0" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.0" />
-    <PackageReference Include="Shiny.Notifications" Version="2.3.0.2906" />
+    <PackageReference Include="Shiny.Notifications" Version="2.4.2.2996" />
     <PackageReference Include="Xam.Plugins.Android.ExoPlayer" Version="2.11.8" />
     <PackageReference Include="Xamarin.Firebase.Messaging" Version="122.0.0.3" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
@@ -100,7 +100,7 @@
     <PackageReference Include="Xamarin.Google.Dagger" Version="2.39.1" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.3" />
     <PackageReference Include="Refit.Newtonsoft.Json" Version="6.1.15" />
-    <PackageReference Include="Shiny.Jobs" Version="2.3.0.2906" />
+    <PackageReference Include="Shiny.Jobs" Version="2.4.2.2996" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.3.1.4" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Extensions" Version="2.2.0.10" />
     <PackageReference Include="Xamarin.AndroidX.Work.Runtime" Version="2.7.0" />

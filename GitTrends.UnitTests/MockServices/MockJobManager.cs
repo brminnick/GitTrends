@@ -53,7 +53,7 @@ namespace GitTrends.UnitTests
 		public async Task<JobRunResult> Run(string jobIdentifier, CancellationToken cancelToken = default)
 		{
 			var jobInfo = _jobDictionary[jobIdentifier];
-			var jobType = jobInfo.Type;
+			var jobType = Type.GetType(jobInfo.TypeName) ?? throw new InvalidOperationException("Invalid Type Name");
 
 			var job = (IJob)(Activator.CreateInstance(jobType) ?? throw new NullReferenceException());
 
