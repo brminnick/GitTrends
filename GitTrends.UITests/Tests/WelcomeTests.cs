@@ -7,72 +7,72 @@ using Xamarin.UITest.iOS;
 
 namespace GitTrends.UITests
 {
-    [TestFixture(Platform.Android, UserType.Demo)]
-    [TestFixture(Platform.Android, UserType.LoggedIn)]
-    [TestFixture(Platform.iOS, UserType.Demo)]
-    [TestFixture(Platform.iOS, UserType.LoggedIn)]
-    class WelcomeTests : BaseUITest
-    {
-        public WelcomeTests(Platform platform, UserType userType) : base(platform, userType)
-        {
-        }
+	[TestFixture(Platform.Android, UserType.Demo)]
+	[TestFixture(Platform.Android, UserType.LoggedIn)]
+	[TestFixture(Platform.iOS, UserType.Demo)]
+	[TestFixture(Platform.iOS, UserType.LoggedIn)]
+	class WelcomeTests : BaseUITest
+	{
+		public WelcomeTests(Platform platform, UserType userType) : base(platform, userType)
+		{
+		}
 
-        public override async Task BeforeEachTest()
-        {
-            await base.BeforeEachTest();
+		public override async Task BeforeEachTest()
+		{
+			await base.BeforeEachTest();
 
-            RepositoryPage.TapSettingsButton();
+			RepositoryPage.TapSettingsButton();
 
-            await SettingsPage.WaitForPageToLoad();
-            SettingsPage.WaitForGitHubLoginToComplete();
+			await SettingsPage.WaitForPageToLoad();
+			SettingsPage.WaitForGitHubLoginToComplete();
 
-            //Assert
-            Assert.AreEqual(GitHubLoginButtonConstants.Disconnect, SettingsPage.LoginTitleText);
+			//Assert
+			Assert.AreEqual(GitHubLoginButtonConstants.Disconnect, SettingsPage.LoginTitleText);
 
-            //Act
-            SettingsPage.TapLoginButton();
-            SettingsPage.WaitForGitHubLogoutToComplete();
+			//Act
+			SettingsPage.TapLoginButton();
+			SettingsPage.WaitForGitHubLogoutToComplete();
 
-            //Assert
-            Assert.AreEqual(GitHubLoginButtonConstants.ConnectToGitHub, SettingsPage.LoginTitleText);
+			//Assert
+			Assert.AreEqual(GitHubLoginButtonConstants.ConnectToGitHub, SettingsPage.LoginTitleText);
 
-            SettingsPage.TapBackButton();
+			SettingsPage.TapBackButton();
 
-            await WelcomePage.WaitForPageToLoad();
-        }
+			await WelcomePage.WaitForPageToLoad();
+		}
 
-        [Test]
-        public async Task VerifyDemoButton()
-        {
-            //Arrange
-            Repository demoUserRepository;
+		[Test]
+		public async Task VerifyDemoButton()
+		{
+			//Arrange
+			Repository demoUserRepository;
 
-            //Act
-            WelcomePage.TapTryDemoButton();
+			//Act
+			WelcomePage.TapTryDemoButton();
 
-            await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
-            await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
+			await RepositoryPage.WaitForPageToLoad().ConfigureAwait(false);
+			await RepositoryPage.WaitForNoPullToRefreshIndicator().ConfigureAwait(false);
 
-            //Assert
-            demoUserRepository = RepositoryPage.VisibleCollection.First();
+			//Assert
+			demoUserRepository = RepositoryPage.VisibleCollection.First();
 
-            Assert.AreEqual(DemoUserConstants.Alias, demoUserRepository.OwnerLogin);
-        }
+			Assert.AreEqual(DemoUserConstants.Alias, demoUserRepository.OwnerLogin);
+		}
 
-        [Test]
-        public void VerifyConnectToGitHubButton()
-        {
-            //Arrange
+		[Test]
+		public void VerifyConnectToGitHubButton()
+		{
+			//Arrange
 
-            //Act
-            WelcomePage.TapConnectToGitHubButton();
+			//Act
+			WelcomePage.TapConnectToGitHubButton();
 
-            //Assert
-            if (App is iOSApp)
-            {
-                SettingsPage.WaitForBrowserToOpen();
-                Assert.IsTrue(WelcomePage.IsBrowserOpen);
-            }
-        }
-    }
+			//Assert
+			if (App is iOSApp)
+			{
+				SettingsPage.WaitForBrowserToOpen();
+				Assert.IsTrue(WelcomePage.IsBrowserOpen);
+			}
+		}
+	}
 }

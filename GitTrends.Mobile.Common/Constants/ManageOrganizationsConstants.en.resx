@@ -16,19 +16,19 @@
     <value>Organizations</value>
   </data>
 	<data name="GitHubOrganizationsDescription" xml:space="preserve">
-    <value>GitHub Organizations are shared accounts where teams can collaborate across many projects </value>
+    <value>GitHub Organizations are shared accounts where teams can collaborate across many projects</value>
   </data>
 	<data name="GitTrendsAccessTitle" xml:space="preserve">
     <value>Access</value>
   </data>
 	<data name="GitTrendsAccessDescription" xml:space="preserve">
-    <value>Organization Access must be granted manually for each Organization </value>
+    <value>Organization Access must be granted manually for each Organization</value>
   </data>
 	<data name="EnableOrganizationsTitle" xml:space="preserve">
     <value>Enable Access</value>
   </data>
 	<data name="EnableOrganizationsDescription" xml:space="preserve">
-    <value>Enable Organization acess by scrolling down, locating your Organization and selecting "Request" </value>
+    <value>Enable Organization access by scrolling down, locating your Organization and selecting "Request"</value>
   </data>
 </root>
 

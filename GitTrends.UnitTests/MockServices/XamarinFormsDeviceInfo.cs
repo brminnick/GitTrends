@@ -3,12 +3,12 @@ using Xamarin.Forms.Internals;
 
 namespace GitTrends.UnitTests
 {
-    class XamarinFormsDeviceInfo : DeviceInfo
-    {
-        public override Size PixelScreenSize => new Size(0, 0);
+	class XamarinFormsDeviceInfo : DeviceInfo
+	{
+		public override Size PixelScreenSize => new Size(0, 0);
 
-        public override Size ScaledScreenSize => new Size(0, 0);
+		public override Size ScaledScreenSize => new Size(0, 0);
 
-        public override double ScalingFactor => 1;
-    }
+		public override double ScalingFactor => 1;
+	}
 }

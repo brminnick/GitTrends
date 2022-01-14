@@ -27,4 +27,16 @@
 	<data name="GitHubApiLimit" xml:space="preserve">
     <value>GitHub API ограничивает количество запросов от нашего API до 5000 запросов в час от одного пользователя</value>
   </data>
+	<data name="AbuseLimitReached" space="preserve">
+		<value>Достигнут Лимит GitHub API</value>
+	</data>
+	<data name="GitHubApiAbuseLimit" space="preserve">
+		<value>Этот GitHub API будет иногда блокировать наши API запросы</value>
+	</data>
+	<data name="AbuseLimitAutomaticRetry" space="preserve">
+		<value>Мы автоматически извлечем данные в фоновом режиме через примерно {0} секунд</value>
+	</data>
+	<data name="AbuseLimitManualRetry" space="preserve">
+		<value>Закройте GitTrends и попробуйте снова через примерно {0} секунд</value>
+	</data>
 </root>

@@ -27,4 +27,10 @@
 	<data name="CreatedBy" xml:space="preserve">
     <value>Erstellt von Code Traveler LLC</value>
   </data>
+	<data name="IncludeOrganizations" xml:space="preserve">
+    <value>Organisationen einbinden</value>
+  </data>
+	<data name="ManageOrganizations" xml:space="preserve">
+    <value>Organisationen verwalten</value>
+  </data>
 </root>

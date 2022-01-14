@@ -1,30 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-	<resheader name="resmimetype">
-		<value>text/microsoft-resx</value>
-	</resheader>
-	<resheader name="version">
-		<value>2.0</value>
-	</resheader>
-	<resheader name="reader">
-		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<resheader name="writer">
-		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<data name="GitHubApiLimit" xml:space="preserve">
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AbuseLimitAutomaticRetry" xml:space="preserve">
+    <value>Nous récupérerons automatiquement les données en arrière-plan en environ {0} secondes</value>
+  </data>
+  <data name="AbuseLimitManualRetry" xml:space="preserve">
+    <value>Fermez GitTrends et réessayez dans environ {0} secondes</value>
+  </data>
+  <data name="AbuseLimitReached" xml:space="preserve">
+    <value>Limite d’API GitHub atteinte </value>
+  </data>
+  <data name="GitHubApiAbuseLimit" xml:space="preserve">
+    <value>L’API GitHub limitera parfois nos demandes d’API</value>
+  </data>
+  <data name="GitHubApiLimit" xml:space="preserve">
     <value>L'API GitHub limite nos requêtes à 5 000 par hour et par utilisateur</value>
   </data>
-	<data name="LearnMore" xml:space="preserve">
+  <data name="LearnMore" xml:space="preserve">
     <value>En savoir plus</value>
   </data>
-	<data name="MinutesReset" xml:space="preserve">
+  <data name="MinutesReset" xml:space="preserve">
     <value>La limite actuelle est prévu d'etre réinitialisé dans {0} minutes</value>
   </data>
-	<data name="UnableToConnectToGitHub" xml:space="preserve">
+  <data name="UnableToConnectToGitHub" xml:space="preserve">
     <value>Impossible de se connecter à GitHub</value>
   </data>
-	<data name="UsageLimitExceeded" xml:space="preserve">
+  <data name="UsageLimitExceeded" xml:space="preserve">
     <value>Limite d'utilisation dépassé</value>
   </data>
 </root>

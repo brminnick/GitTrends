@@ -31,12 +31,10 @@
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/AppIcon.appiconset</string>
 	<key>CFBundleURLTypes</key>
-	<dict>
-   		<key>aps-environment</key>
-		<string>development OR production</string>
-	</dict>
 	<array>
 		<dict>
+			<key>aps-environment</key>
+			<string>development OR production</string>
 			<key>CFBundleURLName</key>
 			<string>com.minnick.GitTrends</string>
 			<key>CFBundleURLSchemes</key>
@@ -59,14 +57,14 @@
 		<string>processing</string>
 	</array>
 	<key>CFBundleShortVersionString</key>
-	<string>2.3.0</string>
+	<string>2.3.4</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.minnick.GitTrends.NotifyTrendingRepositories</string>
 		<string>com.minnick.GitTrends.CleanUpDatabase</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>46</string>
+	<string>50</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>

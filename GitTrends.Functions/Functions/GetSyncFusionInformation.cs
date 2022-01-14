@@ -8,31 +8,31 @@ using Newtonsoft.Json;
 
 namespace GitTrends.Functions
 {
-    public static class GetSyncfusionInformation
-    {
-        [Function(nameof(GetSyncfusionInformation))]
-        public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = nameof(GetSyncfusionInformation) + "/{licenseVersion:long}")] HttpRequestData req, FunctionContext functionContext, long licenseVersion)
-        {
-            var logger = functionContext.GetLogger(nameof(GetSyncfusionInformation));
-            logger.LogInformation("Received request for Syncfusion Information");
+	public static class GetSyncfusionInformation
+	{
+		[Function(nameof(GetSyncfusionInformation))]
+		public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = nameof(GetSyncfusionInformation) + "/{licenseVersion:long}")] HttpRequestData req, FunctionContext functionContext, long licenseVersion)
+		{
+			var logger = functionContext.GetLogger(nameof(GetSyncfusionInformation));
+			logger.LogInformation("Received request for Syncfusion Information");
 
-            var licenseKey = Environment.GetEnvironmentVariable($"SyncfusionLicense{licenseVersion}", EnvironmentVariableTarget.Process);
+			var licenseKey = Environment.GetEnvironmentVariable($"SyncfusionLicense{licenseVersion}", EnvironmentVariableTarget.Process);
 
-            if (string.IsNullOrWhiteSpace(licenseKey))
-            {
-                var badRequestResponse = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
-                await badRequestResponse.WriteStringAsync($"Key for {nameof(licenseVersion)}{licenseVersion} not found").ConfigureAwait(false);
+			if (string.IsNullOrWhiteSpace(licenseKey))
+			{
+				var badRequestResponse = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+				await badRequestResponse.WriteStringAsync($"Key for {nameof(licenseVersion)}{licenseVersion} not found").ConfigureAwait(false);
 
-                return badRequestResponse;
-            }
+				return badRequestResponse;
+			}
 
-            var okResponse = req.CreateResponse(System.Net.HttpStatusCode.OK);
+			var okResponse = req.CreateResponse(System.Net.HttpStatusCode.OK);
 
-            var syncFusionDtoJson = JsonConvert.SerializeObject(new SyncFusionDTO(licenseKey, licenseVersion));
+			var syncFusionDtoJson = JsonConvert.SerializeObject(new SyncFusionDTO(licenseKey, licenseVersion));
 
-            await okResponse.WriteStringAsync(syncFusionDtoJson).ConfigureAwait(false);
+			await okResponse.WriteStringAsync(syncFusionDtoJson).ConfigureAwait(false);
 
-            return okResponse;
-        }
-    }
+			return okResponse;
+		}
+	}
 }

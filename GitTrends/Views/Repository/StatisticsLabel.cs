@@ -2,25 +2,25 @@
 
 namespace GitTrends
 {
-    class StatisticsLabel : Label
-    {
-        public const int StatisticsFontSize = 12;
+	class StatisticsLabel : Label
+	{
+		public const int StatisticsFontSize = 12;
 
-        public StatisticsLabel(in string text, in bool isVisible, in string textColorThemeName)
-        {
-            Text = text;
-            FontSize = StatisticsFontSize;
+		public StatisticsLabel(in string text, in bool isVisible, in string textColorThemeName)
+		{
+			Text = text;
+			FontSize = StatisticsFontSize;
 
-            IsVisible = isVisible;
+			IsVisible = isVisible;
 
-            HorizontalOptions = LayoutOptions.FillAndExpand;
+			HorizontalOptions = LayoutOptions.FillAndExpand;
 
-            HorizontalTextAlignment = TextAlignment.Start;
-            VerticalTextAlignment = TextAlignment.End;
+			HorizontalTextAlignment = TextAlignment.Start;
+			VerticalTextAlignment = TextAlignment.End;
 
-            LineBreakMode = LineBreakMode.TailTruncation;
+			LineBreakMode = LineBreakMode.TailTruncation;
 
-            this.DynamicResource(TextColorProperty, textColorThemeName);
-        }
-    }
+			this.DynamicResource(TextColorProperty, textColorThemeName);
+		}
+	}
 }

@@ -6,48 +6,48 @@ using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends
 {
-    public abstract class BaseContentPage : ContentPage
-    {
+	public abstract class BaseContentPage : ContentPage
+	{
 
-        protected BaseContentPage(in IAnalyticsService analyticsService,
-                                    in IMainThread mainThread,
-                                    in bool shouldUseSafeArea = false)
-        {
-            MainThread = mainThread;
-            AnalyticsService = analyticsService;
+		protected BaseContentPage(in IAnalyticsService analyticsService,
+									in IMainThread mainThread,
+									in bool shouldUseSafeArea = false)
+		{
+			MainThread = mainThread;
+			AnalyticsService = analyticsService;
 
-            this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+			this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 
-            On<iOS>().SetUseSafeArea(shouldUseSafeArea);
-            On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
-        }
+			On<iOS>().SetUseSafeArea(shouldUseSafeArea);
+			On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
+		}
 
-        protected IAnalyticsService AnalyticsService { get; }
-        protected IMainThread MainThread { get; }
+		protected IAnalyticsService AnalyticsService { get; }
+		protected IMainThread MainThread { get; }
 
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
+		protected override void OnAppearing()
+		{
+			base.OnAppearing();
 
-            AnalyticsService.Track($"{GetType().Name} Appeared");
-        }
+			AnalyticsService.Track($"{GetType().Name} Appeared");
+		}
 
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
+		protected override void OnDisappearing()
+		{
+			base.OnDisappearing();
 
-            AnalyticsService.Track($"{GetType().Name} Disappeared");
-        }
-    }
+			AnalyticsService.Track($"{GetType().Name} Disappeared");
+		}
+	}
 
-    public abstract class BaseContentPage<T> : BaseContentPage where T : BaseViewModel
-    {
-        protected BaseContentPage(in T viewModel, in IAnalyticsService analyticsService, in IMainThread mainThread, in bool shouldUseSafeArea = false)
-            : base(analyticsService, mainThread, shouldUseSafeArea)
-        {
-            BindingContext = ViewModel = viewModel;
-        }
+	public abstract class BaseContentPage<T> : BaseContentPage where T : BaseViewModel
+	{
+		protected BaseContentPage(in T viewModel, in IAnalyticsService analyticsService, in IMainThread mainThread, in bool shouldUseSafeArea = false)
+			: base(analyticsService, mainThread, shouldUseSafeArea)
+		{
+			BindingContext = ViewModel = viewModel;
+		}
 
-        protected T ViewModel { get; }
-    }
+		protected T ViewModel { get; }
+	}
 }

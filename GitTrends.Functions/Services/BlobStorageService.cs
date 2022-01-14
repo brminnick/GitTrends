@@ -9,22 +9,20 @@ using Newtonsoft.Json;
 
 namespace GitTrends.Functions
 {
-    class BlobStorageService
-    {
-        const string _libraryContainerName = "librarycache";
-        const string _gitTrendsStatisticsContainerName = "gittrendsstatistics";
+	class BlobStorageService
+	{
+		const string _libraryContainerName = "librarycache";
+		const string _gitTrendsStatisticsContainerName = "gittrendsstatistics";
 
-        readonly BlobServiceClient _blobClient;
+    readonly BlobServiceClient _blobClient;
 
-        public BlobStorageService(BlobServiceClient cloudBlobClient) => _blobClient = cloudBlobClient;
+    public BlobStorageService(BlobServiceClient cloudBlobClient) => _blobClient = cloudBlobClient;
 
-        public Task UploadNuGetLibraries(IEnumerable<NuGetPackageModel> nuGetPackageModels, string blobName) => UploadValue(nuGetPackageModels, blobName, _libraryContainerName);
+		public Task UploadNuGetLibraries(IEnumerable<NuGetPackageModel> nuGetPackageModels, string blobName) => UploadValue(nuGetPackageModels, blobName, _libraryContainerName);
 
-        public Task UploadStatistics(GitTrendsStatisticsDTO gitTrendsStatistics, string blobName) => UploadValue(gitTrendsStatistics, blobName, _gitTrendsStatisticsContainerName);
+		public Task UploadStatistics(GitTrendsStatisticsDTO gitTrendsStatistics, string blobName) => UploadValue(gitTrendsStatistics, blobName, _gitTrendsStatisticsContainerName);
 
-        public Task<GitTrendsStatisticsDTO> GetGitTrendsStatistics() => GetLatestValue<GitTrendsStatisticsDTO>(_gitTrendsStatisticsContainerName);
-
-        public Task<IReadOnlyList<NuGetPackageModel>> GetNuGetLibraries() => GetLatestValue<IReadOnlyList<NuGetPackageModel>>(_libraryContainerName);
+		public Task<GitTrendsStatisticsDTO> GetGitTrendsStatistics() => GetLatestValue<GitTrendsStatisticsDTO>(_gitTrendsStatisticsContainerName);
 
         async Task UploadValue<T>(T data, string blobName, string containerName)
         {

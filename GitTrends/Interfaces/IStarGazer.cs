@@ -2,8 +2,8 @@
 
 namespace GitTrends
 {
-    interface IStarGazerInfo
-    {
-        DateTimeOffset StarredAt { get; }
-    }
+	interface IStarGazerInfo
+	{
+		DateTimeOffset StarredAt { get; }
+	}
 }

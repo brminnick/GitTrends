@@ -2,13 +2,17 @@
 # top-most EditorConfig file
 root = true
 
-# Don't use tabs for indentation.
+# Default settings:
+# A newline ending every file
+# Use 4 spaces as indentation
 [*]
+insert_final_newline = false
 indent_style = space
-# (Please don't specify an indent_size here; that has too many unintended consequences.)
+indent_size = 4
 
 # Code files
 [*.{cs,csx,vb,vbx}]
+indent_style = tab
 indent_size = 4
 
 # Code files
@@ -106,8 +110,14 @@ csharp_new_line_before_finally = true
 csharp_new_line_before_members_in_object_initializers = true
 csharp_new_line_before_members_in_anonymous_types = true
 
+# Organize usings
+dotnet_sort_system_directives_first = true
+
 # CS4014: Because this call is not awaited, execution of the current method continues before the call is completed
 dotnet_diagnostic.CS4014.severity = error
 
-[{GitTrends.Functions, GitTrends.UnitTests, GitTrends.UITests}/**.cs]
-dotnet_diagnostic.CA2007.severity = error
+# Remove explicit default access modifiers
+dotnet_style_require_accessibility_modifiers = omit_if_default:error
+
+# CA1063: Implement IDisposable Correctly
+dotnet_diagnostic.CA1063.severity = error

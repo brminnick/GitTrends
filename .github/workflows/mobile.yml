@@ -15,6 +15,22 @@ jobs:
       steps:
       - uses: actions/checkout@v1
 
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+
+      - name: Setup .NET v6.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Install Boots
+        run : |
+          dotnet tool install --global boots --prerelease
+          boots --alpha Mono
+          boots --alpha Xamarin.Android
+
       - name: Restore NuGet 
         run: |
           nuget restore
@@ -28,6 +44,11 @@ jobs:
 
       steps:
       - uses: actions/checkout@v1
+
+      - name: Setup .NET v6.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
 
       - name: Restore NuGet 
         run: |
@@ -49,6 +70,11 @@ jobs:
 
       steps:
       - uses: actions/checkout@v1
+
+      - name: Setup .NET v6.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
 
       - name: Inject API Keys
         run: |

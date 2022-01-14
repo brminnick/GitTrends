@@ -5,12 +5,12 @@ using GitTrends.Shared;
 
 namespace GitTrends.Mobile.Common
 {
-    public abstract class AzureFunctionsApiService : BaseApiService
-    {
-        readonly static Lazy<IAzureFunctionsApi> _azureFunctionsApiClientHolder = new(() => RefitExtensions.For<IAzureFunctionsApi>(CreateHttpClient(AzureConstants.AzureFunctionsApiUrl)));
+	public abstract class AzureFunctionsApiService : BaseApiService
+	{
+		readonly static Lazy<IAzureFunctionsApi> _azureFunctionsApiClientHolder = new(() => RefitExtensions.For<IAzureFunctionsApi>(CreateHttpClient(AzureConstants.AzureFunctionsApiUrl)));
 
-        static IAzureFunctionsApi AzureFunctionsApiClient => _azureFunctionsApiClientHolder.Value;
+		static IAzureFunctionsApi AzureFunctionsApiClient => _azureFunctionsApiClientHolder.Value;
 
-        public static Task<GitHubToken> GetTestToken() => AttemptAndRetry(() => AzureFunctionsApiClient.GetTestToken(), CancellationToken.None);
-    }
+		public static Task<GitHubToken> GetTestToken() => AttemptAndRetry(() => AzureFunctionsApiClient.GetTestToken(), CancellationToken.None);
+	}
 }
