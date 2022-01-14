@@ -14,9 +14,9 @@ namespace GitTrends.Functions
 		const string _libraryContainerName = "librarycache";
 		const string _gitTrendsStatisticsContainerName = "gittrendsstatistics";
 
-    readonly BlobServiceClient _blobClient;
+		readonly BlobServiceClient _blobClient;
 
-    public BlobStorageService(BlobServiceClient cloudBlobClient) => _blobClient = cloudBlobClient;
+		public BlobStorageService(BlobServiceClient cloudBlobClient) => _blobClient = cloudBlobClient;
 
 		public Task UploadNuGetLibraries(IEnumerable<NuGetPackageModel> nuGetPackageModels, string blobName) => UploadValue(nuGetPackageModels, blobName, _libraryContainerName);
 
@@ -24,48 +24,50 @@ namespace GitTrends.Functions
 
 		public Task<GitTrendsStatisticsDTO> GetGitTrendsStatistics() => GetLatestValue<GitTrendsStatisticsDTO>(_gitTrendsStatisticsContainerName);
 
-        async Task UploadValue<T>(T data, string blobName, string containerName)
-        {
-            var containerClient = GetBlobContainerClient(containerName);
-            await containerClient.CreateIfNotExistsAsync().ConfigureAwait(false);
+		public Task<IReadOnlyList<NuGetPackageModel>> GetNuGetLibraries() => GetLatestValue<IReadOnlyList<NuGetPackageModel>>(_libraryContainerName);
 
-            var blobUri = new Uri($"{containerClient.Uri}/{blobName}");
-            var blobClient = new BlobClient(blobUri);
+		async Task UploadValue<T>(T data, string blobName, string containerName)
+		{
+			var containerClient = GetBlobContainerClient(containerName);
+			await containerClient.CreateIfNotExistsAsync().ConfigureAwait(false);
 
-            var blobContent = JsonConvert.SerializeObject(data);
+			var blobUri = new Uri($"{containerClient.Uri}/{blobName}");
+			var blobClient = new BlobClient(blobUri);
 
-            await blobClient.UploadAsync(new BinaryData(blobContent)).ConfigureAwait(false);
-        }
+			var blobContent = JsonConvert.SerializeObject(data);
 
-        async Task<T> GetLatestValue<T>(string containerName)
-        {
-            var blobList = new List<BlobItem>();
-            await foreach (var blob in GetBlobs(containerName).ConfigureAwait(false))
-            {
-                blobList.Add(blob);
-            }
+			await blobClient.UploadAsync(new BinaryData(blobContent)).ConfigureAwait(false);
+		}
 
-            var newestBlob = blobList.OrderByDescending(x => x.Properties.CreatedOn).First();
+		async Task<T> GetLatestValue<T>(string containerName)
+		{
+			var blobList = new List<BlobItem>();
+			await foreach (var blob in GetBlobs(containerName).ConfigureAwait(false))
+			{
+				blobList.Add(blob);
+			}
 
-            var blobClient = new BlobClient(new Uri($"{GetBlobContainerClient(containerName).Uri}/{newestBlob.Name}"));
-            var blobContentResponse = await blobClient.DownloadContentAsync().ConfigureAwait(false);
+			var newestBlob = blobList.OrderByDescending(x => x.Properties.CreatedOn).First();
 
-            var serializedBlobContents = blobContentResponse.Value.Content;
+			var blobClient = new BlobClient(new Uri($"{GetBlobContainerClient(containerName).Uri}/{newestBlob.Name}"));
+			var blobContentResponse = await blobClient.DownloadContentAsync().ConfigureAwait(false);
 
-            return JsonConvert.DeserializeObject<T>(serializedBlobContents.ToString()) ?? throw new NullReferenceException();
-        }
+			var serializedBlobContents = blobContentResponse.Value.Content;
 
-        async IAsyncEnumerable<BlobItem> GetBlobs(string containerName)
-        {
-            var blobContainerClient = GetBlobContainerClient(containerName);
+			return JsonConvert.DeserializeObject<T>(serializedBlobContents.ToString()) ?? throw new NullReferenceException();
+		}
 
-            await foreach (var blob in blobContainerClient.GetBlobsAsync().ConfigureAwait(false))
-            {
-                if (blob is not null)
-                    yield return blob;
-            }
-        }
+		async IAsyncEnumerable<BlobItem> GetBlobs(string containerName)
+		{
+			var blobContainerClient = GetBlobContainerClient(containerName);
 
-        BlobContainerClient GetBlobContainerClient(string containerName) => _blobClient.GetBlobContainerClient(containerName);
-    }
+			await foreach (var blob in blobContainerClient.GetBlobsAsync().ConfigureAwait(false))
+			{
+				if (blob is not null)
+					yield return blob;
+			}
+		}
+
+		BlobContainerClient GetBlobContainerClient(string containerName) => _blobClient.GetBlobContainerClient(containerName);
+	}
 }
