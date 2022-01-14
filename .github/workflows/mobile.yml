@@ -28,8 +28,8 @@ jobs:
       - name: Install Boots
         run : |
           dotnet tool install --global boots --prerelease
-          boots --preview Mono
-          boots --preview Xamarin.Android
+          boots --alpha Mono
+          boots --alpha Xamarin.Android
 
       - name: Restore NuGet 
         run: |
