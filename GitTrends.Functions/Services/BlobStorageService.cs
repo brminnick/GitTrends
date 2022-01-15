@@ -14,9 +14,9 @@ namespace GitTrends.Functions
 		const string _libraryContainerName = "librarycache";
 		const string _gitTrendsStatisticsContainerName = "gittrendsstatistics";
 
-		readonly BlobServiceClient _blobClient;
+		readonly BlobServiceClient _blobServiceClient;
 
-		public BlobStorageService(BlobServiceClient cloudBlobClient) => _blobClient = cloudBlobClient;
+		public BlobStorageService(BlobServiceClient cloudBlobClient) => _blobServiceClient = cloudBlobClient;
 
 		public Task UploadNuGetLibraries(IEnumerable<NuGetPackageModel> nuGetPackageModels, string blobName) => UploadValue(nuGetPackageModels, blobName, _libraryContainerName);
 
@@ -49,7 +49,7 @@ namespace GitTrends.Functions
 
 			var newestBlob = blobList.OrderByDescending(x => x.Properties.CreatedOn).First();
 
-			var blobClient = new BlobClient(new Uri($"{GetBlobContainerClient(containerName).Uri}/{newestBlob.Name}"));
+			var blobClient = GetBlobContainerClient(containerName).GetBlobClient(newestBlob.Name)
 			var blobContentResponse = await blobClient.DownloadContentAsync().ConfigureAwait(false);
 
 			var serializedBlobContents = blobContentResponse.Value.Content;
@@ -68,6 +68,6 @@ namespace GitTrends.Functions
 			}
 		}
 
-		BlobContainerClient GetBlobContainerClient(string containerName) => _blobClient.GetBlobContainerClient(containerName);
+		BlobContainerClient GetBlobContainerClient(string containerName) => _blobServiceClient.GetBlobContainerClient(containerName);
 	}
 }
