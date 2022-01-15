@@ -70,7 +70,6 @@ namespace GitTrends.UnitTests
 			Assert.AreEqual(repository_Initial.IsFavorite, repository_Final.IsFavorite);
 			Assert.AreEqual(repository_Initial.IsFork, repository_Final.IsFork);
 			Assert.AreEqual(repository_Initial.IssuesCount, repository_Final.IssuesCount);
-			Assert.AreEqual(repository_Initial.IsTrending, repository_Final.IsTrending);
 
 			Assert.IsNotNull(repository_Database.DailyClonesList);
 			Assert.IsNotNull(repository_Database.DailyViewsList);
