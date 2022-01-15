@@ -9,6 +9,6 @@
 		public const string GetAppCenterApiKeysKey = "";
 		public const string GetSyncFusionInformationApiKey = "";
 		public const string GetNotificationHubInformationApiKey = "";
-		public const string AzureFunctionsApiUrl = "https://gittrendsfunctions-isolated.azurewebsites.net/api";
+		public const string AzureFunctionsApiUrl = "https://gittrendsfunctions.azurewebsites.net/api";
 	}
 }
