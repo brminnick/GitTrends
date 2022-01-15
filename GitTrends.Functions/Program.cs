@@ -3,10 +3,9 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using GitHubApiStatus.Extensions;
 using GitTrends.Shared;
-using Microsoft.Azure.Storage;
-using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -53,7 +52,7 @@ namespace GitTrends.Functions
 					services.AddSingleton<GitHubApiV3Service>();
 					services.AddSingleton<BlobStorageService>();
 					services.AddSingleton<GitHubGraphQLApiService>();
-					services.AddSingleton<CloudBlobClient>(CloudStorageAccount.Parse(_storageConnectionString).CreateCloudBlobClient());
+					services.AddSingleton<BlobServiceClient>(new BlobServiceClient(_storageConnectionString));
 
 					static TimeSpan sleepDurationProvider(int attemptNumber) => TimeSpan.FromSeconds(Math.Pow(2, attemptNumber));
 					static DecompressionMethods getDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip;

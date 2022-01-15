@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using GitTrends.Shared;
-using Microsoft.Azure.Storage.Blob;
 using Newtonsoft.Json;
 
 namespace GitTrends.Functions
@@ -13,9 +14,9 @@ namespace GitTrends.Functions
 		const string _libraryContainerName = "librarycache";
 		const string _gitTrendsStatisticsContainerName = "gittrendsstatistics";
 
-		readonly CloudBlobClient _blobClient;
+		readonly BlobServiceClient _blobServiceClient;
 
-		public BlobStorageService(CloudBlobClient cloudBlobClient) => _blobClient = cloudBlobClient;
+		public BlobStorageService(BlobServiceClient cloudBlobClient) => _blobServiceClient = cloudBlobClient;
 
 		public Task UploadNuGetLibraries(IEnumerable<NuGetPackageModel> nuGetPackageModels, string blobName) => UploadValue(nuGetPackageModels, blobName, _libraryContainerName);
 
@@ -27,49 +28,45 @@ namespace GitTrends.Functions
 
 		async Task UploadValue<T>(T data, string blobName, string containerName)
 		{
-			var container = GetBlobContainer(containerName);
-			await container.CreateIfNotExistsAsync().ConfigureAwait(false);
+			var containerClient = GetBlobContainerClient(containerName);
+			await containerClient.CreateIfNotExistsAsync().ConfigureAwait(false);
 
-			var blob = container.GetBlockBlobReference(blobName);
-			await blob.UploadTextAsync(JsonConvert.SerializeObject(data)).ConfigureAwait(false);
+			var blobClient = containerClient.GetBlobClient(blobName);
+
+			var blobContent = JsonConvert.SerializeObject(data);
+
+			await blobClient.UploadAsync(new BinaryData(blobContent)).ConfigureAwait(false);
 		}
 
 		async Task<T> GetLatestValue<T>(string containerName)
 		{
-			var blobList = new List<CloudBlockBlob>();
-			await foreach (var blob in GetBlobs<CloudBlockBlob>(containerName).ConfigureAwait(false))
+			var blobList = new List<BlobItem>();
+			await foreach (var blob in GetBlobs(containerName).ConfigureAwait(false))
 			{
 				blobList.Add(blob);
 			}
 
-			var newestBlob = blobList.OrderByDescending(x => x.Properties.Created).First();
-			var serializedBlobContents = await newestBlob.DownloadTextAsync().ConfigureAwait(false);
+			var newestBlob = blobList.OrderByDescending(x => x.Properties.CreatedOn).First();
 
-			return JsonConvert.DeserializeObject<T>(serializedBlobContents) ?? throw new NullReferenceException();
+			var blobClient = GetBlobContainerClient(containerName).GetBlobClient(newestBlob.Name);
+			var blobContentResponse = await blobClient.DownloadContentAsync().ConfigureAwait(false);
+
+			var serializedBlobContents = blobContentResponse.Value.Content;
+
+			return JsonConvert.DeserializeObject<T>(serializedBlobContents.ToString()) ?? throw new NullReferenceException();
 		}
 
-		async IAsyncEnumerable<T> GetBlobs<T>(string containerName, string prefix = "", int? maxresultsPerQuery = null, BlobListingDetails blobListingDetails = BlobListingDetails.None) where T : ICloudBlob
+		async IAsyncEnumerable<BlobItem> GetBlobs(string containerName)
 		{
-			var blobContainer = GetBlobContainer(containerName);
+			var blobContainerClient = GetBlobContainerClient(containerName);
 
-			BlobContinuationToken? continuationToken = null;
-
-			do
+			await foreach (var blob in blobContainerClient.GetBlobsAsync().ConfigureAwait(false))
 			{
-				var response = await blobContainer.ListBlobsSegmentedAsync(prefix, true, blobListingDetails, maxresultsPerQuery, continuationToken, null, null).ConfigureAwait(false);
-				continuationToken = response?.ContinuationToken;
-
-				var blobListFromResponse = response?.Results?.OfType<T>() ?? Enumerable.Empty<T>();
-
-				foreach (var blob in blobListFromResponse)
-				{
+				if (blob is not null)
 					yield return blob;
-				}
-
-			} while (continuationToken != null);
-
+			}
 		}
 
-		CloudBlobContainer GetBlobContainer(string containerName) => _blobClient.GetContainerReference(containerName);
+		BlobContainerClient GetBlobContainerClient(string containerName) => _blobServiceClient.GetBlobContainerClient(containerName);
 	}
 }
