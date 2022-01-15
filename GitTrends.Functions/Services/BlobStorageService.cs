@@ -31,8 +31,7 @@ namespace GitTrends.Functions
 			var containerClient = GetBlobContainerClient(containerName);
 			await containerClient.CreateIfNotExistsAsync().ConfigureAwait(false);
 
-			var blobUri = new Uri($"{containerClient.Uri}/{blobName}");
-			var blobClient = new BlobClient(blobUri);
+			var blobClient = containerClient.GetBlobClient(blobName);
 
 			var blobContent = JsonConvert.SerializeObject(data);
 
@@ -49,7 +48,7 @@ namespace GitTrends.Functions
 
 			var newestBlob = blobList.OrderByDescending(x => x.Properties.CreatedOn).First();
 
-			var blobClient = GetBlobContainerClient(containerName).GetBlobClient(newestBlob.Name)
+			var blobClient = GetBlobContainerClient(containerName).GetBlobClient(newestBlob.Name);
 			var blobContentResponse = await blobClient.DownloadContentAsync().ConfigureAwait(false);
 
 			var serializedBlobContents = blobContentResponse.Value.Content;
