@@ -230,7 +230,7 @@
 		<Folder Include="Services\" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Polly" Version="7.2.2" />
+		<PackageReference Include="Polly" Version="7.2.3" />
 		<PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.7.0" />
 		<PackageReference Include="GitHubApiStatus" Version="2.0.2" />
 		<PackageReference Include="Refit.Newtonsoft.Json" Version="6.1.15" />
