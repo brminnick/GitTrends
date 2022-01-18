@@ -210,16 +210,9 @@ namespace GitTrends.UnitTests
 			}
 
 			//Assert
-			if (gitHubUserService.Alias is GitHubConstants.GitTrendsRepoOwner)
-			{
-				Assert.IsNotEmpty(repositories);
-				Assert.GreaterOrEqual(repositories.Count, 60);
-			}
-			else
-			{
-				Assert.IsNotEmpty(repositories);
-				Assert.GreaterOrEqual(repositories.Count, 1);
-			}
+			Assert.IsNotEmpty(repositories);
+			Assert.GreaterOrEqual(repositories.Count, 1);
+
 
 			Assert.AreEqual(0, repositories.Sum(x => x.TotalViews));
 			Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueViews));
