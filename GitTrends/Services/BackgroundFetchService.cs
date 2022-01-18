@@ -184,12 +184,22 @@ namespace GitTrends
 				if (delay is not null)
 					await Task.Delay(delay.Value).ConfigureAwait(false);
 
-				var repositories = await _gitHubGraphQLApiService.GetOrganizationRepositories(organizationName, cancellationToken).ConfigureAwait(false);
+				try
+				{
+					var repositories = await _gitHubGraphQLApiService.GetOrganizationRepositories(organizationName, cancellationToken).ConfigureAwait(false);
 
-				foreach (var repository in repositories)
-					ScheduleRetryRepositoriesViewsClones(repository);
+					foreach (var repository in repositories)
+						ScheduleRetryRepositoriesViewsClones(repository);
 
-				OnScheduleRetryOrganizationsRepositoriesCompleted(organizationName);
+				}
+				catch (Exception e)
+				{
+					_analyticsService.Report(e);
+				}
+				finally
+				{
+					OnScheduleRetryOrganizationsRepositoriesCompleted(organizationName);
+				}
 			});
 		}
 
@@ -206,14 +216,21 @@ namespace GitTrends
 
 				using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClones)} Executed");
 
-				await foreach (var repository in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(new List<Repository> { repository }, cancellationToken).ConfigureAwait(false))
+				try
 				{
-					if (repository is not null)
+					await foreach (var repository in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(new List<Repository> { repository }, cancellationToken).ConfigureAwait(false))
 					{
-						await _repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
+						if (repository is not null)
+						{
+							await _repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
 
-						OnScheduleRetryRepositoriesViewsClonesCompleted(repository);
+							OnScheduleRetryRepositoriesViewsClonesCompleted(repository);
+						}
 					}
+				}
+				catch(Exception e)
+				{
+					_analyticsService.Report(e);
 				}
 			});
 		}
@@ -258,9 +275,18 @@ namespace GitTrends
 			{
 				using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleCleanUpDatabase)} Triggered");
 
-				await Task.WhenAll(_referringSitesDatabase.DeleteExpiredData(), _repositoryDatabase.DeleteExpiredData()).ConfigureAwait(false);
-
-				OnDatabaseCleanupCompleted();
+				try
+				{
+					await Task.WhenAll(_referringSitesDatabase.DeleteExpiredData(), _repositoryDatabase.DeleteExpiredData()).ConfigureAwait(false);
+				}
+				catch (Exception e)
+				{
+					_analyticsService.Report(e);
+				}
+				finally
+				{
+					OnDatabaseCleanupCompleted();
+				}
 			});
 		}
 

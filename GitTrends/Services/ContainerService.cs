@@ -69,7 +69,7 @@ namespace GitTrends
 			builder.RegisterInstance(CrossStoreReview.Current).As<IStoreReview>().SingleInstance();
 			builder.RegisterInstance(ShinyHost.Resolve<IJobManager>()).As<IJobManager>().SingleInstance();
 			builder.RegisterInstance(ShinyHost.Resolve<INotificationManager>()).As<INotificationManager>().SingleInstance();
-			builder.RegisterInstance(DependencyService.Resolve<IDeviceNotificationsService>()).As<IDeviceNotificationsService>().SingleInstance();
+			builder.RegisterInstance(ShinyHost.Resolve<IDeviceNotificationsService>()).SingleInstance();
 #if !AppStore
 			builder.RegisterType<UITestsBackdoorService>().AsSelf().SingleInstance();
 #endif
