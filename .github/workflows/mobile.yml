@@ -56,10 +56,29 @@ jobs:
           
       - name: Build UITest Project
         run: |                    
-          mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.UITests/GitTrends.UITests.csproj   
-  
-    UnitTest_GitTrends:
+          mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.UITests/GitTrends.UITests.csproj 
+
+    Build_UnitTest_GitTrends:
       runs-on: macos-latest
+
+      steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup .NET v6.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+          
+      - name: Build Unit Tests
+        run: |   
+          UnitTestProject=`find . -name GitTrends.UnitTests.csproj`
+          echo $UnitTestProject
+          
+          dotnet build  -c Release $UnitTestProject  
+  
+    Run_UnitTest_GitTrends:
+      runs-on: macos-latest
+      needs: [Build_Android, Build_UITests, Build_UnitTest_GitTrends]
 
       env:
         GetTestTokenApiKey: ${{ secrets.GetTestTokenApiKey }}

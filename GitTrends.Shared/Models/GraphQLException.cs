@@ -45,7 +45,7 @@ namespace GitTrends.Shared
 			{
 				var ssoUriList = new List<Uri>();
 
-				foreach (var value in values ?? Enumerable.Empty<string>())
+				foreach (var value in values)
 				{
 					var semicolonSeparatedValues = value.Split(';');
 
