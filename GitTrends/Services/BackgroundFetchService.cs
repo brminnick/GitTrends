@@ -228,7 +228,7 @@ namespace GitTrends
 						}
 					}
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
 					_analyticsService.Report(e);
 				}
