@@ -77,7 +77,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2291" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2337" />
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.4" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="19.4.0.38" />
@@ -99,7 +99,7 @@
     <PackageReference Include="Plugin.StoreReview" Version="3.2.0-beta" />
     <PackageReference Include="Xamarin.Google.Dagger" Version="2.39.1" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.3" />
-    <PackageReference Include="Refit.Newtonsoft.Json" Version="6.1.15" />
+    <PackageReference Include="Refit.Newtonsoft.Json" Version="6.2.16" />
     <PackageReference Include="Shiny.Jobs" Version="2.4.2.2996" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.3.1.4" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Extensions" Version="2.2.0.10" />
@@ -818,10 +818,12 @@
     <ProjectReference Include="..\GitTrends\GitTrends.csproj">
       <Project>{4E7B0399-BAD2-48AF-B7FA-02EC17338FAE}</Project>
       <Name>GitTrends</Name>
+      <ReferenceSourceTarget></ReferenceSourceTarget>
     </ProjectReference>
     <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj">
       <Project>{936AEAD4-A683-44AD-A903-F3196454C244}</Project>
       <Name>GitTrends.Mobile.Common</Name>
+      <ReferenceSourceTarget></ReferenceSourceTarget>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
