@@ -87,7 +87,7 @@ namespace GitTrends
 							Header = new BoxView { WidthRequest = horizontalPadding },
 							SelectionMode = SelectionMode.Single,
 							ItemTemplate = new ContributorDataTemplate(),
-							ItemsSource = ViewModel.GitTrendsContributors,
+							ItemsSource = BindingContext.GitTrendsContributors,
 							ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Horizontal)
 						}.Top().Margins(top: 4)
 						 .Row(Row.CollaboratorCollection).ColumnSpan(All<Column>())
@@ -106,7 +106,7 @@ namespace GitTrends
 							Header = new BoxView { WidthRequest = horizontalPadding },
 							SelectionMode = SelectionMode.Single,
 							ItemTemplate = new LibraryDataTemplate(),
-							ItemsSource = ViewModel.InstalledLibraries,
+							ItemsSource = BindingContext.InstalledLibraries,
 							ItemsLayout = IsSmallScreen ? new LinearItemsLayout(ItemsLayoutOrientation.Horizontal) : new GridItemsLayout(2, ItemsLayoutOrientation.Horizontal)
 						}.Top()
 						 .Row(Row.LibrariesCollection).ColumnSpan(All<Column>())

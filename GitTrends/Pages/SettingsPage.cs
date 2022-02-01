@@ -208,15 +208,15 @@ namespace GitTrends
 
 		async void HandleLoginRowTapped(object sender, EventArgs e)
 		{
-			AnalyticsService.Track("Login Button Tapped", nameof(ViewModel.IsNotAuthenticating), ViewModel.IsNotAuthenticating.ToString());
+			AnalyticsService.Track("Login Button Tapped", nameof(SettingsViewModel.IsNotAuthenticating), BindingContext.IsNotAuthenticating.ToString());
 
-			if (ViewModel.IsNotAuthenticating)
+			if (BindingContext.IsNotAuthenticating)
 			{
 				var loginRowViews = _contentGrid.Children.OfType<ILoginRowView>().Cast<View>();
 
 				await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(0.3, 75)));
 
-				ViewModel.ConnectToGitHubButtonCommand.Execute((_connectToGitHubCancellationTokenSource.Token, (BrowserLaunchOptions?)null));
+				BindingContext.ConnectToGitHubButtonCommand.Execute((_connectToGitHubCancellationTokenSource.Token, (BrowserLaunchOptions?)null));
 
 				await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(1, 350, Easing.CubicOut)));
 			}

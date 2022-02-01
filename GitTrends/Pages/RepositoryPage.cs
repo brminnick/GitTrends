@@ -196,7 +196,7 @@ namespace GitTrends
 			string? selection = await DisplayActionSheet(SortingConstants.ActionSheetTitle, SortingConstants.CancelText, null, sortingOptions.ToArray());
 
 			if (!string.IsNullOrWhiteSpace(selection) && selection != SortingConstants.CancelText)
-				ViewModel.SortRepositoriesCommand.Execute(MobileSortingService.SortingOptionsDictionary.First(x => x.Value == selection).Key);
+				BindingContext.SortRepositoriesCommand.Execute(MobileSortingService.SortingOptionsDictionary.First(x => x.Value == selection).Key);
 		}
 
 		async void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs eventArgs) => await MainThread.InvokeOnMainThreadAsync(async () =>
@@ -247,7 +247,7 @@ namespace GitTrends
 			settingsItem.Text = PageTitles.SettingsPage;
 		}
 
-		void HandleSearchBarTextChanged(object sender, string searchBarText) => ViewModel.FilterRepositoriesCommand.Execute(searchBarText);
+		void HandleSearchBarTextChanged(object sender, string searchBarText) => BindingContext.FilterRepositoriesCommand.Execute(searchBarText);
 
 		void ISearchPage.OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.RaiseEvent(this, text, nameof(SearchBarTextChanged));
 	}

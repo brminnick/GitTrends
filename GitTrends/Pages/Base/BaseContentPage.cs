@@ -45,9 +45,9 @@ namespace GitTrends
 		protected BaseContentPage(in T viewModel, in IAnalyticsService analyticsService, in IMainThread mainThread, in bool shouldUseSafeArea = false)
 			: base(analyticsService, mainThread, shouldUseSafeArea)
 		{
-			BindingContext = ViewModel = viewModel;
+			base.BindingContext = viewModel;
 		}
 
-		protected T ViewModel { get; }
+		protected new T BindingContext => (T)base.BindingContext;
 	}
 }
