@@ -468,7 +468,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2337" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2337+884-sha.8f765bd87-azdo.5638139" />
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.4" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="19.4.0.38" />
