@@ -434,7 +434,8 @@ namespace GitTrends
 			TotalButtonText = RepositoryPageConstants.TOTAL;
 		}
 
-		//Work-around because ContentPage.OnAppearing does not fire after `ContentPage.PushModalAsync()`
+		// Work-around because ContentPage.OnAppearing does not fire after `ContentPage.PushModalAsync()`
+		// Fixed in Xamarin.Forms v5.0.0-sr10 https://github.com/xamarin/Xamarin.Forms/commit/103ef3df7063e42851288c6977567193a74eaaaf
 		void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsRefreshing |= e.IsSessionAuthorized;
 
 		async void HandleShouldIncludeOrganizationsChanged(object sender, bool e)
