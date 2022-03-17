@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using SQLite;
 using Xamarin.Essentials.Interfaces;
@@ -40,6 +41,29 @@ namespace GitTrends
 
 			foreach (var expiredDailyView in expiredDailyViews)
 				await dailyViewsDatabaseConnection.DeleteAsync(expiredDailyView).ConfigureAwait(false);
+		}
+
+		public async Task DeleteRepository(Repository repository)
+		{
+			var (repositoryDatabaseConnection,
+					dailyClonesDatabaseConnection,
+					dailyViewsDatabaseConnection,
+					starGazerInfoDatabaseConnection) = await GetDatabaseConnections().ConfigureAwait(false);
+
+			var dailyViews = await dailyViewsDatabaseConnection.Table<DailyViewsDatabaseModel>().ToListAsync();
+			var dailyClones = await dailyClonesDatabaseConnection.Table<DailyClonesDatabaseModel>().ToListAsync();
+			var starGazerInfos = await starGazerInfoDatabaseConnection.Table<StarGazerInfoDatabaseModel>().ToListAsync();
+
+			foreach (var dailyClone in dailyClones.Where(x => x.RepositoryUrl == repository.Url))
+				await dailyClonesDatabaseConnection.DeleteAsync(dailyClone).ConfigureAwait(false);
+
+			foreach (var dailyView in dailyViews.Where(x => x.RepositoryUrl == repository.Url))
+				await dailyViewsDatabaseConnection.DeleteAsync(dailyView).ConfigureAwait(false);
+
+			foreach (var starGazerInfo in starGazerInfos.Where(x => x.RepositoryUrl == repository.Url))
+				await starGazerInfoDatabaseConnection.DeleteAsync(starGazerInfo).ConfigureAwait(false);
+
+			await repositoryDatabaseConnection.DeleteAsync(RepositoryDatabaseModel.ToRepositoryDatabase(repository)).ConfigureAwait(false);
 		}
 
 		public async Task SaveRepository(Repository repository)

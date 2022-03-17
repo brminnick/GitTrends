@@ -254,8 +254,7 @@ namespace GitTrends
 			catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan)
 										|| (e is HttpRequestException && finalResponse is not null && _gitHubApiStatusService.IsAbuseRateLimit(finalResponse.Headers, out retryTimeSpan)))
 			{
-				if (repositoriesFromDatabase is null)
-					repositoriesFromDatabase = await repositoriesFromDatabaseTask.ConfigureAwait(false);
+				repositoriesFromDatabase ??= await repositoriesFromDatabaseTask.ConfigureAwait(false);
 
 				//Rate Limiting may cause some data to not return successfully from the GitHub API
 				var missingRepositories = _gitHubUserService.ShouldIncludeOrganizations switch

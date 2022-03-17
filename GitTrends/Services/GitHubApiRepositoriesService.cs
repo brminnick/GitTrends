@@ -19,6 +19,7 @@ namespace GitTrends
 		readonly IAnalyticsService _analyticsService;
 		readonly GitHubUserService _gitHubUserService;
 		readonly GitHubApiV3Service _gitHubApiV3Service;
+		readonly RepositoryDatabase _repositoryDatabase;
 		readonly ReferringSitesDatabase _referringSitesDatabase;
 		readonly GitHubApiStatusService _gitHubApiStatusService;
 		readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
@@ -27,6 +28,7 @@ namespace GitTrends
 											IAnalyticsService analyticsService,
 											GitHubUserService gitHubUserService,
 											GitHubApiV3Service gitHubApiV3Service,
+											RepositoryDatabase repositoryDatabase,
 											ReferringSitesDatabase referringSitesDatabase,
 											GitHubApiStatusService gitHubApiStatusService,
 											GitHubGraphQLApiService gitHubGraphQLApiService)
@@ -35,6 +37,7 @@ namespace GitTrends
 			_analyticsService = analyticsService;
 			_gitHubUserService = gitHubUserService;
 			_gitHubApiV3Service = gitHubApiV3Service;
+			_repositoryDatabase = repositoryDatabase;
 			_referringSitesDatabase = referringSitesDatabase;
 			_gitHubApiStatusService = gitHubApiStatusService;
 			_gitHubGraphQLApiService = gitHubGraphQLApiService;
@@ -138,9 +141,9 @@ namespace GitTrends
 						await getCloneStatisticsTask.ConfigureAwait(false),
 						await getStarGazrsTask.ConfigureAwait(false));
 			}
-			catch (ApiException e) when (_gitHubApiStatusService.IsAbuseRateLimit(e.Headers, out var timespan) && timespan is TimeSpan retryTimeSpan)
+			catch (ApiException e) when (_gitHubApiStatusService.IsAbuseRateLimit(e.Headers, out var timespan))
 			{
-				OnAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData(repository, retryTimeSpan);
+				OnAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData(repository, timespan.Value);
 
 				return (null, null, null);
 			}
@@ -154,6 +157,17 @@ namespace GitTrends
 			{
 				reportException(e);
 
+				return (null, null, null);
+			}
+			catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.NotFound) // Repository deleted from GitHub but has not yet been deleted from local SQLite Database
+			{
+				reportException(e);
+
+				var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
+				if (repositoryFromDatabase is null)
+					throw;
+
+				await _repositoryDatabase.DeleteRepository(repository).ConfigureAwait(false);
 				return (null, null, null);
 			}
 
