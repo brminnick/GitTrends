@@ -113,7 +113,9 @@ namespace GitTrends
 
 				var (viewsResponse, clonesResponse, starGazers) = await completedStatisticsTask.ConfigureAwait(false);
 
-				if (viewsResponse != null && clonesResponse != null && starGazers != null)
+				if (starGazers is not null
+					&& viewsResponse is not null
+					&& clonesResponse is not null)
 				{
 					var updatedRepository = repositories.Single(x => x.Name == viewsResponse.RepositoryName) with
 					{

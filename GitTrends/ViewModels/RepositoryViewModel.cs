@@ -160,6 +160,7 @@ namespace GitTrends
 		{
 			HttpResponseMessage? finalResponse = null;
 			IReadOnlyList<Repository>? repositoriesFromDatabase = null;
+			var saveCompletedRepositoryToDatabaseTaskList = new List<Task>();
 
 			var cancellationTokenSource = new CancellationTokenSource();
 			GitHubAuthenticationService.LoggedOut += HandleLoggedOut;
@@ -210,11 +211,17 @@ namespace GitTrends
 				{
 					completedRepositories.Add(retrievedRepositoryWithViewsAndClonesData);
 
-					//Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
-					if (!_gitHubUserService.IsDemoUser && completedRepositories.Count > minimumBatchCount)
+					if (!_gitHubUserService.IsDemoUser)
 					{
-						AddRepositoriesToCollection(completedRepositories, _searchBarText);
-						completedRepositories.Clear();
+						var saveRepositoryToDatabaseTask = _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData);
+						saveCompletedRepositoryToDatabaseTaskList.Add(saveRepositoryToDatabaseTask);
+
+						//Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
+						if (completedRepositories.Count > minimumBatchCount)
+						{
+							AddRepositoriesToCollection(completedRepositories, _searchBarText);
+							completedRepositories.Clear();
+						}
 					}
 				}
 
@@ -314,7 +321,7 @@ namespace GitTrends
 
 				IsRefreshing = false;
 
-				await SaveRepositoriesToDatabase(_repositoryList).ConfigureAwait(false);
+				await Task.WhenAll(saveCompletedRepositoryToDatabaseTaskList).ConfigureAwait(false);
 			}
 
 			static IReadOnlyList<Repository> getDistictRepositories(in IEnumerable<Repository> repositoriesList1, in IEnumerable<Repository> repositoriesList2, Func<Repository, bool>? filter = null) =>
@@ -342,24 +349,6 @@ namespace GitTrends
 
 			if (!_gitHubUserService.IsDemoUser)
 				await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
-		}
-
-		async ValueTask SaveRepositoriesToDatabase(IEnumerable<Repository> repositories)
-		{
-			if (_gitHubUserService.IsDemoUser)
-				return;
-
-			foreach (var repository in repositories.Where(x => x.ContainsTrafficData))
-			{
-				try
-				{
-					await _repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
-				}
-				catch (Exception e)
-				{
-					AnalyticsService.Report(e);
-				}
-			}
 		}
 
 		void ExecuteSortRepositoriesCommand(SortingOption option)
