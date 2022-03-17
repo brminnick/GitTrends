@@ -11,19 +11,19 @@ namespace GitTrends
 {
 	public abstract class BaseDatabase
 	{
+		readonly SQLiteAsyncConnection _databaseConnection;
+
 		protected BaseDatabase(IFileSystem fileSystem, IAnalyticsService analyticsService, TimeSpan expiresAt)
 		{
 			ExpiresAt = expiresAt;
 			AnalyticsService = analyticsService;
 
 			var databasePath = Path.Combine(fileSystem.AppDataDirectory, $"{nameof(GitTrends)}.db3");
-			DatabaseConnection = new SQLiteAsyncConnection(databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache);
+			_databaseConnection = new SQLiteAsyncConnection(databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache);
 		}
 
 		public TimeSpan ExpiresAt { get; }
 		protected IAnalyticsService AnalyticsService { get; }
-
-		SQLiteAsyncConnection DatabaseConnection { get; }
 
 		public abstract Task<int> DeleteAllData();
 
@@ -38,22 +38,22 @@ namespace GitTrends
 
 		protected async ValueTask<SQLiteAsyncConnection> GetDatabaseConnection<T>()
 		{
-			if (!DatabaseConnection.TableMappings.Any(x => x.MappedType == typeof(T)))
+			if (!_databaseConnection.TableMappings.Any(x => x.MappedType == typeof(T)))
 			{
-				await DatabaseConnection.EnableWriteAheadLoggingAsync().ConfigureAwait(false);
+				await _databaseConnection.EnableWriteAheadLoggingAsync().ConfigureAwait(false);
 
 				try
 				{
-					await DatabaseConnection.CreateTablesAsync(CreateFlags.None, typeof(T)).ConfigureAwait(false);
+					await _databaseConnection.CreateTablesAsync(CreateFlags.None, typeof(T)).ConfigureAwait(false);
 				}
 				catch (SQLiteException e) when (e.Message.Contains("PRIMARY KEY", StringComparison.OrdinalIgnoreCase))
 				{
-					await DatabaseConnection.DropTableAsync(DatabaseConnection.TableMappings.First(x => x.MappedType == typeof(T)));
-					await DatabaseConnection.CreateTablesAsync(CreateFlags.None, typeof(T)).ConfigureAwait(false);
+					await _databaseConnection.DropTableAsync(_databaseConnection.TableMappings.First(x => x.MappedType == typeof(T)));
+					await _databaseConnection.CreateTablesAsync(CreateFlags.None, typeof(T)).ConfigureAwait(false);
 				}
 			}
 
-			return DatabaseConnection;
+			return _databaseConnection;
 		}
 	}
 }
