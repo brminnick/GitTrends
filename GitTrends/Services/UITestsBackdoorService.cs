@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
-using Autofac;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Plugin.StoreReview.Abstractions;
@@ -22,6 +21,7 @@ namespace GitTrends
 		readonly static WeakEventManager<Page> _popPageCompletedEventManager = new();
 
 		readonly IMainThread _mainThread;
+		readonly IStoreReview _storeReview;
 		readonly ThemeService _themeService;
 		readonly LanguageService _languageService;
 		readonly GitHubUserService _gitHubUserService;
@@ -31,6 +31,7 @@ namespace GitTrends
 		readonly GitHubAuthenticationService _gitHubAuthenticationService;
 
 		public UITestsBackdoorService(IMainThread mainThread,
+										IStoreReview storeReview,
 										ThemeService themeService,
 										LanguageService languageService,
 										GitHubUserService gitHubUserService,
@@ -40,6 +41,7 @@ namespace GitTrends
 										GitHubAuthenticationService gitHubAuthenticationService)
 		{
 			_mainThread = mainThread;
+			_storeReview = storeReview;
 			_themeService = themeService;
 			_languageService = languageService;
 			_gitHubUserService = gitHubUserService;
@@ -80,7 +82,7 @@ namespace GitTrends
 
 		public Task<GitHubToken> GetGitHubToken() => _gitHubUserService.GetGitHubToken();
 
-		public void TriggerReviewRequest() => ContainerService.Container.Resolve<IStoreReview>().RequestReview(true);
+		public void TriggerReviewRequest() => _storeReview.RequestReview(true);
 
 		public string GetReviewRequestAppStoreTitle() => AppStoreConstants.RatingRequest;
 
