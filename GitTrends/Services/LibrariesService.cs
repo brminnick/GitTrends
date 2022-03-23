@@ -14,19 +14,16 @@ namespace GitTrends
 	{
 		readonly IPreferences _preferences;
 		readonly IAnalyticsService _analyticsService;
-		readonly GitHubApiV3Service _gitHubApiV3Service;
 		readonly ImageCachingService _imageCachingService;
 		readonly AzureFunctionsApiService _azureFunctionsApiService;
 
 		public LibrariesService(IPreferences preferences,
-							IAnalyticsService analyticsService,
-							GitHubApiV3Service gitHubApiV3Service,
-							ImageCachingService imageCachingService,
-							AzureFunctionsApiService azureFunctionsApiService)
+								IAnalyticsService analyticsService,
+								ImageCachingService imageCachingService,
+								AzureFunctionsApiService azureFunctionsApiService)
 		{
 			_preferences = preferences;
 			_analyticsService = analyticsService;
-			_gitHubApiV3Service = gitHubApiV3Service;
 			_imageCachingService = imageCachingService;
 			_azureFunctionsApiService = azureFunctionsApiService;
 		}
