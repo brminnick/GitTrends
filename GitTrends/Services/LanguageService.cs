@@ -12,9 +12,9 @@ namespace GitTrends
 	{
 		readonly static WeakEventManager<string?> _preferredLanguageChangedEventManager = new();
 
+		readonly IMainThread _mainThread;
 		readonly IPreferences _preferences;
 		readonly IAnalyticsService _analyticsService;
-		readonly IMainThread _mainThread;
 
 		public LanguageService(IAnalyticsService analyticsService, IPreferences preferences, IMainThread mainThread)
 		{

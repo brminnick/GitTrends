@@ -80,7 +80,7 @@ namespace GitTrends
 			{
 				public NotificationStatusSvgImage() : base("bell.svg", () => Color.White, 24, 24)
 				{
-					this.Bind(SvgImage.SourceProperty, nameof(OnboardingViewModel.NotificationStatusSvgImageSource));
+					this.Bind(SvgImage.SourceProperty, nameof(OnboardingViewModel.NotificationStatusSvgImageSource), BindingMode.OneWay);
 				}
 			}
 

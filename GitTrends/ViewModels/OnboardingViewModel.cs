@@ -52,7 +52,7 @@ namespace GitTrends
 		public string NotificationStatusSvgImageSource
 		{
 			get => _notificationStatusSvgImageSource;
-			set => SetProperty(ref _notificationStatusSvgImageSource, SvgService.GetFullPath(value));
+			private set => SetProperty(ref _notificationStatusSvgImageSource, SvgService.GetFullPath(value));
 		}
 
 		protected override async Task ExecuteDemoButtonCommand(string? buttonText)
