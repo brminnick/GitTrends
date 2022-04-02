@@ -65,8 +65,7 @@ namespace GitTrends
 						_analyticsService.Report(ex, new Dictionary<string, string>
 						{
 							{ nameof(nugetPackageModel.PackageName), nugetPackageModel.PackageName },
-							{ nameof(nugetPackageModel.IconUri), nugetPackageModel.IconUri.ToString() },
-
+							{ nameof(nugetPackageModel.IconUri), nugetPackageModel.IconUri.ToString() }
 						});
 					});
 				}

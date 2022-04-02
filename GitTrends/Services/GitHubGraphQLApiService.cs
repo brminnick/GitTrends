@@ -136,18 +136,15 @@ namespace GitTrends
 		public async IAsyncEnumerable<Repository> GetViewerOrganizationRepositories([EnumeratorCancellation] CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
 		{
 			var organizationNameList = new List<string>();
+			var getOrganizationTaskList = new List<Task<IReadOnlyList<Repository>>>();
 
 			var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
 
 			await foreach (var organization in GetOrganizationNames(token, cancellationToken).ConfigureAwait(false))
 			{
 				organizationNameList.Add(organization);
-			}
-
-			var getOrganizationTaskList = new List<Task<IReadOnlyList<Repository>>>();
-
-			foreach (var organization in organizationNameList)
 				getOrganizationTaskList.Add(GetOrganizationRepositories(organization, cancellationToken, numberOfRepositoriesPerRequest));
+			}
 
 			while (getOrganizationTaskList.Any())
 			{
