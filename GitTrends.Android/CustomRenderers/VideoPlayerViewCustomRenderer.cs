@@ -36,12 +36,14 @@ namespace GitTrends.Droid
 
 #pragma warning disable CS0618 // Type or member is obsolete
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        public VideoPlayerViewCustomRenderer(System.IntPtr ptr, Android.Runtime.JniHandleOwnership jni)
-        {
+#pragma warning disable IDE0060 // Remove unused parameter
+		public VideoPlayerViewCustomRenderer(System.IntPtr ptr, Android.Runtime.JniHandleOwnership jni)
+		{
             //Fixes no constructor found exception
         }
 #pragma warning restore CS0618 // Type or member is obsolete
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+#pragma warning restore IDE0060 // Remove unused parameter
 
         protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayerView> e)
         {
@@ -77,7 +79,7 @@ namespace GitTrends.Droid
             var httpDataSourceFactory = new DefaultHttpDataSourceFactory(nameof(GitTrends));
             var ssChunkFactory = new DefaultDashChunkSource.Factory(httpDataSourceFactory);
 
-            var ssMediaSourceFactory = new DashMediaSource.Factory(ssChunkFactory, httpDataSourceFactory);
+            var ssMediaSourceFactory = new DashMediaSource.Factory(ssChunkFactory, httpDataSourceFactory);  
 
             _player.Prepare(ssMediaSourceFactory.CreateMediaSource(uri));
         }
