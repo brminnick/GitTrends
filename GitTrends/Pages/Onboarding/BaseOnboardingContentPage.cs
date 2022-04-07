@@ -29,14 +29,13 @@ namespace GitTrends
 
 			var descriptionLayout = new StackLayout
 			{
-				Margin = new Thickness(32, 8),
 				Spacing = 16,
 				Children =
 				{
 					CreateDescriptionTitleLabel(),
 					CreateDescriptionBodyView()
 				}
-			};
+			}.Margin(32, 8);
 
 			Content = new Grid
 			{
@@ -55,7 +54,7 @@ namespace GitTrends
 						.Row(Row.Image).ColumnSpan(All<Column>()),
 
 					CreateImageView()
-						.Row(Row.Image).ColumnSpan(All<Column>()).Margin(Device.RuntimePlatform is Device.iOS ? new Thickness(32, 44 + 32, 32, 32) : new Thickness(32,16)),
+						.Row(Row.Image).ColumnSpan(All<Column>()).Margin(Device.RuntimePlatform is Device.iOS ? new Thickness(32, 44 + 32, 32, 32) : new Thickness(32, 16)),
 
 					descriptionLayout.Row(Row.Description)
 						.RowSpan(2).ColumnSpan(All<Column>()),

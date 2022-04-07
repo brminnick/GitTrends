@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Syncfusion.SfChart.XForms;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 

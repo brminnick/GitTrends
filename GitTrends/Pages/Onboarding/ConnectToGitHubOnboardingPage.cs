@@ -25,10 +25,8 @@ namespace GitTrends
 		protected override View CreateImageView() => new Image
 		{
 			Source = "ConnectToGitHubOnboarding",
-			HorizontalOptions = LayoutOptions.CenterAndExpand,
-			VerticalOptions = LayoutOptions.CenterAndExpand,
 			Aspect = Aspect.AspectFit
-		};
+		}.CenterExpand();
 
 		protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ConnectToGitHubPage_Title);
 
@@ -39,9 +37,9 @@ namespace GitTrends
 				RowSpacing = 16,
 
 				RowDefinitions = Rows.Define(
-						(Row.Description, 65),
-						(Row.Button, 42),
-						(Row.ActivityIndicator, 42)),
+					(Row.Description, 65),
+					(Row.Button, 42),
+					(Row.ActivityIndicator, 42)),
 
 				Children =
 				{

@@ -23,10 +23,8 @@ namespace GitTrends
 
 		protected override View CreateImageView() => new Image
 		{
-			Source = "GitTrendsWhite",
-			HorizontalOptions = LayoutOptions.Center,
-			VerticalOptions = LayoutOptions.Center
-		};
+			Source = "GitTrendsWhite"
+		}.Center();
 
 		protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.GitTrendsPage_Title);
 

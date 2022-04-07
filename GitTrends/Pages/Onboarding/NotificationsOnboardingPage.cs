@@ -25,10 +25,8 @@ namespace GitTrends
 		protected override View CreateImageView() => new Image
 		{
 			Source = "NotificationsOnboarding",
-			HorizontalOptions = LayoutOptions.CenterAndExpand,
-			VerticalOptions = LayoutOptions.CenterAndExpand,
 			Aspect = Aspect.AspectFit
-		};
+		}.CenterExpand();
 
 		protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.NotificationsPage_Title);
 

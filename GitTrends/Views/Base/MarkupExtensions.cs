@@ -6,29 +6,6 @@ using Expression = System.Linq.Expressions.Expression<System.Func<double>>;
 
 namespace GitTrends
 {
-	public static class ElementExtensions
-	{
-		public static TElement DynamicResource<TElement>(this TElement element, BindableProperty property, string key) where TElement : Element
-		{
-			element.SetDynamicResource(property, key);
-			return element;
-		}
-
-		public static TElement DynamicResources<TElement>(this TElement element, params (BindableProperty property, string key)[] resources) where TElement : Element
-		{
-			foreach (var (property, key) in resources)
-				element.SetDynamicResource(property, key);
-
-			return element;
-		}
-
-		public static TButton Padding<TButton>(this TButton button, double horizontalSize, double verticalSize) where TButton : Button
-		{
-			button.Padding = new Thickness(horizontalSize, verticalSize);
-			return button;
-		}
-	}
-
 	static class MarkupExtensions
 	{
 		public static double GetWidth(this View view, in RelativeLayout parent) => view.Measure(parent.Width, parent.Height).Request.Width;

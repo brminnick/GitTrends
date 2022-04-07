@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms.PlatformConfiguration;
+﻿using Xamarin.CommunityToolkit.Markup;
+using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace GitTrends

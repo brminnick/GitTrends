@@ -31,7 +31,6 @@ namespace GitTrends
 
 			Content = new ScrollView
 			{
-				Padding = new Thickness(0, 16, 0, 0),
 				Content = new Grid
 				{
 					ColumnSpacing = 2,
@@ -83,13 +82,12 @@ namespace GitTrends
 						new CollectionView
 						{
 							HorizontalScrollBarVisibility = ScrollBarVisibility.Never,
-							HeightRequest = ContributorDataTemplate.RowHeight + 8,
 							Header = new BoxView { WidthRequest = horizontalPadding },
 							SelectionMode = SelectionMode.Single,
 							ItemTemplate = new ContributorDataTemplate(),
 							ItemsSource = BindingContext.GitTrendsContributors,
 							ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Horizontal)
-						}.Top().Margins(top: 4)
+						}.Top().Margins(top: 4).Height(ContributorDataTemplate.RowHeight + 8)
 						 .Row(Row.CollaboratorCollection).ColumnSpan(All<Column>())
 						 .Invoke(collectionView => collectionView.SelectionChanged += HandleContributorSelectionChanged),
 
@@ -102,18 +100,17 @@ namespace GitTrends
 						new CollectionView
 						{
 							HorizontalScrollBarVisibility = ScrollBarVisibility.Never,
-							HeightRequest = IsSmallScreen ? LibraryDataTemplate.RowHeight + 8 : LibraryDataTemplate.RowHeight * 2 + 8,
 							Header = new BoxView { WidthRequest = horizontalPadding },
 							SelectionMode = SelectionMode.Single,
 							ItemTemplate = new LibraryDataTemplate(),
 							ItemsSource = BindingContext.InstalledLibraries,
 							ItemsLayout = IsSmallScreen ? new LinearItemsLayout(ItemsLayoutOrientation.Horizontal) : new GridItemsLayout(2, ItemsLayoutOrientation.Horizontal)
-						}.Top()
+						}.Top().Height(IsSmallScreen ? LibraryDataTemplate.RowHeight + 8 : LibraryDataTemplate.RowHeight * 2 + 8)
 						 .Row(Row.LibrariesCollection).ColumnSpan(All<Column>())
 						 .Invoke(collectionView => collectionView.SelectionChanged += HandleLibrarySelectionChanged),
 					}
 				}
-			};
+			}.Paddings(0, 16, 0, 0);
 		}
 
 		enum Row { Title, Description, Statistics, ActionButtons, CollaboratorTitle, CollaboratorDescription, CollaboratorCollection, LibrariesTitle, LibrariesDescription, LibrariesCollection }

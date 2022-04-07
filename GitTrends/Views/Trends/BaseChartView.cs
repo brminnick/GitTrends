@@ -1,4 +1,5 @@
 ﻿using Sharpnado.MaterialFrame;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
 
 namespace GitTrends
