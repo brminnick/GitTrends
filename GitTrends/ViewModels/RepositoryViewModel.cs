@@ -25,6 +25,7 @@ namespace GitTrends
 
 		readonly GitHubUserService _gitHubUserService;
 		readonly RepositoryDatabase _repositoryDatabase;
+		readonly DeepLinkingService _deepLinkingService;
 		readonly GitHubApiV3Service _gitHubApiV3Service;
 		readonly ImageCachingService _imageCachingService;
 		readonly MobileSortingService _mobileSortingService;
@@ -47,6 +48,7 @@ namespace GitTrends
 									IAnalyticsService analyticsService,
 									GitHubUserService gitHubUserService,
 									RepositoryDatabase repositoryDatabase,
+									DeepLinkingService deepLinkingService,
 									GitHubApiV3Service gitHubApiV3Service,
 									ImageCachingService imageCachingService,
 									MobileSortingService mobileSortingService,
@@ -63,6 +65,7 @@ namespace GitTrends
 
 			_gitHubUserService = gitHubUserService;
 			_repositoryDatabase = repositoryDatabase;
+			_deepLinkingService = deepLinkingService;
 			_gitHubApiV3Service = gitHubApiV3Service;
 			_imageCachingService = imageCachingService;
 			_mobileSortingService = mobileSortingService;
@@ -84,6 +87,12 @@ namespace GitTrends
 				_ => ExecuteToggleIsFavoriteCommand(repository)
 			});
 
+			NavigateToRepositoryWebsiteCommand = new AsyncCommand<Repository>(repository => repository switch
+			{
+				null => Task.CompletedTask,
+				_ => ExecuteNavigateToRepositoryWebsiteCommand(repository)
+			});
+
 			NotificationService.SortingOptionRequested += HandleSortingOptionRequested;
 
 			GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
@@ -102,6 +111,7 @@ namespace GitTrends
 		public ICommand FilterRepositoriesCommand { get; }
 		public IAsyncCommand PullToRefreshCommand { get; }
 		public AsyncCommand<Repository> ToggleIsFavoriteCommand { get; }
+		public AsyncCommand<Repository> NavigateToRepositoryWebsiteCommand { get; }
 
 		public IReadOnlyList<Repository> VisibleRepositoryList
 		{
@@ -349,6 +359,13 @@ namespace GitTrends
 
 			if (!_gitHubUserService.IsDemoUser)
 				await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
+		}
+
+		Task ExecuteNavigateToRepositoryWebsiteCommand(Repository repository)
+		{
+			AnalyticsService.Track("Open External Repostory Link Tapped", nameof(repository.Url), repository.Url);
+
+			return _deepLinkingService.OpenApp(repository.Url, repository.Url);
 		}
 
 		void ExecuteSortRepositoriesCommand(SortingOption option)

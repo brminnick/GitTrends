@@ -57,7 +57,7 @@
 		<string>processing</string>
 	</array>
 	<key>CFBundleShortVersionString</key>
-	<string>2.3.7</string>
+	<string>2.4.0</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.minnick.GitTrends.NotifyTrendingRepositories</string>

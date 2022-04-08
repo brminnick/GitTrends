@@ -54,7 +54,24 @@ namespace GitTrends
 						CommandParameter = repository,
 						Command = repositoryViewModel.ToggleIsFavoriteCommand,
 						Content = new SvgImage(repository.IsFavorite is true ? "star.svg" : "star_outline.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)], 44, 44)
-									.Margin(new Thickness(0, 0, 32, 0))
+									.Margins(right: 32)
+					}
+				};
+
+				LeftItems = repository.IsRepositoryUrlValid() switch
+				{
+					false => null,
+					true => new SwipeItems
+					{
+						new SwipeItemView
+						{
+							CommandParameter = repository,
+							Command = repositoryViewModel.NavigateToRepositoryWebsiteCommand,
+							Content = new Label { Text = FontAwesomeConstants.ExternalLink.ToString() }
+											.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
+											.Font(FontFamilyConstants.FontAwesome, 28).CenterExpand()
+											.Margins(left: 24),
+						}
 					}
 				};
 
