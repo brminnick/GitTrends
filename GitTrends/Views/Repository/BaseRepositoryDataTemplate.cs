@@ -58,10 +58,9 @@ namespace GitTrends
 					}
 				};
 
-				LeftItems = repository.IsRepositoryUrlValid() switch
+				if (repository.IsRepositoryUrlValid())
 				{
-					false => null,
-					true => new SwipeItems
+					LeftItems = new SwipeItems
 					{
 						new SwipeItemView
 						{
@@ -72,8 +71,8 @@ namespace GitTrends
 											.Font(FontFamilyConstants.FontAwesome, 28).CenterExpand()
 											.Margins(left: 24),
 						}
-					}
-				};
+					};
+				}
 
 				Content = new Grid
 				{
