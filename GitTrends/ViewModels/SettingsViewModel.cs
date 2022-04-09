@@ -495,7 +495,7 @@ namespace GitTrends
 				string alias = GitHubUserService.IsDemoUser ? nameof(GitTrends) : GitHubUserService.Alias;
 				AnalyticsService.Track("Alias Label Tapped", "Alias", alias);
 
-				return _deepLinkingService.OpenApp($"github://", $"{GitHubConstants.GitHubBaseUrl}/{alias}", $"{GitHubConstants.GitHubBaseUrl}/{alias}");
+				return _deepLinkingService.OpenApp(GitHubConstants.AppScheme, $"{GitHubConstants.GitHubBaseUrl}/{alias}", $"{GitHubConstants.GitHubBaseUrl}/{alias}");
 			}
 			else
 			{

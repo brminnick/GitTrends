@@ -365,7 +365,7 @@ namespace GitTrends
 		{
 			AnalyticsService.Track("Open External Repostory Link Tapped", nameof(repository.Url), repository.Url);
 
-			return _deepLinkingService.OpenApp(repository.Url, repository.Url);
+			return _deepLinkingService.OpenApp(GitHubConstants.AppScheme, repository.Url, repository.Url);
 		}
 
 		void ExecuteSortRepositoriesCommand(SortingOption option)
@@ -377,7 +377,7 @@ namespace GitTrends
 
 			_mobileSortingService.CurrentOption = option;
 
-			AnalyticsService.Track("SortingOption Changed", new Dictionary<string, string>
+			AnalyticsService.Track($"{nameof(SortingOption)} Changed", new Dictionary<string, string>
 			{
 				{ nameof(MobileSortingService) + nameof(MobileSortingService.CurrentOption), _mobileSortingService.CurrentOption.ToString() },
 				{ nameof(MobileSortingService) + nameof(MobileSortingService.IsReversed), _mobileSortingService.IsReversed.ToString() }
