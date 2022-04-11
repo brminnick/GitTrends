@@ -66,7 +66,7 @@ namespace GitTrends.Droid
         {
             base.OnElementPropertyChanged(sender, e);
 
-            if (e.PropertyName is nameof(Element.Url)
+            if (e.PropertyName == Element.UrlProperty.PropertyName
                 && Element.Url is not null
                 && Uri.Parse(Element.Url) is Uri uri)
             {
