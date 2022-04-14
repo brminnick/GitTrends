@@ -82,7 +82,7 @@ namespace GitTrends
 						new CollectionView
 						{
 							HorizontalScrollBarVisibility = ScrollBarVisibility.Never,
-							Header = new BoxView { WidthRequest = horizontalPadding },
+							Header = new BoxView().Width(horizontalPadding),
 							SelectionMode = SelectionMode.Single,
 							ItemTemplate = new ContributorDataTemplate(),
 							ItemsSource = BindingContext.GitTrendsContributors,

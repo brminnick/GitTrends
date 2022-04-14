@@ -65,17 +65,18 @@ namespace GitTrends
 				//Yield off of the main thread to generate dailyViewsModelList
 				await Task.Yield();
 
-				var dailyViewsModelList = new List<DailyClonesModel>();
+				var dailyClonesModelList = new List<DailyClonesModel>();
 
 				for (int i = 0; i < 14; i++)
 				{
 					var count = DemoDataConstants.GetRandomNumber() / 2; //Ensures the average clone count is smaller than the average view count
 					var uniqeCount = count / 2; //Ensures uniqueCount is always less than count
 
-					dailyViewsModelList.Add(new DailyClonesModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
+					dailyClonesModelList.Add(new DailyClonesModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
 				}
 
-				return new RepositoryClonesResponseModel(dailyViewsModelList.Sum(x => x.TotalClones), dailyViewsModelList.Sum(x => x.TotalUniqueClones), dailyViewsModelList, repo, owner);
+
+				return new RepositoryClonesResponseModel(dailyClonesModelList.Sum(x => x.TotalClones), dailyClonesModelList.Sum(x => x.TotalUniqueClones), dailyClonesModelList, repo, owner);
 			}
 			else
 			{

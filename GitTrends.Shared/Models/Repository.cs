@@ -124,6 +124,10 @@ namespace GitTrends.Shared
 			return stringBuilder.ToString();
 		}
 
+		public bool IsOwnerAvatarUrlValid() => Uri.TryCreate(OwnerAvatarUrl, UriKind.Absolute, out _);
+
+		public bool IsRepositoryUrlValid() => Uri.TryCreate(Url, UriKind.Absolute, out _);
+
 		static IReadOnlyList<DailyViewsModel> AddMissingDates(in IEnumerable<DailyViewsModel> dailyViews)
 		{
 			var dailyViewsList = new List<DailyViewsModel>(dailyViews);
@@ -166,10 +170,5 @@ namespace GitTrends.Shared
 
 
 		static DateTimeOffset RemoveHourMinuteSecond(in DateTimeOffset date) => new(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
-	}
-
-	public static class RepositoryExtensions
-	{
-		public static bool IsOwnerAvatarUrlValid(this Repository repository) => Uri.TryCreate(repository.OwnerAvatarUrl, UriKind.Absolute, out _);
 	}
 }

@@ -43,9 +43,10 @@ namespace GitTrends
 		{
 			public CardView(in IEnumerable<View> dataTemplateChildren, in RepositoryViewModel repositoryViewModel, in Repository repository)
 			{
-				Tapped += HandleTapped;
+				var sidePadding = IsSmallScreen ? 8 : 16;
+				BackgroundColor = Color.Transparent;				
 
-				BackgroundColor = Color.Transparent;
+				Tapped += HandleTapped;
 
 				RightItems = new SwipeItems
 				{
@@ -54,9 +55,25 @@ namespace GitTrends
 						CommandParameter = repository,
 						Command = repositoryViewModel.ToggleIsFavoriteCommand,
 						Content = new SvgImage(repository.IsFavorite is true ? "star.svg" : "star_outline.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)], 44, 44)
-									.Margin(new Thickness(0, 0, 32, 0))
+									.Margins(right: sidePadding)
 					}
 				};
+
+				if (repository.IsRepositoryUrlValid())
+				{
+					LeftItems = new SwipeItems
+					{
+						new SwipeItemView
+						{
+							CommandParameter = repository,
+							Command = repositoryViewModel.NavigateToRepositoryWebsiteCommand,
+							Content = new Label { Text = FontAwesomeConstants.ExternalLink.ToString() }
+											.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
+											.Font(FontFamilyConstants.FontAwesome, 28).CenterExpand()
+											.Margins(left: sidePadding),
+						}
+					};
+				}
 
 				Content = new Grid
 				{
@@ -68,9 +85,9 @@ namespace GitTrends
 						(CardViewRow.BottomPadding, BottomPadding)),
 
 					ColumnDefinitions = Columns.Define(
-						(CardViewColumn.LeftPadding, IsSmallScreen ? 8 : 16),
+						(CardViewColumn.LeftPadding, sidePadding),
 						(CardViewColumn.Card, Star),
-						(CardViewColumn.RightPadding, IsSmallScreen ? 8 : 16)),
+						(CardViewColumn.RightPadding, sidePadding)),
 
 					Children =
 					{
