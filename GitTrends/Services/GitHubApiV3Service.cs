@@ -127,5 +127,23 @@ namespace GitTrends
 				return referringSites;
 			}
 		}
+
+		public async Task<StarGazers> GetStarGazers(string owner, string repo, CancellationToken cancellationToken)
+		{
+			if (_gitHubUserService.IsDemoUser)
+			{
+				var starCount = DemoDataConstants.GetRandomNumber();
+				var starredAtDates = DemoDataConstants.GenerateStarredAtDates(starCount);
+
+				return new StarGazers(starCount, starredAtDates.Select(x => new StarGazerInfo(x, string.Empty)));
+			}
+			else
+			{
+				var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
+				var starGazers = await AttemptAndRetry_Mobile(() => _githubApiClient.GetStarGazers(owner, repo, GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+
+				return new StarGazers(starGazers.Count, starGazers.Select(x => new StarGazerInfo(x.StarredAt, string.Empty)));
+			}
+		}
 	}
 }

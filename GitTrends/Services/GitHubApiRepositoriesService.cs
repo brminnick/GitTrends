@@ -131,7 +131,7 @@ namespace GitTrends
 
 		async Task<(RepositoryViewsResponseModel? ViewsResponse, RepositoryClonesResponseModel? ClonesResponse, StarGazers? StarGazerResponse)> GetRepositoryStatistics(Repository repository, CancellationToken cancellationToken)
 		{
-			var getStarGazrsTask = _gitHubGraphQLApiService.GetStarGazers(repository.Name, repository.OwnerLogin, cancellationToken);
+			var getStarGazrsTask = _gitHubApiV3Service.GetStarGazers(repository.Name, repository.OwnerLogin, cancellationToken);
 			var getViewStatisticsTask = _gitHubApiV3Service.GetRepositoryViewStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
 			var getCloneStatisticsTask = _gitHubApiV3Service.GetRepositoryCloneStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
 
