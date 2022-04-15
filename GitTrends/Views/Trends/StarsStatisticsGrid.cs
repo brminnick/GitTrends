@@ -22,14 +22,14 @@ namespace GitTrends
 			RowDefinitions = Rows.Define(
 				(Row.TopLine, 1),
 				(Row.Total, _textRowHeight),
-				(Row.Stars, Stars(1)),
+				(Row.Stars, Star),
 				(Row.Message, _textRowHeight),
 				(Row.BottomLine, 1));
 
 			ColumnDefinitions = Columns.Define(
-				(Column.LeftStar, Stars(1)),
-				(Column.Text, Stars(1)),
-				(Column.RightStar, Stars(1)));
+				(Column.LeftStar, Star),
+				(Column.Text, Stars(3)),
+				(Column.RightStar, Star));
 
 			Children.Add(new SeparatorLine()
 							.Row(Row.TopLine).ColumnSpan(All<Column>()));
@@ -42,6 +42,7 @@ namespace GitTrends
 
 			Children.Add(new StarsStatisticsLabel(48) { AutomationId = TrendsPageAutomationIds.StarsStatisticsLabel }
 							.Row(Row.Stars).Column(Column.Text)
+							.CenterExpand()
 							.Bind<Label, double, string>(Label.TextProperty, nameof(TrendsViewModel.TotalStars), convert: totalStars => totalStars.ToAbbreviatedText()));
 
 			Children.Add(new StarSvg()
