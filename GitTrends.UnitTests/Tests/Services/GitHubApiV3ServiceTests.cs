@@ -215,7 +215,7 @@ namespace GitTrends.UnitTests
 
 			//Assert
 			Assert.NotNull(starGazers);
-			Assert.Greater(starGazers.TotalCount, 250);
+			Assert.Greater(starGazers.TotalCount, 500);
 			Assert.IsNotEmpty(starGazers.StarredAt);
 			Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
 		}
@@ -234,28 +234,31 @@ namespace GitTrends.UnitTests
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
 			//Act
-			var graphQLException = Assert.ThrowsAsync<GraphQLException<StarGazerResponse>>(() => gitHubApiV3Service.GetStarGazers(fakeRepoName, fakeRepoOwner, CancellationToken.None));
+			var exception = Assert.ThrowsAsync<ApiException>(() => gitHubApiV3Service.GetStarGazers(fakeRepoOwner, fakeRepoName, CancellationToken.None));
 
 			//Assert
-			Assert.AreEqual(HttpStatusCode.OK, graphQLException?.StatusCode);
-			Assert.IsTrue(graphQLException?.Errors.First().Message.Contains("Could not resolve to a Repository", StringComparison.OrdinalIgnoreCase));
+			Assert.AreEqual(HttpStatusCode.NotFound, exception?.StatusCode);
 
 			//"Could not resolve to a Repository with the name 'zxcvbnmlkjhgfdsa1234567890/abc123321'."
 		}
 
 		[Test]
-		public void GetStarGazers_Unauthenticated()
+		public async Task GetStarGazers_Unauthenticated()
 		{
 			//Arrange
+			StarGazers starGazers;
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
 
 			//Act
 			gitHubUserService.InvalidateToken();
-			var apiException = Assert.ThrowsAsync<ApiException>(() => gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None));
+			starGazers = await gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None);
 
 			//Assert
-			Assert.AreEqual(HttpStatusCode.Unauthorized, apiException?.StatusCode);
+			Assert.NotNull(starGazers);
+			Assert.Greater(starGazers.TotalCount, 500);
+			Assert.IsNotEmpty(starGazers.StarredAt);
+			Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
 		}
 	}
 }

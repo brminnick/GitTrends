@@ -380,7 +380,7 @@ namespace GitTrends.UnitTests
 
 			//Assert
 			Assert.IsNotEmpty(starGazers.StarredAt);
-			Assert.Greater(starGazers.StarredAt.Count, 400);
+			Assert.Greater(starGazers.StarredAt.Count, 500);
 			Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
 		}
 
@@ -400,7 +400,7 @@ namespace GitTrends.UnitTests
 
 			//Assert
 			Assert.NotNull(starGazers);
-			Assert.Greater(starGazers.TotalCount, 250);
+			Assert.Greater(starGazers.TotalCount, 500);
 			Assert.IsNotEmpty(starGazers.StarredAt);
 			Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
 		}
