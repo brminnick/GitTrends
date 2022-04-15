@@ -44,7 +44,7 @@ namespace GitTrends
 			public CardView(in IEnumerable<View> dataTemplateChildren, in RepositoryViewModel repositoryViewModel, in Repository repository)
 			{
 				var sidePadding = IsSmallScreen ? 8 : 16;
-				BackgroundColor = Color.Transparent;				
+				BackgroundColor = Color.Transparent;
 
 				Tapped += HandleTapped;
 
