@@ -139,10 +139,20 @@ namespace GitTrends
 			}
 			else
 			{
-				var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-				var starGazers = await AttemptAndRetry_Mobile(() => _githubApiClient.GetStarGazers(owner, repo, GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+				var totalStarGazers = new List<StarGazer>();
 
-				return new StarGazers(starGazers.Count, starGazers.Select(x => new StarGazerInfo(x.StarredAt, string.Empty)));
+				IReadOnlyList<StarGazer> starGazerResponse;
+				int currentPageNumber = 1;
+				do
+				{
+					var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
+					starGazerResponse = await AttemptAndRetry_Mobile(() => _githubApiClient.GetStarGazers(owner, repo, currentPageNumber, GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+
+					totalStarGazers.AddRange(starGazerResponse);
+					currentPageNumber++;
+				} while (starGazerResponse.Count > 0);
+
+				return new StarGazers(totalStarGazers.Count, totalStarGazers.Select(x => new StarGazerInfo(x.StarredAt, string.Empty)));
 			}
 		}
 	}

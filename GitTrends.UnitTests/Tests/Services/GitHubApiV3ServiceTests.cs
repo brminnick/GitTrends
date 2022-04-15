@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
@@ -153,6 +155,107 @@ namespace GitTrends.UnitTests
 
 			//Assert
 			Assert.AreEqual(HttpStatusCode.Forbidden, exception?.StatusCode);
+		}
+
+		[Test]
+		public async Task GetStarGazersTest_DemoUser()
+		{
+			//Arrange
+			StarGazers starGazers;
+
+			var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
+			var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
+
+			await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
+
+			//Act
+			starGazers = await gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
+
+			//Assert
+			Assert.IsNotEmpty(starGazers.StarredAt);
+			Assert.Greater(starGazers.StarredAt.Count, 0);
+			Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
+		}
+
+		[Test]
+		public async Task GetStarGazersTest_AuthenticatedUser()
+		{
+			//Arrange
+			StarGazers starGazers;
+
+			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+			var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
+			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+			//Act
+			starGazers = await gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
+
+			//Assert
+			Assert.IsNotEmpty(starGazers.StarredAt);
+			Assert.Greater(starGazers.StarredAt.Count, 400);
+			Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
+		}
+
+		[Test]
+		public async Task GetStarGazers_ValidRepo()
+		{
+			//Arrange
+			StarGazers starGazers;
+
+			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+			var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
+			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+			//Act
+			starGazers = await gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false); ;
+
+			//Assert
+			Assert.NotNull(starGazers);
+			Assert.Greater(starGazers.TotalCount, 250);
+			Assert.IsNotEmpty(starGazers.StarredAt);
+			Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
+		}
+
+		[Test]
+		public async Task GetStarGazers_InvalidRepo()
+		{
+			//Arrange
+			const string fakeRepoName = "abc123321";
+			const string fakeRepoOwner = "zxcvbnmlkjhgfdsa1234567890";
+
+			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+			var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
+			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+			//Act
+			var graphQLException = Assert.ThrowsAsync<GraphQLException<StarGazerResponse>>(() => gitHubApiV3Service.GetStarGazers(fakeRepoName, fakeRepoOwner, CancellationToken.None));
+
+			//Assert
+			Assert.AreEqual(HttpStatusCode.OK, graphQLException?.StatusCode);
+			Assert.IsTrue(graphQLException?.Errors.First().Message.Contains("Could not resolve to a Repository", StringComparison.OrdinalIgnoreCase));
+
+			//"Could not resolve to a Repository with the name 'zxcvbnmlkjhgfdsa1234567890/abc123321'."
+		}
+
+		[Test]
+		public void GetStarGazers_Unauthenticated()
+		{
+			//Arrange
+			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+			var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
+
+			//Act
+			gitHubUserService.InvalidateToken();
+			var apiException = Assert.ThrowsAsync<ApiException>(() => gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None));
+
+			//Assert
+			Assert.AreEqual(HttpStatusCode.Unauthorized, apiException?.StatusCode);
 		}
 	}
 }
