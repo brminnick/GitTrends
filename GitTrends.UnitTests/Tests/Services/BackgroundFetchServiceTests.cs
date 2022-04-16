@@ -34,8 +34,8 @@ namespace GitTrends.UnitTests
 												GitHubConstants.GitTrendsAvatarUrl, 1, 2, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
 
 			//Act
-			wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryRepositoriesViewsClones(repository_Initial);
-			wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryRepositoriesViewsClones(repository_Initial);
+			wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository_Initial);
+			wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository_Initial);
 
 			repository_Final = await scheduleRetryRepositoriesViewsClonesCompletedTCS.Task.ConfigureAwait(false);
 			repository_Database = await repositoryDatabase.GetRepository(repository_Initial.Url).ConfigureAwait(false) ?? throw new NullReferenceException();

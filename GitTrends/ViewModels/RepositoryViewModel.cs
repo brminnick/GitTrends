@@ -61,7 +61,8 @@ namespace GitTrends
 		{
 			LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 			TrendsViewModel.RepositorySavedToDatabase += HandleRepositorySavedToDatabase;
-			BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesCompleted += HandleScheduleRetryRepositoriesViewsClonesCompleted;
+			BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
+			BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted += HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
 
 			UpdateText();
 
@@ -251,7 +252,7 @@ namespace GitTrends
 																											&& x.DataDownloadedAt >= DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12)) // Cached repositories that have been updated in the past 12 hours				
 																											&& _repositoryList.Any(y => y.Url == x.Url)); // Ensure was retrieved from GitHub)
 
-				AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, false, x => x.ContainsViewsClonesStarsData);
+				AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
 
 				var starredRepositoriesList = new List<Repository>();
 				await foreach (var retrievedRepositoryWithStarsData in _gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(_repositoryList.Where(x => !x.ContainsViewsClonesStarsData), cancellationTokenSource.Token).ConfigureAwait(false))
@@ -322,7 +323,7 @@ namespace GitTrends
 				foreach (var repositoryToUpdate in _repositoryList.Where(x => !x.ContainsViewsClonesStarsData // Ensure the repository contains data for Views + Clones
 																				 && x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12)))) // Cached repositories that have been updated in the past 12 hours
 				{
-					_backgroundFetchService.TryScheduleRetryRepositoriesViewsClones(repositoryToUpdate, retryTimeSpan.Value);
+					_backgroundFetchService.TryScheduleRetryRepositoriesStars(repositoryToUpdate, retryTimeSpan.Value);
 				}
 
 				var abuseLimit = new AbuseLimitPullToRefreshEventArgs(retryTimeSpan.Value, VisibleRepositoryList.Any());
@@ -537,7 +538,8 @@ namespace GitTrends
 			_pullToRefreshFailedEventManager.RaiseEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
 		}
 
-		void HandleScheduleRetryRepositoriesViewsClonesCompleted(object sender, Repository e) => AddRepositoriesToCollection(new List<Repository> { e }, _searchBarText);
-		void HandleRepositorySavedToDatabase(object sender, Repository e) => AddRepositoriesToCollection(new List<Repository> { e }, _searchBarText);
+		void HandleRepositorySavedToDatabase(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
+		void HandleScheduleRetryRepositoriesStarsCompleted(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
+		void HandleScheduleRetryRepositoriesViewsClonesStarsCompleted(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
 	}
 }

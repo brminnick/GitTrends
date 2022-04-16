@@ -333,7 +333,7 @@ namespace GitTrends
 			}
 			catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan))
 			{
-				_backgroundFetchService.TryScheduleRetryRepositoriesViewsClones(repository, retryTimeSpan.Value);
+				_backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository, retryTimeSpan.Value);
 
 				var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
 
