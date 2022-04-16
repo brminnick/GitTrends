@@ -111,7 +111,6 @@ namespace GitTrends.UnitTests
 			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 			var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
 
-
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
 			//Act
@@ -139,7 +138,7 @@ namespace GitTrends.UnitTests
 			Assert.IsNotEmpty(dailyClonesList_Final);
 			Assert.IsNotEmpty(dailyStarsList_Final);
 
-			Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarCount, dailyStarsList_Final.Select(x => x.TotalStars).Distinct().Count());
+			Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarredAt?.Count, dailyStarsList_Final.Select(x => x.TotalStars).Distinct().Count());
 
 			for (int i = 0; i < dailyViewsList_Final.Count; i++)
 			{
