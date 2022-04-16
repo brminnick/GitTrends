@@ -25,4 +25,6 @@ namespace GitTrends.Shared
 
 		public DateTimeOffset StarredAt { get; }
 	}
+
+	public record StarGazersConnection(long TotalCount);
 }

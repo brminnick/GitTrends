@@ -218,7 +218,7 @@ namespace GitTrends
 
 				try
 				{
-					await foreach (var repository in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(new List<Repository> { repository }, cancellationToken).ConfigureAwait(false))
+					await foreach (var repository in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(new List<Repository> { repository }, cancellationToken).ConfigureAwait(false))
 					{
 						if (repository is not null)
 						{
@@ -339,28 +339,35 @@ namespace GitTrends
 					else
 						retrievedRepositoryList.Add(repository);
 				}
-				var retrievedRepositoryList_NoDuplicatesNoForks = RepositoryService.RemoveForksAndDuplicates(retrievedRepositoryList);
+
+				var retrievedRepositoryList_NoDuplicatesNoForks = retrievedRepositoryList.RemoveForksAndDuplicates(x => x.ContainsViewsClonesData);
 
 				IReadOnlyList<Repository> repositoriesToUpdate = repositoriesFromDatabase.Where(x => _gitHubUserService.ShouldIncludeOrganizations || x.OwnerLogin == _gitHubUserService.Alias) // Only include organization repositories if `ShouldIncludeOrganizations` is true
 											.Where(x => x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12))) // Cached repositories that haven't been updated in 12 hours 
 											.Concat(retrievedRepositoryList_NoDuplicatesNoForks) // Add downloaded repositories
-											.GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.ContainsTrafficData) ?? x.First()).ToList(); // Remove duplicate repositories
+											.GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.ContainsViewsClonesStarsData) ?? x.First()).ToList(); // Remove duplicate repositories
 
+
+				var retrievedRepositoriesWithViewsAndClonesData = new List<Repository>();
+				await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositoriesToUpdate, cancellationToken).ConfigureAwait(false))
+				{
+					retrievedRepositoriesWithViewsAndClonesData.Add(retrievedRepositoryWithViewsAndClonesData);
+				}
 
 				var trendingRepositories = new List<Repository>();
-				await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(repositoriesToUpdate, cancellationToken).ConfigureAwait(false))
+				await foreach (var retrievedRepositoryWithStarsData in _gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(retrievedRepositoriesWithViewsAndClonesData, cancellationToken))
 				{
 					try
 					{
-						await _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData).ConfigureAwait(false);
+						await _repositoryDatabase.SaveRepository(retrievedRepositoryWithStarsData).ConfigureAwait(false);
 					}
 					catch (Exception e)
 					{
 						_analyticsService.Report(e);
 					}
 
-					if (retrievedRepositoryWithViewsAndClonesData.IsTrending)
-						trendingRepositories.Add(retrievedRepositoryWithViewsAndClonesData);
+					if (retrievedRepositoryWithStarsData.IsTrending)
+						trendingRepositories.Add(retrievedRepositoryWithStarsData);
 				}
 
 				return trendingRepositories;

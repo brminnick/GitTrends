@@ -44,9 +44,9 @@ namespace GitTrends.UnitTests
 				repositories_NoViewsClonesData.Add(repository);
 			}
 
-			repositories_NoViewsClonesData_Filtered = RepositoryService.RemoveForksAndDuplicates(repositories_NoViewsClonesData).ToList();
+			repositories_NoViewsClonesData_Filtered = repositories_NoViewsClonesData.RemoveForksAndDuplicates().ToList();
 
-			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(repositories_NoViewsClonesData_Filtered, CancellationToken.None).ConfigureAwait(false))
+			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesData_Filtered, CancellationToken.None).ConfigureAwait(false))
 			{
 				repositories.Add(repository);
 			}
@@ -94,7 +94,7 @@ namespace GitTrends.UnitTests
 
 			var exception = Assert.ThrowsAsync<InvalidOperationException>(async () =>
 			{
-				await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(repositories_NoViewsClonesData, CancellationToken.None).ConfigureAwait(false))
+				await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesData, CancellationToken.None).ConfigureAwait(false))
 				{
 					repositories.Add(repository);
 				}
@@ -113,7 +113,7 @@ namespace GitTrends.UnitTests
 			var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
 
 			//Act
-			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(new List<Repository>(), CancellationToken.None).ConfigureAwait(false))
+			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(new List<Repository>(), CancellationToken.None).ConfigureAwait(false))
 			{
 				repositories.Add(repository);
 			}
@@ -141,11 +141,11 @@ namespace GitTrends.UnitTests
 				repositories_NoViewsClonesData.Add(repository);
 			}
 
-			repositories_NoViewsClonesData_Filtered = RepositoryService.RemoveForksAndDuplicates(repositories_NoViewsClonesData).ToList();
+			repositories_NoViewsClonesData_Filtered = repositories_NoViewsClonesData.RemoveForksAndDuplicates().ToList();
 
 			gitHubUserService.InvalidateToken();
 
-			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(repositories_NoViewsClonesData_Filtered, CancellationToken.None).ConfigureAwait(false))
+			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesData_Filtered, CancellationToken.None).ConfigureAwait(false))
 			{
 				repositories.Add(repository);
 			};
@@ -176,9 +176,9 @@ namespace GitTrends.UnitTests
 				repositories_NoViewsClonesData.Add(repository);
 			}
 
-			repositories_NoViewsClonesData_Filtered = RepositoryService.RemoveForksAndDuplicates(repositories_NoViewsClonesData).ToList();
+			repositories_NoViewsClonesData_Filtered = repositories_NoViewsClonesData.RemoveForksAndDuplicates().ToList();
 
-			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(repositories_NoViewsClonesData_Filtered, CancellationToken.None).ConfigureAwait(false))
+			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesData_Filtered, CancellationToken.None).ConfigureAwait(false))
 			{
 				repositories.Add(repository);
 			};

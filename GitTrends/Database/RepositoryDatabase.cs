@@ -12,7 +12,7 @@ namespace GitTrends
 	{
 		public RepositoryDatabase(IFileSystem fileSystem, IAnalyticsService analyticsService) : base(fileSystem, analyticsService, TimeSpan.FromDays(14))
 		{
-
+			GitHubApiRepositoriesService.RepositoryUriNotFound += HandleRepositoryUriNotFound;
 		}
 
 		public override async Task<int> DeleteAllData()
@@ -211,6 +211,14 @@ namespace GitTrends
 			}
 		}
 
+		async void HandleRepositoryUriNotFound(object sender, Uri e)
+		{
+			var repositoryFromDatabase = await GetRepository(e.ToString()).ConfigureAwait(false);
+
+			if (repositoryFromDatabase is not null)
+				await DeleteRepository(repositoryFromDatabase).ConfigureAwait(false);
+		}
+
 		record DailyClonesDatabaseModel : IDailyClonesModel
 		{
 			public DateTime LocalDay => Day.LocalDateTime;
@@ -309,7 +317,7 @@ namespace GitTrends
 			[PrimaryKey]
 			public string Url { get; init; } = string.Empty;
 
-			public long? StarCount { get; init; }
+			public long StarCount { get; init; }
 
 			public string OwnerLogin { get; init; } = string.Empty;
 
@@ -350,6 +358,7 @@ namespace GitTrends
 										repositoryDatabaseModel.OwnerAvatarUrl ?? repositoryDatabaseModel.OwnerLogin,
 										repositoryDatabaseModel.IssuesCount,
 										repositoryDatabaseModel.WatchersCount,
+										repositoryDatabaseModel.StarCount,
 										repositoryDatabaseModel.Url,
 										repositoryDatabaseModel.IsFork,
 										repositoryDatabaseModel.DataDownloadedAt,

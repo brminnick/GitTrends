@@ -14,12 +14,12 @@ namespace GitTrends
 	public class GitHubApiRepositoriesService
 	{
 		readonly static WeakEventManager<(Repository Repository, TimeSpan RetryTimeSpan)> _abuseRateLimitFoundEventManager = new();
+		readonly static WeakEventManager<Uri> _repositoryUriNotFoundEventManager = new();
 
 		readonly FavIconService _favIconService;
 		readonly IAnalyticsService _analyticsService;
 		readonly GitHubUserService _gitHubUserService;
 		readonly GitHubApiV3Service _gitHubApiV3Service;
-		readonly RepositoryDatabase _repositoryDatabase;
 		readonly ReferringSitesDatabase _referringSitesDatabase;
 		readonly GitHubApiStatusService _gitHubApiStatusService;
 		readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
@@ -28,7 +28,6 @@ namespace GitTrends
 											IAnalyticsService analyticsService,
 											GitHubUserService gitHubUserService,
 											GitHubApiV3Service gitHubApiV3Service,
-											RepositoryDatabase repositoryDatabase,
 											ReferringSitesDatabase referringSitesDatabase,
 											GitHubApiStatusService gitHubApiStatusService,
 											GitHubGraphQLApiService gitHubGraphQLApiService)
@@ -37,10 +36,15 @@ namespace GitTrends
 			_analyticsService = analyticsService;
 			_gitHubUserService = gitHubUserService;
 			_gitHubApiV3Service = gitHubApiV3Service;
-			_repositoryDatabase = repositoryDatabase;
 			_referringSitesDatabase = referringSitesDatabase;
 			_gitHubApiStatusService = gitHubApiStatusService;
 			_gitHubGraphQLApiService = gitHubGraphQLApiService;
+		}
+
+		public static event EventHandler<Uri> RepositoryUriNotFound
+		{
+			add => _repositoryUriNotFoundEventManager.AddEventHandler(value);
+			remove => _repositoryUriNotFoundEventManager.RemoveEventHandler(value);
 		}
 
 		public static event EventHandler<(Repository Repository, TimeSpan RetryTimeSpan)> AbuseRateLimitFound_GetReferringSites
@@ -102,26 +106,24 @@ namespace GitTrends
 			}
 		}
 
-		public async IAsyncEnumerable<Repository> UpdateRepositoriesWithViewsClonesAndStarsData(IReadOnlyList<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
+		public async IAsyncEnumerable<Repository> UpdateRepositoriesWithViewsAndClonesData(IEnumerable<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
 		{
-			var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsResponseModel?, RepositoryClonesResponseModel?, StarGazers?)>>(repositories.Select(x => GetRepositoryStatistics(x, cancellationToken)));
+			var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsResponseModel?, RepositoryClonesResponseModel?)>>(repositories.Select(x => GetViewsAndClonesStatistics(x, cancellationToken)));
 
 			while (getRepositoryStatisticsTaskList.Any())
 			{
 				var completedStatisticsTask = await Task.WhenAny(getRepositoryStatisticsTaskList).ConfigureAwait(false);
 				getRepositoryStatisticsTaskList.Remove(completedStatisticsTask);
 
-				var (viewsResponse, clonesResponse, starGazers) = await completedStatisticsTask.ConfigureAwait(false);
+				var (viewsResponse, clonesResponse) = await completedStatisticsTask.ConfigureAwait(false);
 
-				if (starGazers is not null
-					&& viewsResponse is not null
+				if (viewsResponse is not null
 					&& clonesResponse is not null)
 				{
 					var updatedRepository = repositories.Single(x => x.Name == viewsResponse.RepositoryName) with
 					{
 						DailyViewsList = viewsResponse.DailyViewsList,
-						DailyClonesList = clonesResponse.DailyClonesList,
-						StarredAt = starGazers.StarredAt.Select(x => x.StarredAt).ToList()
+						DailyClonesList = clonesResponse.DailyClonesList
 					};
 
 					yield return updatedRepository;
@@ -129,48 +131,113 @@ namespace GitTrends
 			}
 		}
 
-		async Task<(RepositoryViewsResponseModel? ViewsResponse, RepositoryClonesResponseModel? ClonesResponse, StarGazers? StarGazerResponse)> GetRepositoryStatistics(Repository repository, CancellationToken cancellationToken)
+		public async IAsyncEnumerable<Repository> UpdateRepositoriesWithStarsData(IEnumerable<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
 		{
-			var getStarGazrsTask = _gitHubApiV3Service.GetStarGazers(repository.Name, repository.OwnerLogin, cancellationToken);
+			var getRepositoryStatisticsTaskList = new List<Task<(string RepositoryName, StarGazers? StarGazers)>>(repositories.Select(x => GetStarGazersStatistics(x, cancellationToken)));
+
+			while (getRepositoryStatisticsTaskList.Any())
+			{
+				var completedStatisticsTask = await Task.WhenAny(getRepositoryStatisticsTaskList).ConfigureAwait(false);
+				getRepositoryStatisticsTaskList.Remove(completedStatisticsTask);
+
+				var starsResponse = await completedStatisticsTask.ConfigureAwait(false);
+
+				if (starsResponse.StarGazers is not null)
+				{
+					var updatedRepository = repositories.Single(x => x.Name == starsResponse.RepositoryName) with
+					{
+						StarredAt = starsResponse.StarGazers.StarredAt.Select(x => x.StarredAt).ToList()
+					};
+
+					yield return updatedRepository;
+				}
+			}
+		}
+
+		async Task<(RepositoryViewsResponseModel? ViewsResponse, RepositoryClonesResponseModel? ClonesResponse)> GetViewsAndClonesStatistics(Repository repository, CancellationToken cancellationToken)
+		{
 			var getViewStatisticsTask = _gitHubApiV3Service.GetRepositoryViewStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
 			var getCloneStatisticsTask = _gitHubApiV3Service.GetRepositoryCloneStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
 
 			try
 			{
-				await Task.WhenAll(getViewStatisticsTask, getCloneStatisticsTask, getStarGazrsTask).ConfigureAwait(false);
+				await Task.WhenAll(getViewStatisticsTask, getCloneStatisticsTask).ConfigureAwait(false);
 
 				return (await getViewStatisticsTask.ConfigureAwait(false),
-						await getCloneStatisticsTask.ConfigureAwait(false),
-						await getStarGazrsTask.ConfigureAwait(false));
+						await getCloneStatisticsTask.ConfigureAwait(false));
 			}
 			catch (ApiException e) when (_gitHubApiStatusService.IsAbuseRateLimit(e.Headers, out var timespan))
 			{
 				OnAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData(repository, timespan.Value);
 
-				return (null, null, null);
+				return (null, null);
 			}
 			catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.Forbidden)
 			{
 				reportException(e);
 
-				return (null, null, null);
+				return (null, null);
 			}
 			catch (GraphQLException<StarGazers> e) when (e.ContainsSamlOrganizationAthenticationError(out _))
 			{
 				reportException(e);
 
-				return (null, null, null);
+				return (null, null);
 			}
 			catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.NotFound) // Repository deleted from GitHub but has not yet been deleted from local SQLite Database
 			{
 				reportException(e);
 
-				var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
-				if (repositoryFromDatabase is null)
-					throw;
+				OnRepositoryUriNotFound(repository.Url);
 
-				await _repositoryDatabase.DeleteRepository(repository).ConfigureAwait(false);
-				return (null, null, null);
+				return (null, null);
+			}
+
+			void reportException(in Exception e)
+			{
+				_analyticsService.Report(e, new Dictionary<string, string>
+				{
+					{ nameof(Repository) + nameof(Repository.Name), repository.Name },
+					{ nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin },
+					{ nameof(GitHubUserService) + nameof(GitHubUserService.Alias), _gitHubUserService.Alias },
+					{ nameof(GitHubUserService) + nameof(GitHubUserService.Name), _gitHubUserService.Name },
+					{ nameof(GitHubApiStatusService) + nameof(GitHubApiStatusService.IsAbuseRateLimit),  _gitHubApiStatusService.IsAbuseRateLimit(e, out _).ToString() }
+				});
+			}
+		}
+
+		async Task<(string RepositoryName, StarGazers? StarGazers)> GetStarGazersStatistics(Repository repository, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var starGazers = await _gitHubGraphQLApiService.GetStarGazers(repository.Name, repository.OwnerLogin, cancellationToken).ConfigureAwait(false);
+				return (repository.Name, starGazers);
+			}
+			catch (ApiException e) when (_gitHubApiStatusService.IsAbuseRateLimit(e.Headers, out var timespan))
+			{
+				OnAbuseRateLimitFound_UpdateRepositoriesWithViewsClonesAndStarsData(repository, timespan.Value);
+
+				return (repository.Name, null);
+			}
+			catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.Forbidden)
+			{
+				reportException(e);
+
+				return (repository.Name, null);
+			}
+			catch (GraphQLException<StarGazers> e) when (e.ContainsSamlOrganizationAthenticationError(out _))
+			{
+				reportException(e);
+
+				return (repository.Name, null);
+			}
+			catch (ApiException e) when (e.StatusCode is System.Net.HttpStatusCode.NotFound) // Repository deleted from GitHub but has not yet been deleted from local SQLite Database
+			{
+				reportException(e);
+
+				OnRepositoryUriNotFound(repository.Url);
+
+				return (repository.Name, null);
 			}
 
 			void reportException(in Exception e)
@@ -191,5 +258,8 @@ namespace GitTrends
 
 		void OnAbuseRateLimitFound_GetReferringSites(in Repository repository, in TimeSpan retryTimeSpan) =>
 			_abuseRateLimitFoundEventManager.RaiseEvent(this, (repository, retryTimeSpan), nameof(AbuseRateLimitFound_GetReferringSites));
+
+		void OnRepositoryUriNotFound(in string url) =>
+			_repositoryUriNotFoundEventManager.RaiseEvent(this, new Uri(url), nameof(RepositoryUriNotFound));
 	}
 }

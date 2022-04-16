@@ -44,9 +44,9 @@ namespace GitTrends.UnitTests
 			Assert.IsTrue(wasScheduledSuccessfully_First);
 			Assert.IsFalse(wasScheduledSuccessfully_Second);
 
-			Assert.IsFalse(repository_Initial.ContainsTrafficData);
-			Assert.IsTrue(repository_Final.ContainsTrafficData);
-			Assert.IsTrue(repository_Database.ContainsTrafficData);
+			Assert.IsFalse(repository_Initial.ContainsViewsClonesStarsData);
+			Assert.IsTrue(repository_Final.ContainsViewsClonesStarsData);
+			Assert.IsTrue(repository_Database.ContainsViewsClonesStarsData);
 
 			Assert.IsNull(repository_Initial.DailyClonesList);
 			Assert.IsNull(repository_Initial.DailyViewsList);
@@ -129,8 +129,8 @@ namespace GitTrends.UnitTests
 
 			Assert.AreEqual(organizationName_Initial, organizationName_Final);
 
-			Assert.IsTrue(repository_Final.ContainsTrafficData);
-			Assert.IsTrue(repository_Database.ContainsTrafficData);
+			Assert.IsTrue(repository_Final.ContainsViewsClonesStarsData);
+			Assert.IsTrue(repository_Database.ContainsViewsClonesStarsData);
 
 			Assert.IsNotNull(repository_Final.DailyClonesList);
 			Assert.IsNotNull(repository_Final.DailyViewsList);
@@ -239,7 +239,7 @@ namespace GitTrends.UnitTests
 
 			Assert.AreEqual(repository_Initial.ToString(), repository_Final.ToString());
 
-			Assert.AreEqual(repository_Initial.ContainsTrafficData, repository_Final.ContainsTrafficData);
+			Assert.AreEqual(repository_Initial.ContainsViewsClonesStarsData, repository_Final.ContainsViewsClonesStarsData);
 			Assert.AreEqual(repository_Initial.DailyClonesList?.Count, repository_Final.DailyClonesList?.Count);
 			Assert.AreEqual(repository_Initial.DailyViewsList?.Count, repository_Final.DailyViewsList?.Count);
 			Assert.AreEqual(repository_Initial.DataDownloadedAt, repository_Final.DataDownloadedAt);

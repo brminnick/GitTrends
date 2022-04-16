@@ -128,7 +128,7 @@ namespace GitTrends
 			}
 		}
 
-		public async Task<StarGazers> GetStarGazers(string owner, string repo, CancellationToken cancellationToken)
+		public async Task<StarGazers> GetStarGazers(string owner, string repo, CancellationToken cancellationToken, int starGazersPerRequest = 100)
 		{
 			if (_gitHubUserService.IsDemoUser)
 			{
@@ -146,7 +146,7 @@ namespace GitTrends
 				do
 				{
 					var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-					starGazerResponse = await AttemptAndRetry_Mobile(() => _githubApiClient.GetStarGazers(owner, repo, currentPageNumber, GetGitHubBearerTokenHeader(token)), cancellationToken).ConfigureAwait(false);
+					starGazerResponse = await AttemptAndRetry_Mobile(() => _githubApiClient.GetStarGazers(owner, repo, currentPageNumber, GetGitHubBearerTokenHeader(token), starGazersPerRequest), cancellationToken).ConfigureAwait(false);
 
 					totalStarGazers.AddRange(starGazerResponse);
 					currentPageNumber++;
