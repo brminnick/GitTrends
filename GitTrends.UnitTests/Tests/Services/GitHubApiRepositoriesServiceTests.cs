@@ -26,13 +26,15 @@ namespace GitTrends.UnitTests
 		}
 
 		[Test]
-		public async Task UpdateRepositoriesWithViewsAndClonesData_ValidRepo()
+		public async Task UpdateRepositoriesWithViewsClonesStarsData_ValidRepo()
 		{
 			//Arrange
-			IReadOnlyList<Repository> repositories_NoViewsClonesData_Filtered;
+			IReadOnlyList<Repository> repositories_Filtered;
+			IReadOnlyList<Repository> repositories_NoViewsClonesStarsData_Filtered;
 
 			var repositories = new List<Repository>();
-			var repositories_NoViewsClonesData = new List<Repository>();
+			var repositories_NoStarsData = new List<Repository>();
+			var repositories_NoViewsClonesStarsData = new List<Repository>();
 
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
@@ -41,27 +43,44 @@ namespace GitTrends.UnitTests
 			//Act
 			await foreach (var repository in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
 			{
-				repositories_NoViewsClonesData.Add(repository);
+				repositories_NoViewsClonesStarsData.Add(repository);
 			}
 
-			repositories_NoViewsClonesData_Filtered = repositories_NoViewsClonesData.RemoveForksAndDuplicates().ToList();
+			repositories_NoViewsClonesStarsData_Filtered = repositories_NoViewsClonesStarsData.RemoveForksAndDuplicates().ToList();
 
-			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesData_Filtered, CancellationToken.None).ConfigureAwait(false))
+			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
+			{
+				repositories_NoStarsData.Add(repository);
+			}
+
+			repositories_Filtered = repositories_NoStarsData.RemoveForksAndDuplicates().ToList();
+
+			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositories_Filtered, CancellationToken.None).ConfigureAwait(false))
 			{
 				repositories.Add(repository);
 			}
 
 			//Assert
 			Assert.IsNotEmpty(repositories);
-			Assert.IsNotEmpty(repositories_NoViewsClonesData);
+			Assert.IsNotEmpty(repositories_NoStarsData);
+			Assert.IsNotEmpty(repositories_NoViewsClonesStarsData);
 
-			foreach (var repository in repositories_NoViewsClonesData)
+			foreach (var repository in repositories_NoViewsClonesStarsData)
 			{
 				Assert.IsNull(repository.StarredAt);
 				Assert.IsNull(repository.TotalClones);
 				Assert.IsNull(repository.TotalUniqueClones);
 				Assert.IsNull(repository.TotalViews);
 				Assert.IsNull(repository.TotalUniqueViews);
+			}
+
+			foreach (var repository in repositories_NoStarsData)
+			{
+				Assert.IsNull(repository.StarredAt);
+				Assert.IsNotNull(repository.TotalClones);
+				Assert.IsNotNull(repository.TotalUniqueClones);
+				Assert.IsNotNull(repository.TotalViews);
+				Assert.IsNotNull(repository.TotalUniqueViews);
 			}
 
 			Assert.IsNotEmpty(repositories.SelectMany(x => x.StarredAt));
@@ -76,7 +95,7 @@ namespace GitTrends.UnitTests
 		}
 
 		[Test]
-		public async Task UpdateRepositoriesWithViewsClonesAndStarsData_ValidRepo_NotFiltered()
+		public async Task UpdateRepositoriesWithViewsClonesData_ValidRepo_NotFiltered()
 		{
 			//Arrange
 			var repositories = new List<Repository>();
@@ -105,7 +124,36 @@ namespace GitTrends.UnitTests
 		}
 
 		[Test]
-		public async Task UpdateRepositoriesWithViewsClonesAndStarsData_EmptyRepos()
+		public async Task UpdateRepositoriesWithStarsData_ValidRepo_NotFiltered()
+		{
+			//Arrange
+			var repositories = new List<Repository>();
+			var repositories_NoViewsClonesStarsData = new List<Repository>();
+
+			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+			var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
+
+			//Act
+			await foreach (var repository in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
+			{
+				repositories_NoViewsClonesStarsData.Add(repository);
+			}
+
+			var exception = Assert.ThrowsAsync<InvalidOperationException>(async () =>
+			{
+				await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositories_NoViewsClonesStarsData, CancellationToken.None).ConfigureAwait(false))
+				{
+					repositories.Add(repository);
+				}
+			});
+
+			//Assert
+			Assert.IsTrue(exception?.Message.Contains("more than one matching element"));
+		}
+
+		[Test]
+		public async Task UpdateRepositoriesWithViewsClonesData_EmptyRepos()
 		{
 			//Arrange
 			var repositories = new List<Repository>();
@@ -123,12 +171,33 @@ namespace GitTrends.UnitTests
 		}
 
 		[Test]
+		public async Task UpdateRepositoriesWithViewsClonesStarsData_EmptyRepos()
+		{
+			//Arrange
+			var repositories = new List<Repository>();
+
+			var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
+
+			//Act
+			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(new List<Repository>(), CancellationToken.None).ConfigureAwait(false))
+			{
+				repositories.Add(repository);
+			}
+
+			//Assert
+			Assert.IsEmpty(repositories);
+		}
+
+		[Test]
 		public async Task UpdateRepositoriesWithViewsClonesAndStarsData_ValidRepo_Unauthenticated()
 		{
 			//Arrange
-			IReadOnlyList<Repository> repositories_NoViewsClonesData_Filtered;
+			IReadOnlyList<Repository> repositories_NoStarsData_Filtered;
+			IReadOnlyList<Repository> repositories_NoViewsClonesStarsData_Filtered;
+
 			var repositories = new List<Repository>();
-			var repositories_NoViewsClonesData = new List<Repository>();
+			var repositories_NoStarsData = new List<Repository>();
+			var repositories_NoViewsClonesStarsData = new List<Repository>();
 
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
@@ -138,14 +207,21 @@ namespace GitTrends.UnitTests
 			//Act
 			await foreach (var repository in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
 			{
-				repositories_NoViewsClonesData.Add(repository);
+				repositories_NoViewsClonesStarsData.Add(repository);
 			}
 
-			repositories_NoViewsClonesData_Filtered = repositories_NoViewsClonesData.RemoveForksAndDuplicates().ToList();
+			repositories_NoViewsClonesStarsData_Filtered = repositories_NoViewsClonesStarsData.RemoveForksAndDuplicates().ToList();
 
 			gitHubUserService.InvalidateToken();
 
-			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesData_Filtered, CancellationToken.None).ConfigureAwait(false))
+			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
+			{
+				repositories_NoStarsData.Add(repository);
+			};
+
+			repositories_NoStarsData_Filtered = repositories_NoStarsData.RemoveForksAndDuplicates().ToList();
+
+			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositories_NoStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
 			{
 				repositories.Add(repository);
 			};
@@ -160,9 +236,12 @@ namespace GitTrends.UnitTests
 		public async Task UpdateRepositoriesWithViewsClonesAndStarsData_ValidRepo_Authenticated()
 		{
 			//Arrange
-			IReadOnlyList<Repository> repositories_NoViewsClonesData_Filtered;
+			IReadOnlyList<Repository> repositories_NoStarsData_Filtered;
+			IReadOnlyList<Repository> repositories_NoViewsClonesStarsData_Filtered;
+
 			var repositories = new List<Repository>();
-			var repositories_NoViewsClonesData = new List<Repository>();
+			var repositories_NoStarsData = new List<Repository>();
+			var repositories_NoViewsClonesStarsData = new List<Repository>();
 
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
@@ -173,18 +252,25 @@ namespace GitTrends.UnitTests
 			//Act
 			await foreach (var repository in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
 			{
-				repositories_NoViewsClonesData.Add(repository);
+				repositories_NoViewsClonesStarsData.Add(repository);
 			}
 
-			repositories_NoViewsClonesData_Filtered = repositories_NoViewsClonesData.RemoveForksAndDuplicates().ToList();
+			repositories_NoViewsClonesStarsData_Filtered = repositories_NoViewsClonesStarsData.RemoveForksAndDuplicates().ToList();
 
-			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesData_Filtered, CancellationToken.None).ConfigureAwait(false))
+			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
+			{
+				repositories_NoStarsData.Add(repository);
+			};
+
+			repositories_NoStarsData_Filtered = repositories_NoStarsData.RemoveForksAndDuplicates().ToList();
+
+			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositories_NoStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
 			{
 				repositories.Add(repository);
 			};
 
 			//Assert
-			Assert.AreEqual(repositories_NoViewsClonesData_Filtered.Count, repositories.Count);
+			Assert.AreEqual(repositories_NoViewsClonesStarsData_Filtered.Count, repositories.Count);
 
 			foreach (var repository in repositories)
 			{

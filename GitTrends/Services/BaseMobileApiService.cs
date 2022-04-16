@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,7 +18,7 @@ namespace GitTrends
 
 		protected IAnalyticsService AnalyticsService { get; }
 
-		protected string GetGitHubBearerTokenHeader(GitHubToken token) => $"{token.TokenType} {token.AccessToken}";
+		protected string GetGitHubBearerTokenHeader(GitHubToken token) => token.IsEmpty() ? string.Empty : $"{token.TokenType} {token.AccessToken}";
 
 		protected async Task<T> AttemptAndRetry_Mobile<T>(Func<Task<T>> action, CancellationToken cancellationToken, int numRetries = 3, [CallerMemberName] string callerName = "")
 		{
