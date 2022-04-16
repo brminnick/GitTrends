@@ -26,7 +26,12 @@ namespace GitTrends.UnitTests
 
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
+			var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
 			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+			var repositoriesUpdatedInBackground = new List<Repository>();
+			var fetchStarsInBackgroundTCS = new TaskCompletionSource<IReadOnlyList<Repository>>();
+			BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
 
 			//Act
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
@@ -37,6 +42,7 @@ namespace GitTrends.UnitTests
 			emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
 
 			await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
+			var fetchStarsInBackgroundTCSResult = await fetchStarsInBackgroundTCS.Task.ConfigureAwait(false);
 
 			afterPullToRefresh = DateTimeOffset.UtcNow;
 			emptyDataViewTitle_Final = repositoryViewModel.EmptyDataViewTitle;
@@ -46,6 +52,7 @@ namespace GitTrends.UnitTests
 			//Assert
 			Assert.IsEmpty(visibleRepositoryList_Initial);
 			Assert.IsNotEmpty(visibleRepositoryList_Final);
+			Assert.IsNotEmpty(fetchStarsInBackgroundTCSResult);
 
 			Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true), emptyDataViewTitle_Initial);
 			Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Succeeded, false), emptyDataViewTitle_Final);
@@ -54,6 +61,11 @@ namespace GitTrends.UnitTests
 			Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Succeeded, false), emptyDataViewDescription_Final);
 
 			Assert.IsTrue(visibleRepositoryList_Final.Any(x => x.OwnerLogin is GitHubConstants.GitTrendsRepoOwner && x.Name is GitHubConstants.GitTrendsRepoName));
+
+			Assert.AreEqual(fetchStarsInBackgroundTCSResult.Count, repositoriesUpdatedInBackground.Count);
+
+			foreach (var repository in repositoriesUpdatedInBackground)
+				Assert.IsTrue(visibleRepositoryList_Final.Any(x => x.Url == repository.Url));
 
 			foreach (var repository in visibleRepositoryList_Final)
 			{
@@ -69,7 +81,32 @@ namespace GitTrends.UnitTests
 				Assert.Less(beforePullToRefresh, repository.DataDownloadedAt);
 				Assert.Greater(afterPullToRefresh, repository.DataDownloadedAt);
 			}
+
+			void HandleScheduleRetryRepositoriesStarsCompleted(object? sender, Repository e)
+			{
+				if (!backgroundFetchService.QueuedJobs.Any())
+				{
+					BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
+				}
+
+				Assert.IsNotNull(e.DailyClonesList);
+				Assert.IsNotNull(e.DailyViewsList);
+				Assert.IsNotNull(e.StarCount);
+				Assert.IsNotNull(e.StarredAt);
+				Assert.IsNotNull(e.TotalClones);
+				Assert.IsNotNull(e.TotalUniqueClones);
+				Assert.IsNotNull(e.TotalUniqueViews);
+				Assert.IsNotNull(e.TotalViews);
+
+				repositoriesUpdatedInBackground.Add(e);
+
+				if (!backgroundFetchService.QueuedJobs.Any())
+				{
+					fetchStarsInBackgroundTCS.SetResult(repositoriesUpdatedInBackground);
+				}
+			}
 		}
+
 
 		[Test]
 		public async Task PullToRefreshCommandTest_ShouldIncludeOrganizationsChanged()

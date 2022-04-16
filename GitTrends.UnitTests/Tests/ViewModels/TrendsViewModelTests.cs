@@ -35,7 +35,7 @@ namespace GitTrends.UnitTests
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
 			var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None);
-			await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(new[] { repository }, CancellationToken.None).ConfigureAwait(false))
+			await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(new[] { repository }, CancellationToken.None).ConfigureAwait(false))
 			{
 				repository = completedReposiory;
 			}
@@ -94,7 +94,7 @@ namespace GitTrends.UnitTests
 		public async Task FetchDataCommandTest_AuthenticatedUser_NoData()
 		{
 			//Arrange
-			Repository repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, string.Empty, 0, GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsAvatarUrl, 0, 0, $"{GitHubConstants.GitHubBaseUrl}/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+			Repository repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, string.Empty, 0, GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsAvatarUrl, 0, 0, 0, $"{GitHubConstants.GitHubBaseUrl}/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
 			Repository repository_RepositorySavedToDatabaseResult;
 
 			TaskCompletionSource<Repository> repositorySavedToDatabaseTCS = new();
@@ -110,7 +110,6 @@ namespace GitTrends.UnitTests
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 			var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
-
 
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
@@ -139,7 +138,7 @@ namespace GitTrends.UnitTests
 			Assert.IsNotEmpty(dailyClonesList_Final);
 			Assert.IsNotEmpty(dailyStarsList_Final);
 
-			Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarCount, dailyStarsList_Final.Select(x => x.TotalStars).Distinct().Count());
+			Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarredAt?.Count, dailyStarsList_Final.Select(x => x.TotalStars).Distinct().Count());
 
 			for (int i = 0; i < dailyViewsList_Final.Count; i++)
 			{
@@ -209,7 +208,7 @@ namespace GitTrends.UnitTests
 
 			if (shouldIncludeViewsClonesData)
 			{
-				await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(new[] { repository }, CancellationToken.None).ConfigureAwait(false))
+				await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(new[] { repository }, CancellationToken.None).ConfigureAwait(false))
 				{
 					repository = completedReposiory;
 				}

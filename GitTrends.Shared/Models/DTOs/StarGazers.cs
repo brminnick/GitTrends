@@ -18,4 +18,13 @@ namespace GitTrends.Shared
 	}
 
 	public record StarGazerInfo(DateTimeOffset StarredAt, string Cursor);
+
+	public record StarGazer
+	{
+		public StarGazer(DateTimeOffset starred_at) => StarredAt = starred_at;
+
+		public DateTimeOffset StarredAt { get; }
+	}
+
+	public record StarGazersConnection(long TotalCount);
 }

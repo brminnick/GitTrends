@@ -33,7 +33,7 @@ namespace GitTrends.Shared
 
 		public string OwnerAvatarUrl { get; }
 
-		public long? StarCount { get; }
+		public long StarCount { get; }
 
 		public long IssuesCount { get; }
 

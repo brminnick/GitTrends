@@ -30,6 +30,7 @@ namespace GitTrends
 		readonly ImageCachingService _imageCachingService;
 		readonly MobileSortingService _mobileSortingService;
 		readonly GitHubApiStatusService _gitHubApiStatusService;
+		readonly BackgroundFetchService _backgroundFetchService;
 		readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
 		readonly GitHubAuthenticationService _gitHubAuthenticationService;
 		readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
@@ -53,13 +54,15 @@ namespace GitTrends
 									ImageCachingService imageCachingService,
 									MobileSortingService mobileSortingService,
 									GitHubApiStatusService gitHubApiStatusService,
+									BackgroundFetchService backgroundFetchService,
 									GitHubGraphQLApiService gitHubGraphQLApiService,
 									GitHubAuthenticationService gitHubAuthenticationService,
 									GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, mainThread)
 		{
 			LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
-			TrendsViewModel.RepositorySavedToDatabase += HandleRepositorySavedToDatabase;
-			BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesCompleted += HandleScheduleRetryRepositoriesViewsClonesCompleted;
+			TrendsViewModel.RepositorySavedToDatabase += HandleTrendsViewModelRepositorySavedToDatabase;
+			BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
+			BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted += HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
 
 			UpdateText();
 
@@ -70,6 +73,7 @@ namespace GitTrends
 			_imageCachingService = imageCachingService;
 			_mobileSortingService = mobileSortingService;
 			_gitHubApiStatusService = gitHubApiStatusService;
+			_backgroundFetchService = backgroundFetchService;
 			_gitHubGraphQLApiService = gitHubGraphQLApiService;
 			_gitHubAuthenticationService = gitHubAuthenticationService;
 			_gitHubApiRepositoriesService = gitHubApiRepositoriesService;
@@ -94,6 +98,8 @@ namespace GitTrends
 			});
 
 			NotificationService.SortingOptionRequested += HandleSortingOptionRequested;
+
+			GitHubApiRepositoriesService.RepositoryUriNotFound += HandleRepositoryUriNotFound;
 
 			GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 			GitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
@@ -168,6 +174,8 @@ namespace GitTrends
 
 		async Task ExecutePullToRefreshCommand(string repositoryOwner)
 		{
+			const int minimumBatchCount = 100;
+
 			HttpResponseMessage? finalResponse = null;
 			IReadOnlyList<Repository>? repositoriesFromDatabase = null;
 			var saveCompletedRepositoryToDatabaseTaskList = new List<Task>();
@@ -183,8 +191,7 @@ namespace GitTrends
 
 			try
 			{
-				const int minimumBatchCount = 100;
-
+				#region Get Visible RepositoryList Data in Foreground
 				var favoriteRepositoryUrls = await _repositoryDatabase.GetFavoritesUrls().ConfigureAwait(false);
 
 				var repositoryList = new List<Repository>();
@@ -210,44 +217,85 @@ namespace GitTrends
 
 				repositoriesFromDatabase = await repositoriesFromDatabaseTask.ConfigureAwait(false);
 
-				IReadOnlyList<Repository> repositoriesToUpdate = repositoriesFromDatabase.Where(x => _gitHubUserService.ShouldIncludeOrganizations || x.OwnerLogin == _gitHubUserService.Alias) // Only include organization repositories if `ShouldIncludeOrganizations` is true
-											.Where(x => x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12))) // Cached repositories that haven't been updated in 12 hours 
-											.Concat(_repositoryList) // Add downloaded repositories
-											.OrderByDescending(x => x.DataDownloadedAt) // Ensure the newest data is ordered first
-											.GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.ContainsTrafficData) ?? x.First()).ToList(); // Remove duplicate repositories, selecting the First repository to ensure the Repository newest data is selected because the First repository has the newest data thanks to `OrderByDescending(x => x.DataDownloadedAt)`
+				var repositoriesFromDatabaseThatDontRequireUpdating = repositoriesFromDatabase.Where(x => x.ContainsViewsClonesData // Ensure the repository contains data for Views + Clones
+																											&& x.DataDownloadedAt >= DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12)) // Cached repositories that have been updated in the past 12 hours				
+																											&& _repositoryList.Any(y => y.Url == x.Url)); // Ensure was retrieved from GitHub)
 
-				var completedRepositories = new List<Repository>();
-				await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsClonesAndStarsData(repositoriesToUpdate, cancellationTokenSource.Token).ConfigureAwait(false))
+				AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
+
+				var viewsClonesRepsitoriesList = new List<Repository>();
+				await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.Where(x => !x.ContainsViewsClonesData), cancellationTokenSource.Token).ConfigureAwait(false))
 				{
-					completedRepositories.Add(retrievedRepositoryWithViewsAndClonesData);
+					viewsClonesRepsitoriesList.Add(retrievedRepositoryWithViewsAndClonesData);
 
 					if (!_gitHubUserService.IsDemoUser)
 					{
-						var saveRepositoryToDatabaseTask = _repositoryDatabase.SaveRepository(retrievedRepositoryWithViewsAndClonesData);
-						saveCompletedRepositoryToDatabaseTaskList.Add(saveRepositoryToDatabaseTask);
-
 						//Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
-						if (completedRepositories.Count > minimumBatchCount)
+						if (viewsClonesRepsitoriesList.Count > minimumBatchCount)
 						{
-							AddRepositoriesToCollection(completedRepositories, _searchBarText);
-							completedRepositories.Clear();
+							AddRepositoriesToCollection(viewsClonesRepsitoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
+							viewsClonesRepsitoriesList.Clear();
 						}
 					}
 				}
 
 				//Add Remaining Repositories to VisibleRepositoryList
-				AddRepositoriesToCollection(completedRepositories, _searchBarText);
+				AddRepositoriesToCollection(viewsClonesRepsitoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
+				#endregion
+
+				IsRefreshing = false;
+
+				#region Get StarGazer Data in Background
+				// The StarGazer data can be gathered in the background because the data only appears if the user navigates to the StarsTrendsPage
+				// The data is gathered in the background to optimize the Pull-To-Refresh time visible to the user
+				repositoriesFromDatabaseThatDontRequireUpdating = repositoriesFromDatabase.Where(x => x.ContainsViewsClonesStarsData // Ensure the repository contains data for Views + Clones + Stars
+																											&& x.DataDownloadedAt >= DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12)) // Cached repositories that have been updated in the past 12 hours				
+																											&& _repositoryList.Any(y => y.Url == x.Url)); // Ensure was retrieved from GitHub)
+
+				AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
+
+
+				var repositoriesWithoutStarsDataAndOver1000Stars = _repositoryList.Where(x => !x.ContainsViewsClonesStarsData && x.StarCount > 1000);
+				var repositoriesWithoutStarsDataAndLessThan1000Stars = _repositoryList.Where(x => !x.ContainsViewsClonesStarsData && x.StarCount <= 1000);
+
+				// Fetch Stars Data in Background for Repositories Containing Over 1000 Stars
+				// GitHub API limits us to 100 StarGazers per Request, meaning that a repository with 24K Stars requires 240 round-trips from GitTrends to GitHub's servers to aggregate the data
+				// This data is not displayed in the Repository Page
+				foreach (var repository in repositoriesWithoutStarsDataAndOver1000Stars)
+					_backgroundFetchService.TryScheduleRetryRepositoriesStars(repository); 
+
+				var starredRepositoriesList = new List<Repository>();
+				await foreach (var retrievedRepositoryWithStarsData in _gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositoriesWithoutStarsDataAndLessThan1000Stars, cancellationTokenSource.Token).ConfigureAwait(false))
+				{
+					starredRepositoriesList.Add(retrievedRepositoryWithStarsData);
+
+					if (!_gitHubUserService.IsDemoUser)
+					{
+						var saveRepositoryToDatabaseTask = _repositoryDatabase.SaveRepository(retrievedRepositoryWithStarsData);
+						saveCompletedRepositoryToDatabaseTaskList.Add(saveRepositoryToDatabaseTask);
+
+						//Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
+						if (starredRepositoriesList.Count > minimumBatchCount)
+						{
+							AddRepositoriesToCollection(starredRepositoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
+							starredRepositoriesList.Clear();
+						}
+					}
+				}
+
+				AddRepositoriesToCollection(starredRepositoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
+				#endregion
 
 				if (!_gitHubUserService.IsDemoUser)
 				{
 					//Rate Limiting may cause some data to not return successfully from the GitHub API
 					var missingRepositories = _gitHubUserService.ShouldIncludeOrganizations switch
 					{
-						true => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsTrafficData),
-						false => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsTrafficData && x.OwnerLogin == _gitHubUserService.Alias)
+						true => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsViewsClonesStarsData),
+						false => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsViewsClonesStarsData && x.OwnerLogin == _gitHubUserService.Alias)
 					};
 
-					AddRepositoriesToCollection(missingRepositories, _searchBarText);
+					AddRepositoriesToCollection(missingRepositories, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
 
 					//Call EnsureSuccessStatusCode to confirm the above API calls executed successfully
 					finalResponse = await _gitHubApiV3Service.GetGitHubApiResponse(cancellationTokenSource.Token).ConfigureAwait(false);
@@ -280,7 +328,13 @@ namespace GitTrends
 					false => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.OwnerLogin == _gitHubUserService.Alias)
 				};
 
-				AddRepositoriesToCollection(missingRepositories, _searchBarText);
+				AddRepositoriesToCollection(missingRepositories, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
+
+				foreach (var repositoryToUpdate in _repositoryList.Where(x => !x.ContainsViewsClonesStarsData // Ensure the repository contains data for Views + Clones
+																				 && x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12)))) // Cached repositories that have been updated in the past 12 hours
+				{
+					_backgroundFetchService.TryScheduleRetryRepositoriesStars(repositoryToUpdate, retryTimeSpan.Value);
+				}
 
 				var abuseLimit = new AbuseLimitPullToRefreshEventArgs(retryTimeSpan.Value, VisibleRepositoryList.Any());
 				OnPullToRefreshFailed(abuseLimit);
@@ -393,13 +447,32 @@ namespace GitTrends
 			UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
 		}
 
-		void AddRepositoriesToCollection(in IEnumerable<Repository> repositories, in string searchBarText, in bool shouldUpdateVisibleRepositoryList = true)
+		void AddRepositoriesToCollection(in IEnumerable<Repository> repositories, in string searchBarText, in bool shouldUpdateVisibleRepositoryList = true, Func<Repository, bool>? duplicateRepositoryPriorityFilter = null)
 		{
 			if (!repositories.Any())
 				return;
 
+			duplicateRepositoryPriorityFilter ??= _ => true;
+
 			var updatedRepositoryList = _repositoryList.Concat(repositories);
-			_repositoryList = RepositoryService.RemoveForksAndDuplicates(updatedRepositoryList).ToList();
+			_repositoryList = updatedRepositoryList.RemoveForksAndDuplicates(duplicateRepositoryPriorityFilter).ToList();
+
+			if (shouldUpdateVisibleRepositoryList)
+				UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
+		}
+
+		void RemoveRepositoriesFromCollection(in IEnumerable<Repository> repositories, in string searchBarText, in bool shouldUpdateVisibleRepositoryList = true)
+		{
+			if (!repositories.Any())
+				return;
+
+			var updatedRepositoryList = new List<Repository>(_repositoryList);
+			foreach (var repositoryToRemove in repositories)
+			{
+				updatedRepositoryList.Remove(repositoryToRemove);
+			}
+
+			_repositoryList = updatedRepositoryList.RemoveForksAndDuplicates(x => x.ContainsViewsClonesStarsData).ToList();
 
 			if (shouldUpdateVisibleRepositoryList)
 				UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
@@ -449,6 +522,12 @@ namespace GitTrends
 			await _repositoryDatabase.DeleteAllData().ConfigureAwait(false);
 		}
 
+		void HandleRepositoryUriNotFound(object sender, Uri e)
+		{
+			var repositoriesToRemove = _repositoryList.Where(x => x.Url == e.ToString());
+			RemoveRepositoriesFromCollection(repositoriesToRemove, _searchBarText);
+		}
+
 		void HandleDemoUserActivated(object sender, EventArgs e) => IsRefreshing = true;
 
 		void HandleGitHubAuthenticationServiceLoggedOut(object sender, EventArgs e) => UpdateListForLoggedOutUser();
@@ -469,7 +548,8 @@ namespace GitTrends
 			_pullToRefreshFailedEventManager.RaiseEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
 		}
 
-		void HandleScheduleRetryRepositoriesViewsClonesCompleted(object sender, Repository e) => AddRepositoriesToCollection(new List<Repository> { e }, _searchBarText);
-		void HandleRepositorySavedToDatabase(object sender, Repository e) => AddRepositoriesToCollection(new List<Repository> { e }, _searchBarText);
+		void HandleScheduleRetryRepositoriesStarsCompleted(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
+		void HandleTrendsViewModelRepositorySavedToDatabase(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
+		void HandleScheduleRetryRepositoriesViewsClonesStarsCompleted(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
 	}
 }

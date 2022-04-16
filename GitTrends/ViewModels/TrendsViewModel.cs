@@ -272,12 +272,12 @@ namespace GitTrends
 
 			try
 			{
-				if (repository.ContainsTrafficData
+				if (repository.ContainsViewsClonesStarsData
 					&& repository.DataDownloadedAt > DateTimeOffset.Now.AddDays(-1))
 				{
-					repositoryStars = repository.StarredAt ?? throw new InvalidOperationException($"{nameof(Repository.StarredAt)} cannot be null when {nameof(Repository.ContainsTrafficData)} is true");
-					repositoryViews = repository.DailyViewsList ?? throw new InvalidOperationException($"{nameof(Repository.DailyViewsList)} cannot be null when {nameof(Repository.ContainsTrafficData)} is true");
-					repositoryClones = repository.DailyClonesList ?? throw new InvalidOperationException($"{nameof(Repository.DailyClonesList)} cannot be null when {nameof(Repository.ContainsTrafficData)} is true");
+					repositoryStars = repository.StarredAt ?? throw new InvalidOperationException($"{nameof(Repository.StarredAt)} cannot be null when {nameof(Repository.ContainsViewsClonesStarsData)} is true");
+					repositoryViews = repository.DailyViewsList ?? throw new InvalidOperationException($"{nameof(Repository.DailyViewsList)} cannot be null when {nameof(Repository.ContainsViewsClonesStarsData)} is true");
+					repositoryClones = repository.DailyClonesList ?? throw new InvalidOperationException($"{nameof(Repository.DailyClonesList)} cannot be null when {nameof(Repository.ContainsViewsClonesStarsData)} is true");
 				}
 				else
 				{
@@ -333,7 +333,7 @@ namespace GitTrends
 			}
 			catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan))
 			{
-				_backgroundFetchService.TryScheduleRetryRepositoriesViewsClones(repository, retryTimeSpan.Value);
+				_backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository, retryTimeSpan.Value);
 
 				var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
 

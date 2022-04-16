@@ -40,5 +40,8 @@ namespace GitTrends.Shared
 
 		[Get("/repos/{owner}/{repo}")]
 		Task<GetRepositoryResponse> GetRepository(string owner, string repo, [Header("Authorization")] string authorization);
+
+		[Get("/repos/{owner}/{repo}/stargazers")]
+		Task<IReadOnlyList<StarGazer>> GetStarGazers(string owner, string repo, [AliasAs("page")] int currentPageNumber, [Header("Authorization")] string authorization, [AliasAs("per_page")] int starGazersPerRequest = 100, [Header("Accept")] string accept = "application/vnd.github.v3.star+json");
 	}
 }
