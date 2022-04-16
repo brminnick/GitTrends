@@ -375,7 +375,7 @@ namespace GitTrends
 										repositoryDatabaseModel.IsFavorite,
 										viewsList,
 										clonesList,
-										starGazerInfoDatabaseModels.Select(x => x.StarredAt).Distinct());
+										starGazerInfoDatabaseModels?.Select(x => x.StarredAt).Distinct());
 			}
 
 			public static RepositoryDatabaseModel ToRepositoryDatabase(in Repository repository) => new()
