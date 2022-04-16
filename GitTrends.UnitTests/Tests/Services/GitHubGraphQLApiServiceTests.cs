@@ -141,11 +141,12 @@ namespace GitTrends.UnitTests
 			Assert.AreEqual(GitHubConstants.GitTrendsRepoOwner, gitTrendsRepository.OwnerLogin);
 			Assert.AreEqual(AuthenticatedGitHubUserAvatarUrl, gitTrendsRepository.OwnerAvatarUrl);
 
+			Assert.Greater(repositories.Sum(x => x.StarCount), 0);
 			Assert.AreEqual(0, repositories.Sum(x => x.TotalViews));
 			Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueViews));
 			Assert.AreEqual(0, repositories.Sum(x => x.TotalClones));
 			Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueClones));
-			Assert.AreEqual(0, repositories.Sum(x => x.StarCount));
+			Assert.AreEqual(0, repositories.Sum(x => x.StarredAt?.Count));
 		}
 
 		[Test]
@@ -214,11 +215,12 @@ namespace GitTrends.UnitTests
 			Assert.GreaterOrEqual(repositories.Count, 1);
 
 
+			Assert.Greater(repositories.Sum(x => x.StarCount), 0);
 			Assert.AreEqual(0, repositories.Sum(x => x.TotalViews));
 			Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueViews));
 			Assert.AreEqual(0, repositories.Sum(x => x.TotalClones));
 			Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueClones));
-			Assert.AreEqual(0, repositories.Sum(x => x.StarCount));
+			Assert.AreEqual(0, repositories.Sum(x => x.StarredAt?.Count));
 		}
 
 		[Test]
@@ -267,11 +269,12 @@ namespace GitTrends.UnitTests
 			Assert.IsNotEmpty(repositories);
 			Assert.Greater(repositories.Count, 0);
 
+			Assert.Greater(repositories.Sum(x => x.StarCount), 0);
 			Assert.AreEqual(0, repositories.Sum(x => x.TotalViews));
 			Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueViews));
 			Assert.AreEqual(0, repositories.Sum(x => x.TotalClones));
 			Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueClones));
-			Assert.AreEqual(0, repositories.Sum(x => x.StarCount));
+			Assert.AreEqual(0, repositories.Sum(x => x.StarredAt?.Count));
 		}
 
 		[Test]

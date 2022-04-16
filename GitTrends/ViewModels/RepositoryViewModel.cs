@@ -60,7 +60,7 @@ namespace GitTrends
 									GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, mainThread)
 		{
 			LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
-			TrendsViewModel.RepositorySavedToDatabase += HandleRepositorySavedToDatabase;
+			TrendsViewModel.RepositorySavedToDatabase += HandleTrendsViewModelRepositorySavedToDatabase;
 			BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
 			BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted += HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
 
@@ -189,9 +189,9 @@ namespace GitTrends
 
 			var repositoriesFromDatabaseTask = _repositoryDatabase.GetRepositories();
 
-			#region Get Visible RepositoryList Data in Foreground
 			try
 			{
+				#region Get Visible RepositoryList Data in Foreground
 				var favoriteRepositoryUrls = await _repositoryDatabase.GetFavoritesUrls().ConfigureAwait(false);
 
 				var repositoryList = new List<Repository>();
@@ -254,8 +254,18 @@ namespace GitTrends
 
 				AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
 
+
+				var repositoriesWithoutStarsDataAndOver1000Stars = _repositoryList.Where(x => !x.ContainsViewsClonesStarsData && x.StarCount > 1000);
+				var repositoriesWithoutStarsDataAndLessThan1000Stars = _repositoryList.Where(x => !x.ContainsViewsClonesStarsData && x.StarCount <= 1000);
+
+				// Fetch Stars Data in Background for Repositories Containing Over 1000 Stars
+				// GitHub API limits us to 100 StarGazers per Request, meaning that a repository with 24K Stars requires 240 round-trips from GitTrends to GitHub's servers to aggregate the data
+				// This data is not displayed in the Repository Page
+				foreach (var repository in repositoriesWithoutStarsDataAndOver1000Stars)
+					_backgroundFetchService.TryScheduleRetryRepositoriesStars(repository); 
+
 				var starredRepositoriesList = new List<Repository>();
-				await foreach (var retrievedRepositoryWithStarsData in _gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(_repositoryList.Where(x => !x.ContainsViewsClonesStarsData), cancellationTokenSource.Token).ConfigureAwait(false))
+				await foreach (var retrievedRepositoryWithStarsData in _gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositoriesWithoutStarsDataAndLessThan1000Stars, cancellationTokenSource.Token).ConfigureAwait(false))
 				{
 					starredRepositoriesList.Add(retrievedRepositoryWithStarsData);
 
@@ -538,8 +548,8 @@ namespace GitTrends
 			_pullToRefreshFailedEventManager.RaiseEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
 		}
 
-		void HandleRepositorySavedToDatabase(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
 		void HandleScheduleRetryRepositoriesStarsCompleted(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
+		void HandleTrendsViewModelRepositorySavedToDatabase(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
 		void HandleScheduleRetryRepositoriesViewsClonesStarsCompleted(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
 	}
 }
