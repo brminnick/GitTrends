@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
@@ -98,10 +99,12 @@ namespace GitTrends.UnitTests
 				dailyClonesList.Add(new DailyClonesModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
 			}
 
+			var starredAt = DemoDataConstants.GenerateStarredAtDates(DemoDataConstants.GetRandomNumber()).ToList();
+
 			return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
 														DemoUserConstants.Alias, gitTrendsAvatarUrl,
-														DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
-														gitTrendsAvatarUrl, false, downloadedAt, RepositoryPermission.ADMIN, false, dailyViewsList, dailyClonesList, DemoDataConstants.GenerateStarredAtDates(DemoDataConstants.GetRandomNumber()));
+														DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(), starredAt.Count,
+														gitTrendsAvatarUrl, false, downloadedAt, RepositoryPermission.ADMIN, false, dailyViewsList, dailyClonesList, starredAt);
 		}
 	}
 }

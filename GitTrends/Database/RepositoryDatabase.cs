@@ -93,7 +93,7 @@ namespace GitTrends
 			if (repositoryDatabaseModel is null)
 				return null;
 
-			var (dailyClones, dailyViews, starGazers) = await GetStarsClonesViews(repositoryDatabaseModel).ConfigureAwait(false);
+			var (dailyClones, dailyViews, starGazers) = await GetClonesViewsStars(repositoryDatabaseModel).ConfigureAwait(false);
 
 			return RepositoryDatabaseModel.ToRepository(repositoryDatabaseModel, dailyClones, dailyViews, starGazers);
 		}
@@ -109,7 +109,7 @@ namespace GitTrends
 			var repositoryList = new List<Repository>();
 			foreach (var repositoryDatabaseModel in repositoryDatabaseModels)
 			{
-				var (dailyClones, dailyViews, starGazers) = await GetStarsClonesViews(repositoryDatabaseModel).ConfigureAwait(false);
+				var (dailyClones, dailyViews, starGazers) = await GetClonesViewsStars(repositoryDatabaseModel).ConfigureAwait(false);
 
 				var repository = RepositoryDatabaseModel.ToRepository(repositoryDatabaseModel, dailyClones, dailyViews, starGazers);
 				repositoryList.Add(repository);
@@ -120,9 +120,9 @@ namespace GitTrends
 
 		static bool IsWithin14Days(DateTimeOffset dataDate, DateTimeOffset mostRecentDate) => dataDate.CompareTo(mostRecentDate.Subtract(TimeSpan.FromDays(13)).ToLocalTime()) >= 0;
 
-		async Task<(IReadOnlyList<DailyClonesDatabaseModel> dailyClones,
-							IReadOnlyList<DailyViewsDatabaseModel> dailyViews,
-							IReadOnlyList<StarGazerInfoDatabaseModel> starGazers)> GetStarsClonesViews(RepositoryDatabaseModel repository)
+		async Task<(IReadOnlyList<DailyClonesDatabaseModel>? dailyClones,
+							IReadOnlyList<DailyViewsDatabaseModel>? dailyViews,
+							IReadOnlyList<StarGazerInfoDatabaseModel>? starGazers)> GetClonesViewsStars(RepositoryDatabaseModel repository)
 		{
 			var (_, dailyClonesDatabaseConnection, dailyViewsDatabaseConnection, starGazerInfoDatabaseConnection) = await GetDatabaseConnections().ConfigureAwait(false);
 
@@ -136,19 +136,28 @@ namespace GitTrends
 			var dailyClonesDatabaseModels = await getDailyClonesDatabaseModelsTask.ConfigureAwait(false);
 			var dailyViewsDatabaseModels = await getDailyViewsDatabaseModelsTask.ConfigureAwait(false);
 
-			var sortedRecentDailyClonesDatabaseModels = dailyClonesDatabaseModels.OrderByDescending(x => x.DownloadedAt).ToList();
-			var sortedRecentDailyViewsDatabaseModels = dailyViewsDatabaseModels.OrderByDescending(x => x.DownloadedAt).ToList();
-			var sortedStarGazerInfoModels = starGazerInfoModels.OrderByDescending(x => x.StarredAt).ToList();
+			if (!starGazerInfoModels.Any())
+				starGazerInfoModels = null;
 
-			var mostRecentCloneDay = sortedRecentDailyClonesDatabaseModels.Any() ? sortedRecentDailyClonesDatabaseModels.Max(x => x.Day) : default;
-			var mostRecentViewDay = sortedRecentDailyViewsDatabaseModels.Any() ? sortedRecentDailyViewsDatabaseModels.Max(x => x.Day) : default;
+			if (!dailyClonesDatabaseModels.Any())
+				dailyClonesDatabaseModels = null;
+
+			if (!dailyViewsDatabaseModels.Any())
+				dailyViewsDatabaseModels = null;
+
+			var sortedRecentDailyClonesDatabaseModels = dailyClonesDatabaseModels?.OrderByDescending(x => x.DownloadedAt).ToList();
+			var sortedRecentDailyViewsDatabaseModels = dailyViewsDatabaseModels?.OrderByDescending(x => x.DownloadedAt).ToList();
+			var sortedStarGazerInfoModels = starGazerInfoModels?.OrderByDescending(x => x.StarredAt).ToList();
+
+			var mostRecentCloneDay = sortedRecentDailyClonesDatabaseModels?.Any() is true ? sortedRecentDailyClonesDatabaseModels.Max(x => x.Day) : default;
+			var mostRecentViewDay = sortedRecentDailyViewsDatabaseModels?.Any() is true ? sortedRecentDailyViewsDatabaseModels.Max(x => x.Day) : default;
 
 			var mostRecentDate = mostRecentCloneDay.CompareTo(mostRecentViewDay) > 0 ? mostRecentCloneDay : mostRecentViewDay;
 
-			var dailyClones = sortedRecentDailyClonesDatabaseModels.Where(x => IsWithin14Days(x.Day, mostRecentDate)).GroupBy(x => x.Day).Select(x => x.First()).Take(14);
-			var dailyViews = sortedRecentDailyViewsDatabaseModels.Where(x => IsWithin14Days(x.Day, mostRecentDate)).GroupBy(x => x.Day).Select(x => x.First()).Take(14);
+			var dailyClones = sortedRecentDailyClonesDatabaseModels?.Where(x => IsWithin14Days(x.Day, mostRecentDate)).GroupBy(x => x.Day).Select(x => x.First()).Take(14);
+			var dailyViews = sortedRecentDailyViewsDatabaseModels?.Where(x => IsWithin14Days(x.Day, mostRecentDate)).GroupBy(x => x.Day).Select(x => x.First()).Take(14);
 
-			return (dailyClones.ToList(), dailyViews.ToList(), sortedStarGazerInfoModels);
+			return (dailyClones?.ToList(), dailyViews?.ToList(), sortedStarGazerInfoModels);
 		}
 
 		async Task<(SQLiteAsyncConnection RepositoryDatabaseConnection,
@@ -344,12 +353,12 @@ namespace GitTrends
 			public bool? IsFavorite { get; init; }
 
 			public static Repository ToRepository(in RepositoryDatabaseModel repositoryDatabaseModel,
-													in IEnumerable<DailyClonesDatabaseModel> dailyClonesDatabaseModels,
-													in IEnumerable<DailyViewsDatabaseModel> dailyViewsDatabaseModels,
-													in IEnumerable<StarGazerInfoDatabaseModel> starGazerInfoDatabaseModels)
+													in IEnumerable<DailyClonesDatabaseModel>? dailyClonesDatabaseModels,
+													in IEnumerable<DailyViewsDatabaseModel>? dailyViewsDatabaseModels,
+													in IEnumerable<StarGazerInfoDatabaseModel>? starGazerInfoDatabaseModels)
 			{
-				var clonesList = dailyClonesDatabaseModels.Select(x => DailyClonesDatabaseModel.ToDailyClonesModel(x)).ToList();
-				var viewsList = dailyViewsDatabaseModels.Select(x => DailyViewsDatabaseModel.ToDailyViewsModel(x)).ToList();
+				var clonesList = dailyClonesDatabaseModels?.Select(x => DailyClonesDatabaseModel.ToDailyClonesModel(x)).ToList();
+				var viewsList = dailyViewsDatabaseModels?.Select(x => DailyViewsDatabaseModel.ToDailyViewsModel(x)).ToList();
 
 				return new Repository(repositoryDatabaseModel.Name,
 										repositoryDatabaseModel.Description,

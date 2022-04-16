@@ -14,14 +14,14 @@ namespace GitTrends.UnitTests
 	class BackgroundFetchServiceTests : BaseTest
 	{
 		[Test]
-		public async Task ScheduleRetryRepositoriesViewsClonesTest_AuthenticatedUser()
+		public async Task ScheduleRetryRepositoriesViewsClonesStarsTest_AuthenticatedUser()
 		{
 			//Arrange
 			bool wasScheduledSuccessfully_First, wasScheduledSuccessfully_Second;
 			Repository repository_Initial, repository_Final, repository_Database;
 
-			var scheduleRetryRepositoriesViewsClonesCompletedTCS = new TaskCompletionSource<Repository>();
-			BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesCompleted += HandleScheduleRetryRepositoriesViewsClonesCompleted;
+			var scheduleRetryRepositoriesViewsClonesStarsCompletedTCS = new TaskCompletionSource<Repository>();
+			BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted += HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
 
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
@@ -31,13 +31,13 @@ namespace GitTrends.UnitTests
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
 			repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
-												GitHubConstants.GitTrendsAvatarUrl, 1, 2, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
 
 			//Act
 			wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository_Initial);
 			wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository_Initial);
 
-			repository_Final = await scheduleRetryRepositoriesViewsClonesCompletedTCS.Task.ConfigureAwait(false);
+			repository_Final = await scheduleRetryRepositoriesViewsClonesStarsCompletedTCS.Task.ConfigureAwait(false);
 			repository_Database = await repositoryDatabase.GetRepository(repository_Initial.Url).ConfigureAwait(false) ?? throw new NullReferenceException();
 
 			//Assert
@@ -56,9 +56,9 @@ namespace GitTrends.UnitTests
 			Assert.IsNull(repository_Initial.TotalUniqueViews);
 			Assert.IsNull(repository_Initial.TotalViews);
 
+			Assert.IsNotNull(repository_Final.StarredAt);
 			Assert.IsNotNull(repository_Final.DailyClonesList);
 			Assert.IsNotNull(repository_Final.DailyViewsList);
-			Assert.IsNotNull(repository_Final.StarredAt);
 			Assert.IsNotNull(repository_Final.TotalClones);
 			Assert.IsNotNull(repository_Final.TotalUniqueClones);
 			Assert.IsNotNull(repository_Final.TotalUniqueViews);
@@ -71,9 +71,9 @@ namespace GitTrends.UnitTests
 			Assert.AreEqual(repository_Initial.IsFork, repository_Final.IsFork);
 			Assert.AreEqual(repository_Initial.IssuesCount, repository_Final.IssuesCount);
 
+			Assert.IsNotNull(repository_Database.StarredAt);
 			Assert.IsNotNull(repository_Database.DailyClonesList);
 			Assert.IsNotNull(repository_Database.DailyViewsList);
-			Assert.IsNotNull(repository_Database.StarredAt);
 			Assert.IsNotNull(repository_Database.TotalClones);
 			Assert.IsNotNull(repository_Database.TotalUniqueClones);
 			Assert.IsNotNull(repository_Database.TotalUniqueViews);
@@ -87,10 +87,96 @@ namespace GitTrends.UnitTests
 			Assert.AreEqual(repository_Final.IssuesCount, repository_Database.IssuesCount);
 			Assert.AreEqual(repository_Final.IsTrending, repository_Database.IsTrending);
 
-			void HandleScheduleRetryRepositoriesViewsClonesCompleted(object? sender, Repository e)
+			void HandleScheduleRetryRepositoriesViewsClonesStarsCompleted(object? sender, Repository e)
 			{
-				BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesCompleted -= HandleScheduleRetryRepositoriesViewsClonesCompleted;
-				scheduleRetryRepositoriesViewsClonesCompletedTCS.SetResult(e);
+				BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted -= HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
+				scheduleRetryRepositoriesViewsClonesStarsCompletedTCS.SetResult(e);
+			}
+		}
+
+		[Test]
+		public async Task ScheduleRetryRepositoriesStarsTest_AuthenticatedUser()
+		{
+			//Arrange
+			bool wasScheduledSuccessfully_First, wasScheduledSuccessfully_Second;
+			Repository repository_Initial, repository_Final, repository_Database;
+
+			var scheduleRetryRepositoriesStarsCompletedTCS = new TaskCompletionSource<Repository>();
+			BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
+
+			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+			var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
+			var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+			repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
+												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+
+			//Act
+			wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryRepositoriesStars(repository_Initial);
+			wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryRepositoriesStars(repository_Initial);
+
+			repository_Final = await scheduleRetryRepositoriesStarsCompletedTCS.Task.ConfigureAwait(false);
+			repository_Database = await repositoryDatabase.GetRepository(repository_Initial.Url).ConfigureAwait(false) ?? throw new NullReferenceException();
+
+			//Assert
+			Assert.IsTrue(wasScheduledSuccessfully_First);
+			Assert.IsFalse(wasScheduledSuccessfully_Second);
+
+			Assert.IsFalse(repository_Initial.ContainsViewsClonesData);
+			Assert.IsFalse(repository_Initial.ContainsViewsClonesStarsData);
+			Assert.IsFalse(repository_Final.ContainsViewsClonesData);
+			Assert.IsFalse(repository_Final.ContainsViewsClonesStarsData);
+			Assert.IsFalse(repository_Database.ContainsViewsClonesData);
+			Assert.IsFalse(repository_Database.ContainsViewsClonesStarsData);
+
+			Assert.IsNull(repository_Initial.DailyClonesList);
+			Assert.IsNull(repository_Initial.DailyViewsList);
+			Assert.IsNull(repository_Initial.StarredAt);
+			Assert.IsNull(repository_Initial.TotalClones);
+			Assert.IsNull(repository_Initial.TotalUniqueClones);
+			Assert.IsNull(repository_Initial.TotalUniqueViews);
+			Assert.IsNull(repository_Initial.TotalViews);
+
+			Assert.IsNotNull(repository_Final.StarredAt);
+			Assert.IsNotEmpty(repository_Final.StarredAt ?? Array.Empty<DateTimeOffset>());
+			Assert.IsNull(repository_Final.DailyClonesList);
+			Assert.IsNull(repository_Final.DailyViewsList);
+			Assert.IsNull(repository_Final.TotalClones);
+			Assert.IsNull(repository_Final.TotalUniqueClones);
+			Assert.IsNull(repository_Final.TotalUniqueViews);
+			Assert.IsNull(repository_Final.TotalViews);
+
+			Assert.AreEqual(repository_Initial.Name, repository_Final.Name);
+			Assert.AreEqual(repository_Initial.Description, repository_Final.Description);
+			Assert.AreEqual(repository_Initial.ForkCount, repository_Final.ForkCount);
+			Assert.AreEqual(repository_Initial.IsFavorite, repository_Final.IsFavorite);
+			Assert.AreEqual(repository_Initial.IsFork, repository_Final.IsFork);
+			Assert.AreEqual(repository_Initial.IssuesCount, repository_Final.IssuesCount);
+
+			Assert.IsNotNull(repository_Database.StarredAt);
+			Assert.IsNotEmpty(repository_Database.StarredAt ?? Array.Empty<DateTimeOffset>());
+			Assert.IsNull(repository_Database.DailyClonesList);
+			Assert.IsNull(repository_Database.DailyViewsList);
+			Assert.IsNull(repository_Database.TotalClones);
+			Assert.IsNull(repository_Database.TotalUniqueClones);
+			Assert.IsNull(repository_Database.TotalUniqueViews);
+			Assert.IsNull(repository_Database.TotalViews);
+
+			Assert.AreEqual(repository_Final.Name, repository_Database.Name);
+			Assert.AreEqual(repository_Final.Description, repository_Database.Description);
+			Assert.AreEqual(repository_Final.ForkCount, repository_Database.ForkCount);
+			Assert.AreEqual(repository_Final.IsFavorite, repository_Database.IsFavorite);
+			Assert.AreEqual(repository_Final.IsFork, repository_Database.IsFork);
+			Assert.AreEqual(repository_Final.IssuesCount, repository_Database.IssuesCount);
+			Assert.AreEqual(repository_Final.IsTrending, repository_Database.IsTrending);
+
+			void HandleScheduleRetryRepositoriesStarsCompleted(object? sender, Repository e)
+			{
+				BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
+				scheduleRetryRepositoriesStarsCompletedTCS.SetResult(e);
 			}
 		}
 
@@ -104,8 +190,8 @@ namespace GitTrends.UnitTests
 
 			var scheduleRetryOrganizationsRepositoriesCompletedTCS = new TaskCompletionSource<string>();
 			var scheduleRetryRepositoriesViewsClonesCompletedTCS = new TaskCompletionSource<Repository>();
-			BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesCompleted += HandleScheduleRetryRepositoriesViewsClonesCompleted;
 			BackgroundFetchService.ScheduleRetryOrganizationsRepositoriesCompleted += HandleScheduleRetryOrganizationsRepositoriesCompleted;
+			BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted += HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
 
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
@@ -156,9 +242,9 @@ namespace GitTrends.UnitTests
 			Assert.AreEqual(repository_Final.IssuesCount, repository_Database.IssuesCount);
 			Assert.AreEqual(repository_Final.IsTrending, repository_Database.IsTrending);
 
-			void HandleScheduleRetryRepositoriesViewsClonesCompleted(object? sender, Repository e)
+			void HandleScheduleRetryRepositoriesViewsClonesStarsCompleted(object? sender, Repository e)
 			{
-				BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesCompleted -= HandleScheduleRetryRepositoriesViewsClonesCompleted;
+				BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted -= HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
 				scheduleRetryRepositoriesViewsClonesCompletedTCS.SetResult(e);
 			}
 
@@ -179,7 +265,7 @@ namespace GitTrends.UnitTests
 			IReadOnlyList<MobileReferringSiteModel> mobileReferringSitesList_Initial, mobileReferringSitesList_Final;
 
 			Repository repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
-												GitHubConstants.GitTrendsAvatarUrl, 1, 2, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
 
 			var mobileReferringSiteRetrievedTCS = new TaskCompletionSource<MobileReferringSiteModel>();
 			var scheduleRetryGetReferringSiteCompletedTCS = new TaskCompletionSource<Repository>();
@@ -352,10 +438,8 @@ namespace GitTrends.UnitTests
 			Assert.Greater(expiredRepository_Initial.DailyViewsList.Sum(x => x.TotalViews), 1);
 			Assert.Greater(expiredRepository_Initial.DailyViewsList.Sum(x => x.TotalUniqueViews), 1);
 
-			Assert.AreEqual(0, expiredRepository_Final.DailyClonesList.Sum(x => x.TotalClones));
-			Assert.AreEqual(0, expiredRepository_Final.DailyClonesList.Sum(x => x.TotalUniqueClones));
-			Assert.AreEqual(0, expiredRepository_Final.DailyViewsList.Sum(x => x.TotalViews));
-			Assert.AreEqual(0, expiredRepository_Final.DailyViewsList.Sum(x => x.TotalUniqueViews));
+			Assert.IsNull(expiredRepository_Final.DailyClonesList);
+			Assert.IsNull(expiredRepository_Final.DailyViewsList);
 
 			Assert.AreEqual(unexpiredRepository_Initial.DailyClonesList.Sum(x => x.TotalClones), unexpiredRepository_Final.DailyClonesList.Sum(x => x.TotalClones));
 			Assert.AreEqual(unexpiredRepository_Initial.DailyClonesList.Sum(x => x.TotalUniqueClones), unexpiredRepository_Final.DailyClonesList.Sum(x => x.TotalUniqueClones));
@@ -500,7 +584,7 @@ namespace GitTrends.UnitTests
 			}
 
 			return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-														DemoUserConstants.Alias, GitHubConstants.GitTrendsAvatarUrl, DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
+														DemoUserConstants.Alias, GitHubConstants.GitTrendsAvatarUrl, DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(), starredAtList.Count,
 														repositoryUrl, false, downloadedAt, RepositoryPermission.ADMIN, true, dailyViewsList, dailyClonesList, starredAtList);
 		}
 

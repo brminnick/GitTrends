@@ -30,7 +30,7 @@ namespace GitTrends.Functions
 			var contributors = await getGitTrendsContributorsTask.ConfigureAwait(false);
 
 			var statistics = new GitTrendsStatisticsDTO(new Uri(repository.Url ?? throw new NullReferenceException()),
-															repository.StarCount ?? throw new NullReferenceException(),
+															repository.StarCount,
 															repository.WatchersCount,
 															repository.ForkCount,
 															contributors);
