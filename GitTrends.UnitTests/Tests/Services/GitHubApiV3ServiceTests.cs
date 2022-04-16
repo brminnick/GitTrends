@@ -240,7 +240,7 @@ namespace GitTrends.UnitTests
 			//"Could not resolve to a Repository with the name 'zxcvbnmlkjhgfdsa1234567890/abc123321'."
 		}
 
-		[Test]
+		[Test, Ignore("Test Will Fail if Unauthenticated API Request Count has been exceeded")]
 		public async Task GetStarGazers_Unauthenticated()
 		{
 			//Arrange
