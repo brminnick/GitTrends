@@ -262,7 +262,7 @@ namespace GitTrends
 				// GitHub API limits us to 100 StarGazers per Request, meaning that a repository with 24K Stars requires 240 round-trips from GitTrends to GitHub's servers to aggregate the data
 				// This data is not displayed in the Repository Page
 				foreach (var repository in repositoriesWithoutStarsDataAndOver1000Stars)
-					_backgroundFetchService.TryScheduleRetryRepositoriesStars(repository); 
+					_backgroundFetchService.TryScheduleRetryRepositoriesStars(repository);
 
 				var starredRepositoriesList = new List<Repository>();
 				await foreach (var retrievedRepositoryWithStarsData in _gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositoriesWithoutStarsDataAndLessThan1000Stars, cancellationTokenSource.Token).ConfigureAwait(false))
