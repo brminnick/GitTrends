@@ -10,7 +10,7 @@ namespace GitTrends
 {
 	public class RepositoryDatabase : BaseDatabase
 	{
-		public RepositoryDatabase(IFileSystem fileSystem, IAnalyticsService analyticsService) : base(fileSystem, analyticsService, TimeSpan.FromDays(14))
+		public RepositoryDatabase(IFileSystem fileSystem, IAnalyticsService analyticsService) : base(fileSystem, analyticsService, CachedDataConstants.DatbaseRepositoryLifeSpan)
 		{
 			GitHubApiRepositoriesService.RepositoryUriNotFound += HandleRepositoryUriNotFound;
 		}

@@ -14,6 +14,21 @@ namespace GitTrends.UnitTests
 	class BackgroundFetchServiceTests : BaseTest
 	{
 		[Test]
+		public void VerifyIdentifiers()
+		{
+			// Assert
+			const string organizationName = "GitTrends";
+			var repository = CreateRepository(false);
+			var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+
+			// Assert
+			Assert.AreEqual($"{backgroundFetchService.RetryGetReferringSitesIdentifier}.{repository.Url}", backgroundFetchService.GetRetryGetReferringSitesIdentifier(repository));
+			Assert.AreEqual($"{backgroundFetchService.RetryRepositoriesStarsIdentifier}.{repository.Url}", backgroundFetchService.GetRetryRepositoriesStarsIdentifier(repository));
+			Assert.AreEqual($"{backgroundFetchService.RetryOrganizationsReopsitoriesIdentifier}.{organizationName}", backgroundFetchService.GetRetryOrganizationsRepositoriesIdentifier(organizationName));
+			Assert.AreEqual($"{backgroundFetchService.RetryRepositoriesViewsClonesStarsIdentifier}.{repository.Url}", backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository));
+		}
+
+		[Test]
 		public async Task ScheduleRetryRepositoriesViewsClonesStarsTest_AuthenticatedUser()
 		{
 			//Arrange
