@@ -273,14 +273,14 @@ namespace GitTrends
 			try
 			{
 				if (repository.ContainsViewsClonesData
-					&& repository.DataDownloadedAt > DateTimeOffset.Now.Add(CachedDataConstants.ViewsClonesCacheLifeSpan))
+					&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.ViewsClonesCacheLifeSpan))
 				{
 					repositoryViews = repository.DailyViewsList ?? throw new InvalidOperationException($"{nameof(Repository.DailyViewsList)} cannot be null when {nameof(Repository.ContainsViewsClonesStarsData)} is true");
 					repositoryClones = repository.DailyClonesList ?? throw new InvalidOperationException($"{nameof(Repository.DailyClonesList)} cannot be null when {nameof(Repository.ContainsViewsClonesStarsData)} is true");
 				}
 
 				if (repository.ContainsViewsClonesStarsData
-					&& repository.DataDownloadedAt > DateTimeOffset.Now.Add(CachedDataConstants.StarsDataCacheLifeSpan))
+					&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan))
 				{
 					repositoryStars = repository.StarredAt ?? throw new InvalidOperationException($"{nameof(Repository.StarredAt)} cannot be null when {nameof(Repository.ContainsViewsClonesStarsData)} is true");
 				}
