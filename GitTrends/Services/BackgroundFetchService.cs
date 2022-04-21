@@ -193,6 +193,11 @@ namespace GitTrends
 			}
 		}
 
+		public string GetRetryGetReferringSitesIdentifier(Repository repository) => $"{RetryGetReferringSitesIdentifier}.{repository.Url}";
+		public string GetRetryRepositoriesStarsIdentifier(Repository repository) => $"{RetryRepositoriesStarsIdentifier}.{repository.Url}";
+		public string GetRetryRepositoriesViewsClonesStarsIdentifier(Repository repository) => $"{RetryRepositoriesViewsClonesStarsIdentifier}.{repository.Url}";
+		public string GetRetryOrganizationsRepositoriesIdentifier(string organizationName) => $"{RetryOrganizationsReopsitoriesIdentifier}.{organizationName}";
+
 		void ScheduleRetryOrganizationsRepositories(string organizationName, TimeSpan? delay)
 		{
 			_queuedJobs.Add(GetRetryOrganizationsRepositoriesIdentifier(organizationName));
@@ -369,11 +374,6 @@ namespace GitTrends
 				}
 			});
 		}
-
-		string GetRetryGetReferringSitesIdentifier(Repository repository) => $"{RetryGetReferringSitesIdentifier}.{repository.Url}";
-		string GetRetryRepositoriesStarsIdentifier(Repository repository) => $"{RetryRepositoriesStarsIdentifier}.{repository.Url}";
-		string GetRetryRepositoriesViewsClonesStarsIdentifier(Repository repository) => $"{RetryRepositoriesViewsClonesStarsIdentifier}.{repository.Url}";
-		string GetRetryOrganizationsRepositoriesIdentifier(string organizationName) => $"{RetryOrganizationsReopsitoriesIdentifier}.{organizationName}";
 
 		async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
 		{

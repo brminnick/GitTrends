@@ -218,7 +218,7 @@ namespace GitTrends
 				repositoriesFromDatabase = await repositoriesFromDatabaseTask.ConfigureAwait(false);
 
 				var repositoriesFromDatabaseThatDontRequireUpdating = repositoriesFromDatabase.Where(x => x.ContainsViewsClonesData // Ensure the repository contains data for Views + Clones
-																											&& x.DataDownloadedAt >= DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12)) // Cached repositories that have been updated in the past 12 hours				
+																											&& x.DataDownloadedAt >= DateTimeOffset.Now.Subtract(CachedDataConstants.ViewsClonesCacheLifeSpan) // Cached repositories that have been updated in the past 12 hours				
 																											&& _repositoryList.Any(y => y.Url == x.Url)); // Ensure was retrieved from GitHub)
 
 				AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
@@ -249,7 +249,7 @@ namespace GitTrends
 				// The StarGazer data can be gathered in the background because the data only appears if the user navigates to the StarsTrendsPage
 				// The data is gathered in the background to optimize the Pull-To-Refresh time visible to the user
 				repositoriesFromDatabaseThatDontRequireUpdating = repositoriesFromDatabase.Where(x => x.ContainsViewsClonesStarsData // Ensure the repository contains data for Views + Clones + Stars
-																											&& x.DataDownloadedAt >= DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12)) // Cached repositories that have been updated in the past 12 hours				
+																											&& x.DataDownloadedAt >= DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan) // Cached repositories that have been updated in the past 12 hours				
 																											&& _repositoryList.Any(y => y.Url == x.Url)); // Ensure was retrieved from GitHub)
 
 				AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);

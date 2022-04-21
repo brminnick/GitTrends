@@ -11,7 +11,7 @@ namespace GitTrends
 {
 	public class ReferringSitesDatabase : BaseDatabase
 	{
-		public ReferringSitesDatabase(IFileSystem fileSystem, IAnalyticsService analyticsService) : base(fileSystem, analyticsService, TimeSpan.FromDays(30))
+		public ReferringSitesDatabase(IFileSystem fileSystem, IAnalyticsService analyticsService) : base(fileSystem, analyticsService, CachedDataConstants.DatabaseReferringSitesLifeSpan)
 		{
 
 		}
