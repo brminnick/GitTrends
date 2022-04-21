@@ -289,14 +289,14 @@ namespace GitTrends
 				{
 					IsFetchingData = true;
 
-					var getGetStarsDataTasj = repositoryStars is null ? GetStarsData(repository, cancellationToken) : Task.FromResult(repositoryStars);
+					var getGetStarsDataTask = repositoryStars is null ? GetStarsData(repository, cancellationToken) : Task.FromResult(repositoryStars);
 					var getViewsClonesDataTask = repositoryViews is null || repositoryClones is null
 													? GetViewsClonesData(repository, cancellationToken)
 													: Task.FromResult((repositoryViews, repositoryClones));
 
-					await Task.WhenAll(getGetStarsDataTasj, getViewsClonesDataTask).ConfigureAwait(false);
+					await Task.WhenAll(getGetStarsDataTask, getViewsClonesDataTask).ConfigureAwait(false);
 
-					repositoryStars = await getGetStarsDataTasj.ConfigureAwait(false);
+					repositoryStars = await getGetStarsDataTask.ConfigureAwait(false);
 					(repositoryViews, repositoryClones) = await getViewsClonesDataTask.ConfigureAwait(false);
 
 					var updatedRepository = repository with
