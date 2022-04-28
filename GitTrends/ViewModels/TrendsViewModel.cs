@@ -30,7 +30,9 @@ namespace GitTrends
 		readonly BackgroundFetchService _backgroundFetchService;
 		readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
 
-		bool _isFetchingData = true;
+		bool _isFetchingStarsData = true;
+		bool _isFetchingViewsClonesData = true;
+
 		bool _isViewsSeriesVisible, _isUniqueViewsSeriesVisible, _isClonesSeriesVisible, _isUniqueClonesSeriesVisible;
 
 		string _starsStatisticsText = string.Empty;
@@ -75,7 +77,7 @@ namespace GitTrends
 			ClonesCardTappedCommand = new Command(() => IsClonesSeriesVisible = !IsClonesSeriesVisible);
 			UniqueClonesCardTappedCommand = new Command(() => IsUniqueClonesSeriesVisible = !IsUniqueClonesSeriesVisible);
 
-			RefreshState = RefreshState.Uninitialized;
+			StarsRefreshState = ViewsClonesRefreshState = RefreshState.Uninitialized;
 
 			FetchDataCommand = new AsyncCommand<(Repository Repository, CancellationToken CancellationToken)>(tuple => ExecuteFetchDataCommand(tuple.Repository, tuple.CancellationToken));
 		}
@@ -98,11 +100,11 @@ namespace GitTrends
 
 		public double TotalStars => DailyStarsList.Any() ? DailyStarsList.Last().TotalStars : 0;
 
-		public bool IsStarsEmptyDataViewVisible => !IsStarsChartVisible && !IsFetchingData;
-		public bool IsStarsChartVisible => !IsFetchingData && TotalStars > 1;
+		public bool IsStarsEmptyDataViewVisible => !IsStarsChartVisible && !IsFetchingStarsData;
+		public bool IsStarsChartVisible => !IsFetchingStarsData && TotalStars > 1;
 
-		public bool IsViewsClonesEmptyDataViewVisible => !IsViewsClonesChartVisible && !IsFetchingData;
-		public bool IsViewsClonesChartVisible => !IsFetchingData && DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
+		public bool IsViewsClonesEmptyDataViewVisible => !IsViewsClonesChartVisible && !IsFetchingViewsClonesData;
+		public bool IsViewsClonesChartVisible => !IsFetchingViewsClonesData && DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
 
 		public double ViewsClonesChartYAxisInterval => DailyViewsClonesMaxValue > 20 ? Math.Round(DailyViewsClonesMaxValue / 10) : 2;
 		public double StarsChartYAxisInterval => MaxDailyStarsValue > 20 ? Math.Round(MaxDailyStarsValue / 10) : 2;
@@ -216,10 +218,16 @@ namespace GitTrends
 			set => SetProperty(ref _starsHeaderMessageText, value);
 		}
 
-		public bool IsFetchingData
+		public bool IsFetchingViewsClonesData
 		{
-			get => _isFetchingData;
-			set => SetProperty(ref _isFetchingData, value, OnIsFetchingDataChanged);
+			get => _isFetchingViewsClonesData;
+			set => SetProperty(ref _isFetchingViewsClonesData, value, OnIsFetchingViewsClonesDataChanged);
+		}
+
+		public bool IsFetchingStarsData
+		{
+			get => _isFetchingStarsData;
+			set => SetProperty(ref _isFetchingStarsData, value, OnIsFetchingStarsDataChanged);
 		}
 
 		public IReadOnlyList<DailyViewsModel> DailyViewsList
@@ -240,13 +248,19 @@ namespace GitTrends
 			set => SetProperty(ref _dailyStarsList, value, OnDailyStarsListChanged);
 		}
 
-		RefreshState RefreshState
+		RefreshState ViewsClonesRefreshState
 		{
 			set
 			{
 				ViewsClonesEmptyDataViewImage = EmptyDataViewService.GetViewsClonesImage(value);
 				ViewsClonesEmptyDataViewTitleText = EmptyDataViewService.GetViewsClonesTitleText(value);
+			}
+		}
 
+		RefreshState StarsRefreshState
+		{
+			set
+			{
 				StarsEmptyDataViewImage = EmptyDataViewService.GetStarsImage(value, TotalStars);
 				StarsEmptyDataViewTitleText = EmptyDataViewService.GetStarsTitleText(value, TotalStars);
 				StarsEmptyDataViewDescriptionText = EmptyDataViewService.GetStarsEmptyDataViewDescriptionText(value, TotalStars);
@@ -262,71 +276,90 @@ namespace GitTrends
 
 		async Task ExecuteFetchDataCommand(Repository repository, CancellationToken cancellationToken)
 		{
-			var refreshState = RefreshState.Uninitialized;
-
-			IReadOnlyList<DateTimeOffset>? repositoryStars = null;
-			IReadOnlyList<DailyViewsModel>? repositoryViews = null;
-			IReadOnlyList<DailyClonesModel>? repositoryClones = null;
-
 			var minimumTimeTask = Task.Delay(TimeSpan.FromSeconds(1));
+			using var getGetStarsDataCTS = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+			using var getViewsClonesDataCTS = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
 			try
 			{
+				IReadOnlyList<DateTimeOffset> repositoryStars;
+				IReadOnlyList<DailyViewsModel> repositoryViews;
+				IReadOnlyList<DailyClonesModel> repositoryClones;
+
+				var getGetStarsDataTask = repository.StarredAt is null ? GetStarsData(repository, getGetStarsDataCTS.Token) : Task.FromResult(repository.StarredAt);
+				var getViewsClonesDataTask = repository.DailyViewsList is null || repository.DailyClonesList is null
+												? GetViewsClonesData(repository, getViewsClonesDataCTS.Token)
+												: Task.FromResult((repository.DailyViewsList, repository.DailyClonesList));
+
+				// Update Views Clones Data first because `GetViewsClonesData` is quicker than `GetStarsData`
 				if (repository.ContainsViewsClonesData
 					&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.ViewsClonesCacheLifeSpan))
 				{
 					repositoryViews = repository.DailyViewsList ?? throw new InvalidOperationException($"{nameof(Repository.DailyViewsList)} cannot be null when {nameof(Repository.ContainsViewsClonesStarsData)} is true");
 					repositoryClones = repository.DailyClonesList ?? throw new InvalidOperationException($"{nameof(Repository.DailyClonesList)} cannot be null when {nameof(Repository.ContainsViewsClonesStarsData)} is true");
+
+					updateViewsClonesData(repositoryViews, repositoryClones);
 				}
+				else
+				{
+					(repositoryViews, repositoryClones) = await getViewsClonesDataTask.ConfigureAwait(false);
+					updateViewsClonesData(repositoryViews, repositoryClones);
+				}
+
+				//Set ViewsClonesRefreshState last, because EmptyDataViews are dependent on the Chart ItemSources, e.g. DailyViewsClonesList
+				ViewsClonesRefreshState = RefreshState.Succeeded;
+				IsFetchingViewsClonesData = false;
+
 
 				if (repository.ContainsViewsClonesStarsData
 					&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan))
 				{
 					repositoryStars = repository.StarredAt ?? throw new InvalidOperationException($"{nameof(Repository.StarredAt)} cannot be null when {nameof(Repository.ContainsViewsClonesStarsData)} is true");
+					updateStarsData(repositoryStars);
 				}
-
-				if (repositoryViews is null || repositoryClones is null || repositoryStars is null)
+				else
 				{
-					IsFetchingData = true;
-
-					var getGetStarsDataTask = repositoryStars is null ? GetStarsData(repository, cancellationToken) : Task.FromResult(repositoryStars);
-					var getViewsClonesDataTask = repositoryViews is null || repositoryClones is null
-													? GetViewsClonesData(repository, cancellationToken)
-													: Task.FromResult((repositoryViews, repositoryClones));
-
-					await Task.WhenAll(getGetStarsDataTask, getViewsClonesDataTask).ConfigureAwait(false);
-
 					repositoryStars = await getGetStarsDataTask.ConfigureAwait(false);
-					(repositoryViews, repositoryClones) = await getViewsClonesDataTask.ConfigureAwait(false);
-
-					var updatedRepository = repository with
-					{
-						DataDownloadedAt = DateTimeOffset.UtcNow,
-						StarredAt = repositoryStars,
-						DailyViewsList = repositoryViews,
-						DailyClonesList = repositoryClones
-					};
-
-					await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
-					OnRepositorySavedToDatabase(updatedRepository);
+					updateStarsData(repositoryStars);
 				}
 
-				refreshState = RefreshState.Succeeded;
+				//Set StarsRefreshState last, because EmptyDataViews are dependent on the Chart ItemSources, e.g. DailyStarsList
+				StarsRefreshState = RefreshState.Succeeded;
+				IsFetchingStarsData = false;
+
+				var updatedRepository = repository with
+				{
+					DataDownloadedAt = DateTimeOffset.UtcNow,
+					StarredAt = repositoryStars,
+					DailyViewsList = repositoryViews,
+					DailyClonesList = repositoryClones
+				};
+
+				await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
+				OnRepositorySavedToDatabase(updatedRepository);
 			}
 			catch (Exception e) when (e is ApiException { StatusCode: HttpStatusCode.Unauthorized })
 			{
-				(repositoryStars, repositoryViews, repositoryClones) = await GetNewestRepositoryData(repository).ConfigureAwait(false);
+				var (repositoryStars, repositoryViews, repositoryClones) = await GetNewestRepositoryData(repository).ConfigureAwait(false);
+				updateStarsData(repositoryStars);
+				updateViewsClonesData(repositoryViews, repositoryClones);
 
-				refreshState = RefreshState.LoginExpired;
+				StarsRefreshState = ViewsClonesRefreshState = RefreshState.LoginExpired;
 			}
 			catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximumApiCallLimit(e))
 			{
-				(repositoryStars, repositoryViews, repositoryClones) = await GetNewestRepositoryData(repository).ConfigureAwait(false);
+				var (repositoryStars, repositoryViews, repositoryClones) = await GetNewestRepositoryData(repository).ConfigureAwait(false);
+				updateStarsData(repositoryStars);
+				updateViewsClonesData(repositoryViews, repositoryClones);
 
-				refreshState = RefreshState.MaximumApiLimit;
+				StarsRefreshState = ViewsClonesRefreshState = RefreshState.MaximumApiLimit;
 			}
 			catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan))
 			{
+				IReadOnlyList<DateTimeOffset> repositoryStars;
+				IReadOnlyList<DailyViewsModel> repositoryViews;
+				IReadOnlyList<DailyClonesModel> repositoryClones;
+
 				_backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository, retryTimeSpan.Value);
 
 				var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
@@ -337,7 +370,7 @@ namespace GitTrends
 					repositoryViews = Array.Empty<DailyViewsModel>();
 					repositoryClones = Array.Empty<DailyClonesModel>();
 
-					refreshState = RefreshState.Error;
+					StarsRefreshState = ViewsClonesRefreshState = RefreshState.Error;
 				}
 				else if (repositoryFromDatabase.DataDownloadedAt > repository.DataDownloadedAt) //If data from database is more recent, display data from database
 				{
@@ -345,7 +378,7 @@ namespace GitTrends
 					repositoryViews = repositoryFromDatabase.DailyViewsList ?? Array.Empty<DailyViewsModel>();
 					repositoryClones = repositoryFromDatabase.DailyClonesList ?? Array.Empty<DailyClonesModel>();
 
-					refreshState = RefreshState.Succeeded;
+					StarsRefreshState = ViewsClonesRefreshState = RefreshState.Succeeded;
 				}
 				else //If data passed in as parameter is more recent, display data passed in as parameter
 				{
@@ -353,44 +386,54 @@ namespace GitTrends
 					repositoryViews = repository.DailyViewsList ?? Array.Empty<DailyViewsModel>();
 					repositoryClones = repository.DailyClonesList ?? Array.Empty<DailyClonesModel>();
 
-					refreshState = RefreshState.Succeeded;
+					StarsRefreshState = ViewsClonesRefreshState = RefreshState.Succeeded;
 				}
+
+				updateStarsData(repositoryStars);
+				updateViewsClonesData(repositoryViews, repositoryClones);
 			}
 			catch (Exception e)
 			{
 				AnalyticsService.Report(e);
 
-				(repositoryStars, repositoryViews, repositoryClones) = await GetNewestRepositoryData(repository).ConfigureAwait(false);
+				var (repositoryStars, repositoryViews, repositoryClones) = await GetNewestRepositoryData(repository).ConfigureAwait(false);
+				updateStarsData(repositoryStars);
+				updateViewsClonesData(repositoryViews, repositoryClones);
 
-				refreshState = RefreshState.Error;
+				StarsRefreshState = ViewsClonesRefreshState = RefreshState.Error;
 			}
 			finally
 			{
-				repositoryStars ??= Array.Empty<DateTimeOffset>();
-				repositoryViews ??= Array.Empty<DailyViewsModel>();
-				repositoryClones ??= Array.Empty<DailyClonesModel>();
+				if (!getGetStarsDataCTS.IsCancellationRequested)
+					getGetStarsDataCTS.Cancel();
 
-				DailyStarsList = GetDailyStarsList(repositoryStars).OrderBy(x => x.Day).ToList();
+				if (!getViewsClonesDataCTS.IsCancellationRequested)
+					getViewsClonesDataCTS.Cancel();
+
+				//Display the Activity Indicator for a minimum time to ensure consistant UX
+				await minimumTimeTask.ConfigureAwait(false);
+				IsFetchingStarsData = IsFetchingViewsClonesData = false;
+			}
+
+			PrintDays();
+
+			void updateViewsClonesData(in IEnumerable<DailyViewsModel> repositoryViews, in IEnumerable<DailyClonesModel> repositoryClones)
+			{
 				DailyViewsList = repositoryViews.OrderBy(x => x.Day).ToList();
 				DailyClonesList = repositoryClones.OrderBy(x => x.Day).ToList();
-
-				StarsStatisticsText = repositoryStars.Count.ToAbbreviatedText();
 
 				ViewsStatisticsText = repositoryViews.Sum(x => x.TotalViews).ToAbbreviatedText();
 				UniqueViewsStatisticsText = repositoryViews.Sum(x => x.TotalUniqueViews).ToAbbreviatedText();
 
 				ClonesStatisticsText = repositoryClones.Sum(x => x.TotalClones).ToAbbreviatedText();
 				UniqueClonesStatisticsText = repositoryClones.Sum(x => x.TotalUniqueClones).ToAbbreviatedText();
-
-				//Set RefreshState last, because EmptyDataViews are dependent on the Chart ItemSources, e.g. DailyStarsList
-				RefreshState = refreshState;
-
-				//Display the Activity Indicator for a minimum time to ensure consistant UX
-				await minimumTimeTask.ConfigureAwait(false);
-				IsFetchingData = false;
 			}
 
-			PrintDays();
+			void updateStarsData(in IReadOnlyList<DateTimeOffset> repositoryStars)
+			{
+				DailyStarsList = GetDailyStarsList(repositoryStars).OrderBy(x => x.Day).ToList();
+				StarsStatisticsText = repositoryStars.Count.ToAbbreviatedText();
+			}
 		}
 
 		async Task<(IReadOnlyList<DateTimeOffset> RepositoryStars, IReadOnlyList<DailyViewsModel> RepositoryViews, IReadOnlyList<DailyClonesModel> RepositoryClones)>
@@ -452,7 +495,7 @@ namespace GitTrends
 			static bool IsFetchingStarsInBackground(BackgroundFetchService backgroundFetchService, Repository repository) =>
 				backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesStarsIdentifier(repository));
 
-			Task<IReadOnlyList<DateTimeOffset>> GetRepositoryStarsFromBackgroundService(Repository repository, CancellationToken cancellationToken)
+			async Task<IReadOnlyList<DateTimeOffset>> GetRepositoryStarsFromBackgroundService(Repository repository, CancellationToken cancellationToken)
 			{
 				var backgroundStarsTCS = new TaskCompletionSource<IReadOnlyList<DateTimeOffset>>();
 
@@ -464,7 +507,7 @@ namespace GitTrends
 					backgroundStarsTCS.SetCanceled();
 				}); // Work-around to use a CancellationToken with a TaskCompletionSource: https://stackoverflow.com/a/39897392/5953643
 
-				return backgroundStarsTCS.Task;
+				return await backgroundStarsTCS.Task.ConfigureAwait(false);
 
 				void HandleScheduleRetryRepositoriesStarsCompleted(object sender, Repository e)
 				{
@@ -497,11 +540,10 @@ namespace GitTrends
 				return (repositoryViewsResponse.DailyViewsList, repositoryClonesResponse.DailyClonesList);
 			}
 
-
 			static bool IsFetchingViewsClonesStarsInBackground(BackgroundFetchService backgroundFetchService, Repository repository) =>
-				backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository));
+						backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository));
 
-			Task<(IReadOnlyList<DateTimeOffset> RepositoryStars, IReadOnlyList<DailyViewsModel> RepositoryViews, IReadOnlyList<DailyClonesModel> RepositoryClones)> GetRepositoryViewsClonesStarsFromBackgroundService(Repository repository, CancellationToken cancellationToken)
+			async Task<(IReadOnlyList<DateTimeOffset> RepositoryStars, IReadOnlyList<DailyViewsModel> RepositoryViews, IReadOnlyList<DailyClonesModel> RepositoryClones)> GetRepositoryViewsClonesStarsFromBackgroundService(Repository repository, CancellationToken cancellationToken)
 			{
 				var backgroundStarsTCS = new TaskCompletionSource<(IReadOnlyList<DateTimeOffset> RepositoryStars, IReadOnlyList<DailyViewsModel> RepositoryViews, IReadOnlyList<DailyClonesModel> RepositoryClones)>();
 
@@ -513,7 +555,7 @@ namespace GitTrends
 					backgroundStarsTCS.SetCanceled();
 				}); // Work-around to use a CancellationToken with a TaskCompletionSource: https://stackoverflow.com/a/39897392/5953643
 
-				return backgroundStarsTCS.Task;
+				return await backgroundStarsTCS.Task.ConfigureAwait(false);
 
 				void HandleScheduleRetryRepositoriesViewsClonesStarsCompleted(object sender, Repository e)
 				{
@@ -572,13 +614,16 @@ namespace GitTrends
 			OnPropertyChanged(nameof(ViewsClonesChartYAxisInterval));
 		}
 
-		void OnIsFetchingDataChanged()
+		void OnIsFetchingViewsClonesDataChanged()
+		{
+			OnPropertyChanged(nameof(IsViewsClonesChartVisible));
+			OnPropertyChanged(nameof(IsViewsClonesEmptyDataViewVisible));
+		}
+
+		void OnIsFetchingStarsDataChanged()
 		{
 			OnPropertyChanged(nameof(IsStarsChartVisible));
 			OnPropertyChanged(nameof(IsStarsEmptyDataViewVisible));
-
-			OnPropertyChanged(nameof(IsViewsClonesChartVisible));
-			OnPropertyChanged(nameof(IsViewsClonesEmptyDataViewVisible));
 		}
 
 		void OnRepositorySavedToDatabase(in Repository repository) => _repostoryEventManager.RaiseEvent(this, repository, nameof(RepositorySavedToDatabase));

@@ -12,7 +12,9 @@ namespace GitTrends.UnitTests
 {
 	class TrendsViewModelTests : BaseTest
 	{
-		[Test]
+		const int _timeoutInMilliseconds = 10000;
+
+		[Test, Timeout(_timeoutInMilliseconds)]
 		public async Task FetchDataCommandTest_AuthenticatedUser_OldData()
 		{
 			//Arrange
@@ -90,7 +92,9 @@ namespace GitTrends.UnitTests
 			}
 		}
 
-		[Test]
+#error To Do: Create FetchDataCommand where token is cancelled
+
+		[Test, Timeout(_timeoutInMilliseconds)]
 		public async Task FetchDataCommandTest_AuthenticatedUser_NoData()
 		{
 			//Arrange
@@ -161,8 +165,8 @@ namespace GitTrends.UnitTests
 			}
 		}
 
-		[Test]
-		public async Task FetchDataCommandTest_AuthenticatedUser_NoData_FetchingViewsStarsDataInBackground()
+		[Test, Timeout(_timeoutInMilliseconds)]
+		public async Task FetchDataCommandTest_AuthenticatedUser_NoData_FetchingStarsDataInBackground()
 		{
 			//Arrange
 			bool wasTryScheduleRetryRepositoriesStarsSuccessful;
@@ -180,11 +184,15 @@ namespace GitTrends.UnitTests
 
 			await FetchDataCommandTest_AuthenticatedUser_NoData();
 
+			var isTryScheduleRetryRepositoriesStarsRunningAfterTest = backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesStarsIdentifier(repository_Initial));
+
 			//Assert
 			Assert.IsTrue(wasTryScheduleRetryRepositoriesStarsSuccessful);
+			Assert.IsFalse(isTryScheduleRetryRepositoriesStarsRunningAfterTest);
 		}
 
-		[Test]
+
+		[Test, Timeout(_timeoutInMilliseconds)]
 		public async Task FetchDataCommandTest_AuthenticatedUser_NoData_FetchingViewsClonesStarsDataInBackground()
 		{
 			//Arrange
@@ -198,17 +206,20 @@ namespace GitTrends.UnitTests
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
 			//Act
-
 			wasTryScheduleRetryRepositoriesViewsClonesStarsSuccessful = backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository_Initial);
 
 			await FetchDataCommandTest_AuthenticatedUser_NoData();
 
+			var isTryScheduleRetryRepositoriesViewsClonesStarsRunningAfterTest = backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository_Initial));
+
 			//Assert
 			Assert.IsTrue(wasTryScheduleRetryRepositoriesViewsClonesStarsSuccessful);
+			Assert.IsFalse(isTryScheduleRetryRepositoriesViewsClonesStarsRunningAfterTest);
 		}
 
 		[TestCase(true)]
 		[TestCase(false)]
+		[Timeout(_timeoutInMilliseconds)]
 		public async Task FetchDataCommandTest_AuthenticatedUser(bool shouldIncludeViewsClonesData)
 		{
 			//Arrange
@@ -223,13 +234,13 @@ namespace GitTrends.UnitTests
 			string viewsClonesEmptyDataViewTitleText_Initial, viewsClonesEmptyDataViewTitleText_Final;
 			string starsEmptyDataViewTitleText_Initial, starsEmptyDataViewTitleText_Final;
 
-			bool isViewsClonesChartVisible_Initial, isViewsClonesChartVisible_DuringFetchDataCommand, isViewsClonesChartVisible_Final;
-			bool isStarsChartVisible_Initial, isStarsChartVisible_DuringFetchDataCommand, isStarsChartVisible_Final;
+			bool isViewsClonesChartVisible_Initial, isViewsClonesChartVisible_Final;
+			bool isStarsChartVisible_Initial, isStarsChartVisible_Final;
 
-			bool isFetchingData_Initial, isFetchingData_DuringFetchDataCommand, isFetchingData_Final;
+			bool isFetchingData_Initial, isFetchingData_Final;
 
-			bool isViewsClonesEmptyDataViewVisible_Initial, isViewsClonesEmptyDataViewVisible_DuringFetchDataCommand, isViewsClonesEmptyDataViewVisible_Final;
-			bool isStarsEmptyDataViewVisible_Initial, isStarsEmptyDataViewVisible_DuringFetchDataCommand, isStarsEmptyDataViewVisible_Final;
+			bool isViewsClonesEmptyDataViewVisible_Initial, isViewsClonesEmptyDataViewVisible_Final;
+			bool isStarsEmptyDataViewVisible_Initial, isStarsEmptyDataViewVisible_Final;
 
 			DateTime minViewsClonesDate_Initial, minViewsClonesDate_Final;
 			DateTime maxViewsClonesDate_Initial, maxViewsClonesDate_Final;
@@ -261,7 +272,7 @@ namespace GitTrends.UnitTests
 			}
 
 			//Act
-			isFetchingData_Initial = trendsViewModel.IsFetchingData;
+			isFetchingData_Initial = trendsViewModel.IsFetchingViewsClonesData;
 			dailyStarsList_Initial = trendsViewModel.DailyStarsList;
 			dailyViewsList_Initial = trendsViewModel.DailyViewsList;
 			dailyClonesList_Initial = trendsViewModel.DailyClonesList;
@@ -280,17 +291,9 @@ namespace GitTrends.UnitTests
 			viewsClonesEmptyDataViewTitleText_Initial = trendsViewModel.ViewsClonesEmptyDataViewTitleText;
 			isViewsClonesEmptyDataViewVisible_Initial = trendsViewModel.IsViewsClonesEmptyDataViewVisible;
 
-			var fetchDataCommandTask = trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None));
+			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
 
-			isFetchingData_DuringFetchDataCommand = trendsViewModel.IsFetchingData;
-			isStarsChartVisible_DuringFetchDataCommand = trendsViewModel.IsStarsChartVisible;
-			isViewsClonesChartVisible_DuringFetchDataCommand = trendsViewModel.IsViewsClonesChartVisible;
-			isStarsEmptyDataViewVisible_DuringFetchDataCommand = trendsViewModel.IsStarsEmptyDataViewVisible;
-			isViewsClonesEmptyDataViewVisible_DuringFetchDataCommand = trendsViewModel.IsViewsClonesEmptyDataViewVisible;
-
-			await fetchDataCommandTask.ConfigureAwait(false);
-
-			isFetchingData_Final = trendsViewModel.IsFetchingData;
+			isFetchingData_Final = trendsViewModel.IsFetchingViewsClonesData;
 			dailyStarsList_Final = trendsViewModel.DailyStarsList;
 			dailyViewsList_Final = trendsViewModel.DailyViewsList;
 			dailyClonesList_Final = trendsViewModel.DailyClonesList;
@@ -319,23 +322,18 @@ namespace GitTrends.UnitTests
 			Assert.IsNotEmpty(dailyStarsList_Final);
 
 			Assert.IsTrue(isFetchingData_Initial);
-			Assert.IsTrue(isFetchingData_DuringFetchDataCommand);
 			Assert.IsFalse(isFetchingData_Final);
 
 			Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Initial);
-			Assert.IsFalse(isViewsClonesEmptyDataViewVisible_DuringFetchDataCommand);
 			Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Final);
 
 			Assert.IsFalse(isStarsEmptyDataViewVisible_Initial);
-			Assert.IsFalse(isStarsEmptyDataViewVisible_DuringFetchDataCommand);
 			Assert.IsFalse(isStarsEmptyDataViewVisible_Final);
 
 			Assert.IsFalse(isViewsClonesChartVisible_Initial);
-			Assert.IsFalse(isViewsClonesChartVisible_DuringFetchDataCommand);
 			Assert.True(isViewsClonesChartVisible_Final);
 
 			Assert.IsFalse(isStarsChartVisible_Initial);
-			Assert.IsFalse(isStarsChartVisible_DuringFetchDataCommand);
 			Assert.True(isStarsChartVisible_Final);
 
 			Assert.AreEqual(TrendsViewModel.MinimumChartHeight, dailyViewsClonesMaxValue_Initial);
@@ -368,6 +366,7 @@ namespace GitTrends.UnitTests
 
 		[TestCase(true)]
 		[TestCase(false)]
+		[Timeout(_timeoutInMilliseconds)]
 		public async Task FetchDataCommandTest_DemoUser(bool shouldCreateViewsClonesData)
 		{
 			//Arrange
@@ -403,7 +402,7 @@ namespace GitTrends.UnitTests
 			Assert.IsNotEmpty(dailyClonesList_Final);
 		}
 
-		[Test]
+		[Test, Timeout(_timeoutInMilliseconds)]
 		public async Task UniqueClonesCardTappedCommandTest()
 		{
 			//Arrange
@@ -441,7 +440,7 @@ namespace GitTrends.UnitTests
 			Assert.IsFalse(isUniqueClonesSeriesVisible_AfterViewsCardTappedCommand);
 		}
 
-		[Test]
+		[Test, Timeout(_timeoutInMilliseconds)]
 		public async Task ClonesCardTappedCommandTest()
 		{
 			//Arrange
@@ -480,7 +479,7 @@ namespace GitTrends.UnitTests
 		}
 
 
-		[Test]
+		[Test, Timeout(_timeoutInMilliseconds)]
 		public async Task UniqueViewsCardTappedCommandTest()
 		{
 			//Arrange
@@ -518,7 +517,7 @@ namespace GitTrends.UnitTests
 			Assert.IsFalse(isUniqueViewsSeriesVisible_AfterViewsCardTappedCommand);
 		}
 
-		[Test]
+		[Test, Timeout(_timeoutInMilliseconds)]
 		public async Task ViewsCardTappedCommandTest()
 		{
 			//Arrange
