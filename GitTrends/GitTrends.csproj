@@ -28,7 +28,7 @@
         <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.1.4" />
         <PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.1" />
-        <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.0" />
+        <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.1" />
         <PackageReference Include="Xamarin.Forms" Version="5.0.0.2401" />
         <PackageReference Include="Shiny.Notifications" Version="2.4.3.3024" />
         <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
