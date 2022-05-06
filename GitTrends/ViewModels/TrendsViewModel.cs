@@ -514,9 +514,9 @@ namespace GitTrends
 
 		async Task<IReadOnlyList<DateTimeOffset>> GetStarsData(Repository repository, CancellationToken cancellationToken)
 		{
-			if (IsFetchingStarsInBackground(_backgroundFetchService, repository))
+			if (isFetchingStarsInBackground(_backgroundFetchService, repository))
 			{
-				return await GetRepositoryStarsFromBackgroundService(repository, cancellationToken).ConfigureAwait(false);
+				return await getRepositoryStarsFromBackgroundService(repository, cancellationToken).ConfigureAwait(false);
 			}
 			else
 			{
@@ -524,10 +524,10 @@ namespace GitTrends
 				return getStarGazers.StarredAt.Select(x => x.StarredAt).ToList();
 			}
 
-			static bool IsFetchingStarsInBackground(BackgroundFetchService backgroundFetchService, Repository repository) =>
+			static bool isFetchingStarsInBackground(BackgroundFetchService backgroundFetchService, Repository repository) =>
 				backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesStarsIdentifier(repository));
 
-			async Task<IReadOnlyList<DateTimeOffset>> GetRepositoryStarsFromBackgroundService(Repository repository, CancellationToken cancellationToken)
+			async Task<IReadOnlyList<DateTimeOffset>> getRepositoryStarsFromBackgroundService(Repository repository, CancellationToken cancellationToken)
 			{
 				var backgroundStarsTCS = new TaskCompletionSource<IReadOnlyList<DateTimeOffset>>();
 
@@ -554,9 +554,9 @@ namespace GitTrends
 
 		async Task<(IReadOnlyList<DailyViewsModel> RepositoryViews, IReadOnlyList<DailyClonesModel> RepositoryClones)> GetViewsClonesData(Repository repository, CancellationToken cancellationToken)
 		{
-			if (IsFetchingViewsClonesStarsInBackground(_backgroundFetchService, repository))
+			if (isFetchingViewsClonesStarsInBackground(_backgroundFetchService, repository))
 			{
-				var backgroundServiceResults = await GetRepositoryViewsClonesStarsFromBackgroundService(repository, cancellationToken).ConfigureAwait(false);
+				var backgroundServiceResults = await getRepositoryViewsClonesStarsFromBackgroundService(repository, cancellationToken).ConfigureAwait(false);
 				return (backgroundServiceResults.RepositoryViews, backgroundServiceResults.RepositoryClones);
 			}
 			else
@@ -572,10 +572,10 @@ namespace GitTrends
 				return (repositoryViewsResponse.DailyViewsList, repositoryClonesResponse.DailyClonesList);
 			}
 
-			static bool IsFetchingViewsClonesStarsInBackground(BackgroundFetchService backgroundFetchService, Repository repository) =>
+			static bool isFetchingViewsClonesStarsInBackground(BackgroundFetchService backgroundFetchService, Repository repository) =>
 						backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository));
 
-			async Task<(IReadOnlyList<DateTimeOffset> RepositoryStars, IReadOnlyList<DailyViewsModel> RepositoryViews, IReadOnlyList<DailyClonesModel> RepositoryClones)> GetRepositoryViewsClonesStarsFromBackgroundService(Repository repository, CancellationToken cancellationToken)
+			async Task<(IReadOnlyList<DateTimeOffset> RepositoryStars, IReadOnlyList<DailyViewsModel> RepositoryViews, IReadOnlyList<DailyClonesModel> RepositoryClones)> getRepositoryViewsClonesStarsFromBackgroundService(Repository repository, CancellationToken cancellationToken)
 			{
 				var backgroundStarsTCS = new TaskCompletionSource<(IReadOnlyList<DateTimeOffset> RepositoryStars, IReadOnlyList<DailyViewsModel> RepositoryViews, IReadOnlyList<DailyClonesModel> RepositoryClones)>();
 
