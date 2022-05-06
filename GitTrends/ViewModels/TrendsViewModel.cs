@@ -37,7 +37,6 @@ namespace GitTrends
 		string _starsStatisticsText = string.Empty;
 		string _viewsStatisticsText = string.Empty;
 		string _clonesStatisticsText = string.Empty;
-		string _starsHeaderTitleText = string.Empty;
 		string _starsHeaderMessageText = string.Empty;
 		string _uniqueViewsStatisticsText = string.Empty;
 		string _uniqueClonesStatisticsText = string.Empty;
