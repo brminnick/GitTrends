@@ -93,7 +93,9 @@ namespace GitTrends.UnitTests
 		}
 
 #if RELEASE
-#error To Do: Create FetchDataCommand where token is cancelled
+#error To Do: Create FetchDataCommand test where token is cancelled
+#error To Do: Create FetchDataCommand test where stars data is incomplete
+#error To Do: Create FetchDataCommand test where stars data was originally 0
 #endif
 
 		[Test, Timeout(_timeoutInMilliseconds)]
@@ -235,7 +237,6 @@ namespace GitTrends.UnitTests
 
 			string viewsClonesEmptyDataViewTitleText_Initial, viewsClonesEmptyDataViewTitleText_Final;
 			string starsEmptyDataViewTitleText_Initial, starsEmptyDataViewTitleText_Final;
-			string starsHeaderTitleText_Initial, starsHeaderTitleText_Final;
 			string starsHeaderMessageText_Initial, starsHeaderMessageText_Final;
 
 			bool isViewsClonesChartVisible_Initial, isViewsClonesChartVisible_Final;
@@ -287,7 +288,6 @@ namespace GitTrends.UnitTests
 			minViewsClonesDate_Initial = trendsViewModel.MinViewsClonesDate;
 			maxViewsClonesDate_Initial = trendsViewModel.MaxViewsClonesDate;
 			isStarsChartVisible_Initial = trendsViewModel.IsStarsChartVisible;
-			starsHeaderTitleText_Initial = trendsViewModel.StarsHeaderTitleText;
 			starsHeaderMessageText_Initial = trendsViewModel.StarsHeaderMessageText;
 			dailyViewsClonesMinValue_Initial = trendsViewModel.DailyViewsClonesMinValue;
 			dailyViewsClonesMaxValue_Initial = trendsViewModel.DailyViewsClonesMaxValue;
@@ -310,7 +310,6 @@ namespace GitTrends.UnitTests
 			isStarsChartVisible_Final = trendsViewModel.IsStarsChartVisible;
 			minViewsClonesDate_Final = trendsViewModel.MinViewsClonesDate;
 			maxViewsClonesDate_Final = trendsViewModel.MaxViewsClonesDate;
-			starsHeaderTitleText_Final = trendsViewModel.StarsHeaderTitleText;
 			starsHeaderMessageText_Final = trendsViewModel.StarsHeaderMessageText;
 			dailyViewsClonesMinValue_Final = trendsViewModel.DailyViewsClonesMinValue;
 			dailyViewsClonesMaxValue_Final = trendsViewModel.DailyViewsClonesMaxValue;
@@ -371,11 +370,8 @@ namespace GitTrends.UnitTests
 			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Uninitialized, trendsViewModel.TotalStars), starsEmptyDataViewTitleText_Initial);
 			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), starsEmptyDataViewTitleText_Final);
 
-			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderTitleText(RefreshState.Uninitialized), starsHeaderTitleText_Initial);
-			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderTitleText(RefreshState.Succeeded), starsHeaderTitleText_Final);
-
-			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(default), starsHeaderMessageText_Initial);
-			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(trendsViewModel.TotalStars), starsHeaderMessageText_Final);
+			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Uninitialized, default), starsHeaderMessageText_Initial);
+			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), starsHeaderMessageText_Final);
 		}
 
 		[TestCase(true)]

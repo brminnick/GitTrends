@@ -212,12 +212,6 @@ namespace GitTrends
 			set => SetProperty(ref _isUniqueClonesSeriesVisible, value);
 		}
 
-		public string StarsHeaderTitleText
-		{
-			get => _starsHeaderTitleText;
-			set => SetProperty(ref _starsHeaderTitleText, value);
-		}
-
 		public string StarsHeaderMessageText
 		{
 			get => _starsHeaderMessageText;
@@ -271,8 +265,7 @@ namespace GitTrends
 				StarsEmptyDataViewTitleText = EmptyDataViewService.GetStarsEmptyDataViewTitleText(value, TotalStars);
 				StarsEmptyDataViewDescriptionText = EmptyDataViewService.GetStarsEmptyDataViewDescriptionText(value, TotalStars);
 
-				StarsHeaderTitleText = EmptyDataViewService.GetStarsHeaderTitleText(value);
-				StarsHeaderMessageText = EmptyDataViewService.GetStarsHeaderMessageText(TotalStars);
+				StarsHeaderMessageText = EmptyDataViewService.GetStarsHeaderMessageText(value, TotalStars);
 			}
 		}
 
@@ -320,8 +313,27 @@ namespace GitTrends
 				}
 				else
 				{
-					repositoryStars = await getGetStarsDataTask.ConfigureAwait(false);
-					updateStarsData(repositoryStars);
+					var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
+
+					if (repositoryFromDatabase is null)
+					{
+						repositoryStars = await getGetStarsDataTask.ConfigureAwait(false);
+						updateStarsData(repositoryStars);
+					}
+					else
+					{
+						var estimatedRepositoryStars = getEstimatedStarredAtList(repositoryFromDatabase, repository.StarCount);
+						updateStarsData(estimatedRepositoryStars);
+
+						// Display the estimated Data
+						StarsRefreshState = RefreshState.Succeeded;
+						IsFetchingStarsData = false;
+
+						// Continue to fetch the actual StarredAt Data in the background
+						// This allows us to save the downlaoded data to the database at the end of the `try` block
+						repositoryStars = await getGetStarsDataTask.ConfigureAwait(false);
+						updateStarsData(repositoryStars);
+					}
 				}
 
 				//Set StarsRefreshState last, because EmptyDataViews are dependent on the Chart ItemSources, e.g. DailyStarsList
@@ -375,7 +387,9 @@ namespace GitTrends
 				}
 				else if (repositoryFromDatabase.DataDownloadedAt > repository.DataDownloadedAt) //If data from database is more recent, display data from database
 				{
-					repositoryStars = repositoryFromDatabase.StarredAt ?? Array.Empty<DateTimeOffset>();
+					var estimatedRepositoryStars = getEstimatedStarredAtList(repositoryFromDatabase, repository.StarCount);
+
+					repositoryStars = estimatedRepositoryStars;
 					repositoryViews = repositoryFromDatabase.DailyViewsList ?? Array.Empty<DailyViewsModel>();
 					repositoryClones = repositoryFromDatabase.DailyClonesList ?? Array.Empty<DailyClonesModel>();
 
@@ -434,6 +448,24 @@ namespace GitTrends
 			{
 				DailyStarsList = GetDailyStarsList(repositoryStars).OrderBy(x => x.Day).ToList();
 				StarsStatisticsText = repositoryStars.Count.ToAbbreviatedText();
+			}
+
+			IReadOnlyList<DateTimeOffset> getEstimatedStarredAtList(in Repository repositoryFromDatabase, in long starCount)
+			{
+				if (starCount is 0)
+					return Array.Empty<DateTimeOffset>();
+
+				var incompleteStarredAtList = new List<DateTimeOffset>(repositoryFromDatabase.StarredAt ?? new List<DateTimeOffset> { DateTimeOffset.MinValue });
+				var totalMissingTime = DateTimeOffset.UtcNow.Subtract(incompleteStarredAtList.Last());
+				var missingStarCount = starCount - incompleteStarredAtList.Count;
+
+				for (var i = 0; i < missingStarCount; i++)
+				{
+					var nextDataPointDeltaInSeconds = totalMissingTime.TotalSeconds / missingStarCount * i;
+					incompleteStarredAtList.Add(incompleteStarredAtList.Last().AddSeconds(nextDataPointDeltaInSeconds));
+				}
+
+				return incompleteStarredAtList;
 			}
 		}
 

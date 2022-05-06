@@ -33,9 +33,8 @@ namespace GitTrends
 			Children.Add(new SeparatorLine()
 							.Row(Row.TopLine).ColumnSpan(All<Column>()));
 
-			Children.Add(new StarsStatisticsLabel(_textSize)
-							.Row(Row.Total).ColumnSpan(All<Column>())
-							.Bind(Label.TextProperty, nameof(TrendsViewModel.StarsHeaderTitleText)));
+			Children.Add(new StarsStatisticsLabel("TOTAL", _textSize)
+							.Row(Row.Total).ColumnSpan(All<Column>()));
 
 			Children.Add(new StarSvg()
 							.Row(Row.Stars).Column(Column.LeftStar));
@@ -46,12 +45,18 @@ namespace GitTrends
 							.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsStarsChartVisible))
 							.Bind<Label, double, string>(Label.TextProperty, nameof(TrendsViewModel.TotalStars), convert: totalStars => totalStars.ToAbbreviatedText()));
 
+			Children.Add(new ActivityIndicator()
+							.Row(Row.Stars).Column(Column.Text)
+							.CenterExpand()
+							.DynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.ActivityIndicatorColor))
+							.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingStarsData))
+							.Bind(ActivityIndicator.IsRunningProperty, nameof(TrendsViewModel.IsFetchingStarsData)));
+
 			Children.Add(new StarSvg()
 							.Row(Row.Stars).Column(Column.RightStar));
 
 			Children.Add(new StarsStatisticsLabel(_textSize) { AutomationId = TrendsPageAutomationIds.StarsHeaderMessageLabel }
 							.Row(Row.Message).ColumnSpan(All<Column>())
-							.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsStarsChartVisible))
 							.Bind(Label.TextProperty, nameof(TrendsViewModel.StarsHeaderMessageText)));
 
 			Children.Add(new SeparatorLine()
@@ -76,6 +81,11 @@ namespace GitTrends
 
 		class StarsStatisticsLabel : Label
 		{
+			public StarsStatisticsLabel(in string text, in int fontSize) : this(fontSize)
+			{
+				Text = text;
+			}
+
 			public StarsStatisticsLabel(in int fontSize)
 			{
 				this.TextCenter();

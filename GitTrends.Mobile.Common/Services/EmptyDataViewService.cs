@@ -98,11 +98,12 @@ namespace GitTrends.Mobile.Common
 			_ => throw new NotSupportedException()
 		};
 
-		public static string GetStarsHeaderMessageText(double totalStars) => totalStars switch
+		public static string GetStarsHeaderMessageText(in RefreshState refreshState, double totalStars) => (refreshState, totalStars) switch
 		{
-			0 or 1 => TrendsChartTitleConstants.YouGotThis,
-			> 1 => TrendsChartTitleConstants.KeepItUp,
-			_ => throw new ArgumentOutOfRangeException($"{nameof(totalStars)} cannot be negative")
+			(RefreshState.Uninitialized, _) => EmptyDataViewConstantsInternal.LOADING,
+			(_, 0 or 1) => TrendsChartTitleConstants.YouGotThis,
+			(_, > 1) => TrendsChartTitleConstants.KeepItUp,
+			(_, _) => throw new ArgumentOutOfRangeException($"{nameof(totalStars)} cannot be negative")
 		};
 
 		public static string GetViewsClonesImage(in RefreshState refreshState) => refreshState switch
