@@ -1,7 +1,6 @@
 ﻿using GitTrends.Mobile.Common;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -34,8 +33,9 @@ namespace GitTrends
 			Children.Add(new SeparatorLine()
 							.Row(Row.TopLine).ColumnSpan(All<Column>()));
 
-			Children.Add(new StarsStatisticsLabel("TOTAL", _textSize)
-							.Row(Row.Total).ColumnSpan(All<Column>()));
+			Children.Add(new StarsStatisticsLabel(_textSize)
+							.Row(Row.Total).ColumnSpan(All<Column>())
+							.Bind(Label.TextProperty, nameof(TrendsViewModel.StarsHeaderTitleText)));
 
 			Children.Add(new StarSvg()
 							.Row(Row.Stars).Column(Column.LeftStar));
@@ -76,11 +76,6 @@ namespace GitTrends
 
 		class StarsStatisticsLabel : Label
 		{
-			public StarsStatisticsLabel(in string text, in int fontSize) : this(fontSize)
-			{
-				Text = text;
-			}
-
 			public StarsStatisticsLabel(in int fontSize)
 			{
 				this.TextCenter();

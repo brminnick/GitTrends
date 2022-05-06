@@ -205,7 +205,7 @@ namespace GitTrends.UnitTests
 			string actualResult;
 
 			//Act
-			actualResult = EmptyDataViewService.GetStarsTitleText(refreshState, totalStars);
+			actualResult = EmptyDataViewService.GetStarsEmptyDataViewTitleText(refreshState, totalStars);
 
 			//Assert
 			Assert.AreEqual(expectedResult, actualResult);
@@ -233,7 +233,7 @@ namespace GitTrends.UnitTests
 			//Act
 
 			//Assert
-			Assert.Throws<NotSupportedException>(() => EmptyDataViewService.GetStarsTitleText(refreshState, totalStars));
+			Assert.Throws<NotSupportedException>(() => EmptyDataViewService.GetStarsEmptyDataViewTitleText(refreshState, totalStars));
 		}
 
 		[TestCase(RefreshState.Uninitialized, "EmptyTrafficChart")]
@@ -289,7 +289,7 @@ namespace GitTrends.UnitTests
 			string actualResult;
 
 			//Act
-			actualResult = EmptyDataViewService.GetStarsImage(refreshState, totalStars);
+			actualResult = EmptyDataViewService.GetStarsEmptyDataViewImage(refreshState, totalStars);
 
 			//Assert
 			Assert.AreEqual(expectedResult, actualResult);
@@ -317,7 +317,7 @@ namespace GitTrends.UnitTests
 			//Act
 
 			//Assert
-			Assert.Throws<NotSupportedException>(() => EmptyDataViewService.GetStarsImage(refreshState, totalStars));
+			Assert.Throws<NotSupportedException>(() => EmptyDataViewService.GetStarsEmptyDataViewImage(refreshState, totalStars));
 		}
 	}
 }

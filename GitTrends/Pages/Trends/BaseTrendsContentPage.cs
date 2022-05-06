@@ -20,7 +20,6 @@ namespace GitTrends
 			{
 				ColumnSpacing = 8,
 				RowSpacing = 12,
-				Padding = new Thickness(0, 16),
 
 				RowDefinitions = Rows.Define(
 					(Row.Header, ViewsClonesStatisticsGrid.StatisticsGridHeight),
@@ -44,7 +43,7 @@ namespace GitTrends
 					new TrendsChartActivityIndicator(trendsPageType)
 						.Row(Row.Chart),
 				}
-			};
+			}.Padding(0, 16);
 		}
 
 		protected enum Row { Header, Indicator, Chart }

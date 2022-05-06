@@ -10,7 +10,6 @@ using AsyncAwaitBestPractices;
 using AsyncAwaitBestPractices.MVVM;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Essentials.Interfaces;
@@ -38,6 +37,7 @@ namespace GitTrends
 		string _starsStatisticsText = string.Empty;
 		string _viewsStatisticsText = string.Empty;
 		string _clonesStatisticsText = string.Empty;
+		string _starsHeaderTitleText = string.Empty;
 		string _starsHeaderMessageText = string.Empty;
 		string _uniqueViewsStatisticsText = string.Empty;
 		string _uniqueClonesStatisticsText = string.Empty;
@@ -212,6 +212,12 @@ namespace GitTrends
 			set => SetProperty(ref _isUniqueClonesSeriesVisible, value);
 		}
 
+		public string StarsHeaderTitleText
+		{
+			get => _starsHeaderTitleText;
+			set => SetProperty(ref _starsHeaderTitleText, value);
+		}
+
 		public string StarsHeaderMessageText
 		{
 			get => _starsHeaderMessageText;
@@ -261,16 +267,12 @@ namespace GitTrends
 		{
 			set
 			{
-				StarsEmptyDataViewImage = EmptyDataViewService.GetStarsImage(value, TotalStars);
-				StarsEmptyDataViewTitleText = EmptyDataViewService.GetStarsTitleText(value, TotalStars);
+				StarsEmptyDataViewImage = EmptyDataViewService.GetStarsEmptyDataViewImage(value, TotalStars);
+				StarsEmptyDataViewTitleText = EmptyDataViewService.GetStarsEmptyDataViewTitleText(value, TotalStars);
 				StarsEmptyDataViewDescriptionText = EmptyDataViewService.GetStarsEmptyDataViewDescriptionText(value, TotalStars);
 
-				StarsHeaderMessageText = TotalStars switch
-				{
-					0 or 1 => TrendsChartTitleConstants.YouGotThis,
-					> 1 => TrendsChartTitleConstants.KeepItUp,
-					_ => throw new NotSupportedException($"{nameof(TotalStars)} cannot be negative")
-				};
+				StarsHeaderTitleText = EmptyDataViewService.GetStarsHeaderTitleText(value);
+				StarsHeaderMessageText = EmptyDataViewService.GetStarsHeaderMessageText(TotalStars);
 			}
 		}
 
@@ -309,7 +311,6 @@ namespace GitTrends
 				//Set ViewsClonesRefreshState last, because EmptyDataViews are dependent on the Chart ItemSources, e.g. DailyViewsClonesList
 				ViewsClonesRefreshState = RefreshState.Succeeded;
 				IsFetchingViewsClonesData = false;
-
 
 				if (repository.ContainsViewsClonesStarsData
 					&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan))
