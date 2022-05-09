@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
 	<resheader name="resmimetype">
 		<value>text/microsoft-resx</value>
@@ -62,5 +62,11 @@
   </data>
   <data name="FirstStar" xml:space="preserve">
     <value>İlk yıldızınızı kazandınız!</value>
+  </data>
+	<data name="TOTAL" xml:space="preserve">
+    <value>TOPLAM</value>
+  </data>
+	<data name="LOADING" xml:space="preserve">
+    <value>İNDİRİLİYOR</value>
   </data>
 </root> 

@@ -47,8 +47,9 @@ namespace GitTrends.Shared
 			DailyClonesList = clones?.ToList();
 		}
 
-		public bool ContainsViewsClonesStarsData => TotalClones is not null && TotalViews is not null && TotalUniqueClones is not null && TotalUniqueViews is not null && StarredAt is not null;
+		public bool ContainsStarsData => StarredAt is not null && StarredAt.Count == StarCount;
 		public bool ContainsViewsClonesData => TotalClones is not null && TotalViews is not null && TotalUniqueClones is not null && TotalUniqueViews is not null;
+		public bool ContainsViewsClonesStarsData => ContainsViewsClonesData && ContainsStarsData;
 
 		public DateTimeOffset DataDownloadedAt { get; init; }
 		public string OwnerLogin { get; init; }

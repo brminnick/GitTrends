@@ -1,7 +1,6 @@
 ﻿using GitTrends.Mobile.Common;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -46,12 +45,18 @@ namespace GitTrends
 							.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsStarsChartVisible))
 							.Bind<Label, double, string>(Label.TextProperty, nameof(TrendsViewModel.TotalStars), convert: totalStars => totalStars.ToAbbreviatedText()));
 
+			Children.Add(new ActivityIndicator()
+							.Row(Row.Stars).Column(Column.Text)
+							.CenterExpand()
+							.DynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.ActivityIndicatorColor))
+							.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingStarsData))
+							.Bind(ActivityIndicator.IsRunningProperty, nameof(TrendsViewModel.IsFetchingStarsData)));
+
 			Children.Add(new StarSvg()
 							.Row(Row.Stars).Column(Column.RightStar));
 
 			Children.Add(new StarsStatisticsLabel(_textSize) { AutomationId = TrendsPageAutomationIds.StarsHeaderMessageLabel }
 							.Row(Row.Message).ColumnSpan(All<Column>())
-							.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsStarsChartVisible))
 							.Bind(Label.TextProperty, nameof(TrendsViewModel.StarsHeaderMessageText)));
 
 			Children.Add(new SeparatorLine()

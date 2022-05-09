@@ -1,4 +1,5 @@
-﻿using GitTrends.Mobile.Common;
+﻿using System;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Essentials.Interfaces;
@@ -9,16 +10,16 @@ namespace GitTrends
 {
 	abstract class BaseTrendsContentPage : BaseContentPage
 	{
-		public BaseTrendsContentPage(in Color indicatorColor,
+		protected BaseTrendsContentPage(in Color indicatorColor,
 										in IMainThread mainThread,
 										in int carouselPositionIndex,
+										in TrendsPageType trendsPageType,
 										in IAnalyticsService analyticsService) : base(analyticsService, mainThread, true)
 		{
 			Content = new Grid
 			{
 				ColumnSpacing = 8,
 				RowSpacing = 12,
-				Padding = new Thickness(0, 16),
 
 				RowDefinitions = Rows.Define(
 					(Row.Header, ViewsClonesStatisticsGrid.StatisticsGridHeight),
@@ -39,13 +40,14 @@ namespace GitTrends
 					CreateEmptyDataView().Margin(chartView.Margin).Padding(new Thickness(chartView.Padding.Left + 4, chartView.Padding.Top + 4, chartView.Padding.Right + 4, chartView.Padding.Bottom + 4))
 						.Row(Row.Chart),
 
-					new TrendsChartActivityIndicator()
+					new TrendsChartActivityIndicator(trendsPageType)
 						.Row(Row.Chart),
 				}
-			};
+			}.Padding(0, 16);
 		}
 
 		protected enum Row { Header, Indicator, Chart }
+		protected enum TrendsPageType { ViewsClonesTrendsPage, StarsTrendsPage }
 
 		protected abstract Layout CreateHeaderView();
 		protected abstract BaseChartView CreateChartView();
@@ -76,7 +78,7 @@ namespace GitTrends
 
 		class TrendsChartActivityIndicator : ActivityIndicator
 		{
-			public TrendsChartActivityIndicator()
+			public TrendsChartActivityIndicator(TrendsPageType trendsPageType)
 			{
 				//The size of UIActivityIndicator is fixed by iOS, so we'll use Xamarin.Forms.VisualElement.Scale to increase its size
 				//https://stackoverflow.com/a/2638224/5953643
@@ -85,10 +87,17 @@ namespace GitTrends
 
 				AutomationId = TrendsPageAutomationIds.ActivityIndicator;
 
+				string isFetchingDataPath = trendsPageType switch
+				{
+					TrendsPageType.StarsTrendsPage => nameof(TrendsViewModel.IsFetchingStarsData),
+					TrendsPageType.ViewsClonesTrendsPage => nameof(TrendsViewModel.IsFetchingViewsClonesData),
+					_ => throw new NotImplementedException()
+				};					
+
 				this.CenterExpand()
 					.DynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor))
-					.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingData))
-					.Bind(IsRunningProperty, nameof(TrendsViewModel.IsFetchingData));
+					.Bind(IsVisibleProperty, isFetchingDataPath)
+					.Bind(IsRunningProperty, isFetchingDataPath);
 			}
 		}
 	}

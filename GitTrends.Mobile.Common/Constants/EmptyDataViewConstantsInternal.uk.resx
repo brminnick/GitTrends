@@ -63,4 +63,10 @@
   <data name="FirstStar" xml:space="preserve">
     <value>Ви отримали свою першу зірку!</value>
   </data>
+	<data name="TOTAL" xml:space="preserve">
+    <value>ЗАГАЛЬНО</value>
+  </data>
+	<data name="LOADING" xml:space="preserve">
+    <value>ЗАВАНТАЖЕННЯ</value>
+  </data>
 </root>

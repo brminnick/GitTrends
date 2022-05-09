@@ -1,4 +1,6 @@
 ﻿using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
@@ -240,16 +242,20 @@ namespace GitTrends.UnitTests
 			//"Could not resolve to a Repository with the name 'zxcvbnmlkjhgfdsa1234567890/abc123321'."
 		}
 
-		[Test, Ignore("Test Will Fail if Unauthenticated API Request Count has been exceeded")]
+		[Test,Ignore("Test Fails When GitHub API Rate Limit Exceeded")]
 		public async Task GetStarGazers_Unauthenticated()
 		{
 			//Arrange
 			StarGazers starGazers;
+			var httpClient = ServiceCollection.ServiceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
+			httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue(nameof(GitTrends))));
+
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
 
 			//Act
 			gitHubUserService.InvalidateToken();
+
 			starGazers = await gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None);
 
 			//Assert
