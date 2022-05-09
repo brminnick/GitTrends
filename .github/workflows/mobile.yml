@@ -27,7 +27,7 @@ jobs:
 
       - name: Install Boots
         run : |
-          dotnet tool install --global boots
+          dotnet tool install --global boots --stable
           boots Mono
           boots Xamarin.Android
 
