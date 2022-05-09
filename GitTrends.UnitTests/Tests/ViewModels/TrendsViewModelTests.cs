@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using Xamarin.Forms;
 
 namespace GitTrends.UnitTests
 {
@@ -91,12 +93,6 @@ namespace GitTrends.UnitTests
 				repositorySavedToDatabaseTCS.SetResult(e);
 			}
 		}
-
-#if RELEASE
-#error To Do: Create FetchDataCommand test where token is cancelled
-#error To Do: Create FetchDataCommand test where stars data is incomplete
-#error To Do: Create FetchDataCommand test where stars data was originally 0
-#endif
 
 		[Test, Timeout(_timeoutInMilliseconds)]
 		public async Task FetchDataCommandTest_AuthenticatedUser_NoData()
@@ -195,6 +191,87 @@ namespace GitTrends.UnitTests
 			Assert.IsFalse(isTryScheduleRetryRepositoriesStarsRunningAfterTest);
 		}
 
+		[Test, Timeout(_timeoutInMilliseconds)]
+		public async Task FetchDataCommandTest_AuthenticatedUser_IncompleteOriginalStarsData()
+		{
+			//Arrange
+			var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
+			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+			var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
+			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+			//Act
+			var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
+			repository = repository with { StarredAt = new List<DateTimeOffset> { new DateTimeOffset(2008, 02, 08, 0, 0, 0, TimeSpan.Zero) } };
+
+			await repositoryDatabase.SaveRepository(repository);
+
+			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None));
+
+			//Assert
+			Assert.AreEqual(repository.StarCount, trendsViewModel.TotalStars);
+			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count);
+			Assert.AreEqual(repository.StarCount.ToAbbreviatedText(), trendsViewModel.StarsStatisticsText);
+			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
+			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Succeeded, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
+			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewTitleText);
+		}
+
+		[Test, Timeout(_timeoutInMilliseconds)]
+		public async Task FetchDataCommandTest_AuthenticatedUser_MissingStarsData()
+		{
+			//Arrange
+			var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
+			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+			var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
+			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+			//Act
+			var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
+			await repositoryDatabase.SaveRepository(repository);
+
+			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None));
+
+			//Assert
+			Assert.AreEqual(repository.StarCount, trendsViewModel.TotalStars);
+			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count);
+			Assert.AreEqual(repository.StarCount.ToAbbreviatedText(), trendsViewModel.StarsStatisticsText);
+			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
+			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Succeeded, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
+			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewTitleText);
+		}
+
+		[Test, Timeout(_timeoutInMilliseconds)]
+		public async Task FetchDataCommandTest_AuthenticatedUser_TokenCancelled()
+		{
+			//Arrange
+			Repository repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, string.Empty, 0, GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsAvatarUrl, 0, 0, 0, $"{GitHubConstants.GitHubBaseUrl}/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+
+			var cancellationTokenSource = new CancellationTokenSource();
+
+			var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
+			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+			//Act
+			var fetchDataCommandTask = trendsViewModel.FetchDataCommand.ExecuteAsync((repository_Initial, cancellationTokenSource.Token));
+
+			cancellationTokenSource.Cancel();
+
+			await fetchDataCommandTask.ConfigureAwait(false);
+
+			//Assert
+			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Error, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
+			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Error, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
+			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Error, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewTitleText);
+			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewDescriptionText(RefreshState.Error, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewDescriptionText);
+		}
 
 		[Test, Timeout(_timeoutInMilliseconds)]
 		public async Task FetchDataCommandTest_AuthenticatedUser_NoData_FetchingViewsClonesStarsDataInBackground()

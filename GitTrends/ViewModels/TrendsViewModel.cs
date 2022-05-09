@@ -280,14 +280,13 @@ namespace GitTrends
 				IReadOnlyList<DailyViewsModel> repositoryViews;
 				IReadOnlyList<DailyClonesModel> repositoryClones;
 
-				var getGetStarsDataTask = repository.StarredAt is null ? GetStarsData(repository, getGetStarsDataCTS.Token) : Task.FromResult(repository.StarredAt);
-				var getViewsClonesDataTask = repository.DailyViewsList is null || repository.DailyClonesList is null
-												? GetViewsClonesData(repository, getViewsClonesDataCTS.Token)
-												: Task.FromResult((repository.DailyViewsList, repository.DailyClonesList));
+				var getGetStarsDataTask = isStarsDataComplete(repository) ? Task.FromResult(repository.StarredAt ?? throw new InvalidOperationException()) : GetStarsData(repository, getGetStarsDataCTS.Token);
+				var getViewsClonesDataTask = isViewsClonesDataComplete(repository)
+												? Task.FromResult((repository.DailyViewsList ?? throw new InvalidOperationException(), repository.DailyClonesList ?? throw new InvalidOperationException()))
+												: GetViewsClonesData(repository, getViewsClonesDataCTS.Token);
 
 				// Update Views Clones Data first because `GetViewsClonesData` is quicker than `GetStarsData`
-				if (repository.ContainsViewsClonesData
-					&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.ViewsClonesCacheLifeSpan))
+				if (isViewsClonesDataComplete(repository))
 				{
 					repositoryViews = repository.DailyViewsList ?? throw new InvalidOperationException($"{nameof(Repository.DailyViewsList)} cannot be null when {nameof(Repository.ContainsViewsClonesStarsData)} is true");
 					repositoryClones = repository.DailyClonesList ?? throw new InvalidOperationException($"{nameof(Repository.DailyClonesList)} cannot be null when {nameof(Repository.ContainsViewsClonesStarsData)} is true");
@@ -304,8 +303,7 @@ namespace GitTrends
 				ViewsClonesRefreshState = RefreshState.Succeeded;
 				IsFetchingViewsClonesData = false;
 
-				if (repository.ContainsViewsClonesStarsData
-					&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan))
+				if (isStarsDataComplete(repository))
 				{
 					repositoryStars = repository.StarredAt ?? throw new InvalidOperationException($"{nameof(Repository.StarredAt)} cannot be null when {nameof(Repository.ContainsViewsClonesStarsData)} is true");
 					updateStarsData(repositoryStars);
@@ -349,6 +347,13 @@ namespace GitTrends
 
 				await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
 				OnRepositorySavedToDatabase(updatedRepository);
+
+				static bool isViewsClonesDataComplete(in Repository repository) => repository.ContainsViewsClonesData
+																					&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.ViewsClonesCacheLifeSpan);
+
+				static bool isStarsDataComplete(in Repository repository) => repository.StarredAt is not null
+																				&& repository.StarredAt.Count == repository.StarCount
+																				&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan);
 			}
 			catch (Exception e) when (e is ApiException { StatusCode: HttpStatusCode.Unauthorized })
 			{
@@ -458,7 +463,7 @@ namespace GitTrends
 				var totalMissingTime = DateTimeOffset.UtcNow.Subtract(incompleteStarredAtList.Last());
 				var missingStarCount = starCount - incompleteStarredAtList.Count;
 
-				for (var i = 0; i < missingStarCount; i++)
+				for (var i = 1; i <= missingStarCount; i++)
 				{
 					var nextDataPointDeltaInSeconds = totalMissingTime.TotalSeconds / missingStarCount * i;
 					incompleteStarredAtList.Add(incompleteStarredAtList.Last().AddSeconds(nextDataPointDeltaInSeconds));
