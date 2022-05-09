@@ -33,7 +33,7 @@ namespace GitTrends
 			Children.Add(new SeparatorLine()
 							.Row(Row.TopLine).ColumnSpan(All<Column>()));
 
-			Children.Add(new StarsStatisticsLabel("TOTAL", _textSize)
+			Children.Add(new StarsStatisticsLabel(EmptyDataViewService.GetStarsHeaderTitleText(), _textSize)
 							.Row(Row.Total).ColumnSpan(All<Column>()));
 
 			Children.Add(new StarSvg()
@@ -42,8 +42,8 @@ namespace GitTrends
 			Children.Add(new StarsStatisticsLabel(48) { AutomationId = TrendsPageAutomationIds.StarsStatisticsLabel }
 							.Row(Row.Stars).Column(Column.Text)
 							.CenterExpand()
-							.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsStarsChartVisible))
-							.Bind<Label, double, string>(Label.TextProperty, nameof(TrendsViewModel.TotalStars), convert: totalStars => totalStars.ToAbbreviatedText()));
+							.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingStarsData), convert: (bool isFetchingStarsData) => !isFetchingStarsData)
+							.Bind(Label.TextProperty, nameof(TrendsViewModel.TotalStars), convert: (double totalStars) => totalStars.ToAbbreviatedText()));
 
 			Children.Add(new ActivityIndicator()
 							.Row(Row.Stars).Column(Column.Text)

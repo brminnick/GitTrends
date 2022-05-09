@@ -91,12 +91,7 @@ namespace GitTrends.Mobile.Common
 			_ => throw new NotSupportedException()
 		};
 
-		public static string GetStarsHeaderTitleText(RefreshState refreshState) => refreshState switch
-		{
-			RefreshState.Uninitialized => EmptyDataViewConstantsInternal.LOADING,
-			RefreshState.Succeeded or RefreshState.LoginExpired or RefreshState.AbuseLimit or RefreshState.MaximumApiLimit or RefreshState.Error => EmptyDataViewConstantsInternal.TOTAL,
-			_ => throw new NotSupportedException()
-		};
+		public static string GetStarsHeaderTitleText() => EmptyDataViewConstantsInternal.TOTAL;
 
 		public static string GetStarsHeaderMessageText(in RefreshState refreshState, double totalStars) => (refreshState, totalStars) switch
 		{
