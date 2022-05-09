@@ -351,8 +351,7 @@ namespace GitTrends
 				static bool isViewsClonesDataComplete(in Repository repository) => repository.ContainsViewsClonesData
 																					&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.ViewsClonesCacheLifeSpan);
 
-				static bool isStarsDataComplete(in Repository repository) => repository.StarredAt is not null
-																				&& repository.StarredAt.Count == repository.StarCount
+				static bool isStarsDataComplete(in Repository repository) => repository.ContainsStarsData
 																				&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan);
 			}
 			catch (Exception e) when (e is ApiException { StatusCode: HttpStatusCode.Unauthorized })
