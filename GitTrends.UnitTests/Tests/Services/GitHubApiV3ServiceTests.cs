@@ -1,6 +1,9 @@
 ﻿using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using GitHubApiStatus;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -240,16 +243,26 @@ namespace GitTrends.UnitTests
 			//"Could not resolve to a Repository with the name 'zxcvbnmlkjhgfdsa1234567890/abc123321'."
 		}
 
-		[Test, Ignore("Test Will Fail if Unauthenticated API Request Count has been exceeded")]
+		[Test]
 		public async Task GetStarGazers_Unauthenticated()
 		{
 			//Arrange
 			StarGazers starGazers;
+			var httpClient = ServiceCollection.ServiceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
+			httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue(nameof(GitTrends))));
+
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
 
 			//Act
 			gitHubUserService.InvalidateToken();
+
+			var gitHubRateResult = await httpClient.GetAsync("https://api.github.com/rate_limit").ConfigureAwait(false);
+			var remainingRequestCount = new GitHubApiStatusService().GetRemainingRequestCount(gitHubRateResult.Headers);
+
+			if (remainingRequestCount < 10)
+				Assert.Ignore();
+
 			starGazers = await gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None);
 
 			//Assert

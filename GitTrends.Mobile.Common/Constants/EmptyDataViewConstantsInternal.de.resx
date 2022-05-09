@@ -46,21 +46,27 @@
     <value>Daten können nicht abgerufen werden</value>
   </data>
 	<data name="ZeroStarsEmptyDataViewDescription1" xml:space="preserve">
-        <value>Keine Sorge! Mache weiter so gute Arbeit und die Sterne werden kommen!</value>
-    </data>
+    <value>Keine Sorge! Mache weiter so gute Arbeit und die Sterne werden kommen!</value>
+  </data>
 	<data name="ZeroStarsEmptyDataViewDescription2" xml:space="preserve">
-        <value>Lade die Community ein, deine tolle Arbeit anzusehen!</value>
-    </data>
+    <value>Lade die Community ein, deine tolle Arbeit anzusehen!</value>
+  </data>
 	<data name="ZeroStarsEmptyDataViewDescription3" xml:space="preserve">
-        <value>Teile Updates mit Freunden und erhalte deinen ersten Stern!</value>
-    </data>
+    <value>Teile Updates mit Freunden und erhalte deinen ersten Stern!</value>
+  </data>
 	<data name="Congratulations" xml:space="preserve">
-        <value>Glückwunsch!</value>
-    </data>
+    <value>Glückwunsch!</value>
+  </data>
 	<data name="NoStarsYet" xml:space="preserve">
-        <value>Noch keine Sterne</value>
-    </data>
+    <value>Noch keine Sterne</value>
+  </data>
 	<data name="FirstStar" xml:space="preserve">
-        <value>Du hast deinen ersten Stern erhalten!</value>
-    </data>
+    <value>Du hast deinen ersten Stern erhalten!</value>
+  </data>
+	<data name="TOTAL" xml:space="preserve">
+    <value>GESAMT</value>
+  </data>
+	<data name="LOADING" xml:space="preserve">
+    <value>WIRD HERUNTERGELADEN</value>
+  </data>
 </root>

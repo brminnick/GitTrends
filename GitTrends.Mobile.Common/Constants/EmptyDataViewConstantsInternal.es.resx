@@ -63,4 +63,10 @@
 	<data name="FirstStar" xml:space="preserve">
     <value>Te has ganado tu primera estrella!</value>
   </data>
+	<data name="TOTAL" xml:space="preserve">
+    <value>TOTAL</value>
+  </data>
+	<data name="LOADING" xml:space="preserve">
+    <value>DESCARGANDO</value>
+  </data>
 </root>

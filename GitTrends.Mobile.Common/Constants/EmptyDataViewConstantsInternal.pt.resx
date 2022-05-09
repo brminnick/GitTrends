@@ -46,21 +46,27 @@
     <value>Impossível recuperar dados</value>
   </data>
 	<data name="ZeroStarsEmptyDataViewDescription1" xml:space="preserve">
-        <value>Sem problemas! Mantenha o bom trabalho e as estrelas aparecerão!</value>
-    </data>
+    <value>Sem problemas! Mantenha o bom trabalho e as estrelas aparecerão!</value>
+  </data>
 	<data name="ZeroStarsEmptyDataViewDescription2" xml:space="preserve">
-        <value>Convide sua comunidade para conhecer nosso grande trabalho!</value>
-    </data>
+    <value>Convide sua comunidade para conhecer nosso grande trabalho!</value>
+  </data>
 	<data name="ZeroStarsEmptyDataViewDescription3" xml:space="preserve">
-        <value>Compartilhe atualizações com amigos e ganhe sua primeira estrela!</value>
-    </data>
+    <value>Compartilhe atualizações com amigos e ganhe sua primeira estrela!</value>
+  </data>
 	<data name="Congratulations" xml:space="preserve">
-        <value>Parabéns!</value>
-    </data>
+    <value>Parabéns!</value>
+  </data>
 	<data name="NoStarsYet" xml:space="preserve">
-        <value>Ainda Sem Estrelas</value>
-    </data>
+    <value>Ainda Sem Estrelas</value>
+  </data>
 	<data name="FirstStar" xml:space="preserve">
-        <value>Você recebeu sua primeira estrela!</value>
-    </data>
+    <value>Você recebeu sua primeira estrela!</value>
+  </data>
+	<data name="TOTAL" xml:space="preserve">
+    <value>TOTAL</value>
+  </data>
+	<data name="LOADING" xml:space="preserve">
+    <value>BAIXANDO</value>
+  </data>
 </root>
