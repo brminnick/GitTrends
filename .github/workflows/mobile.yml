@@ -27,9 +27,9 @@ jobs:
 
       - name: Install Boots
         run : |
-          dotnet tool install --global boots --stable
-          boots Mono
-          boots Xamarin.Android
+          dotnet tool install --global boots
+          boots --stable Mono
+          boots --stable Xamarin.Android
 
       - name: Restore NuGet 
         run: |
