@@ -92,7 +92,7 @@ namespace GitTrends
 					TrendsPageType.StarsTrendsPage => nameof(TrendsViewModel.IsFetchingStarsData),
 					TrendsPageType.ViewsClonesTrendsPage => nameof(TrendsViewModel.IsFetchingViewsClonesData),
 					_ => throw new NotImplementedException()
-				};					
+				};
 
 				this.CenterExpand()
 					.DynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor))
