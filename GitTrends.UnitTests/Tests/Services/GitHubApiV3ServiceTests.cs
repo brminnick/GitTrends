@@ -242,7 +242,7 @@ namespace GitTrends.UnitTests
 			//"Could not resolve to a Repository with the name 'zxcvbnmlkjhgfdsa1234567890/abc123321'."
 		}
 
-		[Test,Ignore("Test Fails When GitHub API Rate Limit Exceeded")]
+		[Test, Ignore("Test Fails When GitHub API Rate Limit Exceeded")]
 		public async Task GetStarGazers_Unauthenticated()
 		{
 			//Arrange
