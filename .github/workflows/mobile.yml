@@ -27,17 +27,13 @@ jobs:
 
       - name: Install Boots
         run : |
-          dotnet tool install --global boots --prerelease
-          boots --alpha Mono
-          boots --alpha Xamarin.Android
-
-      - name: Restore NuGet 
-        run: |
-          nuget restore
+          dotnet tool install --global boots
+          boots --stable Mono
+          boots --preview Xamarin.Android
           
       - name: Build Android App
         run: |                    
-          mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /p:Configuration=Release     
+          mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.Android/GitTrends.Android.csproj /verbosity:normal /p:Configuration=Release /restore
           
     Build_UITests:
       runs-on: macos-latest
