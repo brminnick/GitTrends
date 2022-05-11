@@ -46,21 +46,27 @@
     <value>Невозможно получить данные</value>
   </data>
 	<data name="ZeroStarsEmptyDataViewDescription1" xml:space="preserve">
-        <value>Не переживайте! Продолжайте в том же духе и звезды появятся!</value>
-    </data>
+    <value>Не переживайте! Продолжайте в том же духе и звезды появятся!</value>
+  </data>
 	<data name="ZeroStarsEmptyDataViewDescription2" xml:space="preserve">
-        <value>Пригласите сообщество увидеть Вашу отличную работу!</value>
-    </data>
+    <value>Пригласите сообщество увидеть Вашу отличную работу!</value>
+  </data>
 	<data name="ZeroStarsEmptyDataViewDescription3" xml:space="preserve">
-        <value>Поделитесь с друзьями и получите свою первую звезду!</value>
-    </data>
+    <value>Поделитесь с друзьями и получите свою первую звезду!</value>
+  </data>
 	<data name="Congratulations" xml:space="preserve">
-        <value>Поздравляю!</value>
-    </data>
+    <value>Поздравляю!</value>
+  </data>
 	<data name="NoStarsYet" xml:space="preserve">
-        <value>Нет звезд пока</value>
-    </data>
+    <value>Нет звезд пока</value>
+  </data>
 	<data name="FirstStar" xml:space="preserve">
-        <value>Вы заработали свою первую звезду!</value>
-    </data>
+    <value>Вы заработали свою первую звезду!</value>
+  </data>
+	<data name="TOTAL" xml:space="preserve">
+    <value>ОБЩЕЕ</value>
+  </data>
+	<data name="LOADING" xml:space="preserve">
+    <value>СКАЧИВАНИЕ</value>
+  </data>
 </root>

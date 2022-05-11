@@ -9,7 +9,7 @@ namespace GitTrends
 	class ViewsClonesTrendsPage : BaseTrendsContentPage
 	{
 		public ViewsClonesTrendsPage(IMainThread mainThread, IAnalyticsService analyticsService)
-			: base((Color)Application.Current.Resources[nameof(BaseTheme.CardViewsStatsIconColor)], mainThread, 0, analyticsService)
+			: base((Color)Application.Current.Resources[nameof(BaseTheme.CardViewsStatsIconColor)], mainThread, 0, TrendsPageType.ViewsClonesTrendsPage, analyticsService)
 		{
 
 		}

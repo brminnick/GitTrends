@@ -1,7 +1,6 @@
 ﻿using GitTrends.Mobile.Common;
 using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
-using static GitTrends.MarkupExtensions;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -34,7 +33,7 @@ namespace GitTrends
 			Children.Add(new SeparatorLine()
 							.Row(Row.TopLine).ColumnSpan(All<Column>()));
 
-			Children.Add(new StarsStatisticsLabel("TOTAL", _textSize)
+			Children.Add(new StarsStatisticsLabel(EmptyDataViewService.GetStarsHeaderTitleText(), _textSize)
 							.Row(Row.Total).ColumnSpan(All<Column>()));
 
 			Children.Add(new StarSvg()
@@ -43,15 +42,21 @@ namespace GitTrends
 			Children.Add(new StarsStatisticsLabel(48) { AutomationId = TrendsPageAutomationIds.StarsStatisticsLabel }
 							.Row(Row.Stars).Column(Column.Text)
 							.CenterExpand()
-							.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsStarsChartVisible))
+							.Bind<Label, bool, bool>(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingStarsData), convert: isFetchingStarsData => !isFetchingStarsData)
 							.Bind<Label, double, string>(Label.TextProperty, nameof(TrendsViewModel.TotalStars), convert: totalStars => totalStars.ToAbbreviatedText()));
+
+			Children.Add(new ActivityIndicator()
+							.Row(Row.Stars).Column(Column.Text)
+							.CenterExpand()
+							.DynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.ActivityIndicatorColor))
+							.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingStarsData))
+							.Bind(ActivityIndicator.IsRunningProperty, nameof(TrendsViewModel.IsFetchingStarsData)));
 
 			Children.Add(new StarSvg()
 							.Row(Row.Stars).Column(Column.RightStar));
 
 			Children.Add(new StarsStatisticsLabel(_textSize) { AutomationId = TrendsPageAutomationIds.StarsHeaderMessageLabel }
 							.Row(Row.Message).ColumnSpan(All<Column>())
-							.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsStarsChartVisible))
 							.Bind(Label.TextProperty, nameof(TrendsViewModel.StarsHeaderMessageText)));
 
 			Children.Add(new SeparatorLine()

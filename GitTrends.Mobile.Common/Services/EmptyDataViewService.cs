@@ -80,7 +80,7 @@ namespace GitTrends.Mobile.Common
 			_ => throw new NotSupportedException()
 		};
 
-		public static string GetStarsTitleText(in RefreshState refreshState, in double totalStars) => refreshState switch
+		public static string GetStarsEmptyDataViewTitleText(in RefreshState refreshState, in double totalStars) => refreshState switch
 		{
 			RefreshState.Uninitialized => EmptyDataViewConstantsInternal.Uninitialized,
 			RefreshState.Succeeded when totalStars is 1 => EmptyDataViewConstantsInternal.Congratulations,
@@ -89,6 +89,16 @@ namespace GitTrends.Mobile.Common
 			RefreshState.Error => EmptyDataViewConstantsInternal.UnableToRetrieveData,
 			RefreshState.MaximumApiLimit => EmptyDataViewConstantsInternal.UnableToRetrieveData,
 			_ => throw new NotSupportedException()
+		};
+
+		public static string GetStarsHeaderTitleText() => EmptyDataViewConstantsInternal.TOTAL;
+
+		public static string GetStarsHeaderMessageText(in RefreshState refreshState, double totalStars) => (refreshState, totalStars) switch
+		{
+			(RefreshState.Uninitialized, _) => EmptyDataViewConstantsInternal.LOADING,
+			(_, 0 or 1) => TrendsChartTitleConstants.YouGotThis,
+			(_, > 1) => TrendsChartTitleConstants.KeepItUp,
+			(_, _) => throw new ArgumentOutOfRangeException($"{nameof(totalStars)} cannot be negative")
 		};
 
 		public static string GetViewsClonesImage(in RefreshState refreshState) => refreshState switch
@@ -101,7 +111,7 @@ namespace GitTrends.Mobile.Common
 			_ => throw new NotSupportedException()
 		};
 
-		public static string GetStarsImage(in RefreshState refreshState, in double totalStars) => refreshState switch
+		public static string GetStarsEmptyDataViewImage(in RefreshState refreshState, in double totalStars) => refreshState switch
 		{
 			RefreshState.Uninitialized => "EmptyStarChart",
 			RefreshState.Succeeded when totalStars is 1 => "EmptyOneStarChart",

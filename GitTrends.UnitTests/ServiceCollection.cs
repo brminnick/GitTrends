@@ -22,6 +22,7 @@ namespace GitTrends.UnitTests
 		static IServiceProvider CreateContainer(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi)
 		{
 			var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+			services.AddHttpClient();
 
 			//GitTrends Refit Services
 			services.AddSingleton(gitHubApiV3);

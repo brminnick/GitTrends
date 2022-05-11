@@ -64,4 +64,10 @@
 	<data name="Congratulations" xml:space="preserve">
     <value>Felicitations!</value>
   </data>
+	<data name="TOTAL" xml:space="preserve">
+    <value>TOTAL</value>
+  </data>
+	<data name="LOADING" xml:space="preserve">
+    <value>TÉLÉCHARGEMENT</value>
+  </data>
 </root>

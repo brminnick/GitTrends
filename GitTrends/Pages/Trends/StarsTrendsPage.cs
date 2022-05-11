@@ -9,7 +9,7 @@ namespace GitTrends
 	class StarsTrendsPage : BaseTrendsContentPage
 	{
 		public StarsTrendsPage(IAnalyticsService analyticsService, IMainThread mainThread)
-			: base((Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)], mainThread, 1, analyticsService)
+			: base((Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)], mainThread, 1, TrendsPageType.StarsTrendsPage, analyticsService)
 		{
 
 		}

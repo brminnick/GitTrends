@@ -1,5 +1,7 @@
-﻿using Xamarin.CommunityToolkit.Markup;
+﻿using System;
+using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
+using static GitTrends.XamarinFormsService;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
@@ -65,10 +67,10 @@ namespace GitTrends
 		{
 			public TextLabel(in Span title, in Span description)
 			{
-				title.FontSize = 24;
+				title.FontSize = IsSmallScreen ? 20 : 24;
 				title.FontFamily = FontFamilyConstants.RobotoMedium;
 
-				description.FontSize = 20;
+				description.FontSize = IsSmallScreen ? 16 : 20;
 				description.FontFamily = FontFamilyConstants.RobotoMedium;
 
 				FormattedText = new FormattedString
@@ -76,7 +78,9 @@ namespace GitTrends
 					Spans =
 					{
 						title,
-						new Span { Text = "\n" }.Font(size: 24),
+						IsSmallScreen
+							? new Span { Text = Environment.NewLine }.Font(size: 24)
+							: new Span { Text = Environment.NewLine + Environment.NewLine }.Font(size: 24),
 						description
 					}
 				};

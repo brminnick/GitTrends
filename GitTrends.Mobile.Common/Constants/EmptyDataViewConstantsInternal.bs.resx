@@ -63,5 +63,10 @@
   <data name="NoStarsYet" xml:space="preserve">
         <value>Još nema zvijezda</value>
   </data>
-  
+  <data name="TOTAL" xml:space="preserve">
+    <value>TOTAL</value>
+  </data>
+  <data name="LOADING" xml:space="preserve">
+    <value>UČITAVANJE</value>
+  </data>
 </root>
