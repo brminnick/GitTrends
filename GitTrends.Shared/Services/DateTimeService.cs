@@ -33,5 +33,23 @@ namespace GitTrends.Shared
 
 		public static DateTime GetMaximumLocalDateTime(in IEnumerable<DailyViewsModel>? dailyViewsList, in IEnumerable<DailyClonesModel>? dailyClonesList) =>
 			GetMaximumDateTimeOffset(dailyViewsList, dailyClonesList).LocalDateTime;
+
+		public static IReadOnlyList<DateTimeOffset> GetEstimatedStarredAtList(in Repository repositoryFromDatabase, in long starCount)
+		{
+			if (starCount is 0)
+				return Array.Empty<DateTimeOffset>();
+
+			var incompleteStarredAtList = new List<DateTimeOffset>(repositoryFromDatabase.StarredAt ?? new List<DateTimeOffset> { DateTimeOffset.MinValue });
+			var totalMissingTime = DateTimeOffset.UtcNow.Subtract(incompleteStarredAtList.Max());
+			var missingStarCount = starCount - incompleteStarredAtList.Count;
+
+			for (var i = 1; i <= missingStarCount; i++)
+			{
+				var nextDataPointDeltaInSeconds = totalMissingTime.TotalSeconds / missingStarCount * i;
+				incompleteStarredAtList.Add(incompleteStarredAtList.Max().AddSeconds(nextDataPointDeltaInSeconds));
+			}
+
+			return incompleteStarredAtList;
+		}
 	}
 }
