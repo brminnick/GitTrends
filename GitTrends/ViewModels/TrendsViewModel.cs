@@ -312,14 +312,14 @@ namespace GitTrends
 				{
 					var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
 
-					if (repositoryFromDatabase is null)
+					if (repositoryFromDatabase is null || repositoryFromDatabase.StarredAt?.Count is 0)
 					{
 						repositoryStars = await getGetStarsDataTask.ConfigureAwait(false);
 						updateStarsData(repositoryStars);
 					}
 					else
 					{
-						var estimatedRepositoryStars = getEstimatedStarredAtList(repositoryFromDatabase, repository.StarCount);
+						var estimatedRepositoryStars = DateTimeService.GetEstimatedStarredAtList(repositoryFromDatabase, repository.StarCount);
 						updateStarsData(estimatedRepositoryStars);
 
 						// Display the estimated Data
@@ -390,7 +390,7 @@ namespace GitTrends
 				}
 				else if (repositoryFromDatabase.DataDownloadedAt > repository.DataDownloadedAt) //If data from database is more recent, display data from database
 				{
-					var estimatedRepositoryStars = getEstimatedStarredAtList(repositoryFromDatabase, repository.StarCount);
+					var estimatedRepositoryStars = DateTimeService.GetEstimatedStarredAtList(repositoryFromDatabase, repository.StarCount);
 
 					repositoryStars = estimatedRepositoryStars;
 					repositoryViews = repositoryFromDatabase.DailyViewsList ?? Array.Empty<DailyViewsModel>();
@@ -451,24 +451,6 @@ namespace GitTrends
 			{
 				DailyStarsList = GetDailyStarsList(repositoryStars).OrderBy(x => x.Day).ToList();
 				StarsStatisticsText = repositoryStars.Count.ToAbbreviatedText();
-			}
-
-			IReadOnlyList<DateTimeOffset> getEstimatedStarredAtList(in Repository repositoryFromDatabase, in long starCount)
-			{
-				if (starCount is 0)
-					return Array.Empty<DateTimeOffset>();
-
-				var incompleteStarredAtList = new List<DateTimeOffset>(repositoryFromDatabase.StarredAt ?? new List<DateTimeOffset> { DateTimeOffset.MinValue });
-				var totalMissingTime = DateTimeOffset.UtcNow.Subtract(incompleteStarredAtList.Max());
-				var missingStarCount = starCount - incompleteStarredAtList.Count;
-
-				for (var i = 1; i <= missingStarCount; i++)
-				{
-					var nextDataPointDeltaInSeconds = totalMissingTime.TotalSeconds / missingStarCount * i;
-					incompleteStarredAtList.Add(incompleteStarredAtList.Max().AddSeconds(nextDataPointDeltaInSeconds));
-				}
-
-				return incompleteStarredAtList;
 			}
 		}
 
