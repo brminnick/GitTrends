@@ -76,6 +76,110 @@ namespace GitTrends.UnitTests
 			Assert.LessOrEqual(estimatedStarredAtList.Max(), DateTimeOffset.UtcNow.AddMinutes(10));
 			Assert.AreEqual(estimatedStarredAtList.Max(), estimatedStarredAtList.Last());
 		}
+
+		[Test]
+		public void GetMinimumDateTimeOffsetTest_NoData()
+		{
+			// Arrange 
+			var expectedDate = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
+
+			IReadOnlyList<DailyViewsModel> emptyDailyViewsModelList = Array.Empty<DailyViewsModel>();
+			IReadOnlyList<DailyClonesModel> emptyDailyClonesModelList = Array.Empty<DailyClonesModel>();
+
+			// Act
+			var minimumDailyViewsModel = DateTimeService.GetMinimumDateTimeOffset(emptyDailyViewsModelList);
+			var minimumDailyClonesModel = DateTimeService.GetMinimumDateTimeOffset(emptyDailyClonesModelList);
+
+			// Assert
+			Assert.AreEqual(expectedDate.Year, minimumDailyViewsModel.Year);
+			Assert.AreEqual(expectedDate.Month, minimumDailyViewsModel.Month);
+			Assert.AreEqual(expectedDate.Day, minimumDailyViewsModel.Day);
+
+			Assert.AreEqual(expectedDate.Year, minimumDailyClonesModel.Year);
+			Assert.AreEqual(expectedDate.Month, minimumDailyClonesModel.Month);
+			Assert.AreEqual(expectedDate.Day, minimumDailyClonesModel.Day);
+		}
+
+		[Test]
+		public void GetMinimumDateTimeOffsetTest_WithData()
+		{
+			// Arrange 
+			var expectedDate = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
+
+			var emptyDailyViewsModelList = new List<DailyViewsModel>();
+			var emptyDailyClonesModelList = new List<DailyClonesModel>();
+
+			for (var i = expectedDate; i < DateTimeOffset.UtcNow; i = i.AddDays(1))
+			{
+				emptyDailyViewsModelList.Add(new DailyViewsModel(i, 1, 1));
+				emptyDailyClonesModelList.Add(new DailyClonesModel(i, 1, 1));
+			}
+
+			// Act
+			var minimumDailyViewsModel = DateTimeService.GetMinimumDateTimeOffset(emptyDailyViewsModelList);
+			var minimumDailyClonesModel = DateTimeService.GetMinimumDateTimeOffset(emptyDailyClonesModelList);
+
+			// Assert
+			Assert.AreEqual(expectedDate.Year, minimumDailyViewsModel.Year);
+			Assert.AreEqual(expectedDate.Month, minimumDailyViewsModel.Month);
+			Assert.AreEqual(expectedDate.Day, minimumDailyViewsModel.Day);
+
+			Assert.AreEqual(expectedDate.Year, minimumDailyClonesModel.Year);
+			Assert.AreEqual(expectedDate.Month, minimumDailyClonesModel.Month);
+			Assert.AreEqual(expectedDate.Day, minimumDailyClonesModel.Day);
+		}
+
+		[Test]
+		public void GetMaximumDateTimeOffsetTest_NoData()
+		{
+			// Arrange 
+			var expectedDate = DateTimeOffset.UtcNow;
+
+			IReadOnlyList<DailyViewsModel> emptyDailyViewsModelList = Array.Empty<DailyViewsModel>();
+			IReadOnlyList<DailyClonesModel> emptyDailyClonesModelList = Array.Empty<DailyClonesModel>();
+
+			// Act
+			var minimumDailyViewsModel = DateTimeService.GetMaximumDateTimeOffset(emptyDailyViewsModelList);
+			var minimumDailyClonesModel = DateTimeService.GetMaximumDateTimeOffset(emptyDailyClonesModelList);
+
+			// Assert
+			Assert.AreEqual(expectedDate.Year, minimumDailyViewsModel.Year);
+			Assert.AreEqual(expectedDate.Month, minimumDailyViewsModel.Month);
+			Assert.AreEqual(expectedDate.Day, minimumDailyViewsModel.Day);
+
+			Assert.AreEqual(expectedDate.Year, minimumDailyClonesModel.Year);
+			Assert.AreEqual(expectedDate.Month, minimumDailyClonesModel.Month);
+			Assert.AreEqual(expectedDate.Day, minimumDailyClonesModel.Day);
+		}
+
+		[Test]
+		public void GetMaximumDateTimeOffsetTest_WithData()
+		{
+			// Arrange 
+			var expectedDate = DateTimeOffset.UtcNow;
+
+			var emptyDailyViewsModelList = new List<DailyViewsModel>();
+			var emptyDailyClonesModelList = new List<DailyClonesModel>();
+
+			for (var i = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13)); i < DateTimeOffset.UtcNow; i = i.AddDays(1))
+			{
+				emptyDailyViewsModelList.Add(new DailyViewsModel(i, 1, 1));
+				emptyDailyClonesModelList.Add(new DailyClonesModel(i, 1, 1));
+			}
+
+			// Act
+			var minimumDailyViewsModel = DateTimeService.GetMaximumDateTimeOffset(emptyDailyViewsModelList);
+			var minimumDailyClonesModel = DateTimeService.GetMaximumDateTimeOffset(emptyDailyClonesModelList);
+
+			// Assert
+			Assert.AreEqual(expectedDate.Year, minimumDailyViewsModel.Year);
+			Assert.AreEqual(expectedDate.Month, minimumDailyViewsModel.Month);
+			Assert.AreEqual(expectedDate.Day, minimumDailyViewsModel.Day);
+
+			Assert.AreEqual(expectedDate.Year, minimumDailyClonesModel.Year);
+			Assert.AreEqual(expectedDate.Month, minimumDailyClonesModel.Month);
+			Assert.AreEqual(expectedDate.Day, minimumDailyClonesModel.Day);
+		}
 	}
 }
 
