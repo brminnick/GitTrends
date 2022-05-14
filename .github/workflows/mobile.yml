@@ -45,14 +45,10 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0.x'
-
-      - name: Restore NuGet 
-        run: |
-          nuget restore
           
       - name: Build UITest Project
         run: |                    
-          mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.UITests/GitTrends.UITests.csproj 
+          mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll ./GitTrends.UITests/GitTrends.UITests.csproj /verbosity:normal /p:Configuration=Release /restore
 
     Build_UnitTest_GitTrends:
       runs-on: macos-latest
