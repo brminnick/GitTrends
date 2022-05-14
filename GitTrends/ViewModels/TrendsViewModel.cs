@@ -312,7 +312,7 @@ namespace GitTrends
 				{
 					var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
 
-					if (repositoryFromDatabase is null)
+					if (repositoryFromDatabase is null || repositoryFromDatabase.StarredAt?.Count is 0)
 					{
 						repositoryStars = await getGetStarsDataTask.ConfigureAwait(false);
 						updateStarsData(repositoryStars);

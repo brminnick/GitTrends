@@ -40,13 +40,15 @@ namespace GitTrends.Shared
 				return Array.Empty<DateTimeOffset>();
 
 			var incompleteStarredAtList = new List<DateTimeOffset>(repositoryFromDatabase.StarredAt ?? new List<DateTimeOffset> { DateTimeOffset.MinValue });
-			var totalMissingTime = DateTimeOffset.UtcNow.Subtract(incompleteStarredAtList.Max());
-			var missingStarCount = starCount - incompleteStarredAtList.Count;
+			incompleteStarredAtList.Sort();
 
-			for (var i = 1; i <= missingStarCount; i++)
+			var totalMissingTime = DateTimeOffset.UtcNow.Subtract(incompleteStarredAtList.Last());
+			var missingStarCount = starCount - incompleteStarredAtList.Count;
+			var nextDataPointDeltaInSeconds = totalMissingTime.TotalSeconds / missingStarCount;
+
+			for (var i = 0; i < missingStarCount; i++)
 			{
-				var nextDataPointDeltaInSeconds = totalMissingTime.TotalSeconds / missingStarCount * i;
-				incompleteStarredAtList.Add(incompleteStarredAtList.Max().AddSeconds(nextDataPointDeltaInSeconds));
+				incompleteStarredAtList.Add(incompleteStarredAtList.Last().AddSeconds(nextDataPointDeltaInSeconds));
 			}
 
 			return incompleteStarredAtList;
