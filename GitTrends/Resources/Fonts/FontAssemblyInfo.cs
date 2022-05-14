@@ -5,4 +5,4 @@ using Xamarin.Forms;
 [assembly: ExportFont("Roboto-Medium.ttf", Alias = FontFamilyConstants.RobotoMedium)]
 [assembly: ExportFont("Roboto-Regular.ttf", Alias = FontFamilyConstants.RobotoRegular)]
 [assembly: ExportFont("FontAwesome.otf", Alias = FontFamilyConstants.FontAwesome)]
-[assembly: ExportFont("FontAwesomeBrands.ttf", Alias = FontFamilyConstants.FontAwesomeBrands)] 
+[assembly: ExportFont("FontAwesomeBrands.ttf", Alias = FontFamilyConstants.FontAwesomeBrands)]

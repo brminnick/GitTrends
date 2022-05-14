@@ -47,7 +47,7 @@ namespace GitTrends.iOS
 
         static AVPlayerItem CreatePlayerItem(string url)
         {
-            var asset = AVUrlAsset.Create(NSUrl.FromString(url));
+            var asset = AVUrlAsset.Create(NSUrl.FromString(url) ?? throw new System.InvalidOperationException());
 
             return new AVPlayerItem(asset)
             {
