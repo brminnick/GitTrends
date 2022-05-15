@@ -182,4 +182,3 @@ namespace GitTrends.UnitTests
 		}
 	}
 }
-
