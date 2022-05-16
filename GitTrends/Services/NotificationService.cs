@@ -239,7 +239,7 @@ namespace GitTrends
 				if (_deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS)
 					await _notificationService.SetiOSBadgeCount(count).ConfigureAwait(false);
 				else
-					_notificationManager.Badge = count;
+					await _notificationManager.SetBadge(count).ConfigureAwait(false);
 			}
 		}
 

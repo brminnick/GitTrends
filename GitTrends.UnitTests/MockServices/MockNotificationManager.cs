@@ -72,5 +72,12 @@ namespace GitTrends.UnitTests
 			_channelsDictionary.Remove(channelId);
 			return Task.CompletedTask;
 		}
+
+		public Task<AccessState> RequestAccess(AccessRequestFlags flags = AccessRequestFlags.Notification) => throw new System.NotImplementedException();
+		public Task<Notification?> GetNotification(int notificationId) => throw new System.NotImplementedException();
+		public Task Cancel(CancelScope cancelScope = CancelScope.All) => throw new System.NotImplementedException();
+		public Task<IEnumerable<Notification>> GetPendingNotifications() => throw new System.NotImplementedException();
+		public Task<int> GetBadge() => throw new System.NotImplementedException();
+		public Task SetBadge(int? badge) => throw new System.NotImplementedException();
 	}
 }
