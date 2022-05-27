@@ -478,7 +478,7 @@
     <PackageReference Include="Xamarin.TestCloud.Agent" Version="0.23.1" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.1" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.1" />
-    <PackageReference Include="Shiny.Notifications" Version="2.4.3.3024" />
+    <PackageReference Include="Shiny.Notifications" Version="2.5.2" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
     <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.7.3.1" />
