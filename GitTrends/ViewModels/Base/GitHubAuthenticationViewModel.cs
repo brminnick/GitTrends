@@ -38,7 +38,7 @@ namespace GitTrends
 		public bool IsAuthenticating
 		{
 			get => _isAuthenticating;
-			set => SetProperty(_isAuthenticating, value, _ =>
+			set => SetProperty(ref _isAuthenticating, value, () =>
 			{
 				NotifyIsAuthenticatingPropertyChanged();
 				MainThread.InvokeOnMainThreadAsync(HandleConnectToGitHubButtonCommand.NotifyCanExecuteChanged).SafeFireAndForget(ex => Debug.WriteLine(ex));

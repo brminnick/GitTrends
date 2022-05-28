@@ -159,7 +159,7 @@ namespace GitTrends
 		public int ThemePickerSelectedIndex
 		{
 			get => _themePickerSelectedIndex;
-			set => SetProperty(_themePickerSelectedIndex, value, value =>
+			set => SetProperty(ref _themePickerSelectedIndex, value, () =>
 			{
 				if (Enum.IsDefined(typeof(PreferredTheme), value))
 					_themeService.Preference = (PreferredTheme)value;
@@ -169,7 +169,7 @@ namespace GitTrends
 		public int PreferredChartsSelectedIndex
 		{
 			get => _preferredChartsSelectedIndex;
-			set => SetProperty(_preferredChartsSelectedIndex, value, value =>
+			set => SetProperty(ref _preferredChartsSelectedIndex, value, () =>
 			{
 				if (Enum.IsDefined(typeof(TrendsChartOption), value))
 					_trendsChartSettingsService.CurrentTrendsChartOption = (TrendsChartOption)value;
@@ -179,13 +179,13 @@ namespace GitTrends
 		public int LanguagePickerSelectedIndex
 		{
 			get => _languagePickerSelectedIndex;
-			set => SetProperty(_languagePickerSelectedIndex, value, value => _languageService.PreferredLanguage = CultureConstants.CulturePickerOptions.Skip(value).First().Key);
+			set => SetProperty(ref _languagePickerSelectedIndex, value, () => _languageService.PreferredLanguage = CultureConstants.CulturePickerOptions.Skip(value).First().Key);
 		}
 
 		public bool IsRegisterForNotificationsSwitchToggled
 		{
 			get => _isRegisterForNotificationsSwitchToggled;
-			set => SetProperty(_isRegisterForNotificationsSwitchToggled, value, async value => await SetNotificationsPreference(value).ConfigureAwait(false));
+			set => SetProperty(ref _isRegisterForNotificationsSwitchToggled, value, async () => await SetNotificationsPreference(value).ConfigureAwait(false));
 		}
 
 		public bool IsShouldIncludeOrganizationsSwitchToggled
