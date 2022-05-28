@@ -103,7 +103,7 @@ namespace GitTrends
 				FontSize = _aliasLabelHeight - 4;
 				FontFamily = FontFamilyConstants.RobotoRegular;
 
-				this.Bind(nameof(SettingsViewModel.DemoButtonCommand))
+				this.Bind(nameof(SettingsViewModel.HandleDemoButtonTappedCommand))
 					.Bind(TextProperty, nameof(SettingsViewModel.TryDemoButtonText))
 					.Bind(IsVisibleProperty, nameof(SettingsViewModel.IsDemoButtonVisible))
 					.DynamicResources((BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)),

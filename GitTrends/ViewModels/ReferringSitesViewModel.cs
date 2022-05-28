@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GitHubApiStatus;
@@ -12,13 +13,13 @@ using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
 	public partial class ReferringSitesViewModel : BaseViewModel
 	{
-		readonly static WeakEventManager _weakEventManager = new();
+		readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
+		readonly static WeakEventManager<Repository> _abuseRateLimitFound_GetReferringSites_EventManager = new();
 
 		readonly GitHubUserService _gitHubUserService;
 		readonly ReferringSitesDatabase _referringSitesDatabase;
@@ -30,10 +31,7 @@ namespace GitTrends
 		IReadOnlyList<MobileReferringSiteModel> _mobileReferringSitesList = Array.Empty<MobileReferringSiteModel>();
 
 		[ObservableProperty]
-		string _emptyDataViewTitle = string.Empty;
-
-		[ObservableProperty]
-		string _emptyDataViewDescription = string.Empty;
+		string _emptyDataViewTitle = string.Empty, _emptyDataViewDescription = string.Empty;
 
 		[ObservableProperty]
 		bool _isRefreshing, _isEmptyDataViewEnabled;
@@ -59,14 +57,14 @@ namespace GitTrends
 
 		public static event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
 		{
-			add => _weakEventManager.AddEventHandler(value);
-			remove => _weakEventManager.RemoveEventHandler(value);
+			add => _pullToRefreshFailedEventManager.AddEventHandler(value);
+			remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
 		}
 
-		public static event EventHandler<AbuseRateLimitFound_GetReferringSitesEventArgs> AbuseRateLimitFound_GetReferringSites
+		public static event EventHandler<Repository> AbuseRateLimitFound_GetReferringSites
 		{
-			add => _weakEventManager.AddEventHandler(value);
-			remove => _weakEventManager.RemoveEventHandler(value);
+			add => _abuseRateLimitFound_GetReferringSites_EventManager.AddEventHandler(value);
+			remove => _abuseRateLimitFound_GetReferringSites_EventManager.RemoveEventHandler(value);
 		}
 
 		RefreshState RefreshState
@@ -79,8 +77,10 @@ namespace GitTrends
 		}
 
 		[ICommand]
-		async Task ExecuteRefresh(Repository repository, CancellationToken cancellationToken)
+		async Task ExecuteRefresh((Repository repository, CancellationToken cancellationToken) parameter)
 		{
+			var (repository, cancellationToken) = parameter;
+
 			var referringSitesList = await GetReferringSites(repository, cancellationToken).ConfigureAwait(false);
 			MobileReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
 
@@ -159,11 +159,11 @@ namespace GitTrends
 				_ => throw new NotSupportedException()
 			};
 
-			_weakEventManager.HandleEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
+			_pullToRefreshFailedEventManager.RaiseEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
 		}
 
 		void OnAbuseRateLimitFound_GetReferringSites(in Repository repository) =>
-			_weakEventManager.HandleEvent(this, new AbuseRateLimitFound_GetReferringSitesEventArgs(repository), nameof(AbuseRateLimitFound_GetReferringSites));
+			_abuseRateLimitFound_GetReferringSites_EventManager.RaiseEvent(this, repository, nameof(AbuseRateLimitFound_GetReferringSites));
 
 		void HandleMobileReferringSiteRetrieved(object sender, MobileReferringSiteModel e)
 		{

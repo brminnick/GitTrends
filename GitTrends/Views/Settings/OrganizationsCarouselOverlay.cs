@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
-using AsyncAwaitBestPractices.MVVM;
+using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
@@ -98,7 +98,7 @@ namespace GitTrends
 			public CloseButton(Func<Task> dismissOverlay, IAnalyticsService analyticsService)
 			{
 				Text = "x";
-				Command = new AsyncCommand(async () =>
+				Command = new AsyncRelayCommand(async () =>
 				{
 					IsEnabled = false;
 

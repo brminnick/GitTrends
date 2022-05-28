@@ -7,7 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices;
-using AsyncAwaitBestPractices.MVVM;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
@@ -17,7 +18,7 @@ using Xamarin.Forms;
 
 namespace GitTrends
 {
-	public class TrendsViewModel : BaseViewModel
+	public partial class TrendsViewModel : BaseViewModel
 	{
 		public const int MinimumChartHeight = 20;
 
@@ -29,27 +30,37 @@ namespace GitTrends
 		readonly BackgroundFetchService _backgroundFetchService;
 		readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
 
+		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsStarsChartVisible)), AlsoNotifyChangeFor(nameof(IsStarsEmptyDataViewVisible))]
 		bool _isFetchingStarsData = true;
+
+		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsViewsClonesChartVisible)), AlsoNotifyChangeFor(nameof(IsViewsClonesEmptyDataViewVisible))]
 		bool _isFetchingViewsClonesData = true;
 
+		[ObservableProperty]
 		bool _isViewsSeriesVisible, _isUniqueViewsSeriesVisible, _isClonesSeriesVisible, _isUniqueClonesSeriesVisible;
 
-		string _starsStatisticsText = string.Empty;
-		string _viewsStatisticsText = string.Empty;
-		string _clonesStatisticsText = string.Empty;
-		string _starsHeaderMessageText = string.Empty;
-		string _uniqueViewsStatisticsText = string.Empty;
-		string _uniqueClonesStatisticsText = string.Empty;
-		string _starsEmptyDataViewTitleText = string.Empty;
-		string _starsEmptyDataViewDescriptionText = string.Empty;
-		string _viewsClonesEmptyDataViewTitleText = string.Empty;
+		[ObservableProperty]
+		string _starsStatisticsText = string.Empty, _viewsStatisticsText = string.Empty, _clonesStatisticsText = string.Empty, _starsHeaderMessageText = string.Empty,
+			_uniqueViewsStatisticsText = string.Empty, _uniqueClonesStatisticsText = string.Empty, _starsEmptyDataViewTitleText = string.Empty, _starsEmptyDataViewDescriptionText = string.Empty,
+			_viewsClonesEmptyDataViewTitleText = string.Empty;
 
-		ImageSource? __starsEmptyDataViewImage;
-		ImageSource? _viewsClonesEmptyDataViewImage;
+		[ObservableProperty]
+		ImageSource? __starsEmptyDataViewImage, _viewsClonesEmptyDataViewImage;
 
-		IReadOnlyList<DailyStarsModel>? _dailyStarsList;
+		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsViewsClonesChartVisible)), AlsoNotifyChangeFor(nameof(IsViewsClonesEmptyDataViewVisible)),
+			AlsoNotifyChangeFor(nameof(DailyViewsClonesMaxValue)), AlsoNotifyChangeFor(nameof(DailyViewsClonesMaxValue)), AlsoNotifyChangeFor(nameof(MinViewsClonesDate)),
+			AlsoNotifyChangeFor(nameof(MaxViewsClonesDate)),AlsoNotifyChangeFor(nameof(ViewsClonesChartYAxisInterval))]
 		IReadOnlyList<DailyViewsModel>? _dailyViewsList;
+
+		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsViewsClonesChartVisible)), AlsoNotifyChangeFor(nameof(IsViewsClonesEmptyDataViewVisible)),
+			AlsoNotifyChangeFor(nameof(DailyViewsClonesMaxValue)), AlsoNotifyChangeFor(nameof(DailyViewsClonesMinValue)), AlsoNotifyChangeFor(nameof(MinViewsClonesDate)),
+			AlsoNotifyChangeFor(nameof(MaxViewsClonesDate)), AlsoNotifyChangeFor(nameof(ViewsClonesChartYAxisInterval))]
 		IReadOnlyList<DailyClonesModel>? _dailyClonesList;
+
+		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsStarsChartVisible)), AlsoNotifyChangeFor(nameof(IsStarsEmptyDataViewVisible)),
+			AlsoNotifyChangeFor(nameof(MaxDailyStarsValue)), AlsoNotifyChangeFor(nameof(MinDailyStarsValue)), AlsoNotifyChangeFor(nameof(MaxDailyStarsDate)),
+			AlsoNotifyChangeFor(nameof(MinDailyStarsDate)), AlsoNotifyChangeFor(nameof(TotalStars)), AlsoNotifyChangeFor(nameof(StarsChartYAxisInterval))]
+		IReadOnlyList<DailyStarsModel>? _dailyStarsList;
 
 		public TrendsViewModel(IMainThread mainThread,
 								IAnalyticsService analyticsService,
@@ -71,14 +82,12 @@ namespace GitTrends
 			IsClonesSeriesVisible = trendsChartSettingsService.ShouldShowClonesByDefault;
 			IsUniqueClonesSeriesVisible = trendsChartSettingsService.ShouldShowUniqueClonesByDefault;
 
-			ViewsCardTappedCommand = new Command(() => IsViewsSeriesVisible = !IsViewsSeriesVisible);
-			UniqueViewsCardTappedCommand = new Command(() => IsUniqueViewsSeriesVisible = !IsUniqueViewsSeriesVisible);
-			ClonesCardTappedCommand = new Command(() => IsClonesSeriesVisible = !IsClonesSeriesVisible);
-			UniqueClonesCardTappedCommand = new Command(() => IsUniqueClonesSeriesVisible = !IsUniqueClonesSeriesVisible);
+			ViewsCardTappedCommand = new RelayCommand(() => IsViewsSeriesVisible = !IsViewsSeriesVisible);
+			UniqueViewsCardTappedCommand = new RelayCommand(() => IsUniqueViewsSeriesVisible = !IsUniqueViewsSeriesVisible);
+			ClonesCardTappedCommand = new RelayCommand(() => IsClonesSeriesVisible = !IsClonesSeriesVisible);
+			UniqueClonesCardTappedCommand = new RelayCommand(() => IsUniqueClonesSeriesVisible = !IsUniqueClonesSeriesVisible);
 
 			StarsRefreshState = ViewsClonesRefreshState = RefreshState.Uninitialized;
-
-			FetchDataCommand = new AsyncCommand<(Repository Repository, CancellationToken CancellationToken)>(tuple => ExecuteFetchDataCommand(tuple.Repository, tuple.CancellationToken));
 		}
 
 		public ICommand ViewsCardTappedCommand { get; }
@@ -91,8 +100,6 @@ namespace GitTrends
 			add => _repostoryEventManager.AddEventHandler(value);
 			remove => _repostoryEventManager.RemoveEventHandler(value);
 		}
-
-		public IAsyncCommand<(Repository Repository, CancellationToken CancellationToken)> FetchDataCommand { get; }
 
 		public double DailyViewsClonesMinValue { get; } = 0;
 		public double MinDailyStarsValue { get; } = 0;
@@ -127,126 +134,6 @@ namespace GitTrends
 			}
 		}
 
-		public ImageSource? ViewsClonesEmptyDataViewImage
-		{
-			get => _viewsClonesEmptyDataViewImage;
-			set => SetProperty(ref _viewsClonesEmptyDataViewImage, value);
-		}
-
-		public ImageSource? StarsEmptyDataViewImage
-		{
-			get => __starsEmptyDataViewImage;
-			set => SetProperty(ref __starsEmptyDataViewImage, value);
-		}
-
-		public string ViewsClonesEmptyDataViewTitleText
-		{
-			get => _viewsClonesEmptyDataViewTitleText;
-			set => SetProperty(ref _viewsClonesEmptyDataViewTitleText, value);
-		}
-
-		public string StarsEmptyDataViewTitleText
-		{
-			get => _starsEmptyDataViewTitleText;
-			set => SetProperty(ref _starsEmptyDataViewTitleText, value);
-		}
-
-		public string StarsEmptyDataViewDescriptionText
-		{
-			get => _starsEmptyDataViewDescriptionText;
-			set => SetProperty(ref _starsEmptyDataViewDescriptionText, value);
-		}
-
-		public string StarsStatisticsText
-		{
-			get => _starsStatisticsText;
-			set => SetProperty(ref _starsStatisticsText, value);
-		}
-
-		public string ViewsStatisticsText
-		{
-			get => _viewsStatisticsText;
-			set => SetProperty(ref _viewsStatisticsText, value);
-		}
-
-		public string UniqueViewsStatisticsText
-		{
-			get => _uniqueViewsStatisticsText;
-			set => SetProperty(ref _uniqueViewsStatisticsText, value);
-		}
-
-		public string ClonesStatisticsText
-		{
-			get => _clonesStatisticsText;
-			set => SetProperty(ref _clonesStatisticsText, value);
-		}
-
-		public string UniqueClonesStatisticsText
-		{
-			get => _uniqueClonesStatisticsText;
-			set => SetProperty(ref _uniqueClonesStatisticsText, value);
-		}
-
-		public bool IsViewsSeriesVisible
-		{
-			get => _isViewsSeriesVisible;
-			set => SetProperty(ref _isViewsSeriesVisible, value);
-		}
-
-		public bool IsUniqueViewsSeriesVisible
-		{
-			get => _isUniqueViewsSeriesVisible;
-			set => SetProperty(ref _isUniqueViewsSeriesVisible, value);
-		}
-
-		public bool IsClonesSeriesVisible
-		{
-			get => _isClonesSeriesVisible;
-			set => SetProperty(ref _isClonesSeriesVisible, value);
-		}
-
-		public bool IsUniqueClonesSeriesVisible
-		{
-			get => _isUniqueClonesSeriesVisible;
-			set => SetProperty(ref _isUniqueClonesSeriesVisible, value);
-		}
-
-		public string StarsHeaderMessageText
-		{
-			get => _starsHeaderMessageText;
-			set => SetProperty(ref _starsHeaderMessageText, value);
-		}
-
-		public bool IsFetchingViewsClonesData
-		{
-			get => _isFetchingViewsClonesData;
-			set => SetProperty(ref _isFetchingViewsClonesData, value, OnIsFetchingViewsClonesDataChanged);
-		}
-
-		public bool IsFetchingStarsData
-		{
-			get => _isFetchingStarsData;
-			set => SetProperty(ref _isFetchingStarsData, value, OnIsFetchingStarsDataChanged);
-		}
-
-		public IReadOnlyList<DailyViewsModel> DailyViewsList
-		{
-			get => _dailyViewsList ??= Array.Empty<DailyViewsModel>();
-			set => SetProperty(ref _dailyViewsList, value, OnDailyViewsListChanged);
-		}
-
-		public IReadOnlyList<DailyClonesModel> DailyClonesList
-		{
-			get => _dailyClonesList ??= Array.Empty<DailyClonesModel>();
-			set => SetProperty(ref _dailyClonesList, value, OnDailyClonesListChanged);
-		}
-
-		public IReadOnlyList<DailyStarsModel> DailyStarsList
-		{
-			get => _dailyStarsList ??= Array.Empty<DailyStarsModel>();
-			set => SetProperty(ref _dailyStarsList, value, OnDailyStarsListChanged);
-		}
-
 		RefreshState ViewsClonesRefreshState
 		{
 			set
@@ -268,8 +155,11 @@ namespace GitTrends
 			}
 		}
 
-		async Task ExecuteFetchDataCommand(Repository repository, CancellationToken cancellationToken)
+		[ICommand]
+		async Task FetchData((Repository Repository, CancellationToken CancellationToken) parameter)
 		{
+			var (repository, cancellationToken) = parameter;
+
 			var minimumTimeTask = Task.Delay(TimeSpan.FromSeconds(1));
 			using var getGetStarsDataCTS = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 			using var getViewsClonesDataCTS = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -586,62 +476,6 @@ namespace GitTrends
 					}
 				}
 			}
-		}
-
-		void OnDailyStarsListChanged()
-		{
-			OnPropertyChanged(nameof(IsStarsChartVisible));
-			OnPropertyChanged(nameof(IsStarsEmptyDataViewVisible));
-
-			OnPropertyChanged(nameof(MaxDailyStarsValue));
-			OnPropertyChanged(nameof(MinDailyStarsValue));
-
-			OnPropertyChanged(nameof(MaxDailyStarsDate));
-			OnPropertyChanged(nameof(MinDailyStarsDate));
-
-			OnPropertyChanged(nameof(TotalStars));
-
-			OnPropertyChanged(nameof(StarsChartYAxisInterval));
-		}
-
-		void OnDailyClonesListChanged()
-		{
-			OnPropertyChanged(nameof(IsViewsClonesChartVisible));
-			OnPropertyChanged(nameof(IsViewsClonesEmptyDataViewVisible));
-
-			OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
-			OnPropertyChanged(nameof(DailyViewsClonesMinValue));
-
-			OnPropertyChanged(nameof(MinViewsClonesDate));
-			OnPropertyChanged(nameof(MaxViewsClonesDate));
-
-			OnPropertyChanged(nameof(ViewsClonesChartYAxisInterval));
-		}
-
-		void OnDailyViewsListChanged()
-		{
-			OnPropertyChanged(nameof(IsViewsClonesChartVisible));
-			OnPropertyChanged(nameof(IsViewsClonesEmptyDataViewVisible));
-
-			OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
-			OnPropertyChanged(nameof(DailyViewsClonesMaxValue));
-
-			OnPropertyChanged(nameof(MinViewsClonesDate));
-			OnPropertyChanged(nameof(MaxViewsClonesDate));
-
-			OnPropertyChanged(nameof(ViewsClonesChartYAxisInterval));
-		}
-
-		void OnIsFetchingViewsClonesDataChanged()
-		{
-			OnPropertyChanged(nameof(IsViewsClonesChartVisible));
-			OnPropertyChanged(nameof(IsViewsClonesEmptyDataViewVisible));
-		}
-
-		void OnIsFetchingStarsDataChanged()
-		{
-			OnPropertyChanged(nameof(IsStarsChartVisible));
-			OnPropertyChanged(nameof(IsStarsEmptyDataViewVisible));
 		}
 
 		void OnRepositorySavedToDatabase(in Repository repository) => _repostoryEventManager.RaiseEvent(this, repository, nameof(RepositorySavedToDatabase));

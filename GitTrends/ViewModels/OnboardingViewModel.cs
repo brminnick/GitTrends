@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Shiny;
 using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -51,11 +51,11 @@ namespace GitTrends
 			private set => SetProperty(ref _notificationStatusSvgImageSource, SvgService.GetFullPath(value));
 		}
 
-		protected override async Task DemoButton(string? buttonText)
+		protected override async Task HandleDemoButtonTapped(string? buttonText)
 		{
 			try
 			{
-				await base.DemoButton(buttonText).ConfigureAwait(false);
+				await base.HandleDemoButtonTapped(buttonText).ConfigureAwait(false);
 
 				if (buttonText == OnboardingConstants.SkipText)
 				{
@@ -71,7 +71,7 @@ namespace GitTrends
 				}
 				else
 				{
-					throw new NotSupportedException($"{nameof(DemoButton)} Does Not Support {buttonText}");
+					throw new NotSupportedException($"{nameof(HandleDemoButtonTapped)} Does Not Support {buttonText}");
 				}
 			}
 			finally
@@ -81,7 +81,7 @@ namespace GitTrends
 		}
 
 		[ICommand]
-		async Task EnableNotificationsButtonTapped()
+		async Task HandleEnableNotificationsButtonTapped()
 		{
 			const string successSvg = "check.svg";
 			const string failSvg = "error.svg";
@@ -106,6 +106,6 @@ namespace GitTrends
 			};
 		}
 
-		void OnSkipButtonTapped() => _skipButtonTappedEventManager.HandleEvent(null, EventArgs.Empty, nameof(SkipButtonTapped));
+		void OnSkipButtonTapped() => _skipButtonTappedEventManager.RaiseEvent(null, EventArgs.Empty, nameof(SkipButtonTapped));
 	}
 }

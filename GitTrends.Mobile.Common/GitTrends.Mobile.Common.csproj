@@ -235,6 +235,7 @@
 		<PackageReference Include="GitHubApiStatus" Version="2.0.2" />
 		<PackageReference Include="Refit.Newtonsoft.Json" Version="6.3.2" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0-preview3" />
+		<PackageReference Include="AsyncAwaitBestPractices" Version="6.0.4" />
 	</ItemGroup>
 	<Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
 </Project>

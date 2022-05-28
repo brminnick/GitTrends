@@ -66,7 +66,7 @@ namespace GitTrends
 
 					new GitHubButton(WelcomePageAutomationIds.ConnectToGitHubButton, GitHubLoginButtonConstants.ConnectToGitHub).CenterHorizontal().Bottom()
 						.Row(Row.GitHubButton)
-						.Bind(GitHubButton.CommandProperty, nameof(WelcomeViewModel.ConnectToGitHubButtonCommand))
+						.Bind(GitHubButton.CommandProperty, nameof(WelcomeViewModel.HandleConnectToGitHubButtonCommand))
 						.Invoke(button => button.CommandParameter = (_connectToGitHubCancellationTokenSource.Token, browserLaunchOptions)),
 
 					new DemoLabel()
@@ -161,7 +161,7 @@ namespace GitTrends
 
 				AutomationId = WelcomePageAutomationIds.DemoModeButton;
 
-				this.BindTapGesture(nameof(WelcomeViewModel.DemoButtonCommand));
+				this.BindTapGesture(nameof(WelcomeViewModel.HandleDemoButtonTappedCommand));
 				this.Bind(IsVisibleProperty, nameof(WelcomeViewModel.IsDemoButtonVisible));
 			}
 		}

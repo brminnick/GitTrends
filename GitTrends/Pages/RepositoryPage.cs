@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
-using AsyncAwaitBestPractices.MVVM;
 using Autofac;
+using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
@@ -52,7 +52,7 @@ namespace GitTrends
 				IconImageSource = Device.RuntimePlatform is Device.iOS ? "Settings" : null,
 				Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
 				AutomationId = RepositoryPageAutomationIds.SettingsButton,
-				Command = new AsyncCommand(ExecuteSetttingsToolbarItemCommand)
+				Command = new AsyncRelayCommand(ExecuteSetttingsToolbarItemCommand)
 			});
 
 			ToolbarItems.Add(new ToolbarItem
@@ -62,7 +62,7 @@ namespace GitTrends
 				IconImageSource = Device.RuntimePlatform is Device.iOS ? "Sort" : null,
 				Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
 				AutomationId = RepositoryPageAutomationIds.SortButton,
-				Command = new AsyncCommand(ExecuteSortToolbarItemCommand)
+				Command = new AsyncRelayCommand(ExecuteSortToolbarItemCommand)
 			});
 
 			Content = new Grid
@@ -101,7 +101,7 @@ namespace GitTrends
 
 					}.RowSpan(All<Row>()).ColumnSpan(All<Column>()).Assign(out _refreshView)
 					 .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
-					 .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.PullToRefreshCommand))
+					 .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.RefreshCommand))
 					 .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor)),
 
 					new InformationButton(mobileSortingService, mainThread, analyticsService).Row(Row.Information).Column(Column.Information)
@@ -247,7 +247,7 @@ namespace GitTrends
 			settingsItem.Text = PageTitles.SettingsPage;
 		}
 
-		void HandleSearchBarTextChanged(object sender, string searchBarText) => BindingContext.FilterRepositoriesCommand.Execute(searchBarText);
+		void HandleSearchBarTextChanged(object sender, string searchBarText) => BindingContext.SetSearchBarTextCommand.Execute(searchBarText);
 
 		void ISearchPage.OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.RaiseEvent(this, text, nameof(SearchBarTextChanged));
 	}

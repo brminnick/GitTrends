@@ -71,7 +71,7 @@ namespace GitTrends
 					}
 				};
 
-				this.BindTapGesture(nameof(OnboardingViewModel.EnableNotificationsButtonTappedCommand));
+				this.BindTapGesture(nameof(OnboardingViewModel.HandleEnableNotificationsButtonTappedCommand));
 			}
 
 			class NotificationStatusSvgImage : SvgImage
