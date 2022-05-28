@@ -30,6 +30,10 @@ jobs:
         run : |
           mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll --version
           dotnet --info
+      
+      # `dotnet build` is required to run the Source Generators used by CommunityToolkit.Mvvm
+      - name: Build GitTrends .NET Standard Library
+          dotnet build ./GitTrends/GitTrends.csproj
           
       - name: Build Android App
         run: |                    
