@@ -4,50 +4,49 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using AsyncAwaitBestPractices;
-using AsyncAwaitBestPractices.MVVM;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Essentials.Interfaces;
+using Xamarin.Forms;
 
 namespace GitTrends
 {
-	public class ReferringSitesViewModel : BaseViewModel
+	public partial class ReferringSitesViewModel : BaseViewModel
 	{
-		readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
-		readonly static WeakEventManager<Repository> _abuseRateLimitFound_GetReferringSites_EventManager = new();
+		readonly static WeakEventManager _weakEventManager = new();
 
-		readonly FavIconService _favIconService;
 		readonly GitHubUserService _gitHubUserService;
-		readonly GitHubApiV3Service _gitHubApiV3Service;
 		readonly ReferringSitesDatabase _referringSitesDatabase;
 		readonly IGitHubApiStatusService _gitHubApiStatusService;
 		readonly GitHubAuthenticationService _gitHubAuthenticationService;
 		readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
-		IReadOnlyList<MobileReferringSiteModel>? _mobileReferringSiteList;
+		[ObservableProperty]
+		IReadOnlyList<MobileReferringSiteModel> _mobileReferringSitesList = Array.Empty<MobileReferringSiteModel>();
 
-		string _emptyDataViewText = string.Empty;
+		[ObservableProperty]
+		string _emptyDataViewTitle = string.Empty;
+
+		[ObservableProperty]
 		string _emptyDataViewDescription = string.Empty;
 
+		[ObservableProperty]
 		bool _isRefreshing, _isEmptyDataViewEnabled;
 
 		public ReferringSitesViewModel(IMainThread mainThread,
-										FavIconService favIconService,
 										IAnalyticsService analyticsService,
 										GitHubUserService gitHubUserService,
-										GitHubApiV3Service gitHubApiV3Service,
 										ReferringSitesDatabase referringSitesDatabase,
 										GitHubApiStatusService gitHubApiStatusService,
 										GitHubAuthenticationService gitHubAuthenticationService,
 										GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, mainThread)
 		{
-			_favIconService = favIconService;
 			_gitHubUserService = gitHubUserService;
-			_gitHubApiV3Service = gitHubApiV3Service;
 			_referringSitesDatabase = referringSitesDatabase;
 			_gitHubApiStatusService = gitHubApiStatusService;
 			_gitHubAuthenticationService = gitHubAuthenticationService;
@@ -56,52 +55,18 @@ namespace GitTrends
 			BackgroundFetchService.MobileReferringSiteRetrieved += HandleMobileReferringSiteRetrieved;
 
 			RefreshState = RefreshState.Uninitialized;
-
-			RefreshCommand = new AsyncCommand<(Repository Repository, CancellationToken Token)>(tuple => ExecuteRefreshCommand(tuple.Repository, tuple.Token));
 		}
 
 		public static event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
 		{
-			add => _pullToRefreshFailedEventManager.AddEventHandler(value);
-			remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
+			add => _weakEventManager.AddEventHandler(value);
+			remove => _weakEventManager.RemoveEventHandler(value);
 		}
 
-		public static event EventHandler<Repository> AbuseRateLimitFound_GetReferringSites
+		public static event EventHandler<AbuseRateLimitFound_GetReferringSitesEventArgs> AbuseRateLimitFound_GetReferringSites
 		{
-			add => _abuseRateLimitFound_GetReferringSites_EventManager.AddEventHandler(value);
-			remove => _abuseRateLimitFound_GetReferringSites_EventManager.RemoveEventHandler(value);
-		}
-
-		public IAsyncCommand<(Repository repository, CancellationToken Token)> RefreshCommand { get; }
-
-		public string EmptyDataViewTitle
-		{
-			get => _emptyDataViewText;
-			set => SetProperty(ref _emptyDataViewText, value);
-		}
-
-		public string EmptyDataViewDescription
-		{
-			get => _emptyDataViewDescription;
-			set => SetProperty(ref _emptyDataViewDescription, value);
-		}
-
-		public bool IsEmptyDataViewEnabled
-		{
-			get => _isEmptyDataViewEnabled;
-			set => SetProperty(ref _isEmptyDataViewEnabled, value);
-		}
-
-		public bool IsRefreshing
-		{
-			get => _isRefreshing;
-			set => SetProperty(ref _isRefreshing, value);
-		}
-
-		public IReadOnlyList<MobileReferringSiteModel> MobileReferringSitesList
-		{
-			get => _mobileReferringSiteList ??= Array.Empty<MobileReferringSiteModel>();
-			set => SetProperty(ref _mobileReferringSiteList, value);
+			add => _weakEventManager.AddEventHandler(value);
+			remove => _weakEventManager.RemoveEventHandler(value);
 		}
 
 		RefreshState RefreshState
@@ -113,7 +78,8 @@ namespace GitTrends
 			}
 		}
 
-		async Task ExecuteRefreshCommand(Repository repository, CancellationToken cancellationToken)
+		[ICommand]
+		async Task ExecuteRefresh(Repository repository, CancellationToken cancellationToken)
 		{
 			var referringSitesList = await GetReferringSites(repository, cancellationToken).ConfigureAwait(false);
 			MobileReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
@@ -193,11 +159,11 @@ namespace GitTrends
 				_ => throw new NotSupportedException()
 			};
 
-			_pullToRefreshFailedEventManager.RaiseEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
+			_weakEventManager.HandleEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
 		}
 
 		void OnAbuseRateLimitFound_GetReferringSites(in Repository repository) =>
-			_abuseRateLimitFound_GetReferringSites_EventManager.RaiseEvent(this, repository, nameof(AbuseRateLimitFound_GetReferringSites));
+			_weakEventManager.HandleEvent(this, new AbuseRateLimitFound_GetReferringSitesEventArgs(repository), nameof(AbuseRateLimitFound_GetReferringSites));
 
 		void HandleMobileReferringSiteRetrieved(object sender, MobileReferringSiteModel e)
 		{

@@ -78,7 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2401" />
-    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="6.0.4" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="19.4.0.38" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
