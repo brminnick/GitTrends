@@ -33,7 +33,7 @@ jobs:
       
       # `dotnet build` is required to run the Source Generators used by CommunityToolkit.Mvvm
       - name: Build GitTrends .NET Standard Library
-        run : dotnet build ./GitTrends/GitTrends.csproj
+        run : dotnet build ./GitTrends/GitTrends.csproj -c Release
           
       - name: Build Android App
         run: |                    
