@@ -119,7 +119,7 @@ namespace GitTrends
 		}
 
 		[ICommand]
-		async Task Refresh()
+		async Task ExecuteRefresh()
 		{
 			const int minimumBatchCount = 100;
 

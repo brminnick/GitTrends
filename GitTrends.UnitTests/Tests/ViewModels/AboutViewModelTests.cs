@@ -79,7 +79,7 @@ namespace GitTrends.UnitTests
 
 			//Act
 
-			await aboutViewModel.ViewOnGitHubCommand.ExecuteAsync().ConfigureAwait(false);
+			await aboutViewModel.ViewOnGitHubCommand.ExecuteAsync(null).ConfigureAwait(false);
 			var openedBrowserUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
 
 			//Assert
@@ -112,7 +112,7 @@ namespace GitTrends.UnitTests
 
 			//Act
 
-			await aboutViewModel.RequestFeatureCommand.ExecuteAsync().ConfigureAwait(false);
+			await aboutViewModel.RequestFeatureCommand.ExecuteAsync(null).ConfigureAwait(false);
 			var openedBrowserUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
 
 			//Assert

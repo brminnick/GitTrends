@@ -22,7 +22,7 @@ namespace GitTrends.UnitTests
 			OnboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
 
 			//Act
-			await onboardingViewModel.DemoButtonCommand.ExecuteAsync(OnboardingConstants.SkipText).ConfigureAwait(false);
+			await onboardingViewModel.HandleDemoButtonTappedCommand.ExecuteAsync(OnboardingConstants.SkipText).ConfigureAwait(false);
 			await skipButtonTappedTCS.Task.ConfigureAwait(false);
 
 			//Assert
@@ -45,7 +45,7 @@ namespace GitTrends.UnitTests
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
 			//Act
-			await onboardingViewModel.DemoButtonCommand.ExecuteAsync(OnboardingConstants.TryDemoText).ConfigureAwait(false);
+			await onboardingViewModel.HandleDemoButtonTappedCommand.ExecuteAsync(OnboardingConstants.TryDemoText).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsTrue(gitHubUserService.IsDemoUser);
@@ -73,7 +73,10 @@ namespace GitTrends.UnitTests
 			isAuthenticating_BeforeCommand = onboardingViewModel.IsAuthenticating;
 			isDemoButtonVisible_BeforeCommand = onboardingViewModel.IsDemoButtonVisible;
 
-			var connectToGitHubButtonCommandTask = onboardingViewModel.ConnectToGitHubButtonCommand.ExecuteAsync((CancellationToken.None, null));
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+			var connectToGitHubButtonCommandTask = onboardingViewModel.HandleConnectToGitHubButtonCommand.ExecuteAsync((CancellationToken.None, null));
+#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+
 			isAuthenticating_DuringCommand = onboardingViewModel.IsAuthenticating;
 			isDemoButtonVisible_DuringCommand = onboardingViewModel.IsDemoButtonVisible;
 
@@ -121,7 +124,7 @@ namespace GitTrends.UnitTests
 			//Act
 			notificationStatusSvgImageSource_Initial = onboardingViewModel.NotificationStatusSvgImageSource;
 
-			await onboardingViewModel.EnableNotificationsButtonTapped.ExecuteAsync().ConfigureAwait(false);
+			await onboardingViewModel.HandleEnableNotificationsButtonTappedCommand.ExecuteAsync(null).ConfigureAwait(false);
 
 			notificationStatusSvgImageSource_Final = onboardingViewModel.NotificationStatusSvgImageSource;
 

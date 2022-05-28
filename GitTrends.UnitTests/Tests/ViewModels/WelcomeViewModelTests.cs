@@ -29,7 +29,9 @@ namespace GitTrends.UnitTests
 			isAuthenticating_BeforeCommand = welcomeViewModel.IsAuthenticating;
 			isDemoButtonVisible_BeforeCommand = welcomeViewModel.IsDemoButtonVisible;
 
-			var connectToGitHubButtonCommandTask = welcomeViewModel.ConnectToGitHubButtonCommand.ExecuteAsync((CancellationToken.None, null));
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+			var connectToGitHubButtonCommandTask = welcomeViewModel.HandleConnectToGitHubButtonCommand.ExecuteAsync((CancellationToken.None, null));
+#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
 			isAuthenticating_DuringCommand = welcomeViewModel.IsAuthenticating;
 			isDemoButtonVisible_DuringCommand = welcomeViewModel.IsDemoButtonVisible;
 
@@ -76,7 +78,7 @@ namespace GitTrends.UnitTests
 			//Act
 			isDemoButtonVisible_Initial = welcomeViewModel.IsDemoButtonVisible;
 
-			await welcomeViewModel.DemoButtonCommand.ExecuteAsync(null).ConfigureAwait(false);
+			await welcomeViewModel.HandleDemoButtonTappedCommand.ExecuteAsync(null).ConfigureAwait(false);
 
 			isDemoButtonVisible_Final = welcomeViewModel.IsDemoButtonVisible;
 

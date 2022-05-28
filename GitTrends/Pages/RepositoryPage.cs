@@ -101,7 +101,7 @@ namespace GitTrends
 
 					}.RowSpan(All<Row>()).ColumnSpan(All<Column>()).Assign(out _refreshView)
 					 .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
-					 .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.RefreshCommand))
+					 .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.ExecuteRefreshCommand))
 					 .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor)),
 
 					new InformationButton(mobileSortingService, mainThread, analyticsService).Row(Row.Information).Column(Column.Information)

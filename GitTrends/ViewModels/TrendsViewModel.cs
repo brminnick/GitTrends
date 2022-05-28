@@ -49,18 +49,18 @@ namespace GitTrends
 
 		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsViewsClonesChartVisible)), AlsoNotifyChangeFor(nameof(IsViewsClonesEmptyDataViewVisible)),
 			AlsoNotifyChangeFor(nameof(DailyViewsClonesMaxValue)), AlsoNotifyChangeFor(nameof(DailyViewsClonesMaxValue)), AlsoNotifyChangeFor(nameof(MinViewsClonesDate)),
-			AlsoNotifyChangeFor(nameof(MaxViewsClonesDate)),AlsoNotifyChangeFor(nameof(ViewsClonesChartYAxisInterval))]
-		IReadOnlyList<DailyViewsModel>? _dailyViewsList;
+			AlsoNotifyChangeFor(nameof(MaxViewsClonesDate)), AlsoNotifyChangeFor(nameof(ViewsClonesChartYAxisInterval))]
+		IReadOnlyList<DailyViewsModel> _dailyViewsList = Array.Empty<DailyViewsModel>();
 
 		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsViewsClonesChartVisible)), AlsoNotifyChangeFor(nameof(IsViewsClonesEmptyDataViewVisible)),
 			AlsoNotifyChangeFor(nameof(DailyViewsClonesMaxValue)), AlsoNotifyChangeFor(nameof(DailyViewsClonesMinValue)), AlsoNotifyChangeFor(nameof(MinViewsClonesDate)),
 			AlsoNotifyChangeFor(nameof(MaxViewsClonesDate)), AlsoNotifyChangeFor(nameof(ViewsClonesChartYAxisInterval))]
-		IReadOnlyList<DailyClonesModel>? _dailyClonesList;
+		IReadOnlyList<DailyClonesModel> _dailyClonesList = Array.Empty<DailyClonesModel>();
 
 		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsStarsChartVisible)), AlsoNotifyChangeFor(nameof(IsStarsEmptyDataViewVisible)),
 			AlsoNotifyChangeFor(nameof(MaxDailyStarsValue)), AlsoNotifyChangeFor(nameof(MinDailyStarsValue)), AlsoNotifyChangeFor(nameof(MaxDailyStarsDate)),
 			AlsoNotifyChangeFor(nameof(MinDailyStarsDate)), AlsoNotifyChangeFor(nameof(TotalStars)), AlsoNotifyChangeFor(nameof(StarsChartYAxisInterval))]
-		IReadOnlyList<DailyStarsModel>? _dailyStarsList;
+		IReadOnlyList<DailyStarsModel> _dailyStarsList = Array.Empty<DailyStarsModel>();
 
 		public TrendsViewModel(IMainThread mainThread,
 								IAnalyticsService analyticsService,

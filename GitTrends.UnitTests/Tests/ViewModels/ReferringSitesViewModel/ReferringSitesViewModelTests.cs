@@ -37,7 +37,7 @@ namespace GitTrends.UnitTests
 			isEmptyDataViewEnabled_Initial = referringSitesViewModel.IsEmptyDataViewEnabled;
 			emptyDataViewDescription_Initial = referringSitesViewModel.EmptyDataViewDescription;
 
-			var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((mockGitTrendsRepository, CancellationToken.None));
+			var refreshCommandTask = referringSitesViewModel.ExecuteRefreshCommand.ExecuteAsync((mockGitTrendsRepository, CancellationToken.None));
 
 			isEmptyDataViewEnabled_DuringRefresh = referringSitesViewModel.IsEmptyDataViewEnabled;
 			mobileReferringSites_DuringRefresh = referringSitesViewModel.MobileReferringSitesList;
@@ -104,7 +104,7 @@ namespace GitTrends.UnitTests
 			mobileReferringSites_Initial = referringSitesViewModel.MobileReferringSitesList;
 			emptyDataViewDescription_Initial = referringSitesViewModel.EmptyDataViewDescription;
 
-			var refreshCommandTask = referringSitesViewModel.RefreshCommand.ExecuteAsync((mockGitTrendsRepository, CancellationToken.None));
+			var refreshCommandTask = referringSitesViewModel.ExecuteRefreshCommand.ExecuteAsync((mockGitTrendsRepository, CancellationToken.None));
 
 			isEmptyDataViewEnabled_DuringRefresh = referringSitesViewModel.IsEmptyDataViewEnabled;
 			mobileReferringSites_DuringRefresh = referringSitesViewModel.MobileReferringSitesList;

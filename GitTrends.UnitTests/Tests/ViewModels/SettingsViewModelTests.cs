@@ -129,7 +129,7 @@ namespace GitTrends.UnitTests
 			gitHubAliasLabelText_Initial = settingsViewModel.GitHubAliasLabelText;
 			gitHubAvatarImageSource_Initial = settingsViewModel.GitHubAvatarImageSource;
 
-			await settingsViewModel.DemoButtonCommand.ExecuteAsync(null).ConfigureAwait(false);
+			await settingsViewModel.HandleDemoButtonTappedCommand.ExecuteAsync(null).ConfigureAwait(false);
 
 			loginLabelText_Final = settingsViewModel.LoginLabelText;
 			isDemoButtonVisible_Final = settingsViewModel.IsDemoButtonVisible;
@@ -183,7 +183,9 @@ namespace GitTrends.UnitTests
 			isAuthenticating_BeforeCommand = settingsViewModel.IsAuthenticating;
 			isDemoButtonVisible_BeforeCommand = settingsViewModel.IsDemoButtonVisible;
 
-			var connectToGitHubButtonCommandTask = settingsViewModel.ConnectToGitHubButtonCommand.ExecuteAsync((CancellationToken.None, null));
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+			var connectToGitHubButtonCommandTask = settingsViewModel.HandleConnectToGitHubButtonCommand.ExecuteAsync((CancellationToken.None, null));
+#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
 			isNotAuthenticating_DuringCommand = settingsViewModel.IsNotAuthenticating;
 			isAuthenticating_DuringCommand = settingsViewModel.IsAuthenticating;
 			isDemoButtonVisible_DuringCommand = settingsViewModel.IsDemoButtonVisible;
@@ -268,7 +270,7 @@ namespace GitTrends.UnitTests
 			MockLauncher.OpenAsyncExecuted += HandleOpenAsyncExecuted;
 
 			//Act
-			await settingsViewModel.CopyrightLabelTappedCommand.ExecuteAsync().ConfigureAwait(false);
+			await settingsViewModel.CopyrightLabelTappedCommand.ExecuteAsync(null).ConfigureAwait(false);
 			await openAsyncTCS.Task.ConfigureAwait(false);
 
 			//Assert
