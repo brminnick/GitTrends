@@ -147,7 +147,7 @@ jobs:
     displayName: Run Unit Tests
     dependsOn: [Build_UnitTests, Build_Android_App, Build_iOS_App, Build_UITests]
     pool: 
-      vmImage: windows-latest
+      vmImage: unbuntu-latest
 
     steps:      
       - task: UseDotNet@2
@@ -160,18 +160,16 @@ jobs:
         displayName: 'Inject API Keys'
         inputs:
           script: |
-            set GetTestTokenApiKey=$(GETTESTTOKENAPIKEY)
-            set GetAppCenterApiKeysKey=$(GETAPPCENTERAPIKEYSKEY)
-            set GetSyncFusionInformationApiKey=$(GETSYNCFUSIONINFORMATIONAPIKEY)
-            set GetNotificationHubInformationApiKey=$(GETNOTIFICATIONHUBINFORMATIONAPIKEY)
-            set APPCENTER_SOURCE_DIRECTORY=.
+            GetTestTokenApiKey=$(GETTESTTOKENAPIKEY)
+            GetAppCenterApiKeysKey=$(GETAPPCENTERAPIKEYSKEY)
+            GetSyncFusionInformationApiKey=$(GETSYNCFUSIONINFORMATIONAPIKEY)
+            GetNotificationHubInformationApiKey=$(GETNOTIFICATIONHUBINFORMATIONAPIKEY)
+            APPCENTER_SOURCE_DIRECTORY=.
 
             chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
             ./GitTrends.Android/appcenter-pre-build.sh
 
-      - task: VSBuild@1
-        displayName: 'Run Unit Tests'
+      - task: CmdLine@2
+        displayName: 'Inject API Keys'
         inputs:
-          solution: '$(PathToUnitTestsCsproj)'
-          configuration: 'Release'
-          msbuildArgs: '/restore -t:test'
+          script: 'dotnet test $(PathToUnitTestsCsproj) -c Release'
