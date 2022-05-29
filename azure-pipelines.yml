@@ -1,5 +1,6 @@
 variables:
   NET_VERSION: '6.0.x'
+  NET_CORE_VERSION: '3.1.x'
   PathToSolution: 'GitTrends.sln'
   PathToAzureFunctionsCsproj: 'GitTrends.Functions/GitTrends.Functions.csproj'
   PathToAndroidAppCsproj: 'GitTrends.Android/GitTrends.Android.csproj'
@@ -77,7 +78,7 @@ jobs:
         displayName: 'Install .NET SDK'
         inputs:
           packageType: 'sdk'
-          version: '$(NET_VERSION)'
+          version: '$(NET_CORE_VERSION)'
 
       - task: InstallAppleCertificate@2
         inputs:
@@ -156,6 +157,12 @@ jobs:
           packageType: 'sdk'
           version: '$(NET_VERSION)'
 
+      - task: UseDotNet@2
+        displayName: 'Install .NET Core 3.1 SDK'
+        inputs:
+          packageType: 'sdk'
+          version: '$(NET_CORE_VERSION)'
+
       - task: CmdLine@2
         displayName: 'Inject API Keys'
         inputs:
@@ -167,18 +174,13 @@ jobs:
 
             echo "Injecting API Keys"
             echo GETAPPCENTERAPIKEYSKEY $(GETAPPCENTERAPIKEYSKEY)
-
             Test=$(GETAPPCENTERAPIKEYSKEY)
             echo Test
-
+            
             sed -i '' "s/GetTestTokenApiKey = \"\"/GetTestTokenApiKey = \"$(GETTESTTOKENAPIKEY)\"/g" "$AzureConstantsFile"
-
             sed -i '' "s/GetAppCenterApiKeysKey = \"\"/GetAppCenterApiKeysKey = \"$(GETAPPCENTERAPIKEYSKEY)\"/g" "$AzureConstantsFile"
-
             sed -i '' "s/GetSyncFusionInformationApiKey = \"\"/GetSyncFusionInformationApiKey = \"$(GETSYNCFUSIONINFORMATIONAPIKEY)\"/g" "$AzureConstantsFile"
-
             sed -i '' "s/GetNotificationHubInformationApiKey = \"\"/GetNotificationHubInformationApiKey = \"$(GETNOTIFICATIONHUBINFORMATIONAPIKEY)\"/g" "$AzureConstantsFile"
-
             sed -i '' "s/#error Missing API Keys/\/\/#error Missing API Keys/g" "$AzureConstantsFile"
 
       - task: CmdLine@2
