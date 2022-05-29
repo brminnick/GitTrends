@@ -175,9 +175,9 @@ jobs:
             echo "Injecting API Keys"
             echo GETAPPCENTERAPIKEYSKEY $(GETAPPCENTERAPIKEYSKEY)
             Test=$(GETAPPCENTERAPIKEYSKEY)
-            echo Test
-            
-            sed -i '' "s/GetTestTokenApiKey = \"\"/GetTestTokenApiKey = \"$(GETTESTTOKENAPIKEY)\"/g" "$AzureConstantsFile"
+            echo $Test
+
+            sed -i '' "s/GetTestTokenApiKey = \"\"/GetTestTokenApiKey = \"$(GETTESTTOKENAPIKEY)\"/g" "$AzureConstantsFile"  
             sed -i '' "s/GetAppCenterApiKeysKey = \"\"/GetAppCenterApiKeysKey = \"$(GETAPPCENTERAPIKEYSKEY)\"/g" "$AzureConstantsFile"
             sed -i '' "s/GetSyncFusionInformationApiKey = \"\"/GetSyncFusionInformationApiKey = \"$(GETSYNCFUSIONINFORMATIONAPIKEY)\"/g" "$AzureConstantsFile"
             sed -i '' "s/GetNotificationHubInformationApiKey = \"\"/GetNotificationHubInformationApiKey = \"$(GETNOTIFICATIONHUBINFORMATIONAPIKEY)\"/g" "$AzureConstantsFile"
