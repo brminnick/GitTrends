@@ -91,12 +91,19 @@ jobs:
           provProfileSecureFile: Development_Wildcard.mobileprovision
           removeProfile: true
 
-      - task: VSBuild@1
+      - task: NuGetCommand@2
+        inputs:
+          command: 'restore'
+          restoreSolution: '$(PathToSolution)'
+          feedsToUse: 'select'
+
+      - task: XamariniOS@2
         displayName: 'Build iOS App'
         inputs:
-          solution: '$(PathToiOSAppCsproj)'
+          solutionFile: '$(PathToiOSAppCsproj)'
           configuration: 'Release'
-          msbuildArgs: '/restore'
+          packageApp: false
+          runNugetRestore: true
 
   - job: Build_Android_App
     displayName: Build Android App
