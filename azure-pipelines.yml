@@ -81,7 +81,7 @@ jobs:
 
       - task: XamariniOS@2
         inputs:
-          solutionFile: '$(PathToiOSCsproj)'
+          solutionFile: '$(PathToiOSAppCsproj)'
           configuration: 'Release'
           packageApp: false
           buildForSimulator: true
@@ -102,13 +102,13 @@ jobs:
       - task: VSBuild@1
         displayName: 'Build Android App'
         inputs:
-          solution: '$(PathToAndroidCsproj)'
+          solution: '$(PathToAndroidAppCsproj)'
           configuration: 'Release'
           msbuildArgs: '/restore'
 
       - task: XamarinAndroid@1
         inputs:
-          projectFile: '$(PathToAndroidCsproj)'
+          projectFile: '$(PathToAndroidAppCsproj)'
           msbuildVersionOption: 'latest'
           msbuildArchitectureOption: 'x64'
           jdkOption: 'JDKVersion'
