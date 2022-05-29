@@ -92,6 +92,7 @@ jobs:
           removeProfile: true
 
       - task: NuGetCommand@2
+        displayName: 'Restore NuGet Packages'
         inputs:
           command: 'restore'
           restoreSolution: '$(PathToSolution)'
@@ -102,8 +103,7 @@ jobs:
         inputs:
           solutionFile: '$(PathToiOSAppCsproj)'
           configuration: 'Release'
-          packageApp: false
-          runNugetRestore: true
+          packageApp: true
 
   - job: Build_Android_App
     displayName: Build Android App
@@ -157,15 +157,14 @@ jobs:
           version: '$(NET_VERSION)'
 
       - task: CmdLine@2
-        displayName: 'Run Unit Tests'
+        displayName: 'Inject API Keys'
         inputs:
           script: |
-            GetTestTokenApiKey: $(GETTESTTOKENAPIKEY)
-            GetAppCenterApiKeysKey: $(GETAPPCENTERAPIKEYSKEY)
-            GetSyncFusionInformationApiKey: $(GETSYNCFUSIONINFORMATIONAPIKEY)
-            GetNotificationHubInformationApiKey: $(GETNOTIFICATIONHUBINFORMATIONAPIKEY)
-            APPCENTER_SOURCE_DIRECTORY: .
-
+            GetTestTokenApiKey=$(GETTESTTOKENAPIKEY)
+            GetAppCenterApiKeysKey=$(GETAPPCENTERAPIKEYSKEY)
+            GetSyncFusionInformationApiKey=$(GETSYNCFUSIONINFORMATIONAPIKEY)
+            GetNotificationHubInformationApiKey=$(GETNOTIFICATIONHUBINFORMATIONAPIKEY)
+            APPCENTER_SOURCE_DIRECTORY=.
 
             chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
             ./GitTrends.Android/appcenter-pre-build.sh
