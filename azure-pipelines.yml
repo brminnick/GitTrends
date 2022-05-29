@@ -91,15 +91,6 @@ jobs:
           provProfileSecureFile: Development_Wildcard.mobileprovision
           removeProfile: true
 
-      - task: XamariniOS@2
-        displayName: 'Build iOS App'
-        inputs:
-          solutionFile: '$(PathToiOSAppCsproj)'
-          configuration: 'Release'
-          packageApp: false
-          buildForSimulator: true
-          runNugetRestore: true
-
       - task: VSBuild@1
         displayName: 'Build iOS App'
         inputs:
