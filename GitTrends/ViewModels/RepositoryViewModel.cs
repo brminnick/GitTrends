@@ -118,7 +118,7 @@ namespace GitTrends
 			return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
 		}
 
-		[ICommand]
+		[ICommand(AllowConcurrentExecutions = true)]
 		async Task ExecuteRefresh()
 		{
 			const int minimumBatchCount = 100;

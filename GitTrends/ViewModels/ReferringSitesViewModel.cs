@@ -76,7 +76,7 @@ namespace GitTrends
 			}
 		}
 
-		[ICommand]
+		[ICommand(AllowConcurrentExecutions = true)]
 		async Task ExecuteRefresh((Repository repository, CancellationToken cancellationToken) parameter)
 		{
 			var (repository, cancellationToken) = parameter;

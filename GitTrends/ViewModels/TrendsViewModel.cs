@@ -14,7 +14,6 @@ using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
@@ -45,7 +44,7 @@ namespace GitTrends
 			_viewsClonesEmptyDataViewTitleText = string.Empty;
 
 		[ObservableProperty]
-		ImageSource? __starsEmptyDataViewImage, _viewsClonesEmptyDataViewImage;
+		Xamarin.Forms.ImageSource? __starsEmptyDataViewImage, _viewsClonesEmptyDataViewImage;
 
 		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsViewsClonesChartVisible)), AlsoNotifyChangeFor(nameof(IsViewsClonesEmptyDataViewVisible)),
 			AlsoNotifyChangeFor(nameof(DailyViewsClonesMaxValue)), AlsoNotifyChangeFor(nameof(DailyViewsClonesMaxValue)), AlsoNotifyChangeFor(nameof(MinViewsClonesDate)),
