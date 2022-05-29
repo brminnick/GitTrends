@@ -148,7 +148,7 @@ jobs:
     # dependsOn: [Build_UnitTests, Build_Android_App, Build_iOS_App, Build_UITests]
     dependsOn: [Build_UnitTests]
     pool: 
-      vmImage: ubuntu-latest
+      vmImage: macos-latest
 
     steps:      
       - task: UseDotNet@2
