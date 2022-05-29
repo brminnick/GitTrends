@@ -160,11 +160,11 @@ jobs:
         displayName: 'Inject API Keys'
         inputs:
           script: |
-            GetTestTokenApiKey=$(GETTESTTOKENAPIKEY)
-            GetAppCenterApiKeysKey=$(GETAPPCENTERAPIKEYSKEY)
-            GetSyncFusionInformationApiKey=$(GETSYNCFUSIONINFORMATIONAPIKEY)
-            GetNotificationHubInformationApiKey=$(GETNOTIFICATIONHUBINFORMATIONAPIKEY)
-            APPCENTER_SOURCE_DIRECTORY=.
+            set GetTestTokenApiKey=$(GETTESTTOKENAPIKEY)
+            set GetAppCenterApiKeysKey=$(GETAPPCENTERAPIKEYSKEY)
+            set GetSyncFusionInformationApiKey=$(GETSYNCFUSIONINFORMATIONAPIKEY)
+            set GetNotificationHubInformationApiKey=$(GETNOTIFICATIONHUBINFORMATIONAPIKEY)
+            set APPCENTER_SOURCE_DIRECTORY=.
 
             chmod -R 777 ./GitTrends.Android/appcenter-pre-build.sh
             ./GitTrends.Android/appcenter-pre-build.sh
