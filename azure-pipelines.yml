@@ -166,7 +166,10 @@ jobs:
             echo AzureConstantsFile = $AzureConstantsFile
 
             echo "Injecting API Keys"
-            echo $(GETTESTTOKENAPIKEY)
+            echo GETAPPCENTERAPIKEYSKEY $(GETAPPCENTERAPIKEYSKEY)
+
+            Test=$(GETAPPCENTERAPIKEYSKEY)
+            echo Test
 
             sed -i '' "s/GetTestTokenApiKey = \"\"/GetTestTokenApiKey = \"$(GETTESTTOKENAPIKEY)\"/g" "$AzureConstantsFile"
 
