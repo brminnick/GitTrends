@@ -88,7 +88,7 @@ jobs:
       - task: InstallAppleProvisioningProfile@1
         inputs:
           provisioningProfileLocation: 'secureFiles'
-          provProfileSecureFile: Development_Wildcard.mobileprovision
+          provProfileSecureFile: GitTrends_Development_Profile.mobileprovision
           removeProfile: true
 
       - task: NuGetCommand@2
