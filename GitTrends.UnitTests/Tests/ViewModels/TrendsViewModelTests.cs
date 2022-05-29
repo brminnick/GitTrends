@@ -212,11 +212,15 @@ namespace GitTrends.UnitTests
 
 			//Assert
 			Assert.AreEqual(repository.StarCount, trendsViewModel.TotalStars);
-			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count);
 			Assert.AreEqual(repository.StarCount.ToAbbreviatedText(), trendsViewModel.StarsStatisticsText);
 			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
 			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Succeeded, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
 			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewTitleText);
+
+			if (trendsViewModel.DailyStarsList.Max(x => x.Day) > DateTimeOffset.UtcNow.AddSeconds(-1))
+				Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count - 1);
+			else
+				Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count);
 		}
 
 		[Test, Timeout(_timeoutInMilliseconds)]
@@ -238,11 +242,15 @@ namespace GitTrends.UnitTests
 
 			//Assert
 			Assert.AreEqual(repository.StarCount, trendsViewModel.TotalStars);
-			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count);
 			Assert.AreEqual(repository.StarCount.ToAbbreviatedText(), trendsViewModel.StarsStatisticsText);
 			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
 			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Succeeded, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
 			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewTitleText);
+
+			if (trendsViewModel.DailyStarsList.Max(x => x.Day) > DateTimeOffset.UtcNow.AddSeconds(-1))
+				Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count - 1);
+			else
+				Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count);
 		}
 
 		[Test, Timeout(_timeoutInMilliseconds)]
