@@ -79,13 +79,33 @@ jobs:
           packageType: 'sdk'
           version: '$(NET_VERSION)'
 
+      - task: InstallAppleCertificate@2
+        inputs:
+          certSecureFile: Certificates.p12
+          certPwd: $(APPLECERTIFICATEPASSWORD)
+          deleteCert: true
+
+      - task: InstallAppleProvisioningProfile@1
+        inputs:
+          provisioningProfileLocation: 'secureFiles'
+          provProfileSecureFile: Development_Wildcard.mobileprovision
+          removeProfile: true
+
       - task: XamariniOS@2
+        displayName: 'Build iOS App'
         inputs:
           solutionFile: '$(PathToiOSAppCsproj)'
           configuration: 'Release'
           packageApp: false
           buildForSimulator: true
           runNugetRestore: true
+
+      - task: VSBuild@1
+        displayName: 'Build iOS App'
+        inputs:
+          solution: '$(PathToiOSAppCsproj)'
+          configuration: 'Release'
+          msbuildArgs: '/restore'
 
   - job: Build_Android_App
     displayName: Build Android App
@@ -105,13 +125,6 @@ jobs:
           solution: '$(PathToAndroidAppCsproj)'
           configuration: 'Release'
           msbuildArgs: '/restore'
-
-      - task: XamarinAndroid@1
-        inputs:
-          projectFile: '$(PathToAndroidAppCsproj)'
-          msbuildVersionOption: 'latest'
-          msbuildArchitectureOption: 'x64'
-          jdkOption: 'JDKVersion'
 
   - job: Build_UnitTests
     displayName: Build Unit Tests
