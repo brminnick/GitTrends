@@ -37,16 +37,13 @@ namespace GitTrends
 			_gitHubAvatarImageSource = string.Empty, _gitHubAliasLabelText = string.Empty, _preferredChartsLabelText = string.Empty,
 			_registerForNotificationsLabelText = string.Empty, _shouldIncludeOrganizationsLabelText = string.Empty, _gitHubNameLabelText = string.Empty;
 
-		[ObservableProperty]
-		[AlsoNotifyChangeFor(nameof(IsDemoButtonVisible))]
-		[AlsoNotifyChangeFor(nameof(IsAliasLabelVisible))]
+		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsDemoButtonVisible)), AlsoNotifyChangeFor(nameof(IsAliasLabelVisible))]
 		string _loginLabelText = string.Empty;
 
 		[ObservableProperty]
 		bool _isRegisterForNotificationsSwitchEnabled = true;
 
-		[ObservableProperty]
-		[AlsoNotifyChangeFor(nameof(IsShouldIncludeOrganizationsSwitchToggled))]
+		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsShouldIncludeOrganizationsSwitchToggled))]
 		bool _isShouldIncludeOrganizationsSwitchEnabled;
 
 		bool _isRegisterForNotificationsSwitchToggled;
@@ -76,19 +73,18 @@ namespace GitTrends
 			_gitTrendsStatisticsService = gitTrendsStatisticsService;
 			_trendsChartSettingsService = trendsChartSettingsService;
 
+			App.Resumed += HandleResumed;
+
 			GitHubUserService.NameChanged += HandleNameChanged;
 			GitHubUserService.AliasChanged += HandleAliasChanged;
 			GitHubUserService.AvatarUrlChanged += HandleAvatarUrlChanged;
 
-			App.Resumed += HandleResumed;
 			ThemeService.PreferenceChanged += HandlePreferenceChanged;
 			LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 			GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
-			InitializeText();
+			InitializeText(themeService, trendsChartSettingsService);
 
-			ThemePickerSelectedIndex = (int)themeService.Preference;
-			PreferredChartsSelectedIndex = (int)trendsChartSettingsService.CurrentTrendsChartOption;
 			LanguagePickerSelectedIndex = CultureConstants.CulturePickerOptions.Keys.ToList().IndexOf(languageService.PreferredLanguage ?? string.Empty);
 
 			initializeIsRegisterForNotificationsSwitch().SafeFireAndForget();
@@ -315,7 +311,7 @@ namespace GitTrends
 		void HandleNameChanged(object sender, string e) => SetGitHubValues();
 		void HandleAliasChanged(object sender, string e) => SetGitHubValues();
 		void HandleAvatarUrlChanged(object sender, string e) => SetGitHubValues();
-		void HandlePreferredLanguageChanged(object sender, string? e) => InitializeText();
+		void HandlePreferredLanguageChanged(object sender, string? e) => InitializeText(_themeService, _trendsChartSettingsService);
 		void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => SetGitHubValues();
 		void HandlePreferenceChanged(object sender, PreferredTheme e) => UpdateGitHubAvatarImage();
 
@@ -325,11 +321,11 @@ namespace GitTrends
 			IsRegisterForNotificationsSwitchEnabled = true;
 		}
 
-		void InitializeText()
+		void InitializeText(in ThemeService themeService, in TrendsChartSettingsService trendsChartSettingsService)
 		{
 			//Changing the Picker.ItemSource resets the Selected Index to -1
-			var originalThemePickerIndex = ThemePickerSelectedIndex;
-			var originalPreferredChartsIndex = PreferredChartsSelectedIndex;
+			var originalThemePickerIndex = (int)themeService.Preference;
+			var originalPreferredChartsIndex = (int)trendsChartSettingsService.CurrentTrendsChartOption;
 
 			TitleText = PageTitles.SettingsPage;
 			AboutLabelText = PageTitles.AboutPage;
