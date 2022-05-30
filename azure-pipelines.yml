@@ -99,6 +99,7 @@ jobs:
           script: |
             dotnet tool install --global boots --prerelease
             boots --alpha Mono
+            boots --alpha Xamarin.iOS
 
       - task: NuGetCommand@2
         displayName: 'Restore NuGet Packages'
