@@ -2,11 +2,11 @@ variables:
   NET_VERSION: '6.0.x'
   NET_CORE_VERSION: '3.1.x'
   PathToSolution: 'GitTrends.sln'
-  PathToiOSAppCsproj: 'GitTrends.iOS/GitTrends.iOS.csproj'
-  PathToUITestsCsproj: 'GitTrends.UITests/GitTrends.UITests.csproj'
-  PathToAndroidAppCsproj: 'GitTrends.Android/GitTrends.Android.csproj'
-  PathToUnitTestsCsproj: 'GitTrends.UnitTests/GitTrends.UnitTests.csproj'
   PathToAzureFunctionsCsproj: 'GitTrends.Functions/GitTrends.Functions.csproj'
+  PathToAndroidAppCsproj: 'GitTrends.Android/GitTrends.Android.csproj'
+  PathToiOSAppCsproj: 'GitTrends.iOS/GitTrends.iOS.csproj'
+  PathToUnitTestsCsproj: 'GitTrends.UnitTests/GitTrends.UnitTests.csproj'
+  PathToUITestsCsproj: 'GitTrends.UITests/GitTrends.UITests.csproj'
   XcodeVersion: '13.3.1'
 
 trigger:
@@ -99,12 +99,12 @@ jobs:
           restoreSolution: '$(PathToSolution)'
           feedsToUse: 'select'
 
-      - task: MSBuild@1
+      - task: XamariniOS@2
         displayName: 'Build iOS App'
         inputs:
-          solution: $(PathToiOSAppCsproj)
-          msbuildArchitecture: 'x64'
-          restoreNugetPackages: true
+          solutionFile: '$(PathToiOSAppCsproj)'
+          configuration: 'Release'
+          packageApp: true
 
   - job: Build_Android_App
     displayName: Build Android App
