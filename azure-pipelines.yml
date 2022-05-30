@@ -172,16 +172,16 @@ jobs:
             AzureConstantsFile=`find . -name AzureConstants.cs | head -1`
             echo AzureConstantsFile = $AzureConstantsFile
 
-            echo "Injecting API Keys"
-            echo GETAPPCENTERAPIKEYSKEY $(GETAPPCENTERAPIKEYSKEY)
-            Test=$(GETAPPCENTERAPIKEYSKEY)
-            echo $Test
-
             sed -i '' "s/GetTestTokenApiKey = \"\"/GetTestTokenApiKey = \"$(GETTESTTOKENAPIKEY)\"/g" "$AzureConstantsFile"  
             sed -i '' "s/GetAppCenterApiKeysKey = \"\"/GetAppCenterApiKeysKey = \"$(GETAPPCENTERAPIKEYSKEY)\"/g" "$AzureConstantsFile"
             sed -i '' "s/GetSyncFusionInformationApiKey = \"\"/GetSyncFusionInformationApiKey = \"$(GETSYNCFUSIONINFORMATIONAPIKEY)\"/g" "$AzureConstantsFile"
             sed -i '' "s/GetNotificationHubInformationApiKey = \"\"/GetNotificationHubInformationApiKey = \"$(GETNOTIFICATIONHUBINFORMATIONAPIKEY)\"/g" "$AzureConstantsFile"
             sed -i '' "s/#error Missing API Keys/\/\/#error Missing API Keys/g" "$AzureConstantsFile"
+
+      - task: CopyFiles@2
+        displayName: 'Copy Files to Artifact Staging Directory'
+        inputs:
+          targetFolder: $(build.artifactstagingdirectory)
 
       - task: CmdLine@2
         displayName: 'Run Unit Tests'
