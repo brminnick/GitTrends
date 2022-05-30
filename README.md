@@ -1,4 +1,4 @@
-[![Mobile](https://github.com/brminnick/GitTrends/actions/workflows/mobile.yml/badge.svg)](https://github.com/brminnick/GitTrends/actions/workflows/mobile.yml) [![Azure Functions](https://github.com/brminnick/GitTrends/workflows/Azure%20Functions/badge.svg)](https://github.com/brminnick/GitTrends/actions?query=workflow%3A%22Azure+Functions%22) [![Android App Store Build](https://build.appcenter.ms/v0.1/apps/c1dc82e1-fffd-4236-8a17-45d992913793/branches/main/badge)](https://appcenter.ms) [![iOS App Store Build](https://build.appcenter.ms/v0.1/apps/90353386-21d8-4a81-a1a3-7e5df4cbf8d3/branches/main/badge)](https://appcenter.ms)
+[![Build Status](https://dev.azure.com/brminnick/GitTrends/_apis/build/status/Main?branchName=refs%2Fpull%2F471%2Fmerge)](https://dev.azure.com/brminnick/GitTrends/_build/latest?definitionId=9&branchName=refs%2Fpull%2F471%2Fmerge)
 
 <div class="header" align="center">
   <h1 align="center">GitTrends: GitHub Insights</h1>
