@@ -93,30 +93,22 @@ jobs:
           provProfileSecureFile: GitTrends_Development_Profile.mobileprovision
           removeProfile: true
 
-      # - task: CmdLine@2
-      #   displayName: 'Boots: Update Mono + Xamarin.iOS'
-      #   inputs: 
-      #     script: |
-      #       dotnet tool install --global boots --prerelease
-      #       boots --alpha Mono
-      #       boots --alpha Xamarin.iOS
-
       - task: CmdLine@2
         displayName: 'Select Xamarin SDK version'
         inputs:
           script: sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh 6_12_16
 
-      - task: MSBuild@1
-        displayName: 'Build iOS App'
-        inputs:
-          solution: '$(PathToiOSAppCsproj)'
-
-      # - task: XamariniOS@2
+      # - task: MSBuild@1
       #   displayName: 'Build iOS App'
       #   inputs:
-      #     solutionFile: '$(PathToiOSAppCsproj)'
-      #     configuration: 'Release'
-      #     packageApp: true
+      #     solution: '$(PathToiOSAppCsproj)'
+
+      - task: XamariniOS@2
+        displayName: 'Build iOS App'
+        inputs:
+          solutionFile: '$(PathToiOSAppCsproj)'
+          configuration: 'Release'
+          packageApp: true
 
       # - task: CmdLine@2
       #   displayName: 'Build iOS App'
