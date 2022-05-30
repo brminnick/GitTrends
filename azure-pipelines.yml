@@ -146,7 +146,7 @@ jobs:
 
   - job: Run_UnitTests
     displayName: Run Unit Tests
-    # dependsOn: [Build_UnitTests, Build_Android_App, Build_iOS_App, Build_UITests]
+    dependsOn: [Build_UnitTests, Build_Android_App, Build_iOS_App, Build_UITests]
     pool: 
       vmImage: macos-latest
 
@@ -177,11 +177,6 @@ jobs:
             sed -i '' "s/GetSyncFusionInformationApiKey = \"\"/GetSyncFusionInformationApiKey = \"$(GETSYNCFUSIONINFORMATIONAPIKEY)\"/g" "$AzureConstantsFile"
             sed -i '' "s/GetNotificationHubInformationApiKey = \"\"/GetNotificationHubInformationApiKey = \"$(GETNOTIFICATIONHUBINFORMATIONAPIKEY)\"/g" "$AzureConstantsFile"
             sed -i '' "s/#error Missing API Keys/\/\/#error Missing API Keys/g" "$AzureConstantsFile"
-
-      - task: CopyFiles@2
-        displayName: 'Copy Files to Artifact Staging Directory'
-        inputs:
-          targetFolder: $(build.artifactstagingdirectory)
 
       - task: CmdLine@2
         displayName: 'Run Unit Tests'
