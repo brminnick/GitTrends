@@ -106,17 +106,10 @@ jobs:
         inputs:
           script: sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh 6_12_16
 
-      - task: XamariniOS@2
+      - task: CmdLine@2
         displayName: 'Build iOS App'
         inputs:
-          solutionFile: '$(PathToiOSAppCsproj)'
-          configuration: 'Release'
-          packageApp: true
-
-      # - task: CmdLine@2
-      #   displayName: 'Build iOS App'
-      #   inputs:
-      #     script: mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll $(PathToiOSAppCsproj) /verbosity:normal /p:Configuration=Release /restore
+          script: mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll $(PathToiOSAppCsproj) /verbosity:normal /p:Configuration=Release /restore
 
   - job: Build_Android_App
     displayName: Build Android App
