@@ -88,41 +88,6 @@ jobs:
           configuration: 'Release'
           msbuildArgs: '/restore'
 
-      # - task: InstallAppleCertificate@2
-      #   inputs:
-      #     certSecureFile: Certificates.p12
-      #     certPwd: $(APPLECERTIFICATEPASSWORD)
-      #     deleteCert: true
-
-      # - task: InstallAppleProvisioningProfile@1
-      #   inputs:
-      #     provisioningProfileLocation: 'secureFiles'
-      #     provProfileSecureFile: GitTrends_Development_Profile.mobileprovision
-      #     removeProfile: true
-
-      # - task: CmdLine@2
-      #   displayName: 'Select Xamarin SDK version'
-      #   inputs:
-      #     script: sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh 6_12_16
-
-      # - task: MSBuild@1
-      #   displayName: 'Build iOS App'
-      #   inputs:
-      #     solution: '$(PathToiOSAppCsproj)'
-      #     msbuildVersion: 17.0
-
-      # - task: XamariniOS@2
-      #   displayName: 'Build iOS App'
-      #   inputs:
-      #     solutionFile: '$(PathToiOSAppCsproj)'
-      #     configuration: 'Release'
-      #     packageApp: true
-
-      # - task: CmdLine@2
-      #   displayName: 'Build iOS App'
-      #   inputs:
-      #     script: mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll $(PathToiOSAppCsproj) /verbosity:normal /p:Configuration=Release /restore
-
   - job: Build_Android_App
     displayName: Build Android App
     pool: 
