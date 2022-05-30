@@ -100,13 +100,10 @@ jobs:
           restoreSolution: '$(PathToSolution)'
           feedsToUse: 'select'
 
-      - task: MSBuild@1
+      - task: CmdLine@2
         displayName: 'Build GitTrends .NET Standard Project'
         inputs:
-          solution: $(PathToGitTrendsCsproj)
-          msbuildArchitecture: 'x64'
-          restoreNugetPackages: true
-          configuration: 'Release'
+          script: 'dotnet build $(PathToGitTrendsCsproj) -c Release'
 
       - task: XamariniOS@2
         displayName: 'Build iOS App'
