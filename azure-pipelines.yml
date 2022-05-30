@@ -103,24 +103,20 @@ jobs:
 
       - task: CmdLine@2
         displayName: 'Select Xamarin SDK version'
-        enabled: true
         inputs:
           script: sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh 6_12_16
 
-      # - task: NuGetCommand@2
-      #   displayName: 'Restore NuGet Packages'
-      #   inputs:
-      #     command: 'restore'
-      #     restoreSolution: '$(PathToSolution)'
-      #     feedsToUse: 'select'
-
-      - task: MSBuild@1
+      - task: XamariniOS@2
         displayName: 'Build iOS App'
         inputs:
-          solution: $(PathToiOSAppCsproj)
-          msbuildArchitecture: 'x64'
-          restoreNugetPackages: true
+          solutionFile: '$(PathToiOSAppCsproj)'
           configuration: 'Release'
+          packageApp: true
+
+      # - task: CmdLine@2
+      #   displayName: 'Build iOS App'
+      #   inputs:
+      #     script: mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll $(PathToiOSAppCsproj) /verbosity:normal /p:Configuration=Release /restore
 
   - job: Build_Android_App
     displayName: Build Android App
