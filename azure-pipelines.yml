@@ -101,6 +101,12 @@ jobs:
             boots --alpha Mono
             boots --alpha Xamarin.iOS
 
+      - task: CmdLine@2
+        displayName: 'Select Xamarin SDK version'
+        enabled: true
+        inputs:
+          script: sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh 6_12_16
+
       - task: NuGetCommand@2
         displayName: 'Restore NuGet Packages'
         inputs:
