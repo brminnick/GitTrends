@@ -108,12 +108,13 @@ jobs:
           restoreSolution: '$(PathToSolution)'
           feedsToUse: 'select'
 
-      - task: XamariniOS@2
+      - task: MSBuild@1
         displayName: 'Build iOS App'
         inputs:
-          solutionFile: '$(PathToiOSAppCsproj)'
+          solution: $(PathToiOSAppCsproj)
+          msbuildArchitecture: 'x64'
+          restoreNugetPackages: true
           configuration: 'Release'
-          packageApp: true
 
   - job: Build_Android_App
     displayName: Build Android App
