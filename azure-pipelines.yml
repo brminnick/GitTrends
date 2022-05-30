@@ -94,7 +94,7 @@ jobs:
           removeProfile: true
 
       - task: CmdLine@2
-        displayName: 'Boots: Install Mono'
+        displayName: 'Boots: Update Mono + Xamarin.iOS'
         inputs: 
           script: |
             dotnet tool install --global boots --prerelease
@@ -107,11 +107,6 @@ jobs:
           command: 'restore'
           restoreSolution: '$(PathToSolution)'
           feedsToUse: 'select'
-
-      - task: CmdLine@2
-        displayName: 'Build GitTrends .NET Standard Project'
-        inputs:
-          script: 'dotnet build $(PathToGitTrendsCsproj) -c Release'
 
       - task: XamariniOS@2
         displayName: 'Build iOS App'
