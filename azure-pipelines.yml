@@ -105,12 +105,10 @@ jobs:
         inputs:
           script: 'dotnet build $(PathToGitTrendsCsproj) -c Release'
 
-      - task: XamariniOS@2
+      - task: CmdLine@2
         displayName: 'Build iOS App'
         inputs:
-          solutionFile: '$(PathToiOSAppCsproj)'
-          configuration: 'Release'
-          packageApp: true
+          script: 'mono /Applications/Visual\ studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/MSBuild.dll $(PathToiOSAppCsproj) /p:Configuration=Release /p:Platform=iPhone /p:BuildIpa=true'
 
   - job: Build_Android_App
     displayName: Build Android App
