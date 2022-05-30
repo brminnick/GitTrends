@@ -107,12 +107,12 @@ jobs:
         inputs:
           script: sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh 6_12_16
 
-      - task: NuGetCommand@2
-        displayName: 'Restore NuGet Packages'
-        inputs:
-          command: 'restore'
-          restoreSolution: '$(PathToSolution)'
-          feedsToUse: 'select'
+      # - task: NuGetCommand@2
+      #   displayName: 'Restore NuGet Packages'
+      #   inputs:
+      #     command: 'restore'
+      #     restoreSolution: '$(PathToSolution)'
+      #     feedsToUse: 'select'
 
       - task: MSBuild@1
         displayName: 'Build iOS App'
