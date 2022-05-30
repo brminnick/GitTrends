@@ -79,7 +79,7 @@ jobs:
         displayName: 'Install .NET SDK'
         inputs:
           packageType: 'sdk'
-          version: '$(NET_CORE_VERSION)'
+          version: '$(NET_VERSION)'
 
       - task: InstallAppleCertificate@2
         inputs:
