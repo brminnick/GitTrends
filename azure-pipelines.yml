@@ -93,6 +93,13 @@ jobs:
           provProfileSecureFile: GitTrends_Development_Profile.mobileprovision
           removeProfile: true
 
+      - task: CmdLine@2
+        displayName: 'Boots: Install Mono'
+        inputs: 
+          script: |
+            dotnet tool install --global boots --prerelease
+            boots --alpha Mono
+
       - task: NuGetCommand@2
         displayName: 'Restore NuGet Packages'
         inputs:
