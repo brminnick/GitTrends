@@ -16,10 +16,12 @@ namespace GitTrends
 
 		protected bool SetProperty<T>(ref T field, in T newValue, in System.Action? onChanged = null, [CallerMemberName] in string? propertyName = null)
 		{
-			var result = SetProperty(ref field, newValue, propertyName);
-			onChanged?.Invoke();
+			var didPropertyChange = SetProperty(ref field, newValue, propertyName);
 
-			return result;
+			if (didPropertyChange)
+				onChanged?.Invoke();
+
+			return didPropertyChange;
 		}
 	}
 }
