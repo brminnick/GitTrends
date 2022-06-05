@@ -72,7 +72,7 @@ namespace GitTrends
 				{
 					new ReferringSitesRefreshView(collectionView, repository, _refreshViewCancelltionTokenSource.Token).Assign(out _refreshView)
 						.Row(Row.TitleShadow).RowSpan(3).ColumnSpan(All<Column>())
-						.Bind(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.RefreshCommand))
+						.Bind(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.ExecuteRefreshCommand))
 						.Bind(RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing))
 						.DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor)),
 				}

@@ -1,40 +1,27 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using AsyncAwaitBestPractices;
+﻿using System.Runtime.CompilerServices;
+using CommunityToolkit.Mvvm.ComponentModel;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
-	public abstract class BaseViewModel : INotifyPropertyChanged
+	[INotifyPropertyChanged]
+	public abstract partial class BaseViewModel
 	{
-		readonly WeakEventManager _propertyChangedEventManager = new();
-
-		public BaseViewModel(IAnalyticsService analyticsService, IMainThread mainThread) => (AnalyticsService, MainThread) = (analyticsService, mainThread);
-
-		event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
-		{
-			add => _propertyChangedEventManager.AddEventHandler(value);
-			remove => _propertyChangedEventManager.RemoveEventHandler(value);
-		}
+		public BaseViewModel(IAnalyticsService analyticsService, IMainThread mainThread) =>
+			(AnalyticsService, MainThread) = (analyticsService, mainThread);
 
 		protected IAnalyticsService AnalyticsService { get; }
 		protected IMainThread MainThread { get; }
 
-		protected void SetProperty<T>(ref T backingStore, in T value, in System.Action? onChanged = null, [CallerMemberName] in string propertyname = "")
+		protected bool SetProperty<T>(ref T field, in T newValue, in System.Action? onChanged = null, [CallerMemberName] in string? propertyName = null)
 		{
-			if (EqualityComparer<T>.Default.Equals(backingStore, value))
-				return;
+			var didPropertyChange = SetProperty(ref field, newValue, propertyName);
 
-			backingStore = value;
+			if (didPropertyChange)
+				onChanged?.Invoke();
 
-			onChanged?.Invoke();
-
-			OnPropertyChanged(propertyname);
+			return didPropertyChange;
 		}
-
-		protected void OnPropertyChanged([CallerMemberName] in string propertyName = "") =>
-			_propertyChangedEventManager.RaiseEvent(this, new PropertyChangedEventArgs(propertyName), nameof(INotifyPropertyChanged.PropertyChanged));
 	}
 }

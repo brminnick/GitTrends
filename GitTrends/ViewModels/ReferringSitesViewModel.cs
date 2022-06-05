@@ -5,7 +5,8 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
-using AsyncAwaitBestPractices.MVVM;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
@@ -15,39 +16,35 @@ using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
-	public class ReferringSitesViewModel : BaseViewModel
+	public partial class ReferringSitesViewModel : BaseViewModel
 	{
 		readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
 		readonly static WeakEventManager<Repository> _abuseRateLimitFound_GetReferringSites_EventManager = new();
 
-		readonly FavIconService _favIconService;
 		readonly GitHubUserService _gitHubUserService;
-		readonly GitHubApiV3Service _gitHubApiV3Service;
 		readonly ReferringSitesDatabase _referringSitesDatabase;
 		readonly IGitHubApiStatusService _gitHubApiStatusService;
 		readonly GitHubAuthenticationService _gitHubAuthenticationService;
 		readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
-		IReadOnlyList<MobileReferringSiteModel>? _mobileReferringSiteList;
+		[ObservableProperty]
+		IReadOnlyList<MobileReferringSiteModel> _mobileReferringSitesList = Array.Empty<MobileReferringSiteModel>();
 
-		string _emptyDataViewText = string.Empty;
-		string _emptyDataViewDescription = string.Empty;
+		[ObservableProperty]
+		string _emptyDataViewTitle = string.Empty, _emptyDataViewDescription = string.Empty;
 
+		[ObservableProperty]
 		bool _isRefreshing, _isEmptyDataViewEnabled;
 
 		public ReferringSitesViewModel(IMainThread mainThread,
-										FavIconService favIconService,
 										IAnalyticsService analyticsService,
 										GitHubUserService gitHubUserService,
-										GitHubApiV3Service gitHubApiV3Service,
 										ReferringSitesDatabase referringSitesDatabase,
 										GitHubApiStatusService gitHubApiStatusService,
 										GitHubAuthenticationService gitHubAuthenticationService,
 										GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, mainThread)
 		{
-			_favIconService = favIconService;
 			_gitHubUserService = gitHubUserService;
-			_gitHubApiV3Service = gitHubApiV3Service;
 			_referringSitesDatabase = referringSitesDatabase;
 			_gitHubApiStatusService = gitHubApiStatusService;
 			_gitHubAuthenticationService = gitHubAuthenticationService;
@@ -56,8 +53,6 @@ namespace GitTrends
 			BackgroundFetchService.MobileReferringSiteRetrieved += HandleMobileReferringSiteRetrieved;
 
 			RefreshState = RefreshState.Uninitialized;
-
-			RefreshCommand = new AsyncCommand<(Repository Repository, CancellationToken Token)>(tuple => ExecuteRefreshCommand(tuple.Repository, tuple.Token));
 		}
 
 		public static event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
@@ -72,38 +67,6 @@ namespace GitTrends
 			remove => _abuseRateLimitFound_GetReferringSites_EventManager.RemoveEventHandler(value);
 		}
 
-		public IAsyncCommand<(Repository repository, CancellationToken Token)> RefreshCommand { get; }
-
-		public string EmptyDataViewTitle
-		{
-			get => _emptyDataViewText;
-			set => SetProperty(ref _emptyDataViewText, value);
-		}
-
-		public string EmptyDataViewDescription
-		{
-			get => _emptyDataViewDescription;
-			set => SetProperty(ref _emptyDataViewDescription, value);
-		}
-
-		public bool IsEmptyDataViewEnabled
-		{
-			get => _isEmptyDataViewEnabled;
-			set => SetProperty(ref _isEmptyDataViewEnabled, value);
-		}
-
-		public bool IsRefreshing
-		{
-			get => _isRefreshing;
-			set => SetProperty(ref _isRefreshing, value);
-		}
-
-		public IReadOnlyList<MobileReferringSiteModel> MobileReferringSitesList
-		{
-			get => _mobileReferringSiteList ??= Array.Empty<MobileReferringSiteModel>();
-			set => SetProperty(ref _mobileReferringSiteList, value);
-		}
-
 		RefreshState RefreshState
 		{
 			set
@@ -113,8 +76,11 @@ namespace GitTrends
 			}
 		}
 
-		async Task ExecuteRefreshCommand(Repository repository, CancellationToken cancellationToken)
+		[ICommand(AllowConcurrentExecutions = true)]
+		async Task ExecuteRefresh((Repository repository, CancellationToken cancellationToken) parameter)
 		{
+			var (repository, cancellationToken) = parameter;
+
 			var referringSitesList = await GetReferringSites(repository, cancellationToken).ConfigureAwait(false);
 			MobileReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
 

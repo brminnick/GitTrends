@@ -7,19 +7,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AsyncAwaitBestPractices;
-using AsyncAwaitBestPractices.MVVM;
 using Autofac;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Refit;
 using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
 
 namespace GitTrends
 {
-	public class RepositoryViewModel : BaseViewModel
+	public partial class RepositoryViewModel : BaseViewModel
 	{
 		readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
 
@@ -35,14 +35,15 @@ namespace GitTrends
 		readonly GitHubAuthenticationService _gitHubAuthenticationService;
 		readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
-		bool _isRefreshing;
-		string _titleText = string.Empty;
-		string _searchBarText = string.Empty;
-		string _totalButtonText = string.Empty;
-		string _emptyDataViewTitle = string.Empty;
-		string _emptyDataViewDescription = string.Empty;
-
 		IReadOnlyList<Repository> _repositoryList = Array.Empty<Repository>();
+
+		[ObservableProperty]
+		bool _isRefreshing;
+
+		[ObservableProperty]
+		string _titleText = string.Empty, _searchBarText = string.Empty, _totalButtonText = string.Empty, _emptyDataViewTitle = string.Empty, _emptyDataViewDescription = string.Empty;
+
+		[ObservableProperty]
 		IReadOnlyList<Repository> _visibleRepositoryList = Array.Empty<Repository>();
 
 		public RepositoryViewModel(IMainThread mainThread,
@@ -59,12 +60,6 @@ namespace GitTrends
 									GitHubAuthenticationService gitHubAuthenticationService,
 									GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, mainThread)
 		{
-			LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
-			TrendsViewModel.RepositorySavedToDatabase += HandleTrendsViewModelRepositorySavedToDatabase;
-			BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
-			BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted += HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
-
-			UpdateText();
 
 			_gitHubUserService = gitHubUserService;
 			_repositoryDatabase = repositoryDatabase;
@@ -80,79 +75,30 @@ namespace GitTrends
 
 			RefreshState = RefreshState.Uninitialized;
 
-			FilterRepositoriesCommand = new Command<string>(SetSearchBarText);
-			SortRepositoriesCommand = new Command<SortingOption>(ExecuteSortRepositoriesCommand);
-
-			PullToRefreshCommand = new AsyncCommand(() => ExecutePullToRefreshCommand(gitHubUserService.Alias));
-
-			ToggleIsFavoriteCommand = new AsyncCommand<Repository>(repository => repository switch
-			{
-				null => Task.CompletedTask,
-				_ => ExecuteToggleIsFavoriteCommand(repository)
-			});
-
-			NavigateToRepositoryWebsiteCommand = new AsyncCommand<Repository>(repository => repository switch
-			{
-				null => Task.CompletedTask,
-				_ => ExecuteNavigateToRepositoryWebsiteCommand(repository)
-			});
-
 			NotificationService.SortingOptionRequested += HandleSortingOptionRequested;
+
+			LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 
 			GitHubApiRepositoriesService.RepositoryUriNotFound += HandleRepositoryUriNotFound;
 
 			GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 			GitHubAuthenticationService.LoggedOut += HandleGitHubAuthenticationServiceLoggedOut;
 			GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
+
+			TrendsViewModel.RepositorySavedToDatabase += HandleTrendsViewModelRepositorySavedToDatabase;
+
 			GitHubUserService.ShouldIncludeOrganizationsChanged += HandleShouldIncludeOrganizationsChanged;
+
+			BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
+			BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted += HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
+
+			UpdateText();
 		}
 
 		public static event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
 		{
 			add => _pullToRefreshFailedEventManager.AddEventHandler(value);
 			remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
-		}
-
-		public ICommand SortRepositoriesCommand { get; }
-		public ICommand FilterRepositoriesCommand { get; }
-		public IAsyncCommand PullToRefreshCommand { get; }
-		public AsyncCommand<Repository> ToggleIsFavoriteCommand { get; }
-		public AsyncCommand<Repository> NavigateToRepositoryWebsiteCommand { get; }
-
-		public IReadOnlyList<Repository> VisibleRepositoryList
-		{
-			get => _visibleRepositoryList;
-			set => SetProperty(ref _visibleRepositoryList, value);
-		}
-
-		public string EmptyDataViewTitle
-		{
-			get => _emptyDataViewTitle;
-			set => SetProperty(ref _emptyDataViewTitle, value);
-		}
-
-		public string EmptyDataViewDescription
-		{
-			get => _emptyDataViewDescription;
-			set => SetProperty(ref _emptyDataViewDescription, value);
-		}
-
-		public bool IsRefreshing
-		{
-			get => _isRefreshing;
-			set => SetProperty(ref _isRefreshing, value);
-		}
-
-		public string TotalButtonText
-		{
-			get => _totalButtonText;
-			set => SetProperty(ref _totalButtonText, value);
-		}
-
-		public string TitleText
-		{
-			get => _titleText;
-			set => SetProperty(ref _titleText, value);
 		}
 
 		RefreshState RefreshState
@@ -172,7 +118,8 @@ namespace GitTrends
 			return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
 		}
 
-		async Task ExecutePullToRefreshCommand(string repositoryOwner)
+		[ICommand(AllowConcurrentExecutions = true)]
+		async Task ExecuteRefresh()
 		{
 			const int minimumBatchCount = 100;
 
@@ -195,7 +142,7 @@ namespace GitTrends
 				var favoriteRepositoryUrls = await _repositoryDatabase.GetFavoritesUrls().ConfigureAwait(false);
 
 				var repositoryList = new List<Repository>();
-				await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(repositoryOwner, cancellationTokenSource.Token).ConfigureAwait(false))
+				await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(_gitHubUserService.Alias, cancellationTokenSource.Token).ConfigureAwait(false))
 				{
 					if (favoriteRepositoryUrls.Contains(repository.Url))
 						repositoryList.Add(repository with { IsFavorite = true });
@@ -396,7 +343,8 @@ namespace GitTrends
 			void HandleShouldIncludeOrganizationsChanged(object sender, bool e) => cancellationTokenSource.Cancel();
 		}
 
-		async Task ExecuteToggleIsFavoriteCommand(Repository repository)
+		[ICommand]
+		async Task ToggleIsFavorite(Repository repository)
 		{
 			var updatedRepository = repository with
 			{
@@ -415,14 +363,16 @@ namespace GitTrends
 				await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
 		}
 
-		Task ExecuteNavigateToRepositoryWebsiteCommand(Repository repository)
+		[ICommand]
+		Task NavigateToRepositoryWebsite(Repository repository)
 		{
 			AnalyticsService.Track("Open External Repostory Link Tapped", nameof(repository.Url), repository.Url);
 
 			return _deepLinkingService.OpenApp(GitHubConstants.AppScheme, repository.Url, repository.Url);
 		}
 
-		void ExecuteSortRepositoriesCommand(SortingOption option)
+		[ICommand]
+		void SortRepositories(SortingOption option)
 		{
 			if (_mobileSortingService.CurrentOption == option)
 				_mobileSortingService.IsReversed = !_mobileSortingService.IsReversed;
@@ -493,6 +443,7 @@ namespace GitTrends
 			UpdateVisibleRepositoryList(string.Empty, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
 		}
 
+		[ICommand]
 		void SetSearchBarText(string text)
 		{
 			if (EqualityComparer<string>.Default.Equals(_searchBarText, text))

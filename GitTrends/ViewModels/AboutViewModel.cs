@@ -1,20 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AsyncAwaitBestPractices.MVVM;
+using CommunityToolkit.Mvvm.Input;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
-	public class AboutViewModel : BaseViewModel
+	public partial class AboutViewModel : BaseViewModel
 	{
+		readonly DeepLinkingService _deepLinkingService;
+		readonly GitTrendsStatisticsService _gitTrendsStatisticsService;
+
 		public AboutViewModel(IMainThread mainThread,
 								LibrariesService librariesService,
 								IAnalyticsService analyticsService,
 								DeepLinkingService deepLinkingService,
 								GitTrendsStatisticsService gitTrendsStatisticsService) : base(analyticsService, mainThread)
 		{
+			_deepLinkingService = deepLinkingService;
+			_gitTrendsStatisticsService = gitTrendsStatisticsService;
+
 			if (gitTrendsStatisticsService.Stars.HasValue)
 				Stars = gitTrendsStatisticsService.Stars.Value;
 
@@ -26,26 +32,6 @@ namespace GitTrends
 
 			InstalledLibraries = librariesService.InstalledLibraries;
 			GitTrendsContributors = gitTrendsStatisticsService.Contributors.OrderByDescending(x => x.ContributionCount).ToList();
-
-			ViewOnGitHubCommand = new AsyncCommand(() =>
-			{
-				if (gitTrendsStatisticsService?.GitHubUri is null)
-					return Task.CompletedTask;
-
-				AnalyticsService.Track("View On GitHub Tapped");
-
-				return deepLinkingService.OpenBrowser(gitTrendsStatisticsService.GitHubUri);
-			});
-
-			RequestFeatureCommand = new AsyncCommand(() =>
-			{
-				if (gitTrendsStatisticsService?.GitHubUri is null)
-					return Task.CompletedTask;
-
-				AnalyticsService.Track("Request Feature Tapped");
-
-				return deepLinkingService.OpenBrowser(gitTrendsStatisticsService.GitHubUri + "/issues/new?template=feature_request.md");
-			});
 		}
 
 		public long? Stars { get; }
@@ -55,7 +41,26 @@ namespace GitTrends
 		public IReadOnlyList<Contributor> GitTrendsContributors { get; }
 		public IReadOnlyList<NuGetPackageModel> InstalledLibraries { get; }
 
-		public IAsyncCommand ViewOnGitHubCommand { get; }
-		public IAsyncCommand RequestFeatureCommand { get; }
+		[ICommand]
+		public Task ViewOnGitHub()
+		{
+			if (_gitTrendsStatisticsService?.GitHubUri is null)
+				return Task.CompletedTask;
+
+			AnalyticsService.Track("View On GitHub Tapped");
+
+			return _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.GitHubUri);
+		}
+
+		[ICommand]
+		public Task RequestFeature()
+		{
+			if (_gitTrendsStatisticsService?.GitHubUri is null)
+				return Task.CompletedTask;
+
+			AnalyticsService.Track("Request Feature Tapped");
+
+			return _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.GitHubUri + "/issues/new?template=feature_request.md");
+		}
 	}
 }

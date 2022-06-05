@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using AsyncAwaitBestPractices.MVVM;
+using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Xamarin.CommunityToolkit.Markup;
@@ -41,7 +41,7 @@ namespace GitTrends
 			Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic3, FloatingActionButtonSize.Mini).Center().Assign(out _statistic3FloatingActionButton)
 							.Bind<FloatingActionTextButton, IReadOnlyList<Repository>, string>(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.VisibleRepositoryList), BindingMode.OneWay, convert: repositories => repositories is null ? string.Empty : StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic3)));
 
-			Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Information, FloatingActionButtonSize.Normal, new AsyncCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium }.Center().Assign(out _totalButton)
+			Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Information, FloatingActionButtonSize.Normal, new AsyncRelayCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium }.Center().Assign(out _totalButton)
 							.Bind(FloatingActionTextButton.TextProperty, nameof(RepositoryViewModel.TotalButtonText)));
 
 			SetBinding(IsVisibleProperty, new MultiBinding

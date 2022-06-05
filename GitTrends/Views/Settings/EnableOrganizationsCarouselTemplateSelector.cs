@@ -42,7 +42,7 @@ namespace GitTrends
 
 					new GitHubButton(SettingsPageAutomationIds.GitHubButton, SettingsPageConstants.ManageOrganizations) { IsVisible = false, IsEnabled = false }
 						.Row(EnableOrganizationsGrid.Row.GitHubButton)
-						.Bind(GitHubButton.CommandProperty, nameof(SettingsViewModel.ManageOrganizationsButtonCommand), source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(SettingsViewModel)))
+						.Bind(GitHubButton.CommandProperty, nameof(SettingsViewModel.OpenGitTrendsOrganizationBrowserCommand), source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(SettingsViewModel)))
 						.Invoke(button =>
 						{
 							organizationsCarouselView.Scrolled += async (s, e) =>

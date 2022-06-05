@@ -47,7 +47,7 @@ namespace GitTrends
 
 					new GitHubButton(OnboardingAutomationIds.ConnectToGitHubButton, GitHubLoginButtonConstants.ConnectToGitHub)
 						.Row(Row.Button)
-						.Bind(GitHubButton.CommandProperty, nameof(OnboardingViewModel.ConnectToGitHubButtonCommand))
+						.Bind(GitHubButton.CommandProperty, nameof(OnboardingViewModel.HandleConnectToGitHubButtonCommand))
 						.Invoke(button => button.CommandParameter = (CancellationToken.None, new Xamarin.Essentials.BrowserLaunchOptions
 						{
 							PreferredControlColor = Color.White,

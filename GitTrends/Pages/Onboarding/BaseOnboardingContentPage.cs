@@ -114,7 +114,7 @@ namespace GitTrends
 				AutomationId = OnboardingAutomationIds.NextButon;
 
 				GestureRecognizers.Add(new TapGestureRecognizer { CommandParameter = text }
-										.Bind(TapGestureRecognizer.CommandProperty, nameof(OnboardingViewModel.DemoButtonCommand)));
+										.Bind(TapGestureRecognizer.CommandProperty, nameof(OnboardingViewModel.HandleDemoButtonTappedCommand)));
 
 				this.SetBinding(IsVisibleProperty, nameof(OnboardingViewModel.IsDemoButtonVisible));
 			}

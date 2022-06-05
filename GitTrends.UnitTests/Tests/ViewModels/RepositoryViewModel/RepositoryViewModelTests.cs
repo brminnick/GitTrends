@@ -14,7 +14,7 @@ namespace GitTrends.UnitTests
 	[NonParallelizable]
 	class RepositoryViewModelTests : BaseTest
 	{
-		[Test]
+		[Test, Timeout(300000)]
 		public async Task PullToRefreshCommandTest_Authenticated()
 		{
 			//Arrange
@@ -41,7 +41,7 @@ namespace GitTrends.UnitTests
 			visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
 			emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
 
-			await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
+			await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
 			var fetchStarsInBackgroundTCSResult = await fetchStarsInBackgroundTCS.Task.ConfigureAwait(false);
 
 			afterPullToRefresh = DateTimeOffset.UtcNow;
@@ -108,7 +108,7 @@ namespace GitTrends.UnitTests
 		}
 
 
-		[Test]
+		[Test, Timeout(300000)]
 		public async Task PullToRefreshCommandTest_ShouldIncludeOrganizationsChanged()
 		{
 			//Arrange
@@ -123,7 +123,7 @@ namespace GitTrends.UnitTests
 			//Act
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
-			var pullToRefreshCommandTask = repositoryViewModel.PullToRefreshCommand.ExecuteAsync();
+			var pullToRefreshCommandTask = repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null);
 			gitHubUserService.ShouldIncludeOrganizations = !gitHubUserService.ShouldIncludeOrganizations;
 
 			await pullToRefreshCommandTask.ConfigureAwait(false);
@@ -140,7 +140,7 @@ namespace GitTrends.UnitTests
 			}
 		}
 
-		[Test]
+		[Test, Timeout(300000)]
 		public async Task PullToRefreshCommandTest_LoggedOut()
 		{
 			//Arrange
@@ -156,7 +156,7 @@ namespace GitTrends.UnitTests
 			//Act
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
-			var pullToRefreshCommandTask = repositoryViewModel.PullToRefreshCommand.ExecuteAsync();
+			var pullToRefreshCommandTask = repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null);
 			await gitHubAuthenticationService.LogOut().ConfigureAwait(false);
 
 			await pullToRefreshCommandTask.ConfigureAwait(false);
@@ -173,7 +173,7 @@ namespace GitTrends.UnitTests
 			}
 		}
 
-		[Test]
+		[Test, Timeout(300000)]
 		public async Task PullToRefreshCommandTest_AuthorizeSessionStarted()
 		{
 			//Arrange
@@ -189,7 +189,7 @@ namespace GitTrends.UnitTests
 			//Act
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
-			var pullToRefreshCommandTask = repositoryViewModel.PullToRefreshCommand.ExecuteAsync();
+			var pullToRefreshCommandTask = repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null);
 			try
 			{
 				await gitHubAuthenticationService.AuthorizeSession(new Uri("https://gittrends"), CancellationToken.None).ConfigureAwait(false);
@@ -213,7 +213,7 @@ namespace GitTrends.UnitTests
 			}
 		}
 
-		[Test]
+		[Test, Timeout(300000)]
 		public async Task PullToRefreshCommandTest_Unauthenticated()
 		{
 			//Arrange
@@ -233,7 +233,7 @@ namespace GitTrends.UnitTests
 			visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
 			emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
 
-			var pullToRefreshCommandTask = repositoryViewModel.PullToRefreshCommand.ExecuteAsync();
+			var pullToRefreshCommandTask = repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null);
 
 			await pullToRefreshCommandTask.ConfigureAwait(false);
 			var pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
@@ -277,13 +277,13 @@ namespace GitTrends.UnitTests
 
 			//Act
 			await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-			await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
+			await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
 
 			repositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
 			repository = repositoryList_Initial.First();
 			repositoryListCount_Initial = repositoryList_Initial.Count;
 
-			repositoryViewModel.FilterRepositoriesCommand.Execute(repository.Name + DemoDataConstants.GetRandomText());
+			repositoryViewModel.SetSearchBarTextCommand.Execute(repository.Name + DemoDataConstants.GetRandomText());
 
 			repositoryList_Final = repositoryViewModel.VisibleRepositoryList;
 			repositoryListCount_Final = repositoryList_Final.Count;
@@ -307,13 +307,13 @@ namespace GitTrends.UnitTests
 
 			//Act
 			await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-			await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
+			await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
 
 			repositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
 			repository = repositoryList_Initial.First();
 			repositoryListCount_Initial = repositoryList_Initial.Count;
 
-			repositoryViewModel.FilterRepositoriesCommand.Execute(repository.Name);
+			repositoryViewModel.SetSearchBarTextCommand.Execute(repository.Name);
 
 			repositoryList_Final = repositoryViewModel.VisibleRepositoryList;
 			repositoryListCount_Final = repositoryList_Final.Count;
@@ -336,7 +336,7 @@ namespace GitTrends.UnitTests
 
 			//Act
 			await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-			await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
+			await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
 
 			//Assert
 			Assert.Throws<InvalidEnumArgumentException>(() => repositoryViewModel.SortRepositoriesCommand.Execute(sortingOption));
@@ -357,7 +357,7 @@ namespace GitTrends.UnitTests
 
 			//Act
 			await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-			await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
+			await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
 
 			repositoryViewModel.SortRepositoriesCommand.Execute(sortingOption);
 
@@ -392,7 +392,7 @@ namespace GitTrends.UnitTests
 			else
 				await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
-			await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
+			await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
 			repository_initial = repositoryViewModel.VisibleRepositoryList.First();
 
 

@@ -2,11 +2,12 @@ variables:
   NET_VERSION: '6.0.x'
   NET_CORE_VERSION: '3.1.x'
   PathToSolution: 'GitTrends.sln'
-  PathToAzureFunctionsCsproj: 'GitTrends.Functions/GitTrends.Functions.csproj'
-  PathToAndroidAppCsproj: 'GitTrends.Android/GitTrends.Android.csproj'
+  PathToGitTrendsCsproj: 'GitTrends/GitTrends.csproj'
   PathToiOSAppCsproj: 'GitTrends.iOS/GitTrends.iOS.csproj'
-  PathToUnitTestsCsproj: 'GitTrends.UnitTests/GitTrends.UnitTests.csproj'
   PathToUITestsCsproj: 'GitTrends.UITests/GitTrends.UITests.csproj'
+  PathToAndroidAppCsproj: 'GitTrends.Android/GitTrends.Android.csproj'
+  PathToUnitTestsCsproj: 'GitTrends.UnitTests/GitTrends.UnitTests.csproj'
+  PathToAzureFunctionsCsproj: 'GitTrends.Functions/GitTrends.Functions.csproj'
   XcodeVersion: '13.3.1'
 
 trigger:
@@ -71,40 +72,21 @@ jobs:
   - job: Build_iOS_App
     displayName: Build iOS App
     pool: 
-      vmImage: macos-latest
+      vmImage: windows-latest
 
     steps:      
       - task: UseDotNet@2
         displayName: 'Install .NET SDK'
         inputs:
           packageType: 'sdk'
-          version: '$(NET_CORE_VERSION)'
+          version: '$(NET_VERSION)'
 
-      - task: InstallAppleCertificate@2
-        inputs:
-          certSecureFile: Certificates.p12
-          certPwd: $(APPLECERTIFICATEPASSWORD)
-          deleteCert: true
-
-      - task: InstallAppleProvisioningProfile@1
-        inputs:
-          provisioningProfileLocation: 'secureFiles'
-          provProfileSecureFile: GitTrends_Development_Profile.mobileprovision
-          removeProfile: true
-
-      - task: NuGetCommand@2
-        displayName: 'Restore NuGet Packages'
-        inputs:
-          command: 'restore'
-          restoreSolution: '$(PathToSolution)'
-          feedsToUse: 'select'
-
-      - task: XamariniOS@2
+      - task: VSBuild@1
         displayName: 'Build iOS App'
         inputs:
-          solutionFile: '$(PathToiOSAppCsproj)'
+          solution: '$(PathToiOSAppCsproj)'
           configuration: 'Release'
-          packageApp: true
+          msbuildArgs: '/restore'
 
   - job: Build_Android_App
     displayName: Build Android App

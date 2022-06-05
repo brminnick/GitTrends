@@ -3,15 +3,17 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
-using AsyncAwaitBestPractices.MVVM;
+using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
-	public abstract class GitHubAuthenticationViewModel : BaseViewModel
+	public abstract partial class GitHubAuthenticationViewModel : BaseViewModel
 	{
+		readonly DeepLinkingService _deepLinkingService;
+
 		bool _isAuthenticating = false;
 
 		protected GitHubAuthenticationViewModel(IMainThread mainThread,
@@ -23,22 +25,15 @@ namespace GitTrends
 			GitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
 			GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 
-			DemoButtonCommand = new AsyncCommand<string?, object?>(text => ExecuteDemoButtonCommand(text), _ => IsNotAuthenticating);
-			ConnectToGitHubButtonCommand = new AsyncCommand<(CancellationToken CancellationToken, Xamarin.Essentials.BrowserLaunchOptions? BrowserLaunchOptions), object?>(tuple => ExecuteConnectToGitHubButtonCommand(gitHubAuthenticationService, deepLinkingService, gitHubUserService, tuple.CancellationToken, tuple.BrowserLaunchOptions), _ => IsNotAuthenticating);
+			_deepLinkingService = deepLinkingService;
 
 			GitHubUserService = gitHubUserService;
 			GitHubAuthenticationService = gitHubAuthenticationService;
 		}
 
-		public IAsyncCommand<(CancellationToken CancellationToken, Xamarin.Essentials.BrowserLaunchOptions? BrowserLaunchOptions)> ConnectToGitHubButtonCommand { get; }
-		public IAsyncCommand<string?> DemoButtonCommand { get; }
-
 		public bool IsNotAuthenticating => !IsAuthenticating;
 
 		public virtual bool IsDemoButtonVisible => !IsAuthenticating && GitHubUserService.Alias != DemoUserConstants.Alias;
-
-		protected GitHubAuthenticationService GitHubAuthenticationService { get; }
-		protected GitHubUserService GitHubUserService { get; }
 
 		public bool IsAuthenticating
 		{
@@ -46,24 +41,25 @@ namespace GitTrends
 			set => SetProperty(ref _isAuthenticating, value, () =>
 			{
 				NotifyIsAuthenticatingPropertyChanged();
-				MainThread.InvokeOnMainThreadAsync(ConnectToGitHubButtonCommand.RaiseCanExecuteChanged).SafeFireAndForget(ex => Debug.WriteLine(ex));
+				MainThread.InvokeOnMainThreadAsync(HandleConnectToGitHubButtonCommand.NotifyCanExecuteChanged).SafeFireAndForget(ex => Debug.WriteLine(ex));
 			});
 		}
 
-		protected virtual void NotifyIsAuthenticatingPropertyChanged()
-		{
-			OnPropertyChanged(nameof(IsNotAuthenticating));
-			OnPropertyChanged(nameof(IsDemoButtonVisible));
-		}
+		protected GitHubUserService GitHubUserService { get; }
+		protected GitHubAuthenticationService GitHubAuthenticationService { get; }
 
-		protected virtual Task ExecuteDemoButtonCommand(string? buttonText)
+		[ICommand(CanExecute = nameof(IsNotAuthenticating))]
+		protected virtual Task HandleDemoButtonTapped(string? buttonText)
 		{
 			IsAuthenticating = true;
 			return Task.CompletedTask;
 		}
 
-		protected async virtual Task ExecuteConnectToGitHubButtonCommand(GitHubAuthenticationService gitHubAuthenticationService, DeepLinkingService deepLinkingService, GitHubUserService gitHubUserService, CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions = null)
+		[ICommand(CanExecute = nameof(IsNotAuthenticating))]
+		protected async virtual Task HandleConnectToGitHubButton((CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions) parameter)
 		{
+			var (cancellationToken, browserLaunchOptions) = parameter;
+
 			IsAuthenticating = true;
 
 			// Yield from the Main Thread to allow IsAuthenticating indicator to appear
@@ -71,15 +67,17 @@ namespace GitTrends
 
 			try
 			{
-				var loginUrl = gitHubAuthenticationService.GetGitHubLoginUrl();
+				var loginUrl = GitHubAuthenticationService.GetGitHubLoginUrl();
+
+				cancellationToken.ThrowIfCancellationRequested();
 
 				if (!string.IsNullOrWhiteSpace(loginUrl))
 				{
-					await deepLinkingService.OpenBrowser(loginUrl, browserLaunchOptions).ConfigureAwait(false);
+					await _deepLinkingService.OpenBrowser(loginUrl, browserLaunchOptions).ConfigureAwait(false);
 				}
 				else
 				{
-					await deepLinkingService.DisplayAlert("Error", "Couldn't connect to GitHub Login. Check your internet connection and try again", "OK").ConfigureAwait(false);
+					await _deepLinkingService.DisplayAlert("Error", "Couldn't connect to GitHub Login. Check your internet connection and try again", "OK").ConfigureAwait(false);
 				}
 			}
 			catch (Exception e)
@@ -90,6 +88,12 @@ namespace GitTrends
 			{
 				IsAuthenticating = false;
 			}
+		}
+
+		protected virtual void NotifyIsAuthenticatingPropertyChanged()
+		{
+			OnPropertyChanged(nameof(IsNotAuthenticating));
+			OnPropertyChanged(nameof(IsDemoButtonVisible));
 		}
 
 		void HandleAuthorizeSessionStarted(object sender, EventArgs e) => IsAuthenticating = true;

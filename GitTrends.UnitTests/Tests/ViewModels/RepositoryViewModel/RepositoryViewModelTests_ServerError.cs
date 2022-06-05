@@ -53,7 +53,7 @@ namespace GitTrends.UnitTests
 			visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
 			emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
 
-			await repositoryViewModel.PullToRefreshCommand.ExecuteAsync().ConfigureAwait(false);
+			await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
 
 			emptyDataViewTitle_Final = repositoryViewModel.EmptyDataViewTitle;
 			visibleRepositoryList_Final = repositoryViewModel.VisibleRepositoryList;
