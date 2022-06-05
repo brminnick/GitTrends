@@ -14,7 +14,7 @@ namespace GitTrends.UnitTests
 	[NonParallelizable]
 	class RepositoryViewModelTests : BaseTest
 	{
-		[Test]
+		[Test, Timeout(300000)]
 		public async Task PullToRefreshCommandTest_Authenticated()
 		{
 			//Arrange
@@ -108,7 +108,7 @@ namespace GitTrends.UnitTests
 		}
 
 
-		[Test]
+		[Test, Timeout(300000)]
 		public async Task PullToRefreshCommandTest_ShouldIncludeOrganizationsChanged()
 		{
 			//Arrange
@@ -140,7 +140,7 @@ namespace GitTrends.UnitTests
 			}
 		}
 
-		[Test]
+		[Test, Timeout(300000)]
 		public async Task PullToRefreshCommandTest_LoggedOut()
 		{
 			//Arrange
@@ -173,7 +173,7 @@ namespace GitTrends.UnitTests
 			}
 		}
 
-		[Test]
+		[Test, Timeout(300000)]
 		public async Task PullToRefreshCommandTest_AuthorizeSessionStarted()
 		{
 			//Arrange
@@ -213,7 +213,7 @@ namespace GitTrends.UnitTests
 			}
 		}
 
-		[Test]
+		[Test, Timeout(300000)]
 		public async Task PullToRefreshCommandTest_Unauthenticated()
 		{
 			//Arrange
