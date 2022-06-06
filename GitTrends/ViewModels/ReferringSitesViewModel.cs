@@ -91,7 +91,7 @@ namespace GitTrends
 					var referringSite = MobileReferringSitesList.Single(x => x.Referrer == mobileReferringSite.Referrer);
 					referringSite.FavIcon = mobileReferringSite.FavIcon;
 
-					if (string.IsNullOrWhiteSpace(mobileReferringSite.FavIconImageUrl))
+					if (!string.IsNullOrWhiteSpace(mobileReferringSite.FavIconImageUrl))
 						await _referringSitesDatabase.SaveReferringSite(referringSite, repository.Url).ConfigureAwait(false);
 				}
 			}

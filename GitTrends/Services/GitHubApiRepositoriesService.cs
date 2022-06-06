@@ -89,10 +89,10 @@ namespace GitTrends
 			{
 				var mobileReferringSiteFromDatabase = await referringSitesDatabase.GetReferringSite(repositoryUrl, referringSiteModel.ReferrerUri).ConfigureAwait(false);
 
-				if (mobileReferringSiteFromDatabase != null && isFavIconValid(mobileReferringSiteFromDatabase))
+				if (mobileReferringSiteFromDatabase is not null && isFavIconValid(mobileReferringSiteFromDatabase))
 					return mobileReferringSiteFromDatabase;
 
-				if (referringSiteModel.ReferrerUri != null && referringSiteModel.IsReferrerUriValid)
+				if (referringSiteModel.ReferrerUri is not null && referringSiteModel.IsReferrerUriValid)
 				{
 					var favIcon = await _favIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri, cancellationToken).ConfigureAwait(false);
 					return new MobileReferringSiteModel(referringSiteModel, favIcon);
@@ -102,7 +102,7 @@ namespace GitTrends
 					return new MobileReferringSiteModel(referringSiteModel, FavIconService.DefaultFavIcon);
 				}
 
-				static bool isFavIconValid(MobileReferringSiteModel mobileReferringSiteModel) => !string.IsNullOrWhiteSpace(mobileReferringSiteModel.FavIconImageUrl) && mobileReferringSiteModel.DownloadedAt.CompareTo(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(30))) > 0;
+				static bool isFavIconValid(MobileReferringSiteModel mobileReferringSiteModel) => !string.IsNullOrWhiteSpace(mobileReferringSiteModel.FavIconImageUrl) && mobileReferringSiteModel.DownloadedAt > DateTimeOffset.UtcNow.Subtract(CachedDataConstants.DatabaseReferringSitesLifeSpan);
 			}
 		}
 
