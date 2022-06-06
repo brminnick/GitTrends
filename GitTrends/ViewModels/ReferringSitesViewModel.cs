@@ -81,6 +81,7 @@ namespace GitTrends
 		{
 			var (repository, cancellationToken) = parameter;
 
+			var minimumTimerDisplayTimeTask = Task.Delay(TimeSpan.FromSeconds(1));
 			var referringSitesList = await GetReferringSites(repository, cancellationToken).ConfigureAwait(false);
 			MobileReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
 
@@ -95,6 +96,8 @@ namespace GitTrends
 						await _referringSitesDatabase.SaveReferringSite(referringSite, repository.Url).ConfigureAwait(false);
 				}
 			}
+
+			await minimumTimerDisplayTimeTask.ConfigureAwait(false);
 
 			IsRefreshing = false;
 		}
