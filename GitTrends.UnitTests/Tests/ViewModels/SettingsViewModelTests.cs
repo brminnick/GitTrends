@@ -183,9 +183,7 @@ namespace GitTrends.UnitTests
 			isAuthenticating_BeforeCommand = settingsViewModel.IsAuthenticating;
 			isDemoButtonVisible_BeforeCommand = settingsViewModel.IsDemoButtonVisible;
 
-#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
 			var connectToGitHubButtonCommandTask = settingsViewModel.HandleConnectToGitHubButtonCommand.ExecuteAsync((CancellationToken.None, null));
-#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
 			isNotAuthenticating_DuringCommand = settingsViewModel.IsNotAuthenticating;
 			isAuthenticating_DuringCommand = settingsViewModel.IsAuthenticating;
 			isDemoButtonVisible_DuringCommand = settingsViewModel.IsDemoButtonVisible;

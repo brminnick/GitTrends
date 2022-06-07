@@ -37,13 +37,13 @@ namespace GitTrends
 			_gitHubAvatarImageSource = string.Empty, _gitHubAliasLabelText = string.Empty, _preferredChartsLabelText = string.Empty,
 			_registerForNotificationsLabelText = string.Empty, _shouldIncludeOrganizationsLabelText = string.Empty, _gitHubNameLabelText = string.Empty;
 
-		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsDemoButtonVisible)), AlsoNotifyChangeFor(nameof(IsAliasLabelVisible))]
+		[ObservableProperty, NotifyPropertyChangedFor(nameof(IsDemoButtonVisible)), NotifyPropertyChangedFor(nameof(IsAliasLabelVisible))]
 		string _loginLabelText = string.Empty;
 
 		[ObservableProperty]
 		bool _isRegisterForNotificationsSwitchEnabled = true;
 
-		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsShouldIncludeOrganizationsSwitchToggled))]
+		[ObservableProperty, NotifyPropertyChangedFor(nameof(IsShouldIncludeOrganizationsSwitchToggled))]
 		bool _isShouldIncludeOrganizationsSwitchEnabled;
 
 		bool _isRegisterForNotificationsSwitchToggled;
@@ -105,8 +105,6 @@ namespace GitTrends
 		}
 
 		public IReadOnlyList<string> LanguagePickerItemsSource { get; } = CultureConstants.CulturePickerOptions.Values.ToList();
-
-		public new bool IsNotAuthenticating => base.IsNotAuthenticating;
 
 		public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText == GitHubLoginButtonConstants.Disconnect;
 
@@ -253,7 +251,7 @@ namespace GitTrends
 			}
 		}
 
-		[ICommand]
+		[RelayCommand]
 		Task OpenGitTrendsOrganizationBrowser()
 		{
 			if (_gitTrendsStatisticsService.EnableOrganizationsUri is null)
@@ -301,7 +299,7 @@ namespace GitTrends
 			}
 		}
 
-		[ICommand]
+		[RelayCommand]
 		Task CopyrightLabelTapped()
 		{
 			AnalyticsService.Track("CreatedBy Label Tapped");
@@ -376,7 +374,7 @@ namespace GitTrends
 			IsShouldIncludeOrganizationsSwitchEnabled = GitHubUserService.IsAuthenticated;
 		}
 
-		[ICommand(CanExecute = nameof(GitHubAuthenticationViewModel.IsNotAuthenticating))]
+		[RelayCommand(CanExecute = nameof(GitHubAuthenticationViewModel.IsNotAuthenticating))]
 		Task GitHubUserViewTapped()
 		{
 			if (GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser)

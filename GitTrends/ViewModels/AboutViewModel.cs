@@ -41,7 +41,7 @@ namespace GitTrends
 		public IReadOnlyList<Contributor> GitTrendsContributors { get; }
 		public IReadOnlyList<NuGetPackageModel> InstalledLibraries { get; }
 
-		[ICommand]
+		[RelayCommand]
 		public Task ViewOnGitHub()
 		{
 			if (_gitTrendsStatisticsService?.GitHubUri is null)
@@ -52,7 +52,7 @@ namespace GitTrends
 			return _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.GitHubUri);
 		}
 
-		[ICommand]
+		[RelayCommand]
 		public Task RequestFeature()
 		{
 			if (_gitTrendsStatisticsService?.GitHubUri is null)
