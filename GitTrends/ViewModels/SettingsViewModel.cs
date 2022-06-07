@@ -106,8 +106,6 @@ namespace GitTrends
 
 		public IReadOnlyList<string> LanguagePickerItemsSource { get; } = CultureConstants.CulturePickerOptions.Values.ToList();
 
-		public new bool IsNotAuthenticating => base.IsNotAuthenticating;
-
 		public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText == GitHubLoginButtonConstants.Disconnect;
 
 		public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginLabelText == GitHubLoginButtonConstants.ConnectToGitHub;
