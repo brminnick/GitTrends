@@ -118,7 +118,7 @@ namespace GitTrends
 			return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
 		}
 
-		[ICommand(AllowConcurrentExecutions = true)]
+		[RelayCommand(AllowConcurrentExecutions = true)]
 		async Task ExecuteRefresh()
 		{
 			const int minimumBatchCount = 100;
@@ -343,7 +343,7 @@ namespace GitTrends
 			void HandleShouldIncludeOrganizationsChanged(object sender, bool e) => cancellationTokenSource.Cancel();
 		}
 
-		[ICommand]
+		[RelayCommand]
 		async Task ToggleIsFavorite(Repository repository)
 		{
 			var updatedRepository = repository with
@@ -363,7 +363,7 @@ namespace GitTrends
 				await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
 		}
 
-		[ICommand]
+		[RelayCommand]
 		Task NavigateToRepositoryWebsite(Repository repository)
 		{
 			AnalyticsService.Track("Open External Repostory Link Tapped", nameof(repository.Url), repository.Url);
@@ -371,7 +371,7 @@ namespace GitTrends
 			return _deepLinkingService.OpenApp(GitHubConstants.AppScheme, repository.Url, repository.Url);
 		}
 
-		[ICommand]
+		[RelayCommand]
 		void SortRepositories(SortingOption option)
 		{
 			if (_mobileSortingService.CurrentOption == option)
@@ -443,7 +443,7 @@ namespace GitTrends
 			UpdateVisibleRepositoryList(string.Empty, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
 		}
 
-		[ICommand]
+		[RelayCommand]
 		void SetSearchBarText(string text)
 		{
 			if (EqualityComparer<string>.Default.Equals(_searchBarText, text))

@@ -154,7 +154,7 @@ namespace GitTrends
 			}
 		}
 
-		[ICommand]
+		[RelayCommand]
 		async Task FetchData((Repository Repository, CancellationToken CancellationToken) parameter)
 		{
 			var (repository, cancellationToken) = parameter;

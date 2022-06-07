@@ -253,7 +253,7 @@ namespace GitTrends
 			}
 		}
 
-		[ICommand]
+		[RelayCommand]
 		Task OpenGitTrendsOrganizationBrowser()
 		{
 			if (_gitTrendsStatisticsService.EnableOrganizationsUri is null)
@@ -301,7 +301,7 @@ namespace GitTrends
 			}
 		}
 
-		[ICommand]
+		[RelayCommand]
 		Task CopyrightLabelTapped()
 		{
 			AnalyticsService.Track("CreatedBy Label Tapped");
@@ -376,7 +376,7 @@ namespace GitTrends
 			IsShouldIncludeOrganizationsSwitchEnabled = GitHubUserService.IsAuthenticated;
 		}
 
-		[ICommand(CanExecute = nameof(GitHubAuthenticationViewModel.IsNotAuthenticating))]
+		[RelayCommand(CanExecute = nameof(GitHubAuthenticationViewModel.IsNotAuthenticating))]
 		Task GitHubUserViewTapped()
 		{
 			if (GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser)

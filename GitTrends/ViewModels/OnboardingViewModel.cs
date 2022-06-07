@@ -80,7 +80,7 @@ namespace GitTrends
 			}
 		}
 
-		[ICommand]
+		[RelayCommand]
 		async Task HandleEnableNotificationsButtonTapped()
 		{
 			const string successSvg = "check.svg";

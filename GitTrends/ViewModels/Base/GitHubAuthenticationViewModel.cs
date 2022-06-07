@@ -48,14 +48,14 @@ namespace GitTrends
 		protected GitHubUserService GitHubUserService { get; }
 		protected GitHubAuthenticationService GitHubAuthenticationService { get; }
 
-		[ICommand(CanExecute = nameof(IsNotAuthenticating))]
+		[RelayCommand(CanExecute = nameof(IsNotAuthenticating))]
 		protected virtual Task HandleDemoButtonTapped(string? buttonText)
 		{
 			IsAuthenticating = true;
 			return Task.CompletedTask;
 		}
 
-		[ICommand(CanExecute = nameof(IsNotAuthenticating))]
+		[RelayCommand(CanExecute = nameof(IsNotAuthenticating))]
 		protected async virtual Task HandleConnectToGitHubButton((CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions) parameter)
 		{
 			var (cancellationToken, browserLaunchOptions) = parameter;
