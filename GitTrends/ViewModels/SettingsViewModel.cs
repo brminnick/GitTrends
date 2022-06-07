@@ -37,13 +37,13 @@ namespace GitTrends
 			_gitHubAvatarImageSource = string.Empty, _gitHubAliasLabelText = string.Empty, _preferredChartsLabelText = string.Empty,
 			_registerForNotificationsLabelText = string.Empty, _shouldIncludeOrganizationsLabelText = string.Empty, _gitHubNameLabelText = string.Empty;
 
-		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsDemoButtonVisible)), AlsoNotifyChangeFor(nameof(IsAliasLabelVisible))]
+		[ObservableProperty, NotifyPropertyChangedFor(nameof(IsDemoButtonVisible)), NotifyPropertyChangedFor(nameof(IsAliasLabelVisible))]
 		string _loginLabelText = string.Empty;
 
 		[ObservableProperty]
 		bool _isRegisterForNotificationsSwitchEnabled = true;
 
-		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsShouldIncludeOrganizationsSwitchToggled))]
+		[ObservableProperty, NotifyPropertyChangedFor(nameof(IsShouldIncludeOrganizationsSwitchToggled))]
 		bool _isShouldIncludeOrganizationsSwitchEnabled;
 
 		bool _isRegisterForNotificationsSwitchToggled;

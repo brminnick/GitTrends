@@ -29,10 +29,10 @@ namespace GitTrends
 		readonly BackgroundFetchService _backgroundFetchService;
 		readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
 
-		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsStarsChartVisible)), AlsoNotifyChangeFor(nameof(IsStarsEmptyDataViewVisible))]
+		[ObservableProperty, NotifyPropertyChangedFor(nameof(IsStarsChartVisible)), NotifyPropertyChangedFor(nameof(IsStarsEmptyDataViewVisible))]
 		bool _isFetchingStarsData = true;
 
-		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsViewsClonesChartVisible)), AlsoNotifyChangeFor(nameof(IsViewsClonesEmptyDataViewVisible))]
+		[ObservableProperty, NotifyPropertyChangedFor(nameof(IsViewsClonesChartVisible)), NotifyPropertyChangedFor(nameof(IsViewsClonesEmptyDataViewVisible))]
 		bool _isFetchingViewsClonesData = true;
 
 		[ObservableProperty]
@@ -46,19 +46,19 @@ namespace GitTrends
 		[ObservableProperty]
 		Xamarin.Forms.ImageSource? __starsEmptyDataViewImage, _viewsClonesEmptyDataViewImage;
 
-		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsViewsClonesChartVisible)), AlsoNotifyChangeFor(nameof(IsViewsClonesEmptyDataViewVisible)),
-			AlsoNotifyChangeFor(nameof(DailyViewsClonesMaxValue)), AlsoNotifyChangeFor(nameof(DailyViewsClonesMaxValue)), AlsoNotifyChangeFor(nameof(MinViewsClonesDate)),
-			AlsoNotifyChangeFor(nameof(MaxViewsClonesDate)), AlsoNotifyChangeFor(nameof(ViewsClonesChartYAxisInterval))]
+		[ObservableProperty, NotifyPropertyChangedFor(nameof(IsViewsClonesChartVisible)), NotifyPropertyChangedFor(nameof(IsViewsClonesEmptyDataViewVisible)),
+			NotifyPropertyChangedFor(nameof(DailyViewsClonesMaxValue)), NotifyPropertyChangedFor(nameof(DailyViewsClonesMaxValue)), NotifyPropertyChangedFor(nameof(MinViewsClonesDate)),
+			NotifyPropertyChangedFor(nameof(MaxViewsClonesDate)), NotifyPropertyChangedFor(nameof(ViewsClonesChartYAxisInterval))]
 		IReadOnlyList<DailyViewsModel> _dailyViewsList = Array.Empty<DailyViewsModel>();
 
-		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsViewsClonesChartVisible)), AlsoNotifyChangeFor(nameof(IsViewsClonesEmptyDataViewVisible)),
-			AlsoNotifyChangeFor(nameof(DailyViewsClonesMaxValue)), AlsoNotifyChangeFor(nameof(DailyViewsClonesMinValue)), AlsoNotifyChangeFor(nameof(MinViewsClonesDate)),
-			AlsoNotifyChangeFor(nameof(MaxViewsClonesDate)), AlsoNotifyChangeFor(nameof(ViewsClonesChartYAxisInterval))]
+		[ObservableProperty, NotifyPropertyChangedFor(nameof(IsViewsClonesChartVisible)), NotifyPropertyChangedFor(nameof(IsViewsClonesEmptyDataViewVisible)),
+			NotifyPropertyChangedFor(nameof(DailyViewsClonesMaxValue)), NotifyPropertyChangedFor(nameof(DailyViewsClonesMinValue)), NotifyPropertyChangedFor(nameof(MinViewsClonesDate)),
+			NotifyPropertyChangedFor(nameof(MaxViewsClonesDate)), NotifyPropertyChangedFor(nameof(ViewsClonesChartYAxisInterval))]
 		IReadOnlyList<DailyClonesModel> _dailyClonesList = Array.Empty<DailyClonesModel>();
 
-		[ObservableProperty, AlsoNotifyChangeFor(nameof(IsStarsChartVisible)), AlsoNotifyChangeFor(nameof(IsStarsEmptyDataViewVisible)),
-			AlsoNotifyChangeFor(nameof(MaxDailyStarsValue)), AlsoNotifyChangeFor(nameof(MinDailyStarsValue)), AlsoNotifyChangeFor(nameof(MaxDailyStarsDate)),
-			AlsoNotifyChangeFor(nameof(MinDailyStarsDate)), AlsoNotifyChangeFor(nameof(TotalStars)), AlsoNotifyChangeFor(nameof(StarsChartYAxisInterval))]
+		[ObservableProperty, NotifyPropertyChangedFor(nameof(IsStarsChartVisible)), NotifyPropertyChangedFor(nameof(IsStarsEmptyDataViewVisible)),
+			NotifyPropertyChangedFor(nameof(MaxDailyStarsValue)), NotifyPropertyChangedFor(nameof(MinDailyStarsValue)), NotifyPropertyChangedFor(nameof(MaxDailyStarsDate)),
+			NotifyPropertyChangedFor(nameof(MinDailyStarsDate)), NotifyPropertyChangedFor(nameof(TotalStars)), NotifyPropertyChangedFor(nameof(StarsChartYAxisInterval))]
 		IReadOnlyList<DailyStarsModel> _dailyStarsList = Array.Empty<DailyStarsModel>();
 
 		public TrendsViewModel(IMainThread mainThread,
