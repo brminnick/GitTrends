@@ -216,9 +216,7 @@ namespace GitTrends
 
 				await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(0.3, 75)));
 
-#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
 				BindingContext.HandleConnectToGitHubButtonCommand.Execute((_connectToGitHubCancellationTokenSource.Token, null));
-#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
 
 				await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(1, 350, Easing.CubicOut)));
 			}
