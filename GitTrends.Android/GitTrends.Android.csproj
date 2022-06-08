@@ -99,7 +99,7 @@
     <PackageReference Include="Xamarin.Google.Dagger" Version="2.41.0" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.0" />
     <PackageReference Include="Refit.Newtonsoft.Json" Version="6.3.2" />
-    <PackageReference Include="Shiny.Jobs" Version="2.4.3.3024" />
+    <PackageReference Include="Shiny.Jobs" Version="2.5.4" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.4.1.1" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Extensions" Version="2.2.0.10" />
     <PackageReference Include="Xamarin.AndroidX.Work.Runtime" Version="2.7.0" />
