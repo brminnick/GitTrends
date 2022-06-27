@@ -1,4 +1,4 @@
-[![Build Status](https://dev.azure.com/brminnick/GitTrends/_apis/build/status/Main?branchName=refs%2Fpull%2F471%2Fmerge)](https://dev.azure.com/brminnick/GitTrends/_build/latest?definitionId=9&branchName=refs%2Fpull%2F471%2Fmerge)
+[![Build Status](https://dev.azure.com/brminnick/GitTrends/_apis/build/status/Main?branchName=main)](https://dev.azure.com/brminnick/GitTrends/_build/latest?definitionId=9&branchName=main)
 
 <div class="header" align="center">
   <h1 align="center">GitTrends: GitHub Insights</h1>
