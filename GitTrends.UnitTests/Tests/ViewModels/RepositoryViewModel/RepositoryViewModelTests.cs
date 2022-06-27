@@ -14,7 +14,7 @@ namespace GitTrends.UnitTests
 	[NonParallelizable]
 	class RepositoryViewModelTests : BaseTest
 	{
-		[Test, Timeout(300000)]
+		[Test, Timeout(600000)]
 		public async Task PullToRefreshCommandTest_Authenticated()
 		{
 			//Arrange
@@ -42,7 +42,16 @@ namespace GitTrends.UnitTests
 			emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
 
 			await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
-			var fetchStarsInBackgroundTCSResult = await fetchStarsInBackgroundTCS.Task.ConfigureAwait(false);
+
+			if (backgroundFetchService.QueuedJobs.Any())
+			{
+				var fetchStarsInBackgroundTCSResult = await fetchStarsInBackgroundTCS.Task.ConfigureAwait(false);
+				Assert.IsNotEmpty(fetchStarsInBackgroundTCSResult);
+			}
+			else
+			{
+				BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
+			}
 
 			afterPullToRefresh = DateTimeOffset.UtcNow;
 			emptyDataViewTitle_Final = repositoryViewModel.EmptyDataViewTitle;
@@ -52,7 +61,6 @@ namespace GitTrends.UnitTests
 			//Assert
 			Assert.IsEmpty(visibleRepositoryList_Initial);
 			Assert.IsNotEmpty(visibleRepositoryList_Final);
-			Assert.IsNotEmpty(fetchStarsInBackgroundTCSResult);
 
 			Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true), emptyDataViewTitle_Initial);
 			Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Succeeded, false), emptyDataViewTitle_Final);
@@ -62,7 +70,6 @@ namespace GitTrends.UnitTests
 
 			Assert.IsTrue(visibleRepositoryList_Final.Any(x => x.OwnerLogin is GitHubConstants.GitTrendsRepoOwner && x.Name is GitHubConstants.GitTrendsRepoName));
 
-			Assert.AreEqual(fetchStarsInBackgroundTCSResult.Count, repositoriesUpdatedInBackground.Count);
 
 			foreach (var repository in repositoriesUpdatedInBackground)
 				Assert.IsTrue(visibleRepositoryList_Final.Any(x => x.Url == repository.Url));
@@ -108,7 +115,7 @@ namespace GitTrends.UnitTests
 		}
 
 
-		[Test, Timeout(300000)]
+		[Test, Timeout(600000)]
 		public async Task PullToRefreshCommandTest_ShouldIncludeOrganizationsChanged()
 		{
 			//Arrange
@@ -140,7 +147,7 @@ namespace GitTrends.UnitTests
 			}
 		}
 
-		[Test, Timeout(300000)]
+		[Test, Timeout(600000)]
 		public async Task PullToRefreshCommandTest_LoggedOut()
 		{
 			//Arrange
@@ -173,7 +180,7 @@ namespace GitTrends.UnitTests
 			}
 		}
 
-		[Test, Timeout(300000)]
+		[Test, Timeout(600000)]
 		public async Task PullToRefreshCommandTest_AuthorizeSessionStarted()
 		{
 			//Arrange
@@ -213,7 +220,7 @@ namespace GitTrends.UnitTests
 			}
 		}
 
-		[Test, Timeout(300000)]
+		[Test, Timeout(600000)]
 		public async Task PullToRefreshCommandTest_Unauthenticated()
 		{
 			//Arrange

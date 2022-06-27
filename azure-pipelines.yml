@@ -163,4 +163,4 @@ jobs:
       - task: CmdLine@2
         displayName: 'Run Unit Tests'
         inputs:
-          script: 'dotnet test $(PathToUnitTestsCsproj) -c Release'
+          script: 'dotnet test $(PathToUnitTestsCsproj) -c Release -d detailed'

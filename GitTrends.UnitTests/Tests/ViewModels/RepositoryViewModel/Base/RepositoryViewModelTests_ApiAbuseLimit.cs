@@ -5,7 +5,6 @@ using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 
 namespace GitTrends.UnitTests
 {
