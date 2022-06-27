@@ -40,6 +40,8 @@ namespace GitTrends.UnitTests
 
 			async void HandleDemoUserActivated(object? sender, EventArgs e)
 			{
+				GitHubAuthenticationService.DemoUserActivated -= HandleDemoUserActivated;
+
 				await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
 				activateDemoUserTCS.SetResult(null);
 			}

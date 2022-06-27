@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
