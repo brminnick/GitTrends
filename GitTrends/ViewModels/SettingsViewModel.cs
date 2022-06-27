@@ -41,13 +41,12 @@ namespace GitTrends
 		string _loginLabelText = string.Empty;
 
 		[ObservableProperty]
-		bool _isRegisterForNotificationsSwitchEnabled = true;
+		bool _isRegisterForNotificationsSwitchToggled, _isRegisterForNotificationsSwitchEnabled = true;
 
 		[ObservableProperty, NotifyPropertyChangedFor(nameof(IsShouldIncludeOrganizationsSwitchToggled))]
 		bool _isShouldIncludeOrganizationsSwitchEnabled;
 
-		bool _isRegisterForNotificationsSwitchToggled;
-
+		[ObservableProperty]
 		int _themePickerSelectedIndex, _preferredChartsSelectedIndex, _languagePickerSelectedIndex;
 
 		public SettingsViewModel(IMainThread mainThread,
@@ -148,38 +147,6 @@ namespace GitTrends
 				_trendsChartSettingsService.ShouldShowUniqueViewsByDefault = value;
 				OnPropertyChanged();
 			}
-		}
-
-		public int ThemePickerSelectedIndex
-		{
-			get => _themePickerSelectedIndex;
-			set => SetProperty(ref _themePickerSelectedIndex, value, () =>
-			{
-				if (Enum.IsDefined(typeof(PreferredTheme), value))
-					_themeService.Preference = (PreferredTheme)value;
-			});
-		}
-
-		public int PreferredChartsSelectedIndex
-		{
-			get => _preferredChartsSelectedIndex;
-			set => SetProperty(ref _preferredChartsSelectedIndex, value, () =>
-			{
-				if (Enum.IsDefined(typeof(TrendsChartOption), value))
-					_trendsChartSettingsService.CurrentTrendsChartOption = (TrendsChartOption)value;
-			});
-		}
-
-		public int LanguagePickerSelectedIndex
-		{
-			get => _languagePickerSelectedIndex;
-			set => SetProperty(ref _languagePickerSelectedIndex, value, () => _languageService.PreferredLanguage = CultureConstants.CulturePickerOptions.Skip(value).First().Key);
-		}
-
-		public bool IsRegisterForNotificationsSwitchToggled
-		{
-			get => _isRegisterForNotificationsSwitchToggled;
-			set => SetProperty(ref _isRegisterForNotificationsSwitchToggled, value, async () => await SetNotificationsPreference(value).ConfigureAwait(false));
 		}
 
 		public bool IsShouldIncludeOrganizationsSwitchToggled
@@ -350,7 +317,7 @@ namespace GitTrends
 #elif RELEASE
 				return $"v{versionTracking.CurrentVersion} (Release)";
 #else
-                return $"v{versionTracking.CurrentVersion}";
+				return $"v{versionTracking.CurrentVersion}";
 #endif
 			}
 		}
@@ -374,7 +341,7 @@ namespace GitTrends
 			IsShouldIncludeOrganizationsSwitchEnabled = GitHubUserService.IsAuthenticated;
 		}
 
-		[RelayCommand(CanExecute = nameof(GitHubAuthenticationViewModel.IsNotAuthenticating))]
+		[RelayCommand(CanExecute = nameof(IsNotAuthenticating))]
 		Task GitHubUserViewTapped()
 		{
 			if (GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser)
@@ -393,5 +360,20 @@ namespace GitTrends
 
 		void OnSetNotificationsCompleted(AccessState? accessState) => _setNotificationsPreferenceCompletedEventManager.RaiseEvent(this, accessState, nameof(SetNotificationsPreferenceCompleted));
 		void OnOrganizationsCarouselViewVisiblilityChanged(bool isVisible) => _organizationsCarouselViewVisiblilityChangedEventManager.RaiseEvent(this, isVisible, nameof(OrganizationsCarouselViewVisiblilityChanged));
+
+		partial void OnThemePickerSelectedIndexChanged(int value)
+		{
+			if (Enum.IsDefined(typeof(PreferredTheme), value))
+				_themeService.Preference = (PreferredTheme)value;
+		}
+
+		partial void OnPreferredChartsSelectedIndexChanged(int value)
+		{
+			if (Enum.IsDefined(typeof(TrendsChartOption), value))
+				_trendsChartSettingsService.CurrentTrendsChartOption = (TrendsChartOption)value;
+		}
+
+		partial void OnLanguagePickerSelectedIndexChanged(int value) => _languageService.PreferredLanguage = CultureConstants.CulturePickerOptions.Skip(value).First().Key;
+		async partial void OnIsRegisterForNotificationsSwitchToggledChanged(bool value) => await SetNotificationsPreference(value).ConfigureAwait(false);
 	}
 }

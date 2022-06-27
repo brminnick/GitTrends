@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
@@ -14,6 +15,9 @@ namespace GitTrends
 	{
 		readonly DeepLinkingService _deepLinkingService;
 
+		[ObservableProperty]
+		[NotifyCanExecuteChangedFor(nameof(HandleConnectToGitHubButtonCommand))]
+		[NotifyPropertyChangedFor(nameof(IsNotAuthenticating), nameof(IsDemoButtonVisible))]
 		bool _isAuthenticating = false;
 
 		protected GitHubAuthenticationViewModel(IMainThread mainThread,
@@ -35,18 +39,12 @@ namespace GitTrends
 
 		public virtual bool IsDemoButtonVisible => !IsAuthenticating && GitHubUserService.Alias != DemoUserConstants.Alias;
 
-		public bool IsAuthenticating
-		{
-			get => _isAuthenticating;
-			set => SetProperty(ref _isAuthenticating, value, () =>
-			{
-				NotifyIsAuthenticatingPropertyChanged();
-				MainThread.InvokeOnMainThreadAsync(HandleConnectToGitHubButtonCommand.NotifyCanExecuteChanged).SafeFireAndForget(ex => Debug.WriteLine(ex));
-			});
-		}
-
 		protected GitHubUserService GitHubUserService { get; }
 		protected GitHubAuthenticationService GitHubAuthenticationService { get; }
+
+		protected virtual void NotifyIsAuthenticatingPropertyChanged()
+		{
+		}
 
 		[RelayCommand(CanExecute = nameof(IsNotAuthenticating))]
 		protected virtual Task HandleDemoButtonTapped(string? buttonText)
@@ -90,13 +88,9 @@ namespace GitTrends
 			}
 		}
 
-		protected virtual void NotifyIsAuthenticatingPropertyChanged()
-		{
-			OnPropertyChanged(nameof(IsNotAuthenticating));
-			OnPropertyChanged(nameof(IsDemoButtonVisible));
-		}
-
 		void HandleAuthorizeSessionStarted(object sender, EventArgs e) => IsAuthenticating = true;
 		void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsAuthenticating = false;
+
+		partial void OnIsAuthenticatingChanged(bool value) => NotifyIsAuthenticatingPropertyChanged();
 	}
 }
