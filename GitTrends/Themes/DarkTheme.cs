@@ -41,7 +41,7 @@ namespace GitTrends
 		//Blended Colors
 		const string _white12PercentBlend = "#2F2F2F";
 
-		//Surface Elvations
+		//Surface Elevations
 		const string _surfaceElevation0dpHex = "#121212";
 		const string _surfaceElevation1dpHex = "#181B1B";
 		const string _surfaceElevation2dpHex = "#1B1F1F";
