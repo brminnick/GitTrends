@@ -6,7 +6,7 @@ namespace GitTrends
 	//On Android, use Custom Renderer for ExoPlayer because Xamarin.Forms.MediaElement uses Android.VideoView
 	public class VideoPlayerView : View
 	{
-		public readonly BindableProperty UrlProperty = BindableProperty.Create(nameof(Url), typeof(string), typeof(VideoPlayerView));
+		public static readonly BindableProperty UrlProperty = BindableProperty.Create(nameof(Url), typeof(string), typeof(VideoPlayerView));
 
 		public VideoPlayerView(string? uri)
 		{

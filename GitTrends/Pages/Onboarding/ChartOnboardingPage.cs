@@ -29,7 +29,7 @@ namespace GitTrends
 			Border = new Border { Color = Color.FromHex("E0E0E0") },
 			BackgroundColor = Color.White,
 			Padding = new Thickness(5),
-			Content = new VideoPlayerView(MediaElementService.OnboardingChartUrl)
+			Content = new VideoPlayerWithLoadingIndicatorView(MediaElementService.OnboardingChartUrl)
 		};
 
 		protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ChartPage_Title);
