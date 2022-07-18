@@ -13,7 +13,7 @@ namespace GitTrends
 		public static readonly BindableProperty IsActivityIndicatorRunningProperty = BindableProperty.Create(nameof(IsActivityIndicatorRunning), typeof(bool), typeof(VideoPlayerWithLoadingIndicatorView), true);
 
 		readonly VideoPlayerView _videoPlayerView;
-		readonly ActivityIndicator _activityIndicator = new();
+		readonly ActivityIndicator _activityIndicator = new ActivityIndicator().Margin(10);
 
 		public VideoPlayerWithLoadingIndicatorView(string? uri)
 		{
