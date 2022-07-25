@@ -109,7 +109,7 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CustomRenderers\SearchPageRenderer.cs" />
-    <Compile Include="Services\NotificationService_Android.cs" />
+    <Compile Include="Services\DeviceNotificationsService_Android.cs" />
     <Compile Include="CustomRenderers\LabelCustomRenderer.cs" />
     <Compile Include="MainApplication.cs" />
     <Compile Include="CustomRenderers\LowerCaseButtonRenderer.cs" />
