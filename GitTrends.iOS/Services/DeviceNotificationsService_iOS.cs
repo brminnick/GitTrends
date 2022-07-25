@@ -37,8 +37,6 @@ namespace GitTrends.iOS
             return tcs.Task;
         });
 
-        public Task SetiOSBadgeCount(int count) => MainThread.InvokeOnMainThreadAsync(() => UIApplication.SharedApplication.ApplicationIconBadgeNumber = count);
-
         async void HandleRegisterForNotificationsCompleted(object sender, (bool isSuccessful, string errorMessage) e)
         {
             if (e.isSuccessful)

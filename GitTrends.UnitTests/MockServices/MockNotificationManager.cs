@@ -17,14 +17,15 @@ namespace GitTrends.UnitTests
 		public MockNotificationManager(IDeviceNotificationsService deviceNotificationsService) =>
 			_deviceNotificationsService = deviceNotificationsService;
 
-		public int Badge
+		public Task<int> GetBadge() => Task.FromResult(_badge);
+
+		public Task SetBadge(int? badge)
 		{
-			get => _badge;
-			set
-			{
-				_badge = value;
-				_deviceNotificationsService.SetiOSBadgeCount(value);
-			}
+			badge ??= 0;
+
+			_badge = badge.Value;
+
+			return Task.CompletedTask;
 		}
 
 		public Task Cancel(int id)
@@ -33,15 +34,28 @@ namespace GitTrends.UnitTests
 			return Task.CompletedTask;
 		}
 
-		public Task Clear()
+		public Task Cancel(CancelScope cancelScope = CancelScope.All)
 		{
-			_pendingNotificationsDitcionary.Clear();
+			switch (cancelScope)
+			{
+				case CancelScope.Pending:
+				case CancelScope.All:
+					_pendingNotificationsDitcionary.Clear();
+					break;
+
+				case CancelScope.DisplayedOnly:
+					break;
+
+				default:
+					throw new System.NotSupportedException($"{cancelScope} not supported");
+			}
+
 			return Task.CompletedTask;
 		}
 
-		public Task<IEnumerable<Notification>> GetPending() => Task.FromResult(_pendingNotificationsDitcionary.Values.AsEnumerable());
+		public Task<IEnumerable<Notification>> GetPendingNotifications() => Task.FromResult(_pendingNotificationsDitcionary.Values.AsEnumerable());
 
-		public Task<AccessState> RequestAccess()
+		public Task<AccessState> RequestAccess(AccessRequestFlags flags = AccessRequestFlags.Notification)
 		{
 			_deviceNotificationsService.Initialize();
 			return Task.FromResult(AccessState.Available);
@@ -72,5 +86,7 @@ namespace GitTrends.UnitTests
 			_channelsDictionary.Remove(channelId);
 			return Task.CompletedTask;
 		}
+
+		public Task<Notification?> GetNotification(int notificationId) => Task.FromResult<Notification?>(_pendingNotificationsDitcionary[notificationId]);
 	}
 }

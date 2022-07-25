@@ -123,7 +123,7 @@ namespace GitTrends.UnitTests
 
 			static async Task<int> getPendingNotificationCount(INotificationManager notificationManager)
 			{
-				var pendingNotifications = await notificationManager.GetPending().ConfigureAwait(false);
+				var pendingNotifications = await notificationManager.GetPendingNotifications().ConfigureAwait(false);
 				return pendingNotifications.Count();
 			}
 		}
@@ -141,20 +141,20 @@ namespace GitTrends.UnitTests
 			var notificationManager = ServiceCollection.ServiceProvider.GetRequiredService<INotificationManager>();
 
 			//Act
-			appBadgeCount_Initial = notificationManager.Badge;
+			appBadgeCount_Initial = await notificationManager.GetBadge().ConfigureAwait(false);
 
 			await notificationService.SetAppBadgeCount(five).ConfigureAwait(false);
 
-			appBadgeCount_BeforeRegistration = notificationManager.Badge;
+			appBadgeCount_BeforeRegistration = await notificationManager.GetBadge().ConfigureAwait(false);
 
 			await notificationService.Register(false).ConfigureAwait(false);
 			await notificationService.SetAppBadgeCount(five).ConfigureAwait(false);
 
-			appBadgeCount_AfterSet = notificationManager.Badge;
+			appBadgeCount_AfterSet = await notificationManager.GetBadge().ConfigureAwait(false);
 
 			await notificationService.SetAppBadgeCount(zero).ConfigureAwait(false);
 
-			appBadgeCount_AfterClear = notificationManager.Badge;
+			appBadgeCount_AfterClear = await notificationManager.GetBadge().ConfigureAwait(false);
 
 			//Assert
 			Assert.AreEqual(zero, appBadgeCount_Initial);

@@ -85,7 +85,7 @@
     <PackageReference Include="Autofac" Version="6.4.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.3" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.3" />
-    <PackageReference Include="Shiny.Notifications" Version="2.4.3.3024" />
+    <PackageReference Include="Shiny.Notifications" Version="2.5.5" />
     <PackageReference Include="Xam.Plugins.Android.ExoPlayer" Version="2.11.8" />
     <PackageReference Include="Xamarin.Firebase.Messaging" Version="122.0.0.5" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
@@ -99,17 +99,18 @@
     <PackageReference Include="Xamarin.Google.Dagger" Version="2.41.0" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.0" />
     <PackageReference Include="Refit.Newtonsoft.Json" Version="6.3.2" />
-    <PackageReference Include="Shiny.Jobs" Version="2.4.3.3024" />
+    <PackageReference Include="Shiny.Jobs" Version="2.5.5" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.5.0" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Extensions" Version="2.2.0.10" />
-    <PackageReference Include="Xamarin.AndroidX.Work.Runtime" Version="2.7.0" />
+    <PackageReference Include="Xamarin.AndroidX.Work.Runtime" Version="2.7.1.1" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.4.0.2" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CustomRenderers\SearchPageRenderer.cs" />
-    <Compile Include="Services\NotificationService_Android.cs" />
+    <Compile Include="Services\DeviceNotificationsService_Android.cs" />
     <Compile Include="CustomRenderers\LabelCustomRenderer.cs" />
     <Compile Include="MainApplication.cs" />
     <Compile Include="CustomRenderers\LowerCaseButtonRenderer.cs" />
