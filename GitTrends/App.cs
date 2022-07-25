@@ -65,6 +65,10 @@ namespace GitTrends
 
 			_analyticsService.Track("App Resumed");
 
+			await _notificationService.SetAppBadgeCount(10);
+
+			await Task.Delay(10000);
+
 			await ClearBageNotifications();
 		}
 

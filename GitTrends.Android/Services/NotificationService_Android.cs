@@ -40,8 +40,6 @@ namespace GitTrends.Droid
 
             return Task.FromResult<bool?>(isPushNotificationEnabled);
         }
-
-        public Task SetiOSBadgeCount(int count) => throw new NotSupportedException();
     }
 
     [Service(Exported = true), IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
