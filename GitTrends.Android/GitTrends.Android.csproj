@@ -15,7 +15,7 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-    <TargetFrameworkVersion>v12.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v12.1</TargetFrameworkVersion>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <MandroidI18n>cjk;mideast;other;rare;west</MandroidI18n>
@@ -104,6 +104,7 @@
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Extensions" Version="2.2.0.10" />
     <PackageReference Include="Xamarin.AndroidX.Work.Runtime" Version="2.7.1.1" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.4.0.2" />
+    <PackageReference Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
@@ -132,614 +133,110 @@
     <AndroidResource Include="Resources\mipmap-anydpi-v26\icon.xml" />
     <AndroidResource Include="Resources\mipmap-anydpi-v26\icon_round.xml" />
     <AndroidResource Include="Resources\xml\auto_backup_rules.xml" />
-    <AndroidResource Include="Resources\menu\MainMenu.xml">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
+    <AndroidResource Include="Resources\menu\MainMenu.xml" />
     <AndroidResource Include="Resources\values-night\styles.xml" />
-    <AndroidResource Include="Resources\mipmap-hdpi\icon.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-hdpi\launcher_foreground.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-mdpi\icon.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-mdpi\launcher_foreground.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-xhdpi\icon.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-xhdpi\launcher_foreground.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-xxhdpi\icon.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-xxhdpi\launcher_foreground.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable\splash_screen.xml">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable\GitTrends.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
+    <AndroidResource Include="Resources\values-v31\styles.xml" />
+    <AndroidResource Include="Resources\mipmap-hdpi\icon.png" />
+    <AndroidResource Include="Resources\mipmap-hdpi\launcher_foreground.png" />
+    <AndroidResource Include="Resources\mipmap-mdpi\icon.png" />
+    <AndroidResource Include="Resources\mipmap-mdpi\launcher_foreground.png" />
+    <AndroidResource Include="Resources\mipmap-xhdpi\icon.png" />
+    <AndroidResource Include="Resources\mipmap-xhdpi\launcher_foreground.png" />
+    <AndroidResource Include="Resources\mipmap-xxhdpi\icon.png" />
+    <AndroidResource Include="Resources\mipmap-xxhdpi\launcher_foreground.png" />
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png" />
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
+    <AndroidResource Include="Resources\drawable\splash_screen.xml" />
+    <AndroidResource Include="Resources\drawable\GitTrends.png" />
     <AndroidResource Include="Resources\values-night\colors.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\GitTrends.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-night\GitTrends.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-night-hdpi\GitTrends.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-night-xhdpi\GitTrends.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-night-xxhdpi\GitTrends.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-night-xxxhdpi\GitTrends.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\GitTrends.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\GitTrends.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\GitTrends.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable\icon.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable\DefaultProfileImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\DefaultProfileImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\DefaultProfileImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\DefaultProfileImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\DefaultProfileImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-night\DefaultProfileImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-night-hdpi\DefaultProfileImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-night-xhdpi\DefaultProfileImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-night-xxhdpi\DefaultProfileImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-night-xxxhdpi\DefaultProfileImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\ReferringSitesIcon.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable\ReferringSitesIcon.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\ReferringSitesIcon.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\ReferringSitesIcon.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\ReferringSitesIcon.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable\NotificationsOnboarding.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\NotificationsOnboarding.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\NotificationsOnboarding.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\NotificationsOnboarding.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\NotificationsOnboarding.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable\GitTrendWhite.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\GitTrendsWhite.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\GitTrendWhite.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\GitTrendsWhite.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\GitTrendsWhite.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable\ConnectToGitHubOnboarding.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\ConnectToGitHubOnboarding.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\ConnectToGitHubOnboarding.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\ConnectToGitHubOnboarding.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\ConnectToGitHubOnboarding.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable\GitTrendsGreen.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\GitTrendsGreen.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\GitTrendsGreen.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\GitTrendsGreen.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\GitTrendsGreen.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable\DefaultProfileImageGreen.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\DefaultProfileImageGreen.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable\WelcomeImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\WelcomeImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\WelcomeImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\WelcomeImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\WelcomeImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable\DefaultProfileImageWhite.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\DefaultProfileImageWhite.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\DefaultProfileImageWhite.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\DefaultProfileImageWhite.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\DefaultProfileImageWhite.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\DefaultReferringSiteImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\DefaultReferringSiteImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\DefaultReferringSiteImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\DefaultReferringSiteImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-mdpi\DefaultReferringSiteImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-ldpi\DefaultReferringSiteImage.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\EmptyRepositoriesList.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\EmptyRepositoriesList.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\EmptyRepositoriesList.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\EmptyRepositoriesList.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-mdpi\EmptyRepositoriesList.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-ldpi\EmptyRepositoriesList.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\EmptyReferringSitesList.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\EmptyReferringSitesList.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\EmptyReferringSitesList.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\EmptyReferringSitesList.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-mdpi\EmptyReferringSitesList.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-ldpi\EmptyReferringSitesList.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\values\sizes.xml">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-ldpi\EmptyTrafficChart.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\EmptyTrafficChart.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-mdpi\EmptyTrafficChart.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\EmptyTrafficChart.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\EmptyTrafficChart.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\EmptyTrafficChart.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\EmptyStarChart.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-ldpi\EmptyStarChart.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-mdpi\EmptyStarChart.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\EmptyStarChart.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\EmptyStarChart.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\EmptyStarChart.png">
-      <SubType>
-      </SubType>
-      <Generator>
-      </Generator>
-    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-hdpi\GitTrends.png" />
+    <AndroidResource Include="Resources\drawable-night\GitTrends.png" />
+    <AndroidResource Include="Resources\drawable-night-hdpi\GitTrends.png" />
+    <AndroidResource Include="Resources\drawable-night-xhdpi\GitTrends.png" />
+    <AndroidResource Include="Resources\drawable-night-xxhdpi\GitTrends.png" />
+    <AndroidResource Include="Resources\drawable-night-xxxhdpi\GitTrends.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\GitTrends.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\GitTrends.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\GitTrends.png" />
+    <AndroidResource Include="Resources\drawable\icon.png" />
+    <AndroidResource Include="Resources\drawable\DefaultProfileImage.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Resources\drawable-night\DefaultProfileImage.png" />
+    <AndroidResource Include="Resources\drawable-night-hdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Resources\drawable-night-xhdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Resources\drawable-night-xxhdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Resources\drawable-night-xxxhdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ReferringSitesIcon.png" />
+    <AndroidResource Include="Resources\drawable\ReferringSitesIcon.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ReferringSitesIcon.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ReferringSitesIcon.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ReferringSitesIcon.png" />
+    <AndroidResource Include="Resources\drawable\NotificationsOnboarding.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\NotificationsOnboarding.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\NotificationsOnboarding.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\NotificationsOnboarding.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\NotificationsOnboarding.png" />
+    <AndroidResource Include="Resources\drawable\GitTrendWhite.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\GitTrendsWhite.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\GitTrendWhite.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\GitTrendsWhite.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\GitTrendsWhite.png" />
+    <AndroidResource Include="Resources\drawable\ConnectToGitHubOnboarding.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ConnectToGitHubOnboarding.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ConnectToGitHubOnboarding.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ConnectToGitHubOnboarding.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ConnectToGitHubOnboarding.png" />
+    <AndroidResource Include="Resources\drawable\GitTrendsGreen.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\GitTrendsGreen.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\GitTrendsGreen.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\GitTrendsGreen.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\GitTrendsGreen.png" />
+    <AndroidResource Include="Resources\drawable\DefaultProfileImageGreen.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\DefaultProfileImageGreen.png" />
+    <AndroidResource Include="Resources\drawable\WelcomeImage.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\WelcomeImage.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\WelcomeImage.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\WelcomeImage.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\WelcomeImage.png" />
+    <AndroidResource Include="Resources\drawable\DefaultProfileImageWhite.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\DefaultProfileImageWhite.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\DefaultProfileImageWhite.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\DefaultProfileImageWhite.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\DefaultProfileImageWhite.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\DefaultReferringSiteImage.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\DefaultReferringSiteImage.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\DefaultReferringSiteImage.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\DefaultReferringSiteImage.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\DefaultReferringSiteImage.png" />
+    <AndroidResource Include="Resources\drawable-ldpi\DefaultReferringSiteImage.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\EmptyRepositoriesList.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\EmptyRepositoriesList.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\EmptyRepositoriesList.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\EmptyRepositoriesList.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\EmptyRepositoriesList.png" />
+    <AndroidResource Include="Resources\drawable-ldpi\EmptyRepositoriesList.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\EmptyReferringSitesList.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\EmptyReferringSitesList.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\EmptyReferringSitesList.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\EmptyReferringSitesList.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\EmptyReferringSitesList.png" />
+    <AndroidResource Include="Resources\drawable-ldpi\EmptyReferringSitesList.png" />
+    <AndroidResource Include="Resources\values\sizes.xml" />
+    <AndroidResource Include="Resources\drawable-ldpi\EmptyTrafficChart.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\EmptyTrafficChart.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\EmptyTrafficChart.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\EmptyTrafficChart.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\EmptyTrafficChart.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\EmptyTrafficChart.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\EmptyStarChart.png" />
+    <AndroidResource Include="Resources\drawable-ldpi\EmptyStarChart.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\EmptyStarChart.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\EmptyStarChart.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\EmptyStarChart.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\EmptyStarChart.png" />
     <AndroidResource Include="Resources\drawable-hdpi\EmptyOneStarChart.png">
       <SubType></SubType>
       <Generator></Generator>
@@ -838,6 +335,10 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidEnvironment Include="GarbageCollector.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\values-31\" />
+    <Folder Include="Resources\values-v31\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ProjectExtensions>
