@@ -237,80 +237,25 @@
     <AndroidResource Include="Resources\drawable-xhdpi\EmptyStarChart.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\EmptyStarChart.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\EmptyStarChart.png" />
-    <AndroidResource Include="Resources\drawable-hdpi\EmptyOneStarChart.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-ldpi\EmptyOneStarChart.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-mdpi\EmptyOneStarChart.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\EmptyOneStarChart.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\EmptyOneStarChart.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\EmptyOneStarChart.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\Business.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\Inspectocat.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-ldpi\Business.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-ldpi\Inspectocat.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-mdpi\Business.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-mdpi\Inspectocat.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\Business.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\Inspectocat.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\Business.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxhdpi\Inspectocat.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\Business.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\Inspectocat.png">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-hdpi\EmptyOneStarChart.png" />
+    <AndroidResource Include="Resources\drawable-ldpi\EmptyOneStarChart.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\EmptyOneStarChart.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\EmptyOneStarChart.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\EmptyOneStarChart.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\EmptyOneStarChart.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Business.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Inspectocat.png" />
+    <AndroidResource Include="Resources\drawable-ldpi\Business.png" />
+    <AndroidResource Include="Resources\drawable-ldpi\Inspectocat.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\Business.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\Inspectocat.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Business.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Inspectocat.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Business.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Inspectocat.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\Business.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\Inspectocat.png" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\GitTrends\GitTrends.csproj">
       <Project>{4E7B0399-BAD2-48AF-B7FA-02EC17338FAE}</Project>
@@ -335,10 +280,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidEnvironment Include="GarbageCollector.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\values-31\" />
-    <Folder Include="Resources\values-v31\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ProjectExtensions>
