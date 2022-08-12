@@ -132,19 +132,21 @@ namespace GitTrends.Shared
 			var dailyViewsList = new List<DailyViewsModel>(dailyViews);
 
 			var day = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
-			var maximumDay = DateTimeOffset.UtcNow;
+			var maximumAllowedDay = DateTimeOffset.UtcNow;
 
 			var daysList = dailyViews.Select(x => x.Day.Day).ToList();
 
-			while (day.Day != maximumDay.AddDays(1).Day)
+			while (day.Day != maximumAllowedDay.AddDays(1).Day)
 			{
 				if (!daysList.Contains(day.Day))
-					dailyViewsList.Add(new DailyViewsModel(RemoveHourMinuteSecond(day), 0, 0));
+					dailyViewsList.Add(new DailyViewsModel(day.RemoveHourMinuteSecond(), 0, 0));
 
 				day = day.AddDays(1);
 			}
 
-			return dailyViewsList;
+			return dailyViewsList.Count > 14
+					? dailyViewsList.Skip(dailyViewsList.Count - 14).ToList()
+					: dailyViewsList;
 		}
 
 		static IReadOnlyList<DailyClonesModel> AddMissingDates(in IEnumerable<DailyClonesModel> dailyClones)
@@ -152,22 +154,21 @@ namespace GitTrends.Shared
 			var dailyClonesList = new List<DailyClonesModel>(dailyClones);
 
 			var day = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
-			var maximumDay = DateTimeOffset.UtcNow;
+			var maximumAllowedDay = DateTimeOffset.UtcNow;
 
 			var daysList = dailyClones.Select(x => x.Day.Day).ToList();
 
-			while (day.Day != maximumDay.AddDays(1).Day)
+			while (day.Day != maximumAllowedDay.AddDays(1).Day)
 			{
 				if (!daysList.Contains(day.Day))
-					dailyClonesList.Add(new DailyClonesModel(RemoveHourMinuteSecond(day), 0, 0));
+					dailyClonesList.Add(new DailyClonesModel(day.RemoveHourMinuteSecond(), 0, 0));
 
 				day = day.AddDays(1);
 			}
 
-			return dailyClonesList;
+			return dailyClonesList.Count > 14
+					? dailyClonesList.Skip(dailyClonesList.Count - 14).ToList()
+					: dailyClonesList;
 		}
-
-
-		static DateTimeOffset RemoveHourMinuteSecond(in DateTimeOffset date) => new(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
 	}
 }

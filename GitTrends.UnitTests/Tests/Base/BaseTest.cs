@@ -99,7 +99,7 @@ namespace GitTrends.UnitTests
 				dailyClonesList.Add(new DailyClonesModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
 			}
 
-			var starredAt = DemoDataConstants.GenerateStarredAtDates(DemoDataConstants.GetRandomNumber()).ToList();
+			var starredAt = DemoDataConstants.GenerateStarredAtDates(DemoDataConstants.GetRandomNumber(1)).ToList();
 
 			return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
 														DemoUserConstants.Alias, gitTrendsAvatarUrl,

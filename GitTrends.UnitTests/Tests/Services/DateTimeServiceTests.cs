@@ -180,5 +180,25 @@ namespace GitTrends.UnitTests
 			Assert.AreEqual(expectedDate.Month, minimumDailyClonesModel.Month);
 			Assert.AreEqual(expectedDate.Day, minimumDailyClonesModel.Day);
 		}
+
+		[Test]
+		public void EnsureHourMinutesSecondsRemoved()
+		{
+			// Arrange
+			DateTimeOffset dateTimeOffset_Initial, dateTimeOffset_Final;
+			dateTimeOffset_Initial = DateTimeOffset.UtcNow;
+
+			// Act
+			dateTimeOffset_Final = dateTimeOffset_Initial.RemoveHourMinuteSecond();
+
+			// Asset
+			Assert.AreEqual(dateTimeOffset_Initial.Year, dateTimeOffset_Final.Year);
+			Assert.AreEqual(dateTimeOffset_Initial.Month, dateTimeOffset_Final.Month);
+			Assert.AreEqual(dateTimeOffset_Initial.Day, dateTimeOffset_Final.Day);
+			Assert.AreEqual(0, dateTimeOffset_Final.Hour);
+			Assert.AreEqual(0, dateTimeOffset_Final.Minute);
+			Assert.AreEqual(0, dateTimeOffset_Final.Second);
+			Assert.AreEqual(0, dateTimeOffset_Final.Millisecond);
+		}
 	}
 }

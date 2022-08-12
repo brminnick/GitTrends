@@ -15,7 +15,7 @@ namespace GitTrends.Mobile.Common
 
 		static readonly Random _random = new Random((int)DateTime.Now.Ticks);
 
-		public static int GetRandomNumber() => _random.Next(0, MaximumRandomNumber);
+		public static int GetRandomNumber(int minimum = 0) => _random.Next(minimum, MaximumRandomNumber);
 
 		public static string GetRandomText(int? length = null)
 		{

@@ -453,10 +453,10 @@ namespace GitTrends.UnitTests
 
 			Assert.AreEqual(repositoryDatabaseCount_Initial, repositoryDatabaseCount_Final);
 
-			Assert.Greater(expiredRepository_Initial.DailyClonesList.Sum(x => x.TotalClones), 1);
-			Assert.Greater(expiredRepository_Initial.DailyClonesList.Sum(x => x.TotalUniqueClones), 1);
-			Assert.Greater(expiredRepository_Initial.DailyViewsList.Sum(x => x.TotalViews), 1);
-			Assert.Greater(expiredRepository_Initial.DailyViewsList.Sum(x => x.TotalUniqueViews), 1);
+			Assert.AreEqual(0, expiredRepository_Initial.DailyClonesList.Sum(x => x.TotalClones));
+			Assert.AreEqual(0, expiredRepository_Initial.DailyClonesList.Sum(x => x.TotalUniqueClones));
+			Assert.AreEqual(0, expiredRepository_Initial.DailyViewsList.Sum(x => x.TotalViews));
+			Assert.AreEqual(0, expiredRepository_Initial.DailyViewsList.Sum(x => x.TotalUniqueViews));
 
 			Assert.IsNull(expiredRepository_Final.DailyClonesList);
 			Assert.IsNull(expiredRepository_Final.DailyViewsList);
