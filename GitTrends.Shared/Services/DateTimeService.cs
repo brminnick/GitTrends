@@ -53,5 +53,7 @@ namespace GitTrends.Shared
 
 			return incompleteStarredAtList;
 		}
+
+		public static DateTimeOffset RemoveHourMinuteSecond(this DateTimeOffset date) => new(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
 	}
 }

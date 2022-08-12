@@ -72,18 +72,30 @@ namespace GitTrends.UnitTests
 
 			Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarCount, dailyStarsList_Final.Select(x => x.TotalStars).Distinct().Count());
 
-			for (int i = 0; i < dailyViewsList_Final.Count; i++)
+			foreach (var dailyViewsModel_Final in dailyViewsList_Final)
 			{
-				Assert.AreEqual(repository_RepositorySavedToDatabaseResult.DailyViewsList?[i].LocalDay, dailyViewsList_Final[i].LocalDay);
-				Assert.AreEqual(repository_RepositorySavedToDatabaseResult.DailyViewsList?[i].TotalViews, dailyViewsList_Final[i].TotalViews);
-				Assert.AreEqual(repository_RepositorySavedToDatabaseResult.DailyViewsList?[i].TotalUniqueViews, dailyViewsList_Final[i].TotalUniqueViews);
+				var dailyViewsModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
+														.DailyViewsList?.FirstOrDefault(x => x.Day == dailyViewsModel_Final.Day);
+
+				if (dailyViewsModel_SavedToDatabase is null)
+					continue;
+
+				Assert.AreEqual(dailyViewsModel_SavedToDatabase.LocalDay, dailyViewsModel_Final.LocalDay);
+				Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalViews, dailyViewsModel_Final.TotalViews);
+				Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalUniqueViews, dailyViewsModel_Final.TotalUniqueViews);
 			}
 
-			for (int i = 0; i < dailyClonesList_Final.Count; i++)
+			foreach (var dailyClonesModel_Final in dailyClonesList_Final)
 			{
-				Assert.AreEqual(repository_RepositorySavedToDatabaseResult.DailyClonesList?[i].LocalDay, dailyClonesList_Final[i].LocalDay);
-				Assert.AreEqual(repository_RepositorySavedToDatabaseResult.DailyClonesList?[i].TotalClones, dailyClonesList_Final[i].TotalClones);
-				Assert.AreEqual(repository_RepositorySavedToDatabaseResult.DailyClonesList?[i].TotalUniqueClones, dailyClonesList_Final[i].TotalUniqueClones);
+				var dailyClonesModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
+														.DailyClonesList?.FirstOrDefault(x => x.Day == dailyClonesModel_Final.Day);
+
+				if (dailyClonesModel_SavedToDatabase is null)
+					continue;
+
+				Assert.AreEqual(dailyClonesModel_SavedToDatabase.LocalDay, dailyClonesModel_Final.LocalDay);
+				Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalClones, dailyClonesModel_Final.TotalClones);
+				Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalUniqueClones, dailyClonesModel_Final.TotalUniqueClones);
 			}
 
 			void HandleRepositorySavedToDatabase(object? sender, Repository e)
@@ -143,18 +155,30 @@ namespace GitTrends.UnitTests
 
 			Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarredAt?.Count, dailyStarsList_Final.Select(x => x.TotalStars).Distinct().Count());
 
-			for (int i = 0; i < dailyViewsList_Final.Count; i++)
+			foreach(var dailyViewsModel_Final in dailyViewsList_Final)
 			{
-				Assert.AreEqual(repository_RepositorySavedToDatabaseResult.DailyViewsList?[i].LocalDay, dailyViewsList_Final[i].LocalDay);
-				Assert.AreEqual(repository_RepositorySavedToDatabaseResult.DailyViewsList?[i].TotalViews, dailyViewsList_Final[i].TotalViews);
-				Assert.AreEqual(repository_RepositorySavedToDatabaseResult.DailyViewsList?[i].TotalUniqueViews, dailyViewsList_Final[i].TotalUniqueViews);
+				var dailyViewsModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
+														.DailyViewsList?.FirstOrDefault(x => x.Day == dailyViewsModel_Final.Day);
+
+				if (dailyViewsModel_SavedToDatabase is null)
+					continue;
+
+				Assert.AreEqual(dailyViewsModel_SavedToDatabase.LocalDay, dailyViewsModel_Final.LocalDay);
+				Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalViews, dailyViewsModel_Final.TotalViews);
+				Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalUniqueViews, dailyViewsModel_Final.TotalUniqueViews);
 			}
 
-			for (int i = 0; i < dailyClonesList_Final.Count; i++)
+			foreach (var dailyClonesModel_Final in dailyClonesList_Final)
 			{
-				Assert.AreEqual(repository_RepositorySavedToDatabaseResult.DailyClonesList?[i].LocalDay, dailyClonesList_Final[i].LocalDay);
-				Assert.AreEqual(repository_RepositorySavedToDatabaseResult.DailyClonesList?[i].TotalClones, dailyClonesList_Final[i].TotalClones);
-				Assert.AreEqual(repository_RepositorySavedToDatabaseResult.DailyClonesList?[i].TotalUniqueClones, dailyClonesList_Final[i].TotalUniqueClones);
+				var dailyClonesModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
+														.DailyClonesList?.FirstOrDefault(x => x.Day == dailyClonesModel_Final.Day);
+
+				if (dailyClonesModel_SavedToDatabase is null)
+					continue;
+
+				Assert.AreEqual(dailyClonesModel_SavedToDatabase.LocalDay, dailyClonesModel_Final.LocalDay);
+				Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalClones, dailyClonesModel_Final.TotalClones);
+				Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalUniqueClones, dailyClonesModel_Final.TotalUniqueClones);
 			}
 
 			void HandleRepositorySavedToDatabase(object? sender, Repository e)
