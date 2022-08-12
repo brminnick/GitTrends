@@ -135,7 +135,6 @@
     <AndroidResource Include="Resources\xml\auto_backup_rules.xml" />
     <AndroidResource Include="Resources\menu\MainMenu.xml" />
     <AndroidResource Include="Resources\values-night\styles.xml" />
-    <AndroidResource Include="Resources\values-v31\styles.xml" />
     <AndroidResource Include="Resources\mipmap-hdpi\icon.png" />
     <AndroidResource Include="Resources\mipmap-hdpi\launcher_foreground.png" />
     <AndroidResource Include="Resources\mipmap-mdpi\icon.png" />
@@ -255,6 +254,8 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\Inspectocat.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\Business.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\Inspectocat.png" />
+    <AndroidResource Include="Resources\values\splash_theme.xml" />
+    <AndroidResource Include="Resources\values-night\splash_theme.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GitTrends\GitTrends.csproj">
