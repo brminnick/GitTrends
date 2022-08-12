@@ -142,7 +142,7 @@ namespace GitTrends.iOS
             {
                 Element.SizeChanged -= HandleSizeChanged;
 
-                if (NavigationController.NavigationBar.PrefersLargeTitles is true)
+                if (NavigationController?.NavigationBar.PrefersLargeTitles is true)
                 {
                     var statusBarSize = UIApplication.SharedApplication.StatusBarFrame.Size;
                     var statusBarHeight = Math.Min(statusBarSize.Height, statusBarSize.Width);
