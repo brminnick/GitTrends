@@ -274,7 +274,6 @@
   <ItemGroup>
     <LinkDescription Include="linker.xml" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <GoogleServicesJson Include="google-services.json" />
   </ItemGroup>
