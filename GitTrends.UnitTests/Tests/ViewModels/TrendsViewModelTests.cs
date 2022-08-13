@@ -155,7 +155,7 @@ namespace GitTrends.UnitTests
 
 			Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarredAt?.Count, dailyStarsList_Final.Select(x => x.TotalStars).Distinct().Count());
 
-			foreach(var dailyViewsModel_Final in dailyViewsList_Final)
+			foreach (var dailyViewsModel_Final in dailyViewsList_Final)
 			{
 				var dailyViewsModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
 														.DailyViewsList?.FirstOrDefault(x => x.Day == dailyViewsModel_Final.Day);
