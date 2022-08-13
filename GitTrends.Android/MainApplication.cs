@@ -23,6 +23,7 @@ namespace GitTrends.Droid
 		public override void OnCreate()
 		{
 			this.ShinyOnCreate(new ShinyStartup(new DeviceNotificationsService_Android()));
+
 			base.OnCreate();
 
 			AndroidOptions.DefaultSmallIconResourceName = nameof(Resource.Drawable.icon);
