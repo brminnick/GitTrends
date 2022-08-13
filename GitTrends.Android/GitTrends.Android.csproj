@@ -180,7 +180,7 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\NotificationsOnboarding.png" />
     <AndroidResource Include="Resources\drawable\GitTrendsWhite.png" />
     <AndroidResource Include="Resources\drawable-hdpi\GitTrendsWhite.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\GitTrendWhite.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\GitTrendsWhite.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\GitTrendsWhite.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\GitTrendsWhite.png" />
     <AndroidResource Include="Resources\drawable\ConnectToGitHubOnboarding.png" />
