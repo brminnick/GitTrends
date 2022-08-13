@@ -104,7 +104,6 @@
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Extensions" Version="2.2.0.10" />
     <PackageReference Include="Xamarin.AndroidX.Work.Runtime" Version="2.7.1.1" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.4.0.2" />
-    <PackageReference Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
@@ -254,8 +253,18 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\Inspectocat.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\Business.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\Inspectocat.png" />
-    <AndroidResource Include="Resources\values\splash_theme.xml" />
-    <AndroidResource Include="Resources\values-night\splash_theme.xml" />
+    <AndroidResource Include="Resources\drawable-v26\splashscreenanimatedicon.xml" />
+    <AndroidResource Include="Resources\drawable\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Resources\drawable-night\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Resources\drawable-night-hdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Resources\drawable-night-xhdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Resources\drawable-night-xxhdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Resources\drawable-night-xxxhdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\splashscreenanimatedicon.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GitTrends\GitTrends.csproj">

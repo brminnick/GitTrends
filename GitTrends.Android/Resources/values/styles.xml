@@ -24,10 +24,10 @@
 	<style name="AppCompatDialogStyle" parent="Theme.AppCompat.Light.Dialog">
 		<item name="colorAccent">#F97B4F</item>
 	</style>
-	<style name="LaunchTheme" parent="Theme.SplashScreen">
-		<item name="windowSplashScreenBackground">@color/splash_screen_background</item>
-		<item name="windowSplashScreenAnimationDuration">300</item>
-		<item name="windowSplashScreenAnimatedIcon">@drawable/gittrends</item>
-		<item name="postSplashScreenTheme">@style/MainTheme</item>
+	<style name="LaunchTheme" parent="Theme.AppCompat">
+		<item name="android:windowBackground">@drawable/splash_screen</item>
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowSplashScreenBackground">@color/splash_screen_background</item>
+		<item name="android:windowSplashScreenAnimatedIcon">@drawable/splashscreenanimatedicon</item>
 	</style>
 </resources>
