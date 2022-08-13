@@ -28,12 +28,12 @@ namespace GitTrends.Droid
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
-			AndroidX.Core.SplashScreen.SplashScreen.InstallSplashScreen(this);
-
 			TabLayoutResource = Resource.Layout.Tabbar;
 			ToolbarResource = Resource.Layout.Toolbar;
 
 			base.SetTheme(Resource.Style.MainTheme);
+
+			AndroidX.Core.SplashScreen.SplashScreen.InstallSplashScreen(this);
 			base.OnCreate(savedInstanceState);
 
 			Forms.Init(this, savedInstanceState);
