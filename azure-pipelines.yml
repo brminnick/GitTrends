@@ -81,12 +81,10 @@ jobs:
           packageType: 'sdk'
           version: '$(NET_VERSION)'
 
-      - task: VSBuild@1
+      - task: CmdLine@2
         displayName: 'Build iOS App'
         inputs:
-          solution: '$(PathToiOSAppCsproj)'
-          configuration: 'Release'
-          msbuildArgs: '/restore'
+          script: 'msbuild $(PathToiOSAppCsproj) /configuration:Release -t:build,restore'
 
   - job: Build_Android_App
     displayName: Build Android App
