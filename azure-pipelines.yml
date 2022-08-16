@@ -84,7 +84,7 @@ jobs:
       - task: CmdLine@2
         displayName: 'Build iOS App'
         inputs:
-          script: 'msbuild $(PathToiOSAppCsproj) /configuration:Release -t:build,restore'
+          script: 'msbuild $(PathToiOSAppCsproj) /property:Configuration=Release /t:restore;build'
 
   - job: Build_Android_App
     displayName: Build Android App
