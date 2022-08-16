@@ -72,7 +72,7 @@ jobs:
   - job: Build_iOS_App
     displayName: Build iOS App
     pool: 
-      vmImage: windows-latest
+      vmImage: macos-12
 
     steps:      
       - task: UseDotNet@2
