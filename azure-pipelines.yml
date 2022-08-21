@@ -81,12 +81,11 @@ jobs:
           packageType: 'sdk'
           version: '$(NET_VERSION)'
 
-      - task: CmdLine@2
-        displayName: 'Build iOS App'
+      - task: InstallAppleProvisioningProfile@1
         inputs:
-          script: |
-            msbuild $(PathToiOSAppCsproj) /property:Configuration=Release /restore
-            msbuild $(PathToiOSAppCsproj) /property:Configuration=Release
+          provisioningProfileLocation: 'secureFiles'
+          provProfileSecureFile: GitTrends_Development_Profile.mobileprovision
+          removeProfile: true
 
   - job: Build_Android_App
     displayName: Build Android App
