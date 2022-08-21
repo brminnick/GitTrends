@@ -87,6 +87,13 @@ jobs:
           provProfileSecureFile: GitTrends_Development_Profile.mobileprovision
           removeProfile: true
 
+      - task: CmdLine@2
+        displayName: 'Build iOS App'
+        inputs:
+          script: |
+            msbuild $(PathToiOSAppCsproj) /property:Configuration=Release /restore
+            msbuild $(PathToiOSAppCsproj) /property:Configuration=Release
+
   - job: Build_Android_App
     displayName: Build Android App
     pool: 
