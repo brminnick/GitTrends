@@ -42,7 +42,7 @@ namespace GitTrends
 
 				Children.Add(new StatisticsLabel(automationId)
 								.Row(Row.Number)
-								.Bind<Label, long?, string>(Label.TextProperty, bindingPath, BindingMode.OneTime, convert: static  number => number.HasValue ? number.Value.ToAbbreviatedText() : "-"));
+								.Bind<Label, long?, string>(Label.TextProperty, bindingPath, BindingMode.OneTime, convert: static number => number.HasValue ? number.Value.ToAbbreviatedText() : "-"));
 			}
 
 			enum Row { Title, Number }
