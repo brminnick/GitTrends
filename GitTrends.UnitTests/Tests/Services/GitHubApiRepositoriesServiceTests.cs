@@ -250,7 +250,7 @@ namespace GitTrends.UnitTests
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
 			//Act
-			await foreach (var repository in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
+			await foreach (var repository in gitHubGraphQLApiService.GetRepositories("GitTrendsApp", CancellationToken.None).ConfigureAwait(false))
 			{
 				repositories_NoViewsClonesStarsData.Add(repository);
 			}
