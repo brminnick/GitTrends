@@ -154,6 +154,18 @@ namespace GitTrends
 			}
 		}
 
+		static IEnumerable<DailyStarsModel> GetDailyStarsList(IReadOnlyList<DateTimeOffset> starredAtDates)
+		{
+			int totalStars = 0;
+
+			foreach (var starDate in starredAtDates)
+				yield return new DailyStarsModel(++totalStars, starDate);
+
+			//Ensure chart includes todays date
+			if (starredAtDates.Any() && starredAtDates.Max().LocalDateTime.DayOfYear != DateTimeOffset.UtcNow.LocalDateTime.DayOfYear)
+				yield return new DailyStarsModel(totalStars, DateTimeOffset.UtcNow);
+		}
+
 		[RelayCommand]
 		async Task FetchData((Repository Repository, CancellationToken CancellationToken) parameter)
 		{
@@ -372,19 +384,6 @@ namespace GitTrends
 			}
 
 			return (repositoryStars, repositoryViews, repositoryClones);
-		}
-
-
-		IEnumerable<DailyStarsModel> GetDailyStarsList(IReadOnlyList<DateTimeOffset> starredAtDates)
-		{
-			int totalStars = 0;
-
-			foreach (var starDate in starredAtDates)
-				yield return new DailyStarsModel(++totalStars, starDate);
-
-			//Ensure chart includes todays date
-			if (starredAtDates.Any() && starredAtDates.Max().LocalDateTime.DayOfYear != DateTimeOffset.UtcNow.LocalDateTime.DayOfYear)
-				yield return new DailyStarsModel(totalStars, DateTimeOffset.UtcNow);
 		}
 
 		async Task<IReadOnlyList<DateTimeOffset>> GetStarsData(Repository repository, CancellationToken cancellationToken)

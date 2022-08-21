@@ -118,7 +118,7 @@ namespace GitTrends
 		public void Initialize()
 		{
 			//Required to ensure the service is instantiated in the Dependency Injection Container and event in the constructor are subscribed
-			var temp = DateTime.UtcNow;
+			var temp = QueuedJobs;
 		}
 
 		public bool TryScheduleRetryOrganizationsRepositories(string organizationName, TimeSpan? delay = null)

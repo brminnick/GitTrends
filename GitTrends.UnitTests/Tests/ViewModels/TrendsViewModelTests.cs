@@ -37,7 +37,7 @@ namespace GitTrends.UnitTests
 
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
-			var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None);
+			var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 			await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(new[] { repository }, CancellationToken.None).ConfigureAwait(false))
 			{
 				repository = completedReposiory;
@@ -204,7 +204,7 @@ namespace GitTrends.UnitTests
 			//Act
 			wasTryScheduleRetryRepositoriesStarsSuccessful = backgroundFetchService.TryScheduleRetryRepositoriesStars(repository_Initial);
 
-			await FetchDataCommandTest_AuthenticatedUser_NoData();
+			await FetchDataCommandTest_AuthenticatedUser_NoData().ConfigureAwait(false);
 
 			var isTryScheduleRetryRepositoriesStarsRunningAfterTest = backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesStarsIdentifier(repository_Initial));
 
@@ -228,9 +228,9 @@ namespace GitTrends.UnitTests
 			var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 			repository = repository with { StarredAt = new List<DateTimeOffset> { new DateTimeOffset(2008, 02, 08, 0, 0, 0, TimeSpan.Zero) } };
 
-			await repositoryDatabase.SaveRepository(repository);
+			await repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
 
-			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None));
+			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
 
 			//Assert
 			Assert.AreEqual(repository.StarCount, trendsViewModel.TotalStars);
@@ -259,9 +259,9 @@ namespace GitTrends.UnitTests
 
 			//Act
 			var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
-			await repositoryDatabase.SaveRepository(repository);
+			await repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
 
-			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None));
+			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
 
 			//Assert
 			Assert.AreEqual(repository.StarCount, trendsViewModel.TotalStars);
@@ -321,7 +321,7 @@ namespace GitTrends.UnitTests
 			//Act
 			wasTryScheduleRetryRepositoriesViewsClonesStarsSuccessful = backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository_Initial);
 
-			await FetchDataCommandTest_AuthenticatedUser_NoData();
+			await FetchDataCommandTest_AuthenticatedUser_NoData().ConfigureAwait(false);
 
 			var isTryScheduleRetryRepositoriesViewsClonesStarsRunningAfterTest = backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository_Initial));
 
@@ -375,7 +375,7 @@ namespace GitTrends.UnitTests
 
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
-			repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None);
+			repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 
 			if (shouldIncludeViewsClonesData)
 			{

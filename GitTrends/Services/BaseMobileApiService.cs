@@ -18,7 +18,7 @@ namespace GitTrends
 
 		protected IAnalyticsService AnalyticsService { get; }
 
-		protected string GetGitHubBearerTokenHeader(GitHubToken token) => token.IsEmpty() ? string.Empty : $"{token.TokenType} {token.AccessToken}";
+		protected static string GetGitHubBearerTokenHeader(GitHubToken token) => token.IsEmpty() ? string.Empty : $"{token.TokenType} {token.AccessToken}";
 
 		protected async Task<T> AttemptAndRetry_Mobile<T>(Func<Task<T>> action, CancellationToken cancellationToken, int numRetries = 3, [CallerMemberName] string callerName = "")
 		{

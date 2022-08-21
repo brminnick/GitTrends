@@ -1,1 +1,4 @@
-﻿public enum TrendsChartOption { All, NoUniques, JustUniques }
+﻿namespace GitTrends.Mobile.Common
+{
+	public enum TrendsChartOption { All, NoUniques, JustUniques }
+}

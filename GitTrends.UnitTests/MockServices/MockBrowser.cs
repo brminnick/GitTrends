@@ -28,7 +28,7 @@ namespace GitTrends.UnitTests
 
 		public async Task<bool> OpenAsync(Uri uri, BrowserLaunchOptions options)
 		{
-			await Task.Delay(TimeSpan.FromSeconds(1));
+			await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
 
 			OnOpenAsyncExecuted(uri);
 

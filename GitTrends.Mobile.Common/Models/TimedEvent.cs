@@ -4,7 +4,7 @@ using GitTrends.Shared;
 
 namespace GitTrends.Mobile.Common
 {
-	public class TimedEvent : ITimedEvent
+	public sealed class TimedEvent : ITimedEvent
 	{
 		readonly Stopwatch _stopwatch = new();
 		readonly string _trackIdentifier;

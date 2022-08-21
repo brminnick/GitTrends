@@ -23,7 +23,7 @@ namespace GitTrends.iOS
 
         [Preserve, Export(BackdoorMethodConstants.GetVisibleCollection + ":")]
         public NSString GetVisibleRepositoryList(NSString noValue) =>
-            SerializeObject(UITestBackdoorService.GetVisibleCollection());
+            SerializeObject(GitTrends.UITestsBackdoorService.GetVisibleCollection());
 
         [Preserve, Export(BackdoorMethodConstants.GetCurrentTrendsChartOption + ":")]
         public NSString GetCurrentTrendsChartOption(NSString noValue) =>
@@ -31,15 +31,15 @@ namespace GitTrends.iOS
 
         [Preserve, Export(BackdoorMethodConstants.IsViewsClonesChartSeriesVisible + ":")]
         public NSString IsViewsClonesChartSeriesVisible(NSString seriesLabel) =>
-            SerializeObject(UITestBackdoorService.IsViewsClonesChartSeriesVisible(seriesLabel.ToString()));
+            SerializeObject(GitTrends.UITestsBackdoorService.IsViewsClonesChartSeriesVisible(seriesLabel.ToString()));
 
         [Preserve, Export(BackdoorMethodConstants.GetCurrentOnboardingPageNumber + ":")]
         public NSString GetCurrentOnboardingPageNumber(NSString noValue) =>
-            SerializeObject(UITestBackdoorService.GetCurrentOnboardingPageNumber());
+            SerializeObject(GitTrends.UITestsBackdoorService.GetCurrentOnboardingPageNumber());
 
         [Preserve, Export(BackdoorMethodConstants.GetCurrentTrendsPageNumber + ":")]
         public NSString GetCurrentTrendsPageNumber(NSString noValue) =>
-            SerializeObject(UITestBackdoorService.GetCurrentTrendsPageNumber());
+            SerializeObject(GitTrends.UITestsBackdoorService.GetCurrentTrendsPageNumber());
 
         [Preserve, Export(BackdoorMethodConstants.PopPage + ":")]
         public async void PopPage(NSString noValue) =>
@@ -58,7 +58,7 @@ namespace GitTrends.iOS
 
         [Preserve, Export(BackdoorMethodConstants.GetReviewRequestAppStoreTitle + ":")]
         public NSString GetReviewRequestAppStoreTitle(NSString noValue) =>
-           SerializeObject(UITestBackdoorService.GetReviewRequestAppStoreTitle());
+           SerializeObject(GitTrends.UITestsBackdoorService.GetReviewRequestAppStoreTitle());
 
         [Preserve, Export(BackdoorMethodConstants.AreNotificationsEnabled + ":")]
         public NSString AreNotificationsEnabled(NSString noValue) =>
@@ -86,11 +86,11 @@ namespace GitTrends.iOS
 
         [Preserve, Export(BackdoorMethodConstants.GetContributorsCollection + ":")]
         public NSString GetContributorsCollection(NSString noValue) =>
-            SerializeObject(UITestBackdoorService.GetVisibleContributors());
+            SerializeObject(GitTrends.UITestsBackdoorService.GetVisibleContributors());
 
         [Preserve, Export(BackdoorMethodConstants.GetLibrariesCollection + ":")]
         public NSString GetLibrariesCollection(NSString noValue) =>
-            SerializeObject(UITestBackdoorService.GetVisibleLibraries());
+            SerializeObject(GitTrends.UITestsBackdoorService.GetVisibleLibraries());
 
         static NSString SerializeObject<T>(T value) => new (Newtonsoft.Json.JsonConvert.SerializeObject(value));
     }

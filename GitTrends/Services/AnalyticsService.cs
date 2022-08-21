@@ -51,7 +51,7 @@ namespace GitTrends
 		}
 
 		[Conditional("DEBUG")]
-		void PrintException(Exception exception, string callerMemberName, int lineNumber, string filePath, IDictionary<string, string>? properties = null)
+		static void PrintException(Exception exception, string callerMemberName, int lineNumber, string filePath, IDictionary<string, string>? properties = null)
 		{
 			var fileName = System.IO.Path.GetFileName(filePath);
 

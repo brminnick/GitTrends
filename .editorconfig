@@ -121,3 +121,15 @@ dotnet_style_require_accessibility_modifiers = omit_if_default:error
 
 # CA1063: Implement IDisposable Correctly
 dotnet_diagnostic.CA1063.severity = error
+
+# CA1707: Remove the underscores from member name
+dotnet_diagnostic.CA1707.severity = none
+
+# CA1305: The behavior of 'string.Format(string, object)' could vary based on the current user's locale settings. Replace this call
+dotnet_diagnostic.CA1305.severity = info
+
+# CA1822: Member does not access instance data and can be marked as static
+dotnet_diagnostic.CA1822.severity = error
+
+# CA1050: Declar types in namespaces
+dotnet_diagnostic.CA1050.severity = error

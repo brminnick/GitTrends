@@ -8,7 +8,7 @@ namespace GitTrends.UnitTests
 	{
 		readonly static Lazy<Hashtable> _hashtableHolder = new();
 
-		Hashtable Hashtable => _hashtableHolder.Value;
+		static Hashtable Hashtable => _hashtableHolder.Value;
 
 		public void Clear() => Hashtable.Clear();
 
@@ -78,7 +78,7 @@ namespace GitTrends.UnitTests
 
 		public void Set(string key, DateTime value, string sharedName) => throw new NotImplementedException();
 
-		T? Get<T>(string key, T defaultValue)
+		static T? Get<T>(string key, T defaultValue)
 		{
 			if (Hashtable.ContainsKey(key))
 				return (T?)Hashtable[key];
@@ -86,7 +86,7 @@ namespace GitTrends.UnitTests
 			return defaultValue;
 		}
 
-		void Set<T>(string key, T value)
+		static void Set<T>(string key, T value)
 		{
 			if (Hashtable.ContainsKey(key))
 				Hashtable[key] = value;
