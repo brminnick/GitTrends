@@ -82,12 +82,14 @@ jobs:
           version: '$(NET_VERSION)'
 
       - task: InstallAppleCertificate@2
+        displayName: 'Install iOS Signing Certificate'
         inputs:
           certSecureFile: Certificates.p12
           certPwd: $(AppleCertificatePassword)
           deleteCert: true
 
       - task: InstallAppleProvisioningProfile@1
+        displayName: 'Install iOS Provisioning Profile'
         inputs:
           provisioningProfileLocation: 'secureFiles'
           provProfileSecureFile: GitTrends_Development_Profile.mobileprovision
