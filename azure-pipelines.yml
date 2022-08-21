@@ -81,6 +81,12 @@ jobs:
           packageType: 'sdk'
           version: '$(NET_VERSION)'
 
+      - task: InstallAppleCertificate@2
+        inputs:
+          certSecureFile: Certificates.p12
+          certPwd: $(AppleCertificatePassword)
+          deleteCert: true
+
       - task: InstallAppleProvisioningProfile@1
         inputs:
           provisioningProfileLocation: 'secureFiles'
