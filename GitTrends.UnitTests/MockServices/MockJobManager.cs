@@ -59,7 +59,7 @@ namespace GitTrends.UnitTests
 
 			try
 			{
-				await job.Run(jobInfo, cancelToken);
+				await job.Run(jobInfo, cancelToken).ConfigureAwait(false);
 			}
 			catch (Exception e)
 			{
@@ -77,7 +77,7 @@ namespace GitTrends.UnitTests
 
 				foreach (var job in _jobDictionary)
 				{
-					var result = await Run(job.Key, CancellationToken.None);
+					var result = await Run(job.Key, CancellationToken.None).ConfigureAwait(false);
 					resultList.Add(result);
 				}
 
@@ -85,7 +85,7 @@ namespace GitTrends.UnitTests
 			}
 			else
 			{
-				return await Task.WhenAll(_jobDictionary.Select(x => Run(x.Key)));
+				return await Task.WhenAll(_jobDictionary.Select(x => Run(x.Key))).ConfigureAwait(false);
 			}
 		}
 

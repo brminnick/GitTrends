@@ -14,7 +14,7 @@ using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-	public class SplashScreenPage : BaseContentPage
+	public sealed class SplashScreenPage : BaseContentPage, IDisposable
 	{
 		readonly IEnumerator<string> _statusMessageEnumerator = new List<string>
 		{
@@ -71,6 +71,8 @@ namespace GitTrends
 		}
 
 		enum Row { Image, Text, BottomPadding }
+
+		public void Dispose() => _animationCancellationToken.Dispose();
 
 		protected override async void OnAppearing()
 		{
@@ -247,7 +249,7 @@ namespace GitTrends
 					}
 				});
 			}
-		}
+		}		
 
 		class GitTrendsImage : Image
 		{

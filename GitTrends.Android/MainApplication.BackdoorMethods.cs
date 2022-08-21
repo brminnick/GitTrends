@@ -22,7 +22,7 @@ namespace GitTrends.Droid
 
         [Preserve, Export(BackdoorMethodConstants.GetVisibleCollection)]
         public string GetVisibleCollection() =>
-            SerializeObject(UITestBackdoorService.GetVisibleCollection());
+            SerializeObject(GitTrends.UITestsBackdoorService.GetVisibleCollection());
 
         [Preserve, Export(BackdoorMethodConstants.GetCurrentTrendsChartOption)]
         public string GetCurrentTrendsChartOption() =>
@@ -30,15 +30,15 @@ namespace GitTrends.Droid
 
         [Preserve, Export(BackdoorMethodConstants.IsViewsClonesChartSeriesVisible)]
         public bool IsViewsClonesChartSeriesVisible(string seriesLabel) =>
-            UITestBackdoorService.IsViewsClonesChartSeriesVisible(seriesLabel);
+			GitTrends.UITestsBackdoorService.IsViewsClonesChartSeriesVisible(seriesLabel);
 
         [Preserve, Export(BackdoorMethodConstants.GetCurrentOnboardingPageNumber)]
         public string GetCurrentOnboardingPageNumber() =>
-            SerializeObject(UITestBackdoorService.GetCurrentOnboardingPageNumber());
+            SerializeObject(GitTrends.UITestsBackdoorService.GetCurrentOnboardingPageNumber());
 
         [Preserve, Export(BackdoorMethodConstants.GetCurrentTrendsPageNumber)]
         public string GetCurrentTrendsPageNumber() =>
-            SerializeObject(UITestBackdoorService.GetCurrentTrendsPageNumber());
+            SerializeObject(GitTrends.UITestsBackdoorService.GetCurrentTrendsPageNumber());
 
         [Preserve, Export(BackdoorMethodConstants.PopPage)]
         public async void PopPage() => await UITestBackdoorService.PopPage().ConfigureAwait(false);
@@ -53,7 +53,7 @@ namespace GitTrends.Droid
         public void TriggerReviewRequest() => UITestBackdoorService.TriggerReviewRequest();
 
         [Preserve, Export(BackdoorMethodConstants.GetReviewRequestAppStoreTitle)]
-        public string GetReviewRequestAppStoreTitle() => SerializeObject(UITestBackdoorService.GetReviewRequestAppStoreTitle());
+        public string GetReviewRequestAppStoreTitle() => SerializeObject(GitTrends.UITestsBackdoorService.GetReviewRequestAppStoreTitle());
 
         [Preserve, Export(BackdoorMethodConstants.AreNotificationsEnabled)]
         public bool AreNotificationsEnabled() => UITestBackdoorService.AreNotificationsEnabled().GetAwaiter().GetResult();
@@ -74,10 +74,10 @@ namespace GitTrends.Droid
         public string GetPreferredLanguage() => SerializeObject(UITestBackdoorService.GetPreferredLanguage());
 
         [Preserve, Export(BackdoorMethodConstants.GetContributorsCollection)]
-        public string GetContributorsCollection() => SerializeObject(UITestBackdoorService.GetVisibleContributors());
+        public string GetContributorsCollection() => SerializeObject(GitTrends.UITestsBackdoorService.GetVisibleContributors());
 
         [Preserve, Export(BackdoorMethodConstants.GetLibrariesCollection)]
-        public string GetLibrariesCollection() => SerializeObject(UITestBackdoorService.GetVisibleLibraries());
+        public string GetLibrariesCollection() => SerializeObject(GitTrends.UITestsBackdoorService.GetVisibleLibraries());
 
         static string SerializeObject<T>(T value) => Newtonsoft.Json.JsonConvert.SerializeObject(value);
     }

@@ -63,6 +63,52 @@ namespace GitTrends
 			remove => _popPageCompletedEventManager.RemoveEventHandler(value);
 		}
 
+		public static string GetReviewRequestAppStoreTitle() => AppStoreConstants.RatingRequest;
+
+		public static IReadOnlyList<T> GetVisibleCollection<T>() => GetVisibleCollection().Cast<T>().ToList();
+
+		public static IReadOnlyList<NuGetPackageModel> GetVisibleLibraries()
+		{
+			var aboutPage = (AboutPage)GetVisibleContentPage();
+			var aboutViewModel = (AboutViewModel)aboutPage.BindingContext;
+
+			return aboutViewModel.InstalledLibraries;
+		}
+
+		public static IReadOnlyList<Contributor> GetVisibleContributors()
+		{
+			var aboutPage = (AboutPage)GetVisibleContentPage();
+			var aboutViewModel = (AboutViewModel)aboutPage.BindingContext;
+
+			return aboutViewModel.GitTrendsContributors;
+		}
+
+		public static bool IsViewsClonesChartSeriesVisible(string seriesTitle) => IsChartSeriesVisible<ViewsClonesTrendsPage>(seriesTitle);
+
+		public static bool IsStarsChartSeriesVisible(string seriesTitle) => IsChartSeriesVisible<StarsTrendsPage>(seriesTitle);
+
+		public static int GetCurrentOnboardingPageNumber()
+		{
+			var onboardingCarouselPage = (OnboardingCarouselPage)GetVisiblePage();
+			var currentPage = onboardingCarouselPage.CurrentPage;
+
+			return onboardingCarouselPage.Children.IndexOf(currentPage);
+		}
+
+		public static int GetCurrentTrendsPageNumber()
+		{
+			var trendsCarouselPage = (TrendsCarouselPage)GetVisiblePage();
+			var currentPage = trendsCarouselPage.CurrentPage;
+
+			return trendsCarouselPage.Children.IndexOf(currentPage);
+		}
+
+		public static IEnumerable GetVisibleCollection()
+		{
+			var collectionView = (CollectionView)GetVisibleRefreshView().Content;
+			return collectionView.ItemsSource;
+		}
+
 		public string? GetPreferredLanguage() => _languageService.PreferredLanguage;
 
 		public string GetLoggedInUserName() => _gitHubUserService.Name;
@@ -84,31 +130,11 @@ namespace GitTrends
 
 		public void TriggerReviewRequest() => _storeReview.RequestReview(true);
 
-		public string GetReviewRequestAppStoreTitle() => AppStoreConstants.RatingRequest;
-
 		public PreferredTheme GetPreferredTheme() => _themeService.Preference;
 
 		public bool ShouldSendNotifications() => _notificationService.ShouldSendNotifications;
 
 		public Task TriggerPullToRefresh() => _mainThread.InvokeOnMainThreadAsync(() => GetVisibleRefreshView().IsRefreshing = true);
-
-		public IReadOnlyList<T> GetVisibleCollection<T>() => GetVisibleCollection().Cast<T>().ToList();
-
-		public IReadOnlyList<NuGetPackageModel> GetVisibleLibraries()
-		{
-			var aboutPage = (AboutPage)GetVisibleContentPage();
-			var aboutViewModel = (AboutViewModel)aboutPage.BindingContext;
-
-			return aboutViewModel.InstalledLibraries;
-		}
-
-		public IReadOnlyList<Contributor> GetVisibleContributors()
-		{
-			var aboutPage = (AboutPage)GetVisibleContentPage();
-			var aboutViewModel = (AboutViewModel)aboutPage.BindingContext;
-
-			return aboutViewModel.GitTrendsContributors;
-		}
 
 		public async Task PopPage()
 		{
@@ -124,37 +150,16 @@ namespace GitTrends
 			OnPopPageCompleted(pagePopped);
 		}
 
-		public IEnumerable GetVisibleCollection()
-		{
-			var collectionView = (CollectionView)GetVisibleRefreshView().Content;
-			return collectionView.ItemsSource;
-		}
-
 		public TrendsChartOption GetCurrentTrendsChartOption() => _trendsChartSettingsService.CurrentTrendsChartOption;
-
-		public bool IsViewsClonesChartSeriesVisible(string seriesTitle) => IsChartSeriesVisible<ViewsClonesTrendsPage>(seriesTitle);
-
-		public bool IsStarsChartSeriesVisible(string seriesTitle) => IsChartSeriesVisible<StarsTrendsPage>(seriesTitle);
-
-		public int GetCurrentOnboardingPageNumber()
-		{
-			var onboardingCarouselPage = (OnboardingCarouselPage)GetVisiblePage();
-			var currentPage = onboardingCarouselPage.CurrentPage;
-
-			return onboardingCarouselPage.Children.IndexOf(currentPage);
-		}
-
-		public int GetCurrentTrendsPageNumber()
-		{
-			var trendsCarouselPage = (TrendsCarouselPage)GetVisiblePage();
-			var currentPage = trendsCarouselPage.CurrentPage;
-
-			return trendsCarouselPage.Children.IndexOf(currentPage);
-		}
 
 		public Task<bool> AreNotificationsEnabled() => _notificationService.AreNotificationsEnabled();
 
-		RefreshView GetVisibleRefreshView()
+		static ContentPage GetVisibleContentPage() => (ContentPage)GetVisiblePage();
+		static Page GetVisiblePage() => GetVisiblePageFromModalStack() ?? GetVisiblePageFromNavigationStack();
+		static Page? GetVisiblePageFromModalStack() => Application.Current.MainPage.Navigation.ModalStack.LastOrDefault();
+		static Page GetVisiblePageFromNavigationStack() => Application.Current.MainPage.Navigation.NavigationStack.Last();
+
+		static RefreshView GetVisibleRefreshView()
 		{
 			var visibleContentPage = GetVisibleContentPage();
 
@@ -166,7 +171,7 @@ namespace GitTrends
 				throw new Exception($"{visibleContentPage.GetType()} Does Not Contain a RefreshView");
 		}
 
-		bool IsChartSeriesVisible<T>(string seriesTitle) where T : BaseTrendsContentPage
+		static bool IsChartSeriesVisible<T>(string seriesTitle) where T : BaseTrendsContentPage
 		{
 			var trendsCarouselPage = (TrendsCarouselPage)GetVisiblePage();
 			var starsTrendsPage = trendsCarouselPage.Children.OfType<T>().First();
@@ -176,16 +181,8 @@ namespace GitTrends
 			var trendsFrame = viewsClonesTrendsPageLayout.Children.OfType<ViewsClonesChart>().First();
 			var trendsChart = (SfChart)trendsFrame.Content;
 
-			return trendsChart.Series.First(x => x.Label.Equals(seriesTitle)).IsVisible;
+			return trendsChart.Series.First(x => x.Label.Equals(seriesTitle, StringComparison.OrdinalIgnoreCase)).IsVisible;
 		}
-
-		ContentPage GetVisibleContentPage() => (ContentPage)GetVisiblePage();
-
-		Page GetVisiblePage() => GetVisiblePageFromModalStack() ?? GetVisiblePageFromNavigationStack();
-
-		Page? GetVisiblePageFromModalStack() => Application.Current.MainPage.Navigation.ModalStack.LastOrDefault();
-
-		Page GetVisiblePageFromNavigationStack() => Application.Current.MainPage.Navigation.NavigationStack.Last();
 
 		void OnPopPageStarted() => _popPageStartedEventManager.RaiseEvent(this, EventArgs.Empty, nameof(PopPageStarted));
 		void OnPopPageCompleted(Page page) => _popPageCompletedEventManager.RaiseEvent(this, page, nameof(PopPageCompleted));

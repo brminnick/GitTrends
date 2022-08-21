@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -15,10 +15,6 @@
     <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
     <MtouchI18n>cjk,mideast,other,rare,west</MtouchI18n>
-    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <WarningsAsErrors>nullable</WarningsAsErrors>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
@@ -492,24 +488,25 @@
     <ProjectReference Include="..\GitTrends\GitTrends.csproj">
       <Project>{4E7B0399-BAD2-48AF-B7FA-02EC17338FAE}</Project>
       <Name>GitTrends</Name>
-      <ReferenceSourceTarget></ReferenceSourceTarget>
+      <ReferenceSourceTarget>
+      </ReferenceSourceTarget>
     </ProjectReference>
     <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj">
       <Project>{936AEAD4-A683-44AD-A903-F3196454C244}</Project>
       <Name>GitTrends.Mobile.Common</Name>
-      <ReferenceSourceTarget></ReferenceSourceTarget>
+      <ReferenceSourceTarget>
+      </ReferenceSourceTarget>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
-  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Effects\" />
-    <Folder Include="Assets.xcassets\EmptyTrafficChart.imageset\" />
-    <Folder Include="Assets.xcassets\EmptyStarChart.imageset\" />
-    <Folder Include="Assets.xcassets\EmptyOneStarChart.imageset\" />
     <Folder Include="Assets.xcassets\Business.imageset\" />
+    <Folder Include="Assets.xcassets\EmptyOneStarChart.imageset\" />
+    <Folder Include="Assets.xcassets\EmptyStarChart.imageset\" />
+    <Folder Include="Assets.xcassets\EmptyTrafficChart.imageset\" />
     <Folder Include="Assets.xcassets\Inspectocat.imageset\" />
   </ItemGroup>
+  <ItemGroup />
+  <ItemGroup />
   <ProjectExtensions>
     <VisualStudio>
       <UserProperties XamarinHotReloadWrongLinkerErrorInfoBarGitTrendsiOSHideInfoBar="True" />

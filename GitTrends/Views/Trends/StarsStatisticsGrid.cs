@@ -42,8 +42,8 @@ namespace GitTrends
 			Children.Add(new StarsStatisticsLabel(48) { AutomationId = TrendsPageAutomationIds.StarsStatisticsLabel }
 							.Row(Row.Stars).Column(Column.Text)
 							.CenterExpand()
-							.Bind<Label, bool, bool>(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingStarsData), convert: isFetchingStarsData => !isFetchingStarsData)
-							.Bind<Label, double, string>(Label.TextProperty, nameof(TrendsViewModel.TotalStars), convert: totalStars => totalStars.ToAbbreviatedText()));
+							.Bind<Label, bool, bool>(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingStarsData), convert: static isFetchingStarsData => !isFetchingStarsData)
+							.Bind<Label, double, string>(Label.TextProperty, nameof(TrendsViewModel.TotalStars), convert: static totalStars => totalStars.ToAbbreviatedText()));
 
 			Children.Add(new ActivityIndicator()
 							.Row(Row.Stars).Column(Column.Text)

@@ -256,7 +256,7 @@ namespace GitTrends.UnitTests
 			//Act
 			gitHubUserService.InvalidateToken();
 
-			starGazers = await gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None);
+			starGazers = await gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 
 			//Assert
 			Assert.NotNull(starGazers);

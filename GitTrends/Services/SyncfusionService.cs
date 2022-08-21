@@ -26,7 +26,7 @@ namespace GitTrends
 
 		public static long AssemblyVersionNumber => _assemblyVersionNumberHolder.Value;
 
-		string SyncfusionLicenseKey => _syncfusionLicenseKeyHolder.Value;
+		static string SyncfusionLicenseKey => _syncfusionLicenseKeyHolder.Value;
 
 		public async Task Initialize(CancellationToken cancellationToken)
 		{

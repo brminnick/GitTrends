@@ -198,6 +198,7 @@ namespace GitTrends.UnitTests
 			Assert.AreEqual(sortingOption, currentOption_Final);
 		}
 
+		[Test]
 		public void CurrentOptionTest_InvalidOption()
 		{
 			//Arrange

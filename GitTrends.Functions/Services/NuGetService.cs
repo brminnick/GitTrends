@@ -106,7 +106,7 @@ namespace GitTrends.Functions
 			{
 				try
 				{
-					var response = await _client.GetAsync(uri).ConfigureAwait(false);
+					var response = await _client.GetAsync(uri, cancellationToken).ConfigureAwait(false);
 					return response.IsSuccessStatusCode;
 				}
 				catch

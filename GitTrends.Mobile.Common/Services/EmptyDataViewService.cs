@@ -98,7 +98,7 @@ namespace GitTrends.Mobile.Common
 			(RefreshState.Uninitialized, _) => EmptyDataViewConstantsInternal.LOADING,
 			(_, 0 or 1) => TrendsChartTitleConstants.YouGotThis,
 			(_, > 1) => TrendsChartTitleConstants.KeepItUp,
-			(_, _) => throw new ArgumentOutOfRangeException($"{nameof(totalStars)} cannot be negative")
+			(_, _) => throw new ArgumentOutOfRangeException(paramName: nameof(totalStars), message: $"{nameof(totalStars)} cannot be negative")
 		};
 
 		public static string GetViewsClonesImage(in RefreshState refreshState) => refreshState switch

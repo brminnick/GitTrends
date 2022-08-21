@@ -82,7 +82,7 @@ namespace GitTrends
 		}
 
 		[Conditional("DEBUG")]
-		void EnableDebugRainbows(bool shouldUseDebugRainbows)
+		static void EnableDebugRainbows(bool shouldUseDebugRainbows)
 		{
 			Application.Current.Resources.Add(new Style(typeof(ContentPage))
 			{

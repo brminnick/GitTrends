@@ -63,7 +63,7 @@ namespace GitTrends
 				Children.Add(new TrendsStatisticsLabel(34, statisticsTextAutomationId)
 								.Row(Row.Number).Column(Column.Stats).ColumnSpan(2)
 								.Bind(Label.TextProperty, nameof(Text), source: statisticsCard)
-								.Bind<TrendsStatisticsLabel, bool, bool>(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingViewsClonesData), convert: isFetchingData => !isFetchingData));
+								.Bind<TrendsStatisticsLabel, bool, bool>(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingViewsClonesData), convert: static isFetchingData => !isFetchingData));
 				Children.Add(new RepositoryStatSVGImage(svgImage, svgColorTheme).Assign(out _svgImage)
 								.Row(Row.Title).Column(Column.Icon).RowSpan(2)
 								.Bind<SvgImage, bool, Func<Color>>(SvgImage.GetColorProperty, nameof(IsSeriesVisible), convert: convertIsSeriesVisible, source: statisticsCard));
