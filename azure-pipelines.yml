@@ -95,7 +95,14 @@ jobs:
           provProfileSecureFile: GitTrends_Development_Profile.mobileprovision
           removeProfile: true
 
+      - task: CmdLine@2
+        displayName: 'Restore NuGet Packages'
+        inputs:
+          script: |
+            msbuild $(PathToiOSAppCsproj) /property:Configuration=Release /restore
+            
       - task: XamariniOS@2
+        displayName: 'Build iOS App'
         inputs:
           solutionFile: '$(PathToiOSAppCsproj)'
           configuration: 'Release'
