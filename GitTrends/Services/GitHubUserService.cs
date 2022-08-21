@@ -180,7 +180,7 @@ namespace GitTrends
 				throw new ArgumentNullException(nameof(token));
 
 			if (token.AccessToken is null)
-				throw new ArgumentNullException(nameof(token.AccessToken));
+				throw new ArgumentException(nameof(token.AccessToken));
 
 			var serializedToken = JsonConvert.SerializeObject(token);
 			await _secureStorage.SetAsync(_oauthTokenKey, serializedToken).ConfigureAwait(false);

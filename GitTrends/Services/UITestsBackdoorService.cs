@@ -181,7 +181,7 @@ namespace GitTrends
 			var trendsFrame = viewsClonesTrendsPageLayout.Children.OfType<ViewsClonesChart>().First();
 			var trendsChart = (SfChart)trendsFrame.Content;
 
-			return trendsChart.Series.First(x => x.Label.Equals(seriesTitle)).IsVisible;
+			return trendsChart.Series.First(x => x.Label.Equals(seriesTitle, StringComparison.OrdinalIgnoreCase)).IsVisible;
 		}
 
 		void OnPopPageStarted() => _popPageStartedEventManager.RaiseEvent(this, EventArgs.Empty, nameof(PopPageStarted));

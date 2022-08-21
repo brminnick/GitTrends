@@ -7,7 +7,7 @@ namespace GitTrends
 	{
 		public static string GetResourcePath(in string fileName)
 		{
-			if (!fileName.EndsWith(".svg"))
+			if (!fileName.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
 				throw new ArgumentException($"{nameof(fileName)} must end with `.svg`");
 
 			return $"{nameof(GitTrends)}.Resources.SVGs.{fileName}";
@@ -17,7 +17,7 @@ namespace GitTrends
 
 		public static IReadOnlyDictionary<string, string> GetColorStringMap(in string hex)
 		{
-			if (!hex.StartsWith("#"))
+			if (!hex.StartsWith("#", StringComparison.OrdinalIgnoreCase))
 				throw new ArgumentException($"{nameof(hex)} must begin with `#`");
 
 			return new Dictionary<string, string> { { "#000000", hex } };

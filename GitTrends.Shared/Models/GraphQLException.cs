@@ -51,7 +51,7 @@ namespace GitTrends.Shared
 
 					foreach (var semicolonSeparatedValue in semicolonSeparatedValues)
 					{
-						var urlStartIndex = semicolonSeparatedValue.IndexOf("http");
+						var urlStartIndex = semicolonSeparatedValue.IndexOf("http", StringComparison.OrdinalIgnoreCase);
 						var urlString = urlStartIndex < 0 ? string.Empty : semicolonSeparatedValue.Substring(urlStartIndex);
 
 						var isValidUri = Uri.TryCreate(urlString, UriKind.Absolute, out var uri);

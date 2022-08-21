@@ -6,6 +6,5 @@
 		<WarningsAsErrors>nullable</WarningsAsErrors>
 		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 		<GenerateErrorForMissingTargetingPacks>false</GenerateErrorForMissingTargetingPacks>
-		<AnalysisLevel>latest-Recommended</AnalysisLevel>
 	</PropertyGroup>
 </Project>

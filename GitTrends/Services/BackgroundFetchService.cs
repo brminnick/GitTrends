@@ -207,7 +207,7 @@ namespace GitTrends
 				_analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryOrganizationsRepositories)} Triggered", nameof(delay), delay?.ToString() ?? "null");
 
 				if (delay is not null)
-					await Task.Delay(delay.Value).ConfigureAwait(false);
+					await Task.Delay(delay.Value, CancellationToken.None).ConfigureAwait(false);
 
 				try
 				{
@@ -237,7 +237,7 @@ namespace GitTrends
 				_analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClonesStars)} Triggered", nameof(delay), delay?.ToString() ?? "null");
 
 				if (delay is not null)
-					await Task.Delay(delay.Value).ConfigureAwait(false);
+					await Task.Delay(delay.Value, cancellationToken).ConfigureAwait(false);
 
 				using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClonesStars)} Executed");
 
@@ -271,7 +271,7 @@ namespace GitTrends
 				_analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesStars)} Triggered", nameof(delay), delay?.ToString() ?? "null");
 
 				if (delay is not null)
-					await Task.Delay(delay.Value).ConfigureAwait(false);
+					await Task.Delay(delay.Value, cancellationToken).ConfigureAwait(false);
 
 				using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesStars)} Executed");
 
@@ -299,7 +299,7 @@ namespace GitTrends
 				_analyticsService.Track($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryGetReferringSites)} Triggered", nameof(delay), delay?.ToString() ?? "null");
 
 				if (delay is not null)
-					await Task.Delay(delay.Value).ConfigureAwait(false);
+					await Task.Delay(delay.Value, cancellationToken).ConfigureAwait(false);
 
 				try
 				{

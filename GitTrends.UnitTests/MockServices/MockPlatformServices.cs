@@ -39,7 +39,7 @@ namespace GitTrends.UnitTests
 
 		public OSAppTheme RequestedTheme { get; } = OSAppTheme.Unspecified;
 
-		public bool IsInvokeRequired { get; } = false;
+		public bool IsInvokeRequired { get; }
 
 		public string RuntimePlatform { get; } = "Other";
 

@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace GitTrends.Shared
@@ -11,7 +12,7 @@ namespace GitTrends.Shared
 			foreach (char c in input)
 			{
 				if (!char.IsLetterOrDigit(c))
-					resultBuilder.Append(" ");
+					resultBuilder.Append(' ');
 				else
 					resultBuilder.Append(c);
 			}
