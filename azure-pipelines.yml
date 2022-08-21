@@ -72,7 +72,7 @@ jobs:
   - job: Build_iOS_App
     displayName: Build iOS App
     pool: 
-      vmImage: macos-12
+      vmImage: windows-latest
 
     steps:      
       - task: UseDotNet@2
@@ -81,34 +81,12 @@ jobs:
           packageType: 'sdk'
           version: '$(NET_VERSION)'
 
-      - task: InstallAppleCertificate@2
-        displayName: 'Install iOS Signing Certificate'
-        inputs:
-          certSecureFile: Certificates.p12
-          certPwd: $(AppleCertificatePassword)
-          deleteCert: true
-
-      - task: InstallAppleProvisioningProfile@1
-        displayName: 'Install iOS Provisioning Profile'
-        inputs:
-          provisioningProfileLocation: 'secureFiles'
-          provProfileSecureFile: GitTrends_Development_Profile.mobileprovision
-          removeProfile: true
-
-      - task: CmdLine@2
-        displayName: 'Restore NuGet Packages'
-        inputs:
-          script: |
-            msbuild $(PathToiOSAppCsproj) /property:Configuration=Release /restore
-            
-      - task: XamariniOS@2
+      - task: VSBuild@1
         displayName: 'Build iOS App'
         inputs:
-          solutionFile: '$(PathToiOSAppCsproj)'
+          solution: '$(PathToiOSAppCsproj)'
           configuration: 'Release'
-          clean: true
-          packageApp: true
-          runNugetRestore: true
+          msbuildArgs: '/restore'
 
   - job: Build_Android_App
     displayName: Build Android App
