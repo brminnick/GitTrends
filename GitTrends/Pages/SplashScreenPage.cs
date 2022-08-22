@@ -249,7 +249,7 @@ namespace GitTrends
 					}
 				});
 			}
-		}		
+		}
 
 		class GitTrendsImage : Image
 		{
