@@ -21,7 +21,7 @@ namespace GitTrends.Droid
 
         public VideoPlayerViewCustomRenderer(Context context) : base(context)
         {
-            _player = new SimpleExoPlayer.Builder(context).Build();
+            _player = new SimpleExoPlayer.Builder(context).Build() ?? throw new System.InvalidOperationException();
 
             _player.PlayWhenReady = true;
             _player.RepeatMode = (int)RepeatMode.Restart;
