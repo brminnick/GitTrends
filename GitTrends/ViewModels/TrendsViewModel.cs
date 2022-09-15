@@ -44,7 +44,7 @@ namespace GitTrends
 			_viewsClonesEmptyDataViewTitleText = string.Empty;
 
 		[ObservableProperty]
-		Xamarin.Forms.ImageSource? __starsEmptyDataViewImage, _viewsClonesEmptyDataViewImage;
+		Xamarin.Forms.ImageSource? _starsEmptyDataViewImage, _viewsClonesEmptyDataViewImage;
 
 		[ObservableProperty, NotifyPropertyChangedFor(nameof(IsViewsClonesChartVisible)), NotifyPropertyChangedFor(nameof(IsViewsClonesEmptyDataViewVisible)),
 			NotifyPropertyChangedFor(nameof(DailyViewsClonesMaxValue)), NotifyPropertyChangedFor(nameof(DailyViewsClonesMaxValue)), NotifyPropertyChangedFor(nameof(MinViewsClonesDate)),
