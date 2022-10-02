@@ -1,5 +1,5 @@
 variables:
-  NET_VERSION: '6.0.x'
+  NET_VERSION: '7.0.x'
   NET_CORE_VERSION: '3.1.x'
   PathToSolution: 'GitTrends.sln'
   PathToGitTrendsCsproj: 'GitTrends/GitTrends.csproj'
