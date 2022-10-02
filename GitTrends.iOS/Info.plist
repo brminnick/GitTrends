@@ -78,6 +78,8 @@
 		<string>uk</string>
 		<string>cs</string>
 	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>GitTrends does not require your location</string>
 </dict>
