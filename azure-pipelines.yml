@@ -116,6 +116,12 @@ jobs:
           version: '$(NET_VERSION)'
           includePreviewVersions: true
 
+      - task: UseDotNet@2
+        displayName: 'Install .NET Core 3.1 SDK'
+        inputs:
+          packageType: 'sdk'
+          version: '$(NET_CORE_VERSION)'
+
       - task: VSBuild@1
         displayName: 'Build Android App'
         inputs:
