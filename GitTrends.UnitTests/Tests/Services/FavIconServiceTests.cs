@@ -42,7 +42,7 @@ namespace GitTrends.UnitTests
 			Assert.AreEqual(new Uri(expectedFavIconUrl), uriImageSource.Uri);
 		}
 
-		[TestCase("https://www.abbotslangley-pc.gov.uk", "https://www.abbotslangley-pc.gov.uk/wp-content/uploads/2017/09/favicon-1.png")]
+		[TestCase("https://www.amazon.co.uk", "https://amazon.co.uk/favicon.ico")]
 		public async Task GetFavIconImageSourceTest_CountryCodeTopLevelDomains(string url, string expectedFavIconUrl)
 		{
 			//Arrange
