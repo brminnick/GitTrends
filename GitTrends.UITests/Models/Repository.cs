@@ -27,6 +27,10 @@ namespace GitTrends.UITests
 
 		public string Url { get; init; } = string.Empty;
 
+		public bool IsArchived { get; init; }
+
+		public RepositoryPermission Permission { get; init; }
+
 		public long? TotalViews { get; init; }
 
 		public long? TotalUniqueViews { get; init; }
