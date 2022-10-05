@@ -23,6 +23,7 @@ namespace GitTrends.Shared
 							bool isFork,
 							DateTimeOffset dataDownloadedAt,
 							RepositoryPermission permission,
+							bool isArchived,
 							bool? isFavorite = null,
 							IEnumerable<DailyViewsModel>? views = null,
 							IEnumerable<DailyClonesModel>? clones = null,
@@ -42,6 +43,7 @@ namespace GitTrends.Shared
 			IsFork = isFork;
 			Url = url;
 			Permission = permission;
+			IsArchived = isArchived;
 			StarredAt = starredAt?.ToList();
 			DailyViewsList = views?.ToList();
 			DailyClonesList = clones?.ToList();
@@ -63,6 +65,7 @@ namespace GitTrends.Shared
 		public bool IsFork { get; init; }
 		public string Url { get; init; }
 		public RepositoryPermission Permission { get; init; }
+		public bool IsArchived { get; init; }
 
 		public bool? IsFavorite { get; init; }
 

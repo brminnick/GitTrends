@@ -11,6 +11,8 @@ namespace GitTrends.Shared
 										string description,
 										long open_issues_count,
 										long stargazers_count,
+										bool archived,
+										Permissions permissions,
 										Owner_GetRepositoryResponse owner)
 		{
 			Name = name;
@@ -23,8 +25,19 @@ namespace GitTrends.Shared
 			WatchersCount = subscribers_count;
 			OwnerAvatarUrl = owner.AvatarUrl;
 			IssuesCount = open_issues_count;
+			IsArchived = archived;
 
 			DataDownloadedAt = DateTimeOffset.UtcNow;
+
+			Permission = permissions switch
+			{
+				{ Admin: true } => RepositoryPermission.ADMIN,
+				{ Maintain: true } => RepositoryPermission.MAINTAIN,
+				{ Push: true } => RepositoryPermission.WRITE,
+				{ Triage: true } => RepositoryPermission.TRIAGE,
+				{ Pull: true } => RepositoryPermission.READ,
+				_ => RepositoryPermission.UNKNOWN
+			};
 		}
 
 		public DateTimeOffset DataDownloadedAt { get; }
@@ -49,6 +62,8 @@ namespace GitTrends.Shared
 
 		public string Url { get; }
 
+		public bool IsArchived { get; }
+
 		public long? TotalViews { get; }
 
 		public long? TotalUniqueViews { get; }
@@ -58,7 +73,11 @@ namespace GitTrends.Shared
 		public long? TotalUniqueClones { get; }
 
 		public bool? IsFavorite { get; }
+
+		public RepositoryPermission Permission { get; }
 	}
+
+	public record Permissions(bool Admin, bool Maintain, bool Push, bool Triage, bool Pull);
 
 	public record Owner_GetRepositoryResponse : RepositoryOwner
 	{

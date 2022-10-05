@@ -46,14 +46,14 @@ namespace GitTrends.UnitTests
 				repositories_NoViewsClonesStarsData.Add(repository);
 			}
 
-			repositories_NoViewsClonesStarsData_Filtered = repositories_NoViewsClonesStarsData.RemoveForksAndDuplicates().ToList();
+			repositories_NoViewsClonesStarsData_Filtered = repositories_NoViewsClonesStarsData.RemoveForksDuplicatesAndArchives().ToList();
 
 			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
 			{
 				repositories_NoStarsData.Add(repository);
 			}
 
-			repositories_Filtered = repositories_NoStarsData.RemoveForksAndDuplicates().ToList();
+			repositories_Filtered = repositories_NoStarsData.RemoveForksDuplicatesAndArchives().ToList();
 
 			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositories_Filtered, CancellationToken.None).ConfigureAwait(false))
 			{
@@ -210,7 +210,7 @@ namespace GitTrends.UnitTests
 				repositories_NoViewsClonesStarsData.Add(repository);
 			}
 
-			repositories_NoViewsClonesStarsData_Filtered = repositories_NoViewsClonesStarsData.RemoveForksAndDuplicates().ToList();
+			repositories_NoViewsClonesStarsData_Filtered = repositories_NoViewsClonesStarsData.RemoveForksDuplicatesAndArchives().ToList();
 
 			gitHubUserService.InvalidateToken();
 
@@ -219,7 +219,7 @@ namespace GitTrends.UnitTests
 				repositories_NoStarsData.Add(repository);
 			};
 
-			repositories_NoStarsData_Filtered = repositories_NoStarsData.RemoveForksAndDuplicates().ToList();
+			repositories_NoStarsData_Filtered = repositories_NoStarsData.RemoveForksDuplicatesAndArchives().ToList();
 
 			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositories_NoStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
 			{
@@ -255,14 +255,14 @@ namespace GitTrends.UnitTests
 				repositories_NoViewsClonesStarsData.Add(repository);
 			}
 
-			repositories_NoViewsClonesStarsData_Filtered = repositories_NoViewsClonesStarsData.RemoveForksAndDuplicates().ToList();
+			repositories_NoViewsClonesStarsData_Filtered = repositories_NoViewsClonesStarsData.RemoveForksDuplicatesAndArchives().ToList();
 
 			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
 			{
 				repositories_NoStarsData.Add(repository);
 			};
 
-			repositories_NoStarsData_Filtered = repositories_NoStarsData.RemoveForksAndDuplicates().ToList();
+			repositories_NoStarsData_Filtered = repositories_NoStarsData.RemoveForksDuplicatesAndArchives().ToList();
 
 			await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositories_NoStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
 			{
@@ -287,7 +287,7 @@ namespace GitTrends.UnitTests
 			IReadOnlyList<ReferringSiteModel> referringSiteModels;
 
 			var repository = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
-												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
 
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
@@ -318,7 +318,7 @@ namespace GitTrends.UnitTests
 			IReadOnlyList<ReferringSiteModel> referringSiteModels;
 
 			var repository = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
-												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
 
 			var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
 
@@ -345,7 +345,7 @@ namespace GitTrends.UnitTests
 			IReadOnlyList<ReferringSiteModel> referringSiteModels;
 
 			var repository = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
-												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
 
 			var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
 			var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
@@ -375,7 +375,7 @@ namespace GitTrends.UnitTests
 		{
 			// Arrange
 			var repository = new Repository(string.Empty, string.Empty, 1, string.Empty,
-												string.Empty, 1, 2, 3, string.Empty, false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+												string.Empty, 1, 2, 3, string.Empty, false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
 
 			var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
 
@@ -392,7 +392,7 @@ namespace GitTrends.UnitTests
 			List<MobileReferringSiteModel> mobileReferringSiteModels = new();
 
 			var repository = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
-												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
 
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
@@ -434,7 +434,7 @@ namespace GitTrends.UnitTests
 			List<MobileReferringSiteModel> mobileReferringSiteModels = new();
 
 			var repository = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
-												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
 
 			var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
 
@@ -472,7 +472,7 @@ namespace GitTrends.UnitTests
 			List<MobileReferringSiteModel> mobileReferringSiteModels = new();
 
 			var repository = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
-												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+												GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
 
 			var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
 			var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
