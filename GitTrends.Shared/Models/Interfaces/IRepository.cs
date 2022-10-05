@@ -19,5 +19,7 @@ namespace GitTrends.Shared
 		long? TotalClones { get; }
 		long? TotalUniqueClones { get; }
 		bool? IsFavorite { get; }
+		bool IsArchived { get; }
+		RepositoryPermission Permission { get; }
 	}
 }

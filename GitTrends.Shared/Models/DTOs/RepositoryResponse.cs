@@ -12,7 +12,8 @@ namespace GitTrends.Shared
 											bool IsFork,
 											IssuesConnection Issues,
 											Watchers Watchers,
-											string ViewerPermission)
+											string ViewerPermission,
+											bool IsArchived)
 	{
 		public RepositoryPermission Permission => (RepositoryPermission)Enum.Parse(typeof(RepositoryPermission), ViewerPermission);
 	}

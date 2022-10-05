@@ -404,7 +404,7 @@ namespace GitTrends
 			duplicateRepositoryPriorityFilter ??= _ => true;
 
 			var updatedRepositoryList = _repositoryList.Concat(repositories);
-			_repositoryList = updatedRepositoryList.RemoveForksAndDuplicates(duplicateRepositoryPriorityFilter).ToList();
+			_repositoryList = updatedRepositoryList.RemoveForksDuplicatesAndArchives(duplicateRepositoryPriorityFilter).ToList();
 
 			if (shouldUpdateVisibleRepositoryList)
 				UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
@@ -421,7 +421,7 @@ namespace GitTrends
 				updatedRepositoryList.Remove(repositoryToRemove);
 			}
 
-			_repositoryList = updatedRepositoryList.RemoveForksAndDuplicates(x => x.ContainsViewsClonesStarsData).ToList();
+			_repositoryList = updatedRepositoryList.RemoveForksDuplicatesAndArchives(x => x.ContainsViewsClonesStarsData).ToList();
 
 			if (shouldUpdateVisibleRepositoryList)
 				UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);

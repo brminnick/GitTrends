@@ -72,6 +72,7 @@ namespace GitTrends
 									repositoryResult.Repository.IsFork,
 									DateTimeOffset.UtcNow,
 									repositoryResult.Repository.Permission,
+									repositoryResult.Repository.IsArchived,
 									starredAt: starGazersResult.StarredAt.Select(x => x.StarredAt));
 		}
 
@@ -110,7 +111,7 @@ namespace GitTrends
 				{
 					var demoRepo = new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
 												DemoUserConstants.Alias, _gitHubUserService.AvatarUrl, DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
-												DemoDataConstants.GetRandomNumber(), _gitHubUserService.AvatarUrl, false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN);
+												DemoDataConstants.GetRandomNumber(), _gitHubUserService.AvatarUrl, false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
 					yield return demoRepo;
 				}
 
@@ -177,7 +178,7 @@ namespace GitTrends
 					{
 						if (repository is not null)
 							repositoryList.Add(new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
-														repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Stargazers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt, repository.Permission));
+														repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Stargazers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt, repository.Permission, repository.IsArchived));
 					}
 				}
 				while (repositoryConnection?.PageInfo?.HasNextPage is true);
@@ -222,7 +223,7 @@ namespace GitTrends
 				{
 					if (repository is not null)
 						yield return new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
-													repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Stargazers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt, repository.Permission);
+													repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Stargazers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt, repository.Permission, repository.IsArchived);
 				}
 			}
 			while (repositoryConnection?.PageInfo?.HasNextPage is true);

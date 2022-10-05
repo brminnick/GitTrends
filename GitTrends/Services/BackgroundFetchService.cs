@@ -391,7 +391,7 @@ namespace GitTrends
 						retrievedRepositoryList.Add(repository);
 				}
 
-				var retrievedRepositoryList_NoDuplicatesNoForks = retrievedRepositoryList.RemoveForksAndDuplicates(x => x.ContainsViewsClonesData);
+				var retrievedRepositoryList_NoDuplicatesNoForks = retrievedRepositoryList.RemoveForksDuplicatesAndArchives(x => x.ContainsViewsClonesData);
 
 				IReadOnlyList<Repository> repositoriesToUpdate = repositoriesFromDatabase.Where(x => _gitHubUserService.ShouldIncludeOrganizations || x.OwnerLogin == _gitHubUserService.Alias) // Only include organization repositories if `ShouldIncludeOrganizations` is true
 											.Where(x => x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12))) // Cached repositories that haven't been updated in 12 hours 
