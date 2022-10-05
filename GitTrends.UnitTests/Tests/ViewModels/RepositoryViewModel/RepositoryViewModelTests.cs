@@ -85,6 +85,9 @@ namespace GitTrends.UnitTests
 				Assert.IsNotNull(repository.TotalUniqueViews);
 				Assert.IsNotNull(repository.TotalViews);
 
+				Assert.IsFalse(repository.IsArchived);
+				Assert.IsFalse(repository.IsFork);
+
 				Assert.Less(beforePullToRefresh, repository.DataDownloadedAt);
 				Assert.Greater(afterPullToRefresh, repository.DataDownloadedAt);
 			}

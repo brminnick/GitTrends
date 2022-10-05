@@ -20,7 +20,7 @@ namespace GitTrends.Shared
 		public PageInfo PageInfo { get; }
 	}
 
-	public record RepositoryConnectionNode(string ViewerPermission, string Name, string Description, long ForkCount, Uri Url, RepositoryOwner Owner, bool IsFork, IssuesConnection Issues, Watchers Watchers, StarGazersConnection Stargazers)
+	public record RepositoryConnectionNode(bool IsArchived, string ViewerPermission, string Name, string Description, long ForkCount, Uri Url, RepositoryOwner Owner, bool IsFork, IssuesConnection Issues, Watchers Watchers, StarGazersConnection Stargazers)
 	{
 		public DateTimeOffset DataDownloadedAt { get; } = DateTimeOffset.UtcNow;
 

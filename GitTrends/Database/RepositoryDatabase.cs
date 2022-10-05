@@ -340,6 +340,8 @@ namespace GitTrends
 
 			public bool IsFork { get; init; }
 
+			public bool IsArchived { get; init; }
+
 			public long? TotalViews { get; init; }
 
 			public long? TotalUniqueViews { get; init; }
@@ -372,6 +374,7 @@ namespace GitTrends
 										repositoryDatabaseModel.IsFork,
 										repositoryDatabaseModel.DataDownloadedAt,
 										repositoryDatabaseModel.Permission,
+										repositoryDatabaseModel.IsArchived,
 										repositoryDatabaseModel.IsFavorite,
 										viewsList,
 										clonesList,
