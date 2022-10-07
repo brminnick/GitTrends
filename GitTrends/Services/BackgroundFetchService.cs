@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -17,8 +18,6 @@ namespace GitTrends
 		readonly static WeakEventManager<string> _scheduleRetryOrganizationsRepositoriesCompletedEventManager = new();
 		readonly static WeakEventManager<Repository> _repostoryEventManager = new();
 		readonly static WeakEventManager<MobileReferringSiteModel> _mobileReferringSiteRetrievedEventManager = new();
-
-		readonly HashSet<string> _queuedJobs = new();
 
 		readonly IJobManager _jobManager;
 		readonly IAnalyticsService _analyticsService;
@@ -106,7 +105,9 @@ namespace GitTrends
 			remove => _repostoryEventManager.RemoveEventHandler(value);
 		}
 
-		public IReadOnlyList<string> QueuedJobs => _queuedJobs.ToList();
+		public IReadOnlyList<string> QueuedJobs => QueuedJobsHash.ToList();
+
+		protected HashSet<string> QueuedJobsHash { get; } = new();
 
 		public string CleanUpDatabaseIdentifier { get; }
 		public string RetryRepositoriesStarsIdentifier { get; }
@@ -117,7 +118,7 @@ namespace GitTrends
 
 		public void Initialize()
 		{
-			//Required to ensure the service is instantiated in the Dependency Injection Container and event in the constructor are subscribed
+			//Required to ensure the service is instantiated in the Dependency Injection Container and events in the constructor are subscribed
 			var temp = QueuedJobs;
 		}
 
@@ -200,7 +201,7 @@ namespace GitTrends
 
 		void ScheduleRetryOrganizationsRepositories(string organizationName, TimeSpan? delay)
 		{
-			_queuedJobs.Add(GetRetryOrganizationsRepositoriesIdentifier(organizationName));
+			QueuedJobsHash.Add(GetRetryOrganizationsRepositoriesIdentifier(organizationName));
 
 			_jobManager.RunTask(GetRetryOrganizationsRepositoriesIdentifier(organizationName), async cancellationToken =>
 			{
@@ -230,7 +231,7 @@ namespace GitTrends
 
 		void ScheduleRetryRepositoriesViewsClonesStars(Repository repository, TimeSpan? delay = null)
 		{
-			_queuedJobs.Add(GetRetryRepositoriesViewsClonesStarsIdentifier(repository));
+			QueuedJobsHash.Add(GetRetryRepositoriesViewsClonesStarsIdentifier(repository));
 
 			_jobManager.RunTask(GetRetryRepositoriesViewsClonesStarsIdentifier(repository), async cancellationToken =>
 			{
@@ -264,7 +265,7 @@ namespace GitTrends
 
 		void ScheduleRetryRepositoriesStars(Repository repository, TimeSpan? delay = null)
 		{
-			_queuedJobs.Add(GetRetryRepositoriesStarsIdentifier(repository));
+			QueuedJobsHash.Add(GetRetryRepositoriesStarsIdentifier(repository));
 
 			_jobManager.RunTask(GetRetryRepositoriesStarsIdentifier(repository), async cancellationToken =>
 			{
@@ -292,7 +293,7 @@ namespace GitTrends
 
 		void ScheduleRetryGetReferringSites(Repository repository, TimeSpan? delay = null)
 		{
-			_queuedJobs.Add(GetRetryGetReferringSitesIdentifier(repository));
+			QueuedJobsHash.Add(GetRetryGetReferringSitesIdentifier(repository));
 
 			_jobManager.RunTask(GetRetryGetReferringSitesIdentifier(repository), async cancellationToken =>
 			{
@@ -324,7 +325,7 @@ namespace GitTrends
 
 		void ScheduleCleanUpDatabase()
 		{
-			_queuedJobs.Add(CleanUpDatabaseIdentifier);
+			QueuedJobsHash.Add(CleanUpDatabaseIdentifier);
 
 			_jobManager.RunTask(CleanUpDatabaseIdentifier, async cancellationToken =>
 			{
@@ -347,7 +348,7 @@ namespace GitTrends
 
 		void ScheduleNotifyTrendingRepositories(CancellationToken cancellationToken)
 		{
-			_queuedJobs.Add(NotifyTrendingRepositoriesIdentifier);
+			QueuedJobsHash.Add(NotifyTrendingRepositoriesIdentifier);
 
 			_jobManager.RunTask(NotifyTrendingRepositoriesIdentifier, async cancellationToken =>
 			{
@@ -438,37 +439,37 @@ namespace GitTrends
 
 		void OnScheduleRetryRepositoriesViewsClonesStarsCompleted(in Repository repository)
 		{
-			_queuedJobs.Remove(GetRetryRepositoriesViewsClonesStarsIdentifier(repository));
+			QueuedJobsHash.Remove(GetRetryRepositoriesViewsClonesStarsIdentifier(repository));
 			_repostoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesViewsClonesStarsCompleted));
 		}
 
 		void OnScheduleRetryRepositoriesStarsCompleted(in Repository repository)
 		{
-			_queuedJobs.Remove(GetRetryRepositoriesStarsIdentifier(repository));
+			QueuedJobsHash.Remove(GetRetryRepositoriesStarsIdentifier(repository));
 			_repostoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesStarsCompleted));
 		}
 
 		void OnDatabaseCleanupCompleted()
 		{
-			_queuedJobs.Remove(CleanUpDatabaseIdentifier);
+			QueuedJobsHash.Remove(CleanUpDatabaseIdentifier);
 			_eventManager.RaiseEvent(this, EventArgs.Empty, nameof(DatabaseCleanupCompleted));
 		}
 
 		void OnScheduleNotifyTrendingRepositoriesCompleted(in bool result)
 		{
-			_queuedJobs.Remove(NotifyTrendingRepositoriesIdentifier);
+			QueuedJobsHash.Remove(NotifyTrendingRepositoriesIdentifier);
 			_scheduleNotifyTrendingRepositoriesCompletedEventManager.RaiseEvent(this, result, nameof(ScheduleNotifyTrendingRepositoriesCompleted));
 		}
 
 		void OnScheduleRetryOrganizationsRepositoriesCompleted(in string organizationName)
 		{
-			_queuedJobs.Remove(GetRetryOrganizationsRepositoriesIdentifier(organizationName));
+			QueuedJobsHash.Remove(GetRetryOrganizationsRepositoriesIdentifier(organizationName));
 			_scheduleRetryOrganizationsRepositoriesCompletedEventManager.RaiseEvent(this, organizationName, nameof(ScheduleRetryOrganizationsRepositoriesCompleted));
 		}
 
 		void OnScheduleRetryGetReferringSitesCompleted(in Repository repository)
 		{
-			_queuedJobs.Remove(GetRetryGetReferringSitesIdentifier(repository));
+			QueuedJobsHash.Remove(GetRetryGetReferringSitesIdentifier(repository));
 			_repostoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryGetReferringSitesCompleted));
 		}
 

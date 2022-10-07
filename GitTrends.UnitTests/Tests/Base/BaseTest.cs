@@ -56,6 +56,9 @@ namespace GitTrends.UnitTests
 
 			var mockNotificationService = (MockDeviceNotificationsService)ServiceCollection.ServiceProvider.GetRequiredService<IDeviceNotificationsService>();
 			mockNotificationService.Reset();
+
+			var extendedBackgroundFetchService = (ExtendedBackgroundFetchService)ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+			extendedBackgroundFetchService.CancelAllJobs();
 		}
 
 		protected virtual void InitializeServiceCollection()
