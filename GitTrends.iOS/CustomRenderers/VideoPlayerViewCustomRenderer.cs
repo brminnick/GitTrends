@@ -35,7 +35,7 @@ namespace GitTrends.iOS
         {
             base.OnElementPropertyChanged(sender, e);
 
-            if (e.PropertyName is nameof(Element.Url)
+            if (e.PropertyName == VideoPlayerView.UrlProperty.PropertyName
                 && _avPlayerViewController.View is not null
                 && Element.Url is not null)
             {
