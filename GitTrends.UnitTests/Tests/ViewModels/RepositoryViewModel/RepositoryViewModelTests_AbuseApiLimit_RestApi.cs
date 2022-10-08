@@ -13,7 +13,7 @@ namespace GitTrends.UnitTests
 	class RepositoryViewModelTests_AbuseLimit_RestApi : RepositoryViewModelTests_AbuseLimit
 	{
 		[Test]
-		public Task PullToRefreshCommandTest_MaximumApiLimit_RestLApi() => ExecutePullToRefreshCommandTestAbuseLimit();
+		public Task AbuseLimit_RestApi() => ExecutePullToRefreshCommandTestAbuseLimit();
 
 		protected override void InitializeServiceCollection()
 		{

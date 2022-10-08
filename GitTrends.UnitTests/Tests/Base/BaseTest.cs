@@ -20,7 +20,13 @@ namespace GitTrends.UnitTests
 		protected const string AuthenticatedGitHubUserAvatarUrl = "https://avatars.githubusercontent.com/u/13558917?u=f1392f8aefe2d52a87c4d371981cb7153199fa27&v=4";
 
 		[TearDown]
-		public virtual Task TearDown() => Task.CompletedTask;
+		public virtual Task TearDown()
+		{
+			var extendedBackgroundFetchService = (ExtendedBackgroundFetchService)ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+			extendedBackgroundFetchService.CancelAllJobs();
+
+			return Task.CompletedTask;
+		}
 
 		[SetUp]
 		public virtual async Task Setup()
@@ -34,6 +40,9 @@ namespace GitTrends.UnitTests
 
 			Device.Info = new XamarinFormsDeviceInfo();
 			Device.PlatformServices = new MockPlatformServices();
+
+			var extendedBackgroundFetchService = (ExtendedBackgroundFetchService)ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+			extendedBackgroundFetchService.CancelAllJobs();
 
 			var preferences = ServiceCollection.ServiceProvider.GetRequiredService<IPreferences>();
 			preferences.Clear();
@@ -56,9 +65,6 @@ namespace GitTrends.UnitTests
 
 			var mockNotificationService = (MockDeviceNotificationsService)ServiceCollection.ServiceProvider.GetRequiredService<IDeviceNotificationsService>();
 			mockNotificationService.Reset();
-
-			var extendedBackgroundFetchService = (ExtendedBackgroundFetchService)ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
-			extendedBackgroundFetchService.CancelAllJobs();
 		}
 
 		protected virtual void InitializeServiceCollection()
