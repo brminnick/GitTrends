@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
@@ -202,23 +203,25 @@ namespace GitTrends.UnitTests
 		public void CurrentOptionTest_InvalidOption()
 		{
 			//Arrange
-			SortingOption currentOption_Initial, currentOption_PlusOne, currentOption_NegativeOne;
+			SortingOption currentOption_Initial;
 
 			var sortingService = ServiceCollection.ServiceProvider.GetRequiredService<MobileSortingService>();
 
 			//Act
 			currentOption_Initial = sortingService.CurrentOption;
 
-			sortingService.CurrentOption = (SortingOption)(Enum.GetNames(typeof(SortingOption)).Count() + 1);
-			currentOption_PlusOne = sortingService.CurrentOption;
-
-			sortingService.CurrentOption = (SortingOption)(-1);
-			currentOption_NegativeOne = sortingService.CurrentOption;
-
-			//Assert
+			// Assert
 			Assert.AreEqual(MobileSortingService.DefaultSortingOption, currentOption_Initial);
-			Assert.AreEqual(MobileSortingService.DefaultSortingOption, currentOption_PlusOne);
-			Assert.AreEqual(MobileSortingService.DefaultSortingOption, currentOption_NegativeOne);
+
+			Assert.Throws<InvalidEnumArgumentException>(() =>
+			{
+				sortingService.CurrentOption = (SortingOption)(Enum.GetNames(typeof(SortingOption)).Count() + 1);
+			});
+
+			Assert.Throws<InvalidEnumArgumentException>(() =>
+			{
+				sortingService.CurrentOption = (SortingOption)(-1);
+			});
 		}
 	}
 }

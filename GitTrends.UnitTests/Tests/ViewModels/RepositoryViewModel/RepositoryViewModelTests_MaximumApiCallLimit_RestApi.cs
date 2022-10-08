@@ -13,7 +13,7 @@ namespace GitTrends.UnitTests
 	class RepositoryViewModelTests_MaximumApiCallLimit_RestApi : RepositoryViewModelTests_MaximumApiCallLimit
 	{
 		[Test]
-		public Task PullToRefreshCommandTest_MaximumApiLimit_RestLApi() => ExecutePullToRefreshCommandTestMaximumApiLimitTest();
+		public Task MaximumApiCallLimit_RestApi() => ExecutePullToRefreshCommandTestMaximumApiLimitTest();
 
 		protected override void InitializeServiceCollection()
 		{
@@ -24,7 +24,7 @@ namespace GitTrends.UnitTests
 			ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
 		}
 
-		protected static HttpClient CreateMaximumApiLimitHttpClient(string url)
+		static HttpClient CreateMaximumApiLimitHttpClient(string url)
 		{
 			var responseMessage = new HttpResponseMessage(HttpStatusCode.Forbidden);
 			responseMessage.Headers.Add(GitHubApiStatusService.RateLimitHeader, "5000");

@@ -33,7 +33,7 @@ namespace GitTrends.UnitTests
 			services.AddSingleton<AnalyticsInitializationService>();
 			services.AddSingleton<AppInitializationService>();
 			services.AddSingleton<AzureFunctionsApiService>();
-			services.AddSingleton<BackgroundFetchService>();
+			services.AddSingleton<BackgroundFetchService, ExtendedBackgroundFetchService>();
 			services.AddSingleton<DeepLinkingService>();
 			services.AddSingleton<NotificationService, ExtendedNotificationService>();
 			services.AddSingleton<GitHubApiV3Service>();
