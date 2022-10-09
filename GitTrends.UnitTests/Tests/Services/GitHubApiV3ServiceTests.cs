@@ -3,8 +3,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using GitHubApiStatus;
-using GitHubApiStatus.Extensions;
 using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -244,22 +242,19 @@ namespace GitTrends.UnitTests
 			//"Could not resolve to a Repository with the name 'zxcvbnmlkjhgfdsa1234567890/abc123321'."
 		}
 
-		[Test]
+		[Test, Ignore("Test Fails When GitHub API Rate Limit Exceeded")]
 		public async Task GetStarGazers_Unauthenticated()
 		{
 			//Arrange
 			StarGazers starGazers;
+			var httpClient = ServiceCollection.ServiceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
+			httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue(nameof(GitTrends))));
 
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
-			var gitHubApiStatusService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiStatusService>();
 
 			//Act
 			gitHubUserService.InvalidateToken();
-
-			var rateLimits = await gitHubApiStatusService.GetApiRateLimits().ConfigureAwait(false);
-			if (rateLimits.RestApi.RemainingRequestCount < 1000)
-				Assert.Ignore("Test Fails When GitHub API Rate Limit Exceeded");
 
 			starGazers = await gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 
