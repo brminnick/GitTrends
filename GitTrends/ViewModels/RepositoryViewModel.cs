@@ -35,6 +35,7 @@ namespace GitTrends
 		readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
 		IReadOnlyList<Repository> _repositoryList = Array.Empty<Repository>();
+		RefreshState _refreshState;
 
 		[ObservableProperty]
 		bool _isRefreshing;
@@ -102,10 +103,12 @@ namespace GitTrends
 
 		RefreshState RefreshState
 		{
+			get => _refreshState;
 			set
 			{
 				EmptyDataViewTitle = EmptyDataViewService.GetRepositoryTitleText(value, !_repositoryList.Any());
 				EmptyDataViewDescription = EmptyDataViewService.GetRepositoryDescriptionText(value, !_repositoryList.Any());
+				_refreshState = value;
 			}
 		}
 
@@ -201,8 +204,8 @@ namespace GitTrends
 				AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
 
 
-				var repositoriesWithoutStarsDataAndOver1000Stars = _repositoryList.Where(x => !x.ContainsViewsClonesStarsData && x.StarCount > 1000);
-				var repositoriesWithoutStarsDataAndLessThan1000Stars = _repositoryList.Where(x => !x.ContainsViewsClonesStarsData && x.StarCount <= 1000);
+				var repositoriesWithoutStarsDataAndOver1000Stars = _repositoryList.Where(x => !x.ContainsStarsData && x.StarCount > 1000);
+				var repositoriesWithoutStarsDataAndLessThan1000Stars = _repositoryList.Where(x => !x.ContainsStarsData && x.StarCount <= 1000);
 
 				// Fetch Stars Data in Background for Repositories Containing Over 1000 Stars
 				// GitHub API limits us to 100 StarGazers per Request, meaning that a repository with 24K Stars requires 240 round-trips from GitTrends to GitHub's servers to aggregate the data
@@ -498,8 +501,8 @@ namespace GitTrends
 			_pullToRefreshFailedEventManager.RaiseEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
 		}
 
-		void HandleScheduleRetryRepositoriesStarsCompleted(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
-		void HandleTrendsViewModelRepositorySavedToDatabase(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
-		void HandleScheduleRetryRepositoriesViewsClonesStarsCompleted(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
+		void HandleScheduleRetryRepositoriesStarsCompleted(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
+		void HandleTrendsViewModelRepositorySavedToDatabase(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
+		void HandleScheduleRetryRepositoriesViewsClonesStarsCompleted(object sender, Repository e) => AddRepositoriesToCollection(new Repository[] { e }, _searchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
 	}
 }
