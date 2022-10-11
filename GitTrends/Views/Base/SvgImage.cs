@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using FFImageLoading;
 using FFImageLoading.Svg.Forms;
 using GitTrends.Mobile.Common;
 using Xamarin.CommunityToolkit.Markup;
@@ -15,17 +16,22 @@ namespace GitTrends
 			BindableProperty.Create(nameof(GetColor), typeof(Func<Color>), typeof(SvgImage), (Func<Color>)(() => Color.Default), propertyChanged: HandleGetTextColorPropertyChanged);
 
 		public SvgImage(in string svgFileName, in Func<Color> getColor, double widthRequest = 24, double heightRequest = 24)
+			: this(getColor, widthRequest, heightRequest)
 		{
-			if (!svgFileName.EndsWith(".svg"))
-				throw new ArgumentException($"{nameof(svgFileName)} must end with .svg", nameof(svgFileName));
+			Source = SvgService.GetValidatedFullPath(svgFileName);
+		}
 
+		public SvgImage(in Func<Color> getColor, double widthRequest = 24, double heightRequest = 24)
+			:this(widthRequest, heightRequest)
+		{
+			GetColor = getColor;
+		}
+
+		public SvgImage(double widthRequest = 24, double heightRequest = 24)
+		{
 			ThemeService.PreferenceChanged += HandlePreferenceChanged;
 
 			this.FillExpand();
-
-			GetColor = getColor;
-
-			Source = SvgService.GetFullPath(svgFileName);
 
 			WidthRequest = widthRequest;
 			HeightRequest = heightRequest;
@@ -44,6 +50,19 @@ namespace GitTrends
 					OnPropertyChanged(nameof(GetColor));
 				}
 			}
+		}
+
+		// Ensure only Validated Full Path is 
+		protected override ImageSource CoerceImageSource(object newValue)
+        {
+			var source = base.CoerceImageSource(newValue);
+
+			if(source is FileImageSource fileImageSource)
+			{
+				_ = SvgService.GetValidatedSvgFileName(fileImageSource.File);
+			}
+
+			return source;
 		}
 
 		static void HandleGetTextColorPropertyChanged(BindableObject bindable, object oldValue, object newValue)

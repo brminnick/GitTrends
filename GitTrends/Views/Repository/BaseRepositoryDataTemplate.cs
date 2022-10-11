@@ -25,7 +25,7 @@ namespace GitTrends
 
 		readonly static AsyncAwaitBestPractices.WeakEventManager _tappedWeakEventManager = new();
 
-		protected BaseRepositoryDataTemplate(IEnumerable<View> parentDataTemplateChildren, RepositoryViewModel repositoryViewModel, Repository repository) : base(() => new CardView(parentDataTemplateChildren, repositoryViewModel, repository))
+		protected BaseRepositoryDataTemplate(IEnumerable<View> parentDataTemplateChildren) : base(() => new CardView(parentDataTemplateChildren))
 		{
 
 		}
@@ -41,7 +41,7 @@ namespace GitTrends
 
 		class CardView : ExtendedSwipeView<Repository>
 		{
-			public CardView(in IEnumerable<View> dataTemplateChildren, in RepositoryViewModel repositoryViewModel, in Repository repository)
+			public CardView(in IEnumerable<View> dataTemplateChildren)
 			{
 				var sidePadding = IsSmallScreen ? 8 : 16;
 				BackgroundColor = Color.Transparent;
@@ -52,28 +52,24 @@ namespace GitTrends
 				{
 					new SwipeItemView
 					{
-						CommandParameter = repository,
-						Command = repositoryViewModel.ToggleIsFavoriteCommand,
-						Content = new SvgImage(repository.IsFavorite is true ? "star.svg" : "star_outline.svg", () => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)], 44, 44)
+						Content = new SvgImage(() => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)], 44, 44)
 									.Margins(right: sidePadding)
-					}
+									.Bind(SvgImage.SourceProperty, nameof(Repository.IsFavorite), convert: (bool? isFavorite) => isFavorite is true ? "star.svg" : "star_outline.svg")
+					}.Bind(SwipeItemView.CommandProperty, nameof(RepositoryViewModel.ToggleIsFavoriteCommand), source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))
+					 .Bind(SwipeItemView.CommandParameterProperty)
 				};
 
-				if (repository.IsRepositoryUrlValid())
+				LeftItems = new SwipeItems
 				{
-					LeftItems = new SwipeItems
+					new SwipeItemView
 					{
-						new SwipeItemView
-						{
-							CommandParameter = repository,
-							Command = repositoryViewModel.NavigateToRepositoryWebsiteCommand,
-							Content = new Label { Text = FontAwesomeConstants.ExternalLink.ToString() }
-											.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
-											.Font(FontFamilyConstants.FontAwesome, 28).CenterExpand()
-											.Margins(left: sidePadding),
-						}
-					};
-				}
+						Content = new Label { Text = FontAwesomeConstants.ExternalLink.ToString() }
+										.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
+										.Font(FontFamilyConstants.FontAwesome, 28).CenterExpand()
+										.Margins(left: sidePadding),
+					}
+				}.Bind(SwipeItemView.CommandProperty, nameof(RepositoryViewModel.NavigateToRepositoryWebsiteCommand), source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))
+				 .Bind(SwipeItemView.CommandParameterProperty);
 
 				Content = new Grid
 				{
@@ -91,7 +87,7 @@ namespace GitTrends
 
 					Children =
 					{
-						new CardViewFrame(dataTemplateChildren, repository).Row(CardViewRow.Card).Column(CardViewColumn.Card)
+						new CardViewFrame(dataTemplateChildren).Row(CardViewRow.Card).Column(CardViewColumn.Card)
 					}
 				};
 			}
@@ -103,21 +99,21 @@ namespace GitTrends
 
 			class CardViewFrame : MaterialFrame
 			{
-				public CardViewFrame(in IEnumerable<View> dataTemplateChildren, in Repository repository)
+				public CardViewFrame(in IEnumerable<View> dataTemplateChildren)
 				{
 					Padding = IsSmallScreen ? new Thickness(8, 16, 6, 8) : new Thickness(16, 16, 12, 8);
 					CornerRadius = 4;
 					HasShadow = false;
 					Elevation = 4;
 
-					Content = new ContentGrid(dataTemplateChildren, repository);
+					Content = new ContentGrid(dataTemplateChildren);
 
 					this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
 				}
 
 				class ContentGrid : Grid
 				{
-					public ContentGrid(in IEnumerable<View> dataTemplateChildren, in Repository repository)
+					public ContentGrid(in IEnumerable<View> dataTemplateChildren)
 					{
 						this.FillExpand();
 
@@ -140,28 +136,42 @@ namespace GitTrends
 							(Column.Emoji3, _emojiColumnSize),
 							(Column.Statistic3, _statsColumnSize));
 
-						Children.Add(new AvatarImage(repository.OwnerAvatarUrl, _circleImageHeight)
+						Children.Add(new AvatarImage(_circleImageHeight)
 										.Row(Row.Title).Column(Column.Avatar).RowSpan(2)
+										.Bind(AvatarImage.ImageSourceProperty, nameof(Repository.OwnerAvatarUrl), BindingMode.OneTime)
 										.DynamicResources((CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
 															(CircleImage.ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
 															(CircleImage.LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource))));
 
-						Children.Add(new NameLabel(repository.Name)
-										.Row(Row.Title).Column(Column.Trending).ColumnSpan(7));
+						Children.Add(new NameLabel()
+										.Row(Row.Title).Column(Column.Trending).ColumnSpan(7)
+										.Bind(Label.TextProperty, nameof(Repository.Name)));
 
-						Children.Add(new DescriptionLabel(repository.Description)
-										.Row(Row.Description).Column(Column.Trending).ColumnSpan(7));
+						Children.Add(new DescriptionLabel()
+										.Row(Row.Description).Column(Column.Trending).ColumnSpan(7)
+										.Bind(Label.TextProperty, nameof(Repository.Description)));
 
 						Children.Add(new Separator()
 										.Row(Row.Separator).Column(Column.Trending).ColumnSpan(7));
 
 						//On large screens, display TrendingImage in the same column as the repository name
-						Children.Add(new LargeScreenTrendingImage(repository.IsTrending, repository.IsFavorite).Assign(out LargeScreenTrendingImage largeScreenTrendingImage)
-										.Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2));
+						Children.Add(new TrendingImage(RepositoryPageAutomationIds.LargeScreenTrendingImage)
+										.Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2)
+										.Assign(out TrendingImage largeScreenTrendingImage)
+										.Bind<TrendingImage, bool, double, bool, bool>(SvgImage.IsVisibleProperty,
+											binding1: new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
+											binding2: new Binding(nameof(this.Width), BindingMode.OneWay, source: this),
+											binding3: new Binding(nameof(Repository.IsFavorite), BindingMode.OneWay),
+											convert: ((bool IsTrending, double Width, bool IsFavorite) inputs) => IsTrendingImageVisible(inputs.IsTrending, inputs.Width, inputs.IsFavorite, largeScreenTrendingImageWidth => largeScreenTrendingImageWidth >= (TrendingImage.SvgWidthRequest + 8))));
 
 						//On smaller screens, display TrendingImage under the Avatar
-						Children.Add(new SmallScreenTrendingImage(repository.IsTrending, repository.IsFavorite, largeScreenTrendingImage)
-										.Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3));
+						Children.Add(new TrendingImage(RepositoryPageAutomationIds.SmallScreenTrendingImage)
+										.Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3)
+										.Bind<TrendingImage, bool, double, bool, bool>(SvgImage.IsVisibleProperty,
+											binding1: new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
+											binding2: new Binding(nameof(this.Width), BindingMode.OneWay, source: largeScreenTrendingImage),
+											binding3: new Binding(nameof(Repository.IsFavorite), BindingMode.OneWay),
+											convert: ((bool IsTrending, double Width, bool IsFavorite) inputs) => IsTrendingImageVisible(inputs.IsTrending, inputs.Width, inputs.IsFavorite, largeScreenTrendingImageWidth => largeScreenTrendingImageWidth < (TrendingImage.SvgWidthRequest + 8))));
 
 						foreach (var child in dataTemplateChildren)
 						{
@@ -171,10 +181,8 @@ namespace GitTrends
 
 					class NameLabel : PrimaryColorLabel
 					{
-						public NameLabel(in string name) : base(20)
+						public NameLabel() : base(20)
 						{
-							Text = name;
-
 							LineBreakMode = LineBreakMode.TailTruncation;
 							HorizontalOptions = LayoutOptions.FillAndExpand;
 							FontFamily = FontFamilyConstants.RobotoBold;
@@ -183,10 +191,8 @@ namespace GitTrends
 
 					class DescriptionLabel : PrimaryColorLabel
 					{
-						public DescriptionLabel(in string description) : base(14)
+						public DescriptionLabel() : base(14)
 						{
-							Text = description;
-
 							MaxLines = 2;
 							LineHeight = 1.16;
 							FontFamily = FontFamilyConstants.RobotoRegular;
@@ -211,83 +217,37 @@ namespace GitTrends
 						public Separator() => this.DynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
 					}
 
-					class LargeScreenTrendingImage : TrendingImage
-					{
-						public LargeScreenTrendingImage(bool isTrending, bool? isFavorite) : base(RepositoryPageAutomationIds.LargeScreenTrendingImage, isTrending, isFavorite)
-						{
-							SetBinding(IsVisibleProperty, new MultiBinding
-							{
-								Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth >= (SvgWidthRequest + 8)),
-								Bindings =
-								{
-									new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
-									new Binding(nameof(Width), BindingMode.OneWay, source: this),
-									new Binding(nameof(Repository.IsFavorite), BindingMode.OneWay)
-								}
-							});
-						}
-					}
-
-					class SmallScreenTrendingImage : TrendingImage
-					{
-						public SmallScreenTrendingImage(bool isTrending, bool? isFavorite, LargeScreenTrendingImage largeScreenTrendingImage) :
-							base(RepositoryPageAutomationIds.SmallScreenTrendingImage, isTrending, isFavorite)
-						{
-							SetBinding(IsVisibleProperty, new MultiBinding
-							{
-								Converter = new IsVisibleConverter(largeScreenTrendingImageWidth => largeScreenTrendingImageWidth < (SvgWidthRequest + 8)),
-								Bindings =
-								{
-									new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
-									new Binding(nameof(Width), BindingMode.OneWay, source: largeScreenTrendingImage),
-									new Binding(nameof(Repository.IsFavorite), BindingMode.OneWay)
-								}
-							});
-						}
-					}
-
-					abstract class TrendingImage : StatisticsSvgImage
+					class TrendingImage : SvgImage
 					{
 						public const double SvgWidthRequest = 62;
 						public const double SvgHeightRequest = 16;
 
-						public TrendingImage(string automationId, bool isTrending, bool? isFavorite)
-							: base(isTrending ? "trending_tag.svg" : "favorite_tag.svg",
-									isFavorite is true ? nameof(BaseTheme.CardStarsStatsIconColor) : nameof(BaseTheme.CardTrendingStatsColor),
-									SvgWidthRequest,
-									SvgHeightRequest)
+						public TrendingImage(string automationId) : base(SvgWidthRequest, SvgHeightRequest)
 						{
 							AutomationId = automationId;
 							HorizontalOptions = LayoutOptions.Start;
 							VerticalOptions = LayoutOptions.End;
+
+							this.Bind(SvgImage.SourceProperty, 
+										nameof(Repository.IsTrending), 
+										BindingMode.OneTime,
+										convert: (bool isTrending) => isTrending ? SvgService.GetValidatedFullPath("trending_tag.svg"): SvgService.GetValidatedFullPath("favorite_tag.svg"));
+							
+							this.Bind<SvgImage, bool?, Func<Color>>(SvgImage.GetColorProperty, 
+																	nameof(Repository.IsFavorite), 
+																	BindingMode.OneTime,
+																	convert: (bool? isFavorite) => isFavorite is true 
+																									? () => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)] 
+																									: () => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)]);
 						}
-
-						protected class IsVisibleConverter : IMultiValueConverter
-						{
-							readonly Func<double, bool> _isWidthValid;
-
-							public IsVisibleConverter(Func<double, bool> isWidthValid) => _isWidthValid = isWidthValid;
-
-							public object? Convert(object?[]? values, Type? targetType, object? parameter, CultureInfo? culture)
-							{
-								if (values is null || !values.Any())
-									return false;
-
-								if (values[0] is null || values[1] is null)
-									return false;
-
-								var isTrending = (bool)(values[0] ?? throw new NotSupportedException("Value cannot be null"));
-								var width = (double)(values[1] ?? throw new NotSupportedException("Value cannot be null"));
-								var isFavorite = (bool?)values[2];
-
-								// When `Width is -1`, Xamarin.Forms hasn't inflated the View
-								// Allow Xamarin.Forms to inflate the view, then validate its Width
-								return (isTrending || isFavorite is true)
-										&& (width is -1 || _isWidthValid(width));
-							}
-
-							public object?[]? ConvertBack(object? value, Type?[]? targetTypes, object? parameter, CultureInfo? culture) => throw new NotImplementedException();
-						}
+					}
+					
+					static bool IsTrendingImageVisible(bool isTrending, double width, bool isFavorite, Func<double, bool> isWidthValid)
+					{
+							// When `Width is -1`, Xamarin.Forms hasn't inflated the View
+							// Allow Xamarin.Forms to inflate the view, then validate its Width
+							return (isTrending || isFavorite is true)
+									&& (width is -1 || isWidthValid(width));
 					}
 				}
 			}

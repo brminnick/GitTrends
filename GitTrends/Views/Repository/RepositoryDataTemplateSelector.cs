@@ -10,139 +10,203 @@ namespace GitTrends
 	class RepositoryDataTemplateSelector : DataTemplateSelector
 	{
 		readonly MobileSortingService _sortingService;
-		readonly RepositoryViewModel _repositoryViewModel;
 
-		public RepositoryDataTemplateSelector(in MobileSortingService sortingService, in RepositoryViewModel repositoryViewModel) =>
-			(_sortingService, _repositoryViewModel) = (sortingService, repositoryViewModel);
+		readonly ViewsDataTemplate _viewsDataTemplate;
+		readonly ClonesDataTemplate _clonesDataTemplate;
+		readonly IssuesForksDataTemplate _issuesForksDataTemplate;
 
-		protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
+		public RepositoryDataTemplateSelector(in MobileSortingService sortingService) 
 		{
-			var repository = (Repository)item;
-
-			var sortingCategory = MobileSortingService.GetSortingCategory(_sortingService.CurrentOption);
-
-			return sortingCategory switch
-			{
-				SortingCategory.Clones => new ClonesDataTemplate(_repositoryViewModel, repository),
-				SortingCategory.Views => new ViewsDataTemplate(_repositoryViewModel, repository),
-				SortingCategory.IssuesForks => new IssuesForksDataTemplate(_repositoryViewModel, repository),
-				_ => throw new NotSupportedException()
-			};
+			_sortingService = sortingService;
+			_clonesDataTemplate = new ClonesDataTemplate();
+			_viewsDataTemplate = new ViewsDataTemplate();
+			_issuesForksDataTemplate = new IssuesForksDataTemplate();
 		}
 
-		static bool IsStatisticsLabelVisible(object? item) => item is not null;
+		protected override DataTemplate OnSelectTemplate(object item, BindableObject container) => MobileSortingService.GetSortingCategory(_sortingService.CurrentOption) switch
+		{
+			SortingCategory.Views => _viewsDataTemplate,
+			SortingCategory.Clones => _clonesDataTemplate,
+			SortingCategory.IssuesForks => _issuesForksDataTemplate,
+			_ => throw new NotSupportedException()
+		};
+
+		static bool IsStatisticsLabelVisible<T>(T? item) => item is not null;
 
 		class ClonesDataTemplate : BaseRepositoryDataTemplate
 		{
-			public ClonesDataTemplate(in RepositoryViewModel repositoryViewModel, in Repository repository) : base(CreateClonesDataTemplateViews(repository), repositoryViewModel, repository)
+			public ClonesDataTemplate() : base(CreateClonesDataTemplateViews())
 			{
 
 			}
 
-			static IEnumerable<View> CreateClonesDataTemplateViews(in Repository repository) => new View[]
+			static IEnumerable<View> CreateClonesDataTemplateViews() => new View[]
 			{
-				new StatisticsSvgImage("total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
+				new StatisticsSvgImage("total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor))
+					.Row(Row.Statistics).Column(Column.Emoji1),
 
                 //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                new StatisticsLabel(repository.TotalClones.ToAbbreviatedText(), IsStatisticsLabelVisible(repository.TotalClones), nameof(BaseTheme.CardClonesStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic1),
+                new StatisticsLabel(nameof(BaseTheme.CardClonesStatsTextColor))
+					.Row(Row.Statistics).Column(Column.Statistic1)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.TotalClones), BindingMode.OneTime, convert: static (long? totalClones) => IsStatisticsLabelVisible(totalClones))
+					.Bind(Label.TextProperty, nameof(Repository.TotalClones), BindingMode.OneTime, convert: static (long? totalClones) => totalClones.ToAbbreviatedText()),
 
                 //Display an activity indicator while the Data is loading
-                new StatisticsActivityIndicator(!IsStatisticsLabelVisible(repository.TotalClones)).Row(Row.Statistics).Column(Column.Statistic1),
+                new StatisticsActivityIndicator()
+					.Row(Row.Statistics).Column(Column.Statistic1)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.TotalClones), BindingMode.OneTime, convert: static (long? totalClones) => !IsStatisticsLabelVisible(totalClones)),
 
-				new StatisticsSvgImage("unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji2),
+				new StatisticsSvgImage("unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor))
+					.Row(Row.Statistics).Column(Column.Emoji2),
 
                 //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                new StatisticsLabel(repository.TotalUniqueClones.ToAbbreviatedText(), IsStatisticsLabelVisible(repository.TotalUniqueClones), nameof(BaseTheme.CardUniqueClonesStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic2),
+                new StatisticsLabel(nameof(BaseTheme.CardUniqueClonesStatsTextColor))
+					.Row(Row.Statistics).Column(Column.Statistic2)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.TotalUniqueClones), BindingMode.OneTime, convert: static (long? totalUniqueClones) => IsStatisticsLabelVisible(totalUniqueClones))
+					.Bind(Label.TextProperty, nameof(Repository.TotalUniqueClones), BindingMode.OneTime, convert: static (long? totalUniqueClones) => totalUniqueClones.ToAbbreviatedText()),
 
                 //Display an activity indicator while the Data is loading
-                new StatisticsActivityIndicator(!IsStatisticsLabelVisible(repository.TotalUniqueClones)).Row(Row.Statistics).Column(Column.Statistic2),
+                new StatisticsActivityIndicator()
+					.Row(Row.Statistics).Column(Column.Statistic2)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.TotalUniqueClones), BindingMode.OneTime, convert: static (long? totalUniqueClones) => !IsStatisticsLabelVisible(totalUniqueClones)),
 
-				new StatisticsSvgImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji3),
+				new StatisticsSvgImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
+					.Row(Row.Statistics).Column(Column.Emoji3),
 
                 //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                new StatisticsLabel(repository.StarCount.ToAbbreviatedText(), IsStatisticsLabelVisible(repository.StarCount), nameof(BaseTheme.CardStarsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic3),
+                new StatisticsLabel(nameof(BaseTheme.CardStarsStatsTextColor))
+					.Row(Row.Statistics).Column(Column.Statistic3)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => IsStatisticsLabelVisible(starCount))
+					.Bind(Label.TextProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => starCount.ToAbbreviatedText()),
 
                 //Display an activity indicator while the Data is loading
-                new StatisticsActivityIndicator(!IsStatisticsLabelVisible(repository.StarCount)).Row(Row.Statistics).Column(Column.Statistic3),
+                new StatisticsActivityIndicator()
+					.Row(Row.Statistics).Column(Column.Statistic3)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => !IsStatisticsLabelVisible(starCount)),
 			};
 		}
 
 		class ViewsDataTemplate : BaseRepositoryDataTemplate
 		{
-			public ViewsDataTemplate(in RepositoryViewModel repositoryViewModel, in Repository repository) : base(CreateViewsDataTemplateViews(repository), repositoryViewModel, repository)
+			public ViewsDataTemplate() : base(CreateViewsDataTemplateViews())
 			{
 
 			}
 
-			static IEnumerable<View> CreateViewsDataTemplateViews(in Repository repository) => new View[]
+			static IEnumerable<View> CreateViewsDataTemplateViews() => new View[]
 			{
-				new StatisticsSvgImage("total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
+				new StatisticsSvgImage("total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor))
+					.Row(Row.Statistics).Column(Column.Emoji1),
 
                 //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                new StatisticsLabel(repository.TotalViews.ToAbbreviatedText(), IsStatisticsLabelVisible(repository.TotalViews), nameof(BaseTheme.CardViewsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic1),
+                new StatisticsLabel(nameof(BaseTheme.CardViewsStatsTextColor))
+					.Row(Row.Statistics).Column(Column.Statistic1)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.TotalViews), BindingMode.OneTime, convert: static (long? totalViews) => IsStatisticsLabelVisible(totalViews))
+					.Bind(Label.TextProperty, nameof(Repository.TotalViews), BindingMode.OneTime, convert: static (long? totalViews) => totalViews.ToAbbreviatedText()),
 
                 //Display an activity indicator while the Data is loading
-                new StatisticsActivityIndicator(!IsStatisticsLabelVisible(repository.TotalViews)).Row(Row.Statistics).Column(Column.Statistic1),
+                new StatisticsActivityIndicator()
+					.Row(Row.Statistics).Column(Column.Statistic1)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.TotalViews), BindingMode.OneTime, convert: static (long? totalViews) => !IsStatisticsLabelVisible(totalViews)),
 
-				new StatisticsSvgImage("unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji2),
+				new StatisticsSvgImage("unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor))
+					.Row(Row.Statistics).Column(Column.Emoji2),
 
                 //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                new StatisticsLabel(repository.TotalUniqueViews.ToAbbreviatedText(), IsStatisticsLabelVisible(repository.TotalUniqueViews), nameof(BaseTheme.CardUniqueViewsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic2),
+                new StatisticsLabel(nameof(BaseTheme.CardUniqueViewsStatsTextColor))
+					.Row(Row.Statistics).Column(Column.Statistic2)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.TotalUniqueViews), BindingMode.OneTime, convert: static (long? totalUniqueViews) => IsStatisticsLabelVisible(totalUniqueViews))
+					.Bind(Label.TextProperty, nameof(Repository.TotalUniqueViews), BindingMode.OneTime, convert: static (long? totalUniqueViews) => totalUniqueViews.ToAbbreviatedText()),
 
                 //Display an activity indicator while the Data is loading
-                new StatisticsActivityIndicator(!IsStatisticsLabelVisible(repository.TotalUniqueViews)).Row(Row.Statistics).Column(Column.Statistic2),
+                new StatisticsActivityIndicator()
+					.Row(Row.Statistics).Column(Column.Statistic2)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.TotalUniqueViews), BindingMode.OneTime, convert: static (long? totalUniqueViews) => !IsStatisticsLabelVisible(totalUniqueViews)),
 
-				new StatisticsSvgImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji3),
+				new StatisticsSvgImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
+					.Row(Row.Statistics).Column(Column.Emoji3),
 
                 //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                new StatisticsLabel(repository.StarCount.ToAbbreviatedText(), IsStatisticsLabelVisible(repository.StarCount), nameof(BaseTheme.CardStarsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic3),
+                new StatisticsLabel(nameof(BaseTheme.CardStarsStatsTextColor))
+					.Row(Row.Statistics).Column(Column.Statistic3)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => IsStatisticsLabelVisible(starCount))
+					.Bind(Label.TextProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => starCount.ToAbbreviatedText()),
 
                 //Display an activity indicator while the Data is loading
-                new StatisticsActivityIndicator(!IsStatisticsLabelVisible(repository.StarCount)).Row(Row.Statistics).Column(Column.Statistic3),
+                new StatisticsActivityIndicator()
+					.Row(Row.Statistics).Column(Column.Statistic3)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => !IsStatisticsLabelVisible(starCount)),
 			};
 		}
 
 		class IssuesForksDataTemplate : BaseRepositoryDataTemplate
 		{
-			public IssuesForksDataTemplate(in RepositoryViewModel repositoryViewModel, in Repository repository) : base(CreateIssuesForksDataTemplateViews(repository), repositoryViewModel, repository)
+			public IssuesForksDataTemplate() : base(CreateIssuesForksDataTemplateViews())
 			{
 
 			}
 
-			static IEnumerable<View> CreateIssuesForksDataTemplateViews(in Repository repository) => new View[]
+			static IEnumerable<View> CreateIssuesForksDataTemplateViews() => new View[]
 			{
-				new StatisticsSvgImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji1),
+				new StatisticsSvgImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
+					.Row(Row.Statistics).Column(Column.Emoji1),
 
                 //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                new StatisticsLabel(repository.StarCount.ToAbbreviatedText(), IsStatisticsLabelVisible(repository.StarCount), nameof(BaseTheme.CardStarsStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic1),
+                new StatisticsLabel(nameof(BaseTheme.CardStarsStatsTextColor))
+					.Row(Row.Statistics).Column(Column.Statistic1)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => IsStatisticsLabelVisible(starCount))
+					.Bind(Label.TextProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => starCount.ToAbbreviatedText()),
 
                 //Display an activity indicator while the Data is loading
-                new StatisticsActivityIndicator(!IsStatisticsLabelVisible(repository.StarCount)).Row(Row.Statistics).Column(Column.Statistic1),
+                new StatisticsActivityIndicator()
+					.Row(Row.Statistics).Column(Column.Statistic1)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => !IsStatisticsLabelVisible(starCount)),
 
-				new StatisticsSvgImage("repo_forked.svg", nameof(BaseTheme.CardForksStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji2),
+				new StatisticsSvgImage("repo_forked.svg", nameof(BaseTheme.CardForksStatsIconColor))
+					.Row(Row.Statistics).Column(Column.Emoji2),
 
                 //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                new StatisticsLabel(repository.ForkCount.ToAbbreviatedText(), IsStatisticsLabelVisible(repository.ForkCount), nameof(BaseTheme.CardForksStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic2),
+                new StatisticsLabel(nameof(BaseTheme.CardForksStatsTextColor))
+					.Row(Row.Statistics).Column(Column.Statistic2)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.ForkCount), BindingMode.OneTime, convert: static (long? forkCount) => IsStatisticsLabelVisible(forkCount))
+					.Bind(Label.TextProperty, nameof(Repository.ForkCount), BindingMode.OneTime, convert: static (long? forkCount) => forkCount.ToAbbreviatedText()),
 
                 //Display an activity indicator while the Data is loading
-                new StatisticsActivityIndicator(!IsStatisticsLabelVisible(repository.ForkCount)).Row(Row.Statistics).Column(Column.Statistic2),
+                new StatisticsActivityIndicator()
+					.Row(Row.Statistics).Column(Column.Statistic2)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.ForkCount), BindingMode.OneTime, convert: static (long? forkCount) => !IsStatisticsLabelVisible(forkCount)),
 
-				new StatisticsSvgImage("issue_opened.svg", nameof(BaseTheme.CardIssuesStatsIconColor)).Row(Row.Statistics).Column(Column.Emoji3),
+				new StatisticsSvgImage("issue_opened.svg", nameof(BaseTheme.CardIssuesStatsIconColor))
+					.Row(Row.Statistics).Column(Column.Emoji3),
 
                 //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
-                new StatisticsLabel(repository.IssuesCount.ToAbbreviatedText(), IsStatisticsLabelVisible(repository.IssuesCount), nameof(BaseTheme.CardIssuesStatsTextColor)).Row(Row.Statistics).Column(Column.Statistic3),
+                new StatisticsLabel(nameof(BaseTheme.CardIssuesStatsTextColor))
+					.Row(Row.Statistics).Column(Column.Statistic3)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.IssuesCount), BindingMode.OneTime, convert: static (long? issuesCount) => IsStatisticsLabelVisible(issuesCount))
+					.Bind(Label.TextProperty, nameof(Repository.IssuesCount), BindingMode.OneTime, convert: static (long? issuesCount) => issuesCount.ToAbbreviatedText()),
 
                 //Display an activity indicator while the Data is loading
-                new StatisticsActivityIndicator(!IsStatisticsLabelVisible(repository.IssuesCount)).Row(Row.Statistics).Column(Column.Statistic3),
+                new StatisticsActivityIndicator()
+					.Row(Row.Statistics).Column(Column.Statistic3)
+					.Bind(Label.IsVisibleProperty, nameof(Repository.IssuesCount), BindingMode.OneTime, convert: static (long? issuesCount) => !IsStatisticsLabelVisible(forkCount)),
 			};
+		}
+
+		class StatisticsSvgImage : SvgImage
+		{
+			public StatisticsSvgImage(string fileName, string baseThemeColor, in double widthRequest = 24, in double heightRequest = 24)
+				: base(fileName, () => (Color)Application.Current.Resources[baseThemeColor], widthRequest, heightRequest)
+			{
+				VerticalOptions = LayoutOptions.CenterAndExpand;
+				HorizontalOptions = LayoutOptions.EndAndExpand;
+			}
 		}
 
 		class StatisticsActivityIndicator : ActivityIndicator
 		{
-			public StatisticsActivityIndicator(bool isVisible)
+			public StatisticsActivityIndicator()
 			{
-				IsVisible = isVisible;
-				IsRunning = isVisible;
+				IsRunning = true;
 
 				Scale = 0.67;
 

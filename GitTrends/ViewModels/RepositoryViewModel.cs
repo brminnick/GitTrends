@@ -365,11 +365,12 @@ namespace GitTrends
 				await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
 		}
 
-		[RelayCommand]
+		static bool IsNavigateToRepositoryWebsiteCommandEnabled(Repository repository) => repository.IsRepositoryUrlValid();
+
+		[RelayCommand(CanExecute = nameof(IsNavigateToRepositoryWebsiteCommandEnabled))]
 		Task NavigateToRepositoryWebsite(Repository repository)
 		{
 			AnalyticsService.Track("Open External Repostory Link Tapped", nameof(repository.Url), repository.Url);
-
 			return _deepLinkingService.OpenApp(GitHubConstants.AppScheme, repository.Url, repository.Url);
 		}
 
