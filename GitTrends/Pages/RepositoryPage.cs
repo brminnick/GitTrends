@@ -86,7 +86,7 @@ namespace GitTrends
 						AutomationId = RepositoryPageAutomationIds.RefreshView,
 						Content = new CollectionView
 						{
-							ItemTemplate = new RepositoryDataTemplateSelector(mobileSortingService, repositoryViewModel),
+							ItemTemplate = new RepositoryDataTemplateSelector(mobileSortingService),
 							BackgroundColor = Color.Transparent,
 							AutomationId = RepositoryPageAutomationIds.CollectionView,
                             //Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879

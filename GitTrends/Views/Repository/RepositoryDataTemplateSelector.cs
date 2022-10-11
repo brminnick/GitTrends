@@ -188,7 +188,7 @@ namespace GitTrends
                 //Display an activity indicator while the Data is loading
                 new StatisticsActivityIndicator()
 					.Row(Row.Statistics).Column(Column.Statistic3)
-					.Bind(Label.IsVisibleProperty, nameof(Repository.IssuesCount), BindingMode.OneTime, convert: static (long? issuesCount) => !IsStatisticsLabelVisible(forkCount)),
+					.Bind(Label.IsVisibleProperty, nameof(Repository.IssuesCount), BindingMode.OneTime, convert: static (long? issuesCount) => !IsStatisticsLabelVisible(issuesCount)),
 			};
 		}
 
