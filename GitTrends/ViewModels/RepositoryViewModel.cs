@@ -120,6 +120,8 @@ namespace GitTrends
 			return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
 		}
 
+		static bool IsNavigateToRepositoryWebsiteCommandEnabled(Repository repository) => repository.IsRepositoryUrlValid();
+
 		[RelayCommand(AllowConcurrentExecutions = true)]
 		async Task ExecuteRefresh()
 		{
@@ -364,8 +366,6 @@ namespace GitTrends
 			if (!_gitHubUserService.IsDemoUser)
 				await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
 		}
-
-		static bool IsNavigateToRepositoryWebsiteCommandEnabled(Repository repository) => repository.IsRepositoryUrlValid();
 
 		[RelayCommand(CanExecute = nameof(IsNavigateToRepositoryWebsiteCommandEnabled))]
 		Task NavigateToRepositoryWebsite(Repository repository)

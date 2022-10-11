@@ -53,10 +53,10 @@ namespace GitTrends
 					new SwipeItemView
 					{
 						Content = new SvgImage(() => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)], 44, 44)
-									.Margins(right: sidePadding)
-									.Bind(SvgImage.SourceProperty, nameof(Repository.IsFavorite), convert: (bool? isFavorite) => isFavorite is true ? "star.svg" : "star_outline.svg")
-					}.Bind(SwipeItemView.CommandProperty, nameof(RepositoryViewModel.ToggleIsFavoriteCommand), source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))
-					 .Bind(SwipeItemView.CommandParameterProperty)
+										.Margins(right: sidePadding)
+										.Bind(SvgImage.SourceProperty, nameof(Repository.IsFavorite), BindingMode.OneTime, convert: static (bool? isFavorite) => isFavorite is true ? "star.svg" : "star_outline.svg")
+					}.Bind(SwipeItemView.CommandProperty, nameof(RepositoryViewModel.ToggleIsFavoriteCommand), BindingMode.OneTime, source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))
+					 .Bind(SwipeItemView.CommandParameterProperty, mode: BindingMode.OneTime)
 				};
 
 				LeftItems = new SwipeItems
@@ -67,9 +67,9 @@ namespace GitTrends
 										.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
 										.Font(FontFamilyConstants.FontAwesome, 28).CenterExpand()
 										.Margins(left: sidePadding),
-					}
-				}.Bind(SwipeItemView.CommandProperty, nameof(RepositoryViewModel.NavigateToRepositoryWebsiteCommand), source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))
-				 .Bind(SwipeItemView.CommandParameterProperty);
+					}.Bind(SwipeItemView.CommandProperty, nameof(RepositoryViewModel.NavigateToRepositoryWebsiteCommand), BindingMode.OneTime, source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))
+					 .Bind(SwipeItemView.CommandParameterProperty, mode: BindingMode.OneTime)
+				};
 
 				Content = new Grid
 				{
@@ -145,7 +145,7 @@ namespace GitTrends
 
 						Children.Add(new NameLabel()
 										.Row(Row.Title).Column(Column.Trending).ColumnSpan(7)
-										.Bind(Label.TextProperty, nameof(Repository.Name)));
+										.Bind(Label.TextProperty, nameof(Repository.Name), BindingMode.OneTime));
 
 						Children.Add(new DescriptionLabel()
 										.Row(Row.Description).Column(Column.Trending).ColumnSpan(7)
@@ -228,26 +228,26 @@ namespace GitTrends
 							HorizontalOptions = LayoutOptions.Start;
 							VerticalOptions = LayoutOptions.End;
 
-							this.Bind(SvgImage.SourceProperty, 
-										nameof(Repository.IsTrending), 
+							this.Bind(SvgImage.SourceProperty,
+										nameof(Repository.IsTrending),
 										BindingMode.OneTime,
-										convert: (bool isTrending) => isTrending ? SvgService.GetValidatedFullPath("trending_tag.svg"): SvgService.GetValidatedFullPath("favorite_tag.svg"));
-							
-							this.Bind<SvgImage, bool?, Func<Color>>(SvgImage.GetColorProperty, 
-																	nameof(Repository.IsFavorite), 
+										convert: static (bool isTrending) => isTrending ? SvgService.GetValidatedFullPath("trending_tag.svg") : SvgService.GetValidatedFullPath("favorite_tag.svg"));
+
+							this.Bind<SvgImage, bool?, Func<Color>>(SvgImage.GetColorProperty,
+																	nameof(Repository.IsFavorite),
 																	BindingMode.OneTime,
-																	convert: (bool? isFavorite) => isFavorite is true 
-																									? () => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)] 
+																	convert: static (bool? isFavorite) => isFavorite is true
+																									? () => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)]
 																									: () => (Color)Application.Current.Resources[nameof(BaseTheme.CardTrendingStatsColor)]);
 						}
 					}
-					
+
 					static bool IsTrendingImageVisible(bool isTrending, double width, bool isFavorite, Func<double, bool> isWidthValid)
 					{
-							// When `Width is -1`, Xamarin.Forms hasn't inflated the View
-							// Allow Xamarin.Forms to inflate the view, then validate its Width
-							return (isTrending || isFavorite is true)
-									&& (width is -1 || isWidthValid(width));
+						// When `Width is -1`, Xamarin.Forms hasn't inflated the View
+						// Allow Xamarin.Forms to inflate the view, then validate its Width
+						return (isTrending || isFavorite is true)
+								&& (width is -1 || isWidthValid(width));
 					}
 				}
 			}
