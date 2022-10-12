@@ -15,7 +15,7 @@ namespace GitTrends
 		readonly ClonesDataTemplate _clonesDataTemplate;
 		readonly IssuesForksDataTemplate _issuesForksDataTemplate;
 
-		public RepositoryDataTemplateSelector(in MobileSortingService sortingService) 
+		public RepositoryDataTemplateSelector(in MobileSortingService sortingService)
 		{
 			_sortingService = sortingService;
 			_clonesDataTemplate = new ClonesDataTemplate();
@@ -23,15 +23,20 @@ namespace GitTrends
 			_issuesForksDataTemplate = new IssuesForksDataTemplate();
 		}
 
-		protected override DataTemplate OnSelectTemplate(object item, BindableObject container) => MobileSortingService.GetSortingCategory(_sortingService.CurrentOption) switch
+		protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
 		{
-			SortingCategory.Views => _viewsDataTemplate,
-			SortingCategory.Clones => _clonesDataTemplate,
-			SortingCategory.IssuesForks => _issuesForksDataTemplate,
-			_ => throw new NotSupportedException()
-		};
+			var category = MobileSortingService.GetSortingCategory(_sortingService.CurrentOption);
 
-		static bool IsStatisticsLabelVisible<T>(T? item) => item is not null;
+			return category switch
+			{
+				SortingCategory.Views => _viewsDataTemplate,
+				SortingCategory.Clones => _clonesDataTemplate,
+				SortingCategory.IssuesForks => _issuesForksDataTemplate,
+				_ => throw new NotSupportedException()
+			};
+		}
+
+		static bool IsStatisticsLabelVisible(long? item) => item is not null;
 
 		class ClonesDataTemplate : BaseRepositoryDataTemplate
 		{
@@ -48,8 +53,8 @@ namespace GitTrends
                 //Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
                 new StatisticsLabel(nameof(BaseTheme.CardClonesStatsTextColor))
 					.Row(Row.Statistics).Column(Column.Statistic1)
-					.Bind(Label.IsVisibleProperty, nameof(Repository.TotalClones), BindingMode.OneTime, convert: static (long? totalClones) => IsStatisticsLabelVisible(totalClones))
-					.Bind(Label.TextProperty, nameof(Repository.TotalClones), BindingMode.OneTime, convert: static (long? totalClones) => totalClones.ToAbbreviatedText()),
+					.Bind(Label.IsVisibleProperty, nameof(Repository.TotalClones), BindingMode.OneWay, convert: static (long? totalClones) => IsStatisticsLabelVisible(totalClones))
+					.Bind(Label.TextProperty, nameof(Repository.TotalClones), BindingMode.OneTime, convert:  static (long? totalClones) => totalClones.ToAbbreviatedText()),
 
                 //Display an activity indicator while the Data is loading
                 new StatisticsActivityIndicator()

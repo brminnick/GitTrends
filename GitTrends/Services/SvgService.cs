@@ -20,7 +20,9 @@ namespace GitTrends
 			if(fileName is null)
 				throw new ArgumentNullException($"{nameof(fileName)} cannot be null", nameof(fileName));
 
-			if (!fileName.EndsWith(".svg"))
+			var finalFinalNameCharacters = fileName.AsSpan()[^5..^0];
+
+			if (!(finalFinalNameCharacters.EndsWith(".svg", StringComparison.OrdinalIgnoreCase) || finalFinalNameCharacters.EndsWith(".svg/", StringComparison.OrdinalIgnoreCase)))
 				throw new ArgumentException($"{nameof(fileName)} must end with .svg", nameof(fileName));
 
 			return fileName;

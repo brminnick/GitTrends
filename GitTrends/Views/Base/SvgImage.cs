@@ -22,7 +22,7 @@ namespace GitTrends
 		}
 
 		public SvgImage(in Func<Color> getColor, double widthRequest = 24, double heightRequest = 24)
-			:this(widthRequest, heightRequest)
+			: this(widthRequest, heightRequest)
 		{
 			GetColor = getColor;
 		}
@@ -54,15 +54,13 @@ namespace GitTrends
 
 		// Ensure only Validated Full Path is 
 		protected override ImageSource CoerceImageSource(object newValue)
-        {
-			var source = base.CoerceImageSource(newValue);
+		{
+			if (newValue is UriImageSource uri)
+				SvgService.GetValidatedSvgFileName(uri.Uri.ToString());
+			else if (newValue is FileImageSource file)
+				SvgService.GetValidatedSvgFileName(file.File.ToString());
 
-			if(source is FileImageSource fileImageSource)
-			{
-				_ = SvgService.GetValidatedSvgFileName(fileImageSource.File);
-			}
-
-			return source;
+			return base.CoerceImageSource(newValue);
 		}
 
 		static void HandleGetTextColorPropertyChanged(BindableObject bindable, object oldValue, object newValue)

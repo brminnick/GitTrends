@@ -54,7 +54,13 @@ namespace GitTrends
 					{
 						Content = new SvgImage(() => (Color)Application.Current.Resources[nameof(BaseTheme.CardStarsStatsIconColor)], 44, 44)
 										.Margins(right: sidePadding)
-										.Bind(SvgImage.SourceProperty, nameof(Repository.IsFavorite), BindingMode.OneTime, convert: static (bool? isFavorite) => isFavorite is true ? "star.svg" : "star_outline.svg")
+										.Bind(SvgImage.SourceProperty,
+												nameof(Repository.IsFavorite),
+												BindingMode.OneTime,
+												convert: static (bool? isFavorite) => isFavorite is true
+																						? SvgService.GetValidatedFullPath("star.svg")
+																						: SvgService.GetValidatedFullPath("star_outline.svg"))
+
 					}.Bind(SwipeItemView.CommandProperty, nameof(RepositoryViewModel.ToggleIsFavoriteCommand), BindingMode.OneTime, source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))
 					 .Bind(SwipeItemView.CommandParameterProperty, mode: BindingMode.OneTime)
 				};
@@ -158,20 +164,22 @@ namespace GitTrends
 						Children.Add(new TrendingImage(RepositoryPageAutomationIds.LargeScreenTrendingImage)
 										.Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2)
 										.Assign(out TrendingImage largeScreenTrendingImage)
-										.Bind<TrendingImage, bool, double, bool, bool>(SvgImage.IsVisibleProperty,
+										.Bind<TrendingImage, bool, double, bool, bool>(
+											SvgImage.IsVisibleProperty,
 											binding1: new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
 											binding2: new Binding(nameof(this.Width), BindingMode.OneWay, source: this),
 											binding3: new Binding(nameof(Repository.IsFavorite), BindingMode.OneWay),
-											convert: ((bool IsTrending, double Width, bool IsFavorite) inputs) => IsTrendingImageVisible(inputs.IsTrending, inputs.Width, inputs.IsFavorite, largeScreenTrendingImageWidth => largeScreenTrendingImageWidth >= (TrendingImage.SvgWidthRequest + 8))));
+											convert: ((bool IsTrending, double Width, bool IsFavorite) inputs) => IsTrendingImageVisible(inputs.IsTrending, inputs.Width, inputs.IsFavorite, largeScreenTrendingImageWidth => largeScreenTrendingImageWidth < (TrendingImage.SvgWidthRequest + 8))));
 
 						//On smaller screens, display TrendingImage under the Avatar
 						Children.Add(new TrendingImage(RepositoryPageAutomationIds.SmallScreenTrendingImage)
 										.Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3)
-										.Bind<TrendingImage, bool, double, bool, bool>(SvgImage.IsVisibleProperty,
+										.Bind<TrendingImage, bool, double, bool, bool>(
+											SvgImage.IsVisibleProperty,
 											binding1: new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
 											binding2: new Binding(nameof(this.Width), BindingMode.OneWay, source: largeScreenTrendingImage),
 											binding3: new Binding(nameof(Repository.IsFavorite), BindingMode.OneWay),
-											convert: ((bool IsTrending, double Width, bool IsFavorite) inputs) => IsTrendingImageVisible(inputs.IsTrending, inputs.Width, inputs.IsFavorite, largeScreenTrendingImageWidth => largeScreenTrendingImageWidth < (TrendingImage.SvgWidthRequest + 8))));
+											convert: ((bool IsTrending, double Width, bool IsFavorite) inputs) => IsTrendingImageVisible(inputs.IsTrending, inputs.Width, inputs.IsFavorite, largeScreenTrendingImageWidth => largeScreenTrendingImageWidth >= (TrendingImage.SvgWidthRequest + 8))));
 
 						foreach (var child in dataTemplateChildren)
 						{
