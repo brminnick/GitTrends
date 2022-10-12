@@ -17,7 +17,7 @@ namespace GitTrends
 
 		public static string GetValidatedSvgFileName(in string? fileName)
 		{
-			if(fileName is null)
+			if (fileName is null)
 				throw new ArgumentNullException($"{nameof(fileName)} cannot be null", nameof(fileName));
 
 			var finalFinalNameCharacters = fileName.AsSpan()[^5..^0];

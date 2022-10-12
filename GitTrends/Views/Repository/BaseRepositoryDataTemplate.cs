@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Sharpnado.MaterialFrame;
