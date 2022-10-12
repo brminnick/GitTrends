@@ -37,7 +37,7 @@ namespace GitTrends
 
 		class ClonesDataTemplate : BaseRepositoryDataTemplate
 		{
-			public ClonesDataTemplate() : base(CreateClonesDataTemplateViews())
+			public ClonesDataTemplate() : base(() => new CardView(CreateClonesDataTemplateViews()))
 			{
 
 			}
@@ -90,7 +90,7 @@ namespace GitTrends
 
 		class ViewsDataTemplate : BaseRepositoryDataTemplate
 		{
-			public ViewsDataTemplate() : base(CreateViewsDataTemplateViews())
+			public ViewsDataTemplate() : base(() => new CardView(CreateViewsDataTemplateViews()))
 			{
 
 			}
@@ -143,7 +143,7 @@ namespace GitTrends
 
 		class IssuesForksDataTemplate : BaseRepositoryDataTemplate
 		{
-			public IssuesForksDataTemplate() : base(CreateIssuesForksDataTemplateViews())
+			public IssuesForksDataTemplate() : base(() => new CardView(CreateIssuesForksDataTemplateViews()))
 			{
 
 			}

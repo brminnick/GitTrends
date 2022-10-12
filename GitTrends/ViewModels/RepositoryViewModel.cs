@@ -120,7 +120,7 @@ namespace GitTrends
 			return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
 		}
 
-		static bool IsNavigateToRepositoryWebsiteCommandEnabled(Repository repository) => repository.IsRepositoryUrlValid();
+		static bool IsNavigateToRepositoryWebsiteCommandEnabled(Repository? repository) => repository?.IsRepositoryUrlValid() is true;
 
 		[RelayCommand(AllowConcurrentExecutions = true)]
 		async Task ExecuteRefresh()
@@ -368,8 +368,11 @@ namespace GitTrends
 		}
 
 		[RelayCommand(CanExecute = nameof(IsNavigateToRepositoryWebsiteCommandEnabled))]
-		Task NavigateToRepositoryWebsite(Repository repository)
+		Task NavigateToRepositoryWebsite(Repository? repository)
 		{
+			if (repository is null)
+				throw new ArgumentNullException(nameof(repository));
+
 			AnalyticsService.Track("Open External Repostory Link Tapped", nameof(repository.Url), repository.Url);
 			return _deepLinkingService.OpenApp(GitHubConstants.AppScheme, repository.Url, repository.Url);
 		}
