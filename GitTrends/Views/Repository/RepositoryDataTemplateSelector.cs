@@ -11,16 +11,13 @@ namespace GitTrends
 	{
 		readonly MobileSortingService _sortingService;
 
-		readonly ViewsDataTemplate _viewsDataTemplate;
-		readonly ClonesDataTemplate _clonesDataTemplate;
-		readonly IssuesForksDataTemplate _issuesForksDataTemplate;
+		readonly ViewsDataTemplate _viewsDataTemplate = new();
+		readonly ClonesDataTemplate _clonesDataTemplate = new();
+		readonly IssuesForksDataTemplate _issuesForksDataTemplate = new();
 
 		public RepositoryDataTemplateSelector(in MobileSortingService sortingService)
 		{
 			_sortingService = sortingService;
-			_clonesDataTemplate = new ClonesDataTemplate();
-			_viewsDataTemplate = new ViewsDataTemplate();
-			_issuesForksDataTemplate = new IssuesForksDataTemplate();
 		}
 
 		protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
