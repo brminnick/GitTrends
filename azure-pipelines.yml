@@ -1,5 +1,5 @@
 variables:
-  NET_VERSION: '7.0.x'
+  NET_VERSION: '6.0.x'
   NET_CORE_VERSION: '3.1.x'
   PathToSolution: 'GitTrends.sln'
   PathToGitTrendsCsproj: 'GitTrends/GitTrends.csproj'
@@ -38,11 +38,10 @@ jobs:
 
     steps:      
       - task: UseDotNet@2
-        displayName: 'Install .NET SDK'
+        displayName: 'Install Latest .NET SDK'
         inputs:
           packageType: 'sdk'
           version: '$(NET_VERSION)'
-          includePreviewVersions: true
 
       - task: VSBuild@1
         displayName: 'Build Azure Functions'
@@ -58,11 +57,10 @@ jobs:
 
     steps:      
       - task: UseDotNet@2
-        displayName: 'Install .NET SDK'
+        displayName: 'Install Latest .NET SDK'
         inputs:
           packageType: 'sdk'
           version: '$(NET_VERSION)'
-          includePreviewVersions: true
 
       - task: UseDotNet@2
         displayName: 'Install .NET Core 3.1 SDK'
@@ -84,11 +82,10 @@ jobs:
 
     steps:      
       - task: UseDotNet@2
-        displayName: 'Install .NET SDK'
+        displayName: 'Install Latest .NET SDK'
         inputs:
           packageType: 'sdk'
           version: '$(NET_VERSION)'
-          includePreviewVersions: true
 
       - task: UseDotNet@2
         displayName: 'Install .NET Core 3.1 SDK'
@@ -110,11 +107,10 @@ jobs:
 
     steps:      
       - task: UseDotNet@2
-        displayName: 'Install .NET SDK'
+        displayName: 'Install Latest .NET SDK'
         inputs:
           packageType: 'sdk'
           version: '$(NET_VERSION)'
-          includePreviewVersions: true
 
       - task: UseDotNet@2
         displayName: 'Install .NET Core 3.1 SDK'
@@ -136,11 +132,10 @@ jobs:
 
     steps:      
       - task: UseDotNet@2
-        displayName: 'Install .NET SDK'
+        displayName: 'Install Latest .NET SDK'
         inputs:
           packageType: 'sdk'
           version: '$(NET_VERSION)'
-          includePreviewVersions: true
 
       - task: UseDotNet@2
         displayName: 'Install .NET Core 3.1 SDK'
@@ -163,11 +158,10 @@ jobs:
 
     steps:      
       - task: UseDotNet@2
-        displayName: 'Install .NET SDK'
+        displayName: 'Install Latest .NET SDK'
         inputs:
           packageType: 'sdk'
           version: '$(NET_VERSION)'
-          includePreviewVersions: true
 
       - task: UseDotNet@2
         displayName: 'Install .NET Core 3.1 SDK'
