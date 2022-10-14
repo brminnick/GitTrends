@@ -23,7 +23,7 @@ namespace GitTrends
 
 		readonly static AsyncAwaitBestPractices.WeakEventManager _tappedWeakEventManager = new();
 
-		protected BaseRepositoryDataTemplate(Func<object> loadTemplate) : base(loadTemplate)
+		private protected BaseRepositoryDataTemplate(Func<object> loadTemplate) : base(loadTemplate)
 		{
 
 		}
@@ -34,10 +34,10 @@ namespace GitTrends
 			remove => _tappedWeakEventManager.RemoveEventHandler(value);
 		}
 
-		protected enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
-		protected enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3 }
+		private protected enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
+		private protected enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3 }
 
-		protected class CardView : ExtendedSwipeView<Repository>
+		private protected class CardView : ExtendedSwipeView<Repository>
 		{
 			public CardView(in IEnumerable<View> dataTemplateChildren)
 			{
