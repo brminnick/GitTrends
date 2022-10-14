@@ -146,7 +146,7 @@ namespace GitTrends
 				{
 					var updatedRepository = repositories.Single(x => x.Name == starsResponse.RepositoryName) with
 					{
-						StarredAt = starsResponse.StarGazers.StarredAt.Select(x => x.StarredAt).ToList()
+						StarredAt = starsResponse.StarGazers.StarredAt.Select(static x => x.StarredAt).ToList()
 					};
 
 					yield return updatedRepository;

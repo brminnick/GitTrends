@@ -46,7 +46,7 @@ namespace GitTrends.Functions
 				blobList.Add(blob);
 			}
 
-			var newestBlob = blobList.OrderByDescending(x => x.Properties.CreatedOn).First();
+			var newestBlob = blobList.OrderByDescending(static x => x.Properties.CreatedOn).First();
 
 			var blobClient = GetBlobContainerClient(containerName).GetBlobClient(newestBlob.Name);
 			var blobContentResponse = await blobClient.DownloadContentAsync().ConfigureAwait(false);

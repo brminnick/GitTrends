@@ -56,7 +56,7 @@ namespace GitTrends
 			{
 				var libraries = await _azureFunctionsApiService.GetLibraries(cancellationToken).ConfigureAwait(false);
 
-				InstalledLibraries = libraries.OrderBy(x => x.PackageName).ToList();
+				InstalledLibraries = libraries.OrderBy(static x => x.PackageName).ToList();
 
 				foreach (var nugetPackageModel in InstalledLibraries)
 				{

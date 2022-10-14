@@ -77,8 +77,8 @@ namespace GitTrends.Shared
 				var dailyViewsList = value is null ? null : AddMissingDates(value);
 				_dailyViewsList = dailyViewsList;
 
-				TotalViews = dailyViewsList?.Sum(x => x.TotalViews);
-				TotalUniqueViews = dailyViewsList?.Sum(x => x.TotalUniqueViews);
+				TotalViews = dailyViewsList?.Sum(static x => x.TotalViews);
+				TotalUniqueViews = dailyViewsList?.Sum(static x => x.TotalUniqueViews);
 
 				IsTrending |= dailyViewsList?.IsTrending() ?? false;
 			}
@@ -92,8 +92,8 @@ namespace GitTrends.Shared
 				var dailyClonesList = value is null ? null : AddMissingDates(value);
 				_dailyClonesList = dailyClonesList;
 
-				TotalClones = dailyClonesList?.Sum(x => x.TotalClones);
-				TotalUniqueClones = dailyClonesList?.Sum(x => x.TotalUniqueClones);
+				TotalClones = dailyClonesList?.Sum(static x => x.TotalClones);
+				TotalUniqueClones = dailyClonesList?.Sum(static x => x.TotalUniqueClones);
 
 				IsTrending |= dailyClonesList?.IsTrending() ?? false;
 			}
@@ -102,7 +102,7 @@ namespace GitTrends.Shared
 		public IReadOnlyList<DateTimeOffset>? StarredAt
 		{
 			get => _starredAt;
-			init => _starredAt = value?.OrderBy(x => x).ToList();
+			init => _starredAt = value?.OrderBy(static x => x).ToList();
 		}
 
 		public long? TotalViews { get; private init; }
@@ -137,7 +137,7 @@ namespace GitTrends.Shared
 			var day = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
 			var maximumAllowedDay = DateTimeOffset.UtcNow;
 
-			var daysList = dailyViews.Select(x => x.Day.Day).ToList();
+			var daysList = dailyViews.Select(static x => x.Day.Day).ToList();
 
 			while (day.Day != maximumAllowedDay.AddDays(1).Day)
 			{
@@ -159,7 +159,7 @@ namespace GitTrends.Shared
 			var day = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
 			var maximumAllowedDay = DateTimeOffset.UtcNow;
 
-			var daysList = dailyClones.Select(x => x.Day.Day).ToList();
+			var daysList = dailyClones.Select(static x => x.Day.Day).ToList();
 
 			while (day.Day != maximumAllowedDay.AddDays(1).Day)
 			{

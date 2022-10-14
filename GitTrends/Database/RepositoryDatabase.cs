@@ -80,9 +80,9 @@ namespace GitTrends
 		public async Task<IReadOnlyList<string>> GetFavoritesUrls()
 		{
 			var repositoryDatabaseConnection = await GetDatabaseConnection<RepositoryDatabaseModel>().ConfigureAwait(false);
-			var favoriteRepositories = await AttemptAndRetry(() => repositoryDatabaseConnection.Table<RepositoryDatabaseModel>().Where(x => x.IsFavorite == true).ToListAsync()).ConfigureAwait(false);
+			var favoriteRepositories = await AttemptAndRetry(() => repositoryDatabaseConnection.Table<RepositoryDatabaseModel>().Where(static x => x.IsFavorite == true).ToListAsync()).ConfigureAwait(false);
 
-			return favoriteRepositories.Select(x => x.Url).ToList();
+			return favoriteRepositories.Select(static x => x.Url).ToList();
 		}
 
 		public async Task<Repository?> GetRepository(string repositoryUrl)
@@ -145,17 +145,17 @@ namespace GitTrends
 			if (!dailyViewsDatabaseModels.Any())
 				dailyViewsDatabaseModels = null;
 
-			var sortedRecentDailyClonesDatabaseModels = dailyClonesDatabaseModels?.OrderByDescending(x => x.DownloadedAt).ToList();
-			var sortedRecentDailyViewsDatabaseModels = dailyViewsDatabaseModels?.OrderByDescending(x => x.DownloadedAt).ToList();
-			var sortedStarGazerInfoModels = starGazerInfoModels?.OrderByDescending(x => x.StarredAt).ToList();
+			var sortedRecentDailyClonesDatabaseModels = dailyClonesDatabaseModels?.OrderByDescending(static x => x.DownloadedAt).ToList();
+			var sortedRecentDailyViewsDatabaseModels = dailyViewsDatabaseModels?.OrderByDescending(static x => x.DownloadedAt).ToList();
+			var sortedStarGazerInfoModels = starGazerInfoModels?.OrderByDescending(static x => x.StarredAt).ToList();
 
-			var mostRecentCloneDay = sortedRecentDailyClonesDatabaseModels?.Any() is true ? sortedRecentDailyClonesDatabaseModels.Max(x => x.Day) : default;
-			var mostRecentViewDay = sortedRecentDailyViewsDatabaseModels?.Any() is true ? sortedRecentDailyViewsDatabaseModels.Max(x => x.Day) : default;
+			var mostRecentCloneDay = sortedRecentDailyClonesDatabaseModels?.Any() is true ? sortedRecentDailyClonesDatabaseModels.Max(static x => x.Day) : default;
+			var mostRecentViewDay = sortedRecentDailyViewsDatabaseModels?.Any() is true ? sortedRecentDailyViewsDatabaseModels.Max(static x => x.Day) : default;
 
 			var mostRecentDate = mostRecentCloneDay.CompareTo(mostRecentViewDay) > 0 ? mostRecentCloneDay : mostRecentViewDay;
 
-			var dailyClones = sortedRecentDailyClonesDatabaseModels?.Where(x => IsWithin14Days(x.Day, mostRecentDate)).GroupBy(x => x.Day).Select(x => x.First()).Take(14);
-			var dailyViews = sortedRecentDailyViewsDatabaseModels?.Where(x => IsWithin14Days(x.Day, mostRecentDate)).GroupBy(x => x.Day).Select(x => x.First()).Take(14);
+			var dailyClones = sortedRecentDailyClonesDatabaseModels?.Where(x => IsWithin14Days(x.Day, mostRecentDate)).GroupBy(static x => x.Day).Select(static x => x.First()).Take(14);
+			var dailyViews = sortedRecentDailyViewsDatabaseModels?.Where(x => IsWithin14Days(x.Day, mostRecentDate)).GroupBy(static x => x.Day).Select(static x => x.First()).Take(14);
 
 			return (dailyClones?.ToList(), dailyViews?.ToList(), sortedStarGazerInfoModels);
 		}
@@ -359,8 +359,8 @@ namespace GitTrends
 													in IEnumerable<DailyViewsDatabaseModel>? dailyViewsDatabaseModels,
 													in IEnumerable<StarGazerInfoDatabaseModel>? starGazerInfoDatabaseModels)
 			{
-				var clonesList = dailyClonesDatabaseModels?.Select(x => DailyClonesDatabaseModel.ToDailyClonesModel(x)).ToList();
-				var viewsList = dailyViewsDatabaseModels?.Select(x => DailyViewsDatabaseModel.ToDailyViewsModel(x)).ToList();
+				var clonesList = dailyClonesDatabaseModels?.Select(static x => DailyClonesDatabaseModel.ToDailyClonesModel(x)).ToList();
+				var viewsList = dailyViewsDatabaseModels?.Select(static x => DailyViewsDatabaseModel.ToDailyViewsModel(x)).ToList();
 
 				return new Repository(repositoryDatabaseModel.Name,
 										repositoryDatabaseModel.Description,
@@ -378,7 +378,7 @@ namespace GitTrends
 										repositoryDatabaseModel.IsFavorite,
 										viewsList,
 										clonesList,
-										starGazerInfoDatabaseModels?.Select(x => x.StarredAt).Distinct());
+										starGazerInfoDatabaseModels?.Select(static x => x.StarredAt).Distinct());
 			}
 
 			public static RepositoryDatabaseModel ToRepositoryDatabase(in Repository repository) => new()

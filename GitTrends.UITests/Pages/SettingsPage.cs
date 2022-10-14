@@ -244,9 +244,9 @@ namespace GitTrends.UITests
 			scrollToRow(App, rowNumber, rowOffset, totalRows, selection);
 
 			if (App is iOSApp)
-				App.Tap(x => x.Marked("Done"));
+				App.Tap(static x => x.Marked("Done"));
 			else if (App is AndroidApp)
-				App.Tap(x => x.Marked("OK"));
+				App.Tap(static x => x.Marked("OK"));
 			else
 				throw new NotSupportedException();
 
@@ -259,23 +259,23 @@ namespace GitTrends.UITests
 				switch (app)
 				{
 					case iOSApp iosApp:
-						iosApp.WaitForElement(x => x.Class("UIPickerView"));
+						iosApp.WaitForElement(static x => x.Class("UIPickerView"));
 						iosApp.Query(x => x.Class("UIPickerView").Invoke("selectRow", rowNumber + rowOffset, "inComponent", 0, "animated", true));
 
 						iosApp.Tap(selection);
 						break;
 
 					case AndroidApp androidApp:
-						androidApp.WaitForElement(x => x.Class("android.widget.ScrollView"));
+						androidApp.WaitForElement(static x => x.Class("android.widget.ScrollView"));
 
 						while (rowNumber + rowOffset != getCurrentPickerRow(androidApp) && totalRows - 1 != getCurrentPickerRow(androidApp))
 						{
-							androidApp.Query(x => x.Class("android.widget.NumberPicker").Invoke("scrollBy", 0, -50));
+							androidApp.Query(static x => x.Class("android.widget.NumberPicker").Invoke("scrollBy", 0, -50));
 						}
 
 						while (getCurrentPickerRow(androidApp) != rowNumber)
 						{
-							androidApp.Query(x => x.Class("android.widget.NumberPicker").Invoke("scrollBy", 0, 50));
+							androidApp.Query(static x => x.Class("android.widget.NumberPicker").Invoke("scrollBy", 0, 50));
 						}
 
 						break;
@@ -288,7 +288,7 @@ namespace GitTrends.UITests
 
 				static int getCurrentPickerRow(AndroidApp app)
 				{
-					var currentPickerRow = app.Query(x => x.Class("android.widget.NumberPicker").Invoke("getValue")).First().ToString();
+					var currentPickerRow = app.Query(static x => x.Class("android.widget.NumberPicker").Invoke("getValue")).First().ToString();
 					return int.Parse(currentPickerRow);
 				}
 			}

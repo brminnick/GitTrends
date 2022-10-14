@@ -109,7 +109,7 @@ namespace GitTrends
 		public bool IsStarsChartVisible => !IsFetchingStarsData && TotalStars > 1;
 
 		public bool IsViewsClonesEmptyDataViewVisible => !IsViewsClonesChartVisible && !IsFetchingViewsClonesData;
-		public bool IsViewsClonesChartVisible => !IsFetchingViewsClonesData && DailyViewsList.Sum(x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(x => x.TotalClones + x.TotalUniqueClones) > 0;
+		public bool IsViewsClonesChartVisible => !IsFetchingViewsClonesData && DailyViewsList.Sum(static x => x.TotalViews + x.TotalUniqueViews) + DailyClonesList.Sum(static x => x.TotalClones + x.TotalUniqueClones) > 0;
 
 		public double ViewsClonesChartYAxisInterval => DailyViewsClonesMaxValue > 20 ? Math.Round(DailyViewsClonesMaxValue / 10) : 2;
 		public double StarsChartYAxisInterval => MaxDailyStarsValue > 20 ? Math.Round(MaxDailyStarsValue / 10) : 2;
@@ -126,8 +126,8 @@ namespace GitTrends
 		{
 			get
 			{
-				var dailyViewMaxValue = DailyViewsList.Any() ? DailyViewsList.Max(x => x.TotalViews) : 0;
-				var dailyClonesMaxValue = DailyClonesList.Any() ? DailyClonesList.Max(x => x.TotalClones) : 0;
+				var dailyViewMaxValue = DailyViewsList.Any() ? DailyViewsList.Max(static x => x.TotalViews) : 0;
+				var dailyClonesMaxValue = DailyClonesList.Any() ? DailyClonesList.Max(static x => x.TotalClones) : 0;
 
 				return Math.Max(Math.Max(dailyViewMaxValue, dailyClonesMaxValue), MinimumChartHeight);
 			}
@@ -338,19 +338,19 @@ namespace GitTrends
 
 			void updateViewsClonesData(in IEnumerable<DailyViewsModel> repositoryViews, in IEnumerable<DailyClonesModel> repositoryClones)
 			{
-				DailyViewsList = repositoryViews.OrderBy(x => x.Day).ToList();
-				DailyClonesList = repositoryClones.OrderBy(x => x.Day).ToList();
+				DailyViewsList = repositoryViews.OrderBy(static x => x.Day).ToList();
+				DailyClonesList = repositoryClones.OrderBy(static x => x.Day).ToList();
 
-				ViewsStatisticsText = repositoryViews.Sum(x => x.TotalViews).ToAbbreviatedText();
-				UniqueViewsStatisticsText = repositoryViews.Sum(x => x.TotalUniqueViews).ToAbbreviatedText();
+				ViewsStatisticsText = repositoryViews.Sum(static x => x.TotalViews).ToAbbreviatedText();
+				UniqueViewsStatisticsText = repositoryViews.Sum(static x => x.TotalUniqueViews).ToAbbreviatedText();
 
-				ClonesStatisticsText = repositoryClones.Sum(x => x.TotalClones).ToAbbreviatedText();
-				UniqueClonesStatisticsText = repositoryClones.Sum(x => x.TotalUniqueClones).ToAbbreviatedText();
+				ClonesStatisticsText = repositoryClones.Sum(static x => x.TotalClones).ToAbbreviatedText();
+				UniqueClonesStatisticsText = repositoryClones.Sum(static x => x.TotalUniqueClones).ToAbbreviatedText();
 			}
 
 			void updateStarsData(in IReadOnlyList<DateTimeOffset> repositoryStars)
 			{
-				DailyStarsList = GetDailyStarsList(repositoryStars).OrderBy(x => x.Day).ToList();
+				DailyStarsList = GetDailyStarsList(repositoryStars).OrderBy(static x => x.Day).ToList();
 				StarsStatisticsText = repositoryStars.Count.ToAbbreviatedText();
 			}
 		}
@@ -395,7 +395,7 @@ namespace GitTrends
 			else
 			{
 				var getStarGazers = await _gitHubGraphQLApiService.GetStarGazers(repository.Name, repository.OwnerLogin, cancellationToken).ConfigureAwait(false);
-				return getStarGazers.StarredAt.Select(x => x.StarredAt).ToList();
+				return getStarGazers.StarredAt.Select(static x => x.StarredAt).ToList();
 			}
 
 			static bool isFetchingStarsInBackground(BackgroundFetchService backgroundFetchService, Repository repository) =>
@@ -482,13 +482,13 @@ namespace GitTrends
 		void PrintDays()
 		{
 			Debug.WriteLine("Clones");
-			foreach (var cloneDay in DailyClonesList.Select(x => x.Day))
+			foreach (var cloneDay in DailyClonesList.Select(static x => x.Day))
 				Debug.WriteLine(cloneDay);
 
 			Debug.WriteLine("");
 
 			Debug.WriteLine("Views");
-			foreach (var viewDay in DailyViewsList.Select(x => x.Day))
+			foreach (var viewDay in DailyViewsList.Select(static x => x.Day))
 				Debug.WriteLine(viewDay);
 		}
 	}

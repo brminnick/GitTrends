@@ -73,7 +73,7 @@ namespace GitTrends
 									DateTimeOffset.UtcNow,
 									repositoryResult.Repository.Permission,
 									repositoryResult.Repository.IsArchived,
-									starredAt: starGazersResult.StarredAt.Select(x => x.StarredAt));
+									starredAt: starGazersResult.StarredAt.Select(static x => x.StarredAt));
 		}
 
 		public async Task<StarGazers> GetStarGazers(string repositoryName, string repositoryOwner, CancellationToken cancellationToken)
@@ -83,7 +83,7 @@ namespace GitTrends
 				var starCount = DemoDataConstants.GetRandomNumber();
 				var starredAtDates = DemoDataConstants.GenerateStarredAtDates(starCount);
 
-				var starGazerInfoList = starredAtDates.Select(x => new StarGazerInfo(x, string.Empty));
+				var starGazerInfoList = starredAtDates.Select(static x => new StarGazerInfo(x, string.Empty));
 
 				return new StarGazers(starCount, starGazerInfoList);
 			}
@@ -174,7 +174,7 @@ namespace GitTrends
 					repositoryConnection = await GetOrganizationRepositoryConnection(organization, token, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
 
 					// Views + Clones statistics are only available for repositories with write access
-					foreach (var repository in repositoryConnection.RepositoryList.Where(x => x?.Permission is RepositoryPermission.ADMIN or RepositoryPermission.MAINTAIN or RepositoryPermission.WRITE))
+					foreach (var repository in repositoryConnection.RepositoryList.Where(static x => x?.Permission is RepositoryPermission.ADMIN or RepositoryPermission.MAINTAIN or RepositoryPermission.WRITE))
 					{
 						if (repository is not null)
 							repositoryList.Add(new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
@@ -219,7 +219,7 @@ namespace GitTrends
 				repositoryConnection = await GetUserRepositoryConnection(repositoryOwner, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
 
 				// Views + Clones statistics are only available for repositories with write access
-				foreach (var repository in repositoryConnection.RepositoryList.Where(x => x?.Permission is RepositoryPermission.ADMIN or RepositoryPermission.MAINTAIN or RepositoryPermission.WRITE))
+				foreach (var repository in repositoryConnection.RepositoryList.Where(static x => x?.Permission is RepositoryPermission.ADMIN or RepositoryPermission.MAINTAIN or RepositoryPermission.WRITE))
 				{
 					if (repository is not null)
 						yield return new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,

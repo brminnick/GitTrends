@@ -19,9 +19,9 @@ namespace GitTrends
 
 		public static void SetSelectedStateBackgroundColor(this VisualElement visualElement, Color color)
 		{
-			if (VisualStateManager.GetVisualStateGroups(visualElement).FirstOrDefault(x => x.Name is nameof(VisualStateManager.CommonStates)) is VisualStateGroup commonStatesGroup
-				&& commonStatesGroup.States.FirstOrDefault(x => x.Name is VisualStateManager.CommonStates.Selected) is VisualState selectedVisualState
-				&& selectedVisualState.Setters.FirstOrDefault(x => x.Property == VisualElement.BackgroundColorProperty) is Setter backgroundColorPropertySetter)
+			if (VisualStateManager.GetVisualStateGroups(visualElement).FirstOrDefault(static x => x.Name is nameof(VisualStateManager.CommonStates)) is VisualStateGroup commonStatesGroup
+				&& commonStatesGroup.States.FirstOrDefault(static x => x.Name is VisualStateManager.CommonStates.Selected) is VisualState selectedVisualState
+				&& selectedVisualState.Setters.FirstOrDefault(static x => x.Property == VisualElement.BackgroundColorProperty) is Setter backgroundColorPropertySetter)
 			{
 				backgroundColorPropertySetter.Value = color;
 			}
@@ -95,7 +95,7 @@ namespace GitTrends
 			var childLayouts = layout.Children.OfType<Layout<View>>();
 
 			var childContentViews = layout.Children.OfType<ContentView>();
-			var childContentViewLayouts = childContentViews.Select(x => x.Content).OfType<Layout<View>>();
+			var childContentViewLayouts = childContentViews.Select(static x => x.Content).OfType<Layout<View>>();
 
 			return childLayouts.Concat(childContentViewLayouts);
 		}

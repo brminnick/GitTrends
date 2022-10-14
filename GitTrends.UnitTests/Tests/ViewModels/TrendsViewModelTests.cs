@@ -70,7 +70,7 @@ namespace GitTrends.UnitTests
 			Assert.IsNotEmpty(dailyClonesList_Final);
 			Assert.IsNotEmpty(dailyStarsList_Final);
 
-			Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarCount, dailyStarsList_Final.Select(x => x.TotalStars).Distinct().Count());
+			Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarCount, dailyStarsList_Final.Select(static x => x.TotalStars).Distinct().Count());
 
 			foreach (var dailyViewsModel_Final in dailyViewsList_Final)
 			{
@@ -153,7 +153,7 @@ namespace GitTrends.UnitTests
 			Assert.IsNotEmpty(dailyClonesList_Final);
 			Assert.IsNotEmpty(dailyStarsList_Final);
 
-			Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarredAt?.Count, dailyStarsList_Final.Select(x => x.TotalStars).Distinct().Count());
+			Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarredAt?.Count, dailyStarsList_Final.Select(static x => x.TotalStars).Distinct().Count());
 
 			foreach (var dailyViewsModel_Final in dailyViewsList_Final)
 			{
@@ -234,7 +234,7 @@ namespace GitTrends.UnitTests
 
 			//Assert
 			Assert.AreEqual(repository.StarCount, trendsViewModel.TotalStars);
-			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Max(x => x.TotalStars));
+			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Max(static x => x.TotalStars));
 			Assert.AreEqual(repository.StarCount.ToAbbreviatedText(), trendsViewModel.StarsStatisticsText);
 			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
 			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Succeeded, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
@@ -265,7 +265,7 @@ namespace GitTrends.UnitTests
 
 			//Assert
 			Assert.AreEqual(repository.StarCount, trendsViewModel.TotalStars);
-			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Max(x => x.TotalStars));
+			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Max(static x => x.TotalStars));
 			Assert.AreEqual(repository.StarCount.ToAbbreviatedText(), trendsViewModel.StarsStatisticsText);
 			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
 			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Succeeded, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);

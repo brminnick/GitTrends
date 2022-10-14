@@ -240,8 +240,8 @@ namespace GitTrends
 
 		void HandlePreferredLanguageChanged(object sender, string? e)
 		{
-			var sortItem = ToolbarItems.First(x => x.AutomationId is RepositoryPageAutomationIds.SortButton);
-			var settingsItem = ToolbarItems.First(x => x.AutomationId is RepositoryPageAutomationIds.SettingsButton);
+			var sortItem = ToolbarItems.First(static x => x.AutomationId is RepositoryPageAutomationIds.SortButton);
+			var settingsItem = ToolbarItems.First(static x => x.AutomationId is RepositoryPageAutomationIds.SettingsButton);
 
 			sortItem.Text = RepositoryPageConstants.SortToolbarItemText;
 			settingsItem.Text = PageTitles.SettingsPage;

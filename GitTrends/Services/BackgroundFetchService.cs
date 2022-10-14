@@ -381,7 +381,7 @@ namespace GitTrends
 			if (!_gitHubUserService.IsDemoUser && !string.IsNullOrEmpty(_gitHubUserService.Alias))
 			{
 				var repositoriesFromDatabase = await _repositoryDatabase.GetRepositories().ConfigureAwait(false);
-				IReadOnlyList<string> favoriteRepositoryUrls = repositoriesFromDatabase.Where(x => x.IsFavorite is true).Select(x => x.Url).ToList();
+				IReadOnlyList<string> favoriteRepositoryUrls = repositoriesFromDatabase.Where(static x => x.IsFavorite is true).Select(static x => x.Url).ToList();
 
 				var retrievedRepositoryList = new List<Repository>();
 				await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(_gitHubUserService.Alias, cancellationToken).ConfigureAwait(false))
@@ -392,12 +392,12 @@ namespace GitTrends
 						retrievedRepositoryList.Add(repository);
 				}
 
-				var retrievedRepositoryList_NoDuplicatesNoForks = retrievedRepositoryList.RemoveForksDuplicatesAndArchives(x => x.ContainsViewsClonesData);
+				var retrievedRepositoryList_NoDuplicatesNoForks = retrievedRepositoryList.RemoveForksDuplicatesAndArchives(static x => x.ContainsViewsClonesData);
 
 				IReadOnlyList<Repository> repositoriesToUpdate = repositoriesFromDatabase.Where(x => _gitHubUserService.ShouldIncludeOrganizations || x.OwnerLogin == _gitHubUserService.Alias) // Only include organization repositories if `ShouldIncludeOrganizations` is true
-											.Where(x => x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12))) // Cached repositories that haven't been updated in 12 hours 
+											.Where(static x => x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12))) // Cached repositories that haven't been updated in 12 hours 
 											.Concat(retrievedRepositoryList_NoDuplicatesNoForks) // Add downloaded repositories
-											.GroupBy(x => x.Name).Select(x => x.FirstOrDefault(x => x.ContainsViewsClonesStarsData) ?? x.First()).ToList(); // Remove duplicate repositories
+											.GroupBy(static x => x.Name).Select(static x => x.FirstOrDefault(static x => x.ContainsViewsClonesStarsData) ?? x.First()).ToList(); // Remove duplicate repositories
 
 
 				var retrievedRepositoriesWithViewsAndClonesData = new List<Repository>();
