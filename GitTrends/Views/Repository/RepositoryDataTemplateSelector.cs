@@ -56,7 +56,7 @@ namespace GitTrends
                 //Display an activity indicator while the Data is loading
                 new StatisticsActivityIndicator()
 					.Row(Row.Statistics).Column(Column.Statistic1)
-					.Bind(Label.IsVisibleProperty, nameof(Repository.TotalClones), BindingMode.OneTime, convert: static (long? totalClones) => !IsStatisticsLabelVisible(totalClones)),
+					.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.TotalClones), BindingMode.OneTime, convert: static (long? totalClones) => !IsStatisticsLabelVisible(totalClones)),
 
 				new StatisticsSvgImage("unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor))
 					.Row(Row.Statistics).Column(Column.Emoji2),
@@ -70,7 +70,7 @@ namespace GitTrends
                 //Display an activity indicator while the Data is loading
                 new StatisticsActivityIndicator()
 					.Row(Row.Statistics).Column(Column.Statistic2)
-					.Bind(Label.IsVisibleProperty, nameof(Repository.TotalUniqueClones), BindingMode.OneTime, convert: static (long? totalUniqueClones) => !IsStatisticsLabelVisible(totalUniqueClones)),
+					.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.TotalUniqueClones), BindingMode.OneTime, convert: static (long? totalUniqueClones) => !IsStatisticsLabelVisible(totalUniqueClones)),
 
 				new StatisticsSvgImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
 					.Row(Row.Statistics).Column(Column.Emoji3),
@@ -84,7 +84,7 @@ namespace GitTrends
                 //Display an activity indicator while the Data is loading
                 new StatisticsActivityIndicator()
 					.Row(Row.Statistics).Column(Column.Statistic3)
-					.Bind(Label.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => !IsStatisticsLabelVisible(starCount)),
+					.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => !IsStatisticsLabelVisible(starCount)),
 			};
 		}
 
@@ -109,7 +109,7 @@ namespace GitTrends
                 //Display an activity indicator while the Data is loading
                 new StatisticsActivityIndicator()
 					.Row(Row.Statistics).Column(Column.Statistic1)
-					.Bind(Label.IsVisibleProperty, nameof(Repository.TotalViews), BindingMode.OneTime, convert: static (long? totalViews) => !IsStatisticsLabelVisible(totalViews)),
+					.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.TotalViews), BindingMode.OneTime, convert: static (long? totalViews) => !IsStatisticsLabelVisible(totalViews)),
 
 				new StatisticsSvgImage("unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor))
 					.Row(Row.Statistics).Column(Column.Emoji2),
@@ -123,7 +123,7 @@ namespace GitTrends
                 //Display an activity indicator while the Data is loading
                 new StatisticsActivityIndicator()
 					.Row(Row.Statistics).Column(Column.Statistic2)
-					.Bind(Label.IsVisibleProperty, nameof(Repository.TotalUniqueViews), BindingMode.OneTime, convert: static (long? totalUniqueViews) => !IsStatisticsLabelVisible(totalUniqueViews)),
+					.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.TotalUniqueViews), BindingMode.OneTime, convert: static (long? totalUniqueViews) => !IsStatisticsLabelVisible(totalUniqueViews)),
 
 				new StatisticsSvgImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
 					.Row(Row.Statistics).Column(Column.Emoji3),
@@ -137,7 +137,7 @@ namespace GitTrends
                 //Display an activity indicator while the Data is loading
                 new StatisticsActivityIndicator()
 					.Row(Row.Statistics).Column(Column.Statistic3)
-					.Bind(Label.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => !IsStatisticsLabelVisible(starCount)),
+					.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => !IsStatisticsLabelVisible(starCount)),
 			};
 		}
 
@@ -162,7 +162,7 @@ namespace GitTrends
                 //Display an activity indicator while the Data is loading
                 new StatisticsActivityIndicator()
 					.Row(Row.Statistics).Column(Column.Statistic1)
-					.Bind(Label.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => !IsStatisticsLabelVisible(starCount)),
+					.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => !IsStatisticsLabelVisible(starCount)),
 
 				new StatisticsSvgImage("repo_forked.svg", nameof(BaseTheme.CardForksStatsIconColor))
 					.Row(Row.Statistics).Column(Column.Emoji2),
@@ -176,7 +176,7 @@ namespace GitTrends
                 //Display an activity indicator while the Data is loading
                 new StatisticsActivityIndicator()
 					.Row(Row.Statistics).Column(Column.Statistic2)
-					.Bind(Label.IsVisibleProperty, nameof(Repository.ForkCount), BindingMode.OneTime, convert: static (long? forkCount) => !IsStatisticsLabelVisible(forkCount)),
+					.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.ForkCount), BindingMode.OneTime, convert: static (long? forkCount) => !IsStatisticsLabelVisible(forkCount)),
 
 				new StatisticsSvgImage("issue_opened.svg", nameof(BaseTheme.CardIssuesStatsIconColor))
 					.Row(Row.Statistics).Column(Column.Emoji3),
@@ -190,14 +190,14 @@ namespace GitTrends
                 //Display an activity indicator while the Data is loading
                 new StatisticsActivityIndicator()
 					.Row(Row.Statistics).Column(Column.Statistic3)
-					.Bind(Label.IsVisibleProperty, nameof(Repository.IssuesCount), BindingMode.OneTime, convert: static (long? issuesCount) => !IsStatisticsLabelVisible(issuesCount)),
+					.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.IssuesCount), BindingMode.OneTime, convert: static (long? issuesCount) => !IsStatisticsLabelVisible(issuesCount)),
 			};
 		}
 
 		class StatisticsSvgImage : SvgImage
 		{
-			public StatisticsSvgImage(string fileName, string baseThemeColor, in double widthRequest = 24, in double heightRequest = 24)
-				: base(fileName, () => (Color)Application.Current.Resources[baseThemeColor], widthRequest, heightRequest)
+			public StatisticsSvgImage(string fileName, string baseThemeColor)
+				: base(fileName, () => (Color)Application.Current.Resources[baseThemeColor], 24, 24)
 			{
 				VerticalOptions = LayoutOptions.CenterAndExpand;
 				HorizontalOptions = LayoutOptions.EndAndExpand;
