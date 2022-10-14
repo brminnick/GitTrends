@@ -218,7 +218,9 @@ namespace GitTrends
 			}
 		}
 
-		[RelayCommand]
+		bool CanOpenGitTrendsOrganizationBrowserCommandExecute() => _gitTrendsStatisticsService.EnableOrganizationsUri is not null;
+
+		[RelayCommand(CanExecute = nameof(CanOpenGitTrendsOrganizationBrowserCommandExecute))]
 		Task OpenGitTrendsOrganizationBrowser()
 		{
 			if (_gitTrendsStatisticsService.EnableOrganizationsUri is null)
@@ -247,16 +249,20 @@ namespace GitTrends
 				if (isNotificationsEnabled)
 				{
 					result = await _notificationService.Register(true).ConfigureAwait(false);
-					AnalyticsService.Track("Settings Notification Changed", new Dictionary<string, string>
+					AnalyticsService.Track("Register for Notifications Switch Toggled", new Dictionary<string, string>
 					{
 						{ nameof(isNotificationsEnabled), isNotificationsEnabled.ToString() },
-						{ "Result", result.ToString()}
+						{ nameof(result), result.ToString() }
 					});
 				}
 				else
 				{
 					_notificationService.UnRegister();
-					AnalyticsService.Track("Register for Notifications Switch Toggled", nameof(isNotificationsEnabled), isNotificationsEnabled.ToString());
+					AnalyticsService.Track("Register for Notifications Switch Toggled", new Dictionary<string, string>
+					{
+						{ nameof(isNotificationsEnabled), isNotificationsEnabled.ToString() },
+						{ nameof(result), result.ToString() }
+					});
 				}
 			}
 			finally
