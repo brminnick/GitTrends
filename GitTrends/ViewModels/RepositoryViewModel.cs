@@ -184,12 +184,8 @@ namespace GitTrends
 						//Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
 						if (viewsClonesRepsitoriesList.Count > minimumBatchCount)
 						{
-							var temp = VisibleRepositoryList.First();
-							var newTemp = viewsClonesRepsitoriesList.First();
-
 							AddRepositoriesToCollection(viewsClonesRepsitoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
 							viewsClonesRepsitoriesList.Clear();
-							await Task.Yield();
 						}
 					}
 				}
