@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
@@ -37,7 +38,7 @@ namespace GitTrends.UnitTests
 			await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
 
 			emptyDataViewTitle_Final = repositoryViewModel.EmptyDataViewTitle;
-			visibleRepositoryList_Final = repositoryViewModel.VisibleRepositoryList;
+			visibleRepositoryList_Final = repositoryViewModel.VisibleRepositoryList.ToList();
 			emptyDataViewDescription_Final = repositoryViewModel.EmptyDataViewDescription;
 
 			pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
