@@ -247,9 +247,6 @@ namespace GitTrends.UnitTests
 		{
 			//Arrange
 			StarGazers starGazers;
-			var httpClient = ServiceCollection.ServiceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
-			httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue(nameof(GitTrends))));
-
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var gitHubApiV3Service = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiV3Service>();
 

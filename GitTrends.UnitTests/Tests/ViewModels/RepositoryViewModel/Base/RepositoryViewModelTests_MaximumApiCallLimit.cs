@@ -32,7 +32,7 @@ namespace GitTrends.UnitTests
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
 			emptyDataViewTitle_Initial = repositoryViewModel.EmptyDataViewTitle;
-			visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
+			visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList.ToList();
 			emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
 
 			await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
