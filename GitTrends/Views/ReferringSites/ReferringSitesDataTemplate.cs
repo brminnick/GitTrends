@@ -26,12 +26,12 @@ namespace GitTrends
 				RowSpacing = 0;
 				RowDefinitions = Rows.Define(
 					(Row.TopPadding, TopPadding),
-					(Row.Card, Stars(1)),
+					(Row.Card, Star),
 					(Row.BottomPadding, BottomPadding));
 
 				ColumnDefinitions = Columns.Define(
 					(Column.LeftPadding, 16),
-					(Column.Card, Stars(1)),
+					(Column.Card, Star),
 					(Column.RightPadding, 16));
 
 				Children.Add(new CardViewFrame().Row(Row.Card).Column(Column.Card));
