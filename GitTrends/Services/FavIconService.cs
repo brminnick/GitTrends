@@ -175,8 +175,8 @@ namespace GitTrends
 		{
 			try
 			{
-				var shortcutIconNode = htmlDoc.DocumentNode.SelectNodes("//head//link").SelectMany(x => x.Attributes.Where(x => x.Value is "shortcut icon")).First();
-				var hrefValue = shortcutIconNode.OwnerNode.Attributes.First(x => x.Name is "href").Value;
+				var shortcutIconNode = htmlDoc.DocumentNode.SelectNodes("//head//link").SelectMany(static x => x.Attributes.Where(static x => x.Value is "shortcut icon")).First();
+				var hrefValue = shortcutIconNode.OwnerNode.Attributes.First(static x => x.Name is "href").Value;
 
 				var shortcutIconUrl = hrefValue.Contains("http") ? hrefValue : url.Trim('/') + hrefValue;
 
@@ -202,8 +202,8 @@ namespace GitTrends
 		{
 			try
 			{
-				var shortcutIconNode = htmlDoc.DocumentNode.SelectNodes("//head//link").SelectMany(x => x.Attributes.Where(x => x.Value is "apple-touch-icon")).First();
-				var hrefValue = shortcutIconNode.OwnerNode.Attributes.First(x => x.Name is "href").Value;
+				var shortcutIconNode = htmlDoc.DocumentNode.SelectNodes("//head//link").SelectMany(static x => x.Attributes.Where(static x => x.Value is "apple-touch-icon")).First();
+				var hrefValue = shortcutIconNode.OwnerNode.Attributes.First(static x => x.Name is "href").Value;
 
 				var appleTouchIconUrl = hrefValue.Contains("http") ? hrefValue : url.Trim('/') + hrefValue;
 
@@ -229,8 +229,8 @@ namespace GitTrends
 		{
 			try
 			{
-				var shortcutIconNode = htmlDoc.DocumentNode.SelectNodes("//head//link").SelectMany(x => x.Attributes.Where(x => x.Value is "icon")).First();
-				var hrefValue = shortcutIconNode.OwnerNode.Attributes.First(x => x.Name is "href").Value;
+				var shortcutIconNode = htmlDoc.DocumentNode.SelectNodes("//head//link").SelectMany(static x => x.Attributes.Where(static x => x.Value is "icon")).First();
+				var hrefValue = shortcutIconNode.OwnerNode.Attributes.First(static x => x.Name is "href").Value;
 
 				var iconUrl = hrefValue.Contains("http") ? hrefValue : url.Trim('/') + hrefValue;
 

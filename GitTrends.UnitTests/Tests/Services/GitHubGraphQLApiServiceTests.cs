@@ -134,19 +134,19 @@ namespace GitTrends.UnitTests
 			//Assert
 			Assert.GreaterOrEqual(repositories.Count, 0);
 
-			var gitTrendsRepository = repositories.Single(x => x.Name is GitHubConstants.GitTrendsRepoName
+			var gitTrendsRepository = repositories.Single(static x => x.Name is GitHubConstants.GitTrendsRepoName
 																&& x.OwnerLogin is GitHubConstants.GitTrendsRepoOwner);
 
 			Assert.AreEqual(GitHubConstants.GitTrendsRepoName, gitTrendsRepository.Name);
 			Assert.AreEqual(GitHubConstants.GitTrendsRepoOwner, gitTrendsRepository.OwnerLogin);
 			Assert.AreEqual(AuthenticatedGitHubUserAvatarUrl, gitTrendsRepository.OwnerAvatarUrl);
 
-			Assert.Greater(repositories.Sum(x => x.StarCount), 0);
-			Assert.AreEqual(0, repositories.Sum(x => x.TotalViews));
-			Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueViews));
-			Assert.AreEqual(0, repositories.Sum(x => x.TotalClones));
-			Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueClones));
-			Assert.AreEqual(0, repositories.Sum(x => x.StarredAt?.Count));
+			Assert.Greater(repositories.Sum(static x => x.StarCount), 0);
+			Assert.AreEqual(0, repositories.Sum(static x => x.TotalViews));
+			Assert.AreEqual(0, repositories.Sum(static x => x.TotalUniqueViews));
+			Assert.AreEqual(0, repositories.Sum(static x => x.TotalClones));
+			Assert.AreEqual(0, repositories.Sum(static x => x.TotalUniqueClones));
+			Assert.AreEqual(0, repositories.Sum(static x => x.StarredAt?.Count));
 		}
 
 		[Test]
@@ -215,12 +215,12 @@ namespace GitTrends.UnitTests
 			Assert.GreaterOrEqual(repositories.Count, 1);
 
 
-			Assert.Greater(repositories.Sum(x => x.StarCount), 0);
-			Assert.AreEqual(0, repositories.Sum(x => x.TotalViews));
-			Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueViews));
-			Assert.AreEqual(0, repositories.Sum(x => x.TotalClones));
-			Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueClones));
-			Assert.AreEqual(0, repositories.Sum(x => x.StarredAt?.Count));
+			Assert.Greater(repositories.Sum(static x => x.StarCount), 0);
+			Assert.AreEqual(0, repositories.Sum(static x => x.TotalViews));
+			Assert.AreEqual(0, repositories.Sum(static x => x.TotalUniqueViews));
+			Assert.AreEqual(0, repositories.Sum(static x => x.TotalClones));
+			Assert.AreEqual(0, repositories.Sum(static x => x.TotalUniqueClones));
+			Assert.AreEqual(0, repositories.Sum(static x => x.StarredAt?.Count));
 		}
 
 		[Test]
@@ -269,12 +269,12 @@ namespace GitTrends.UnitTests
 			Assert.IsNotEmpty(repositories);
 			Assert.Greater(repositories.Count, 0);
 
-			Assert.Greater(repositories.Sum(x => x.StarCount), 0);
-			Assert.AreEqual(0, repositories.Sum(x => x.TotalViews));
-			Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueViews));
-			Assert.AreEqual(0, repositories.Sum(x => x.TotalClones));
-			Assert.AreEqual(0, repositories.Sum(x => x.TotalUniqueClones));
-			Assert.AreEqual(0, repositories.Sum(x => x.StarredAt?.Count));
+			Assert.Greater(repositories.Sum(static x => x.StarCount), 0);
+			Assert.AreEqual(0, repositories.Sum(static x => x.TotalViews));
+			Assert.AreEqual(0, repositories.Sum(static x => x.TotalUniqueViews));
+			Assert.AreEqual(0, repositories.Sum(static x => x.TotalClones));
+			Assert.AreEqual(0, repositories.Sum(static x => x.TotalUniqueClones));
+			Assert.AreEqual(0, repositories.Sum(static x => x.StarredAt?.Count));
 		}
 
 		[Test]

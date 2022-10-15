@@ -120,6 +120,8 @@ namespace GitTrends
 			return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
 		}
 
+		static bool IsNavigateToRepositoryWebsiteCommandEnabled(Repository? repository) => repository?.IsRepositoryUrlValid() is true;
+
 		[RelayCommand(AllowConcurrentExecutions = true)]
 		async Task ExecuteRefresh()
 		{
@@ -173,7 +175,7 @@ namespace GitTrends
 				AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
 
 				var viewsClonesRepsitoriesList = new List<Repository>();
-				await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.Where(x => !x.ContainsViewsClonesData), cancellationTokenSource.Token).ConfigureAwait(false))
+				await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.Where(static x => !x.ContainsViewsClonesData), cancellationTokenSource.Token).ConfigureAwait(false))
 				{
 					viewsClonesRepsitoriesList.Add(retrievedRepositoryWithViewsAndClonesData);
 
@@ -204,8 +206,8 @@ namespace GitTrends
 				AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
 
 
-				var repositoriesWithoutStarsDataAndOver1000Stars = _repositoryList.Where(x => !x.ContainsStarsData && x.StarCount > 1000);
-				var repositoriesWithoutStarsDataAndLessThan1000Stars = _repositoryList.Where(x => !x.ContainsStarsData && x.StarCount <= 1000);
+				var repositoriesWithoutStarsDataAndOver1000Stars = _repositoryList.Where(static x => !x.ContainsStarsData && x.StarCount > 1000);
+				var repositoriesWithoutStarsDataAndLessThan1000Stars = _repositoryList.Where(static x => !x.ContainsStarsData && x.StarCount <= 1000);
 
 				// Fetch Stars Data in Background for Repositories Containing Over 1000 Stars
 				// GitHub API limits us to 100 StarGazers per Request, meaning that a repository with 24K Stars requires 240 round-trips from GitTrends to GitHub's servers to aggregate the data
@@ -279,7 +281,7 @@ namespace GitTrends
 
 				AddRepositoriesToCollection(missingRepositories, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
 
-				foreach (var repositoryToUpdate in _repositoryList.Where(x => !x.ContainsViewsClonesStarsData // Ensure the repository contains data for Views + Clones
+				foreach (var repositoryToUpdate in _repositoryList.Where(static x => !x.ContainsViewsClonesStarsData // Ensure the repository contains data for Views + Clones
 																				 && x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12)))) // Cached repositories that have been updated in the past 12 hours
 				{
 					_backgroundFetchService.TryScheduleRetryRepositoriesStars(repositoryToUpdate, retryTimeSpan.Value);
@@ -315,7 +317,7 @@ namespace GitTrends
 
 				if (repositoriesFromDatabase.Any())
 				{
-					var dataDownloadedAt = repositoriesFromDatabase.Max(x => x.DataDownloadedAt);
+					var dataDownloadedAt = repositoriesFromDatabase.Max(static x => x.DataDownloadedAt);
 					OnPullToRefreshFailed(new ErrorPullToRefreshEventArgs($"{RepositoryPageConstants.DisplayingDataFrom} {dataDownloadedAt.ToLocalTime():dd MMMM @ HH:mm}"));
 				}
 				else
@@ -338,7 +340,7 @@ namespace GitTrends
 			}
 
 			static IReadOnlyList<Repository> getDistictRepositories(in IEnumerable<Repository> repositoriesList1, in IEnumerable<Repository> repositoriesList2, Func<Repository, bool>? filter = null) =>
-					repositoriesList1.Concat(repositoriesList2).Where(filter ?? (_ => true)).GroupBy(x => x.Url).Where(g => g.Count() is 1).Select(g => g.First()).ToList();
+					repositoriesList1.Concat(repositoriesList2).Where(filter ?? (_ => true)).GroupBy(static x => x.Url).Where(g => g.Count() is 1).Select(g => g.First()).ToList();
 
 			void HandleLoggedOut(object sender, EventArgs e) => cancellationTokenSource.Cancel();
 			void HandleAuthorizeSessionStarted(object sender, EventArgs e) => cancellationTokenSource.Cancel();
@@ -365,11 +367,13 @@ namespace GitTrends
 				await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
 		}
 
-		[RelayCommand]
-		Task NavigateToRepositoryWebsite(Repository repository)
+		[RelayCommand(CanExecute = nameof(IsNavigateToRepositoryWebsiteCommandEnabled))]
+		Task NavigateToRepositoryWebsite(Repository? repository)
 		{
-			AnalyticsService.Track("Open External Repostory Link Tapped", nameof(repository.Url), repository.Url);
+			if (repository is null)
+				throw new ArgumentNullException(nameof(repository));
 
+			AnalyticsService.Track("Open External Repostory Link Tapped", nameof(repository.Url), repository.Url);
 			return _deepLinkingService.OpenApp(GitHubConstants.AppScheme, repository.Url, repository.Url);
 		}
 
@@ -424,7 +428,7 @@ namespace GitTrends
 				updatedRepositoryList.Remove(repositoryToRemove);
 			}
 
-			_repositoryList = updatedRepositoryList.RemoveForksDuplicatesAndArchives(x => x.ContainsViewsClonesStarsData).ToList();
+			_repositoryList = updatedRepositoryList.RemoveForksDuplicatesAndArchives(static x => x.ContainsViewsClonesStarsData).ToList();
 
 			if (shouldUpdateVisibleRepositoryList)
 				UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);

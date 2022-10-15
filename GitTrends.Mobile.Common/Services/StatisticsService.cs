@@ -37,9 +37,9 @@ namespace GitTrends.Mobile.Common
 		public static string GetInformationLabelText<TRepository>(in IReadOnlyList<TRepository> repositories, in SortingCategory sortingCategory) where TRepository : IRepository => (repositories.Any(), sortingCategory) switch
 		{
 			(false, _) => string.Empty,
-			(true, SortingCategory.Views) => $"{SortingConstants.Views} {repositories.Sum(x => x?.TotalViews ?? 0).ToAbbreviatedText()}, {SortingConstants.UniqueViews} {repositories.Sum(x => x?.TotalUniqueViews ?? 0).ToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(x => x?.StarCount ?? 0).ToAbbreviatedText()}",
-			(true, SortingCategory.Clones) => $"{SortingConstants.Clones} {repositories.Sum(x => x?.TotalClones ?? 0).ToAbbreviatedText()}, {SortingConstants.UniqueClones} {repositories.Sum(x => x?.TotalUniqueClones ?? 0).ToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(x => x?.StarCount ?? 0).ToAbbreviatedText()}",
-			(true, SortingCategory.IssuesForks) => $"{SortingConstants.Stars} {repositories.Sum(x => x?.StarCount ?? 0).ToAbbreviatedText()}, {SortingConstants.Forks} {repositories.Sum(x => x.ForkCount).ToAbbreviatedText()}, {SortingConstants.Issues} {repositories.Sum(x => x.IssuesCount).ToAbbreviatedText()}",
+			(true, SortingCategory.Views) => $"{SortingConstants.Views} {repositories.Sum(static x => x?.TotalViews ?? 0).ToAbbreviatedText()}, {SortingConstants.UniqueViews} {repositories.Sum(static x => x?.TotalUniqueViews ?? 0).ToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(static x => x?.StarCount ?? 0).ToAbbreviatedText()}",
+			(true, SortingCategory.Clones) => $"{SortingConstants.Clones} {repositories.Sum(static x => x?.TotalClones ?? 0).ToAbbreviatedText()}, {SortingConstants.UniqueClones} {repositories.Sum(static x => x?.TotalUniqueClones ?? 0).ToAbbreviatedText()}, {SortingConstants.Stars} {repositories.Sum(static x => x?.StarCount ?? 0).ToAbbreviatedText()}",
+			(true, SortingCategory.IssuesForks) => $"{SortingConstants.Stars} {repositories.Sum(static x => x?.StarCount ?? 0).ToAbbreviatedText()}, {SortingConstants.Forks} {repositories.Sum(static x => x.ForkCount).ToAbbreviatedText()}, {SortingConstants.Issues} {repositories.Sum(static x => x.IssuesCount).ToAbbreviatedText()}",
 			(_, _) => throw new NotSupportedException()
 		};
 
@@ -50,15 +50,15 @@ namespace GitTrends.Mobile.Common
 		{
 			return (sortingCategory, floatingActionButtonType) switch
 			{
-				(SortingCategory.Clones, FloatingActionButtonType.Statistic1) => repositories.Sum(x => x?.TotalClones ?? 0).ToAbbreviatedText(),
-				(SortingCategory.Clones, FloatingActionButtonType.Statistic2) => repositories.Sum(x => x?.TotalUniqueClones ?? 0).ToAbbreviatedText(),
-				(SortingCategory.Clones, FloatingActionButtonType.Statistic3) => repositories.Sum(x => x?.StarCount ?? 0).ToAbbreviatedText(),
-				(SortingCategory.Views, FloatingActionButtonType.Statistic1) => repositories.Sum(x => x?.TotalViews ?? 0).ToAbbreviatedText(),
-				(SortingCategory.Views, FloatingActionButtonType.Statistic2) => repositories.Sum(x => x?.TotalUniqueViews ?? 0).ToAbbreviatedText(),
-				(SortingCategory.Views, FloatingActionButtonType.Statistic3) => repositories.Sum(x => x?.StarCount ?? 0).ToAbbreviatedText(),
-				(SortingCategory.IssuesForks, FloatingActionButtonType.Statistic1) => repositories.Sum(x => x?.StarCount ?? 0).ToAbbreviatedText(),
-				(SortingCategory.IssuesForks, FloatingActionButtonType.Statistic2) => repositories.Sum(x => x.ForkCount).ToAbbreviatedText(),
-				(SortingCategory.IssuesForks, FloatingActionButtonType.Statistic3) => repositories.Sum(x => x.IssuesCount).ToAbbreviatedText(),
+				(SortingCategory.Clones, FloatingActionButtonType.Statistic1) => repositories.Sum(static x => x?.TotalClones ?? 0).ToAbbreviatedText(),
+				(SortingCategory.Clones, FloatingActionButtonType.Statistic2) => repositories.Sum(static x => x?.TotalUniqueClones ?? 0).ToAbbreviatedText(),
+				(SortingCategory.Clones, FloatingActionButtonType.Statistic3) => repositories.Sum(static x => x?.StarCount ?? 0).ToAbbreviatedText(),
+				(SortingCategory.Views, FloatingActionButtonType.Statistic1) => repositories.Sum(static x => x?.TotalViews ?? 0).ToAbbreviatedText(),
+				(SortingCategory.Views, FloatingActionButtonType.Statistic2) => repositories.Sum(static x => x?.TotalUniqueViews ?? 0).ToAbbreviatedText(),
+				(SortingCategory.Views, FloatingActionButtonType.Statistic3) => repositories.Sum(static x => x?.StarCount ?? 0).ToAbbreviatedText(),
+				(SortingCategory.IssuesForks, FloatingActionButtonType.Statistic1) => repositories.Sum(static x => x?.StarCount ?? 0).ToAbbreviatedText(),
+				(SortingCategory.IssuesForks, FloatingActionButtonType.Statistic2) => repositories.Sum(static x => x.ForkCount).ToAbbreviatedText(),
+				(SortingCategory.IssuesForks, FloatingActionButtonType.Statistic3) => repositories.Sum(static x => x.IssuesCount).ToAbbreviatedText(),
 				(_, FloatingActionButtonType.Information) => throw new NotSupportedException(),
 				(_, _) => throw new NotImplementedException()
 			};

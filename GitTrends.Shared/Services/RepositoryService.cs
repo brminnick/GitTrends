@@ -10,7 +10,7 @@ namespace GitTrends.Shared
 		{
 			duplicateRepositoryPriorityFilter ??= _ => true;
 
-			return repositoriesList.Where(x => !x.IsFork && !x.IsArchived).OrderByDescending(x => x.DataDownloadedAt).GroupBy(x => x.Name).Select(x => x.FirstOrDefault(duplicateRepositoryPriorityFilter) ?? x.First());
+			return repositoriesList.Where(static x => !x.IsFork && !x.IsArchived).OrderByDescending(static x => x.DataDownloadedAt).GroupBy(static x => x.Name).Select(x => x.FirstOrDefault(duplicateRepositoryPriorityFilter) ?? x.First());
 		}
 	}
 }

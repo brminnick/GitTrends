@@ -47,7 +47,7 @@ namespace GitTrends
 						dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
 				}
 
-				return new RepositoryViewsResponseModel(dailyViewsModelList.Sum(x => x.TotalViews), dailyViewsModelList.Sum(x => x.TotalUniqueViews), dailyViewsModelList, repo, owner);
+				return new RepositoryViewsResponseModel(dailyViewsModelList.Sum(static x => x.TotalViews), dailyViewsModelList.Sum(static x => x.TotalUniqueViews), dailyViewsModelList, repo, owner);
 			}
 			else
 			{
@@ -76,7 +76,7 @@ namespace GitTrends
 				}
 
 
-				return new RepositoryClonesResponseModel(dailyClonesModelList.Sum(x => x.TotalClones), dailyClonesModelList.Sum(x => x.TotalUniqueClones), dailyClonesModelList, repo, owner);
+				return new RepositoryClonesResponseModel(dailyClonesModelList.Sum(static x => x.TotalClones), dailyClonesModelList.Sum(static x => x.TotalUniqueClones), dailyClonesModelList, repo, owner);
 			}
 			else
 			{
@@ -135,7 +135,7 @@ namespace GitTrends
 				var starCount = DemoDataConstants.GetRandomNumber();
 				var starredAtDates = DemoDataConstants.GenerateStarredAtDates(starCount);
 
-				return new StarGazers(starCount, starredAtDates.Select(x => new StarGazerInfo(x, string.Empty)));
+				return new StarGazers(starCount, starredAtDates.Select(static x => new StarGazerInfo(x, string.Empty)));
 			}
 			else
 			{
@@ -152,7 +152,7 @@ namespace GitTrends
 					currentPageNumber++;
 				} while (starGazerResponse.Count > 0);
 
-				return new StarGazers(totalStarGazers.Count, totalStarGazers.Select(x => new StarGazerInfo(x.StarredAt, string.Empty)));
+				return new StarGazers(totalStarGazers.Count, totalStarGazers.Select(static x => new StarGazerInfo(x.StarredAt, string.Empty)));
 			}
 		}
 	}

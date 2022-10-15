@@ -38,7 +38,7 @@ namespace GitTrends
 			var databaseConnection = await GetDatabaseConnection<MobileReferringSitesDatabaseModel>().ConfigureAwait(false);
 			var referringSitesDatabaseModelList = await databaseConnection.Table<MobileReferringSitesDatabaseModel>().Where(x => x.RepositoryUrl == repositoryUrl && x.ReferrerUri == referrerUri).ToListAsync().ConfigureAwait(false);
 
-			var newestReferringSiteModel = referringSitesDatabaseModelList.OrderByDescending(x => x.DownloadedAt).FirstOrDefault();
+			var newestReferringSiteModel = referringSitesDatabaseModelList.OrderByDescending(static x => x.DownloadedAt).FirstOrDefault();
 
 			try
 			{
@@ -57,7 +57,7 @@ namespace GitTrends
 
 			var referringSitesDatabaseModelList = await databaseConnection.Table<MobileReferringSitesDatabaseModel>().Where(x => x.RepositoryUrl == repositoryUrl).ToListAsync().ConfigureAwait(false);
 
-			return referringSitesDatabaseModelList.Select(x => MobileReferringSitesDatabaseModel.ToReferringSitesModel(x)).ToList();
+			return referringSitesDatabaseModelList.Select(static x => MobileReferringSitesDatabaseModel.ToReferringSitesModel(x)).ToList();
 		}
 
 		public async Task<int> SaveReferringSite(MobileReferringSiteModel referringSiteModel, string repositoryUrl)

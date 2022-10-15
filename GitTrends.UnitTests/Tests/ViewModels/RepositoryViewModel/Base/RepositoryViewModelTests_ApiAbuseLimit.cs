@@ -36,13 +36,13 @@ namespace GitTrends.UnitTests
 			gitHubApiAbuseLimitCount_Initial = gitHubUserService.GitHubApiAbuseLimitCount;
 
 			emptyDataViewTitle_Initial = repositoryViewModel.EmptyDataViewTitle;
-			visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
+			visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList.ToList();
 			emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
 
 			await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
 
 			emptyDataViewTitle_Final = repositoryViewModel.EmptyDataViewTitle;
-			visibleRepositoryList_Final = repositoryViewModel.VisibleRepositoryList;
+			visibleRepositoryList_Final = repositoryViewModel.VisibleRepositoryList.ToList();
 			emptyDataViewDescription_Final = repositoryViewModel.EmptyDataViewDescription;
 
 			pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);

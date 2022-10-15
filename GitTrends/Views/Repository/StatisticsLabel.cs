@@ -7,12 +7,9 @@ namespace GitTrends
 	{
 		public const int StatisticsFontSize = 12;
 
-		public StatisticsLabel(in string text, in bool isVisible, in string textColorThemeName)
+		public StatisticsLabel(in string textColorThemeName)
 		{
-			Text = text;
 			FontSize = StatisticsFontSize;
-
-			IsVisible = isVisible;
 
 			HorizontalOptions = LayoutOptions.FillAndExpand;
 

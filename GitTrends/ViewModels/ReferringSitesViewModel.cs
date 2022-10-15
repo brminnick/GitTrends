@@ -83,7 +83,7 @@ namespace GitTrends
 
 			var minimumTimerDisplayTimeTask = Task.Delay(TimeSpan.FromSeconds(1));
 			var referringSitesList = await GetReferringSites(repository, cancellationToken).ConfigureAwait(false);
-			MobileReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList.Select(x => new MobileReferringSiteModel(x))).ToList();
+			MobileReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList.Select(static x => new MobileReferringSiteModel(x))).ToList();
 
 			if (!_gitHubUserService.IsDemoUser)
 			{

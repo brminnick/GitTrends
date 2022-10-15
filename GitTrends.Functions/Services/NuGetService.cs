@@ -90,7 +90,7 @@ namespace GitTrends.Functions
 				}
 			});
 
-			var remainingTasks = getInstalledPackageInfoTCSList.Select(x => x.PackageInfoTCS.Task).ToList();
+			var remainingTasks = getInstalledPackageInfoTCSList.Select(static x => x.PackageInfoTCS.Task).ToList();
 
 			while (remainingTasks.Any())
 			{
@@ -140,7 +140,7 @@ namespace GitTrends.Functions
 				getCSProjFileTask.csprojSourceCodeTCS.SetResult(file);
 			});
 
-			var remainingTasks = getCSProjFileTaskList.Select(x => x.csprojSourceCodeTCS.Task).ToList();
+			var remainingTasks = getCSProjFileTaskList.Select(static x => x.csprojSourceCodeTCS.Task).ToList();
 
 			while (remainingTasks.Any())
 			{

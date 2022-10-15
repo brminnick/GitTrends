@@ -50,7 +50,7 @@ namespace GitTrends.Mobile.Common
 			for (int i = 0; i < starCount; i++)
 				starGazerList.Add(GetRandomDate());
 
-			return starGazerList.OrderBy(x => x);
+			return starGazerList.OrderBy(static x => x);
 		}
 	}
 }

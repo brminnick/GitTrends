@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
@@ -31,13 +32,13 @@ namespace GitTrends.UnitTests
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
 			emptyDataViewTitle_Initial = repositoryViewModel.EmptyDataViewTitle;
-			visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
+			visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList.ToList();
 			emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
 
 			await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
 
 			emptyDataViewTitle_Final = repositoryViewModel.EmptyDataViewTitle;
-			visibleRepositoryList_Final = repositoryViewModel.VisibleRepositoryList;
+			visibleRepositoryList_Final = repositoryViewModel.VisibleRepositoryList.ToList();
 			emptyDataViewDescription_Final = repositoryViewModel.EmptyDataViewDescription;
 
 			pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);

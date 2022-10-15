@@ -31,7 +31,7 @@ namespace GitTrends.Mobile.Common
 				{"", "Default" }
 			};
 
-			foreach (var keyValuePair in _cultureOptions.OrderBy(x => x.Value.RemoveEmoji()))
+			foreach (var keyValuePair in _cultureOptions.OrderBy(static x => x.Value.RemoveEmoji()))
 				culturePickerOptions.Add(keyValuePair.Key, keyValuePair.Value);
 
 			return culturePickerOptions;

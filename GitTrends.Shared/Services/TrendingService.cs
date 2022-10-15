@@ -14,7 +14,7 @@ namespace GitTrends.Shared
 			if (dailyClones is null)
 				return false;
 
-			var sortedDailyClonesList = dailyClones.OrderBy(x => x.TotalClones).ToList();
+			var sortedDailyClonesList = dailyClones.OrderBy(static x => x.TotalClones).ToList();
 
 			return DoesContainUpperOutlier(sortedDailyClonesList);
 		}
@@ -24,7 +24,7 @@ namespace GitTrends.Shared
 			if (dailyViews is null)
 				return false;
 
-			var sortedDailyViewsList = dailyViews.OrderBy(x => x.TotalViews).ToList();
+			var sortedDailyViewsList = dailyViews.OrderBy(static x => x.TotalViews).ToList();
 
 			return DoesContainUpperOutlier(sortedDailyViewsList);
 		}
@@ -78,6 +78,6 @@ namespace GitTrends.Shared
 		}
 
 		static IEnumerable<T> GetTwoMostRecentDays<T>(in IList<T> dailyClonesModels) where T : BaseDailyModel =>
-			dailyClonesModels.Where(x => x.LocalDay.AddDays(2) > DateTime.Now);
+			dailyClonesModels.Where(static x => x.LocalDay.AddDays(2) > DateTime.Now);
 	}
 }

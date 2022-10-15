@@ -18,13 +18,13 @@ namespace GitTrends
 
 		public async Task PreloadRepositoryImages(IEnumerable<Repository> repositories)
 		{
-			foreach (var repository in getDistinctOwnerAvatarUrlList(repositories).Where(x => x.IsOwnerAvatarUrlValid()))
+			foreach (var repository in getDistinctOwnerAvatarUrlList(repositories).Where(static x => x.IsOwnerAvatarUrlValid()))
 			{
 				await PreloadImageRepositoryImage(repository).ConfigureAwait(false);
 			}
 
 			//Removes Duplicate OwnerAvatarUrls
-			static IEnumerable<Repository> getDistinctOwnerAvatarUrlList(in IEnumerable<Repository> repositories) => repositories.GroupBy(x => x.OwnerAvatarUrl).Select(g => g.First());
+			static IEnumerable<Repository> getDistinctOwnerAvatarUrlList(in IEnumerable<Repository> repositories) => repositories.GroupBy(static x => x.OwnerAvatarUrl).Select(g => g.First());
 		}
 
 		public async Task PreloadImageRepositoryImage(Repository repository)

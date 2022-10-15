@@ -111,7 +111,7 @@ namespace GitTrends.UnitTests
 			Assert.IsEmpty(filesWithMissingEntryValue, "Missing Values Found", filesWithMissingEntryValue);
 		}
 
-		static List<ResxEntryModel> GetDefaultResx(in List<ResxFile> resxFiles) => resxFiles.First(x => x.Language is "").Entries;
+		static List<ResxEntryModel> GetDefaultResx(in List<ResxFile> resxFiles) => resxFiles.First(static x => x.Language is "").Entries;
 
 		//https://stackoverflow.com/a/41760659/5953643
 		static CultureInfo[] GetAvailableResxCultureInfos(Assembly assembly)

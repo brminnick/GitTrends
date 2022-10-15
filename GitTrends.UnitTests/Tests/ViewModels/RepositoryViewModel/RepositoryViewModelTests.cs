@@ -68,7 +68,7 @@ namespace GitTrends.UnitTests
 			Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
 			Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Succeeded, false), emptyDataViewDescription_Final);
 
-			Assert.IsTrue(visibleRepositoryList_Final.Any(x => x.OwnerLogin is GitHubConstants.GitTrendsRepoOwner && x.Name is GitHubConstants.GitTrendsRepoName));
+			Assert.IsTrue(visibleRepositoryList_Final.Any(static x => x.OwnerLogin is GitHubConstants.GitTrendsRepoOwner && x.Name is GitHubConstants.GitTrendsRepoName));
 
 
 			foreach (var repository in repositoriesUpdatedInBackground)

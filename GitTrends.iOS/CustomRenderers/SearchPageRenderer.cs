@@ -89,14 +89,14 @@ namespace GitTrends.iOS
         async Task<(IReadOnlyList<UIBarButtonItem>? LeftBarButtonItem, IReadOnlyList<UIBarButtonItem> RightBarButtonItems)> GetToolbarItems(IEnumerable<ToolbarItem> items)
         {
             var leftBarButtonItems = new List<UIBarButtonItem>();
-            foreach (var item in items.Where(x => x.Priority is 1))
+            foreach (var item in items.Where(static x => x.Priority is 1))
             {
                 var barButtonItem = await GetUIBarButtonItem(item);
                 leftBarButtonItems.Add(barButtonItem);
             }
 
             var rightBarButtonItems = new List<UIBarButtonItem>();
-            foreach (var item in items.Where(x => x.Priority != 1))
+            foreach (var item in items.Where(static x => x.Priority != 1))
             {
                 var barButtonItem = await GetUIBarButtonItem(item);
                 rightBarButtonItems.Add(barButtonItem);

@@ -214,11 +214,11 @@ namespace GitTrends
 			{
 				var loginRowViews = _contentGrid.Children.OfType<ILoginRowView>().Cast<View>();
 
-				await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(0.3, 75)));
+				await Task.WhenAll(loginRowViews.Select(static x => x.FadeTo(0.3, 75)));
 
 				BindingContext.HandleConnectToGitHubButtonCommand.Execute((_connectToGitHubCancellationTokenSource.Token, null));
 
-				await Task.WhenAll(loginRowViews.Select(x => x.FadeTo(1, 350, Easing.CubicOut)));
+				await Task.WhenAll(loginRowViews.Select(static x => x.FadeTo(1, 350, Easing.CubicOut)));
 			}
 		}
 

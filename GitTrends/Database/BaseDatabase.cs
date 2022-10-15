@@ -38,7 +38,7 @@ namespace GitTrends
 
 		protected async ValueTask<SQLiteAsyncConnection> GetDatabaseConnection<T>()
 		{
-			if (!_databaseConnection.TableMappings.Any(x => x.MappedType == typeof(T)))
+			if (!_databaseConnection.TableMappings.Any(static x => x.MappedType == typeof(T)))
 			{
 				await _databaseConnection.EnableWriteAheadLoggingAsync().ConfigureAwait(false);
 
@@ -48,7 +48,7 @@ namespace GitTrends
 				}
 				catch (SQLiteException e) when (e.Message.Contains("PRIMARY KEY", StringComparison.OrdinalIgnoreCase))
 				{
-					await _databaseConnection.DropTableAsync(_databaseConnection.TableMappings.First(x => x.MappedType == typeof(T)));
+					await _databaseConnection.DropTableAsync(_databaseConnection.TableMappings.First(static x => x.MappedType == typeof(T)));
 					await _databaseConnection.CreateTablesAsync(CreateFlags.None, typeof(T)).ConfigureAwait(false);
 				}
 			}

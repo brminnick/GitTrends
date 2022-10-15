@@ -211,7 +211,7 @@ namespace GitTrends.UITests
 			visibleRepositoryList = RepositoryPage.VisibleCollection;
 			Assert.IsTrue(visibleRepositoryList.Any());
 
-			if (visibleRepositoryList.Count(x => x.IsTrending) > 0)
+			if (visibleRepositoryList.Count(static x => x.IsTrending) > 0)
 			{
 				Assert.AreNotEqual(smallScreenTrendingImageCount, largeScreenTrendingImageCount);
 				if (smallScreenTrendingImageCount > 0)
@@ -221,7 +221,7 @@ namespace GitTrends.UITests
 					Assert.AreEqual(0, smallScreenTrendingImageCount);
 			}
 
-			Assert.IsFalse(visibleRepositoryList.Any(x => x.DailyClonesList?.Count <= 0 || x.DailyViewsList?.Count <= 0));
+			Assert.IsFalse(visibleRepositoryList.Any(static x => x.DailyClonesList?.Count <= 0 || x.DailyViewsList?.Count <= 0));
 		}
 
 		[Test]
