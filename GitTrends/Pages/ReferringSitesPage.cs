@@ -95,7 +95,7 @@ namespace GitTrends
 		{
 			base.OnAppearing();
 
-			if (_refreshView?.Content is CollectionView collectionView
+			if (_refreshView.Content is CollectionView collectionView
 				&& collectionView.ItemsSource.IsNullOrEmpty())
 			{
 				_refreshView.IsRefreshing = true;
@@ -185,13 +185,13 @@ namespace GitTrends
 			{
 				AutomationId = ReferringSitesPageAutomationIds.CollectionView;
 				BackgroundColor = Color.Transparent;
-				ItemTemplate = new ReferringSitesDataTemplateSelector();
 				SelectionMode = SelectionMode.Single;
+				ItemTemplate = new ReferringSitesDataTemplate();
 				ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical);
 
 				//iOS Header + Footer break CollectionView after Refresh bug: https://github.com/xamarin/Xamarin.Forms/issues/9879
-				Header = Device.RuntimePlatform is Device.iOS ? null : new BoxView { HeightRequest = ReferringSitesDataTemplateSelector.BottomPadding };
-				Footer = Device.RuntimePlatform is Device.iOS ? null : new BoxView { HeightRequest = ReferringSitesDataTemplateSelector.TopPadding };
+				Header = Device.RuntimePlatform is Device.iOS ? null : new BoxView { HeightRequest = ReferringSitesDataTemplate.BottomPadding };
+				Footer = Device.RuntimePlatform is Device.iOS ? null : new BoxView { HeightRequest = ReferringSitesDataTemplate.TopPadding };
 				EmptyView = new EmptyDataView("EmptyReferringSitesList", ReferringSitesPageAutomationIds.EmptyDataView)
 								.Bind(EmptyDataView.TitleProperty, nameof(ReferringSitesViewModel.EmptyDataViewTitle))
 								.Bind(EmptyDataView.DescriptionProperty, nameof(ReferringSitesViewModel.EmptyDataViewDescription));
