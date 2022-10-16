@@ -22,6 +22,7 @@ namespace GitTrends.UnitTests
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 			var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
 			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+			var backgroundFetchService = (ExtendedBackgroundFetchService)ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
 
 			var pullToRefreshFailedTCS = new TaskCompletionSource<PullToRefreshFailedEventArgs>();
 
@@ -35,6 +36,7 @@ namespace GitTrends.UnitTests
 			emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
 
 			await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
+			backgroundFetchService.CancelAllJobs();
 
 			emptyDataViewTitle_Final = repositoryViewModel.EmptyDataViewTitle;
 			visibleRepositoryList_Final = new List<Repository>(repositoryViewModel.VisibleRepositoryList);
