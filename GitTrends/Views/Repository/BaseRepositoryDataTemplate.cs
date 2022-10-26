@@ -21,30 +21,23 @@ namespace GitTrends
 
 		readonly static double _circleImageHeight = IsSmallScreen ? 48 : 62;
 
-		readonly static AsyncAwaitBestPractices.WeakEventManager _tappedWeakEventManager = new();
-
 		private protected BaseRepositoryDataTemplate(Func<object> loadTemplate) : base(loadTemplate)
 		{
 
 		}
 
-		public static event EventHandler Tapped
-		{
-			add => _tappedWeakEventManager.AddEventHandler(value);
-			remove => _tappedWeakEventManager.RemoveEventHandler(value);
-		}
-
 		private protected enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
 		private protected enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3 }
 
-		private protected class CardView : ExtendedSwipeView<Repository>
+		private protected class CardView : ExtendedSwipeView
 		{
 			public CardView(in IEnumerable<View> dataTemplateChildren)
 			{
+				this.Bind(TappedCommandParameterProperty, mode: BindingMode.OneTime)
+					.Bind(TappedCommandProperty, nameof(RepositoryPage.RepositoryDataTemplateTappedCommand), BindingMode.OneTime, source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(RepositoryPage)));
+
 				var sidePadding = IsSmallScreen ? 8 : 16;
 				BackgroundColor = Color.Transparent;
-
-				Tapped += HandleTapped;
 
 				RightItems = new SwipeItems
 				{
@@ -99,8 +92,6 @@ namespace GitTrends
 
 			enum CardViewRow { TopPadding, Card, BottomPadding }
 			enum CardViewColumn { LeftPadding, Card, RightPadding }
-
-			void HandleTapped(object sender, EventArgs e) => _tappedWeakEventManager.RaiseEvent(this, e, nameof(BaseRepositoryDataTemplate.Tapped));
 
 			class CardViewFrame : MaterialFrame
 			{

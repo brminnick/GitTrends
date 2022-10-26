@@ -16,7 +16,7 @@ using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-	public class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISearchPage
+	public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISearchPage
 	{
 		readonly WeakEventManager<string> _searchTextChangedEventManager = new();
 
@@ -36,9 +36,6 @@ namespace GitTrends
 			_firstRunService = firstRunService;
 			_gitHubUserService = gitHubUserService;
 			_deepLinkingService = deepLinkingService;
-
-			//Workaround for CollectionView.SelectionChanged firing when SwipeView is swiped
-			BaseRepositoryDataTemplate.Tapped += HandleRepositoryDataTemplateTapped;
 
 			SearchBarTextChanged += HandleSearchBarTextChanged;
 			RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
@@ -146,19 +143,16 @@ namespace GitTrends
 			static bool isUserValid(in string accessToken, in string alias) => !string.IsNullOrWhiteSpace(accessToken) || !string.IsNullOrWhiteSpace(alias);
 		}
 
-
-		async void HandleRepositoryDataTemplateTapped(object sender, EventArgs e)
+		[RelayCommand]
+		Task RepositoryDataTemplateTapped(Repository repository)
 		{
-			var view = (View)sender;
-			var repository = (Repository)view.BindingContext;
-
 			AnalyticsService.Track("Repository Tapped", new Dictionary<string, string>
 			{
 				{ nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin },
 				{ nameof(Repository) + nameof(Repository.Name), repository.Name }
 			});
 
-			await NavigateToTrendsPage(repository);
+			return NavigateToTrendsPage(repository);
 		}
 
 		async Task NavigateToWelcomePage()
