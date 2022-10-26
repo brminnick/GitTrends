@@ -59,6 +59,7 @@ namespace GitTrends.UnitTests
 			void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
 			{
 				RepositoryViewModel.PullToRefreshFailed -= HandlePullToRefreshFailed;
+				backgroundFetchService.CancelAllJobs();
 				pullToRefreshFailedTCS.SetResult(e);
 			}
 		}
