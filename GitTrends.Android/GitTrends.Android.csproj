@@ -79,7 +79,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2515" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2545" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="20.3.0.49" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
