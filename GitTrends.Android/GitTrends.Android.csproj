@@ -106,6 +106,7 @@
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Extensions" Version="2.2.0.10" />
     <PackageReference Include="Xamarin.AndroidX.Work.Runtime" Version="2.7.1.1" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.4.0.2" />
+    <PackageReference Include="Xamarin.AndroidX.Core" Version="1.9.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
