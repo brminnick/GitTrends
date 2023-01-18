@@ -234,7 +234,7 @@
 		<PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.7.4" />
 		<PackageReference Include="GitHubApiStatus" Version="2.0.4" />
 		<PackageReference Include="Refit.Newtonsoft.Json" Version="6.3.2" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
 		<PackageReference Include="AsyncAwaitBestPractices" Version="6.0.6" />
 	</ItemGroup>
 	<Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
