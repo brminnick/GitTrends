@@ -41,7 +41,9 @@ namespace GitTrends
 		bool _isRefreshing;
 
 		[ObservableProperty]
-		string _titleText = string.Empty, _searchBarText = string.Empty, _totalButtonText = string.Empty, _emptyDataViewTitle = string.Empty, _emptyDataViewDescription = string.Empty;
+		string _titleText = string.Empty, _totalButtonText = string.Empty, _emptyDataViewTitle = string.Empty, _emptyDataViewDescription = string.Empty;
+
+		string _searchBarText = string.Empty;
 
 		[ObservableProperty]
 		IReadOnlyList<Repository> _visibleRepositoryList = Array.Empty<Repository>();
@@ -357,7 +359,7 @@ namespace GitTrends
 
 			AnalyticsService.Track("IsFavorite Toggled", nameof(Repository.IsFavorite), updatedRepository.IsFavorite.ToString());
 
-			var updatedRepositoryList = new List<Repository>(_visibleRepositoryList);
+			var updatedRepositoryList = new List<Repository>(VisibleRepositoryList);
 			updatedRepositoryList.Remove(repository);
 			updatedRepositoryList.Add(updatedRepository);
 

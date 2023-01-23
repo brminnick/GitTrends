@@ -4,8 +4,7 @@ using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
-	[INotifyPropertyChanged]
-	public abstract partial class BaseViewModel
+	public abstract class BaseViewModel : ObservableObject
 	{
 		public BaseViewModel(IAnalyticsService analyticsService, IMainThread mainThread) =>
 			(AnalyticsService, MainThread) = (analyticsService, mainThread);
