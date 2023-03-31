@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
@@ -16,7 +16,7 @@
         <PackageReference Include="NuGet.Protocol" Version="6.5.0" />
         <PackageReference Include="Refit.Newtonsoft.Json" Version="6.3.2" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
-        <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.1.0" />
+        <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.2.0" />
         <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="5.1.1" />
     </ItemGroup>
     <ItemGroup>
