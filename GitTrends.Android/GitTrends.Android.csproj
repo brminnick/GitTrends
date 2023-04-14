@@ -100,7 +100,7 @@
     <PackageReference Include="Plugin.StoreReview" Version="5.0.1" />
     <PackageReference Include="Xamarin.Google.Dagger" Version="2.44.2.1" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.3" />
-    <PackageReference Include="Refit.Newtonsoft.Json" Version="6.4.1" />
+    <PackageReference Include="Refit.Newtonsoft.Json" Version="6.5.1" />
     <PackageReference Include="Shiny.Jobs" Version="2.7.1" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.5.1.2" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Extensions" Version="2.2.0.10" />
