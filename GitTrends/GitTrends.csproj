@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
@@ -29,7 +29,7 @@
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.1" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.1" />
         <PackageReference Include="Xamarin.Forms" Version="5.0.0.2578" />
-        <PackageReference Include="Shiny.Notifications" Version="2.7.1" />
+        <PackageReference Include="Shiny.Notifications" Version="2.7.2" />
         <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
         <PackageReference Include="Plugin.StoreReview" Version="5.0.1" />
         <PackageReference Include="Sharpnado.MaterialFrame" Version="1.3.0" />
