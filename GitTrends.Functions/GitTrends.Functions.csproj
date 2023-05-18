@@ -13,7 +13,7 @@
         <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.13.0" />
         <PackageReference Include="Refit.HttpClientFactory" Version="6.5.1" />
         <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
-        <PackageReference Include="NuGet.Protocol" Version="6.5.0" />
+        <PackageReference Include="NuGet.Protocol" Version="6.6.0" />
         <PackageReference Include="Refit.Newtonsoft.Json" Version="6.5.1" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.2.0" />
