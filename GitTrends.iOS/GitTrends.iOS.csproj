@@ -471,7 +471,7 @@
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
     <PackageReference Include="Autofac" Version="7.0.1" />
     <PackageReference Include="Xamarin.TestCloud.Agent" Version="0.23.2" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.1" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.1" />
     <PackageReference Include="Shiny.Notifications" Version="2.7.2" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
