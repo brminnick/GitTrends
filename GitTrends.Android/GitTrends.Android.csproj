@@ -102,7 +102,7 @@
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.3" />
     <PackageReference Include="Refit.Newtonsoft.Json" Version="6.5.1" />
     <PackageReference Include="Shiny.Jobs" Version="2.7.2" />
-    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.5.1.2" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.6.1.2" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Extensions" Version="2.2.0.10" />
     <PackageReference Include="Xamarin.AndroidX.Work.Runtime" Version="2.7.1.1" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.4.0.2" />
