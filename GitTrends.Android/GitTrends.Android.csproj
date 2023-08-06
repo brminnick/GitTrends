@@ -81,7 +81,7 @@
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2578" />
     <PackageReference Include="Polly" Version="7.2.4" />
-    <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="20.3.0.49" />
+    <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="22.2.7" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
     <PackageReference Include="Autofac" Version="7.0.1" />
