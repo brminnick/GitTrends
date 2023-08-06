@@ -17,7 +17,6 @@ namespace GitTrends
 
 		public VideoPlayerWithLoadingIndicatorView(string? uri)
 		{
-			_videoPlayerView = new VideoPlayerView(uri);
 			Url = uri;
 
 			Padding = 0;
@@ -30,9 +29,10 @@ namespace GitTrends
 							.Bind(ActivityIndicator.IsVisibleProperty, nameof(IsActivityIndicatorVisible), source: this)
 							.Bind(ActivityIndicator.IsRunningProperty, nameof(IsActivityIndicatorRunning), source: this));
 
-			Children.Add(_videoPlayerView
+			Children.Add(new VideoPlayerView(uri)
 							.Row(Row.Video)
-							.Bind(VideoPlayerView.UrlProperty, nameof(Url), source: this));
+							.Bind(VideoPlayerView.UrlProperty, nameof(Url), source: this)
+							.Assign(out _videoPlayerView));
 		}
 
 		enum Row { Video }
