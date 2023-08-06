@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using GitTrends.Shared;
@@ -14,6 +15,9 @@ namespace GitTrends.UnitTests
 		public async Task InitializeOnboardingChartTest()
 		{
 			//Arrange
+			HttpResponseMessage getOnboardingChartUrlResponse_HLSUrl, getOnboardingChartUrlResponse_DashUrl, getOnboardingChartUrlResponse_ManifestUrl,
+								getEnableOrganizationsUrlResponse_HLSUrl, getEnableOrganizationsUrlResponse_DashUrl, getEnableOrganizationsUrlResponse_ManifestUrl;
+
 			StreamingManifest? onboardingChartStreamingManifest_BeforeInitialization, onboardingChartStreamingManifest_EventHandlerResult, onboardingChartStreamingManifest_AfterInitialization,
 								enableOrganizationsStreamingManifest_BeforeInitialization, enableOrganizationsStreamingManifest_EventHandlerResult, enableOrganizationsStreamingManifest_AfterInitialization;
 
@@ -24,6 +28,8 @@ namespace GitTrends.UnitTests
 
 			var deviceInfo = ServiceCollection.ServiceProvider.GetRequiredService<IDeviceInfo>();
 			var mediaElementService = ServiceCollection.ServiceProvider.GetRequiredService<MediaElementService>();
+
+			var httpClient = new HttpClient();
 
 			MediaElementService.OnboardingChartManifestChanged += HandleOnboardingChartManifestChanged;
 			MediaElementService.EnableOrganizationsManifestChanged += HandleEnableOrganizationsManifestChanged;
@@ -46,6 +52,14 @@ namespace GitTrends.UnitTests
 			onboardingChartStreamingManifest_AfterInitialization = mediaElementService.OnboardingChartManifest;
 			enableOrganizationsStreamingManifest_AfterInitialization = mediaElementService.EnableOrganizationsManifest;
 
+			getOnboardingChartUrlResponse_HLSUrl = await httpClient.GetAsync(onboardingChartStreamingManifest_AfterInitialization?.HlsUrl);
+			getOnboardingChartUrlResponse_DashUrl = await httpClient.GetAsync(onboardingChartStreamingManifest_AfterInitialization?.DashUrl);
+			getOnboardingChartUrlResponse_ManifestUrl = await httpClient.GetAsync(onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl);
+
+			getEnableOrganizationsUrlResponse_HLSUrl = await httpClient.GetAsync(enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl);
+			getEnableOrganizationsUrlResponse_DashUrl = await httpClient.GetAsync(enableOrganizationsStreamingManifest_AfterInitialization?.DashUrl);
+			getEnableOrganizationsUrlResponse_ManifestUrl = await httpClient.GetAsync(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl);
+
 			//Assert
 			Assert.IsNull(onboardingChartStreamingManifest_BeforeInitialization);
 			Assert.IsNotNull(onboardingChartStreamingManifest_EventHandlerResult);
@@ -58,6 +72,10 @@ namespace GitTrends.UnitTests
 			Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_AfterInitialization?.HlsUrl, UriKind.Absolute));
 			Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_AfterInitialization?.DashUrl, UriKind.Absolute));
 			Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl, UriKind.Absolute));
+
+			Assert.DoesNotThrow(() => getOnboardingChartUrlResponse_HLSUrl.EnsureSuccessStatusCode());
+			Assert.DoesNotThrow(() => getOnboardingChartUrlResponse_DashUrl.EnsureSuccessStatusCode());
+			Assert.DoesNotThrow(() => getOnboardingChartUrlResponse_ManifestUrl.EnsureSuccessStatusCode());
 
 			if (deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.Android)
 				Assert.AreEqual(onboardingChartStreamingManifest_AfterInitialization?.DashUrl, onboardingChartUrl_Final);
@@ -77,6 +95,10 @@ namespace GitTrends.UnitTests
 			Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl, UriKind.Absolute));
 			Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_AfterInitialization?.DashUrl, UriKind.Absolute));
 			Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl, UriKind.Absolute));
+
+			Assert.DoesNotThrow(() => getEnableOrganizationsUrlResponse_HLSUrl.EnsureSuccessStatusCode());
+			Assert.DoesNotThrow(() => getEnableOrganizationsUrlResponse_DashUrl.EnsureSuccessStatusCode());
+			Assert.DoesNotThrow(() => getEnableOrganizationsUrlResponse_ManifestUrl.EnsureSuccessStatusCode());
 
 			if (deviceInfo.Platform == Xamarin.Essentials.DevicePlatform.Android)
 				Assert.AreEqual(enableOrganizationsStreamingManifest_AfterInitialization?.DashUrl, enableOrganizationsUrl_Final);
