@@ -17,7 +17,7 @@ namespace GitTrends.UnitTests
 {
 	abstract class BaseTest
 	{
-		protected const string AuthenticatedGitHubUserAvatarUrl = "https://avatars.githubusercontent.com/u/13558917?u=f1392f8aefe2d52a87c4d371981cb7153199fa27&v=4";
+		protected const string AuthenticatedGitHubUserAvatarUrl = "https://avatars.githubusercontent.com/u/13558917?u=6e0d77ca0420f418c8ad5110cb155dea5d427a35&v=4";
 
 		[TearDown]
 		public virtual Task TearDown()
