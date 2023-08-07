@@ -1,5 +1,4 @@
-﻿using System;
-using Xamarin.CommunityToolkit.Markup;
+﻿using Xamarin.CommunityToolkit.Markup;
 using Xamarin.Forms;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
@@ -12,9 +11,6 @@ namespace GitTrends
 		public static readonly BindableProperty IsActivityIndicatorVisibleProperty = BindableProperty.Create(nameof(IsActivityIndicatorVisible), typeof(bool), typeof(VideoPlayerWithLoadingIndicatorView), true);
 		public static readonly BindableProperty IsActivityIndicatorRunningProperty = BindableProperty.Create(nameof(IsActivityIndicatorRunning), typeof(bool), typeof(VideoPlayerWithLoadingIndicatorView), true);
 
-		readonly VideoPlayerView _videoPlayerView;
-		readonly ActivityIndicator _activityIndicator = new ActivityIndicator().Margin(10);
-
 		public VideoPlayerWithLoadingIndicatorView(string? uri)
 		{
 			Url = uri;
@@ -23,16 +19,16 @@ namespace GitTrends
 
 			RowDefinitions = Rows.Define((Row.Video, Star));
 
-			Children.Add(_activityIndicator
+			Children.Add(new ActivityIndicator()
 							.Row(Row.Video)
+							.Margin(10)
 							.Bind(ActivityIndicator.ColorProperty, nameof(ActivityIndicatorColor), source: this)
 							.Bind(ActivityIndicator.IsVisibleProperty, nameof(IsActivityIndicatorVisible), source: this)
 							.Bind(ActivityIndicator.IsRunningProperty, nameof(IsActivityIndicatorRunning), source: this));
 
 			Children.Add(new VideoPlayerView(uri)
 							.Row(Row.Video)
-							.Bind(VideoPlayerView.UrlProperty, nameof(Url), source: this)
-							.Assign(out _videoPlayerView));
+							.Bind(VideoPlayerView.UrlProperty, nameof(Url), source: this));
 		}
 
 		enum Row { Video }
