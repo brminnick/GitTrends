@@ -13,7 +13,7 @@ namespace GitTrends.UnitTests
 		public async Task GetFavIconImageSourceTest_InvalidUri()
 		{
 			//Arrange
-			Uri invalidUri = new Uri("https://abc123456789.com/");
+			Uri invalidUri = new Uri("https://abc123456789qwertyuioplkjhgfdsazxcvbnm.com/");
 			var favIconService = ServiceCollection.ServiceProvider.GetRequiredService<FavIconService>();
 
 			//Act
@@ -24,9 +24,8 @@ namespace GitTrends.UnitTests
 			Assert.AreEqual(fileImageSource.File, FavIconService.DefaultFavIcon);
 		}
 
-		[TestCase("http://contiva.atlassian.net", "https://wac-cdn.atlassian.com/assets/img/favicons/atlassian/favicon.png")] //Clear Text Uri
-		[TestCase("https://contiva.atlassian.net/", "https://wac-cdn.atlassian.com/assets/img/favicons/atlassian/favicon.png")] //Icon Url
-		[TestCase("https://chrissainty.com/", "https://chrissainty.com/favicon-32x32.png")] //Shortcut icon Url
+		[TestCase("https://outlook.live.com/owa/", "https://logincdn.msftauth.net/16.000.29852.17/images/favicon.ico")] //Shortcut icon Uri
+		[TestCase("https://chrissainty.com/", "https://chrissainty.com/favicon-32x32.png")] // Icon Url
 		[TestCase("https://visualstudiomagazine.com/", "https://visualstudiomagazine.com/design/ECG/VisualStudioMagazine/img/vsm_apple_icon.png")] //Apple Touch Icon Url
 		[TestCase("https://mondaypunday.com/", "https://mondaypunday.com/favicon.ico")] //FavIcon Url
 		public async Task GetFavIconImageSourceTest_ValidUrl(string url, string expectedFavIconUrl)
