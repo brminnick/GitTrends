@@ -8,7 +8,6 @@ using Com.Google.Android.Exoplayer2.UI;
 using Com.Google.Android.Exoplayer2.Upstream;
 using GitTrends;
 using GitTrends.Droid;
-using Javax.Sql;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
