@@ -8,7 +8,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="GitHubApiStatus.Extensions" Version="2.0.4" />
-        <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="7.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="7.0.10" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.13.0" OutputItemType="Analyzer" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.18.0" />
         <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
