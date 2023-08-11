@@ -122,7 +122,7 @@ namespace GitTrends.Droid
         void HandleQueryTextChange(object sender, SearchView.QueryTextChangeEventArgs e)
         {
             if (Element is ISearchPage searchPage)
-                searchPage.OnSearchBarTextChanged(e.NewText);
+                searchPage.OnSearchBarTextChanged(e?.NewText ?? string.Empty);
         }
     }
 }
