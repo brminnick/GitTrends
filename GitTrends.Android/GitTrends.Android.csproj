@@ -87,7 +87,7 @@
     <PackageReference Include="Autofac" Version="7.1.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.3" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.3" />
-    <PackageReference Include="Shiny.Notifications" Version="2.7.3" />
+    <PackageReference Include="Shiny.Notifications" Version="3.1.0" />
     <PackageReference Include="Xam.Plugins.Android.ExoPlayer" Version="2.14.6" />
     <PackageReference Include="Xamarin.Firebase.Messaging" Version="123.2.1" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
