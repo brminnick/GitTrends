@@ -112,6 +112,13 @@ jobs:
           packageType: 'sdk'
           version: '$(NET_VERSION)'
 
+      - task: JavaToolInstaller@0
+        displayName: 'Install Java'
+        inputs:
+          versionSpec: '11'
+          jdkArchitectureOption: 'x64'
+          jdkSourceOption: 'PreInstalled'
+
       - task: UseDotNet@2
         displayName: 'Install .NET Core 3.1 SDK'
         inputs:
