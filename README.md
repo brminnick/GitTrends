@@ -10,7 +10,7 @@
 </p>
 
 <p align="center" >
-  <a href="https://twitter.com/buhakmeh/status/1273974920649805825?s=20">
+  <a>
     <img src="https://user-images.githubusercontent.com/13558917/85167001-fc4db180-b21c-11ea-9055-bddb158542a7.gif" height="250"/> 
     </br>
     Motion Graphic Created by Khalid Abuhakmeh 🙌
