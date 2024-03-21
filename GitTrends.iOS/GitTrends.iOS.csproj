@@ -469,7 +469,7 @@
     <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="23.1.42" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
-    <PackageReference Include="Autofac" Version="7.1.0" />
+    <PackageReference Include="Autofac" Version="8.0.0" />
     <PackageReference Include="Xamarin.TestCloud.Agent" Version="0.23.2" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.3" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.3" />
