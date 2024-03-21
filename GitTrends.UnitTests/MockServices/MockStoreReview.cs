@@ -33,10 +33,10 @@ namespace GitTrends.UnitTests
 
 		public void OpenStoreReviewPage(string appId) => OnStoreReviewPageOpened(appId);
 
-		public Task RequestReview(bool testMode)
+		public Task<bool> RequestReview(bool testMode)
 		{
 			OnReviewRequested(testMode);
-			return Task.CompletedTask;
+			return Task.FromResult(true);
 		}
 
 		void OnStoreListingOpened(in string appId) => _storeListingOpenedEventManager.RaiseEvent(this, appId, nameof(StoreListingOpened));
