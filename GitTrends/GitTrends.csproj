@@ -35,7 +35,7 @@
         <PackageReference Include="Plugin.StoreReview" Version="6.0.0" />
         <PackageReference Include="Sharpnado.MaterialFrame" Version="1.3.0" />
         <PackageReference Include="Xamarin.CommunityToolkit.Markup" Version="2.0.6" />
-        <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.6" />
+        <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.7" />
         <PackageReference Include="Shiny.Jobs" Version="2.7.3" />
     </ItemGroup>
     <ItemGroup>
