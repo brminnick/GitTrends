@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using Plugin.StoreReview;
 using Plugin.StoreReview.Abstractions;
 
 namespace GitTrends.UnitTests
@@ -33,10 +34,10 @@ namespace GitTrends.UnitTests
 
 		public void OpenStoreReviewPage(string appId) => OnStoreReviewPageOpened(appId);
 
-		public Task RequestReview(bool testMode)
+		public Task<ReviewStatus> RequestReview(bool testMode)
 		{
 			OnReviewRequested(testMode);
-			return Task.CompletedTask;
+			return Task.FromResult(ReviewStatus.Succeeded);
 		}
 
 		void OnStoreListingOpened(in string appId) => _storeListingOpenedEventManager.RaiseEvent(this, appId, nameof(StoreListingOpened));
