@@ -6,41 +6,40 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace GitTrends.Functions
+namespace GitTrends.Functions;
+
+public static class GetGitTrendsEnableOrganizationsUri
 {
-	public static class GetGitTrendsEnableOrganizationsUri
+	static readonly string _enableOrganizationsUrl = Environment.GetEnvironmentVariable("EnableOrganizationsUrl") ?? string.Empty;
+
+	[Function(nameof(GetGitTrendsEnableOrganizationsUri))]
+	public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req, FunctionContext functionContext)
 	{
-		readonly static string _enableOrganizationsUrl = Environment.GetEnvironmentVariable("EnableOrganizationsUrl") ?? string.Empty;
+		var logger = functionContext.GetLogger(nameof(GetGitHubClientId));
+		logger.LogInformation("Retrieving Organizations Url");
 
-		[Function(nameof(GetGitTrendsEnableOrganizationsUri))]
-		public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req, FunctionContext functionContext)
+		if (string.IsNullOrWhiteSpace(_enableOrganizationsUrl))
 		{
-			var logger = functionContext.GetLogger(nameof(GetGitHubClientId));
-			logger.LogInformation("Retrieving Organizations Url");
+			var notFoundResponse = req.CreateResponse(System.Net.HttpStatusCode.NotFound);
+			await notFoundResponse.WriteStringAsync("Enable Organizations Url Not Found").ConfigureAwait(false);
 
-			if (string.IsNullOrWhiteSpace(_enableOrganizationsUrl))
-			{
-				var notFoundResponse = req.CreateResponse(System.Net.HttpStatusCode.NotFound);
-				await notFoundResponse.WriteStringAsync("Enable Organizations Url Not Found").ConfigureAwait(false);
-
-				return notFoundResponse;
-			}
-
-			if (string.IsNullOrWhiteSpace(GetGitHubClientId.ClientId))
-			{
-				var notFoundResponse = req.CreateResponse(System.Net.HttpStatusCode.NotFound);
-				await notFoundResponse.WriteStringAsync("Client Id Not Found").ConfigureAwait(false);
-
-				return notFoundResponse;
-			}
-
-			var okResponse = req.CreateResponse(System.Net.HttpStatusCode.OK);
-
-			var getGitTrendsEnableOrganizationsUri = JsonConvert.SerializeObject(new GitTrendsEnableOrganizationsUriDTO(new Uri(_enableOrganizationsUrl + GetGitHubClientId.ClientId)));
-
-			await okResponse.WriteStringAsync(getGitTrendsEnableOrganizationsUri).ConfigureAwait(false);
-
-			return okResponse;
+			return notFoundResponse;
 		}
+
+		if (string.IsNullOrWhiteSpace(GetGitHubClientId.ClientId))
+		{
+			var notFoundResponse = req.CreateResponse(System.Net.HttpStatusCode.NotFound);
+			await notFoundResponse.WriteStringAsync("Client Id Not Found").ConfigureAwait(false);
+
+			return notFoundResponse;
+		}
+
+		var okResponse = req.CreateResponse(System.Net.HttpStatusCode.OK);
+
+		var getGitTrendsEnableOrganizationsUri = JsonConvert.SerializeObject(new GitTrendsEnableOrganizationsUriDTO(new Uri(_enableOrganizationsUrl + GetGitHubClientId.ClientId)));
+
+		await okResponse.WriteStringAsync(getGitTrendsEnableOrganizationsUri).ConfigureAwait(false);
+
+		return okResponse;
 	}
 }

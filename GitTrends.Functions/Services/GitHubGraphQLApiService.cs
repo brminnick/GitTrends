@@ -5,20 +5,19 @@ using GitTrends.Shared;
 using Microsoft.Extensions.Logging;
 using Refit;
 
-namespace GitTrends.Functions
+namespace GitTrends.Functions;
+
+class GitHubGraphQLApiService : BaseGitHubApiService
 {
-	class GitHubGraphQLApiService : BaseGitHubApiService
+	readonly IGitHubGraphQLApi _gitHubGraphQLClient;
+
+	public GitHubGraphQLApiService(IGitHubGraphQLApi gitHubGraphQLApi,
+									ILogger<GitHubGraphQLApiService> logger,
+									IGitHubApiStatusService gitHubApiStatusService) : base(gitHubApiStatusService, logger)
 	{
-		readonly IGitHubGraphQLApi _gitHubGraphQLClient;
-
-		public GitHubGraphQLApiService(IGitHubGraphQLApi gitHubGraphQLApi,
-										ILogger<GitHubGraphQLApiService> logger,
-										IGitHubApiStatusService gitHubApiStatusService) : base(gitHubApiStatusService, logger)
-		{
-			_gitHubGraphQLClient = gitHubGraphQLApi;
-		}
-
-		public Task<ApiResponse<GraphQLResponse<GitHubViewerLoginResponse>>> ViewerLoginQuery(string token, CancellationToken cancellationToken) =>
-			AttemptAndRetry_Functions(() => _gitHubGraphQLClient.ViewerLoginQuery(new ViewerLoginQueryContent(), $"Bearer {token}"), cancellationToken);
+		_gitHubGraphQLClient = gitHubGraphQLApi;
 	}
+
+	public Task<ApiResponse<GraphQLResponse<GitHubViewerLoginResponse>>> ViewerLoginQuery(string token, CancellationToken cancellationToken) =>
+		AttemptAndRetry_Functions(() => _gitHubGraphQLClient.ViewerLoginQuery(new ViewerLoginQueryContent(), $"Bearer {token}"), cancellationToken);
 }

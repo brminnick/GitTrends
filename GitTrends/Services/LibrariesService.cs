@@ -8,67 +8,66 @@ using GitTrends.Shared;
 using Newtonsoft.Json;
 using Xamarin.Essentials.Interfaces;
 
-namespace GitTrends
+namespace GitTrends;
+
+public class LibrariesService
 {
-	public class LibrariesService
+	readonly IPreferences _preferences;
+	readonly IAnalyticsService _analyticsService;
+	readonly ImageCachingService _imageCachingService;
+	readonly AzureFunctionsApiService _azureFunctionsApiService;
+
+	public LibrariesService(IPreferences preferences,
+							IAnalyticsService analyticsService,
+							ImageCachingService imageCachingService,
+							AzureFunctionsApiService azureFunctionsApiService)
 	{
-		readonly IPreferences _preferences;
-		readonly IAnalyticsService _analyticsService;
-		readonly ImageCachingService _imageCachingService;
-		readonly AzureFunctionsApiService _azureFunctionsApiService;
+		_preferences = preferences;
+		_analyticsService = analyticsService;
+		_imageCachingService = imageCachingService;
+		_azureFunctionsApiService = azureFunctionsApiService;
+	}
 
-		public LibrariesService(IPreferences preferences,
-								IAnalyticsService analyticsService,
-								ImageCachingService imageCachingService,
-								AzureFunctionsApiService azureFunctionsApiService)
+	public IReadOnlyList<NuGetPackageModel> InstalledLibraries
+	{
+		get
 		{
-			_preferences = preferences;
-			_analyticsService = analyticsService;
-			_imageCachingService = imageCachingService;
-			_azureFunctionsApiService = azureFunctionsApiService;
+			var serializedInstalledNuGetPackages = _preferences.Get(nameof(InstalledLibraries), null);
+
+			return serializedInstalledNuGetPackages is null
+				? Array.Empty<NuGetPackageModel>()
+				: JsonConvert.DeserializeObject<IReadOnlyList<NuGetPackageModel>>(serializedInstalledNuGetPackages) ?? throw new JsonException();
 		}
-
-		public IReadOnlyList<NuGetPackageModel> InstalledLibraries
+		private set
 		{
-			get
-			{
-				var serializedInstalledNuGetPackages = _preferences.Get(nameof(InstalledLibraries), null);
-
-				return serializedInstalledNuGetPackages is null
-					? Array.Empty<NuGetPackageModel>()
-					: JsonConvert.DeserializeObject<IReadOnlyList<NuGetPackageModel>>(serializedInstalledNuGetPackages) ?? throw new JsonException();
-			}
-			private set
-			{
-				var serializedInstalledNuGetPackages = JsonConvert.SerializeObject(value);
-				_preferences.Set(nameof(InstalledLibraries), serializedInstalledNuGetPackages);
-			}
+			var serializedInstalledNuGetPackages = JsonConvert.SerializeObject(value);
+			_preferences.Set(nameof(InstalledLibraries), serializedInstalledNuGetPackages);
 		}
+	}
 
-		public async ValueTask Initialize(CancellationToken cancellationToken)
+	public async ValueTask Initialize(CancellationToken cancellationToken)
+	{
+		if (InstalledLibraries.Any())
+			initialize().SafeFireAndForget(ex => _analyticsService.Report(ex));
+		else
+			await initialize().ConfigureAwait(false);
+
+		async Task initialize()
 		{
-			if (InstalledLibraries.Any())
-				initialize().SafeFireAndForget(ex => _analyticsService.Report(ex));
-			else
-				await initialize().ConfigureAwait(false);
+			var libraries = await _azureFunctionsApiService.GetLibraries(cancellationToken).ConfigureAwait(false);
 
-			async Task initialize()
+			InstalledLibraries = libraries.OrderBy(static x => x.PackageName).ToList();
+
+			foreach (var nugetPackageModel in InstalledLibraries)
 			{
-				var libraries = await _azureFunctionsApiService.GetLibraries(cancellationToken).ConfigureAwait(false);
-
-				InstalledLibraries = libraries.OrderBy(static x => x.PackageName).ToList();
-
-				foreach (var nugetPackageModel in InstalledLibraries)
+				_imageCachingService.PreloadImage(nugetPackageModel.IconUri).SafeFireAndForget(ex =>
 				{
-					_imageCachingService.PreloadImage(nugetPackageModel.IconUri).SafeFireAndForget(ex =>
+					_analyticsService.Report(ex, new Dictionary<string, string>
 					{
-						_analyticsService.Report(ex, new Dictionary<string, string>
-						{
-							{ nameof(nugetPackageModel.PackageName), nugetPackageModel.PackageName },
-							{ nameof(nugetPackageModel.IconUri), nugetPackageModel.IconUri.ToString() }
-						});
+						{ nameof(nugetPackageModel.PackageName), nugetPackageModel.PackageName },
+						{ nameof(nugetPackageModel.IconUri), nugetPackageModel.IconUri.ToString() }
 					});
-				}
+				});
 			}
 		}
 	}

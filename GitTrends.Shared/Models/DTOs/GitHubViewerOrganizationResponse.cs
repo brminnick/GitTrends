@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace GitTrends.Shared
-{
-	public record GitHubViewerOrganizationResponse(ViewerOrganizationsResponse Viewer);
+namespace GitTrends.Shared;
 
-	public record ViewerOrganizationsResponse(OrganizationNamesResponse Organizations);
+public record GitHubViewerOrganizationResponse(ViewerOrganizationsResponse Viewer);
 
-	public record OrganizationNamesResponse(IReadOnlyList<OrganizationRepositoryName> Nodes, PageInfo PageInfo);
+public record ViewerOrganizationsResponse(OrganizationNamesResponse Organizations);
 
-	public record OrganizationRepositoryName(string Login);
-}
+public record OrganizationNamesResponse(IReadOnlyList<OrganizationRepositoryName> Nodes, PageInfo PageInfo);
+
+public record OrganizationRepositoryName(string Login);

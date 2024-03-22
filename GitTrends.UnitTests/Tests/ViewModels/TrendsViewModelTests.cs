@@ -9,669 +9,668 @@ using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Xamarin.Forms;
 
-namespace GitTrends.UnitTests
+namespace GitTrends.UnitTests;
+
+class TrendsViewModelTests : BaseTest
 {
-	class TrendsViewModelTests : BaseTest
+	const int _timeoutInMilliseconds = 10000;
+
+	[Test, Timeout(_timeoutInMilliseconds)]
+	public async Task FetchDataCommandTest_AuthenticatedUser_OldData()
 	{
-		const int _timeoutInMilliseconds = 10000;
+		//Arrange
+		Repository repository_OldData, repository_RepositorySavedToDatabaseResult;
 
-		[Test, Timeout(_timeoutInMilliseconds)]
-		public async Task FetchDataCommandTest_AuthenticatedUser_OldData()
+		TaskCompletionSource<Repository> repositorySavedToDatabaseTCS = new();
+
+		TrendsViewModel.RepositorySavedToDatabase += HandleRepositorySavedToDatabase;
+
+		IReadOnlyList<DailyStarsModel> dailyStarsList_Initial, dailyStarsList_Final;
+		IReadOnlyList<DailyViewsModel> dailyViewsList_Initial, dailyViewsList_Final;
+		IReadOnlyList<DailyClonesModel> dailyClonesList_Initial, dailyClonesList_Final;
+
+		var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
+
+		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+		var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+		var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
+
+		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+		var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
+		await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(new[] { repository }, CancellationToken.None).ConfigureAwait(false))
 		{
-			//Arrange
-			Repository repository_OldData, repository_RepositorySavedToDatabaseResult;
+			repository = completedReposiory;
+		}
 
-			TaskCompletionSource<Repository> repositorySavedToDatabaseTCS = new();
+		repository_OldData = repository with { DataDownloadedAt = DateTimeOffset.UtcNow.AddDays(-1) };
 
-			TrendsViewModel.RepositorySavedToDatabase += HandleRepositorySavedToDatabase;
+		//Act
+		dailyStarsList_Initial = trendsViewModel.DailyStarsList;
+		dailyViewsList_Initial = trendsViewModel.DailyViewsList;
+		dailyClonesList_Initial = trendsViewModel.DailyClonesList;
 
-			IReadOnlyList<DailyStarsModel> dailyStarsList_Initial, dailyStarsList_Final;
-			IReadOnlyList<DailyViewsModel> dailyViewsList_Initial, dailyViewsList_Final;
-			IReadOnlyList<DailyClonesModel> dailyClonesList_Initial, dailyClonesList_Final;
+		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository_OldData, CancellationToken.None)).ConfigureAwait(false);
+		repository_RepositorySavedToDatabaseResult = await repositorySavedToDatabaseTCS.Task.ConfigureAwait(false);
 
-			var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
+		dailyStarsList_Final = trendsViewModel.DailyStarsList;
+		dailyViewsList_Final = trendsViewModel.DailyViewsList;
+		dailyClonesList_Final = trendsViewModel.DailyClonesList;
 
-			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
-			var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
+		//Assert
+		Assert.IsNotEmpty(repository_OldData.DailyClonesList ?? throw new NullReferenceException());
+		Assert.IsNotEmpty(repository_OldData.DailyViewsList ?? throw new NullReferenceException());
+		Assert.IsNotEmpty(repository_OldData.StarredAt ?? throw new NullReferenceException());
 
-			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+		Assert.IsEmpty(dailyViewsList_Initial);
+		Assert.IsEmpty(dailyClonesList_Initial);
+		Assert.IsEmpty(dailyStarsList_Initial);
 
-			var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
+		Assert.IsNotEmpty(dailyViewsList_Final);
+		Assert.IsNotEmpty(dailyClonesList_Final);
+		Assert.IsNotEmpty(dailyStarsList_Final);
+
+		Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarCount, dailyStarsList_Final.Select(static x => x.TotalStars).Distinct().Count());
+
+		foreach (var dailyViewsModel_Final in dailyViewsList_Final)
+		{
+			var dailyViewsModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
+													.DailyViewsList?.FirstOrDefault(x => x.Day == dailyViewsModel_Final.Day);
+
+			if (dailyViewsModel_SavedToDatabase is null)
+				continue;
+
+			Assert.AreEqual(dailyViewsModel_SavedToDatabase.LocalDay, dailyViewsModel_Final.LocalDay);
+			Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalViews, dailyViewsModel_Final.TotalViews);
+			Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalUniqueViews, dailyViewsModel_Final.TotalUniqueViews);
+		}
+
+		foreach (var dailyClonesModel_Final in dailyClonesList_Final)
+		{
+			var dailyClonesModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
+													.DailyClonesList?.FirstOrDefault(x => x.Day == dailyClonesModel_Final.Day);
+
+			if (dailyClonesModel_SavedToDatabase is null)
+				continue;
+
+			Assert.AreEqual(dailyClonesModel_SavedToDatabase.LocalDay, dailyClonesModel_Final.LocalDay);
+			Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalClones, dailyClonesModel_Final.TotalClones);
+			Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalUniqueClones, dailyClonesModel_Final.TotalUniqueClones);
+		}
+
+		void HandleRepositorySavedToDatabase(object? sender, Repository e)
+		{
+			TrendsViewModel.RepositorySavedToDatabase -= HandleRepositorySavedToDatabase;
+			repositorySavedToDatabaseTCS.SetResult(e);
+		}
+	}
+
+	[Test, Timeout(_timeoutInMilliseconds)]
+	public async Task FetchDataCommandTest_AuthenticatedUser_NoData()
+	{
+		//Arrange
+		Repository repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, string.Empty, 0, GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsAvatarUrl, 0, 0, 0, $"{GitHubConstants.GitHubBaseUrl}/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
+		Repository repository_RepositorySavedToDatabaseResult;
+
+		TaskCompletionSource<Repository> repositorySavedToDatabaseTCS = new();
+
+		TrendsViewModel.RepositorySavedToDatabase += HandleRepositorySavedToDatabase;
+
+		IReadOnlyList<DailyStarsModel> dailyStarsList_Initial, dailyStarsList_Final;
+		IReadOnlyList<DailyViewsModel> dailyViewsList_Initial, dailyViewsList_Final;
+		IReadOnlyList<DailyClonesModel> dailyClonesList_Initial, dailyClonesList_Final;
+
+		var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
+
+		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+		var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+		var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
+
+		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+		//Act
+		dailyStarsList_Initial = trendsViewModel.DailyStarsList;
+		dailyViewsList_Initial = trendsViewModel.DailyViewsList;
+		dailyClonesList_Initial = trendsViewModel.DailyClonesList;
+
+		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository_Initial, CancellationToken.None)).ConfigureAwait(false);
+		repository_RepositorySavedToDatabaseResult = await repositorySavedToDatabaseTCS.Task.ConfigureAwait(false);
+
+		dailyStarsList_Final = trendsViewModel.DailyStarsList;
+		dailyViewsList_Final = trendsViewModel.DailyViewsList;
+		dailyClonesList_Final = trendsViewModel.DailyClonesList;
+
+		//Assert
+		Assert.IsNull(repository_Initial.DailyClonesList);
+		Assert.IsNull(repository_Initial.DailyViewsList);
+		Assert.IsNull(repository_Initial.StarredAt);
+
+		Assert.IsEmpty(dailyViewsList_Initial);
+		Assert.IsEmpty(dailyClonesList_Initial);
+		Assert.IsEmpty(dailyStarsList_Initial);
+
+		Assert.IsNotEmpty(dailyViewsList_Final);
+		Assert.IsNotEmpty(dailyClonesList_Final);
+		Assert.IsNotEmpty(dailyStarsList_Final);
+
+		Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarredAt?.Count, dailyStarsList_Final.Select(static x => x.TotalStars).Distinct().Count());
+
+		foreach (var dailyViewsModel_Final in dailyViewsList_Final)
+		{
+			var dailyViewsModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
+													.DailyViewsList?.FirstOrDefault(x => x.Day == dailyViewsModel_Final.Day);
+
+			if (dailyViewsModel_SavedToDatabase is null)
+				continue;
+
+			Assert.AreEqual(dailyViewsModel_SavedToDatabase.LocalDay, dailyViewsModel_Final.LocalDay);
+			Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalViews, dailyViewsModel_Final.TotalViews);
+			Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalUniqueViews, dailyViewsModel_Final.TotalUniqueViews);
+		}
+
+		foreach (var dailyClonesModel_Final in dailyClonesList_Final)
+		{
+			var dailyClonesModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
+													.DailyClonesList?.FirstOrDefault(x => x.Day == dailyClonesModel_Final.Day);
+
+			if (dailyClonesModel_SavedToDatabase is null)
+				continue;
+
+			Assert.AreEqual(dailyClonesModel_SavedToDatabase.LocalDay, dailyClonesModel_Final.LocalDay);
+			Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalClones, dailyClonesModel_Final.TotalClones);
+			Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalUniqueClones, dailyClonesModel_Final.TotalUniqueClones);
+		}
+
+		void HandleRepositorySavedToDatabase(object? sender, Repository e)
+		{
+			TrendsViewModel.RepositorySavedToDatabase -= HandleRepositorySavedToDatabase;
+			repositorySavedToDatabaseTCS.SetResult(e);
+		}
+	}
+
+	[Test, Timeout(_timeoutInMilliseconds)]
+	public async Task FetchDataCommandTest_AuthenticatedUser_NoData_FetchingStarsDataInBackground()
+	{
+		//Arrange
+		bool wasTryScheduleRetryRepositoriesStarsSuccessful;
+		Repository repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, string.Empty, 0, GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsAvatarUrl, 0, 0, 0, $"{GitHubConstants.GitHubBaseUrl}/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
+
+		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+		var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+		var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+		//Act
+		wasTryScheduleRetryRepositoriesStarsSuccessful = backgroundFetchService.TryScheduleRetryRepositoriesStars(repository_Initial);
+
+		await FetchDataCommandTest_AuthenticatedUser_NoData().ConfigureAwait(false);
+
+		var isTryScheduleRetryRepositoriesStarsRunningAfterTest = backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesStarsIdentifier(repository_Initial));
+
+		//Assert
+		Assert.IsTrue(wasTryScheduleRetryRepositoriesStarsSuccessful);
+		Assert.IsFalse(isTryScheduleRetryRepositoriesStarsRunningAfterTest);
+	}
+
+	[Test, Timeout(_timeoutInMilliseconds)]
+	public async Task FetchDataCommandTest_AuthenticatedUser_IncompleteOriginalStarsData()
+	{
+		//Arrange
+		var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
+		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+		var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
+		var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+		//Act
+		var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
+		repository = repository with { StarredAt = new List<DateTimeOffset> { new DateTimeOffset(2008, 02, 08, 0, 0, 0, TimeSpan.Zero) } };
+
+		await repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
+
+		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+
+		//Assert
+		Assert.AreEqual(repository.StarCount, trendsViewModel.TotalStars);
+		Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Max(static x => x.TotalStars));
+		Assert.AreEqual(repository.StarCount.ToAbbreviatedText(), trendsViewModel.StarsStatisticsText);
+		Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
+		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Succeeded, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
+		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewTitleText);
+
+		if (trendsViewModel.DailyStarsList[^1].TotalStars == trendsViewModel.DailyStarsList[^2].TotalStars)
+			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count - 1);
+		else
+			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count);
+	}
+
+	[Test, Timeout(_timeoutInMilliseconds)]
+	public async Task FetchDataCommandTest_AuthenticatedUser_MissingStarsData()
+	{
+		//Arrange
+		var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
+		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+		var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
+		var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+		//Act
+		var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
+		await repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
+
+		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+
+		//Assert
+		Assert.AreEqual(repository.StarCount, trendsViewModel.TotalStars);
+		Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Max(static x => x.TotalStars));
+		Assert.AreEqual(repository.StarCount.ToAbbreviatedText(), trendsViewModel.StarsStatisticsText);
+		Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
+		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Succeeded, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
+		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewTitleText);
+
+		if (trendsViewModel.DailyStarsList[^1].TotalStars == trendsViewModel.DailyStarsList[^2].TotalStars)
+			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count - 1);
+		else
+			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count);
+	}
+
+	[Test, Timeout(_timeoutInMilliseconds)]
+	public async Task FetchDataCommandTest_AuthenticatedUser_TokenCancelled()
+	{
+		//Arrange
+		Repository repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, string.Empty, 0, GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsAvatarUrl, 0, 0, 0, $"{GitHubConstants.GitHubBaseUrl}/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
+
+		var cancellationTokenSource = new CancellationTokenSource();
+
+		var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
+		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+		var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+		//Act
+		var fetchDataCommandTask = trendsViewModel.FetchDataCommand.ExecuteAsync((repository_Initial, cancellationTokenSource.Token));
+
+		cancellationTokenSource.Cancel();
+
+		await fetchDataCommandTask.ConfigureAwait(false);
+
+		//Assert
+		Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Error, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
+		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Error, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
+		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Error, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewTitleText);
+		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewDescriptionText(RefreshState.Error, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewDescriptionText);
+	}
+
+	[Test, Timeout(_timeoutInMilliseconds)]
+	public async Task FetchDataCommandTest_AuthenticatedUser_NoData_FetchingViewsClonesStarsDataInBackground()
+	{
+		//Arrange
+		bool wasTryScheduleRetryRepositoriesViewsClonesStarsSuccessful;
+		Repository repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, string.Empty, 0, GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsAvatarUrl, 0, 0, 0, $"{GitHubConstants.GitHubBaseUrl}/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
+
+		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+		var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+		var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+		//Act
+		wasTryScheduleRetryRepositoriesViewsClonesStarsSuccessful = backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository_Initial);
+
+		await FetchDataCommandTest_AuthenticatedUser_NoData().ConfigureAwait(false);
+
+		var isTryScheduleRetryRepositoriesViewsClonesStarsRunningAfterTest = backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository_Initial));
+
+		//Assert
+		Assert.IsTrue(wasTryScheduleRetryRepositoriesViewsClonesStarsSuccessful);
+		Assert.IsFalse(isTryScheduleRetryRepositoriesViewsClonesStarsRunningAfterTest);
+	}
+
+	[TestCase(true)]
+	[TestCase(false)]
+	[Timeout(_timeoutInMilliseconds)]
+	public async Task FetchDataCommandTest_AuthenticatedUser(bool shouldIncludeViewsClonesData)
+	{
+		//Arrange
+		Repository repository;
+
+		double dailyViewsClonesMinValue_Initial, dailyViewsClonesMinValue_Final;
+		double dailyViewsClonesMaxValue_Initial, dailyViewsClonesMaxValue_Final;
+
+		double minDailyStarsValue_Initial, minDailyStarsValue_Final;
+		double maxDailyStarsValue_Initial, maxDailyStarsValue_Final;
+
+		string viewsClonesEmptyDataViewTitleText_Initial, viewsClonesEmptyDataViewTitleText_Final;
+		string starsEmptyDataViewTitleText_Initial, starsEmptyDataViewTitleText_Final;
+		string starsHeaderMessageText_Initial, starsHeaderMessageText_Final;
+
+		bool isViewsClonesChartVisible_Initial, isViewsClonesChartVisible_Final;
+		bool isStarsChartVisible_Initial, isStarsChartVisible_Final;
+
+		bool isFetchingData_Initial, isFetchingData_Final;
+
+		bool isViewsClonesEmptyDataViewVisible_Initial, isViewsClonesEmptyDataViewVisible_Final;
+		bool isStarsEmptyDataViewVisible_Initial, isStarsEmptyDataViewVisible_Final;
+
+		DateTime minViewsClonesDate_Initial, minViewsClonesDate_Final;
+		DateTime maxViewsClonesDate_Initial, maxViewsClonesDate_Final;
+
+		DateTime minDailyStarsDate_Initial, minDailyStarsDate_Final;
+		DateTime maxDailyStarsDate_Initial, maxDailyStarsDate_Final;
+
+		IReadOnlyList<DailyStarsModel> dailyStarsList_Initial, dailyStarsList_Final;
+		IReadOnlyList<DailyViewsModel> dailyViewsList_Initial, dailyViewsList_Final;
+		IReadOnlyList<DailyClonesModel> dailyClonesList_Initial, dailyClonesList_Final;
+
+		var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
+
+		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+		var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+		var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
+
+
+		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+		repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
+
+		if (shouldIncludeViewsClonesData)
+		{
 			await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(new[] { repository }, CancellationToken.None).ConfigureAwait(false))
 			{
 				repository = completedReposiory;
 			}
-
-			repository_OldData = repository with { DataDownloadedAt = DateTimeOffset.UtcNow.AddDays(-1) };
-
-			//Act
-			dailyStarsList_Initial = trendsViewModel.DailyStarsList;
-			dailyViewsList_Initial = trendsViewModel.DailyViewsList;
-			dailyClonesList_Initial = trendsViewModel.DailyClonesList;
-
-			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository_OldData, CancellationToken.None)).ConfigureAwait(false);
-			repository_RepositorySavedToDatabaseResult = await repositorySavedToDatabaseTCS.Task.ConfigureAwait(false);
-
-			dailyStarsList_Final = trendsViewModel.DailyStarsList;
-			dailyViewsList_Final = trendsViewModel.DailyViewsList;
-			dailyClonesList_Final = trendsViewModel.DailyClonesList;
-
-			//Assert
-			Assert.IsNotEmpty(repository_OldData.DailyClonesList ?? throw new NullReferenceException());
-			Assert.IsNotEmpty(repository_OldData.DailyViewsList ?? throw new NullReferenceException());
-			Assert.IsNotEmpty(repository_OldData.StarredAt ?? throw new NullReferenceException());
-
-			Assert.IsEmpty(dailyViewsList_Initial);
-			Assert.IsEmpty(dailyClonesList_Initial);
-			Assert.IsEmpty(dailyStarsList_Initial);
-
-			Assert.IsNotEmpty(dailyViewsList_Final);
-			Assert.IsNotEmpty(dailyClonesList_Final);
-			Assert.IsNotEmpty(dailyStarsList_Final);
-
-			Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarCount, dailyStarsList_Final.Select(static x => x.TotalStars).Distinct().Count());
-
-			foreach (var dailyViewsModel_Final in dailyViewsList_Final)
-			{
-				var dailyViewsModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
-														.DailyViewsList?.FirstOrDefault(x => x.Day == dailyViewsModel_Final.Day);
-
-				if (dailyViewsModel_SavedToDatabase is null)
-					continue;
-
-				Assert.AreEqual(dailyViewsModel_SavedToDatabase.LocalDay, dailyViewsModel_Final.LocalDay);
-				Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalViews, dailyViewsModel_Final.TotalViews);
-				Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalUniqueViews, dailyViewsModel_Final.TotalUniqueViews);
-			}
-
-			foreach (var dailyClonesModel_Final in dailyClonesList_Final)
-			{
-				var dailyClonesModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
-														.DailyClonesList?.FirstOrDefault(x => x.Day == dailyClonesModel_Final.Day);
-
-				if (dailyClonesModel_SavedToDatabase is null)
-					continue;
-
-				Assert.AreEqual(dailyClonesModel_SavedToDatabase.LocalDay, dailyClonesModel_Final.LocalDay);
-				Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalClones, dailyClonesModel_Final.TotalClones);
-				Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalUniqueClones, dailyClonesModel_Final.TotalUniqueClones);
-			}
-
-			void HandleRepositorySavedToDatabase(object? sender, Repository e)
-			{
-				TrendsViewModel.RepositorySavedToDatabase -= HandleRepositorySavedToDatabase;
-				repositorySavedToDatabaseTCS.SetResult(e);
-			}
 		}
 
-		[Test, Timeout(_timeoutInMilliseconds)]
-		public async Task FetchDataCommandTest_AuthenticatedUser_NoData()
-		{
-			//Arrange
-			Repository repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, string.Empty, 0, GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsAvatarUrl, 0, 0, 0, $"{GitHubConstants.GitHubBaseUrl}/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
-			Repository repository_RepositorySavedToDatabaseResult;
+		//Act
+		isFetchingData_Initial = trendsViewModel.IsFetchingViewsClonesData;
+		dailyStarsList_Initial = trendsViewModel.DailyStarsList;
+		dailyViewsList_Initial = trendsViewModel.DailyViewsList;
+		dailyClonesList_Initial = trendsViewModel.DailyClonesList;
+		maxDailyStarsDate_Initial = trendsViewModel.MaxDailyStarsDate;
+		minDailyStarsDate_Initial = trendsViewModel.MinDailyStarsDate;
+		minDailyStarsValue_Initial = trendsViewModel.MinDailyStarsValue;
+		maxDailyStarsValue_Initial = trendsViewModel.MaxDailyStarsValue;
+		minViewsClonesDate_Initial = trendsViewModel.MinViewsClonesDate;
+		maxViewsClonesDate_Initial = trendsViewModel.MaxViewsClonesDate;
+		isStarsChartVisible_Initial = trendsViewModel.IsStarsChartVisible;
+		starsHeaderMessageText_Initial = trendsViewModel.StarsHeaderMessageText;
+		dailyViewsClonesMinValue_Initial = trendsViewModel.DailyViewsClonesMinValue;
+		dailyViewsClonesMaxValue_Initial = trendsViewModel.DailyViewsClonesMaxValue;
+		isViewsClonesChartVisible_Initial = trendsViewModel.IsViewsClonesChartVisible;
+		starsEmptyDataViewTitleText_Initial = trendsViewModel.StarsEmptyDataViewTitleText;
+		isStarsEmptyDataViewVisible_Initial = trendsViewModel.IsStarsEmptyDataViewVisible;
+		viewsClonesEmptyDataViewTitleText_Initial = trendsViewModel.ViewsClonesEmptyDataViewTitleText;
+		isViewsClonesEmptyDataViewVisible_Initial = trendsViewModel.IsViewsClonesEmptyDataViewVisible;
+
+		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+
+		isFetchingData_Final = trendsViewModel.IsFetchingViewsClonesData;
+		dailyStarsList_Final = trendsViewModel.DailyStarsList;
+		dailyViewsList_Final = trendsViewModel.DailyViewsList;
+		dailyClonesList_Final = trendsViewModel.DailyClonesList;
+		maxDailyStarsDate_Final = trendsViewModel.MaxDailyStarsDate;
+		minDailyStarsDate_Final = trendsViewModel.MinDailyStarsDate;
+		minDailyStarsValue_Final = trendsViewModel.MinDailyStarsValue;
+		maxDailyStarsValue_Final = trendsViewModel.MaxDailyStarsValue;
+		isStarsChartVisible_Final = trendsViewModel.IsStarsChartVisible;
+		minViewsClonesDate_Final = trendsViewModel.MinViewsClonesDate;
+		maxViewsClonesDate_Final = trendsViewModel.MaxViewsClonesDate;
+		starsHeaderMessageText_Final = trendsViewModel.StarsHeaderMessageText;
+		dailyViewsClonesMinValue_Final = trendsViewModel.DailyViewsClonesMinValue;
+		dailyViewsClonesMaxValue_Final = trendsViewModel.DailyViewsClonesMaxValue;
+		isViewsClonesChartVisible_Final = trendsViewModel.IsViewsClonesChartVisible;
+		starsEmptyDataViewTitleText_Final = trendsViewModel.StarsEmptyDataViewTitleText;
+		isStarsEmptyDataViewVisible_Final = trendsViewModel.IsStarsEmptyDataViewVisible;
+		viewsClonesEmptyDataViewTitleText_Final = trendsViewModel.ViewsClonesEmptyDataViewTitleText;
+		isViewsClonesEmptyDataViewVisible_Final = trendsViewModel.IsViewsClonesEmptyDataViewVisible;
+
+		//Assert
+		Assert.IsEmpty(dailyViewsList_Initial);
+		Assert.IsEmpty(dailyClonesList_Initial);
+		Assert.IsEmpty(dailyStarsList_Initial);
+
+		Assert.IsNotEmpty(dailyViewsList_Final);
+		Assert.IsNotEmpty(dailyClonesList_Final);
+		Assert.IsNotEmpty(dailyStarsList_Final);
+
+		Assert.IsTrue(isFetchingData_Initial);
+		Assert.IsFalse(isFetchingData_Final);
+
+		Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Initial);
+		Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Final);
+
+		Assert.IsFalse(isStarsEmptyDataViewVisible_Initial);
+		Assert.IsFalse(isStarsEmptyDataViewVisible_Final);
+
+		Assert.IsFalse(isViewsClonesChartVisible_Initial);
+		Assert.True(isViewsClonesChartVisible_Final);
+
+		Assert.IsFalse(isStarsChartVisible_Initial);
+		Assert.True(isStarsChartVisible_Final);
+
+		Assert.AreEqual(TrendsViewModel.MinimumChartHeight, dailyViewsClonesMaxValue_Initial);
+		Assert.GreaterOrEqual(dailyViewsClonesMaxValue_Final, dailyViewsClonesMaxValue_Initial);
+
+		Assert.AreEqual(TrendsViewModel.MinimumChartHeight, maxDailyStarsValue_Initial);
+		Assert.GreaterOrEqual(maxDailyStarsValue_Final, maxDailyStarsValue_Initial);
+
+		Assert.AreEqual(0, dailyViewsClonesMinValue_Initial);
+		Assert.AreEqual(dailyViewsClonesMinValue_Final, dailyViewsClonesMinValue_Initial);
+
+		Assert.AreEqual(0, minDailyStarsValue_Initial);
+		Assert.AreEqual(minDailyStarsValue_Final, minDailyStarsValue_Initial);
+
+		Assert.AreEqual(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13)).Date, minViewsClonesDate_Initial.Date);
+		Assert.LessOrEqual(minViewsClonesDate_Final.Date, minViewsClonesDate_Initial.Date);
+
+		Assert.AreEqual(DateTimeOffset.UtcNow.Date, maxViewsClonesDate_Initial.Date);
+		Assert.LessOrEqual(maxViewsClonesDate_Final.Date, maxViewsClonesDate_Initial.Date);
+
+		Assert.LessOrEqual(minDailyStarsDate_Final.Date, minDailyStarsDate_Initial.Date);
+		Assert.LessOrEqual(maxDailyStarsDate_Final.Date, maxDailyStarsDate_Initial.Date);
+
+		Assert.AreEqual(EmptyDataViewService.GetViewsClonesTitleText(RefreshState.Uninitialized), viewsClonesEmptyDataViewTitleText_Initial);
+		Assert.AreEqual(EmptyDataViewService.GetViewsClonesTitleText(RefreshState.Succeeded), viewsClonesEmptyDataViewTitleText_Final);
+
+		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Uninitialized, trendsViewModel.TotalStars), starsEmptyDataViewTitleText_Initial);
+		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), starsEmptyDataViewTitleText_Final);
+
+		Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Uninitialized, default), starsHeaderMessageText_Initial);
+		Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), starsHeaderMessageText_Final);
+	}
+
+	[TestCase(true)]
+	[TestCase(false)]
+	[Timeout(_timeoutInMilliseconds)]
+	public async Task FetchDataCommandTest_DemoUser(bool shouldCreateViewsClonesData)
+	{
+		//Arrange
+		IReadOnlyList<DailyStarsModel> dailyStarsList_Initial, dailyStarsList_Final;
+		IReadOnlyList<DailyViewsModel> dailyViewsList_Initial, dailyViewsList_Final;
+		IReadOnlyList<DailyClonesModel> dailyClonesList_Initial, dailyClonesList_Final;
 
-			TaskCompletionSource<Repository> repositorySavedToDatabaseTCS = new();
+		Repository repository = CreateRepository(shouldCreateViewsClonesData);
 
-			TrendsViewModel.RepositorySavedToDatabase += HandleRepositorySavedToDatabase;
+		var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
 
-			IReadOnlyList<DailyStarsModel> dailyStarsList_Initial, dailyStarsList_Final;
-			IReadOnlyList<DailyViewsModel> dailyViewsList_Initial, dailyViewsList_Final;
-			IReadOnlyList<DailyClonesModel> dailyClonesList_Initial, dailyClonesList_Final;
-
-			var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
-
-			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
-			var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
+		var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
+		await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
-			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
-
-			//Act
-			dailyStarsList_Initial = trendsViewModel.DailyStarsList;
-			dailyViewsList_Initial = trendsViewModel.DailyViewsList;
-			dailyClonesList_Initial = trendsViewModel.DailyClonesList;
+		//Act
+		dailyStarsList_Initial = trendsViewModel.DailyStarsList;
+		dailyViewsList_Initial = trendsViewModel.DailyViewsList;
+		dailyClonesList_Initial = trendsViewModel.DailyClonesList;
 
-			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository_Initial, CancellationToken.None)).ConfigureAwait(false);
-			repository_RepositorySavedToDatabaseResult = await repositorySavedToDatabaseTCS.Task.ConfigureAwait(false);
+		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
 
-			dailyStarsList_Final = trendsViewModel.DailyStarsList;
-			dailyViewsList_Final = trendsViewModel.DailyViewsList;
-			dailyClonesList_Final = trendsViewModel.DailyClonesList;
-
-			//Assert
-			Assert.IsNull(repository_Initial.DailyClonesList);
-			Assert.IsNull(repository_Initial.DailyViewsList);
-			Assert.IsNull(repository_Initial.StarredAt);
-
-			Assert.IsEmpty(dailyViewsList_Initial);
-			Assert.IsEmpty(dailyClonesList_Initial);
-			Assert.IsEmpty(dailyStarsList_Initial);
-
-			Assert.IsNotEmpty(dailyViewsList_Final);
-			Assert.IsNotEmpty(dailyClonesList_Final);
-			Assert.IsNotEmpty(dailyStarsList_Final);
-
-			Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarredAt?.Count, dailyStarsList_Final.Select(static x => x.TotalStars).Distinct().Count());
-
-			foreach (var dailyViewsModel_Final in dailyViewsList_Final)
-			{
-				var dailyViewsModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
-														.DailyViewsList?.FirstOrDefault(x => x.Day == dailyViewsModel_Final.Day);
-
-				if (dailyViewsModel_SavedToDatabase is null)
-					continue;
-
-				Assert.AreEqual(dailyViewsModel_SavedToDatabase.LocalDay, dailyViewsModel_Final.LocalDay);
-				Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalViews, dailyViewsModel_Final.TotalViews);
-				Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalUniqueViews, dailyViewsModel_Final.TotalUniqueViews);
-			}
-
-			foreach (var dailyClonesModel_Final in dailyClonesList_Final)
-			{
-				var dailyClonesModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
-														.DailyClonesList?.FirstOrDefault(x => x.Day == dailyClonesModel_Final.Day);
-
-				if (dailyClonesModel_SavedToDatabase is null)
-					continue;
-
-				Assert.AreEqual(dailyClonesModel_SavedToDatabase.LocalDay, dailyClonesModel_Final.LocalDay);
-				Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalClones, dailyClonesModel_Final.TotalClones);
-				Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalUniqueClones, dailyClonesModel_Final.TotalUniqueClones);
-			}
-
-			void HandleRepositorySavedToDatabase(object? sender, Repository e)
-			{
-				TrendsViewModel.RepositorySavedToDatabase -= HandleRepositorySavedToDatabase;
-				repositorySavedToDatabaseTCS.SetResult(e);
-			}
-		}
-
-		[Test, Timeout(_timeoutInMilliseconds)]
-		public async Task FetchDataCommandTest_AuthenticatedUser_NoData_FetchingStarsDataInBackground()
-		{
-			//Arrange
-			bool wasTryScheduleRetryRepositoriesStarsSuccessful;
-			Repository repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, string.Empty, 0, GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsAvatarUrl, 0, 0, 0, $"{GitHubConstants.GitHubBaseUrl}/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
-
-			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-			var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
-			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
-
-			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
-
-			//Act
-			wasTryScheduleRetryRepositoriesStarsSuccessful = backgroundFetchService.TryScheduleRetryRepositoriesStars(repository_Initial);
-
-			await FetchDataCommandTest_AuthenticatedUser_NoData().ConfigureAwait(false);
-
-			var isTryScheduleRetryRepositoriesStarsRunningAfterTest = backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesStarsIdentifier(repository_Initial));
-
-			//Assert
-			Assert.IsTrue(wasTryScheduleRetryRepositoriesStarsSuccessful);
-			Assert.IsFalse(isTryScheduleRetryRepositoriesStarsRunningAfterTest);
-		}
-
-		[Test, Timeout(_timeoutInMilliseconds)]
-		public async Task FetchDataCommandTest_AuthenticatedUser_IncompleteOriginalStarsData()
-		{
-			//Arrange
-			var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
-			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-			var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
-			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
-
-			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
-
-			//Act
-			var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
-			repository = repository with { StarredAt = new List<DateTimeOffset> { new DateTimeOffset(2008, 02, 08, 0, 0, 0, TimeSpan.Zero) } };
-
-			await repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
-
-			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
-
-			//Assert
-			Assert.AreEqual(repository.StarCount, trendsViewModel.TotalStars);
-			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Max(static x => x.TotalStars));
-			Assert.AreEqual(repository.StarCount.ToAbbreviatedText(), trendsViewModel.StarsStatisticsText);
-			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
-			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Succeeded, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
-			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewTitleText);
-
-			if (trendsViewModel.DailyStarsList[^1].TotalStars == trendsViewModel.DailyStarsList[^2].TotalStars)
-				Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count - 1);
-			else
-				Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count);
-		}
-
-		[Test, Timeout(_timeoutInMilliseconds)]
-		public async Task FetchDataCommandTest_AuthenticatedUser_MissingStarsData()
-		{
-			//Arrange
-			var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
-			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-			var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
-			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
-
-			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+		dailyStarsList_Final = trendsViewModel.DailyStarsList;
+		dailyViewsList_Final = trendsViewModel.DailyViewsList;
+		dailyClonesList_Final = trendsViewModel.DailyClonesList;
 
-			//Act
-			var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
-			await repositoryDatabase.SaveRepository(repository).ConfigureAwait(false);
+		//Assret
+		Assert.IsEmpty(dailyStarsList_Initial);
+		Assert.IsEmpty(dailyViewsList_Initial);
+		Assert.IsEmpty(dailyClonesList_Initial);
 
-			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+		Assert.IsNotEmpty(dailyStarsList_Final);
+		Assert.IsNotEmpty(dailyViewsList_Final);
+		Assert.IsNotEmpty(dailyClonesList_Final);
+	}
 
-			//Assert
-			Assert.AreEqual(repository.StarCount, trendsViewModel.TotalStars);
-			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Max(static x => x.TotalStars));
-			Assert.AreEqual(repository.StarCount.ToAbbreviatedText(), trendsViewModel.StarsStatisticsText);
-			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
-			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Succeeded, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
-			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewTitleText);
+	[Test, Timeout(_timeoutInMilliseconds)]
+	public async Task UniqueClonesCardTappedCommandTest()
+	{
+		//Arrange
+		bool isUniqueClonesSeriesVisible_Initial, isUniqueClonesSeriesVisible_AfterFetchDataCommand, isUniqueClonesSeriesVisible_AfterViewsCardTappedCommand;
+		string uniqueClonesStatisticsText_Initial, uniqueClonesStatisticsText_AfterFetchDataCommand, uniqueClonesStatisticsText_AfterViewsCardTappedCommand;
 
-			if (trendsViewModel.DailyStarsList[^1].TotalStars == trendsViewModel.DailyStarsList[^2].TotalStars)
-				Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count - 1);
-			else
-				Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count);
-		}
+		Repository repository = CreateRepository();
 
-		[Test, Timeout(_timeoutInMilliseconds)]
-		public async Task FetchDataCommandTest_AuthenticatedUser_TokenCancelled()
-		{
-			//Arrange
-			Repository repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, string.Empty, 0, GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsAvatarUrl, 0, 0, 0, $"{GitHubConstants.GitHubBaseUrl}/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
+		var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
 
-			var cancellationTokenSource = new CancellationTokenSource();
+		var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
+		await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
-			var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
-			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+		//Act
+		isUniqueClonesSeriesVisible_Initial = trendsViewModel.IsUniqueClonesSeriesVisible;
+		uniqueClonesStatisticsText_Initial = trendsViewModel.UniqueClonesStatisticsText;
 
-			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
 
-			//Act
-			var fetchDataCommandTask = trendsViewModel.FetchDataCommand.ExecuteAsync((repository_Initial, cancellationTokenSource.Token));
+		isUniqueClonesSeriesVisible_AfterFetchDataCommand = trendsViewModel.IsUniqueClonesSeriesVisible;
+		uniqueClonesStatisticsText_AfterFetchDataCommand = trendsViewModel.UniqueClonesStatisticsText;
 
-			cancellationTokenSource.Cancel();
-
-			await fetchDataCommandTask.ConfigureAwait(false);
-
-			//Assert
-			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Error, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
-			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Error, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
-			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Error, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewTitleText);
-			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewDescriptionText(RefreshState.Error, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewDescriptionText);
-		}
-
-		[Test, Timeout(_timeoutInMilliseconds)]
-		public async Task FetchDataCommandTest_AuthenticatedUser_NoData_FetchingViewsClonesStarsDataInBackground()
-		{
-			//Arrange
-			bool wasTryScheduleRetryRepositoriesViewsClonesStarsSuccessful;
-			Repository repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, string.Empty, 0, GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsAvatarUrl, 0, 0, 0, $"{GitHubConstants.GitHubBaseUrl}/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
-
-			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-			var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
-			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
-
-			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
-
-			//Act
-			wasTryScheduleRetryRepositoriesViewsClonesStarsSuccessful = backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository_Initial);
-
-			await FetchDataCommandTest_AuthenticatedUser_NoData().ConfigureAwait(false);
-
-			var isTryScheduleRetryRepositoriesViewsClonesStarsRunningAfterTest = backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository_Initial));
-
-			//Assert
-			Assert.IsTrue(wasTryScheduleRetryRepositoriesViewsClonesStarsSuccessful);
-			Assert.IsFalse(isTryScheduleRetryRepositoriesViewsClonesStarsRunningAfterTest);
-		}
-
-		[TestCase(true)]
-		[TestCase(false)]
-		[Timeout(_timeoutInMilliseconds)]
-		public async Task FetchDataCommandTest_AuthenticatedUser(bool shouldIncludeViewsClonesData)
-		{
-			//Arrange
-			Repository repository;
-
-			double dailyViewsClonesMinValue_Initial, dailyViewsClonesMinValue_Final;
-			double dailyViewsClonesMaxValue_Initial, dailyViewsClonesMaxValue_Final;
-
-			double minDailyStarsValue_Initial, minDailyStarsValue_Final;
-			double maxDailyStarsValue_Initial, maxDailyStarsValue_Final;
-
-			string viewsClonesEmptyDataViewTitleText_Initial, viewsClonesEmptyDataViewTitleText_Final;
-			string starsEmptyDataViewTitleText_Initial, starsEmptyDataViewTitleText_Final;
-			string starsHeaderMessageText_Initial, starsHeaderMessageText_Final;
-
-			bool isViewsClonesChartVisible_Initial, isViewsClonesChartVisible_Final;
-			bool isStarsChartVisible_Initial, isStarsChartVisible_Final;
-
-			bool isFetchingData_Initial, isFetchingData_Final;
-
-			bool isViewsClonesEmptyDataViewVisible_Initial, isViewsClonesEmptyDataViewVisible_Final;
-			bool isStarsEmptyDataViewVisible_Initial, isStarsEmptyDataViewVisible_Final;
-
-			DateTime minViewsClonesDate_Initial, minViewsClonesDate_Final;
-			DateTime maxViewsClonesDate_Initial, maxViewsClonesDate_Final;
-
-			DateTime minDailyStarsDate_Initial, minDailyStarsDate_Final;
-			DateTime maxDailyStarsDate_Initial, maxDailyStarsDate_Final;
-
-			IReadOnlyList<DailyStarsModel> dailyStarsList_Initial, dailyStarsList_Final;
-			IReadOnlyList<DailyViewsModel> dailyViewsList_Initial, dailyViewsList_Final;
-			IReadOnlyList<DailyClonesModel> dailyClonesList_Initial, dailyClonesList_Final;
-
-			var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
-
-			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
-			var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
-
-
-			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
-
-			repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
-
-			if (shouldIncludeViewsClonesData)
-			{
-				await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(new[] { repository }, CancellationToken.None).ConfigureAwait(false))
-				{
-					repository = completedReposiory;
-				}
-			}
-
-			//Act
-			isFetchingData_Initial = trendsViewModel.IsFetchingViewsClonesData;
-			dailyStarsList_Initial = trendsViewModel.DailyStarsList;
-			dailyViewsList_Initial = trendsViewModel.DailyViewsList;
-			dailyClonesList_Initial = trendsViewModel.DailyClonesList;
-			maxDailyStarsDate_Initial = trendsViewModel.MaxDailyStarsDate;
-			minDailyStarsDate_Initial = trendsViewModel.MinDailyStarsDate;
-			minDailyStarsValue_Initial = trendsViewModel.MinDailyStarsValue;
-			maxDailyStarsValue_Initial = trendsViewModel.MaxDailyStarsValue;
-			minViewsClonesDate_Initial = trendsViewModel.MinViewsClonesDate;
-			maxViewsClonesDate_Initial = trendsViewModel.MaxViewsClonesDate;
-			isStarsChartVisible_Initial = trendsViewModel.IsStarsChartVisible;
-			starsHeaderMessageText_Initial = trendsViewModel.StarsHeaderMessageText;
-			dailyViewsClonesMinValue_Initial = trendsViewModel.DailyViewsClonesMinValue;
-			dailyViewsClonesMaxValue_Initial = trendsViewModel.DailyViewsClonesMaxValue;
-			isViewsClonesChartVisible_Initial = trendsViewModel.IsViewsClonesChartVisible;
-			starsEmptyDataViewTitleText_Initial = trendsViewModel.StarsEmptyDataViewTitleText;
-			isStarsEmptyDataViewVisible_Initial = trendsViewModel.IsStarsEmptyDataViewVisible;
-			viewsClonesEmptyDataViewTitleText_Initial = trendsViewModel.ViewsClonesEmptyDataViewTitleText;
-			isViewsClonesEmptyDataViewVisible_Initial = trendsViewModel.IsViewsClonesEmptyDataViewVisible;
-
-			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
-
-			isFetchingData_Final = trendsViewModel.IsFetchingViewsClonesData;
-			dailyStarsList_Final = trendsViewModel.DailyStarsList;
-			dailyViewsList_Final = trendsViewModel.DailyViewsList;
-			dailyClonesList_Final = trendsViewModel.DailyClonesList;
-			maxDailyStarsDate_Final = trendsViewModel.MaxDailyStarsDate;
-			minDailyStarsDate_Final = trendsViewModel.MinDailyStarsDate;
-			minDailyStarsValue_Final = trendsViewModel.MinDailyStarsValue;
-			maxDailyStarsValue_Final = trendsViewModel.MaxDailyStarsValue;
-			isStarsChartVisible_Final = trendsViewModel.IsStarsChartVisible;
-			minViewsClonesDate_Final = trendsViewModel.MinViewsClonesDate;
-			maxViewsClonesDate_Final = trendsViewModel.MaxViewsClonesDate;
-			starsHeaderMessageText_Final = trendsViewModel.StarsHeaderMessageText;
-			dailyViewsClonesMinValue_Final = trendsViewModel.DailyViewsClonesMinValue;
-			dailyViewsClonesMaxValue_Final = trendsViewModel.DailyViewsClonesMaxValue;
-			isViewsClonesChartVisible_Final = trendsViewModel.IsViewsClonesChartVisible;
-			starsEmptyDataViewTitleText_Final = trendsViewModel.StarsEmptyDataViewTitleText;
-			isStarsEmptyDataViewVisible_Final = trendsViewModel.IsStarsEmptyDataViewVisible;
-			viewsClonesEmptyDataViewTitleText_Final = trendsViewModel.ViewsClonesEmptyDataViewTitleText;
-			isViewsClonesEmptyDataViewVisible_Final = trendsViewModel.IsViewsClonesEmptyDataViewVisible;
-
-			//Assert
-			Assert.IsEmpty(dailyViewsList_Initial);
-			Assert.IsEmpty(dailyClonesList_Initial);
-			Assert.IsEmpty(dailyStarsList_Initial);
-
-			Assert.IsNotEmpty(dailyViewsList_Final);
-			Assert.IsNotEmpty(dailyClonesList_Final);
-			Assert.IsNotEmpty(dailyStarsList_Final);
-
-			Assert.IsTrue(isFetchingData_Initial);
-			Assert.IsFalse(isFetchingData_Final);
-
-			Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Initial);
-			Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Final);
-
-			Assert.IsFalse(isStarsEmptyDataViewVisible_Initial);
-			Assert.IsFalse(isStarsEmptyDataViewVisible_Final);
-
-			Assert.IsFalse(isViewsClonesChartVisible_Initial);
-			Assert.True(isViewsClonesChartVisible_Final);
-
-			Assert.IsFalse(isStarsChartVisible_Initial);
-			Assert.True(isStarsChartVisible_Final);
-
-			Assert.AreEqual(TrendsViewModel.MinimumChartHeight, dailyViewsClonesMaxValue_Initial);
-			Assert.GreaterOrEqual(dailyViewsClonesMaxValue_Final, dailyViewsClonesMaxValue_Initial);
-
-			Assert.AreEqual(TrendsViewModel.MinimumChartHeight, maxDailyStarsValue_Initial);
-			Assert.GreaterOrEqual(maxDailyStarsValue_Final, maxDailyStarsValue_Initial);
-
-			Assert.AreEqual(0, dailyViewsClonesMinValue_Initial);
-			Assert.AreEqual(dailyViewsClonesMinValue_Final, dailyViewsClonesMinValue_Initial);
-
-			Assert.AreEqual(0, minDailyStarsValue_Initial);
-			Assert.AreEqual(minDailyStarsValue_Final, minDailyStarsValue_Initial);
-
-			Assert.AreEqual(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13)).Date, minViewsClonesDate_Initial.Date);
-			Assert.LessOrEqual(minViewsClonesDate_Final.Date, minViewsClonesDate_Initial.Date);
-
-			Assert.AreEqual(DateTimeOffset.UtcNow.Date, maxViewsClonesDate_Initial.Date);
-			Assert.LessOrEqual(maxViewsClonesDate_Final.Date, maxViewsClonesDate_Initial.Date);
-
-			Assert.LessOrEqual(minDailyStarsDate_Final.Date, minDailyStarsDate_Initial.Date);
-			Assert.LessOrEqual(maxDailyStarsDate_Final.Date, maxDailyStarsDate_Initial.Date);
-
-			Assert.AreEqual(EmptyDataViewService.GetViewsClonesTitleText(RefreshState.Uninitialized), viewsClonesEmptyDataViewTitleText_Initial);
-			Assert.AreEqual(EmptyDataViewService.GetViewsClonesTitleText(RefreshState.Succeeded), viewsClonesEmptyDataViewTitleText_Final);
-
-			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Uninitialized, trendsViewModel.TotalStars), starsEmptyDataViewTitleText_Initial);
-			Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), starsEmptyDataViewTitleText_Final);
-
-			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Uninitialized, default), starsHeaderMessageText_Initial);
-			Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), starsHeaderMessageText_Final);
-		}
-
-		[TestCase(true)]
-		[TestCase(false)]
-		[Timeout(_timeoutInMilliseconds)]
-		public async Task FetchDataCommandTest_DemoUser(bool shouldCreateViewsClonesData)
-		{
-			//Arrange
-			IReadOnlyList<DailyStarsModel> dailyStarsList_Initial, dailyStarsList_Final;
-			IReadOnlyList<DailyViewsModel> dailyViewsList_Initial, dailyViewsList_Final;
-			IReadOnlyList<DailyClonesModel> dailyClonesList_Initial, dailyClonesList_Final;
+		trendsViewModel.UniqueClonesCardTappedCommand.Execute(null);
 
-			Repository repository = CreateRepository(shouldCreateViewsClonesData);
-
-			var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
-
-			var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
-			await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
+		isUniqueClonesSeriesVisible_AfterViewsCardTappedCommand = trendsViewModel.IsUniqueClonesSeriesVisible;
+		uniqueClonesStatisticsText_AfterViewsCardTappedCommand = trendsViewModel.UniqueClonesStatisticsText;
 
-			//Act
-			dailyStarsList_Initial = trendsViewModel.DailyStarsList;
-			dailyViewsList_Initial = trendsViewModel.DailyViewsList;
-			dailyClonesList_Initial = trendsViewModel.DailyClonesList;
-
-			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
-
-			dailyStarsList_Final = trendsViewModel.DailyStarsList;
-			dailyViewsList_Final = trendsViewModel.DailyViewsList;
-			dailyClonesList_Final = trendsViewModel.DailyClonesList;
+		//Assert
+		Assert.AreEqual(string.Empty, uniqueClonesStatisticsText_Initial);
+		Assert.AreEqual(repository.TotalUniqueClones.ToAbbreviatedText(), uniqueClonesStatisticsText_AfterFetchDataCommand);
+		Assert.AreEqual(repository.TotalUniqueClones.ToAbbreviatedText(), uniqueClonesStatisticsText_AfterViewsCardTappedCommand);
 
-			//Assret
-			Assert.IsEmpty(dailyStarsList_Initial);
-			Assert.IsEmpty(dailyViewsList_Initial);
-			Assert.IsEmpty(dailyClonesList_Initial);
+		Assert.IsTrue(isUniqueClonesSeriesVisible_Initial);
+		Assert.IsTrue(isUniqueClonesSeriesVisible_AfterFetchDataCommand);
+		Assert.IsFalse(isUniqueClonesSeriesVisible_AfterViewsCardTappedCommand);
+	}
 
-			Assert.IsNotEmpty(dailyStarsList_Final);
-			Assert.IsNotEmpty(dailyViewsList_Final);
-			Assert.IsNotEmpty(dailyClonesList_Final);
-		}
+	[Test, Timeout(_timeoutInMilliseconds)]
+	public async Task ClonesCardTappedCommandTest()
+	{
+		//Arrange
+		bool isClonesSeriesVisible_Initial, isClonesSeriesVisible_AfterFetchDataCommand, isClonesSeriesVisible_AfterViewsCardTappedCommand;
+		string clonesStatisticsText_Initial, clonesStatisticsText_AfterFetchDataCommand, clonesStatisticsText_AfterViewsCardTappedCommand;
 
-		[Test, Timeout(_timeoutInMilliseconds)]
-		public async Task UniqueClonesCardTappedCommandTest()
-		{
-			//Arrange
-			bool isUniqueClonesSeriesVisible_Initial, isUniqueClonesSeriesVisible_AfterFetchDataCommand, isUniqueClonesSeriesVisible_AfterViewsCardTappedCommand;
-			string uniqueClonesStatisticsText_Initial, uniqueClonesStatisticsText_AfterFetchDataCommand, uniqueClonesStatisticsText_AfterViewsCardTappedCommand;
+		Repository repository = CreateRepository();
 
-			Repository repository = CreateRepository();
+		var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
 
-			var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
+		var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
+		await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
-			var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
-			await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
+		//Act
+		isClonesSeriesVisible_Initial = trendsViewModel.IsClonesSeriesVisible;
+		clonesStatisticsText_Initial = trendsViewModel.ClonesStatisticsText;
 
-			//Act
-			isUniqueClonesSeriesVisible_Initial = trendsViewModel.IsUniqueClonesSeriesVisible;
-			uniqueClonesStatisticsText_Initial = trendsViewModel.UniqueClonesStatisticsText;
+		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
 
-			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+		isClonesSeriesVisible_AfterFetchDataCommand = trendsViewModel.IsClonesSeriesVisible;
+		clonesStatisticsText_AfterFetchDataCommand = trendsViewModel.ClonesStatisticsText;
 
-			isUniqueClonesSeriesVisible_AfterFetchDataCommand = trendsViewModel.IsUniqueClonesSeriesVisible;
-			uniqueClonesStatisticsText_AfterFetchDataCommand = trendsViewModel.UniqueClonesStatisticsText;
+		trendsViewModel.ClonesCardTappedCommand.Execute(null);
 
-			trendsViewModel.UniqueClonesCardTappedCommand.Execute(null);
+		isClonesSeriesVisible_AfterViewsCardTappedCommand = trendsViewModel.IsClonesSeriesVisible;
+		clonesStatisticsText_AfterViewsCardTappedCommand = trendsViewModel.ClonesStatisticsText;
 
-			isUniqueClonesSeriesVisible_AfterViewsCardTappedCommand = trendsViewModel.IsUniqueClonesSeriesVisible;
-			uniqueClonesStatisticsText_AfterViewsCardTappedCommand = trendsViewModel.UniqueClonesStatisticsText;
+		//Assert
+		Assert.AreEqual(string.Empty, clonesStatisticsText_Initial);
+		Assert.AreEqual(repository.TotalClones.ToAbbreviatedText(), clonesStatisticsText_AfterFetchDataCommand);
+		Assert.AreEqual(repository.TotalClones.ToAbbreviatedText(), clonesStatisticsText_AfterViewsCardTappedCommand);
 
-			//Assert
-			Assert.AreEqual(string.Empty, uniqueClonesStatisticsText_Initial);
-			Assert.AreEqual(repository.TotalUniqueClones.ToAbbreviatedText(), uniqueClonesStatisticsText_AfterFetchDataCommand);
-			Assert.AreEqual(repository.TotalUniqueClones.ToAbbreviatedText(), uniqueClonesStatisticsText_AfterViewsCardTappedCommand);
+		Assert.IsTrue(isClonesSeriesVisible_Initial);
+		Assert.IsTrue(isClonesSeriesVisible_AfterFetchDataCommand);
+		Assert.IsFalse(isClonesSeriesVisible_AfterViewsCardTappedCommand);
+	}
 
-			Assert.IsTrue(isUniqueClonesSeriesVisible_Initial);
-			Assert.IsTrue(isUniqueClonesSeriesVisible_AfterFetchDataCommand);
-			Assert.IsFalse(isUniqueClonesSeriesVisible_AfterViewsCardTappedCommand);
-		}
 
-		[Test, Timeout(_timeoutInMilliseconds)]
-		public async Task ClonesCardTappedCommandTest()
-		{
-			//Arrange
-			bool isClonesSeriesVisible_Initial, isClonesSeriesVisible_AfterFetchDataCommand, isClonesSeriesVisible_AfterViewsCardTappedCommand;
-			string clonesStatisticsText_Initial, clonesStatisticsText_AfterFetchDataCommand, clonesStatisticsText_AfterViewsCardTappedCommand;
+	[Test, Timeout(_timeoutInMilliseconds)]
+	public async Task UniqueViewsCardTappedCommandTest()
+	{
+		//Arrange
+		bool isUniqueViewsSeriesVisible_Initial, isUniqueViewsSeriesVisible_AfterFetchDataCommand, isUniqueViewsSeriesVisible_AfterViewsCardTappedCommand;
+		string uniqueViewsStatisticsText_Initial, uniqueViewsStatisticsText_AfterFetchDataCommand, uniqueViewsStatisticsText_AfterViewsCardTappedCommand;
 
-			Repository repository = CreateRepository();
+		Repository repository = CreateRepository();
 
-			var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
+		var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
 
-			var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
-			await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
+		var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
+		await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
-			//Act
-			isClonesSeriesVisible_Initial = trendsViewModel.IsClonesSeriesVisible;
-			clonesStatisticsText_Initial = trendsViewModel.ClonesStatisticsText;
+		//Act
+		isUniqueViewsSeriesVisible_Initial = trendsViewModel.IsUniqueViewsSeriesVisible;
+		uniqueViewsStatisticsText_Initial = trendsViewModel.UniqueViewsStatisticsText;
 
-			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
 
-			isClonesSeriesVisible_AfterFetchDataCommand = trendsViewModel.IsClonesSeriesVisible;
-			clonesStatisticsText_AfterFetchDataCommand = trendsViewModel.ClonesStatisticsText;
+		isUniqueViewsSeriesVisible_AfterFetchDataCommand = trendsViewModel.IsUniqueViewsSeriesVisible;
+		uniqueViewsStatisticsText_AfterFetchDataCommand = trendsViewModel.UniqueViewsStatisticsText;
 
-			trendsViewModel.ClonesCardTappedCommand.Execute(null);
+		trendsViewModel.UniqueViewsCardTappedCommand.Execute(null);
 
-			isClonesSeriesVisible_AfterViewsCardTappedCommand = trendsViewModel.IsClonesSeriesVisible;
-			clonesStatisticsText_AfterViewsCardTappedCommand = trendsViewModel.ClonesStatisticsText;
+		isUniqueViewsSeriesVisible_AfterViewsCardTappedCommand = trendsViewModel.IsUniqueViewsSeriesVisible;
+		uniqueViewsStatisticsText_AfterViewsCardTappedCommand = trendsViewModel.UniqueViewsStatisticsText;
 
-			//Assert
-			Assert.AreEqual(string.Empty, clonesStatisticsText_Initial);
-			Assert.AreEqual(repository.TotalClones.ToAbbreviatedText(), clonesStatisticsText_AfterFetchDataCommand);
-			Assert.AreEqual(repository.TotalClones.ToAbbreviatedText(), clonesStatisticsText_AfterViewsCardTappedCommand);
+		//Assert
+		Assert.AreEqual(string.Empty, uniqueViewsStatisticsText_Initial);
+		Assert.AreEqual(repository.TotalUniqueViews.ToAbbreviatedText(), uniqueViewsStatisticsText_AfterFetchDataCommand);
+		Assert.AreEqual(repository.TotalUniqueViews.ToAbbreviatedText(), uniqueViewsStatisticsText_AfterViewsCardTappedCommand);
 
-			Assert.IsTrue(isClonesSeriesVisible_Initial);
-			Assert.IsTrue(isClonesSeriesVisible_AfterFetchDataCommand);
-			Assert.IsFalse(isClonesSeriesVisible_AfterViewsCardTappedCommand);
-		}
+		Assert.IsTrue(isUniqueViewsSeriesVisible_Initial);
+		Assert.IsTrue(isUniqueViewsSeriesVisible_AfterFetchDataCommand);
+		Assert.IsFalse(isUniqueViewsSeriesVisible_AfterViewsCardTappedCommand);
+	}
 
+	[Test, Timeout(_timeoutInMilliseconds)]
+	public async Task ViewsCardTappedCommandTest()
+	{
+		//Arrange
+		bool isViewsSeriesVisible_Initial, isViewsSeriesVisible_AfterFetchDataCommand, isViewsSeriesVisible_AfterViewsCardTappedCommand;
+		string viewsStatisticsText_Initial, viewsStatisticsText_AfterFetchDataCommand, viewsStatisticsText_AfterViewsCardTappedCommand;
 
-		[Test, Timeout(_timeoutInMilliseconds)]
-		public async Task UniqueViewsCardTappedCommandTest()
-		{
-			//Arrange
-			bool isUniqueViewsSeriesVisible_Initial, isUniqueViewsSeriesVisible_AfterFetchDataCommand, isUniqueViewsSeriesVisible_AfterViewsCardTappedCommand;
-			string uniqueViewsStatisticsText_Initial, uniqueViewsStatisticsText_AfterFetchDataCommand, uniqueViewsStatisticsText_AfterViewsCardTappedCommand;
+		Repository repository = CreateRepository();
 
-			Repository repository = CreateRepository();
+		var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
 
-			var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
+		var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
+		await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
 
-			var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
-			await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
+		//Act
+		isViewsSeriesVisible_Initial = trendsViewModel.IsViewsSeriesVisible;
+		viewsStatisticsText_Initial = trendsViewModel.ViewsStatisticsText;
 
-			//Act
-			isUniqueViewsSeriesVisible_Initial = trendsViewModel.IsUniqueViewsSeriesVisible;
-			uniqueViewsStatisticsText_Initial = trendsViewModel.UniqueViewsStatisticsText;
+		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
 
-			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+		isViewsSeriesVisible_AfterFetchDataCommand = trendsViewModel.IsViewsSeriesVisible;
+		viewsStatisticsText_AfterFetchDataCommand = trendsViewModel.ViewsStatisticsText;
 
-			isUniqueViewsSeriesVisible_AfterFetchDataCommand = trendsViewModel.IsUniqueViewsSeriesVisible;
-			uniqueViewsStatisticsText_AfterFetchDataCommand = trendsViewModel.UniqueViewsStatisticsText;
+		trendsViewModel.ViewsCardTappedCommand.Execute(null);
 
-			trendsViewModel.UniqueViewsCardTappedCommand.Execute(null);
+		isViewsSeriesVisible_AfterViewsCardTappedCommand = trendsViewModel.IsViewsSeriesVisible;
+		viewsStatisticsText_AfterViewsCardTappedCommand = trendsViewModel.ViewsStatisticsText;
 
-			isUniqueViewsSeriesVisible_AfterViewsCardTappedCommand = trendsViewModel.IsUniqueViewsSeriesVisible;
-			uniqueViewsStatisticsText_AfterViewsCardTappedCommand = trendsViewModel.UniqueViewsStatisticsText;
+		//Assert
+		Assert.AreEqual(string.Empty, viewsStatisticsText_Initial);
+		Assert.AreEqual(repository.TotalViews.ToAbbreviatedText(), viewsStatisticsText_AfterFetchDataCommand);
+		Assert.AreEqual(repository.TotalViews.ToAbbreviatedText(), viewsStatisticsText_AfterViewsCardTappedCommand);
 
-			//Assert
-			Assert.AreEqual(string.Empty, uniqueViewsStatisticsText_Initial);
-			Assert.AreEqual(repository.TotalUniqueViews.ToAbbreviatedText(), uniqueViewsStatisticsText_AfterFetchDataCommand);
-			Assert.AreEqual(repository.TotalUniqueViews.ToAbbreviatedText(), uniqueViewsStatisticsText_AfterViewsCardTappedCommand);
-
-			Assert.IsTrue(isUniqueViewsSeriesVisible_Initial);
-			Assert.IsTrue(isUniqueViewsSeriesVisible_AfterFetchDataCommand);
-			Assert.IsFalse(isUniqueViewsSeriesVisible_AfterViewsCardTappedCommand);
-		}
-
-		[Test, Timeout(_timeoutInMilliseconds)]
-		public async Task ViewsCardTappedCommandTest()
-		{
-			//Arrange
-			bool isViewsSeriesVisible_Initial, isViewsSeriesVisible_AfterFetchDataCommand, isViewsSeriesVisible_AfterViewsCardTappedCommand;
-			string viewsStatisticsText_Initial, viewsStatisticsText_AfterFetchDataCommand, viewsStatisticsText_AfterViewsCardTappedCommand;
-
-			Repository repository = CreateRepository();
-
-			var trendsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<TrendsViewModel>();
-
-			var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
-			await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-
-			//Act
-			isViewsSeriesVisible_Initial = trendsViewModel.IsViewsSeriesVisible;
-			viewsStatisticsText_Initial = trendsViewModel.ViewsStatisticsText;
-
-			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
-
-			isViewsSeriesVisible_AfterFetchDataCommand = trendsViewModel.IsViewsSeriesVisible;
-			viewsStatisticsText_AfterFetchDataCommand = trendsViewModel.ViewsStatisticsText;
-
-			trendsViewModel.ViewsCardTappedCommand.Execute(null);
-
-			isViewsSeriesVisible_AfterViewsCardTappedCommand = trendsViewModel.IsViewsSeriesVisible;
-			viewsStatisticsText_AfterViewsCardTappedCommand = trendsViewModel.ViewsStatisticsText;
-
-			//Assert
-			Assert.AreEqual(string.Empty, viewsStatisticsText_Initial);
-			Assert.AreEqual(repository.TotalViews.ToAbbreviatedText(), viewsStatisticsText_AfterFetchDataCommand);
-			Assert.AreEqual(repository.TotalViews.ToAbbreviatedText(), viewsStatisticsText_AfterViewsCardTappedCommand);
-
-			Assert.IsTrue(isViewsSeriesVisible_Initial);
-			Assert.IsTrue(isViewsSeriesVisible_AfterFetchDataCommand);
-			Assert.IsFalse(isViewsSeriesVisible_AfterViewsCardTappedCommand);
-		}
+		Assert.IsTrue(isViewsSeriesVisible_Initial);
+		Assert.IsTrue(isViewsSeriesVisible_AfterFetchDataCommand);
+		Assert.IsFalse(isViewsSeriesVisible_AfterViewsCardTappedCommand);
 	}
 }

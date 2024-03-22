@@ -1,21 +1,20 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Shiny;
 
-namespace GitTrends
+namespace GitTrends;
+
+public class ShinyStartup : Shiny.ShinyStartup
 {
-	public class ShinyStartup : Shiny.ShinyStartup
+	readonly IDeviceNotificationsService _deviceNotificationsService;
+
+	public ShinyStartup(IDeviceNotificationsService deviceNotificationsService) =>
+		_deviceNotificationsService = deviceNotificationsService;
+
+	public override void ConfigureServices(IServiceCollection services, IPlatform platform)
 	{
-		readonly IDeviceNotificationsService _deviceNotificationsService;
+		services.AddSingleton<IDeviceNotificationsService>(_deviceNotificationsService);
 
-		public ShinyStartup(IDeviceNotificationsService deviceNotificationsService) =>
-			_deviceNotificationsService = deviceNotificationsService;
-
-		public override void ConfigureServices(IServiceCollection services, IPlatform platform)
-		{
-			services.AddSingleton<IDeviceNotificationsService>(_deviceNotificationsService);
-
-			services.UseJobs();
-			services.UseNotifications();
-		}
+		services.UseJobs();
+		services.UseNotifications();
 	}
 }

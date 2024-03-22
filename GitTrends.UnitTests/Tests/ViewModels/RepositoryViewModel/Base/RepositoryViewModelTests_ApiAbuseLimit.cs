@@ -6,69 +6,68 @@ using GitTrends.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
-namespace GitTrends.UnitTests
+namespace GitTrends.UnitTests;
+
+[NonParallelizable]
+abstract class RepositoryViewModelTests_AbuseLimit : BaseTest
 {
-	[NonParallelizable]
-	abstract class RepositoryViewModelTests_AbuseLimit : BaseTest
+	protected async Task ExecutePullToRefreshCommandTestAbuseLimit()
 	{
-		protected async Task ExecutePullToRefreshCommandTestAbuseLimit()
+		//Arrange
+		PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs;
+		IReadOnlyList<Repository> visibleRepositoryList_Initial, visibleRepositoryList_Final;
+
+		int gitHubApiAbuseLimitCount_Initial, gitHubApiAbuseLimitCount_Final;
+
+		string emptyDataViewTitle_Initial, emptyDataViewTitle_Final;
+		string emptyDataViewDescription_Initial, emptyDataViewDescription_Final;
+
+		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+		var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
+		var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+		var backgroundFetchService = (ExtendedBackgroundFetchService)ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+
+		var pullToRefreshFailedTCS = new TaskCompletionSource<PullToRefreshFailedEventArgs>();
+
+		RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
+
+		//Act
+		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
+
+		gitHubApiAbuseLimitCount_Initial = gitHubUserService.GitHubApiAbuseLimitCount;
+
+		emptyDataViewTitle_Initial = repositoryViewModel.EmptyDataViewTitle;
+		visibleRepositoryList_Initial = new List<Repository>(repositoryViewModel.VisibleRepositoryList);
+		emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
+
+		await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
+		backgroundFetchService.CancelAllJobs();
+
+		emptyDataViewTitle_Final = repositoryViewModel.EmptyDataViewTitle;
+		visibleRepositoryList_Final = new List<Repository>(repositoryViewModel.VisibleRepositoryList);
+		emptyDataViewDescription_Final = repositoryViewModel.EmptyDataViewDescription;
+
+		pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
+
+		gitHubApiAbuseLimitCount_Final = gitHubUserService.GitHubApiAbuseLimitCount;
+
+		//Assert
+		Assert.IsEmpty(visibleRepositoryList_Initial);
+
+		Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true), emptyDataViewTitle_Initial);
+		Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.AbuseLimit, !visibleRepositoryList_Final.Any()), emptyDataViewTitle_Final);
+
+		Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
+		Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.AbuseLimit, !visibleRepositoryList_Final.Any()), emptyDataViewDescription_Final);
+
+		Assert.IsInstanceOf<AbuseLimitPullToRefreshEventArgs>(pullToRefreshFailedEventArgs);
+		Assert.AreEqual(0, gitHubApiAbuseLimitCount_Initial);
+		Assert.Greater(gitHubApiAbuseLimitCount_Final, 0);
+
+		void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
 		{
-			//Arrange
-			PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs;
-			IReadOnlyList<Repository> visibleRepositoryList_Initial, visibleRepositoryList_Final;
-
-			int gitHubApiAbuseLimitCount_Initial, gitHubApiAbuseLimitCount_Final;
-
-			string emptyDataViewTitle_Initial, emptyDataViewTitle_Final;
-			string emptyDataViewDescription_Initial, emptyDataViewDescription_Final;
-
-			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-			var repositoryViewModel = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryViewModel>();
-			var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
-			var backgroundFetchService = (ExtendedBackgroundFetchService)ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
-
-			var pullToRefreshFailedTCS = new TaskCompletionSource<PullToRefreshFailedEventArgs>();
-
-			RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
-
-			//Act
-			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
-
-			gitHubApiAbuseLimitCount_Initial = gitHubUserService.GitHubApiAbuseLimitCount;
-
-			emptyDataViewTitle_Initial = repositoryViewModel.EmptyDataViewTitle;
-			visibleRepositoryList_Initial = new List<Repository>(repositoryViewModel.VisibleRepositoryList);
-			emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
-
-			await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
-			backgroundFetchService.CancelAllJobs();
-
-			emptyDataViewTitle_Final = repositoryViewModel.EmptyDataViewTitle;
-			visibleRepositoryList_Final = new List<Repository>(repositoryViewModel.VisibleRepositoryList);
-			emptyDataViewDescription_Final = repositoryViewModel.EmptyDataViewDescription;
-
-			pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
-
-			gitHubApiAbuseLimitCount_Final = gitHubUserService.GitHubApiAbuseLimitCount;
-
-			//Assert
-			Assert.IsEmpty(visibleRepositoryList_Initial);
-
-			Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true), emptyDataViewTitle_Initial);
-			Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.AbuseLimit, !visibleRepositoryList_Final.Any()), emptyDataViewTitle_Final);
-
-			Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
-			Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.AbuseLimit, !visibleRepositoryList_Final.Any()), emptyDataViewDescription_Final);
-
-			Assert.IsInstanceOf<AbuseLimitPullToRefreshEventArgs>(pullToRefreshFailedEventArgs);
-			Assert.AreEqual(0, gitHubApiAbuseLimitCount_Initial);
-			Assert.Greater(gitHubApiAbuseLimitCount_Final, 0);
-
-			void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
-			{
-				RepositoryViewModel.PullToRefreshFailed -= HandlePullToRefreshFailed;
-				pullToRefreshFailedTCS.SetResult(e);
-			}
+			RepositoryViewModel.PullToRefreshFailed -= HandlePullToRefreshFailed;
+			pullToRefreshFailedTCS.SetResult(e);
 		}
 	}
 }

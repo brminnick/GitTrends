@@ -1,15 +1,14 @@
 ﻿using System.Threading.Tasks;
 
-namespace GitTrends.UnitTests
+namespace GitTrends.UnitTests;
+
+public class MockDeviceNotificationsService : IDeviceNotificationsService
 {
-	public class MockDeviceNotificationsService : IDeviceNotificationsService
-	{
-		bool _areNotificationsEnabled;
+	bool _areNotificationsEnabled;
 
-		public Task<bool?> AreNotificationEnabled() => Task.FromResult((bool?)_areNotificationsEnabled);
+	public Task<bool?> AreNotificationEnabled() => Task.FromResult((bool?)_areNotificationsEnabled);
 
-		public void Initialize() => _areNotificationsEnabled = true;
+	public void Initialize() => _areNotificationsEnabled = true;
 
-		public void Reset() => _areNotificationsEnabled = false;
-	}
+	public void Reset() => _areNotificationsEnabled = false;
 }

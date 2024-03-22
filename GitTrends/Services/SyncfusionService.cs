@@ -4,66 +4,65 @@ using System.Threading.Tasks;
 using GitTrends.Shared;
 using Xamarin.Essentials.Interfaces;
 
-namespace GitTrends
+namespace GitTrends;
+
+public class SyncfusionService
 {
-	public class SyncfusionService
+	static readonly Lazy<long> _assemblyVersionNumberHolder = new(() => long.Parse(System.Reflection.Assembly.GetAssembly(typeof(Syncfusion.CoreAssembly)).GetName().Version.ToString().Replace(".", "")));
+	static readonly Lazy<string> _syncfusionLicenseKeyHolder = new(() => $"{nameof(SyncFusionDTO.LicenseKey)}{_assemblyVersionNumberHolder.Value}");
+
+	readonly ISecureStorage _secureStorage;
+	readonly IAnalyticsService _analyticsService;
+	readonly AzureFunctionsApiService _azureFunctionsApiService;
+
+	public SyncfusionService(ISecureStorage secureStorage,
+								IAnalyticsService analyticsService,
+								AzureFunctionsApiService azureFunctionsApiService)
 	{
-		readonly static Lazy<long> _assemblyVersionNumberHolder = new(() => long.Parse(System.Reflection.Assembly.GetAssembly(typeof(Syncfusion.CoreAssembly)).GetName().Version.ToString().Replace(".", "")));
-		readonly static Lazy<string> _syncfusionLicenseKeyHolder = new(() => $"{nameof(SyncFusionDTO.LicenseKey)}{_assemblyVersionNumberHolder.Value}");
+		_secureStorage = secureStorage;
+		_analyticsService = analyticsService;
+		_azureFunctionsApiService = azureFunctionsApiService;
+	}
 
-		readonly ISecureStorage _secureStorage;
-		readonly IAnalyticsService _analyticsService;
-		readonly AzureFunctionsApiService _azureFunctionsApiService;
+	public static long AssemblyVersionNumber => _assemblyVersionNumberHolder.Value;
 
-		public SyncfusionService(ISecureStorage secureStorage,
-									IAnalyticsService analyticsService,
-									AzureFunctionsApiService azureFunctionsApiService)
+	static string SyncfusionLicenseKey => _syncfusionLicenseKeyHolder.Value;
+
+	public async Task Initialize(CancellationToken cancellationToken)
+	{
+		var syncFusionLicense = await GetLicense().ConfigureAwait(false);
+
+		if (string.IsNullOrWhiteSpace(syncFusionLicense))
 		{
-			_secureStorage = secureStorage;
-			_analyticsService = analyticsService;
-			_azureFunctionsApiService = azureFunctionsApiService;
+			try
+			{
+				var syncusionDto = await _azureFunctionsApiService.GetSyncfusionInformation(cancellationToken).ConfigureAwait(false);
+
+				syncFusionLicense = syncusionDto.LicenseKey;
+
+				await SaveLicense(syncFusionLicense).ConfigureAwait(false);
+			}
+			catch (Exception e)
+			{
+				_analyticsService.Report(e);
+			}
 		}
 
-		public static long AssemblyVersionNumber => _assemblyVersionNumberHolder.Value;
+		if (string.IsNullOrWhiteSpace(syncFusionLicense))
+			throw new SyncFusionLicenseException($"{nameof(syncFusionLicense)} is empty");
+		else
+			Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicense);
+	}
 
-		static string SyncfusionLicenseKey => _syncfusionLicenseKeyHolder.Value;
+	public Task<string?> GetLicense() => _secureStorage.GetAsync(SyncfusionLicenseKey);
 
-		public async Task Initialize(CancellationToken cancellationToken)
+	Task SaveLicense(in string license) => _secureStorage.SetAsync(SyncfusionLicenseKey, license);
+
+	class SyncFusionLicenseException : Exception
+	{
+		public SyncFusionLicenseException(string message) : base(message)
 		{
-			var syncFusionLicense = await GetLicense().ConfigureAwait(false);
 
-			if (string.IsNullOrWhiteSpace(syncFusionLicense))
-			{
-				try
-				{
-					var syncusionDto = await _azureFunctionsApiService.GetSyncfusionInformation(cancellationToken).ConfigureAwait(false);
-
-					syncFusionLicense = syncusionDto.LicenseKey;
-
-					await SaveLicense(syncFusionLicense).ConfigureAwait(false);
-				}
-				catch (Exception e)
-				{
-					_analyticsService.Report(e);
-				}
-			}
-
-			if (string.IsNullOrWhiteSpace(syncFusionLicense))
-				throw new SyncFusionLicenseException($"{nameof(syncFusionLicense)} is empty");
-			else
-				Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicense);
-		}
-
-		public Task<string?> GetLicense() => _secureStorage.GetAsync(SyncfusionLicenseKey);
-
-		Task SaveLicense(in string license) => _secureStorage.SetAsync(SyncfusionLicenseKey, license);
-
-		class SyncFusionLicenseException : Exception
-		{
-			public SyncFusionLicenseException(string message) : base(message)
-			{
-
-			}
 		}
 	}
 }

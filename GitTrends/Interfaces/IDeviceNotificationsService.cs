@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 
-namespace GitTrends
+namespace GitTrends;
+
+public interface IDeviceNotificationsService
 {
-	public interface IDeviceNotificationsService
-	{
-		void Initialize();
-		Task<bool?> AreNotificationEnabled();
-	}
+	void Initialize();
+	Task<bool?> AreNotificationEnabled();
 }

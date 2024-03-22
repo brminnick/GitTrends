@@ -2,17 +2,16 @@
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace GitTrends.Shared
-{
-	public record RepositoryClonesResponseModel : BaseRepositoryModel
-	{
-		public RepositoryClonesResponseModel(long count, long uniques, IEnumerable<DailyClonesModel> clones, string repositoryName = "", string repositoryOwner = "")
-			: base(count, uniques, repositoryName, repositoryOwner)
-		{
-			DailyClonesList = clones.ToList();
-		}
+namespace GitTrends.Shared;
 
-		[JsonProperty("clones")]
-		public List<DailyClonesModel> DailyClonesList { get; }
+public record RepositoryClonesResponseModel : BaseRepositoryModel
+{
+	public RepositoryClonesResponseModel(long count, long uniques, IEnumerable<DailyClonesModel> clones, string repositoryName = "", string repositoryOwner = "")
+		: base(count, uniques, repositoryName, repositoryOwner)
+	{
+		DailyClonesList = clones.ToList();
 	}
+
+	[JsonProperty("clones")]
+	public List<DailyClonesModel> DailyClonesList { get; }
 }

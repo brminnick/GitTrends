@@ -2,28 +2,27 @@
 using NUnit.Framework;
 using Xamarin.UITest;
 
-namespace GitTrends.UITests
+namespace GitTrends.UITests;
+
+[TestFixture(Platform.Android, UserType.Neither)]
+[TestFixture(Platform.iOS, UserType.Neither)]
+class LaunchTests : BaseUITest
 {
-	[TestFixture(Platform.Android, UserType.Neither)]
-	[TestFixture(Platform.iOS, UserType.Neither)]
-	class LaunchTests : BaseUITest
+	public LaunchTests(Platform platform, UserType userType) : base(platform, userType)
 	{
-		public LaunchTests(Platform platform, UserType userType) : base(platform, userType)
-		{
 
+	}
+
+	[Test]
+	public void LaunchTest()
+	{
+		try
+		{
+			SplashScreenPage.WaitForPageToLoad(TimeSpan.FromSeconds(1));
 		}
-
-		[Test]
-		public void LaunchTest()
+		catch
 		{
-			try
-			{
-				SplashScreenPage.WaitForPageToLoad(TimeSpan.FromSeconds(1));
-			}
-			catch
-			{
-				OnboardingPage.WaitForPageToLoad(TimeSpan.FromSeconds(10));
-			}
+			OnboardingPage.WaitForPageToLoad(TimeSpan.FromSeconds(10));
 		}
 	}
 }

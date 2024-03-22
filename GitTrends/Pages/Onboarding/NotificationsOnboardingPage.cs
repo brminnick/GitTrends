@@ -7,91 +7,90 @@ using Xamarin.Forms;
 using Xamarin.Forms.PancakeView;
 using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
 
-namespace GitTrends
+namespace GitTrends;
+
+public class NotificationsOnboardingPage : BaseOnboardingContentPage
 {
-	public class NotificationsOnboardingPage : BaseOnboardingContentPage
+	public NotificationsOnboardingPage(IDeviceInfo deviceInfo,
+										IMainThread mainThread,
+										IAnalyticsService analyticsService,
+										MediaElementService mediaElementService)
+		: base(OnboardingConstants.SkipText, deviceInfo, Color.FromHex(BaseTheme.LightTealColorHex), mainThread, 2, analyticsService, mediaElementService)
 	{
-		public NotificationsOnboardingPage(IDeviceInfo deviceInfo,
-											IMainThread mainThread,
-											IAnalyticsService analyticsService,
-											MediaElementService mediaElementService)
-			: base(OnboardingConstants.SkipText, deviceInfo, Color.FromHex(BaseTheme.LightTealColorHex), mainThread, 2, analyticsService, mediaElementService)
+
+	}
+
+	enum Row { Description, Button }
+
+	protected override View CreateImageView() => new Image
+	{
+		Source = "NotificationsOnboarding",
+		Aspect = Aspect.AspectFit
+	}.CenterExpand();
+
+	protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.NotificationsPage_Title);
+
+	protected override View CreateDescriptionBodyView() => new ScrollView
+	{
+		Content = new Grid
 		{
+			RowSpacing = 14,
 
-		}
+			RowDefinitions = Rows.Define(
+				(Row.Description, 65),
+				(Row.Button, 42)),
 
-		enum Row { Description, Button }
-
-		protected override View CreateImageView() => new Image
-		{
-			Source = "NotificationsOnboarding",
-			Aspect = Aspect.AspectFit
-		}.CenterExpand();
-
-		protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.NotificationsPage_Title);
-
-		protected override View CreateDescriptionBodyView() => new ScrollView
-		{
-			Content = new Grid
+			Children =
 			{
-				RowSpacing = 14,
+				new BodyLabel(OnboardingConstants.NotificationsPage_Body_MoreTrafficThanUsual).Row(Row.Description),
+				new EnableNotificationsView().Row(Row.Button)
+			}
+		}
+	};
 
-				RowDefinitions = Rows.Define(
-					(Row.Description, 65),
-					(Row.Button, 42)),
+	class EnableNotificationsView : PancakeView
+	{
+		public EnableNotificationsView()
+		{
+			this.CenterExpand();
 
+			AutomationId = OnboardingAutomationIds.EnableNotificationsButton;
+
+			BackgroundColor = Color.FromHex(BaseTheme.CoralColorHex);
+			CornerRadius = 5;
+			Padding = new Thickness(16, 10);
+
+			Content = new StackLayout
+			{
+				Orientation = StackOrientation.Horizontal,
+				Spacing = 16,
 				Children =
 				{
-					new BodyLabel(OnboardingConstants.NotificationsPage_Body_MoreTrafficThanUsual).Row(Row.Description),
-					new EnableNotificationsView().Row(Row.Button)
+					new NotificationStatusSvgImage(),
+					new EnableNotificationsLabel()
 				}
-			}
-		};
+			};
 
-		class EnableNotificationsView : PancakeView
+			this.BindTapGesture(nameof(OnboardingViewModel.HandleEnableNotificationsButtonTappedCommand));
+		}
+
+		class NotificationStatusSvgImage : SvgImage
 		{
-			public EnableNotificationsView()
+			public NotificationStatusSvgImage() : base("bell.svg", () => Color.White, 24, 24)
 			{
-				this.CenterExpand();
-
-				AutomationId = OnboardingAutomationIds.EnableNotificationsButton;
-
-				BackgroundColor = Color.FromHex(BaseTheme.CoralColorHex);
-				CornerRadius = 5;
-				Padding = new Thickness(16, 10);
-
-				Content = new StackLayout
-				{
-					Orientation = StackOrientation.Horizontal,
-					Spacing = 16,
-					Children =
-					{
-						new NotificationStatusSvgImage(),
-						new EnableNotificationsLabel()
-					}
-				};
-
-				this.BindTapGesture(nameof(OnboardingViewModel.HandleEnableNotificationsButtonTappedCommand));
+				this.Bind(SvgImage.SourceProperty, nameof(OnboardingViewModel.NotificationStatusSvgImageSource), BindingMode.OneWay);
 			}
+		}
 
-			class NotificationStatusSvgImage : SvgImage
+		class EnableNotificationsLabel : Label
+		{
+			public EnableNotificationsLabel()
 			{
-				public NotificationStatusSvgImage() : base("bell.svg", () => Color.White, 24, 24)
-				{
-					this.Bind(SvgImage.SourceProperty, nameof(OnboardingViewModel.NotificationStatusSvgImageSource), BindingMode.OneWay);
-				}
-			}
-
-			class EnableNotificationsLabel : Label
-			{
-				public EnableNotificationsLabel()
-				{
-					this.TextCenter();
-					TextColor = Color.White;
-					FontSize = 18;
-					FontFamily = FontFamilyConstants.RobotoRegular;
-					Text = OnboardingConstants.EnableNotifications;
-				}
+				this.TextCenter();
+				TextColor = Color.White;
+				FontSize = 18;
+				FontFamily = FontFamilyConstants.RobotoRegular;
+				Text = OnboardingConstants.EnableNotifications;
 			}
 		}
 	}

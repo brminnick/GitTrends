@@ -4,24 +4,23 @@ using GitTrends.Mobile.Common;
 using Xamarin.UITest;
 using Query = System.Func<Xamarin.UITest.Queries.AppQuery, Xamarin.UITest.Queries.AppQuery>;
 
-namespace GitTrends.UITests
+namespace GitTrends.UITests;
+
+class SplashScreenPage : BasePage
 {
-	class SplashScreenPage : BasePage
+	readonly Query _gitTrendsImage, _statusLabel;
+
+	public SplashScreenPage(IApp app) : base(app)
 	{
-		readonly Query _gitTrendsImage, _statusLabel;
+		_gitTrendsImage = GenerateMarkedQuery(SplashScreenPageAutomationIds.GitTrendsImage);
+		_statusLabel = GenerateMarkedQuery(SplashScreenPageAutomationIds.StatusLabel);
+	}
 
-		public SplashScreenPage(IApp app) : base(app)
-		{
-			_gitTrendsImage = GenerateMarkedQuery(SplashScreenPageAutomationIds.GitTrendsImage);
-			_statusLabel = GenerateMarkedQuery(SplashScreenPageAutomationIds.StatusLabel);
-		}
+	public string StatusLabelText => GetText(_statusLabel);
 
-		public string StatusLabelText => GetText(_statusLabel);
-
-		public override Task WaitForPageToLoad(TimeSpan? timespan = null)
-		{
-			App.WaitForElement(_gitTrendsImage);
-			return Task.CompletedTask;
-		}
+	public override Task WaitForPageToLoad(TimeSpan? timespan = null)
+	{
+		App.WaitForElement(_gitTrendsImage);
+		return Task.CompletedTask;
 	}
 }
