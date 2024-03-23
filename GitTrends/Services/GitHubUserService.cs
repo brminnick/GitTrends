@@ -14,10 +14,10 @@ namespace GitTrends
 	{
 		const string _oauthTokenKey = "OAuthToken";
 
-		readonly static WeakEventManager<string> _nameChangedEventManager = new();
-		readonly static WeakEventManager<string> _aliasChangedEventManager = new();
-		readonly static WeakEventManager<string> _avatarUrlChangedEventManager = new();
-		readonly static WeakEventManager<bool> _shouldIncludeOrganizationsChangedEventManager = new();
+		static readonly WeakEventManager<string> _nameChangedEventManager = new();
+		static readonly WeakEventManager<string> _aliasChangedEventManager = new();
+		static readonly WeakEventManager<string> _avatarUrlChangedEventManager = new();
+		static readonly WeakEventManager<bool> _shouldIncludeOrganizationsChangedEventManager = new();
 
 		readonly IPreferences _preferences;
 		readonly ISecureStorage _secureStorage;

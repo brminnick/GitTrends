@@ -16,8 +16,8 @@ namespace GitTrends
 {
 	public partial class SettingsViewModel : GitHubAuthenticationViewModel
 	{
-		readonly static WeakEventManager<bool> _organizationsCarouselViewVisiblilityChangedEventManager = new();
-		readonly static WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new();
+		static readonly WeakEventManager<bool> _organizationsCarouselViewVisiblilityChangedEventManager = new();
+		static readonly WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new();
 
 		readonly ThemeService _themeService;
 		readonly LanguageService _languageService;

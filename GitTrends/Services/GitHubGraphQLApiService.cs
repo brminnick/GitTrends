@@ -17,7 +17,7 @@ namespace GitTrends
 {
 	public class GitHubGraphQLApiService : BaseMobileApiService
 	{
-		readonly static WeakEventManager<(string, TimeSpan)> _abuseRateLimitFound_GetOrganizationRepositoriesEventManager = new();
+		static readonly WeakEventManager<(string, TimeSpan)> _abuseRateLimitFound_GetOrganizationRepositoriesEventManager = new();
 
 		readonly IGitHubGraphQLApi _githubApiClient;
 		readonly GitHubUserService _gitHubUserService;

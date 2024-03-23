@@ -18,8 +18,8 @@ namespace GitTrends
 {
 	public partial class ReferringSitesViewModel : BaseViewModel
 	{
-		readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
-		readonly static WeakEventManager<Repository> _abuseRateLimitFound_GetReferringSites_EventManager = new();
+		static readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
+		static readonly WeakEventManager<Repository> _abuseRateLimitFound_GetReferringSites_EventManager = new();
 
 		readonly GitHubUserService _gitHubUserService;
 		readonly ReferringSitesDatabase _referringSitesDatabase;

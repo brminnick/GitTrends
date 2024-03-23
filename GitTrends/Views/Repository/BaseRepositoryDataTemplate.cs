@@ -19,7 +19,7 @@ namespace GitTrends
 		const double _statisticsRowHeight = StatisticsLabel.StatisticsFontSize + 4;
 		const double _emojiColumnSize = _statisticsRowHeight;
 
-		readonly static double _circleImageHeight = IsSmallScreen ? 48 : 62;
+		static readonly double _circleImageHeight = IsSmallScreen ? 48 : 62;
 
 		private protected BaseRepositoryDataTemplate(Func<object> loadTemplate) : base(loadTemplate)
 		{

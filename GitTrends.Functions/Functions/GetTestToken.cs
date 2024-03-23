@@ -15,7 +15,7 @@ namespace GitTrends.Functions
 {
 	class GetTestToken
 	{
-		readonly static IReadOnlyDictionary<string, string> _testTokenDictionary = new Dictionary<string, string>
+		static readonly IReadOnlyDictionary<string, string> _testTokenDictionary = new Dictionary<string, string>
 		{
 			{ "UITestToken_brminnick", Environment.GetEnvironmentVariable("UITestToken_brminnick") ?? string.Empty },
 			{ "UITestToken_GitTrendsApp",  Environment.GetEnvironmentVariable("UITestToken_GitTrendsApp") ?? string.Empty },

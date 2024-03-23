@@ -12,7 +12,7 @@ namespace GitTrends
 		const int _loginTextHeight = 24;
 		const int _textPadding = 8;
 
-		readonly static int _circleDiameter = IsSmallScreen ? 54 : 64;
+		static readonly int _circleDiameter = IsSmallScreen ? 54 : 64;
 
 		public LibraryDataTemplate() : base(CreateLibraryDataTemplate)
 		{

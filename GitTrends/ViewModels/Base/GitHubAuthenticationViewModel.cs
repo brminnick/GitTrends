@@ -54,7 +54,7 @@ namespace GitTrends
 		}
 
 		[RelayCommand(CanExecute = nameof(IsNotAuthenticating))]
-		protected async virtual Task HandleConnectToGitHubButton((CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions) parameter)
+		protected virtual async Task HandleConnectToGitHubButton((CancellationToken cancellationToken, Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions) parameter)
 		{
 			var (cancellationToken, browserLaunchOptions) = parameter;
 

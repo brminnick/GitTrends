@@ -12,7 +12,7 @@ namespace GitTrends
 {
 	public class ThemeService
 	{
-		readonly static WeakEventManager<PreferredTheme> _preferenceChangedEventManager = new();
+		static readonly WeakEventManager<PreferredTheme> _preferenceChangedEventManager = new();
 
 		readonly IMainThread _mainThread;
 		readonly IPreferences _preferences;

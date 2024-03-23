@@ -13,11 +13,11 @@ namespace GitTrends
 {
 	public class BackgroundFetchService
 	{
-		readonly static WeakEventManager _eventManager = new();
-		readonly static WeakEventManager<bool> _scheduleNotifyTrendingRepositoriesCompletedEventManager = new();
-		readonly static WeakEventManager<string> _scheduleRetryOrganizationsRepositoriesCompletedEventManager = new();
-		readonly static WeakEventManager<Repository> _repostoryEventManager = new();
-		readonly static WeakEventManager<MobileReferringSiteModel> _mobileReferringSiteRetrievedEventManager = new();
+		static readonly WeakEventManager _eventManager = new();
+		static readonly WeakEventManager<bool> _scheduleNotifyTrendingRepositoriesCompletedEventManager = new();
+		static readonly WeakEventManager<string> _scheduleRetryOrganizationsRepositoriesCompletedEventManager = new();
+		static readonly WeakEventManager<Repository> _repostoryEventManager = new();
+		static readonly WeakEventManager<MobileReferringSiteModel> _mobileReferringSiteRetrievedEventManager = new();
 
 		readonly IJobManager _jobManager;
 		readonly IAnalyticsService _analyticsService;

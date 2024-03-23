@@ -12,7 +12,7 @@ namespace GitTrends
 {
 	public class App : Xamarin.Forms.Application
 	{
-		readonly static WeakEventManager _resumedEventManager = new();
+		static readonly WeakEventManager _resumedEventManager = new();
 
 		readonly IAnalyticsService _analyticsService;
 		readonly NotificationService _notificationService;
