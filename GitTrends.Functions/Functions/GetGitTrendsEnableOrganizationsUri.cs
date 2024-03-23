@@ -10,7 +10,7 @@ namespace GitTrends.Functions
 {
 	public static class GetGitTrendsEnableOrganizationsUri
 	{
-		readonly static string _enableOrganizationsUrl = Environment.GetEnvironmentVariable("EnableOrganizationsUrl") ?? string.Empty;
+		static readonly string _enableOrganizationsUrl = Environment.GetEnvironmentVariable("EnableOrganizationsUrl") ?? string.Empty;
 
 		[Function(nameof(GetGitTrendsEnableOrganizationsUri))]
 		public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req, FunctionContext functionContext)

@@ -8,9 +8,9 @@ namespace GitTrends.UnitTests
 {
 	public class MockStoreReview : IStoreReview
 	{
-		readonly static WeakEventManager<bool> _reviewRequestedEventManager = new();
-		readonly static WeakEventManager<string> _storeListingOpenedEventManager = new();
-		readonly static WeakEventManager<string> _storeReviewPageOpenedEventManager = new();
+		static readonly WeakEventManager<bool> _reviewRequestedEventManager = new();
+		static readonly WeakEventManager<string> _storeListingOpenedEventManager = new();
+		static readonly WeakEventManager<string> _storeReviewPageOpenedEventManager = new();
 
 		public static event EventHandler<string> StoreListingOpened
 		{

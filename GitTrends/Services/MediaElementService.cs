@@ -11,7 +11,7 @@ namespace GitTrends
 {
 	public class MediaElementService
 	{
-		readonly static WeakEventManager<StreamingManifest?> _streamingManifestChangedEventManager = new();
+		static readonly WeakEventManager<StreamingManifest?> _streamingManifestChangedEventManager = new();
 
 		readonly IDeviceInfo _deviceInfo;
 		readonly IPreferences _preferences;

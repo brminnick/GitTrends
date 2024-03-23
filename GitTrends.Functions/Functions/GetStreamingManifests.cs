@@ -11,8 +11,8 @@ namespace GitTrends.Functions
 {
 	public static class GetStreamingManifests
 	{
-		readonly static string _chartVideoManifestUrl = Environment.GetEnvironmentVariable("ChartVideoManifestUrl") ?? string.Empty;
-		readonly static string _enableOrganizationsVideoManifestUrl = Environment.GetEnvironmentVariable("EnableOrganizationsVideoManifestUrl") ?? string.Empty;
+		static readonly string _chartVideoManifestUrl = Environment.GetEnvironmentVariable("ChartVideoManifestUrl") ?? string.Empty;
+		static readonly string _enableOrganizationsVideoManifestUrl = Environment.GetEnvironmentVariable("EnableOrganizationsVideoManifestUrl") ?? string.Empty;
 
 		[Function(nameof(GetStreamingManifests))]
 		public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req, FunctionContext functionContext)

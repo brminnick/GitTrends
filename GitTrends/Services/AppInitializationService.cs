@@ -8,7 +8,7 @@ namespace GitTrends
 {
 	public class AppInitializationService
 	{
-		readonly static WeakEventManager<InitializationCompleteEventArgs> _initializationCompletedEventManager = new();
+		static readonly WeakEventManager<InitializationCompleteEventArgs> _initializationCompletedEventManager = new();
 
 		readonly ThemeService _themeService;
 		readonly LanguageService _languageService;

@@ -20,7 +20,7 @@ namespace GitTrends
 {
 	public partial class RepositoryViewModel : BaseViewModel
 	{
-		readonly static WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
+		static readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
 
 		readonly GitHubUserService _gitHubUserService;
 		readonly RepositoryDatabase _repositoryDatabase;

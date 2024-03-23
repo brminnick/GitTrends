@@ -12,11 +12,11 @@ namespace GitTrends.Functions
 	{
 		const string _runTwicePerDay = "0 0 */12 * * *";
 
-		readonly static string _notificationHubFullConnectionString_Debug = Environment.GetEnvironmentVariable("NotificationHubFullConnectionString_Debug") ?? string.Empty;
-		readonly static string _notificationHubFullConnectionString = Environment.GetEnvironmentVariable("NotificationHubFullConnectionString") ?? string.Empty;
+		static readonly string _notificationHubFullConnectionString_Debug = Environment.GetEnvironmentVariable("NotificationHubFullConnectionString_Debug") ?? string.Empty;
+		static readonly string _notificationHubFullConnectionString = Environment.GetEnvironmentVariable("NotificationHubFullConnectionString") ?? string.Empty;
 
-		readonly static Lazy<NotificationHubClient> _clientHolder = new(NotificationHubClient.CreateClientFromConnectionString(_notificationHubFullConnectionString, GetNotificationHubInformation.NotificationHubName));
-		readonly static Lazy<NotificationHubClient> _debugClientHolder = new(NotificationHubClient.CreateClientFromConnectionString(_notificationHubFullConnectionString_Debug, GetNotificationHubInformation.NotificationHubName_Debug));
+		static readonly Lazy<NotificationHubClient> _clientHolder = new(NotificationHubClient.CreateClientFromConnectionString(_notificationHubFullConnectionString, GetNotificationHubInformation.NotificationHubName));
+		static readonly Lazy<NotificationHubClient> _debugClientHolder = new(NotificationHubClient.CreateClientFromConnectionString(_notificationHubFullConnectionString_Debug, GetNotificationHubInformation.NotificationHubName_Debug));
 
 		static NotificationHubClient Client => _clientHolder.Value;
 		static NotificationHubClient DebugClient => _debugClientHolder.Value;

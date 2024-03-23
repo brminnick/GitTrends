@@ -12,8 +12,8 @@ namespace GitTrends.Functions
 {
 	public static class GetAppCenterApiKeys
 	{
-		readonly static string _iOS = Environment.GetEnvironmentVariable("AppCenterApiKey_iOS") ?? string.Empty;
-		readonly static string _android = Environment.GetEnvironmentVariable("AppCenterApiKey_Android") ?? string.Empty;
+		static readonly string _iOS = Environment.GetEnvironmentVariable("AppCenterApiKey_iOS") ?? string.Empty;
+		static readonly string _android = Environment.GetEnvironmentVariable("AppCenterApiKey_Android") ?? string.Empty;
 
 		[Function(nameof(GetAppCenterApiKeys))]
 		public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData req, FunctionContext context)

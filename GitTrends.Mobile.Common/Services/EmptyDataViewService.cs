@@ -6,14 +6,14 @@ namespace GitTrends.Mobile.Common
 {
 	public static class EmptyDataViewService
 	{
-		readonly static IReadOnlyList<string> _zeroStarsEmptyDataViewDescription = new[]
+		static readonly IReadOnlyList<string> _zeroStarsEmptyDataViewDescription = new[]
 		{
 			EmptyDataViewConstantsInternal.ZeroStarsEmptyDataViewDescription1,
 			EmptyDataViewConstantsInternal.ZeroStarsEmptyDataViewDescription2,
 			EmptyDataViewConstantsInternal.ZeroStarsEmptyDataViewDescription3
 		};
 
-		readonly static Random _random = new((int)DateTime.Now.Ticks);
+		static readonly Random _random = new((int)DateTime.Now.Ticks);
 
 		public static string GetReferringSitesTitleText(in RefreshState refreshState) => refreshState switch
 		{

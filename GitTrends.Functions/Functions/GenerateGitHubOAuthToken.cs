@@ -12,10 +12,10 @@ namespace GitTrends.Functions
 {
 	class GenerateGitHubOAuthToken
 	{
-		readonly static string _clientSecret = Environment.GetEnvironmentVariable("GitTrendsClientSecret") ?? string.Empty;
-		readonly static string _clientId = Environment.GetEnvironmentVariable("GitTrendsClientId") ?? string.Empty;
+		static readonly string _clientSecret = Environment.GetEnvironmentVariable("GitTrendsClientSecret") ?? string.Empty;
+		static readonly string _clientId = Environment.GetEnvironmentVariable("GitTrendsClientId") ?? string.Empty;
 
-		readonly static JsonSerializer _serializer = new();
+		static readonly JsonSerializer _serializer = new();
 
 		readonly GitHubAuthService _gitHubAuthService;
 

@@ -16,8 +16,8 @@ namespace GitTrends.Functions
 {
 	class Program
 	{
-		readonly static string _token = Environment.GetEnvironmentVariable("UITestToken_brminnick") ?? string.Empty;
-		readonly static string _storageConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage") ?? string.Empty;
+		static readonly string _token = Environment.GetEnvironmentVariable("UITestToken_brminnick") ?? string.Empty;
+		static readonly string _storageConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage") ?? string.Empty;
 
 		static Task Main(string[] args)
 		{

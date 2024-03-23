@@ -21,7 +21,7 @@ namespace GitTrends
 	{
 		public const int MinimumChartHeight = 20;
 
-		readonly static WeakEventManager<Repository> _repostoryEventManager = new();
+		static readonly WeakEventManager<Repository> _repostoryEventManager = new();
 
 		readonly GitHubApiV3Service _gitHubApiV3Service;
 		readonly RepositoryDatabase _repositoryDatabase;

@@ -13,8 +13,8 @@ namespace GitTrends
 {
 	public class GitHubApiRepositoriesService
 	{
-		readonly static WeakEventManager<(Repository Repository, TimeSpan RetryTimeSpan)> _abuseRateLimitFoundEventManager = new();
-		readonly static WeakEventManager<Uri> _repositoryUriNotFoundEventManager = new();
+		static readonly WeakEventManager<(Repository Repository, TimeSpan RetryTimeSpan)> _abuseRateLimitFoundEventManager = new();
+		static readonly WeakEventManager<Uri> _repositoryUriNotFoundEventManager = new();
 
 		readonly FavIconService _favIconService;
 		readonly IAnalyticsService _analyticsService;

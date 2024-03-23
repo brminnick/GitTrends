@@ -18,9 +18,9 @@ namespace GitTrends
 	{
 		const string _getNotificationHubInformationKey = "GetNotificationHubInformation";
 
-		readonly static WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new();
-		readonly static WeakEventManager<NotificationHubInformation> _initializationCompletedEventManager = new();
-		readonly static WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new();
+		static readonly WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new();
+		static readonly WeakEventManager<NotificationHubInformation> _initializationCompletedEventManager = new();
+		static readonly WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new();
 
 		readonly IDeviceInfo _deviceInfo;
 		readonly IPreferences _preferences;

@@ -7,7 +7,7 @@ namespace GitTrends.UnitTests
 {
 	class MockSecureStorage : ISecureStorage
 	{
-		readonly static Lazy<Hashtable> _hashtableHolder = new();
+		static readonly Lazy<Hashtable> _hashtableHolder = new();
 
 		static Hashtable Hashtable => _hashtableHolder.Value;
 

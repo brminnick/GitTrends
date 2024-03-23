@@ -11,7 +11,7 @@ namespace GitTrends
 {
 	public partial class OnboardingViewModel : GitHubAuthenticationViewModel
 	{
-		readonly static WeakEventManager _skipButtonTappedEventManager = new();
+		static readonly WeakEventManager _skipButtonTappedEventManager = new();
 
 		readonly IAnalyticsService _analyticsService;
 		readonly NotificationService _notificationService;
