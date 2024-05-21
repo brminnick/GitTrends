@@ -76,14 +76,14 @@ namespace GitTrends.iOS
             parentViewController.NavigationItem.LeftBarButtonItems = leftBarButtonItems.Any() switch
             {
                 true => leftBarButtonItems.ToArray(),
-                false => Array.Empty<UIBarButtonItem>()
             };
+                false => []
 
             parentViewController.NavigationItem.RightBarButtonItems = rightBarButtonItems.Any() switch
             {
                 true => rightBarButtonItems.ToArray(),
-                false => Array.Empty<UIBarButtonItem>()
             };
+                false => []
         }
 
         async Task<(IReadOnlyList<UIBarButtonItem>? LeftBarButtonItem, IReadOnlyList<UIBarButtonItem> RightBarButtonItems)> GetToolbarItems(IEnumerable<ToolbarItem> items)

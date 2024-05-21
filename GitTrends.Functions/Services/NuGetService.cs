@@ -60,7 +60,7 @@ namespace GitTrends.Functions
 			Parallel.ForEach(getInstalledPackageInfoTCSList, async package =>
 			{
 				const string defaultNuGetIcon = "https://www.nuget.org/Content/gallery/img/logo-og-600x600.png";
-				IEnumerable<IPackageSearchMetadata> metadatas = Enumerable.Empty<IPackageSearchMetadata>();
+				IEnumerable<IPackageSearchMetadata> metadatas = [];
 
 				try
 				{
@@ -121,7 +121,7 @@ namespace GitTrends.Functions
 			var doc = XDocument.Parse(csProjSourceCode);
 			var nugetPackageNames = doc.XPathSelectElements("//PackageReference").Select(pr => pr.Attribute("Include")?.Value);
 
-			return nugetPackageNames?.OfType<string>().ToArray() ?? Array.Empty<string>();
+			return nugetPackageNames?.OfType<string>().ToArray() ?? [];
 		}
 
 		async IAsyncEnumerable<string> GetCsprojFiles([EnumeratorCancellation] CancellationToken cancellationToken)

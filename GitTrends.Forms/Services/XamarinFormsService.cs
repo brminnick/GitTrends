@@ -90,7 +90,7 @@ namespace GitTrends
 		static IEnumerable<Layout<View>> GetChildLayouts(in Layout<View> layout)
 		{
 			if (layout.Children is null || !layout.Children.Any())
-				return Enumerable.Empty<Layout<View>>();
+				return [];
 
 			var childLayouts = layout.Children.OfType<Layout<View>>();
 
