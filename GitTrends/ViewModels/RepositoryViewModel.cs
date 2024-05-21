@@ -361,7 +361,7 @@ public partial class RepositoryViewModel : BaseViewModel
 	[RelayCommand(CanExecute = nameof(IsNavigateToRepositoryWebsiteCommandEnabled))]
 	Task NavigateToRepositoryWebsite(Repository? repository, CancellationToken token)
 	{
-		 ArgumentNullException.ThrowIfNull(repository);
+		ArgumentNullException.ThrowIfNull(repository);
 
 		AnalyticsService.Track("Open External Repostory Link Tapped", nameof(repository.Url), repository.Url);
 		return _deepLinkingService.OpenApp(GitHubConstants.AppScheme, repository.Url, repository.Url, token);

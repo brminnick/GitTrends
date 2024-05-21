@@ -6,7 +6,7 @@ public class SyncfusionService(ISecureStorage secureStorage,
 								IAnalyticsService analyticsService,
 								AzureFunctionsApiService azureFunctionsApiService)
 {
-	static readonly Lazy<long> _assemblyVersionNumberHolder = new(() => long.Parse(System.Reflection.Assembly.GetAssembly(typeof(Syncfusion.CoreAssembly))?.GetName().Version?.ToString()?.Replace(".", "") 
+	static readonly Lazy<long> _assemblyVersionNumberHolder = new(() => long.Parse(System.Reflection.Assembly.GetAssembly(typeof(Syncfusion.CoreAssembly))?.GetName().Version?.ToString()?.Replace(".", "")
 																			?? throw new InvalidOperationException("Syncfusion Assembly Version Number Not Found")));
 	static readonly Lazy<string> _syncfusionLicenseKeyHolder = new(() => $"{nameof(SyncFusionDTO.LicenseKey)}{_assemblyVersionNumberHolder.Value}");
 

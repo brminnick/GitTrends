@@ -143,7 +143,7 @@ public class GitTrendsStatisticsService(IPreferences preferences,
 
 			if (serializedContributors is null)
 				return [];
-			
+
 			var contributors = JsonConvert.DeserializeObject<IReadOnlyList<Contributor>>(serializedContributors);
 			return contributors ?? [];
 		}
