@@ -19,15 +19,15 @@ namespace GitTrends.UnitTests
 			const string lastReferer = "t.co";
 
 			//Arrange
-			IReadOnlyList<MobileReferringSiteModel> referringSitesList = new[]
-			{
+			IReadOnlyList<MobileReferringSiteModel> referringSitesList =
+			[
 				new MobileReferringSiteModel(new ReferringSiteModel(10, 10, "Google")),
 				new MobileReferringSiteModel(new ReferringSiteModel(10, 10, "codetraver.io")),
 				new MobileReferringSiteModel(new ReferringSiteModel(10, 10, lastReferer)),
 				new MobileReferringSiteModel(new ReferringSiteModel(100, largestTotalUniqueCount, "facebook.com")),
 				new MobileReferringSiteModel(new ReferringSiteModel(100, 9, "linkedin.com")),
 				new MobileReferringSiteModel(new ReferringSiteModel(largestTotalCount, 9, "reddit.com"))
-			};
+			];
 
 			//Act
 			var sortedReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList);

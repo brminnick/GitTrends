@@ -24,9 +24,9 @@ namespace GitTrends.UnitTests
 
 		public string FirstInstalledBuild => PreviousBuild;
 
-		public IEnumerable<string> VersionHistory { get; } = new[] { "1.0.0", "1.0.1" };
+		public IEnumerable<string> VersionHistory { get; } = ["1.0.0", "1.0.1"];
 
-		public IEnumerable<string> BuildHistory { get; } = new[] { "24", "25" };
+		public IEnumerable<string> BuildHistory { get; } = ["24", "25"];
 
 		public bool IsFirstLaunchForBuild(string build) => true;
 

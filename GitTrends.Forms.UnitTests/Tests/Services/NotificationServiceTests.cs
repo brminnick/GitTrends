@@ -90,7 +90,7 @@ namespace GitTrends.UnitTests
 			int pendingNotificationsCount_Initial, pendingNotificationsCount_BeforeRegistration, pendingNotificationsCount_AfterEmptyRepositoryList, pendingNotificationsCount_AfterTrendingRepositoryList;
 
 			IReadOnlyList<Repository> emptyTrendingRepositoryList = Array.Empty<Repository>();
-			IReadOnlyList<Repository> trendingRepositoryList = new[] { CreateRepository() };
+			IReadOnlyList<Repository> trendingRepositoryList = [CreateRepository()];
 
 			var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
 			var notificationManager = ServiceCollection.ServiceProvider.GetRequiredService<INotificationManager>();

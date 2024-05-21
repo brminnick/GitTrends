@@ -38,7 +38,7 @@ namespace GitTrends.UnitTests
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService).ConfigureAwait(false);
 
 			var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
-			await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(new[] { repository }, CancellationToken.None).ConfigureAwait(false))
+			await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData([repository], CancellationToken.None).ConfigureAwait(false))
 			{
 				repository = completedReposiory;
 			}
@@ -379,7 +379,7 @@ namespace GitTrends.UnitTests
 
 			if (shouldIncludeViewsClonesData)
 			{
-				await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(new[] { repository }, CancellationToken.None).ConfigureAwait(false))
+				await foreach (var completedReposiory in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData([repository], CancellationToken.None).ConfigureAwait(false))
 				{
 					repository = completedReposiory;
 				}

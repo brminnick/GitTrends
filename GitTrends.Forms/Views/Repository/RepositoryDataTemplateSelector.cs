@@ -42,8 +42,8 @@ namespace GitTrends
 
 			}
 
-			static IEnumerable<View> CreateClonesDataTemplateViews() => new View[]
-			{
+			static IEnumerable<View> CreateClonesDataTemplateViews() =>
+			[
 				new StatisticsSvgImage("total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor))
 					.Row(Row.Statistics).Column(Column.Emoji1),
 
@@ -85,7 +85,7 @@ namespace GitTrends
                 new StatisticsActivityIndicator()
 					.Row(Row.Statistics).Column(Column.Statistic3)
 					.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => !IsStatisticsLabelVisible(starCount)),
-			};
+			];
 		}
 
 		class ViewsDataTemplate : BaseRepositoryDataTemplate
@@ -95,8 +95,8 @@ namespace GitTrends
 
 			}
 
-			static IEnumerable<View> CreateViewsDataTemplateViews() => new View[]
-			{
+			static IEnumerable<View> CreateViewsDataTemplateViews() =>
+			[
 				new StatisticsSvgImage("total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor))
 					.Row(Row.Statistics).Column(Column.Emoji1),
 
@@ -138,7 +138,7 @@ namespace GitTrends
                 new StatisticsActivityIndicator()
 					.Row(Row.Statistics).Column(Column.Statistic3)
 					.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => !IsStatisticsLabelVisible(starCount)),
-			};
+			];
 		}
 
 		class IssuesForksDataTemplate : BaseRepositoryDataTemplate
@@ -148,8 +148,8 @@ namespace GitTrends
 
 			}
 
-			static IEnumerable<View> CreateIssuesForksDataTemplateViews() => new View[]
-			{
+			static IEnumerable<View> CreateIssuesForksDataTemplateViews() =>
+			[
 				new StatisticsSvgImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
 					.Row(Row.Statistics).Column(Column.Emoji1),
 
@@ -191,7 +191,7 @@ namespace GitTrends
                 new StatisticsActivityIndicator()
 					.Row(Row.Statistics).Column(Column.Statistic3)
 					.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.IssuesCount), BindingMode.OneTime, convert: static (long? issuesCount) => !IsStatisticsLabelVisible(issuesCount)),
-			};
+			];
 		}
 
 		class StatisticsSvgImage : SvgImage

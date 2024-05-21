@@ -116,7 +116,7 @@ namespace GitTrends
 					Color = Color.FromHex(BaseTheme.LightTealColorHex).ToSKColor(),
 					StrokeWidth = _separatorWidth,
 					StrokeCap = SKStrokeCap.Butt,
-					PathEffect = SKPathEffect.CreateDash(new[] { 8f, 8f }, 0f)
+					PathEffect = SKPathEffect.CreateDash([8f, 8f], 0f)
 				};
 
 				canvas.DrawLine(imageInfo.Width / 2, 0, imageInfo.Width / 2, imageInfo.Height, paintDashedLines);

@@ -17,8 +17,8 @@ namespace GitTrends.Functions
 	{
 		readonly SourceRepository _sourceRepository = Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
 
-		static readonly IReadOnlyList<string> _csProjFilePaths = new[]
-		{
+		static readonly IReadOnlyList<string> _csProjFilePaths =
+		[
 			Environment.GetEnvironmentVariable("iOSCSProjPath") ?? string.Empty,
 			Environment.GetEnvironmentVariable("UITestCSProjPath") ?? string.Empty,
 			Environment.GetEnvironmentVariable("AndroidCSProjPath") ?? string.Empty,
@@ -26,7 +26,7 @@ namespace GitTrends.Functions
 			Environment.GetEnvironmentVariable("GitTrendsCSProjPath") ?? string.Empty,
 			Environment.GetEnvironmentVariable("FunctionsCSProjPath") ?? string.Empty,
 			Environment.GetEnvironmentVariable("MobileCommonCSProjPath") ?? string.Empty
-		};
+		];
 
 		readonly ILogger _logger;
 		readonly HttpClient _client;

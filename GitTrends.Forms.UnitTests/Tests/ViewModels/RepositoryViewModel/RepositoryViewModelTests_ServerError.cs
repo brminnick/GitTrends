@@ -21,14 +21,14 @@ namespace GitTrends.UnitTests
 			//Arrange
 			PullToRefreshFailedEventArgs pullToRefreshFailedEventArgs;
 			IReadOnlyList<Repository> visibleRepositoryList_Initial, visibleRepositoryList_Final;
-			IReadOnlyList<Repository> generatedRepositories = new[]
-			{
+			IReadOnlyList<Repository> generatedRepositories =
+			[
 				CreateRepository(),
 				CreateRepository(),
 				CreateRepository(),
 				CreateRepository(),
 				CreateRepository(),
-			};
+			];
 
 			string emptyDataViewTitle_Initial, emptyDataViewTitle_Final;
 			string emptyDataViewDescription_Initial, emptyDataViewDescription_Final;

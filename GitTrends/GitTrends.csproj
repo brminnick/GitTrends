@@ -74,4 +74,8 @@
     <None Include="C:\GitHub\GitTrends\GitTrends\.editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj" />
+  </ItemGroup>
+
 </Project>
