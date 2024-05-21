@@ -272,9 +272,9 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\splashscreenanimatedicon.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GitTrends\GitTrends.csproj">
-      <Project>{4E7B0399-BAD2-48AF-B7FA-02EC17338FAE}</Project>
-      <Name>GitTrends</Name>
+    <ProjectReference Include="..\GitTrends.Forms\GitTrends.Forms.csproj">
+      <Project>{4e7b0399-bad2-48af-b7fa-02ec17338fae}</Project>
+      <Name>GitTrends.Forms</Name>
       <ReferenceSourceTarget>
       </ReferenceSourceTarget>
     </ProjectReference>

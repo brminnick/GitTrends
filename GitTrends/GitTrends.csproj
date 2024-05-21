@@ -1,76 +1,65 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
-        <Configurations>Debug;Release;AppStore</Configurations>
-        <BuildWithMSBuildOnMono>true</BuildWithMSBuildOnMono>
+        <TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+        <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
+        <!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
+
+        <!-- Note for MacCatalyst:
+        The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
+        When specifying both architectures, use the plural <RuntimeIdentifiers> instead of the singular <RuntimeIdentifier>.
+        The Mac App Store will NOT accept apps with ONLY maccatalyst-arm64 indicated;
+        either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
+        <!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
+
+        <OutputType>Exe</OutputType>
+        <RootNamespace>GitTrends</RootNamespace>
+        <UseMaui>true</UseMaui>
+        <SingleProject>true</SingleProject>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <!-- Display name -->
+        <ApplicationTitle>GitTrends</ApplicationTitle>
+
+        <!-- App Identifier -->
+        <ApplicationId>com.companyname.gittrends</ApplicationId>
+
+        <!-- Versions -->
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationVersion>1</ApplicationVersion>
+
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DebugType>pdbonly</DebugType>
-        <DebugSymbols>true</DebugSymbols>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-      <DebugType></DebugType>
-      <Optimize>true</Optimize>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
-      <DebugType></DebugType>
-      <Optimize>true</Optimize>
-      <DefineConstants>AppStore</DefineConstants>
-      <NoWarn>1701;1702</NoWarn>
-      <NoStdLib>false</NoStdLib>
-    </PropertyGroup>
+
     <ItemGroup>
-        <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="23.1.42" />
-        <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
-        <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
-        <PackageReference Include="Autofac" Version="8.0.0" />
-        <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.1.4" />
-        <PackageReference Include="HtmlAgilityPack" Version="1.11.59" />
-        <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.3" />
-        <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.3" />
-        <PackageReference Include="Xamarin.Forms" Version="5.0.0.2662" />
-        <PackageReference Include="Shiny.Notifications" Version="2.7.3" />
-        <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
-        <PackageReference Include="Plugin.StoreReview" Version="6.2.0" />
-        <PackageReference Include="Sharpnado.MaterialFrame" Version="1.3.0" />
-        <PackageReference Include="Xamarin.CommunityToolkit.Markup" Version="2.0.6" />
-        <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.7" />
-        <PackageReference Include="Shiny.Jobs" Version="2.7.3" />
+        <!-- App Icon -->
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4"/>
+
+        <!-- Splash Screen -->
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128"/>
+
+        <!-- Images -->
+        <MauiImage Include="Resources\Images\*"/>
+        <MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185"/>
+
+        <!-- Custom Fonts -->
+        <MauiFont Include="Resources\Fonts\*"/>
+
+        <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
     </ItemGroup>
+
     <ItemGroup>
-      <EmbeddedResource Include="Resources\SVGs\chart.svg" />
-      <EmbeddedResource Include="Resources\SVGs\issue_opened.svg" />
-      <EmbeddedResource Include="Resources\SVGs\megaphone.svg" />
-      <EmbeddedResource Include="Resources\SVGs\repo_forked.svg" />
-      <EmbeddedResource Include="Resources\SVGs\star.svg" />
-      <EmbeddedResource Include="Resources\SVGs\total_clones.svg" />
-      <EmbeddedResource Include="Resources\SVGs\total_views.svg" />
-      <EmbeddedResource Include="Resources\SVGs\trending_tag.svg" />
-      <EmbeddedResource Include="Resources\SVGs\unique_clones.svg" />
-      <EmbeddedResource Include="Resources\SVGs\unique_views.svg" />
-      <EmbeddedResource Include="Resources\Fonts\FontAwesomeBrands.ttf" />
-      <EmbeddedResource Include="Resources\Fonts\Roboto-Bold.ttf" />
-      <EmbeddedResource Include="Resources\Fonts\Roboto-Medium.ttf" />
-      <EmbeddedResource Include="Resources\Fonts\Roboto-Regular.ttf" />
-      <EmbeddedResource Include="Resources\SVGs\zoom_gesture.svg" />
-      <EmbeddedResource Include="Resources\SVGs\longpress_gesture.svg" />
-      <EmbeddedResource Include="Resources\Fonts\FontAwesome.otf" />
-      <EmbeddedResource Include="Resources\SVGs\bell.svg" />
-      <EmbeddedResource Include="Resources\SVGs\check.svg" />
-      <EmbeddedResource Include="Resources\SVGs\error.svg" />
-      <EmbeddedResource Include="Resources\SVGs\github.svg" />
-      <EmbeddedResource Include="Resources\SVGs\theme.svg" />
-      <EmbeddedResource Include="Resources\SVGs\logout.svg" />
-      <EmbeddedResource Include="Resources\SVGs\right_arrow.svg" />
-      <EmbeddedResource Include="Resources\SVGs\language.svg" />
-      <EmbeddedResource Include="Resources\SVGs\about.svg" />
-      <EmbeddedResource Include="Resources\SVGs\favorite_tag.svg" />
-      <EmbeddedResource Include="Resources\SVGs\star_outline.svg" />
-      <EmbeddedResource Include="Resources\SVGs\sparkle.svg" />
-      <EmbeddedResource Include="Resources\SVGs\organization.svg" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0"/>
     </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj" />
-    </ItemGroup>
+
 </Project>
