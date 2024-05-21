@@ -18,7 +18,7 @@ public interface IGitHubApiV3
 	Task<HttpResponseMessage> GetGitHubApiResponse_Authenticated([Header("Authorization")] string authorization, CancellationToken token, string owner = GitHubConstants.GitTrendsRepoOwner, string repo = GitHubConstants.GitTrendsRepoName);
 
 	[Get("/repos/{owner}/{repo}")]
-	Task<HttpResponseMessage> GetGitHubApiResponse_Unauthenticated(string owner = GitHubConstants.GitTrendsRepoOwner, CancellationToken token, string repo = GitHubConstants.GitTrendsRepoName);
+	Task<HttpResponseMessage> GetGitHubApiResponse_Unauthenticated(CancellationToken token, string owner = GitHubConstants.GitTrendsRepoOwner, string repo = GitHubConstants.GitTrendsRepoName);
 
 	[Get("/repos/{owner}/{repo}/contributors")]
 	Task<IReadOnlyList<Contributor>> GetContributors(string owner, string repo, CancellationToken token);

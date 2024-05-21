@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<Configurations>Debug;Release;AppStore</Configurations>
-		<BuildWithMSBuildOnMono>true</BuildWithMSBuildOnMono>
+    <UseMaui>true</UseMaui>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;</DefineConstants>
