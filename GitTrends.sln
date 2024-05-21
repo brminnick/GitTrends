@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.UITests", "GitTre
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends.Forms", "GitTrends.Forms\GitTrends.Forms.csproj", "{4E7B0399-BAD2-48AF-B7FA-02EC17338FAE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends.UnitTests", "GitTrends.UnitTests\GitTrends.UnitTests.csproj", "{EE380E99-E700-4B0C-9C56-B098CB400AAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends.Forms.UnitTests", "GitTrends.Forms.UnitTests\GitTrends.Forms.UnitTests.csproj", "{EE380E99-E700-4B0C-9C56-B098CB400AAE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends.Mobile.Common", "GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj", "{936AEAD4-A683-44AD-A903-F3196454C244}"
 EndProject

@@ -3,6 +3,7 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>GitTrends.UnitTests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
