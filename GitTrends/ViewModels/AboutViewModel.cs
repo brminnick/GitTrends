@@ -27,7 +27,7 @@ public partial class AboutViewModel : BaseViewModel
 			Forks = gitTrendsStatisticsService.Forks.Value;
 
 		InstalledLibraries = librariesService.InstalledLibraries;
-		GitTrendsContributors = gitTrendsStatisticsService.Contributors.OrderByDescending(static x => x.ContributionCount).ToList();
+		GitTrendsContributors = [.. gitTrendsStatisticsService.Contributors.OrderByDescending(static x => x.ContributionCount)];
 	}
 
 	public long? Stars { get; }
@@ -38,24 +38,24 @@ public partial class AboutViewModel : BaseViewModel
 	public IReadOnlyList<NuGetPackageModel> InstalledLibraries { get; }
 
 	[RelayCommand]
-	public Task ViewOnGitHub()
+	public Task ViewOnGitHub(CancellationToken token)
 	{
 		if (_gitTrendsStatisticsService?.GitHubUri is null)
 			return Task.CompletedTask;
 
 		AnalyticsService.Track("View On GitHub Tapped");
 
-		return _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.GitHubUri);
+		return _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.GitHubUri, token);
 	}
 
 	[RelayCommand]
-	public Task RequestFeature()
+	public Task RequestFeature(CancellationToken token)
 	{
 		if (_gitTrendsStatisticsService?.GitHubUri is null)
 			return Task.CompletedTask;
 
 		AnalyticsService.Track("Request Feature Tapped");
 
-		return _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.GitHubUri + "/issues/new?template=feature_request.md");
+		return _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.GitHubUri + "/issues/new?template=feature_request.md", token);
 	}
 }

@@ -65,7 +65,7 @@ namespace GitTrends.Shared
 			}
 			else
 			{
-				ssoUris = Array.Empty<Uri>();
+				ssoUris = [];
 			}
 
 			return doesContainError;

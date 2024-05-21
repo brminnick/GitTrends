@@ -174,7 +174,7 @@ namespace GitTrends.UnitTests
 				}
 			}
 
-			return assemblyResxCultures.ToArray();
+			return [.. assemblyResxCultures];
 		}
 
 		//https://stackoverflow.com/a/41760659/5953643

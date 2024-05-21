@@ -79,7 +79,7 @@ namespace GitTrends.UnitTests
 			return Task.CompletedTask;
 		}
 
-		public Task<IList<Channel>> GetChannels() => Task.FromResult((IList<Channel>)_channelsDictionary.Values.ToList());
+		public Task<IList<Channel>> GetChannels() => Task.FromResult((IList<Channel>)[.. _channelsDictionary.Values]);
 
 		public Task<Channel?> GetChannel(string channelId) => _channelsDictionary.TryGetValue(channelId, out var channel)
 																? Task.FromResult<Channel?>(channel)

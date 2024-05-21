@@ -49,17 +49,17 @@ namespace GitTrends
 		[ObservableProperty, NotifyPropertyChangedFor(nameof(IsViewsClonesChartVisible)), NotifyPropertyChangedFor(nameof(IsViewsClonesEmptyDataViewVisible)),
 			NotifyPropertyChangedFor(nameof(DailyViewsClonesMaxValue)), NotifyPropertyChangedFor(nameof(DailyViewsClonesMaxValue)), NotifyPropertyChangedFor(nameof(MinViewsClonesDate)),
 			NotifyPropertyChangedFor(nameof(MaxViewsClonesDate)), NotifyPropertyChangedFor(nameof(ViewsClonesChartYAxisInterval))]
-		IReadOnlyList<DailyViewsModel> _dailyViewsList = Array.Empty<DailyViewsModel>();
+		IReadOnlyList<DailyViewsModel> _dailyViewsList = [];
 
 		[ObservableProperty, NotifyPropertyChangedFor(nameof(IsViewsClonesChartVisible)), NotifyPropertyChangedFor(nameof(IsViewsClonesEmptyDataViewVisible)),
 			NotifyPropertyChangedFor(nameof(DailyViewsClonesMaxValue)), NotifyPropertyChangedFor(nameof(DailyViewsClonesMinValue)), NotifyPropertyChangedFor(nameof(MinViewsClonesDate)),
 			NotifyPropertyChangedFor(nameof(MaxViewsClonesDate)), NotifyPropertyChangedFor(nameof(ViewsClonesChartYAxisInterval))]
-		IReadOnlyList<DailyClonesModel> _dailyClonesList = Array.Empty<DailyClonesModel>();
+		IReadOnlyList<DailyClonesModel> _dailyClonesList = [];
 
 		[ObservableProperty, NotifyPropertyChangedFor(nameof(IsStarsChartVisible)), NotifyPropertyChangedFor(nameof(IsStarsEmptyDataViewVisible)),
 			NotifyPropertyChangedFor(nameof(MaxDailyStarsValue)), NotifyPropertyChangedFor(nameof(MinDailyStarsValue)), NotifyPropertyChangedFor(nameof(MaxDailyStarsDate)),
 			NotifyPropertyChangedFor(nameof(MinDailyStarsDate)), NotifyPropertyChangedFor(nameof(TotalStars)), NotifyPropertyChangedFor(nameof(StarsChartYAxisInterval))]
-		IReadOnlyList<DailyStarsModel> _dailyStarsList = Array.Empty<DailyStarsModel>();
+		IReadOnlyList<DailyStarsModel> _dailyStarsList = [];
 
 		public TrendsViewModel(IMainThread mainThread,
 								IAnalyticsService analyticsService,
@@ -283,9 +283,9 @@ namespace GitTrends
 
 				if (repositoryFromDatabase is null)
 				{
-					repositoryStars = Array.Empty<DateTimeOffset>();
-					repositoryViews = Array.Empty<DailyViewsModel>();
-					repositoryClones = Array.Empty<DailyClonesModel>();
+					repositoryStars = [];
+					repositoryViews = [];
+					repositoryClones = [];
 
 					StarsRefreshState = ViewsClonesRefreshState = RefreshState.Error;
 				}
@@ -294,16 +294,16 @@ namespace GitTrends
 					var estimatedRepositoryStars = DateTimeService.GetEstimatedStarredAtList(repositoryFromDatabase, repository.StarCount);
 
 					repositoryStars = estimatedRepositoryStars;
-					repositoryViews = repositoryFromDatabase.DailyViewsList ?? Array.Empty<DailyViewsModel>();
-					repositoryClones = repositoryFromDatabase.DailyClonesList ?? Array.Empty<DailyClonesModel>();
+					repositoryViews = repositoryFromDatabase.DailyViewsList ?? [];
+					repositoryClones = repositoryFromDatabase.DailyClonesList ?? [];
 
 					StarsRefreshState = ViewsClonesRefreshState = RefreshState.Succeeded;
 				}
 				else //If data passed in as parameter is more recent, display data passed in as parameter
 				{
-					repositoryStars = repository.StarredAt ?? Array.Empty<DateTimeOffset>();
-					repositoryViews = repository.DailyViewsList ?? Array.Empty<DailyViewsModel>();
-					repositoryClones = repository.DailyClonesList ?? Array.Empty<DailyClonesModel>();
+					repositoryStars = repository.StarredAt ?? [];
+					repositoryViews = repository.DailyViewsList ?? [];
+					repositoryClones = repository.DailyClonesList ?? [];
 
 					StarsRefreshState = ViewsClonesRefreshState = RefreshState.Succeeded;
 				}
@@ -338,8 +338,8 @@ namespace GitTrends
 
 			void updateViewsClonesData(in IEnumerable<DailyViewsModel> repositoryViews, in IEnumerable<DailyClonesModel> repositoryClones)
 			{
-				DailyViewsList = repositoryViews.OrderBy(static x => x.Day).ToList();
-				DailyClonesList = repositoryClones.OrderBy(static x => x.Day).ToList();
+				DailyViewsList = [.. repositoryViews.OrderBy(static x => x.Day)];
+				DailyClonesList = [.. repositoryClones.OrderBy(static x => x.Day)];
 
 				ViewsStatisticsText = repositoryViews.Sum(static x => x.TotalViews).ToAbbreviatedText();
 				UniqueViewsStatisticsText = repositoryViews.Sum(static x => x.TotalUniqueViews).ToAbbreviatedText();
@@ -350,7 +350,7 @@ namespace GitTrends
 
 			void updateStarsData(in IReadOnlyList<DateTimeOffset> repositoryStars)
 			{
-				DailyStarsList = GetDailyStarsList(repositoryStars).OrderBy(static x => x.Day).ToList();
+				DailyStarsList = [.. GetDailyStarsList(repositoryStars).OrderBy(static x => x.Day)];
 				StarsStatisticsText = repositoryStars.Count.ToAbbreviatedText();
 			}
 		}
@@ -366,21 +366,21 @@ namespace GitTrends
 
 			if (repositoryFromDatabase is null)
 			{
-				repositoryStars = Array.Empty<DateTimeOffset>();
-				repositoryViews = Array.Empty<DailyViewsModel>();
-				repositoryClones = Array.Empty<DailyClonesModel>();
+				repositoryStars = [];
+				repositoryViews = [];
+				repositoryClones = [];
 			}
 			else if (repositoryFromDatabase.DataDownloadedAt > repository.DataDownloadedAt) //If data from database is more recent, display data from database
 			{
-				repositoryStars = repositoryFromDatabase.StarredAt ?? Array.Empty<DateTimeOffset>();
-				repositoryViews = repositoryFromDatabase.DailyViewsList ?? Array.Empty<DailyViewsModel>();
-				repositoryClones = repositoryFromDatabase.DailyClonesList ?? Array.Empty<DailyClonesModel>();
+				repositoryStars = repositoryFromDatabase.StarredAt ?? [];
+				repositoryViews = repositoryFromDatabase.DailyViewsList ?? [];
+				repositoryClones = repositoryFromDatabase.DailyClonesList ?? [];
 			}
 			else //If data passed in as parameter is more recent, display data passed in as parameter
 			{
-				repositoryStars = repository.StarredAt ?? Array.Empty<DateTimeOffset>();
-				repositoryViews = repository.DailyViewsList ?? Array.Empty<DailyViewsModel>();
-				repositoryClones = repository.DailyClonesList ?? Array.Empty<DailyClonesModel>();
+				repositoryStars = repository.StarredAt ?? [];
+				repositoryViews = repository.DailyViewsList ?? [];
+				repositoryClones = repository.DailyClonesList ?? [];
 			}
 
 			return (repositoryStars, repositoryViews, repositoryClones);

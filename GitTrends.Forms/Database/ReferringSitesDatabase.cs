@@ -68,7 +68,7 @@ namespace GitTrends
 			return await databaseConnection.InsertOrReplaceAsync(referringSitesDatabaseModel).ConfigureAwait(false);
 		}
 
-		record MobileReferringSitesDatabaseModel : IMobileReferringSiteModel
+		sealed record MobileReferringSitesDatabaseModel : IMobileReferringSiteModel
 		{
 			//PrimaryKey must be nullable https://github.com/praeclarum/sqlite-net/issues/327
 			[PrimaryKey]

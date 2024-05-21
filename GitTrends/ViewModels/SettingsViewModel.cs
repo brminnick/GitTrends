@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Shiny;
 
 namespace GitTrends;
 
@@ -22,7 +23,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 	readonly TrendsChartSettingsService _trendsChartSettingsService;
 
 	[ObservableProperty]
-	IReadOnlyList<string> _themePickerItemsSource = Array.Empty<string>(), _preferredChartsItemsSource = Array.Empty<string>();
+	IReadOnlyList<string> _themePickerItemsSource = [], _preferredChartsItemsSource = [];
 
 	[ObservableProperty]
 	string _titleText = string.Empty, _aboutLabelText = string.Empty, _themeLabelText = string.Empty,
@@ -81,7 +82,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 
 		initializeIsRegisterForNotificationsSwitch().SafeFireAndForget();
 
-		async Task initializeIsRegisterForNotificationsSwitch() => IsRegisterForNotificationsSwitchToggled = notificationService.ShouldSendNotifications && await notificationService.AreNotificationsEnabled().ConfigureAwait(false);
+		async Task initializeIsRegisterForNotificationsSwitch() => IsRegisterForNotificationsSwitchToggled = notificationService.ShouldSendNotifications && await notificationService.AreNotificationsEnabled(CancellationToken.None).ConfigureAwait(false);
 	}
 
 	public static event EventHandler<AccessState?> SetNotificationsPreferenceCompleted
@@ -173,7 +174,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 
 		if (GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser)
 		{
-			await GitHubAuthenticationService.LogOut().ConfigureAwait(false);
+			await GitHubAuthenticationService.LogOut(parameter.cancellationToken).ConfigureAwait(false);
 
 			SetGitHubValues();
 		}
@@ -183,17 +184,17 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 		}
 	}
 
-	protected override async Task HandleDemoButtonTapped(string? buttonText)
+	protected override async Task HandleDemoButtonTapped(string? buttonText, CancellationToken token)
 	{
 		var demoUserActivatedTCS = new TaskCompletionSource<object?>();
 		GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 
 		try
 		{
-			await base.HandleDemoButtonTapped(buttonText).ConfigureAwait(false);
+			await base.HandleDemoButtonTapped(buttonText, token).ConfigureAwait(false);
 
 			AnalyticsService.Track("Settings Try Demo Button Tapped");
-			await GitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
+			await GitHubAuthenticationService.ActivateDemoUser(token).ConfigureAwait(false);
 			await demoUserActivatedTCS.Task.ConfigureAwait(false);
 		}
 		finally
@@ -201,7 +202,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 			IsAuthenticating = false;
 		}
 
-		void HandleDemoUserActivated(object sender, EventArgs e)
+		void HandleDemoUserActivated(object? sender, EventArgs e)
 		{
 			GitHubAuthenticationService.DemoUserActivated -= HandleDemoUserActivated;
 
@@ -214,7 +215,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 	bool CanOpenGitTrendsOrganizationBrowserCommandExecute() => _gitTrendsStatisticsService.EnableOrganizationsUri is not null;
 
 	[RelayCommand(CanExecute = nameof(CanOpenGitTrendsOrganizationBrowserCommandExecute))]
-	Task OpenGitTrendsOrganizationBrowser()
+	Task OpenGitTrendsOrganizationBrowser(CancellationToken token)
 	{
 		if (_gitTrendsStatisticsService.EnableOrganizationsUri is null)
 			throw new InvalidOperationException($"{nameof(GitTrendsStatisticsService)}.{nameof(GitTrendsStatisticsService.EnableOrganizationsUri)} Must Be Initialized");
@@ -223,7 +224,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 
 		OnOrganizationsCarouselViewVisiblilityChanged(false);
 
-		return _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri);
+		return _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri, token);
 	}
 
 	void ExecutePreferredChartsChangedCommand(TrendsChartOption trendsChartOption)
@@ -232,7 +233,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 		PreferredChartsSelectedIndex = (int)trendsChartOption;
 	}
 
-	async Task SetNotificationsPreference(bool isNotificationsEnabled)
+	async Task SetNotificationsPreference(bool isNotificationsEnabled, CancellationToken token)
 	{
 		AccessState? result = null;
 		IsRegisterForNotificationsSwitchEnabled = false;
@@ -241,11 +242,11 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 		{
 			if (isNotificationsEnabled)
 			{
-				result = await _notificationService.Register(true).ConfigureAwait(false);
+				result = await _notificationService.Register(true, token).ConfigureAwait(false);
 				AnalyticsService.Track("Register for Notifications Switch Toggled", new Dictionary<string, string>
 				{
 					{ nameof(isNotificationsEnabled), isNotificationsEnabled.ToString() },
-					{ nameof(result), result.ToString() }
+					{ nameof(result), result?.ToString() ?? "null" }
 				});
 			}
 			else
@@ -254,7 +255,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 				AnalyticsService.Track("Register for Notifications Switch Toggled", new Dictionary<string, string>
 				{
 					{ nameof(isNotificationsEnabled), isNotificationsEnabled.ToString() },
-					{ nameof(result), result.ToString() }
+					{ nameof(result), result?.ToString() ?? "null" }
 				});
 			}
 		}
@@ -266,22 +267,22 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 	}
 
 	[RelayCommand]
-	Task CopyrightLabelTapped()
+	Task CopyrightLabelTapped(CancellationToken token)
 	{
 		AnalyticsService.Track("CreatedBy Label Tapped");
-		return _deepLinkingService.OpenApp("twitter://user?id=3418408341", "https://twitter.com/intent/user?user_id=3418408341");
+		return _deepLinkingService.OpenApp("twitter://user?id=3418408341", "https://twitter.com/intent/user?user_id=3418408341", token);
 	}
 
-	void HandleNameChanged(object sender, string e) => SetGitHubValues();
-	void HandleAliasChanged(object sender, string e) => SetGitHubValues();
-	void HandleAvatarUrlChanged(object sender, string e) => SetGitHubValues();
-	void HandlePreferredLanguageChanged(object sender, string? e) => InitializeText(_themeService, _trendsChartSettingsService);
-	void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => SetGitHubValues();
-	void HandlePreferenceChanged(object sender, PreferredTheme e) => UpdateGitHubAvatarImage();
+	void HandleNameChanged(object? sender, string e) => SetGitHubValues();
+	void HandleAliasChanged(object? sender, string e) => SetGitHubValues();
+	void HandleAvatarUrlChanged(object? sender, string e) => SetGitHubValues();
+	void HandlePreferredLanguageChanged(object? sender, string? e) => InitializeText(_themeService, _trendsChartSettingsService);
+	void HandleAuthorizeSessionCompleted(object? sender, AuthorizeSessionCompletedEventArgs e) => SetGitHubValues();
+	void HandlePreferenceChanged(object? sender, PreferredTheme e) => UpdateGitHubAvatarImage();
 
-	async void HandleResumed(object sender, EventArgs e)
+	async void HandleResumed(object? sender, EventArgs e)
 	{
-		IsRegisterForNotificationsSwitchToggled = _notificationService.ShouldSendNotifications && await _notificationService.AreNotificationsEnabled().ConfigureAwait(false);
+		IsRegisterForNotificationsSwitchToggled = _notificationService.ShouldSendNotifications && await _notificationService.AreNotificationsEnabled(CancellationToken.None).ConfigureAwait(false);
 		IsRegisterForNotificationsSwitchEnabled = true;
 	}
 
@@ -341,14 +342,14 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 	}
 
 	[RelayCommand(CanExecute = nameof(IsNotAuthenticating))]
-	Task GitHubUserViewTapped()
+	Task GitHubUserViewTapped(CancellationToken token)
 	{
 		if (GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser)
 		{
 			string alias = GitHubUserService.IsDemoUser ? nameof(GitTrends) : GitHubUserService.Alias;
 			AnalyticsService.Track("Alias Label Tapped", "Alias", alias);
 
-			return _deepLinkingService.OpenApp(GitHubConstants.AppScheme, $"{GitHubConstants.GitHubBaseUrl}/{alias}", $"{GitHubConstants.GitHubBaseUrl}/{alias}");
+			return _deepLinkingService.OpenApp(GitHubConstants.AppScheme, $"{GitHubConstants.GitHubBaseUrl}/{alias}", $"{GitHubConstants.GitHubBaseUrl}/{alias}", token);
 		}
 		else
 		{
@@ -373,5 +374,5 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 	}
 
 	partial void OnLanguagePickerSelectedIndexChanged(int value) => _languageService.PreferredLanguage = CultureConstants.CulturePickerOptions.Skip(value).First().Key;
-	async partial void OnIsRegisterForNotificationsSwitchToggledChanged(bool value) => await SetNotificationsPreference(value).ConfigureAwait(false);
+	async partial void OnIsRegisterForNotificationsSwitchToggledChanged(bool value) => await SetNotificationsPreference(value, CancellationToken.None).ConfigureAwait(false);
 }

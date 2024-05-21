@@ -83,8 +83,8 @@ namespace GitTrends.UnitTests
 			// Arrange 
 			var expectedDate = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
 
-			IReadOnlyList<DailyViewsModel> emptyDailyViewsModelList = Array.Empty<DailyViewsModel>();
-			IReadOnlyList<DailyClonesModel> emptyDailyClonesModelList = Array.Empty<DailyClonesModel>();
+			IReadOnlyList<DailyViewsModel> emptyDailyViewsModelList = [];
+			IReadOnlyList<DailyClonesModel> emptyDailyClonesModelList = [];
 
 			// Act
 			var minimumDailyViewsModel = DateTimeService.GetMinimumDateTimeOffset(emptyDailyViewsModelList);
@@ -135,8 +135,8 @@ namespace GitTrends.UnitTests
 			// Arrange 
 			var expectedDate = DateTimeOffset.UtcNow;
 
-			IReadOnlyList<DailyViewsModel> emptyDailyViewsModelList = Array.Empty<DailyViewsModel>();
-			IReadOnlyList<DailyClonesModel> emptyDailyClonesModelList = Array.Empty<DailyClonesModel>();
+			IReadOnlyList<DailyViewsModel> emptyDailyViewsModelList = [];
+			IReadOnlyList<DailyClonesModel> emptyDailyClonesModelList = [];
 
 			// Act
 			var minimumDailyViewsModel = DateTimeService.GetMaximumDateTimeOffset(emptyDailyViewsModelList);

@@ -105,7 +105,7 @@ namespace GitTrends
 			remove => _repostoryEventManager.RemoveEventHandler(value);
 		}
 
-		public IReadOnlyList<string> QueuedJobs => QueuedJobsHash.ToList();
+		public IReadOnlyList<string> QueuedJobs => [.. QueuedJobsHash];
 
 		protected HashSet<string> QueuedJobsHash { get; } = new();
 
@@ -425,7 +425,7 @@ namespace GitTrends
 				return trendingRepositories;
 			}
 
-			return Array.Empty<Repository>();
+			return [];
 		}
 
 		void HandleAbuseRateLimitFound_GetOrganizationRepositories(object sender, (string OrganizationName, TimeSpan RetryTimeSpan) data) =>

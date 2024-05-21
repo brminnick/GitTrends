@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
+using Shiny;
 
 namespace GitTrends;
 
@@ -46,11 +47,11 @@ public partial class OnboardingViewModel : GitHubAuthenticationViewModel
 		private set => SetProperty(ref _notificationStatusSvgImageSource, SvgService.GetFullPath(value));
 	}
 
-	protected override async Task HandleDemoButtonTapped(string? buttonText)
+	protected override async Task HandleDemoButtonTapped(string? buttonText, CancellationToken token)
 	{
 		try
 		{
-			await base.HandleDemoButtonTapped(buttonText).ConfigureAwait(false);
+			await base.HandleDemoButtonTapped(buttonText, token).ConfigureAwait(false);
 
 			if (buttonText == OnboardingConstants.SkipText)
 			{
@@ -62,7 +63,7 @@ public partial class OnboardingViewModel : GitHubAuthenticationViewModel
 
 				//Allow Activity Indicator to run for a minimum of 1500ms
 				var minimumActivityIndicatorTimeSpan = TimeSpan.FromSeconds(1.5);
-				await Task.WhenAll(GitHubAuthenticationService.ActivateDemoUser(), Task.Delay(minimumActivityIndicatorTimeSpan)).ConfigureAwait(false);
+				await Task.WhenAll(GitHubAuthenticationService.ActivateDemoUser(token), Task.Delay(minimumActivityIndicatorTimeSpan, token)).ConfigureAwait(false);
 			}
 			else
 			{
@@ -76,12 +77,12 @@ public partial class OnboardingViewModel : GitHubAuthenticationViewModel
 	}
 
 	[RelayCommand]
-	async Task HandleEnableNotificationsButtonTapped()
+	async Task HandleEnableNotificationsButtonTapped(CancellationToken token)
 	{
 		const string successSvg = "check.svg";
 		const string failSvg = "error.svg";
 
-		var result = await _notificationService.Register(NotificationStatusSvgImageSource == SvgService.GetFullPath(failSvg)).ConfigureAwait(false);
+		var result = await _notificationService.Register(NotificationStatusSvgImageSource == SvgService.GetFullPath(failSvg), token).ConfigureAwait(false);
 
 		if (isNotificationResultSuccessful(result))
 		{

@@ -29,7 +29,7 @@ namespace GitTrends
 		readonly TrendsChartSettingsService _trendsChartSettingsService;
 
 		[ObservableProperty]
-		IReadOnlyList<string> _themePickerItemsSource = Array.Empty<string>(), _preferredChartsItemsSource = Array.Empty<string>();
+		IReadOnlyList<string> _themePickerItemsSource = [], _preferredChartsItemsSource = [];
 
 		[ObservableProperty]
 		string _titleText = string.Empty, _aboutLabelText = string.Empty, _themeLabelText = string.Empty,

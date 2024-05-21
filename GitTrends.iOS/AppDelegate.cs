@@ -86,7 +86,7 @@ namespace GitTrends.iOS
 
             var notificationHubInformation = await notificationService.GetNotificationHubInformation().ConfigureAwait(false);
 
-            var tokenAsString = BitConverter.ToString(deviceToken.ToArray()).Replace("-", "").Replace("\"", "");
+            var tokenAsString = BitConverter.ToString([.. deviceToken]).Replace("-", "").Replace("\"", "");
 
 #if AppStore
             var hubClient = NotificationHubClient.CreateClientFromConnectionString(notificationHubInformation.ConnectionString, notificationHubInformation.Name);

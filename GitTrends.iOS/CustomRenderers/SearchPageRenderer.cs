@@ -75,13 +75,13 @@ namespace GitTrends.iOS
 
             parentViewController.NavigationItem.LeftBarButtonItems = leftBarButtonItems.Any() switch
             {
-                true => leftBarButtonItems.ToArray(),
+                true => [.. leftBarButtonItems],
                 false => []
             };
 
             parentViewController.NavigationItem.RightBarButtonItems = rightBarButtonItems.Any() switch
             {
-                true => rightBarButtonItems.ToArray(),
+                true => [.. rightBarButtonItems],
                 false => []
             };
         }

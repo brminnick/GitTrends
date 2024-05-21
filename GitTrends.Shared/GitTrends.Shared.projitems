@@ -21,7 +21,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AzureConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\GithubConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\BaseApiService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DailyClonesModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DailyViewsModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GitHubToken.cs" />

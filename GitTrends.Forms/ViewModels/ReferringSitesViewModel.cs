@@ -28,7 +28,7 @@ namespace GitTrends
 		readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
 		[ObservableProperty]
-		IReadOnlyList<MobileReferringSiteModel> _mobileReferringSitesList = Array.Empty<MobileReferringSiteModel>();
+		IReadOnlyList<MobileReferringSiteModel> _mobileReferringSitesList = [];
 
 		[ObservableProperty]
 		string _emptyDataViewTitle = string.Empty, _emptyDataViewDescription = string.Empty;
@@ -104,7 +104,7 @@ namespace GitTrends
 
 		async Task<IReadOnlyList<ReferringSiteModel>> GetReferringSites(Repository repository, CancellationToken cancellationToken)
 		{
-			IReadOnlyList<ReferringSiteModel> referringSitesList = Array.Empty<ReferringSiteModel>();
+			IReadOnlyList<ReferringSiteModel> referringSitesList = [];
 
 			try
 			{

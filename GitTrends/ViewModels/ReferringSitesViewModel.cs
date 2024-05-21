@@ -87,7 +87,7 @@ public partial class ReferringSitesViewModel : BaseViewModel
 				referringSite.FavIcon = mobileReferringSite.FavIcon;
 
 				if (!string.IsNullOrWhiteSpace(mobileReferringSite.FavIconImageUrl))
-					await _referringSitesDatabase.SaveReferringSite(referringSite, repository.Url).ConfigureAwait(false);
+					await _referringSitesDatabase.SaveReferringSite(referringSite, repository.Url, cancellationToken).ConfigureAwait(false);
 			}
 		}
 
@@ -98,7 +98,7 @@ public partial class ReferringSitesViewModel : BaseViewModel
 
 	async Task<IReadOnlyList<ReferringSiteModel>> GetReferringSites(Repository repository, CancellationToken cancellationToken)
 	{
-		IReadOnlyList<ReferringSiteModel> referringSitesList = Array.Empty<ReferringSiteModel>();
+		IReadOnlyList<ReferringSiteModel> referringSitesList = [];
 
 		try
 		{
@@ -110,11 +110,11 @@ public partial class ReferringSitesViewModel : BaseViewModel
 		{
 			OnPullToRefreshFailed(new LoginExpiredPullToRefreshEventArgs());
 
-			await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
+			await _gitHubAuthenticationService.LogOut(cancellationToken).ConfigureAwait(false);
 		}
 		catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryDelay))
 		{
-			var mobileReferringSitesList = await _referringSitesDatabase.GetReferringSites(repository.Url).ConfigureAwait(false);
+			var mobileReferringSitesList = await _referringSitesDatabase.GetReferringSites(repository.Url, cancellationToken).ConfigureAwait(false);
 			referringSitesList = MobileSortingService.SortReferringSites(mobileReferringSitesList).ToList();
 
 			OnAbuseRateLimitFound_GetReferringSites(repository);
@@ -162,9 +162,9 @@ public partial class ReferringSitesViewModel : BaseViewModel
 	void OnAbuseRateLimitFound_GetReferringSites(in Repository repository) =>
 		_abuseRateLimitFound_GetReferringSites_EventManager.RaiseEvent(this, repository, nameof(AbuseRateLimitFound_GetReferringSites));
 
-	void HandleMobileReferringSiteRetrieved(object sender, MobileReferringSiteModel e)
+	void HandleMobileReferringSiteRetrieved(object? sender, MobileReferringSiteModel e)
 	{
-		var updatedReferringSitesList = MobileReferringSitesList.Concat(new List<MobileReferringSiteModel> { e });
+		var updatedReferringSitesList = MobileReferringSitesList.Concat([e]);
 		MobileReferringSitesList = MobileSortingService.SortReferringSites(updatedReferringSitesList).ToList();
 	}
 }

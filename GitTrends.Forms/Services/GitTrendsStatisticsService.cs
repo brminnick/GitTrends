@@ -154,15 +154,15 @@ namespace GitTrends
 			try
 			{
 				var contributors = JsonConvert.DeserializeObject<IReadOnlyList<Contributor>>(_preferences.Get(nameof(Contributors), null));
-				return contributors ?? Array.Empty<Contributor>();
+				return contributors ?? [];
 			}
 			catch (ArgumentNullException)
 			{
-				return Array.Empty<Contributor>();
+				return [];
 			}
 			catch (JsonReaderException)
 			{
-				return Array.Empty<Contributor>();
+				return [];
 			}
 		}
 	}

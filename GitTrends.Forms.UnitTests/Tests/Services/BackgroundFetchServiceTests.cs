@@ -161,7 +161,7 @@ namespace GitTrends.UnitTests
 			Assert.IsNull(repository_Initial.TotalViews);
 
 			Assert.IsNotNull(repository_Final.StarredAt);
-			Assert.IsNotEmpty(repository_Final.StarredAt ?? Array.Empty<DateTimeOffset>());
+			Assert.IsNotEmpty(repository_Final.StarredAt ?? []);
 			Assert.IsNull(repository_Final.DailyClonesList);
 			Assert.IsNull(repository_Final.DailyViewsList);
 			Assert.IsNull(repository_Final.TotalClones);
@@ -177,7 +177,7 @@ namespace GitTrends.UnitTests
 			Assert.AreEqual(repository_Initial.IssuesCount, repository_Final.IssuesCount);
 
 			Assert.IsNotNull(repository_Database.StarredAt);
-			Assert.IsNotEmpty(repository_Database.StarredAt ?? Array.Empty<DateTimeOffset>());
+			Assert.IsNotEmpty(repository_Database.StarredAt ?? []);
 			Assert.IsNull(repository_Database.DailyClonesList);
 			Assert.IsNull(repository_Database.DailyViewsList);
 			Assert.IsNull(repository_Database.TotalClones);

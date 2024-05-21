@@ -37,7 +37,7 @@ namespace GitTrends.Shared
 		public static IReadOnlyList<DateTimeOffset> GetEstimatedStarredAtList(in Repository repositoryFromDatabase, in long starCount)
 		{
 			if (starCount is 0)
-				return Array.Empty<DateTimeOffset>();
+				return [];
 
 			var incompleteStarredAtList = new List<DateTimeOffset>(repositoryFromDatabase.StarredAt ?? new List<DateTimeOffset> { DateTimeOffset.MinValue });
 			incompleteStarredAtList.Sort();

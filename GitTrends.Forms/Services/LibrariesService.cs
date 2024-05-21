@@ -35,7 +35,7 @@ namespace GitTrends
 				var serializedInstalledNuGetPackages = _preferences.Get(nameof(InstalledLibraries), null);
 
 				return serializedInstalledNuGetPackages is null
-					? Array.Empty<NuGetPackageModel>()
+					? []
 					: JsonConvert.DeserializeObject<IReadOnlyList<NuGetPackageModel>>(serializedInstalledNuGetPackages) ?? throw new JsonException();
 			}
 			private set
@@ -56,7 +56,7 @@ namespace GitTrends
 			{
 				var libraries = await _azureFunctionsApiService.GetLibraries(cancellationToken).ConfigureAwait(false);
 
-				InstalledLibraries = libraries.OrderBy(static x => x.PackageName).ToList();
+				InstalledLibraries = [.. libraries.OrderBy(static x => x.PackageName)];
 
 				foreach (var nugetPackageModel in InstalledLibraries)
 				{

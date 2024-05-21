@@ -34,7 +34,7 @@ namespace GitTrends
 		readonly GitHubAuthenticationService _gitHubAuthenticationService;
 		readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
-		IReadOnlyList<Repository> _repositoryList = Array.Empty<Repository>();
+		IReadOnlyList<Repository> _repositoryList = [];
 		RefreshState _refreshState;
 
 		[ObservableProperty]
@@ -46,7 +46,7 @@ namespace GitTrends
 		string _searchBarText = string.Empty;
 
 		[ObservableProperty]
-		IReadOnlyList<Repository> _visibleRepositoryList = Array.Empty<Repository>();
+		IReadOnlyList<Repository> _visibleRepositoryList = [];
 
 		public RepositoryViewModel(IMainThread mainThread,
 									IAnalyticsService analyticsService,
@@ -267,7 +267,7 @@ namespace GitTrends
 				await _gitHubAuthenticationService.LogOut().ConfigureAwait(false);
 				await _repositoryDatabase.DeleteAllData().ConfigureAwait(false);
 
-				SetRepositoriesCollection(Array.Empty<Repository>(), _searchBarText);
+				SetRepositoriesCollection([], _searchBarText);
 			}
 			catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan)
 										|| (e is HttpRequestException && finalResponse is not null && _gitHubApiStatusService.IsAbuseRateLimit(finalResponse.Headers, out retryTimeSpan)))
@@ -306,7 +306,7 @@ namespace GitTrends
 				var maximimApiRequestsReachedEventArgs = new MaximumApiRequestsReachedEventArgs(_gitHubApiStatusService.GetRateLimitResetDateTime(responseHeaders));
 				OnPullToRefreshFailed(maximimApiRequestsReachedEventArgs);
 
-				SetRepositoriesCollection(Array.Empty<Repository>(), _searchBarText);
+				SetRepositoriesCollection([], _searchBarText);
 			}
 			catch (Exception e)
 			{
@@ -447,7 +447,7 @@ namespace GitTrends
 
 		void UpdateListForLoggedOutUser()
 		{
-			_repositoryList = Array.Empty<Repository>();
+			_repositoryList = [];
 			UpdateVisibleRepositoryList(string.Empty, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
 		}
 

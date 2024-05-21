@@ -31,7 +31,7 @@ namespace GitTrends
 				Forks = gitTrendsStatisticsService.Forks.Value;
 
 			InstalledLibraries = librariesService.InstalledLibraries;
-			GitTrendsContributors = gitTrendsStatisticsService.Contributors.OrderByDescending(static x => x.ContributionCount).ToList();
+			GitTrendsContributors = [.. gitTrendsStatisticsService.Contributors.OrderByDescending(static x => x.ContributionCount)];
 		}
 
 		public long? Stars { get; }

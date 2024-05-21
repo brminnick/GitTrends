@@ -104,7 +104,7 @@ namespace GitTrends
 
 			var repositoryDatabaseModels = await AttemptAndRetry(() => repositoryDatabaseConnection.Table<RepositoryDatabaseModel>().ToListAsync()).ConfigureAwait(false);
 			if (!repositoryDatabaseModels.Any())
-				return Array.Empty<Repository>();
+				return [];
 
 			var repositoryList = new List<Repository>();
 			foreach (var repositoryDatabaseModel in repositoryDatabaseModels)
@@ -313,7 +313,7 @@ namespace GitTrends
 			};
 		}
 
-		record RepositoryDatabaseModel : IRepository
+		sealed record RepositoryDatabaseModel : IRepository
 		{
 			public DateTimeOffset DataDownloadedAt { get; init; } = DateTimeOffset.UtcNow;
 

@@ -205,7 +205,7 @@ public partial class TrendsViewModel : BaseViewModel
 			}
 			else
 			{
-				var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
+				var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url, cancellationToken).ConfigureAwait(false);
 
 				if (repositoryFromDatabase is null || repositoryFromDatabase.StarredAt?.Count is 0)
 				{
@@ -240,7 +240,7 @@ public partial class TrendsViewModel : BaseViewModel
 				DailyClonesList = repositoryClones
 			};
 
-			await _repositoryDatabase.SaveRepository(updatedRepository).ConfigureAwait(false);
+			await _repositoryDatabase.SaveRepository(updatedRepository, cancellationToken).ConfigureAwait(false);
 			OnRepositorySavedToDatabase(updatedRepository);
 
 			static bool isViewsClonesDataComplete(in Repository repository) => repository.ContainsViewsClonesData
@@ -251,7 +251,7 @@ public partial class TrendsViewModel : BaseViewModel
 		}
 		catch (Exception e) when (e is ApiException { StatusCode: HttpStatusCode.Unauthorized })
 		{
-			var (repositoryStars, repositoryViews, repositoryClones) = await GetNewestRepositoryData(repository).ConfigureAwait(false);
+			var (repositoryStars, repositoryViews, repositoryClones) = await GetNewestRepositoryData(repository, cancellationToken).ConfigureAwait(false);
 			updateStarsData(repositoryStars);
 			updateViewsClonesData(repositoryViews, repositoryClones);
 
@@ -259,7 +259,7 @@ public partial class TrendsViewModel : BaseViewModel
 		}
 		catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximumApiCallLimit(e))
 		{
-			var (repositoryStars, repositoryViews, repositoryClones) = await GetNewestRepositoryData(repository).ConfigureAwait(false);
+			var (repositoryStars, repositoryViews, repositoryClones) = await GetNewestRepositoryData(repository, cancellationToken).ConfigureAwait(false);
 			updateStarsData(repositoryStars);
 			updateViewsClonesData(repositoryViews, repositoryClones);
 
@@ -273,13 +273,13 @@ public partial class TrendsViewModel : BaseViewModel
 
 			_backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository, retryTimeSpan.Value);
 
-			var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
+			var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url, cancellationToken).ConfigureAwait(false);
 
 			if (repositoryFromDatabase is null)
 			{
-				repositoryStars = Array.Empty<DateTimeOffset>();
-				repositoryViews = Array.Empty<DailyViewsModel>();
-				repositoryClones = Array.Empty<DailyClonesModel>();
+				repositoryStars = [];
+				repositoryViews = [];
+				repositoryClones = [];
 
 				StarsRefreshState = ViewsClonesRefreshState = RefreshState.Error;
 			}
@@ -288,16 +288,16 @@ public partial class TrendsViewModel : BaseViewModel
 				var estimatedRepositoryStars = DateTimeService.GetEstimatedStarredAtList(repositoryFromDatabase, repository.StarCount);
 
 				repositoryStars = estimatedRepositoryStars;
-				repositoryViews = repositoryFromDatabase.DailyViewsList ?? Array.Empty<DailyViewsModel>();
-				repositoryClones = repositoryFromDatabase.DailyClonesList ?? Array.Empty<DailyClonesModel>();
+				repositoryViews = repositoryFromDatabase.DailyViewsList ?? [];
+				repositoryClones = repositoryFromDatabase.DailyClonesList ?? [];
 
 				StarsRefreshState = ViewsClonesRefreshState = RefreshState.Succeeded;
 			}
 			else //If data passed in as parameter is more recent, display data passed in as parameter
 			{
-				repositoryStars = repository.StarredAt ?? Array.Empty<DateTimeOffset>();
-				repositoryViews = repository.DailyViewsList ?? Array.Empty<DailyViewsModel>();
-				repositoryClones = repository.DailyClonesList ?? Array.Empty<DailyClonesModel>();
+				repositoryStars = repository.StarredAt ?? [];
+				repositoryViews = repository.DailyViewsList ?? [];
+				repositoryClones = repository.DailyClonesList ?? [];
 
 				StarsRefreshState = ViewsClonesRefreshState = RefreshState.Succeeded;
 			}
@@ -309,7 +309,7 @@ public partial class TrendsViewModel : BaseViewModel
 		{
 			AnalyticsService.Report(e);
 
-			var (repositoryStars, repositoryViews, repositoryClones) = await GetNewestRepositoryData(repository).ConfigureAwait(false);
+			var (repositoryStars, repositoryViews, repositoryClones) = await GetNewestRepositoryData(repository, cancellationToken).ConfigureAwait(false);
 			updateStarsData(repositoryStars);
 			updateViewsClonesData(repositoryViews, repositoryClones);
 
@@ -332,8 +332,8 @@ public partial class TrendsViewModel : BaseViewModel
 
 		void updateViewsClonesData(in IEnumerable<DailyViewsModel> repositoryViews, in IEnumerable<DailyClonesModel> repositoryClones)
 		{
-			DailyViewsList = repositoryViews.OrderBy(static x => x.Day).ToList();
-			DailyClonesList = repositoryClones.OrderBy(static x => x.Day).ToList();
+			DailyViewsList = [.. repositoryViews.OrderBy(static x => x.Day)];
+			DailyClonesList = [.. repositoryClones.OrderBy(static x => x.Day)];
 
 			ViewsStatisticsText = repositoryViews.Sum(static x => x.TotalViews).ToAbbreviatedText();
 			UniqueViewsStatisticsText = repositoryViews.Sum(static x => x.TotalUniqueViews).ToAbbreviatedText();
@@ -344,37 +344,37 @@ public partial class TrendsViewModel : BaseViewModel
 
 		void updateStarsData(in IReadOnlyList<DateTimeOffset> repositoryStars)
 		{
-			DailyStarsList = GetDailyStarsList(repositoryStars).OrderBy(static x => x.Day).ToList();
+			DailyStarsList = [.. GetDailyStarsList(repositoryStars).OrderBy(static x => x.Day)];
 			StarsStatisticsText = repositoryStars.Count.ToAbbreviatedText();
 		}
 	}
 
 	async Task<(IReadOnlyList<DateTimeOffset> RepositoryStars, IReadOnlyList<DailyViewsModel> RepositoryViews, IReadOnlyList<DailyClonesModel> RepositoryClones)>
-		GetNewestRepositoryData(Repository repository)
+		GetNewestRepositoryData(Repository repository, CancellationToken token)
 	{
 		IReadOnlyList<DateTimeOffset> repositoryStars;
 		IReadOnlyList<DailyViewsModel> repositoryViews;
 		IReadOnlyList<DailyClonesModel> repositoryClones;
 
-		var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url).ConfigureAwait(false);
+		var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url, token).ConfigureAwait(false);
 
 		if (repositoryFromDatabase is null)
 		{
-			repositoryStars = Array.Empty<DateTimeOffset>();
-			repositoryViews = Array.Empty<DailyViewsModel>();
-			repositoryClones = Array.Empty<DailyClonesModel>();
+			repositoryStars = [];
+			repositoryViews = [];
+			repositoryClones = [];
 		}
 		else if (repositoryFromDatabase.DataDownloadedAt > repository.DataDownloadedAt) //If data from database is more recent, display data from database
 		{
-			repositoryStars = repositoryFromDatabase.StarredAt ?? Array.Empty<DateTimeOffset>();
-			repositoryViews = repositoryFromDatabase.DailyViewsList ?? Array.Empty<DailyViewsModel>();
-			repositoryClones = repositoryFromDatabase.DailyClonesList ?? Array.Empty<DailyClonesModel>();
+			repositoryStars = repositoryFromDatabase.StarredAt ?? [];
+			repositoryViews = repositoryFromDatabase.DailyViewsList ?? [];
+			repositoryClones = repositoryFromDatabase.DailyClonesList ?? [];
 		}
 		else //If data passed in as parameter is more recent, display data passed in as parameter
 		{
-			repositoryStars = repository.StarredAt ?? Array.Empty<DateTimeOffset>();
-			repositoryViews = repository.DailyViewsList ?? Array.Empty<DailyViewsModel>();
-			repositoryClones = repository.DailyClonesList ?? Array.Empty<DailyClonesModel>();
+			repositoryStars = repository.StarredAt ?? [];
+			repositoryViews = repository.DailyViewsList ?? [];
+			repositoryClones = repository.DailyClonesList ?? [];
 		}
 
 		return (repositoryStars, repositoryViews, repositoryClones);
@@ -409,7 +409,7 @@ public partial class TrendsViewModel : BaseViewModel
 
 			return await backgroundStarsTCS.Task.ConfigureAwait(false);
 
-			void HandleScheduleRetryRepositoriesStarsCompleted(object sender, Repository e)
+			void HandleScheduleRetryRepositoriesStarsCompleted(object? sender, Repository e)
 			{
 				if (e.Url == repository.Url)
 				{
@@ -457,7 +457,7 @@ public partial class TrendsViewModel : BaseViewModel
 
 			return await backgroundStarsTCS.Task.ConfigureAwait(false);
 
-			void HandleScheduleRetryRepositoriesViewsClonesStarsCompleted(object sender, Repository e)
+			void HandleScheduleRetryRepositoriesViewsClonesStarsCompleted(object? sender, Repository e)
 			{
 				if (e.Url == repository.Url)
 				{

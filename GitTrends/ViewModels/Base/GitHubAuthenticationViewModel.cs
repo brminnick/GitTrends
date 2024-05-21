@@ -41,8 +41,10 @@ public abstract partial class GitHubAuthenticationViewModel : BaseViewModel
 	}
 
 	[RelayCommand(CanExecute = nameof(IsNotAuthenticating))]
-	protected virtual Task HandleDemoButtonTapped(string? buttonText)
+	protected virtual Task HandleDemoButtonTapped(string? buttonText, CancellationToken token)
 	{
+		token.ThrowIfCancellationRequested();
+
 		IsAuthenticating = true;
 		return Task.CompletedTask;
 	}
@@ -65,11 +67,11 @@ public abstract partial class GitHubAuthenticationViewModel : BaseViewModel
 
 			if (!string.IsNullOrWhiteSpace(loginUrl))
 			{
-				await _deepLinkingService.OpenBrowser(loginUrl, browserLaunchOptions).ConfigureAwait(false);
+				await _deepLinkingService.OpenBrowser(loginUrl, cancellationToken, browserLaunchOptions).ConfigureAwait(false);
 			}
 			else
 			{
-				await _deepLinkingService.DisplayAlert("Error", "Couldn't connect to GitHub Login. Check your internet connection and try again", "OK").ConfigureAwait(false);
+				await _deepLinkingService.DisplayAlert("Error", "Couldn't connect to GitHub Login. Check your internet connection and try again", "OK", cancellationToken).ConfigureAwait(false);
 			}
 		}
 		catch (Exception e)
@@ -82,8 +84,8 @@ public abstract partial class GitHubAuthenticationViewModel : BaseViewModel
 		}
 	}
 
-	void HandleAuthorizeSessionStarted(object sender, EventArgs e) => IsAuthenticating = true;
-	void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsAuthenticating = false;
+	void HandleAuthorizeSessionStarted(object? sender, EventArgs e) => IsAuthenticating = true;
+	void HandleAuthorizeSessionCompleted(object? sender, AuthorizeSessionCompletedEventArgs e) => IsAuthenticating = false;
 
 	partial void OnIsAuthenticatingChanged(bool value) => NotifyIsAuthenticatingPropertyChanged();
 }
