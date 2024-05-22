@@ -148,7 +148,7 @@ public static partial class MauiProgram
 		services.AddHttpClient<FavIconService>();
 	}
 
-	static IServiceCollection AddTransientWithShellRoute<TPage, TViewModel>(this IServiceCollection services) where TPage : BasePage<TViewModel>
+	static IServiceCollection AddTransientWithShellRoute<TPage, TViewModel>(this IServiceCollection services) where TPage : BaseContentPage<TViewModel>
 																												where TViewModel : BaseViewModel
 	{
 		return services.AddTransientWithShellRoute<TPage, TViewModel>(AppShell.GetPageRoute<TViewModel>());

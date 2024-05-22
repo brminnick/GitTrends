@@ -1,6 +1,6 @@
 namespace GitTrends;
 
-class AppShell : Shell
+partial class AppShell : Shell
 {
 
 }
