@@ -9,7 +9,9 @@ using Newtonsoft.Json;
 
 namespace GitTrends.Functions;
 
-class GetTestToken
+class GetTestToken(GitHubApiV3Service gitHubApiV3Service,
+					IGitHubApiStatusService gitHubApiStatusService,
+					GitHubGraphQLApiService gitHubGraphQLApiService)
 {
 	static readonly IReadOnlyDictionary<string, string> _testTokenDictionary = new Dictionary<string, string>
 	{
@@ -18,18 +20,9 @@ class GetTestToken
 		{ "UITestToken_TheCodeTraveler",  Environment.GetEnvironmentVariable("UITestToken_TheCodeTraveler") ?? string.Empty },
 	};
 
-	readonly GitHubApiV3Service _gitHubApiV3Service;
-	readonly IGitHubApiStatusService _gitHubApiStatusService;
-	readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
-
-	public GetTestToken(GitHubApiV3Service gitHubApiV3Service,
-		IGitHubApiStatusService gitHubApiStatusService,
-		GitHubGraphQLApiService gitHubGraphQLApiService)
-	{
-		_gitHubApiV3Service = gitHubApiV3Service;
-		_gitHubApiStatusService = gitHubApiStatusService;
-		_gitHubGraphQLApiService = gitHubGraphQLApiService;
-	}
+	readonly GitHubApiV3Service _gitHubApiV3Service = gitHubApiV3Service;
+	readonly IGitHubApiStatusService _gitHubApiStatusService = gitHubApiStatusService;
+	readonly GitHubGraphQLApiService _gitHubGraphQLApiService = gitHubGraphQLApiService;
 
 	[Function(nameof(GetTestToken))]
 	public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData req, FunctionContext functionContext)

@@ -4,13 +4,10 @@ using Microsoft.Extensions.Logging;
 
 namespace GitTrends.Functions;
 
-class UpdateGitTrendsStatistics
+class UpdateGitTrendsStatistics(GitHubApiV3Service gitHubApiV3Service, BlobStorageService blobStorageService)
 {
-	readonly GitHubApiV3Service _gitHubApiV3Service;
-	readonly BlobStorageService _blobStorageService;
-
-	public UpdateGitTrendsStatistics(GitHubApiV3Service gitHubApiV3Service, BlobStorageService blobStorageService) =>
-		(_gitHubApiV3Service, _blobStorageService) = (gitHubApiV3Service, blobStorageService);
+	readonly GitHubApiV3Service _gitHubApiV3Service = gitHubApiV3Service;
+	readonly BlobStorageService _blobStorageService = blobStorageService;
 
 	[Function(nameof(UpdateGitTrendsStatistics))]
 	public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, FunctionContext context)

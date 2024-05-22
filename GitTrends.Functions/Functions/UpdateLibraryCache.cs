@@ -4,13 +4,10 @@ using Microsoft.Extensions.Logging;
 
 namespace GitTrends.Functions;
 
-class UpdateLibraryCache
+class UpdateLibraryCache(NuGetService nuGetService, BlobStorageService blobStorageService)
 {
-	readonly NuGetService _nuGetService;
-	readonly BlobStorageService _blobStorageService;
-
-	public UpdateLibraryCache(NuGetService nuGetService, BlobStorageService blobStorageService) =>
-		(_nuGetService, _blobStorageService) = (nuGetService, blobStorageService);
+	readonly NuGetService _nuGetService = nuGetService;
+	readonly BlobStorageService _blobStorageService = blobStorageService;
 
 	[Function(nameof(UpdateLibraryCache))]
 	public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, FunctionContext context)

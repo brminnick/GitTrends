@@ -4,11 +4,9 @@ using Newtonsoft.Json;
 
 namespace GitTrends.Functions;
 
-class GetLibraries
+class GetLibraries(BlobStorageService blobStorageService)
 {
-	readonly BlobStorageService _blobStorageService;
-
-	public GetLibraries(BlobStorageService blobStorageService) => _blobStorageService = blobStorageService;
+	readonly BlobStorageService _blobStorageService = blobStorageService;
 
 	[Function(nameof(GetLibraries))]
 	public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData request, FunctionContext context)
