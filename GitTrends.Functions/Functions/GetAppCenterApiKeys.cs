@@ -1,51 +1,47 @@
-﻿using System;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Net;
 using GitTrends.Shared;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace GitTrends.Functions
+namespace GitTrends.Functions;
+
+public static class GetAppCenterApiKeys
 {
-	public static class GetAppCenterApiKeys
+	static readonly string _iOS = Environment.GetEnvironmentVariable("AppCenterApiKey_iOS") ?? string.Empty;
+	static readonly string _android = Environment.GetEnvironmentVariable("AppCenterApiKey_Android") ?? string.Empty;
+
+	[Function(nameof(GetAppCenterApiKeys))]
+	public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData req, FunctionContext context)
 	{
-		static readonly string _iOS = Environment.GetEnvironmentVariable("AppCenterApiKey_iOS") ?? string.Empty;
-		static readonly string _android = Environment.GetEnvironmentVariable("AppCenterApiKey_Android") ?? string.Empty;
+		var log = context.GetLogger(nameof(GetAppCenterApiKeys));
 
-		[Function(nameof(GetAppCenterApiKeys))]
-		public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData req, FunctionContext context)
+		log.LogInformation("Retrieving Client Id");
+
+		if (string.IsNullOrWhiteSpace(_iOS))
 		{
-			var log = context.GetLogger(nameof(GetAppCenterApiKeys));
+			var notFoundResponse = req.CreateResponse(HttpStatusCode.NotFound);
+			await notFoundResponse.WriteStringAsync($"{nameof(_iOS)} Not Found").ConfigureAwait(false);
 
-			log.LogInformation("Retrieving Client Id");
+			return notFoundResponse;
+		}
+		else if (string.IsNullOrWhiteSpace(_android))
+		{
+			var notFoundResponse = req.CreateResponse(HttpStatusCode.NotFound);
+			await notFoundResponse.WriteStringAsync($"{nameof(_android)} Not Found").ConfigureAwait(false);
 
-			if (string.IsNullOrWhiteSpace(_iOS))
-			{
-				var notFoundResponse = req.CreateResponse(HttpStatusCode.NotFound);
-				await notFoundResponse.WriteStringAsync($"{nameof(_iOS)} Not Found").ConfigureAwait(false);
+			return notFoundResponse;
+		}
+		else
+		{
+			var response = req.CreateResponse(HttpStatusCode.OK);
 
-				return notFoundResponse;
-			}
-			else if (string.IsNullOrWhiteSpace(_android))
-			{
-				var notFoundResponse = req.CreateResponse(HttpStatusCode.NotFound);
-				await notFoundResponse.WriteStringAsync($"{nameof(_android)} Not Found").ConfigureAwait(false);
+			var appCenterApiKeyDtoJson = JsonConvert.SerializeObject(new AppCenterApiKeyDTO(_iOS, _android));
 
-				return notFoundResponse;
-			}
-			else
-			{
-				var response = req.CreateResponse(HttpStatusCode.OK);
+			await response.WriteStringAsync(appCenterApiKeyDtoJson).ConfigureAwait(false);
 
-				var appCenterApiKeyDtoJson = JsonConvert.SerializeObject(new AppCenterApiKeyDTO(_iOS, _android));
-
-				await response.WriteStringAsync(appCenterApiKeyDtoJson).ConfigureAwait(false);
-
-				return response;
-			}
+			return response;
 		}
 	}
 }
