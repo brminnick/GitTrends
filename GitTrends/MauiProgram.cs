@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui;
+﻿using System.Net;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
@@ -15,7 +16,7 @@ using Syncfusion.Maui.Core.Hosting;
 
 namespace GitTrends;
 
-public static class MauiProgram
+public static partial class MauiProgram
 {
 	public static MauiApp CreateMauiApp()
 	{
@@ -91,7 +92,6 @@ public static class MauiProgram
 		services.AddSingleton<GitHubUserService>();
 		services.AddSingleton<GitHubGraphQLApiService>();
 		services.AddSingleton<GitTrendsStatisticsService>();
-		services.AddSingleton<ImageCachingService>();
 		services.AddSingleton<LanguageService>();
 		services.AddSingleton<LibrariesService>();
 		services.AddSingleton<MediaElementService>();
@@ -111,6 +111,8 @@ public static class MauiProgram
 
 	static void RegisterPagesAndViewModels(in IServiceCollection services)
 	{
+		services.AddSingleton<App>();
+		
 		services.AddTransientWithShellRoute<AboutPage, AboutViewModel>();
 		services.AddTransient<ChartOnboardingPage>();
 		services.AddTransient<ConnectToGitHubOnboardingPage>();

@@ -83,10 +83,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="C:\GitHub\GitTrends\GitTrends\.editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProguardConfiguration Include="Platforms\Android\proguard.cfg" />
   </ItemGroup>
 

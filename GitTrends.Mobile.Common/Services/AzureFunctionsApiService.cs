@@ -1,10 +1,11 @@
 ﻿using GitTrends.Shared;
+using Refit;
 
 namespace GitTrends.Mobile.Common;
 
 public abstract class AzureFunctionsApiService
 {
-	static readonly Lazy<IAzureFunctionsApi> _azureFunctionsApiClientHolder = new(() => RefitExtensions.For<IAzureFunctionsApi>(new HttpClient { BaseAddress = new Uri(AzureConstants.AzureFunctionsApiUrl) }));
+	static readonly Lazy<IAzureFunctionsApi> _azureFunctionsApiClientHolder = new(() => RestService.For<IAzureFunctionsApi>(new HttpClient { BaseAddress = new Uri(AzureConstants.AzureFunctionsApiUrl) }));
 
 	static IAzureFunctionsApi AzureFunctionsApiClient => _azureFunctionsApiClientHolder.Value;
 
