@@ -1,30 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
-namespace GitTrends.Shared
+namespace GitTrends.Shared;
+
+public record StarGazers
 {
-	public record StarGazers
-	{
-		public StarGazers(long totalCount, IEnumerable<StarGazerInfo> edges) =>
-			(TotalCount, StarredAt) = (totalCount, edges.ToList());
+	public StarGazers(long totalCount, IEnumerable<StarGazerInfo> edges) =>
+		(TotalCount, StarredAt) = (totalCount, edges.ToList());
 
-		[JsonProperty("totalCount")]
-		public long TotalCount { get; }
+	[JsonPropertyName("totalCount")]
+	public long TotalCount { get; }
 
-		[JsonProperty("edges")]
-		public IReadOnlyList<StarGazerInfo> StarredAt { get; }
-	}
-
-	public record StarGazerInfo(DateTimeOffset StarredAt, string Cursor);
-
-	public record StarGazer
-	{
-		public StarGazer(DateTimeOffset starred_at) => StarredAt = starred_at;
-
-		public DateTimeOffset StarredAt { get; }
-	}
-
-	public record StarGazersConnection(long TotalCount);
+	[JsonPropertyName("edges")]
+	public IReadOnlyList<StarGazerInfo> StarredAt { get; }
 }
+
+public record StarGazerInfo(DateTimeOffset StarredAt, string Cursor);
+
+public record StarGazer
+{
+	public StarGazer(DateTimeOffset starred_at) => StarredAt = starred_at;
+
+	public DateTimeOffset StarredAt { get; }
+}
+
+public record StarGazersConnection(long TotalCount);

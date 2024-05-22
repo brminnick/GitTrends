@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
-namespace GitTrends.Shared
+namespace GitTrends.Shared;
+
+public record IssuesConnection
 {
-	public record IssuesConnection
-	{
-		public IssuesConnection(long totalCount, IEnumerable<Issue>? nodes) =>
-			(IssuesCount, IssueList) = (totalCount, (nodes ?? []).ToList());
+	public IssuesConnection(long totalCount, IEnumerable<Issue>? nodes) =>
+		(IssuesCount, IssueList) = (totalCount, (nodes ?? []).ToList());
 
-		[JsonProperty("nodes")]
-		public IReadOnlyList<Issue> IssueList { get; }
+	[JsonPropertyName("nodes")]
+	public IReadOnlyList<Issue> IssueList { get; }
 
-		[JsonProperty("totalCount")]
-		public long IssuesCount { get; }
-	}
+	[JsonPropertyName("totalCount")]
+	public long IssuesCount { get; }
 }

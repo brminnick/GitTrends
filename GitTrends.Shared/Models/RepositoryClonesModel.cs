@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace GitTrends.Shared
 {
@@ -12,7 +10,7 @@ namespace GitTrends.Shared
 			DailyClonesList = clones.ToList();
 		}
 
-		[JsonProperty("clones")]
+		[JsonPropertyName("clones")]
 		public List<DailyClonesModel> DailyClonesList { get; }
 	}
 }

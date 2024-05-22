@@ -1,47 +1,45 @@
-﻿using System;
-using System.Text;
-using Newtonsoft.Json;
+﻿using System.Text;
+using System.Text.Json.Serialization;
 
-namespace GitTrends.Shared
+namespace GitTrends.Shared;
+
+public record User
 {
-	public record User
+	public User(RepositoryConnection repositories, string name, string company, DateTimeOffset createdAt, string login, Uri avatarUrl)
 	{
-		public User(RepositoryConnection repositories, string name, string company, DateTimeOffset createdAt, string login, Uri avatarUrl)
-		{
-			RepositoryConnection = repositories;
-			Name = name;
-			Company = company;
-			AccountCreationDate = createdAt;
-			Alias = login;
-			AvatarUri = avatarUrl;
-		}
+		RepositoryConnection = repositories;
+		Name = name;
+		Company = company;
+		AccountCreationDate = createdAt;
+		Alias = login;
+		AvatarUri = avatarUrl;
+	}
 
-		[JsonProperty("repositories")]
-		public RepositoryConnection RepositoryConnection { get; }
+	[JsonPropertyName("repositories")]
+	public RepositoryConnection RepositoryConnection { get; }
 
-		[JsonProperty("name")]
-		public string Name { get; }
+	[JsonPropertyName("name")]
+	public string Name { get; }
 
-		[JsonProperty("company")]
-		public string Company { get; }
+	[JsonPropertyName("company")]
+	public string Company { get; }
 
-		[JsonProperty("createdAt")]
-		public DateTimeOffset AccountCreationDate { get; }
+	[JsonPropertyName("createdAt")]
+	public DateTimeOffset AccountCreationDate { get; }
 
-		[JsonProperty("login")]
-		public string Alias { get; }
+	[JsonPropertyName("login")]
+	public string Alias { get; }
 
-		[JsonProperty("avatarUrl")]
-		public Uri AvatarUri { get; }
+	[JsonPropertyName("avatarUrl")]
+	public Uri AvatarUri { get; }
 
-		public override string ToString()
-		{
-			var stringBuilder = new StringBuilder();
-			stringBuilder.AppendLine($"{nameof(Name)}: {Name}");
-			stringBuilder.AppendLine($"{nameof(Company)}: {Company}");
-			stringBuilder.AppendLine($"{nameof(AccountCreationDate)}: {AccountCreationDate}");
+	public override string ToString()
+	{
+		var stringBuilder = new StringBuilder();
+		stringBuilder.AppendLine($"{nameof(Name)}: {Name}");
+		stringBuilder.AppendLine($"{nameof(Company)}: {Company}");
+		stringBuilder.AppendLine($"{nameof(AccountCreationDate)}: {AccountCreationDate}");
 
-			return stringBuilder.ToString();
-		}
+		return stringBuilder.ToString();
 	}
 }

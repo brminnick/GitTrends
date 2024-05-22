@@ -1,28 +1,27 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
-namespace GitTrends.Shared
+namespace GitTrends.Shared;
+
+public record GitHubToken
 {
-	public record GitHubToken
-	{
-		public GitHubToken(string access_token, string scope, string token_type) =>
-			(AccessToken, Scope, TokenType) = (access_token, scope, token_type);
+	public GitHubToken(string access_token, string scope, string token_type) =>
+		(AccessToken, Scope, TokenType) = (access_token, scope, token_type);
 
-		public static GitHubToken Empty { get; } = new GitHubToken(string.Empty, string.Empty, string.Empty);
+	public static GitHubToken Empty { get; } = new GitHubToken(string.Empty, string.Empty, string.Empty);
 
-		[JsonProperty("access_token")]
-		public string AccessToken { get; }
+	[JsonPropertyName("access_token")]
+	public string AccessToken { get; }
 
-		[JsonProperty("scope")]
-		public string Scope { get; }
+	[JsonPropertyName("scope")]
+	public string Scope { get; }
 
-		[JsonProperty("token_type")]
-		public string TokenType { get; }
-	}
+	[JsonPropertyName("token_type")]
+	public string TokenType { get; }
+}
 
-	public static class GitHubTokenExtensions
-	{
-		public static bool IsEmpty(this GitHubToken gitHubToken) => gitHubToken.AccessToken == string.Empty
-																	&& gitHubToken.Scope == string.Empty
-																	&& gitHubToken.TokenType == string.Empty;
-	}
+public static class GitHubTokenExtensions
+{
+	public static bool IsEmpty(this GitHubToken gitHubToken) => gitHubToken.AccessToken == string.Empty
+																&& gitHubToken.Scope == string.Empty
+																&& gitHubToken.TokenType == string.Empty;
 }
