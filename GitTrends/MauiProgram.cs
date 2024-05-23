@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui;
+﻿using System.Diagnostics;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
@@ -9,15 +10,17 @@ using Plugin.StoreReview;
 using Plugin.StoreReview.Abstractions;
 using Polly;
 using Refit;
+using Sentry.Maui;
+using Sentry.Profiling;
 using Sharpnado.MaterialFrame;
 using Shiny;
 using Syncfusion.Maui.Core.Hosting;
 
 namespace GitTrends;
 
-public static partial class MauiProgram
+public static class MauiProgram
 {
-	public static MauiApp CreateMauiApp()
+	public static MauiApp CreateMauiApp(IAppInfo appInfo)
 	{
 		var builder = MauiApp.CreateBuilder();
 		builder
@@ -27,6 +30,7 @@ public static partial class MauiProgram
 			.UseMauiCommunityToolkit()
 			.UseMauiCommunityToolkitMarkup()
 			.UseMauiCommunityToolkitMediaElement()
+			.UseSentry(options => ConfigureSentryOptions(options, appInfo))
 			.ConfigureSyncfusionCore()
 			.ConfigureFonts(fonts =>
 			{
@@ -78,7 +82,6 @@ public static partial class MauiProgram
 	{
 		services.AddSingleton<App>();
 		services.AddSingleton<IAnalyticsService, AnalyticsService>();
-		services.AddSingleton<AnalyticsInitializationService>();
 		services.AddSingleton<AppInitializationService>();
 		services.AddSingleton<AppStoreConstants>();
 		services.AddSingleton<AzureFunctionsApiService>();
@@ -149,6 +152,54 @@ public static partial class MauiProgram
 																												where TViewModel : BaseViewModel
 	{
 		return services.AddTransientWithShellRoute<TPage, TViewModel>(AppShell.GetPageRoute<TViewModel>());
+	}
+
+
+	static void ConfigureSentryOptions(in SentryMauiOptions options, in IAppInfo appInfo)
+	{
+		// The DSN is the only required setting.
+		options.Dsn = "https://4e21564ab4374deb8b95da8a25dc2cca@o166840.ingest.us.sentry.io/6568237";
+		options.TracesSampleRate = 1.0;
+		options.IncludeTextInBreadcrumbs = true;
+		options.IncludeTitleInBreadcrumbs = true;
+		options.IncludeBackgroundingStateInBreadcrumbs = true;
+		options.StackTraceMode = StackTraceMode.Enhanced;
+		options.IsGlobalModeEnabled = true;
+		options.Release = appInfo.VersionString;
+		options.Distribution = appInfo.BuildString;
+		
+		options.TracesSampleRate = 1.0;
+		options.ProfilesSampleRate = 1.0;
+		options.AddIntegration(new ProfilingIntegration());
+
+		options.ExperimentalMetrics = new ExperimentalMetricsOptions
+		{
+			EnableCodeLocations = true
+		};
+
+		ConfigureDebugSentryOptions(options);
+		ConfigureReleaseSentryOptions(options);
+		ConfigureAppStoreSentryOptions(options);
+
+		[Conditional("DEBUG")]
+		static void ConfigureDebugSentryOptions(SentryMauiOptions options)
+		{
+			options.Debug = true;
+			options.Environment ="DEBUG"; 
+			options.DiagnosticLevel = SentryLevel.Debug;
+		}
+
+		[Conditional("RELEASE")]
+		static void ConfigureReleaseSentryOptions(SentryMauiOptions options)
+		{
+			options.Environment = "RELEASE"; 
+		}
+		
+		[Conditional("AppStore")]
+		static void ConfigureAppStoreSentryOptions(SentryMauiOptions options)
+		{
+			options.Environment = "AppStore"; 
+		}
 	}
 
 	sealed class MobileHttpRetryStrategyOptions : HttpRetryStrategyOptions

@@ -12,8 +12,7 @@ public class AppInitializationService(ThemeService themeService,
 										NotificationService notificationService,
 										BackgroundFetchService backgroundFetchService,
 										GitTrendsStatisticsService gitTrendsStatisticsService,
-										IDeviceNotificationsService deviceNotificationService,
-										AnalyticsInitializationService analyticsInitializationService)
+										IDeviceNotificationsService deviceNotificationService)
 {
 	static readonly WeakEventManager<InitializationCompleteEventArgs> _initializationCompletedEventManager = new();
 
@@ -27,7 +26,6 @@ public class AppInitializationService(ThemeService themeService,
 	readonly BackgroundFetchService _backgroundFetchService = backgroundFetchService;
 	readonly GitTrendsStatisticsService _gitTrendsStatisticsService = gitTrendsStatisticsService;
 	readonly IDeviceNotificationsService _deviceNotificationsService = deviceNotificationService;
-	readonly AnalyticsInitializationService _analyticsInitializationService = analyticsInitializationService;
 
 	public static event EventHandler<InitializationCompleteEventArgs> InitializationCompleted
 	{
@@ -51,19 +49,13 @@ public class AppInitializationService(ThemeService themeService,
 			#endregion
 
 			#region Then, Initialize Services Requiring API Response
-			// Initialize Analaytics Service First
-			var initializeAnalyticsInitializationServiceTask = _analyticsInitializationService.Initialize(cancellationToken);
-
 			var initializeSyncFusionServiceTask = _syncfusionService.Initialize(cancellationToken);
-			var intializeOnboardingChartValueTask = _mediaElementService.InitializeManifests(cancellationToken);
+			var initializeOnboardingChartValueTask = _mediaElementService.InitializeManifests(cancellationToken);
 			var initializeLibrariesServiceValueTask = _librariesService.Initialize(cancellationToken);
 			var initializeNotificationServiceValueTask = _notificationService.Initialize(cancellationToken);
 			var initializeGitTrendsStatisticsValueTask = _gitTrendsStatisticsService.Initialize(cancellationToken);
-
-			// Initialize Analaytics Service First
-			await initializeAnalyticsInitializationServiceTask.ConfigureAwait(false);
-
-			await intializeOnboardingChartValueTask.ConfigureAwait(false);
+			
+			await initializeOnboardingChartValueTask.ConfigureAwait(false);
 			await initializeGitTrendsStatisticsValueTask.ConfigureAwait(false);
 #if DEBUG
 			initializeSyncFusionServiceTask.SafeFireAndForget(ex => _analyticsService.Report(ex));

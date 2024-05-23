@@ -19,81 +19,81 @@
     <ApplicationTitle>GitTrends</ApplicationTitle>
 
     <!-- App Identifier -->
-    <ApplicationId>com.companyname.gittrends</ApplicationId>
+    <ApplicationId>com.minnick.gittrends</ApplicationId>
 
     <!-- Versions -->
     <ApplicationDisplayVersion>2.25.10</ApplicationDisplayVersion>
-    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationVersion>64</ApplicationVersion>
 
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">16.0</SupportedOSPlatformVersion>    
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">16.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">16.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</SupportedOSPlatformVersion>
     <TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">34</TargetPlatformVersion>
-  
-</PropertyGroup>
+
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <DefineConstants>AppStore</DefineConstants>
+    <NoWarn>1701;1702</NoWarn>
+    <NoStdLib>false</NoStdLib>
+  </PropertyGroup>
 
   <ItemGroup>
     <!-- App Icon -->
-    <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+    <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4"/>
 
     <!-- Splash Screen -->
-    <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+    <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128"/>
 
     <!-- Images -->
-    <MauiImage Include="Resources\Images\*" />
-    <MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
+    <MauiImage Include="Resources\Images\*"/>
+    <MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185"/>
 
     <!-- Custom Fonts -->
-    <MauiFont Include="Resources\Fonts\*" />
+    <MauiFont Include="Resources\Fonts\*"/>
 
     <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
-    <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="3.1.1" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.5.0" />
-    <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiPackageVersion)" />
-    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiPackageVersion)" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="CommunityToolkit.Maui" Version="9.0.0" />
-    <PackageReference Include="CommunityToolkit.Maui.Markup" Version="4.0.0" />
-    <PackageReference Include="Plugin.StoreReview" Version="6.2.0" />
-    <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
-    <PackageReference Include="Sharpnado.MaterialFrame.Maui" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
-    <PackageReference Include="Shiny.Hosting.Maui" Version="3.3.3" />
-    <PackageReference Include="Shiny.Jobs" Version="3.3.3" />
-    <PackageReference Include="Shiny.Notifications" Version="3.3.3" />
-    <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.8" />
-    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.8" />
-    <PackageReference Include="Syncfusion.Maui.Charts" Version="25.2.5" />
+    <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="3.1.1"/>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.61"/>
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.5.0"/>
+    <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiPackageVersion)"/>
+    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiPackageVersion)"/>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2"/>
+    <PackageReference Include="CommunityToolkit.Maui" Version="9.0.0"/>
+    <PackageReference Include="CommunityToolkit.Maui.Markup" Version="4.0.0"/>
+    <PackageReference Include="Plugin.StoreReview" Version="6.2.0"/>
+    <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0"/>
+    <PackageReference Include="Sentry.Maui" Version="4.6.2"/>
+    <PackageReference Include="Sentry.Profiling" Version="4.6.2"/>
+    <PackageReference Include="Sharpnado.MaterialFrame.Maui" Version="2.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0"/>
+    <PackageReference Include="Shiny.Hosting.Maui" Version="3.3.3"/>
+    <PackageReference Include="Shiny.Jobs" Version="3.3.3"/>
+    <PackageReference Include="Shiny.Notifications" Version="3.3.3"/>
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.8"/>
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172"/>
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.8"/>
+    <PackageReference Include="Syncfusion.Maui.Charts" Version="25.2.5"/>
   </ItemGroup>
 
   <ItemGroup>
-    <EditorConfigFiles Remove="C:\GitHub\GitTrends\GitTrends\.editorconfig" />
+    <None Remove="Platforms\Android\linker.xml"/>
+    <LinkDescription Include="Platforms\Android\linker.xml"/>
+    <ProguardConfiguration Include="Platforms\Android\proguard.cfg"/>
+    <EditorConfigFiles Remove="C:\GitHub\GitTrends\GitTrends\.editorconfig"/>
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Platforms\Android\linker.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <LinkDescription Include="Platforms\Android\linker.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProguardConfiguration Include="Platforms\Android\proguard.cfg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj" />
+    <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj"/>
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-    <BundleResource Include="Platforms\iOS\PrivacyInfo.xcprivacy" LogicalName="PrivacyInfo.xcprivacy" />
+    <BundleResource Include="Platforms\iOS\PrivacyInfo.xcprivacy" LogicalName="PrivacyInfo.xcprivacy"/>
   </ItemGroup>
 
 </Project>

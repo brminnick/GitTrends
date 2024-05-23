@@ -5,18 +5,39 @@ using GitTrends.Shared;
 
 namespace GitTrends;
 
-public class AnalyticsService : IAnalyticsService
+public class AnalyticsService(SentryClient client) : IAnalyticsService
 {
-	public bool Configured => throw new NotImplementedException();
+	readonly ISentryClient _client = client;
 
-	public void Start(string apiKey) =>
-		throw new NotImplementedException();
+	public bool Configured => _client.IsEnabled;
 
-	public void Track(string trackIdentifier, IDictionary<string, string>? table = null) =>
-		throw new NotImplementedException();
+	public void Track(string trackIdentifier, IDictionary<string, string>? table = null)
+	{
+		var sentryEvent = new SentryEvent
+		{
+			TransactionName = trackIdentifier
+		};
 
-	public void Track(string trackIdentifier, string key, string value) =>
-		throw new NotImplementedException();
+		if (table is not null)
+		{
+			foreach (var keyValuePair in table)
+			{
+				sentryEvent.SetExtra(keyValuePair.Key, keyValuePair.Value);
+			}
+		}
+
+		_client.CaptureEvent(sentryEvent);
+	}
+
+	public void Track(string trackIdentifier, string key, string value)
+	{
+		Track(trackIdentifier, new Dictionary<string, string>
+		{
+			{
+				key, value
+			}
+		});
+	}
 
 	public ITimedEvent TrackTime(string trackIdentifier, IDictionary<string, string>? table = null) =>
 		new TimedEvent(this, trackIdentifier, table);
@@ -42,7 +63,7 @@ public class AnalyticsService : IAnalyticsService
 	{
 		PrintException(exception, callerMemberName, lineNumber, filePath, properties);
 
-		throw new NotImplementedException();
+		_client.CaptureException(exception);
 	}
 
 	[Conditional("DEBUG")]
