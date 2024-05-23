@@ -1,4 +1,6 @@
-﻿namespace GitTrends;
+﻿using System.Collections;
+
+namespace GitTrends;
 
 static class MauiService
 {
@@ -11,6 +13,8 @@ static class MauiService
 	public static double ScreenWidth { get; } = DeviceDisplay.MainDisplayInfo.Width / DeviceDisplay.MainDisplayInfo.Density;
 	public static double ScreenHeight { get; } = DeviceDisplay.MainDisplayInfo.Height / DeviceDisplay.MainDisplayInfo.Density;
 	public static bool IsSmallScreen { get; } = ScreenWidth <= 360;
+	
+	public static bool IsNullOrEmpty(this IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
 
 	public static void SetSelectedStateBackgroundColor(this VisualElement visualElement, Color color)
 	{

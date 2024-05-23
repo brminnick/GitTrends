@@ -1,5 +1,4 @@
-﻿using System.Net;
-using CommunityToolkit.Maui;
+﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
@@ -27,6 +26,7 @@ public static partial class MauiProgram
 			.UseShiny()
 			.UseMauiCommunityToolkit()
 			.UseMauiCommunityToolkitMarkup()
+			.UseMauiCommunityToolkitMediaElement()
 			.ConfigureSyncfusionCore()
 			.ConfigureFonts(fonts =>
 			{
@@ -70,6 +70,7 @@ public static partial class MauiProgram
 		services.AddSingleton<ILauncher>(Launcher.Default);
 		services.AddSingleton<IPreferences>(Preferences.Default);
 		services.AddSingleton<ISecureStorage>(SecureStorage.Default);
+		services.AddSingleton<IStoreReview>(CrossStoreReview.Current);
 		services.AddSingleton<IVersionTracking>(VersionTracking.Default);
 	}
 
@@ -103,10 +104,6 @@ public static partial class MauiProgram
 		services.AddSingleton<SyncfusionService>();
 		services.AddSingleton<ThemeService>();
 		services.AddSingleton<TrendsChartSettingsService>();
-		services.AddSingleton<IStoreReview>(CrossStoreReview.Current);
-#if !AppStore
-		// #ToDo Register UI Test Service
-#endif
 	}
 
 	static void RegisterPagesAndViewModels(in IServiceCollection services)

@@ -475,14 +475,14 @@ public partial class TrendsViewModel : BaseViewModel
 	[Conditional("DEBUG")]
 	void PrintDays()
 	{
-		Debug.WriteLine("Clones");
+		Trace.WriteLine("Clones");
 		foreach (var cloneDay in DailyClonesList.Select(static x => x.Day))
-			Debug.WriteLine(cloneDay);
+			Trace.WriteLine(cloneDay);
 
 		Debug.WriteLine("");
 
 		Debug.WriteLine("Views");
 		foreach (var viewDay in DailyViewsList.Select(static x => x.Day))
-			Debug.WriteLine(viewDay);
+			Trace.WriteLine(viewDay);
 	}
 }

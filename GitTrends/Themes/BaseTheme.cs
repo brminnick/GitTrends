@@ -1,4 +1,5 @@
-﻿using Sharpnado.MaterialFrame;
+﻿using GitTrends.Resources;
+using Sharpnado.MaterialFrame;
 
 namespace GitTrends;
 
@@ -82,9 +83,9 @@ public abstract class BaseTheme : ResourceDictionary
 		Add(nameof(MaterialFrameTheme), MaterialFrameTheme);
 	}
 
-	public static string GetGitTrendsImageSource() => (string)(Application.Current?.Resources?[nameof(GitTrendsImageSource)] ?? "GitTrends");
-	public static string GetDefaultProfileImageSource() => (string)(Application.Current?.Resources?[nameof(DefaultProfileImageSource)] ?? "DefaultProfileImage");
-	public static string GetDefaultReferringSiteImageSource() => (string)(Application.Current?.Resources?[nameof(DefaultReferringSiteImageSource)] ?? "DefaultReferringSiteImage");
+	public static string GetGitTrendsImageSource() => AppResources.GetResource(nameof(GitTrendsImageSource), "GitTrends");
+	public static string GetDefaultProfileImageSource() => AppResources.GetResource(nameof(DefaultProfileImageSource), "DefaultProfileImage");
+	public static string GetDefaultReferringSiteImageSource() => AppResources.GetResource(nameof(DefaultReferringSiteImageSource), "DefaultReferringSiteImage");
 
 	public abstract Color NavigationBarBackgroundColor { get; }
 	public abstract Color NavigationBarTextColor { get; }

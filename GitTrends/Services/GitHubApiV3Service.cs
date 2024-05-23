@@ -78,7 +78,7 @@ public class GitHubApiV3Service(IGitHubApiV3 gitHubApiV3,
 		var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
 
 		if (!_gitHubUserService.IsAuthenticated)
-			return await _githubApiClient.GetGitHubApiResponse_Unauthenticated(GetGitHubBearerTokenHeader(token), cancellationToken).ConfigureAwait(false);
+			return await _githubApiClient.GetGitHubApiResponse_Unauthenticated(cancellationToken, GetGitHubBearerTokenHeader(token)).ConfigureAwait(false);
 
 		return await _githubApiClient.GetGitHubApiResponse_Authenticated(GetGitHubBearerTokenHeader(token), cancellationToken).ConfigureAwait(false);
 	}

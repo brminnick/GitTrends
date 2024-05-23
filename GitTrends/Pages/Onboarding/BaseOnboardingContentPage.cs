@@ -1,10 +1,9 @@
 ﻿using GitTrends.Mobile.Common;
 using GitTrends.Shared;
-using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
-using static GitTrends.XamarinFormsService;
-using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+using CommunityToolkit.Maui.Markup;
+using CommunityToolkit.Maui.Markup;
+using static GitTrends.MauiService;
+using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -13,10 +12,9 @@ namespace GitTrends
 		protected BaseOnboardingContentPage(in string nextButtonText,
 											in IDeviceInfo deviceInfo,
 											in Color backgroundColor,
-											in IMainThread mainThread,
 											in int carouselPositionIndex,
 											in IAnalyticsService analyticsService,
-											in MediaElementService mediaElementService) : base(analyticsService, mainThread)
+											in MediaElementService mediaElementService) : base(analyticsService)
 		{
 			DeviceInfo = deviceInfo;
 			MediaElementService = mediaElementService;
@@ -94,14 +92,14 @@ namespace GitTrends
 			return Device.RuntimePlatform is Device.iOS ? 2 : 9;
 		}
 
-		class NextLabel : Label
+		sealed class NextLabel : Label
 		{
 			public NextLabel(in string text)
 			{
 				Text = text;
 				FontSize = 15;
-				TextColor = Color.White;
-				BackgroundColor = Color.Transparent;
+				TextColor = Colors.White;
+				BackgroundColor = Colors.Transparent;
 				FontFamily = FontFamilyConstants.RobotoRegular;
 
 				Opacity = 0.8;
@@ -120,13 +118,7 @@ namespace GitTrends
 			}
 		}
 
-		protected class BodySvg : SvgImage
-		{
-			public BodySvg(in string svgFileName) : base(svgFileName, () => Color.White, 24, 24)
-			{
-
-			}
-		}
+		protected class BodySvg(in string svgFileName) : SvgImage(svgFileName, () => Colors.White, 24, 24);
 
 		protected class TitleLabel : Label
 		{
@@ -134,7 +126,7 @@ namespace GitTrends
 			{
 				Text = text;
 				FontSize = 34;
-				TextColor = Color.White;
+				TextColor = Colors.White;
 				LineHeight = 1.12;
 				FontFamily = FontFamilyConstants.RobotoBold;
 				AutomationId = OnboardingAutomationIds.TitleLabel;
@@ -147,7 +139,7 @@ namespace GitTrends
 			{
 				Text = text;
 				FontSize = 15;
-				TextColor = Color.White;
+				TextColor = Colors.White;
 				LineHeight = 1.021;
 				LineBreakMode = LineBreakMode.WordWrap;
 				FontFamily = FontFamilyConstants.RobotoRegular;
@@ -157,7 +149,7 @@ namespace GitTrends
 
 		class OpacityOverlay : View
 		{
-			public OpacityOverlay() => BackgroundColor = Color.White.MultiplyAlpha(0.25);
+			public OpacityOverlay() => BackgroundColor = Colors.White.MultiplyAlpha(0.25f);
 		}
 
 		class OnboardingIndicatorView : IndicatorView
@@ -168,8 +160,8 @@ namespace GitTrends
 
 				IsEnabled = false;
 
-				SelectedIndicatorColor = Color.White;
-				IndicatorColor = Color.White.MultiplyAlpha(0.25);
+				SelectedIndicatorColor = Colors.White;
+				IndicatorColor = Colors.White.MultiplyAlpha(0.25f);
 
 				Margin = new Thickness(30, 0, 0, 0);
 

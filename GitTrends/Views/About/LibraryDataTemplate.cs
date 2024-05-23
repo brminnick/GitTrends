@@ -1,23 +1,17 @@
 ﻿using GitTrends.Shared;
-using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Forms;
-using static GitTrends.XamarinFormsService;
-using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+using CommunityToolkit.Maui.Markup;
+using static GitTrends.MauiService;
+using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-	class LibraryDataTemplate : DataTemplate
+	class LibraryDataTemplate() : DataTemplate(CreateLibraryDataTemplate)
 	{
 		const int _rowSpacing = 4;
 		const int _loginTextHeight = 24;
 		const int _textPadding = 8;
 
 		static readonly int _circleDiameter = IsSmallScreen ? 54 : 64;
-
-		public LibraryDataTemplate() : base(CreateLibraryDataTemplate)
-		{
-
-		}
 
 		public static int RowHeight { get; } = _rowSpacing + _circleDiameter + _loginTextHeight;
 
@@ -40,12 +34,12 @@ namespace GitTrends
 
 			Children =
 			{
-				new AvatarImage(_circleDiameter){ BackgroundColor = Color.White, Padding = 12 }.FillExpand()
+				new AvatarImage(_circleDiameter){ BackgroundColor = Colors.White, Padding = 12 }.Fill()
 					.Row(Row.Avatar).Column(Column.Image)
 					.Bind(CircleImage.ImageSourceProperty, nameof(NuGetPackageModel.IconUri), BindingMode.OneTime)
 					.DynamicResource(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
 
-				new Label { LineBreakMode = LineBreakMode.TailTruncation }.FillExpandHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, IsSmallScreen ? 10 : 12)
+				new Label { LineBreakMode = LineBreakMode.TailTruncation }.FillHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, IsSmallScreen ? 10 : 12)
 					.Row(Row.Login).Column(Column.LeftText).ColumnSpan(3)
 					.Bind(Label.TextProperty, nameof(NuGetPackageModel.PackageName), BindingMode.OneTime)
 					.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))

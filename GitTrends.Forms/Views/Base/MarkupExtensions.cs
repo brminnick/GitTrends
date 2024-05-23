@@ -11,7 +11,7 @@ namespace GitTrends
 		public static double GetWidth(this View view, in RelativeLayout parent) => view.Measure(parent.Width, parent.Height).Request.Width;
 		public static double GetHeight(this View view, in RelativeLayout parent) => view.Measure(parent.Width, parent.Height).Request.Height;
 
-		public static bool IsNullOrEmpty(this IEnumerable? enumerable) => !enumerable?.GetEnumerator().MoveNext() ?? true;
+		
 
 		public static RelativeLayout RelativeLayout(params ConstrainedView?[] constrainedViews)
 		{

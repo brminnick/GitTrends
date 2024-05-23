@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AsyncAwaitBestPractices;
-using Autofac;
+﻿using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
-using Shiny;
-using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
-using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+using CommunityToolkit.Maui.Markup;
+using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -25,13 +17,13 @@ namespace GitTrends
 		readonly GitHubUserService _gitHubUserService;
 		readonly DeepLinkingService _deepLinkingService;
 
-		public RepositoryPage(IMainThread mainThread,
+		public RepositoryPage(IDeviceInfo deviceInfo,
 								FirstRunService firstRunService,
 								IAnalyticsService analyticsService,
 								GitHubUserService gitHubUserService,
 								DeepLinkingService deepLinkingService,
 								RepositoryViewModel repositoryViewModel,
-								MobileSortingService mobileSortingService) : base(repositoryViewModel, analyticsService, mainThread)
+								MobileSortingService mobileSortingService) : base(repositoryViewModel, analyticsService)
 		{
 			_firstRunService = firstRunService;
 			_gitHubUserService = gitHubUserService;
@@ -46,8 +38,8 @@ namespace GitTrends
 			ToolbarItems.Add(new ToolbarItem
 			{
 				Text = PageTitles.SettingsPage,
-				IconImageSource = Device.RuntimePlatform is Device.iOS ? "Settings" : null,
-				Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
+				IconImageSource = deviceInfo.Platform == DevicePlatform.iOS ? "Settings" : null,
+				Order = deviceInfo.Platform == DevicePlatform.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
 				AutomationId = RepositoryPageAutomationIds.SettingsButton,
 				Command = new AsyncRelayCommand(ExecuteSetttingsToolbarItemCommand)
 			});
@@ -84,11 +76,11 @@ namespace GitTrends
 						Content = new CollectionView
 						{
 							ItemTemplate = new RepositoryDataTemplateSelector(mobileSortingService),
-							BackgroundColor = Color.Transparent,
+							BackgroundColor = Colors.Transparent,
 							AutomationId = RepositoryPageAutomationIds.CollectionView,
                             //Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
-                            Header = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.BottomPadding } : null,
-							Footer = Device.RuntimePlatform is Device.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.TopPadding } : null,
+                            Header = deviceInfo.Platform == DevicePlatform.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.BottomPadding } : null,
+							Footer = deviceInfo.Platform == DevicePlatform.Android ? new BoxView { HeightRequest = BaseRepositoryDataTemplate.TopPadding } : null,
 							EmptyView = new EmptyDataView("EmptyRepositoriesList", RepositoryPageAutomationIds.EmptyDataView)
 											.Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(RepositoryViewModel.IsRefreshing), convert: static  isRefreshing => !isRefreshing)
 											.Bind(EmptyDataView.TitleProperty, nameof(RepositoryViewModel.EmptyDataViewTitle))
@@ -101,7 +93,7 @@ namespace GitTrends
 					 .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.ExecuteRefreshCommand))
 					 .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor)),
 
-					new InformationButton(mobileSortingService, mainThread, analyticsService).Row(Row.Information).Column(Column.Information)
+					new InformationButton(mobileSortingService, analyticsService).Row(Row.Information).Column(Column.Information)
 				}
 			};
 		}
@@ -157,23 +149,23 @@ namespace GitTrends
 
 		async Task NavigateToWelcomePage()
 		{
-			var welcomePage = ContainerService.Container.Resolve<WelcomePage>();
+			var welcomePage = IPlatformApplication.Current?.Services.GetRequiredService<WelcomePage>();
 
 			//Allow RepositoryPage to appear briefly before loading 
 			await Task.Delay(TimeSpan.FromMilliseconds(250));
-			await MainThread.InvokeOnMainThreadAsync(() => Navigation.PushModalAsync(welcomePage));
+			await Dispatcher.DispatchAsync(() => Navigation.PushModalAsync(welcomePage));
 		}
 
 		Task NavigateToSettingsPage()
 		{
-			var settingsPage = ContainerService.Container.Resolve<SettingsPage>();
-			return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(settingsPage));
+			var settingsPage = IPlatformApplication.Current?.Services.GetRequiredService<SettingsPage>();
+			return Dispatcher.DispatchAsync(() => Navigation.PushAsync(settingsPage));
 		}
 
 		Task NavigateToTrendsPage(in Repository repository)
 		{
-			var trendsCarouselPage = ContainerService.Container.Resolve<TrendsCarouselPage>(new TypedParameter(typeof(Repository), repository));
-			return MainThread.InvokeOnMainThreadAsync(() => Navigation.PushAsync(trendsCarouselPage));
+			var trendsCarouselPage = IPlatformApplication.Current?.Services.GetRequiredService<TrendsCarouselPage>();
+			return Dispatcher.DispatchAsync(() => Navigation.PushAsync(trendsCarouselPage));
 		}
 
 		Task ExecuteSetttingsToolbarItemCommand()
@@ -193,10 +185,10 @@ namespace GitTrends
 				BindingContext.SortRepositoriesCommand.Execute(MobileSortingService.SortingOptionsDictionary.First(x => x.Value == selection).Key);
 		}
 
-		async void HandlePullToRefreshFailed(object sender, PullToRefreshFailedEventArgs eventArgs) => await MainThread.InvokeOnMainThreadAsync(async () =>
+		async void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs eventArgs) => await Dispatcher.DispatchAsync(async () =>
 		{
 			if (Application.Current is App
-				&& !Application.Current.MainPage.Navigation.ModalStack.Any()
+				&& !Application.Current.MainPage?.Navigation.ModalStack.Any() is true
 				&& Application.Current.MainPage.Navigation.NavigationStack.Last() is RepositoryPage)
 			{
 				switch (eventArgs)
@@ -204,13 +196,13 @@ namespace GitTrends
 					case MaximumApiRequestsReachedEventArgs:
 						var isAccepted = await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Accept, eventArgs.Cancel);
 						if (isAccepted)
-							await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs);
+							await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs, CancellationToken.None);
 						break;
 
 					case AbuseLimitPullToRefreshEventArgs when _gitHubUserService.GitHubApiAbuseLimitCount <= 1:
 						var isAlertAccepted = await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Accept, eventArgs.Cancel);
 						if (isAlertAccepted)
-							await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubApiAbuseDocs);
+							await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubApiAbuseDocs, CancellationToken.None);
 						break;
 
 					case AbuseLimitPullToRefreshEventArgs:
@@ -232,7 +224,7 @@ namespace GitTrends
 			}
 		});
 
-		void HandlePreferredLanguageChanged(object sender, string? e)
+		void HandlePreferredLanguageChanged(object? sender, string? e)
 		{
 			var sortItem = ToolbarItems.First(static x => x.AutomationId is RepositoryPageAutomationIds.SortButton);
 			var settingsItem = ToolbarItems.First(static x => x.AutomationId is RepositoryPageAutomationIds.SettingsButton);
@@ -241,7 +233,7 @@ namespace GitTrends
 			settingsItem.Text = PageTitles.SettingsPage;
 		}
 
-		void HandleSearchBarTextChanged(object sender, string searchBarText) => BindingContext.SetSearchBarTextCommand.Execute(searchBarText);
+		void HandleSearchBarTextChanged(object? sender, string searchBarText) => BindingContext.SetSearchBarTextCommand.Execute(searchBarText);
 
 		void ISearchPage.OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.RaiseEvent(this, text, nameof(SearchBarTextChanged));
 	}

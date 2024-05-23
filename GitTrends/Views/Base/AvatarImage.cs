@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Markup;
+using Microsoft.Maui.Controls.Shapes;
 
 namespace GitTrends;
 
@@ -14,11 +15,11 @@ class AvatarImage : CircleImage
 		this.Center();
 
 		WidthRequest = HeightRequest = diameter;
+		BorderColor = Colors.Black;
 
-		Border = new Border
+		StrokeShape = new RoundRectangle
 		{
-			Thickness = 1,
-			Color = Color.Black
+			StrokeThickness = 1
 		};
 	}
 }

@@ -1,32 +1,26 @@
 ﻿using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
-using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
-using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+using CommunityToolkit.Maui.Markup;
+using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
 	public class GitTrendsOnboardingPage : BaseOnboardingContentPage
 	{
 		public GitTrendsOnboardingPage(IDeviceInfo deviceInfo,
-										IMainThread mainThread,
 										IAnalyticsService analyticsService,
 										MediaElementService mediaElementService)
-			: base(OnboardingConstants.SkipText, deviceInfo, Color.FromHex(BaseTheme.LightTealColorHex), mainThread, 0, analyticsService, mediaElementService)
+			: base(OnboardingConstants.SkipText, deviceInfo, Color.FromArgb(BaseTheme.LightTealColorHex), 0, analyticsService, mediaElementService)
 		{
 		}
 
 		enum Row { Title, Connect, MonitorImage, MonitorDescription, Discover }
 		enum Column { Image, Description }
 
-		protected override View CreateImageView() => new Image
-		{
-			Source = "GitTrendsWhite"
-		}.Center();
+		protected override View CreateImageView() => new Image { Source = "GitTrendsWhite" }.Center();
 
-		protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.GitTrendsPage_Title);
+		protected override TitleLabel CreateDescriptionTitleLabel() => new(OnboardingConstants.GitTrendsPage_Title);
 
 		protected override View CreateDescriptionBodyView() => new ScrollView
 		{
@@ -61,13 +55,13 @@ namespace GitTrends
 			}
 		};
 
-		class GitHubLogoLabel : Label
+		sealed class GitHubLogoLabel : Label
 		{
 			public GitHubLogoLabel()
 			{
 				Text = FontAwesomeBrandsConstants.GitHubOctocat;
 				FontSize = 24;
-				TextColor = Color.White;
+				TextColor = Colors.White;
 				FontFamily = FontFamilyConstants.FontAwesomeBrands;
 				VerticalTextAlignment = TextAlignment.Center;
 				HorizontalTextAlignment = TextAlignment.Center;

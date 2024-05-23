@@ -1,6 +1,6 @@
-﻿using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Forms;
-using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+﻿using CommunityToolkit.Maui.Markup;
+using CommunityToolkit.Maui.Views;
+using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -26,9 +26,9 @@ namespace GitTrends
 							.Bind(ActivityIndicator.IsVisibleProperty, nameof(IsActivityIndicatorVisible), source: this)
 							.Bind(ActivityIndicator.IsRunningProperty, nameof(IsActivityIndicatorRunning), source: this));
 
-			Children.Add(new VideoPlayerView(uri)
+			Children.Add(new MediaElement()
 							.Row(Row.Video)
-							.Bind(VideoPlayerView.UrlProperty, nameof(Url), source: this));
+							.Bind(MediaElement.SourceProperty, nameof(Url), source: this));
 		}
 
 		enum Row { Video }

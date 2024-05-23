@@ -264,6 +264,9 @@ public class NotificationService
 																				NotificationConstants.HandleNotification_SingleTrendingRepository_Accept,
 																				NotificationConstants.HandleNotification_SingleTrendingRepository_Decline,
 																				token).ConfigureAwait(false);
+			
+			if(shouldNavigateToChart is null)
+				throw new InvalidOperationException($"{nameof(shouldNavigateToChart)} cannot be null");
 
 			_analyticsService.Track("Single Trending Repository Prompt Displayed", nameof(shouldNavigateToChart), shouldNavigateToChart.Value.ToString());
 

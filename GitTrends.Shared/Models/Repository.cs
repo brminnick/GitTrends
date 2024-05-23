@@ -4,9 +4,9 @@ namespace GitTrends.Shared;
 
 public record Repository : IRepository
 {
-	IReadOnlyList<DateTimeOffset>? _starredAt;
-	IReadOnlyList<DailyViewsModel>? _dailyViewsList;
-	IReadOnlyList<DailyClonesModel>? _dailyClonesList;
+	readonly IReadOnlyList<DateTimeOffset>? _starredAt;
+	readonly IReadOnlyList<DailyViewsModel>? _dailyViewsList;
+	readonly IReadOnlyList<DailyClonesModel>? _dailyClonesList;
 
 	public Repository(string name,
 						string description,

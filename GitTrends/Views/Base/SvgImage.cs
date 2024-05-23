@@ -5,7 +5,7 @@ using CommunityToolkit.Maui.Behaviors;
 
 namespace GitTrends;
 
-public partial class SvgImage : Image
+public class SvgImage : Image
 {
 	public static readonly BindableProperty GetColorProperty =
 		BindableProperty.Create(nameof(GetColor), typeof(Func<Color>), typeof(SvgImage), () => Colors.Transparent, propertyChanged: HandleGetTextColorPropertyChanged);

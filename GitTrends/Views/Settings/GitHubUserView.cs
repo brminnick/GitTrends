@@ -1,7 +1,6 @@
 ﻿using GitTrends.Mobile.Common;
-using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Forms;
-using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+using CommunityToolkit.Maui.Markup;
+using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -40,7 +39,7 @@ namespace GitTrends
 
 		enum Row { Image, Name, Alias }
 
-		class GitHubAvatarImage : CircleImage
+		sealed class GitHubAvatarImage : CircleImage
 		{
 			public GitHubAvatarImage()
 			{
@@ -56,7 +55,7 @@ namespace GitTrends
 			}
 		}
 
-		class NameLabel : Label
+		sealed class NameLabel : Label
 		{
 			public NameLabel()
 			{
@@ -73,7 +72,7 @@ namespace GitTrends
 			}
 		}
 
-		class AliasLabel : Label
+		sealed class AliasLabel : Label
 		{
 			public AliasLabel()
 			{
@@ -91,7 +90,7 @@ namespace GitTrends
 			}
 		}
 
-		class TryDemoButton : Button
+		sealed class TryDemoButton : Button
 		{
 			public TryDemoButton()
 			{
@@ -111,7 +110,7 @@ namespace GitTrends
 			}
 		}
 
-		class IsAuthenticatingActivityIndicator : ActivityIndicator
+		sealed class IsAuthenticatingActivityIndicator : ActivityIndicator
 		{
 			public IsAuthenticatingActivityIndicator()
 			{

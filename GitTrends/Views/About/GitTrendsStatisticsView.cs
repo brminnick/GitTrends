@@ -1,126 +1,121 @@
-﻿using System;
-using GitTrends.Mobile.Common;
+﻿using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using SkiaSharp;
-using SkiaSharp.Views.Forms;
-using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Forms;
-using static GitTrends.XamarinFormsService;
-using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+using SkiaSharp.Views.Maui;
+using CommunityToolkit.Maui.Markup;
+using GitTrends.Resources;
+using SkiaSharp.Views.Maui.Controls;
+using static GitTrends.MauiService;
+using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
-namespace GitTrends
+namespace GitTrends;
+
+class GitTrendsStatisticsView : HorizontalStackLayout
 {
-	class GitTrendsStatisticsView : StackLayout
+	const int _separatorWidth = 2;
+
+	public GitTrendsStatisticsView()
 	{
-		const int _separatorWidth = 2;
+		this.Center();
 
-		public GitTrendsStatisticsView()
+		Spacing = 12;
+
+		Children.Add(new StatisticsGrid(AboutPageConstants.Watching, "unique_views.svg", AboutPageAutomationIds.WatchersLabel, nameof(AboutViewModel.Watchers)));
+		Children.Add(new DashedLineSeparator());
+		Children.Add(new StatisticsGrid(AboutPageConstants.Stars, "star.svg", AboutPageAutomationIds.StarsLabel, nameof(AboutViewModel.Stars)));
+		Children.Add(new DashedLineSeparator());
+		Children.Add(new StatisticsGrid(AboutPageConstants.Forks, "repo_forked.svg", AboutPageAutomationIds.ForksLabel, nameof(AboutViewModel.Forks)));
+	}
+
+	class StatisticsGrid : Grid
+	{
+		public StatisticsGrid(in string title, in string svgFileName, in string automationId, in string bindingPath)
 		{
-			this.Center();
+			RowDefinitions = Rows.Define(
+				(Row.Title, IsSmallScreen ? 12 : 16),
+				(Row.Number, IsSmallScreen ? 16 : 20));
 
-			Spacing = 12;
+			Children.Add(new StatsTitleLayout(title, svgFileName, () => AppResources.GetResource<Color>(nameof(BaseTheme.SettingsLabelTextColor)))
+				.Row(Row.Title));
 
-			Orientation = StackOrientation.Horizontal;
-
-			Children.Add(new StatisticsGrid(AboutPageConstants.Watching, "unique_views.svg", AboutPageAutomationIds.WatchersLabel, nameof(AboutViewModel.Watchers)));
-			Children.Add(new DashedLineSeparator());
-			Children.Add(new StatisticsGrid(AboutPageConstants.Stars, "star.svg", AboutPageAutomationIds.StarsLabel, nameof(AboutViewModel.Stars)));
-			Children.Add(new DashedLineSeparator());
-			Children.Add(new StatisticsGrid(AboutPageConstants.Forks, "repo_forked.svg", AboutPageAutomationIds.ForksLabel, nameof(AboutViewModel.Forks)));
+			Children.Add(new StatisticsLabel(automationId)
+				.Row(Row.Number)
+				.Bind<Label, long?, string>(Label.TextProperty, bindingPath, BindingMode.OneTime, convert: static number => number.HasValue ? number.Value.ToAbbreviatedText() : "-"));
 		}
 
-		class StatisticsGrid : Grid
+		enum Row { Title, Number }
+
+		class StatsTitleLayout : StackLayout
 		{
-			public StatisticsGrid(in string title, in string svgFileName, in string automationId, in string bindingPath)
+			public StatsTitleLayout(in string text, in string svgFileName, in Func<Color> getTextColor)
 			{
-				RowDefinitions = Rows.Define(
-					(Row.Title, IsSmallScreen ? 12 : 16),
-					(Row.Number, IsSmallScreen ? 16 : 20));
+				Spacing = 2;
+				Orientation = StackOrientation.Horizontal;
 
-				Children.Add(new StatsTitleLayout(title, svgFileName, () => (Color)Application.Current.Resources[nameof(BaseTheme.SettingsLabelTextColor)])
-								.Row(Row.Title));
+				HorizontalOptions = LayoutOptions.Center;
 
-				Children.Add(new StatisticsLabel(automationId)
-								.Row(Row.Number)
-								.Bind<Label, long?, string>(Label.TextProperty, bindingPath, BindingMode.OneTime, convert: static number => number.HasValue ? number.Value.ToAbbreviatedText() : "-"));
+				Children.Add(new AboutPageSvgImage(svgFileName, getTextColor));
+				Children.Add(new StatsTitleLabel(text));
 			}
 
-			enum Row { Title, Number }
-
-			class StatsTitleLayout : StackLayout
+			class AboutPageSvgImage : SvgImage
 			{
-				public StatsTitleLayout(in string text, in string svgFileName, in Func<Color> getTextColor)
+				public AboutPageSvgImage(in string svgFileName, in Func<Color> getTextColor) : base(svgFileName, getTextColor, 12, 12)
 				{
-					Spacing = 2;
-					Orientation = StackOrientation.Horizontal;
-
-					HorizontalOptions = LayoutOptions.Center;
-
-					Children.Add(new AboutPageSvgImage(svgFileName, getTextColor));
-					Children.Add(new StatsTitleLabel(text));
-				}
-
-				class AboutPageSvgImage : SvgImage
-				{
-					public AboutPageSvgImage(in string svgFileName, in Func<Color> getTextColor) : base(svgFileName, getTextColor, 12, 12)
-					{
-						HorizontalOptions = LayoutOptions.End;
-						VerticalOptions = LayoutOptions.Center;
-					}
-				}
-
-				class StatsTitleLabel : Label
-				{
-					public StatsTitleLabel(in string text)
-					{
-						Text = text;
-						LineBreakMode = LineBreakMode.TailTruncation;
-
-						this.TextStart().TextCenterVertical().FillExpand().Font(FontFamilyConstants.RobotoMedium, IsSmallScreen ? 8 : 12).DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
-					}
+					HorizontalOptions = LayoutOptions.End;
+					VerticalOptions = LayoutOptions.Center;
 				}
 			}
 
-			class StatisticsLabel : Label
+			class StatsTitleLabel : Label
 			{
-				public StatisticsLabel(in string automationId)
+				public StatsTitleLabel(in string text)
 				{
-					AutomationId = automationId;
+					Text = text;
+					LineBreakMode = LineBreakMode.TailTruncation;
 
-					FontSize = IsSmallScreen ? 12 : 16;
-					FontFamily = FontFamilyConstants.RobotoRegular;
-
-					this.Center().TextCenter().DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
+					this.TextStart().TextCenterVertical().Fill().Font(FontFamilyConstants.RobotoMedium, IsSmallScreen ? 8 : 12).DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
 				}
 			}
 		}
 
-		class DashedLineSeparator : SKCanvasView
+		class StatisticsLabel : Label
 		{
-			public DashedLineSeparator()
+			public StatisticsLabel(in string automationId)
 			{
-				WidthRequest = _separatorWidth;
-				PaintSurface += HandlePaintSurface;
+				AutomationId = automationId;
+
+				FontSize = IsSmallScreen ? 12 : 16;
+				FontFamily = FontFamilyConstants.RobotoRegular;
+
+				this.Center().TextCenter().DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
 			}
+		}
+	}
 
-			void HandlePaintSurface(object sender, SKPaintSurfaceEventArgs e)
-			{
-				var imageInfo = e.Info;
-				var canvas = e.Surface.Canvas;
+	class DashedLineSeparator : SKCanvasView
+	{
+		public DashedLineSeparator()
+		{
+			WidthRequest = _separatorWidth;
+			PaintSurface += HandlePaintSurface;
+		}
 
-				canvas.Clear();
+		static void HandlePaintSurface(object? sender, SKPaintSurfaceEventArgs e)
+		{
+			var imageInfo = e.Info;
+			var canvas = e.Surface.Canvas;
 
-				using var paintDashedLines = new SKPaint
-				{
-					Style = SKPaintStyle.Stroke,
-					Color = Color.FromHex(BaseTheme.LightTealColorHex).ToSKColor(),
-					StrokeWidth = _separatorWidth,
-					StrokeCap = SKStrokeCap.Butt,
-					PathEffect = SKPathEffect.CreateDash([8f, 8f], 0f)
-				};
+			canvas.Clear();
 
-				canvas.DrawLine(imageInfo.Width / 2, 0, imageInfo.Width / 2, imageInfo.Height, paintDashedLines);
-			}
+			using var paintDashedLines = new SKPaint();
+			paintDashedLines.Style = SKPaintStyle.Stroke;
+			paintDashedLines.Color = Color.FromArgb(BaseTheme.LightTealColorHex).ToSKColor();
+			paintDashedLines.StrokeWidth = _separatorWidth;
+			paintDashedLines.StrokeCap = SKStrokeCap.Butt;
+			paintDashedLines.PathEffect = SKPathEffect.CreateDash([8f, 8f], 0f);
+
+			canvas.DrawLine(imageInfo.Width / 2.0f, 0, imageInfo.Width / 2.0f, imageInfo.Height, paintDashedLines);
 		}
 	}
 }

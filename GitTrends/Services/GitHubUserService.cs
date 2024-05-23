@@ -206,8 +206,8 @@ public class GitHubUserService
 			GitHubApiAbuseLimitCount++;
 	}
 
-	void HandleDemoUserActivated(object sender, EventArgs e) => IsDemoUser = true;
-	void HandleAuthorizeSessionCompleted(object sender, AuthorizeSessionCompletedEventArgs e) => IsAuthenticated = e.IsSessionAuthorized;
+	void HandleDemoUserActivated(object? sender, EventArgs e) => IsDemoUser = true;
+	void HandleAuthorizeSessionCompleted(object? sender, AuthorizeSessionCompletedEventArgs e) => IsAuthenticated = e.IsSessionAuthorized;
 
 	void OnNameChanged(in string name) => _nameChangedEventManager.RaiseEvent(this, name, nameof(NameChanged));
 	void OnAliasChanged(in string alias) => _aliasChangedEventManager.RaiseEvent(this, alias, nameof(AliasChanged));

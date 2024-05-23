@@ -6,12 +6,10 @@ namespace GitTrends;
 
 public class GitTrendsStatisticsService(IPreferences preferences,
 											IAnalyticsService analyticsService,
-											ImageCachingService imageCachingService,
 											AzureFunctionsApiService azureFunctionsApiService)
 {
 	readonly IPreferences _preferences = preferences;
 	readonly IAnalyticsService _analyticsService = analyticsService;
-	readonly ImageCachingService _imageCachingService = imageCachingService;
 	readonly AzureFunctionsApiService _azureFunctionsApiService = azureFunctionsApiService;
 
 	public Uri? EnableOrganizationsUri
@@ -129,9 +127,6 @@ public class GitTrendsStatisticsService(IPreferences preferences,
 			ClientId = clientId.ClientId;
 
 			EnableOrganizationsUri = gitTrendsEnableOrganizationsUri.Uri;
-
-			foreach (var contributor in Contributors)
-				_imageCachingService.PreloadImage(contributor.AvatarUrl).SafeFireAndForget(ex => _analyticsService.Report(ex));
 		}
 	}
 

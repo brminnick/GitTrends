@@ -1,24 +1,22 @@
-﻿using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Forms;
+﻿using CommunityToolkit.Maui.Markup;
 
-namespace GitTrends
+namespace GitTrends;
+
+class StatisticsLabel : Label
 {
-	class StatisticsLabel : Label
+	public const int StatisticsFontSize = 12;
+
+	public StatisticsLabel(in string textColorThemeName)
 	{
-		public const int StatisticsFontSize = 12;
+		FontSize = StatisticsFontSize;
 
-		public StatisticsLabel(in string textColorThemeName)
-		{
-			FontSize = StatisticsFontSize;
+		HorizontalOptions = LayoutOptions.Fill;
 
-			HorizontalOptions = LayoutOptions.FillAndExpand;
+		HorizontalTextAlignment = TextAlignment.Start;
+		VerticalTextAlignment = TextAlignment.End;
 
-			HorizontalTextAlignment = TextAlignment.Start;
-			VerticalTextAlignment = TextAlignment.End;
+		LineBreakMode = LineBreakMode.TailTruncation;
 
-			LineBreakMode = LineBreakMode.TailTruncation;
-
-			this.DynamicResource(TextColorProperty, textColorThemeName);
-		}
+		this.DynamicResource(TextColorProperty, textColorThemeName);
 	}
 }

@@ -51,6 +51,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="3.1.1" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.5.0" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiPackageVersion)" />
@@ -65,6 +66,7 @@
     <PackageReference Include="Shiny.Hosting.Maui" Version="3.3.3" />
     <PackageReference Include="Shiny.Jobs" Version="3.3.3" />
     <PackageReference Include="Shiny.Notifications" Version="3.3.3" />
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.8" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
     <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.8" />
     <PackageReference Include="Syncfusion.Maui.Charts" Version="25.2.5" />

@@ -1,24 +1,15 @@
 ﻿using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
-using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
-using Xamarin.Forms.PancakeView;
-using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+using CommunityToolkit.Maui.Markup;
+using Microsoft.Maui.Controls.Shapes;
+using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-	public class NotificationsOnboardingPage : BaseOnboardingContentPage
+	public class NotificationsOnboardingPage(IDeviceInfo deviceInfo, IAnalyticsService analyticsService, MediaElementService mediaElementService) 
+		: BaseOnboardingContentPage(OnboardingConstants.SkipText, deviceInfo, Color.FromArgb(BaseTheme.LightTealColorHex), 2, analyticsService, mediaElementService)
 	{
-		public NotificationsOnboardingPage(IDeviceInfo deviceInfo,
-											IMainThread mainThread,
-											IAnalyticsService analyticsService,
-											MediaElementService mediaElementService)
-			: base(OnboardingConstants.SkipText, deviceInfo, Color.FromHex(BaseTheme.LightTealColorHex), mainThread, 2, analyticsService, mediaElementService)
-		{
-
-		}
 
 		enum Row { Description, Button }
 
@@ -26,9 +17,9 @@ namespace GitTrends
 		{
 			Source = "NotificationsOnboarding",
 			Aspect = Aspect.AspectFit
-		}.CenterExpand();
+		}.Center();
 
-		protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.NotificationsPage_Title);
+		protected override TitleLabel CreateDescriptionTitleLabel() => new(OnboardingConstants.NotificationsPage_Title);
 
 		protected override View CreateDescriptionBodyView() => new ScrollView
 		{
@@ -48,16 +39,20 @@ namespace GitTrends
 			}
 		};
 
-		class EnableNotificationsView : PancakeView
+		sealed class EnableNotificationsView : Border
 		{
 			public EnableNotificationsView()
 			{
-				this.CenterExpand();
+				this.Center();
 
 				AutomationId = OnboardingAutomationIds.EnableNotificationsButton;
 
-				BackgroundColor = Color.FromHex(BaseTheme.CoralColorHex);
-				CornerRadius = 5;
+				BackgroundColor = Color.FromArgb(BaseTheme.CoralColorHex);
+
+				StrokeShape = new RoundRectangle
+				{
+					CornerRadius = 5
+				};
 				Padding = new Thickness(16, 10);
 
 				Content = new StackLayout
@@ -76,7 +71,7 @@ namespace GitTrends
 
 			class NotificationStatusSvgImage : SvgImage
 			{
-				public NotificationStatusSvgImage() : base("bell.svg", () => Color.White, 24, 24)
+				public NotificationStatusSvgImage() : base("bell.svg", () => Colors.White, 24, 24)
 				{
 					this.Bind(SvgImage.SourceProperty, nameof(OnboardingViewModel.NotificationStatusSvgImageSource), BindingMode.OneWay);
 				}
@@ -87,7 +82,7 @@ namespace GitTrends
 				public EnableNotificationsLabel()
 				{
 					this.TextCenter();
-					TextColor = Color.White;
+					TextColor = Colors.White;
 					FontSize = 18;
 					FontFamily = FontFamilyConstants.RobotoRegular;
 					Text = OnboardingConstants.EnableNotifications;

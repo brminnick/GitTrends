@@ -1,5 +1,4 @@
-﻿
-namespace GitTrends;
+﻿namespace GitTrends;
 
 public class FirstRunService
 {
@@ -8,10 +7,7 @@ public class FirstRunService
 	public FirstRunService(IPreferences preferences)
 	{
 		_preferences = preferences;
-
-#if !AppStore
-		UITestsBackdoorService.PopPageStarted += HandlePagePopped;
-#endif
+		
 		GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 		GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 	}

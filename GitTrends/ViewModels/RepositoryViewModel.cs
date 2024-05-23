@@ -348,7 +348,7 @@ public partial class RepositoryViewModel : BaseViewModel
 
 		AnalyticsService.Track("IsFavorite Toggled", nameof(Repository.IsFavorite), updatedRepository.IsFavorite.Value.ToString());
 
-		var updatedRepositoryList = new List<Repository>(VisibleRepositoryList);
+		List<Repository> updatedRepositoryList = VisibleRepositoryList.ToList();
 		updatedRepositoryList.Remove(repository);
 		updatedRepositoryList.Add(updatedRepository);
 

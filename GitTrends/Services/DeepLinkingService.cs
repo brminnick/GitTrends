@@ -2,11 +2,12 @@
 
 namespace GitTrends
 {
-	public class DeepLinkingService(IEmail email,
-									IBrowser browser,
-									IAppInfo appInfo,
-									ILauncher launcher,
-									IDispatcher mainThread)
+	public class DeepLinkingService(
+		IEmail email,
+		IBrowser browser,
+		IAppInfo appInfo,
+		ILauncher launcher,
+		IDispatcher mainThread)
 	{
 		readonly IEmail _email = email;
 		readonly IAppInfo _appInfo = appInfo;
@@ -125,8 +126,11 @@ namespace GitTrends
 
 			return await tcs.Task.ConfigureAwait(false);
 
-			void HandlePageAppearing(object sender, Page page)
+			void HandlePageAppearing(object? sender, Page page)
 			{
+				if (Application.Current?.MainPage is null)
+					throw new InvalidNavigationException("Application.Current Cannot Be Null");
+
 				if (page is BaseNavigationPage baseNavigationPage)
 				{
 					Application.Current.PageAppearing -= HandlePageAppearing;

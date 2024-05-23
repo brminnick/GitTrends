@@ -1,65 +1,57 @@
 ﻿using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
-using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
-using Xamarin.Forms.PancakeView;
-using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+using CommunityToolkit.Maui.Markup;
+using Microsoft.Maui.Controls.Shapes;
+using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
-namespace GitTrends
+namespace GitTrends;
+
+public class ChartOnboardingPage(IDeviceInfo deviceInfo, IAnalyticsService analyticsService, MediaElementService mediaElementService)
+	: BaseOnboardingContentPage(OnboardingConstants.SkipText, deviceInfo, Color.FromHex(BaseTheme.CoralColorHex), 1, analyticsService, mediaElementService)
 {
-	public class ChartOnboardingPage : BaseOnboardingContentPage
+
+	enum Row { Title, Zoom, LongPress }
+	enum Column { Image, Description }
+
+	protected override View CreateImageView() => new Border
 	{
-
-		public ChartOnboardingPage(IDeviceInfo deviceInfo,
-									IMainThread mainThread,
-									IAnalyticsService analyticsService,
-									MediaElementService mediaElementService)
-			: base(OnboardingConstants.SkipText, deviceInfo, Color.FromHex(BaseTheme.CoralColorHex), mainThread, 1, analyticsService, mediaElementService)
-		{
-
-		}
-
-		enum Row { Title, Zoom, LongPress }
-		enum Column { Image, Description }
-
-		protected override View CreateImageView() => new PancakeView
+		StrokeShape = new RoundRectangle
 		{
 			CornerRadius = 4,
-			Border = new Border { Color = Color.FromHex("E0E0E0") },
-			BackgroundColor = Color.White,
-			Padding = new Thickness(5),
-			Content = new VideoPlayerWithLoadingIndicatorView(MediaElementService.OnboardingChartUrl)
-		};
+		},
+		Stroke = Color.FromArgb("E0E0E0"),
+		BackgroundColor = Colors.White,
+		Padding = new Thickness(5),
+		Content = new VideoPlayerWithLoadingIndicatorView(MediaElementService.OnboardingChartUrl)
+	};
 
-		protected override TitleLabel CreateDescriptionTitleLabel() => new TitleLabel(OnboardingConstants.ChartPage_Title);
+	protected override TitleLabel CreateDescriptionTitleLabel() => new(OnboardingConstants.ChartPage_Title);
 
-		protected override View CreateDescriptionBodyView() => new ScrollView
+	protected override View CreateDescriptionBodyView() => new ScrollView
+	{
+		Content = new Grid
 		{
-			Content = new Grid
+			RowSpacing = 14,
+
+			RowDefinitions = Rows.Define(
+				(Row.Title, Auto),
+				(Row.Zoom, 48),
+				(Row.LongPress, 48)),
+
+			ColumnDefinitions = Columns.Define(
+				(Column.Image, 56),
+				(Column.Description, Star)),
+
+			Children =
 			{
-				RowSpacing = 14,
+				new BodyLabel(OnboardingConstants.ChartPage_Body_ShowAllTraffic).Row(Row.Title).ColumnSpan(All<Column>()),
 
-				RowDefinitions = Rows.Define(
-					(Row.Title, Auto),
-					(Row.Zoom, 48),
-					(Row.LongPress, 48)),
+				new BodySvg("zoom_gesture.svg").Row(Row.Zoom).Column(Column.Image),
+				new BodyLabel(OnboardingConstants.ChartPage_Body_ZoomInOut).Row(Row.Zoom).Column(Column.Description),
 
-				ColumnDefinitions = Columns.Define(
-					(Column.Image, 56),
-					(Column.Description, Star)),
-
-				Children =
-				{
-					new BodyLabel(OnboardingConstants.ChartPage_Body_ShowAllTraffic).Row(Row.Title).ColumnSpan(All<Column>()),
-
-					new BodySvg("zoom_gesture.svg").Row(Row.Zoom).Column(Column.Image),
-					new BodyLabel(OnboardingConstants.ChartPage_Body_ZoomInOut).Row(Row.Zoom).Column(Column.Description),
-
-					new BodySvg("longpress_gesture.svg").Row(Row.LongPress).Column(Column.Image),
-					new BodyLabel(OnboardingConstants.ChartPage_Body_LongPress).Row(Row.LongPress).Column(Column.Description),
-				}
+				new BodySvg("longpress_gesture.svg").Row(Row.LongPress).Column(Column.Image),
+				new BodyLabel(OnboardingConstants.ChartPage_Body_LongPress).Row(Row.LongPress).Column(Column.Description),
 			}
-		};
-	}
+		}
+	};
 }

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Markup;
+using Microsoft.Maui.Controls.Shapes;
 
 namespace GitTrends;
 
@@ -8,8 +9,12 @@ public class CircleBorder : Border
 	{
 		HeightRequest = WidthRequest = Math.Min(HeightRequest, WidthRequest);
 
-		this.Bind<Border, double, double>(CornerRadiusProperty, nameof(Width), convert: convertWidthToCornerRadius, source: this);
+		StrokeShape = new RoundRectangle()
+			.Bind(RoundRectangle.CornerRadiusProperty, 
+				getter: circleBorder => circleBorder.Width, 
+				convert: ConvertWidthToCornerRadius, 
+				source: this);
 
-		static double convertWidthToCornerRadius(double width) => width is -1 ? -1 : width / 2;
+		static double ConvertWidthToCornerRadius(double width) => width is -1 ? -1 : width / 2;
 	}
 }
