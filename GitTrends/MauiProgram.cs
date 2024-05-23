@@ -157,7 +157,6 @@ public static class MauiProgram
 
 	static void ConfigureSentryOptions(in SentryMauiOptions options, in IAppInfo appInfo)
 	{
-		// The DSN is the only required setting.
 		options.Dsn = "https://4e21564ab4374deb8b95da8a25dc2cca@o166840.ingest.us.sentry.io/6568237";
 		options.TracesSampleRate = 1.0;
 		options.IncludeTextInBreadcrumbs = true;
