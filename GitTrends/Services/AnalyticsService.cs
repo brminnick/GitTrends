@@ -5,7 +5,7 @@ using GitTrends.Shared;
 
 namespace GitTrends;
 
-public class AnalyticsService(SentryClient client) : IAnalyticsService
+public class AnalyticsService(ISentryClient client) : IAnalyticsService
 {
 	readonly ISentryClient _client = client;
 
