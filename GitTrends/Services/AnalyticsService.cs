@@ -69,7 +69,7 @@ public class AnalyticsService(ISentryClient client) : IAnalyticsService
 	[Conditional("DEBUG")]
 	static void PrintException(Exception exception, string callerMemberName, int lineNumber, string filePath, IDictionary<string, string>? properties = null)
 	{
-		var fileName = System.IO.Path.GetFileName(filePath);
+		var fileName = Path.GetFileName(filePath);
 
 		Debug.WriteLine(exception.GetType());
 		Debug.WriteLine($"Error: {exception.Message}");
@@ -77,7 +77,7 @@ public class AnalyticsService(ISentryClient client) : IAnalyticsService
 		Debug.WriteLine($"Caller Name: {callerMemberName}");
 		Debug.WriteLine($"File Name: {fileName}");
 
-		if (properties != null)
+		if (properties is not null)
 		{
 			foreach (var property in properties)
 				Debug.WriteLine($"{property.Key}: {property.Value}");
