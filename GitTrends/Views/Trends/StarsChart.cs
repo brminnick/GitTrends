@@ -21,10 +21,7 @@ class StarsChart() : BaseChartView(new StarsTrendsChart())
 			StarsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyStarsList));
 			StarsSeries.PropertyChanged += HandleStarSeriesPropertyChanged;
 
-			Series = new ChartSeriesCollection
-			{
-				StarsSeries
-			};
+			Series = [StarsSeries];
 
 			this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsStarsChartVisible));
 		}

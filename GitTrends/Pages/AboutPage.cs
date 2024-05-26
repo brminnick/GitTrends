@@ -12,6 +12,7 @@ class AboutPage : BaseContentPage<AboutViewModel>
 	readonly DeepLinkingService _deepLinkingService;
 
 	public AboutPage(AboutViewModel aboutViewModel,
+		IDeviceInfo deviceInfo,
 		IAnalyticsService analyticsService,
 		DeepLinkingService deepLinkingService) : base(aboutViewModel, analyticsService)
 	{
@@ -65,7 +66,7 @@ class AboutPage : BaseContentPage<AboutViewModel>
 					new GitTrendsStatisticsView()
 						.Row(Row.Statistics).Column(Column.Statistics),
 
-					new ButtonLayout().Center()
+					new ButtonLayout(deviceInfo).Center()
 						.Row(Row.ActionButtons).Column(Column.Icon).ColumnSpan(2),
 
 					new TitleLabel(AboutPageConstants.CollaboratorsTitle).TextBottom()
@@ -166,38 +167,34 @@ class AboutPage : BaseContentPage<AboutViewModel>
 
 	class ButtonLayout : HorizontalStackLayout
 	{
-		public ButtonLayout()
+		public ButtonLayout(IDeviceInfo deviceInfo)
 		{
 			Spacing = 16;
 
 			Margin = new Thickness(0, 16);
 
-			Children.Add(new ViewOnGitHubButton().End());
-			Children.Add(new RequestFeatureButton().Start());
+			Children.Add(new ViewOnGitHubButton(deviceInfo).End());
+			Children.Add(new RequestFeatureButton(deviceInfo).Start());
 		}
 
-		class ViewOnGitHubButton : AboutPageButton
+		class ViewOnGitHubButton(IDeviceInfo deviceInfo) 
+			: AboutPageButton("github.svg", AboutPageConstants.GitHubButton, AboutPageAutomationIds.ViewOnGitHubButton, Color.FromArgb("231F20"), nameof(AboutViewModel.ViewOnGitHubCommand), deviceInfo)
 		{
-			public ViewOnGitHubButton() : base("github.svg", AboutPageConstants.GitHubButton, AboutPageAutomationIds.ViewOnGitHubButton, Color.FromArgb("231F20"), nameof(AboutViewModel.ViewOnGitHubCommand))
-			{
-			}
 		}
 
-		class RequestFeatureButton : AboutPageButton
+		class RequestFeatureButton(IDeviceInfo deviceInfo) 
+			: AboutPageButton("sparkle.svg", AboutPageConstants.RequestFeatureButton, AboutPageAutomationIds.RequestFeatureButton, Color.FromArgb("F97B4F"), nameof(AboutViewModel.RequestFeatureCommand), deviceInfo)
 		{
-			public RequestFeatureButton() : base("sparkle.svg", AboutPageConstants.RequestFeatureButton, AboutPageAutomationIds.RequestFeatureButton, Color.FromArgb("F97B4F"), nameof(AboutViewModel.RequestFeatureCommand))
-			{
-			}
 		}
 
 
 		abstract class AboutPageButton : SvgTextLabel
 		{
-			protected AboutPageButton(in string svgFileName, in string text, in string automationId, in Color backgroundColor, in string commandPropertyBindingPath)
+			protected AboutPageButton(in string svgFileName, in string text, in string automationId, in Color backgroundColor, in string commandPropertyBindingPath, in IDeviceInfo deviceInfo)
 				: base(svgFileName, text, automationId, IsSmallScreen ? 12 : 14, FontFamilyConstants.RobotoMedium, 4)
 			{
 				BackgroundColor = backgroundColor;
-				Padding = IsSmallScreen ? new Thickness(DeviceInfo.Platform == DevicePlatform.iOS ? 8 : 12, 8) : new Thickness(DeviceInfo.Platform == DevicePlatform.iOS ? 10 : 16, 8);
+				Padding = IsSmallScreen ? new Thickness(deviceInfo.Platform == DevicePlatform.iOS ? 8 : 12, 8) : new Thickness(deviceInfo.Platform == DevicePlatform.iOS ? 10 : 16, 8);
 				GestureRecognizers.Add(new TapGestureRecognizer().Bind(TapGestureRecognizer.CommandProperty, commandPropertyBindingPath));
 			}
 		}

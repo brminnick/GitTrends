@@ -181,7 +181,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 					public NameLabel() : base(20)
 					{
 						LineBreakMode = LineBreakMode.TailTruncation;
-						HorizontalOptions = LayoutOptions.FillAndExpand;
+						HorizontalOptions = LayoutOptions.Fill;
 						FontFamily = FontFamilyConstants.RobotoBold;
 					}
 				}

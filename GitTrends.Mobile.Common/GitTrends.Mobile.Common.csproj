@@ -5,6 +5,11 @@
 		<Configurations>Debug;Release;AppStore</Configurations>
     <UseMaui>true</UseMaui>
 	</PropertyGroup>
+  
+  <ItemGroup>
+    <InternalsVisibleTo Include="GitTrends.UnitTests" />
+  </ItemGroup>
+  
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;</DefineConstants>
 	</PropertyGroup>

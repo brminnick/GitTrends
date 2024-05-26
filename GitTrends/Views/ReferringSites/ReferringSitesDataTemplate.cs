@@ -57,8 +57,8 @@ class ReferringSitesDataTemplate() : DataTemplate(() => new CardView())
 				const int rowSpacing = 6;
 				const int separatorPadding = 12;
 
-				HorizontalOptions = LayoutOptions.FillAndExpand;
-				VerticalOptions = LayoutOptions.FillAndExpand;
+				HorizontalOptions = LayoutOptions.Fill;
+				VerticalOptions = LayoutOptions.Fill;
 
 				RowSpacing = rowSpacing;
 				ColumnSpacing = 0;
@@ -159,7 +159,7 @@ class ReferringSitesDataTemplate() : DataTemplate(() => new CardView())
 					FontFamily = FontFamilyConstants.RobotoRegular;
 					LineBreakMode = LineBreakMode.TailTruncation;
 
-					HorizontalOptions = LayoutOptions.FillAndExpand;
+					HorizontalOptions = LayoutOptions.Fill;
 					HorizontalTextAlignment = TextAlignment.Start;
 
 					VerticalTextAlignment = TextAlignment.End;

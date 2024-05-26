@@ -48,8 +48,8 @@ namespace GitTrends
 			{
 				Text = RepositoryPageConstants.SortToolbarItemText,
 				Priority = 1,
-				IconImageSource = Device.RuntimePlatform is Device.iOS ? "Sort" : null,
-				Order = Device.RuntimePlatform is Device.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
+				IconImageSource = deviceInfo.Platform == DevicePlatform.iOS ? "Sort" : null,
+				Order = deviceInfo.Platform == DevicePlatform.Android ? ToolbarItemOrder.Secondary : ToolbarItemOrder.Default,
 				AutomationId = RepositoryPageAutomationIds.SortButton,
 				Command = new AsyncRelayCommand(ExecuteSortToolbarItemCommand)
 			});

@@ -1,0 +1,133 @@
+﻿using System.Globalization;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
+using GitTrends.Shared;
+using Refit;
+
+[assembly: NonParallelizable]
+namespace GitTrends.UnitTests;
+
+abstract class BaseTest : IDisposable
+{
+	protected static string AuthenticatedGitHubUserAvatarUrl { get; } = "https://avatars.githubusercontent.com/u/13558917?u=6e0d77ca0420f418c8ad5110cb155dea5d427a35&v=4";
+	protected CancellationTokenSource TestCancellationTokenSource { get; private set; } = new();
+
+	public void Dispose()
+	{
+		Dispose(true);
+		GC.SuppressFinalize(this);
+	}
+
+	[TearDown]
+	public virtual Task TearDown()
+	{
+		var extendedBackgroundFetchService = (ExtendedBackgroundFetchService)ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+		extendedBackgroundFetchService.CancelAllJobs();
+
+		return Task.CompletedTask;
+	}
+
+	[SetUp]
+	public virtual async Task Setup()
+	{
+		TestCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+		
+		InitializeServiceCollection();
+
+		CultureInfo.DefaultThreadCurrentCulture = null;
+		CultureInfo.DefaultThreadCurrentUICulture = null;
+
+		var extendedBackgroundFetchService = (ExtendedBackgroundFetchService)ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
+		extendedBackgroundFetchService.CancelAllJobs();
+
+		var preferences = ServiceCollection.ServiceProvider.GetRequiredService<IPreferences>();
+		preferences.Clear();
+
+		var secureStorage = ServiceCollection.ServiceProvider.GetRequiredService<ISecureStorage>();
+		secureStorage.RemoveAll();
+
+		var referringSitesDatabase = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesDatabase>();
+		await referringSitesDatabase.DeleteAllData(TestCancellationTokenSource.Token).ConfigureAwait(false);
+
+		var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
+		await repositoryDatabase.DeleteAllData(TestCancellationTokenSource.Token).ConfigureAwait(false);
+
+		var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
+		await gitHubAuthenticationService.LogOut(TestCancellationTokenSource.Token).ConfigureAwait(false);
+
+		var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
+		await notificationService.SetAppBadgeCount(0, TestCancellationTokenSource.Token).ConfigureAwait(false);
+		notificationService.UnRegister();
+
+		var mockNotificationService = (MockDeviceNotificationsService)ServiceCollection.ServiceProvider.GetRequiredService<IDeviceNotificationsService>();
+		mockNotificationService.Reset();
+	}
+	
+		protected static async Task AuthenticateUser(GitHubUserService gitHubUserService, GitHubGraphQLApiService gitHubGraphQLApiService, CancellationToken token)
+	{
+		var accessToken = await Mobile.Common.AzureFunctionsApiService.GetTestToken(token).ConfigureAwait(false);
+		if (accessToken.IsEmpty() || string.IsNullOrWhiteSpace(accessToken.AccessToken))
+			throw new Exception("Invalid Token");
+
+		await gitHubUserService.SaveGitHubToken(accessToken).ConfigureAwait(false);
+
+		var (login, name, avatarUri) = await gitHubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false);
+
+		gitHubUserService.Alias = login;
+		gitHubUserService.Name = name;
+		gitHubUserService.AvatarUrl = avatarUri.ToString();
+	}
+
+	protected static Repository CreateRepository(bool createViewsAndClones = true)
+	{
+		const string gitTrendsAvatarUrl = "https://avatars3.githubusercontent.com/u/61480020?s=400&u=b1a900b5fa1ede22af9d2d9bfd6c49a072e659ba&v=4";
+		var downloadedAt = DateTimeOffset.UtcNow;
+
+		var dailyViewsList = new List<DailyViewsModel>();
+		var dailyClonesList = new List<DailyClonesModel>();
+
+		for (int i = 0; i < 14 && createViewsAndClones; i++)
+		{
+			var count = DemoDataConstants.GetRandomNumber();
+			var uniqeCount = count / 2; //Ensures uniqueCount is always less than count
+
+			dailyViewsList.Add(new DailyViewsModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
+			dailyClonesList.Add(new DailyClonesModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
+		}
+
+		var starredAt = DemoDataConstants.GenerateStarredAtDates(DemoDataConstants.GetRandomNumber(1)).ToList();
+
+		return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
+			DemoUserConstants.Alias, gitTrendsAvatarUrl,
+			DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(), starredAt.Count,
+			gitTrendsAvatarUrl, false, downloadedAt, RepositoryPermission.ADMIN, false, false, dailyViewsList, dailyClonesList, starredAt);
+	}
+	
+	protected virtual void Dispose(bool disposing)
+	{
+		if (disposing)
+		{
+			TestCancellationTokenSource.Dispose();
+		}
+	}
+
+	protected virtual void InitializeServiceCollection()
+	{
+		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(new HttpClient
+		{
+			BaseAddress = new Uri(GitHubConstants.GitHubRestApiUrl)
+		});
+
+		var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(new HttpClient
+		{
+			BaseAddress = new Uri(GitHubConstants.GitHubGraphQLApi)
+		});
+
+		var azureFunctionsClient = RestService.For<IAzureFunctionsApi>(new HttpClient
+		{
+			BaseAddress = new Uri(AzureConstants.AzureFunctionsApiUrl)
+		});
+
+		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
+	}
+}

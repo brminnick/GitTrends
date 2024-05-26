@@ -100,7 +100,7 @@ public class BackgroundFetchService
 
 	public IReadOnlyList<string> QueuedJobs => [.. QueuedJobsHash];
 
-	protected HashSet<string> QueuedJobsHash { get; } = new();
+	protected HashSet<string> QueuedJobsHash { get; } = [];
 
 	public string CleanUpDatabaseIdentifier { get; }
 	public string RetryRepositoriesStarsIdentifier { get; }

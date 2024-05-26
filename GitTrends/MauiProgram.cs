@@ -26,7 +26,9 @@ public static class MauiProgram
 		builder
 			.UseMauiApp<App>()
 			.UseSharpnadoMaterialFrame(true)
+#if ANDROID || IOS || MACCATALYST
 			.UseShiny()
+#endif
 			.UseMauiCommunityToolkit()
 			.UseMauiCommunityToolkitMarkup()
 			.UseMauiCommunityToolkitMediaElement()
@@ -42,7 +44,9 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
+#if ANDROID || IOS || MACCATALYST
 		builder.Services.AddNotifications();
+#endif
 
 #if AppStore
 #error: No Shiny Jobs defined
