@@ -189,7 +189,7 @@ namespace GitTrends
 		{
 			if (Application.Current is App
 				&& !Application.Current.MainPage?.Navigation.ModalStack.Any() is true
-				&& Application.Current.MainPage.Navigation.NavigationStack.Last() is RepositoryPage)
+				&& Application.Current.MainPage?.Navigation.NavigationStack.Last() is RepositoryPage)
 			{
 				switch (eventArgs)
 				{

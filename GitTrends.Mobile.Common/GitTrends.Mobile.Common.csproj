@@ -225,17 +225,10 @@
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
-		<Folder Include="Enums\" />
-		<Folder Include="EventArgs\" />
-		<Folder Include="Models\" />
-		<Folder Include="Services\" />
-	</ItemGroup>
-	<ItemGroup>
 		<PackageReference Include="AsyncAwaitBestPractices" Version="7.0.0" />
 		<PackageReference Include="Polly" Version="8.3.1" />
-		<PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.8.0" />
 		<PackageReference Include="GitHubApiStatus" Version="2.0.4" />
-		<PackageReference Include="Refit.Newtonsoft.Json" Version="7.0.0" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0"/>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 	</ItemGroup>
 	<Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />

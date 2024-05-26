@@ -71,18 +71,18 @@ public class AnalyticsService(ISentryClient client) : IAnalyticsService
 	{
 		var fileName = Path.GetFileName(filePath);
 
-		Debug.WriteLine(exception.GetType());
-		Debug.WriteLine($"Error: {exception.Message}");
-		Debug.WriteLine($"Line Number: {lineNumber}");
-		Debug.WriteLine($"Caller Name: {callerMemberName}");
-		Debug.WriteLine($"File Name: {fileName}");
+		Trace.WriteLine(exception.GetType());
+		Trace.WriteLine($"Error: {exception.Message}");
+		Trace.WriteLine($"Line Number: {lineNumber}");
+		Trace.WriteLine($"Caller Name: {callerMemberName}");
+		Trace.WriteLine($"File Name: {fileName}");
 
 		if (properties is not null)
 		{
 			foreach (var property in properties)
-				Debug.WriteLine($"{property.Key}: {property.Value}");
+				Trace.WriteLine($"{property.Key}: {property.Value}");
 		}
 
-		Debug.WriteLine(exception);
+		Trace.WriteLine(exception);
 	}
 }

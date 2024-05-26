@@ -7,21 +7,26 @@ abstract class BaseTrendsChart : SfCartesianChart
 {
 	readonly ChartZoomPanBehavior _chartZoomPanBehavior = new();
 
-	protected BaseTrendsChart(in string automationId)
+	protected BaseTrendsChart(in string automationId, in DateTimeAxis primaryAxis, in NumericalAxis secondaryAxis)
 	{
 		AutomationId = automationId;
 
-		Margin = 0;
-		ChartPadding = new Thickness(0, 24, 0, 4);
+		Margin = new Thickness(0, 24, 0, 4);
 
 		BackgroundColor = Colors.Transparent;
 
-		ChartBehaviors = new ChartBehaviorCollection
-		{
-			_chartZoomPanBehavior,
-			new ChartTrackballBehavior()
-		};
+		PrimaryAxis = primaryAxis;
+		SecondaryAxis = secondaryAxis;
+		
+		XAxes.Add(PrimaryAxis);
+		YAxes.Add(SecondaryAxis);
+
+		ZoomPanBehavior = _chartZoomPanBehavior;
+		TrackballBehavior = new ChartTrackballBehavior();
 	}
+
+	protected DateTimeAxis PrimaryAxis { get; }
+	protected NumericalAxis SecondaryAxis { get; }
 
 	protected Task SetZoom(double primaryAxisStart, double primaryAxisEnd, double secondaryAxisStart, double secondaryAxisEnd) => Dispatcher.DispatchAsync(() =>
 	{
@@ -37,9 +42,9 @@ abstract class BaseTrendsChart : SfCartesianChart
 			Label = title;
 			XBindingPath = xDataTitle;
 			YBindingPath = yDataTitle;
-			LegendIcon = ChartLegendIcon.SeriesType;
+			LegendIcon = ChartLegendIconType.SeriesType;
 
-			this.DynamicResource(Color, colorResource);
+			this.DynamicResource(StrokeProperty, colorResource);
 		}
 	}
 }

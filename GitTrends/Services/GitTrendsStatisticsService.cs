@@ -1,6 +1,6 @@
-﻿using AsyncAwaitBestPractices;
+﻿using System.Text.Json;
+using AsyncAwaitBestPractices;
 using GitTrends.Shared;
-using Newtonsoft.Json;
 
 namespace GitTrends;
 
@@ -95,7 +95,7 @@ public class GitTrendsStatisticsService(IPreferences preferences,
 	public IReadOnlyList<Contributor> Contributors
 	{
 		get => GetContributors();
-		private set => _preferences.Set(nameof(Contributors), JsonConvert.SerializeObject(value));
+		private set => _preferences.Set(nameof(Contributors), JsonSerializer.Serialize(value));
 	}
 
 	public async ValueTask Initialize(CancellationToken cancellationToken)
@@ -139,7 +139,7 @@ public class GitTrendsStatisticsService(IPreferences preferences,
 			if (serializedContributors is null)
 				return [];
 
-			var contributors = JsonConvert.DeserializeObject<IReadOnlyList<Contributor>>(serializedContributors);
+			var contributors = JsonSerializer.Deserialize<IReadOnlyList<Contributor>>(serializedContributors);
 			return contributors ?? [];
 		}
 		catch (ArgumentNullException)

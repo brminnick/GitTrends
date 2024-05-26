@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Text.Json;
 using AsyncAwaitBestPractices;
 using GitTrends.Shared;
-using Newtonsoft.Json;
 
 namespace GitTrends
 {
@@ -109,19 +109,19 @@ namespace GitTrends
 				if (serializedManifest is null)
 					return null;
 
-				return JsonConvert.DeserializeObject<StreamingManifest>(serializedManifest);
+				return JsonSerializer.Deserialize<StreamingManifest>(serializedManifest);
 			}
 			catch (ArgumentNullException)
 			{
 				return null;
 			}
-			catch (JsonReaderException)
+			catch (JsonException)
 			{
 				return null;
 			}
 		}
 
-		void SetStreamingManifest(StreamingManifest? streamingManifest, [CallerMemberName] string key = "") => _preferences.Set(key, JsonConvert.SerializeObject(streamingManifest));
+		void SetStreamingManifest(StreamingManifest? streamingManifest, [CallerMemberName] string key = "") => _preferences.Set(key, JsonSerializer.Serialize(streamingManifest));
 
 		void OnOnboardingChartStreamingManifestChanged(StreamingManifest? onboardingChartStreamingManifest) => _streamingManifestChangedEventManager.RaiseEvent(this, onboardingChartStreamingManifest, nameof(OnboardingChartManifestChanged));
 		void OnEnableOrganizationsStreamingManifestChanged(StreamingManifest? enableOrganizationsStreamingManifest) => _streamingManifestChangedEventManager.RaiseEvent(this, enableOrganizationsStreamingManifest, nameof(EnableOrganizationsManifestChanged));

@@ -1,8 +1,8 @@
-﻿using AsyncAwaitBestPractices;
+﻿using System.Text.Json;
+using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
-using Newtonsoft.Json;
 using Shiny;
 using Shiny.Notifications;
 
@@ -128,7 +128,7 @@ public class NotificationService
 			try
 			{
 				notificationHubInformation = await _azureFunctionsApiService.GetNotificationHubInformation(cancellationToken).ConfigureAwait(false);
-				await _secureStorage.SetAsync(_getNotificationHubInformationKey, JsonConvert.SerializeObject(notificationHubInformation)).ConfigureAwait(false);
+				await _secureStorage.SetAsync(_getNotificationHubInformationKey, JsonSerializer.Serialize(notificationHubInformation)).ConfigureAwait(false);
 			}
 			catch (Exception e)
 			{
@@ -150,7 +150,7 @@ public class NotificationService
 
 		try
 		{
-			var token = JsonConvert.DeserializeObject<NotificationHubInformation?>(serializedToken) ?? throw new InvalidOperationException("Deserialized token cannot be null");
+			var token = JsonSerializer.Deserialize<NotificationHubInformation?>(serializedToken) ?? throw new InvalidOperationException("Deserialized token cannot be null");
 
 			return token;
 		}
@@ -158,7 +158,7 @@ public class NotificationService
 		{
 			return NotificationHubInformation.Empty;
 		}
-		catch (JsonReaderException)
+		catch (JsonException)
 		{
 			return NotificationHubInformation.Empty;
 		}

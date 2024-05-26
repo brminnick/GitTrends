@@ -10,7 +10,8 @@ class ViewsClonesChart() : BaseChartView(new ViewsClonesTrendsChart())
 {
 	sealed class ViewsClonesTrendsChart : BaseTrendsChart
 	{
-		public ViewsClonesTrendsChart() : base(TrendsPageAutomationIds.ViewsClonesChart)
+		public ViewsClonesTrendsChart()
+			: base(TrendsPageAutomationIds.ViewsClonesChart, new ViewsClonesPrimaryAxis(), new ViewsClonesSecondaryAxis())
 		{
 			TotalViewsSeries = new TrendsAreaSeries(TrendsChartTitleConstants.TotalViewsTitle, nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalViews), nameof(BaseTheme.TotalViewsColor));
 			TotalViewsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList));
@@ -37,49 +38,6 @@ class ViewsClonesChart() : BaseChartView(new ViewsClonesTrendsChart())
 				TotalUniqueClonesSeries
 			];
 
-			var primaryAxisLabelStyle = new ChartAxisLabelStyle
-			{
-				FontSize = 9,
-				FontFamily = FontFamilyConstants.RobotoRegular,
-				Margin = new Thickness(2, 4, 2, 0)
-			}.DynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
-
-			var axisLineStyle = new ChartLineStyle()
-			{
-				StrokeWidth = 1.51
-			}.DynamicResource(ChartLineStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
-
-			PrimaryAxis = new DateTimeAxis
-			{
-				IntervalType = DateTimeIntervalType.Days,
-				Interval = 1,
-				RangePadding = DateTimeRangePadding.Round,
-				LabelStyle = primaryAxisLabelStyle,
-				AxisLineStyle = axisLineStyle,
-				MajorTickStyle = new ChartAxisTickStyle { StrokeColor = Color.Transparent },
-				ShowMajorGridLines = false,
-			};
-			PrimaryAxis.SetBinding(DateTimeAxis.MinimumProperty, nameof(TrendsViewModel.MinViewsClonesDate));
-			PrimaryAxis.SetBinding(DateTimeAxis.MaximumProperty, nameof(TrendsViewModel.MaxViewsClonesDate));
-
-			var secondaryAxisMajorTickStyle = new ChartAxisTickStyle().DynamicResource(ChartAxisTickStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
-
-			var secondaryAxisLabelStyle = new ChartAxisLabelStyle
-			{
-				FontSize = 12,
-				FontFamily = FontFamilyConstants.RobotoRegular,
-			}.DynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
-
-			SecondaryAxis = new NumericalAxis
-				{
-					LabelStyle = secondaryAxisLabelStyle,
-					AxisLineStyle = axisLineStyle,
-					MajorTickStyle = secondaryAxisMajorTickStyle,
-					ShowMajorGridLines = false,
-				}.Bind(NumericalAxis.MinimumProperty, nameof(TrendsViewModel.DailyViewsClonesMinValue))
-				.Bind(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.DailyViewsClonesMaxValue))
-				.Bind(NumericalAxis.IntervalProperty, nameof(TrendsViewModel.ViewsClonesChartYAxisInterval));
-
 			this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsViewsClonesChartVisible));
 		}
 
@@ -87,5 +45,61 @@ class ViewsClonesChart() : BaseChartView(new ViewsClonesTrendsChart())
 		public AreaSeries TotalUniqueViewsSeries { get; }
 		public AreaSeries TotalClonesSeries { get; }
 		public AreaSeries TotalUniqueClonesSeries { get; }
+
+		sealed class ViewsClonesPrimaryAxis : DateTimeAxis
+		{
+			public ViewsClonesPrimaryAxis()
+			{
+				Interval = 1;
+				IntervalType = DateTimeIntervalType.Days;
+				RangePadding = DateTimeRangePadding.Round;
+				AxisLineStyle = new AxisLineStyle();
+
+				MajorTickStyle = new ChartAxisTickStyle
+				{
+					Stroke = Colors.Transparent
+				};
+				ShowMajorGridLines = false;
+
+				LabelStyle = new ChartAxisLabelStyle
+				{
+					FontSize = 9,
+					FontFamily = FontFamilyConstants.RobotoRegular,
+					Margin = new Thickness(2, 4, 2, 0)
+				}.DynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
+
+				this.Bind(MinimumProperty, nameof(TrendsViewModel.MinViewsClonesDate))
+					.Bind(MaximumProperty, nameof(TrendsViewModel.MaxViewsClonesDate));
+			}
+		}
+
+		sealed class ViewsClonesSecondaryAxis : NumericalAxis
+		{
+			public ViewsClonesSecondaryAxis()
+			{
+				ShowMajorGridLines = false;
+				AxisLineStyle = new AxisLineStyle();
+				MajorTickStyle = new ChartAxisTickStyle().DynamicResource(ChartAxisTickStyle.StrokeProperty, nameof(BaseTheme.ChartAxisLineColor));
+				
+				LabelStyle = new ChartAxisLabelStyle
+				{
+					FontSize = 12,
+					FontFamily = FontFamilyConstants.RobotoRegular,
+				}.DynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
+				
+				this.Bind(MinimumProperty, nameof(TrendsViewModel.DailyViewsClonesMinValue))
+					.Bind(MaximumProperty, nameof(TrendsViewModel.DailyViewsClonesMaxValue))
+					.Bind(IntervalProperty, nameof(TrendsViewModel.ViewsClonesChartYAxisInterval));
+			}
+		}
+
+		sealed class AxisLineStyle : ChartLineStyle
+		{
+			public AxisLineStyle()
+			{
+				StrokeWidth = 1.51;
+				this.DynamicResource(ChartLineStyle.StrokeProperty, nameof(BaseTheme.ChartAxisLineColor));
+			}
+		}
 	}
 }

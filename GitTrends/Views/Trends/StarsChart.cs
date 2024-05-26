@@ -8,7 +8,6 @@ namespace GitTrends;
 
 class StarsChart() : BaseChartView(new StarsTrendsChart())
 {
-
 	sealed class StarsTrendsChart : BaseTrendsChart
 	{
 		//MinimumStarCount > MaximumDays > MaximumStarCount
@@ -16,54 +15,8 @@ class StarsChart() : BaseChartView(new StarsTrendsChart())
 		const int _minimumStarCount = 10;
 		const int _maximumStarCount = 100;
 
-		public StarsTrendsChart() : base(TrendsPageAutomationIds.StarsChart)
+		public StarsTrendsChart() : base(TrendsPageAutomationIds.StarsChart, new StarsChartPrimaryAxis(), new StarsChartSecondaryAxis())
 		{
-			var primaryAxisLabelStyle = new ChartAxisLabelStyle
-			{
-				FontSize = 9,
-				FontFamily = FontFamilyConstants.RobotoRegular,
-				Margin = new Thickness(2, 4, 2, 0)
-			}.DynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
-
-			var axisLineStyle = new ChartLineStyle()
-			{
-				StrokeWidth = 1.51
-			}.DynamicResource(ChartLineStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
-
-			PrimaryAxis = new DateTimeAxis
-			{
-				IntervalType = DateTimeIntervalType.Months,
-				Interval = 1,
-				RangePadding = DateTimeRangePadding.Round,
-				LabelStyle = primaryAxisLabelStyle,
-				AxisLineStyle = axisLineStyle,
-				MajorTickStyle = new ChartAxisTickStyle
-				{
-					StrokeColor = Colors.Transparent
-				},
-				ShowMajorGridLines = false,
-			};
-			PrimaryAxis.SetBinding(DateTimeAxis.MinimumProperty, nameof(TrendsViewModel.MinDailyStarsDate));
-			PrimaryAxis.SetBinding(DateTimeAxis.MaximumProperty, nameof(TrendsViewModel.MaxDailyStarsDate));
-
-			var secondaryAxisMajorTickStyle = new ChartAxisTickStyle().DynamicResource(ChartAxisTickStyle.StrokeColorProperty, nameof(BaseTheme.ChartAxisLineColor));
-
-			var secondaryAxisLabelStyle = new ChartAxisLabelStyle
-			{
-				FontSize = 12,
-				FontFamily = FontFamilyConstants.RobotoRegular,
-			}.DynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
-
-			SecondaryAxis = new NumericalAxis
-				{
-					LabelStyle = secondaryAxisLabelStyle,
-					AxisLineStyle = axisLineStyle,
-					MajorTickStyle = secondaryAxisMajorTickStyle,
-					ShowMajorGridLines = false,
-				}.Bind(NumericalAxis.MinimumProperty, nameof(TrendsViewModel.MinDailyStarsValue))
-				.Bind(NumericalAxis.MaximumProperty, nameof(TrendsViewModel.MaxDailyStarsValue))
-				.Bind(NumericalAxis.IntervalProperty, nameof(TrendsViewModel.StarsChartYAxisInterval));
-
 			StarsSeries = new TrendsAreaSeries(TrendsChartTitleConstants.StarsTitle, nameof(DailyStarsModel.LocalDay), nameof(DailyStarsModel.TotalStars), nameof(BaseTheme.CardStarsStatsIconColor));
 			StarsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyStarsList));
 			StarsSeries.PropertyChanged += HandleStarSeriesPropertyChanged;
@@ -131,7 +84,7 @@ class StarsChart() : BaseChartView(new StarsTrendsChart())
 		void HandleStarSeriesPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			ArgumentNullException.ThrowIfNull(sender);
-			
+
 			if (e.PropertyName == ChartSeries.ItemsSourceProperty.PropertyName)
 			{
 				var trendsAreaSeries = (TrendsAreaSeries)sender;
@@ -155,6 +108,64 @@ class StarsChart() : BaseChartView(new StarsTrendsChart())
 						await ZoomStarsChart(dailyStarsList);
 					}
 				}
+			}
+		}
+
+		sealed class StarsChartPrimaryAxis : DateTimeAxis
+		{
+			public StarsChartPrimaryAxis()
+			{
+				LabelStyle = new ChartAxisLabelStyle
+				{
+					FontSize = 9,
+					FontFamily = FontFamilyConstants.RobotoRegular,
+					Margin = new Thickness(2, 4, 2, 0)
+				}.DynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
+
+				AxisLineStyle = new AxisLineStyle();
+				IntervalType = DateTimeIntervalType.Months;
+				Interval = 1;
+				RangePadding = DateTimeRangePadding.Round;
+				MajorTickStyle = new ChartAxisTickStyle
+				{
+					Stroke = Colors.Transparent
+				};
+				ShowMajorGridLines = false;
+
+
+				this.SetBinding(MinimumProperty, nameof(TrendsViewModel.MinDailyStarsDate));
+				this.SetBinding(MaximumProperty, nameof(TrendsViewModel.MaxDailyStarsDate));
+			}
+		}
+
+		sealed class StarsChartSecondaryAxis : NumericalAxis
+		{
+			public StarsChartSecondaryAxis()
+			{
+				ShowMajorGridLines = false;
+
+				AxisLineStyle = new AxisLineStyle();
+
+				MajorTickStyle = new ChartAxisTickStyle().DynamicResource(ChartAxisTickStyle.StrokeProperty, nameof(BaseTheme.ChartAxisLineColor));
+
+				LabelStyle = new ChartAxisLabelStyle
+				{
+					FontSize = 12,
+					FontFamily = FontFamilyConstants.RobotoRegular,
+				}.DynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
+
+				this.Bind(MinimumProperty, nameof(TrendsViewModel.MinDailyStarsValue))
+					.Bind(MaximumProperty, nameof(TrendsViewModel.MaxDailyStarsValue))
+					.Bind(IntervalProperty, nameof(TrendsViewModel.StarsChartYAxisInterval));
+			}
+		}
+
+		sealed class AxisLineStyle : ChartLineStyle
+		{
+			public AxisLineStyle()
+			{
+				StrokeWidth = 1.51;
+				this.DynamicResource(StrokeProperty, nameof(BaseTheme.ChartAxisLineColor));
 			}
 		}
 	}

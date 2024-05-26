@@ -2,7 +2,7 @@
 
 namespace GitTrends;
 
-public class BaseCarouselPage<T> : CarouselPage where T : BaseViewModel
+public class BaseCarouselPage<T> : ContentPage where T : BaseViewModel
 {
 	public BaseCarouselPage(T viewModel, IAnalyticsService analyticsService)
 	{
@@ -11,11 +11,23 @@ public class BaseCarouselPage<T> : CarouselPage where T : BaseViewModel
 
 		ChildAdded += HandleChildAdded;
 		ChildRemoved += HandleChildRemoved;
+
+		base.Content = new Grid();
 	}
 
 	public int PageCount => Children.Count;
+
+	protected IView CurrentPage
+	{
+		get => throw new NotImplementedException();
+		set => throw new NotImplementedException();
+	}
+
+	protected IList<IView> Children => Content.Children;
 		
 	protected IAnalyticsService AnalyticsService { get; }
+
+	new Grid Content => (Grid)base.Content;
 
 	protected override void OnAppearing()
 	{
