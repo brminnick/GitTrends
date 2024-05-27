@@ -13,8 +13,11 @@ using Refit;
 using Sentry.Maui;
 using Sentry.Profiling;
 using Sharpnado.MaterialFrame;
-using Shiny;
 using Syncfusion.Maui.Core.Hosting;
+
+#if ANDROID || IOS || MACCATALYST
+using Shiny;
+#endif
 
 namespace GitTrends;
 

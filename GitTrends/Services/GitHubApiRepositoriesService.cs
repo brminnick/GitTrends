@@ -6,13 +6,14 @@ using Refit;
 
 namespace GitTrends;
 
-public class GitHubApiRepositoriesService(FavIconService favIconService,
-											IAnalyticsService analyticsService,
-											GitHubUserService gitHubUserService,
-											GitHubApiV3Service gitHubApiV3Service,
-											ReferringSitesDatabase referringSitesDatabase,
-											GitHubApiStatusService gitHubApiStatusService,
-											GitHubGraphQLApiService gitHubGraphQLApiService)
+public class GitHubApiRepositoriesService(
+	FavIconService favIconService,
+	IAnalyticsService analyticsService,
+	GitHubUserService gitHubUserService,
+	GitHubApiV3Service gitHubApiV3Service,
+	ReferringSitesDatabase referringSitesDatabase,
+	IGitHubApiStatusService gitHubApiStatusService,
+	GitHubGraphQLApiService gitHubGraphQLApiService)
 {
 	static readonly WeakEventManager<(Repository Repository, TimeSpan RetryTimeSpan)> _abuseRateLimitFoundEventManager = new();
 	static readonly WeakEventManager<Uri> _repositoryUriNotFoundEventManager = new();
@@ -22,7 +23,7 @@ public class GitHubApiRepositoriesService(FavIconService favIconService,
 	readonly GitHubUserService _gitHubUserService = gitHubUserService;
 	readonly GitHubApiV3Service _gitHubApiV3Service = gitHubApiV3Service;
 	readonly ReferringSitesDatabase _referringSitesDatabase = referringSitesDatabase;
-	readonly GitHubApiStatusService _gitHubApiStatusService = gitHubApiStatusService;
+	readonly IGitHubApiStatusService _gitHubApiStatusService = gitHubApiStatusService;
 	readonly GitHubGraphQLApiService _gitHubGraphQLApiService = gitHubGraphQLApiService;
 
 	public static event EventHandler<Uri> RepositoryUriNotFound
@@ -148,7 +149,7 @@ public class GitHubApiRepositoriesService(FavIconService favIconService,
 			await Task.WhenAll(getViewStatisticsTask, getCloneStatisticsTask).ConfigureAwait(false);
 
 			return (await getViewStatisticsTask.ConfigureAwait(false),
-					await getCloneStatisticsTask.ConfigureAwait(false));
+				await getCloneStatisticsTask.ConfigureAwait(false));
 		}
 		catch (ApiException e) when (_gitHubApiStatusService.IsAbuseRateLimit(e.Headers, out var timespan))
 		{
@@ -181,11 +182,21 @@ public class GitHubApiRepositoriesService(FavIconService favIconService,
 		{
 			_analyticsService.Report(e, new Dictionary<string, string>
 			{
-				{ nameof(Repository) + nameof(Repository.Name), repository.Name },
-				{ nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin },
-				{ nameof(GitHubUserService) + nameof(GitHubUserService.Alias), _gitHubUserService.Alias },
-				{ nameof(GitHubUserService) + nameof(GitHubUserService.Name), _gitHubUserService.Name },
-				{ nameof(GitHubApiStatusService) + nameof(GitHubApiStatusService.IsAbuseRateLimit),  _gitHubApiStatusService.IsAbuseRateLimit(e, out _).ToString() }
+				{
+					nameof(Repository) + nameof(Repository.Name), repository.Name
+				},
+				{
+					nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin
+				},
+				{
+					nameof(GitHubUserService) + nameof(GitHubUserService.Alias), _gitHubUserService.Alias
+				},
+				{
+					nameof(GitHubUserService) + nameof(GitHubUserService.Name), _gitHubUserService.Name
+				},
+				{
+					nameof(GitHubApiStatusService) + nameof(GitHubApiStatusService.IsAbuseRateLimit), _gitHubApiStatusService.IsAbuseRateLimit(e, out _).ToString()
+				}
 			});
 		}
 	}
@@ -228,11 +239,21 @@ public class GitHubApiRepositoriesService(FavIconService favIconService,
 		{
 			_analyticsService.Report(e, new Dictionary<string, string>
 			{
-				{ nameof(Repository) + nameof(Repository.Name), repository.Name },
-				{ nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin },
-				{ nameof(GitHubUserService) + nameof(GitHubUserService.Alias), _gitHubUserService.Alias },
-				{ nameof(GitHubUserService) + nameof(GitHubUserService.Name), _gitHubUserService.Name },
-				{ nameof(GitHubApiStatusService) + nameof(GitHubApiStatusService.IsAbuseRateLimit),  _gitHubApiStatusService.IsAbuseRateLimit(e, out _).ToString() }
+				{
+					nameof(Repository) + nameof(Repository.Name), repository.Name
+				},
+				{
+					nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin
+				},
+				{
+					nameof(GitHubUserService) + nameof(GitHubUserService.Alias), _gitHubUserService.Alias
+				},
+				{
+					nameof(GitHubUserService) + nameof(GitHubUserService.Name), _gitHubUserService.Name
+				},
+				{
+					nameof(GitHubApiStatusService) + nameof(GitHubApiStatusService.IsAbuseRateLimit), _gitHubApiStatusService.IsAbuseRateLimit(e, out _).ToString()
+				}
 			});
 		}
 	}
