@@ -22,8 +22,8 @@ public static class GitHubApiExceptionService
 
 		return exception switch
 		{
-			ApiException apiException when apiException.StatusCode is HttpStatusCode.Forbidden => gitHubApiStatusService.HasReachedMaximimApiCallLimit(apiException.Headers),
-			GraphQLException graphQLException => gitHubApiStatusService.HasReachedMaximimApiCallLimit(graphQLException.ResponseHeaders),
+			ApiException { StatusCode: HttpStatusCode.Forbidden } apiException => gitHubApiStatusService.HasReachedMaximumApiCallLimit(apiException.Headers),
+			GraphQLException graphQLException => gitHubApiStatusService.HasReachedMaximumApiCallLimit(graphQLException.ResponseHeaders),
 			_ => false
 		};
 	}
@@ -34,7 +34,7 @@ public static class GitHubApiExceptionService
 
 		return exception switch
 		{
-			ApiException apiException when apiException.StatusCode is HttpStatusCode.Forbidden => gitHubApiStatusService.IsAbuseRateLimit(apiException.Headers, out delta),
+			ApiException { StatusCode: HttpStatusCode.Forbidden } apiException => gitHubApiStatusService.IsAbuseRateLimit(apiException.Headers, out delta),
 			GraphQLException graphQLException => gitHubApiStatusService.IsAbuseRateLimit(graphQLException.ResponseHeaders, out delta),
 			_ => false
 		};
