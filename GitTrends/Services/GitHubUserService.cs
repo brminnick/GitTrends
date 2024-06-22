@@ -18,11 +18,11 @@ public class GitHubUserService
 
 	readonly IPreferences _preferences;
 	readonly ISecureStorage _secureStorage;
-	readonly GitHubApiStatusService _gitHubApiStatusService;
+	readonly IGitHubApiStatusService _gitHubApiStatusService;
 
 	public GitHubUserService(IPreferences preferences,
 								ISecureStorage secureStorage,
-								GitHubApiStatusService gitHubApiStatusService)
+								IGitHubApiStatusService gitHubApiStatusService)
 	{
 		_preferences = preferences;
 		_secureStorage = secureStorage;

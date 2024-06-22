@@ -19,7 +19,7 @@ public partial class TrendsViewModel : BaseViewModel
 
 	readonly GitHubApiV3Service _gitHubApiV3Service;
 	readonly RepositoryDatabase _repositoryDatabase;
-	readonly GitHubApiStatusService _gitHubApiStatusService;
+	readonly IGitHubApiStatusService _gitHubApiStatusService;
 	readonly BackgroundFetchService _backgroundFetchService;
 	readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
 
@@ -59,7 +59,7 @@ public partial class TrendsViewModel : BaseViewModel
 							IAnalyticsService analyticsService,
 							RepositoryDatabase repositoryDatabse,
 							GitHubApiV3Service gitHubApiV3Service,
-							GitHubApiStatusService gitHubApiStatusService,
+							IGitHubApiStatusService gitHubApiStatusService,
 							BackgroundFetchService backgroundFetchService,
 							GitHubGraphQLApiService gitHubGraphQLApiService,
 							TrendsChartSettingsService trendsChartSettingsService) : base(analyticsService, dispatcher)

@@ -11,13 +11,13 @@ namespace GitTrends;
 public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 										IGitHubGraphQLApi gitHubGraphQLApi,
 										GitHubUserService gitHubUserService,
-										GitHubApiStatusService gitHubApiStatusService) : BaseMobileApiService(analyticsService)
+										IGitHubApiStatusService gitHubApiStatusService) : BaseMobileApiService(analyticsService)
 {
 	static readonly WeakEventManager<(string, TimeSpan)> _abuseRateLimitFound_GetOrganizationRepositoriesEventManager = new();
 
 	readonly IGitHubGraphQLApi _githubApiClient = gitHubGraphQLApi;
 	readonly GitHubUserService _gitHubUserService = gitHubUserService;
-	readonly GitHubApiStatusService _gitHubApiStatusService = gitHubApiStatusService;
+	readonly IGitHubApiStatusService _gitHubApiStatusService = gitHubApiStatusService;
 
 	public static event EventHandler<(string OrganizationName, TimeSpan RetryTimeSpan)> AbuseRateLimitFound_GetOrganizationRepositories
 	{

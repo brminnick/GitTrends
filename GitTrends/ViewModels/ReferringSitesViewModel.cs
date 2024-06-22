@@ -34,7 +34,7 @@ public partial class ReferringSitesViewModel : BaseViewModel
 									IAnalyticsService analyticsService,
 									GitHubUserService gitHubUserService,
 									ReferringSitesDatabase referringSitesDatabase,
-									GitHubApiStatusService gitHubApiStatusService,
+									IGitHubApiStatusService gitHubApiStatusService,
 									GitHubAuthenticationService gitHubAuthenticationService,
 									GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, mainThread)
 	{

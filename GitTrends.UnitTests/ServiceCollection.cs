@@ -41,7 +41,6 @@ static class ServiceCollection
 		services.AddSingleton<NotificationService, ExtendedNotificationService>();
 		services.AddSingleton<GitHubApiV3Service>();
 		services.AddSingleton<GitHubApiRepositoriesService>();
-		services.AddSingleton<GitHubApiStatusService>();
 		services.AddSingleton<GitHubAuthenticationService>();
 		services.AddSingleton<GitHubGraphQLApiService>();
 		services.AddSingleton<GitHubUserService>();

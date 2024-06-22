@@ -7,10 +7,10 @@ public class MockPreferences : IPreferences
 	static readonly Lazy<Hashtable> _hashtableHolder = new();
 
 	static Hashtable Hashtable => _hashtableHolder.Value;
-	
-	public void Clear(string? sharedName) => throw new NotImplementedException();
 
-	public bool ContainsKey(string key, string? sharedName) => throw new NotImplementedException();
+	public void Clear(string? sharedName) => Hashtable.Clear();
+
+	public bool ContainsKey(string key, string? sharedName) => Hashtable.ContainsKey(key);
 
 	public T Get<T>(string key, T defaultValue, string? sharedName)
 	{

@@ -19,7 +19,7 @@ public partial class RepositoryViewModel : BaseViewModel
 	readonly DeepLinkingService _deepLinkingService;
 	readonly GitHubApiV3Service _gitHubApiV3Service;
 	readonly MobileSortingService _mobileSortingService;
-	readonly GitHubApiStatusService _gitHubApiStatusService;
+	readonly IGitHubApiStatusService _gitHubApiStatusService;
 	readonly BackgroundFetchService _backgroundFetchService;
 	readonly GitHubGraphQLApiService _gitHubGraphQLApiService;
 	readonly GitHubAuthenticationService _gitHubAuthenticationService;
@@ -46,7 +46,7 @@ public partial class RepositoryViewModel : BaseViewModel
 								DeepLinkingService deepLinkingService,
 								GitHubApiV3Service gitHubApiV3Service,
 								MobileSortingService mobileSortingService,
-								GitHubApiStatusService gitHubApiStatusService,
+								IGitHubApiStatusService gitHubApiStatusService,
 								BackgroundFetchService backgroundFetchService,
 								GitHubGraphQLApiService gitHubGraphQLApiService,
 								GitHubAuthenticationService gitHubAuthenticationService,
