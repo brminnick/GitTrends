@@ -1,0 +1,13 @@
+﻿<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
+    <item android:drawable="@color/splash_screen_background"/>
+
+    <item
+        android:width="384dp"
+        android:height="384dp"
+        android:gravity="center">
+
+        <bitmap
+            android:src="@drawable/GitTrends"
+            android:gravity="fill" />
+    </item>
+</layer-list>

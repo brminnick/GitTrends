@@ -1,0 +1,296 @@
+{
+  "colors": [
+    {
+      "idiom": "universal",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 1.0,
+          "green": 1.0,
+          "blue": 1.0,
+          "alpha": 1.0
+        }
+      }
+    },
+    {
+      "idiom": "iphone",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 1.0,
+          "green": 1.0,
+          "blue": 1.0,
+          "alpha": 1.0
+        }
+      }
+    },
+    {
+      "idiom": "ipad",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 1.0,
+          "green": 1.0,
+          "blue": 1.0,
+          "alpha": 1.0
+        }
+      }
+    },
+    {
+      "idiom": "watch",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 1.0,
+          "green": 1.0,
+          "blue": 1.0,
+          "alpha": 1.0
+        }
+      }
+    },
+    {
+      "idiom": "tv",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 1.0,
+          "green": 1.0,
+          "blue": 1.0,
+          "alpha": 1.0
+        }
+      }
+    },
+    {
+      "idiom": "mac",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 1.0,
+          "green": 1.0,
+          "blue": 1.0,
+          "alpha": 1.0
+        }
+      }
+    },
+    {
+      "idiom": "universal",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 0.298039228,
+          "green": 0.6784314,
+          "blue": 0.635294139,
+          "alpha": 1.0
+        }
+      },
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ]
+    },
+    {
+      "idiom": "iphone",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 0.298039228,
+          "green": 0.6784314,
+          "blue": 0.635294139,
+          "alpha": 1.0
+        }
+      },
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ]
+    },
+    {
+      "idiom": "ipad",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 0.298039228,
+          "green": 0.6784314,
+          "blue": 0.635294139,
+          "alpha": 1.0
+        }
+      },
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ]
+    },
+    {
+      "idiom": "watch",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 0.298039228,
+          "green": 0.6784314,
+          "blue": 0.635294139,
+          "alpha": 1.0
+        }
+      },
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ]
+    },
+    {
+      "idiom": "tv",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 0.298039228,
+          "green": 0.6784314,
+          "blue": 0.635294139,
+          "alpha": 1.0
+        }
+      },
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ]
+    },
+    {
+      "idiom": "mac",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 0.298039228,
+          "green": 0.6784314,
+          "blue": 0.635294139,
+          "alpha": 1.0
+        }
+      },
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ]
+    },
+    {
+      "idiom": "universal",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 1.0,
+          "green": 1.0,
+          "blue": 1.0,
+          "alpha": 1.0
+        }
+      },
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "light"
+        }
+      ]
+    },
+    {
+      "idiom": "iphone",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 1.0,
+          "green": 1.0,
+          "blue": 1.0,
+          "alpha": 1.0
+        }
+      },
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "light"
+        }
+      ]
+    },
+    {
+      "idiom": "ipad",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 1.0,
+          "green": 1.0,
+          "blue": 1.0,
+          "alpha": 1.0
+        }
+      },
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "light"
+        }
+      ]
+    },
+    {
+      "idiom": "watch",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 1.0,
+          "green": 1.0,
+          "blue": 1.0,
+          "alpha": 1.0
+        }
+      },
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "light"
+        }
+      ]
+    },
+    {
+      "idiom": "tv",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 1.0,
+          "green": 1.0,
+          "blue": 1.0,
+          "alpha": 1.0
+        }
+      },
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "light"
+        }
+      ]
+    },
+    {
+      "idiom": "mac",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": 1.0,
+          "green": 1.0,
+          "blue": 1.0,
+          "alpha": 1.0
+        }
+      },
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "light"
+        }
+      ]
+    }
+  ],
+  "info": {
+    "version": 1,
+    "author": "xcode"
+  }
+}
