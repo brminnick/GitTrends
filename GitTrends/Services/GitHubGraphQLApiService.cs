@@ -68,7 +68,7 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 			var starCount = DemoDataConstants.GetRandomNumber();
 			var starredAtDates = DemoDataConstants.GenerateStarredAtDates(starCount);
 
-			var starGazerInfoList = starredAtDates.Select(static x => new StarGazerInfo(x, string.Empty));
+			var starGazerInfoList = starredAtDates.Select(static x => new StarGazerInfo(x, string.Empty)).ToList();
 
 			return new StarGazers(starCount, starGazerInfoList);
 		}
@@ -183,11 +183,14 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 		var response = await action().ConfigureAwait(false);
 
 		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
-
-		if (response?.Content?.Errors is not null)
+		
+		if (response.Error is not null)
+			throw response.Error;
+		
+		if (response.Content?.Errors is not null)
 			throw new GraphQLException<T>(response.Content.Data, response.Content.Errors, response.StatusCode, response.Headers);
 
-		if (response?.Content is null)
+		if (response.Content is null)
 			throw new InvalidOperationException("GraphQL Content Cannot Be Null");
 
 		return response.Content.Data;

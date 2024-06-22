@@ -2,25 +2,12 @@
 
 namespace GitTrends.Shared;
 
-public record StarGazers
-{
-	public StarGazers(long totalCount, IEnumerable<StarGazerInfo> edges) =>
-		(TotalCount, StarredAt) = (totalCount, edges.ToList());
-
-	[JsonPropertyName("totalCount")]
-	public long TotalCount { get; }
-
-	[JsonPropertyName("edges")]
-	public IReadOnlyList<StarGazerInfo> StarredAt { get; }
-}
+public record StarGazers(
+	[property: JsonPropertyName("totalCount")] long TotalCount,
+	[property: JsonPropertyName("edges")] IReadOnlyList<StarGazerInfo> StarredAt);
 
 public record StarGazerInfo(DateTimeOffset StarredAt, string Cursor);
 
-public record StarGazer
-{
-	public StarGazer(DateTimeOffset starred_at) => StarredAt = starred_at;
-
-	public DateTimeOffset StarredAt { get; }
-}
+public record StarGazer(DateTimeOffset StarredAt);
 
 public record StarGazersConnection(long TotalCount);

@@ -7,4 +7,4 @@ public record Contributor(
 	[property: JsonPropertyName("avatar_url")] Uri AvatarUrl,
 	[property: JsonPropertyName("html_url")] Uri GitHubUrl,
 	[property: JsonPropertyName("contributions")] long ContributionCount,
-	[property: JsonPropertyName("dataDownloadedAt")] DateTimeOffset? DataDownloadedAt);
+	[property: JsonPropertyName("dataDownloadedAt")] DateTimeOffset? DataDownloadedAt = null);

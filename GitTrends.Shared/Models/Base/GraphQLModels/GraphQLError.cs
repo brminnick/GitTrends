@@ -6,7 +6,7 @@ namespace GitTrends.Shared;
 public record GraphQLError(string Message, GraphQLLocation[] Locations)
 {
 	[JsonExtensionData]
-	public IDictionary<string, JsonDocument>? AdditonalEntries { get; set; }
+	public IDictionary<string, JsonElement>? AdditionalEntries { get; set; }
 }
 
 public record GraphQLLocation(long Line, long Column);

@@ -33,13 +33,7 @@ public record StarGazerQueryContent : GraphQLRequest
 	}
 }
 
-public record ViewerLoginQueryContent : GraphQLRequest
-{
-	public ViewerLoginQueryContent() : base("query { viewer{ login, name, avatarUrl }}")
-	{
-
-	}
-}
+public record ViewerLoginQueryContent() : GraphQLRequest("query { viewer{ login, name, avatarUrl }}");
 
 public record ViewerOrganizationsQueryContent : GraphQLRequest
 {

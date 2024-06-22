@@ -318,10 +318,10 @@ public partial class TrendsViewModel : BaseViewModel
 		finally
 		{
 			if (!getGetStarsDataCTS.IsCancellationRequested)
-				getGetStarsDataCTS.Cancel();
+				await getGetStarsDataCTS.CancelAsync();
 
 			if (!getViewsClonesDataCTS.IsCancellationRequested)
-				getViewsClonesDataCTS.Cancel();
+				await getViewsClonesDataCTS.CancelAsync();
 
 			//Display the Activity Indicator for a minimum time to ensure consistant UX
 			await minimumTimeTask.ConfigureAwait(false);
@@ -404,7 +404,7 @@ public partial class TrendsViewModel : BaseViewModel
 			using var cancellationTokenRegistration = cancellationToken.Register(() =>
 			{
 				BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
-				backgroundStarsTCS.SetCanceled();
+				backgroundStarsTCS.SetCanceled(cancellationToken);
 			}); // Work-around to use a CancellationToken with a TaskCompletionSource: https://stackoverflow.com/a/39897392/5953643
 
 			return await backgroundStarsTCS.Task.ConfigureAwait(false);

@@ -3,35 +3,14 @@ using System.Text.Json.Serialization;
 
 namespace GitTrends.Shared;
 
-public record User
+public record User(
+	[property: JsonPropertyName("repositories")] RepositoryConnection RepositoryConnection,
+	[property: JsonPropertyName("name")] string Name,
+	[property: JsonPropertyName("company")] string Company,
+	[property: JsonPropertyName("createdAt")] DateTimeOffset AccountCreationDate,
+	[property: JsonPropertyName("login")] string Alias,
+	[property: JsonPropertyName("avatarUrl")] Uri AvatarUri)
 {
-	public User(RepositoryConnection repositories, string name, string company, DateTimeOffset createdAt, string login, Uri avatarUrl)
-	{
-		RepositoryConnection = repositories;
-		Name = name;
-		Company = company;
-		AccountCreationDate = createdAt;
-		Alias = login;
-		AvatarUri = avatarUrl;
-	}
-
-	[JsonPropertyName("repositories")]
-	public RepositoryConnection RepositoryConnection { get; }
-
-	[JsonPropertyName("name")]
-	public string Name { get; }
-
-	[JsonPropertyName("company")]
-	public string Company { get; }
-
-	[JsonPropertyName("createdAt")]
-	public DateTimeOffset AccountCreationDate { get; }
-
-	[JsonPropertyName("login")]
-	public string Alias { get; }
-
-	[JsonPropertyName("avatarUrl")]
-	public Uri AvatarUri { get; }
 
 	public override string ToString()
 	{

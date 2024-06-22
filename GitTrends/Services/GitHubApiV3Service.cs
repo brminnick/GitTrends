@@ -56,9 +56,9 @@ public class GitHubApiV3Service(IGitHubApiV3 gitHubApiV3,
 			for (int i = 0; i < 14; i++)
 			{
 				var count = DemoDataConstants.GetRandomNumber() / 2; //Ensures the average clone count is smaller than the average view count
-				var uniqeCount = count / 2; //Ensures uniqueCount is always less than count
+				var uniqueCount = count / 2; //Ensures uniqueCount is always less than count
 
-				dailyClonesModelList.Add(new DailyClonesModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
+				dailyClonesModelList.Add(new DailyClonesModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqueCount));
 			}
 
 
@@ -121,7 +121,7 @@ public class GitHubApiV3Service(IGitHubApiV3 gitHubApiV3,
 			var starCount = DemoDataConstants.GetRandomNumber();
 			var starredAtDates = DemoDataConstants.GenerateStarredAtDates(starCount);
 
-			return new StarGazers(starCount, starredAtDates.Select(static x => new StarGazerInfo(x, string.Empty)));
+			return new StarGazers(starCount, starredAtDates.Select(static x => new StarGazerInfo(x, string.Empty)).ToList());
 		}
 		else
 		{
@@ -138,7 +138,7 @@ public class GitHubApiV3Service(IGitHubApiV3 gitHubApiV3,
 				currentPageNumber++;
 			} while (starGazerResponse.Count > 0);
 
-			return new StarGazers(totalStarGazers.Count, totalStarGazers.Select(static x => new StarGazerInfo(x.StarredAt, string.Empty)));
+			return new StarGazers(totalStarGazers.Count, totalStarGazers.Select(static x => new StarGazerInfo(x.StarredAt, string.Empty)).ToList());
 		}
 	}
 }

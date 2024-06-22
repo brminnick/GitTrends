@@ -2,14 +2,6 @@
 
 namespace GitTrends.Shared;
 
-public record IssuesConnection
-{
-	public IssuesConnection(long totalCount, IEnumerable<Issue>? nodes) =>
-		(IssuesCount, IssueList) = (totalCount, (nodes ?? []).ToList());
-
-	[JsonPropertyName("nodes")]
-	public IReadOnlyList<Issue> IssueList { get; }
-
-	[JsonPropertyName("totalCount")]
-	public long IssuesCount { get; }
-}
+public record IssuesConnection(
+	[property: JsonPropertyName("totalCount")] long IssuesCount,
+	[property: JsonPropertyName("nodes")] IReadOnlyList<Issue> IssueList);

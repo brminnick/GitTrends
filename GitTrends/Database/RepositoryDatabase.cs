@@ -80,9 +80,6 @@ namespace GitTrends
 				await Execute<RepositoryDatabaseModel, RepositoryDatabaseModel>(repositoryDatabaseConnection => repositoryDatabaseConnection.Table<RepositoryDatabaseModel>().FirstOrDefaultAsync(x => x.Url == repositoryUrl),
 					token).ConfigureAwait(false);
 
-			if (repositoryDatabaseModel is null)
-				return null;
-
 			var (dailyClones, dailyViews, starGazers) = await GetClonesViewsStars(repositoryDatabaseModel, token).ConfigureAwait(false);
 
 			return RepositoryDatabaseModel.ToRepository(repositoryDatabaseModel, dailyClones, dailyViews, starGazers);
@@ -184,7 +181,7 @@ namespace GitTrends
 			foreach (var dailyViewsModel in repository.DailyViewsList)
 			{
 				var dailyViewsDatabaseModel = DailyViewsDatabaseModel.ToDailyViewsDatabaseModel(dailyViewsModel, repository);
-				await Execute<int, DailyViewsDatabaseModel>(dailyViewsDatabaseConnection => dailyViewsDatabaseConnection.InsertOrReplaceAsync(dailyViewsModel), token).ConfigureAwait(false);
+				await Execute<int, DailyViewsDatabaseModel>(dailyViewsDatabaseConnection => dailyViewsDatabaseConnection.InsertOrReplaceAsync(dailyViewsDatabaseModel), token).ConfigureAwait(false);
 			}
 		}
 
