@@ -13,7 +13,7 @@ namespace GitTrends.UnitTests
 		[Test]
 		public Task MaximumApiLimit_GraphQLApi() => ExecutePullToRefreshCommandTestMaximumApiLimitTest();
 
-		protected override void InitializeServiceCollection()
+		protected override void InitializeServiceCollection(GitHubToken token)
 		{
 			var gitHubApiV3Client = RestService.For<IGitHubApiV3>(new HttpClient
 			{
@@ -27,7 +27,7 @@ namespace GitTrends.UnitTests
 				BaseAddress = new(AzureConstants.AzureFunctionsApiUrl)
 			});
 
-			ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
+			ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient, token);
 		}
 
 		protected static HttpClient CreateMaximumApiLimitHttpClient(string url)

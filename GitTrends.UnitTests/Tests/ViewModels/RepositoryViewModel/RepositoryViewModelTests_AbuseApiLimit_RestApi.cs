@@ -12,7 +12,7 @@ class RepositoryViewModelTests_AbuseLimit_RestApi : RepositoryViewModelTests_Abu
 	[Test]
 	public Task AbuseLimit_RestApi() => ExecutePullToRefreshCommandTestAbuseLimit();
 
-	protected override void InitializeServiceCollection()
+	protected override void InitializeServiceCollection(GitHubToken token)
 	{
 		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(CreateAbuseApiLimitHttpClient(GitHubConstants.GitHubRestApiUrl));
 		var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(new HttpClient
@@ -25,7 +25,7 @@ class RepositoryViewModelTests_AbuseLimit_RestApi : RepositoryViewModelTests_Abu
 			BaseAddress = new(AzureConstants.AzureFunctionsApiUrl)
 		});
 
-		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
+		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient, token);
 	}
 
 	protected static HttpClient CreateAbuseApiLimitHttpClient(string url)

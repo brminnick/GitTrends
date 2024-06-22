@@ -76,7 +76,7 @@ class ReferringSitesViewModelTests_MaximumApiCallLimit : BaseTest
 		}
 	}
 
-	protected override void InitializeServiceCollection()
+	protected override void InitializeServiceCollection(GitHubToken token)
 	{
 		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(CreateMaximumApiLimitHttpClient(GitHubConstants.GitHubRestApiUrl));
 
@@ -90,7 +90,7 @@ class ReferringSitesViewModelTests_MaximumApiCallLimit : BaseTest
 			BaseAddress = new(AzureConstants.AzureFunctionsApiUrl)
 		});
 
-		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
+		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient, token);
 	}
 
 	static HttpClient CreateMaximumApiLimitHttpClient(string url)

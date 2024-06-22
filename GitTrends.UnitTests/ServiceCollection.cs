@@ -13,12 +13,12 @@ static class ServiceCollection
 {
 	static IServiceProvider? _serviceProviderHolder;
 
-	public static IServiceProvider ServiceProvider => _serviceProviderHolder ?? throw new NullReferenceException("Must call Initialize first");
+	public static IServiceProvider ServiceProvider => _serviceProviderHolder ?? throw new InvalidOperationException("Must call Initialize first");
 
-	public static void Initialize(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi) =>
-		_serviceProviderHolder = CreateContainer(azureFunctionsApi, gitHubApiV3, gitHubGraphQLApi);
+	public static void Initialize(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi, GitHubToken token) =>
+		_serviceProviderHolder = CreateContainer(azureFunctionsApi, gitHubApiV3, gitHubGraphQLApi, token);
 
-	static ServiceProvider CreateContainer(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi)
+	static ServiceProvider CreateContainer(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi, GitHubToken token)
 	{
 		var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
 
@@ -27,7 +27,7 @@ static class ServiceCollection
 		services.AddSingleton(gitHubGraphQLApi);
 		services.AddSingleton(azureFunctionsApi);
 		
-		services.AddGitHubApiStatusService(new AuthenticationHeaderValue("bearer", "123"), new ProductHeaderValue(nameof(GitTrends)))
+		services.AddGitHubApiStatusService(new AuthenticationHeaderValue(token.TokenType, token.AccessToken), new ProductHeaderValue(nameof(GitTrends)))
 			.ConfigurePrimaryHttpMessageHandler(static config => new HttpClientHandler
 			{
 				AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate

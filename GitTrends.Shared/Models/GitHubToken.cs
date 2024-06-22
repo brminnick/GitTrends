@@ -2,26 +2,16 @@
 
 namespace GitTrends.Shared;
 
-public record GitHubToken
+[method: JsonConstructor]
+public record GitHubToken(
+	[property: JsonPropertyName("access_token")] string AccessToken,
+	[property: JsonPropertyName("scope")] string Scope,
+	[property: JsonPropertyName("token_type")] string TokenType)
 {
-	public GitHubToken(string access_token, string scope, string token_type) =>
-		(AccessToken, Scope, TokenType) = (access_token, scope, token_type);
-
 	public static GitHubToken Empty { get; } = new GitHubToken(string.Empty, string.Empty, string.Empty);
-
-	[JsonPropertyName("access_token")]
-	public string AccessToken { get; }
-
-	[JsonPropertyName("scope")]
-	public string Scope { get; }
-
-	[JsonPropertyName("token_type")]
-	public string TokenType { get; }
 }
 
 public static class GitHubTokenExtensions
 {
-	public static bool IsEmpty(this GitHubToken gitHubToken) => gitHubToken.AccessToken == string.Empty
-																&& gitHubToken.Scope == string.Empty
-																&& gitHubToken.TokenType == string.Empty;
+	public static bool IsEmpty(this GitHubToken gitHubToken) => gitHubToken is { AccessToken: "", Scope: "", TokenType: "" };
 }

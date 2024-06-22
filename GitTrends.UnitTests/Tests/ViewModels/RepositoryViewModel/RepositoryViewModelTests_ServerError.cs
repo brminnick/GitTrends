@@ -102,7 +102,7 @@ class RepositoryViewModelTests_ServerError : BaseTest
 		}
 	}
 
-	protected override void InitializeServiceCollection()
+	protected override void InitializeServiceCollection(GitHubToken token)
 	{
 		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(CreateServerErrorHttpClient(GitHubConstants.GitHubRestApiUrl));
 
@@ -116,7 +116,7 @@ class RepositoryViewModelTests_ServerError : BaseTest
 			BaseAddress = new(AzureConstants.AzureFunctionsApiUrl)
 		});
 
-		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
+		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient, token);
 	}
 
 	static HttpClient CreateServerErrorHttpClient(string url)

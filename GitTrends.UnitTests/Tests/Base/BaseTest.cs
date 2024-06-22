@@ -31,11 +31,15 @@ abstract class BaseTest : IDisposable
 	public virtual async Task Setup()
 	{
 		TestCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-		
-		InitializeServiceCollection();
 
 		CultureInfo.DefaultThreadCurrentCulture = null;
 		CultureInfo.DefaultThreadCurrentUICulture = null;
+		
+		var accessToken = await Mobile.Common.AzureFunctionsApiService.GetTestToken(TestCancellationTokenSource.Token).ConfigureAwait(false);
+		if (accessToken.IsEmpty() || string.IsNullOrWhiteSpace(accessToken.AccessToken))
+			throw new InvalidOperationException("Invalid Token");
+
+		InitializeServiceCollection(accessToken);
 
 		var extendedBackgroundFetchService = (ExtendedBackgroundFetchService)ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
 		extendedBackgroundFetchService.CancelAllJobs();
@@ -62,12 +66,12 @@ abstract class BaseTest : IDisposable
 		var mockNotificationService = (MockDeviceNotificationsService)ServiceCollection.ServiceProvider.GetRequiredService<IDeviceNotificationsService>();
 		mockNotificationService.Reset();
 	}
-	
-		protected static async Task AuthenticateUser(GitHubUserService gitHubUserService, GitHubGraphQLApiService gitHubGraphQLApiService, CancellationToken token)
+
+	protected static async Task AuthenticateUser(GitHubUserService gitHubUserService, GitHubGraphQLApiService gitHubGraphQLApiService, CancellationToken token)
 	{
 		var accessToken = await Mobile.Common.AzureFunctionsApiService.GetTestToken(token).ConfigureAwait(false);
 		if (accessToken.IsEmpty() || string.IsNullOrWhiteSpace(accessToken.AccessToken))
-			throw new Exception("Invalid Token");
+			throw new InvalidOperationException("Invalid Token");
 
 		await gitHubUserService.SaveGitHubToken(accessToken).ConfigureAwait(false);
 
@@ -102,7 +106,7 @@ abstract class BaseTest : IDisposable
 			DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(), starredAt.Count,
 			gitTrendsAvatarUrl, false, downloadedAt, RepositoryPermission.ADMIN, false, false, dailyViewsList, dailyClonesList, starredAt);
 	}
-	
+
 	protected virtual void Dispose(bool disposing)
 	{
 		if (disposing)
@@ -111,7 +115,7 @@ abstract class BaseTest : IDisposable
 		}
 	}
 
-	protected virtual void InitializeServiceCollection()
+	protected virtual void InitializeServiceCollection(GitHubToken token)
 	{
 		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(new HttpClient
 		{
@@ -128,6 +132,6 @@ abstract class BaseTest : IDisposable
 			BaseAddress = new Uri(AzureConstants.AzureFunctionsApiUrl)
 		});
 
-		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
+		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient, token);
 	}
 }
