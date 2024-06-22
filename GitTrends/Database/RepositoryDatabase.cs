@@ -10,11 +10,15 @@ namespace GitTrends
 			GitHubApiRepositoriesService.RepositoryUriNotFound += HandleRepositoryUriNotFound;
 		}
 
-		public override Task DeleteAllData(CancellationToken token) => Task.WhenAll(
-			Execute<int, DailyViewsDatabaseModel>(static async databaseConnection => await databaseConnection.DeleteAllAsync<DailyViewsDatabaseModel>(), token),
-			Execute<int, DailyClonesDatabaseModel>(static async databaseConnection => await databaseConnection.DeleteAllAsync<DailyClonesDatabaseModel>(), token),
-			Execute<int, StarGazerInfoDatabaseModel>(static async databaseConnection => await databaseConnection.DeleteAllAsync<StarGazerInfoDatabaseModel>(), token),
-			Execute<int, RepositoryDatabaseModel>(static async databaseConnection => await databaseConnection.DeleteAllAsync<RepositoryDatabaseModel>(), token));
+		public override async Task DeleteAllData(CancellationToken token)
+		{
+			await Task.WhenAll(
+				Execute<int, DailyViewsDatabaseModel>(static async databaseConnection => await databaseConnection.DeleteAllAsync<DailyViewsDatabaseModel>(), token),
+				Execute<int, DailyClonesDatabaseModel>(static async databaseConnection => await databaseConnection.DeleteAllAsync<DailyClonesDatabaseModel>(), token),
+				Execute<int, StarGazerInfoDatabaseModel>(static async databaseConnection => await databaseConnection.DeleteAllAsync<StarGazerInfoDatabaseModel>(), token));
+			
+			await Execute<int, RepositoryDatabaseModel>(static async databaseConnection => await databaseConnection.DeleteAllAsync<RepositoryDatabaseModel>(), token);
+		}
 
 		public async Task DeleteExpiredData(CancellationToken token)
 		{
@@ -63,9 +67,9 @@ namespace GitTrends
 		{
 			var favoriteRepositories =
 				await Execute<List<RepositoryDatabaseModel>, RepositoryDatabaseModel>(
-					static repositoryDatabaseConnection => repositoryDatabaseConnection.Table<RepositoryDatabaseModel>().Where(static x => x.IsFavorite == true).ToListAsync(),
-					token)
-				.ConfigureAwait(false);
+						static repositoryDatabaseConnection => repositoryDatabaseConnection.Table<RepositoryDatabaseModel>().Where(static x => x.IsFavorite == true).ToListAsync(),
+						token)
+					.ConfigureAwait(false);
 
 			return favoriteRepositories.Select(static x => x.Url).ToList();
 		}
@@ -74,7 +78,7 @@ namespace GitTrends
 		{
 			var repositoryDatabaseModel =
 				await Execute<RepositoryDatabaseModel, RepositoryDatabaseModel>(repositoryDatabaseConnection => repositoryDatabaseConnection.Table<RepositoryDatabaseModel>().FirstOrDefaultAsync(x => x.Url == repositoryUrl),
-				token).ConfigureAwait(false);
+					token).ConfigureAwait(false);
 
 			if (repositoryDatabaseModel is null)
 				return null;
@@ -106,8 +110,8 @@ namespace GitTrends
 		static bool IsWithin14Days(DateTimeOffset dataDate, DateTimeOffset mostRecentDate) => dataDate.CompareTo(mostRecentDate.Subtract(TimeSpan.FromDays(13)).ToLocalTime()) >= 0;
 
 		async Task<(IReadOnlyList<DailyClonesDatabaseModel>? dailyClones,
-							IReadOnlyList<DailyViewsDatabaseModel>? dailyViews,
-							IReadOnlyList<StarGazerInfoDatabaseModel>? starGazers)> GetClonesViewsStars(RepositoryDatabaseModel repository, CancellationToken token)
+			IReadOnlyList<DailyViewsDatabaseModel>? dailyViews,
+			IReadOnlyList<StarGazerInfoDatabaseModel>? starGazers)> GetClonesViewsStars(RepositoryDatabaseModel repository, CancellationToken token)
 		{
 			var getStarGazerInfoModelsTask = Execute<List<StarGazerInfoDatabaseModel>, StarGazerInfoDatabaseModel>(starGazerInfoDatabaseConnection => starGazerInfoDatabaseConnection.Table<StarGazerInfoDatabaseModel>().Where(x => x.RepositoryUrl == repository.Url).ToListAsync(), token);
 			var getDailyClonesDatabaseModelsTask = Execute<List<DailyClonesDatabaseModel>, DailyClonesDatabaseModel>(dailyClonesDatabaseConnection => dailyClonesDatabaseConnection.Table<DailyClonesDatabaseModel>().Where(x => x.RepositoryUrl == repository.Url).ToListAsync(), token);
@@ -236,7 +240,7 @@ namespace GitTrends
 			public DateTimeOffset StarredAt { get; init; }
 
 			public static StarGazerInfo ToStarGazerInfo(in StarGazerInfoDatabaseModel starGazerInfoDatabaseModel) =>
-			   new(starGazerInfoDatabaseModel.StarredAt, string.Empty);
+				new(starGazerInfoDatabaseModel.StarredAt, string.Empty);
 
 			public static StarGazerInfoDatabaseModel ToStarGazerInfoDatabaseModel(in StarGazerInfo starGazerInfo, in Repository repository) => new()
 			{
@@ -319,30 +323,30 @@ namespace GitTrends
 			public bool? IsFavorite { get; init; }
 
 			public static Repository ToRepository(in RepositoryDatabaseModel repositoryDatabaseModel,
-													in IEnumerable<DailyClonesDatabaseModel>? dailyClonesDatabaseModels,
-													in IEnumerable<DailyViewsDatabaseModel>? dailyViewsDatabaseModels,
-													in IEnumerable<StarGazerInfoDatabaseModel>? starGazerInfoDatabaseModels)
+				in IEnumerable<DailyClonesDatabaseModel>? dailyClonesDatabaseModels,
+				in IEnumerable<DailyViewsDatabaseModel>? dailyViewsDatabaseModels,
+				in IEnumerable<StarGazerInfoDatabaseModel>? starGazerInfoDatabaseModels)
 			{
 				var clonesList = dailyClonesDatabaseModels?.Select(static x => DailyClonesDatabaseModel.ToDailyClonesModel(x)).ToList();
 				var viewsList = dailyViewsDatabaseModels?.Select(static x => DailyViewsDatabaseModel.ToDailyViewsModel(x)).ToList();
 
 				return new Repository(repositoryDatabaseModel.Name,
-										repositoryDatabaseModel.Description,
-										repositoryDatabaseModel.ForkCount,
-										repositoryDatabaseModel.OwnerLogin,
-										repositoryDatabaseModel.OwnerAvatarUrl ?? repositoryDatabaseModel.OwnerLogin,
-										repositoryDatabaseModel.IssuesCount,
-										repositoryDatabaseModel.WatchersCount,
-										repositoryDatabaseModel.StarCount,
-										repositoryDatabaseModel.Url,
-										repositoryDatabaseModel.IsFork,
-										repositoryDatabaseModel.DataDownloadedAt,
-										repositoryDatabaseModel.Permission,
-										repositoryDatabaseModel.IsArchived,
-										repositoryDatabaseModel.IsFavorite,
-										viewsList,
-										clonesList,
-										starGazerInfoDatabaseModels?.Select(static x => x.StarredAt).Distinct());
+					repositoryDatabaseModel.Description,
+					repositoryDatabaseModel.ForkCount,
+					repositoryDatabaseModel.OwnerLogin,
+					repositoryDatabaseModel.OwnerAvatarUrl ?? repositoryDatabaseModel.OwnerLogin,
+					repositoryDatabaseModel.IssuesCount,
+					repositoryDatabaseModel.WatchersCount,
+					repositoryDatabaseModel.StarCount,
+					repositoryDatabaseModel.Url,
+					repositoryDatabaseModel.IsFork,
+					repositoryDatabaseModel.DataDownloadedAt,
+					repositoryDatabaseModel.Permission,
+					repositoryDatabaseModel.IsArchived,
+					repositoryDatabaseModel.IsFavorite,
+					viewsList,
+					clonesList,
+					starGazerInfoDatabaseModels?.Select(static x => x.StarredAt).Distinct());
 			}
 
 			public static RepositoryDatabaseModel ToRepositoryDatabase(in Repository repository) => new()

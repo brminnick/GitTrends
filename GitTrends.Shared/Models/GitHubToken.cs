@@ -2,7 +2,6 @@
 
 namespace GitTrends.Shared;
 
-[method: JsonConstructor]
 public record GitHubToken(
 	[property: JsonPropertyName("access_token")] string AccessToken,
 	[property: JsonPropertyName("scope")] string Scope,

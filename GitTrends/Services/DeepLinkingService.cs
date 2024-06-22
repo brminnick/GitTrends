@@ -47,7 +47,7 @@ namespace GitTrends
 		{
 			var currentTheme = (BaseTheme?)Application.Current?.Resources;
 
-			if (currentTheme != null)
+			if (currentTheme is not null)
 			{
 				browserLaunchOptions ??= new BrowserLaunchOptions
 				{
@@ -55,13 +55,9 @@ namespace GitTrends
 					PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor,
 					Flags = BrowserLaunchFlags.PresentAsFormSheet
 				};
-
 			}
 
-			if (browserLaunchOptions is null)
-				return _browser.OpenAsync(url);
-
-			return _browser.OpenAsync(url, browserLaunchOptions);
+			return browserLaunchOptions is null ? _browser.OpenAsync(url) : _browser.OpenAsync(url, browserLaunchOptions);
 
 		}).WaitAsync(token);
 

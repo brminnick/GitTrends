@@ -38,7 +38,7 @@ public partial class AboutViewModel : BaseViewModel
 	public IReadOnlyList<NuGetPackageModel> InstalledLibraries { get; }
 
 	[RelayCommand]
-	public Task ViewOnGitHub(CancellationToken token)
+	Task ViewOnGitHub(CancellationToken token)
 	{
 		if (_gitTrendsStatisticsService?.GitHubUri is null)
 			return Task.CompletedTask;
@@ -49,9 +49,9 @@ public partial class AboutViewModel : BaseViewModel
 	}
 
 	[RelayCommand]
-	public Task RequestFeature(CancellationToken token)
+	Task RequestFeature(CancellationToken token)
 	{
-		if (_gitTrendsStatisticsService?.GitHubUri is null)
+		if (_gitTrendsStatisticsService.GitHubUri is null)
 			return Task.CompletedTask;
 
 		AnalyticsService.Track("Request Feature Tapped");

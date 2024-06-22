@@ -30,7 +30,7 @@ abstract class BaseTest : IDisposable
 	[SetUp]
 	public virtual async Task Setup()
 	{
-		TestCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+		TestCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(30));
 
 		CultureInfo.DefaultThreadCurrentCulture = null;
 		CultureInfo.DefaultThreadCurrentUICulture = null;
@@ -75,7 +75,7 @@ abstract class BaseTest : IDisposable
 
 		await gitHubUserService.SaveGitHubToken(accessToken).ConfigureAwait(false);
 
-		var (login, name, avatarUri) = await gitHubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false);
+		var (login, name, avatarUri) = await gitHubGraphQLApiService.GetCurrentUserInfo(token).ConfigureAwait(false);
 
 		gitHubUserService.Alias = login;
 		gitHubUserService.Name = name;
