@@ -7,7 +7,7 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <WarningsAsErrors>nullable</WarningsAsErrors>
-    <MauiPackageVersion>8.0.40</MauiPackageVersion>
+    <MauiPackageVersion>8.0.60</MauiPackageVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>

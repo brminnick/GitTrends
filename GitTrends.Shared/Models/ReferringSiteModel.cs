@@ -2,19 +2,18 @@
 
 public record ReferringSiteModel : BaseTotalCountModel, IReferringSiteModel
 {
-	public ReferringSiteModel(in long count, in long uniques, in string referrer, in DateTimeOffset? downloadedAt = null) : base(count, uniques)
+	public ReferringSiteModel(long count, long uniques, string referrer, DateTimeOffset? downloadedAt = null) : base(count, uniques)
 	{
 		DownloadedAt = downloadedAt ?? DateTimeOffset.UtcNow;
 
 		Referrer = referrer;
-		Uri.TryCreate("https://" + referrer, UriKind.Absolute, out Uri? referringUri);
 
-		if (referringUri is null)
+		if (!Uri.TryCreate("https://" + referrer, UriKind.Absolute, out var referringUri))
 		{
 			ReferrerUri = null;
 			IsReferrerUriValid = false;
 		}
-		else if (!referringUri.ToString().Contains("."))
+		else if (!referringUri.ToString().Contains('.'))
 		{
 			ReferrerUri = new Uri(referringUri.ToString().TrimEnd('/') + ".com/");
 			IsReferrerUriValid = true;

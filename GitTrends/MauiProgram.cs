@@ -11,7 +11,7 @@ using Plugin.StoreReview.Abstractions;
 using Polly;
 using Refit;
 using Sentry.Maui;
-using Sentry.Profiling;
+
 using Sharpnado.MaterialFrame;
 using Syncfusion.Maui.Core.Hosting;
 
@@ -176,7 +176,6 @@ public static class MauiProgram
 		
 		options.TracesSampleRate = 1.0;
 		options.ProfilesSampleRate = 1.0;
-		options.AddIntegration(new ProfilingIntegration());
 
 		options.ExperimentalMetrics = new ExperimentalMetricsOptions
 		{

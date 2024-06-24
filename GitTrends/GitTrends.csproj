@@ -10,7 +10,7 @@
     either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
     <!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
 
-    <OutputType Condition="'$(TargetFramework)' != 'net8.0'">Exe</OutputType>
+    <OutputType Condition="'$(TargetFramework)' != '$(NetVersion)'">Exe</OutputType>
     <RootNamespace>GitTrends</RootNamespace>
     <UseMaui>true</UseMaui>
     <SingleProject>true</SingleProject>
@@ -68,26 +68,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Maui" Version="9.0.0"/>
+    <PackageReference Include="CommunityToolkit.Maui" Version="9.0.1" />
     <PackageReference Include="CommunityToolkit.Maui.Markup" Version="4.0.0"/>
-    <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="3.1.1"/>
+    <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.0.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2"/>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.61"/>
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.5.0"/>
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.6.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0"/>
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiPackageVersion)"/>
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiPackageVersion)"/>
     <PackageReference Include="Plugin.StoreReview" Version="6.2.0"/>
-    <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0"/>
-    <PackageReference Include="Sentry.Profiling" Version="4.6.2"/>
-    <PackageReference Include="Sentry.Maui" Version="4.6.2"/>
+    <PackageReference Include="Refit.HttpClientFactory" Version="7.1.0" />
+    <PackageReference Include="Sentry.Maui" Version="4.7.0" />
     <PackageReference Include="Sharpnado.MaterialFrame.Maui" Version="2.0.0"/>
     <PackageReference Include="Shiny.Jobs" Version="3.3.3"/>
     <PackageReference Include="Shiny.Notifications" Version="3.3.3"/>
     <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.8"/>
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172"/>
     <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.8"/>
-    <PackageReference Include="Syncfusion.Maui.Charts" Version="25.2.5"/>
+    <PackageReference Include="Syncfusion.Maui.Charts" Version="26.1.38" />
     <PackageReference Include="GitHubApiStatus" Version="3.0.0"/>
   </ItemGroup>
 

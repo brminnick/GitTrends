@@ -108,7 +108,7 @@ public class GitHubApiV3Service(IGitHubApiV3 gitHubApiV3,
 		else
 		{
 			var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-			var referringSites = await _githubApiClient.GetReferingSites(owner, repo, GetGitHubBearerTokenHeader(token), cancellationToken).ConfigureAwait(false);
+			var referringSites = await _githubApiClient.GetReferringSites(owner, repo, GetGitHubBearerTokenHeader(token), cancellationToken).ConfigureAwait(false);
 
 			return referringSites;
 		}
