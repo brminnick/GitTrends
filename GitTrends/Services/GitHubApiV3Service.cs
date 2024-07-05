@@ -98,7 +98,7 @@ public class GitHubApiV3Service(IGitHubApiV3 gitHubApiV3,
 				do
 				{
 					referrer = DemoDataConstants.GetRandomText();
-				} while (Uri.TryCreate("https://" + referrer, UriKind.Absolute, out _));
+				} while (Uri.TryCreate($"{Uri.UriSchemeHttps}://{referrer}", UriKind.Absolute, out _));
 
 				referringSitesList.Add(new ReferringSiteModel(DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(), referrer));
 			}
