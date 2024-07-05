@@ -22,11 +22,11 @@ namespace GitTrends
 			}, token);
 
 		public Task<MobileReferringSiteModel?> GetReferringSite(string repositoryUrl, Uri? referrerUri, CancellationToken token) =>
-			Execute<MobileReferringSiteModel?, MobileReferringSiteModel>(async databaseConnection =>
+			Execute<MobileReferringSiteModel?, MobileReferringSitesDatabaseModel>(async databaseConnection =>
 			{
 				var referringSitesDatabaseModelList = await databaseConnection.Table<MobileReferringSitesDatabaseModel>().Where(x => x.RepositoryUrl == repositoryUrl && x.ReferrerUri == referrerUri).ToListAsync().ConfigureAwait(false);
 
-				var newestReferringSiteModel = referringSitesDatabaseModelList.OrderByDescending(static x => x.DownloadedAt).FirstOrDefault();
+				var newestReferringSiteModel = referringSitesDatabaseModelList.MaxBy(static x => x.DownloadedAt);
 
 				try
 				{
@@ -40,7 +40,7 @@ namespace GitTrends
 			}, token);
 
 		public Task<List<MobileReferringSiteModel>> GetReferringSites(string repositoryUrl, CancellationToken token) =>
-			Execute<List<MobileReferringSiteModel>, MobileReferringSiteModel>(async databaseConnection =>
+			Execute<List<MobileReferringSiteModel>, MobileReferringSitesDatabaseModel>(async databaseConnection =>
 			{
 				var referringSitesDatabaseModelList = await databaseConnection.Table<MobileReferringSitesDatabaseModel>().Where(x => x.RepositoryUrl == repositoryUrl).ToListAsync().ConfigureAwait(false);
 

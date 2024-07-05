@@ -59,7 +59,7 @@ public class GitHubApiRepositoriesService(
 
 	public async IAsyncEnumerable<MobileReferringSiteModel> GetMobileReferringSites(IEnumerable<ReferringSiteModel> referringSites, string repositoryUrl, [EnumeratorCancellation] CancellationToken cancellationToken)
 	{
-		var favIconTaskList = referringSites.Select(x => setFavIcon(_referringSitesDatabase, x, repositoryUrl, cancellationToken)).ToList();
+		var favIconTaskList = referringSites.Select(x => setFavIcon(_referringSitesDatabase, _favIconService, x, repositoryUrl, cancellationToken)).ToList();
 
 		while (favIconTaskList.Any())
 		{
@@ -70,7 +70,7 @@ public class GitHubApiRepositoriesService(
 			yield return mobileReferringSiteModel;
 		}
 
-		async Task<MobileReferringSiteModel> setFavIcon(ReferringSitesDatabase referringSitesDatabase, ReferringSiteModel referringSiteModel, string repositoryUrl, CancellationToken cancellationToken)
+		static async Task<MobileReferringSiteModel> setFavIcon(ReferringSitesDatabase referringSitesDatabase, FavIconService favIconService, ReferringSiteModel referringSiteModel, string repositoryUrl, CancellationToken cancellationToken)
 		{
 			var mobileReferringSiteFromDatabase = await referringSitesDatabase.GetReferringSite(repositoryUrl, referringSiteModel.ReferrerUri, cancellationToken).ConfigureAwait(false);
 
@@ -79,7 +79,7 @@ public class GitHubApiRepositoriesService(
 
 			if (referringSiteModel.ReferrerUri is not null && referringSiteModel.IsReferrerUriValid)
 			{
-				var favIcon = await _favIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri, cancellationToken).ConfigureAwait(false);
+				var favIcon = await favIconService.GetFavIconImageSource(referringSiteModel.ReferrerUri, cancellationToken).ConfigureAwait(false);
 				return new MobileReferringSiteModel(referringSiteModel, favIcon);
 			}
 			else
