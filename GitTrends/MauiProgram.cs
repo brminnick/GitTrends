@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using GitHubApiStatus;
@@ -142,17 +143,23 @@ public static class MauiProgram
 	{
 		services.AddRefitClient<IGitHubApiV3>()
 							.ConfigureHttpClient(static client => client.BaseAddress = new Uri(GitHubConstants.GitHubRestApiUrl))
+							.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler { AutomaticDecompression = GetDecompressionMethods() })
 							.AddStandardResilienceHandler(static options => options.Retry = new MobileHttpRetryStrategyOptions());
 
 		services.AddRefitClient<IGitHubGraphQLApi>()
 							.ConfigureHttpClient(static client => client.BaseAddress = new Uri(GitHubConstants.GitHubGraphQLApi))
+							.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler { AutomaticDecompression = GetDecompressionMethods() })
 							.AddStandardResilienceHandler(static options => options.Retry = new MobileHttpRetryStrategyOptions());
 
 		services.AddRefitClient<IAzureFunctionsApi>()
 							.ConfigureHttpClient(static client => client.BaseAddress = new Uri(AzureConstants.AzureFunctionsApiUrl))
+							.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler { AutomaticDecompression = GetDecompressionMethods() })
 							.AddStandardResilienceHandler(static options => options.Retry = new MobileHttpRetryStrategyOptions());
 
-		services.AddHttpClient<FavIconService>();
+		services.AddHttpClient<FavIconService>()
+			.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler { AutomaticDecompression = GetDecompressionMethods() });
+		
+		static DecompressionMethods GetDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.Brotli;
 	}
 
 	static IServiceCollection AddTransientWithShellRoute<TPage, TViewModel>(this IServiceCollection services) where TPage : BaseContentPage<TViewModel>

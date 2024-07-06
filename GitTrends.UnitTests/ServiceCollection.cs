@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net;
+using System.Net.Http.Headers;
 using GitHubApiStatus;
 using GitHubApiStatus.Extensions;
 using GitTrends.Mobile.Common;
@@ -17,6 +18,8 @@ static class ServiceCollection
 
 	public static void Initialize(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi, GitHubToken token) =>
 		_serviceProviderHolder = CreateContainer(azureFunctionsApi, gitHubApiV3, gitHubGraphQLApi, token);
+	
+	public static DecompressionMethods GetDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.Brotli;
 
 	static ServiceProvider CreateContainer(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi, GitHubToken token)
 	{
@@ -28,9 +31,9 @@ static class ServiceCollection
 		services.AddSingleton(azureFunctionsApi);
 		
 		services.AddGitHubApiStatusService(new AuthenticationHeaderValue(token.TokenType, token.AccessToken), new ProductHeaderValue(nameof(GitTrends)))
-			.ConfigurePrimaryHttpMessageHandler(static config => new HttpClientHandler
+			.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler
 			{
-				AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate
+				AutomaticDecompression = GetDecompressionMethods()
 			});
 
 		//GitTrends Services

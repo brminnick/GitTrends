@@ -9,7 +9,6 @@
     <Import_RootNamespace>GitTrends.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Models\" />
     <Folder Include="$(MSBuildThisFileDirectory)Services\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\Base\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\Base\GraphQLModels\" />
@@ -26,11 +25,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\GitHubToken.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Issue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\IssueConnection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ReferrersResponseModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ReferringSiteModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Repository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryClonesModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryClonesResponseModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryConnection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryViewsModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryViewsResponseModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\User.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Base\BaseDailyModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Base\BaseRepositoryModel.cs" />

@@ -2,10 +2,10 @@
 
 public static class DateTimeService
 {
-	public static DateTimeOffset GetMinimumDateTimeOffset<T>(in IEnumerable<T>? dailyList) where T : BaseDailyModel =>
+	public static DateTimeOffset GetMinimumDateTimeOffset<T>(in IEnumerable<T>? dailyList) where T : IBaseDailyModel =>
 		dailyList?.Any() is true ? dailyList.Min(static x => x.Day) : DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13));
 
-	public static DateTimeOffset GetMaximumDateTimeOffset<T>(in IEnumerable<T>? dailyList) where T : BaseDailyModel =>
+	public static DateTimeOffset GetMaximumDateTimeOffset<T>(in IEnumerable<T>? dailyList) where T : IBaseDailyModel =>
 		dailyList?.Any() is true ? dailyList.Max(static x => x.Day) : DateTimeOffset.UtcNow;
 
 	public static DateTimeOffset GetMinimumDateTimeOffset(in IEnumerable<DailyViewsModel>? dailyViewsList, in IEnumerable<DailyClonesModel>? dailyClonesList)

@@ -1,11 +1,10 @@
-﻿namespace GitTrends.Shared;
+﻿using System.Text.Json.Serialization;
+namespace GitTrends.Shared;
 
 public record ReferringSiteModel : BaseTotalCountModel, IReferringSiteModel
 {
-	public ReferringSiteModel(long count, long uniques, string referrer, DateTimeOffset? downloadedAt = null) : base(count, uniques)
+	public ReferringSiteModel(long count, long uniques, string referrer) : base(count, uniques)
 	{
-		DownloadedAt = downloadedAt ?? DateTimeOffset.UtcNow;
-
 		Referrer = referrer;
 
 		if (!Uri.TryCreate("https://" + referrer, UriKind.Absolute, out var referringUri))
@@ -25,7 +24,9 @@ public record ReferringSiteModel : BaseTotalCountModel, IReferringSiteModel
 		}
 	}
 
-	public DateTimeOffset DownloadedAt { get; }
+	public DateTimeOffset DownloadedAt { get; init; } = DateTimeOffset.UtcNow;
+	
+	[JsonPropertyName("referrer")]
 	public string Referrer { get; }
 	public bool IsReferrerUriValid { get; }
 	public Uri? ReferrerUri { get; }

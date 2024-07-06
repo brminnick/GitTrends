@@ -93,7 +93,9 @@ public class GitHubApiRepositoriesService(
 
 	public async IAsyncEnumerable<Repository> UpdateRepositoriesWithViewsAndClonesData(IEnumerable<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
 	{
-		var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsResponseModel?, RepositoryClonesResponseModel?)>>(repositories.Select(x => GetViewsAndClonesStatistics(x, cancellationToken)));
+		repositories = repositories.ToList();
+		
+		var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsModel?, RepositoryClonesModel?)>>(repositories.Select(x => GetViewsAndClonesStatistics(x, cancellationToken)));
 
 		while (getRepositoryStatisticsTaskList.Any())
 		{
@@ -118,6 +120,8 @@ public class GitHubApiRepositoriesService(
 
 	public async IAsyncEnumerable<Repository> UpdateRepositoriesWithStarsData(IEnumerable<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
 	{
+		repositories = repositories.ToList();
+		
 		var getRepositoryStatisticsTaskList = new List<Task<(string RepositoryName, StarGazers? StarGazers)>>(repositories.Select(x => GetStarGazersStatistics(x, cancellationToken)));
 
 		while (getRepositoryStatisticsTaskList.Any())
@@ -139,7 +143,7 @@ public class GitHubApiRepositoriesService(
 		}
 	}
 
-	async Task<(RepositoryViewsResponseModel? ViewsResponse, RepositoryClonesResponseModel? ClonesResponse)> GetViewsAndClonesStatistics(Repository repository, CancellationToken cancellationToken)
+	async Task<(RepositoryViewsModel? ViewsResponse, RepositoryClonesModel? ClonesResponse)> GetViewsAndClonesStatistics(Repository repository, CancellationToken cancellationToken)
 	{
 		var getViewStatisticsTask = _gitHubApiV3Service.GetRepositoryViewStatistics(repository.OwnerLogin, repository.Name, cancellationToken);
 		var getCloneStatisticsTask = _gitHubApiV3Service.GetRepositoryCloneStatistics(repository.OwnerLogin, repository.Name, cancellationToken);

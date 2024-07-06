@@ -605,6 +605,9 @@ class BackgroundFetchServiceTests : BaseTest
 	{
 		return new MobileReferringSiteModel(new ReferringSiteModel(DemoDataConstants.GetRandomNumber(),
 			DemoDataConstants.GetRandomNumber(),
-			referrer, downloadedAt));
+			referrer))
+		{
+			DownloadedAt = downloadedAt
+		};
 	}
 }

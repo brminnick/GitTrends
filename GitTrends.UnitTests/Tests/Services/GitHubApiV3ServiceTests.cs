@@ -95,11 +95,8 @@ class GitHubApiV3ServiceTests : BaseTest
 
 		gitHubUserService.InvalidateToken();
 
-		//Act
-		var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryCloneStatistics(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
-
-		//Assert
-		Assert.AreEqual(HttpStatusCode.Forbidden, exception?.StatusCode);
+		//Act //Assert
+		Assert.ThrowsAsync<InvalidOperationException>(async () => await gitHubApiV3Service.GetRepositoryCloneStatistics(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 	}
 
 	[Test]
@@ -141,11 +138,8 @@ class GitHubApiV3ServiceTests : BaseTest
 
 		gitHubUserService.InvalidateToken();
 
-		//Act
-		var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryViewStatistics(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
-
-		//Assert
-		Assert.AreEqual(HttpStatusCode.Forbidden, exception?.StatusCode);
+		//Act //Assert
+		Assert.ThrowsAsync<InvalidOperationException>(async () => await gitHubApiV3Service.GetRepositoryViewStatistics(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 	}
 
 	[Test]

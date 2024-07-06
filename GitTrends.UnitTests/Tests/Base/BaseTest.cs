@@ -117,17 +117,22 @@ abstract class BaseTest : IDisposable
 
 	protected virtual void InitializeServiceCollection(GitHubToken token)
 	{
-		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(new HttpClient
+		var handler = new HttpClientHandler
+		{
+			AutomaticDecompression = ServiceCollection.GetDecompressionMethods()
+		};
+		
+		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(new HttpClient(handler)
 		{
 			BaseAddress = new Uri(GitHubConstants.GitHubRestApiUrl)
 		});
 
-		var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(new HttpClient
+		var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(new HttpClient(handler)
 		{
 			BaseAddress = new Uri(GitHubConstants.GitHubGraphQLApi)
 		});
 
-		var azureFunctionsClient = RestService.For<IAzureFunctionsApi>(new HttpClient
+		var azureFunctionsClient = RestService.For<IAzureFunctionsApi>(new HttpClient(handler)
 		{
 			BaseAddress = new Uri(AzureConstants.AzureFunctionsApiUrl)
 		});

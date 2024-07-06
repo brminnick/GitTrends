@@ -1,15 +1,13 @@
-﻿using System.Text.Json.Serialization;
-
 namespace GitTrends.Shared;
 
-public record RepositoryViewsResponseModel : BaseRepositoryModel
+public record RepositoryViewsModel : RepositoryViewsResponseModel, IBaseRepositoryModel
 {
-	public RepositoryViewsResponseModel(long count, long uniques, IEnumerable<DailyViewsModel> views, string repositoryName = "", string repositoryOwner = "")
-		: base(count, uniques, repositoryName, repositoryOwner)
+	public RepositoryViewsModel(long totalCount, long totalUniqueCount, IEnumerable<DailyViewsModel> dailyViewsList, string repositoryName, string repositoryOwner)
+		: base(totalCount, totalUniqueCount, dailyViewsList.ToList())
 	{
-		DailyViewsList = views.ToList();
+		(RepositoryName, RepositoryOwner) = (repositoryName, repositoryOwner);
 	}
 
-	[JsonPropertyName("views")]
-	public List<DailyViewsModel> DailyViewsList { get; }
+	public string RepositoryName { get; }
+	public string RepositoryOwner { get; }
 }

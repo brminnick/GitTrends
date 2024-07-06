@@ -2,16 +2,18 @@
 
 namespace GitTrends.Shared;
 
-public record DailyClonesModel : BaseDailyModel, IDailyClonesModel
+public record DailyClonesModel(
+	[property: JsonPropertyName("timestamp")] DateTimeOffset Day,
+	[property: JsonPropertyName("count")] long TotalClones,
+	[property: JsonPropertyName("uniques")] long TotalUniqueClones)
+	: IBaseDailyModel, IDailyClonesModel
 {
-	public DailyClonesModel(DateTimeOffset timestamp, long count, long uniques) : base(timestamp, count, uniques)
-	{
-
-	}
+	[JsonIgnore]
+	public DateTime LocalDay => Day.LocalDateTime;
+	
+	[JsonIgnore]
+	long IBaseDailyModel.TotalCount => TotalClones;
 
 	[JsonIgnore]
-	public long TotalClones => TotalCount;
-
-	[JsonIgnore]
-	public long TotalUniqueClones => TotalUniqueCount;
+	long IBaseDailyModel.TotalUniqueCount => TotalUniqueClones;
 }

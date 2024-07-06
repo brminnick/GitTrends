@@ -73,6 +73,6 @@ static class TrendingService
 			return (null, null, null);
 	}
 
-	static IEnumerable<T> GetTwoMostRecentDays<T>(in IList<T> dailyClonesModels) where T : BaseDailyModel =>
+	static IEnumerable<T> GetTwoMostRecentDays<T>(in IList<T> dailyClonesModels) where T : IBaseDailyModel =>
 		dailyClonesModels.Where(static x => x.LocalDay.AddDays(2) > DateTime.Now);
 }

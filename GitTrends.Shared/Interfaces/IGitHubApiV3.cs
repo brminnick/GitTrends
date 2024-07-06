@@ -12,7 +12,7 @@ public interface IGitHubApiV3
 	Task<RepositoryClonesResponseModel> GetRepositoryCloneStatistics(string owner, string repo, [Header("Authorization")] string authorization, CancellationToken token);
 
 	[Get("/repos/{owner}/{repo}/traffic/popular/referrers")]
-	Task<IReadOnlyList<ReferringSiteModel>> GetReferringSites(string owner, string repo, [Header("Authorization")] string authorization, CancellationToken token);
+	Task<IReadOnlyList<ReferrersResponseModel>> GetReferringSites(string owner, string repo, [Header("Authorization")] string authorization, CancellationToken token);
 
 	[Get("/repos/{owner}/{repo}")]
 	Task<HttpResponseMessage> GetGitHubApiResponse_Authenticated([Header("Authorization")] string authorization, CancellationToken token, string owner = GitHubConstants.GitTrendsRepoOwner, string repo = GitHubConstants.GitTrendsRepoName);

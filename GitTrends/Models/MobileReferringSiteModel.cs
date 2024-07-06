@@ -14,8 +14,9 @@ public record MobileReferringSiteModel : ReferringSiteModel, IMobileReferringSit
 	ImageSource? _favIcon;
 
 	public MobileReferringSiteModel(in ReferringSiteModel referringSiteModel, in ImageSource? favIcon = null)
-		: base(referringSiteModel.TotalCount, referringSiteModel.TotalUniqueCount, referringSiteModel.Referrer, referringSiteModel.DownloadedAt)
+		: base(referringSiteModel.TotalCount, referringSiteModel.TotalUniqueCount, referringSiteModel.Referrer)
 	{
+		DownloadedAt = referringSiteModel.DownloadedAt;
 		FavIcon = favIcon ?? FavIconService.DefaultFavIcon;
 	}
 

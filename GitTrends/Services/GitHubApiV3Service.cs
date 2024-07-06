@@ -3,16 +3,17 @@ using GitTrends.Shared;
 
 namespace GitTrends;
 
-public class GitHubApiV3Service(IGitHubApiV3 gitHubApiV3,
-								IAnalyticsService analyticsService,
-								GitHubUserService gitHubUserService) : BaseMobileApiService(analyticsService)
+public class GitHubApiV3Service(
+	IGitHubApiV3 gitHubApiV3,
+	IAnalyticsService analyticsService,
+	GitHubUserService gitHubUserService) : BaseMobileApiService(analyticsService)
 {
 	readonly IGitHubApiV3 _githubApiClient = gitHubApiV3;
 	readonly GitHubUserService _gitHubUserService = gitHubUserService;
 
 	public Task<RepositoryFile> GetGitTrendsFile(string fileName, CancellationToken cancellationToken) => _githubApiClient.GetGitTrendsFile(fileName, cancellationToken);
 
-	public async Task<RepositoryViewsResponseModel> GetRepositoryViewStatistics(string owner, string repo, CancellationToken cancellationToken)
+	public async Task<RepositoryViewsModel> GetRepositoryViewStatistics(string owner, string repo, CancellationToken cancellationToken)
 	{
 		if (_gitHubUserService.IsDemoUser)
 		{
@@ -33,18 +34,16 @@ public class GitHubApiV3Service(IGitHubApiV3 gitHubApiV3,
 					dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
 			}
 
-			return new RepositoryViewsResponseModel(dailyViewsModelList.Sum(static x => x.TotalViews), dailyViewsModelList.Sum(static x => x.TotalUniqueViews), dailyViewsModelList, repo, owner);
+			return new RepositoryViewsModel(dailyViewsModelList.Sum(static x => x.TotalViews), dailyViewsModelList.Sum(static x => x.TotalUniqueViews), dailyViewsModelList, repo, owner);
 		}
-		else
-		{
-			var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-			var response = await _githubApiClient.GetRepositoryViewStatistics(owner, repo, GetGitHubBearerTokenHeader(token), cancellationToken).ConfigureAwait(false);
 
-			return new RepositoryViewsResponseModel(response.TotalCount, response.TotalUniqueCount, response.DailyViewsList, repo, owner);
-		}
+		var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
+		var response = await _githubApiClient.GetRepositoryViewStatistics(owner, repo, GetGitHubBearerTokenHeader(token), cancellationToken).ConfigureAwait(false);
+
+		return new RepositoryViewsModel(response.TotalCount, response.TotalUniqueCount, response.DailyViewsList, repo, owner);
 	}
 
-	public async Task<RepositoryClonesResponseModel> GetRepositoryCloneStatistics(string owner, string repo, CancellationToken cancellationToken)
+	public async Task<RepositoryClonesModel> GetRepositoryCloneStatistics(string owner, string repo, CancellationToken cancellationToken)
 	{
 		if (_gitHubUserService.IsDemoUser)
 		{
@@ -61,16 +60,13 @@ public class GitHubApiV3Service(IGitHubApiV3 gitHubApiV3,
 				dailyClonesModelList.Add(new DailyClonesModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqueCount));
 			}
 
-
-			return new RepositoryClonesResponseModel(dailyClonesModelList.Sum(static x => x.TotalClones), dailyClonesModelList.Sum(static x => x.TotalUniqueClones), dailyClonesModelList, repo, owner);
+			return new RepositoryClonesModel(dailyClonesModelList.Sum(static x => x.TotalClones), dailyClonesModelList.Sum(static x => x.TotalUniqueClones), dailyClonesModelList, repo, owner);
 		}
-		else
-		{
-			var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-			var response = await _githubApiClient.GetRepositoryCloneStatistics(owner, repo, GetGitHubBearerTokenHeader(token), cancellationToken).ConfigureAwait(false);
 
-			return new RepositoryClonesResponseModel(response.TotalCount, response.TotalUniqueCount, response.DailyClonesList, repo, owner);
-		}
+		var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
+		var response = await _githubApiClient.GetRepositoryCloneStatistics(owner, repo, GetGitHubBearerTokenHeader(token), cancellationToken).ConfigureAwait(false);
+
+		return new RepositoryClonesModel(response.TotalCount, response.TotalUniqueCount, response.DailyClonesList, repo, owner);
 	}
 
 	public async Task<HttpResponseMessage> GetGitHubApiResponse(CancellationToken cancellationToken)
@@ -105,13 +101,11 @@ public class GitHubApiV3Service(IGitHubApiV3 gitHubApiV3,
 
 			return referringSitesList;
 		}
-		else
-		{
-			var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-			var referringSites = await _githubApiClient.GetReferringSites(owner, repo, GetGitHubBearerTokenHeader(token), cancellationToken).ConfigureAwait(false);
 
-			return referringSites;
-		}
+		var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
+		var referringSites = await _githubApiClient.GetReferringSites(owner, repo, GetGitHubBearerTokenHeader(token), cancellationToken).ConfigureAwait(false);
+
+		return referringSites.Select(static x => new ReferringSiteModel(x.Count, x.Uniques, x.Referrer)).ToList();
 	}
 
 	public async Task<StarGazers> GetStarGazers(string owner, string repo, CancellationToken cancellationToken, int starGazersPerRequest = 100)
@@ -123,22 +117,20 @@ public class GitHubApiV3Service(IGitHubApiV3 gitHubApiV3,
 
 			return new StarGazers(starCount, starredAtDates.Select(static x => new StarGazerInfo(x, string.Empty)).ToList());
 		}
-		else
+
+		var totalStarGazers = new List<StarGazer>();
+
+		IReadOnlyList<StarGazer> starGazerResponse;
+		int currentPageNumber = 1;
+		do
 		{
-			var totalStarGazers = new List<StarGazer>();
+			var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
+			starGazerResponse = await _githubApiClient.GetStarGazers(owner, repo, currentPageNumber, GetGitHubBearerTokenHeader(token), cancellationToken, starGazersPerRequest).ConfigureAwait(false);
 
-			IReadOnlyList<StarGazer> starGazerResponse;
-			int currentPageNumber = 1;
-			do
-			{
-				var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
-				starGazerResponse = await _githubApiClient.GetStarGazers(owner, repo, currentPageNumber, GetGitHubBearerTokenHeader(token), cancellationToken, starGazersPerRequest).ConfigureAwait(false);
+			totalStarGazers.AddRange(starGazerResponse);
+			currentPageNumber++;
+		} while (starGazerResponse.Count > 0);
 
-				totalStarGazers.AddRange(starGazerResponse);
-				currentPageNumber++;
-			} while (starGazerResponse.Count > 0);
-
-			return new StarGazers(totalStarGazers.Count, totalStarGazers.Select(static x => new StarGazerInfo(x.StarredAt, string.Empty)).ToList());
-		}
+		return new StarGazers(totalStarGazers.Count, totalStarGazers.Select(static x => new StarGazerInfo(x.StarredAt, string.Empty)).ToList());
 	}
 }
