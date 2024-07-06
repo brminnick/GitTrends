@@ -16,14 +16,19 @@ class RepositoryViewModelTests_AbuseApiLimit_GraphQLApi : RepositoryViewModelTes
 
 	protected override void InitializeServiceCollection(GitHubToken token)
 	{
-		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(new HttpClient
+		var handler = new HttpClientHandler
+		{
+			AutomaticDecompression = GetDecompressionMethods()
+		};
+		
+		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(new HttpClient(handler)
 		{
 			BaseAddress = new(GitHubConstants.GitHubRestApiUrl)
 		});
 
 		var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(CreateAbuseApiLimitHttpClient(GitHubConstants.GitHubGraphQLApi));
 
-		var azureFunctionsClient = RestService.For<IAzureFunctionsApi>(new HttpClient
+		var azureFunctionsClient = RestService.For<IAzureFunctionsApi>(new HttpClient(handler)
 		{
 			BaseAddress = new(AzureConstants.AzureFunctionsApiUrl)
 		});

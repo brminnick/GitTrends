@@ -15,9 +15,12 @@ class AzureFunctionsApiServiceTests : BaseTest
 		tokenDTO = await azureFunctionsApiService.GetGitHubClientId(CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotNull(tokenDTO);
-		Assert.IsNotNull(tokenDTO.ClientId);
-		Assert.IsFalse(string.IsNullOrWhiteSpace(tokenDTO.ClientId));
+		Assert.Multiple(() =>
+		{
+			Assert.That(tokenDTO, Is.Not.Null);
+			Assert.That(tokenDTO.ClientId, Is.Not.Null);
+			Assert.That(string.IsNullOrWhiteSpace(tokenDTO.ClientId), Is.False);
+		});
 	}
 
 	[Test]
@@ -31,11 +34,14 @@ class AzureFunctionsApiServiceTests : BaseTest
 		//Act
 		gitHubToken = await azureFunctionsApiService.GenerateGitTrendsOAuthToken(generateTokenDTO, CancellationToken.None).ConfigureAwait(false);
 
-		//Assert
-		Assert.IsNotNull(gitHubToken);
-		Assert.IsEmpty(GitHubToken.Empty.AccessToken);
-		Assert.IsEmpty(GitHubToken.Empty.Scope);
-		Assert.IsEmpty(GitHubToken.Empty.TokenType);
+		Assert.Multiple(() =>
+		{
+			//Assert
+			Assert.That(gitHubToken, Is.Not.Null);
+			Assert.That(GitHubToken.Empty.AccessToken, Is.Empty);
+			Assert.That(GitHubToken.Empty.Scope, Is.Empty);
+			Assert.That(GitHubToken.Empty.TokenType, Is.Empty);
+		});
 	}
 
 	[Test]
@@ -49,11 +55,13 @@ class AzureFunctionsApiServiceTests : BaseTest
 		syncFusionDTO = await azureFunctionsApiService.GetSyncfusionInformation(CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotNull(syncFusionDTO);
-		Assert.IsNotNull(syncFusionDTO.LicenseKey);
-		Assert.IsFalse(string.IsNullOrWhiteSpace(syncFusionDTO.LicenseKey));
-
-		Assert.Greater(syncFusionDTO.LicenseVersion, 0);
+		Assert.Multiple(() =>
+		{
+			Assert.That(syncFusionDTO, Is.Not.Null);
+			Assert.That(syncFusionDTO.LicenseKey, Is.Not.Null);
+			Assert.That(string.IsNullOrWhiteSpace(syncFusionDTO.LicenseKey), Is.False);
+			Assert.That(syncFusionDTO.LicenseVersion, Is.GreaterThan(0));
+		});
 	}
 
 	[Test]
@@ -67,16 +75,19 @@ class AzureFunctionsApiServiceTests : BaseTest
 		streamingManifests = await azureFunctionsApiService.GetStreamingManifests(CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotNull(streamingManifests);
+		Assert.Multiple(() =>
+		{
+			Assert.That(streamingManifests, Is.Not.Null);
 
-		Assert.IsTrue(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.Chart].HlsUrl, UriKind.Absolute));
-		Assert.IsTrue(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.Chart].ManifestUrl, UriKind.Absolute));
+			Assert.That(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.Chart].HlsUrl, UriKind.Absolute));
+			Assert.That(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.Chart].ManifestUrl, UriKind.Absolute));
 
-		Assert.IsTrue(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.EnableOrganizations].HlsUrl, UriKind.Absolute));
-		Assert.IsTrue(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.EnableOrganizations].ManifestUrl, UriKind.Absolute));
+			Assert.That(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.EnableOrganizations].HlsUrl, UriKind.Absolute));
+			Assert.That(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.EnableOrganizations].ManifestUrl, UriKind.Absolute));
 
-		Assert.AreNotEqual(streamingManifests[StreamingConstants.Chart].HlsUrl, streamingManifests[StreamingConstants.EnableOrganizations].HlsUrl);
-		Assert.AreNotEqual(streamingManifests[StreamingConstants.Chart].ManifestUrl, streamingManifests[StreamingConstants.EnableOrganizations].ManifestUrl);
+			Assert.That(streamingManifests[StreamingConstants.EnableOrganizations].HlsUrl, Is.Not.EqualTo(streamingManifests[StreamingConstants.Chart].HlsUrl));
+			Assert.That(streamingManifests[StreamingConstants.EnableOrganizations].ManifestUrl, Is.Not.EqualTo(streamingManifests[StreamingConstants.Chart].ManifestUrl));
+		});
 	}
 
 	[Test]
@@ -90,16 +101,19 @@ class AzureFunctionsApiServiceTests : BaseTest
 		notificationHubInformation = await azureFunctionsApiService.GetNotificationHubInformation(CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotNull(notificationHubInformation);
-		Assert.IsNotNull(notificationHubInformation.ConnectionString);
-		Assert.IsNotNull(notificationHubInformation.ConnectionString_Debug);
-		Assert.IsNotNull(notificationHubInformation.Name);
-		Assert.IsNotNull(notificationHubInformation.Name_Debug);
+		Assert.Multiple(() =>
+		{
+			Assert.That(notificationHubInformation, Is.Not.Null);
+			Assert.That(notificationHubInformation.ConnectionString, Is.Not.Null);
+			Assert.That(notificationHubInformation.ConnectionString_Debug, Is.Not.Null);
+			Assert.That(notificationHubInformation.Name, Is.Not.Null);
+			Assert.That(notificationHubInformation.Name_Debug, Is.Not.Null);
 
-		Assert.IsFalse(string.IsNullOrWhiteSpace(notificationHubInformation.ConnectionString));
-		Assert.IsFalse(string.IsNullOrWhiteSpace(notificationHubInformation.ConnectionString_Debug));
-		Assert.IsFalse(string.IsNullOrWhiteSpace(notificationHubInformation.Name));
-		Assert.IsFalse(string.IsNullOrWhiteSpace(notificationHubInformation.Name_Debug));
+			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation.ConnectionString), Is.False);
+			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation.ConnectionString_Debug), Is.False);
+			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation.Name), Is.False);
+			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation.Name_Debug), Is.False);
+		});
 	}
 
 	[Test]
@@ -113,20 +127,23 @@ class AzureFunctionsApiServiceTests : BaseTest
 		nugetPackageModels = await azureFunctionsApiService.GetLibraries(CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotNull(nugetPackageModels);
-		Assert.IsNotEmpty(nugetPackageModels);
+		Assert.That(nugetPackageModels, Is.Not.Null);
+		Assert.That(nugetPackageModels, Is.Not.Empty);
 
 		foreach (var nugetPackage in nugetPackageModels)
 		{
-			Assert.IsNotNull(nugetPackage.IconUri);
-			Assert.IsTrue(nugetPackage.IconUri.IsAbsoluteUri);
-			Assert.IsTrue(nugetPackage.IconUri.IsWellFormedOriginalString());
+			Assert.Multiple(() =>
+			{
+				Assert.That(nugetPackage.IconUri, Is.Not.Null);
+				Assert.That(nugetPackage.IconUri.IsAbsoluteUri);
+				Assert.That(nugetPackage.IconUri.IsWellFormedOriginalString());
 
-			Assert.IsFalse(string.IsNullOrWhiteSpace(nugetPackage.PackageName));
+				Assert.That(string.IsNullOrWhiteSpace(nugetPackage.PackageName), Is.False);
 
-			Assert.IsNotNull(nugetPackage.WebsiteUri);
-			Assert.IsTrue(nugetPackage.WebsiteUri.IsAbsoluteUri);
-			Assert.IsTrue(nugetPackage.WebsiteUri.IsWellFormedOriginalString());
+				Assert.That(nugetPackage.WebsiteUri, Is.Not.Null);
+				Assert.That(nugetPackage.WebsiteUri.IsAbsoluteUri);
+				Assert.That(nugetPackage.WebsiteUri.IsWellFormedOriginalString());
+			});
 		}
 	}
 
@@ -141,16 +158,19 @@ class AzureFunctionsApiServiceTests : BaseTest
 		gitTrendsStatisticsDTO = await azureFunctionsApiService.GetGitTrendsStatistics(CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotNull(gitTrendsStatisticsDTO);
-		Assert.IsNotEmpty(gitTrendsStatisticsDTO.Contributors);
+		Assert.Multiple(() =>
+		{
+			Assert.That(gitTrendsStatisticsDTO, Is.Not.Null);
+			Assert.That(gitTrendsStatisticsDTO.Contributors, Is.Not.Empty);
 
-		Assert.Greater(gitTrendsStatisticsDTO.Forks, 0);
-		Assert.Greater(gitTrendsStatisticsDTO.Stars, 0);
-		Assert.Greater(gitTrendsStatisticsDTO.Watchers, 0);
+			Assert.That(gitTrendsStatisticsDTO.Forks, Is.GreaterThan(0));
+			Assert.That(gitTrendsStatisticsDTO.Stars, Is.GreaterThan(0));
+			Assert.That(gitTrendsStatisticsDTO.Watchers, Is.GreaterThan(0));
 
-		Assert.IsNotNull(gitTrendsStatisticsDTO.GitHubUri);
-		Assert.IsTrue(gitTrendsStatisticsDTO.GitHubUri.IsAbsoluteUri);
-		Assert.IsTrue(gitTrendsStatisticsDTO.GitHubUri.IsWellFormedOriginalString());
+			Assert.That(gitTrendsStatisticsDTO.GitHubUri, Is.Not.Null);
+			Assert.That(gitTrendsStatisticsDTO.GitHubUri.IsAbsoluteUri);
+			Assert.That(gitTrendsStatisticsDTO.GitHubUri.IsWellFormedOriginalString());
+		});
 	}
 
 	[Test]
@@ -164,9 +184,12 @@ class AzureFunctionsApiServiceTests : BaseTest
 		appCenterApiKeyDTO = await azureFunctionsApiService.GetAppCenterApiKeys(CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotNull(appCenterApiKeyDTO);
-		Assert.IsNotNull(appCenterApiKeyDTO.iOS);
-		Assert.IsNotNull(appCenterApiKeyDTO.Android);
+		Assert.Multiple(() =>
+		{
+			Assert.That(appCenterApiKeyDTO, Is.Not.Null);
+			Assert.That(appCenterApiKeyDTO.iOS, Is.Not.Null);
+			Assert.That(appCenterApiKeyDTO.Android, Is.Not.Null);
+		});
 	}
 
 	[Test]
@@ -180,8 +203,11 @@ class AzureFunctionsApiServiceTests : BaseTest
 		appCenterApiKeyDTO = await azureFunctionsApiService.GetAppCenterApiKeys(CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotNull(appCenterApiKeyDTO);
-		Assert.IsNotNull(appCenterApiKeyDTO.iOS);
-		Assert.IsNotNull(appCenterApiKeyDTO.Android);
+		Assert.Multiple(() =>
+		{
+			Assert.That(appCenterApiKeyDTO, Is.Not.Null);
+			Assert.That(appCenterApiKeyDTO.iOS, Is.Not.Null);
+			Assert.That(appCenterApiKeyDTO.Android, Is.Not.Null);
+		});
 	}
 }

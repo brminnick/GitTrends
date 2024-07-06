@@ -511,7 +511,7 @@ namespace GitTrends.UnitTests
 			dailyViewsList_Final = trendsViewModel.DailyViewsList;
 			dailyClonesList_Final = trendsViewModel.DailyClonesList;
 
-			//Assret
+			//Assert
 			Assert.IsEmpty(dailyStarsList_Initial);
 			Assert.IsEmpty(dailyViewsList_Initial);
 			Assert.IsEmpty(dailyClonesList_Initial);

@@ -7,7 +7,7 @@ namespace GitTrends.UnitTests;
 [NonParallelizable]
 class RepositoryViewModelTests : BaseTest
 {
-	[Test, Timeout(600000)]
+	[Test, CancelAfter(600000)]
 	public async Task PullToRefreshCommandTest_Authenticated()
 	{
 		//Arrange
@@ -39,7 +39,7 @@ class RepositoryViewModelTests : BaseTest
 		if (backgroundFetchService.QueuedJobs.Any())
 		{
 			var fetchStarsInBackgroundTCSResult = await fetchStarsInBackgroundTCS.Task.ConfigureAwait(false);
-			Assert.IsNotEmpty(fetchStarsInBackgroundTCSResult);
+			Assert.That(fetchStarsInBackgroundTCSResult, Is.Not.Empty);
 		}
 		else
 		{
@@ -51,39 +51,41 @@ class RepositoryViewModelTests : BaseTest
 		visibleRepositoryList_Final = repositoryViewModel.VisibleRepositoryList;
 		emptyDataViewDescription_Final = repositoryViewModel.EmptyDataViewDescription;
 
-		//Assert
-		Assert.IsEmpty(visibleRepositoryList_Initial);
-		Assert.IsNotEmpty(visibleRepositoryList_Final);
-
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true), emptyDataViewTitle_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Succeeded, false), emptyDataViewTitle_Final);
-
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Succeeded, false), emptyDataViewDescription_Final);
-
-		Assert.IsTrue(visibleRepositoryList_Final.Any(static x => x.OwnerLogin is GitHubConstants.GitTrendsRepoOwner && x.Name is GitHubConstants.GitTrendsRepoName));
-
-
-		foreach (var repository in repositoriesUpdatedInBackground)
-			Assert.IsTrue(visibleRepositoryList_Final.Any(x => x.Url == repository.Url));
-
-		foreach (var repository in visibleRepositoryList_Final)
+		Assert.Multiple(() =>
 		{
-			Assert.IsNotNull(repository.DailyClonesList);
-			Assert.IsNotNull(repository.DailyViewsList);
-			Assert.IsNotNull(repository.StarCount);
-			Assert.IsNotNull(repository.StarredAt);
-			Assert.IsNotNull(repository.TotalClones);
-			Assert.IsNotNull(repository.TotalUniqueClones);
-			Assert.IsNotNull(repository.TotalUniqueViews);
-			Assert.IsNotNull(repository.TotalViews);
+			//Assert
+			Assert.That(visibleRepositoryList_Initial, Is.Empty);
+			Assert.That(visibleRepositoryList_Final, Is.Not.Empty);
 
-			Assert.IsFalse(repository.IsArchived);
-			Assert.IsFalse(repository.IsFork);
+			Assert.That(emptyDataViewTitle_Initial, Is.EqualTo(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true)));
+			Assert.That(emptyDataViewTitle_Final, Is.EqualTo(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Succeeded, false)));
 
-			Assert.Less(beforePullToRefresh, repository.DataDownloadedAt);
-			Assert.Greater(afterPullToRefresh, repository.DataDownloadedAt);
-		}
+			Assert.That(emptyDataViewDescription_Initial, Is.EqualTo(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true)));
+			Assert.That(emptyDataViewDescription_Final, Is.EqualTo(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Succeeded, false)));
+
+			Assert.That(visibleRepositoryList_Final.Any(static x => x.OwnerLogin is GitHubConstants.GitTrendsRepoOwner && x.Name is GitHubConstants.GitTrendsRepoName), Is.True);
+
+
+			foreach (var repository in repositoriesUpdatedInBackground)
+				Assert.That(visibleRepositoryList_Final.Any(x => x.Url == repository.Url));
+
+			foreach (var repository in visibleRepositoryList_Final)
+			{
+				Assert.That(repository.DailyClonesList, Is.Not.Null);
+				Assert.That(repository.DailyViewsList, Is.Not.Null);
+				Assert.That(repository.StarredAt, Is.Not.Null);
+				Assert.That(repository.TotalClones, Is.Not.Null);
+				Assert.That(repository.TotalUniqueClones, Is.Not.Null);
+				Assert.That(repository.TotalUniqueViews, Is.Not.Null);
+				Assert.That(repository.TotalViews, Is.Not.Null);
+
+				Assert.That(repository.IsArchived, Is.False);
+				Assert.That(repository.IsFork, Is.False);
+
+				Assert.That(beforePullToRefresh, Is.LessThan(repository.DataDownloadedAt));
+				Assert.That(afterPullToRefresh, Is.GreaterThan(repository.DataDownloadedAt));
+			}
+		});
 
 		void HandleScheduleRetryRepositoriesStarsCompleted(object? sender, Repository e)
 		{
@@ -92,14 +94,16 @@ class RepositoryViewModelTests : BaseTest
 				BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
 			}
 
-			Assert.IsNotNull(e.DailyClonesList);
-			Assert.IsNotNull(e.DailyViewsList);
-			Assert.IsNotNull(e.StarCount);
-			Assert.IsNotNull(e.StarredAt);
-			Assert.IsNotNull(e.TotalClones);
-			Assert.IsNotNull(e.TotalUniqueClones);
-			Assert.IsNotNull(e.TotalUniqueViews);
-			Assert.IsNotNull(e.TotalViews);
+			Assert.Multiple(() =>
+			{
+				Assert.That(e.DailyClonesList, Is.Not.Null);
+				Assert.That(e.DailyViewsList, Is.Not.Null);
+				Assert.That(e.StarredAt, Is.Not.Null);
+				Assert.That(e.TotalClones, Is.Not.Null);
+				Assert.That(e.TotalUniqueClones, Is.Not.Null);
+				Assert.That(e.TotalUniqueViews, Is.Not.Null);
+				Assert.That(e.TotalViews, Is.Not.Null);
+			});
 
 			repositoriesUpdatedInBackground.Add(e);
 
@@ -111,7 +115,7 @@ class RepositoryViewModelTests : BaseTest
 	}
 
 
-	[Test, Timeout(600000)]
+	[Test, CancelAfter(600000)]
 	public async Task PullToRefreshCommandTest_ShouldIncludeOrganizationsChanged()
 	{
 		//Arrange
@@ -133,8 +137,11 @@ class RepositoryViewModelTests : BaseTest
 		var handlePullToRefreshFailedResult = await handlePullToRefreshFailedTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsEmpty(repositoryViewModel.VisibleRepositoryList);
-		Assert.IsInstanceOf<ErrorPullToRefreshEventArgs>(handlePullToRefreshFailedResult);
+		Assert.Multiple(() =>
+		{
+			Assert.That(repositoryViewModel.VisibleRepositoryList, Is.Empty);
+			Assert.That(handlePullToRefreshFailedResult, Is.InstanceOf<ErrorPullToRefreshEventArgs>());
+		});
 
 		void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
 		{
@@ -143,7 +150,7 @@ class RepositoryViewModelTests : BaseTest
 		}
 	}
 
-	[Test, Timeout(600000)]
+	[Test, CancelAfter(600000)]
 	public async Task PullToRefreshCommandTest_LoggedOut()
 	{
 		//Arrange
@@ -166,8 +173,11 @@ class RepositoryViewModelTests : BaseTest
 		var handlePullToRefreshFailedResult = await handlePullToRefreshFailedTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsEmpty(repositoryViewModel.VisibleRepositoryList);
-		Assert.IsTrue(handlePullToRefreshFailedResult is LoginExpiredPullToRefreshEventArgs or ErrorPullToRefreshEventArgs);
+		Assert.Multiple(() =>
+		{
+			Assert.That(repositoryViewModel.VisibleRepositoryList, Is.Empty);
+			Assert.That(handlePullToRefreshFailedResult is LoginExpiredPullToRefreshEventArgs or ErrorPullToRefreshEventArgs);
+		});
 
 		void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
 		{
@@ -176,7 +186,7 @@ class RepositoryViewModelTests : BaseTest
 		}
 	}
 
-	[Test, Timeout(600000)]
+	[Test, CancelAfter(600000)]
 	public async Task PullToRefreshCommandTest_AuthorizeSessionStarted()
 	{
 		//Arrange
@@ -206,8 +216,11 @@ class RepositoryViewModelTests : BaseTest
 		var handlePullToRefreshFailedResult = await handlePullToRefreshFailedTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsEmpty(repositoryViewModel.VisibleRepositoryList);
-		Assert.IsInstanceOf<ErrorPullToRefreshEventArgs>(handlePullToRefreshFailedResult);
+		Assert.Multiple(() =>
+		{
+			Assert.That(repositoryViewModel.VisibleRepositoryList, Is.Empty);
+			Assert.That(handlePullToRefreshFailedResult, Is.InstanceOf<ErrorPullToRefreshEventArgs>());
+		});
 
 		void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
 		{
@@ -216,7 +229,7 @@ class RepositoryViewModelTests : BaseTest
 		}
 	}
 
-	[Test, Timeout(600000)]
+	[Test, CancelAfter(600000)]
 	public async Task PullToRefreshCommandTest_Unauthenticated()
 	{
 		//Arrange
@@ -246,17 +259,20 @@ class RepositoryViewModelTests : BaseTest
 		emptyDataViewDescription_Final = repositoryViewModel.EmptyDataViewDescription;
 
 		//Assert
-		Assert.IsTrue(didPullToRefreshFailedFire);
-		Assert.IsInstanceOf(typeof(LoginExpiredPullToRefreshEventArgs), pullToRefreshFailedEventArgs);
+		Assert.Multiple(() =>
+		{
+			Assert.That(didPullToRefreshFailedFire);
+			Assert.That(pullToRefreshFailedEventArgs, Is.InstanceOf(typeof(LoginExpiredPullToRefreshEventArgs)));
 
-		Assert.IsEmpty(visibleRepositoryList_Initial);
-		Assert.IsEmpty(visibleRepositoryList_Final);
+			Assert.That(visibleRepositoryList_Initial, Is.Empty);
+			Assert.That(visibleRepositoryList_Final, Is.Empty);
 
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true), emptyDataViewTitle_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.LoginExpired, true), emptyDataViewTitle_Final);
+			Assert.That(emptyDataViewTitle_Initial, Is.EqualTo(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true)));
+			Assert.That(emptyDataViewTitle_Final, Is.EqualTo(EmptyDataViewService.GetRepositoryTitleText(RefreshState.LoginExpired, true)));
 
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.LoginExpired, true), emptyDataViewDescription_Final);
+			Assert.That(emptyDataViewDescription_Initial, Is.EqualTo(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true)));
+			Assert.That(emptyDataViewDescription_Final, Is.EqualTo(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.LoginExpired, true)));
+		});
 
 		void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
 		{
@@ -292,9 +308,12 @@ class RepositoryViewModelTests : BaseTest
 		repositoryListCount_Final = repositoryList_Final.Count;
 
 		//Assert
-		Assert.IsEmpty(repositoryViewModel.VisibleRepositoryList);
-		Assert.Greater(repositoryListCount_Initial, 0);
-		Assert.Less(repositoryListCount_Final, repositoryListCount_Initial);
+		Assert.Multiple(() =>
+		{
+			Assert.That(repositoryViewModel.VisibleRepositoryList, Is.Empty);
+			Assert.That(repositoryListCount_Initial, Is.GreaterThan(0));
+			Assert.That(repositoryListCount_Final, Is.LessThan(repositoryListCount_Initial));
+		});
 	}
 
 	[Test]
@@ -322,9 +341,12 @@ class RepositoryViewModelTests : BaseTest
 		repositoryListCount_Final = repositoryList_Final.Count;
 
 		//Assert
-		Assert.Contains(repository, repositoryViewModel.VisibleRepositoryList.ToArray());
-		Assert.Greater(repositoryListCount_Initial, 1);
-		Assert.Less(repositoryListCount_Final, repositoryListCount_Initial);
+		Assert.Multiple(() =>
+		{
+			Assert.That(repositoryViewModel.VisibleRepositoryList.ToArray(), Does.Contain(repository));
+			Assert.That(repositoryListCount_Initial, Is.GreaterThan(1));
+			Assert.That(repositoryListCount_Final, Is.LessThan(repositoryListCount_Initial));
+		});
 	}
 
 	[TestCase((SortingOption)int.MinValue)]
@@ -407,14 +429,17 @@ class RepositoryViewModelTests : BaseTest
 		repository_final = repositoryViewModel.VisibleRepositoryList.First();
 
 		//Assert
-		Assert.IsNull(repository_initial.IsFavorite);
-		Assert.True(repository_favorite.IsFavorite);
-		Assert.IsFalse(repository_final.IsFavorite);
+		Assert.Multiple(() =>
+		{
+			Assert.That(repository_initial.IsFavorite, Is.Null);
+			Assert.That(repository_favorite.IsFavorite, Is.True);
+			Assert.That(repository_final.IsFavorite, Is.False);
 
-		if (isDemo)
-			Assert.IsEmpty(favoriteUrls);
-		else
-			Assert.AreEqual(favoriteUrls.First(), repository_favorite.Url);
+			if (isDemo)
+				Assert.That(favoriteUrls, Is.Empty);
+			else
+				Assert.That(repository_favorite.Url, Is.EqualTo(favoriteUrls.First()));
+		});
 	}
 
 	static void AssertRepositoriesReversedSorted(in IEnumerable<Repository> repositories, in SortingOption sortingOption)
@@ -427,50 +452,58 @@ class RepositoryViewModelTests : BaseTest
 		switch (sortingOption)
 		{
 			case SortingOption.Views when topRepository.IsTrending == secondTopRepository.IsTrending:
-				Assert.GreaterOrEqual(topRepository.TotalViews, secondTopRepository.TotalViews);
+				ArgumentNullException.ThrowIfNull(secondTopRepository.TotalViews);
+				Assert.That(topRepository.TotalViews, Is.GreaterThanOrEqualTo(secondTopRepository.TotalViews));
 				break;
 			case SortingOption.Views:
-				Assert.GreaterOrEqual(secondTopRepository.TotalViews, lastRepository.TotalViews);
+				ArgumentNullException.ThrowIfNull(lastRepository.TotalViews);
+				Assert.That(secondTopRepository.TotalViews, Is.GreaterThanOrEqualTo(lastRepository.TotalViews));
 				break;
 			case SortingOption.Stars when topRepository.IsTrending == secondTopRepository.IsTrending:
-				Assert.LessOrEqual(topRepository.StarCount, secondTopRepository.StarCount);
+				Assert.That(topRepository.StarCount, Is.LessThanOrEqualTo(secondTopRepository.StarCount));
 				break;
 			case SortingOption.Stars:
-				Assert.LessOrEqual(secondTopRepository.StarCount, lastRepository.StarCount);
+				Assert.That(secondTopRepository.StarCount, Is.LessThanOrEqualTo(lastRepository.StarCount));
 				break;
 			case SortingOption.Forks when topRepository.IsTrending == secondTopRepository.IsTrending:
-				Assert.LessOrEqual(topRepository.ForkCount, secondTopRepository.ForkCount);
+				Assert.That(topRepository.ForkCount, Is.LessThanOrEqualTo(secondTopRepository.ForkCount));
 				break;
 			case SortingOption.Forks:
-				Assert.LessOrEqual(secondTopRepository.ForkCount, lastRepository.ForkCount);
+				Assert.That(secondTopRepository.ForkCount, Is.LessThanOrEqualTo(lastRepository.ForkCount));
 				break;
 			case SortingOption.Issues when topRepository.IsTrending == secondTopRepository.IsTrending:
-				Assert.LessOrEqual(topRepository.IssuesCount, secondTopRepository.IssuesCount);
+				Assert.That(topRepository.IssuesCount, Is.LessThanOrEqualTo(secondTopRepository.IssuesCount));
 				break;
 			case SortingOption.Issues:
-				Assert.LessOrEqual(secondTopRepository.IssuesCount, lastRepository.IssuesCount);
+				Assert.That(secondTopRepository.IssuesCount, Is.LessThanOrEqualTo(lastRepository.IssuesCount));
 				break;
 			case SortingOption.Clones when topRepository.IsTrending == secondTopRepository.IsTrending:
-				Assert.LessOrEqual(topRepository.TotalClones, secondTopRepository.TotalClones);
+				ArgumentNullException.ThrowIfNull(secondTopRepository.TotalClones);
+				Assert.That(topRepository.TotalClones, Is.LessThanOrEqualTo(secondTopRepository.TotalClones));
 				break;
 			case SortingOption.Clones:
-				Assert.LessOrEqual(secondTopRepository.TotalClones, lastRepository.TotalClones);
+				ArgumentNullException.ThrowIfNull(lastRepository.TotalClones);
+				Assert.That(secondTopRepository.TotalClones, Is.LessThanOrEqualTo(lastRepository.TotalClones));
 				break;
 			case SortingOption.UniqueClones when topRepository.IsTrending == secondTopRepository.IsTrending:
-				Assert.LessOrEqual(topRepository.TotalUniqueClones, secondTopRepository.TotalUniqueClones);
+				ArgumentNullException.ThrowIfNull(secondTopRepository.TotalUniqueClones);
+				Assert.That(topRepository.TotalUniqueClones, Is.LessThanOrEqualTo(secondTopRepository.TotalUniqueClones));
 				break;
 			case SortingOption.UniqueClones:
-				Assert.LessOrEqual(secondTopRepository.TotalUniqueClones, lastRepository.TotalUniqueClones);
+				ArgumentNullException.ThrowIfNull(lastRepository.TotalUniqueClones);
+				Assert.That(secondTopRepository.TotalUniqueClones, Is.LessThanOrEqualTo(lastRepository.TotalUniqueClones));
 				break;
 			case SortingOption.UniqueViews when topRepository.IsTrending == secondTopRepository.IsTrending:
-				Assert.LessOrEqual(topRepository.TotalUniqueViews, secondTopRepository.TotalUniqueViews);
+				ArgumentNullException.ThrowIfNull(secondTopRepository.TotalUniqueViews);
+				Assert.That(topRepository.TotalUniqueViews, Is.LessThanOrEqualTo(secondTopRepository.TotalUniqueViews));
 				break;
 			case SortingOption.UniqueViews:
-				Assert.LessOrEqual(secondTopRepository.TotalUniqueViews, lastRepository.TotalUniqueViews);
+				ArgumentNullException.ThrowIfNull(lastRepository.TotalUniqueViews);
+				Assert.That(secondTopRepository.TotalUniqueViews, Is.LessThanOrEqualTo(lastRepository.TotalUniqueViews));
 				break;
 			default:
 				throw new NotSupportedException();
-		};
+		}
 	}
 
 	static void AssertRepositoriesSorted(in IEnumerable<Repository> repositories, in SortingOption sortingOption)
@@ -483,49 +516,57 @@ class RepositoryViewModelTests : BaseTest
 		switch (sortingOption)
 		{
 			case SortingOption.Views when topRepository.IsTrending == secondTopRepository.IsTrending:
-				Assert.LessOrEqual(topRepository.TotalViews, secondTopRepository.TotalViews);
+				ArgumentNullException.ThrowIfNull(secondTopRepository.TotalViews);
+				Assert.That(topRepository.TotalViews, Is.LessThanOrEqualTo(secondTopRepository.TotalViews));
 				break;
 			case SortingOption.Views:
-				Assert.LessOrEqual(secondTopRepository.TotalViews, lastRepository.TotalViews);
+				ArgumentNullException.ThrowIfNull(lastRepository.TotalViews);
+				Assert.That(secondTopRepository.TotalViews, Is.LessThanOrEqualTo(lastRepository.TotalViews));
 				break;
 			case SortingOption.Stars when topRepository.IsTrending == secondTopRepository.IsTrending:
-				Assert.GreaterOrEqual(topRepository.StarCount, secondTopRepository.StarCount);
+				Assert.That(topRepository.StarCount, Is.GreaterThanOrEqualTo(secondTopRepository.StarCount));
 				break;
 			case SortingOption.Stars:
-				Assert.GreaterOrEqual(secondTopRepository.StarCount, lastRepository.StarCount);
+				Assert.That(secondTopRepository.StarCount, Is.GreaterThanOrEqualTo(lastRepository.StarCount));
 				break;
 			case SortingOption.Forks when topRepository.IsTrending == secondTopRepository.IsTrending:
-				Assert.GreaterOrEqual(topRepository.ForkCount, secondTopRepository.ForkCount);
+				Assert.That(topRepository.ForkCount, Is.GreaterThanOrEqualTo(secondTopRepository.ForkCount));
 				break;
 			case SortingOption.Forks:
-				Assert.GreaterOrEqual(secondTopRepository.ForkCount, lastRepository.ForkCount);
+				Assert.That(secondTopRepository.ForkCount, Is.GreaterThanOrEqualTo(lastRepository.ForkCount));
 				break;
 			case SortingOption.Issues when topRepository.IsTrending == secondTopRepository.IsTrending:
-				Assert.GreaterOrEqual(topRepository.IssuesCount, secondTopRepository.IssuesCount);
+				Assert.That(topRepository.IssuesCount, Is.GreaterThanOrEqualTo(secondTopRepository.IssuesCount));
 				break;
 			case SortingOption.Issues:
-				Assert.GreaterOrEqual(secondTopRepository.IssuesCount, lastRepository.IssuesCount);
+				Assert.That(secondTopRepository.IssuesCount, Is.GreaterThanOrEqualTo(lastRepository.IssuesCount));
 				break;
 			case SortingOption.Clones when topRepository.IsTrending == secondTopRepository.IsTrending:
-				Assert.GreaterOrEqual(topRepository.TotalClones, secondTopRepository.TotalClones);
+				ArgumentNullException.ThrowIfNull(secondTopRepository.TotalClones);
+				Assert.That(topRepository.TotalClones, Is.GreaterThanOrEqualTo(secondTopRepository.TotalClones));
 				break;
 			case SortingOption.Clones:
-				Assert.GreaterOrEqual(secondTopRepository.TotalClones, lastRepository.TotalClones);
+				ArgumentNullException.ThrowIfNull(lastRepository.TotalClones);
+				Assert.That(secondTopRepository.TotalClones, Is.GreaterThanOrEqualTo(lastRepository.TotalClones));
 				break;
 			case SortingOption.UniqueClones when topRepository.IsTrending == secondTopRepository.IsTrending:
-				Assert.GreaterOrEqual(topRepository.TotalUniqueClones, secondTopRepository.TotalUniqueClones);
+				ArgumentNullException.ThrowIfNull(secondTopRepository.TotalUniqueClones);
+				Assert.That(topRepository.TotalUniqueClones, Is.GreaterThanOrEqualTo(secondTopRepository.TotalUniqueClones));
 				break;
 			case SortingOption.UniqueClones:
-				Assert.GreaterOrEqual(secondTopRepository.TotalUniqueClones, lastRepository.TotalUniqueClones);
+				ArgumentNullException.ThrowIfNull(lastRepository.TotalUniqueClones);
+				Assert.That(secondTopRepository.TotalUniqueClones, Is.GreaterThanOrEqualTo(lastRepository.TotalUniqueClones));
 				break;
 			case SortingOption.UniqueViews when topRepository.IsTrending == secondTopRepository.IsTrending:
-				Assert.GreaterOrEqual(topRepository.TotalUniqueViews, secondTopRepository.TotalUniqueViews);
+				ArgumentNullException.ThrowIfNull(secondTopRepository.TotalUniqueViews);
+				Assert.That(topRepository.TotalUniqueViews, Is.GreaterThanOrEqualTo(secondTopRepository.TotalUniqueViews));
 				break;
 			case SortingOption.UniqueViews:
-				Assert.GreaterOrEqual(secondTopRepository.TotalUniqueViews, lastRepository.TotalUniqueViews);
+				ArgumentNullException.ThrowIfNull(lastRepository.TotalUniqueViews);
+				Assert.That(secondTopRepository.TotalUniqueViews, Is.GreaterThanOrEqualTo(lastRepository.TotalUniqueViews));
 				break;
 			default:
 				throw new NotSupportedException();
-		};
+		}
 	}
 }

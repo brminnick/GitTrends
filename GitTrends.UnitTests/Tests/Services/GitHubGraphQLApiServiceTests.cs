@@ -18,7 +18,7 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false));
 
 		//Assert
-		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 	}
 
 	[Test]
@@ -32,7 +32,7 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false));
 
 		//Assert
-		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 	}
 
 	[Test]
@@ -48,9 +48,12 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		var (login, name, avatarUri) = await githubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.AreEqual(gitHubUserService.Alias, login);
-		Assert.AreEqual(gitHubUserService.Name, name);
-		Assert.AreEqual(new Uri(gitHubUserService.AvatarUrl), avatarUri);
+		Assert.Multiple(() =>
+		{
+			Assert.That(login, Is.EqualTo(gitHubUserService.Alias));
+			Assert.That(name, Is.EqualTo(gitHubUserService.Name));
+			Assert.That(avatarUri, Is.EqualTo(new Uri(gitHubUserService.AvatarUrl)));
+		});
 	}
 
 	[Test]
@@ -70,7 +73,7 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		});
 
 		//Assert
-		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 	}
 
 	[Test]
@@ -91,19 +94,22 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		}
 
 		//Assert
-		Assert.IsNotEmpty(repositories);
-		Assert.AreEqual(DemoDataConstants.RepoCount, repositories.Count);
+		Assert.That(repositories, Is.Not.Empty);
+		Assert.That(repositories, Has.Count.EqualTo(DemoDataConstants.RepoCount));
 
 		foreach (var repository in repositories)
 		{
-			Assert.GreaterOrEqual(DemoDataConstants.MaximumRandomNumber, repository.IssuesCount);
-			Assert.GreaterOrEqual(DemoDataConstants.MaximumRandomNumber, repository.ForkCount);
-			Assert.AreEqual(DemoUserConstants.Alias, repository.OwnerLogin);
+			Assert.Multiple(() =>
+			{
+				Assert.That(repository.IssuesCount, Is.LessThan(DemoDataConstants.MaximumRandomNumber));
+				Assert.That(repository.ForkCount, Is.LessThan(DemoDataConstants.MaximumRandomNumber));
+				Assert.That(repository.OwnerLogin, Is.EqualTo(DemoUserConstants.Alias));
 
-			Assert.IsNull(repository.TotalClones);
-			Assert.IsNull(repository.TotalUniqueClones);
-			Assert.IsNull(repository.TotalViews);
-			Assert.IsNull(repository.TotalUniqueViews);
+				Assert.That(repository.TotalClones, Is.Null);
+				Assert.That(repository.TotalUniqueClones, Is.Null);
+				Assert.That(repository.TotalViews, Is.Null);
+				Assert.That(repository.TotalUniqueViews, Is.Null);
+			});
 		}
 	}
 
@@ -125,21 +131,23 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		}
 
 		//Assert
-		Assert.GreaterOrEqual(repositories.Count, 0);
+		Assert.That(repositories, Has.Count.GreaterThanOrEqualTo(0));
 
-		var gitTrendsRepository = repositories.Single(static x => x.Name is GitHubConstants.GitTrendsRepoName
-			&& x.OwnerLogin is GitHubConstants.GitTrendsRepoOwner);
+		var gitTrendsRepository = repositories.Single(static x => x is { Name: GitHubConstants.GitTrendsRepoName, OwnerLogin: GitHubConstants.GitTrendsRepoOwner });
 
-		Assert.AreEqual(GitHubConstants.GitTrendsRepoName, gitTrendsRepository.Name);
-		Assert.AreEqual(GitHubConstants.GitTrendsRepoOwner, gitTrendsRepository.OwnerLogin);
-		Assert.AreEqual(AuthenticatedGitHubUserAvatarUrl, gitTrendsRepository.OwnerAvatarUrl);
+		Assert.Multiple(() =>
+		{
+			Assert.That(gitTrendsRepository.Name, Is.EqualTo(GitHubConstants.GitTrendsRepoName));
+			Assert.That(gitTrendsRepository.OwnerLogin, Is.EqualTo(GitHubConstants.GitTrendsRepoOwner));
+			Assert.That(gitTrendsRepository.OwnerAvatarUrl, Is.EqualTo(AuthenticatedGitHubUserAvatarUrl));
 
-		Assert.Greater(repositories.Sum(static x => x.StarCount), 0);
-		Assert.AreEqual(0, repositories.Sum(static x => x.TotalViews));
-		Assert.AreEqual(0, repositories.Sum(static x => x.TotalUniqueViews));
-		Assert.AreEqual(0, repositories.Sum(static x => x.TotalClones));
-		Assert.AreEqual(0, repositories.Sum(static x => x.TotalUniqueClones));
-		Assert.AreEqual(0, repositories.Sum(static x => x.StarredAt?.Count));
+			Assert.That(repositories.Sum(static x => x.StarCount), Is.GreaterThan(0));
+			Assert.That(repositories.Sum(static x => x.TotalViews), Is.EqualTo(0));
+			Assert.That(repositories.Sum(static x => x.TotalUniqueViews), Is.EqualTo(0));
+			Assert.That(repositories.Sum(static x => x.TotalClones), Is.EqualTo(0));
+			Assert.That(repositories.Sum(static x => x.TotalUniqueClones), Is.EqualTo(0));
+			Assert.That(repositories.Sum(static x => x.StarredAt?.Count), Is.EqualTo(0));
+		});
 	}
 
 	[Test]
@@ -159,8 +167,11 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		});
 
 		//Assert
-		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
-		Assert.IsEmpty(repositories);
+		Assert.Multiple(() =>
+		{
+			Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+			Assert.That(repositories, Is.Empty);
+		});
 	}
 
 	[Test]
@@ -183,8 +194,11 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		});
 
 		//Assert
-		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
-		Assert.IsEmpty(repositories);
+		Assert.Multiple(() =>
+		{
+			Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+			Assert.That(repositories, Is.Empty);
+		});
 	}
 
 	[Test]
@@ -204,16 +218,18 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		}
 
 		//Assert
-		Assert.IsNotEmpty(repositories);
-		Assert.GreaterOrEqual(repositories.Count, 1);
+		Assert.Multiple(() =>
+		{
+			Assert.That(repositories, Is.Not.Empty);
+			Assert.That(repositories, Is.Not.Empty);
 
-
-		Assert.Greater(repositories.Sum(static x => x.StarCount), 0);
-		Assert.AreEqual(0, repositories.Sum(static x => x.TotalViews));
-		Assert.AreEqual(0, repositories.Sum(static x => x.TotalUniqueViews));
-		Assert.AreEqual(0, repositories.Sum(static x => x.TotalClones));
-		Assert.AreEqual(0, repositories.Sum(static x => x.TotalUniqueClones));
-		Assert.AreEqual(0, repositories.Sum(static x => x.StarredAt?.Count));
+			Assert.That(repositories.Sum(static x => x.StarCount), Is.GreaterThan(0));
+			Assert.That(repositories.Sum(static x => x.TotalViews), Is.EqualTo(0));
+			Assert.That(repositories.Sum(static x => x.TotalUniqueViews), Is.EqualTo(0));
+			Assert.That(repositories.Sum(static x => x.TotalClones), Is.EqualTo(0));
+			Assert.That(repositories.Sum(static x => x.TotalUniqueClones), Is.EqualTo(0));
+			Assert.That(repositories.Sum(static x => x.StarredAt?.Count), Is.EqualTo(0));
+		});
 	}
 
 	[Test]
@@ -226,7 +242,7 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		var exception = Assert.ThrowsAsync<ApiException>(() => githubGraphQLApiService.GetOrganizationRepositories(nameof(GitTrends), CancellationToken.None));
 
 		//Assert
-		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 	}
 
 	[Test]
@@ -242,7 +258,7 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		var exception = Assert.ThrowsAsync<ApiException>(() => githubGraphQLApiService.GetOrganizationRepositories(nameof(GitTrends), CancellationToken.None));
 
 		//Assert
-		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 	}
 
 	[Test]
@@ -259,15 +275,18 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		repositories = await githubGraphQLApiService.GetOrganizationRepositories(nameof(GitTrends), CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotEmpty(repositories);
-		Assert.Greater(repositories.Count, 0);
+		Assert.Multiple(() =>
+		{
+			Assert.That(repositories, Is.Not.Empty);
+			Assert.That(repositories, Is.Not.Empty);
 
-		Assert.Greater(repositories.Sum(static x => x.StarCount), 0);
-		Assert.AreEqual(0, repositories.Sum(static x => x.TotalViews));
-		Assert.AreEqual(0, repositories.Sum(static x => x.TotalUniqueViews));
-		Assert.AreEqual(0, repositories.Sum(static x => x.TotalClones));
-		Assert.AreEqual(0, repositories.Sum(static x => x.TotalUniqueClones));
-		Assert.AreEqual(0, repositories.Sum(static x => x.StarredAt?.Count));
+			Assert.That(repositories.Sum(static x => x.StarCount), Is.GreaterThan(0));
+			Assert.That(repositories.Sum(static x => x.TotalViews), Is.EqualTo(0));
+			Assert.That(repositories.Sum(static x => x.TotalUniqueViews), Is.EqualTo(0));
+			Assert.That(repositories.Sum(static x => x.TotalClones), Is.EqualTo(0));
+			Assert.That(repositories.Sum(static x => x.TotalUniqueClones), Is.EqualTo(0));
+			Assert.That(repositories.Sum(static x => x.StarredAt?.Count), Is.EqualTo(0));
+		});
 	}
 
 	[Test]
@@ -281,7 +300,7 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetRepository(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
 		//Assert
-		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 	}
 
 	[Test]
@@ -297,7 +316,7 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetRepository(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
 		//Assert
-		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 	}
 
 	[Test]
@@ -320,24 +339,27 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		afterDownload = DateTimeOffset.UtcNow;
 
 		//Assert
-		Assert.Greater(repository.StarCount, 150);
-		Assert.Greater(repository.ForkCount, 30);
+		Assert.Multiple(() =>
+		{
+			Assert.That(repository.StarCount, Is.GreaterThan(150));
+			Assert.That(repository.ForkCount, Is.GreaterThan(30));
 
-		Assert.AreEqual(GitHubConstants.GitTrendsRepoName, repository.Name);
-		Assert.AreEqual(GitHubConstants.GitTrendsRepoOwner, repository.OwnerLogin);
-		Assert.AreEqual(AuthenticatedGitHubUserAvatarUrl, repository.OwnerAvatarUrl);
+			Assert.That(repository.Name, Is.EqualTo(GitHubConstants.GitTrendsRepoName));
+			Assert.That(repository.OwnerLogin, Is.EqualTo(GitHubConstants.GitTrendsRepoOwner));
+			Assert.That(repository.OwnerAvatarUrl, Is.EqualTo(AuthenticatedGitHubUserAvatarUrl));
 
-		Assert.IsNull(repository.TotalClones);
-		Assert.IsNull(repository.TotalUniqueClones);
-		Assert.IsNull(repository.TotalViews);
-		Assert.IsNull(repository.TotalUniqueViews);
+			Assert.That(repository.TotalClones, Is.Null);
+			Assert.That(repository.TotalUniqueClones, Is.Null);
+			Assert.That(repository.TotalViews, Is.Null);
+			Assert.That(repository.TotalUniqueViews, Is.Null);
 
-		Assert.IsTrue(beforeDownload.CompareTo(repository.DataDownloadedAt) < 0);
-		Assert.IsTrue(afterDownload.CompareTo(repository.DataDownloadedAt) > 0);
+			Assert.That(beforeDownload.CompareTo(repository.DataDownloadedAt), Is.LessThan(0));
+			Assert.That(afterDownload.CompareTo(repository.DataDownloadedAt), Is.GreaterThan(0));
 
-		Assert.IsFalse(string.IsNullOrWhiteSpace(repository.Description));
+			Assert.That(string.IsNullOrWhiteSpace(repository.Description), Is.False);
 
-		Assert.IsFalse(repository.IsFork);
+			Assert.That(repository.IsFork, Is.False);
+		});
 	}
 
 	[Test]
@@ -355,9 +377,12 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		starGazers = await githubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotEmpty(starGazers.StarredAt);
-		Assert.Greater(starGazers.StarredAt.Count, 0);
-		Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
+		Assert.Multiple(() =>
+		{
+			Assert.That(starGazers.StarredAt, Is.Not.Empty);
+			Assert.That(starGazers.StarredAt, Is.Not.Empty);
+			Assert.That(starGazers.StarredAt, Has.Count.EqualTo(starGazers.TotalCount));
+		});
 	}
 
 	[Test]
@@ -375,9 +400,12 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		starGazers = await githubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotEmpty(starGazers.StarredAt);
-		Assert.Greater(starGazers.StarredAt.Count, 500);
-		Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
+		Assert.Multiple(() =>
+		{
+			Assert.That(starGazers.StarredAt, Is.Not.Empty);
+			Assert.That(starGazers.StarredAt, Has.Count.GreaterThan(500));
+			Assert.That(starGazers.StarredAt, Has.Count.EqualTo(starGazers.TotalCount));
+		});
 	}
 
 	[Test]
@@ -393,13 +421,15 @@ class GitHubGraphQLApiServiceTests : BaseTest
 
 		//Act
 		starGazers = await gitHubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None).ConfigureAwait(false);
-		;
 
 		//Assert
-		Assert.NotNull(starGazers);
-		Assert.Greater(starGazers.TotalCount, 500);
-		Assert.IsNotEmpty(starGazers.StarredAt);
-		Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
+		Assert.Multiple(() =>
+		{
+			Assert.That(starGazers, Is.Not.Null);
+			Assert.That(starGazers.TotalCount, Is.GreaterThan(500));
+			Assert.That(starGazers.StarredAt, Is.Not.Empty);
+			Assert.That(starGazers.StarredAt, Has.Count.EqualTo(starGazers.TotalCount));
+		});
 	}
 
 	[Test]
@@ -418,8 +448,11 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		var graphQLException = Assert.ThrowsAsync<GraphQLException<StarGazerResponse>>(() => gitHubGraphQLApiService.GetStarGazers(fakeRepoName, fakeRepoOwner, CancellationToken.None));
 
 		//Assert
-		Assert.AreEqual(HttpStatusCode.OK, graphQLException?.StatusCode);
-		Assert.IsTrue(graphQLException?.Errors.First().Message.Contains("Could not resolve to a Repository", StringComparison.OrdinalIgnoreCase));
+		Assert.Multiple(() =>
+		{
+			Assert.That(graphQLException?.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+			Assert.That(graphQLException?.Errors[0].Message.Contains("Could not resolve to a Repository", StringComparison.OrdinalIgnoreCase), Is.True);
+		});
 
 		//"Could not resolve to a Repository with the name 'zxcvbnmlkjhgfdsa1234567890/abc123321'."
 	}
@@ -434,8 +467,8 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		//Act
 		gitHubUserService.InvalidateToken();
 		var exception = Assert.ThrowsAsync<ApiException>(() => gitHubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None));
-		
+
 		//Assert
-		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 	}
 }

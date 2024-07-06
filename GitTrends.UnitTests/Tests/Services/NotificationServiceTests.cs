@@ -64,8 +64,11 @@ class NotificationServiceTests : BaseTest
 		sortingOption = await sortingOptionRequestedTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsTrue(didSortingOptionRequestedFire);
-		Assert.AreEqual(SortingOption.Views, sortingOption);
+		Assert.Multiple(() =>
+		{
+			Assert.That(didSortingOptionRequestedFire);
+			Assert.That(sortingOption, Is.EqualTo(SortingOption.Views));
+		});
 
 		void HandleSortingOptionRequested(object? sender, SortingOption e)
 		{
@@ -109,15 +112,18 @@ class NotificationServiceTests : BaseTest
 #endif
 
 		//Assert
-		Assert.AreEqual(0, pendingNotificationsCount_Initial);
-		Assert.AreEqual(0, pendingNotificationsCount_BeforeRegistration);
-		Assert.AreEqual(0, pendingNotificationsCount_AfterEmptyRepositoryList);
-		Assert.AreEqual(trendingRepositoryList.Count, pendingNotificationsCount_AfterTrendingRepositoryList);
+		Assert.Multiple(() =>
+		{
+			Assert.That(pendingNotificationsCount_Initial, Is.EqualTo(0));
+			Assert.That(pendingNotificationsCount_BeforeRegistration, Is.EqualTo(0));
+			Assert.That(pendingNotificationsCount_AfterEmptyRepositoryList, Is.EqualTo(0));
+			Assert.That(pendingNotificationsCount_AfterTrendingRepositoryList, Is.EqualTo(trendingRepositoryList.Count));
+		});
 
 		static async Task<int> getPendingNotificationCount(INotificationManager notificationManager)
 		{
 			var pendingNotifications = await notificationManager.GetPendingNotifications().ConfigureAwait(false);
-			return pendingNotifications.Count();
+			return pendingNotifications.Count;
 		}
 	}
 
@@ -150,10 +156,13 @@ class NotificationServiceTests : BaseTest
 		(_, appBadgeCount_AfterClear) = await notificationManager.TryGetBadge().ConfigureAwait(false);
 
 		//Assert
-		Assert.AreEqual(zero, appBadgeCount_Initial);
-		Assert.AreEqual(zero, appBadgeCount_BeforeRegistration);
-		Assert.AreEqual(five, appBadgeCount_AfterSet);
-		Assert.AreEqual(zero, appBadgeCount_AfterClear);
+		Assert.Multiple(() =>
+		{
+			Assert.That(appBadgeCount_Initial, Is.EqualTo(zero));
+			Assert.That(appBadgeCount_BeforeRegistration, Is.EqualTo(zero));
+			Assert.That(appBadgeCount_AfterSet, Is.EqualTo(five));
+			Assert.That(appBadgeCount_AfterClear, Is.EqualTo(zero));
+		});
 	}
 
 	[Test]
@@ -184,19 +193,21 @@ class NotificationServiceTests : BaseTest
 		shouldSendNotifications_AfterUnRegistration = notificationService.ShouldSendNotifications;
 
 		//Assert
-		Assert.IsTrue(didRegistrationCompletedFire);
-		Assert.AreEqual(AccessState.Available, registrationResult);
+		Assert.Multiple(() =>
+		{
+			Assert.That(didRegistrationCompletedFire, Is.True);
+			Assert.That(registrationResult, Is.EqualTo(AccessState.Available));
 
-		Assert.IsFalse(shouldSendNotifications_Initial);
-		Assert.IsFalse(shouldSendNotifications_AfterUnRegistration);
+			Assert.That(shouldSendNotifications_Initial, Is.False);
+			Assert.That(shouldSendNotifications_AfterUnRegistration, Is.False);
 
-		Assert.AreEqual(isRegistrationSuccessful, shouldSendNotifications_AfterRegistration);
-		Assert.AreEqual(isRegistrationSuccessful, string.IsNullOrWhiteSpace(registrationErrorMessage));
+			Assert.That(shouldSendNotifications_AfterRegistration, Is.EqualTo(isRegistrationSuccessful));
+			Assert.That(string.IsNullOrWhiteSpace(registrationErrorMessage), Is.EqualTo(isRegistrationSuccessful));
 
-		Assert.IsFalse(areNotificationsEnabled_Initial);
-		Assert.IsTrue(areNotificationsEnabled_AfterRegistration);
-		Assert.IsTrue(areNotificationsEnabled_AfterUnRegistration);
-
+			Assert.That(areNotificationsEnabled_Initial, Is.False);
+			Assert.That(areNotificationsEnabled_AfterRegistration);
+			Assert.That(areNotificationsEnabled_AfterUnRegistration);
+		});
 
 		void HandleRegistrationCompleted(object? sender, (bool isSuccessful, string errorMessage) e)
 		{
@@ -228,17 +239,20 @@ class NotificationServiceTests : BaseTest
 		await initializationCompletedTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsTrue(didInitializationCompletedFire);
+		Assert.Multiple(() =>
+		{
+			Assert.That(didInitializationCompletedFire);
 
-		Assert.AreEqual(NotificationHubInformation.Empty.ConnectionString, notificationHubInformation_BeforeInitialization.ConnectionString);
-		Assert.AreEqual(NotificationHubInformation.Empty.ConnectionString_Debug, notificationHubInformation_BeforeInitialization.ConnectionString_Debug);
-		Assert.AreEqual(NotificationHubInformation.Empty.Name, notificationHubInformation_BeforeInitialization.Name);
-		Assert.AreEqual(NotificationHubInformation.Empty.Name_Debug, notificationHubInformation_BeforeInitialization.Name_Debug);
+			Assert.That(notificationHubInformation_BeforeInitialization.ConnectionString, Is.EqualTo(NotificationHubInformation.Empty.ConnectionString));
+			Assert.That(notificationHubInformation_BeforeInitialization.ConnectionString_Debug, Is.EqualTo(NotificationHubInformation.Empty.ConnectionString_Debug));
+			Assert.That(notificationHubInformation_BeforeInitialization.Name, Is.EqualTo(NotificationHubInformation.Empty.Name));
+			Assert.That(notificationHubInformation_BeforeInitialization.Name_Debug, Is.EqualTo(NotificationHubInformation.Empty.Name_Debug));
 
-		Assert.IsFalse(string.IsNullOrWhiteSpace(notificationHubInformation_AfterInitialization.Name));
-		Assert.IsFalse(string.IsNullOrWhiteSpace(notificationHubInformation_AfterInitialization.Name_Debug));
-		Assert.IsFalse(string.IsNullOrWhiteSpace(notificationHubInformation_AfterInitialization.ConnectionString));
-		Assert.IsFalse(string.IsNullOrWhiteSpace(notificationHubInformation_AfterInitialization.ConnectionString_Debug));
+			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation_AfterInitialization.Name), Is.False);
+			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation_AfterInitialization.Name_Debug), Is.False);
+			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation_AfterInitialization.ConnectionString), Is.False);
+			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation_AfterInitialization.ConnectionString_Debug), Is.False);
+		});
 
 		void HandleInitializationCompleted(object? sender, NotificationHubInformation e)
 		{

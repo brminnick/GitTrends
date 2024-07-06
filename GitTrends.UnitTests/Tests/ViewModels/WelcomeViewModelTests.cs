@@ -35,19 +35,22 @@ class WelcomeViewModelTests : BaseTest
 		isDemoButtonVisible_AfterCommand = welcomeViewModel.IsDemoButtonVisible;
 
 		//Assert
-		Assert.IsTrue(didOpenAsyncFire);
+		Assert.Multiple(() =>
+		{
+			Assert.That(didOpenAsyncFire);
 
-		Assert.IsFalse(isAuthenticating_BeforeCommand);
-		Assert.True(isDemoButtonVisible_BeforeCommand);
+			Assert.That(isAuthenticating_BeforeCommand, Is.False);
+			Assert.That(isDemoButtonVisible_BeforeCommand);
 
-		Assert.IsTrue(isAuthenticating_DuringCommand);
-		Assert.False(isDemoButtonVisible_DuringCommand);
+			Assert.That(isAuthenticating_DuringCommand);
+			Assert.That(isDemoButtonVisible_DuringCommand, Is.False);
 
-		Assert.IsFalse(isAuthenticating_AfterCommand);
-		Assert.True(isDemoButtonVisible_AfterCommand);
+			Assert.That(isAuthenticating_AfterCommand, Is.False);
+			Assert.That(isDemoButtonVisible_AfterCommand);
 
-		Assert.IsTrue(openedUrl.Contains($"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id="));
-		Assert.IsTrue(openedUrl.Contains($"&scope={GitHubConstants.OAuthScope}&state="));
+			Assert.That(openedUrl, Does.Contain($"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id="));
+			Assert.That(openedUrl, Does.Contain($"&scope={GitHubConstants.OAuthScope}&state="));
+		});
 
 		void HandleOpenAsyncExecuted(object? sender, Uri e)
 		{
@@ -75,9 +78,12 @@ class WelcomeViewModelTests : BaseTest
 		isDemoButtonVisible_Final = welcomeViewModel.IsDemoButtonVisible;
 
 		//Assert
-		Assert.IsTrue(gitHubUserService.IsDemoUser);
+		Assert.Multiple(() =>
+		{
+			Assert.That(gitHubUserService.IsDemoUser);
 
-		Assert.IsTrue(isDemoButtonVisible_Initial);
-		Assert.IsFalse(isDemoButtonVisible_Final);
+			Assert.That(isDemoButtonVisible_Initial);
+			Assert.That(isDemoButtonVisible_Final, Is.False);
+		});
 	}
 }

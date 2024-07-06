@@ -17,7 +17,10 @@ class DateTimeServiceTests : BaseTest
 		var todaysDate = DateTimeOffset.UtcNow;
 		var startingDate = todaysDate.AddMonths(-1);
 
-		var beginningStarredAtList = new List<DateTimeOffset> { startingDate };
+		var beginningStarredAtList = new List<DateTimeOffset>
+		{
+			startingDate
+		};
 		for (int i = 0; i < beginningStarCount - 1; i++)
 		{
 			var timeSpan = todaysDate - startingDate;
@@ -27,11 +30,14 @@ class DateTimeServiceTests : BaseTest
 			beginningStarredAtList.Add(randomDateTimeOffset);
 		}
 
-		Assert.AreEqual(beginningStarCount, beginningStarredAtList.Count);
-		Assert.AreEqual(startingDate, beginningStarredAtList.Min());
-		Assert.LessOrEqual(beginningStarredAtList.Max(), todaysDate);
+		Assert.Multiple(() =>
+		{
+			Assert.That(beginningStarredAtList, Has.Count.EqualTo(beginningStarCount));
+			Assert.That(beginningStarredAtList.Min(), Is.EqualTo(startingDate));
+			Assert.That(beginningStarredAtList.Max(), Is.LessThanOrEqualTo(todaysDate));
+		});
 
-		Repository repository = CreateRepository(false) with
+		var repository = CreateRepository(false) with
 		{
 			StarredAt = beginningStarredAtList
 		};
@@ -40,13 +46,16 @@ class DateTimeServiceTests : BaseTest
 		var estimatedStarredAtList = DateTimeService.GetEstimatedStarredAtList(repository, totalStarCount);
 
 		// Assert
-		Assert.AreEqual(totalStarCount, estimatedStarredAtList.Count);
+		Assert.Multiple(() =>
+		{
+			Assert.That(estimatedStarredAtList, Has.Count.EqualTo(totalStarCount));
 
-		Assert.AreEqual(startingDate, estimatedStarredAtList.Min());
-		Assert.AreEqual(estimatedStarredAtList.Min(), estimatedStarredAtList.First());
+			Assert.That(estimatedStarredAtList.Min(), Is.EqualTo(startingDate));
+			Assert.That(estimatedStarredAtList[0], Is.EqualTo(estimatedStarredAtList.Min()));
 
-		Assert.LessOrEqual(estimatedStarredAtList.Max(), DateTimeOffset.UtcNow.AddMinutes(10));
-		Assert.AreEqual(estimatedStarredAtList.Max(), estimatedStarredAtList.Last());
+			Assert.That(estimatedStarredAtList.Max(), Is.LessThanOrEqualTo(DateTimeOffset.UtcNow.AddMinutes(10)));
+			Assert.That(estimatedStarredAtList[^1], Is.EqualTo(estimatedStarredAtList.Max()));
+		});
 	}
 
 	[TestCase(100)]
@@ -63,14 +72,17 @@ class DateTimeServiceTests : BaseTest
 		// Act
 		var estimatedStarredAtList = DateTimeService.GetEstimatedStarredAtList(repository, totalStarCount);
 
-		// Assert
-		Assert.AreEqual(totalStarCount, estimatedStarredAtList.Count);
+		Assert.Multiple(() =>
+		{
+			// Assert
+			Assert.That(estimatedStarredAtList, Has.Count.EqualTo(totalStarCount));
 
-		Assert.LessOrEqual(DateTimeOffset.MinValue, estimatedStarredAtList.Min());
-		Assert.AreEqual(estimatedStarredAtList.Min(), estimatedStarredAtList.First());
+			Assert.That(DateTimeOffset.MinValue, Is.LessThanOrEqualTo(estimatedStarredAtList.Min()));
+			Assert.That(estimatedStarredAtList[0], Is.EqualTo(estimatedStarredAtList.Min()));
 
-		Assert.LessOrEqual(estimatedStarredAtList.Max(), DateTimeOffset.UtcNow.AddMinutes(10));
-		Assert.AreEqual(estimatedStarredAtList.Max(), estimatedStarredAtList.Last());
+			Assert.That(estimatedStarredAtList.Max(), Is.LessThanOrEqualTo(DateTimeOffset.UtcNow.AddMinutes(10)));
+			Assert.That(estimatedStarredAtList[^1], Is.EqualTo(estimatedStarredAtList.Max()));
+		});
 	}
 
 	[Test]
@@ -87,13 +99,16 @@ class DateTimeServiceTests : BaseTest
 		var minimumDailyClonesModel = DateTimeService.GetMinimumDateTimeOffset(emptyDailyClonesModelList);
 
 		// Assert
-		Assert.AreEqual(expectedDate.Year, minimumDailyViewsModel.Year);
-		Assert.AreEqual(expectedDate.Month, minimumDailyViewsModel.Month);
-		Assert.AreEqual(expectedDate.Day, minimumDailyViewsModel.Day);
+		Assert.Multiple(() =>
+		{
+			Assert.That(minimumDailyViewsModel.Year, Is.EqualTo(expectedDate.Year));
+			Assert.That(minimumDailyViewsModel.Month, Is.EqualTo(expectedDate.Month));
+			Assert.That(minimumDailyViewsModel.Day, Is.EqualTo(expectedDate.Day));
 
-		Assert.AreEqual(expectedDate.Year, minimumDailyClonesModel.Year);
-		Assert.AreEqual(expectedDate.Month, minimumDailyClonesModel.Month);
-		Assert.AreEqual(expectedDate.Day, minimumDailyClonesModel.Day);
+			Assert.That(minimumDailyClonesModel.Year, Is.EqualTo(expectedDate.Year));
+			Assert.That(minimumDailyClonesModel.Month, Is.EqualTo(expectedDate.Month));
+			Assert.That(minimumDailyClonesModel.Day, Is.EqualTo(expectedDate.Day));
+		});
 	}
 
 	[Test]
@@ -115,14 +130,17 @@ class DateTimeServiceTests : BaseTest
 		var minimumDailyViewsModel = DateTimeService.GetMinimumDateTimeOffset(emptyDailyViewsModelList);
 		var minimumDailyClonesModel = DateTimeService.GetMinimumDateTimeOffset(emptyDailyClonesModelList);
 
-		// Assert
-		Assert.AreEqual(expectedDate.Year, minimumDailyViewsModel.Year);
-		Assert.AreEqual(expectedDate.Month, minimumDailyViewsModel.Month);
-		Assert.AreEqual(expectedDate.Day, minimumDailyViewsModel.Day);
+		Assert.Multiple(() =>
+		{
+			// Assert
+			Assert.That(minimumDailyViewsModel.Year, Is.EqualTo(expectedDate.Year));
+			Assert.That(minimumDailyViewsModel.Month, Is.EqualTo(expectedDate.Month));
+			Assert.That(minimumDailyViewsModel.Day, Is.EqualTo(expectedDate.Day));
 
-		Assert.AreEqual(expectedDate.Year, minimumDailyClonesModel.Year);
-		Assert.AreEqual(expectedDate.Month, minimumDailyClonesModel.Month);
-		Assert.AreEqual(expectedDate.Day, minimumDailyClonesModel.Day);
+			Assert.That(minimumDailyClonesModel.Year, Is.EqualTo(expectedDate.Year));
+			Assert.That(minimumDailyClonesModel.Month, Is.EqualTo(expectedDate.Month));
+			Assert.That(minimumDailyClonesModel.Day, Is.EqualTo(expectedDate.Day));
+		});
 	}
 
 	[Test]
@@ -139,13 +157,16 @@ class DateTimeServiceTests : BaseTest
 		var minimumDailyClonesModel = DateTimeService.GetMaximumDateTimeOffset(emptyDailyClonesModelList);
 
 		// Assert
-		Assert.AreEqual(expectedDate.Year, minimumDailyViewsModel.Year);
-		Assert.AreEqual(expectedDate.Month, minimumDailyViewsModel.Month);
-		Assert.AreEqual(expectedDate.Day, minimumDailyViewsModel.Day);
+		Assert.Multiple(() =>
+		{
+			Assert.That(minimumDailyViewsModel.Year, Is.EqualTo(expectedDate.Year));
+			Assert.That(minimumDailyViewsModel.Month, Is.EqualTo(expectedDate.Month));
+			Assert.That(minimumDailyViewsModel.Day, Is.EqualTo(expectedDate.Day));
 
-		Assert.AreEqual(expectedDate.Year, minimumDailyClonesModel.Year);
-		Assert.AreEqual(expectedDate.Month, minimumDailyClonesModel.Month);
-		Assert.AreEqual(expectedDate.Day, minimumDailyClonesModel.Day);
+			Assert.That(minimumDailyClonesModel.Year, Is.EqualTo(expectedDate.Year));
+			Assert.That(minimumDailyClonesModel.Month, Is.EqualTo(expectedDate.Month));
+			Assert.That(minimumDailyClonesModel.Day, Is.EqualTo(expectedDate.Day));
+		});
 	}
 
 	[Test]
@@ -168,13 +189,16 @@ class DateTimeServiceTests : BaseTest
 		var minimumDailyClonesModel = DateTimeService.GetMaximumDateTimeOffset(emptyDailyClonesModelList);
 
 		// Assert
-		Assert.AreEqual(expectedDate.Year, minimumDailyViewsModel.Year);
-		Assert.AreEqual(expectedDate.Month, minimumDailyViewsModel.Month);
-		Assert.AreEqual(expectedDate.Day, minimumDailyViewsModel.Day);
+		Assert.Multiple(() =>
+		{
+			Assert.That(minimumDailyViewsModel.Year, Is.EqualTo(expectedDate.Year));
+			Assert.That(minimumDailyViewsModel.Month, Is.EqualTo(expectedDate.Month));
+			Assert.That(minimumDailyViewsModel.Day, Is.EqualTo(expectedDate.Day));
 
-		Assert.AreEqual(expectedDate.Year, minimumDailyClonesModel.Year);
-		Assert.AreEqual(expectedDate.Month, minimumDailyClonesModel.Month);
-		Assert.AreEqual(expectedDate.Day, minimumDailyClonesModel.Day);
+			Assert.That(minimumDailyClonesModel.Year, Is.EqualTo(expectedDate.Year));
+			Assert.That(minimumDailyClonesModel.Day, Is.EqualTo(expectedDate.Day));
+			Assert.That(minimumDailyClonesModel.Month, Is.EqualTo(expectedDate.Month));
+		});
 	}
 
 	[Test]
@@ -188,12 +212,15 @@ class DateTimeServiceTests : BaseTest
 		dateTimeOffset_Final = dateTimeOffset_Initial.RemoveHourMinuteSecond();
 
 		// Asset
-		Assert.AreEqual(dateTimeOffset_Initial.Year, dateTimeOffset_Final.Year);
-		Assert.AreEqual(dateTimeOffset_Initial.Month, dateTimeOffset_Final.Month);
-		Assert.AreEqual(dateTimeOffset_Initial.Day, dateTimeOffset_Final.Day);
-		Assert.AreEqual(0, dateTimeOffset_Final.Hour);
-		Assert.AreEqual(0, dateTimeOffset_Final.Minute);
-		Assert.AreEqual(0, dateTimeOffset_Final.Second);
-		Assert.AreEqual(0, dateTimeOffset_Final.Millisecond);
+		Assert.Multiple(() =>
+		{
+			Assert.That(dateTimeOffset_Final.Year, Is.EqualTo(dateTimeOffset_Initial.Year));
+			Assert.That(dateTimeOffset_Final.Month, Is.EqualTo(dateTimeOffset_Initial.Month));
+			Assert.That(dateTimeOffset_Final.Day, Is.EqualTo(dateTimeOffset_Initial.Day));
+			Assert.That(dateTimeOffset_Final.Hour, Is.EqualTo(0));
+			Assert.That(dateTimeOffset_Final.Minute, Is.EqualTo(0));
+			Assert.That(dateTimeOffset_Final.Second, Is.EqualTo(0));
+			Assert.That(dateTimeOffset_Final.Millisecond, Is.EqualTo(0));
+		});
 	}
 }

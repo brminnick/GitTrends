@@ -24,7 +24,7 @@ class ReviewServiceTests : BaseTest
 		for (int i = 0; i < ReviewService.MinimumReviewRequests; i++)
 		{
 			await reviewService.TryRequestReviewPrompt().ConfigureAwait(false);
-			Assert.IsFalse(didReviewRequestedFire_ReviewService);
+			Assert.That(didReviewRequestedFire_ReviewService, Is.False);
 		}
 
 		await reviewService.TryRequestReviewPrompt().ConfigureAwait(false);
@@ -32,11 +32,14 @@ class ReviewServiceTests : BaseTest
 		var storeReviewResult = await reviewRequestedTCS_StoreReview.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsTrue(didReviewRequestedFire_ReviewService);
-		Assert.IsTrue(didReviewRequestedFire_StoreReview);
-		Assert.IsTrue(storeReviewResult);
-		Assert.AreNotEqual(preferences.Get("MostRecentRequestDate", default(DateTime)), default);
-		Assert.AreNotEqual(preferences.Get("MostRecentReviewedBuildString", default(string)), default);
+		Assert.Multiple(() =>
+		{
+			Assert.That(didReviewRequestedFire_ReviewService);
+			Assert.That(didReviewRequestedFire_StoreReview);
+			Assert.That(storeReviewResult);
+			Assert.That(preferences.Get("MostRecentRequestDate", default(DateTime)), Is.Not.EqualTo(default(DateTime)));
+			Assert.That(preferences.Get("MostRecentReviewedBuildString", default(string)), Is.Not.EqualTo(default));
+		});
 
 		void HandleReviewRequested_ReviewService(object? sender, EventArgs e)
 		{
@@ -70,13 +73,16 @@ class ReviewServiceTests : BaseTest
 		for (int i = 0; i < ReviewService.MinimumReviewRequests; i++)
 		{
 			await reviewService.TryRequestReviewPrompt().ConfigureAwait(false);
-			Assert.IsFalse(didReviewRequestedFire);
+			Assert.That(didReviewRequestedFire, Is.False);
 		}
 
 		//Assert
-		Assert.IsFalse(didReviewRequestedFire);
-		Assert.AreEqual(preferences.Get("MostRecentRequestDate", default(DateTime)), default(DateTime));
-		Assert.AreEqual(preferences.Get("MostRecentReviewedBuildString", default(string)), default(string));
+		Assert.Multiple(() =>
+		{
+			Assert.That(didReviewRequestedFire, Is.False);
+			Assert.That(preferences.Get("MostRecentRequestDate", default(DateTime)), Is.EqualTo(default(DateTime)));
+			Assert.That(preferences.Get("MostRecentReviewedBuildString", default(string)), Is.EqualTo(default(string)));
+		});
 
 		ReviewService.ReviewRequested -= HandleReviewRequested;
 
@@ -99,9 +105,12 @@ class ReviewServiceTests : BaseTest
 		await reviewService.TryRequestReviewPrompt().ConfigureAwait(false);
 
 		//Assert
-		Assert.IsFalse(didReviewRequestedFire);
-		Assert.AreNotEqual(preferences.Get("MostRecentRequestDate", default(DateTime)), default);
-		Assert.AreNotEqual(preferences.Get("MostRecentReviewedBuildString", default(string)), default);
+		Assert.Multiple(() =>
+		{
+			Assert.That(didReviewRequestedFire, Is.False);
+			Assert.That(preferences.Get("MostRecentRequestDate", default(DateTime)), Is.Not.EqualTo(default(DateTime)));
+			Assert.That(preferences.Get("MostRecentReviewedBuildString", default(string)), Is.Not.EqualTo(default(string)));
+		});
 
 		ReviewService.ReviewRequested -= HandleReviewRequested;
 

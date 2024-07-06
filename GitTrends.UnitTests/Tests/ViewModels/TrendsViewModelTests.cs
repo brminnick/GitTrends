@@ -7,7 +7,7 @@ class TrendsViewModelTests : BaseTest
 {
 	const int _timeoutInMilliseconds = 10000;
 
-	[Test, Timeout(_timeoutInMilliseconds)]
+	[Test, CancelAfter(_timeoutInMilliseconds)]
 	public async Task FetchDataCommandTest_AuthenticatedUser_OldData()
 	{
 		//Arrange
@@ -35,7 +35,10 @@ class TrendsViewModelTests : BaseTest
 			repository = completedReposiory;
 		}
 
-		repository_OldData = repository with { DataDownloadedAt = DateTimeOffset.UtcNow.AddDays(-1) };
+		repository_OldData = repository with
+		{
+			DataDownloadedAt = DateTimeOffset.UtcNow.AddDays(-1)
+		};
 
 		//Act
 		dailyStarsList_Initial = trendsViewModel.DailyStarsList;
@@ -49,46 +52,49 @@ class TrendsViewModelTests : BaseTest
 		dailyViewsList_Final = trendsViewModel.DailyViewsList;
 		dailyClonesList_Final = trendsViewModel.DailyClonesList;
 
-		//Assert
-		Assert.IsNotEmpty(repository_OldData.DailyClonesList ?? throw new NullReferenceException());
-		Assert.IsNotEmpty(repository_OldData.DailyViewsList ?? throw new NullReferenceException());
-		Assert.IsNotEmpty(repository_OldData.StarredAt ?? throw new NullReferenceException());
-
-		Assert.IsEmpty(dailyViewsList_Initial);
-		Assert.IsEmpty(dailyClonesList_Initial);
-		Assert.IsEmpty(dailyStarsList_Initial);
-
-		Assert.IsNotEmpty(dailyViewsList_Final);
-		Assert.IsNotEmpty(dailyClonesList_Final);
-		Assert.IsNotEmpty(dailyStarsList_Final);
-
-		Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarCount, dailyStarsList_Final.Select(static x => x.TotalStars).Distinct().Count());
-
-		foreach (var dailyViewsModel_Final in dailyViewsList_Final)
+		Assert.Multiple(() =>
 		{
-			var dailyViewsModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
-				.DailyViewsList?.FirstOrDefault(x => x.Day == dailyViewsModel_Final.Day);
+			//Assert
+			Assert.That(repository_OldData.DailyClonesList ?? throw new NullReferenceException(), Is.Not.Empty);
+			Assert.That(repository_OldData.DailyViewsList ?? throw new NullReferenceException(), Is.Not.Empty);
+			Assert.That(repository_OldData.StarredAt ?? throw new NullReferenceException(), Is.Not.Empty);
 
-			if (dailyViewsModel_SavedToDatabase is null)
-				continue;
+			Assert.That(dailyViewsList_Initial, Is.Empty);
+			Assert.That(dailyClonesList_Initial, Is.Empty);
+			Assert.That(dailyStarsList_Initial, Is.Empty);
 
-			Assert.AreEqual(dailyViewsModel_SavedToDatabase.LocalDay, dailyViewsModel_Final.LocalDay);
-			Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalViews, dailyViewsModel_Final.TotalViews);
-			Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalUniqueViews, dailyViewsModel_Final.TotalUniqueViews);
-		}
+			Assert.That(dailyViewsList_Final, Is.Not.Empty);
+			Assert.That(dailyClonesList_Final, Is.Not.Empty);
+			Assert.That(dailyStarsList_Final, Is.Not.Empty);
 
-		foreach (var dailyClonesModel_Final in dailyClonesList_Final)
-		{
-			var dailyClonesModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
-				.DailyClonesList?.FirstOrDefault(x => x.Day == dailyClonesModel_Final.Day);
+			Assert.That(dailyStarsList_Final.Select(static x => x.TotalStars).Distinct().Count(), Is.EqualTo(repository_RepositorySavedToDatabaseResult.StarCount));
 
-			if (dailyClonesModel_SavedToDatabase is null)
-				continue;
+			foreach (var dailyViewsModel_Final in dailyViewsList_Final)
+			{
+				var dailyViewsModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
+					.DailyViewsList?.FirstOrDefault(x => x.Day == dailyViewsModel_Final.Day);
 
-			Assert.AreEqual(dailyClonesModel_SavedToDatabase.LocalDay, dailyClonesModel_Final.LocalDay);
-			Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalClones, dailyClonesModel_Final.TotalClones);
-			Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalUniqueClones, dailyClonesModel_Final.TotalUniqueClones);
-		}
+				if (dailyViewsModel_SavedToDatabase is null)
+					continue;
+
+				Assert.That(dailyViewsModel_Final.LocalDay, Is.EqualTo(dailyViewsModel_SavedToDatabase.LocalDay));
+				Assert.That(dailyViewsModel_Final.TotalViews, Is.EqualTo(dailyViewsModel_SavedToDatabase.TotalViews));
+				Assert.That(dailyViewsModel_Final.TotalUniqueViews, Is.EqualTo(dailyViewsModel_SavedToDatabase.TotalUniqueViews));
+			}
+
+			foreach (var dailyClonesModel_Final in dailyClonesList_Final)
+			{
+				var dailyClonesModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
+					.DailyClonesList?.FirstOrDefault(x => x.Day == dailyClonesModel_Final.Day);
+
+				if (dailyClonesModel_SavedToDatabase is null)
+					continue;
+
+				Assert.That(dailyClonesModel_Final.LocalDay, Is.EqualTo(dailyClonesModel_SavedToDatabase.LocalDay));
+				Assert.That(dailyClonesModel_Final.TotalClones, Is.EqualTo(dailyClonesModel_SavedToDatabase.TotalClones));
+				Assert.That(dailyClonesModel_Final.TotalUniqueClones, Is.EqualTo(dailyClonesModel_SavedToDatabase.TotalUniqueClones));
+			}
+		});
 
 		void HandleRepositorySavedToDatabase(object? sender, Repository e)
 		{
@@ -97,7 +103,7 @@ class TrendsViewModelTests : BaseTest
 		}
 	}
 
-	[Test, Timeout(_timeoutInMilliseconds)]
+	[Test, CancelAfter(_timeoutInMilliseconds)]
 	public async Task FetchDataCommandTest_AuthenticatedUser_NoData()
 	{
 		//Arrange
@@ -132,46 +138,50 @@ class TrendsViewModelTests : BaseTest
 		dailyViewsList_Final = trendsViewModel.DailyViewsList;
 		dailyClonesList_Final = trendsViewModel.DailyClonesList;
 
-		//Assert
-		Assert.IsNull(repository_Initial.DailyClonesList);
-		Assert.IsNull(repository_Initial.DailyViewsList);
-		Assert.IsNull(repository_Initial.StarredAt);
-
-		Assert.IsEmpty(dailyViewsList_Initial);
-		Assert.IsEmpty(dailyClonesList_Initial);
-		Assert.IsEmpty(dailyStarsList_Initial);
-
-		Assert.IsNotEmpty(dailyViewsList_Final);
-		Assert.IsNotEmpty(dailyClonesList_Final);
-		Assert.IsNotEmpty(dailyStarsList_Final);
-
-		Assert.AreEqual(repository_RepositorySavedToDatabaseResult.StarredAt?.Count, dailyStarsList_Final.Select(static x => x.TotalStars).Distinct().Count());
-
-		foreach (var dailyViewsModel_Final in dailyViewsList_Final)
+		Assert.Multiple(() =>
 		{
-			var dailyViewsModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
-				.DailyViewsList?.FirstOrDefault(x => x.Day == dailyViewsModel_Final.Day);
+			//Assert
+			Assert.That(repository_Initial.DailyClonesList, Is.Null);
+			Assert.That(repository_Initial.DailyViewsList, Is.Null);
 
-			if (dailyViewsModel_SavedToDatabase is null)
-				continue;
+			Assert.That(repository_Initial.StarredAt, Is.Null);
 
-			Assert.AreEqual(dailyViewsModel_SavedToDatabase.LocalDay, dailyViewsModel_Final.LocalDay);
-			Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalViews, dailyViewsModel_Final.TotalViews);
-			Assert.AreEqual(dailyViewsModel_SavedToDatabase.TotalUniqueViews, dailyViewsModel_Final.TotalUniqueViews);
-		}
+			Assert.That(dailyViewsList_Initial, Is.Empty);
+			Assert.That(dailyClonesList_Initial, Is.Empty);
+			Assert.That(dailyStarsList_Initial, Is.Empty);
 
-		foreach (var dailyClonesModel_Final in dailyClonesList_Final)
-		{
-			var dailyClonesModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
-				.DailyClonesList?.FirstOrDefault(x => x.Day == dailyClonesModel_Final.Day);
+			Assert.That(dailyViewsList_Final, Is.Not.Empty);
+			Assert.That(dailyClonesList_Final, Is.Not.Empty);
+			Assert.That(dailyStarsList_Final, Is.Not.Empty);
 
-			if (dailyClonesModel_SavedToDatabase is null)
-				continue;
+			Assert.That(dailyStarsList_Final.Select(static x => x.TotalStars).Distinct().Count(), Is.EqualTo(repository_RepositorySavedToDatabaseResult.StarredAt?.Count));
 
-			Assert.AreEqual(dailyClonesModel_SavedToDatabase.LocalDay, dailyClonesModel_Final.LocalDay);
-			Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalClones, dailyClonesModel_Final.TotalClones);
-			Assert.AreEqual(dailyClonesModel_SavedToDatabase.TotalUniqueClones, dailyClonesModel_Final.TotalUniqueClones);
-		}
+			foreach (var dailyViewsModel_Final in dailyViewsList_Final)
+			{
+				var dailyViewsModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
+					.DailyViewsList?.FirstOrDefault(x => x.Day == dailyViewsModel_Final.Day);
+
+				if (dailyViewsModel_SavedToDatabase is null)
+					continue;
+
+				Assert.That(dailyViewsModel_Final.LocalDay, Is.EqualTo(dailyViewsModel_SavedToDatabase.LocalDay));
+				Assert.That(dailyViewsModel_Final.TotalViews, Is.EqualTo(dailyViewsModel_SavedToDatabase.TotalViews));
+				Assert.That(dailyViewsModel_SavedToDatabase.TotalUniqueViews, Is.EqualTo(dailyViewsModel_Final.TotalUniqueViews));
+			}
+
+			foreach (var dailyClonesModel_Final in dailyClonesList_Final)
+			{
+				var dailyClonesModel_SavedToDatabase = repository_RepositorySavedToDatabaseResult
+					.DailyClonesList?.FirstOrDefault(x => x.Day == dailyClonesModel_Final.Day);
+
+				if (dailyClonesModel_SavedToDatabase is null)
+					continue;
+
+				Assert.That(dailyClonesModel_Final.LocalDay, Is.EqualTo(dailyClonesModel_SavedToDatabase.LocalDay));
+				Assert.That(dailyClonesModel_Final.TotalClones, Is.EqualTo(dailyClonesModel_SavedToDatabase.TotalClones));
+				Assert.That(dailyClonesModel_Final.TotalUniqueClones, Is.EqualTo(dailyClonesModel_SavedToDatabase.TotalUniqueClones));
+			}
+		});
 
 		void HandleRepositorySavedToDatabase(object? sender, Repository e)
 		{
@@ -180,7 +190,7 @@ class TrendsViewModelTests : BaseTest
 		}
 	}
 
-	[Test, Timeout(_timeoutInMilliseconds)]
+	[Test, CancelAfter(_timeoutInMilliseconds)]
 	public async Task FetchDataCommandTest_AuthenticatedUser_NoData_FetchingStarsDataInBackground()
 	{
 		//Arrange
@@ -201,11 +211,14 @@ class TrendsViewModelTests : BaseTest
 		var isTryScheduleRetryRepositoriesStarsRunningAfterTest = backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesStarsIdentifier(repository_Initial));
 
 		//Assert
-		Assert.IsTrue(wasTryScheduleRetryRepositoriesStarsSuccessful);
-		Assert.IsFalse(isTryScheduleRetryRepositoriesStarsRunningAfterTest);
+		Assert.Multiple(() =>
+		{
+			Assert.That(wasTryScheduleRetryRepositoriesStarsSuccessful);
+			Assert.That(isTryScheduleRetryRepositoriesStarsRunningAfterTest, Is.False);
+		});
 	}
 
-	[Test, Timeout(_timeoutInMilliseconds)]
+	[Test, CancelAfter(_timeoutInMilliseconds)]
 	public async Task FetchDataCommandTest_AuthenticatedUser_IncompleteOriginalStarsData()
 	{
 		//Arrange
@@ -218,27 +231,33 @@ class TrendsViewModelTests : BaseTest
 
 		//Act
 		var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
-		repository = repository with { StarredAt = [ new(2008, 02, 08, 0, 0, 0, TimeSpan.Zero) ] };
+		repository = repository with
+		{
+			StarredAt = [new(2008, 02, 08, 0, 0, 0, TimeSpan.Zero)]
+		};
 
 		await repositoryDatabase.SaveRepository(repository, TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
 
-		//Assert
-		Assert.AreEqual(repository.StarCount, trendsViewModel.TotalStars);
-		Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Max(static x => x.TotalStars));
-		Assert.AreEqual(repository.StarCount.ToAbbreviatedText(), trendsViewModel.StarsStatisticsText);
-		Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
-		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Succeeded, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
-		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewTitleText);
+		Assert.Multiple(() =>
+		{
+			//Assert
+			Assert.That(trendsViewModel.TotalStars, Is.EqualTo(repository.StarCount));
+			Assert.That(trendsViewModel.DailyStarsList.Max(static x => x.TotalStars), Is.EqualTo(repository.StarCount));
+			Assert.That(trendsViewModel.StarsStatisticsText, Is.EqualTo(repository.StarCount.ToAbbreviatedText()));
+			Assert.That(trendsViewModel.StarsHeaderMessageText, Is.EqualTo(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars)));
+			Assert.That(((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File, Is.EqualTo(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Succeeded, trendsViewModel.TotalStars)));
+			Assert.That(trendsViewModel.StarsEmptyDataViewTitleText, Is.EqualTo(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars)));
 
-		if (trendsViewModel.DailyStarsList[^1].TotalStars == trendsViewModel.DailyStarsList[^2].TotalStars)
-			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count - 1);
-		else
-			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count);
+			if (Math.Abs(trendsViewModel.DailyStarsList[^1].TotalStars - trendsViewModel.DailyStarsList[^2].TotalStars) < double.Epsilon)
+				Assert.That(trendsViewModel.DailyStarsList.Count - 1, Is.EqualTo(repository.StarCount));
+			else
+				Assert.That(trendsViewModel.DailyStarsList, Has.Count.EqualTo(repository.StarCount));
+		});
 	}
 
-	[Test, Timeout(_timeoutInMilliseconds)]
+	[Test, CancelAfter(_timeoutInMilliseconds)]
 	public async Task FetchDataCommandTest_AuthenticatedUser_MissingStarsData()
 	{
 		//Arrange
@@ -256,20 +275,23 @@ class TrendsViewModelTests : BaseTest
 		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
 
 		//Assert
-		Assert.AreEqual(repository.StarCount, trendsViewModel.TotalStars);
-		Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Max(static x => x.TotalStars));
-		Assert.AreEqual(repository.StarCount.ToAbbreviatedText(), trendsViewModel.StarsStatisticsText);
-		Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
-		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Succeeded, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
-		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewTitleText);
+		Assert.Multiple(() =>
+		{
+			Assert.That(trendsViewModel.TotalStars, Is.EqualTo(repository.StarCount));
+			Assert.That(trendsViewModel.DailyStarsList.Max(static x => x.TotalStars), Is.EqualTo(repository.StarCount));
+			Assert.That(trendsViewModel.StarsStatisticsText, Is.EqualTo(repository.StarCount.ToAbbreviatedText()));
+			Assert.That(trendsViewModel.StarsHeaderMessageText, Is.EqualTo(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars)));
+			Assert.That(((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File, Is.EqualTo(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Succeeded, trendsViewModel.TotalStars)));
+			Assert.That(trendsViewModel.StarsEmptyDataViewTitleText, Is.EqualTo(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars)));
 
-		if (trendsViewModel.DailyStarsList[^1].TotalStars == trendsViewModel.DailyStarsList[^2].TotalStars)
-			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count - 1);
-		else
-			Assert.AreEqual(repository.StarCount, trendsViewModel.DailyStarsList.Count);
+			if (Math.Abs(trendsViewModel.DailyStarsList[^1].TotalStars - trendsViewModel.DailyStarsList[^2].TotalStars) < double.Epsilon)
+				Assert.That(trendsViewModel.DailyStarsList.Count - 1, Is.EqualTo(repository.StarCount));
+			else
+				Assert.That(trendsViewModel.DailyStarsList, Has.Count.EqualTo(repository.StarCount));
+		});
 	}
 
-	[Test, Timeout(_timeoutInMilliseconds)]
+	[Test, CancelAfter(_timeoutInMilliseconds)]
 	public async Task FetchDataCommandTest_AuthenticatedUser_TokenCancelled()
 	{
 		//Arrange
@@ -291,13 +313,16 @@ class TrendsViewModelTests : BaseTest
 		await fetchDataCommandTask.ConfigureAwait(false);
 
 		//Assert
-		Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Error, trendsViewModel.TotalStars), trendsViewModel.StarsHeaderMessageText);
-		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Error, trendsViewModel.TotalStars), ((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File);
-		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Error, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewTitleText);
-		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewDescriptionText(RefreshState.Error, trendsViewModel.TotalStars), trendsViewModel.StarsEmptyDataViewDescriptionText);
+		Assert.Multiple(() =>
+		{
+			Assert.That(trendsViewModel.StarsHeaderMessageText, Is.EqualTo(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Error, trendsViewModel.TotalStars)));
+			Assert.That(((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File, Is.EqualTo(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Error, trendsViewModel.TotalStars)));
+			Assert.That(trendsViewModel.StarsEmptyDataViewTitleText, Is.EqualTo(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Error, trendsViewModel.TotalStars)));
+			Assert.That(trendsViewModel.StarsEmptyDataViewDescriptionText, Is.EqualTo(EmptyDataViewService.GetStarsEmptyDataViewDescriptionText(RefreshState.Error, trendsViewModel.TotalStars)));
+		});
 	}
 
-	[Test, Timeout(_timeoutInMilliseconds)]
+	[Test, CancelAfter(_timeoutInMilliseconds)]
 	public async Task FetchDataCommandTest_AuthenticatedUser_NoData_FetchingViewsClonesStarsDataInBackground()
 	{
 		//Arrange
@@ -318,13 +343,16 @@ class TrendsViewModelTests : BaseTest
 		var isTryScheduleRetryRepositoriesViewsClonesStarsRunningAfterTest = backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository_Initial));
 
 		//Assert
-		Assert.IsTrue(wasTryScheduleRetryRepositoriesViewsClonesStarsSuccessful);
-		Assert.IsFalse(isTryScheduleRetryRepositoriesViewsClonesStarsRunningAfterTest);
+		Assert.Multiple(() =>
+		{
+			Assert.That(wasTryScheduleRetryRepositoriesViewsClonesStarsSuccessful, Is.True);
+			Assert.That(isTryScheduleRetryRepositoriesViewsClonesStarsRunningAfterTest, Is.False);
+		});
 	}
 
 	[TestCase(true)]
 	[TestCase(false)]
-	[Timeout(_timeoutInMilliseconds)]
+	[CancelAfter(_timeoutInMilliseconds)]
 	public async Task FetchDataCommandTest_AuthenticatedUser(bool shouldIncludeViewsClonesData)
 	{
 		//Arrange
@@ -420,64 +448,67 @@ class TrendsViewModelTests : BaseTest
 		viewsClonesEmptyDataViewTitleText_Final = trendsViewModel.ViewsClonesEmptyDataViewTitleText;
 		isViewsClonesEmptyDataViewVisible_Final = trendsViewModel.IsViewsClonesEmptyDataViewVisible;
 
-		//Assert
-		Assert.IsEmpty(dailyViewsList_Initial);
-		Assert.IsEmpty(dailyClonesList_Initial);
-		Assert.IsEmpty(dailyStarsList_Initial);
+		Assert.Multiple(() =>
+		{
+			//Assert
+			Assert.That(dailyViewsList_Initial, Is.Empty);
+			Assert.That(dailyClonesList_Initial, Is.Empty);
+			Assert.That(dailyStarsList_Initial, Is.Empty);
 
-		Assert.IsNotEmpty(dailyViewsList_Final);
-		Assert.IsNotEmpty(dailyClonesList_Final);
-		Assert.IsNotEmpty(dailyStarsList_Final);
+			Assert.That(dailyViewsList_Final, Is.Not.Empty);
+			Assert.That(dailyClonesList_Final, Is.Not.Empty);
+			Assert.That(dailyStarsList_Final, Is.Not.Empty);
 
-		Assert.IsTrue(isFetchingData_Initial);
-		Assert.IsFalse(isFetchingData_Final);
+			Assert.That(isFetchingData_Initial);
+			Assert.That(isFetchingData_Final, Is.False);
 
-		Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Initial);
-		Assert.IsFalse(isViewsClonesEmptyDataViewVisible_Final);
+			Assert.That(isViewsClonesEmptyDataViewVisible_Initial, Is.False);
+			Assert.That(isViewsClonesEmptyDataViewVisible_Final, Is.False);
 
-		Assert.IsFalse(isStarsEmptyDataViewVisible_Initial);
-		Assert.IsFalse(isStarsEmptyDataViewVisible_Final);
+			Assert.That(isStarsEmptyDataViewVisible_Initial, Is.False);
+			Assert.That(isStarsEmptyDataViewVisible_Final, Is.False);
 
-		Assert.IsFalse(isViewsClonesChartVisible_Initial);
-		Assert.True(isViewsClonesChartVisible_Final);
+			Assert.That(isViewsClonesChartVisible_Initial, Is.False);
+			Assert.That(isViewsClonesChartVisible_Final);
 
-		Assert.IsFalse(isStarsChartVisible_Initial);
-		Assert.True(isStarsChartVisible_Final);
+			Assert.That(isStarsChartVisible_Initial, Is.False);
+			Assert.That(isStarsChartVisible_Final);
 
-		Assert.AreEqual(TrendsViewModel.MinimumChartHeight, dailyViewsClonesMaxValue_Initial);
-		Assert.GreaterOrEqual(dailyViewsClonesMaxValue_Final, dailyViewsClonesMaxValue_Initial);
+			Assert.That(dailyViewsClonesMaxValue_Initial, Is.EqualTo(TrendsViewModel.MinimumChartHeight));
+			Assert.That(dailyViewsClonesMaxValue_Final, Is.GreaterThanOrEqualTo(dailyViewsClonesMaxValue_Initial));
 
-		Assert.AreEqual(TrendsViewModel.MinimumChartHeight, maxDailyStarsValue_Initial);
-		Assert.GreaterOrEqual(maxDailyStarsValue_Final, maxDailyStarsValue_Initial);
+			Assert.That(maxDailyStarsValue_Initial, Is.EqualTo(TrendsViewModel.MinimumChartHeight));
+			Assert.That(maxDailyStarsValue_Final, Is.GreaterThanOrEqualTo(maxDailyStarsValue_Initial));
 
-		Assert.AreEqual(0, dailyViewsClonesMinValue_Initial);
-		Assert.AreEqual(dailyViewsClonesMinValue_Final, dailyViewsClonesMinValue_Initial);
+			Assert.That(dailyViewsClonesMinValue_Initial, Is.EqualTo(0));
+			Assert.That(dailyViewsClonesMinValue_Initial, Is.EqualTo(dailyViewsClonesMinValue_Final));
 
-		Assert.AreEqual(0, minDailyStarsValue_Initial);
-		Assert.AreEqual(minDailyStarsValue_Final, minDailyStarsValue_Initial);
+			Assert.That(minDailyStarsValue_Initial, Is.EqualTo(0));
+			Assert.That(minDailyStarsValue_Initial, Is.EqualTo(minDailyStarsValue_Final));
 
-		Assert.AreEqual(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13)).Date, minViewsClonesDate_Initial.Date);
-		Assert.LessOrEqual(minViewsClonesDate_Final.Date, minViewsClonesDate_Initial.Date);
+			Assert.That(minViewsClonesDate_Initial.Date, Is.EqualTo(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(13)).Date));
+			Assert.That(minViewsClonesDate_Final.Date, Is.LessThanOrEqualTo(minViewsClonesDate_Initial.Date));
 
-		Assert.AreEqual(DateTimeOffset.UtcNow.Date, maxViewsClonesDate_Initial.Date);
-		Assert.LessOrEqual(maxViewsClonesDate_Final.Date, maxViewsClonesDate_Initial.Date);
+			Assert.That(maxViewsClonesDate_Initial.Date, Is.EqualTo(DateTimeOffset.UtcNow.Date));
+			Assert.That(maxViewsClonesDate_Final.Date, Is.LessThanOrEqualTo(maxViewsClonesDate_Initial.Date));
 
-		Assert.LessOrEqual(minDailyStarsDate_Final.Date, minDailyStarsDate_Initial.Date);
-		Assert.LessOrEqual(maxDailyStarsDate_Final.Date, maxDailyStarsDate_Initial.Date);
+			Assert.That(minDailyStarsDate_Final.Date, Is.LessThanOrEqualTo(minDailyStarsDate_Initial.Date));
+			Assert.That(maxDailyStarsDate_Final.Date, Is.LessThanOrEqualTo(maxDailyStarsDate_Initial.Date));
 
-		Assert.AreEqual(EmptyDataViewService.GetViewsClonesTitleText(RefreshState.Uninitialized), viewsClonesEmptyDataViewTitleText_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetViewsClonesTitleText(RefreshState.Succeeded), viewsClonesEmptyDataViewTitleText_Final);
+			Assert.That(viewsClonesEmptyDataViewTitleText_Initial, Is.EqualTo(EmptyDataViewService.GetViewsClonesTitleText(RefreshState.Uninitialized)));
+			Assert.That(viewsClonesEmptyDataViewTitleText_Final, Is.EqualTo(EmptyDataViewService.GetViewsClonesTitleText(RefreshState.Succeeded)));
 
-		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Uninitialized, trendsViewModel.TotalStars), starsEmptyDataViewTitleText_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars), starsEmptyDataViewTitleText_Final);
+			Assert.That(starsEmptyDataViewTitleText_Initial, Is.EqualTo(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Uninitialized, trendsViewModel.TotalStars)));
+			Assert.That(starsEmptyDataViewTitleText_Final, Is.EqualTo(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Succeeded, trendsViewModel.TotalStars)));
 
-		Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Uninitialized, default), starsHeaderMessageText_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars), starsHeaderMessageText_Final);
+			Assert.That(starsHeaderMessageText_Initial, Is.EqualTo(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Uninitialized, default)));
+			Assert.That(starsHeaderMessageText_Final, Is.EqualTo(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Succeeded, trendsViewModel.TotalStars)));
+		});
 	}
 
 	[TestCase(true)]
 	[TestCase(false)]
-	[Timeout(_timeoutInMilliseconds)]
+	[CancelAfter(_timeoutInMilliseconds)]
 	public async Task FetchDataCommandTest_DemoUser(bool shouldCreateViewsClonesData)
 	{
 		//Arrange
@@ -503,17 +534,20 @@ class TrendsViewModelTests : BaseTest
 		dailyViewsList_Final = trendsViewModel.DailyViewsList;
 		dailyClonesList_Final = trendsViewModel.DailyClonesList;
 
-		//Assret
-		Assert.IsEmpty(dailyStarsList_Initial);
-		Assert.IsEmpty(dailyViewsList_Initial);
-		Assert.IsEmpty(dailyClonesList_Initial);
+		//Assert
+		Assert.Multiple(() =>
+		{
+			Assert.That(dailyStarsList_Initial, Is.Empty);
+			Assert.That(dailyViewsList_Initial, Is.Empty);
+			Assert.That(dailyClonesList_Initial, Is.Empty);
 
-		Assert.IsNotEmpty(dailyStarsList_Final);
-		Assert.IsNotEmpty(dailyViewsList_Final);
-		Assert.IsNotEmpty(dailyClonesList_Final);
+			Assert.That(dailyStarsList_Final, Is.Not.Empty);
+			Assert.That(dailyViewsList_Final, Is.Not.Empty);
+			Assert.That(dailyClonesList_Final, Is.Not.Empty);
+		});
 	}
 
-	[Test, Timeout(_timeoutInMilliseconds)]
+	[Test, CancelAfter(_timeoutInMilliseconds)]
 	public async Task UniqueClonesCardTappedCommandTest()
 	{
 		//Arrange
@@ -542,16 +576,19 @@ class TrendsViewModelTests : BaseTest
 		uniqueClonesStatisticsText_AfterViewsCardTappedCommand = trendsViewModel.UniqueClonesStatisticsText;
 
 		//Assert
-		Assert.AreEqual(string.Empty, uniqueClonesStatisticsText_Initial);
-		Assert.AreEqual(repository.TotalUniqueClones.ToAbbreviatedText(), uniqueClonesStatisticsText_AfterFetchDataCommand);
-		Assert.AreEqual(repository.TotalUniqueClones.ToAbbreviatedText(), uniqueClonesStatisticsText_AfterViewsCardTappedCommand);
+		Assert.Multiple(() =>
+		{
+			Assert.That(uniqueClonesStatisticsText_Initial, Is.EqualTo(string.Empty));
+			Assert.That(uniqueClonesStatisticsText_AfterFetchDataCommand, Is.EqualTo(repository.TotalUniqueClones.ToAbbreviatedText()));
+			Assert.That(uniqueClonesStatisticsText_AfterViewsCardTappedCommand, Is.EqualTo(repository.TotalUniqueClones.ToAbbreviatedText()));
 
-		Assert.IsTrue(isUniqueClonesSeriesVisible_Initial);
-		Assert.IsTrue(isUniqueClonesSeriesVisible_AfterFetchDataCommand);
-		Assert.IsFalse(isUniqueClonesSeriesVisible_AfterViewsCardTappedCommand);
+			Assert.That(isUniqueClonesSeriesVisible_Initial);
+			Assert.That(isUniqueClonesSeriesVisible_AfterFetchDataCommand);
+			Assert.That(isUniqueClonesSeriesVisible_AfterViewsCardTappedCommand, Is.False);
+		});
 	}
 
-	[Test, Timeout(_timeoutInMilliseconds)]
+	[Test, CancelAfter(_timeoutInMilliseconds)]
 	public async Task ClonesCardTappedCommandTest()
 	{
 		//Arrange
@@ -580,17 +617,20 @@ class TrendsViewModelTests : BaseTest
 		clonesStatisticsText_AfterViewsCardTappedCommand = trendsViewModel.ClonesStatisticsText;
 
 		//Assert
-		Assert.AreEqual(string.Empty, clonesStatisticsText_Initial);
-		Assert.AreEqual(repository.TotalClones.ToAbbreviatedText(), clonesStatisticsText_AfterFetchDataCommand);
-		Assert.AreEqual(repository.TotalClones.ToAbbreviatedText(), clonesStatisticsText_AfterViewsCardTappedCommand);
+		Assert.Multiple(() =>
+		{
+			Assert.That(clonesStatisticsText_Initial, Is.EqualTo(string.Empty));
+			Assert.That(clonesStatisticsText_AfterFetchDataCommand, Is.EqualTo(repository.TotalClones.ToAbbreviatedText()));
+			Assert.That(clonesStatisticsText_AfterViewsCardTappedCommand, Is.EqualTo(repository.TotalClones.ToAbbreviatedText()));
 
-		Assert.IsTrue(isClonesSeriesVisible_Initial);
-		Assert.IsTrue(isClonesSeriesVisible_AfterFetchDataCommand);
-		Assert.IsFalse(isClonesSeriesVisible_AfterViewsCardTappedCommand);
+			Assert.That(isClonesSeriesVisible_Initial);
+			Assert.That(isClonesSeriesVisible_AfterFetchDataCommand);
+			Assert.That(isClonesSeriesVisible_AfterViewsCardTappedCommand, Is.False);
+		});
 	}
 
 
-	[Test, Timeout(_timeoutInMilliseconds)]
+	[Test, CancelAfter(_timeoutInMilliseconds)]
 	public async Task UniqueViewsCardTappedCommandTest()
 	{
 		//Arrange
@@ -619,16 +659,19 @@ class TrendsViewModelTests : BaseTest
 		uniqueViewsStatisticsText_AfterViewsCardTappedCommand = trendsViewModel.UniqueViewsStatisticsText;
 
 		//Assert
-		Assert.AreEqual(string.Empty, uniqueViewsStatisticsText_Initial);
-		Assert.AreEqual(repository.TotalUniqueViews.ToAbbreviatedText(), uniqueViewsStatisticsText_AfterFetchDataCommand);
-		Assert.AreEqual(repository.TotalUniqueViews.ToAbbreviatedText(), uniqueViewsStatisticsText_AfterViewsCardTappedCommand);
+		Assert.Multiple(() =>
+		{
+			Assert.That(uniqueViewsStatisticsText_Initial, Is.EqualTo(string.Empty));
+			Assert.That(uniqueViewsStatisticsText_AfterFetchDataCommand, Is.EqualTo(repository.TotalUniqueViews.ToAbbreviatedText()));
+			Assert.That(uniqueViewsStatisticsText_AfterViewsCardTappedCommand, Is.EqualTo(repository.TotalUniqueViews.ToAbbreviatedText()));
 
-		Assert.IsTrue(isUniqueViewsSeriesVisible_Initial);
-		Assert.IsTrue(isUniqueViewsSeriesVisible_AfterFetchDataCommand);
-		Assert.IsFalse(isUniqueViewsSeriesVisible_AfterViewsCardTappedCommand);
+			Assert.That(isUniqueViewsSeriesVisible_Initial);
+			Assert.That(isUniqueViewsSeriesVisible_AfterFetchDataCommand);
+			Assert.That(isUniqueViewsSeriesVisible_AfterViewsCardTappedCommand, Is.False);
+		});
 	}
 
-	[Test, Timeout(_timeoutInMilliseconds)]
+	[Test, CancelAfter(_timeoutInMilliseconds)]
 	public async Task ViewsCardTappedCommandTest()
 	{
 		//Arrange
@@ -657,12 +700,15 @@ class TrendsViewModelTests : BaseTest
 		viewsStatisticsText_AfterViewsCardTappedCommand = trendsViewModel.ViewsStatisticsText;
 
 		//Assert
-		Assert.AreEqual(string.Empty, viewsStatisticsText_Initial);
-		Assert.AreEqual(repository.TotalViews.ToAbbreviatedText(), viewsStatisticsText_AfterFetchDataCommand);
-		Assert.AreEqual(repository.TotalViews.ToAbbreviatedText(), viewsStatisticsText_AfterViewsCardTappedCommand);
+		Assert.Multiple(() =>
+		{
+			Assert.That(viewsStatisticsText_Initial, Is.EqualTo(string.Empty));
+			Assert.That(viewsStatisticsText_AfterFetchDataCommand, Is.EqualTo(repository.TotalViews.ToAbbreviatedText()));
+			Assert.That(viewsStatisticsText_AfterViewsCardTappedCommand, Is.EqualTo(repository.TotalViews.ToAbbreviatedText()));
 
-		Assert.IsTrue(isViewsSeriesVisible_Initial);
-		Assert.IsTrue(isViewsSeriesVisible_AfterFetchDataCommand);
-		Assert.IsFalse(isViewsSeriesVisible_AfterViewsCardTappedCommand);
+			Assert.That(isViewsSeriesVisible_Initial);
+			Assert.That(isViewsSeriesVisible_AfterFetchDataCommand);
+			Assert.That(isViewsSeriesVisible_AfterViewsCardTappedCommand, Is.False);
+		});
 	}
 }

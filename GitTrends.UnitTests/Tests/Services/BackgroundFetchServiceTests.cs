@@ -15,10 +15,13 @@ class BackgroundFetchServiceTests : BaseTest
 		var backgroundFetchService = ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
 
 		// Assert
-		Assert.AreEqual($"{backgroundFetchService.RetryGetReferringSitesIdentifier}.{repository.Url}", backgroundFetchService.GetRetryGetReferringSitesIdentifier(repository));
-		Assert.AreEqual($"{backgroundFetchService.RetryRepositoriesStarsIdentifier}.{repository.Url}", backgroundFetchService.GetRetryRepositoriesStarsIdentifier(repository));
-		Assert.AreEqual($"{backgroundFetchService.RetryOrganizationsReopsitoriesIdentifier}.{organizationName}", backgroundFetchService.GetRetryOrganizationsRepositoriesIdentifier(organizationName));
-		Assert.AreEqual($"{backgroundFetchService.RetryRepositoriesViewsClonesStarsIdentifier}.{repository.Url}", backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository));
+		Assert.Multiple(() =>
+		{
+			Assert.That(backgroundFetchService.GetRetryGetReferringSitesIdentifier(repository), Is.EqualTo($"{backgroundFetchService.RetryGetReferringSitesIdentifier}.{repository.Url}"));
+			Assert.That(backgroundFetchService.GetRetryRepositoriesStarsIdentifier(repository), Is.EqualTo($"{backgroundFetchService.RetryRepositoriesStarsIdentifier}.{repository.Url}"));
+			Assert.That(backgroundFetchService.GetRetryOrganizationsRepositoriesIdentifier(organizationName), Is.EqualTo($"{backgroundFetchService.RetryOrganizationsReopsitoriesIdentifier}.{organizationName}"));
+			Assert.That(backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository), Is.EqualTo($"{backgroundFetchService.RetryRepositoriesViewsClonesStarsIdentifier}.{repository.Url}"));
+		});
 	}
 
 	[Test]
@@ -50,52 +53,55 @@ class BackgroundFetchServiceTests : BaseTest
 		repository_Final = await scheduleRetryRepositoriesViewsClonesStarsCompletedTCS.Task.ConfigureAwait(false);
 		repository_Database = await repositoryDatabase.GetRepository(repository_Initial.Url, TestCancellationTokenSource.Token).ConfigureAwait(false) ?? throw new NullReferenceException();
 
-		//Assert
-		Assert.IsTrue(wasScheduledSuccessfully_First);
-		Assert.IsFalse(wasScheduledSuccessfully_Second);
+		Assert.Multiple(() =>
+		{
+			//Assert
+			Assert.That(wasScheduledSuccessfully_First);
+			Assert.That(wasScheduledSuccessfully_Second, Is.False);
 
-		Assert.IsNull(repository_Initial.StarredAt);
-		Assert.IsNotNull(repository_Final.StarredAt);
-		Assert.IsNotNull(repository_Database.StarredAt);
+			Assert.That(repository_Initial.StarredAt, Is.Null);
+			Assert.That(repository_Final.StarredAt, Is.Not.Null);
+			Assert.That(repository_Database.StarredAt, Is.Not.Null);
 
-		Assert.IsNull(repository_Initial.DailyClonesList);
-		Assert.IsNull(repository_Initial.DailyViewsList);
-		Assert.IsNull(repository_Initial.StarredAt);
-		Assert.IsNull(repository_Initial.TotalClones);
-		Assert.IsNull(repository_Initial.TotalUniqueClones);
-		Assert.IsNull(repository_Initial.TotalUniqueViews);
-		Assert.IsNull(repository_Initial.TotalViews);
+			Assert.That(repository_Initial.DailyClonesList, Is.Null);
+			Assert.That(repository_Initial.DailyViewsList, Is.Null);
+			Assert.That(repository_Initial.StarredAt, Is.Null);
+			Assert.That(repository_Initial.TotalClones, Is.Null);
+			Assert.That(repository_Initial.TotalUniqueClones, Is.Null);
+			Assert.That(repository_Initial.TotalUniqueViews, Is.Null);
+			Assert.That(repository_Initial.TotalViews, Is.Null);
 
-		Assert.IsNotNull(repository_Final.StarredAt);
-		Assert.IsNotNull(repository_Final.DailyClonesList);
-		Assert.IsNotNull(repository_Final.DailyViewsList);
-		Assert.IsNotNull(repository_Final.TotalClones);
-		Assert.IsNotNull(repository_Final.TotalUniqueClones);
-		Assert.IsNotNull(repository_Final.TotalUniqueViews);
-		Assert.IsNotNull(repository_Final.TotalViews);
+			Assert.That(repository_Final.StarredAt, Is.Not.Null);
+			Assert.That(repository_Final.DailyClonesList, Is.Not.Null);
+			Assert.That(repository_Final.DailyViewsList, Is.Not.Null);
+			Assert.That(repository_Final.TotalClones, Is.Not.Null);
+			Assert.That(repository_Final.TotalUniqueClones, Is.Not.Null);
+			Assert.That(repository_Final.TotalUniqueViews, Is.Not.Null);
+			Assert.That(repository_Final.TotalViews, Is.Not.Null);
 
-		Assert.AreEqual(repository_Initial.Name, repository_Final.Name);
-		Assert.AreEqual(repository_Initial.Description, repository_Final.Description);
-		Assert.AreEqual(repository_Initial.ForkCount, repository_Final.ForkCount);
-		Assert.AreEqual(repository_Initial.IsFavorite, repository_Final.IsFavorite);
-		Assert.AreEqual(repository_Initial.IsFork, repository_Final.IsFork);
-		Assert.AreEqual(repository_Initial.IssuesCount, repository_Final.IssuesCount);
+			Assert.That(repository_Final.Name, Is.EqualTo(repository_Initial.Name));
+			Assert.That(repository_Final.Description, Is.EqualTo(repository_Initial.Description));
+			Assert.That(repository_Final.ForkCount, Is.EqualTo(repository_Initial.ForkCount));
+			Assert.That(repository_Final.IsFavorite, Is.EqualTo(repository_Initial.IsFavorite));
+			Assert.That(repository_Final.IsFork, Is.EqualTo(repository_Initial.IsFork));
+			Assert.That(repository_Final.IssuesCount, Is.EqualTo(repository_Initial.IssuesCount));
 
-		Assert.IsNotNull(repository_Database.StarredAt);
-		Assert.IsNotNull(repository_Database.DailyClonesList);
-		Assert.IsNotNull(repository_Database.DailyViewsList);
-		Assert.IsNotNull(repository_Database.TotalClones);
-		Assert.IsNotNull(repository_Database.TotalUniqueClones);
-		Assert.IsNotNull(repository_Database.TotalUniqueViews);
-		Assert.IsNotNull(repository_Database.TotalViews);
+			Assert.That(repository_Database.StarredAt, Is.Not.Null);
+			Assert.That(repository_Database.DailyClonesList, Is.Not.Null);
+			Assert.That(repository_Database.DailyViewsList, Is.Not.Null);
+			Assert.That(repository_Database.TotalClones, Is.Not.Null);
+			Assert.That(repository_Database.TotalUniqueClones, Is.Not.Null);
+			Assert.That(repository_Database.TotalUniqueViews, Is.Not.Null);
+			Assert.That(repository_Database.TotalViews, Is.Not.Null);
 
-		Assert.AreEqual(repository_Final.Name, repository_Database.Name);
-		Assert.AreEqual(repository_Final.Description, repository_Database.Description);
-		Assert.AreEqual(repository_Final.ForkCount, repository_Database.ForkCount);
-		Assert.AreEqual(repository_Final.IsFavorite, repository_Database.IsFavorite);
-		Assert.AreEqual(repository_Final.IsFork, repository_Database.IsFork);
-		Assert.AreEqual(repository_Final.IssuesCount, repository_Database.IssuesCount);
-		Assert.AreEqual(repository_Final.IsTrending, repository_Database.IsTrending);
+			Assert.That(repository_Database.Name, Is.EqualTo(repository_Final.Name));
+			Assert.That(repository_Database.Description, Is.EqualTo(repository_Final.Description));
+			Assert.That(repository_Database.ForkCount, Is.EqualTo(repository_Final.ForkCount));
+			Assert.That(repository_Database.IsFavorite, Is.EqualTo(repository_Final.IsFavorite));
+			Assert.That(repository_Database.IsFork, Is.EqualTo(repository_Final.IsFork));
+			Assert.That(repository_Database.IssuesCount, Is.EqualTo(repository_Final.IssuesCount));
+			Assert.That(repository_Database.IsTrending, Is.EqualTo(repository_Final.IsTrending));
+		});
 
 		void HandleScheduleRetryRepositoriesViewsClonesStarsCompleted(object? sender, Repository e)
 		{
@@ -134,57 +140,60 @@ class BackgroundFetchServiceTests : BaseTest
 		repository_Final = await scheduleRetryRepositoriesStarsCompletedTCS.Task.ConfigureAwait(false);
 		repository_Database = await repositoryDatabase.GetRepository(repository_Initial.Url, TestCancellationTokenSource.Token).ConfigureAwait(false) ?? throw new NullReferenceException();
 
-		//Assert
-		Assert.IsTrue(wasScheduledSuccessfully_First);
-		Assert.IsFalse(wasScheduledSuccessfully_Second);
+		Assert.Multiple(() =>
+		{
+			//Assert
+			Assert.That(wasScheduledSuccessfully_First);
+			Assert.That(wasScheduledSuccessfully_Second, Is.False);
 
-		Assert.IsFalse(repository_Initial.ContainsViewsClonesData);
-		Assert.IsFalse(repository_Initial.ContainsViewsClonesStarsData);
-		Assert.IsFalse(repository_Final.ContainsViewsClonesData);
-		Assert.IsFalse(repository_Final.ContainsViewsClonesStarsData);
-		Assert.IsFalse(repository_Database.ContainsViewsClonesData);
-		Assert.IsFalse(repository_Database.ContainsViewsClonesStarsData);
+			Assert.That(repository_Initial.ContainsViewsClonesData, Is.False);
+			Assert.That(repository_Initial.ContainsViewsClonesStarsData, Is.False);
+			Assert.That(repository_Final.ContainsViewsClonesData, Is.False);
+			Assert.That(repository_Final.ContainsViewsClonesStarsData, Is.False);
+			Assert.That(repository_Database.ContainsViewsClonesData, Is.False);
+			Assert.That(repository_Database.ContainsViewsClonesStarsData, Is.False);
 
-		Assert.IsNull(repository_Initial.DailyClonesList);
-		Assert.IsNull(repository_Initial.DailyViewsList);
-		Assert.IsNull(repository_Initial.StarredAt);
-		Assert.IsNull(repository_Initial.TotalClones);
-		Assert.IsNull(repository_Initial.TotalUniqueClones);
-		Assert.IsNull(repository_Initial.TotalUniqueViews);
-		Assert.IsNull(repository_Initial.TotalViews);
+			Assert.That(repository_Initial.DailyClonesList, Is.Null);
+			Assert.That(repository_Initial.DailyViewsList, Is.Null);
+			Assert.That(repository_Initial.StarredAt, Is.Null);
+			Assert.That(repository_Initial.TotalClones, Is.Null);
+			Assert.That(repository_Initial.TotalUniqueClones, Is.Null);
+			Assert.That(repository_Initial.TotalUniqueViews, Is.Null);
+			Assert.That(repository_Initial.TotalViews, Is.Null);
 
-		Assert.IsNotNull(repository_Final.StarredAt);
-		Assert.IsNotEmpty(repository_Final.StarredAt ?? []);
-		Assert.IsNull(repository_Final.DailyClonesList);
-		Assert.IsNull(repository_Final.DailyViewsList);
-		Assert.IsNull(repository_Final.TotalClones);
-		Assert.IsNull(repository_Final.TotalUniqueClones);
-		Assert.IsNull(repository_Final.TotalUniqueViews);
-		Assert.IsNull(repository_Final.TotalViews);
+			Assert.That(repository_Final.StarredAt, Is.Not.Null);
+			Assert.That(repository_Final.StarredAt ?? [], Is.Not.Empty);
+			Assert.That(repository_Final.DailyClonesList, Is.Null);
+			Assert.That(repository_Final.DailyViewsList, Is.Null);
+			Assert.That(repository_Final.TotalClones, Is.Null);
+			Assert.That(repository_Final.TotalUniqueClones, Is.Null);
+			Assert.That(repository_Final.TotalUniqueViews, Is.Null);
+			Assert.That(repository_Final.TotalViews, Is.Null);
 
-		Assert.AreEqual(repository_Initial.Name, repository_Final.Name);
-		Assert.AreEqual(repository_Initial.Description, repository_Final.Description);
-		Assert.AreEqual(repository_Initial.ForkCount, repository_Final.ForkCount);
-		Assert.AreEqual(repository_Initial.IsFavorite, repository_Final.IsFavorite);
-		Assert.AreEqual(repository_Initial.IsFork, repository_Final.IsFork);
-		Assert.AreEqual(repository_Initial.IssuesCount, repository_Final.IssuesCount);
+			Assert.That(repository_Final.Name, Is.EqualTo(repository_Initial.Name));
+			Assert.That(repository_Final.Description, Is.EqualTo(repository_Initial.Description));
+			Assert.That(repository_Final.ForkCount, Is.EqualTo(repository_Initial.ForkCount));
+			Assert.That(repository_Final.IsFavorite, Is.EqualTo(repository_Initial.IsFavorite));
+			Assert.That(repository_Final.IsFork, Is.EqualTo(repository_Initial.IsFork));
+			Assert.That(repository_Final.IssuesCount, Is.EqualTo(repository_Initial.IssuesCount));
 
-		Assert.IsNotNull(repository_Database.StarredAt);
-		Assert.IsNotEmpty(repository_Database.StarredAt ?? []);
-		Assert.IsNull(repository_Database.DailyClonesList);
-		Assert.IsNull(repository_Database.DailyViewsList);
-		Assert.IsNull(repository_Database.TotalClones);
-		Assert.IsNull(repository_Database.TotalUniqueClones);
-		Assert.IsNull(repository_Database.TotalUniqueViews);
-		Assert.IsNull(repository_Database.TotalViews);
+			Assert.That(repository_Database.StarredAt, Is.Not.Null);
+			Assert.That(repository_Database.StarredAt ?? [], Is.Not.Empty);
+			Assert.That(repository_Database.DailyClonesList, Is.Null);
+			Assert.That(repository_Database.DailyViewsList, Is.Null);
+			Assert.That(repository_Database.TotalClones, Is.Null);
+			Assert.That(repository_Database.TotalUniqueClones, Is.Null);
+			Assert.That(repository_Database.TotalUniqueViews, Is.Null);
+			Assert.That(repository_Database.TotalViews, Is.Null);
 
-		Assert.AreEqual(repository_Final.Name, repository_Database.Name);
-		Assert.AreEqual(repository_Final.Description, repository_Database.Description);
-		Assert.AreEqual(repository_Final.ForkCount, repository_Database.ForkCount);
-		Assert.AreEqual(repository_Final.IsFavorite, repository_Database.IsFavorite);
-		Assert.AreEqual(repository_Final.IsFork, repository_Database.IsFork);
-		Assert.AreEqual(repository_Final.IssuesCount, repository_Database.IssuesCount);
-		Assert.AreEqual(repository_Final.IsTrending, repository_Database.IsTrending);
+			Assert.That(repository_Database.Name, Is.EqualTo(repository_Final.Name));
+			Assert.That(repository_Database.Description, Is.EqualTo(repository_Final.Description));
+			Assert.That(repository_Database.ForkCount, Is.EqualTo(repository_Final.ForkCount));
+			Assert.That(repository_Database.IsFavorite, Is.EqualTo(repository_Final.IsFavorite));
+			Assert.That(repository_Database.IsFork, Is.EqualTo(repository_Final.IsFork));
+			Assert.That(repository_Database.IssuesCount, Is.EqualTo(repository_Final.IssuesCount));
+			Assert.That(repository_Database.IsTrending, Is.EqualTo(repository_Final.IsTrending));
+		});
 
 		void HandleScheduleRetryRepositoriesStarsCompleted(object? sender, Repository e)
 		{
@@ -223,37 +232,41 @@ class BackgroundFetchServiceTests : BaseTest
 		repository_Database = await repositoryDatabase.GetRepository(repository_Final.Url, TestCancellationTokenSource.Token).ConfigureAwait(false) ?? throw new NullReferenceException();
 
 		//Assert
-		Assert.IsTrue(wasScheduledSuccessfully_First);
-		Assert.IsFalse(wasScheduledSuccessfully_Second);
+		Assert.Multiple(() =>
+		{
+			Assert.That(wasScheduledSuccessfully_First);
+			Assert.That(wasScheduledSuccessfully_Second, Is.False);
 
-		Assert.AreEqual(organizationName_Initial, organizationName_Final);
+			Assert.That(organizationName_Final, Is.EqualTo(organizationName_Initial));
 
-		Assert.IsTrue(repository_Final.ContainsViewsClonesStarsData);
-		Assert.IsTrue(repository_Database.ContainsViewsClonesStarsData);
+			Assert.That(repository_Final.ContainsViewsClonesStarsData);
+			Assert.That(repository_Database.ContainsViewsClonesStarsData);
 
-		Assert.IsNotNull(repository_Final.DailyClonesList);
-		Assert.IsNotNull(repository_Final.DailyViewsList);
-		Assert.IsNotNull(repository_Final.StarredAt);
-		Assert.IsNotNull(repository_Final.TotalClones);
-		Assert.IsNotNull(repository_Final.TotalUniqueClones);
-		Assert.IsNotNull(repository_Final.TotalUniqueViews);
-		Assert.IsNotNull(repository_Final.TotalViews);
+			Assert.That(repository_Final.DailyClonesList, Is.Not.Null);
+			Assert.That(repository_Final.DailyViewsList, Is.Not.Null);
+			Assert.That(repository_Final.StarredAt, Is.Not.Null);
+			Assert.That(repository_Final.TotalClones, Is.Not.Null);
+			Assert.That(repository_Final.TotalUniqueClones, Is.Not.Null);
+			Assert.That(repository_Final.TotalUniqueViews, Is.Not.Null);
+			Assert.That(repository_Final.TotalViews, Is.Not.Null);
 
-		Assert.IsNotNull(repository_Database.DailyClonesList);
-		Assert.IsNotNull(repository_Database.DailyViewsList);
-		Assert.IsNotNull(repository_Database.StarredAt);
-		Assert.IsNotNull(repository_Database.TotalClones);
-		Assert.IsNotNull(repository_Database.TotalUniqueClones);
-		Assert.IsNotNull(repository_Database.TotalUniqueViews);
-		Assert.IsNotNull(repository_Database.TotalViews);
 
-		Assert.AreEqual(repository_Final.Name, repository_Database.Name);
-		Assert.AreEqual(repository_Final.Description, repository_Database.Description);
-		Assert.AreEqual(repository_Final.ForkCount, repository_Database.ForkCount);
-		Assert.AreEqual(repository_Final.IsFavorite, repository_Database.IsFavorite);
-		Assert.AreEqual(repository_Final.IsFork, repository_Database.IsFork);
-		Assert.AreEqual(repository_Final.IssuesCount, repository_Database.IssuesCount);
-		Assert.AreEqual(repository_Final.IsTrending, repository_Database.IsTrending);
+			Assert.That(repository_Database.DailyClonesList, Is.Not.Null);
+			Assert.That(repository_Database.DailyViewsList, Is.Not.Null);
+			Assert.That(repository_Database.StarredAt, Is.Not.Null);
+			Assert.That(repository_Database.TotalClones, Is.Not.Null);
+			Assert.That(repository_Database.TotalUniqueClones, Is.Not.Null);
+			Assert.That(repository_Database.TotalUniqueViews, Is.Not.Null);
+			Assert.That(repository_Database.TotalViews, Is.Not.Null);
+
+			Assert.That(repository_Database.Name, Is.EqualTo(repository_Final.Name));
+			Assert.That(repository_Database.Description, Is.EqualTo(repository_Final.Description));
+			Assert.That(repository_Database.ForkCount, Is.EqualTo(repository_Final.ForkCount));
+			Assert.That(repository_Database.IsFavorite, Is.EqualTo(repository_Final.IsFavorite));
+			Assert.That(repository_Database.IsFork, Is.EqualTo(repository_Final.IsFork));
+			Assert.That(repository_Database.IssuesCount, Is.EqualTo(repository_Final.IssuesCount));
+			Assert.That(repository_Database.IsTrending, Is.EqualTo(repository_Final.IsTrending));
+		});
 
 		void HandleScheduleRetryRepositoriesViewsClonesStarsCompleted(object? sender, Repository e)
 		{
@@ -307,78 +320,81 @@ class BackgroundFetchServiceTests : BaseTest
 		IReadOnlyList<MobileReferringSiteModel> mobileReferringSiteModelsFromDatabase = await referringSitesDatabase.GetReferringSites(repository_Initial.Url, TestCancellationTokenSource.Token).ConfigureAwait(false);
 		mobileReferringSiteModel_Database = mobileReferringSiteModelsFromDatabase.Single(x => x.ReferrerUri is not null && x.ReferrerUri == mobileReferringSiteModel.ReferrerUri);
 
-		// Assert
-		Assert.IsTrue(wasScheduledSuccessfully_First);
-		Assert.IsFalse(wasScheduledSuccessfully_Second);
-
-		Assert.IsNotNull(mobileReferringSiteModel.FavIcon);
-		Assert.IsNotNull(mobileReferringSiteModel.FavIconImageUrl);
-		if (string.Empty == mobileReferringSiteModel.FavIconImageUrl)
-			Assert.AreEqual(FavIconService.DefaultFavIcon, ((FileImageSource?)mobileReferringSiteModel.FavIcon)?.File);
-		else
-			Assert.IsNotEmpty(mobileReferringSiteModel.FavIconImageUrl);
-		Assert.IsTrue(mobileReferringSiteModel.IsReferrerUriValid);
-		Assert.IsNotNull(mobileReferringSiteModel.Referrer);
-		Assert.IsNotEmpty(mobileReferringSiteModel.Referrer);
-		Assert.IsNotNull(mobileReferringSiteModel.ReferrerUri);
-		Assert.IsTrue(Uri.IsWellFormedUriString(mobileReferringSiteModel.ReferrerUri?.ToString(), UriKind.Absolute));
-		Assert.Greater(mobileReferringSiteModel.TotalCount, 0);
-		Assert.Greater(mobileReferringSiteModel.TotalUniqueCount, 0);
-
-		Assert.AreEqual(mobileReferringSiteModel.ToString(), mobileReferringSiteModel_Database.ToString());
-
-		Assert.AreEqual(mobileReferringSiteModel.DownloadedAt, mobileReferringSiteModel_Database.DownloadedAt);
-		Assert.AreEqual(mobileReferringSiteModel.FavIcon?.ToString(), mobileReferringSiteModel_Database.FavIcon?.ToString());
-		Assert.AreEqual(mobileReferringSiteModel.FavIconImageUrl, mobileReferringSiteModel_Database.FavIconImageUrl);
-		Assert.AreEqual(mobileReferringSiteModel.IsReferrerUriValid, mobileReferringSiteModel_Database.IsReferrerUriValid);
-		Assert.AreEqual(mobileReferringSiteModel.Referrer, mobileReferringSiteModel_Database.Referrer);
-		Assert.AreEqual(mobileReferringSiteModel.ReferrerUri?.ToString(), mobileReferringSiteModel_Database.ReferrerUri?.ToString());
-		Assert.AreEqual(mobileReferringSiteModel.TotalCount, mobileReferringSiteModel_Database.TotalCount);
-		Assert.AreEqual(mobileReferringSiteModel.TotalUniqueCount, mobileReferringSiteModel_Database.TotalUniqueCount);
-
-		Assert.AreEqual(repository_Initial.ToString(), repository_Final.ToString());
-
-		Assert.AreEqual(repository_Initial.ContainsViewsClonesStarsData, repository_Final.ContainsViewsClonesStarsData);
-		Assert.AreEqual(repository_Initial.DailyClonesList?.Count, repository_Final.DailyClonesList?.Count);
-		Assert.AreEqual(repository_Initial.DailyViewsList?.Count, repository_Final.DailyViewsList?.Count);
-		Assert.AreEqual(repository_Initial.DataDownloadedAt, repository_Final.DataDownloadedAt);
-		Assert.AreEqual(repository_Initial.Description, repository_Final.Description);
-		Assert.AreEqual(repository_Initial.ForkCount, repository_Final.ForkCount);
-		Assert.AreEqual(repository_Initial.IsFavorite, repository_Final.IsFavorite);
-		Assert.AreEqual(repository_Initial.IsFork, repository_Final.IsFork);
-		Assert.AreEqual(repository_Initial.IssuesCount, repository_Final.IssuesCount);
-		Assert.AreEqual(repository_Initial.IsTrending, repository_Final.IsTrending);
-		Assert.AreEqual(repository_Initial.Name, repository_Final.Name);
-		Assert.AreEqual(repository_Initial.OwnerAvatarUrl, repository_Final.OwnerAvatarUrl);
-		Assert.AreEqual(repository_Initial.OwnerLogin, repository_Final.OwnerLogin);
-		Assert.AreEqual(repository_Initial.Permission, repository_Final.Permission);
-		Assert.AreEqual(repository_Initial.StarCount, repository_Final.StarCount);
-		Assert.AreEqual(repository_Initial.StarredAt, repository_Final.StarredAt);
-		Assert.AreEqual(repository_Initial.TotalClones, repository_Final.TotalClones);
-		Assert.AreEqual(repository_Initial.TotalUniqueClones, repository_Final.TotalUniqueClones);
-		Assert.AreEqual(repository_Initial.TotalUniqueViews, repository_Final.TotalUniqueViews);
-		Assert.AreEqual(repository_Initial.TotalViews, repository_Final.TotalViews);
-		Assert.AreEqual(repository_Initial.Url, repository_Final.Url);
-		Assert.AreEqual(repository_Initial.WatchersCount, repository_Final.WatchersCount);
-
-		Assert.AreEqual(0, mobileReferringSitesList_Initial.Count);
-		Assert.Greater(mobileReferringSitesList_Final.Count, mobileReferringSitesList_Initial.Count);
-		foreach (var mobileReferringSite in mobileReferringSitesList_Final)
+		Assert.Multiple(() =>
 		{
-			Assert.IsNotNull(mobileReferringSite.FavIcon);
-			Assert.IsNotNull(mobileReferringSite.FavIconImageUrl);
-			if (string.Empty == mobileReferringSite.FavIconImageUrl)
-				Assert.AreEqual(FavIconService.DefaultFavIcon, ((FileImageSource?)mobileReferringSite.FavIcon)?.File);
+			// Assert
+			Assert.That(wasScheduledSuccessfully_First);
+			Assert.That(wasScheduledSuccessfully_Second, Is.False);
+
+			Assert.That(mobileReferringSiteModel.FavIcon, Is.Not.Null);
+			Assert.That(mobileReferringSiteModel.FavIconImageUrl, Is.Not.Null);
+			if (string.Empty == mobileReferringSiteModel.FavIconImageUrl)
+				Assert.That(((FileImageSource?)mobileReferringSiteModel.FavIcon)?.File, Is.EqualTo(FavIconService.DefaultFavIcon));
 			else
-				Assert.IsNotEmpty(mobileReferringSite.FavIconImageUrl);
-			Assert.IsTrue(mobileReferringSite.IsReferrerUriValid);
-			Assert.IsNotNull(mobileReferringSite.Referrer);
-			Assert.IsNotEmpty(mobileReferringSite.Referrer);
-			Assert.IsNotNull(mobileReferringSite.ReferrerUri);
-			Assert.IsTrue(Uri.IsWellFormedUriString(mobileReferringSite.ReferrerUri?.ToString(), UriKind.Absolute));
-			Assert.Greater(mobileReferringSite.TotalCount, 0);
-			Assert.Greater(mobileReferringSite.TotalUniqueCount, 0);
-		}
+				Assert.That(mobileReferringSiteModel.FavIconImageUrl, Is.Not.Empty);
+			Assert.That(mobileReferringSiteModel.IsReferrerUriValid);
+			Assert.That(mobileReferringSiteModel.Referrer, Is.Not.Null);
+			Assert.That(mobileReferringSiteModel.Referrer, Is.Not.Empty);
+			Assert.That(mobileReferringSiteModel.ReferrerUri, Is.Not.Null);
+			Assert.That(Uri.IsWellFormedUriString(mobileReferringSiteModel.ReferrerUri?.ToString(), UriKind.Absolute));
+			Assert.That(mobileReferringSiteModel.TotalCount, Is.GreaterThan(0));
+			Assert.That(mobileReferringSiteModel.TotalUniqueCount, Is.GreaterThan(0));
+
+			Assert.That(mobileReferringSiteModel_Database.ToString(), Is.EqualTo(mobileReferringSiteModel.ToString()));
+
+			Assert.That(mobileReferringSiteModel_Database.DownloadedAt, Is.EqualTo(mobileReferringSiteModel.DownloadedAt));
+			Assert.That(mobileReferringSiteModel_Database.FavIcon?.ToString(), Is.EqualTo(mobileReferringSiteModel.FavIcon?.ToString()));
+			Assert.That(mobileReferringSiteModel_Database.FavIconImageUrl, Is.EqualTo(mobileReferringSiteModel.FavIconImageUrl));
+			Assert.That(mobileReferringSiteModel_Database.IsReferrerUriValid, Is.EqualTo(mobileReferringSiteModel.IsReferrerUriValid));
+			Assert.That(mobileReferringSiteModel_Database.Referrer, Is.EqualTo(mobileReferringSiteModel.Referrer));
+			Assert.That(mobileReferringSiteModel_Database.ReferrerUri?.ToString(), Is.EqualTo(mobileReferringSiteModel.ReferrerUri?.ToString()));
+			Assert.That(mobileReferringSiteModel_Database.TotalCount, Is.EqualTo(mobileReferringSiteModel.TotalCount));
+			Assert.That(mobileReferringSiteModel_Database.TotalUniqueCount, Is.EqualTo(mobileReferringSiteModel.TotalUniqueCount));
+
+			Assert.That(repository_Final.ToString(), Is.EqualTo(repository_Initial.ToString()));
+
+			Assert.That(repository_Final.ContainsViewsClonesStarsData, Is.EqualTo(repository_Initial.ContainsViewsClonesStarsData));
+			Assert.That(repository_Final.DailyClonesList?.Count, Is.EqualTo(repository_Initial.DailyClonesList?.Count));
+			Assert.That(repository_Final.DailyViewsList?.Count, Is.EqualTo(repository_Initial.DailyViewsList?.Count));
+			Assert.That(repository_Final.DataDownloadedAt, Is.EqualTo(repository_Initial.DataDownloadedAt));
+			Assert.That(repository_Final.Description, Is.EqualTo(repository_Initial.Description));
+			Assert.That(repository_Final.ForkCount, Is.EqualTo(repository_Initial.ForkCount));
+			Assert.That(repository_Final.IsFavorite, Is.EqualTo(repository_Initial.IsFavorite));
+			Assert.That(repository_Final.IsFork, Is.EqualTo(repository_Initial.IsFork));
+			Assert.That(repository_Final.IssuesCount, Is.EqualTo(repository_Initial.IssuesCount));
+			Assert.That(repository_Final.IsTrending, Is.EqualTo(repository_Initial.IsTrending));
+			Assert.That(repository_Final.Name, Is.EqualTo(repository_Initial.Name));
+			Assert.That(repository_Final.OwnerAvatarUrl, Is.EqualTo(repository_Initial.OwnerAvatarUrl));
+			Assert.That(repository_Final.OwnerLogin, Is.EqualTo(repository_Initial.OwnerLogin));
+			Assert.That(repository_Final.Permission, Is.EqualTo(repository_Initial.Permission));
+			Assert.That(repository_Final.StarCount, Is.EqualTo(repository_Initial.StarCount));
+			Assert.That(repository_Final.StarredAt, Is.EqualTo(repository_Initial.StarredAt));
+			Assert.That(repository_Final.TotalClones, Is.EqualTo(repository_Initial.TotalClones));
+			Assert.That(repository_Final.TotalUniqueClones, Is.EqualTo(repository_Initial.TotalUniqueClones));
+			Assert.That(repository_Final.TotalUniqueViews, Is.EqualTo(repository_Initial.TotalUniqueViews));
+			Assert.That(repository_Final.TotalViews, Is.EqualTo(repository_Initial.TotalViews));
+			Assert.That(repository_Final.Url, Is.EqualTo(repository_Initial.Url));
+			Assert.That(repository_Final.WatchersCount, Is.EqualTo(repository_Initial.WatchersCount));
+
+			Assert.That(mobileReferringSitesList_Initial, Is.Empty);
+			Assert.That(mobileReferringSitesList_Final, Has.Count.GreaterThan(mobileReferringSitesList_Initial.Count));
+			foreach (var mobileReferringSite in mobileReferringSitesList_Final)
+			{
+				Assert.That(mobileReferringSite.FavIcon, Is.Not.Null);
+				Assert.That(mobileReferringSite.FavIconImageUrl, Is.Not.Null);
+				if (string.Empty == mobileReferringSite.FavIconImageUrl)
+					Assert.That(((FileImageSource?)mobileReferringSite.FavIcon)?.File, Is.EqualTo(FavIconService.DefaultFavIcon));
+				else
+					Assert.That(mobileReferringSite.FavIconImageUrl, Is.Not.Empty);
+				Assert.That(mobileReferringSite.IsReferrerUriValid);
+				Assert.That(mobileReferringSite.Referrer, Is.Not.Null);
+				Assert.That(mobileReferringSite.Referrer, Is.Not.Empty);
+				Assert.That(mobileReferringSite.ReferrerUri, Is.Not.Null);
+				Assert.That(Uri.IsWellFormedUriString(mobileReferringSite.ReferrerUri?.ToString(), UriKind.Absolute));
+				Assert.That(mobileReferringSite.TotalCount, Is.GreaterThan(0));
+				Assert.That(mobileReferringSite.TotalUniqueCount, Is.GreaterThan(0));
+			}
+		});
 
 		void HandleMobileReferringSiteRetrieved(object? sender, MobileReferringSiteModel e)
 		{
@@ -437,33 +453,36 @@ class BackgroundFetchServiceTests : BaseTest
 		expiredRepository_Final = finalRepositories.First(x => x.DataDownloadedAt == expiredRepository_Initial.DataDownloadedAt);
 		unexpiredRepository_Final = finalRepositories.First(x => x.DataDownloadedAt == unexpiredRepository_Initial.DataDownloadedAt);
 
-		//Assert
-		Assert.IsTrue(wasScheduledSuccessfully_First);
-		Assert.IsFalse(wasScheduledSuccessfully_Second);
+		Assert.Multiple(() =>
+		{
+			//Assert
+			Assert.That(wasScheduledSuccessfully_First);
+			Assert.That(wasScheduledSuccessfully_Second, Is.False);
 
-		Assert.AreEqual(2, repositoryDatabaseCount_Initial);
-		Assert.AreEqual(2, referringSitesDatabaseCount_Initial);
+			Assert.That(repositoryDatabaseCount_Initial, Is.EqualTo(2));
+			Assert.That(referringSitesDatabaseCount_Initial, Is.EqualTo(2));
 
-		Assert.AreEqual(repositoryDatabaseCount_Initial, repositoryDatabaseCount_Final);
+			Assert.That(repositoryDatabaseCount_Final, Is.EqualTo(repositoryDatabaseCount_Initial));
 
-		Assert.AreEqual(0, expiredRepository_Initial.DailyClonesList?.Sum(static x => x.TotalClones));
-		Assert.AreEqual(0, expiredRepository_Initial.DailyClonesList?.Sum(static x => x.TotalUniqueClones));
-		Assert.AreEqual(0, expiredRepository_Initial.DailyViewsList?.Sum(static x => x.TotalViews));
-		Assert.AreEqual(0, expiredRepository_Initial.DailyViewsList?.Sum(static x => x.TotalUniqueViews));
+			Assert.That(expiredRepository_Initial.DailyClonesList?.Sum(static x => x.TotalClones), Is.EqualTo(0));
+			Assert.That(expiredRepository_Initial.DailyClonesList?.Sum(static x => x.TotalUniqueClones), Is.EqualTo(0));
+			Assert.That(expiredRepository_Initial.DailyViewsList?.Sum(static x => x.TotalViews), Is.EqualTo(0));
+			Assert.That(expiredRepository_Initial.DailyViewsList?.Sum(static x => x.TotalUniqueViews), Is.EqualTo(0));
 
-		Assert.IsNull(expiredRepository_Final.DailyClonesList);
-		Assert.IsNull(expiredRepository_Final.DailyViewsList);
+			Assert.That(expiredRepository_Final.DailyClonesList, Is.Null);
+			Assert.That(expiredRepository_Final.DailyViewsList, Is.Null);
 
-		Assert.AreEqual(unexpiredRepository_Initial.DailyClonesList?.Sum(static x => x.TotalClones), unexpiredRepository_Final.DailyClonesList?.Sum(static x => x.TotalClones));
-		Assert.AreEqual(unexpiredRepository_Initial.DailyClonesList?.Sum(static x => x.TotalUniqueClones), unexpiredRepository_Final.DailyClonesList?.Sum(static x => x.TotalUniqueClones));
-		Assert.AreEqual(unexpiredRepository_Initial.DailyViewsList?.Sum(static x => x.TotalViews), unexpiredRepository_Final.DailyViewsList?.Sum(static x => x.TotalViews));
-		Assert.AreEqual(unexpiredRepository_Initial.DailyViewsList?.Sum(static x => x.TotalUniqueViews), unexpiredRepository_Final.DailyViewsList?.Sum(static x => x.TotalUniqueViews));
+			Assert.That(unexpiredRepository_Final.DailyClonesList?.Sum(static x => x.TotalClones), Is.EqualTo(unexpiredRepository_Initial.DailyClonesList?.Sum(static x => x.TotalClones)));
+			Assert.That(unexpiredRepository_Final.DailyClonesList?.Sum(static x => x.TotalUniqueClones), Is.EqualTo(unexpiredRepository_Initial.DailyClonesList?.Sum(static x => x.TotalUniqueClones)));
+			Assert.That(unexpiredRepository_Final.DailyViewsList?.Sum(static x => x.TotalViews), Is.EqualTo(unexpiredRepository_Initial.DailyViewsList?.Sum(static x => x.TotalViews)));
+			Assert.That(unexpiredRepository_Final.DailyViewsList?.Sum(static x => x.TotalUniqueViews), Is.EqualTo(unexpiredRepository_Initial.DailyViewsList?.Sum(static x => x.TotalUniqueViews)));
 
-		Assert.AreEqual(2, repositoryDatabaseCount_Final);
-		Assert.AreEqual(1, referringSitesDatabaseCount_Final);
+			Assert.That(repositoryDatabaseCount_Final, Is.EqualTo(2));
+			Assert.That(referringSitesDatabaseCount_Final, Is.EqualTo(1));
 
-		Assert.IsTrue(unexpiredRepository_Initial.IsFavorite);
-		Assert.IsTrue(unexpiredRepository_Final.IsFavorite);
+			Assert.That(unexpiredRepository_Initial.IsFavorite, Is.True);
+			Assert.That(unexpiredRepository_Final.IsFavorite, Is.True);
+		});
 
 		async Task<int> getRepositoryDatabaseCount(RepositoryDatabase repositoryDatabase)
 		{
@@ -505,7 +524,7 @@ class BackgroundFetchServiceTests : BaseTest
 		var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsFalse(result);
+		Assert.That(result, Is.False);
 
 		void HandleScheduleNotifyTrendingRepositoriesCompleted(object? sender, bool e)
 		{
@@ -534,9 +553,12 @@ class BackgroundFetchServiceTests : BaseTest
 		var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsTrue(gitHubUserService.IsDemoUser);
-		Assert.IsFalse(gitHubUserService.IsAuthenticated);
-		Assert.IsFalse(result);
+		Assert.Multiple(() =>
+		{
+			Assert.That(gitHubUserService.IsDemoUser);
+			Assert.That(gitHubUserService.IsAuthenticated, Is.False);
+			Assert.That(result, Is.False);
+		});
 
 		void HandleScheduleNotifyTrendingRepositoriesCompleted(object? sender, bool e)
 		{
@@ -566,12 +588,15 @@ class BackgroundFetchServiceTests : BaseTest
 		var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsTrue(wasScheduledSuccessfully_First);
-		Assert.IsFalse(wasScheduledSuccessfully_Second);
+		Assert.Multiple(() =>
+		{
+			Assert.That(wasScheduledSuccessfully_First);
+			Assert.That(wasScheduledSuccessfully_Second, Is.False);
 
-		Assert.IsFalse(gitHubUserService.IsDemoUser);
-		Assert.IsTrue(gitHubUserService.IsAuthenticated);
-		Assert.IsTrue(result);
+			Assert.That(gitHubUserService.IsDemoUser, Is.False);
+			Assert.That(gitHubUserService.IsAuthenticated);
+			Assert.That(result);
+		});
 
 		void HandleScheduleNotifyTrendingRepositoriesCompleted(object? sender, bool e)
 		{
@@ -589,11 +614,11 @@ class BackgroundFetchServiceTests : BaseTest
 		for (int i = 0; i < 14; i++)
 		{
 			var count = DemoDataConstants.GetRandomNumber();
-			var uniqeCount = count / 2; //Ensures uniqueCount is always less than count
+			var uniqueCount = count / 2; //Ensures uniqueCount is always less than count
 
 			starredAtList.Add(DemoDataConstants.GetRandomDate());
-			dailyViewsList.Add(new DailyViewsModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
-			dailyClonesList.Add(new DailyClonesModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
+			dailyViewsList.Add(new DailyViewsModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqueCount));
+			dailyClonesList.Add(new DailyClonesModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqueCount));
 		}
 
 		return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),

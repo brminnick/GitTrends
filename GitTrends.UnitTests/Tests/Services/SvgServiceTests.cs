@@ -11,10 +11,8 @@ class SvgServiceTests : BaseTest
 			{ "#000000", hex }
 		};
 
-		//Act
+		//Act //Assert
 		Assert.Throws<ArgumentException>(() => SvgService.GetColorStringMap(hex));
-
-		//Assert
 	}
 
 	[Test]
@@ -31,7 +29,7 @@ class SvgServiceTests : BaseTest
 		var actualColorMap = SvgService.GetColorStringMap(hex);
 
 		//Assert
-		Assert.AreEqual(expectedColorMap, actualColorMap);
+		Assert.That(actualColorMap, Is.EqualTo(expectedColorMap));
 	}
 
 	[Test]
@@ -45,7 +43,7 @@ class SvgServiceTests : BaseTest
 		var actualResourcePath = SvgService.GetResourcePath(svgName);
 
 		//Assert
-		Assert.AreEqual(expectedResourcePath, actualResourcePath);
+		Assert.That(actualResourcePath, Is.EqualTo(expectedResourcePath));
 	}
 
 	[TestCase("star")]
@@ -72,7 +70,7 @@ class SvgServiceTests : BaseTest
 		var actualResourcePath = SvgService.GetFullPath(svgName);
 
 		//Assert
-		Assert.AreEqual(expectedResourcePath, actualResourcePath);
+		Assert.That(actualResourcePath, Is.EqualTo(expectedResourcePath));
 	}
 
 	[TestCase("star")]

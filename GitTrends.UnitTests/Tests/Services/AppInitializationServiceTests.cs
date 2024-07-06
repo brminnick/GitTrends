@@ -1,5 +1,4 @@
-﻿
-namespace GitTrends.UnitTests;
+﻿namespace GitTrends.UnitTests;
 
 class AppInitializationServiceTests : BaseTest
 {
@@ -15,18 +14,21 @@ class AppInitializationServiceTests : BaseTest
 		var appInitializationService = ServiceCollection.ServiceProvider.GetRequiredService<AppInitializationService>();
 
 		//Assert
-		Assert.IsFalse(appInitializationService.IsInitializationComplete);
+		Assert.That(appInitializationService.IsInitializationComplete, Is.False);
 
 		//Act
 		var isInitializationSuccessful = await appInitializationService.InitializeApp(CancellationToken.None).ConfigureAwait(false);
 		var initializationCompleteEventArgs = await initializeAppCommandTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsTrue(isInitializationSuccessful);
-		Assert.IsTrue(didInitializationCompleteFire);
-		Assert.IsTrue(appInitializationService.IsInitializationComplete);
-		Assert.IsTrue(initializationCompleteEventArgs.IsInitializationSuccessful);
-		Assert.AreEqual(isInitializationSuccessful, initializationCompleteEventArgs.IsInitializationSuccessful);
+		Assert.Multiple(() =>
+		{
+			Assert.That(isInitializationSuccessful);
+			Assert.That(didInitializationCompleteFire);
+			Assert.That(appInitializationService.IsInitializationComplete);
+			Assert.That(initializationCompleteEventArgs.IsInitializationSuccessful);
+		});
+		Assert.That(initializationCompleteEventArgs.IsInitializationSuccessful, Is.EqualTo(isInitializationSuccessful));
 
 		void HandleInitializationComplete(object? sender, InitializationCompleteEventArgs e)
 		{

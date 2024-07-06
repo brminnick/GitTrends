@@ -53,37 +53,49 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		}
 
 		//Assert
-		Assert.IsNotEmpty(repositories);
-		Assert.IsNotEmpty(repositories_NoStarsData);
-		Assert.IsNotEmpty(repositories_NoViewsClonesStarsData);
+		Assert.Multiple(() =>
+		{
+			Assert.That(repositories, Is.Not.Empty);
+			Assert.That(repositories_NoStarsData, Is.Not.Empty);
+			Assert.That(repositories_NoViewsClonesStarsData, Is.Not.Empty);
+		});
 
 		foreach (var repository in repositories_NoViewsClonesStarsData)
 		{
-			Assert.IsNull(repository.StarredAt);
-			Assert.IsNull(repository.TotalClones);
-			Assert.IsNull(repository.TotalUniqueClones);
-			Assert.IsNull(repository.TotalViews);
-			Assert.IsNull(repository.TotalUniqueViews);
+			Assert.Multiple(() =>
+			{
+				Assert.That(repository.StarredAt, Is.Null);
+				Assert.That(repository.TotalClones, Is.Null);
+				Assert.That(repository.TotalUniqueClones, Is.Null);
+				Assert.That(repository.TotalViews, Is.Null);
+				Assert.That(repository.TotalUniqueViews, Is.Null);
+			});
 		}
 
 		foreach (var repository in repositories_NoStarsData)
 		{
-			Assert.IsNull(repository.StarredAt);
-			Assert.IsNotNull(repository.TotalClones);
-			Assert.IsNotNull(repository.TotalUniqueClones);
-			Assert.IsNotNull(repository.TotalViews);
-			Assert.IsNotNull(repository.TotalUniqueViews);
+			Assert.Multiple(() =>
+			{
+				Assert.That(repository.StarredAt, Is.Null);
+				Assert.That(repository.TotalClones, Is.Not.Null);
+				Assert.That(repository.TotalUniqueClones, Is.Not.Null);
+				Assert.That(repository.TotalViews, Is.Not.Null);
+				Assert.That(repository.TotalUniqueViews, Is.Not.Null);
+			});
 		}
 
-		Assert.IsNotEmpty(repositories.SelectMany(static x => x.StarredAt ?? throw new InvalidOperationException()));
-		Assert.IsNotEmpty(repositories.SelectMany(static x => x.DailyViewsList ?? throw new InvalidOperationException()));
-		Assert.IsNotEmpty(repositories.SelectMany(static x => x.DailyClonesList ?? throw new InvalidOperationException()));
+		Assert.Multiple(() =>
+		{
+			Assert.That(repositories.SelectMany(static x => x.StarredAt ?? throw new InvalidOperationException()), Is.Not.Empty);
+			Assert.That(repositories.SelectMany(static x => x.DailyViewsList ?? throw new InvalidOperationException()), Is.Not.Empty);
+			Assert.That(repositories.SelectMany(static x => x.DailyClonesList ?? throw new InvalidOperationException()), Is.Not.Empty);
 
-		Assert.Less(0, repositories.SelectMany(static x => x.StarredAt ?? throw new InvalidOperationException()).Count());
-		Assert.Less(0, repositories.Sum(static x => x.TotalClones));
-		Assert.Less(0, repositories.Sum(static x => x.TotalUniqueClones));
-		Assert.Less(0, repositories.Sum(static x => x.TotalViews));
-		Assert.Less(0, repositories.Sum(static x => x.TotalUniqueViews));
+			Assert.That(repositories.SelectMany(static x => x.StarredAt ?? throw new InvalidOperationException()).Count(), Is.GreaterThan(0));
+			Assert.That(repositories.Sum(static x => x.TotalClones ?? throw new InvalidOperationException($"{nameof(x.TotalClones)} cannot be null")), Is.GreaterThan(0));
+			Assert.That(repositories.Sum(static x => x.TotalUniqueClones ?? throw new InvalidOperationException($"{nameof(x.TotalUniqueClones)} cannot be null")), Is.GreaterThan(0));
+			Assert.That(repositories.Sum(static x => x.TotalViews ?? throw new InvalidOperationException($"{nameof(x.TotalViews)} cannot be null")), Is.GreaterThan(0));
+			Assert.That(repositories.Sum(static x => x.TotalUniqueViews ?? throw new InvalidOperationException($"{nameof(x.TotalUniqueViews)} cannot be null")), Is.GreaterThan(0));
+		});
 	}
 
 	[Test]
@@ -112,7 +124,7 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		});
 
 		//Assert
-		Assert.IsTrue(exception?.Message.Contains("more than one matching element"));
+		Assert.That(exception?.Message.Contains("more than one matching element"), Is.True);
 	}
 
 	[Test]
@@ -141,7 +153,7 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		});
 
 		//Assert
-		Assert.IsTrue(exception?.Message.Contains("more than one matching element"));
+		Assert.That(exception?.Message.Contains("more than one matching element"), Is.True);
 	}
 
 	[Test]
@@ -159,7 +171,7 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		}
 
 		//Assert
-		Assert.IsEmpty(repositories);
+		Assert.That(repositories, Is.Empty);
 	}
 
 	[Test]
@@ -177,7 +189,7 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		}
 
 		//Assert
-		Assert.IsEmpty(repositories);
+		Assert.That(repositories, Is.Empty);
 	}
 
 	[Test]
@@ -209,19 +221,22 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
 		{
 			repositories_NoStarsData.Add(repository);
-		};
+		}
 
 		repositories_NoStarsData_Filtered = repositories_NoStarsData.RemoveForksDuplicatesAndArchives().ToList();
 
 		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositories_NoStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
 		{
 			repositories.Add(repository);
-		};
+		}
 
 		//Assert
-		Assert.IsEmpty(repositories.SelectMany(static x => x.StarredAt ?? throw new InvalidOperationException()));
-		Assert.IsEmpty(repositories.SelectMany(static x => x.DailyViewsList ?? throw new InvalidOperationException()));
-		Assert.IsEmpty(repositories.SelectMany(static x => x.DailyClonesList ?? throw new InvalidOperationException()));
+		Assert.Multiple(() =>
+		{
+			Assert.That(repositories.SelectMany(static x => x.StarredAt ?? throw new InvalidOperationException()), Is.Empty);
+			Assert.That(repositories.SelectMany(static x => x.DailyViewsList ?? throw new InvalidOperationException()), Is.Empty);
+			Assert.That(repositories.SelectMany(static x => x.DailyClonesList ?? throw new InvalidOperationException()), Is.Empty);
+		});
 	}
 
 	[Test]
@@ -252,23 +267,28 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
 		{
 			repositories_NoStarsData.Add(repository);
-		};
+		}
+		;
 
 		repositories_NoStarsData_Filtered = repositories_NoStarsData.RemoveForksDuplicatesAndArchives().ToList();
 
 		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositories_NoStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
 		{
 			repositories.Add(repository);
-		};
+		}
+		;
 
 		//Assert
-		Assert.AreEqual(repositories_NoViewsClonesStarsData_Filtered.Count, repositories.Count);
+		Assert.That(repositories, Has.Count.EqualTo(repositories_NoViewsClonesStarsData_Filtered.Count));
 
 		foreach (var repository in repositories)
 		{
-			Assert.IsNotNull(repository.DailyClonesList);
-			Assert.IsNotNull(repository.DailyViewsList);
-			Assert.IsNotNull(repository.StarredAt);
+			Assert.Multiple(() =>
+			{
+				Assert.That(repository.DailyClonesList, Is.Not.Null);
+				Assert.That(repository.DailyViewsList, Is.Not.Null);
+				Assert.That(repository.StarredAt, Is.Not.Null);
+			});
 		}
 	}
 
@@ -293,13 +313,16 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		//Assert
 		foreach (var referringSite in referringSiteModels)
 		{
-			Assert.IsTrue(referringSite.IsReferrerUriValid);
-			Assert.IsNotNull(referringSite.Referrer);
-			Assert.IsNotEmpty(referringSite.Referrer);
-			Assert.IsNotNull(referringSite.ReferrerUri);
-			Assert.IsTrue(Uri.IsWellFormedUriString(referringSite.ReferrerUri?.ToString(), UriKind.Absolute));
-			Assert.Greater(referringSite.TotalCount, 0);
-			Assert.Greater(referringSite.TotalUniqueCount, 0);
+			Assert.Multiple(() =>
+			{
+				Assert.That(referringSite.IsReferrerUriValid);
+				Assert.That(referringSite.Referrer, Is.Not.Null);
+				Assert.That(referringSite.Referrer, Is.Not.Empty);
+				Assert.That(referringSite.ReferrerUri, Is.Not.Null);
+				Assert.That(Uri.IsWellFormedUriString(referringSite.ReferrerUri?.ToString(), UriKind.Absolute), Is.True);
+				Assert.That(referringSite.TotalCount, Is.GreaterThan(0));
+				Assert.That(referringSite.TotalUniqueCount, Is.GreaterThan(0));
+			});
 		}
 	}
 
@@ -320,13 +343,16 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		//Assert
 		foreach (var referringSite in referringSiteModels)
 		{
-			Assert.IsTrue(referringSite.IsReferrerUriValid);
-			Assert.IsNotNull(referringSite.Referrer);
-			Assert.IsNotEmpty(referringSite.Referrer);
-			Assert.IsNotNull(referringSite.ReferrerUri);
-			Assert.IsTrue(Uri.IsWellFormedUriString(referringSite.ReferrerUri?.ToString(), UriKind.Absolute));
-			Assert.Greater(referringSite.TotalCount, 0);
-			Assert.Greater(referringSite.TotalUniqueCount, 0);
+			Assert.Multiple(() =>
+			{
+				Assert.That(referringSite.IsReferrerUriValid, Is.True);
+				Assert.That(referringSite.Referrer, Is.Not.Null);
+				Assert.That(referringSite.Referrer, Is.Not.Empty);
+				Assert.That(referringSite.ReferrerUri, Is.Not.Null);
+				Assert.That(Uri.IsWellFormedUriString(referringSite.ReferrerUri?.ToString(), UriKind.Absolute));
+				Assert.That(referringSite.TotalCount, Is.GreaterThan(0));
+				Assert.That(referringSite.TotalUniqueCount, Is.GreaterThan(0));
+			});
 		}
 	}
 
@@ -350,15 +376,18 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		//Assert
 		foreach (var referringSite in referringSiteModels)
 		{
-			Assert.IsFalse(referringSite.IsReferrerUriValid);
-			Assert.IsNotNull(referringSite.Referrer);
-			Assert.IsNotEmpty(referringSite.Referrer);
-			Assert.IsNull(referringSite.ReferrerUri);
-			Assert.IsFalse(Uri.IsWellFormedUriString(referringSite.ReferrerUri?.ToString(), UriKind.Absolute));
-			Assert.GreaterOrEqual(referringSite.TotalCount, 0);
-			Assert.LessOrEqual(referringSite.TotalCount, DemoDataConstants.MaximumRandomNumber);
-			Assert.GreaterOrEqual(referringSite.TotalUniqueCount, 0);
-			Assert.LessOrEqual(referringSite.TotalUniqueCount, DemoDataConstants.MaximumRandomNumber);
+			Assert.Multiple(() =>
+			{
+				Assert.That(referringSite.IsReferrerUriValid, Is.False);
+				Assert.That(referringSite.Referrer, Is.Not.Null);
+				Assert.That(referringSite.Referrer, Is.Not.Empty);
+				Assert.That(referringSite.ReferrerUri, Is.Null);
+				Assert.That(Uri.IsWellFormedUriString(referringSite.ReferrerUri?.ToString(), UriKind.Absolute), Is.False);
+				Assert.That(referringSite.TotalCount, Is.GreaterThanOrEqualTo(0));
+				Assert.That(referringSite.TotalCount, Is.LessThanOrEqualTo(DemoDataConstants.MaximumRandomNumber));
+				Assert.That(referringSite.TotalUniqueCount, Is.GreaterThanOrEqualTo(0));
+				Assert.That(referringSite.TotalUniqueCount, Is.LessThanOrEqualTo(DemoDataConstants.MaximumRandomNumber));
+			});
 		}
 	}
 
@@ -373,7 +402,7 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 
 		// Act 
 		var exception = Assert.ThrowsAsync<ApiException>(() => gitHubApiRepositoriesService.GetReferringSites(repository, CancellationToken.None));
-		Assert.AreEqual(HttpStatusCode.NotFound, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
 	}
 
 	[Test]
@@ -402,19 +431,22 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		//Assert
 		foreach (var mobileReferringSite in mobileReferringSiteModels)
 		{
-			Assert.IsNotNull(mobileReferringSite.FavIcon);
-			Assert.IsNotNull(mobileReferringSite.FavIconImageUrl);
-			if (string.Empty == mobileReferringSite.FavIconImageUrl)
-				Assert.AreEqual(FavIconService.DefaultFavIcon, ((FileImageSource?)mobileReferringSite.FavIcon)?.File);
-			else
-				Assert.IsNotEmpty(mobileReferringSite.FavIconImageUrl);
-			Assert.IsTrue(mobileReferringSite.IsReferrerUriValid);
-			Assert.IsNotNull(mobileReferringSite.Referrer);
-			Assert.IsNotEmpty(mobileReferringSite.Referrer);
-			Assert.IsNotNull(mobileReferringSite.ReferrerUri);
-			Assert.IsTrue(Uri.IsWellFormedUriString(mobileReferringSite.ReferrerUri?.ToString(), UriKind.Absolute));
-			Assert.Greater(mobileReferringSite.TotalCount, 0);
-			Assert.Greater(mobileReferringSite.TotalUniqueCount, 0);
+			Assert.Multiple(() =>
+			{
+				Assert.That(mobileReferringSite.FavIconImageUrl, Is.Not.Null);
+				Assert.That(mobileReferringSite.FavIcon, Is.Not.Null);
+				if (string.Empty == mobileReferringSite.FavIconImageUrl)
+					Assert.That(((FileImageSource?)mobileReferringSite.FavIcon)?.File, Is.EqualTo(FavIconService.DefaultFavIcon));
+				else
+					Assert.That(mobileReferringSite.FavIconImageUrl, Is.Not.Empty);
+				Assert.That(mobileReferringSite.IsReferrerUriValid);
+				Assert.That(mobileReferringSite.Referrer, Is.Not.Null);
+				Assert.That(mobileReferringSite.ReferrerUri, Is.Not.Null);
+				Assert.That(mobileReferringSite.Referrer, Is.Not.Empty);
+				Assert.That(Uri.IsWellFormedUriString(mobileReferringSite.ReferrerUri?.ToString(), UriKind.Absolute), Is.True);
+				Assert.That(mobileReferringSite.TotalCount, Is.GreaterThan(0));
+				Assert.That(mobileReferringSite.TotalUniqueCount, Is.GreaterThan(0));
+			});
 		}
 	}
 
@@ -440,19 +472,22 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		//Assert
 		foreach (var mobileReferringSite in mobileReferringSiteModels)
 		{
-			Assert.IsNotNull(mobileReferringSite.FavIcon);
-			Assert.IsNotNull(mobileReferringSite.FavIconImageUrl);
-			if (string.Empty == mobileReferringSite.FavIconImageUrl)
-				Assert.AreEqual(FavIconService.DefaultFavIcon, ((FileImageSource?)mobileReferringSite.FavIcon)?.File);
-			else
-				Assert.IsNotEmpty(mobileReferringSite.FavIconImageUrl);
-			Assert.IsTrue(mobileReferringSite.IsReferrerUriValid);
-			Assert.IsNotNull(mobileReferringSite.Referrer);
-			Assert.IsNotEmpty(mobileReferringSite.Referrer);
-			Assert.IsNotNull(mobileReferringSite.ReferrerUri);
-			Assert.IsTrue(Uri.IsWellFormedUriString(mobileReferringSite.ReferrerUri?.ToString(), UriKind.Absolute));
-			Assert.Greater(mobileReferringSite.TotalCount, 0);
-			Assert.Greater(mobileReferringSite.TotalUniqueCount, 0);
+			Assert.Multiple(() =>
+			{
+				Assert.That(mobileReferringSite.FavIcon, Is.Not.Null);
+				Assert.That(mobileReferringSite.FavIconImageUrl, Is.Not.Null);
+				if (string.Empty == mobileReferringSite.FavIconImageUrl)
+					Assert.That(((FileImageSource?)mobileReferringSite.FavIcon)?.File, Is.EqualTo(FavIconService.DefaultFavIcon));
+				else
+					Assert.That(mobileReferringSite.FavIconImageUrl, Is.Not.Empty);
+				Assert.That(mobileReferringSite.IsReferrerUriValid);
+				Assert.That(mobileReferringSite.Referrer, Is.Not.Null);
+				Assert.That(mobileReferringSite.Referrer, Is.Not.Empty);
+				Assert.That(mobileReferringSite.ReferrerUri, Is.Not.Null);
+				Assert.That(Uri.IsWellFormedUriString(mobileReferringSite.ReferrerUri?.ToString(), UriKind.Absolute));
+				Assert.That(mobileReferringSite.TotalCount, Is.GreaterThan(0));
+				Assert.That(mobileReferringSite.TotalUniqueCount, Is.GreaterThan(0));
+			});
 		}
 	}
 
@@ -481,22 +516,25 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		//Assert
 		foreach (var mobileReferringSite in mobileReferringSiteModels)
 		{
-			Assert.AreEqual("DefaultReferringSiteImage", FavIconService.DefaultFavIcon);
+			Assert.Multiple(() =>
+			{
+				Assert.That(FavIconService.DefaultFavIcon, Is.EqualTo("DefaultReferringSiteImage"));
 
-			Assert.IsInstanceOf<FileImageSource>(mobileReferringSite.FavIcon);
-			Assert.AreEqual(FavIconService.DefaultFavIcon, ((FileImageSource?)mobileReferringSite.FavIcon)?.File);
+				Assert.That(mobileReferringSite.FavIcon, Is.InstanceOf<FileImageSource>());
+				Assert.That(((FileImageSource?)mobileReferringSite.FavIcon)?.File, Is.EqualTo(FavIconService.DefaultFavIcon));
 
-			Assert.IsNotNull(mobileReferringSite.FavIconImageUrl);
-			Assert.IsEmpty(mobileReferringSite.FavIconImageUrl);
-			Assert.IsFalse(mobileReferringSite.IsReferrerUriValid);
-			Assert.IsNotNull(mobileReferringSite.Referrer);
-			Assert.IsNotEmpty(mobileReferringSite.Referrer);
-			Assert.IsNull(mobileReferringSite.ReferrerUri);
-			Assert.IsFalse(Uri.IsWellFormedUriString(mobileReferringSite.ReferrerUri?.ToString(), UriKind.Absolute));
-			Assert.GreaterOrEqual(mobileReferringSite.TotalCount, 0);
-			Assert.LessOrEqual(mobileReferringSite.TotalCount, DemoDataConstants.MaximumRandomNumber);
-			Assert.GreaterOrEqual(mobileReferringSite.TotalUniqueCount, 0);
-			Assert.LessOrEqual(mobileReferringSite.TotalUniqueCount, DemoDataConstants.MaximumRandomNumber);
+				Assert.That(mobileReferringSite.FavIconImageUrl, Is.Not.Null);
+				Assert.That(mobileReferringSite.FavIconImageUrl, Is.Empty);
+				Assert.That(mobileReferringSite.IsReferrerUriValid, Is.False);
+				Assert.That(mobileReferringSite.Referrer, Is.Not.Null);
+				Assert.That(mobileReferringSite.Referrer, Is.Not.Empty);
+				Assert.That(mobileReferringSite.ReferrerUri, Is.Null);
+				Assert.That(Uri.IsWellFormedUriString(mobileReferringSite.ReferrerUri?.ToString(), UriKind.Absolute), Is.False);
+				Assert.That(mobileReferringSite.TotalCount, Is.GreaterThanOrEqualTo(0));
+				Assert.That(mobileReferringSite.TotalCount, Is.LessThanOrEqualTo(DemoDataConstants.MaximumRandomNumber));
+				Assert.That(mobileReferringSite.TotalUniqueCount, Is.GreaterThanOrEqualTo(0));
+				Assert.That(mobileReferringSite.TotalUniqueCount, Is.LessThanOrEqualTo(DemoDataConstants.MaximumRandomNumber));
+			});
 		}
 	}
 
@@ -510,14 +548,21 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
 
 		// Act 
-		await foreach (var mobileReferringSite in gitHubApiRepositoriesService.GetMobileReferringSites(new List<ReferringSiteModel> { referringSite }, string.Empty, CancellationToken.None))
+		await foreach (var mobileReferringSite in gitHubApiRepositoriesService.GetMobileReferringSites(new List<ReferringSiteModel>
+		{
+			referringSite
+		}, string.Empty, CancellationToken.None))
 		{
 			mobileReferringSiteModel = mobileReferringSite;
 		}
 
-		Assert.AreEqual("DefaultReferringSiteImage", FavIconService.DefaultFavIcon);
+		// Assert
+		Assert.Multiple(() =>
+		{
+			Assert.That(FavIconService.DefaultFavIcon, Is.EqualTo("DefaultReferringSiteImage"));
 
-		Assert.IsInstanceOf<FileImageSource>(mobileReferringSiteModel?.FavIcon);
-		Assert.AreEqual(FavIconService.DefaultFavIcon, ((FileImageSource?)mobileReferringSiteModel?.FavIcon)?.File);
+			Assert.That(mobileReferringSiteModel?.FavIcon, Is.InstanceOf<FileImageSource>());
+			Assert.That(((FileImageSource?)mobileReferringSiteModel?.FavIcon)?.File, Is.EqualTo(FavIconService.DefaultFavIcon));
+		});
 	}
 }

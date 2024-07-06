@@ -35,38 +35,44 @@ class GitTrendsStatisticsServiceTests : BaseTest
 		enableOrganizationsUri_Final = gitTrendsStatisticsService.EnableOrganizationsUri;
 
 		//Assert
-		Assert.IsNull(stars_Initial);
-		Assert.IsNull(forks_Initial);
-		Assert.IsNull(watchers_Initial);
-		Assert.IsNull(clientId_Initial);
-		Assert.IsNull(gitHubUri_Initial);
-		Assert.IsNull(enableOrganizationsUri_Initial);
+		Assert.Multiple(() =>
+		{
+			Assert.That(stars_Initial, Is.Null);
+			Assert.That(forks_Initial, Is.Null);
+			Assert.That(watchers_Initial, Is.Null);
+			Assert.That(clientId_Initial, Is.Null);
+			Assert.That(gitHubUri_Initial, Is.Null);
+			Assert.That(enableOrganizationsUri_Initial, Is.Null);
 
-		Assert.IsNotNull(contributors_Initial);
-		Assert.IsEmpty(contributors_Initial);
+			Assert.That(contributors_Initial, Is.Not.Null);
+			Assert.That(contributors_Initial, Is.Empty);
 
-		Assert.IsNotNull(stars_Final);
-		Assert.IsNotNull(forks_Final);
-		Assert.IsNotNull(watchers_Final);
-		Assert.IsNotNull(clientId_Final);
-		Assert.IsNotNull(gitHubUri_Final);
-		Assert.IsNotNull(enableOrganizationsUri_Final);
+			Assert.That(stars_Final, Is.Not.Null);
+			Assert.That(forks_Final, Is.Not.Null);
+			Assert.That(watchers_Final, Is.Not.Null);
+			Assert.That(clientId_Final, Is.Not.Null);
+			Assert.That(gitHubUri_Final, Is.Not.Null);
+			Assert.That(enableOrganizationsUri_Final, Is.Not.Null);
 
-		Assert.Less(0, stars_Final);
-		Assert.Less(0, forks_Final);
-		Assert.Less(0, watchers_Final);
+			Assert.That(stars_Final, Is.GreaterThan(0));
+			Assert.That(forks_Final, Is.GreaterThan(0));
+			Assert.That(watchers_Final, Is.GreaterThan(0));
 
-		Assert.IsNotEmpty(contributors_Final);
+			Assert.That(contributors_Final, Is.Not.Empty);
+		});
 
 		foreach (var contributor in contributors_Final)
 		{
 			var isAvatarUrlValid = Uri.TryCreate(contributor.AvatarUrl.ToString(), UriKind.Absolute, out _);
 			var isGitHubUrlValid = Uri.TryCreate(contributor.GitHubUrl.ToString(), UriKind.Absolute, out _);
 
-			Assert.IsTrue(isAvatarUrlValid);
-			Assert.IsTrue(isGitHubUrlValid);
-			Assert.Greater(contributor.ContributionCount, 0);
-			Assert.IsFalse(string.IsNullOrEmpty(contributor.Login));
+			Assert.Multiple(() =>
+			{
+				Assert.That(isAvatarUrlValid);
+				Assert.That(isGitHubUrlValid);
+				Assert.That(contributor.ContributionCount, Is.GreaterThan(0));
+				Assert.That(string.IsNullOrEmpty(contributor.Login), Is.False);
+			});
 		}
 	}
 }

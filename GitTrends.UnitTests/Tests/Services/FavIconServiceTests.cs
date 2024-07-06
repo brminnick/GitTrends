@@ -13,8 +13,11 @@ class FavIconServiceTests : BaseTest
 		var fileImageSource = (FileImageSource)await favIconService.GetFavIconImageSource(invalidUri, CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotNull(fileImageSource);
-		Assert.AreEqual(fileImageSource.File, FavIconService.DefaultFavIcon);
+		Assert.Multiple(() =>
+		{
+			Assert.That(fileImageSource, Is.Not.Null);
+			Assert.That(FavIconService.DefaultFavIcon, Is.EqualTo(fileImageSource.File));
+		});
 	}
 
 	[TestCase("https://outlook.live.com/owa/", "https://logincdn.msftauth.net/16.000.30275.14/images/favicon.ico")] //Shortcut icon Uri
@@ -30,8 +33,11 @@ class FavIconServiceTests : BaseTest
 		var uriImageSource = (UriImageSource)await favIconService.GetFavIconImageSource(new Uri(url), CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotNull(uriImageSource);
-		Assert.AreEqual(new Uri(expectedFavIconUrl), uriImageSource.Uri);
+		Assert.Multiple(() =>
+		{
+			Assert.That(uriImageSource, Is.Not.Null);
+			Assert.That(uriImageSource.Uri, Is.EqualTo(new Uri(expectedFavIconUrl)));
+		});
 	}
 
 	[TestCase("https://www.amazon.co.uk", "https://amazon.co.uk/favicon.ico")]
@@ -44,8 +50,11 @@ class FavIconServiceTests : BaseTest
 		var uriImageSource = (UriImageSource)await favIconService.GetFavIconImageSource(new Uri(url), CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotNull(uriImageSource);
-		Assert.AreEqual(new Uri(expectedFavIconUrl), uriImageSource.Uri);
-		Assert.IsFalse(uriImageSource.Uri.ToString().Contains("https://favicons.githubusercontent.com"));
+		Assert.Multiple(() =>
+		{
+			Assert.That(uriImageSource, Is.Not.Null);
+			Assert.That(uriImageSource.Uri, Is.EqualTo(new Uri(expectedFavIconUrl)));
+			Assert.That(uriImageSource.Uri.ToString().Contains("https://favicons.githubusercontent.com"), Is.False);
+		});
 	}
 }

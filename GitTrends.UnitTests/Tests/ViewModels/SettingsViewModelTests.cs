@@ -38,17 +38,20 @@ class SettingsViewModelTests : BaseTest
 		isRegisterForNotificationsSwitchToggled_Final = settingsViewModel.IsRegisterForNotificationsSwitchToggled;
 
 		//Assert
-		Assert.IsTrue(didSetNotificationsPreferenceCompletedFire);
+		Assert.Multiple(() =>
+		{
+			Assert.That(didSetNotificationsPreferenceCompletedFire);
 
-		Assert.IsFalse(shouldSendNotifications_Initial);
-		Assert.IsTrue(isRegisterForNotificationsSwitchEnabled_Initial);
-		Assert.IsFalse(isRegisterForNotificationsSwitchToggled_Initial);
+			Assert.That(shouldSendNotifications_Initial, Is.False);
+			Assert.That(isRegisterForNotificationsSwitchEnabled_Initial);
+			Assert.That(isRegisterForNotificationsSwitchToggled_Initial, Is.False);
 
-		Assert.IsTrue(shouldSendNotifications_Final);
-		Assert.IsTrue(isRegisterForNotificationsSwitchEnabled_Final);
-		Assert.IsTrue(isRegisterForNotificationsSwitchToggled_Final);
+			Assert.That(shouldSendNotifications_Final);
+			Assert.That(isRegisterForNotificationsSwitchEnabled_Final);
+			Assert.That(isRegisterForNotificationsSwitchToggled_Final);
 
-		Assert.AreEqual(AccessState.Available, accessState);
+			Assert.That(accessState, Is.EqualTo(AccessState.Available));
+		});
 
 		void HandleSetNotificationsPreferenceCompleted(object? sender, AccessState? e)
 		{
@@ -89,17 +92,20 @@ class SettingsViewModelTests : BaseTest
 		preferredChartsIndex_AfterAll = settingsViewModel.PreferredChartsSelectedIndex;
 
 		//Assert
-		Assert.AreEqual(TrendsChartOption.All, currentTrendsChartOption_Initial);
-		Assert.AreEqual(TrendsChartOption.All, (TrendsChartOption)preferredChartsIndex_Initial);
+		Assert.Multiple(() =>
+		{
+			Assert.That(currentTrendsChartOption_Initial, Is.EqualTo(TrendsChartOption.All));
+			Assert.That((TrendsChartOption)preferredChartsIndex_Initial, Is.EqualTo(TrendsChartOption.All));
 
-		Assert.AreEqual(TrendsChartOption.JustUniques, currentTrendsChartOption_AfterJustUniques);
-		Assert.AreEqual(TrendsChartOption.JustUniques, (TrendsChartOption)preferredChartsIndex_AfterJustUniques);
+			Assert.That(currentTrendsChartOption_AfterJustUniques, Is.EqualTo(TrendsChartOption.JustUniques));
+			Assert.That((TrendsChartOption)preferredChartsIndex_AfterJustUniques, Is.EqualTo(TrendsChartOption.JustUniques));
 
-		Assert.AreEqual(TrendsChartOption.NoUniques, currentTrendsChartOption_AfterNoUniques);
-		Assert.AreEqual(TrendsChartOption.NoUniques, (TrendsChartOption)preferredChartsIndex_AfterNoUniques);
+			Assert.That(currentTrendsChartOption_AfterNoUniques, Is.EqualTo(TrendsChartOption.NoUniques));
+			Assert.That((TrendsChartOption)preferredChartsIndex_AfterNoUniques, Is.EqualTo(TrendsChartOption.NoUniques));
 
-		Assert.AreEqual(TrendsChartOption.All, currentTrendsChartOption_AfterAll);
-		Assert.AreEqual(TrendsChartOption.All, (TrendsChartOption)preferredChartsIndex_AfterAll);
+			Assert.That(currentTrendsChartOption_AfterAll, Is.EqualTo(TrendsChartOption.All));
+			Assert.That((TrendsChartOption)preferredChartsIndex_AfterAll, Is.EqualTo(TrendsChartOption.All));
+		});
 	}
 
 	[Test]
@@ -132,25 +138,28 @@ class SettingsViewModelTests : BaseTest
 		gitHubAvatarImageSource_Final = settingsViewModel.GitHubAvatarImageSource;
 
 		//Assert
-		Assert.IsTrue(gitHubUserService.IsDemoUser);
+		Assert.Multiple(() =>
+		{
+			Assert.That(gitHubUserService.IsDemoUser);
 
-		Assert.IsTrue(isDemoButtonVisible_Initial);
-		Assert.IsFalse(isDemoButtonVisible_Final);
+			Assert.That(isDemoButtonVisible_Initial);
+			Assert.That(isDemoButtonVisible_Final, Is.False);
 
-		Assert.AreEqual(string.Empty, gitHubAliasLabelText_Initial);
-		Assert.AreEqual("@" + DemoUserConstants.Alias, gitHubAliasLabelText_Final);
-		Assert.AreEqual(gitHubAliasLabelText_Final, "@" + gitHubUserService.Alias);
+			Assert.That(gitHubAliasLabelText_Initial, Is.EqualTo(string.Empty));
+			Assert.That($"@{DemoUserConstants.Alias}", Is.EqualTo(gitHubAliasLabelText_Final));
+			Assert.That(gitHubAliasLabelText_Final, Is.EqualTo("@" + gitHubUserService.Alias));
 
-		Assert.AreEqual(GitHubLoginButtonConstants.NotLoggedIn, gitHubNameLabelText_Initial);
-		Assert.AreEqual(DemoUserConstants.Name, gitHubNameLabelText_Final);
-		Assert.AreEqual(gitHubNameLabelText_Final, gitHubUserService.Name);
+			Assert.That(GitHubLoginButtonConstants.NotLoggedIn, Is.EqualTo(gitHubNameLabelText_Initial));
+			Assert.That(DemoUserConstants.Name, Is.EqualTo(gitHubNameLabelText_Final));
+			Assert.That(gitHubNameLabelText_Final, Is.EqualTo(gitHubUserService.Name));
 
-		Assert.AreEqual("DefaultProfileImage", gitHubAvatarImageSource_Initial);
-		Assert.AreEqual("GitTrends", gitHubAvatarImageSource_Final);
-		Assert.AreEqual(gitHubAvatarImageSource_Final, BaseTheme.GetGitTrendsImageSource());
+			Assert.That(gitHubAvatarImageSource_Initial, Is.EqualTo("DefaultProfileImage"));
+			Assert.That(gitHubAvatarImageSource_Final, Is.EqualTo("GitTrends"));
+			Assert.That(gitHubAvatarImageSource_Final, Is.EqualTo(BaseTheme.GetGitTrendsImageSource()));
 
-		Assert.AreEqual(loginLabelText_Initial, GitHubLoginButtonConstants.ConnectToGitHub);
-		Assert.AreEqual(loginLabelText_Final, GitHubLoginButtonConstants.Disconnect);
+			Assert.That(loginLabelText_Initial, Is.EqualTo(GitHubLoginButtonConstants.ConnectToGitHub));
+			Assert.That(loginLabelText_Final, Is.EqualTo(GitHubLoginButtonConstants.Disconnect));
+		});
 	}
 
 	[Test]
@@ -191,22 +200,25 @@ class SettingsViewModelTests : BaseTest
 		isDemoButtonVisible_AfterCommand = settingsViewModel.IsDemoButtonVisible;
 
 		//Assert
-		Assert.IsTrue(didOpenAsyncFire);
+		Assert.Multiple(() =>
+		{
+			Assert.That(didOpenAsyncFire);
 
-		Assert.IsFalse(isAuthenticating_BeforeCommand);
-		Assert.True(isNotAuthenticating_BeforeCommand);
-		Assert.True(isDemoButtonVisible_BeforeCommand);
+			Assert.That(isAuthenticating_BeforeCommand, Is.False);
+			Assert.That(isNotAuthenticating_BeforeCommand);
+			Assert.That(isDemoButtonVisible_BeforeCommand);
 
-		Assert.IsTrue(isAuthenticating_DuringCommand);
-		Assert.IsFalse(isNotAuthenticating_DuringCommand);
-		Assert.False(isDemoButtonVisible_DuringCommand);
+			Assert.That(isAuthenticating_DuringCommand);
+			Assert.That(isNotAuthenticating_DuringCommand, Is.False);
+			Assert.That(isDemoButtonVisible_DuringCommand, Is.False);
 
-		Assert.IsFalse(isAuthenticating_AfterCommand);
-		Assert.True(isNotAuthenticating_AfterCommand);
-		Assert.True(isDemoButtonVisible_AfterCommand);
+			Assert.That(isAuthenticating_AfterCommand, Is.False);
+			Assert.That(isNotAuthenticating_AfterCommand);
+			Assert.That(isDemoButtonVisible_AfterCommand);
 
-		Assert.IsTrue(openedUrl.Contains($"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id="));
-		Assert.IsTrue(openedUrl.Contains($"&scope={GitHubConstants.OAuthScope}&state="));
+			Assert.That(openedUrl, Does.Contain($"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id="));
+			Assert.That(openedUrl, Does.Contain($"&scope={GitHubConstants.OAuthScope}&state="));
+		});
 
 		void HandleOpenAsyncExecuted(object? sender, Uri e)
 		{
@@ -241,12 +253,15 @@ class SettingsViewModelTests : BaseTest
 		themePickerItemSource_Final = settingsViewModel.ThemePickerItemsSource;
 
 		//Assert
-		Assert.AreEqual(Enum.GetNames(typeof(PreferredTheme)), themePickerItemSource_Initial);
-		Assert.AreEqual(themePickerItemSource_Initial, themePickerItemSource_Final);
+		Assert.Multiple(() =>
+		{
+			Assert.That(Enum.GetNames(typeof(PreferredTheme)), Is.EqualTo(themePickerItemSource_Initial));
+			Assert.That(themePickerItemSource_Initial, Is.EqualTo(themePickerItemSource_Final));
 
-		Assert.AreEqual(PreferredTheme.Dark, (PreferredTheme)themePickerIndex_AfterDarkTheme);
-		Assert.AreEqual(PreferredTheme.Light, (PreferredTheme)themePickerIndex_AfterLightTheme);
-		Assert.AreEqual(PreferredTheme.Default, (PreferredTheme)themePickerIndex_AfterDefaultTheme);
+			Assert.That((PreferredTheme)themePickerIndex_AfterDarkTheme, Is.EqualTo(PreferredTheme.Dark));
+			Assert.That((PreferredTheme)themePickerIndex_AfterLightTheme, Is.EqualTo(PreferredTheme.Light));
+			Assert.That((PreferredTheme)themePickerIndex_AfterDefaultTheme, Is.EqualTo(PreferredTheme.Default));
+		});
 	}
 
 
@@ -266,7 +281,7 @@ class SettingsViewModelTests : BaseTest
 		await openAsyncTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsTrue(didOpenAsyncFire);
+		Assert.That(didOpenAsyncFire);
 
 		void HandleOpenAsyncExecuted(object? sender, EventArgs e)
 		{
@@ -313,13 +328,16 @@ class SettingsViewModelTests : BaseTest
 		isShouldIncludeOrganizationsSwitchToggled_Final = settingsViewModel.IsShouldIncludeOrganizationsSwitchToggled;
 
 		//Assert
-		Assert.IsFalse(isShouldIncludeOrganizationsSwitchEnabled_Initial);
-		Assert.IsFalse(isShouldIncludeOrganizationsSwitchToggled_Initial);
+		Assert.Multiple(() =>
+		{
+			Assert.That(isShouldIncludeOrganizationsSwitchEnabled_Initial, Is.False);
+			Assert.That(isShouldIncludeOrganizationsSwitchToggled_Initial, Is.False);
 
-		Assert.IsTrue(isShouldIncludeOrganizationsSwitchEnabled_Final);
-		Assert.IsTrue(isShouldIncludeOrganizationsSwitchToggled_Final);
+			Assert.That(isShouldIncludeOrganizationsSwitchEnabled_Final);
+			Assert.That(isShouldIncludeOrganizationsSwitchToggled_Final);
 
-		Assert.IsTrue(organizationsCarouselViewVisiblilityChangedResult);
+			Assert.That(organizationsCarouselViewVisiblilityChangedResult);
+		});
 
 		void HandleOrganizationsCarouselViewVisiblilityChanged(object? sender, bool e)
 		{

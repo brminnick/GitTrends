@@ -30,11 +30,13 @@ class GitHubUserServiceTests : BaseTest
 		alias_Final = gitHubUserService.Alias;
 
 		//Assert
-		Assert.IsTrue(didAliasChangedFire);
-		Assert.AreEqual(string.Empty, alias_Initial);
-		Assert.AreEqual(GitHubConstants.GitTrendsRepoOwner, alias_Final);
-		Assert.AreEqual(alias_Final, aliasChangedResult);
-
+		Assert.Multiple(() =>
+		{
+			Assert.That(didAliasChangedFire, Is.True);
+			Assert.That(alias_Initial, Is.EqualTo(string.Empty));
+			Assert.That(alias_Final, Is.EqualTo(GitHubConstants.GitTrendsRepoOwner));
+			Assert.That(aliasChangedResult, Is.EqualTo(alias_Final));
+		});
 
 		void HandleAliasChanged(object? sender, string e)
 		{
@@ -66,12 +68,14 @@ class GitHubUserServiceTests : BaseTest
 		nameChangedResult = await nameChangedTCS.Task.ConfigureAwait(false);
 		name_Final = gitHubUserService.Name;
 
-		//Assert
-		Assert.IsTrue(didNameChangedFire);
-		Assert.AreEqual(string.Empty, name_Initial);
-		Assert.AreEqual(expectedName, name_Final);
-		Assert.AreEqual(name_Final, nameChangedResult);
-
+		Assert.Multiple(() =>
+		{
+			//Assert
+			Assert.That(didNameChangedFire, Is.True);
+			Assert.That(name_Initial, Is.EqualTo(string.Empty));
+			Assert.That(name_Final, Is.EqualTo(expectedName));
+			Assert.That(nameChangedResult, Is.EqualTo(name_Final));
+		});
 
 		void HandleNameChanged(object? sender, string e)
 		{
@@ -101,12 +105,14 @@ class GitHubUserServiceTests : BaseTest
 		avatarUrlChangedResult = await avatarUrlChangedTCS.Task.ConfigureAwait(false);
 		avatarUrl_Final = gitHubUserService.AvatarUrl;
 
-		//Assert
-		Assert.IsTrue(didAvatarUrlChangedFire);
-		Assert.AreEqual(string.Empty, avatarUrl_Initial);
-		Assert.AreEqual(AuthenticatedGitHubUserAvatarUrl, avatarUrl_Final);
-		Assert.AreEqual(avatarUrl_Final, avatarUrlChangedResult);
-
+		Assert.Multiple(() =>
+		{
+			//Assert
+			Assert.That(didAvatarUrlChangedFire);
+			Assert.That(avatarUrl_Initial, Is.EqualTo(string.Empty));
+			Assert.That(avatarUrl_Final, Is.EqualTo(AuthenticatedGitHubUserAvatarUrl));
+			Assert.That(avatarUrlChangedResult, Is.EqualTo(avatarUrl_Final));
+		});
 
 		void HandleAvatarUrlChanged(object? sender, string e)
 		{
@@ -129,13 +135,16 @@ class GitHubUserServiceTests : BaseTest
 		var retrievedToken = await gitHubUserService.GetGitHubToken().ConfigureAwait(false);
 
 		//Assert
-		Assert.AreEqual(_token, retrievedToken.AccessToken);
-		Assert.AreEqual(_scope, retrievedToken.Scope);
-		Assert.AreEqual(_tokenType, retrievedToken.TokenType);
+		Assert.Multiple(() =>
+		{
+			Assert.That(retrievedToken.AccessToken, Is.EqualTo(_token));
+			Assert.That(retrievedToken.Scope, Is.EqualTo(_scope));
+			Assert.That(retrievedToken.TokenType, Is.EqualTo(_tokenType));
 
-		Assert.AreEqual(gitHubToken.AccessToken, retrievedToken.AccessToken);
-		Assert.AreEqual(gitHubToken.Scope, retrievedToken.Scope);
-		Assert.AreEqual(gitHubToken.TokenType, retrievedToken.TokenType);
+			Assert.That(retrievedToken.AccessToken, Is.EqualTo(gitHubToken.AccessToken));
+			Assert.That(retrievedToken.Scope, Is.EqualTo(gitHubToken.Scope));
+			Assert.That(retrievedToken.TokenType, Is.EqualTo(gitHubToken.TokenType));
+		});
 	}
 
 	[Test]
@@ -152,9 +161,12 @@ class GitHubUserServiceTests : BaseTest
 		var retrievedToken = await gitHubUserService.GetGitHubToken().ConfigureAwait(false);
 
 		//Assert
-		Assert.AreEqual(GitHubToken.Empty.AccessToken, retrievedToken.AccessToken);
-		Assert.AreEqual(GitHubToken.Empty.Scope, retrievedToken.Scope);
-		Assert.AreEqual(GitHubToken.Empty.TokenType, retrievedToken.TokenType);
+		Assert.Multiple(() =>
+		{
+			Assert.That(retrievedToken.AccessToken, Is.EqualTo(GitHubToken.Empty.AccessToken));
+			Assert.That(retrievedToken.Scope, Is.EqualTo(GitHubToken.Empty.Scope));
+			Assert.That(retrievedToken.TokenType, Is.EqualTo(GitHubToken.Empty.TokenType));
+		});
 	}
 
 	[Test]
@@ -173,14 +185,17 @@ class GitHubUserServiceTests : BaseTest
 
 		token_AfterInvalidation = await gitHubUserService.GetGitHubToken().ConfigureAwait(false);
 
-		//Assert
-		Assert.AreEqual(_token, token_BeforeInvalidation.AccessToken);
-		Assert.AreEqual(_scope, token_BeforeInvalidation.Scope);
-		Assert.AreEqual(_tokenType, token_BeforeInvalidation.TokenType);
+		Assert.Multiple(() =>
+		{
+			//Assert
+			Assert.That(token_BeforeInvalidation.AccessToken, Is.EqualTo(_token));
+			Assert.That(token_BeforeInvalidation.Scope, Is.EqualTo(_scope));
+			Assert.That(token_BeforeInvalidation.TokenType, Is.EqualTo(_tokenType));
 
-		Assert.AreEqual(GitHubToken.Empty.AccessToken, token_AfterInvalidation.AccessToken);
-		Assert.AreEqual(GitHubToken.Empty.Scope, token_AfterInvalidation.Scope);
-		Assert.AreEqual(GitHubToken.Empty.TokenType, token_AfterInvalidation.TokenType);
+			Assert.That(token_AfterInvalidation.AccessToken, Is.EqualTo(GitHubToken.Empty.AccessToken));
+			Assert.That(token_AfterInvalidation.Scope, Is.EqualTo(GitHubToken.Empty.Scope));
+			Assert.That(token_AfterInvalidation.TokenType, Is.EqualTo(GitHubToken.Empty.TokenType));
+		});
 	}
 
 	[Test]
@@ -202,9 +217,12 @@ class GitHubUserServiceTests : BaseTest
 		shouldIncludeOrganizations_Final = gitHubUserService.ShouldIncludeOrganizations;
 
 		//Assert
-		Assert.IsFalse(shouldIncludeOrganizations_Initial);
-		Assert.IsTrue(shouldIncludeOrganizationsChangedResult);
-		Assert.IsTrue(shouldIncludeOrganizations_Final);
+		Assert.Multiple(() =>
+		{
+			Assert.That(shouldIncludeOrganizations_Initial, Is.False);
+			Assert.That(shouldIncludeOrganizationsChangedResult);
+			Assert.That(shouldIncludeOrganizations_Final);
+		});
 
 		void HandleShouldIncludeOrganizationsChanged(object? sender, bool e)
 		{

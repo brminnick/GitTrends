@@ -17,10 +17,13 @@ class SyncfusionServiceTests : BaseTest
 		license_final = await syncfusionService.GetLicense().ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNull(license_initial);
-		Assert.IsNotNull(license_final);
-		Assert.IsTrue(IsBase64String(license_final ?? throw new InvalidOperationException($"{nameof(license_final)} cannot be null")));
-		Assert.Greater(SyncfusionService.AssemblyVersionNumber, 0);
+		Assert.Multiple(() =>
+		{
+			Assert.That(license_initial, Is.Null);
+			Assert.That(license_final, Is.Not.Null);
+			Assert.That(IsBase64String(license_final ?? throw new InvalidOperationException($"{nameof(license_final)} cannot be null")), Is.True);
+			Assert.That(SyncfusionService.AssemblyVersionNumber, Is.GreaterThan(0));
+		});
 	}
 
 	static bool IsBase64String(string text)

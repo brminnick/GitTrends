@@ -21,7 +21,10 @@ class ThemeServiceTests : BaseTest
 		preferredTheme_Final = themeService.Preference;
 
 		//Assert
-		Assert.AreEqual(PreferredTheme.Default, preferredTheme_Initial);
-		Assert.AreEqual(expectedFinalPreferredTheme, preferredTheme_Final);
+		Assert.Multiple(() =>
+		{
+			Assert.That(preferredTheme_Initial, Is.EqualTo(PreferredTheme.Default));
+			Assert.That(preferredTheme_Final, Is.EqualTo(expectedFinalPreferredTheme));
+		});
 	}
 }

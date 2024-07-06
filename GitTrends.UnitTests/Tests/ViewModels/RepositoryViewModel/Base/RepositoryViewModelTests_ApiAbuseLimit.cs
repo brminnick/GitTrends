@@ -46,18 +46,21 @@ abstract class RepositoryViewModelTests_AbuseLimit : BaseTest
 
 		gitHubApiAbuseLimitCount_Final = gitHubUserService.GitHubApiAbuseLimitCount;
 
-		//Assert
-		Assert.IsEmpty(visibleRepositoryList_Initial);
+		Assert.Multiple(() =>
+		{
+			//Assert
+			Assert.That(visibleRepositoryList_Initial, Is.Empty);
 
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true), emptyDataViewTitle_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.AbuseLimit, !visibleRepositoryList_Final.Any()), emptyDataViewTitle_Final);
+			Assert.That(emptyDataViewTitle_Initial, Is.EqualTo(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true)));
+			Assert.That(emptyDataViewTitle_Final, Is.EqualTo(EmptyDataViewService.GetRepositoryTitleText(RefreshState.AbuseLimit, !visibleRepositoryList_Final.Any())));
 
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.AbuseLimit, !visibleRepositoryList_Final.Any()), emptyDataViewDescription_Final);
+			Assert.That(emptyDataViewDescription_Initial, Is.EqualTo(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true)));
+			Assert.That(emptyDataViewDescription_Final, Is.EqualTo(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.AbuseLimit, !visibleRepositoryList_Final.Any())));
 
-		Assert.IsInstanceOf<AbuseLimitPullToRefreshEventArgs>(pullToRefreshFailedEventArgs);
-		Assert.AreEqual(0, gitHubApiAbuseLimitCount_Initial);
-		Assert.Greater(gitHubApiAbuseLimitCount_Final, 0);
+			Assert.That(pullToRefreshFailedEventArgs, Is.InstanceOf<AbuseLimitPullToRefreshEventArgs>());
+			Assert.That(gitHubApiAbuseLimitCount_Initial, Is.EqualTo(0));
+			Assert.That(gitHubApiAbuseLimitCount_Final, Is.GreaterThan(0));
+		});
 
 		void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
 		{

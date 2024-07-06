@@ -51,22 +51,25 @@ class ReferringSitesViewModelTests_AbuseApiLimit : BaseTest
 
 		pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
 
-		//Asset
-		Assert.IsFalse(isEmptyDataViewEnabled_Initial);
-		Assert.IsFalse(isEmptyDataViewEnabled_DuringRefresh);
-		Assert.True(isEmptyDataViewEnabled_Final);
+		//Assert
+		Assert.Multiple(() =>
+		{
+			Assert.That(isEmptyDataViewEnabled_Initial, Is.False);
+			Assert.That(isEmptyDataViewEnabled_DuringRefresh, Is.False);
+			Assert.That(isEmptyDataViewEnabled_Final);
 
-		Assert.IsEmpty(mobileReferringSites_Initial);
-		Assert.IsEmpty(mobileReferringSites_DuringRefresh);
-		Assert.IsEmpty(mobileReferringSites_Final);
+			Assert.That(mobileReferringSites_Initial, Is.Empty);
+			Assert.That(mobileReferringSites_DuringRefresh, Is.Empty);
+			Assert.That(mobileReferringSites_Final, Is.Empty);
 
-		Assert.AreEqual(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.AbuseLimit), emptyDataViewTitle_Final);
-		Assert.AreEqual(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Uninitialized), emptyDataViewTitle_Initial);
+			Assert.That(emptyDataViewTitle_Final, Is.EqualTo(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.AbuseLimit)));
+			Assert.That(emptyDataViewTitle_Initial, Is.EqualTo(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Uninitialized)));
 
-		Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.AbuseLimit), emptyDataViewDescription_Final);
-		Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Uninitialized), emptyDataViewDescription_Initial);
+			Assert.That(emptyDataViewDescription_Final, Is.EqualTo(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.AbuseLimit)));
+			Assert.That(emptyDataViewDescription_Initial, Is.EqualTo(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Uninitialized)));
 
-		Assert.IsInstanceOf<AbuseLimitPullToRefreshEventArgs>(pullToRefreshFailedEventArgs);
+			Assert.That(pullToRefreshFailedEventArgs, Is.InstanceOf<AbuseLimitPullToRefreshEventArgs>());
+		});
 
 		void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
 		{
@@ -78,13 +81,18 @@ class ReferringSitesViewModelTests_AbuseApiLimit : BaseTest
 	protected override void InitializeServiceCollection(GitHubToken token)
 	{
 		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(CreateAbuseApiLimitHttpClient(GitHubConstants.GitHubRestApiUrl));
-		
-		var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(new HttpClient
+
+		var handler = new HttpClientHandler
+		{
+			AutomaticDecompression = GetDecompressionMethods()
+		};
+
+		var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(new HttpClient(handler)
 		{
 			BaseAddress = new(GitHubConstants.GitHubGraphQLApi)
 		});
 
-		var azureFunctionsClient = RestService.For<IAzureFunctionsApi>(new HttpClient
+		var azureFunctionsClient = RestService.For<IAzureFunctionsApi>(new HttpClient(handler)
 		{
 			BaseAddress = new(AzureConstants.AzureFunctionsApiUrl)
 		});

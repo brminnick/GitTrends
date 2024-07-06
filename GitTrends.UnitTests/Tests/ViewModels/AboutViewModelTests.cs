@@ -11,12 +11,15 @@ class AboutViewModelTests : BaseTest
 		//Act
 
 		//Assert
-		Assert.IsNull(aboutViewModel.Watchers);
-		Assert.IsNull(aboutViewModel.Stars);
-		Assert.IsNull(aboutViewModel.Forks);
+		Assert.Multiple(() =>
+		{
+			Assert.That(aboutViewModel.Watchers, Is.Null);
+			Assert.That(aboutViewModel.Stars, Is.Null);
+			Assert.That(aboutViewModel.Forks, Is.Null);
 
-		Assert.IsEmpty(aboutViewModel.InstalledLibraries);
-		Assert.IsEmpty(aboutViewModel.GitTrendsContributors);
+			Assert.That(aboutViewModel.InstalledLibraries, Is.Empty);
+			Assert.That(aboutViewModel.GitTrendsContributors, Is.Empty);
+		});
 	}
 
 	[Test]
@@ -30,15 +33,18 @@ class AboutViewModelTests : BaseTest
 		//Act
 
 		//Assert
-		Assert.IsNotNull(aboutViewModel.Watchers);
-		Assert.IsNotNull(aboutViewModel.Stars);
-		Assert.IsNotNull(aboutViewModel.Forks);
-		Assert.IsNotEmpty(aboutViewModel.GitTrendsContributors);
+		Assert.Multiple(() =>
+		{
+			Assert.That(aboutViewModel.Watchers, Is.Not.Null);
+			Assert.That(aboutViewModel.Stars, Is.Not.Null);
+			Assert.That(aboutViewModel.Forks, Is.Not.Null);
+			Assert.That(aboutViewModel.GitTrendsContributors, Is.Not.Empty);
 
-		Assert.Greater(aboutViewModel.Watchers, 0);
-		Assert.Greater(aboutViewModel.Stars, 0);
-		Assert.Greater(aboutViewModel.Forks, 0);
-		Assert.Greater(aboutViewModel.GitTrendsContributors.Count, 0);
+			Assert.That(aboutViewModel.Watchers, Is.GreaterThan(0));
+			Assert.That(aboutViewModel.Stars, Is.GreaterThan(0));
+			Assert.That(aboutViewModel.Forks, Is.GreaterThan(0));
+			Assert.That(aboutViewModel.GitTrendsContributors, Is.Not.Empty);
+		});
 	}
 
 	[Test]
@@ -53,8 +59,7 @@ class AboutViewModelTests : BaseTest
 		//Act
 
 		//Assert
-		Assert.IsNotEmpty(aboutViewModel.InstalledLibraries);
-		Assert.Greater(aboutViewModel.InstalledLibraries.Count, 0);
+		Assert.That(aboutViewModel.InstalledLibraries, Is.Not.Empty);
 	}
 
 	[Test]
@@ -77,9 +82,12 @@ class AboutViewModelTests : BaseTest
 		var openedBrowserUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsTrue(didBrowserOpen);
-		Assert.IsNotNull(gitTrendsStatisticsService.GitHubUri);
-		Assert.AreEqual(gitTrendsStatisticsService.GitHubUri, openedBrowserUri);
+		Assert.Multiple(() =>
+		{
+			Assert.That(didBrowserOpen);
+			Assert.That(gitTrendsStatisticsService.GitHubUri, Is.Not.Null);
+			Assert.That(openedBrowserUri, Is.EqualTo(gitTrendsStatisticsService.GitHubUri));
+		});
 
 		void HandleOpenAsyncExecuted(object? sender, Uri e)
 		{
@@ -110,9 +118,12 @@ class AboutViewModelTests : BaseTest
 		var openedBrowserUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsTrue(didBrowserOpen);
-		Assert.IsNotNull(gitTrendsStatisticsService.GitHubUri);
-		Assert.AreEqual(new Uri(gitTrendsStatisticsService.GitHubUri + "/issues/new?template=feature_request.md"), openedBrowserUri);
+		Assert.Multiple(() =>
+		{
+			Assert.That(didBrowserOpen);
+			Assert.That(gitTrendsStatisticsService.GitHubUri, Is.Not.Null);
+			Assert.That(openedBrowserUri, Is.EqualTo(new Uri(gitTrendsStatisticsService.GitHubUri + "/issues/new?template=feature_request.md")));
+		});
 
 		void HandleOpenAsyncExecuted(object? sender, Uri e)
 		{

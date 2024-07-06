@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Net;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
@@ -12,6 +13,8 @@ abstract class BaseTest : IDisposable
 	protected static string AuthenticatedGitHubUserAvatarUrl { get; } = "https://avatars.githubusercontent.com/u/13558917?u=6e0d77ca0420f418c8ad5110cb155dea5d427a35&v=4";
 	protected CancellationTokenSource TestCancellationTokenSource { get; private set; } = new();
 
+	public static DecompressionMethods GetDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.Brotli;
+	
 	public void Dispose()
 	{
 		Dispose(true);
@@ -119,7 +122,7 @@ abstract class BaseTest : IDisposable
 	{
 		var handler = new HttpClientHandler
 		{
-			AutomaticDecompression = ServiceCollection.GetDecompressionMethods()
+			AutomaticDecompression = GetDecompressionMethods()
 		};
 		
 		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(new HttpClient(handler)

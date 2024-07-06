@@ -41,7 +41,7 @@ class ResxTests : BaseTest
 			foreach (var cultureName in cultureNames)
 			{
 				//Assert
-				Assert.IsTrue(resxCultureInfoList.Any(x => x.Name == cultureName));
+				Assert.That(resxCultureInfoList.Any(x => x.Name == cultureName));
 			}
 		}
 	}
@@ -102,9 +102,12 @@ class ResxTests : BaseTest
 		}
 
 		//Assert
-		Assert.IsEmpty(filesWithExtraEntries, "Extra Translations Found", filesWithExtraEntries);
-		Assert.IsEmpty(filesWithMissingEntryData, "Missing Data Found", filesWithMissingEntryData);
-		Assert.IsEmpty(filesWithMissingEntryValue, "Missing Values Found", filesWithMissingEntryValue);
+		Assert.Multiple(() =>
+		{
+			Assert.That(filesWithExtraEntries, Is.Empty); // Extra Translations Found
+			Assert.That(filesWithMissingEntryData, Is.Empty); // Missing Data Found
+			Assert.That(filesWithMissingEntryValue, Is.Empty); // Missing Values Found
+		});
 	}
 
 	static List<ResxEntryModel> GetDefaultResx(in List<ResxFile> resxFiles) => resxFiles.First(static x => x.Language is "").Entries;
@@ -113,11 +116,14 @@ class ResxTests : BaseTest
 	static CultureInfo[] GetAvailableResxCultureInfos(Assembly assembly)
 	{
 		// must have invariant culture
-		var assemblyResxCultures = new HashSet<CultureInfo> { CultureInfo.InvariantCulture };
+		var assemblyResxCultures = new HashSet<CultureInfo>
+		{
+			CultureInfo.InvariantCulture
+		};
 
-		string[] names = assembly.GetManifestResourceNames();
+		var names = assembly.GetManifestResourceNames();
 
-		if (names is not null && names.Length > 0)
+		if (names.Length > 0)
 		{
 			var allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
 
@@ -313,7 +319,7 @@ class ResxTests : BaseTest
 
 	class ResxFile(in string language)
 	{
-		public ResxFile(in string language, in IEnumerable<ResxEntryModel> resxEntryModels) 
+		public ResxFile(in string language, in IEnumerable<ResxEntryModel> resxEntryModels)
 			: this(language) => Entries.AddRange(resxEntryModels);
 
 		public string Language { get; } = language;

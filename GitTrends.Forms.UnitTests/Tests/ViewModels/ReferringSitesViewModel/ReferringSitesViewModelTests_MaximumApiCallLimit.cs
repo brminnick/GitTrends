@@ -58,7 +58,7 @@ namespace GitTrends.UnitTests
 
 			pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
 
-			//Asset
+			//Assert
 			Assert.IsFalse(isEmptyDataViewEnabled_Initial);
 			Assert.IsFalse(isEmptyDataViewEnabled_DuringRefresh);
 			Assert.True(isEmptyDataViewEnabled_Final);

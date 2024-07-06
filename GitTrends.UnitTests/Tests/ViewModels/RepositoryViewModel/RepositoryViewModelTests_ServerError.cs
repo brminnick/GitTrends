@@ -58,42 +58,46 @@ class RepositoryViewModelTests_ServerError : BaseTest
 		pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsEmpty(visibleRepositoryList_Initial);
-		Assert.IsNotEmpty(visibleRepositoryList_Final);
-
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true), emptyDataViewTitle_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Error, false), emptyDataViewTitle_Final);
-
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Error, false), emptyDataViewDescription_Final);
-
-		Assert.IsInstanceOf<ErrorPullToRefreshEventArgs>(pullToRefreshFailedEventArgs);
-
-		foreach (var visibleRepository in visibleRepositoryList_Final)
+		Assert.Multiple(() =>
 		{
-			//Ensure visibleRepositoryList_Final matches the generatedRepositories
-			var matchingRepository = generatedRepositories.Single(x => x.Url == visibleRepository.Url);
+			Assert.That(visibleRepositoryList_Initial, Is.Empty);
+			Assert.That(visibleRepositoryList_Final, Is.Not.Empty);
 
-			Assert.AreEqual(visibleRepository.DailyClonesList?.Count, matchingRepository.DailyClonesList?.Count);
-			Assert.AreEqual(visibleRepository.DailyViewsList?.Count, matchingRepository.DailyViewsList?.Count);
-			Assert.AreEqual(visibleRepository.DataDownloadedAt, matchingRepository.DataDownloadedAt);
-			Assert.AreEqual(visibleRepository.Description, matchingRepository.Description);
-			Assert.AreEqual(visibleRepository.ForkCount, matchingRepository.ForkCount);
-			Assert.AreEqual(visibleRepository.IsFavorite, matchingRepository.IsFavorite);
-			Assert.AreEqual(visibleRepository.IsFork, matchingRepository.IsFork);
-			Assert.AreEqual(visibleRepository.IssuesCount, matchingRepository.IssuesCount);
-			Assert.AreEqual(visibleRepository.IsTrending, matchingRepository.IsTrending);
-			Assert.AreEqual(visibleRepository.Name, matchingRepository.Name);
-			Assert.AreEqual(visibleRepository.OwnerAvatarUrl, matchingRepository.OwnerAvatarUrl);
-			Assert.AreEqual(visibleRepository.OwnerLogin, matchingRepository.OwnerLogin);
-			Assert.AreEqual(visibleRepository.StarCount, matchingRepository.StarCount);
-			Assert.AreEqual(visibleRepository.StarredAt?.Count, matchingRepository.StarredAt?.Count);
-			Assert.AreEqual(visibleRepository.TotalClones, matchingRepository.TotalClones);
-			Assert.AreEqual(visibleRepository.TotalUniqueClones, matchingRepository.TotalUniqueClones);
-			Assert.AreEqual(visibleRepository.TotalUniqueViews, matchingRepository.TotalUniqueViews);
-			Assert.AreEqual(visibleRepository.TotalViews, matchingRepository.TotalViews);
-			Assert.AreEqual(visibleRepository.Url, matchingRepository.Url);
-		}
+			Assert.That(emptyDataViewTitle_Initial, Is.EqualTo(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true)));
+			Assert.That(emptyDataViewTitle_Final, Is.EqualTo(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Error, false)));
+
+			Assert.That(emptyDataViewDescription_Initial, Is.EqualTo(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true)));
+			Assert.That(emptyDataViewDescription_Final, Is.EqualTo(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Error, false)));
+
+			Assert.That(pullToRefreshFailedEventArgs, Is.InstanceOf<ErrorPullToRefreshEventArgs>());
+
+
+			foreach (var visibleRepository in visibleRepositoryList_Final)
+			{
+				//Ensure visibleRepositoryList_Final matches the generatedRepositories
+				var matchingRepository = generatedRepositories.Single(x => x.Url == visibleRepository.Url);
+
+				Assert.That(matchingRepository.DailyClonesList?.Count, Is.EqualTo(visibleRepository.DailyClonesList?.Count));
+				Assert.That(matchingRepository.DailyViewsList?.Count, Is.EqualTo(visibleRepository.DailyViewsList?.Count));
+				Assert.That(matchingRepository.DataDownloadedAt, Is.EqualTo(visibleRepository.DataDownloadedAt));
+				Assert.That(matchingRepository.Description, Is.EqualTo(visibleRepository.Description));
+				Assert.That(matchingRepository.ForkCount, Is.EqualTo(visibleRepository.ForkCount));
+				Assert.That(matchingRepository.IsFavorite, Is.EqualTo(visibleRepository.IsFavorite));
+				Assert.That(matchingRepository.IsFork, Is.EqualTo(visibleRepository.IsFork));
+				Assert.That(matchingRepository.IssuesCount, Is.EqualTo(visibleRepository.IssuesCount));
+				Assert.That(matchingRepository.IsTrending, Is.EqualTo(visibleRepository.IsTrending));
+				Assert.That(matchingRepository.Name, Is.EqualTo(visibleRepository.Name));
+				Assert.That(matchingRepository.OwnerAvatarUrl, Is.EqualTo(visibleRepository.OwnerAvatarUrl));
+				Assert.That(matchingRepository.OwnerLogin, Is.EqualTo(visibleRepository.OwnerLogin));
+				Assert.That(matchingRepository.StarCount, Is.EqualTo(visibleRepository.StarCount));
+				Assert.That(matchingRepository.StarredAt?.Count, Is.EqualTo(visibleRepository.StarredAt?.Count));
+				Assert.That(matchingRepository.TotalClones, Is.EqualTo(visibleRepository.TotalClones));
+				Assert.That(matchingRepository.TotalUniqueClones, Is.EqualTo(visibleRepository.TotalUniqueClones));
+				Assert.That(matchingRepository.TotalUniqueViews, Is.EqualTo(visibleRepository.TotalUniqueViews));
+				Assert.That(matchingRepository.TotalViews, Is.EqualTo(visibleRepository.TotalViews));
+				Assert.That(matchingRepository.Url, Is.EqualTo(visibleRepository.Url));
+			}
+		});
 
 		void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
 		{
@@ -104,14 +108,19 @@ class RepositoryViewModelTests_ServerError : BaseTest
 
 	protected override void InitializeServiceCollection(GitHubToken token)
 	{
+		var handler = new HttpClientHandler
+		{
+			AutomaticDecompression = GetDecompressionMethods()
+		};
+
 		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(CreateServerErrorHttpClient(GitHubConstants.GitHubRestApiUrl));
 
-		var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(new HttpClient
+		var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(new HttpClient(handler)
 		{
 			BaseAddress = new(GitHubConstants.GitHubGraphQLApi)
 		});
-		
-		var azureFunctionsClient = RestService.For<IAzureFunctionsApi>(new HttpClient
+
+		var azureFunctionsClient = RestService.For<IAzureFunctionsApi>(new HttpClient(handler)
 		{
 			BaseAddress = new(AzureConstants.AzureFunctionsApiUrl)
 		});

@@ -53,70 +53,73 @@ class MediaElementServiceTest : BaseTest
 		getEnableOrganizationsUrlResponse_DashUrl = await httpClient.GetAsync(enableOrganizationsStreamingManifest_AfterInitialization?.DashUrl);
 		getEnableOrganizationsUrlResponse_ManifestUrl = await httpClient.GetAsync(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl);
 
-		//Assert
-		Assert.IsNull(onboardingChartStreamingManifest_BeforeInitialization);
-		Assert.IsNotNull(onboardingChartStreamingManifest_EventHandlerResult);
-		Assert.IsNotNull(onboardingChartStreamingManifest_AfterInitialization);
+		Assert.Multiple(() =>
+		{
+			//Assert
+			Assert.That(onboardingChartStreamingManifest_BeforeInitialization, Is.Null);
+			Assert.That(onboardingChartStreamingManifest_EventHandlerResult, Is.Not.Null);
+			Assert.That(onboardingChartStreamingManifest_AfterInitialization, Is.Not.Null);
 
-		Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_EventHandlerResult?.HlsUrl, UriKind.Absolute));
-		Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_EventHandlerResult?.DashUrl, UriKind.Absolute));
-		Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_EventHandlerResult?.ManifestUrl, UriKind.Absolute));
+			Assert.That(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_EventHandlerResult?.HlsUrl, UriKind.Absolute));
+			Assert.That(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_EventHandlerResult?.DashUrl, UriKind.Absolute));
+			Assert.That(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_EventHandlerResult?.ManifestUrl, UriKind.Absolute));
 
-		Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_AfterInitialization?.HlsUrl, UriKind.Absolute));
-		Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_AfterInitialization?.DashUrl, UriKind.Absolute));
-		Assert.IsTrue(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl, UriKind.Absolute));
+			Assert.That(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_AfterInitialization?.HlsUrl, UriKind.Absolute));
+			Assert.That(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_AfterInitialization?.DashUrl, UriKind.Absolute));
+			Assert.That(Uri.IsWellFormedUriString(onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl, UriKind.Absolute));
 
-		Assert.DoesNotThrow(() => getOnboardingChartUrlResponse_HLSUrl.EnsureSuccessStatusCode());
-		Assert.DoesNotThrow(() => getOnboardingChartUrlResponse_DashUrl.EnsureSuccessStatusCode());
-		Assert.DoesNotThrow(() => getOnboardingChartUrlResponse_ManifestUrl.EnsureSuccessStatusCode());
+			Assert.DoesNotThrow(() => getOnboardingChartUrlResponse_HLSUrl.EnsureSuccessStatusCode());
+			Assert.DoesNotThrow(() => getOnboardingChartUrlResponse_DashUrl.EnsureSuccessStatusCode());
+			Assert.DoesNotThrow(() => getOnboardingChartUrlResponse_ManifestUrl.EnsureSuccessStatusCode());
 
-		if (deviceInfo.Platform == DevicePlatform.Android)
-			Assert.AreEqual(onboardingChartStreamingManifest_AfterInitialization?.DashUrl, onboardingChartUrl_Final);
-		else if (deviceInfo.Platform == DevicePlatform.iOS)
-			Assert.AreEqual(onboardingChartStreamingManifest_AfterInitialization?.HlsUrl, onboardingChartUrl_Final);
-		else
-			throw new InvalidOperationException($"{deviceInfo.Platform} Not Under Test");
+			if (deviceInfo.Platform == DevicePlatform.Android)
+				Assert.That(onboardingChartUrl_Final, Is.EqualTo(onboardingChartStreamingManifest_AfterInitialization?.DashUrl));
+			else if (deviceInfo.Platform == DevicePlatform.iOS)
+				Assert.That(onboardingChartUrl_Final, Is.EqualTo(onboardingChartStreamingManifest_AfterInitialization?.HlsUrl));
+			else
+				throw new InvalidOperationException($"{deviceInfo.Platform} Not Under Test");
 
-		Assert.IsNull(enableOrganizationsStreamingManifest_BeforeInitialization);
-		Assert.IsNotNull(enableOrganizationsStreamingManifest_EventHandlerResult);
-		Assert.IsNotNull(enableOrganizationsStreamingManifest_AfterInitialization);
+			Assert.That(enableOrganizationsStreamingManifest_BeforeInitialization, Is.Null);
+			Assert.That(enableOrganizationsStreamingManifest_EventHandlerResult, Is.Not.Null);
+			Assert.That(enableOrganizationsStreamingManifest_AfterInitialization, Is.Not.Null);
 
-		Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_EventHandlerResult?.HlsUrl, UriKind.Absolute));
-		Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_EventHandlerResult?.DashUrl, UriKind.Absolute));
-		Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_EventHandlerResult?.ManifestUrl, UriKind.Absolute));
+			Assert.That(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_EventHandlerResult?.HlsUrl, UriKind.Absolute), Is.True);
+			Assert.That(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_EventHandlerResult?.DashUrl, UriKind.Absolute), Is.True);
+			Assert.That(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_EventHandlerResult?.ManifestUrl, UriKind.Absolute), Is.True);
 
-		Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl, UriKind.Absolute));
-		Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_AfterInitialization?.DashUrl, UriKind.Absolute));
-		Assert.IsTrue(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl, UriKind.Absolute));
+			Assert.That(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl, UriKind.Absolute));
+			Assert.That(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_AfterInitialization?.DashUrl, UriKind.Absolute));
+			Assert.That(Uri.IsWellFormedUriString(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl, UriKind.Absolute));
 
-		Assert.DoesNotThrow(() => getEnableOrganizationsUrlResponse_HLSUrl.EnsureSuccessStatusCode());
-		Assert.DoesNotThrow(() => getEnableOrganizationsUrlResponse_DashUrl.EnsureSuccessStatusCode());
-		Assert.DoesNotThrow(() => getEnableOrganizationsUrlResponse_ManifestUrl.EnsureSuccessStatusCode());
+			Assert.DoesNotThrow(() => getEnableOrganizationsUrlResponse_HLSUrl.EnsureSuccessStatusCode());
+			Assert.DoesNotThrow(() => getEnableOrganizationsUrlResponse_DashUrl.EnsureSuccessStatusCode());
+			Assert.DoesNotThrow(() => getEnableOrganizationsUrlResponse_ManifestUrl.EnsureSuccessStatusCode());
 
-		if (deviceInfo.Platform == DevicePlatform.Android)
-			Assert.AreEqual(enableOrganizationsStreamingManifest_AfterInitialization?.DashUrl, enableOrganizationsUrl_Final);
-		else if (deviceInfo.Platform == DevicePlatform.iOS)
-			Assert.AreEqual(enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl, enableOrganizationsUrl_Final);
-		else
-			throw new InvalidOperationException($"{deviceInfo.Platform} Not Under Test");
+			if (deviceInfo.Platform == DevicePlatform.Android)
+				Assert.That(enableOrganizationsUrl_Final, Is.EqualTo(enableOrganizationsStreamingManifest_AfterInitialization?.DashUrl));
+			else if (deviceInfo.Platform == DevicePlatform.iOS)
+				Assert.That(enableOrganizationsUrl_Final, Is.EqualTo(enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl));
+			else
+				throw new InvalidOperationException($"{deviceInfo.Platform} Not Under Test");
 
-		Assert.AreEqual(enableOrganizationsStreamingManifest_EventHandlerResult?.ManifestUrl, enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl);
-		Assert.AreEqual(onboardingChartStreamingManifest_EventHandlerResult?.ManifestUrl, onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl);
+			Assert.That(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl, Is.EqualTo(enableOrganizationsStreamingManifest_EventHandlerResult?.ManifestUrl));
+			Assert.That(onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl, Is.EqualTo(onboardingChartStreamingManifest_EventHandlerResult?.ManifestUrl));
 
-		Assert.AreEqual(enableOrganizationsStreamingManifest_EventHandlerResult?.HlsUrl, enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl);
-		Assert.AreEqual(onboardingChartStreamingManifest_EventHandlerResult?.HlsUrl, onboardingChartStreamingManifest_AfterInitialization?.HlsUrl);
+			Assert.That(enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl, Is.EqualTo(enableOrganizationsStreamingManifest_EventHandlerResult?.HlsUrl));
+			Assert.That(onboardingChartStreamingManifest_AfterInitialization?.HlsUrl, Is.EqualTo(onboardingChartStreamingManifest_EventHandlerResult?.HlsUrl));
 
-		Assert.AreEqual(enableOrganizationsStreamingManifest_EventHandlerResult?.DashUrl, enableOrganizationsStreamingManifest_AfterInitialization?.DashUrl);
-		Assert.AreEqual(onboardingChartStreamingManifest_EventHandlerResult?.DashUrl, onboardingChartStreamingManifest_AfterInitialization?.DashUrl);
+			Assert.That(enableOrganizationsStreamingManifest_AfterInitialization?.DashUrl, Is.EqualTo(enableOrganizationsStreamingManifest_EventHandlerResult?.DashUrl));
+			Assert.That(onboardingChartStreamingManifest_AfterInitialization?.DashUrl, Is.EqualTo(onboardingChartStreamingManifest_EventHandlerResult?.DashUrl));
 
-		Assert.AreNotEqual(enableOrganizationsStreamingManifest_EventHandlerResult?.ManifestUrl, onboardingChartStreamingManifest_EventHandlerResult?.ManifestUrl);
-		Assert.AreNotEqual(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl, onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl);
+			Assert.That(onboardingChartStreamingManifest_EventHandlerResult?.ManifestUrl, Is.Not.EqualTo(enableOrganizationsStreamingManifest_EventHandlerResult?.ManifestUrl));
+			Assert.That(onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl, Is.Not.EqualTo(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl));
 
-		Assert.AreNotEqual(enableOrganizationsStreamingManifest_EventHandlerResult?.HlsUrl, onboardingChartStreamingManifest_EventHandlerResult?.HlsUrl);
-		Assert.AreNotEqual(enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl, onboardingChartStreamingManifest_AfterInitialization?.HlsUrl);
+			Assert.That(onboardingChartStreamingManifest_EventHandlerResult?.HlsUrl, Is.Not.EqualTo(enableOrganizationsStreamingManifest_EventHandlerResult?.HlsUrl));
+			Assert.That(onboardingChartStreamingManifest_AfterInitialization?.HlsUrl, Is.Not.EqualTo(enableOrganizationsStreamingManifest_AfterInitialization?.HlsUrl));
 
-		Assert.AreNotEqual(enableOrganizationsStreamingManifest_EventHandlerResult?.ManifestUrl, onboardingChartStreamingManifest_EventHandlerResult?.ManifestUrl);
-		Assert.AreNotEqual(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl, onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl);
+			Assert.That(onboardingChartStreamingManifest_EventHandlerResult?.ManifestUrl, Is.Not.EqualTo(enableOrganizationsStreamingManifest_EventHandlerResult?.ManifestUrl));
+			Assert.That(onboardingChartStreamingManifest_AfterInitialization?.ManifestUrl, Is.Not.EqualTo(enableOrganizationsStreamingManifest_AfterInitialization?.ManifestUrl));
+		});
 
 		void HandleOnboardingChartManifestChanged(object? sender, StreamingManifest? e)
 		{

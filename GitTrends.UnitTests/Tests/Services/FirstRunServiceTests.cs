@@ -31,8 +31,11 @@ class FirstRunServiceTests : BaseTest
 		//Assert
 		isFirstRun_Final = firstRunService.IsFirstRun;
 
-		Assert.IsTrue(isFirstRun_Initial);
-		Assert.IsFalse(isFirstRun_Final);
+		Assert.Multiple(() =>
+		{
+			Assert.That(isFirstRun_Initial, Is.True);
+			Assert.That(isFirstRun_Final, Is.False);
+		});
 
 		async void HandleDemoUserActivated(object? sender, EventArgs e)
 		{

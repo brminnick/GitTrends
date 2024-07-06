@@ -18,8 +18,6 @@ static class ServiceCollection
 
 	public static void Initialize(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi, GitHubToken token) =>
 		_serviceProviderHolder = CreateContainer(azureFunctionsApi, gitHubApiV3, gitHubGraphQLApi, token);
-	
-	public static DecompressionMethods GetDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.Brotli;
 
 	static ServiceProvider CreateContainer(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi, GitHubToken token)
 	{
@@ -33,7 +31,7 @@ static class ServiceCollection
 		services.AddGitHubApiStatusService(new AuthenticationHeaderValue(token.TokenType, token.AccessToken), new ProductHeaderValue(nameof(GitTrends)))
 			.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler
 			{
-				AutomaticDecompression = GetDecompressionMethods()
+				AutomaticDecompression = BaseTest.GetDecompressionMethods()
 			});
 
 		//GitTrends Services

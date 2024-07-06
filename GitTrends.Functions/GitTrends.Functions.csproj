@@ -11,9 +11,9 @@
         <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.6.0" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.2" OutputItemType="Analyzer" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.21.0" />
-        <PackageReference Include="Refit.HttpClientFactory" Version="7.1.0" />
+        <PackageReference Include="Refit.HttpClientFactory" Version="7.1.2" />
         <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.2.0" />
-        <PackageReference Include="NuGet.Protocol" Version="6.10.0" />
+        <PackageReference Include="NuGet.Protocol" Version="6.10.1" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.1.0" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.0" />
         <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="5.2.2" />

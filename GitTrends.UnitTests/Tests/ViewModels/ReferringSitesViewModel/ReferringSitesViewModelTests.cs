@@ -44,24 +44,26 @@ class ReferringSitesViewModelTests : BaseTest
 		isEmptyDataViewEnabled_Final = referringSitesViewModel.IsEmptyDataViewEnabled;
 		emptyDataViewDescription_Final = referringSitesViewModel.EmptyDataViewDescription;
 
-		//Assert
-		Assert.IsTrue(didPullToRefreshFailedFire);
-		Assert.IsTrue(pullToRefreshFailedEventArgs is MaximumApiRequestsReachedEventArgs || pullToRefreshFailedEventArgs is ErrorPullToRefreshEventArgs);
+		Assert.Multiple(() =>
+		{
+			//Assert
+			Assert.That(didPullToRefreshFailedFire);
+			Assert.That(pullToRefreshFailedEventArgs is MaximumApiRequestsReachedEventArgs or ErrorPullToRefreshEventArgs);
 
-		Assert.IsFalse(isEmptyDataViewEnabled_Initial);
-		Assert.IsFalse(isEmptyDataViewEnabled_DuringRefresh);
-		Assert.IsTrue(isEmptyDataViewEnabled_Final);
+			Assert.That(isEmptyDataViewEnabled_Initial, Is.False);
+			Assert.That(isEmptyDataViewEnabled_DuringRefresh, Is.False);
+			Assert.That(isEmptyDataViewEnabled_Final, Is.True);
 
-		Assert.AreEqual(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Uninitialized), emptyDataViewTitle_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Error), emptyDataViewTitle_Final);
+			Assert.That(emptyDataViewTitle_Initial, Is.EqualTo(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Uninitialized)));
+			Assert.That(emptyDataViewTitle_Final, Is.EqualTo(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Error)));
 
-		Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Uninitialized), emptyDataViewDescription_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Error), emptyDataViewDescription_Final);
+			Assert.That(emptyDataViewDescription_Initial, Is.EqualTo(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Uninitialized)));
+			Assert.That(emptyDataViewDescription_Final, Is.EqualTo(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Error)));
 
-		Assert.IsEmpty(mobileReferringSites_Initial);
-		Assert.IsEmpty(mobileReferringSites_DuringRefresh);
-		Assert.IsEmpty(mobileReferringSites_Final);
-
+			Assert.That(mobileReferringSites_Initial, Is.Empty);
+			Assert.That(mobileReferringSites_DuringRefresh, Is.Empty);
+			Assert.That(mobileReferringSites_Final, Is.Empty);
+		});
 
 		void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
 		{
@@ -112,25 +114,28 @@ class ReferringSitesViewModelTests : BaseTest
 
 		currentTime_Final = DateTimeOffset.UtcNow;
 
-		//Asset
-		Assert.IsFalse(isEmptyDataViewEnabled_Initial);
-		Assert.IsFalse(isEmptyDataViewEnabled_DuringRefresh);
-		Assert.True(isEmptyDataViewEnabled_Final);
-
-		Assert.IsEmpty(mobileReferringSites_Initial);
-		Assert.IsEmpty(mobileReferringSites_DuringRefresh);
-		Assert.IsNotEmpty(mobileReferringSites_Final);
-
-		Assert.AreEqual(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Succeeded), emptyDataViewTitle_Final);
-		Assert.AreEqual(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Uninitialized), emptyDataViewTitle_Initial);
-
-		Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Succeeded), emptyDataViewDescription_Final);
-		Assert.AreEqual(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Uninitialized), emptyDataViewDescription_Initial);
-
-		foreach (var referringSite in mobileReferringSites_Final)
+		Assert.Multiple(() =>
 		{
-			Assert.Less(currentTime_Initial, referringSite.DownloadedAt);
-			Assert.Greater(currentTime_Final, referringSite.DownloadedAt);
-		}
+			//Assert
+			Assert.That(isEmptyDataViewEnabled_Initial, Is.False);
+			Assert.That(isEmptyDataViewEnabled_DuringRefresh, Is.False);
+			Assert.That(isEmptyDataViewEnabled_Final);
+
+			Assert.That(mobileReferringSites_Initial, Is.Empty);
+			Assert.That(mobileReferringSites_DuringRefresh, Is.Empty);
+			Assert.That(mobileReferringSites_Final, Is.Not.Empty);
+
+			Assert.That(emptyDataViewTitle_Final, Is.EqualTo(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Succeeded)));
+			Assert.That(emptyDataViewTitle_Initial, Is.EqualTo(EmptyDataViewService.GetReferringSitesTitleText(RefreshState.Uninitialized)));
+
+			Assert.That(emptyDataViewDescription_Final, Is.EqualTo(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Succeeded)));
+			Assert.That(emptyDataViewDescription_Initial, Is.EqualTo(EmptyDataViewService.GetReferringSitesDescriptionText(RefreshState.Uninitialized)));
+
+			foreach (var referringSite in mobileReferringSites_Final)
+			{
+				Assert.That(currentTime_Initial, Is.LessThan(referringSite.DownloadedAt));
+				Assert.That(currentTime_Final, Is.GreaterThan(referringSite.DownloadedAt));
+			}
+		});
 	}
 }

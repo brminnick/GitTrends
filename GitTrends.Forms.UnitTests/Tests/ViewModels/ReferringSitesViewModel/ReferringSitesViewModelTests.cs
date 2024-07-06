@@ -118,7 +118,7 @@ namespace GitTrends.UnitTests
 
 			currentTime_Final = DateTimeOffset.UtcNow;
 
-			//Asset
+			//Assert
 			Assert.IsFalse(isEmptyDataViewEnabled_Initial);
 			Assert.IsFalse(isEmptyDataViewEnabled_DuringRefresh);
 			Assert.True(isEmptyDataViewEnabled_Final);

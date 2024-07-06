@@ -6,12 +6,13 @@
     <IsTrimmable>false</IsTrimmable>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
-    <WarningsAsErrors>nullable</WarningsAsErrors>
-    <MauiPackageVersion>8.0.60</MauiPackageVersion>
+    <MauiPackageVersion>8.0.61</MauiPackageVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
     <GenerateErrorForMissingTargetingPacks>false</GenerateErrorForMissingTargetingPacks>
     <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
+    
+    <WarningsAsErrors>nullable, NUnit2019, NUnit2017, NUnit2045, NUnit2002, NUnit2046, NUnit2007, CS0618</WarningsAsErrors>
   </PropertyGroup>
 </Project>

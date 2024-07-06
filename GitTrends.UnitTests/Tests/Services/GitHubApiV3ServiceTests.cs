@@ -26,8 +26,8 @@ class GitHubApiV3ServiceTests : BaseTest
 		var referringSites = await gitHubApiV3Service.GetReferringSites(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotNull(referringSites);
-		Assert.IsNotEmpty(referringSites);
+		Assert.That(referringSites, Is.Not.Null);
+		Assert.That(referringSites, Is.Not.Empty);
 	}
 
 	[Test]
@@ -41,9 +41,9 @@ class GitHubApiV3ServiceTests : BaseTest
 
 		//Act 
 		var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetReferringSites(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
-		
+
 		//Assert
-		Assert.AreEqual(HttpStatusCode.Forbidden, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
 	}
 
 	[Test]
@@ -56,7 +56,7 @@ class GitHubApiV3ServiceTests : BaseTest
 		var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetReferringSites("xamarin", GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
 		//Assert
-		Assert.AreEqual(HttpStatusCode.NotFound, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
 	}
 
 	[Test]
@@ -69,11 +69,14 @@ class GitHubApiV3ServiceTests : BaseTest
 		var clones = await gitHubApiV3Service.GetRepositoryCloneStatistics(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotNull(clones);
-		Assert.IsNotNull(clones.DailyClonesList);
-		Assert.IsNotEmpty(clones.DailyClonesList);
-		Assert.AreEqual(GitHubConstants.GitTrendsRepoName, clones.RepositoryName);
-		Assert.AreEqual(GitHubConstants.GitTrendsRepoOwner, clones.RepositoryOwner);
+		Assert.Multiple(() =>
+		{
+			Assert.That(clones, Is.Not.Null);
+			Assert.That(clones.DailyClonesList, Is.Not.Null);
+			Assert.That(clones.DailyClonesList, Is.Not.Empty);
+			Assert.That(clones.RepositoryName, Is.EqualTo(GitHubConstants.GitTrendsRepoName));
+			Assert.That(clones.RepositoryOwner, Is.EqualTo(GitHubConstants.GitTrendsRepoOwner));
+		});
 	}
 
 	[Test]
@@ -86,7 +89,7 @@ class GitHubApiV3ServiceTests : BaseTest
 		var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryCloneStatistics("xamarin", GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
 		//Assert
-		Assert.AreEqual(HttpStatusCode.NotFound, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
 	}
 
 	[Test]
@@ -100,9 +103,9 @@ class GitHubApiV3ServiceTests : BaseTest
 
 		//Act
 		var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryCloneStatistics(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
-		
+
 		//Assert
-		Assert.AreEqual(HttpStatusCode.Forbidden, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
 	}
 
 	[Test]
@@ -115,11 +118,14 @@ class GitHubApiV3ServiceTests : BaseTest
 		var views = await gitHubApiV3Service.GetRepositoryViewStatistics(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotNull(views);
-		Assert.IsNotNull(views.DailyViewsList);
-		Assert.IsNotEmpty(views.DailyViewsList);
-		Assert.AreEqual(GitHubConstants.GitTrendsRepoName, views.RepositoryName);
-		Assert.AreEqual(GitHubConstants.GitTrendsRepoOwner, views.RepositoryOwner);
+		Assert.Multiple(() =>
+		{
+			Assert.That(views, Is.Not.Null);
+			Assert.That(views.DailyViewsList, Is.Not.Null);
+			Assert.That(views.DailyViewsList, Is.Not.Empty);
+			Assert.That(views.RepositoryName, Is.EqualTo(GitHubConstants.GitTrendsRepoName));
+			Assert.That(views.RepositoryOwner, Is.EqualTo(GitHubConstants.GitTrendsRepoOwner));
+		});
 	}
 
 	[Test]
@@ -132,7 +138,7 @@ class GitHubApiV3ServiceTests : BaseTest
 		var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryViewStatistics("xamarin", GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
 		//Assert
-		Assert.AreEqual(HttpStatusCode.NotFound, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
 	}
 
 	[Test]
@@ -146,9 +152,9 @@ class GitHubApiV3ServiceTests : BaseTest
 
 		//Act
 		var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryViewStatistics(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
-		
+
 		//Assert
-		Assert.AreEqual(HttpStatusCode.Forbidden, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
 	}
 
 	[Test]
@@ -166,9 +172,12 @@ class GitHubApiV3ServiceTests : BaseTest
 		starGazers = await gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotEmpty(starGazers.StarredAt);
-		Assert.Greater(starGazers.StarredAt.Count, 0);
-		Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
+		Assert.Multiple(() =>
+		{
+			Assert.That(starGazers.StarredAt, Is.Not.Empty);
+			Assert.That(starGazers.StarredAt, Is.Not.Empty);
+			Assert.That(starGazers.StarredAt, Has.Count.EqualTo(starGazers.TotalCount));
+		});
 	}
 
 	[Test]
@@ -187,9 +196,12 @@ class GitHubApiV3ServiceTests : BaseTest
 		starGazers = await gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsNotEmpty(starGazers.StarredAt);
-		Assert.Greater(starGazers.StarredAt.Count, 400);
-		Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
+		Assert.Multiple(() =>
+		{
+			Assert.That(starGazers.StarredAt, Is.Not.Empty);
+			Assert.That(starGazers.StarredAt, Has.Count.GreaterThan(400));
+			Assert.That(starGazers.StarredAt, Has.Count.EqualTo(starGazers.TotalCount));
+		});
 	}
 
 	[Test]
@@ -205,13 +217,16 @@ class GitHubApiV3ServiceTests : BaseTest
 		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService, TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Act
-		starGazers = await gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false); ;
+		starGazers = await gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.NotNull(starGazers);
-		Assert.Greater(starGazers.TotalCount, 500);
-		Assert.IsNotEmpty(starGazers.StarredAt);
-		Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
+		Assert.Multiple(() =>
+		{
+			Assert.That(starGazers, Is.Not.Null);
+			Assert.That(starGazers.TotalCount, Is.GreaterThan(500));
+			Assert.That(starGazers.StarredAt, Is.Not.Empty);
+			Assert.That(starGazers.StarredAt, Has.Count.EqualTo(starGazers.TotalCount));
+		});
 	}
 
 	[Test]
@@ -231,7 +246,7 @@ class GitHubApiV3ServiceTests : BaseTest
 		var exception = Assert.ThrowsAsync<ApiException>(() => gitHubApiV3Service.GetStarGazers(fakeRepoOwner, fakeRepoName, CancellationToken.None));
 
 		//Assert
-		Assert.AreEqual(HttpStatusCode.NotFound, exception?.StatusCode);
+		Assert.That(exception?.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
 
 		//"Could not resolve to a Repository with the name 'zxcvbnmlkjhgfdsa1234567890/abc123321'."
 	}
@@ -250,9 +265,12 @@ class GitHubApiV3ServiceTests : BaseTest
 		starGazers = await gitHubApiV3Service.GetStarGazers(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
-		Assert.NotNull(starGazers);
-		Assert.Greater(starGazers.TotalCount, 500);
-		Assert.IsNotEmpty(starGazers.StarredAt);
-		Assert.AreEqual(starGazers.TotalCount, starGazers.StarredAt.Count);
+		Assert.Multiple(() =>
+		{
+			Assert.That(starGazers, Is.Not.Null);
+			Assert.That(starGazers.TotalCount, Is.GreaterThan(500));
+			Assert.That(starGazers.StarredAt, Is.Not.Empty);
+			Assert.That(starGazers.StarredAt, Has.Count.EqualTo(starGazers.TotalCount));
+		});
 	}
 }

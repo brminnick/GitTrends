@@ -18,7 +18,7 @@ class EmptyDataViewServiceTests : BaseTest
 		actualResult = EmptyDataViewService.GetReferringSitesTitleText(refreshState);
 
 		//Assert
-		Assert.AreEqual(expectedResult, actualResult);
+		Assert.That(actualResult, Is.EqualTo(expectedResult));
 	}
 
 	[TestCase(int.MinValue)]
@@ -49,7 +49,7 @@ class EmptyDataViewServiceTests : BaseTest
 		actualResult = EmptyDataViewService.GetReferringSitesDescriptionText(refreshState);
 
 		//Assert
-		Assert.AreEqual(expectedResult, actualResult);
+		Assert.That(actualResult, Is.EqualTo(expectedResult));
 	}
 
 	[TestCase(int.MinValue)]
@@ -87,7 +87,7 @@ class EmptyDataViewServiceTests : BaseTest
 		actualResult = EmptyDataViewService.GetRepositoryTitleText(refreshState, isRepositoryListEmpty);
 
 		//Assert
-		Assert.AreEqual(expectedResult, actualResult);
+		Assert.That(actualResult, Is.EqualTo(expectedResult));
 	}
 
 	[TestCase(int.MinValue, true)]
@@ -129,7 +129,7 @@ class EmptyDataViewServiceTests : BaseTest
 		actualResult = EmptyDataViewService.GetRepositoryDescriptionText(refreshState, isRepositoryListEmpty);
 
 		//Assert
-		Assert.AreEqual(expectedResult, actualResult);
+		Assert.That(actualResult, Is.EqualTo(expectedResult));
 	}
 
 	[TestCase(int.MinValue, true)]
@@ -164,7 +164,7 @@ class EmptyDataViewServiceTests : BaseTest
 		actualResult = EmptyDataViewService.GetViewsClonesTitleText(refreshState);
 
 		//Assert
-		Assert.AreEqual(expectedResult, actualResult);
+		Assert.That(actualResult, Is.EqualTo(expectedResult));
 	}
 
 	[TestCase(int.MinValue)]
@@ -206,7 +206,7 @@ class EmptyDataViewServiceTests : BaseTest
 		actualResult = EmptyDataViewService.GetStarsEmptyDataViewTitleText(refreshState, totalStars);
 
 		//Assert
-		Assert.AreEqual(expectedResult, actualResult);
+		Assert.That(actualResult, Is.EqualTo(expectedResult));
 	}
 
 	[TestCase(int.MinValue, 0)]
@@ -248,7 +248,7 @@ class EmptyDataViewServiceTests : BaseTest
 		actualResult = EmptyDataViewService.GetViewsClonesImage(refreshState);
 
 		//Assert
-		Assert.AreEqual(expectedResult, actualResult);
+		Assert.That(actualResult, Is.EqualTo(expectedResult));
 	}
 
 	[TestCase(int.MinValue)]
@@ -290,7 +290,7 @@ class EmptyDataViewServiceTests : BaseTest
 		actualResult = EmptyDataViewService.GetStarsEmptyDataViewImage(refreshState, totalStars);
 
 		//Assert
-		Assert.AreEqual(expectedResult, actualResult);
+		Assert.That(actualResult, Is.EqualTo(expectedResult));
 	}
 
 	[TestCase(int.MinValue, 0)]

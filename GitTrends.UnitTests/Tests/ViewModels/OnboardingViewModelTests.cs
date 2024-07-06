@@ -20,7 +20,7 @@ class OnboardingViewModelTests : BaseTest
 		await skipButtonTappedTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsTrue(didSkipButtonTappedFire);
+		Assert.That(didSkipButtonTappedFire);
 
 		void HandleSkipButtonTapped(object? sender, EventArgs e)
 		{
@@ -42,7 +42,7 @@ class OnboardingViewModelTests : BaseTest
 		await onboardingViewModel.HandleDemoButtonTappedCommand.ExecuteAsync(OnboardingConstants.TryDemoText).ConfigureAwait(false);
 
 		//Assert
-		Assert.IsTrue(gitHubUserService.IsDemoUser);
+		Assert.That(gitHubUserService.IsDemoUser);
 	}
 
 	[Test]
@@ -80,19 +80,22 @@ class OnboardingViewModelTests : BaseTest
 		isDemoButtonVisible_AfterCommand = onboardingViewModel.IsDemoButtonVisible;
 
 		//Assert
-		Assert.IsTrue(didOpenAsyncFire);
+		Assert.Multiple(() =>
+		{
+			Assert.That(didOpenAsyncFire);
 
-		Assert.IsFalse(isAuthenticating_BeforeCommand);
-		Assert.True(isDemoButtonVisible_BeforeCommand);
+			Assert.That(isAuthenticating_BeforeCommand, Is.False);
+			Assert.That(isDemoButtonVisible_BeforeCommand);
 
-		Assert.IsTrue(isAuthenticating_DuringCommand);
-		Assert.False(isDemoButtonVisible_DuringCommand);
+			Assert.That(isAuthenticating_DuringCommand);
+			Assert.That(isDemoButtonVisible_DuringCommand, Is.False);
 
-		Assert.IsFalse(isAuthenticating_AfterCommand);
-		Assert.True(isDemoButtonVisible_AfterCommand);
+			Assert.That(isAuthenticating_AfterCommand, Is.False);
+			Assert.That(isDemoButtonVisible_AfterCommand);
 
-		Assert.IsTrue(openedUrl.Contains($"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id="));
-		Assert.IsTrue(openedUrl.Contains($"&scope={GitHubConstants.OAuthScope}&state="));
+			Assert.That(openedUrl, Does.Contain($"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id="));
+			Assert.That(openedUrl, Does.Contain($"&scope={GitHubConstants.OAuthScope}&state="));
+		});
 
 		void HandleOpenAsyncExecuted(object? sender, Uri e)
 		{
@@ -121,7 +124,10 @@ class OnboardingViewModelTests : BaseTest
 		notificationStatusSvgImageSource_Final = onboardingViewModel.NotificationStatusSvgImageSource;
 
 		//Assert
-		Assert.AreEqual(SvgService.GetFullPath(bellSvg), notificationStatusSvgImageSource_Initial);
-		Assert.AreEqual(SvgService.GetFullPath(successSvg), notificationStatusSvgImageSource_Final);
+		Assert.Multiple(() =>
+		{
+			Assert.That(notificationStatusSvgImageSource_Initial, Is.EqualTo(SvgService.GetFullPath(bellSvg)));
+			Assert.That(notificationStatusSvgImageSource_Final, Is.EqualTo(SvgService.GetFullPath(successSvg)));
+		});
 	}
 }

@@ -48,28 +48,31 @@ class TrendsChartSettingsServiceTests : BaseTest
 		shouldShowUniqueViewsByDefault_AfterAll = trendsChartSettingsService.ShouldShowUniqueViewsByDefault;
 
 		//Assert
-		Assert.AreEqual(TrendsChartOption.All, trendsChartOption_Initial);
-		Assert.IsTrue(shouldShowClonesByDefault_Initial);
-		Assert.IsTrue(shouldShowUniqueClonesByDefault_Initial);
-		Assert.IsTrue(shouldShowViewsByDefault_Initial);
-		Assert.IsTrue(shouldShowUniqueViewsByDefault_Initial);
+		Assert.Multiple(() =>
+		{
+			Assert.That(trendsChartOption_Initial, Is.EqualTo(TrendsChartOption.All));
+			Assert.That(shouldShowClonesByDefault_Initial);
+			Assert.That(shouldShowUniqueClonesByDefault_Initial);
+			Assert.That(shouldShowViewsByDefault_Initial);
+			Assert.That(shouldShowUniqueViewsByDefault_Initial);
 
-		Assert.AreEqual(TrendsChartOption.NoUniques, trendsChartOption_AfterNoUniques);
-		Assert.IsTrue(shouldShowClonesByDefault_AfterNoUniques);
-		Assert.IsFalse(shouldShowUniqueClonesByDefault_AfterNoUniques);
-		Assert.IsTrue(shouldShowViewsByDefault_AfterNoUniques);
-		Assert.IsFalse(shouldShowUniqueViewsByDefault_AfterNoUniques);
+			Assert.That(trendsChartOption_AfterNoUniques, Is.EqualTo(TrendsChartOption.NoUniques));
+			Assert.That(shouldShowClonesByDefault_AfterNoUniques);
+			Assert.That(shouldShowUniqueClonesByDefault_AfterNoUniques, Is.False);
+			Assert.That(shouldShowViewsByDefault_AfterNoUniques);
+			Assert.That(shouldShowUniqueViewsByDefault_AfterNoUniques, Is.False);
 
-		Assert.AreEqual(TrendsChartOption.JustUniques, trendsChartOption_AfterJustUniques);
-		Assert.IsFalse(shouldShowClonesByDefault_AfterJustUniques);
-		Assert.IsTrue(shouldShowUniqueClonesByDefault_AfterJustUniques);
-		Assert.IsFalse(shouldShowViewsByDefault_AfterJustUniques);
-		Assert.IsTrue(shouldShowUniqueViewsByDefault_AfterJustUniques);
+			Assert.That(trendsChartOption_AfterJustUniques, Is.EqualTo(TrendsChartOption.JustUniques));
+			Assert.That(shouldShowClonesByDefault_AfterJustUniques, Is.False);
+			Assert.That(shouldShowUniqueClonesByDefault_AfterJustUniques);
+			Assert.That(shouldShowViewsByDefault_AfterJustUniques, Is.False);
+			Assert.That(shouldShowUniqueViewsByDefault_AfterJustUniques);
 
-		Assert.AreEqual(TrendsChartOption.All, trendsChartOption_AfterAll);
-		Assert.IsTrue(shouldShowClonesByDefault_AfterAll);
-		Assert.IsTrue(shouldShowUniqueClonesByDefault_AfterAll);
-		Assert.IsTrue(shouldShowViewsByDefault_AfterAll);
-		Assert.IsTrue(shouldShowUniqueViewsByDefault_AfterAll);
+			Assert.That(trendsChartOption_AfterAll, Is.EqualTo(TrendsChartOption.All));
+			Assert.That(shouldShowClonesByDefault_AfterAll);
+			Assert.That(shouldShowUniqueClonesByDefault_AfterAll);
+			Assert.That(shouldShowViewsByDefault_AfterAll);
+			Assert.That(shouldShowUniqueViewsByDefault_AfterAll);
+		});
 	}
 }

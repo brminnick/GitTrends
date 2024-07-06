@@ -41,16 +41,19 @@ abstract class RepositoryViewModelTests_MaximumApiCallLimit : BaseTest
 		pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.IsEmpty(visibleRepositoryList_Initial);
-		Assert.IsEmpty(visibleRepositoryList_Final);
+		Assert.Multiple(() =>
+		{
+			Assert.That(visibleRepositoryList_Initial, Is.Empty);
+			Assert.That(visibleRepositoryList_Final, Is.Empty);
 
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true), emptyDataViewTitle_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryTitleText(RefreshState.MaximumApiLimit, true), emptyDataViewTitle_Final);
+			Assert.That(emptyDataViewTitle_Initial, Is.EqualTo(EmptyDataViewService.GetRepositoryTitleText(RefreshState.Uninitialized, true)));
+			Assert.That(emptyDataViewTitle_Final, Is.EqualTo(EmptyDataViewService.GetRepositoryTitleText(RefreshState.MaximumApiLimit, true)));
 
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true), emptyDataViewDescription_Initial);
-		Assert.AreEqual(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.MaximumApiLimit, true), emptyDataViewDescription_Final);
+			Assert.That(emptyDataViewDescription_Initial, Is.EqualTo(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true)));
+			Assert.That(emptyDataViewDescription_Final, Is.EqualTo(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.MaximumApiLimit, true)));
 
-		Assert.IsInstanceOf<MaximumApiRequestsReachedEventArgs>(pullToRefreshFailedEventArgs);
+			Assert.That(pullToRefreshFailedEventArgs, Is.InstanceOf<MaximumApiRequestsReachedEventArgs>());
+		});
 
 		void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
 		{
