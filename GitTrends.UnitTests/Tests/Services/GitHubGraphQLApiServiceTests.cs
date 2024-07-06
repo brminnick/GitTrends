@@ -14,8 +14,11 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		//Arrange
 		var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
-		//Act //Assert
-		var exception = Assert.ThrowsAsync<InvalidOperationException>(async () => await githubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false));
+		//Act
+		var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false));
+
+		//Assert
+		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
 	}
 
 	[Test]
@@ -25,8 +28,11 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 		var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
 
-		//Act //Assert
-		var exception = Assert.ThrowsAsync<InvalidOperationException>(async () => await githubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false));
+		//Act
+		var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetCurrentUserInfo(CancellationToken.None).ConfigureAwait(false));
+
+		//Assert
+		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
 	}
 
 	[Test]
@@ -54,14 +60,17 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
-		//Act //Assert
-		var exception = Assert.ThrowsAsync<InvalidOperationException>(async () =>
+		//Act
+		var exception = Assert.ThrowsAsync<ApiException>(async () =>
 		{
 			await foreach (var retrievedRepositories in githubGraphQLApiService.GetRepositories(gitHubUserService.Alias, TestCancellationTokenSource.Token).ConfigureAwait(false))
 			{
 
 			}
 		});
+
+		//Assert
+		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
 	}
 
 	[Test]
@@ -141,7 +150,7 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
 		//Act
-		Assert.ThrowsAsync<InvalidOperationException>(async () =>
+		var exception = Assert.ThrowsAsync<ApiException>(async () =>
 		{
 			await foreach (var repository in githubGraphQLApiService.GetViewerOrganizationRepositories(CancellationToken.None).ConfigureAwait(false))
 			{
@@ -150,6 +159,7 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		});
 
 		//Assert
+		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
 		Assert.IsEmpty(repositories);
 	}
 
@@ -164,7 +174,7 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		await gitHubAuthenticationService.ActivateDemoUser(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Act
-		Assert.ThrowsAsync<InvalidOperationException>(async () =>
+		var exception = Assert.ThrowsAsync<ApiException>(async () =>
 		{
 			await foreach (var repository in githubGraphQLApiService.GetViewerOrganizationRepositories(CancellationToken.None).ConfigureAwait(false))
 			{
@@ -173,6 +183,7 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		});
 
 		//Assert
+		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
 		Assert.IsEmpty(repositories);
 	}
 
@@ -212,7 +223,10 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
 		//Act //Assert
-		Assert.ThrowsAsync<InvalidOperationException>(() => githubGraphQLApiService.GetOrganizationRepositories(nameof(GitTrends), CancellationToken.None));
+		var exception = Assert.ThrowsAsync<ApiException>(() => githubGraphQLApiService.GetOrganizationRepositories(nameof(GitTrends), CancellationToken.None));
+
+		//Assert
+		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
 	}
 
 	[Test]
@@ -225,7 +239,10 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		await gitHubAuthenticationService.ActivateDemoUser(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Act //Assert
-		Assert.ThrowsAsync<InvalidOperationException>(() => githubGraphQLApiService.GetOrganizationRepositories(nameof(GitTrends), CancellationToken.None));
+		var exception = Assert.ThrowsAsync<ApiException>(() => githubGraphQLApiService.GetOrganizationRepositories(nameof(GitTrends), CancellationToken.None));
+
+		//Assert
+		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
 	}
 
 	[Test]
@@ -260,8 +277,11 @@ class GitHubGraphQLApiServiceTests : BaseTest
 		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 		var githubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 
-		//Act //Assert
-		Assert.ThrowsAsync<InvalidOperationException>(async () => await githubGraphQLApiService.GetRepository(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
+		//Act
+		var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetRepository(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
+
+		//Assert
+		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
 	}
 
 	[Test]
@@ -274,9 +294,10 @@ class GitHubGraphQLApiServiceTests : BaseTest
 
 		//Act
 		await gitHubAuthenticationService.ActivateDemoUser(TestCancellationTokenSource.Token).ConfigureAwait(false);
+		var exception = Assert.ThrowsAsync<ApiException>(async () => await githubGraphQLApiService.GetRepository(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
 
 		//Assert
-		Assert.ThrowsAsync<InvalidOperationException>(async () => await githubGraphQLApiService.GetRepository(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
+		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
 	}
 
 	[Test]
@@ -412,8 +433,9 @@ class GitHubGraphQLApiServiceTests : BaseTest
 
 		//Act
 		gitHubUserService.InvalidateToken();
-
+		var exception = Assert.ThrowsAsync<ApiException>(() => gitHubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None));
+		
 		//Assert
-		Assert.ThrowsAsync<InvalidOperationException>(() => gitHubGraphQLApiService.GetStarGazers(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoOwner, CancellationToken.None));
+		Assert.AreEqual(HttpStatusCode.Unauthorized, exception?.StatusCode);
 	}
 }

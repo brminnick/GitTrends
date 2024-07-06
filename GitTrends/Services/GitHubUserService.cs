@@ -134,7 +134,7 @@ public class GitHubUserService
 		var serializedToken = await _secureStorage.GetAsync(_oauthTokenKey).ConfigureAwait(false);
 
 		if (serializedToken is null)
-			throw new InvalidOperationException("OAuth Token cannot be null");
+			return GitHubToken.Empty;
 
 		try
 		{

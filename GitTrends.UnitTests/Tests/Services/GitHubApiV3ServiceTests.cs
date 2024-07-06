@@ -39,8 +39,11 @@ class GitHubApiV3ServiceTests : BaseTest
 
 		gitHubUserService.InvalidateToken();
 
-		//Act //Assert
-		Assert.ThrowsAsync<InvalidOperationException>(async () => await gitHubApiV3Service.GetReferringSites(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
+		//Act 
+		var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetReferringSites(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
+		
+		//Assert
+		Assert.AreEqual(HttpStatusCode.Forbidden, exception?.StatusCode);
 	}
 
 	[Test]
@@ -95,8 +98,11 @@ class GitHubApiV3ServiceTests : BaseTest
 
 		gitHubUserService.InvalidateToken();
 
-		//Act //Assert
-		Assert.ThrowsAsync<InvalidOperationException>(async () => await gitHubApiV3Service.GetRepositoryCloneStatistics(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
+		//Act
+		var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryCloneStatistics(gitHubUserService.Alias, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
+		
+		//Assert
+		Assert.AreEqual(HttpStatusCode.Forbidden, exception?.StatusCode);
 	}
 
 	[Test]
@@ -138,8 +144,11 @@ class GitHubApiV3ServiceTests : BaseTest
 
 		gitHubUserService.InvalidateToken();
 
-		//Act //Assert
-		Assert.ThrowsAsync<InvalidOperationException>(async () => await gitHubApiV3Service.GetRepositoryViewStatistics(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
+		//Act
+		var exception = Assert.ThrowsAsync<ApiException>(async () => await gitHubApiV3Service.GetRepositoryViewStatistics(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false));
+		
+		//Assert
+		Assert.AreEqual(HttpStatusCode.Forbidden, exception?.StatusCode);
 	}
 
 	[Test]
