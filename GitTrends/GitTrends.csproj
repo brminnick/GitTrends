@@ -31,14 +31,6 @@
     <TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">34</TargetPlatformVersion>
   </PropertyGroup>
 
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <DefineConstants>AppStore</DefineConstants>
-    <NoWarn>1701;1702</NoWarn>
-    <NoStdLib>false</NoStdLib>
-  </PropertyGroup>
-
   <ItemGroup>
     <!-- App Icon -->
     <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4"/>

@@ -9,23 +9,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="GitTrends.UnitTests"/>
   </ItemGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>
-    </DebugType>
-    <DefineConstants>TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_0;</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
-    <DebugType>
-    </DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE;NETSTANDARD;NETSTANDARD2_0;AppStore</DefineConstants>
-    <NoWarn>1701;1702</NoWarn>
-    <NoStdLib>false</NoStdLib>
-  </PropertyGroup>
+  
   <ItemGroup>
     <EmbeddedResource Update="Constants\AboutPageConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

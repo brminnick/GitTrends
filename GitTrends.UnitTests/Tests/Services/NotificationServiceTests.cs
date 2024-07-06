@@ -108,7 +108,7 @@ class NotificationServiceTests : BaseTest
 #if !DEBUG
             await notificationService.TrySendTrendingNotificaiton(trendingRepositoryList).ConfigureAwait(false);
             var pendingNotificationsCount_AfterDuplicateTrendingRepositoryList = await getPendingNotificationCount(notificationManager).ConfigureAwait(false);
-            Assert.AreEqual(trendingRepositoryList.Count, pendingNotificationsCount_AfterDuplicateTrendingRepositoryList);
+            Assert.That(trendingRepositoryList, Has.Count.EqualTo(pendingNotificationsCount_AfterDuplicateTrendingRepositoryList));
 #endif
 
 		//Assert
