@@ -260,7 +260,7 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 		{
 			githubUserResponse = await ExecuteGraphQLRequest(() => _githubApiClient.UserRepositoryConnectionQuery(new UserRepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token), cancellationToken)).ConfigureAwait(false);
 		}
-		catch (GraphQLException<GitHubUserResponse> e) when (e.ContainsSamlOrganizationAuthenticationError(out _))
+		catch (GraphQLException<GitHubUserResponse> e) when (e.ContainsSamlOrganizationAuthenticationError(out _) || e.IsForbidden())
 		{
 			githubUserResponse = e.GraphQLData;
 		}
@@ -276,7 +276,7 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 		{
 			githubOrganizationResponse = await ExecuteGraphQLRequest(() => _githubApiClient.OrganizationRepositoryConnectionQuery(new OrganizationRepositoryConnectionQueryContent(organizationLogin, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token), cancellationToken)).ConfigureAwait(false);
 		}
-		catch (GraphQLException<GitHubOrganizationResponse> e) when (e.ContainsSamlOrganizationAuthenticationError(out _))
+		catch (GraphQLException<GitHubOrganizationResponse> e) when (e.ContainsSamlOrganizationAuthenticationError(out _) || e.IsForbidden())
 		{
 			githubOrganizationResponse = e.GraphQLData;
 		}

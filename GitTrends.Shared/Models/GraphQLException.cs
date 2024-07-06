@@ -3,28 +3,32 @@ using System.Net.Http.Headers;
 
 namespace GitTrends.Shared;
 
-public class GraphQLException<T>(in T data,
-						in GraphQLError[] errors,
-						in HttpStatusCode statusCode,
-						in HttpResponseHeaders responseHeaders) : GraphQLException(errors, statusCode, responseHeaders)
+public class GraphQLException<T>(
+	in T data,
+	in GraphQLError[] errors,
+	in HttpStatusCode statusCode,
+	in HttpResponseHeaders responseHeaders) : GraphQLException(errors, statusCode, responseHeaders)
 {
 	public T GraphQLData { get; } = data;
 }
 
-public class GraphQLException(in GraphQLError[] errors,
-						in HttpStatusCode statusCode,
-						in HttpResponseHeaders responseHeaders) : Exception
+public class GraphQLException(
+	in GraphQLError[] errors,
+	in HttpStatusCode statusCode,
+	in HttpResponseHeaders responseHeaders) : Exception
 {
 	public IReadOnlyList<GraphQLError> Errors { get; } = errors;
 	public HttpStatusCode StatusCode { get; } = statusCode;
 	public HttpResponseHeaders ResponseHeaders { get; } = responseHeaders;
-}
 
-public static class GraphQLExceptionExtensions
-{
-	public static bool ContainsSamlOrganizationAuthenticationError<T>(this GraphQLException<T> graphQLException, out IReadOnlyList<Uri> ssoUris)
+	public bool IsForbidden()
 	{
-		var doesContainError = graphQLException.ResponseHeaders.TryGetValues("x-github-sso", out var values);
+		return Errors.Any(static x => x.AdditionalEntries?.TryGetValue("type", out var jsonElement) is true && jsonElement.GetString()?.Equals("FORBIDDEN", StringComparison.OrdinalIgnoreCase) is true);
+	}
+
+	public bool ContainsSamlOrganizationAuthenticationError(out IReadOnlyList<Uri> ssoUris)
+	{
+		var doesContainError = ResponseHeaders.TryGetValues("x-github-sso", out var values);
 
 		if (doesContainError)
 		{
