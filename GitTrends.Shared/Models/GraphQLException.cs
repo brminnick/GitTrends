@@ -22,7 +22,7 @@ public class GraphQLException(in GraphQLError[] errors,
 
 public static class GraphQLExceptionExtensions
 {
-	public static bool ContainsSamlOrganizationAthenticationError<T>(this GraphQLException<T> graphQLException, out IReadOnlyList<Uri> ssoUris)
+	public static bool ContainsSamlOrganizationAuthenticationError<T>(this GraphQLException<T> graphQLException, out IReadOnlyList<Uri> ssoUris)
 	{
 		var doesContainError = graphQLException.ResponseHeaders.TryGetValues("x-github-sso", out var values);
 
@@ -36,8 +36,8 @@ public static class GraphQLExceptionExtensions
 
 				foreach (var semicolonSeparatedValue in semicolonSeparatedValues)
 				{
-					var urlStartIndex = semicolonSeparatedValue.IndexOf("http", StringComparison.OrdinalIgnoreCase);
-					var urlString = urlStartIndex < 0 ? string.Empty : semicolonSeparatedValue.Substring(urlStartIndex);
+					var urlStartIndex = semicolonSeparatedValue.IndexOf(Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase);
+					var urlString = urlStartIndex < 0 ? string.Empty : semicolonSeparatedValue[urlStartIndex..];
 
 					var isValidUri = Uri.TryCreate(urlString, UriKind.Absolute, out var uri);
 

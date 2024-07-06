@@ -156,7 +156,7 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 		{
 			do
 			{
-				repositoryConnection = await GetOrganizationRepositoryConnection(organization, token, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
+				repositoryConnection = await GetOrganizationRepositoryConnection(organization, token, repositoryConnection?.PageInfo.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
 
 				// Views + Clones statistics are only available for repositories with write access
 				foreach (var repository in repositoryConnection.RepositoryList.Where(static x => x?.Permission is RepositoryPermission.ADMIN or RepositoryPermission.MAINTAIN or RepositoryPermission.WRITE))
@@ -219,7 +219,7 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 
 		do
 		{
-			repositoryConnection = await GetUserRepositoryConnection(repositoryOwner, repositoryConnection?.PageInfo?.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
+			repositoryConnection = await GetUserRepositoryConnection(repositoryOwner, repositoryConnection?.PageInfo.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
 
 			// Views + Clones statistics are only available for repositories with write access
 			foreach (var repository in repositoryConnection.RepositoryList.Where(static x => x?.Permission is RepositoryPermission.ADMIN or RepositoryPermission.MAINTAIN or RepositoryPermission.WRITE))
@@ -260,7 +260,7 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 		{
 			githubUserResponse = await ExecuteGraphQLRequest(() => _githubApiClient.UserRepositoryConnectionQuery(new UserRepositoryConnectionQueryContent(repositoryOwner, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token), cancellationToken)).ConfigureAwait(false);
 		}
-		catch (GraphQLException<GitHubUserResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out _))
+		catch (GraphQLException<GitHubUserResponse> e) when (e.ContainsSamlOrganizationAuthenticationError(out _))
 		{
 			githubUserResponse = e.GraphQLData;
 		}
@@ -276,7 +276,7 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 		{
 			githubOrganizationResponse = await ExecuteGraphQLRequest(() => _githubApiClient.OrganizationRepositoryConnectionQuery(new OrganizationRepositoryConnectionQueryContent(organizationLogin, GetEndCursorString(endCursor), numberOfRepositoriesPerRequest), GetGitHubBearerTokenHeader(token), cancellationToken)).ConfigureAwait(false);
 		}
-		catch (GraphQLException<GitHubOrganizationResponse> e) when (e.ContainsSamlOrganizationAthenticationError(out _))
+		catch (GraphQLException<GitHubOrganizationResponse> e) when (e.ContainsSamlOrganizationAuthenticationError(out _))
 		{
 			githubOrganizationResponse = e.GraphQLData;
 		}

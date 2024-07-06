@@ -167,7 +167,7 @@ public class GitHubApiRepositoriesService(
 
 			return (null, null);
 		}
-		catch (GraphQLException<StarGazers> e) when (e.ContainsSamlOrganizationAthenticationError(out _))
+		catch (GraphQLException<StarGazers> e) when (e.ContainsSamlOrganizationAuthenticationError(out _))
 		{
 			reportException(e);
 
@@ -224,7 +224,7 @@ public class GitHubApiRepositoriesService(
 
 			return (repository.Name, null);
 		}
-		catch (GraphQLException<StarGazers> e) when (e.ContainsSamlOrganizationAthenticationError(out _))
+		catch (GraphQLException<StarGazers> e) when (e.ContainsSamlOrganizationAuthenticationError(out _))
 		{
 			reportException(e);
 
