@@ -4,7 +4,7 @@ namespace GitTrends.Shared;
 
 public record DailyViewsModel(
 	[property: JsonPropertyName("timestamp")] DateTimeOffset Day, 
-	[property: JsonPropertyName("totalCount")] long TotalCount, 
+	[property: JsonPropertyName("count")] long TotalCount, 
 	[property: JsonPropertyName("uniques")] long TotalUniqueCount) 
 	: IBaseDailyModel, IDailyViewsModel
 {
