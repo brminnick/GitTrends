@@ -10,7 +10,7 @@ class OnboardingViewModelTests : BaseTest
 	{
 		//Arrange
 		bool didSkipButtonTappedFire = false;
-		var skipButtonTappedTCS = new TaskCompletionSource<object?>();
+		var skipButtonTappedTCS = new TaskCompletionSource();
 
 		var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
 		OnboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
@@ -27,7 +27,7 @@ class OnboardingViewModelTests : BaseTest
 			OnboardingViewModel.SkipButtonTapped -= HandleSkipButtonTapped;
 
 			didSkipButtonTappedFire = true;
-			skipButtonTappedTCS.SetResult(null);
+			skipButtonTappedTCS.SetResult();
 		}
 	}
 

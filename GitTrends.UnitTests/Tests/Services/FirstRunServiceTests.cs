@@ -14,7 +14,7 @@ class FirstRunServiceTests : BaseTest
 	{
 		//Arrange
 		bool isFirstRun_Initial, isFirstRun_Final;
-		var activateDemoUserTCS = new TaskCompletionSource<object?>();
+		var activateDemoUserTCS = new TaskCompletionSource();
 
 		GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 
@@ -42,7 +42,7 @@ class FirstRunServiceTests : BaseTest
 			GitHubAuthenticationService.DemoUserActivated -= HandleDemoUserActivated;
 
 			await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
-			activateDemoUserTCS.SetResult(null);
+			activateDemoUserTCS.SetResult();
 		}
 	}
 }

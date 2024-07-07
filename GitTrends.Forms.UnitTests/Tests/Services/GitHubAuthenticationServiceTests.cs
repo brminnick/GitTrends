@@ -18,7 +18,7 @@ namespace GitTrends.UnitTests
 		{
 			//Arrange
 			var didAuthorizeSessionStartedFire = false;
-			var authorizeSessionStartedTCS = new TaskCompletionSource<object?>();
+			var authorizeSessionStartedTCS = new TaskCompletionSource();
 
 			var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
 			GitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
@@ -73,7 +73,7 @@ namespace GitTrends.UnitTests
 		{
 			//Arrange
 			var didDemoUserActivatedFire = false;
-			var demoUserActivatedTCS = new TaskCompletionSource<object?>();
+			var demoUserActivatedTCS = new TaskCompletionSource();
 
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
@@ -105,7 +105,7 @@ namespace GitTrends.UnitTests
 			string gitHubUserName_Initial, gitHubUserName_Final, gitHubUserAlias_Initial, gitHubUserAlias_Final;
 
 			var didDLoggedOutFire = false;
-			var loggedOutTCS = new TaskCompletionSource<object?>();
+			var loggedOutTCS = new TaskCompletionSource();
 
 			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 

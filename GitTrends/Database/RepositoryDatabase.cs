@@ -16,7 +16,7 @@ namespace GitTrends
 				Execute<int, DailyViewsDatabaseModel>(static async databaseConnection => await databaseConnection.DeleteAllAsync<DailyViewsDatabaseModel>(), token),
 				Execute<int, DailyClonesDatabaseModel>(static async databaseConnection => await databaseConnection.DeleteAllAsync<DailyClonesDatabaseModel>(), token),
 				Execute<int, StarGazerInfoDatabaseModel>(static async databaseConnection => await databaseConnection.DeleteAllAsync<StarGazerInfoDatabaseModel>(), token));
-			
+
 			await Execute<int, RepositoryDatabaseModel>(static async databaseConnection => await databaseConnection.DeleteAllAsync<RepositoryDatabaseModel>(), token);
 		}
 
@@ -77,8 +77,15 @@ namespace GitTrends
 		public async Task<Repository?> GetRepository(string repositoryUrl, CancellationToken token)
 		{
 			var repositoryDatabaseModel =
-				await Execute<RepositoryDatabaseModel, RepositoryDatabaseModel>(repositoryDatabaseConnection => repositoryDatabaseConnection.Table<RepositoryDatabaseModel>().FirstOrDefaultAsync(x => x.Url == repositoryUrl),
+				await Execute<RepositoryDatabaseModel?, RepositoryDatabaseModel>(async repositoryDatabaseConnection =>
+					{
+						var repository = await repositoryDatabaseConnection.Table<RepositoryDatabaseModel>().FirstOrDefaultAsync(x => x.Url == repositoryUrl).ConfigureAwait(false);
+						return repository ?? null;
+					},
 					token).ConfigureAwait(false);
+
+			if (repositoryDatabaseModel is null)
+				return null;
 
 			var (dailyClones, dailyViews, starGazers) = await GetClonesViewsStars(repositoryDatabaseModel, token).ConfigureAwait(false);
 

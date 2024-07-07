@@ -3,7 +3,7 @@
 class SvgServiceTests : BaseTest
 {
 	[TestCase("AABBCCDD")]
-	public void GetColorStringMap_InalidHex(string hex)
+	public void GetColorStringMap_InvalidHex(string hex)
 	{
 		//Arrange
 		var expectedColorMap = new Dictionary<string, string>

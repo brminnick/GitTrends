@@ -18,7 +18,7 @@ namespace GitTrends.UnitTests
 		{
 			//Arrange
 			bool isFirstRun_Initial, isFirstRun_Final;
-			var activateDemoUserTCS = new TaskCompletionSource<object?>();
+			var activateDemoUserTCS = new TaskCompletionSource();
 
 			GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 

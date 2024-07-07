@@ -192,7 +192,7 @@ namespace GitTrends
 
 		protected override async Task HandleDemoButtonTapped(string? buttonText)
 		{
-			var demoUserActivatedTCS = new TaskCompletionSource<object?>();
+			var demoUserActivatedTCS = new TaskCompletionSource();
 			GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 
 			try

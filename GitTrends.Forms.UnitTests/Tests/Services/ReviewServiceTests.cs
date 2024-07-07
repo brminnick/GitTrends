@@ -15,7 +15,7 @@ namespace GitTrends.UnitTests
 			bool didReviewRequestedFire_ReviewService = false;
 			bool didReviewRequestedFire_StoreReview = false;
 
-			var reviewRequestedTCS_ReviewService = new TaskCompletionSource<object?>();
+			var reviewRequestedTCS_ReviewService = new TaskCompletionSource();
 			var reviewRequestedTCS_StoreReview = new TaskCompletionSource<bool>();
 
 			MockStoreReview.ReviewRequested += HandleReviewRequested_StoreReview;

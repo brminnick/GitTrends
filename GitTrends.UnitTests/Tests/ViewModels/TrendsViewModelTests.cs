@@ -138,9 +138,9 @@ class TrendsViewModelTests : BaseTest
 		dailyViewsList_Final = trendsViewModel.DailyViewsList;
 		dailyClonesList_Final = trendsViewModel.DailyClonesList;
 
+		//Assert
 		Assert.Multiple(() =>
 		{
-			//Assert
 			Assert.That(repository_Initial.DailyClonesList, Is.Null);
 			Assert.That(repository_Initial.DailyViewsList, Is.Null);
 
@@ -308,7 +308,7 @@ class TrendsViewModelTests : BaseTest
 		//Act
 		var fetchDataCommandTask = trendsViewModel.FetchDataCommand.ExecuteAsync((repository_Initial, cancellationTokenSource.Token));
 
-		cancellationTokenSource.Cancel();
+		await cancellationTokenSource.CancelAsync();
 
 		await fetchDataCommandTask.ConfigureAwait(false);
 

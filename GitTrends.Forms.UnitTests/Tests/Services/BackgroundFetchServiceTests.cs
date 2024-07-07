@@ -405,7 +405,7 @@ namespace GitTrends.UnitTests
 		{
 			//Arrange
 			bool wasScheduledSuccessfully_First, wasScheduledSuccessfully_Second;
-			var databaseCleanupCompletedTCS = new TaskCompletionSource<object?>();
+			var databaseCleanupCompletedTCS = new TaskCompletionSource();
 			BackgroundFetchService.DatabaseCleanupCompleted += HandleDatabaseCompleted;
 
 			int repositoryDatabaseCount_Initial, repositoryDatabaseCount_Final, referringSitesDatabaseCount_Initial, referringSitesDatabaseCount_Final;

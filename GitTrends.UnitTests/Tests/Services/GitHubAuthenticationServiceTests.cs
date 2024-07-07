@@ -11,7 +11,7 @@ class GitHubAuthenticationServiceTests : BaseTest
 	{
 		//Arrange
 		var didAuthorizeSessionStartedFire = false;
-		var authorizeSessionStartedTCS = new TaskCompletionSource<object?>();
+		var authorizeSessionStartedTCS = new TaskCompletionSource();
 
 		var gitHubAuthenticationService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubAuthenticationService>();
 		GitHubAuthenticationService.AuthorizeSessionStarted += HandleAuthorizeSessionStarted;
@@ -27,7 +27,7 @@ class GitHubAuthenticationServiceTests : BaseTest
 		{
 			GitHubAuthenticationService.AuthorizeSessionStarted -= HandleAuthorizeSessionStarted;
 			didAuthorizeSessionStartedFire = true;
-			authorizeSessionStartedTCS.SetResult(null);
+			authorizeSessionStartedTCS.SetResult();
 		}
 	}
 
@@ -67,7 +67,7 @@ class GitHubAuthenticationServiceTests : BaseTest
 	{
 		//Arrange
 		var didDemoUserActivatedFire = false;
-		var demoUserActivatedTCS = new TaskCompletionSource<object?>();
+		var demoUserActivatedTCS = new TaskCompletionSource();
 
 		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
@@ -90,7 +90,7 @@ class GitHubAuthenticationServiceTests : BaseTest
 		{
 			GitHubAuthenticationService.DemoUserActivated -= HandleDemoUserActivated;
 			didDemoUserActivatedFire = true;
-			demoUserActivatedTCS.SetResult(null);
+			demoUserActivatedTCS.SetResult();
 		}
 	}
 
@@ -101,7 +101,7 @@ class GitHubAuthenticationServiceTests : BaseTest
 		string gitHubUserName_Initial, gitHubUserName_Final, gitHubUserAlias_Initial, gitHubUserAlias_Final;
 
 		var didDLoggedOutFire = false;
-		var loggedOutTCS = new TaskCompletionSource<object?>();
+		var loggedOutTCS = new TaskCompletionSource();
 
 		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 
@@ -132,7 +132,7 @@ class GitHubAuthenticationServiceTests : BaseTest
 		{
 			GitHubAuthenticationService.LoggedOut -= HandleLoggedOut;
 			didDLoggedOutFire = true;
-			loggedOutTCS.SetResult(null);
+			loggedOutTCS.SetResult();
 		}
 	}
 

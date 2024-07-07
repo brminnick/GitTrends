@@ -186,7 +186,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 
 	protected override async Task HandleDemoButtonTapped(string? buttonText, CancellationToken token)
 	{
-		var demoUserActivatedTCS = new TaskCompletionSource<object?>();
+		var demoUserActivatedTCS = new TaskCompletionSource();
 		GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 
 		try
@@ -208,7 +208,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 
 			SetGitHubValues();
 
-			demoUserActivatedTCS.SetResult(null);
+			demoUserActivatedTCS.SetResult();
 		}
 	}
 

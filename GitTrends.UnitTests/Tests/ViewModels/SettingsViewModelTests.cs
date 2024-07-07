@@ -270,7 +270,7 @@ class SettingsViewModelTests : BaseTest
 	{
 		//Arrange
 		bool didOpenAsyncFire = false;
-		var openAsyncTCS = new TaskCompletionSource<object?>();
+		var openAsyncTCS = new TaskCompletionSource();
 
 		var settingsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SettingsViewModel>();
 
@@ -288,7 +288,7 @@ class SettingsViewModelTests : BaseTest
 			MockLauncher.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
 
 			didOpenAsyncFire = true;
-			openAsyncTCS.SetResult(null);
+			openAsyncTCS.SetResult();
 		}
 	}
 

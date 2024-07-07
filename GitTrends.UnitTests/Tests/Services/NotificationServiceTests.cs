@@ -40,7 +40,7 @@ class NotificationServiceTests : BaseTest
 
 	}
 
-	[Test]
+	[Test, CancelAfter(5000)]
 	public async Task HandleNotificationTest_ValidMultipleNotification()
 	{
 		//Arrange

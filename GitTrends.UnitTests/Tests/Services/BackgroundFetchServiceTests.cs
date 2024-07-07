@@ -414,7 +414,7 @@ class BackgroundFetchServiceTests : BaseTest
 	{
 		//Arrange
 		bool wasScheduledSuccessfully_First, wasScheduledSuccessfully_Second;
-		var databaseCleanupCompletedTCS = new TaskCompletionSource<object?>();
+		var databaseCleanupCompletedTCS = new TaskCompletionSource();
 		BackgroundFetchService.DatabaseCleanupCompleted += HandleDatabaseCompleted;
 
 		int repositoryDatabaseCount_Initial, repositoryDatabaseCount_Final, referringSitesDatabaseCount_Initial, referringSitesDatabaseCount_Final;
@@ -505,7 +505,7 @@ class BackgroundFetchServiceTests : BaseTest
 		void HandleDatabaseCompleted(object? sender, EventArgs e)
 		{
 			BackgroundFetchService.DatabaseCleanupCompleted -= HandleDatabaseCompleted;
-			databaseCleanupCompletedTCS.SetResult(null);
+			databaseCleanupCompletedTCS.SetResult();
 		}
 	}
 

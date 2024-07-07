@@ -9,7 +9,7 @@ class ReviewServiceTests : BaseTest
 		bool didReviewRequestedFire_ReviewService = false;
 		bool didReviewRequestedFire_StoreReview = false;
 
-		var reviewRequestedTCS_ReviewService = new TaskCompletionSource<object?>();
+		var reviewRequestedTCS_ReviewService = new TaskCompletionSource();
 		var reviewRequestedTCS_StoreReview = new TaskCompletionSource<bool>();
 
 		MockStoreReview.ReviewRequested += HandleReviewRequested_StoreReview;
@@ -46,7 +46,7 @@ class ReviewServiceTests : BaseTest
 			ReviewService.ReviewRequested -= HandleReviewRequested_ReviewService;
 
 			didReviewRequestedFire_ReviewService = true;
-			reviewRequestedTCS_ReviewService.SetResult(null);
+			reviewRequestedTCS_ReviewService.SetResult();
 		}
 
 		void HandleReviewRequested_StoreReview(object? sender, bool e)

@@ -261,7 +261,7 @@ namespace GitTrends.UnitTests
 		{
 			//Arrange
 			bool didOpenAsyncFire = false;
-			var openAsyncTCS = new TaskCompletionSource<object?>();
+			var openAsyncTCS = new TaskCompletionSource();
 
 			var settingsViewModel = ServiceCollection.ServiceProvider.GetRequiredService<SettingsViewModel>();
 

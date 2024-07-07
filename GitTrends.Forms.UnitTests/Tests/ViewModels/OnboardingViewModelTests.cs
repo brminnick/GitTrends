@@ -16,7 +16,7 @@ namespace GitTrends.UnitTests
 		{
 			//Arrange
 			bool didSkipButtonTappedFire = false;
-			var skipButtonTappedTCS = new TaskCompletionSource<object?>();
+			var skipButtonTappedTCS = new TaskCompletionSource();
 
 			var onboardingViewModel = ServiceCollection.ServiceProvider.GetRequiredService<OnboardingViewModel>();
 			OnboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
