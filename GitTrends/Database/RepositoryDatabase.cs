@@ -133,8 +133,8 @@ namespace GitTrends
 			var sortedRecentDailyViewsDatabaseModels = dailyViewsDatabaseModels?.OrderByDescending(static x => x.DownloadedAt).ToList();
 			var sortedStarGazerInfoModels = starGazerInfoModels?.OrderByDescending(static x => x.StarredAt).ToList();
 
-			var mostRecentCloneDay = sortedRecentDailyClonesDatabaseModels?.Count is 0 ? sortedRecentDailyClonesDatabaseModels.Max(static x => x.Day) : default;
-			var mostRecentViewDay = sortedRecentDailyViewsDatabaseModels?.Count is 0 ? sortedRecentDailyViewsDatabaseModels.Max(static x => x.Day) : default;
+			var mostRecentCloneDay = sortedRecentDailyClonesDatabaseModels?.Count is > 0 ? sortedRecentDailyClonesDatabaseModels.Max(static x => x.Day) : default;
+			var mostRecentViewDay = sortedRecentDailyViewsDatabaseModels?.Count is > 0 ? sortedRecentDailyViewsDatabaseModels.Max(static x => x.Day) : default;
 
 			var mostRecentDate = mostRecentCloneDay.CompareTo(mostRecentViewDay) > 0 ? mostRecentCloneDay : mostRecentViewDay;
 
