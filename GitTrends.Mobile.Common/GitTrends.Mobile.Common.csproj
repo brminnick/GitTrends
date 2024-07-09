@@ -213,7 +213,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AsyncAwaitBestPractices" Version="7.0.0"/>
+    <PackageReference Include="AsyncAwaitBestPractices" Version="8.0.0" />
     <PackageReference Include="Polly" Version="8.4.1" />
     <PackageReference Include="Refit.HttpClientFactory" Version="7.1.2" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2"/>
