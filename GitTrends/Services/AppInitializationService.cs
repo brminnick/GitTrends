@@ -8,7 +8,6 @@ public class AppInitializationService(ThemeService themeService,
 										LibrariesService librariesService,
 										IAnalyticsService analyticsService,
 										SyncfusionService syncFusionService,
-										MediaElementService mediaElementService,
 										NotificationService notificationService,
 										BackgroundFetchService backgroundFetchService,
 										GitTrendsStatisticsService gitTrendsStatisticsService,
@@ -21,7 +20,6 @@ public class AppInitializationService(ThemeService themeService,
 	readonly LibrariesService _librariesService = librariesService;
 	readonly IAnalyticsService _analyticsService = analyticsService;
 	readonly SyncfusionService _syncfusionService = syncFusionService;
-	readonly MediaElementService _mediaElementService = mediaElementService;
 	readonly NotificationService _notificationService = notificationService;
 	readonly BackgroundFetchService _backgroundFetchService = backgroundFetchService;
 	readonly GitTrendsStatisticsService _gitTrendsStatisticsService = gitTrendsStatisticsService;
@@ -50,12 +48,10 @@ public class AppInitializationService(ThemeService themeService,
 
 			#region Then, Initialize Services Requiring API Response
 			var initializeSyncFusionServiceTask = _syncfusionService.Initialize(cancellationToken);
-			var initializeOnboardingChartValueTask = _mediaElementService.InitializeManifests(cancellationToken);
 			var initializeLibrariesServiceValueTask = _librariesService.Initialize(cancellationToken);
 			var initializeNotificationServiceValueTask = _notificationService.Initialize(cancellationToken);
 			var initializeGitTrendsStatisticsValueTask = _gitTrendsStatisticsService.Initialize(cancellationToken);
 			
-			await initializeOnboardingChartValueTask.ConfigureAwait(false);
 			await initializeGitTrendsStatisticsValueTask.ConfigureAwait(false);
 #if DEBUG
 			initializeSyncFusionServiceTask.SafeFireAndForget(ex => _analyticsService.Report(ex));

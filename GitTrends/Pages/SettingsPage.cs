@@ -15,8 +15,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 
 	public SettingsPage(IDeviceInfo deviceInfo, 
 		IAnalyticsService analyticsService,
-		SettingsViewModel settingsViewModel,
-		MediaElementService mediaElementService) 
+		SettingsViewModel settingsViewModel) 
 		: base(settingsViewModel, analyticsService)
 	{
 		const int separatorRowHeight = 1;
@@ -166,7 +165,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 					}.Assign(out _contentGrid)
 				}.Paddings(left: 28, right: 28, bottom: 8),
 
-				new OrganizationsCarouselOverlay(analyticsService, mediaElementService).Assign(out _organizationsCarouselOverlay),
+				new OrganizationsCarouselOverlay(analyticsService).Assign(out _organizationsCarouselOverlay),
 			}
 		};
 

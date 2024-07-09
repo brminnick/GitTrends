@@ -106,7 +106,6 @@ public static class MauiProgram
 		services.AddSingleton<GitTrendsStatisticsService>();
 		services.AddSingleton<LanguageService>();
 		services.AddSingleton<LibrariesService>();
-		services.AddSingleton<MediaElementService>();
 		services.AddSingleton<NotificationService>();
 		services.AddSingleton<ReferringSitesDatabase>();
 		services.AddSingleton<RepositoryDatabase>();

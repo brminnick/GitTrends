@@ -12,11 +12,9 @@ public abstract class BaseOnboardingContentPage : BaseContentPage
 		in IDeviceInfo deviceInfo,
 		in Color backgroundColor,
 		in int carouselPositionIndex,
-		in IAnalyticsService analyticsService,
-		in MediaElementService mediaElementService) : base(analyticsService)
+		in IAnalyticsService analyticsService) : base(analyticsService)
 	{
 		DeviceInfo = deviceInfo;
-		MediaElementService = mediaElementService;
 
 		//Don't Use BaseTheme.PageBackgroundColor
 		RemoveDynamicResource(BackgroundColorProperty);
@@ -73,7 +71,6 @@ public abstract class BaseOnboardingContentPage : BaseContentPage
 	protected abstract View CreateDescriptionBodyView();
 
 	protected IDeviceInfo DeviceInfo { get; }
-	protected MediaElementService MediaElementService { get; }
 
 	int GetImageRowStarHeight()
 	{

@@ -50,7 +50,6 @@ static class ServiceCollection
 		services.AddSingleton<FirstRunService>();
 		services.AddSingleton<LanguageService>();
 		services.AddSingleton<LibrariesService>();
-		services.AddSingleton<MediaElementService>();
 		services.AddSingleton<ReferringSitesDatabase>();
 		services.AddSingleton<RepositoryDatabase>();
 		services.AddSingleton<ReviewService>();

@@ -6,8 +6,8 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;
 
-public class ChartOnboardingPage(IDeviceInfo deviceInfo, IAnalyticsService analyticsService, MediaElementService mediaElementService)
-	: BaseOnboardingContentPage(OnboardingConstants.SkipText, deviceInfo, Color.FromArgb(BaseTheme.CoralColorHex), 1, analyticsService, mediaElementService)
+public class ChartOnboardingPage(IDeviceInfo deviceInfo, IAnalyticsService analyticsService)
+	: BaseOnboardingContentPage(OnboardingConstants.SkipText, deviceInfo, Color.FromArgb(BaseTheme.CoralColorHex), 1, analyticsService)
 {
 
 	enum Row { Title, Zoom, LongPress }
@@ -22,7 +22,7 @@ public class ChartOnboardingPage(IDeviceInfo deviceInfo, IAnalyticsService analy
 		Stroke = Color.FromArgb("E0E0E0"),
 		BackgroundColor = Colors.White,
 		Padding = new Thickness(5),
-		Content = new VideoPlayerWithLoadingIndicatorView(MediaElementService.OnboardingChartUrl)
+		Content = new VideoPlayerWithLoadingIndicatorView(VideoConstants.ChartVideoFileName)
 	};
 
 	protected override TitleLabel CreateDescriptionTitleLabel() => new(OnboardingConstants.ChartPage_Title);

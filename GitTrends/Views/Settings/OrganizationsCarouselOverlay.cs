@@ -15,8 +15,7 @@ class OrganizationsCarouselOverlay : Grid
 {
 	readonly IAnalyticsService _analyticsService;
 
-	public OrganizationsCarouselOverlay(IAnalyticsService analyticsService,
-		MediaElementService mediaElementService)
+	public OrganizationsCarouselOverlay(IAnalyticsService analyticsService)
 	{
 		_analyticsService = analyticsService;
 
@@ -37,7 +36,7 @@ class OrganizationsCarouselOverlay : Grid
 			.Row(Row.CloseButton).Column(Column.Right));
 
 
-		Children.Add(new OrganizationsCarouselFrame(analyticsService, mediaElementService)
+		Children.Add(new OrganizationsCarouselFrame(analyticsService)
 			.Row(Row.CarouselFrame).Column(Column.Center));
 
 		Dismiss(false).SafeFireAndForget(ex => analyticsService.Report(ex));
@@ -122,8 +121,7 @@ class OrganizationsCarouselOverlay : Grid
 		readonly IndicatorView _indicatorView;
 		readonly IAnalyticsService _analyticsService;
 
-		public OrganizationsCarouselFrame(IAnalyticsService analyticsService,
-			MediaElementService mediaElementService)
+		public OrganizationsCarouselFrame(IAnalyticsService analyticsService)
 		{
 			_analyticsService = analyticsService;
 
@@ -144,7 +142,7 @@ class OrganizationsCarouselOverlay : Grid
 					new OpacityOverlay()
 						.Row(EnableOrganizationsGrid.Row.Image),
 
-					new OrganizationsCarouselView(analyticsService, mediaElementService)
+					new OrganizationsCarouselView(analyticsService)
 						.Row(EnableOrganizationsGrid.Row.Image).RowSpan(All<EnableOrganizationsGrid.Row>())
 						.Invoke(view => view.PositionChanged += HandlePositionChanged)
 						.Fill(),
@@ -184,7 +182,7 @@ class OrganizationsCarouselOverlay : Grid
 		{
 			readonly IAnalyticsService _analyticsService;
 
-			public OrganizationsCarouselView(IAnalyticsService analyticsService, MediaElementService mediaElementService)
+			public OrganizationsCarouselView(IAnalyticsService analyticsService)
 			{
 				_analyticsService = analyticsService;
 
@@ -195,7 +193,7 @@ class OrganizationsCarouselOverlay : Grid
 				{
 					new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.GitHubOrganizationsTitle, ManageOrganizationsConstants.GitHubOrganizationsDescription, 0, "Business", null),
 					new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.GitTrendsAccessTitle, ManageOrganizationsConstants.GitTrendsAccessDescription, 1, "Inspectocat", null),
-					new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.EnableOrganizationsTitle, ManageOrganizationsConstants.EnableOrganizationsDescription, 2, null, mediaElementService.EnableOrganizationsUrl),
+					new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.EnableOrganizationsTitle, ManageOrganizationsConstants.EnableOrganizationsDescription, 2, null, VideoConstants.EnableOranizationsFileName),
 				};
 
 				ItemTemplate = new EnableOrganizationsCarouselTemplateSelector();
