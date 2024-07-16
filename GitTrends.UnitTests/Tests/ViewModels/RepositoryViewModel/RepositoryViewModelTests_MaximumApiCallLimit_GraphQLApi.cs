@@ -13,7 +13,7 @@ class RepositoryViewModelTests_MaximumApiCallLimit_GraphQLApi : RepositoryViewMo
 	[Test]
 	public Task MaximumApiLimit_GraphQLApi() => ExecutePullToRefreshCommandTestMaximumApiLimitTest();
 
-	protected override void InitializeServiceCollection(GitHubToken token)
+	protected override void InitializeServiceCollection()
 	{
 		var handler = new HttpClientHandler
 		{
@@ -32,7 +32,7 @@ class RepositoryViewModelTests_MaximumApiCallLimit_GraphQLApi : RepositoryViewMo
 			BaseAddress = new(AzureConstants.AzureFunctionsApiUrl)
 		});
 
-		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient, token);
+		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
 	}
 
 	protected static HttpClient CreateMaximumApiLimitHttpClient(string url)

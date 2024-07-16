@@ -37,12 +37,8 @@ abstract class BaseTest : IDisposable
 
 		CultureInfo.DefaultThreadCurrentCulture = null;
 		CultureInfo.DefaultThreadCurrentUICulture = null;
-		
-		var accessToken = await Mobile.Common.AzureFunctionsApiService.GetTestToken(TestCancellationTokenSource.Token).ConfigureAwait(false);
-		if (accessToken.IsEmpty() || string.IsNullOrWhiteSpace(accessToken.AccessToken))
-			throw new InvalidOperationException("Invalid Token");
 
-		InitializeServiceCollection(accessToken);
+		InitializeServiceCollection();
 
 		var extendedBackgroundFetchService = (ExtendedBackgroundFetchService)ServiceCollection.ServiceProvider.GetRequiredService<BackgroundFetchService>();
 		extendedBackgroundFetchService.CancelAllJobs();
@@ -115,7 +111,7 @@ abstract class BaseTest : IDisposable
 		}
 	}
 
-	protected virtual void InitializeServiceCollection(GitHubToken token)
+	protected virtual void InitializeServiceCollection()
 	{
 		var handler = new HttpClientHandler
 		{
@@ -137,6 +133,6 @@ abstract class BaseTest : IDisposable
 			BaseAddress = new Uri(AzureConstants.AzureFunctionsApiUrl)
 		});
 
-		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient, token);
+		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
 	}
 }

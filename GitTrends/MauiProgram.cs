@@ -94,7 +94,7 @@ public static class MauiProgram
 		services.AddSingleton<DeepLinkingService>();
 		services.AddSingleton<FavIconService>();
 		services.AddSingleton<FirstRunService>();
-		services.AddSingleton<IGitHubApiStatusService, GitHubApiStatusService>();
+		services.AddSingleton<IGitHubApiStatusService>(_ => new GitHubApiStatusService());
 		services.AddSingleton<GitHubApiRepositoriesService>();
 		services.AddSingleton<GitHubApiV3Service>();
 		services.AddSingleton<GitHubAuthenticationService>();

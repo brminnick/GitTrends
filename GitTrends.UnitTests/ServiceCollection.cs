@@ -16,38 +16,35 @@ static class ServiceCollection
 
 	public static IServiceProvider ServiceProvider => _serviceProviderHolder ?? throw new InvalidOperationException("Must call Initialize first");
 
-	public static void Initialize(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi, GitHubToken token) =>
-		_serviceProviderHolder = CreateContainer(azureFunctionsApi, gitHubApiV3, gitHubGraphQLApi, token);
+	public static void Initialize(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi) =>
+		_serviceProviderHolder = CreateContainer(azureFunctionsApi, gitHubApiV3, gitHubGraphQLApi);
 
-	static ServiceProvider CreateContainer(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi, GitHubToken token)
+	static ServiceProvider CreateContainer(IAzureFunctionsApi azureFunctionsApi, IGitHubApiV3 gitHubApiV3, IGitHubGraphQLApi gitHubGraphQLApi)
 	{
 		var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
 
 		//GitTrends Refit Services
+		services.AddHttpClient();
 		services.AddSingleton(gitHubApiV3);
 		services.AddSingleton(gitHubGraphQLApi);
 		services.AddSingleton(azureFunctionsApi);
-		
-		services.AddGitHubApiStatusService(new AuthenticationHeaderValue(token.TokenType, token.AccessToken), new ProductHeaderValue(nameof(GitTrends)))
-			.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler
-			{
-				AutomaticDecompression = BaseTest.GetDecompressionMethods()
-			});
+
 
 		//GitTrends Services
 		services.AddSingleton<AppInitializationService>();
 		services.AddSingleton<AzureFunctionsApiService>();
-		services.AddSingleton<BackgroundFetchService, ExtendedBackgroundFetchService>();
 		services.AddSingleton<DeepLinkingService>();
+		services.AddSingleton<BackgroundFetchService, ExtendedBackgroundFetchService>();
 		services.AddSingleton<NotificationService, ExtendedNotificationService>();
+		services.AddSingleton<FavIconService>();
+		services.AddSingleton<FirstRunService>();
 		services.AddSingleton<GitHubApiV3Service>();
 		services.AddSingleton<GitHubApiRepositoriesService>();
 		services.AddSingleton<GitHubAuthenticationService>();
 		services.AddSingleton<GitHubGraphQLApiService>();
 		services.AddSingleton<GitHubUserService>();
 		services.AddSingleton<GitTrendsStatisticsService>();
-		services.AddSingleton<FavIconService>();
-		services.AddSingleton<FirstRunService>();
+		services.AddSingleton<IGitHubApiStatusService>(_ => new GitHubApiStatusService());
 		services.AddSingleton<LanguageService>();
 		services.AddSingleton<LibrariesService>();
 		services.AddSingleton<ReferringSitesDatabase>();
