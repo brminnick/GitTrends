@@ -18,14 +18,8 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CFBundleDisplayName</key>
-	<string>GitTrends</string>
-	<key>CFBundleIdentifier</key>
-	<string>com.minnick.GitTrends</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
-	<key>CFBundleName</key>
-	<string>GitTrends</string>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/AppIcon.appiconset</string>
 	<key>CFBundleURLTypes</key>
@@ -54,20 +48,11 @@
 		<string>remote-notification</string>
 		<string>processing</string>
 	</array>
-    <key>BGTaskSchedulerPermittedIdentifiers</key>
-    <array>
-        <string>com.shiny.job</string>
-        <string>com.shiny.jobpower</string>
-        <string>com.shiny.jobnet</string>
-        <string>com.shiny.jobpowernet</string>
-    </array>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.minnick.GitTrends.NotifyTrendingRepositories</string>
 		<string>com.minnick.GitTrends.CleanUpDatabase</string>
 	</array>
-	<key>CFBundleVersion</key>
-	<string>64</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
