@@ -6,5 +6,4 @@ partial class AppShell
 	{
 		throw new NotImplementedException();
 	}
-
 }

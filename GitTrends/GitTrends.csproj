@@ -3,13 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>$(NetVersion);$(NetVersion)-android;$(NetVersion)-ios;$(NetVersion)-maccatalyst</TargetFrameworks>
 
-    <!-- Note for MacCatalyst:
-    The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
-    When specifying both architectures, use the plural <RuntimeIdentifiers> instead of the singular <RuntimeIdentifier>.
-    The Mac App Store will NOT accept apps with ONLY maccatalyst-arm64 indicated;
-    either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
-    <!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
-
     <OutputType Condition="'$(TargetFramework)' != '$(NetVersion)'">Exe</OutputType>
     <RootNamespace>GitTrends</RootNamespace>
     <UseMaui>true</UseMaui>
@@ -228,8 +221,15 @@
     <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\splashscreenanimatedicon.png"/>
   </ItemGroup>
 
-  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
     <BundleResource Include="Platforms\iOS\PrivacyInfo.xcprivacy" LogicalName="PrivacyInfo.xcprivacy"/>
   </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
+    <BundleResource Include="Platforms\MacCatalyst\PrivacyInfo.xcprivacy" LogicalName="PrivacyInfo.xcprivacy"/>
+    <RuntimeIdentifiers Condition="'$(Configuration)' == 'AppStore'">maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers>
+  </ItemGroup>
+  
+  
 
 </Project>
