@@ -73,7 +73,6 @@ static class ServiceCollection
 		services.AddSingleton<IBrowser, MockBrowser>();
 		services.AddSingleton<IDeviceInfo, MockDeviceInfo>();
 		services.AddSingleton<IDispatcher, MockDispatcher>();
-		services.AddSingleton<IDeviceNotificationsService, MockDeviceNotificationsService>();
 		services.AddSingleton<IFileSystem, MockFileSystem>();
 		services.AddSingleton<IEmail, MockEmail>();
 		services.AddSingleton<ILauncher, MockLauncher>();

@@ -65,9 +65,6 @@ abstract class BaseTest : IDisposable
 		var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
 		await notificationService.SetAppBadgeCount(0, TestCancellationTokenSource.Token).ConfigureAwait(false);
 		notificationService.UnRegister();
-
-		var mockNotificationService = (MockDeviceNotificationsService)ServiceCollection.ServiceProvider.GetRequiredService<IDeviceNotificationsService>();
-		mockNotificationService.Reset();
 	}
 
 	protected static async Task AuthenticateUser(GitHubUserService gitHubUserService, GitHubGraphQLApiService gitHubGraphQLApiService, CancellationToken token)

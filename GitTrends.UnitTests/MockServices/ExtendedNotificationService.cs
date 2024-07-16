@@ -12,9 +12,8 @@ public class ExtendedNotificationService(
 	MobileSortingService sortingService,
 	DeepLinkingService deepLinkingService,
 	INotificationManager notificationManager,
-	AzureFunctionsApiService azureFunctionsApiService,
-	IDeviceNotificationsService deviceNotificationsService)
-	: NotificationService(deviceInfo, preferences, secureStorage, analyticsService, sortingService, deepLinkingService, notificationManager, deviceNotificationsService, azureFunctionsApiService)
+	AzureFunctionsApiService azureFunctionsApiService)
+	: NotificationService(deviceInfo, preferences, secureStorage, analyticsService, sortingService, deepLinkingService, notificationManager, azureFunctionsApiService)
 {
 	public override void UnRegister()
 	{

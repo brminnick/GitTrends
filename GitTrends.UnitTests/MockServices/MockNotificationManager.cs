@@ -3,7 +3,7 @@ using Shiny.Notifications;
 
 namespace GitTrends.UnitTests;
 
-public class MockNotificationManager(IDeviceNotificationsService deviceNotificationsService) : INotificationManager
+public class MockNotificationManager : INotificationManager
 {
 	readonly Dictionary<string, Channel> _channelsDictionary = new();
 	readonly Dictionary<int, Notification> _pendingNotificationsDitcionary = new();
@@ -37,7 +37,7 @@ public class MockNotificationManager(IDeviceNotificationsService deviceNotificat
 
 	public Task<AccessState> RequestAccess(AccessRequestFlags flags = AccessRequestFlags.Notification)
 	{
-		deviceNotificationsService.Initialize();
+		throw new NotImplementedException();
 		return Task.FromResult(AccessState.Available);
 	}
 
