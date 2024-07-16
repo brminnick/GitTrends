@@ -46,7 +46,7 @@ class App : Microsoft.Maui.Controls.Application
 
 		_analyticsService.Track("App Started");
 
-		await ClearBageNotifications(CancellationToken.None);
+		await ClearBadgeNotifications(CancellationToken.None);
 
 		var appInitializationCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
 		await _appInitializationService.InitializeApp(appInitializationCancellationTokenSource.Token);
@@ -60,7 +60,7 @@ class App : Microsoft.Maui.Controls.Application
 
 		_analyticsService.Track("App Resumed");
 
-		await ClearBageNotifications(CancellationToken.None);
+		await ClearBadgeNotifications(CancellationToken.None);
 	}
 
 	protected override void OnSleep()
@@ -70,7 +70,7 @@ class App : Microsoft.Maui.Controls.Application
 		_analyticsService.Track("App Backgrounded");
 	}
 
-	ValueTask ClearBageNotifications(CancellationToken token) => _notificationService.SetAppBadgeCount(0, token);
+	ValueTask ClearBadgeNotifications(CancellationToken token) => _notificationService.SetAppBadgeCount(0, token);
 
 	void OnResumed() => _resumedEventManager.RaiseEvent(this, EventArgs.Empty, nameof(Resumed));
 }

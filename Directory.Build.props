@@ -16,7 +16,7 @@
     <WarningsAsErrors>nullable, NUnit2019, NUnit2017, NUnit2045, NUnit2002, NUnit2046, NUnit2007, CS0618</WarningsAsErrors>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'AppStore' ">
     <Optimize>true</Optimize>
     <DefineConstants>AppStore</DefineConstants>
     <NoWarn>1701;1702</NoWarn>
@@ -25,7 +25,7 @@
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <NoWarn>1701;1702</NoWarn>
     <NoStdLib>false</NoStdLib>
     <DebugSymbols>true</DebugSymbols>

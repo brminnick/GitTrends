@@ -9,7 +9,7 @@ public class BackgroundFetchService
 	static readonly AsyncAwaitBestPractices.WeakEventManager _eventManager = new();
 	static readonly WeakEventManager<bool> _scheduleNotifyTrendingRepositoriesCompletedEventManager = new();
 	static readonly WeakEventManager<string> _scheduleRetryOrganizationsRepositoriesCompletedEventManager = new();
-	static readonly WeakEventManager<Repository> _repostoryEventManager = new();
+	static readonly WeakEventManager<Repository> _repositoryEventManager = new();
 	static readonly WeakEventManager<MobileReferringSiteModel> _mobileReferringSiteRetrievedEventManager = new();
 
 	readonly IJobManager _jobManager;
@@ -82,20 +82,20 @@ public class BackgroundFetchService
 
 	public static event EventHandler<Repository> ScheduleRetryRepositoriesViewsClonesStarsCompleted
 	{
-		add => _repostoryEventManager.AddEventHandler(value);
-		remove => _repostoryEventManager.RemoveEventHandler(value);
+		add => _repositoryEventManager.AddEventHandler(value);
+		remove => _repositoryEventManager.RemoveEventHandler(value);
 	}
 
 	public static event EventHandler<Repository> ScheduleRetryRepositoriesStarsCompleted
 	{
-		add => _repostoryEventManager.AddEventHandler(value);
-		remove => _repostoryEventManager.RemoveEventHandler(value);
+		add => _repositoryEventManager.AddEventHandler(value);
+		remove => _repositoryEventManager.RemoveEventHandler(value);
 	}
 
 	public static event EventHandler<Repository> ScheduleRetryGetReferringSitesCompleted
 	{
-		add => _repostoryEventManager.AddEventHandler(value);
-		remove => _repostoryEventManager.RemoveEventHandler(value);
+		add => _repositoryEventManager.AddEventHandler(value);
+		remove => _repositoryEventManager.RemoveEventHandler(value);
 	}
 
 	public IReadOnlyList<string> QueuedJobs => [.. QueuedJobsHash];
@@ -433,13 +433,13 @@ public class BackgroundFetchService
 	void OnScheduleRetryRepositoriesViewsClonesStarsCompleted(in Repository repository)
 	{
 		QueuedJobsHash.Remove(GetRetryRepositoriesViewsClonesStarsIdentifier(repository));
-		_repostoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesViewsClonesStarsCompleted));
+		_repositoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesViewsClonesStarsCompleted));
 	}
 
 	void OnScheduleRetryRepositoriesStarsCompleted(in Repository repository)
 	{
 		QueuedJobsHash.Remove(GetRetryRepositoriesStarsIdentifier(repository));
-		_repostoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesStarsCompleted));
+		_repositoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryRepositoriesStarsCompleted));
 	}
 
 	void OnDatabaseCleanupCompleted()
@@ -463,7 +463,7 @@ public class BackgroundFetchService
 	void OnScheduleRetryGetReferringSitesCompleted(in Repository repository)
 	{
 		QueuedJobsHash.Remove(GetRetryGetReferringSitesIdentifier(repository));
-		_repostoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryGetReferringSitesCompleted));
+		_repositoryEventManager.RaiseEvent(this, repository, nameof(ScheduleRetryGetReferringSitesCompleted));
 	}
 
 	void OnMobileReferringSiteRetrieved(in MobileReferringSiteModel referringSite) =>

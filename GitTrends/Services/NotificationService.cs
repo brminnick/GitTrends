@@ -23,7 +23,6 @@ public class NotificationService
 	readonly IAnalyticsService _analyticsService;
 	readonly DeepLinkingService _deepLinkingService;
 	readonly INotificationManager _notificationManager;
-	readonly IDeviceNotificationsService _notificationService;
 	readonly AzureFunctionsApiService _azureFunctionsApiService;
 
 	TaskCompletionSource<AccessState>? _settingsResultCompletionSource;
@@ -35,7 +34,6 @@ public class NotificationService
 								MobileSortingService sortingService,
 								DeepLinkingService deepLinkingService,
 								INotificationManager notificationManager,
-								IDeviceNotificationsService notificationService,
 								AzureFunctionsApiService azureFunctionsApiService)
 	{
 		_deviceInfo = deviceInfo;
@@ -45,7 +43,6 @@ public class NotificationService
 		_analyticsService = analyticsService;
 		_deepLinkingService = deepLinkingService;
 		_notificationManager = notificationManager;
-		_notificationService = notificationService;
 		_azureFunctionsApiService = azureFunctionsApiService;
 
 		App.Resumed += HandleAppResumed;
@@ -96,10 +93,9 @@ public class NotificationService
 	public static string CreateSingleRepositoryNotificationMessage(in string repositoryName, in string repositoryOwner) => string.Format(NotificationConstants.SingleRepositoryNotificationMessage, repositoryName, repositoryOwner);
 	public static string CreateMultipleRepositoryNotificationMessage(in int count) => string.Format(NotificationConstants.MultipleRepositoryNotificationMessage, count);
 
-	public async Task<bool> AreNotificationsEnabled(CancellationToken token)
+	public Task<bool> AreNotificationsEnabled(CancellationToken token)
 	{
-		bool? areNotificationsEnabled = await _notificationService.AreNotificationEnabled(token).ConfigureAwait(false);
-		return areNotificationsEnabled ?? false;
+		throw new NotImplementedException();
 	}
 
 	public async ValueTask Initialize(CancellationToken cancellationToken)

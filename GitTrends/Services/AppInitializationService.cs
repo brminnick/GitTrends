@@ -10,8 +10,7 @@ public class AppInitializationService(ThemeService themeService,
 										SyncfusionService syncFusionService,
 										NotificationService notificationService,
 										BackgroundFetchService backgroundFetchService,
-										GitTrendsStatisticsService gitTrendsStatisticsService,
-										IDeviceNotificationsService deviceNotificationService)
+										GitTrendsStatisticsService gitTrendsStatisticsService)
 {
 	static readonly WeakEventManager<InitializationCompleteEventArgs> _initializationCompletedEventManager = new();
 
@@ -23,7 +22,6 @@ public class AppInitializationService(ThemeService themeService,
 	readonly NotificationService _notificationService = notificationService;
 	readonly BackgroundFetchService _backgroundFetchService = backgroundFetchService;
 	readonly GitTrendsStatisticsService _gitTrendsStatisticsService = gitTrendsStatisticsService;
-	readonly IDeviceNotificationsService _deviceNotificationsService = deviceNotificationService;
 
 	public static event EventHandler<InitializationCompleteEventArgs> InitializationCompleted
 	{
@@ -42,7 +40,6 @@ public class AppInitializationService(ThemeService themeService,
 			#region First, Initialize Services That Dont Require API Response
 			_languageService.Initialize();
 			_backgroundFetchService.Initialize();
-			_deviceNotificationsService.Initialize();
 			await _themeService.Initialize().ConfigureAwait(false);
 			#endregion
 

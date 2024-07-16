@@ -50,13 +50,10 @@ public static class MauiProgram
 
 #if ANDROID || IOS || MACCATALYST
 		builder.Services.AddNotifications();
-#endif
-
-#if AppStore
-#error: No Shiny Jobs defined
 		builder.Services.AddJob(typeof(BackgroundFetchService));
 #endif
 
+		
 		RegisterCrossPlatformAPIs(builder.Services);
 		RegisterDatabases(builder.Services);
 		RegisterPagesAndViewModels(builder.Services);
@@ -97,7 +94,7 @@ public static class MauiProgram
 		services.AddSingleton<DeepLinkingService>();
 		services.AddSingleton<FavIconService>();
 		services.AddSingleton<FirstRunService>();
-		services.AddSingleton<GitHubApiStatusService>();
+		services.AddSingleton<IGitHubApiStatusService, GitHubApiStatusService>();
 		services.AddSingleton<GitHubApiRepositoriesService>();
 		services.AddSingleton<GitHubApiV3Service>();
 		services.AddSingleton<GitHubAuthenticationService>();
@@ -164,7 +161,7 @@ public static class MauiProgram
 	static IServiceCollection AddTransientWithShellRoute<TPage, TViewModel>(this IServiceCollection services) where TPage : BaseContentPage<TViewModel>
 																												where TViewModel : BaseViewModel
 	{
-		return services.AddTransientWithShellRoute<TPage, TViewModel>(AppShell.GetPageRoute<TViewModel>());
+		return services.AddTransientWithShellRoute<TPage, TViewModel>(AppShell.GetPageRoute<TPage>());
 	}
 
 
