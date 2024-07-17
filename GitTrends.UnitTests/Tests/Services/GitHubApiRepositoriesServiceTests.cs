@@ -90,7 +90,7 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 			Assert.That(repositories.SelectMany(static x => x.DailyViewsList ?? throw new InvalidOperationException()), Is.Not.Empty);
 			Assert.That(repositories.SelectMany(static x => x.DailyClonesList ?? throw new InvalidOperationException()), Is.Not.Empty);
 
-			Assert.That(repositories.SelectMany(static x => x.StarredAt ?? throw new InvalidOperationException()).Count(), Is.GreaterThan(0));
+			Assert.That(repositories.Sum(static x => x.StarredAt?.Count ?? throw new InvalidOperationException()), Is.EqualTo(repositories.Sum(static x => x.StarCount)));
 			Assert.That(repositories.Sum(static x => x.TotalClones ?? throw new InvalidOperationException($"{nameof(x.TotalClones)} cannot be null")), Is.GreaterThan(0));
 			Assert.That(repositories.Sum(static x => x.TotalUniqueClones ?? throw new InvalidOperationException($"{nameof(x.TotalUniqueClones)} cannot be null")), Is.GreaterThan(0));
 			Assert.That(repositories.Sum(static x => x.TotalViews ?? throw new InvalidOperationException($"{nameof(x.TotalViews)} cannot be null")), Is.GreaterThan(0));

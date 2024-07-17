@@ -260,6 +260,9 @@ public class NotificationService
 																				NotificationConstants.HandleNotification_SingleTrendingRepository_Accept,
 																				NotificationConstants.HandleNotification_SingleTrendingRepository_Decline,
 																				token).ConfigureAwait(false);
+
+			if (Application.Current is null) // Set default value for unit tests
+				shouldNavigateToChart = true;
 			
 			if(shouldNavigateToChart is null)
 				throw new InvalidOperationException($"{nameof(shouldNavigateToChart)} cannot be null");
@@ -296,7 +299,8 @@ public class NotificationService
 																				token).ConfigureAwait(false);
 			}
 
-			if (shouldSortByTrending is true)
+			if (Application.Current is null // Set default value for unit tests
+				|| shouldSortByTrending is true) 
 				OnSortingOptionRequested(_sortingService.CurrentOption);
 
 			_analyticsService.Track("Multiple Trending Repository Prompt Displayed", nameof(shouldSortByTrending), shouldSortByTrending?.ToString() ?? "null");

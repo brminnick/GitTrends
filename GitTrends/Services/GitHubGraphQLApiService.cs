@@ -8,10 +8,11 @@ using Refit;
 
 namespace GitTrends;
 
-public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
-										IGitHubGraphQLApi gitHubGraphQLApi,
-										GitHubUserService gitHubUserService,
-										IGitHubApiStatusService gitHubApiStatusService) : BaseMobileApiService(analyticsService)
+public class GitHubGraphQLApiService(
+	IAnalyticsService analyticsService,
+	IGitHubGraphQLApi gitHubGraphQLApi,
+	GitHubUserService gitHubUserService,
+	IGitHubApiStatusService gitHubApiStatusService) : BaseMobileApiService(analyticsService)
 {
 	static readonly WeakEventManager<(string, TimeSpan)> _abuseRateLimitFound_GetOrganizationRepositoriesEventManager = new();
 
@@ -46,19 +47,19 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 		var repositoryResult = await repositoryQueryTask.ConfigureAwait(false);
 
 		return new Repository(repositoryResult.Repository.Name,
-								repositoryResult.Repository.Description,
-								repositoryResult.Repository.ForkCount,
-								repositoryResult.Repository.Owner.Login,
-								repositoryResult.Repository.Owner.AvatarUrl,
-								repositoryResult.Repository.Issues.IssuesCount,
-								repositoryResult.Repository.Watchers.TotalCount,
-								starGazersResult.StarredAt.Count,
-								repositoryResult.Repository.Url.ToString(),
-								repositoryResult.Repository.IsFork,
-								DateTimeOffset.UtcNow,
-								repositoryResult.Repository.Permission,
-								repositoryResult.Repository.IsArchived,
-								starredAt: starGazersResult.StarredAt.Select(static x => x.StarredAt));
+			repositoryResult.Repository.Description,
+			repositoryResult.Repository.ForkCount,
+			repositoryResult.Repository.Owner.Login,
+			repositoryResult.Repository.Owner.AvatarUrl,
+			repositoryResult.Repository.Issues.IssuesCount,
+			repositoryResult.Repository.Watchers.TotalCount,
+			starGazersResult.StarredAt.Count,
+			repositoryResult.Repository.Url.ToString(),
+			repositoryResult.Repository.IsFork,
+			DateTimeOffset.UtcNow,
+			repositoryResult.Repository.Permission,
+			repositoryResult.Repository.IsArchived,
+			starredAt: starGazersResult.StarredAt.Select(static x => x.StarredAt));
 	}
 
 	public async Task<StarGazers> GetStarGazers(string repositoryName, string repositoryOwner, CancellationToken cancellationToken)
@@ -90,18 +91,18 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 		if (_gitHubUserService.IsDemoUser)
 		{
 			//Yield off of main thread to generate the demoDataList
-			await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
+			await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken).ConfigureAwait(false);
 
 			for (int i = 0; i < DemoDataConstants.RepoCount; i++)
 			{
 				var demoRepo = new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
-											DemoUserConstants.Alias, _gitHubUserService.AvatarUrl, DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
-											DemoDataConstants.GetRandomNumber(), _gitHubUserService.AvatarUrl, false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
+					DemoUserConstants.Alias, _gitHubUserService.AvatarUrl, DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(),
+					DemoDataConstants.GetRandomNumber(), _gitHubUserService.AvatarUrl, false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
 				yield return demoRepo;
 			}
 
 			//Allow UI to update
-			await Task.Delay(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
+			await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken).ConfigureAwait(false);
 		}
 		else
 		{
@@ -159,14 +160,9 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 				repositoryConnection = await GetOrganizationRepositoryConnection(organization, token, repositoryConnection?.PageInfo.EndCursor, cancellationToken, numberOfRepositoriesPerRequest).ConfigureAwait(false);
 
 				// Views + Clones statistics are only available for repositories with write access
-				foreach (var repository in repositoryConnection.RepositoryList.Where(static x => x?.Permission is RepositoryPermission.ADMIN or RepositoryPermission.MAINTAIN or RepositoryPermission.WRITE))
-				{
-					if (repository is not null)
-						repositoryList.Add(new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
-													repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Stargazers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt, repository.Permission, repository.IsArchived));
-				}
-			}
-			while (repositoryConnection?.PageInfo?.HasNextPage is true);
+				repositoryList.AddRange(repositoryConnection.RepositoryList.Where(static x => x?.Permission is RepositoryPermission.ADMIN or RepositoryPermission.MAINTAIN or RepositoryPermission.WRITE).OfType<RepositoryConnectionNode>().Select(repository => new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl, repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Stargazers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt, repository.Permission, repository.IsArchived)));
+				
+			} while (repositoryConnection.PageInfo.HasNextPage);
 		}
 		catch (ApiException e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryDelta))
 		{
@@ -183,10 +179,10 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 		var response = await action().ConfigureAwait(false);
 
 		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
-		
+
 		if (response.Error is not null)
 			throw response.Error;
-		
+
 		if (response.Content?.Errors is not null)
 			throw new GraphQLException<T>(response.Content.Data, response.Content.Errors, response.StatusCode, response.Headers);
 
@@ -198,6 +194,8 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 
 	async IAsyncEnumerable<StarGazers> GetStarGazers(string repositoryName, string repositoryOwner, [EnumeratorCancellation] CancellationToken cancellationToken, int numberOfStarGazersPerRequest = 100)
 	{
+		
+		
 		StarGazerResponse? starGazerResponse = null;
 
 		var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
@@ -207,10 +205,9 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 			var endCursor = GetEndCursorString(starGazerResponse?.Repository.StarGazers.StarredAt.LastOrDefault()?.Cursor);
 			starGazerResponse = await ExecuteGraphQLRequest(() => _githubApiClient.StarGazerQuery(new StarGazerQueryContent(repositoryName, repositoryOwner, endCursor, numberOfStarGazersPerRequest), GetGitHubBearerTokenHeader(token), cancellationToken)).ConfigureAwait(false);
 
-			if (starGazerResponse?.Repository.StarGazers != null)
-				yield return starGazerResponse.Repository.StarGazers;
+			yield return starGazerResponse.Repository.StarGazers;
 
-		} while (starGazerResponse?.Repository.StarGazers.StarredAt.Count == numberOfStarGazersPerRequest);
+		} while (starGazerResponse.Repository.StarGazers.StarredAt.Count == numberOfStarGazersPerRequest);
 	}
 
 	async IAsyncEnumerable<Repository> GetOwnedRepositories(string repositoryOwner, [EnumeratorCancellation] CancellationToken cancellationToken, int numberOfRepositoriesPerRequest = 100)
@@ -226,10 +223,9 @@ public class GitHubGraphQLApiService(IAnalyticsService analyticsService,
 			{
 				if (repository is not null)
 					yield return new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl,
-												repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Stargazers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt, repository.Permission, repository.IsArchived);
+						repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Stargazers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt, repository.Permission, repository.IsArchived);
 			}
-		}
-		while (repositoryConnection?.PageInfo?.HasNextPage is true);
+		} while (repositoryConnection.PageInfo.HasNextPage);
 	}
 
 	async IAsyncEnumerable<string> GetOrganizationNames(GitHubToken token, [EnumeratorCancellation] CancellationToken cancellationToken)

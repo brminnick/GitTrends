@@ -34,7 +34,7 @@ class RepositoryViewModelTests : BaseTest
 		visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
 		emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
 
-		await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
+		await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		if (backgroundFetchService.QueuedJobs.Any())
 		{
@@ -63,7 +63,7 @@ class RepositoryViewModelTests : BaseTest
 			Assert.That(emptyDataViewDescription_Initial, Is.EqualTo(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Uninitialized, true)));
 			Assert.That(emptyDataViewDescription_Final, Is.EqualTo(EmptyDataViewService.GetRepositoryDescriptionText(RefreshState.Succeeded, false)));
 
-			Assert.That(visibleRepositoryList_Final.Any(static x => x.OwnerLogin is GitHubConstants.GitTrendsRepoOwner && x.Name is GitHubConstants.GitTrendsRepoName), Is.True);
+			Assert.That(visibleRepositoryList_Final.Any(static x => x is { OwnerLogin: GitHubConstants.GitTrendsRepoOwner, Name: GitHubConstants.GitTrendsRepoName }), Is.True);
 
 
 			foreach (var repository in repositoriesUpdatedInBackground)
@@ -130,7 +130,7 @@ class RepositoryViewModelTests : BaseTest
 		//Act
 		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService, TestCancellationTokenSource.Token).ConfigureAwait(false);
 
-		var pullToRefreshCommandTask = repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null);
+		var pullToRefreshCommandTask = repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(TestCancellationTokenSource.Token);
 		gitHubUserService.ShouldIncludeOrganizations = !gitHubUserService.ShouldIncludeOrganizations;
 
 		await pullToRefreshCommandTask.ConfigureAwait(false);
@@ -166,7 +166,7 @@ class RepositoryViewModelTests : BaseTest
 		//Act
 		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService, TestCancellationTokenSource.Token).ConfigureAwait(false);
 
-		var pullToRefreshCommandTask = repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null);
+		var pullToRefreshCommandTask = repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(TestCancellationTokenSource.Token);
 		await gitHubAuthenticationService.LogOut(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		await pullToRefreshCommandTask.ConfigureAwait(false);
@@ -202,7 +202,7 @@ class RepositoryViewModelTests : BaseTest
 		//Act
 		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService, TestCancellationTokenSource.Token).ConfigureAwait(false);
 
-		var pullToRefreshCommandTask = repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null);
+		var pullToRefreshCommandTask = repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(TestCancellationTokenSource.Token);
 		try
 		{
 			await gitHubAuthenticationService.AuthorizeSession(new Uri("https://gittrends"), CancellationToken.None).ConfigureAwait(false);
@@ -249,7 +249,7 @@ class RepositoryViewModelTests : BaseTest
 		visibleRepositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
 		emptyDataViewDescription_Initial = repositoryViewModel.EmptyDataViewDescription;
 
-		var pullToRefreshCommandTask = repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null);
+		var pullToRefreshCommandTask = repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(TestCancellationTokenSource.Token);
 
 		await pullToRefreshCommandTask.ConfigureAwait(false);
 		var pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
@@ -296,7 +296,7 @@ class RepositoryViewModelTests : BaseTest
 
 		//Act
 		await gitHubAuthenticationService.ActivateDemoUser(TestCancellationTokenSource.Token).ConfigureAwait(false);
-		await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
+		await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		repositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
 		repository = repositoryList_Initial.First();
@@ -329,7 +329,7 @@ class RepositoryViewModelTests : BaseTest
 
 		//Act
 		await gitHubAuthenticationService.ActivateDemoUser(TestCancellationTokenSource.Token).ConfigureAwait(false);
-		await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
+		await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		repositoryList_Initial = repositoryViewModel.VisibleRepositoryList;
 		repository = repositoryList_Initial.First();
@@ -361,7 +361,7 @@ class RepositoryViewModelTests : BaseTest
 
 		//Act
 		await gitHubAuthenticationService.ActivateDemoUser(TestCancellationTokenSource.Token).ConfigureAwait(false);
-		await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
+		await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert
 		Assert.Throws<InvalidEnumArgumentException>(() => repositoryViewModel.SortRepositoriesCommand.Execute(sortingOption));
@@ -382,7 +382,7 @@ class RepositoryViewModelTests : BaseTest
 
 		//Act
 		await gitHubAuthenticationService.ActivateDemoUser(TestCancellationTokenSource.Token).ConfigureAwait(false);
-		await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
+		await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		repositoryViewModel.SortRepositoriesCommand.Execute(sortingOption);
 
@@ -417,7 +417,7 @@ class RepositoryViewModelTests : BaseTest
 		else
 			await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService, TestCancellationTokenSource.Token).ConfigureAwait(false);
 
-		await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null).ConfigureAwait(false);
+		await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 		repository_initial = repositoryViewModel.VisibleRepositoryList.First();
 
 

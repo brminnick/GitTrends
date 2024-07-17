@@ -46,7 +46,7 @@ public record Repository : IRepository
 		DailyClonesList = clones?.ToList();
 	}
 
-	public bool ContainsStarsData => StarredAt is not null && StarredAt.Count == StarCount;
+	public bool ContainsStarsData => StarredAt is not null;
 	public bool ContainsViewsClonesData => TotalClones is not null && TotalViews is not null && TotalUniqueClones is not null && TotalUniqueViews is not null;
 	public bool ContainsViewsClonesStarsData => ContainsViewsClonesData && ContainsStarsData;
 

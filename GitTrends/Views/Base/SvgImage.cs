@@ -36,6 +36,7 @@ public class SvgImage : Image
 		Behaviors.Add(new IconTintColorBehavior()
 						.Bind(IconTintColorBehavior.TintColorProperty, 
 							getter: static (SvgImage image) => image.GetColor(),
+							handlers: [],
 							source: this)
 						.Assign(out _iconTintColorBehavior));
 	}

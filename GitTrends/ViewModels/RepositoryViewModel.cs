@@ -165,24 +165,24 @@ public partial class RepositoryViewModel : BaseViewModel
 
 			AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
 
-			var viewsClonesRepsitoriesList = new List<Repository>();
+			var viewsClonesRepositoriesList = new List<Repository>();
 			await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.Where(static x => !x.ContainsViewsClonesData), cancellationTokenSource.Token).ConfigureAwait(false))
 			{
-				viewsClonesRepsitoriesList.Add(retrievedRepositoryWithViewsAndClonesData);
+				viewsClonesRepositoriesList.Add(retrievedRepositoryWithViewsAndClonesData);
 
 				if (!_gitHubUserService.IsDemoUser)
 				{
 					//Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
-					if (viewsClonesRepsitoriesList.Count > minimumBatchCount)
+					if (viewsClonesRepositoriesList.Count > minimumBatchCount)
 					{
-						AddRepositoriesToCollection(viewsClonesRepsitoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
-						viewsClonesRepsitoriesList.Clear();
+						AddRepositoriesToCollection(viewsClonesRepositoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
+						viewsClonesRepositoriesList.Clear();
 					}
 				}
 			}
 
 			//Add Remaining Repositories to VisibleRepositoryList
-			AddRepositoriesToCollection(viewsClonesRepsitoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
+			AddRepositoriesToCollection(viewsClonesRepositoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
 			#endregion
 
 			IsRefreshing = false;
@@ -197,8 +197,8 @@ public partial class RepositoryViewModel : BaseViewModel
 			AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
 
 
-			var repositoriesWithoutStarsDataAndOver1000Stars = _repositoryList.Where(static x => !x.ContainsStarsData && x.StarCount > 1000);
-			var repositoriesWithoutStarsDataAndLessThan1000Stars = _repositoryList.Where(static x => !x.ContainsStarsData && x.StarCount <= 1000);
+			var repositoriesWithoutStarsDataAndOver1000Stars = _repositoryList.Where(static x => x is { ContainsStarsData: false, StarCount: > 1000 });
+			var repositoriesWithoutStarsDataAndLessThan1000Stars = _repositoryList.Where(static x => x is { ContainsStarsData: false, StarCount: <= 1000 });
 
 			// Fetch Stars Data in Background for Repositories Containing Over 1000 Stars
 			// GitHub API limits us to 100 StarGazers per Request, meaning that a repository with 24K Stars requires 240 round-trips from GitTrends to GitHub's servers to aggregate the data
@@ -292,8 +292,8 @@ public partial class RepositoryViewModel : BaseViewModel
 				_ => throw new NotSupportedException()
 			};
 
-			var maximimApiRequestsReachedEventArgs = new MaximumApiRequestsReachedEventArgs(_gitHubApiStatusService.GetRateLimitResetDateTime(responseHeaders));
-			OnPullToRefreshFailed(maximimApiRequestsReachedEventArgs);
+			var maximumApiRequestsReachedEventArgs = new MaximumApiRequestsReachedEventArgs(_gitHubApiStatusService.GetRateLimitResetDateTime(responseHeaders));
+			OnPullToRefreshFailed(maximumApiRequestsReachedEventArgs);
 
 			SetRepositoriesCollection([], _searchBarText);
 		}
@@ -301,8 +301,7 @@ public partial class RepositoryViewModel : BaseViewModel
 		{
 			AnalyticsService.Report(e);
 
-			if (repositoriesFromDatabase is null)
-				repositoriesFromDatabase = await repositoriesFromDatabaseTask.ConfigureAwait(false);
+			repositoriesFromDatabase ??= await repositoriesFromDatabaseTask.ConfigureAwait(false);
 
 			SetRepositoriesCollection(repositoriesFromDatabase, _searchBarText);
 
@@ -348,7 +347,7 @@ public partial class RepositoryViewModel : BaseViewModel
 
 		AnalyticsService.Track("IsFavorite Toggled", nameof(Repository.IsFavorite), updatedRepository.IsFavorite.Value.ToString());
 
-		List<Repository> updatedRepositoryList = VisibleRepositoryList.ToList();
+		List<Repository> updatedRepositoryList = [.. VisibleRepositoryList];
 		updatedRepositoryList.Remove(repository);
 		updatedRepositoryList.Add(updatedRepository);
 
