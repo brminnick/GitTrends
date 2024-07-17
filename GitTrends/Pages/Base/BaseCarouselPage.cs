@@ -2,9 +2,9 @@
 
 namespace GitTrends;
 
-public class BaseCarouselPage<T> : ContentPage where T : BaseViewModel
+public abstract class BaseCarouselPage<T> : ContentPage where T : BaseViewModel
 {
-	public BaseCarouselPage(T viewModel, IAnalyticsService analyticsService)
+	protected BaseCarouselPage(T viewModel, IAnalyticsService analyticsService)
 	{
 		BindingContext = viewModel;
 		AnalyticsService = analyticsService;
