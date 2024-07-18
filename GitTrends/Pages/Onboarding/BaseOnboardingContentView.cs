@@ -6,14 +6,15 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;
 
-public abstract class BaseOnboardingContentPage : BaseContentPage
+public abstract class BaseOnboardingContentView : Grid
 {
-	protected BaseOnboardingContentPage(in string nextButtonText,
+	protected BaseOnboardingContentView(in string nextButtonText,
 		in IDeviceInfo deviceInfo,
 		in Color backgroundColor,
 		in int carouselPositionIndex,
-		in IAnalyticsService analyticsService) : base(analyticsService)
+		in IAnalyticsService analyticsService)
 	{
+		AnalyticsService = analyticsService;
 		DeviceInfo = deviceInfo;
 
 		//Don't Use BaseTheme.PageBackgroundColor
@@ -22,45 +23,39 @@ public abstract class BaseOnboardingContentPage : BaseContentPage
 		AutomationId = OnboardingAutomationIds.OnboardingPage;
 		BackgroundColor = backgroundColor;
 
-		var descriptionLayout = new StackLayout
-		{
-			Spacing = 16,
-			Children =
+
+		RowDefinitions = Rows.Define(
+			(Row.Image, Stars(GetImageRowStarHeight())),
+			(Row.Description, Stars(GetDescriptionRowStarHeight())),
+			(Row.Indicator, 44));
+
+		ColumnDefinitions = Columns.Define(
+			(Column.Indicator, Stars(1)),
+			(Column.Button, Stars(1)));
+
+		Children.Add(new OpacityOverlay()
+			.Row(Row.Image).ColumnSpan(All<Column>()));
+
+		Children.Add(CreateImageView()
+			.Row(Row.Image).ColumnSpan(All<Column>()).Margin(deviceInfo.Platform == DevicePlatform.iOS ? new Thickness(32, 44 + 32, 32, 32) : new Thickness(32, 16)));
+
+		Children.Add(new VerticalStackLayout
 			{
-				CreateDescriptionTitleLabel(),
-				CreateDescriptionBodyView()
-			}
-		}.Margin(32, 8);
+				Spacing = 16,
+				Children =
+				{
+					CreateDescriptionTitleLabel(),
+					CreateDescriptionBodyView()
+				}
+			}.Margin(32, 8)
+			.Row(Row.Description)
+			.RowSpan(2).ColumnSpan(All<Column>()));
 
-		Content = new Grid
-		{
-			RowDefinitions = Rows.Define(
-				(Row.Image, Stars(GetImageRowStarHeight())),
-				(Row.Description, Stars(GetDescriptionRowStarHeight())),
-				(Row.Indicator, 44)),
+		Children.Add(new OnboardingIndicatorView(carouselPositionIndex)
+			.Row(Row.Indicator).Column(Column.Indicator));
 
-			ColumnDefinitions = Columns.Define(
-				(Column.Indicator, Stars(1)),
-				(Column.Button, Stars(1))),
-
-			Children =
-			{
-				new OpacityOverlay()
-					.Row(Row.Image).ColumnSpan(All<Column>()),
-
-				CreateImageView()
-					.Row(Row.Image).ColumnSpan(All<Column>()).Margin(deviceInfo.Platform == DevicePlatform.iOS ? new Thickness(32, 44 + 32, 32, 32) : new Thickness(32, 16)),
-
-				descriptionLayout.Row(Row.Description)
-					.RowSpan(2).ColumnSpan(All<Column>()),
-
-				new OnboardingIndicatorView(carouselPositionIndex)
-					.Row(Row.Indicator).Column(Column.Indicator),
-
-				new NextLabel(nextButtonText)
-					.Row(Row.Indicator).Column(Column.Button),
-			}
-		};
+		Children.Add(new NextLabel(nextButtonText)
+			.Row(Row.Indicator).Column(Column.Button));
 	}
 
 	enum Row { Image, Description, Indicator }
@@ -71,6 +66,7 @@ public abstract class BaseOnboardingContentPage : BaseContentPage
 	protected abstract View CreateDescriptionBodyView();
 
 	protected IDeviceInfo DeviceInfo { get; }
+	protected IAnalyticsService AnalyticsService { get; }
 
 	int GetImageRowStarHeight()
 	{
@@ -88,9 +84,9 @@ public abstract class BaseOnboardingContentPage : BaseContentPage
 		return DeviceInfo.Platform == DevicePlatform.iOS ? 2 : 9;
 	}
 
-	protected class BodySvg(in string svgFileName) : SvgImage(svgFileName, () => Colors.White, 24, 24);
+	protected sealed class BodySvg(in string svgFileName) : SvgImage(svgFileName, () => Colors.White, 24, 24);
 
-	protected class TitleLabel : Label
+	protected sealed class TitleLabel : Label
 	{
 		public TitleLabel(in string text)
 		{
@@ -103,7 +99,7 @@ public abstract class BaseOnboardingContentPage : BaseContentPage
 		}
 	}
 
-	protected class BodyLabel : Label
+	protected sealed class BodyLabel : Label
 	{
 		public BodyLabel(in string text)
 		{
@@ -116,7 +112,7 @@ public abstract class BaseOnboardingContentPage : BaseContentPage
 			VerticalTextAlignment = TextAlignment.Start;
 		}
 	}
-	
+
 	sealed class NextLabel : Label
 	{
 		public NextLabel(in string text)
@@ -136,7 +132,10 @@ public abstract class BaseOnboardingContentPage : BaseContentPage
 
 			AutomationId = OnboardingAutomationIds.NextButon;
 
-			GestureRecognizers.Add(new TapGestureRecognizer { CommandParameter = text }
+			GestureRecognizers.Add(new TapGestureRecognizer
+				{
+					CommandParameter = text
+				}
 				.Bind(TapGestureRecognizer.CommandProperty, nameof(OnboardingViewModel.HandleDemoButtonTappedCommand)));
 
 			this.SetBinding(IsVisibleProperty, nameof(OnboardingViewModel.IsDemoButtonVisible));
@@ -164,8 +163,8 @@ public abstract class BaseOnboardingContentPage : BaseContentPage
 			HorizontalOptions = LayoutOptions.Start;
 			AutomationId = OnboardingAutomationIds.PageIndicator;
 
-			SetBinding(CountProperty, new Binding(nameof(OnboardingCarouselPage.PageCount),
-				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(OnboardingCarouselPage))));
+			SetBinding(CountProperty, new Binding(nameof(OnboardingPage.PageCount),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(OnboardingPage))));
 		}
 	}
 }

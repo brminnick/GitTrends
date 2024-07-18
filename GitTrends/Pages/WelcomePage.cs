@@ -21,6 +21,8 @@ public sealed class WelcomePage : BaseContentPage<WelcomeViewModel>, IDisposable
 		: base(welcomeViewModel, analyticsService, shouldUseSafeArea: true)
 	{
 		_appInfo = appInfo;
+		
+		Shell.SetPresentationMode(this, PresentationMode.ModalAnimated);
 
 		RemoveDynamicResource(BackgroundColorProperty);
 		On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.OverFullScreen);

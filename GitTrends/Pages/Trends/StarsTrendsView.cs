@@ -5,8 +5,8 @@ using GitTrends.Resources;
 
 namespace GitTrends;
 
-class StarsTrendsPage(IDeviceInfo deviceInfo, IAnalyticsService analyticsService) 
-	: BaseTrendsContentPage(AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor)), deviceInfo, 1, TrendsPageType.StarsTrendsPage, analyticsService)
+class StarsTrendsView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService) 
+	: BaseTrendsContentView(AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor)), deviceInfo, 1, TrendsPageType.StarsTrendsPage, analyticsService)
 {
 	protected override Layout CreateHeaderView() => new StarsStatisticsGrid();
 	

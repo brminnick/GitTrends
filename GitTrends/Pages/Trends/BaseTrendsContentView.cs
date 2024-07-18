@@ -5,47 +5,45 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;
 
-abstract class BaseTrendsContentPage : BaseContentPage
+abstract class BaseTrendsContentView : Grid
 {
-	protected BaseTrendsContentPage(in Color indicatorColor,
+	protected BaseTrendsContentView(in Color indicatorColor,
 		in IDeviceInfo deviceInfo,
 		in int carouselPositionIndex,
 		in TrendsPageType trendsPageType,
-		in IAnalyticsService analyticsService) 
-		: base(analyticsService, true)
+		in IAnalyticsService analyticsService)
 	{
-		Content = new Grid
-		{
-			ColumnSpacing = 8,
-			RowSpacing = 12,
+		AnalyticsService = analyticsService;
 
-			RowDefinitions = Rows.Define(
-				(Row.Header, ViewsClonesStatisticsGrid.StatisticsGridHeight),
-				(Row.Indicator, 12),
-				(Row.Chart, Star)),
+		ColumnSpacing = 8;
+		RowSpacing = 12;
 
-			Children =
-			{
-				CreateHeaderView()
-					.Row(Row.Header),
+		RowDefinitions = Rows.Define(
+			(Row.Header, ViewsClonesStatisticsGrid.StatisticsGridHeight),
+			(Row.Indicator, 12),
+			(Row.Chart, Star));
 
-				new TrendsIndicatorView(carouselPositionIndex, indicatorColor).Fill()
-					.Row(Row.Indicator),
+		Children.Add(CreateHeaderView().Row(Row.Header));
 
-				CreateChartView().Assign(out BaseChartView chartView)
-					.Row(Row.Chart),
 
-				CreateEmptyDataView().Margin(chartView.Margin).Padding(new Thickness(chartView.Padding.Left + 4, chartView.Padding.Top + 4, chartView.Padding.Right + 4, chartView.Padding.Bottom + 4))
-					.Row(Row.Chart),
+		Children.Add(new TrendsIndicatorView(carouselPositionIndex, indicatorColor).Fill().Row(Row.Indicator));
 
-				new TrendsChartActivityIndicator(trendsPageType, deviceInfo)
-					.Row(Row.Chart),
-			}
-		}.Padding(0, 16);
+		Children.Add(CreateChartView().Assign(out BaseChartView chartView).Row(Row.Chart));
+
+		Children.Add(CreateEmptyDataView()
+			.Margin(chartView.Margin)
+			.Padding(new Thickness(chartView.Padding.Left + 4, chartView.Padding.Top + 4, chartView.Padding.Right + 4, chartView.Padding.Bottom + 4))
+			.Row(Row.Chart));
+
+		Children.Add(new TrendsChartActivityIndicator(trendsPageType, deviceInfo).Row(Row.Chart));
+		
+		this.Padding(0, 16);
 	}
 
-	protected enum Row { Header, Indicator, Chart }
 	protected enum TrendsPageType { ViewsClonesTrendsPage, StarsTrendsPage }
+	enum Row { Header, Indicator, Chart }
+	
+	protected IAnalyticsService AnalyticsService { get; }
 
 	protected abstract Layout CreateHeaderView();
 	protected abstract BaseChartView CreateChartView();
@@ -69,8 +67,8 @@ abstract class BaseTrendsContentPage : BaseContentPage
 			this.Center();
 
 
-			SetBinding(CountProperty, new Binding(nameof(TrendsCarouselPage.PageCount),
-				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(TrendsCarouselPage))));
+			SetBinding(CountProperty, new Binding(nameof(TrendsPage.PageCount),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(TrendsPage))));
 		}
 	}
 

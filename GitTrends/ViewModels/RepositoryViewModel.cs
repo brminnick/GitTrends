@@ -188,7 +188,7 @@ public partial class RepositoryViewModel : BaseViewModel
 			IsRefreshing = false;
 
 			#region Get StarGazer Data in Background
-			// The StarGazer data can be gathered in the background because the data only appears if the user navigates to the StarsTrendsPage
+			// The StarGazer data can be gathered in the background because the data only appears if the user navigates to the StarsTrendsView
 			// The data is gathered in the background to optimize the Pull-To-Refresh time visible to the user
 			repositoriesFromDatabaseThatDontRequireUpdating = repositoriesFromDatabase.Where(x => x.ContainsViewsClonesStarsData // Ensure the repository contains data for Views + Clones + Stars
 																										&& x.DataDownloadedAt >= DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan) // Cached repositories that have been updated in the past 12 hours				

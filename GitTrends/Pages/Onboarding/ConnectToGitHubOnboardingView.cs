@@ -6,9 +6,9 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;
 
-public class ConnectToGitHubOnboardingPage : BaseOnboardingContentPage
+public class ConnectToGitHubOnboardingView : BaseOnboardingContentView
 {
-	public ConnectToGitHubOnboardingPage(IDeviceInfo deviceInfo, IAnalyticsService analyticsService)
+	public ConnectToGitHubOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService)
 		: base(OnboardingConstants.TryDemoText, deviceInfo, Color.FromArgb(BaseTheme.CoralColorHex), 3, analyticsService)
 	{
 		GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;

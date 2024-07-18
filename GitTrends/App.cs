@@ -1,4 +1,5 @@
 using System.Globalization;
+using AsyncAwaitBestPractices;
 using GitTrends.Shared;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
@@ -13,23 +14,27 @@ class App : Microsoft.Maui.Controls.Application
 	readonly NotificationService _notificationService;
 	readonly AppInitializationService _appInitializationService;
 
-	public App(LanguageService languageService,
-					SplashScreenPage splashScreenPage,
-					IAnalyticsService analyticsService,
-					NotificationService notificationService,
-					AppInitializationService appInitializationService)
+	public App(AppShell appShell,
+		LanguageService languageService,
+		IAnalyticsService analyticsService,
+		NotificationService notificationService,
+		AppInitializationService appInitializationService)
 	{
 		_analyticsService = analyticsService;
 		_notificationService = notificationService;
 		_appInitializationService = appInitializationService;
 
 		analyticsService.Track("App Initialized", new Dictionary<string, string>
+		{
 			{
-				{ nameof(LanguageService.PreferredLanguage), languageService.PreferredLanguage ?? "default" },
-				{ nameof(CultureInfo.CurrentUICulture), CultureInfo.CurrentUICulture.TwoLetterISOLanguageName }
-			});
+				nameof(LanguageService.PreferredLanguage), languageService.PreferredLanguage ?? "default"
+			},
+			{
+				nameof(CultureInfo.CurrentUICulture), CultureInfo.CurrentUICulture.TwoLetterISOLanguageName
+			}
+		});
 
-		MainPage = splashScreenPage;
+		MainPage = appShell;
 
 		On<iOS>().SetHandleControlUpdatesOnMainThread(true);
 	}

@@ -6,8 +6,8 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;
 
-public class ChartOnboardingPage(IDeviceInfo deviceInfo, IAnalyticsService analyticsService)
-	: BaseOnboardingContentPage(OnboardingConstants.SkipText, deviceInfo, Color.FromArgb(BaseTheme.CoralColorHex), 1, analyticsService)
+public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService)
+	: BaseOnboardingContentView(OnboardingConstants.SkipText, deviceInfo, Color.FromArgb(BaseTheme.CoralColorHex), 1, analyticsService)
 {
 
 	enum Row { Title, Zoom, LongPress }

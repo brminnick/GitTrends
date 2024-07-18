@@ -12,7 +12,6 @@ using Plugin.StoreReview.Abstractions;
 using Polly;
 using Refit;
 using Sentry.Maui;
-
 using Sharpnado.MaterialFrame;
 using Syncfusion.Maui.Core.Hosting;
 
@@ -40,8 +39,11 @@ public static class MauiProgram
 			.ConfigureSyncfusionCore()
 			.ConfigureFonts(fonts =>
 			{
-				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+				fonts.AddFont("FontAwesome.otf", FontFamilyConstants.FontAwesome);
+				fonts.AddFont("FontAwesomeBrands.ttf", FontFamilyConstants.FontAwesomeBrands);
+				fonts.AddFont("Roboto-Bold.ttf", FontFamilyConstants.RobotoBold);
+				fonts.AddFont("Roboto-Medium.ttf", FontFamilyConstants.RobotoMedium);
+				fonts.AddFont("Roboto-Regular.ttf", FontFamilyConstants.RobotoRegular);
 			});
 
 #if DEBUG
@@ -53,7 +55,7 @@ public static class MauiProgram
 		builder.Services.AddJob(typeof(BackgroundFetchService));
 #endif
 
-		
+
 		RegisterCrossPlatformAPIs(builder.Services);
 		RegisterDatabases(builder.Services);
 		RegisterPagesAndViewModels(builder.Services);
@@ -116,21 +118,21 @@ public static class MauiProgram
 	static void RegisterPagesAndViewModels(in IServiceCollection services)
 	{
 		services.AddSingleton<App>();
-		
+		services.AddSingleton<AppShell>();
+
 		services.AddTransientWithShellRoute<AboutPage, AboutViewModel>();
-		services.AddTransient<ChartOnboardingPage>();
-		services.AddTransient<ConnectToGitHubOnboardingPage>();
-		services.AddTransient<GitTrendsOnboardingPage>();
-		services.AddTransient<NotificationsOnboardingPage>();
-		services.AddTransient<OnboardingCarouselPage>();
-		services.AddTransient<OnboardingViewModel>();
+		services.AddTransientWithShellRoute<OnboardingPage, OnboardingViewModel>();
 		services.AddTransientWithShellRoute<ReferringSitesPage, ReferringSitesViewModel>();
 		services.AddTransientWithShellRoute<RepositoryPage, RepositoryViewModel>();
 		services.AddTransientWithShellRoute<SettingsPage, SettingsViewModel>();
+		services.AddTransient<ChartOnboardingView>();
+		services.AddTransient<ConnectToGitHubOnboardingView>();
+		services.AddTransient<GitTrendsOnboardingView>();
+		services.AddTransient<NotificationsOnboardingView>();
 		services.AddTransient<SplashScreenPage>();
-		services.AddTransient<StarsTrendsPage>();
-		services.AddTransient<TrendsCarouselPage>();
-		services.AddTransient<ViewsClonesTrendsPage>();
+		services.AddTransient<StarsTrendsView>();
+		services.AddTransient<TrendsPage>();
+		services.AddTransient<ViewsClonesTrendsView>();
 		services.AddTransient<TrendsViewModel>();
 		services.AddTransient<WelcomePage>();
 	}
@@ -138,28 +140,40 @@ public static class MauiProgram
 	static void RegisterHttpClientServices(in IServiceCollection services)
 	{
 		services.AddRefitClient<IGitHubApiV3>()
-							.ConfigureHttpClient(static client => client.BaseAddress = new Uri(GitHubConstants.GitHubRestApiUrl))
-							.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler { AutomaticDecompression = GetDecompressionMethods() })
-							.AddStandardResilienceHandler(static options => options.Retry = new MobileHttpRetryStrategyOptions());
+			.ConfigureHttpClient(static client => client.BaseAddress = new Uri(GitHubConstants.GitHubRestApiUrl))
+			.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler
+			{
+				AutomaticDecompression = GetDecompressionMethods()
+			})
+			.AddStandardResilienceHandler(static options => options.Retry = new MobileHttpRetryStrategyOptions());
 
 		services.AddRefitClient<IGitHubGraphQLApi>()
-							.ConfigureHttpClient(static client => client.BaseAddress = new Uri(GitHubConstants.GitHubGraphQLApi))
-							.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler { AutomaticDecompression = GetDecompressionMethods() })
-							.AddStandardResilienceHandler(static options => options.Retry = new MobileHttpRetryStrategyOptions());
+			.ConfigureHttpClient(static client => client.BaseAddress = new Uri(GitHubConstants.GitHubGraphQLApi))
+			.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler
+			{
+				AutomaticDecompression = GetDecompressionMethods()
+			})
+			.AddStandardResilienceHandler(static options => options.Retry = new MobileHttpRetryStrategyOptions());
 
 		services.AddRefitClient<IAzureFunctionsApi>()
-							.ConfigureHttpClient(static client => client.BaseAddress = new Uri(AzureConstants.AzureFunctionsApiUrl))
-							.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler { AutomaticDecompression = GetDecompressionMethods() })
-							.AddStandardResilienceHandler(static options => options.Retry = new MobileHttpRetryStrategyOptions());
+			.ConfigureHttpClient(static client => client.BaseAddress = new Uri(AzureConstants.AzureFunctionsApiUrl))
+			.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler
+			{
+				AutomaticDecompression = GetDecompressionMethods()
+			})
+			.AddStandardResilienceHandler(static options => options.Retry = new MobileHttpRetryStrategyOptions());
 
 		services.AddHttpClient<FavIconService>()
-			.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler { AutomaticDecompression = GetDecompressionMethods() });
-		
+			.ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler
+			{
+				AutomaticDecompression = GetDecompressionMethods()
+			});
+
 		static DecompressionMethods GetDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.Brotli;
 	}
 
-	static IServiceCollection AddTransientWithShellRoute<TPage, TViewModel>(this IServiceCollection services) where TPage : BaseContentPage<TViewModel>
-																												where TViewModel : BaseViewModel
+	static IServiceCollection AddTransientWithShellRoute<TPage, TViewModel>(this IServiceCollection services) where TPage : BaseContentPage
+		where TViewModel : BaseViewModel
 	{
 		return services.AddTransientWithShellRoute<TPage, TViewModel>(AppShell.GetPageRoute<TPage>());
 	}
@@ -176,7 +190,7 @@ public static class MauiProgram
 		options.IsGlobalModeEnabled = true;
 		options.Release = appInfo.VersionString;
 		options.Distribution = appInfo.BuildString;
-		
+
 		options.TracesSampleRate = 1.0;
 		options.ProfilesSampleRate = 1.0;
 
@@ -193,20 +207,20 @@ public static class MauiProgram
 		static void ConfigureDebugSentryOptions(SentryMauiOptions options)
 		{
 			options.Debug = true;
-			options.Environment ="DEBUG"; 
+			options.Environment = "DEBUG";
 			options.DiagnosticLevel = SentryLevel.Debug;
 		}
 
 		[Conditional("RELEASE")]
 		static void ConfigureReleaseSentryOptions(SentryMauiOptions options)
 		{
-			options.Environment = "RELEASE"; 
+			options.Environment = "RELEASE";
 		}
-		
+
 		[Conditional("AppStore")]
 		static void ConfigureAppStoreSentryOptions(SentryMauiOptions options)
 		{
-			options.Environment = "AppStore"; 
+			options.Environment = "AppStore";
 		}
 	}
 

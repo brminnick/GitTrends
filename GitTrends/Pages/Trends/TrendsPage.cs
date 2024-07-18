@@ -5,19 +5,19 @@ using CommunityToolkit.Maui.Markup;
 
 namespace GitTrends;
 
-sealed class TrendsCarouselPage : BaseCarouselPage<TrendsViewModel>, IDisposable
+sealed class TrendsPage : BaseCarouselViewPage<TrendsViewModel>, IDisposable
 {
 	readonly CancellationTokenSource _fetchDataCancellationTokenSource = new();
 
 	readonly Repository _repository;
 	readonly IDeviceInfo _deviceInfo;
 
-	public TrendsCarouselPage(Repository repository,
+	public TrendsPage(Repository repository,
 		IDeviceInfo deviceInfo,
-		StarsTrendsPage starsTrendsPage,
+		StarsTrendsView starsTrendsView,
 		TrendsViewModel trendsViewModel,
 		IAnalyticsService analyticsService,
-		ViewsClonesTrendsPage viewsClonesTrendsPage) : base(trendsViewModel, analyticsService)
+		ViewsClonesTrendsView viewsClonesTrendsView) : base(trendsViewModel, analyticsService)
 	{
 		_repository = repository;
 		_deviceInfo = deviceInfo;
@@ -31,8 +31,8 @@ sealed class TrendsCarouselPage : BaseCarouselPage<TrendsViewModel>, IDisposable
 			AutomationId = TrendsPageAutomationIds.ReferringSitesButton
 		}.Invoke(referringSitesToolbarItem => referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked));
 
-		Children.Add(viewsClonesTrendsPage);
-		Children.Add(starsTrendsPage);
+		Children.Add(viewsClonesTrendsView);
+		Children.Add(starsTrendsView);
 
 		this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 

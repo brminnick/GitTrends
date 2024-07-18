@@ -6,9 +6,9 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-	public class GitTrendsOnboardingPage : BaseOnboardingContentPage
+	public class GitTrendsOnboardingView : BaseOnboardingContentView
 	{
-		public GitTrendsOnboardingPage(IDeviceInfo deviceInfo,
+		public GitTrendsOnboardingView(IDeviceInfo deviceInfo,
 										IAnalyticsService analyticsService)
 			: base(OnboardingConstants.SkipText, deviceInfo, Color.FromArgb(BaseTheme.LightTealColorHex), 0, analyticsService)
 		{

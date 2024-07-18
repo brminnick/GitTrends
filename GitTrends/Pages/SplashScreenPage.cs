@@ -32,13 +32,15 @@ public sealed class SplashScreenPage : BaseContentPage, IDisposable
 
 	CancellationTokenSource _animationCancellationToken = new();
 
-	public SplashScreenPage(FirstRunService firstRunService,
+	public SplashScreenPage(
+		FirstRunService firstRunService,
 		IAnalyticsService analyticsService,
 		AppInitializationService appInitializationService)
 		: base(analyticsService)
 	{
+		Shell.SetNavBarIsVisible(this, false);
 		this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.GitTrendsImageBackgroundColor));
-
+		
 		_firstRunService = firstRunService;
 		_appInitializationService = appInitializationService;
 
@@ -220,29 +222,9 @@ public sealed class SplashScreenPage : BaseContentPage, IDisposable
 				var explodeImageTask = Task.WhenAll(Content.ScaleTo(100, 250, Easing.CubicOut), Content.FadeTo(0, 250, Easing.CubicIn));
 				BackgroundColor = AppResources.GetResource<Color>(nameof(BaseTheme.PageBackgroundColor));
 
-				var repositoryPage = IPlatformApplication.Current?.Services.GetRequiredService<RepositoryPage>() 
-										?? throw new InvalidOperationException($"{nameof(RepositoryPage)} not found");
-
-				if (_firstRunService.IsFirstRun)
-					repositoryPage.Appearing += HandleRepositoryPageAppearing;
-
 				await explodeImageTask;
 
-				if (Application.Current?.MainPage is null)
-					throw new InvalidOperationException("Application.Current cannot be null");
-				
-				Application.Current.MainPage = new BaseNavigationPage(repositoryPage);
-
-				async void HandleRepositoryPageAppearing(object? sender, EventArgs e)
-				{
-					repositoryPage.Appearing -= HandleRepositoryPageAppearing;
-
-					//Yield the UI thread to allow MainPage to be set
-					await Task.Delay(TimeSpan.FromMilliseconds(500));
-
-					var onboardingCarouselPage = IPlatformApplication.Current?.Services.GetRequiredService<OnboardingCarouselPage>();
-					await repositoryPage.Navigation.PushModalAsync(onboardingCarouselPage);
-				}
+				await Shell.Current.GoToAsync(AppShell.GetPageRoute<RepositoryPage>());
 			});
 		}
 	}

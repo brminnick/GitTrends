@@ -107,37 +107,5 @@ namespace GitTrends
 				}
 			}).WaitAsync(token);
 		}
-
-		async ValueTask<BaseNavigationPage> GetBaseNavigationPage()
-		{
-			if (Application.Current?.MainPage is null)
-				throw new InvalidNavigationException("Application.Current Cannot Be Null");
-
-			if (Application.Current.MainPage is BaseNavigationPage baseNavigationPage)
-				return baseNavigationPage;
-
-			var tcs = new TaskCompletionSource<BaseNavigationPage>();
-
-			Application.Current.PageAppearing += HandlePageAppearing;
-
-			return await tcs.Task.ConfigureAwait(false);
-
-			void HandlePageAppearing(object? sender, Page page)
-			{
-				if (Application.Current?.MainPage is null)
-					throw new InvalidNavigationException("Application.Current Cannot Be Null");
-
-				if (page is BaseNavigationPage baseNavigationPage)
-				{
-					Application.Current.PageAppearing -= HandlePageAppearing;
-					tcs.SetResult(baseNavigationPage);
-				}
-				else if (page.Parent is BaseNavigationPage baseNavigation)
-				{
-					Application.Current.PageAppearing -= HandlePageAppearing;
-					tcs.SetResult(baseNavigation);
-				}
-			}
-		}
 	}
 }
