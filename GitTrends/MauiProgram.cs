@@ -125,10 +125,6 @@ public static class MauiProgram
 		services.AddTransientWithShellRoute<ReferringSitesPage, ReferringSitesViewModel>();
 		services.AddTransientWithShellRoute<RepositoryPage, RepositoryViewModel>();
 		services.AddTransientWithShellRoute<SettingsPage, SettingsViewModel>();
-		services.AddTransient<ChartOnboardingView>();
-		services.AddTransient<ConnectToGitHubOnboardingView>();
-		services.AddTransient<GitTrendsOnboardingView>();
-		services.AddTransient<NotificationsOnboardingView>();
 		services.AddTransient<SplashScreenPage>();
 		services.AddTransient<StarsTrendsView>();
 		services.AddTransient<TrendsPage>();

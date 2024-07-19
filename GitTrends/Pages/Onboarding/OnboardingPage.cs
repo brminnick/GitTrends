@@ -1,4 +1,5 @@
-﻿using GitTrends.Shared;
+﻿using GitTrends.Mobile.Common;
+using GitTrends.Shared;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 
@@ -7,13 +8,16 @@ namespace GitTrends;
 public class OnboardingPage : BaseCarouselViewPage<OnboardingViewModel>
 {
 	public OnboardingPage(
+		IDeviceInfo deviceInfo,
+		IDispatcher dispatcher,
 		IAnalyticsService analyticsService,
-		OnboardingViewModel onboardingViewModel,
-		ChartOnboardingView chartOnboardingView,
-		GitTrendsOnboardingView welcomeOnboardingView,
-		NotificationsOnboardingView notificationsOnboardingView,
-		ConnectToGitHubOnboardingView connectToGitHubOnboardingView) : base(onboardingViewModel, analyticsService)
+		OnboardingViewModel onboardingViewModel) : base(onboardingViewModel, analyticsService)
 	{
+		//Don't Use BaseTheme.PageBackgroundColor
+		RemoveDynamicResource(BackgroundColorProperty);
+		
+		AutomationId = OnboardingAutomationIds.OnboardingPage;
+		
 		Shell.SetPresentationMode(this, PresentationMode.ModalAnimated);
 		
 		On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.OverFullScreen);
@@ -21,10 +25,8 @@ public class OnboardingPage : BaseCarouselViewPage<OnboardingViewModel>
 		OnboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
 		GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 
-		Children.Add(welcomeOnboardingView);
-		Children.Add(chartOnboardingView);
-		Children.Add(notificationsOnboardingView);
-		Children.Add(connectToGitHubOnboardingView);
+		Content.ItemsSource = Enumerable.Range(0, 4);
+		Content.ItemTemplate = new OnboardingCarouselDataTemplateSelector(deviceInfo, dispatcher, analyticsService);
 	}
 
 	//Disable the Hardware Back Button on Android

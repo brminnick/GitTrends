@@ -6,53 +6,68 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-	public class GitTrendsOnboardingView : BaseOnboardingContentView
+	public class GitTrendsOnboardingView(
+		IDeviceInfo deviceInfo,
+		IAnalyticsService analyticsService)
+		: BaseOnboardingContentView(
+			OnboardingConstants.SkipText,
+			deviceInfo,
+			Color.FromArgb(BaseTheme.LightTealColorHex),
+			0,
+			() => new ImageView(),
+			() => new(OnboardingConstants.GitTrendsPage_Title),
+			() => new DescriptionBodyView(),
+			analyticsService)
 	{
-		public GitTrendsOnboardingView(IDeviceInfo deviceInfo,
-										IAnalyticsService analyticsService)
-			: base(OnboardingConstants.SkipText, deviceInfo, Color.FromArgb(BaseTheme.LightTealColorHex), 0, analyticsService)
-		{
-		}
 
 		enum Row { Title, Connect, MonitorImage, MonitorDescription, Discover }
 		enum Column { Image, Description }
 
-		protected override View CreateImageView() => new Image { Source = "GitTrendsWhite" }.Center();
-
-		protected override TitleLabel CreateDescriptionTitleLabel() => new(OnboardingConstants.GitTrendsPage_Title);
-
-		protected override View CreateDescriptionBodyView() => new ScrollView
+		sealed class ImageView : Image
 		{
-			Content = new Grid
+			public ImageView()
 			{
-				RowSpacing = 14,
-
-				RowDefinitions = Rows.Define(
-					(Row.Title, Auto),
-					(Row.Connect, 24),
-					(Row.MonitorImage, 24),
-					(Row.MonitorDescription, 2),
-					(Row.Discover, 24)),
-
-				ColumnDefinitions = Columns.Define(
-					(Column.Image, 56),
-					(Column.Description, Star)),
-
-				Children =
-				{
-					new BodyLabel(OnboardingConstants.GitTrendsPage_Body_GitTrendsHelps).Row(Row.Title).ColumnSpan(All<Column>()),
-
-					new GitHubLogoLabel().Row(Row.Connect).Column(Column.Image),
-					new BodyLabel(GitHubLoginButtonConstants.ConnectToGitHub).Row(Row.Connect).Column(Column.Description),
-
-					new BodySvg("chart.svg").Row(Row.MonitorImage).Column(Column.Image).Center().RowSpan(2),
-					new BodyLabel(OnboardingConstants.GitTrendsPage_Body_MonitorGitHubRepos).TextTop().Row(Row.MonitorImage).RowSpan(2).Column(Column.Description),
-
-					new BodySvg("megaphone.svg").Row(Row.Discover).Column(Column.Image),
-					new BodyLabel(OnboardingConstants.GitTrendsPage_Body_DiscoverReferringSites).Row(Row.Discover).Column(Column.Description),
-				}
+				Source = "GitTrendsWhite";
+				this.Center();
 			}
-		};
+		}
+
+		sealed class DescriptionBodyView : ScrollView
+		{
+			public DescriptionBodyView()
+			{
+
+				Content = new Grid
+				{
+					RowSpacing = 14,
+
+					RowDefinitions = Rows.Define(
+						(Row.Title, Auto),
+						(Row.Connect, 24),
+						(Row.MonitorImage, 24),
+						(Row.MonitorDescription, 2),
+						(Row.Discover, 24)),
+
+					ColumnDefinitions = Columns.Define(
+						(Column.Image, 56),
+						(Column.Description, Star)),
+
+					Children =
+					{
+						new BodyLabel(OnboardingConstants.GitTrendsPage_Body_GitTrendsHelps).Row(Row.Title).ColumnSpan(All<Column>()),
+
+						new GitHubLogoLabel().Row(Row.Connect).Column(Column.Image),
+						new BodyLabel(GitHubLoginButtonConstants.ConnectToGitHub).Row(Row.Connect).Column(Column.Description),
+
+						new BodySvg("chart.svg").Row(Row.MonitorImage).Column(Column.Image).Center().RowSpan(2),
+						new BodyLabel(OnboardingConstants.GitTrendsPage_Body_MonitorGitHubRepos).TextTop().Row(Row.MonitorImage).RowSpan(2).Column(Column.Description),
+
+						new BodySvg("megaphone.svg").Row(Row.Discover).Column(Column.Image),
+						new BodyLabel(OnboardingConstants.GitTrendsPage_Body_DiscoverReferringSites).Row(Row.Discover).Column(Column.Description),
+					}
+				};
+			}
+		}
 
 		sealed class GitHubLogoLabel : Label
 		{

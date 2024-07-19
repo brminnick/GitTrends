@@ -8,36 +8,51 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 namespace GitTrends
 {
 	public class NotificationsOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService) 
-		: BaseOnboardingContentView(OnboardingConstants.SkipText, deviceInfo, Color.FromArgb(BaseTheme.LightTealColorHex), 2, analyticsService)
+		: BaseOnboardingContentView(
+			OnboardingConstants.SkipText, 
+			deviceInfo, 
+			Color.FromArgb(BaseTheme.LightTealColorHex), 
+			2,
+			() => new ImageView(),
+			() => new(OnboardingConstants.NotificationsPage_Title),
+			() => new DescriptionBodyView(),
+			analyticsService)
 	{
 
 		enum Row { Description, Button }
 
-		protected override View CreateImageView() => new Image
+		sealed class ImageView :  Image
 		{
-			Source = "NotificationsOnboarding",
-			Aspect = Aspect.AspectFit
-		}.Center();
-
-		protected override TitleLabel CreateDescriptionTitleLabel() => new(OnboardingConstants.NotificationsPage_Title);
-
-		protected override View CreateDescriptionBodyView() => new ScrollView
-		{
-			Content = new Grid
+			public ImageView()
 			{
-				RowSpacing = 14,
 
-				RowDefinitions = Rows.Define(
-					(Row.Description, 65),
-					(Row.Button, 42)),
-
-				Children =
-				{
-					new BodyLabel(OnboardingConstants.NotificationsPage_Body_MoreTrafficThanUsual).Row(Row.Description),
-					new EnableNotificationsView().Row(Row.Button)
-				}
+				Source = "NotificationsOnboarding";
+				Aspect = Aspect.AspectFit;
+				this.Center();
 			}
-		};
+		}
+
+		sealed class DescriptionBodyView : ScrollView
+		{
+			public DescriptionBodyView()
+			{
+
+				Content = new Grid
+				{
+					RowSpacing = 14,
+
+					RowDefinitions = Rows.Define(
+						(Row.Description, 65),
+						(Row.Button, 42)),
+
+					Children =
+					{
+						new BodyLabel(OnboardingConstants.NotificationsPage_Body_MoreTrafficThanUsual).Row(Row.Description),
+						new EnableNotificationsView().Row(Row.Button)
+					}
+				};
+			}
+		}
 
 		sealed class EnableNotificationsView : Border
 		{

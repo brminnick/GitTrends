@@ -6,82 +6,87 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;
 
-public abstract class BaseOnboardingContentView : Grid
+public abstract class BaseOnboardingContentView(
+	string nextButtonText,
+	IDeviceInfo deviceInfo,
+	Color backgroundColor,
+	int carouselPositionIndex,
+	Func<View> createImageView,
+	Func<BaseOnboardingContentView.TitleLabel> createTitleLabel,
+	Func<View> createDescriptionBodyView,
+	IAnalyticsService analyticsService)
+	: DataTemplate(() => CreateGrid(nextButtonText, deviceInfo, backgroundColor, carouselPositionIndex, createImageView, createTitleLabel, createDescriptionBodyView))
 {
-	protected BaseOnboardingContentView(in string nextButtonText,
-		in IDeviceInfo deviceInfo,
-		in Color backgroundColor,
-		in int carouselPositionIndex,
-		in IAnalyticsService analyticsService)
-	{
-		AnalyticsService = analyticsService;
-		DeviceInfo = deviceInfo;
-
-		//Don't Use BaseTheme.PageBackgroundColor
-		RemoveDynamicResource(BackgroundColorProperty);
-
-		AutomationId = OnboardingAutomationIds.OnboardingPage;
-		BackgroundColor = backgroundColor;
-
-
-		RowDefinitions = Rows.Define(
-			(Row.Image, Stars(GetImageRowStarHeight())),
-			(Row.Description, Stars(GetDescriptionRowStarHeight())),
-			(Row.Indicator, 44));
-
-		ColumnDefinitions = Columns.Define(
-			(Column.Indicator, Stars(1)),
-			(Column.Button, Stars(1)));
-
-		Children.Add(new OpacityOverlay()
-			.Row(Row.Image).ColumnSpan(All<Column>()));
-
-		Children.Add(CreateImageView()
-			.Row(Row.Image).ColumnSpan(All<Column>()).Margin(deviceInfo.Platform == DevicePlatform.iOS ? new Thickness(32, 44 + 32, 32, 32) : new Thickness(32, 16)));
-
-		Children.Add(new VerticalStackLayout
-			{
-				Spacing = 16,
-				Children =
-				{
-					CreateDescriptionTitleLabel(),
-					CreateDescriptionBodyView()
-				}
-			}.Margin(32, 8)
-			.Row(Row.Description)
-			.RowSpan(2).ColumnSpan(All<Column>()));
-
-		Children.Add(new OnboardingIndicatorView(carouselPositionIndex)
-			.Row(Row.Indicator).Column(Column.Indicator));
-
-		Children.Add(new NextLabel(nextButtonText)
-			.Row(Row.Indicator).Column(Column.Button));
-	}
 
 	enum Row { Image, Description, Indicator }
 	enum Column { Indicator, Button }
 
-	protected abstract View CreateImageView();
-	protected abstract TitleLabel CreateDescriptionTitleLabel();
-	protected abstract View CreateDescriptionBodyView();
+	protected IDeviceInfo DeviceInfo { get; } = deviceInfo;
+	protected IAnalyticsService AnalyticsService { get; } = analyticsService;
 
-	protected IDeviceInfo DeviceInfo { get; }
-	protected IAnalyticsService AnalyticsService { get; }
+	static Grid CreateGrid(string nextButtonText,
+		IDeviceInfo deviceInfo,
+		Color backgroundColor,
+		int carouselPositionIndex,
+		Func<View> createImageView,
+		Func<TitleLabel> createTitleLabel,
+		Func<View> createDescriptionBodyView) => new()
+	{
 
-	int GetImageRowStarHeight()
+		BackgroundColor = backgroundColor,
+
+		RowDefinitions = Rows.Define(
+			(Row.Image, Stars(GetImageRowStarHeight(deviceInfo))),
+			(Row.Description, Stars(GetDescriptionRowStarHeight(deviceInfo))),
+			(Row.Indicator, 44)),
+
+		ColumnDefinitions = Columns.Define(
+			(Column.Indicator, Stars(1)),
+			(Column.Button, Stars(1))),
+
+		Children =
+		{
+			new OpacityOverlay()
+				.Row(Row.Image).ColumnSpan(All<Column>()),
+
+			createImageView()
+				.Row(Row.Image).ColumnSpan(All<Column>())
+				.Margin(deviceInfo.Platform == DevicePlatform.iOS ? new Thickness(32, 44 + 32, 32, 32) : new Thickness(32, 16)),
+
+			new VerticalStackLayout
+				{
+					Spacing = 16,
+					Children =
+					{
+						createTitleLabel(),
+						createDescriptionBodyView()
+					}
+				}.Margin(32, 8)
+				.Row(Row.Description)
+				.RowSpan(2).ColumnSpan(All<Column>()),
+
+			new OnboardingIndicatorView(carouselPositionIndex)
+				.Row(Row.Indicator).Column(Column.Indicator),
+
+			new NextLabel(nextButtonText)
+				.Row(Row.Indicator).Column(Column.Button),
+		}
+	};
+
+	static int GetImageRowStarHeight(IDeviceInfo deviceInfo)
 	{
 		if (ScreenHeight < 700)
 			return 8;
 
-		return DeviceInfo.Platform == DevicePlatform.iOS ? 3 : 11;
+		return deviceInfo.Platform == DevicePlatform.iOS ? 3 : 11;
 	}
 
-	int GetDescriptionRowStarHeight()
+	static int GetDescriptionRowStarHeight(IDeviceInfo deviceInfo)
 	{
 		if (ScreenHeight < 700)
 			return 9;
 
-		return DeviceInfo.Platform == DevicePlatform.iOS ? 2 : 9;
+		return deviceInfo.Platform == DevicePlatform.iOS ? 2 : 9;
 	}
 
 	protected sealed class BodySvg(in string svgFileName) : SvgImage(svgFileName, () => Colors.White, 24, 24);
@@ -142,7 +147,7 @@ public abstract class BaseOnboardingContentView : Grid
 		}
 	}
 
-	sealed class OpacityOverlay : View
+	sealed class OpacityOverlay : BoxView
 	{
 		public OpacityOverlay() => BackgroundColor = Colors.White.MultiplyAlpha(0.25f);
 	}
