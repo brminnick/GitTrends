@@ -26,7 +26,12 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 		MobileSortingService mobileSortingService) : base(repositoryViewModel, analyticsService)
 	{
 		Shell.SetPresentationMode(this, PresentationMode.NotAnimated);
-		
+		Shell.SetBackButtonBehavior(this, new BackButtonBehavior
+		{
+			IsVisible = false,
+			IsEnabled = false
+		});
+
 		_firstRunService = firstRunService;
 		_gitHubUserService = gitHubUserService;
 		_deepLinkingService = deepLinkingService;
