@@ -1,6 +1,7 @@
 ﻿using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using CommunityToolkit.Maui.Markup;
+using CommunityToolkit.Maui.Views;
 using static GitTrends.MauiService;
 
 namespace GitTrends;
@@ -17,7 +18,17 @@ class EnableOrganizationsCarouselTemplateSelector : DataTemplateSelector
 			Children =
 			{
 				includeOrganizationsModel.Url is not null
-					? new VideoPlayerWithLoadingIndicatorView(includeOrganizationsModel.Url).Margin(24, 12)
+					? new MediaElement
+						{
+							Source = MediaSource.FromResource(VideoConstants.ChartVideoFileName),
+							Background = null,
+							ShouldAutoPlay = true,
+							ShouldShowPlaybackControls = false,
+							ShouldLoopPlayback = true,
+							Volume = 0.0,
+							Margin = 0,
+						}.Center()
+						.Margin(24, 12)
 						.Row(EnableOrganizationsGrid.Row.Image)
 					: new Image { Source = includeOrganizationsModel.ImageSource, Aspect = Aspect.AspectFit }.Margin(24, 12)
 						.Row(EnableOrganizationsGrid.Row.Image),
