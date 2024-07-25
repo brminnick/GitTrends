@@ -1,6 +1,7 @@
 ﻿using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using CommunityToolkit.Maui.Markup;
+using CommunityToolkit.Maui.Views;
 using Microsoft.Maui.Controls.Shapes;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
@@ -8,9 +9,9 @@ namespace GitTrends;
 
 public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService)
 	: BaseOnboardingContentView(
-		OnboardingConstants.SkipText, 
-		deviceInfo, 
-		Color.FromArgb(BaseTheme.CoralColorHex), 
+		OnboardingConstants.SkipText,
+		deviceInfo,
+		Color.FromArgb(BaseTheme.CoralColorHex),
 		1,
 		() => new ImageView(),
 		() => new TitleLabel(OnboardingConstants.ChartPage_Title),
@@ -21,10 +22,13 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 	enum Row { Title, Zoom, LongPress }
 	enum Column { Image, Description }
 
-	sealed class ImageView :  Border
+	sealed class ImageView : Border
 	{
 		public ImageView()
 		{
+			const int chartVideoHeight = 1080;
+			const int chartVideoWidth = 860;
+			
 			StrokeShape = new RoundRectangle
 			{
 				CornerRadius = 4,
@@ -32,8 +36,24 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 			Stroke = Color.FromArgb("E0E0E0");
 			BackgroundColor = Colors.White;
 			Padding = new Thickness(5);
-			
-			Content = new VideoPlayerWithLoadingIndicatorView(VideoConstants.ChartVideoFileName);
+
+			Content = new MediaElement
+			{
+				Source = MediaSource.FromResource(VideoConstants.ChartVideoFileName),
+				Background = null,
+				ShouldAutoPlay = true,
+				ShouldShowPlaybackControls = false,
+				ShouldLoopPlayback = true,
+				Volume = 0.0,
+				Margin = 0,
+			}.Center()
+			.Bind(WidthRequestProperty,
+				source: this,
+				getter: imageView => imageView.Height,
+				convert: convertWidthToMatchRecordedVideoDimensions);
+
+			// This ensures that black bars don't appear on the sides of the video due to being improperly scaled
+			double convertWidthToMatchRecordedVideoDimensions(double imageViewHeight) => (imageViewHeight - Padding.VerticalThickness) / chartVideoHeight * chartVideoWidth ;
 		}
 	}
 
