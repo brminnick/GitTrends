@@ -175,7 +175,7 @@ class RepositoryDataTemplateSelector(in MobileSortingService sortingService) : D
 	class StatisticsSvgImage : SvgImage
 	{
 		public StatisticsSvgImage(string fileName, string baseThemeColor)
-			: base(fileName, () => AppResources.GetResource<Color>(baseThemeColor), 24, 24)
+			: base(fileName, AppResources.GetResource<Color>(baseThemeColor), 24, 24)
 		{
 			VerticalOptions = LayoutOptions.Center;
 			HorizontalOptions = LayoutOptions.End;

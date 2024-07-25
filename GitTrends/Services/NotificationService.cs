@@ -230,7 +230,7 @@ public class NotificationService
 		}
 	}
 
-	public async ValueTask TrySendTrendingNotificaiton(IReadOnlyList<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
+	public async ValueTask TrySendTrendingNotification(IReadOnlyList<Repository> trendingRepositories, DateTimeOffset? notificationDateTime = null)
 	{
 		if (!ShouldSendNotifications)
 			return;

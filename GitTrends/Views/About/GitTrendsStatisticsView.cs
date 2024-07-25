@@ -35,7 +35,7 @@ class GitTrendsStatisticsView : HorizontalStackLayout
 				(Row.Title, IsSmallScreen ? 12 : 16),
 				(Row.Number, IsSmallScreen ? 16 : 20));
 
-			Children.Add(new StatsTitleLayout(title, svgFileName, () => AppResources.GetResource<Color>(nameof(BaseTheme.SettingsLabelTextColor)))
+			Children.Add(new StatsTitleLayout(title, svgFileName, AppResources.GetResource<Color>(nameof(BaseTheme.SettingsLabelTextColor)))
 				.Row(Row.Title));
 
 			Children.Add(new StatisticsLabel(automationId)
@@ -47,20 +47,20 @@ class GitTrendsStatisticsView : HorizontalStackLayout
 
 		class StatsTitleLayout : StackLayout
 		{
-			public StatsTitleLayout(in string text, in string svgFileName, in Func<Color> getTextColor)
+			public StatsTitleLayout(in string text, in string svgFileName, in Color textColor)
 			{
 				Spacing = 2;
 				Orientation = StackOrientation.Horizontal;
 
 				HorizontalOptions = LayoutOptions.Center;
 
-				Children.Add(new AboutPageSvgImage(svgFileName, getTextColor));
+				Children.Add(new AboutPageSvgImage(svgFileName, textColor));
 				Children.Add(new StatsTitleLabel(text));
 			}
 
 			class AboutPageSvgImage : SvgImage
 			{
-				public AboutPageSvgImage(in string svgFileName, in Func<Color> getTextColor) : base(svgFileName, getTextColor, 12, 12)
+				public AboutPageSvgImage(in string svgFileName, in Color textColor) : base(svgFileName, textColor, 12, 12)
 				{
 					HorizontalOptions = LayoutOptions.End;
 					VerticalOptions = LayoutOptions.Center;

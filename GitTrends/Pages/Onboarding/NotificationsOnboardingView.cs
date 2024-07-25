@@ -7,11 +7,11 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
-	public class NotificationsOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService) 
+	public class NotificationsOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService)
 		: BaseOnboardingContentView(
-			OnboardingConstants.SkipText, 
-			deviceInfo, 
-			Color.FromArgb(BaseTheme.LightTealColorHex), 
+			OnboardingConstants.SkipText,
+			deviceInfo,
+			Color.FromArgb(BaseTheme.LightTealColorHex),
 			2,
 			() => new ImageView(),
 			() => new(OnboardingConstants.NotificationsPage_Title),
@@ -21,7 +21,7 @@ namespace GitTrends
 
 		enum Row { Description, Button }
 
-		sealed class ImageView :  Image
+		sealed class ImageView : Image
 		{
 			public ImageView()
 			{
@@ -43,7 +43,7 @@ namespace GitTrends
 
 					RowDefinitions = Rows.Define(
 						(Row.Description, 65),
-						(Row.Button, 42)),
+						(Row.Button, 46)),
 
 					Children =
 					{
@@ -70,9 +70,8 @@ namespace GitTrends
 				};
 				Padding = new Thickness(16, 10);
 
-				Content = new StackLayout
+				Content = new HorizontalStackLayout
 				{
-					Orientation = StackOrientation.Horizontal,
 					Spacing = 16,
 					Children =
 					{
@@ -81,22 +80,26 @@ namespace GitTrends
 					}
 				};
 
-				this.BindTapGesture(nameof(OnboardingViewModel.HandleEnableNotificationsButtonTappedCommand));
+				this.BindTapGesture(nameof(OnboardingViewModel.HandleEnableNotificationsButtonTappedCommand),
+					commandSource: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(OnboardingViewModel)));
 			}
 
-			class NotificationStatusSvgImage : SvgImage
+			sealed class NotificationStatusSvgImage : SvgImage
 			{
-				public NotificationStatusSvgImage() : base("bell.svg", () => Colors.White, 24, 24)
+				public NotificationStatusSvgImage() : base("chart.svg", Colors.White, 24, 24)
 				{
-					this.Bind(SvgImage.SourceProperty, nameof(OnboardingViewModel.NotificationStatusSvgImageSource), BindingMode.OneWay);
+					this.Bind(SourceProperty, nameof(OnboardingViewModel.NotificationStatusSvgImageSource), BindingMode.OneWay,
+						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(OnboardingViewModel)));
 				}
 			}
 
-			class EnableNotificationsLabel : Label
+			sealed class EnableNotificationsLabel : Label
 			{
 				public EnableNotificationsLabel()
 				{
+					this.Center();
 					this.TextCenter();
+
 					TextColor = Colors.White;
 					FontSize = 18;
 					FontFamily = FontFamilyConstants.RobotoRegular;

@@ -41,14 +41,14 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 			[
 				new SwipeItemView
 					{
-						Content = new SvgImage(() => AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor)), 44, 44)
+						Content = new SvgImage(AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor)), 44, 44)
 							.Margins(right: sidePadding)
 							.Bind(SvgImage.SourceProperty,
 								nameof(Repository.IsFavorite),
 								BindingMode.OneTime,
 								convert: static (bool? isFavorite) => isFavorite is true
-									? SvgService.GetValidatedFullPath("star.svg")
-									: SvgService.GetValidatedFullPath("star_outline.svg"))
+									? "star.svg"
+									: "star_outline.svg")
 
 					}.Bind(SwipeItemView.CommandProperty, nameof(RepositoryViewModel.ToggleIsFavoriteCommand), BindingMode.OneTime, source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))
 					.Bind(SwipeItemView.CommandParameterProperty, mode: BindingMode.OneTime)
@@ -228,9 +228,9 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 						this.Bind(SvgImage.SourceProperty,
 							nameof(Repository.IsTrending),
 							BindingMode.OneTime,
-							convert: static (bool isTrending) => isTrending ? SvgService.GetValidatedFullPath("trending_tag.svg") : SvgService.GetValidatedFullPath("favorite_tag.svg"));
+							convert: static (bool isTrending) => isTrending ? "trending_tag.svg" : "favorite_tag.svg");
 
-						this.Bind<SvgImage, bool?, Func<Color>>(SvgImage.GetColorProperty,
+						this.Bind<SvgImage, bool?, Func<Color>>(SvgImage.SvgColorProperty,
 							nameof(Repository.IsFavorite),
 							BindingMode.OneTime,
 							convert: static (bool? isFavorite) => isFavorite is true

@@ -9,12 +9,12 @@ namespace GitTrends;
 public class ConnectToGitHubOnboardingView : BaseOnboardingContentView
 {
 	readonly IDispatcher _dispatcher;
-	
+
 	public ConnectToGitHubOnboardingView(IDeviceInfo deviceInfo, IDispatcher dispatcher, IAnalyticsService analyticsService)
 		: base(
-			OnboardingConstants.TryDemoText, 
-			deviceInfo, 
-			Color.FromArgb(BaseTheme.CoralColorHex), 
+			OnboardingConstants.TryDemoText,
+			deviceInfo,
+			Color.FromArgb(BaseTheme.CoralColorHex),
 			3,
 			() => new ImageView(),
 			() => new TitleLabel(OnboardingConstants.ConnectToGitHubPage_Title),
@@ -26,7 +26,7 @@ public class ConnectToGitHubOnboardingView : BaseOnboardingContentView
 	}
 
 	enum Row { Description, Button, ActivityIndicator }
-	
+
 	async void HandleAuthorizeSessionCompleted(object? sender, AuthorizeSessionCompletedEventArgs e)
 	{
 		if (e.IsSessionAuthorized)
@@ -53,7 +53,7 @@ public class ConnectToGitHubOnboardingView : BaseOnboardingContentView
 
 				RowDefinitions = Rows.Define(
 					(Row.Description, 65),
-					(Row.Button, 42),
+					(Row.Button, 46),
 					(Row.ActivityIndicator, 42)),
 
 				Children =
@@ -62,7 +62,8 @@ public class ConnectToGitHubOnboardingView : BaseOnboardingContentView
 
 					new GitHubButton(OnboardingAutomationIds.ConnectToGitHubButton, GitHubLoginButtonConstants.ConnectToGitHub)
 						.Row(Row.Button)
-						.Bind(GitHubButton.CommandProperty, nameof(OnboardingViewModel.HandleConnectToGitHubButtonCommand))
+						.Bind(GitHubButton.CommandProperty, nameof(OnboardingViewModel.HandleConnectToGitHubButtonCommand),
+							source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(OnboardingViewModel)))
 						.Invoke(button => button.CommandParameter = (CancellationToken.None, new BrowserLaunchOptions
 						{
 							PreferredControlColor = Colors.White,
@@ -84,8 +85,12 @@ public class ConnectToGitHubOnboardingView : BaseOnboardingContentView
 
 			AutomationId = OnboardingAutomationIds.IsAuthenticatingActivityIndicator;
 
-			this.SetBinding(IsVisibleProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
-			this.SetBinding(IsRunningProperty, nameof(GitHubAuthenticationViewModel.IsAuthenticating));
+			this.Bind(IsVisibleProperty,
+					nameof(GitHubAuthenticationViewModel.IsAuthenticating),
+					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(OnboardingViewModel)))
+				.Bind(IsRunningProperty,
+					nameof(GitHubAuthenticationViewModel.IsAuthenticating),
+					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(OnboardingViewModel)));
 		}
 	}
 }

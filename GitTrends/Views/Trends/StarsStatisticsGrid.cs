@@ -67,7 +67,7 @@ class StarsStatisticsGrid : Grid
 
 	sealed class StarSvg : SvgImage
 	{
-		public StarSvg() : base("star.svg", () => Colors.White, 44, 44)
+		public StarSvg() : base("star.svg", Colors.White, 44, 44)
 		{
 			this.Center();
 		}

@@ -94,19 +94,19 @@ class NotificationServiceTests : BaseTest
 		//Act
 		pendingNotificationsCount_Initial = await getPendingNotificationCount(notificationManager).ConfigureAwait(false);
 
-		await notificationService.TrySendTrendingNotificaiton(trendingRepositoryList).ConfigureAwait(false);
+		await notificationService.TrySendTrendingNotification(trendingRepositoryList).ConfigureAwait(false);
 		pendingNotificationsCount_BeforeRegistration = await getPendingNotificationCount(notificationManager).ConfigureAwait(false);
 
 		await notificationService.Register(false, TestCancellationTokenSource.Token).ConfigureAwait(false);
 
-		await notificationService.TrySendTrendingNotificaiton(emptyTrendingRepositoryList).ConfigureAwait(false);
+		await notificationService.TrySendTrendingNotification(emptyTrendingRepositoryList).ConfigureAwait(false);
 		pendingNotificationsCount_AfterEmptyRepositoryList = await getPendingNotificationCount(notificationManager).ConfigureAwait(false);
 
-		await notificationService.TrySendTrendingNotificaiton(trendingRepositoryList).ConfigureAwait(false);
+		await notificationService.TrySendTrendingNotification(trendingRepositoryList).ConfigureAwait(false);
 		pendingNotificationsCount_AfterTrendingRepositoryList = await getPendingNotificationCount(notificationManager).ConfigureAwait(false);
 
 #if !DEBUG
-            await notificationService.TrySendTrendingNotificaiton(trendingRepositoryList).ConfigureAwait(false);
+            await notificationService.TrySendTrendingNotification(trendingRepositoryList).ConfigureAwait(false);
             var pendingNotificationsCount_AfterDuplicateTrendingRepositoryList = await getPendingNotificationCount(notificationManager).ConfigureAwait(false);
             Assert.That(trendingRepositoryList, Has.Count.EqualTo(pendingNotificationsCount_AfterDuplicateTrendingRepositoryList));
 #endif

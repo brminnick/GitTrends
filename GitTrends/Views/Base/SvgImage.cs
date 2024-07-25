@@ -7,21 +7,22 @@ namespace GitTrends;
 
 public class SvgImage : Image
 {
-	public static readonly BindableProperty GetColorProperty =
-		BindableProperty.Create(nameof(GetColor), typeof(Func<Color>), typeof(SvgImage), () => Colors.Transparent, propertyChanged: HandleGetTextColorPropertyChanged);
+	public static readonly BindableProperty SvgColorProperty =
+		BindableProperty.Create(nameof(SvgColor), typeof(Color), typeof(SvgImage), Colors.White, propertyChanged: HandleGetTextColorPropertyChanged);
 
-	readonly IconTintColorBehavior _iconTintColorBehavior;
-
-	public SvgImage(in string svgFileName, in Func<Color> getColor, double widthRequest = 24, double heightRequest = 24)
-		: this(getColor, widthRequest, heightRequest)
+	public SvgImage(in string svgFileName, in Color svgColor, double widthRequest = 24, double heightRequest = 24)
+		: this(svgColor, widthRequest, heightRequest)
 	{
-		Source = SvgService.GetValidatedFullPath(svgFileName);
+		if (!Path.GetExtension(svgFileName).EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+			throw new ArgumentException($"{nameof(svgFileName)} must end with `.svg`");
+
+		Source = svgFileName;
 	}
 
-	public SvgImage(in Func<Color> getColor, double widthRequest = 24, double heightRequest = 24)
+	public SvgImage(Color color, double widthRequest = 24, double heightRequest = 24)
 		: this(widthRequest, heightRequest)
 	{
-		GetColor = getColor;
+		SvgColor = color;
 	}
 
 	public SvgImage(double widthRequest = 24, double heightRequest = 24)
@@ -34,24 +35,20 @@ public class SvgImage : Image
 		HeightRequest = heightRequest;
 
 		Behaviors.Add(new IconTintColorBehavior()
-						.Bind(IconTintColorBehavior.TintColorProperty, 
-							getter: static (SvgImage image) => image.GetColor(),
-							handlers: [],
-							source: this)
-						.Assign(out _iconTintColorBehavior));
+			.Bind(IconTintColorBehavior.TintColorProperty,
+				getter: static image => image.SvgColor,
+				source: this));
 	}
 
-	public Func<Color> GetColor
+	public Color SvgColor
 	{
-		get => (Func<Color>)GetValue(GetColorProperty);
+		get => (Color)GetValue(SvgColorProperty);
 		set
 		{
-			SetSvgColorAsync().SafeFireAndForget();
-
-			if (value() != GetColor())
+			if (Equals(value, SvgColor))
 			{
-				SetValue(GetColorProperty, value);
-				OnPropertyChanged(nameof(GetColor));
+				SetValue(SvgColorProperty, value);
+				OnPropertyChanged();
 			}
 		}
 	}
@@ -59,12 +56,11 @@ public class SvgImage : Image
 	static void HandleGetTextColorPropertyChanged(BindableObject bindable, object oldValue, object newValue)
 	{
 		var svgImage = (SvgImage)bindable;
-		svgImage.GetColor = (Func<Color>)newValue;
+		svgImage.SvgColor = (Color)newValue;
 	}
 
-	void HandlePreferenceChanged(object? sender, PreferredTheme e) => SetSvgColor();
-
-	Task SetSvgColorAsync() => Dispatcher.DispatchAsync(SetSvgColor);
-
-	void SetSvgColor() => _iconTintColorBehavior.TintColor = GetColor();
+	void HandlePreferenceChanged(object? sender, PreferredTheme e)
+	{
+		throw new NotImplementedException();
+	}
 }

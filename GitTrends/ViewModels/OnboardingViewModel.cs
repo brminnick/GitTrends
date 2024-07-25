@@ -44,7 +44,7 @@ public partial class OnboardingViewModel : GitHubAuthenticationViewModel
 	public string NotificationStatusSvgImageSource
 	{
 		get => _notificationStatusSvgImageSource;
-		private set => SetProperty(ref _notificationStatusSvgImageSource, SvgService.GetFullPath(value));
+		private set => SetProperty(ref _notificationStatusSvgImageSource, value);
 	}
 
 	protected override async Task HandleDemoButtonTapped(string? buttonText, CancellationToken token)
@@ -82,16 +82,9 @@ public partial class OnboardingViewModel : GitHubAuthenticationViewModel
 		const string successSvg = "check.svg";
 		const string failSvg = "error.svg";
 
-		var result = await _notificationService.Register(NotificationStatusSvgImageSource == SvgService.GetFullPath(failSvg), token).ConfigureAwait(false);
+		var result = await _notificationService.Register(NotificationStatusSvgImageSource == failSvg, token).ConfigureAwait(false);
 
-		if (isNotificationResultSuccessful(result))
-		{
-			NotificationStatusSvgImageSource = successSvg;
-		}
-		else
-		{
-			NotificationStatusSvgImageSource = failSvg;
-		}
+		NotificationStatusSvgImageSource = isNotificationResultSuccessful(result) ? successSvg : failSvg;
 
 		_analyticsService.Track("Onboarding Notification Button Tapped", "Result", result.ToString());
 

@@ -65,7 +65,7 @@ class StatisticsCard : MaterialFrame
 				.Bind<TrendsStatisticsLabel, bool, bool>(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingViewsClonesData), convert: static isFetchingData => !isFetchingData));
 			Children.Add(new RepositoryStatSVGImage(svgImage, svgColorTheme).Assign(out _svgImage)
 				.Row(Row.Title).Column(Column.Icon).RowSpan(2)
-				.Bind<SvgImage, bool, Func<Color>>(SvgImage.GetColorProperty, nameof(IsSeriesVisible), convert: convertIsSeriesVisible, source: statisticsCard));
+				.Bind<SvgImage, bool, Func<Color>>(SvgImage.SvgColorProperty, nameof(IsSeriesVisible), convert: convertIsSeriesVisible, source: statisticsCard));
 
 			Func<Color> convertIsSeriesVisible(bool isVisible) => isVisible ? _svgImage.DefaultColor : () => Colors.Gray;
 		}
@@ -73,7 +73,7 @@ class StatisticsCard : MaterialFrame
 		sealed class RepositoryStatSVGImage : SvgImage
 		{
 			public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor)
-				: base(svgFileName, () => AppResources.GetResource<Color>(baseThemeColor), 32, 32)
+				: base(svgFileName, AppResources.GetResource<Color>(baseThemeColor), 32, 32)
 			{
 				VerticalOptions = LayoutOptions.Center;
 				HorizontalOptions = LayoutOptions.End;

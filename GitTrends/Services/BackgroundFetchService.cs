@@ -356,7 +356,7 @@ public class BackgroundFetchService
 				else
 				{
 					var trendingRepositories = await GetTrendingRepositories(cancellationToken).ConfigureAwait(false);
-					await _notificationService.TrySendTrendingNotificaiton(trendingRepositories).ConfigureAwait(false);
+					await _notificationService.TrySendTrendingNotification(trendingRepositories).ConfigureAwait(false);
 
 					OnScheduleNotifyTrendingRepositoriesCompleted(true);
 				}
