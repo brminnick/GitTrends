@@ -126,8 +126,8 @@ class OnboardingViewModelTests : BaseTest
 		//Assert
 		Assert.Multiple(() =>
 		{
-			Assert.That(notificationStatusSvgImageSource_Initial, Is.EqualTo(SvgService.GetFullPath(bellSvg)));
-			Assert.That(notificationStatusSvgImageSource_Final, Is.EqualTo(SvgService.GetFullPath(successSvg)));
+			Assert.That(notificationStatusSvgImageSource_Initial, Is.EqualTo(bellSvg));
+			Assert.That(notificationStatusSvgImageSource_Final, Is.EqualTo(successSvg));
 		});
 	}
 }
