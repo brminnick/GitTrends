@@ -1,4 +1,5 @@
-﻿using GitTrends.Shared;
+﻿using System.ComponentModel;
+using GitTrends.Shared;
 
 namespace GitTrends;
 
@@ -7,14 +8,12 @@ public abstract class BaseCarouselViewPage<T> : BaseContentPage<T> where T : Bas
 	protected BaseCarouselViewPage(T viewModel, IAnalyticsService analyticsService) : base(viewModel, analyticsService)
 	{
 		base.Content = new CarouselView();
+		Content.Loop = false;
 
-		Content.ChildAdded += HandleChildAdded;
-		Content.ChildRemoved += HandleChildRemoved;
+		Content.PropertyChanged += HandleCarouselViewPropertyChanged;
 	}
 
-	public int PageCount => Children.Count;
-
-	protected IList<View> Children => Content.VisibleViews;
+	public int PageCount { get; private set; }
 
 	protected new CarouselView Content => (CarouselView)base.Content;
 
@@ -32,6 +31,16 @@ public abstract class BaseCarouselViewPage<T> : BaseContentPage<T> where T : Bas
 		AnalyticsService.Track($"{GetType().Name} Disappeared");
 	}
 
-	void HandleChildAdded(object? sender, ElementEventArgs e) => OnPropertyChanged(nameof(PageCount));
-	void HandleChildRemoved(object? sender, ElementEventArgs e) => OnPropertyChanged(nameof(PageCount));
+	void HandleCarouselViewPropertyChanged(object? sender, PropertyChangedEventArgs e)
+	{
+		if (e.PropertyName == ItemsView.ItemsSourceProperty.PropertyName)
+		{
+			ArgumentNullException.ThrowIfNull(sender);
+			var carouselView = (CarouselView)sender;
+
+			PageCount = ((IEnumerable<int>)carouselView.ItemsSource).Count();
+			
+			OnPropertyChanged(nameof(PageCount));
+		}
+	}
 }

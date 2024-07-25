@@ -31,9 +31,6 @@ sealed class TrendsPage : BaseCarouselViewPage<TrendsViewModel>, IDisposable
 			AutomationId = TrendsPageAutomationIds.ReferringSitesButton
 		}.Invoke(referringSitesToolbarItem => referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked));
 
-		Children.Add(viewsClonesTrendsView);
-		Children.Add(starsTrendsView);
-
 		this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 
 		trendsViewModel.FetchDataCommand.Execute((repository, _fetchDataCancellationTokenSource.Token));

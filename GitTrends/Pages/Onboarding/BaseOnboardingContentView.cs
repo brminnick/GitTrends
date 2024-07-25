@@ -17,7 +17,6 @@ public abstract class BaseOnboardingContentView(
 	IAnalyticsService analyticsService)
 	: DataTemplate(() => CreateGrid(nextButtonText, deviceInfo, backgroundColor, carouselPositionIndex, createImageView, createTitleLabel, createDescriptionBodyView))
 {
-
 	enum Row { Image, Description, Indicator }
 	enum Column { Indicator, Button }
 
@@ -141,7 +140,8 @@ public abstract class BaseOnboardingContentView(
 				{
 					CommandParameter = text
 				}
-				.Bind(TapGestureRecognizer.CommandProperty, nameof(OnboardingViewModel.HandleDemoButtonTappedCommand)));
+				.Bind(TapGestureRecognizer.CommandProperty, nameof(OnboardingViewModel.HandleDemoButtonTappedCommand),
+					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(OnboardingViewModel))));
 
 			this.SetBinding(IsVisibleProperty, nameof(OnboardingViewModel.IsDemoButtonVisible));
 		}
@@ -159,6 +159,7 @@ public abstract class BaseOnboardingContentView(
 			Position = position;
 
 			IsEnabled = false;
+			InputTransparent = true;
 
 			SelectedIndicatorColor = Colors.White;
 			IndicatorColor = Colors.White.MultiplyAlpha(0.25f);

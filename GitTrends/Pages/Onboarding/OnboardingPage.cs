@@ -15,11 +15,11 @@ public class OnboardingPage : BaseCarouselViewPage<OnboardingViewModel>
 	{
 		//Don't Use BaseTheme.PageBackgroundColor
 		RemoveDynamicResource(BackgroundColorProperty);
-		
+
 		AutomationId = OnboardingAutomationIds.OnboardingPage;
-		
+
 		Shell.SetPresentationMode(this, PresentationMode.ModalAnimated);
-		
+
 		On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.OverFullScreen);
 
 		OnboardingViewModel.SkipButtonTapped += HandleSkipButtonTapped;
@@ -32,11 +32,11 @@ public class OnboardingPage : BaseCarouselViewPage<OnboardingViewModel>
 	//Disable the Hardware Back Button on Android
 	protected override bool OnBackButtonPressed() => false;
 
-	async void HandleSkipButtonTapped(object? sender, EventArgs e)
+	void HandleSkipButtonTapped(object? sender, EventArgs e)
 	{
 		AnalyticsService.Track("Skip Button Tapped");
 
-		await Dispatcher.DispatchAsync(() => Content.Position = Children.Count - 1);
+		Content.ScrollTo(PageCount - 1);
 	}
 
 	void HandleDemoUserActivated(object? sender, EventArgs e) => Dispatcher.Dispatch(() => Shell.Current.GoToAsync(".."));
