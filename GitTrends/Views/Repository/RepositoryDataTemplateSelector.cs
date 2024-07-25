@@ -28,7 +28,7 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 
 	static bool IsStatisticsLabelVisible(long? item) => item is not null;
 
-	sealed class ClonesDataTemplate(IDeviceInfo deviceInfo) : BaseRepositoryDataTemplate(() => new CardView(CreateClonesDataTemplateViews(deviceInfo)))
+	sealed class ClonesDataTemplate(IDeviceInfo deviceInfo) : BaseRepositoryDataTemplate(() => new CardView(deviceInfo, CreateClonesDataTemplateViews(deviceInfo)))
 	{
 		static IEnumerable<View> CreateClonesDataTemplateViews(IDeviceInfo deviceInfo) =>
 		[
@@ -76,7 +76,7 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 		];
 	}
 
-	sealed class ViewsDataTemplate(IDeviceInfo deviceInfo) : BaseRepositoryDataTemplate(() => new CardView(CreateViewsDataTemplateViews(deviceInfo)))
+	sealed class ViewsDataTemplate(IDeviceInfo deviceInfo) : BaseRepositoryDataTemplate(() => new CardView(deviceInfo, CreateViewsDataTemplateViews(deviceInfo)))
 	{
 		static IEnumerable<View> CreateViewsDataTemplateViews(IDeviceInfo deviceInfo) =>
 		[
@@ -124,7 +124,7 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 		];
 	}
 
-	sealed class IssuesForksDataTemplate(IDeviceInfo deviceInfo) : BaseRepositoryDataTemplate(() => new CardView(CreateIssuesForksDataTemplateViews(deviceInfo)))
+	sealed class IssuesForksDataTemplate(IDeviceInfo deviceInfo) : BaseRepositoryDataTemplate(() => new CardView(deviceInfo, CreateIssuesForksDataTemplateViews(deviceInfo)))
 	{
 		static IEnumerable<View> CreateIssuesForksDataTemplateViews(IDeviceInfo deviceInfo) =>
 		[

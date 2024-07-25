@@ -86,7 +86,7 @@ namespace GitTrends
 
 			sealed class NotificationStatusSvgImage : SvgImage
 			{
-				public NotificationStatusSvgImage(IDeviceInfo deviceInfo) : base(deviceInfo, "chart.svg", Colors.White, 24, 24)
+				public NotificationStatusSvgImage(IDeviceInfo deviceInfo) : base(deviceInfo)
 				{
 					this.Bind(SourceProperty, nameof(OnboardingViewModel.NotificationStatusSvgImageSource), BindingMode.OneWay,
 						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(OnboardingViewModel)));

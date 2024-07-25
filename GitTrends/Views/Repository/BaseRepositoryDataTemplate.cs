@@ -29,7 +29,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 
 	private protected class CardView : ExtendedSwipeView
 	{
-		public CardView(in IEnumerable<View> dataTemplateChildren)
+		public CardView(in IDeviceInfo deviceInfo, in IEnumerable<View> dataTemplateChildren)
 		{
 			this.Bind(TappedCommandParameterProperty, mode: BindingMode.OneTime)
 				.Bind(TappedCommandProperty, nameof(RepositoryPage.RepositoryDataTemplateTappedCommand), BindingMode.OneTime, source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(RepositoryPage)));
@@ -41,7 +41,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 			[
 				new SwipeItemView
 					{
-						Content = new SvgImage(AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor)), 44, 44)
+						Content = new SvgImage(deviceInfo, AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor)), 44, 44)
 							.Margins(right: sidePadding)
 							.Bind(SvgImage.SourceProperty,
 								nameof(Repository.IsFavorite),
@@ -86,7 +86,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 
 				Children =
 				{
-					new CardViewFrame(dataTemplateChildren).Row(CardViewRow.Card).Column(CardViewColumn.Card)
+					new CardViewFrame(deviceInfo, dataTemplateChildren).Row(CardViewRow.Card).Column(CardViewColumn.Card)
 				}
 			};
 		}
@@ -96,21 +96,21 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 
 		class CardViewFrame : MaterialFrame
 		{
-			public CardViewFrame(in IEnumerable<View> dataTemplateChildren)
+			public CardViewFrame(in IDeviceInfo deviceInfo, in IEnumerable<View> dataTemplateChildren)
 			{
 				Padding = IsSmallScreen ? new Thickness(8, 16, 6, 8) : new Thickness(16, 16, 12, 8);
 				CornerRadius = 4;
 				HasShadow = false;
 				Elevation = 4;
 
-				Content = new ContentGrid(dataTemplateChildren);
+				Content = new ContentGrid(deviceInfo, dataTemplateChildren);
 
 				this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
 			}
 
 			class ContentGrid : Grid
 			{
-				public ContentGrid(in IEnumerable<View> dataTemplateChildren)
+				public ContentGrid(in IDeviceInfo deviceInfo, in IEnumerable<View> dataTemplateChildren)
 				{
 					this.Fill();
 
@@ -152,7 +152,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 						.Row(Row.Separator).Column(Column.Trending).ColumnSpan(7));
 
 					//On large screens, display TrendingImage in the same column as the repository name
-					Children.Add(new TrendingImage(RepositoryPageAutomationIds.LargeScreenTrendingImage)
+					Children.Add(new TrendingImage(deviceInfo, RepositoryPageAutomationIds.LargeScreenTrendingImage)
 						.Row(Row.SeparatorPadding).Column(Column.Trending).RowSpan(2)
 						.Assign(out TrendingImage largeScreenTrendingImage)
 						.Bind(IsVisibleProperty,
@@ -162,7 +162,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 							convert: ((bool IsTrending, double Width, bool IsFavorite) inputs) => IsTrendingImageVisible(inputs.IsTrending, inputs.Width, inputs.IsFavorite, largeScreenTrendingImageWidth => largeScreenTrendingImageWidth < (TrendingImage.SvgWidthRequest + 8))));
 
 					//On smaller screens, display TrendingImage under the Avatar
-					Children.Add(new TrendingImage(RepositoryPageAutomationIds.SmallScreenTrendingImage)
+					Children.Add(new TrendingImage(deviceInfo, RepositoryPageAutomationIds.SmallScreenTrendingImage)
 						.Row(Row.SeparatorPadding).Column(Column.Avatar).RowSpan(2).ColumnSpan(3)
 						.Bind(IsVisibleProperty,
 							binding1: new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
@@ -219,7 +219,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 					public const double SvgWidthRequest = 62;
 					public const double SvgHeightRequest = 16;
 
-					public TrendingImage(string automationId) : base(SvgWidthRequest, SvgHeightRequest)
+					public TrendingImage(IDeviceInfo deviceInfo, string automationId) : base(deviceInfo, SvgWidthRequest, SvgHeightRequest)
 					{
 						AutomationId = automationId;
 						HorizontalOptions = LayoutOptions.Start;

@@ -131,7 +131,7 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 
 		switch (_firstRunService.IsFirstRun)
 		{
-			case true when !Shell.Current.Navigation.ModalStack.Any(x => x is OnboardingPage):
+			case true when !Shell.Current.Navigation.ModalStack.OfType<OnboardingPage>().Any():
 				await NavigateToOnboardingPage();
 				break;
 
