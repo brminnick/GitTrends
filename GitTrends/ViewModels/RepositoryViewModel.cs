@@ -40,17 +40,17 @@ public partial class RepositoryViewModel : BaseViewModel
 	IReadOnlyList<Repository> _visibleRepositoryList = [];
 
 	public RepositoryViewModel(IDispatcher dispatcher,
-								IAnalyticsService analyticsService,
-								GitHubUserService gitHubUserService,
-								RepositoryDatabase repositoryDatabase,
-								DeepLinkingService deepLinkingService,
-								GitHubApiV3Service gitHubApiV3Service,
-								MobileSortingService mobileSortingService,
-								IGitHubApiStatusService gitHubApiStatusService,
-								BackgroundFetchService backgroundFetchService,
-								GitHubGraphQLApiService gitHubGraphQLApiService,
-								GitHubAuthenticationService gitHubAuthenticationService,
-								GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, dispatcher)
+		IAnalyticsService analyticsService,
+		GitHubUserService gitHubUserService,
+		RepositoryDatabase repositoryDatabase,
+		DeepLinkingService deepLinkingService,
+		GitHubApiV3Service gitHubApiV3Service,
+		MobileSortingService mobileSortingService,
+		IGitHubApiStatusService gitHubApiStatusService,
+		BackgroundFetchService backgroundFetchService,
+		GitHubGraphQLApiService gitHubGraphQLApiService,
+		GitHubAuthenticationService gitHubAuthenticationService,
+		GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, dispatcher)
 	{
 
 		_gitHubUserService = gitHubUserService;
@@ -134,13 +134,17 @@ public partial class RepositoryViewModel : BaseViewModel
 		try
 		{
 			#region Get Visible RepositoryList Data in Foreground
+
 			var favoriteRepositoryUrls = await _repositoryDatabase.GetFavoritesUrls(token).ConfigureAwait(false);
 
 			var repositoryList = new List<Repository>();
 			await foreach (var repository in _gitHubGraphQLApiService.GetRepositories(_gitHubUserService.Alias, cancellationTokenSource.Token).ConfigureAwait(false))
 			{
 				if (favoriteRepositoryUrls.Contains(repository.Url))
-					repositoryList.Add(repository with { IsFavorite = true });
+					repositoryList.Add(repository with
+					{
+						IsFavorite = true
+					});
 				else
 					repositoryList.Add(repository);
 
@@ -160,8 +164,8 @@ public partial class RepositoryViewModel : BaseViewModel
 			repositoriesFromDatabase = await repositoriesFromDatabaseTask.ConfigureAwait(false);
 
 			var repositoriesFromDatabaseThatDontRequireUpdating = repositoriesFromDatabase.Where(x => x.ContainsViewsClonesData // Ensure the repository contains data for Views + Clones
-																										&& x.DataDownloadedAt >= DateTimeOffset.Now.Subtract(CachedDataConstants.ViewsClonesCacheLifeSpan) // Cached repositories that have been updated in the past 12 hours				
-																										&& _repositoryList.Any(y => y.Url == x.Url)); // Ensure was retrieved from GitHub)
+				&& x.DataDownloadedAt >= DateTimeOffset.Now.Subtract(CachedDataConstants.ViewsClonesCacheLifeSpan) // Cached repositories that have been updated in the past 12 hours				
+				&& _repositoryList.Any(y => y.Url == x.Url)); // Ensure was retrieved from GitHub)
 
 			AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
 
@@ -183,16 +187,18 @@ public partial class RepositoryViewModel : BaseViewModel
 
 			//Add Remaining Repositories to VisibleRepositoryList
 			AddRepositoriesToCollection(viewsClonesRepositoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
+
 			#endregion
 
-			IsRefreshing = false;
+			await Dispatcher.DispatchAsync(() =>IsRefreshing = false);
 
 			#region Get StarGazer Data in Background
+
 			// The StarGazer data can be gathered in the background because the data only appears if the user navigates to the StarsTrendsView
 			// The data is gathered in the background to optimize the Pull-To-Refresh time visible to the user
 			repositoriesFromDatabaseThatDontRequireUpdating = repositoriesFromDatabase.Where(x => x.ContainsViewsClonesStarsData // Ensure the repository contains data for Views + Clones + Stars
-																										&& x.DataDownloadedAt >= DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan) // Cached repositories that have been updated in the past 12 hours				
-																										&& _repositoryList.Any(y => y.Url == x.Url)); // Ensure was retrieved from GitHub)
+				&& x.DataDownloadedAt >= DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan) // Cached repositories that have been updated in the past 12 hours				
+				&& _repositoryList.Any(y => y.Url == x.Url)); // Ensure was retrieved from GitHub)
 
 			AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
 
@@ -226,6 +232,7 @@ public partial class RepositoryViewModel : BaseViewModel
 			}
 
 			AddRepositoriesToCollection(starredRepositoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
+
 			#endregion
 
 			if (!_gitHubUserService.IsDemoUser)
@@ -233,8 +240,8 @@ public partial class RepositoryViewModel : BaseViewModel
 				//Rate Limiting may cause some data to not return successfully from the GitHub API
 				var missingRepositories = _gitHubUserService.ShouldIncludeOrganizations switch
 				{
-					true => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsViewsClonesStarsData),
-					false => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsViewsClonesStarsData && x.OwnerLogin == _gitHubUserService.Alias)
+					true => getDistinctRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsViewsClonesStarsData),
+					false => getDistinctRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsViewsClonesStarsData && x.OwnerLogin == _gitHubUserService.Alias)
 				};
 
 				AddRepositoriesToCollection(missingRepositories, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
@@ -247,10 +254,8 @@ public partial class RepositoryViewModel : BaseViewModel
 			RefreshState = RefreshState.Succeeded;
 		}
 		catch (Exception e) when ((e is ApiException { StatusCode: HttpStatusCode.Unauthorized })
-									|| (e is HttpRequestException && finalResponse?.StatusCode is HttpStatusCode.Unauthorized))
+			|| (e is HttpRequestException && finalResponse?.StatusCode is HttpStatusCode.Unauthorized))
 		{
-			var loginExpiredEventArgs = new LoginExpiredPullToRefreshEventArgs();
-
 			OnPullToRefreshFailed(new LoginExpiredPullToRefreshEventArgs());
 
 			await _gitHubAuthenticationService.LogOut(token).ConfigureAwait(false);
@@ -259,21 +264,21 @@ public partial class RepositoryViewModel : BaseViewModel
 			SetRepositoriesCollection([], _searchBarText);
 		}
 		catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan)
-									|| (e is HttpRequestException && finalResponse is not null && _gitHubApiStatusService.IsAbuseRateLimit(finalResponse.Headers, out retryTimeSpan)))
+			|| (e is HttpRequestException && finalResponse is not null && _gitHubApiStatusService.IsAbuseRateLimit(finalResponse.Headers, out retryTimeSpan)))
 		{
 			repositoriesFromDatabase ??= await repositoriesFromDatabaseTask.ConfigureAwait(false);
 
 			//Rate Limiting may cause some data to not return successfully from the GitHub API
 			var missingRepositories = _gitHubUserService.ShouldIncludeOrganizations switch
 			{
-				true => getDistictRepositories(_repositoryList, repositoriesFromDatabase),
-				false => getDistictRepositories(_repositoryList, repositoriesFromDatabase, x => x.OwnerLogin == _gitHubUserService.Alias)
+				true => getDistinctRepositories(_repositoryList, repositoriesFromDatabase),
+				false => getDistinctRepositories(_repositoryList, repositoriesFromDatabase, x => x.OwnerLogin == _gitHubUserService.Alias)
 			};
 
 			AddRepositoriesToCollection(missingRepositories, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
 
 			foreach (var repositoryToUpdate in _repositoryList.Where(static x => !x.ContainsViewsClonesStarsData // Ensure the repository contains data for Views + Clones
-																			 && x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12)))) // Cached repositories that have been updated in the past 12 hours
+				&& x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12)))) // Cached repositories that have been updated in the past 12 hours
 			{
 				_backgroundFetchService.TryScheduleRetryRepositoriesStars(repositoryToUpdate, retryTimeSpan.Value);
 			}
@@ -282,7 +287,7 @@ public partial class RepositoryViewModel : BaseViewModel
 			OnPullToRefreshFailed(abuseLimit);
 		}
 		catch (Exception e) when (_gitHubApiStatusService.HasReachedMaximumApiCallLimit(e)
-									|| (e is HttpRequestException && finalResponse is not null && finalResponse.Headers.DoesContainGitHubRateLimitHeader() && _gitHubApiStatusService.HasReachedMaximumApiCallLimit(finalResponse.Headers)))
+			|| (e is HttpRequestException && finalResponse is not null && finalResponse.Headers.DoesContainGitHubRateLimitHeader() && _gitHubApiStatusService.HasReachedMaximumApiCallLimit(finalResponse.Headers)))
 		{
 			var responseHeaders = e switch
 			{
@@ -324,13 +329,13 @@ public partial class RepositoryViewModel : BaseViewModel
 			if (cancellationTokenSource.IsCancellationRequested)
 				UpdateListForLoggedOutUser();
 
-			IsRefreshing = false;
+			await Dispatcher.DispatchAsync(() => IsRefreshing = false);
 
 			await Task.WhenAll(saveCompletedRepositoryToDatabaseTaskList).ConfigureAwait(false);
 		}
 
-		static IReadOnlyList<Repository> getDistictRepositories(in IEnumerable<Repository> repositoriesList1, in IEnumerable<Repository> repositoriesList2, Func<Repository, bool>? filter = null) =>
-				repositoriesList1.Concat(repositoriesList2).Where(filter ?? (_ => true)).GroupBy(static x => x.Url).Where(g => g.Count() is 1).Select(g => g.First()).ToList();
+		static IReadOnlyList<Repository> getDistinctRepositories(in IEnumerable<Repository> repositoriesList1, in IEnumerable<Repository> repositoriesList2, Func<Repository, bool>? filter = null) =>
+			repositoriesList1.Concat(repositoriesList2).Where(filter ?? (_ => true)).GroupBy(static x => x.Url).Where(g => g.Count() is 1).Select(g => g.First()).ToList();
 
 		void HandleLoggedOut(object? sender, EventArgs e) => cancellationTokenSource.Cancel();
 		void HandleAuthorizeSessionStarted(object? sender, EventArgs e) => cancellationTokenSource.Cancel();
@@ -378,8 +383,12 @@ public partial class RepositoryViewModel : BaseViewModel
 
 		AnalyticsService.Track($"{nameof(SortingOption)} Changed", new Dictionary<string, string>
 		{
-			{ nameof(MobileSortingService) + nameof(MobileSortingService.CurrentOption), _mobileSortingService.CurrentOption.ToString() },
-			{ nameof(MobileSortingService) + nameof(MobileSortingService.IsReversed), _mobileSortingService.IsReversed.ToString() }
+			{
+				nameof(MobileSortingService) + nameof(MobileSortingService.CurrentOption), _mobileSortingService.CurrentOption.ToString()
+			},
+			{
+				nameof(MobileSortingService) + nameof(MobileSortingService.IsReversed), _mobileSortingService.IsReversed.ToString()
+			}
 		});
 
 		UpdateVisibleRepositoryList(_searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);

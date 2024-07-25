@@ -82,6 +82,7 @@
     <None Remove="Platforms\Android\linker.xml"/>
     <LinkDescription Include="Platforms\Android\linker.xml"/>
     <ProguardConfiguration Include="Platforms\Android\proguard.cfg"/>
+    <AndroidEnvironment Include="Platforms\Android\GarbageCollector.config" />
     <AndroidResource Include="Platforms\Android\Resources\layout\Tabbar.axml"/>
     <AndroidResource Include="Platforms\Android\Resources\layout\Toolbar.axml"/>
     <AndroidResource Include="Platforms\Android\Resources\values\styles.xml"/>

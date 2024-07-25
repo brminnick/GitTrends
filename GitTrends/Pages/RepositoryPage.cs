@@ -1,4 +1,5 @@
-﻿using AsyncAwaitBestPractices;
+﻿using System.ComponentModel;
+using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
@@ -112,6 +113,16 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 				new InformationButton(mobileSortingService, analyticsService).Row(Row.Information).Column(Column.Information)
 			}
 		};
+		
+		_refreshView.PropertyChanged += HandleRefreshViewPropertyChanged;
+		
+		void HandleRefreshViewPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == RefreshView.IsRefreshingProperty.PropertyName)
+			{
+				
+			}
+		}
 	}
 
 	enum Row { CollectionView, Information }
