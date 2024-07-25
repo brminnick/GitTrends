@@ -14,28 +14,28 @@ class GitTrendsStatisticsView : HorizontalStackLayout
 {
 	const int _separatorWidth = 2;
 
-	public GitTrendsStatisticsView()
+	public GitTrendsStatisticsView(in IDeviceInfo deviceInfo)
 	{
 		this.Center();
 
 		Spacing = 12;
 
-		Children.Add(new StatisticsGrid(AboutPageConstants.Watching, "unique_views.svg", AboutPageAutomationIds.WatchersLabel, nameof(AboutViewModel.Watchers)));
+		Children.Add(new StatisticsGrid(deviceInfo, AboutPageConstants.Watching, "unique_views.svg", AboutPageAutomationIds.WatchersLabel, nameof(AboutViewModel.Watchers)));
 		Children.Add(new DashedLineSeparator());
-		Children.Add(new StatisticsGrid(AboutPageConstants.Stars, "star.svg", AboutPageAutomationIds.StarsLabel, nameof(AboutViewModel.Stars)));
+		Children.Add(new StatisticsGrid(deviceInfo, AboutPageConstants.Stars, "star.svg", AboutPageAutomationIds.StarsLabel, nameof(AboutViewModel.Stars)));
 		Children.Add(new DashedLineSeparator());
-		Children.Add(new StatisticsGrid(AboutPageConstants.Forks, "repo_forked.svg", AboutPageAutomationIds.ForksLabel, nameof(AboutViewModel.Forks)));
+		Children.Add(new StatisticsGrid(deviceInfo, AboutPageConstants.Forks, "repo_forked.svg", AboutPageAutomationIds.ForksLabel, nameof(AboutViewModel.Forks)));
 	}
 
 	class StatisticsGrid : Grid
 	{
-		public StatisticsGrid(in string title, in string svgFileName, in string automationId, in string bindingPath)
+		public StatisticsGrid(in IDeviceInfo deviceInfo, in string title, in string svgFileName, in string automationId, in string bindingPath)
 		{
 			RowDefinitions = Rows.Define(
 				(Row.Title, IsSmallScreen ? 12 : 16),
 				(Row.Number, IsSmallScreen ? 16 : 20));
 
-			Children.Add(new StatsTitleLayout(title, svgFileName, AppResources.GetResource<Color>(nameof(BaseTheme.SettingsLabelTextColor)))
+			Children.Add(new StatsTitleLayout(deviceInfo, title, svgFileName, AppResources.GetResource<Color>(nameof(BaseTheme.SettingsLabelTextColor)))
 				.Row(Row.Title));
 
 			Children.Add(new StatisticsLabel(automationId)
@@ -47,20 +47,20 @@ class GitTrendsStatisticsView : HorizontalStackLayout
 
 		class StatsTitleLayout : StackLayout
 		{
-			public StatsTitleLayout(in string text, in string svgFileName, in Color textColor)
+			public StatsTitleLayout(in IDeviceInfo deviceInfo, in string text, in string svgFileName, in Color textColor)
 			{
 				Spacing = 2;
 				Orientation = StackOrientation.Horizontal;
 
 				HorizontalOptions = LayoutOptions.Center;
 
-				Children.Add(new AboutPageSvgImage(svgFileName, textColor));
+				Children.Add(new AboutPageSvgImage(deviceInfo, svgFileName, textColor));
 				Children.Add(new StatsTitleLabel(text));
 			}
 
 			class AboutPageSvgImage : SvgImage
 			{
-				public AboutPageSvgImage(in string svgFileName, in Color textColor) : base(svgFileName, textColor, 12, 12)
+				public AboutPageSvgImage(in IDeviceInfo deviceInfo, in string svgFileName, in Color textColor) : base(deviceInfo, svgFileName, textColor, 12, 12)
 				{
 					HorizontalOptions = LayoutOptions.End;
 					VerticalOptions = LayoutOptions.Center;

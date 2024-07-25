@@ -18,7 +18,7 @@ public class ConnectToGitHubOnboardingView : BaseOnboardingContentView
 			3,
 			() => new ImageView(),
 			() => new TitleLabel(OnboardingConstants.ConnectToGitHubPage_Title),
-			() => new DescriptionBodyView(),
+			() => new DescriptionBodyView(deviceInfo),
 			analyticsService)
 	{
 		_dispatcher = dispatcher;
@@ -45,7 +45,7 @@ public class ConnectToGitHubOnboardingView : BaseOnboardingContentView
 
 	sealed class DescriptionBodyView : ScrollView
 	{
-		public DescriptionBodyView()
+		public DescriptionBodyView(in IDeviceInfo deviceInfo)
 		{
 			Content = new Grid
 			{
@@ -60,7 +60,7 @@ public class ConnectToGitHubOnboardingView : BaseOnboardingContentView
 				{
 					new BodyLabel(OnboardingConstants.ConnectToGitHubPage_Body_GetStarted).Row(Row.Description),
 
-					new GitHubButton(OnboardingAutomationIds.ConnectToGitHubButton, GitHubLoginButtonConstants.ConnectToGitHub)
+					new GitHubButton(deviceInfo, OnboardingAutomationIds.ConnectToGitHubButton, GitHubLoginButtonConstants.ConnectToGitHub)
 						.Row(Row.Button)
 						.Bind(GitHubButton.CommandProperty, nameof(OnboardingViewModel.HandleConnectToGitHubButtonCommand),
 							source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(OnboardingViewModel)))

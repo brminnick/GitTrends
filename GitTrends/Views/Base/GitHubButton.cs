@@ -10,8 +10,8 @@ class GitHubButton : SvgTextLabel
 	public static readonly BindableProperty CommandParameterProperty =
 		BindableProperty.Create(nameof(CommandParameter), typeof(object), typeof(GitHubButton), null, propertyChanged: OnCommandParameterPropertyChanged);
 
-	public GitHubButton(in string automationId, in string buttonText)
-		: base("github.svg", buttonText, automationId, 18, FontFamilyConstants.RobotoRegular, 16)
+	public GitHubButton(in IDeviceInfo deviceInfo, in string automationId, in string buttonText)
+		: base(deviceInfo, "github.svg", buttonText, automationId, 18, FontFamilyConstants.RobotoRegular, 16)
 	{
 		BackgroundColor = Color.FromArgb("231F20");
 

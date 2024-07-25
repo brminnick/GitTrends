@@ -15,7 +15,7 @@ class OrganizationsCarouselOverlay : Grid
 {
 	readonly IAnalyticsService _analyticsService;
 
-	public OrganizationsCarouselOverlay(IAnalyticsService analyticsService)
+	public OrganizationsCarouselOverlay(IDeviceInfo deviceInfo, IAnalyticsService analyticsService)
 	{
 		_analyticsService = analyticsService;
 
@@ -36,7 +36,7 @@ class OrganizationsCarouselOverlay : Grid
 			.Row(Row.CloseButton).Column(Column.Right));
 
 
-		Children.Add(new OrganizationsCarouselFrame(analyticsService)
+		Children.Add(new OrganizationsCarouselFrame(deviceInfo, analyticsService)
 			.Row(Row.CarouselFrame).Column(Column.Center));
 
 		Dismiss(false).SafeFireAndForget(ex => analyticsService.Report(ex));
@@ -121,7 +121,7 @@ class OrganizationsCarouselOverlay : Grid
 		readonly IndicatorView _indicatorView;
 		readonly IAnalyticsService _analyticsService;
 
-		public OrganizationsCarouselFrame(IAnalyticsService analyticsService)
+		public OrganizationsCarouselFrame(IDeviceInfo deviceInfo, IAnalyticsService analyticsService)
 		{
 			_analyticsService = analyticsService;
 
@@ -142,7 +142,7 @@ class OrganizationsCarouselOverlay : Grid
 					new OpacityOverlay()
 						.Row(EnableOrganizationsGrid.Row.Image),
 
-					new OrganizationsCarouselView(analyticsService)
+					new OrganizationsCarouselView(deviceInfo, analyticsService)
 						.Row(EnableOrganizationsGrid.Row.Image).RowSpan(All<EnableOrganizationsGrid.Row>())
 						.Invoke(view => view.PositionChanged += HandlePositionChanged)
 						.Fill(),
@@ -182,7 +182,7 @@ class OrganizationsCarouselOverlay : Grid
 		{
 			readonly IAnalyticsService _analyticsService;
 
-			public OrganizationsCarouselView(IAnalyticsService analyticsService)
+			public OrganizationsCarouselView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService)
 			{
 				_analyticsService = analyticsService;
 
@@ -196,7 +196,7 @@ class OrganizationsCarouselOverlay : Grid
 					new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.EnableOrganizationsTitle, ManageOrganizationsConstants.EnableOrganizationsDescription, 2, null, VideoConstants.EnableOranizationsFileName),
 				};
 
-				ItemTemplate = new EnableOrganizationsCarouselTemplateSelector();
+				ItemTemplate = new EnableOrganizationsCarouselTemplateSelector(deviceInfo);
 			}
 
 			protected override void OnPositionChanged(PositionChangedEventArgs args)

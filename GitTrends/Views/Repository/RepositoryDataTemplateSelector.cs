@@ -5,13 +5,13 @@ using GitTrends.Resources;
 
 namespace GitTrends;
 
-class RepositoryDataTemplateSelector(in MobileSortingService sortingService) : DataTemplateSelector
+class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSortingService sortingService) : DataTemplateSelector
 {
 	readonly MobileSortingService _sortingService = sortingService;
 
-	readonly ViewsDataTemplate _viewsDataTemplate = new();
-	readonly ClonesDataTemplate _clonesDataTemplate = new();
-	readonly IssuesForksDataTemplate _issuesForksDataTemplate = new();
+	readonly ViewsDataTemplate _viewsDataTemplate = new(deviceInfo);
+	readonly ClonesDataTemplate _clonesDataTemplate = new(deviceInfo);
+	readonly IssuesForksDataTemplate _issuesForksDataTemplate = new(deviceInfo);
 
 	protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
 	{
@@ -28,11 +28,11 @@ class RepositoryDataTemplateSelector(in MobileSortingService sortingService) : D
 
 	static bool IsStatisticsLabelVisible(long? item) => item is not null;
 
-	sealed class ClonesDataTemplate() : BaseRepositoryDataTemplate(() => new CardView(CreateClonesDataTemplateViews()))
+	sealed class ClonesDataTemplate(IDeviceInfo deviceInfo) : BaseRepositoryDataTemplate(() => new CardView(CreateClonesDataTemplateViews(deviceInfo)))
 	{
-		static IEnumerable<View> CreateClonesDataTemplateViews() =>
+		static IEnumerable<View> CreateClonesDataTemplateViews(IDeviceInfo deviceInfo) =>
 		[
-			new StatisticsSvgImage("total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor))
+			new StatisticsSvgImage(deviceInfo, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji1),
 
 			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
@@ -46,7 +46,7 @@ class RepositoryDataTemplateSelector(in MobileSortingService sortingService) : D
 				.Row(Row.Statistics).Column(Column.Statistic1)
 				.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.TotalClones), BindingMode.OneTime, convert: static (long? totalClones) => !IsStatisticsLabelVisible(totalClones)),
 
-			new StatisticsSvgImage("unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor))
+			new StatisticsSvgImage(deviceInfo, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji2),
 
 			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
@@ -60,7 +60,7 @@ class RepositoryDataTemplateSelector(in MobileSortingService sortingService) : D
 				.Row(Row.Statistics).Column(Column.Statistic2)
 				.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.TotalUniqueClones), BindingMode.OneTime, convert: static (long? totalUniqueClones) => !IsStatisticsLabelVisible(totalUniqueClones)),
 
-			new StatisticsSvgImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
+			new StatisticsSvgImage(deviceInfo, "star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji3),
 
 			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
@@ -76,11 +76,11 @@ class RepositoryDataTemplateSelector(in MobileSortingService sortingService) : D
 		];
 	}
 
-	sealed class ViewsDataTemplate() : BaseRepositoryDataTemplate(() => new CardView(CreateViewsDataTemplateViews()))
+	sealed class ViewsDataTemplate(IDeviceInfo deviceInfo) : BaseRepositoryDataTemplate(() => new CardView(CreateViewsDataTemplateViews(deviceInfo)))
 	{
-		static IEnumerable<View> CreateViewsDataTemplateViews() =>
+		static IEnumerable<View> CreateViewsDataTemplateViews(IDeviceInfo deviceInfo) =>
 		[
-			new StatisticsSvgImage("total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor))
+			new StatisticsSvgImage(deviceInfo, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji1),
 
 			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
@@ -94,7 +94,7 @@ class RepositoryDataTemplateSelector(in MobileSortingService sortingService) : D
 				.Row(Row.Statistics).Column(Column.Statistic1)
 				.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.TotalViews), BindingMode.OneTime, convert: static (long? totalViews) => !IsStatisticsLabelVisible(totalViews)),
 
-			new StatisticsSvgImage("unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor))
+			new StatisticsSvgImage(deviceInfo, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji2),
 
 			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
@@ -108,7 +108,7 @@ class RepositoryDataTemplateSelector(in MobileSortingService sortingService) : D
 				.Row(Row.Statistics).Column(Column.Statistic2)
 				.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.TotalUniqueViews), BindingMode.OneTime, convert: static (long? totalUniqueViews) => !IsStatisticsLabelVisible(totalUniqueViews)),
 
-			new StatisticsSvgImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
+			new StatisticsSvgImage(deviceInfo, "star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji3),
 
 			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
@@ -124,11 +124,11 @@ class RepositoryDataTemplateSelector(in MobileSortingService sortingService) : D
 		];
 	}
 
-	sealed class IssuesForksDataTemplate() : BaseRepositoryDataTemplate(() => new CardView(CreateIssuesForksDataTemplateViews()))
+	sealed class IssuesForksDataTemplate(IDeviceInfo deviceInfo) : BaseRepositoryDataTemplate(() => new CardView(CreateIssuesForksDataTemplateViews(deviceInfo)))
 	{
-		static IEnumerable<View> CreateIssuesForksDataTemplateViews() =>
+		static IEnumerable<View> CreateIssuesForksDataTemplateViews(IDeviceInfo deviceInfo) =>
 		[
-			new StatisticsSvgImage("star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
+			new StatisticsSvgImage(deviceInfo, "star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji1),
 
 			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
@@ -142,7 +142,7 @@ class RepositoryDataTemplateSelector(in MobileSortingService sortingService) : D
 				.Row(Row.Statistics).Column(Column.Statistic1)
 				.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => !IsStatisticsLabelVisible(starCount)),
 
-			new StatisticsSvgImage("repo_forked.svg", nameof(BaseTheme.CardForksStatsIconColor))
+			new StatisticsSvgImage(deviceInfo, "repo_forked.svg", nameof(BaseTheme.CardForksStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji2),
 
 			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
@@ -156,7 +156,7 @@ class RepositoryDataTemplateSelector(in MobileSortingService sortingService) : D
 				.Row(Row.Statistics).Column(Column.Statistic2)
 				.Bind(ActivityIndicator.IsVisibleProperty, nameof(Repository.ForkCount), BindingMode.OneTime, convert: static (long? forkCount) => !IsStatisticsLabelVisible(forkCount)),
 
-			new StatisticsSvgImage("issue_opened.svg", nameof(BaseTheme.CardIssuesStatsIconColor))
+			new StatisticsSvgImage(deviceInfo, "issue_opened.svg", nameof(BaseTheme.CardIssuesStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji3),
 
 			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
@@ -174,8 +174,8 @@ class RepositoryDataTemplateSelector(in MobileSortingService sortingService) : D
 
 	class StatisticsSvgImage : SvgImage
 	{
-		public StatisticsSvgImage(string fileName, string baseThemeColor)
-			: base(fileName, AppResources.GetResource<Color>(baseThemeColor), 24, 24)
+		public StatisticsSvgImage(IDeviceInfo deviceInfo, string fileName, string baseThemeColor)
+			: base(deviceInfo, fileName, AppResources.GetResource<Color>(baseThemeColor), 24, 24)
 		{
 			VerticalOptions = LayoutOptions.Center;
 			HorizontalOptions = LayoutOptions.End;

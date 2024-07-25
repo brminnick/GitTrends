@@ -5,7 +5,7 @@ namespace GitTrends;
 
 class SvgTextLabel : Border
 {
-	public SvgTextLabel(in string svgFileName, in string text, in string automationId, in int fontSize, in string fontFamily, in double logoTextSpacing)
+	public SvgTextLabel(in IDeviceInfo deviceInfo, in string svgFileName, in string text, in string automationId, in int fontSize, in string fontFamily, in double logoTextSpacing)
 	{
 		AutomationId = automationId;
 
@@ -20,7 +20,7 @@ class SvgTextLabel : Border
 			Spacing = logoTextSpacing,
 			Children =
 			{
-				new SvgImage(svgFileName, Colors.White),
+				new SvgImage(deviceInfo, svgFileName, Colors.White),
 				new TextLabel(text, fontSize,fontFamily)
 			}
 		};

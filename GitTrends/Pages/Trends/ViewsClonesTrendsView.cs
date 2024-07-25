@@ -8,8 +8,7 @@ namespace GitTrends;
 class ViewsClonesTrendsView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService) 
 	: BaseTrendsContentView(AppResources.GetResource<Color>(nameof(BaseTheme.CardViewsStatsIconColor)), deviceInfo, 0, TrendsPageType.ViewsClonesTrendsPage, analyticsService)
 {
-
-	protected override Layout CreateHeaderView() => new ViewsClonesStatisticsGrid();
+	protected override Layout CreateHeaderView() => new ViewsClonesStatisticsGrid(deviceInfo);
 	
 	protected override BaseChartView CreateChartView() => new ViewsClonesChart();
 	

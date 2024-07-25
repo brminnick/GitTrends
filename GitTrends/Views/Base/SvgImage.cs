@@ -10,13 +10,13 @@ public class SvgImage : Image
 	public static readonly BindableProperty SvgColorProperty =
 		BindableProperty.Create(nameof(SvgColor), typeof(Color), typeof(SvgImage), Colors.White, propertyChanged: HandleGetTextColorPropertyChanged);
 
-	public SvgImage(in string svgFileName, in Color svgColor, double widthRequest = 24, double heightRequest = 24)
+	public SvgImage(in IDeviceInfo deviceInfo, in string svgFileName, in Color svgColor, double widthRequest = 24, double heightRequest = 24)
 		: this(svgColor, widthRequest, heightRequest)
 	{
 		if (!Path.GetExtension(svgFileName).EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
 			throw new ArgumentException($"{nameof(svgFileName)} must end with `.svg`");
 
-		Source = svgFileName;
+		Source = deviceInfo.Platform == DevicePlatform.iOS ? Path.ChangeExtension(svgFileName, ".png") : svgFileName;
 	}
 
 	public SvgImage(Color color, double widthRequest = 24, double heightRequest = 24)

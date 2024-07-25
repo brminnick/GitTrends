@@ -16,6 +16,7 @@ public sealed class WelcomePage : BaseContentPage<WelcomeViewModel>, IDisposable
 	readonly IAppInfo _appInfo;
 
 	public WelcomePage(IAppInfo appInfo,
+		IDeviceInfo deviceInfo,
 		WelcomeViewModel welcomeViewModel,
 		IAnalyticsService analyticsService)
 		: base(welcomeViewModel, analyticsService, shouldUseSafeArea: true)
@@ -60,7 +61,7 @@ public sealed class WelcomePage : BaseContentPage<WelcomeViewModel>, IDisposable
 				new Image { Source = "WelcomeImage" }.Center()
 					.Row(Row.Image),
 
-				new GitHubButton(WelcomePageAutomationIds.ConnectToGitHubButton, GitHubLoginButtonConstants.ConnectToGitHub).CenterHorizontal().Bottom()
+				new GitHubButton(deviceInfo, WelcomePageAutomationIds.ConnectToGitHubButton, GitHubLoginButtonConstants.ConnectToGitHub).CenterHorizontal().Bottom()
 					.Row(Row.GitHubButton)
 					.Bind(GitHubButton.CommandProperty, nameof(WelcomeViewModel.HandleConnectToGitHubButtonCommand))
 					.Invoke(button => button.CommandParameter = (_connectToGitHubCancellationTokenSource.Token, browserLaunchOptions)),

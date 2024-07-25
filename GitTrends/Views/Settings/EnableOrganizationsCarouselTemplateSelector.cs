@@ -6,14 +6,16 @@ using static GitTrends.MauiService;
 
 namespace GitTrends;
 
-class EnableOrganizationsCarouselTemplateSelector : DataTemplateSelector
+class EnableOrganizationsCarouselTemplateSelector(IDeviceInfo deviceInfo) : DataTemplateSelector
 {
-	protected override DataTemplate OnSelectTemplate(object item, BindableObject container) => new EnableOrganizationsCarouselTemplate((IncludeOrganizationsCarouselModel)item, (CarouselView)container);
+	readonly IDeviceInfo _deviceInfo = deviceInfo;
+	
+	protected override DataTemplate OnSelectTemplate(object item, BindableObject container) => new EnableOrganizationsCarouselTemplate(_deviceInfo, (IncludeOrganizationsCarouselModel)item, (CarouselView)container);
 
-	sealed class EnableOrganizationsCarouselTemplate(IncludeOrganizationsCarouselModel includeOrganizationsModel, CarouselView organizationsCarouselView) 
-		: DataTemplate(() => CreateItemsGrid(includeOrganizationsModel, organizationsCarouselView))
+	sealed class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, IncludeOrganizationsCarouselModel includeOrganizationsModel, CarouselView organizationsCarouselView) 
+		: DataTemplate(() => CreateItemsGrid(deviceInfo, includeOrganizationsModel, organizationsCarouselView))
 	{
-		static EnableOrganizationsGrid CreateItemsGrid(IncludeOrganizationsCarouselModel includeOrganizationsModel, CarouselView organizationsCarouselView) => new()
+		static EnableOrganizationsGrid CreateItemsGrid(IDeviceInfo deviceInfo, IncludeOrganizationsCarouselModel includeOrganizationsModel, CarouselView organizationsCarouselView) => new()
 		{
 			Children =
 			{
@@ -46,7 +48,7 @@ class EnableOrganizationsCarouselTemplateSelector : DataTemplateSelector
 
 					: new DescriptionLabel(includeOrganizationsModel.Text).Row(EnableOrganizationsGrid.Row.Description),
 
-				new GitHubButton(SettingsPageAutomationIds.GitHubButton, SettingsPageConstants.ManageOrganizations) { IsVisible = false, IsEnabled = false }
+				new GitHubButton(deviceInfo, SettingsPageAutomationIds.GitHubButton, SettingsPageConstants.ManageOrganizations) { IsVisible = false, IsEnabled = false }
 					.Row(EnableOrganizationsGrid.Row.GitHubButton)
 					.Bind(GitHubButton.CommandProperty, nameof(SettingsViewModel.OpenGitTrendsOrganizationBrowserCommand), source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(SettingsViewModel)))
 					.Invoke(button =>

@@ -88,7 +88,7 @@ public abstract class BaseOnboardingContentView(
 		return deviceInfo.Platform == DevicePlatform.iOS ? 2 : 9;
 	}
 
-	protected sealed class BodySvg(in string svgFileName) : SvgImage(svgFileName, Colors.White, 24, 24);
+	protected sealed class BodySvg(in IDeviceInfo deviceInfo, in string svgFileName) : SvgImage(deviceInfo, svgFileName, Colors.White, 24, 24);
 
 	protected sealed class TitleLabel : Label
 	{

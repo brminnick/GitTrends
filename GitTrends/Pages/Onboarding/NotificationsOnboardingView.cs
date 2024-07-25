@@ -15,7 +15,7 @@ namespace GitTrends
 			2,
 			() => new ImageView(),
 			() => new(OnboardingConstants.NotificationsPage_Title),
-			() => new DescriptionBodyView(),
+			() => new DescriptionBodyView(deviceInfo),
 			analyticsService)
 	{
 
@@ -34,7 +34,7 @@ namespace GitTrends
 
 		sealed class DescriptionBodyView : ScrollView
 		{
-			public DescriptionBodyView()
+			public DescriptionBodyView(IDeviceInfo deviceInfo)
 			{
 
 				Content = new Grid
@@ -48,7 +48,7 @@ namespace GitTrends
 					Children =
 					{
 						new BodyLabel(OnboardingConstants.NotificationsPage_Body_MoreTrafficThanUsual).Row(Row.Description),
-						new EnableNotificationsView().Row(Row.Button)
+						new EnableNotificationsView(deviceInfo).Row(Row.Button)
 					}
 				};
 			}
@@ -56,7 +56,7 @@ namespace GitTrends
 
 		sealed class EnableNotificationsView : Border
 		{
-			public EnableNotificationsView()
+			public EnableNotificationsView(IDeviceInfo deviceInfo)
 			{
 				this.Center();
 
@@ -75,7 +75,7 @@ namespace GitTrends
 					Spacing = 16,
 					Children =
 					{
-						new NotificationStatusSvgImage(),
+						new NotificationStatusSvgImage(deviceInfo),
 						new EnableNotificationsLabel()
 					}
 				};
@@ -86,7 +86,7 @@ namespace GitTrends
 
 			sealed class NotificationStatusSvgImage : SvgImage
 			{
-				public NotificationStatusSvgImage() : base("chart.svg", Colors.White, 24, 24)
+				public NotificationStatusSvgImage(IDeviceInfo deviceInfo) : base(deviceInfo, "chart.svg", Colors.White, 24, 24)
 				{
 					this.Bind(SourceProperty, nameof(OnboardingViewModel.NotificationStatusSvgImageSource), BindingMode.OneWay,
 						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(OnboardingViewModel)));

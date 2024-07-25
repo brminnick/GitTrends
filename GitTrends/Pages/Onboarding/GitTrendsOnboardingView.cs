@@ -16,7 +16,7 @@ namespace GitTrends
 			0,
 			() => new ImageView(),
 			() => new(OnboardingConstants.GitTrendsPage_Title),
-			() => new DescriptionBodyView(),
+			() => new DescriptionBodyView(deviceInfo),
 			analyticsService)
 	{
 
@@ -34,9 +34,8 @@ namespace GitTrends
 
 		sealed class DescriptionBodyView : ScrollView
 		{
-			public DescriptionBodyView()
+			public DescriptionBodyView(in IDeviceInfo deviceInfo)
 			{
-
 				Content = new Grid
 				{
 					RowSpacing = 14,
@@ -59,10 +58,10 @@ namespace GitTrends
 						new GitHubLogoLabel().Row(Row.Connect).Column(Column.Image),
 						new BodyLabel(GitHubLoginButtonConstants.ConnectToGitHub).Row(Row.Connect).Column(Column.Description),
 
-						new BodySvg("chart.svg").Row(Row.MonitorImage).Column(Column.Image).Center().RowSpan(2),
+						new BodySvg(deviceInfo, "chart.svg").Row(Row.MonitorImage).Column(Column.Image).Center().RowSpan(2),
 						new BodyLabel(OnboardingConstants.GitTrendsPage_Body_MonitorGitHubRepos).TextTop().Row(Row.MonitorImage).RowSpan(2).Column(Column.Description),
 
-						new BodySvg("megaphone.svg").Row(Row.Discover).Column(Column.Image),
+						new BodySvg(deviceInfo, "megaphone.svg").Row(Row.Discover).Column(Column.Image),
 						new BodyLabel(OnboardingConstants.GitTrendsPage_Body_DiscoverReferringSites).Row(Row.Discover).Column(Column.Description),
 					}
 				};

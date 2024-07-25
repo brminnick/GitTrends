@@ -9,7 +9,7 @@ class StarsStatisticsGrid : Grid
 	const int _textSize = 24;
 	const int _textRowHeight = _textSize + 8;
 
-	public StarsStatisticsGrid()
+	public StarsStatisticsGrid(in IDeviceInfo deviceInfo)
 	{
 		this.Fill()
 			.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardStarsStatsIconColor));
@@ -35,7 +35,7 @@ class StarsStatisticsGrid : Grid
 		Children.Add(new StarsStatisticsLabel(EmptyDataViewService.GetStarsHeaderTitleText(), _textSize)
 			.Row(Row.Total).ColumnSpan(All<Column>()));
 
-		Children.Add(new StarSvg()
+		Children.Add(new StarSvg(deviceInfo)
 			.Row(Row.Stars).Column(Column.LeftStar));
 
 		Children.Add(new StarsStatisticsLabel(48) { AutomationId = TrendsPageAutomationIds.StarsStatisticsLabel }
@@ -51,7 +51,7 @@ class StarsStatisticsGrid : Grid
 			.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingStarsData))
 			.Bind(ActivityIndicator.IsRunningProperty, nameof(TrendsViewModel.IsFetchingStarsData)));
 
-		Children.Add(new StarSvg()
+		Children.Add(new StarSvg(deviceInfo)
 			.Row(Row.Stars).Column(Column.RightStar));
 
 		Children.Add(new StarsStatisticsLabel(_textSize) { AutomationId = TrendsPageAutomationIds.StarsHeaderMessageLabel }
@@ -67,7 +67,7 @@ class StarsStatisticsGrid : Grid
 
 	sealed class StarSvg : SvgImage
 	{
-		public StarSvg() : base("star.svg", Colors.White, 44, 44)
+		public StarSvg(in IDeviceInfo deviceInfo) : base(deviceInfo, "star.svg", Colors.White, 44, 44)
 		{
 			this.Center();
 		}

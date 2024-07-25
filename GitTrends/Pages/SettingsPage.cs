@@ -75,12 +75,12 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 
 							new AboutRowTappableView(aboutRowTapGesture)
 								.Row(SettingsRow.About).ColumnSpan(All<SettingsColumn>()),
-							new AboutRowSvg("about.svg", getSVGIconColor())
+							new AboutRowSvg(deviceInfo, "about.svg", getSVGIconColor())
 								.Row(SettingsRow.About).Column(SettingsColumn.Icon),
 							new AboutTitleLabel(SettingsPageAutomationIds.AboutTitleLabel)
 								.Row(SettingsRow.About).Column(SettingsColumn.Title)
 								.Bind(Label.TextProperty, nameof(SettingsViewModel.AboutLabelText)),
-							new AboutRowSvg("right_arrow.svg", getSVGIconColor()).End()
+							new AboutRowSvg(deviceInfo, "right_arrow.svg", getSVGIconColor()).End()
 								.Row(SettingsRow.About).Column(SettingsColumn.Button),
 
 							new Separator()
@@ -88,17 +88,17 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 
 							new LoginRowTappableView(loginRowTapGesture)
 								.Row(SettingsRow.Login).ColumnSpan(All<SettingsColumn>()),
-							new LoginRowSvg("logout.svg", getSVGIconColor())
+							new LoginRowSvg(deviceInfo, "logout.svg", getSVGIconColor())
 								.Row(SettingsRow.Login).Column(SettingsColumn.Icon),
 							new LoginLabel()
 								.Row(SettingsRow.Login).Column(SettingsColumn.Title),
-							new LoginRowSvg("right_arrow.svg", getSVGIconColor()).End()
+							new LoginRowSvg(deviceInfo, "right_arrow.svg", getSVGIconColor()).End()
 								.Row(SettingsRow.Login).Column(SettingsColumn.Button),
 
 							new Separator()
 								.Row(SettingsRow.LoginSeparator).ColumnSpan(All<SettingsColumn>()),
 
-							new SvgImage("organization.svg", getSVGIconColor())
+							new SvgImage(deviceInfo, "organization.svg", getSVGIconColor())
 								.Row(SettingsRow.Organizations).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.IncludeOrganizationsSwitch)
 								.Row(SettingsRow.Organizations).Column(SettingsColumn.Title)
@@ -109,7 +109,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 							new Separator()
 								.Row(SettingsRow.OrganizationsSeparator).ColumnSpan(All<SettingsColumn>()),
 
-							new SvgImage("bell.svg", getSVGIconColor())
+							new SvgImage(deviceInfo, "bell.svg", getSVGIconColor())
 								.Row(SettingsRow.Notifications).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.RegisterForNotificationsTitleLabel)
 								.Row(SettingsRow.Notifications).Column(SettingsColumn.Title)
@@ -120,7 +120,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 							new Separator()
 								.Row(SettingsRow.NotificationsSeparator).ColumnSpan(All<SettingsColumn>()),
 
-							new SvgImage("theme.svg", getSVGIconColor())
+							new SvgImage(deviceInfo, "theme.svg", getSVGIconColor())
 								.Row(SettingsRow.Theme).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.ThemeTitleLabel)
 								.Row(SettingsRow.Theme).Column(SettingsColumn.Title)
@@ -133,7 +133,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 							new Separator()
 								.Row(SettingsRow.ThemeSeparator).ColumnSpan(All<SettingsColumn>()),
 
-							new SvgImage("language.svg", getSVGIconColor())
+							new SvgImage(deviceInfo, "language.svg", getSVGIconColor())
 								.Row(SettingsRow.Language).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.LanguageTitleLabel)
 								.Row(SettingsRow.Language).Column(SettingsColumn.Title)
@@ -146,7 +146,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 							new Separator()
 								.Row(SettingsRow.LanguageSeparator).ColumnSpan(All<SettingsColumn>()),
 
-							new SvgImage("chart.svg", getSVGIconColor())
+							new SvgImage(deviceInfo, "chart.svg", getSVGIconColor())
 								.Row(SettingsRow.PreferredCharts).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.PreferredChartTitleLabel)
 								.Row(SettingsRow.PreferredCharts).Column(SettingsColumn.Title)
@@ -165,7 +165,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 					}.Assign(out _contentGrid)
 				}.Paddings(left: 28, right: 28, bottom: 8),
 
-				new OrganizationsCarouselOverlay(analyticsService).Assign(out _organizationsCarouselOverlay),
+				new OrganizationsCarouselOverlay(deviceInfo, analyticsService).Assign(out _organizationsCarouselOverlay),
 			}
 		};
 
@@ -240,7 +240,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 
 	sealed class LoginRowSvg : SvgImage, ILoginRowView
 	{
-		public LoginRowSvg(in string svgFileName, in Color textColor) : base(svgFileName, textColor)
+		public LoginRowSvg(in IDeviceInfo deviceInfo, in string svgFileName, in Color textColor) : base(deviceInfo, svgFileName, textColor)
 		{
 			//Allow LoginRowTappableView to handle taps
 			InputTransparent = true;
@@ -274,7 +274,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 
 	sealed class AboutRowSvg : SvgImage
 	{
-		public AboutRowSvg(in string svgFileName, in Color textColor) : base(svgFileName, textColor)
+		public AboutRowSvg(in IDeviceInfo deviceInfo, in string svgFileName, in Color textColor) : base(deviceInfo, svgFileName, textColor)
 		{
 			//Allow AboutRowTappableView to handle taps
 			InputTransparent = true;

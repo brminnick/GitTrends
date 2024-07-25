@@ -63,7 +63,7 @@ class AboutPage : BaseContentPage<AboutViewModel>
 					new DescriptionLabel(AboutPageConstants.DescriptionText) { MaxLines = 3 }
 						.Row(Row.Description).Column(Column.Statistics),
 
-					new GitTrendsStatisticsView()
+					new GitTrendsStatisticsView(deviceInfo)
 						.Row(Row.Statistics).Column(Column.Statistics),
 
 					new ButtonLayout(deviceInfo).Center()
@@ -191,7 +191,7 @@ class AboutPage : BaseContentPage<AboutViewModel>
 		abstract class AboutPageButton : SvgTextLabel
 		{
 			protected AboutPageButton(in string svgFileName, in string text, in string automationId, in Color backgroundColor, in string commandPropertyBindingPath, in IDeviceInfo deviceInfo)
-				: base(svgFileName, text, automationId, IsSmallScreen ? 12 : 14, FontFamilyConstants.RobotoMedium, 4)
+				: base(deviceInfo, svgFileName, text, automationId, IsSmallScreen ? 12 : 14, FontFamilyConstants.RobotoMedium, 4)
 			{
 				BackgroundColor = backgroundColor;
 				Padding = IsSmallScreen ? new Thickness(deviceInfo.Platform == DevicePlatform.iOS ? 8 : 12, 8) : new Thickness(deviceInfo.Platform == DevicePlatform.iOS ? 10 : 16, 8);

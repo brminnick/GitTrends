@@ -8,7 +8,7 @@ namespace GitTrends;
 class StarsTrendsView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService) 
 	: BaseTrendsContentView(AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor)), deviceInfo, 1, TrendsPageType.StarsTrendsPage, analyticsService)
 {
-	protected override Layout CreateHeaderView() => new StarsStatisticsGrid();
+	protected override Layout CreateHeaderView() => new StarsStatisticsGrid(deviceInfo);
 	
 	protected override BaseChartView CreateChartView() => new StarsChart();
 	

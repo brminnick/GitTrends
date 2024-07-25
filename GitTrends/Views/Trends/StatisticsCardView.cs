@@ -10,12 +10,17 @@ class StatisticsCard : MaterialFrame
 	public static readonly BindableProperty IsSeriesVisibleProperty = BindableProperty.Create(nameof(IsSeriesVisible), typeof(bool), typeof(StatisticsCard), false);
 	public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(string), typeof(StatisticsCard), string.Empty);
 
-	public StatisticsCard(in string title, in string svgImage, in string svgColorTheme, in string cardAutomationId, in string statisticsTextAutomationId)
+	public StatisticsCard(in string title, 
+		in string svgImage, 
+		in string svgColorTheme, 
+		in string cardAutomationId, 
+		in string statisticsTextAutomationId, 
+		in IDeviceInfo deviceInfo)
 	{
 		Elevation = 4;
 
 		Padding = new Thickness(16, 12);
-		Content = new StatisticsCardContent(title, svgImage, svgColorTheme, statisticsTextAutomationId, this);
+		Content = new StatisticsCardContent(title, svgImage, svgColorTheme, statisticsTextAutomationId, this, deviceInfo);
 		CornerRadius = 4;
 		AutomationId = cardAutomationId;
 
@@ -42,7 +47,12 @@ class StatisticsCard : MaterialFrame
 	{
 		readonly RepositoryStatSVGImage _svgImage;
 
-		public StatisticsCardContent(in string title, in string svgImage, in string svgColorTheme, in string statisticsTextAutomationId, in StatisticsCard statisticsCard)
+		public StatisticsCardContent(in string title,
+			in string svgImage, 
+			in string svgColorTheme, 
+			in string statisticsTextAutomationId, 
+			in StatisticsCard statisticsCard,
+			in IDeviceInfo deviceInfo)
 		{
 			RowSpacing = 0;
 			ColumnSpacing = 0;
@@ -63,7 +73,7 @@ class StatisticsCard : MaterialFrame
 				.Row(Row.Number).Column(Column.Stats).ColumnSpan(2)
 				.Bind(Label.TextProperty, nameof(Text), source: statisticsCard)
 				.Bind<TrendsStatisticsLabel, bool, bool>(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingViewsClonesData), convert: static isFetchingData => !isFetchingData));
-			Children.Add(new RepositoryStatSVGImage(svgImage, svgColorTheme).Assign(out _svgImage)
+			Children.Add(new RepositoryStatSVGImage(svgImage, svgColorTheme, deviceInfo).Assign(out _svgImage)
 				.Row(Row.Title).Column(Column.Icon).RowSpan(2)
 				.Bind<SvgImage, bool, Func<Color>>(SvgImage.SvgColorProperty, nameof(IsSeriesVisible), convert: convertIsSeriesVisible, source: statisticsCard));
 
@@ -72,8 +82,8 @@ class StatisticsCard : MaterialFrame
 
 		sealed class RepositoryStatSVGImage : SvgImage
 		{
-			public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor)
-				: base(svgFileName, AppResources.GetResource<Color>(baseThemeColor), 32, 32)
+			public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor, in IDeviceInfo deviceInfo)
+				: base(deviceInfo, svgFileName, AppResources.GetResource<Color>(baseThemeColor), 32, 32)
 			{
 				VerticalOptions = LayoutOptions.Center;
 				HorizontalOptions = LayoutOptions.End;

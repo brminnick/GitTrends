@@ -1,7 +1,6 @@
 ﻿using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using CommunityToolkit.Maui.Markup;
-using CommunityToolkit.Maui.Views;
 using Microsoft.Maui.Controls.Shapes;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
@@ -15,7 +14,7 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 		1,
 		() => new ImageView(),
 		() => new TitleLabel(OnboardingConstants.ChartPage_Title),
-		() => new DescriptionBodyView(),
+		() => new DescriptionBodyView(deviceInfo),
 		analyticsService)
 {
 
@@ -28,7 +27,7 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 		{
 			const int chartVideoHeight = 1080;
 			const int chartVideoWidth = 860;
-			
+
 			StrokeShape = new RoundRectangle
 			{
 				CornerRadius = 4,
@@ -36,30 +35,36 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 			Stroke = Color.FromArgb("E0E0E0");
 			BackgroundColor = Colors.White;
 			Padding = new Thickness(5);
+			
+#if AppStore
+#error 
+#endif
+#if !(IOS || !MACCATALYST)
 
 			Content = new MediaElement
-			{
-				Source = MediaSource.FromResource(VideoConstants.ChartVideoFileName),
-				Background = null,
-				ShouldAutoPlay = true,
-				ShouldShowPlaybackControls = false,
-				ShouldLoopPlayback = true,
-				Volume = 0.0,
-				Margin = 0,
-			}.Center()
-			.Bind(WidthRequestProperty,
-				source: this,
-				getter: imageView => imageView.Height,
-				convert: convertWidthToMatchRecordedVideoDimensions);
+				{
+					Source = MediaSource.FromResource(VideoConstants.ChartVideoFileName),
+					Background = null,
+					ShouldAutoPlay = true,
+					ShouldShowPlaybackControls = false,
+					ShouldLoopPlayback = true,
+					Volume = 0.0,
+					Margin = 0,
+				}.Center()
+				.Bind(WidthRequestProperty,
+					source: this,
+					getter: imageView => imageView.Height,
+					convert: convertWidthToMatchRecordedVideoDimensions);
 
 			// This ensures that black bars don't appear on the sides of the video due to being improperly scaled
-			double convertWidthToMatchRecordedVideoDimensions(double imageViewHeight) => (imageViewHeight - Padding.VerticalThickness) / chartVideoHeight * chartVideoWidth ;
+			double convertWidthToMatchRecordedVideoDimensions(double imageViewHeight) => (imageViewHeight - Padding.VerticalThickness) / chartVideoHeight * chartVideoWidth;
+#endif
 		}
 	}
 
 	sealed class DescriptionBodyView : ScrollView
 	{
-		public DescriptionBodyView()
+		public DescriptionBodyView(in IDeviceInfo deviceInfo)
 		{
 			Content = new Grid
 			{
@@ -78,10 +83,10 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 				{
 					new BodyLabel(OnboardingConstants.ChartPage_Body_ShowAllTraffic).Row(Row.Title).ColumnSpan(All<Column>()),
 
-					new BodySvg("zoom_gesture.svg").Row(Row.Zoom).Column(Column.Image),
+					new BodySvg(deviceInfo, "zoom_gesture.svg").Row(Row.Zoom).Column(Column.Image),
 					new BodyLabel(OnboardingConstants.ChartPage_Body_ZoomInOut).Row(Row.Zoom).Column(Column.Description),
 
-					new BodySvg("longpress_gesture.svg").Row(Row.LongPress).Column(Column.Image),
+					new BodySvg(deviceInfo, "longpress_gesture.svg").Row(Row.LongPress).Column(Column.Image),
 					new BodyLabel(OnboardingConstants.ChartPage_Body_LongPress).Row(Row.LongPress).Column(Column.Description),
 				}
 			};

@@ -85,7 +85,7 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 						AutomationId = RepositoryPageAutomationIds.RefreshView,
 						Content = new CollectionView
 						{
-							ItemTemplate = new RepositoryDataTemplateSelector(mobileSortingService),
+							ItemTemplate = new RepositoryDataTemplateSelector(deviceInfo, mobileSortingService),
 							BackgroundColor = Colors.Transparent,
 							AutomationId = RepositoryPageAutomationIds.CollectionView,
 							//Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
