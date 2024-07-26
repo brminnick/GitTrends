@@ -64,7 +64,7 @@ public class CircleImage : CircleBorder
 
 		var image = (Image)sender;
 
-		if (e.PropertyName != Image.IsLoadingProperty.PropertyName) 
+		if (e.PropertyName != Image.IsLoadingProperty.PropertyName || image.Source == ImageSource) 
 			return;
 
 		if (image.IsLoading)

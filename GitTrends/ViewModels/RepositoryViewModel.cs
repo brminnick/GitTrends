@@ -190,7 +190,7 @@ public partial class RepositoryViewModel : BaseViewModel
 
 			#endregion
 
-			await Dispatcher.DispatchAsync(() =>IsRefreshing = false);
+			IsRefreshing = false;
 
 			#region Get StarGazer Data in Background
 
@@ -329,7 +329,7 @@ public partial class RepositoryViewModel : BaseViewModel
 			if (cancellationTokenSource.IsCancellationRequested)
 				UpdateListForLoggedOutUser();
 
-			await Dispatcher.DispatchAsync(() => IsRefreshing = false);
+			IsRefreshing = false;
 
 			await Task.WhenAll(saveCompletedRepositoryToDatabaseTaskList).ConfigureAwait(false);
 		}
