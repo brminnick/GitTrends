@@ -17,9 +17,6 @@ class AvatarImage : CircleImage
 		WidthRequest = HeightRequest = diameter;
 		BorderColor = Colors.Black;
 
-		StrokeShape = new RoundRectangle
-		{
-			StrokeThickness = 1
-		};
+		StrokeThickness = 1;
 	}
 }

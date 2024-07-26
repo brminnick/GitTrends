@@ -10,28 +10,30 @@ public class SvgImage : Image
 	public static readonly BindableProperty SvgColorProperty =
 		BindableProperty.Create(nameof(SvgColor), typeof(Color), typeof(SvgImage), Colors.White, propertyChanged: HandleGetTextColorPropertyChanged);
 
+	const int _defaultHeight = 18;
+	const int _defaultWidth = 18;
+
 	readonly IDeviceInfo _deviceInfo;
-	
-	public SvgImage(in IDeviceInfo deviceInfo, in string svgFileName, in Color svgColor, double widthRequest = 24, double heightRequest = 24)
+
+	public SvgImage(in IDeviceInfo deviceInfo, in string svgFileName, in Color svgColor, double widthRequest = _defaultWidth, double heightRequest = _defaultHeight)
 		: this(deviceInfo, svgColor, widthRequest, heightRequest)
 	{
 		if (!Path.GetExtension(svgFileName).EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
 			throw new ArgumentException($"{nameof(svgFileName)} must end with `.svg`");
 
 		Source = svgFileName;
-
 	}
 
-	public SvgImage(IDeviceInfo deviceInfo, Color color, double widthRequest = 24, double heightRequest = 24)
+	public SvgImage(IDeviceInfo deviceInfo, Color color, double widthRequest = _defaultWidth, double heightRequest = _defaultHeight)
 		: this(deviceInfo, widthRequest, heightRequest)
 	{
 		SvgColor = color;
 	}
 
-	public SvgImage(IDeviceInfo deviceInfo, double widthRequest = 24, double heightRequest = 24)
+	public SvgImage(IDeviceInfo deviceInfo, double widthRequest = _defaultWidth, double heightRequest = _defaultHeight)
 	{
 		_deviceInfo = deviceInfo;
-		
+
 		PropertyChanged += HandlePropertyChanged;
 		ThemeService.PreferenceChanged += HandlePreferenceChanged;
 
@@ -51,7 +53,7 @@ public class SvgImage : Image
 		get => (Color)GetValue(SvgColorProperty);
 		set
 		{
-			if (Equals(value, SvgColor))
+			if (!Equals(value, SvgColor))
 			{
 				SetValue(SvgColorProperty, value);
 				OnPropertyChanged();
@@ -69,12 +71,12 @@ public class SvgImage : Image
 	{
 		throw new NotImplementedException();
 	}
-	
+
 	void HandlePropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
 		if (e.PropertyName == SourceProperty.PropertyName)
 		{
-			if(_deviceInfo.Platform == DevicePlatform.iOS && Source is IFileImageSource fileImageSource)
+			if (_deviceInfo.Platform == DevicePlatform.iOS && Source is IFileImageSource fileImageSource)
 				Source = Path.ChangeExtension(fileImageSource.File, ".png");
 		}
 	}

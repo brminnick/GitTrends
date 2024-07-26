@@ -35,7 +35,7 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 			new StatisticsSvgImage(deviceInfo, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji1),
 
-			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+			//Only display the value when the Repository Data finishes loading. This avoids showing '0' while the data is loading.
 			new StatisticsLabel(nameof(BaseTheme.CardClonesStatsTextColor))
 				.Row(Row.Statistics).Column(Column.Statistic1)
 				.Bind(Label.IsVisibleProperty, nameof(Repository.TotalClones), BindingMode.OneWay, convert: static (long? totalClones) => IsStatisticsLabelVisible(totalClones))
@@ -49,7 +49,7 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 			new StatisticsSvgImage(deviceInfo, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji2),
 
-			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+			//Only display the value when the Repository Data finishes loading. This avoids showing '0' while the data is loading.
 			new StatisticsLabel(nameof(BaseTheme.CardUniqueClonesStatsTextColor))
 				.Row(Row.Statistics).Column(Column.Statistic2)
 				.Bind(Label.IsVisibleProperty, nameof(Repository.TotalUniqueClones), BindingMode.OneTime, convert: static (long? totalUniqueClones) => IsStatisticsLabelVisible(totalUniqueClones))
@@ -63,7 +63,7 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 			new StatisticsSvgImage(deviceInfo, "star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji3),
 
-			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+			//Only display the value when the Repository Data finishes loading. This avoids showing '0' while the data is loading.
 			new StatisticsLabel(nameof(BaseTheme.CardStarsStatsTextColor))
 				.Row(Row.Statistics).Column(Column.Statistic3)
 				.Bind(Label.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => IsStatisticsLabelVisible(starCount))
@@ -83,7 +83,7 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 			new StatisticsSvgImage(deviceInfo, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji1),
 
-			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+			//Only display the value when the Repository Data finishes loading. This avoids showing '0' while the data is loading.
 			new StatisticsLabel(nameof(BaseTheme.CardViewsStatsTextColor))
 				.Row(Row.Statistics).Column(Column.Statistic1)
 				.Bind(Label.IsVisibleProperty, nameof(Repository.TotalViews), BindingMode.OneTime, convert: static (long? totalViews) => IsStatisticsLabelVisible(totalViews))
@@ -97,7 +97,7 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 			new StatisticsSvgImage(deviceInfo, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji2),
 
-			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+			//Only display the value when the Repository Data finishes loading. This avoids showing '0' while the data is loading.
 			new StatisticsLabel(nameof(BaseTheme.CardUniqueViewsStatsTextColor))
 				.Row(Row.Statistics).Column(Column.Statistic2)
 				.Bind(Label.IsVisibleProperty, nameof(Repository.TotalUniqueViews), BindingMode.OneTime, convert: static (long? totalUniqueViews) => IsStatisticsLabelVisible(totalUniqueViews))
@@ -111,7 +111,7 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 			new StatisticsSvgImage(deviceInfo, "star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji3),
 
-			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+			//Only display the value when the Repository Data finishes loading. This avoids showing '0' while the data is loading.
 			new StatisticsLabel(nameof(BaseTheme.CardStarsStatsTextColor))
 				.Row(Row.Statistics).Column(Column.Statistic3)
 				.Bind(Label.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => IsStatisticsLabelVisible(starCount))
@@ -131,7 +131,7 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 			new StatisticsSvgImage(deviceInfo, "star.svg", nameof(BaseTheme.CardStarsStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji1),
 
-			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+			//Only display the value when the Repository Data finishes loading. This avoids showing '0' while the data is loading.
 			new StatisticsLabel(nameof(BaseTheme.CardStarsStatsTextColor))
 				.Row(Row.Statistics).Column(Column.Statistic1)
 				.Bind(Label.IsVisibleProperty, nameof(Repository.StarCount), BindingMode.OneTime, convert: static (long? starCount) => IsStatisticsLabelVisible(starCount))
@@ -145,7 +145,7 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 			new StatisticsSvgImage(deviceInfo, "repo_forked.svg", nameof(BaseTheme.CardForksStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji2),
 
-			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+			//Only display the value when the Repository Data finishes loading. This avoids showing '0' while the data is loading.
 			new StatisticsLabel(nameof(BaseTheme.CardForksStatsTextColor))
 				.Row(Row.Statistics).Column(Column.Statistic2)
 				.Bind(Label.IsVisibleProperty, nameof(Repository.ForkCount), BindingMode.OneTime, convert: static (long? forkCount) => IsStatisticsLabelVisible(forkCount))
@@ -159,7 +159,7 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 			new StatisticsSvgImage(deviceInfo, "issue_opened.svg", nameof(BaseTheme.CardIssuesStatsIconColor))
 				.Row(Row.Statistics).Column(Column.Emoji3),
 
-			//Only display the value when the Repository Data finishes loading. This avoid showing '0' while the data is loading.
+			//Only display the value when the Repository Data finishes loading. This avoids showing '0' while the data is loading.
 			new StatisticsLabel(nameof(BaseTheme.CardIssuesStatsTextColor))
 				.Row(Row.Statistics).Column(Column.Statistic3)
 				.Bind(Label.IsVisibleProperty, nameof(Repository.IssuesCount), BindingMode.OneTime, convert: static (long? issuesCount) => IsStatisticsLabelVisible(issuesCount))
@@ -172,10 +172,10 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 		];
 	}
 
-	class StatisticsSvgImage : SvgImage
-	{
+	sealed class StatisticsSvgImage : SvgImage
+	{		
 		public StatisticsSvgImage(IDeviceInfo deviceInfo, string fileName, string baseThemeColor)
-			: base(deviceInfo, fileName, AppResources.GetResource<Color>(baseThemeColor), 24, 24)
+			: base(deviceInfo, fileName, AppResources.GetResource<Color>(baseThemeColor))
 		{
 			VerticalOptions = LayoutOptions.Center;
 			HorizontalOptions = LayoutOptions.End;

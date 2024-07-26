@@ -27,12 +27,15 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 	private protected enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
 	private protected enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3 }
 
-	private protected class CardView : ExtendedSwipeView
+	private protected sealed class CardView : ExtendedSwipeView
 	{
 		public CardView(in IDeviceInfo deviceInfo, in IEnumerable<View> dataTemplateChildren)
 		{
 			this.Bind(TappedCommandParameterProperty, mode: BindingMode.OneTime)
-				.Bind(TappedCommandProperty, nameof(RepositoryPage.RepositoryDataTemplateTappedCommand), BindingMode.OneTime, source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(RepositoryPage)));
+				.Bind(TappedCommandProperty, 
+					nameof(RepositoryPage.RepositoryDataTemplateTappedCommand), 
+					BindingMode.OneTime, 
+					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(RepositoryPage)));
 
 			var sidePadding = IsSmallScreen ? 8 : 16;
 			BackgroundColor = Colors.Transparent;
@@ -72,6 +75,8 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 
 			Content = new Grid
 			{
+				InputTransparent = true,
+				
 				RowSpacing = 0,
 
 				RowDefinitions = Rows.Define(
@@ -94,7 +99,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 		enum CardViewRow { TopPadding, Card, BottomPadding }
 		enum CardViewColumn { LeftPadding, Card, RightPadding }
 
-		class CardViewFrame : MaterialFrame
+		sealed class CardViewFrame : MaterialFrame
 		{
 			public CardViewFrame(in IDeviceInfo deviceInfo, in IEnumerable<View> dataTemplateChildren)
 			{
@@ -108,7 +113,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 				this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
 			}
 
-			class ContentGrid : Grid
+			sealed class ContentGrid : Grid
 			{
 				public ContentGrid(in IDeviceInfo deviceInfo, in IEnumerable<View> dataTemplateChildren)
 				{
@@ -176,7 +181,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 					}
 				}
 
-				class NameLabel : PrimaryColorLabel
+				sealed class NameLabel : PrimaryColorLabel
 				{
 					public NameLabel() : base(20)
 					{
@@ -186,7 +191,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 					}
 				}
 
-				class DescriptionLabel : PrimaryColorLabel
+				sealed class DescriptionLabel : PrimaryColorLabel
 				{
 					public DescriptionLabel() : base(14)
 					{
@@ -209,12 +214,12 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 					}
 				}
 
-				class Separator : BoxView
+				sealed class Separator : BoxView
 				{
 					public Separator() => this.DynamicResource(ColorProperty, nameof(BaseTheme.SeparatorColor));
 				}
 
-				class TrendingImage : SvgImage
+				sealed class TrendingImage : SvgImage
 				{
 					public const double SvgWidthRequest = 62;
 					public const double SvgHeightRequest = 16;

@@ -7,7 +7,7 @@ public class CircleBorder : Border
 {
 	public CircleBorder()
 	{
-		HeightRequest = WidthRequest = Math.Min(HeightRequest, WidthRequest);
+		HeightRequest = WidthRequest = Math.Min(HeightRequest, WidthRequest); 
 
 		StrokeShape = new RoundRectangle()
 			.Bind(RoundRectangle.CornerRadiusProperty, 
@@ -15,6 +15,6 @@ public class CircleBorder : Border
 				convert: ConvertWidthToCornerRadius, 
 				source: this);
 
-		static double ConvertWidthToCornerRadius(double width) => width is -1 ? -1 : width / 2;
+		static CornerRadius ConvertWidthToCornerRadius(double width) => width is -1 ? -1 : width / 2;
 	}
 }
