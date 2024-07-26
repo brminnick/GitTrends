@@ -11,11 +11,12 @@ using Refit;
 
 namespace GitTrends;
 
-public partial class TrendsViewModel : BaseViewModel
+public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 {
 	public const int MinimumChartHeight = 20;
+	public const string RepositoryQueryString = nameof(RepositoryQueryString);
 
-	static readonly WeakEventManager<Repository> _repostoryEventManager = new();
+	static readonly WeakEventManager<Repository> _repositoryEventManager = new();
 
 	readonly GitHubApiV3Service _gitHubApiV3Service;
 	readonly RepositoryDatabase _repositoryDatabase;
@@ -35,7 +36,7 @@ public partial class TrendsViewModel : BaseViewModel
 	[ObservableProperty]
 	string _starsStatisticsText = string.Empty, _viewsStatisticsText = string.Empty, _clonesStatisticsText = string.Empty, _starsHeaderMessageText = string.Empty,
 		_uniqueViewsStatisticsText = string.Empty, _uniqueClonesStatisticsText = string.Empty, _starsEmptyDataViewTitleText = string.Empty, _starsEmptyDataViewDescriptionText = string.Empty,
-		_viewsClonesEmptyDataViewTitleText = string.Empty;
+		_viewsClonesEmptyDataViewTitleText = string.Empty, _title = string.Empty;
 
 	[ObservableProperty]
 	ImageSource? _starsEmptyDataViewImage, _viewsClonesEmptyDataViewImage;
@@ -90,8 +91,8 @@ public partial class TrendsViewModel : BaseViewModel
 
 	public static event EventHandler<Repository> RepositorySavedToDatabase
 	{
-		add => _repostoryEventManager.AddEventHandler(value);
-		remove => _repostoryEventManager.RemoveEventHandler(value);
+		add => _repositoryEventManager.AddEventHandler(value);
+		remove => _repositoryEventManager.RemoveEventHandler(value);
 	}
 
 	public double DailyViewsClonesMinValue { get; } = 0;
@@ -159,13 +160,10 @@ public partial class TrendsViewModel : BaseViewModel
 		if (starredAtDates.Any() && starredAtDates.Max().LocalDateTime.DayOfYear != DateTimeOffset.UtcNow.LocalDateTime.DayOfYear)
 			yield return new DailyStarsModel(totalStars, DateTimeOffset.UtcNow);
 	}
-
-	[RelayCommand]
-	async Task FetchData((Repository Repository, CancellationToken CancellationToken) parameter)
+	
+	async Task FetchData(Repository repository, CancellationToken cancellationToken)
 	{
-		var (repository, cancellationToken) = parameter;
-
-		var minimumTimeTask = Task.Delay(TimeSpan.FromSeconds(1));
+		var minimumTimeTask = Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
 		using var getGetStarsDataCTS = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 		using var getViewsClonesDataCTS = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
@@ -222,7 +220,7 @@ public partial class TrendsViewModel : BaseViewModel
 					IsFetchingStarsData = false;
 
 					// Continue to fetch the actual StarredAt Data in the background
-					// This allows us to save the downlaoded data to the database at the end of the `try` block
+					// This allows us to save the downloaded data to the database at the end of the `try` block
 					repositoryStars = await getGetStarsDataTask.ConfigureAwait(false);
 					updateStarsData(repositoryStars);
 				}
@@ -470,7 +468,7 @@ public partial class TrendsViewModel : BaseViewModel
 		}
 	}
 
-	void OnRepositorySavedToDatabase(in Repository repository) => _repostoryEventManager.RaiseEvent(this, repository, nameof(RepositorySavedToDatabase));
+	void OnRepositorySavedToDatabase(in Repository repository) => _repositoryEventManager.RaiseEvent(this, repository, nameof(RepositorySavedToDatabase));
 
 	[Conditional("DEBUG")]
 	void PrintDays()
@@ -484,5 +482,15 @@ public partial class TrendsViewModel : BaseViewModel
 		Debug.WriteLine("Views");
 		foreach (var viewDay in DailyViewsList.Select(static x => x.Day))
 			Trace.WriteLine(viewDay);
+	}
+	
+	async void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)
+	{
+		var repository = (Repository)query[RepositoryQueryString];
+		Title = repository.Name;
+
+		var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+
+		await FetchData(repository, cancellationTokenSource.Token);
 	}
 }

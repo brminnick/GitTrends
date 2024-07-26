@@ -125,11 +125,10 @@ public static class MauiProgram
 		services.AddTransientWithShellRoute<ReferringSitesPage, ReferringSitesViewModel>();
 		services.AddTransientWithShellRoute<RepositoryPage, RepositoryViewModel>();
 		services.AddTransientWithShellRoute<SettingsPage, SettingsViewModel>();
+		services.AddTransientWithShellRoute<TrendsPage, TrendsViewModel>();
 		services.AddTransient<SplashScreenPage>();
 		services.AddTransient<StarsTrendsView>();
-		services.AddTransient<TrendsPage>();
 		services.AddTransient<ViewsClonesTrendsView>();
-		services.AddTransient<TrendsViewModel>();
 		services.AddTransient<WelcomePage>();
 	}
 

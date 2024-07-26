@@ -30,6 +30,10 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
 		DeepLinkingService deepLinkingService,
 		ReferringSitesViewModel referringSitesViewModel) : base(referringSitesViewModel, analyticsService)
 	{
+#if IOS || MACCATALYST
+		Shell.SetPresentationMode(this, PresentationMode.ModalAnimated);
+#endif
+
 		Title = PageTitles.ReferringSitesPage;
 
 		_repository = repository;
@@ -200,12 +204,12 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
 			{
 				HeightRequest = ReferringSitesDataTemplate.BottomPadding
 			};
-				
+
 			Footer = deviceInfo.Platform == DevicePlatform.iOS ? null : new BoxView
 			{
 				HeightRequest = ReferringSitesDataTemplate.TopPadding
 			};
-				
+
 			EmptyView = new EmptyDataView("EmptyReferringSitesList", ReferringSitesPageAutomationIds.EmptyDataView)
 				.Bind(EmptyDataView.TitleProperty, nameof(ReferringSitesViewModel.EmptyDataViewTitle))
 				.Bind(EmptyDataView.DescriptionProperty, nameof(ReferringSitesViewModel.EmptyDataViewDescription));

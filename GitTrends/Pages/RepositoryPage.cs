@@ -113,14 +113,14 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 				new InformationButton(mobileSortingService, analyticsService).Row(Row.Information).Column(Column.Information)
 			}
 		};
-		
+
 		_refreshView.PropertyChanged += HandleRefreshViewPropertyChanged;
-		
+
 		void HandleRefreshViewPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == RefreshView.IsRefreshingProperty.PropertyName)
 			{
-				
+
 			}
 		}
 	}
@@ -200,8 +200,17 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 	Task NavigateToSettingsPage() =>
 		Dispatcher.DispatchAsync(() => Shell.Current.GoToAsync(AppShell.GetPageRoute<SettingsPage>()));
 
-	Task NavigateToTrendsPage(in Repository repository) =>
-		Dispatcher.DispatchAsync(() => Shell.Current.GoToAsync(AppShell.GetPageRoute<TrendsPage>()));
+	Task NavigateToTrendsPage(in Repository repository)
+	{
+		var parameters = new Dictionary<string, object>
+		{
+			{
+				TrendsViewModel.RepositoryQueryString, repository
+			}
+		};
+
+		return Dispatcher.DispatchAsync(() => Shell.Current.GoToAsync(AppShell.GetPageRoute<TrendsPage>(), parameters));
+	}
 
 	Task ExecuteSettingsToolbarItemCommand()
 	{
