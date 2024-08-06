@@ -57,7 +57,6 @@ public class SvgImage : Image
 
 	void HandlePreferenceChanged(object? sender, PreferredTheme e)
 	{
-		throw new NotImplementedException();
 	}
 
 	void HandlePropertyChanged(object? sender, PropertyChangedEventArgs e)

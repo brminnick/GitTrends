@@ -235,12 +235,14 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 							mode: BindingMode.OneTime,
 							convert: static (bool isTrending) => isTrending ? "trending_tag.svg" : "favorite_tag.svg");
 
-						this.Bind(SvgImage.SvgColorProperty,
-							getter: (Repository repository) => repository.IsFavorite,
-							mode: BindingMode.OneTime,
-							convert: static (bool? isFavorite) => isFavorite is true
-								? AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor))
-								: AppResources.GetResource<Color>(nameof(BaseTheme.CardTrendingStatsColor)));
+						// this.DynamicResource(SvgImage.SvgColorProperty, nameof(BaseTheme.CardStarsStatsIconColor));
+
+						 this.Bind(SvgImage.SvgColorProperty,
+						 	getter: (Repository repository) => repository.IsFavorite,
+						 	mode: BindingMode.OneTime,
+						 	convert: static (bool? isFavorite) => isFavorite is true
+						 		? AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor))
+						 		: AppResources.GetResource<Color>(nameof(BaseTheme.CardTrendingStatsColor)));
 					}
 				}
 

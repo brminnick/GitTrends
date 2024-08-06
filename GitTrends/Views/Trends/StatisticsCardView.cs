@@ -69,15 +69,17 @@ class StatisticsCard : MaterialFrame
 
 			Children.Add(new PrimaryColorLabel(14, title)
 				.Row(Row.Title).Column(Column.Stats));
+			
 			Children.Add(new TrendsStatisticsLabel(34, statisticsTextAutomationId)
 				.Row(Row.Number).Column(Column.Stats).ColumnSpan(2)
 				.Bind(Label.TextProperty, nameof(Text), source: statisticsCard)
 				.Bind<TrendsStatisticsLabel, bool, bool>(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingViewsClonesData), convert: static isFetchingData => !isFetchingData));
+			
 			Children.Add(new RepositoryStatSVGImage(svgImage, svgColorTheme, deviceInfo).Assign(out _svgImage)
 				.Row(Row.Title).Column(Column.Icon).RowSpan(2)
-				.Bind<SvgImage, bool, Func<Color>>(SvgImage.SvgColorProperty, nameof(IsSeriesVisible), convert: convertIsSeriesVisible, source: statisticsCard));
+				.Bind<SvgImage, bool, Color>(SvgImage.SvgColorProperty, nameof(IsSeriesVisible), convert: convertIsSeriesVisible, source: statisticsCard));
 
-			Func<Color> convertIsSeriesVisible(bool isVisible) => isVisible ? _svgImage.DefaultColor : () => Colors.Gray;
+			Color convertIsSeriesVisible(bool isVisible) => isVisible ? _svgImage.DefaultColor : Colors.Gray;
 		}
 
 		sealed class RepositoryStatSVGImage : SvgImage
@@ -88,10 +90,10 @@ class StatisticsCard : MaterialFrame
 				VerticalOptions = LayoutOptions.Center;
 				HorizontalOptions = LayoutOptions.End;
 
-				DefaultColor = () => AppResources.GetResource<Color>(baseThemeColor);
+				DefaultColor = AppResources.GetResource<Color>(baseThemeColor);
 			}
 
-			public Func<Color> DefaultColor { get; }
+			public Color DefaultColor { get; }
 		}
 
 		class TrendsStatisticsLabel : Label

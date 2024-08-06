@@ -142,7 +142,7 @@ class AboutPage : BaseContentPage<AboutViewModel>
 		}
 	}
 
-	class TitleLabel : Label
+	sealed class TitleLabel : Label
 	{
 		public TitleLabel(in string text)
 		{
@@ -153,7 +153,7 @@ class AboutPage : BaseContentPage<AboutViewModel>
 		}
 	}
 
-	class DescriptionLabel : Label
+	sealed class DescriptionLabel : Label
 	{
 		public DescriptionLabel(in string text)
 		{
@@ -165,7 +165,7 @@ class AboutPage : BaseContentPage<AboutViewModel>
 		}
 	}
 
-	class ButtonLayout : HorizontalStackLayout
+	sealed class ButtonLayout : HorizontalStackLayout
 	{
 		public ButtonLayout(IDeviceInfo deviceInfo)
 		{
@@ -177,12 +177,12 @@ class AboutPage : BaseContentPage<AboutViewModel>
 			Children.Add(new RequestFeatureButton(deviceInfo).Start());
 		}
 
-		class ViewOnGitHubButton(IDeviceInfo deviceInfo) 
+		sealed class ViewOnGitHubButton(IDeviceInfo deviceInfo) 
 			: AboutPageButton("github.svg", AboutPageConstants.GitHubButton, AboutPageAutomationIds.ViewOnGitHubButton, Color.FromArgb("231F20"), nameof(AboutViewModel.ViewOnGitHubCommand), deviceInfo)
 		{
 		}
 
-		class RequestFeatureButton(IDeviceInfo deviceInfo) 
+		sealed class RequestFeatureButton(IDeviceInfo deviceInfo) 
 			: AboutPageButton("sparkle.svg", AboutPageConstants.RequestFeatureButton, AboutPageAutomationIds.RequestFeatureButton, Color.FromArgb("F97B4F"), nameof(AboutViewModel.RequestFeatureCommand), deviceInfo)
 		{
 		}
