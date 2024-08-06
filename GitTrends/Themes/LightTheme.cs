@@ -35,7 +35,7 @@ public sealed class LightTheme : BaseTheme
 	public override Color NavigationBarTextColor { get; } = Color.FromArgb(_toolbarTextHex);
 
 	public override Color PageBackgroundColor { get; } = Color.FromArgb(_pageBackgroundColorHex);
-	public override Color PageBackgroundColor_85Opactity { get; } = Color.FromArgb(_pageBackgroundColorHex).MultiplyAlpha(0.85f);
+	public override Color PageBackgroundColor_85Opacity { get; } = Color.FromArgb(_pageBackgroundColorHex).MultiplyAlpha(0.85f);
 
 	//Text
 	public override Color PrimaryTextColor { get; } = Color.FromArgb(_primaryTextHex);

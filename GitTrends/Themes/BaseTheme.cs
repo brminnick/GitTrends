@@ -14,7 +14,7 @@ public abstract class BaseTheme : ResourceDictionary
 		Add(nameof(NavigationBarTextColor), NavigationBarTextColor);
 
 		Add(nameof(PageBackgroundColor), PageBackgroundColor);
-		Add(nameof(PageBackgroundColor_85Opactity), PageBackgroundColor_85Opactity);
+		Add(nameof(PageBackgroundColor_85Opacity), PageBackgroundColor_85Opacity);
 
 		Add(nameof(PrimaryTextColor), PrimaryTextColor);
 		Add(nameof(TextColor), TextColor);
@@ -91,7 +91,7 @@ public abstract class BaseTheme : ResourceDictionary
 	public abstract Color NavigationBarTextColor { get; }
 
 	public abstract Color PageBackgroundColor { get; }
-	public abstract Color PageBackgroundColor_85Opactity { get; }
+	public abstract Color PageBackgroundColor_85Opacity { get; }
 
 	public abstract Color PrimaryTextColor { get; }
 	public abstract Color TextColor { get; }

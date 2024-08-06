@@ -8,7 +8,7 @@ namespace GitTrends;
 public class SvgImage : Image
 {
 	public static readonly BindableProperty SvgColorProperty =
-		BindableProperty.Create(nameof(SvgColor), typeof(Color), typeof(SvgImage), Colors.White, propertyChanged: HandleGetTextColorPropertyChanged);
+		BindableProperty.Create(nameof(SvgColor), typeof(Color), typeof(SvgImage), Colors.White);
 
 	const int _defaultHeight = 18;
 	const int _defaultWidth = 18;
@@ -45,26 +45,14 @@ public class SvgImage : Image
 		Behaviors.Add(new IconTintColorBehavior()
 			.Bind(IconTintColorBehavior.TintColorProperty,
 				getter: static image => image.SvgColor,
+				setter: static (image, color) => image.SvgColor = color,
 				source: this));
 	}
 
 	public Color SvgColor
 	{
 		get => (Color)GetValue(SvgColorProperty);
-		set
-		{
-			if (!Equals(value, SvgColor))
-			{
-				SetValue(SvgColorProperty, value);
-				OnPropertyChanged();
-			}
-		}
-	}
-
-	static void HandleGetTextColorPropertyChanged(BindableObject bindable, object oldValue, object newValue)
-	{
-		var svgImage = (SvgImage)bindable;
-		svgImage.SvgColor = (Color)newValue;
+		set => SetValue(SvgColorProperty, value);
 	}
 
 	void HandlePreferenceChanged(object? sender, PreferredTheme e)

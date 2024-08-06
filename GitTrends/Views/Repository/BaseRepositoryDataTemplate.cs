@@ -231,16 +231,16 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 						VerticalOptions = LayoutOptions.End;
 
 						this.Bind(SvgImage.SourceProperty,
-							nameof(Repository.IsTrending),
-							BindingMode.OneTime,
+							getter: (Repository repository) => repository.IsTrending,
+							mode: BindingMode.OneTime,
 							convert: static (bool isTrending) => isTrending ? "trending_tag.svg" : "favorite_tag.svg");
 
-						this.Bind<SvgImage, bool?, Func<Color>>(SvgImage.SvgColorProperty,
-							nameof(Repository.IsFavorite),
-							BindingMode.OneTime,
+						this.Bind(SvgImage.SvgColorProperty,
+							getter: (Repository repository) => repository.IsFavorite,
+							mode: BindingMode.OneTime,
 							convert: static (bool? isFavorite) => isFavorite is true
-								? () => AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor))
-								: () => AppResources.GetResource<Color>(nameof(BaseTheme.CardTrendingStatsColor)));
+								? AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor))
+								: AppResources.GetResource<Color>(nameof(BaseTheme.CardTrendingStatsColor)));
 					}
 				}
 
