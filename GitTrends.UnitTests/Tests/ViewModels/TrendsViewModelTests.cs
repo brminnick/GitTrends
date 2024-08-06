@@ -45,7 +45,7 @@ class TrendsViewModelTests : BaseTest
 		dailyViewsList_Initial = trendsViewModel.DailyViewsList;
 		dailyClonesList_Initial = trendsViewModel.DailyClonesList;
 
-		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository_OldData, CancellationToken.None)).ConfigureAwait(false);
+		await trendsViewModel.FetchData(repository_OldData, CancellationToken.None).ConfigureAwait(false);
 		repository_RepositorySavedToDatabaseResult = await repositorySavedToDatabaseTCS.Task.ConfigureAwait(false);
 
 		dailyStarsList_Final = trendsViewModel.DailyStarsList;
@@ -131,7 +131,7 @@ class TrendsViewModelTests : BaseTest
 		dailyViewsList_Initial = trendsViewModel.DailyViewsList;
 		dailyClonesList_Initial = trendsViewModel.DailyClonesList;
 
-		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository_Initial, CancellationToken.None)).ConfigureAwait(false);
+		await trendsViewModel.FetchData(repository_Initial, CancellationToken.None).ConfigureAwait(false);
 		repository_RepositorySavedToDatabaseResult = await repositorySavedToDatabaseTCS.Task.ConfigureAwait(false);
 
 		dailyStarsList_Final = trendsViewModel.DailyStarsList;
@@ -238,7 +238,7 @@ class TrendsViewModelTests : BaseTest
 
 		await repositoryDatabase.SaveRepository(repository, TestCancellationTokenSource.Token).ConfigureAwait(false);
 
-		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+		await trendsViewModel.FetchData(repository, CancellationToken.None).ConfigureAwait(false);
 
 		Assert.Multiple(() =>
 		{
@@ -272,7 +272,7 @@ class TrendsViewModelTests : BaseTest
 		var repository = await gitHubGraphQLApiService.GetRepository(GitHubConstants.GitTrendsRepoOwner, GitHubConstants.GitTrendsRepoName, CancellationToken.None).ConfigureAwait(false);
 		await repositoryDatabase.SaveRepository(repository, TestCancellationTokenSource.Token).ConfigureAwait(false);
 
-		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+		await trendsViewModel.FetchData(repository, CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
 		Assert.Multiple(() =>
@@ -306,7 +306,7 @@ class TrendsViewModelTests : BaseTest
 		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService, TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Act
-		var fetchDataCommandTask = trendsViewModel.FetchDataCommand.ExecuteAsync((repository_Initial, cancellationTokenSource.Token));
+		var fetchDataCommandTask = trendsViewModel.FetchData(repository_Initial, cancellationTokenSource.Token);
 
 		await cancellationTokenSource.CancelAsync();
 
@@ -426,7 +426,7 @@ class TrendsViewModelTests : BaseTest
 		viewsClonesEmptyDataViewTitleText_Initial = trendsViewModel.ViewsClonesEmptyDataViewTitleText;
 		isViewsClonesEmptyDataViewVisible_Initial = trendsViewModel.IsViewsClonesEmptyDataViewVisible;
 
-		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+		await trendsViewModel.FetchData(repository, CancellationToken.None).ConfigureAwait(false);
 
 		isFetchingData_Final = trendsViewModel.IsFetchingViewsClonesData;
 		dailyStarsList_Final = trendsViewModel.DailyStarsList;
@@ -528,7 +528,7 @@ class TrendsViewModelTests : BaseTest
 		dailyViewsList_Initial = trendsViewModel.DailyViewsList;
 		dailyClonesList_Initial = trendsViewModel.DailyClonesList;
 
-		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+		await trendsViewModel.FetchData(repository, CancellationToken.None).ConfigureAwait(false);
 
 		dailyStarsList_Final = trendsViewModel.DailyStarsList;
 		dailyViewsList_Final = trendsViewModel.DailyViewsList;
@@ -565,7 +565,7 @@ class TrendsViewModelTests : BaseTest
 		isUniqueClonesSeriesVisible_Initial = trendsViewModel.IsUniqueClonesSeriesVisible;
 		uniqueClonesStatisticsText_Initial = trendsViewModel.UniqueClonesStatisticsText;
 
-		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+		await trendsViewModel.FetchData(repository, CancellationToken.None).ConfigureAwait(false);
 
 		isUniqueClonesSeriesVisible_AfterFetchDataCommand = trendsViewModel.IsUniqueClonesSeriesVisible;
 		uniqueClonesStatisticsText_AfterFetchDataCommand = trendsViewModel.UniqueClonesStatisticsText;
@@ -606,7 +606,7 @@ class TrendsViewModelTests : BaseTest
 		isClonesSeriesVisible_Initial = trendsViewModel.IsClonesSeriesVisible;
 		clonesStatisticsText_Initial = trendsViewModel.ClonesStatisticsText;
 
-		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+		await trendsViewModel.FetchData(repository, CancellationToken.None).ConfigureAwait(false);
 
 		isClonesSeriesVisible_AfterFetchDataCommand = trendsViewModel.IsClonesSeriesVisible;
 		clonesStatisticsText_AfterFetchDataCommand = trendsViewModel.ClonesStatisticsText;
@@ -648,7 +648,7 @@ class TrendsViewModelTests : BaseTest
 		isUniqueViewsSeriesVisible_Initial = trendsViewModel.IsUniqueViewsSeriesVisible;
 		uniqueViewsStatisticsText_Initial = trendsViewModel.UniqueViewsStatisticsText;
 
-		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+		await trendsViewModel.FetchData(repository, CancellationToken.None).ConfigureAwait(false);
 
 		isUniqueViewsSeriesVisible_AfterFetchDataCommand = trendsViewModel.IsUniqueViewsSeriesVisible;
 		uniqueViewsStatisticsText_AfterFetchDataCommand = trendsViewModel.UniqueViewsStatisticsText;
@@ -689,7 +689,7 @@ class TrendsViewModelTests : BaseTest
 		isViewsSeriesVisible_Initial = trendsViewModel.IsViewsSeriesVisible;
 		viewsStatisticsText_Initial = trendsViewModel.ViewsStatisticsText;
 
-		await trendsViewModel.FetchDataCommand.ExecuteAsync((repository, CancellationToken.None)).ConfigureAwait(false);
+		await trendsViewModel.FetchData(repository, CancellationToken.None).ConfigureAwait(false);
 
 		isViewsSeriesVisible_AfterFetchDataCommand = trendsViewModel.IsViewsSeriesVisible;
 		viewsStatisticsText_AfterFetchDataCommand = trendsViewModel.ViewsStatisticsText;

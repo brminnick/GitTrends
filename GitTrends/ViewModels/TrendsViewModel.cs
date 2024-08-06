@@ -161,7 +161,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 			yield return new DailyStarsModel(totalStars, DateTimeOffset.UtcNow);
 	}
 	
-	async Task FetchData(Repository repository, CancellationToken cancellationToken)
+	public async Task FetchData(Repository repository, CancellationToken cancellationToken)
 	{
 		var minimumTimeTask = Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
 		using var getGetStarsDataCTS = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
