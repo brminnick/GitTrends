@@ -105,7 +105,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 			{
 				Padding = IsSmallScreen ? new Thickness(8, 16, 6, 8) : new Thickness(16, 16, 12, 8);
 				CornerRadius = 4;
-				HasShadow = false;
+				HasShadow = true;
 				Elevation = 4;
 
 				Content = new ContentGrid(deviceInfo, dataTemplateChildren);

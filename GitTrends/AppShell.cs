@@ -1,5 +1,5 @@
-
 using System.Diagnostics;
+
 namespace GitTrends;
 
 partial class AppShell : Shell
@@ -14,8 +14,8 @@ partial class AppShell : Shell
 
 		Navigating += HandleNavigating;
 	}
-	
-	void HandleNavigating(object? sender, ShellNavigatingEventArgs e)
+
+	static void HandleNavigating(object? sender, ShellNavigatingEventArgs e)
 	{
 		Trace.WriteLine($"Navigating from: {e.Current?.Location}");
 		Trace.WriteLine($"Navigating to: {e.Target}");

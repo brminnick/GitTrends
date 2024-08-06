@@ -10,8 +10,10 @@ using Refit;
 
 namespace GitTrends;
 
-public partial class ReferringSitesViewModel : BaseViewModel
+public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 {
+	public const string RepositoryQueryString = nameof(RepositoryQueryString);
+	
 	static readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
 	static readonly WeakEventManager<Repository> _abuseRateLimitFound_GetReferringSites_EventManager = new();
 
@@ -20,6 +22,8 @@ public partial class ReferringSitesViewModel : BaseViewModel
 	readonly IGitHubApiStatusService _gitHubApiStatusService;
 	readonly GitHubAuthenticationService _gitHubAuthenticationService;
 	readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
+
+	Repository? _repository;
 
 	[ObservableProperty]
 	IReadOnlyList<MobileReferringSiteModel> _mobileReferringSitesList = [];
@@ -71,27 +75,28 @@ public partial class ReferringSitesViewModel : BaseViewModel
 	}
 
 	[RelayCommand(AllowConcurrentExecutions = true)]
-	async Task ExecuteRefresh((Repository repository, CancellationToken cancellationToken) parameter)
+	async Task ExecuteRefresh(CancellationToken cancellationToken)
 	{
-		var (repository, cancellationToken) = parameter;
-
-		var minimumTimerDisplayTimeTask = Task.Delay(TimeSpan.FromSeconds(1));
-		var referringSitesList = await GetReferringSites(repository, cancellationToken).ConfigureAwait(false);
+		if (_repository is null)
+			return;
+		
+		var minimumTimerDisplayTimeTask = Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+		var referringSitesList = await GetReferringSites(_repository, cancellationToken).ConfigureAwait(false);
 		MobileReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList.Select(static x => new MobileReferringSiteModel(x))).ToList();
 
 		if (!_gitHubUserService.IsDemoUser)
 		{
-			await foreach (var mobileReferringSite in _gitHubApiRepositoriesService.GetMobileReferringSites(referringSitesList, repository.Url, cancellationToken).ConfigureAwait(false))
+			await foreach (var mobileReferringSite in _gitHubApiRepositoriesService.GetMobileReferringSites(referringSitesList, _repository.Url, cancellationToken).ConfigureAwait(false))
 			{
 				var referringSite = MobileReferringSitesList.Single(x => x.Referrer == mobileReferringSite.Referrer);
 				referringSite.FavIcon = mobileReferringSite.FavIcon;
 
 				if (!string.IsNullOrWhiteSpace(mobileReferringSite.FavIconImageUrl))
-					await _referringSitesDatabase.SaveReferringSite(referringSite, repository.Url, cancellationToken).ConfigureAwait(false);
+					await _referringSitesDatabase.SaveReferringSite(referringSite, _repository.Url, cancellationToken).ConfigureAwait(false);
 			}
 		}
 
-		await minimumTimerDisplayTimeTask.ConfigureAwait(false);
+		await minimumTimerDisplayTimeTask.ConfigureAwait(ConfigureAwaitOptions.None | ConfigureAwaitOptions.SuppressThrowing);
 
 		IsRefreshing = false;
 	}
@@ -166,5 +171,11 @@ public partial class ReferringSitesViewModel : BaseViewModel
 	{
 		var updatedReferringSitesList = MobileReferringSitesList.Concat([e]);
 		MobileReferringSitesList = MobileSortingService.SortReferringSites(updatedReferringSitesList).ToList();
+	}
+	
+	void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)
+	{
+		var repository = (Repository)query[RepositoryQueryString];
+		_repository = repository;
 	}
 }

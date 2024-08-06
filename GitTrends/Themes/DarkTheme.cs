@@ -2,7 +2,7 @@
 
 namespace GitTrends;
 
-public class DarkTheme : BaseTheme
+public sealed class DarkTheme : BaseTheme
 {
 	public const string PageBackgroundColorHex = "#121212";
 

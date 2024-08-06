@@ -2,7 +2,7 @@
 
 namespace GitTrends;
 
-public class LightTheme : BaseTheme
+public sealed class LightTheme : BaseTheme
 {
 	const string _primaryTextHex = "#584053";
 	const string _primaryTealHex = LightTealColorHex;

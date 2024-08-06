@@ -14,14 +14,13 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
 
 	readonly CancellationTokenSource _refreshViewCancellationTokenSource = new();
 
-	readonly Repository _repository;
 	readonly RefreshView _refreshView;
 	readonly ThemeService _themeService;
 	readonly ReviewService _reviewService;
 	readonly GitHubUserService _gitHubUserService;
 	readonly DeepLinkingService _deepLinkingService;
 
-	public ReferringSitesPage(Repository repository,
+	public ReferringSitesPage(
 		IDeviceInfo deviceInfo,
 		ThemeService themeService,
 		ReviewService reviewService,
@@ -36,7 +35,6 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
 
 		Title = PageTitles.ReferringSitesPage;
 
-		_repository = repository;
 		_themeService = themeService;
 		_reviewService = reviewService;
 		_gitHubUserService = gitHubUserService;
@@ -49,8 +47,10 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
 		var shadowHeight = isiOS ? 1 : 0;
 
 		var collectionView = new ReferringSitesCollectionView(deviceInfo)
-			.Bind(IsVisibleProperty, nameof(ReferringSitesViewModel.IsEmptyDataViewEnabled))
-			.Bind(CollectionView.ItemsSourceProperty, nameof(ReferringSitesViewModel.MobileReferringSitesList))
+			.Bind(IsVisibleProperty, 
+				getter: (ReferringSitesViewModel vm) => vm.IsEmptyDataViewEnabled)
+			.Bind(CollectionView.ItemsSourceProperty, 
+				getter: (ReferringSitesViewModel vm) => vm.MobileReferringSitesList)
 			.Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged);
 
 		Content = new Grid
@@ -68,11 +68,15 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
 
 			Children =
 			{
-				new ReferringSitesRefreshView(collectionView, repository, _refreshViewCancellationTokenSource.Token).Assign(out _refreshView)
+				new ReferringSitesRefreshView(collectionView).Assign(out _refreshView)
 					.Row(Row.TitleShadow).RowSpan(3).ColumnSpan(All<Column>())
-					.Bind(RefreshView.CommandProperty, nameof(ReferringSitesViewModel.ExecuteRefreshCommand))
-					.Bind(RefreshView.IsRefreshingProperty, nameof(ReferringSitesViewModel.IsRefreshing))
-					.DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor)),
+					.DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor))
+					.Bind(RefreshView.CommandProperty,
+						getter: (ReferringSitesViewModel vm) => vm.ExecuteRefreshCommand,
+						mode: BindingMode.OneTime)
+					.Bind(RefreshView.IsRefreshingProperty,
+						getter: (ReferringSitesViewModel vm) => vm.IsRefreshing,
+						setter: (ReferringSitesViewModel vm, bool isRefreshing) => vm.IsRefreshing = isRefreshing)
 			}
 		};
 
@@ -91,7 +95,7 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
 
 	public void Dispose()
 	{
-		throw new NotImplementedException();
+		_refreshViewCancellationTokenSource.Dispose();
 	}
 
 	protected override async void OnAppearing()
@@ -181,11 +185,10 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
 
 	sealed class ReferringSitesRefreshView : RefreshView
 	{
-		public ReferringSitesRefreshView(in CollectionView collectionView, in Repository repository, in CancellationToken cancellationToken)
+		public ReferringSitesRefreshView(in CollectionView collectionView)
 		{
 			Content = collectionView;
 			AutomationId = ReferringSitesPageAutomationIds.RefreshView;
-			CommandParameter = (repository, cancellationToken);
 		}
 	}
 
