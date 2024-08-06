@@ -13,7 +13,7 @@
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
   <data name="DescriptionText" xml:space="preserve">
-    <value>GitTrends, GitHub depolarınızı izlemenize yardımcı olan Xamarin.Forms ve C# kullanan açık kaynak bir uygulamadır!</value>
+    <value>GitTrends, GitHub depolarınızı izlemenize yardımcı olan .NET MAUI ve C# kullanan açık kaynak bir uygulamadır!</value>
   </data>
   <data name="Stars" xml:space="preserve">
     <value>Yıldızlar</value>

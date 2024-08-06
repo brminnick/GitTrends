@@ -28,13 +28,13 @@ public class NotificationService
 	TaskCompletionSource<AccessState>? _settingsResultCompletionSource;
 
 	public NotificationService(IDeviceInfo deviceInfo,
-								IPreferences preferences,
-								ISecureStorage secureStorage,
-								IAnalyticsService analyticsService,
-								MobileSortingService sortingService,
-								DeepLinkingService deepLinkingService,
-								INotificationManager notificationManager,
-								AzureFunctionsApiService azureFunctionsApiService)
+		IPreferences preferences,
+		ISecureStorage secureStorage,
+		IAnalyticsService analyticsService,
+		MobileSortingService sortingService,
+		DeepLinkingService deepLinkingService,
+		INotificationManager notificationManager,
+		AzureFunctionsApiService azureFunctionsApiService)
 	{
 		_deviceInfo = deviceInfo;
 		_preferences = preferences;
@@ -95,7 +95,12 @@ public class NotificationService
 
 	public Task<bool> AreNotificationsEnabled(CancellationToken token)
 	{
+#if !DEBUG
+		#error 
 		throw new NotImplementedException();
+#else
+		return Task.FromResult(false);
+#endif
 	}
 
 	public async ValueTask Initialize(CancellationToken cancellationToken)
@@ -216,8 +221,12 @@ public class NotificationService
 
 			_analyticsService.Track("Register For Notifications", new Dictionary<string, string>
 			{
-				{ nameof(initialNotificationRequestResult), initialNotificationRequestResult.ToString() },
-				{ nameof(finalNotificationRequestResult), finalNotificationRequestResult?.ToString() ?? "null" },
+				{
+					nameof(initialNotificationRequestResult), initialNotificationRequestResult.ToString()
+				},
+				{
+					nameof(finalNotificationRequestResult), finalNotificationRequestResult?.ToString() ?? "null"
+				},
 			});
 		}
 	}
@@ -256,15 +265,15 @@ public class NotificationService
 		{
 			var alertTitle = string.Format(NotificationConstants.HandleNotification_SingleTrendingRepository_Title, MostRecentTrendingRepositoryName);
 			var shouldNavigateToChart = await _deepLinkingService.DisplayAlert(alertTitle,
-																				NotificationConstants.HandleNotification_SingleTrendingRepository_Message,
-																				NotificationConstants.HandleNotification_SingleTrendingRepository_Accept,
-																				NotificationConstants.HandleNotification_SingleTrendingRepository_Decline,
-																				token).ConfigureAwait(false);
+				NotificationConstants.HandleNotification_SingleTrendingRepository_Message,
+				NotificationConstants.HandleNotification_SingleTrendingRepository_Accept,
+				NotificationConstants.HandleNotification_SingleTrendingRepository_Decline,
+				token).ConfigureAwait(false);
 
 			if (Application.Current is null) // Set default value for unit tests
 				shouldNavigateToChart = true;
-			
-			if(shouldNavigateToChart is null)
+
+			if (shouldNavigateToChart is null)
 				throw new InvalidOperationException($"{nameof(shouldNavigateToChart)} cannot be null");
 
 			_analyticsService.Track("Single Trending Repository Prompt Displayed", nameof(shouldNavigateToChart), shouldNavigateToChart.Value.ToString());
@@ -273,8 +282,8 @@ public class NotificationService
 			{
 				//Create repository with only Name & Owner, because those are the only metrics that TrendsPage needs to fetch the chart data
 				var repository = new Repository(MostRecentTrendingRepositoryName, string.Empty, 0,
-												MostRecentTrendingRepositoryOwner, string.Empty,
-												0, 0, 0, string.Empty, false, default, RepositoryPermission.UNKNOWN, false);
+					MostRecentTrendingRepositoryOwner, string.Empty,
+					0, 0, 0, string.Empty, false, default, RepositoryPermission.UNKNOWN, false);
 
 				await _deepLinkingService.NavigateToTrendsPage(repository, token).ConfigureAwait(false);
 			}
@@ -286,21 +295,21 @@ public class NotificationService
 			if (!_sortingService.IsReversed)
 			{
 				await _deepLinkingService.DisplayAlert(message,
-														NotificationConstants.HandleNotification_MultipleTrendingRepository_Sorted_Message,
-														NotificationConstants.HandleNotification_MultipleTrendingRepository_Cancel,
-														token).ConfigureAwait(false);
+					NotificationConstants.HandleNotification_MultipleTrendingRepository_Sorted_Message,
+					NotificationConstants.HandleNotification_MultipleTrendingRepository_Cancel,
+					token).ConfigureAwait(false);
 			}
 			else
 			{
 				shouldSortByTrending = await _deepLinkingService.DisplayAlert(message,
-																				NotificationConstants.HandleNotification_MultipleTrendingRepositor_Unsorted_Message,
-																				NotificationConstants.HandleNotification_MultipleTrendingRepositor_Unsorted_Accept,
-																				NotificationConstants.HandleNotification_MultipleTrendingRepositor_Unsorted_Decline,
-																				token).ConfigureAwait(false);
+					NotificationConstants.HandleNotification_MultipleTrendingRepositor_Unsorted_Message,
+					NotificationConstants.HandleNotification_MultipleTrendingRepositor_Unsorted_Accept,
+					NotificationConstants.HandleNotification_MultipleTrendingRepositor_Unsorted_Decline,
+					token).ConfigureAwait(false);
 			}
 
 			if (Application.Current is null // Set default value for unit tests
-				|| shouldSortByTrending is true) 
+				|| shouldSortByTrending is true)
 				OnSortingOptionRequested(_sortingService.CurrentOption);
 
 			_analyticsService.Track("Multiple Trending Repository Prompt Displayed", nameof(shouldSortByTrending), shouldSortByTrending?.ToString() ?? "null");

@@ -13,7 +13,7 @@
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
 	<data name="DescriptionText" xml:space="preserve">
-    <value>GitTrends - це застосунок з відкритим кодом, створений на C# з використанням Xamarin.Forms. Він допомагає моніторити ваші репозиторії GitHub!</value>
+    <value>GitTrends - це застосунок з відкритим кодом, створений на C# з використанням .NET MAUI. Він допомагає моніторити ваші репозиторії GitHub!</value>
   </data>
 	<data name="Stars" xml:space="preserve">
     <value>Зірки</value>

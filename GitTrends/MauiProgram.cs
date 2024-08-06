@@ -13,6 +13,7 @@ using Polly;
 using Refit;
 using Sentry.Maui;
 using Sharpnado.MaterialFrame;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 using Syncfusion.Maui.Core.Hosting;
 
 #if ANDROID || IOS || MACCATALYST
@@ -28,6 +29,7 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
+			.UseSkiaSharp()
 			.UseSharpnadoMaterialFrame(true)
 #if ANDROID || IOS || MACCATALYST
 			.UseShiny()

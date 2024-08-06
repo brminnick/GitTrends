@@ -40,7 +40,7 @@ public partial class AboutViewModel : BaseViewModel
 	[RelayCommand]
 	Task ViewOnGitHub(CancellationToken token)
 	{
-		if (_gitTrendsStatisticsService?.GitHubUri is null)
+		if (_gitTrendsStatisticsService.GitHubUri is null)
 			return Task.CompletedTask;
 
 		AnalyticsService.Track("View On GitHub Tapped");

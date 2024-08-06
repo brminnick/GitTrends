@@ -45,12 +45,11 @@ class GitTrendsStatisticsView : HorizontalStackLayout
 
 		enum Row { Title, Number }
 
-		class StatsTitleLayout : StackLayout
+		sealed class StatsTitleLayout : HorizontalStackLayout
 		{
 			public StatsTitleLayout(in IDeviceInfo deviceInfo, in string text, in string svgFileName, in Color textColor)
 			{
 				Spacing = 2;
-				Orientation = StackOrientation.Horizontal;
 
 				HorizontalOptions = LayoutOptions.Center;
 
@@ -58,7 +57,7 @@ class GitTrendsStatisticsView : HorizontalStackLayout
 				Children.Add(new StatsTitleLabel(text));
 			}
 
-			class AboutPageSvgImage : SvgImage
+			sealed class AboutPageSvgImage : SvgImage
 			{
 				public AboutPageSvgImage(in IDeviceInfo deviceInfo, in string svgFileName, in Color textColor) : base(deviceInfo, svgFileName, textColor, 12, 12)
 				{
@@ -67,7 +66,7 @@ class GitTrendsStatisticsView : HorizontalStackLayout
 				}
 			}
 
-			class StatsTitleLabel : Label
+			sealed class StatsTitleLabel : Label
 			{
 				public StatsTitleLabel(in string text)
 				{
@@ -79,7 +78,7 @@ class GitTrendsStatisticsView : HorizontalStackLayout
 			}
 		}
 
-		class StatisticsLabel : Label
+		sealed class StatisticsLabel : Label
 		{
 			public StatisticsLabel(in string automationId)
 			{
@@ -93,7 +92,7 @@ class GitTrendsStatisticsView : HorizontalStackLayout
 		}
 	}
 
-	class DashedLineSeparator : SKCanvasView
+	sealed class DashedLineSeparator : SKCanvasView
 	{
 		public DashedLineSeparator()
 		{

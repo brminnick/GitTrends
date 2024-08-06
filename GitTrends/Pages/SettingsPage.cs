@@ -228,12 +228,12 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 			await _organizationsCarouselOverlay.Dismiss(true);
 	});
 
-	sealed class AboutRowTappableView : View
+	sealed class AboutRowTappableView : ContentView
 	{
 		public AboutRowTappableView(TapGestureRecognizer tapGestureRecognizer) => GestureRecognizers.Add(tapGestureRecognizer);
 	}
 
-	sealed class LoginRowTappableView : View, ILoginRowView
+	sealed class LoginRowTappableView : ContentView, ILoginRowView
 	{
 		public LoginRowTappableView(TapGestureRecognizer tapGestureRecognizer) => GestureRecognizers.Add(tapGestureRecognizer);
 	}
@@ -330,8 +330,5 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 		}
 	}
 
-	interface ILoginRowView
-	{
-
-	}
+	interface ILoginRowView;
 }
