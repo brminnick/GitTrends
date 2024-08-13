@@ -58,7 +58,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 
 	public TrendsViewModel(IDispatcher dispatcher,
 							IAnalyticsService analyticsService,
-							RepositoryDatabase repositoryDatabse,
+							RepositoryDatabase repositoryDatabase,
 							GitHubApiV3Service gitHubApiV3Service,
 							IGitHubApiStatusService gitHubApiStatusService,
 							BackgroundFetchService backgroundFetchService,
@@ -66,7 +66,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 							TrendsChartSettingsService trendsChartSettingsService) : base(analyticsService, dispatcher)
 	{
 		_gitHubApiV3Service = gitHubApiV3Service;
-		_repositoryDatabase = repositoryDatabse;
+		_repositoryDatabase = repositoryDatabase;
 		_gitHubApiStatusService = gitHubApiStatusService;
 		_backgroundFetchService = backgroundFetchService;
 		_gitHubGraphQLApiService = gitHubGraphQLApiService;
@@ -98,7 +98,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 	public double DailyViewsClonesMinValue { get; } = 0;
 	public double MinDailyStarsValue { get; } = 0;
 
-	public double TotalStars => DailyStarsList.Any() ? DailyStarsList.Last().TotalStars : 0;
+	public double TotalStars => DailyStarsList.Count is not 0 ? DailyStarsList.Last().TotalStars : 0;
 
 	public bool IsStarsEmptyDataViewVisible => !IsStarsChartVisible && !IsFetchingStarsData;
 	public bool IsStarsChartVisible => !IsFetchingStarsData && TotalStars > 1;
@@ -112,8 +112,8 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 	public DateTime MinViewsClonesDate => DateTimeService.GetMinimumLocalDateTime(DailyViewsList, DailyClonesList);
 	public DateTime MaxViewsClonesDate => DateTimeService.GetMaximumLocalDateTime(DailyViewsList, DailyClonesList);
 
-	public DateTime MaxDailyStarsDate => DailyStarsList.Any() ? DailyStarsList.Last().LocalDay : DateTime.Today;
-	public DateTime MinDailyStarsDate => DailyStarsList.Any() ? DailyStarsList.First().LocalDay : DateTime.Today.Subtract(TimeSpan.FromDays(14));
+	public DateTime MaxDailyStarsDate => DailyStarsList.Count is not 0 ? DailyStarsList.Last().LocalDay : DateTime.Today;
+	public DateTime MinDailyStarsDate => DailyStarsList.Count is not 0 ? DailyStarsList.First().LocalDay : DateTime.Today.Subtract(TimeSpan.FromDays(14));
 
 	public double MaxDailyStarsValue => TotalStars > MinimumChartHeight ? TotalStars : MinimumChartHeight;
 
@@ -399,7 +399,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 
 			BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
 
-			using var cancellationTokenRegistration = cancellationToken.Register(() =>
+			await using var cancellationTokenRegistration = cancellationToken.Register(() =>
 			{
 				BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
 				backgroundStarsTCS.SetCanceled(cancellationToken);
@@ -447,7 +447,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 
 			BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted += HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
 
-			using var cancellationTokenRegistration = cancellationToken.Register(() =>
+			await using var cancellationTokenRegistration = cancellationToken.Register(() =>
 			{
 				BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted -= HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
 				backgroundStarsTCS.SetCanceled();
