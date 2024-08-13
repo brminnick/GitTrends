@@ -17,13 +17,18 @@ class StarsChart() : BaseChartView(new StarsTrendsChart())
 
 		public StarsTrendsChart() : base(TrendsPageAutomationIds.StarsChart, new StarsChartPrimaryAxis(), new StarsChartSecondaryAxis())
 		{
-			StarsSeries = new TrendsAreaSeries(TrendsChartTitleConstants.StarsTitle, nameof(DailyStarsModel.LocalDay), nameof(DailyStarsModel.TotalStars), nameof(BaseTheme.CardStarsStatsIconColor));
-			StarsSeries.SetBinding(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyStarsList));
+			StarsSeries = new TrendsAreaSeries(TrendsChartTitleConstants.StarsTitle, nameof(DailyStarsModel.LocalDay), nameof(DailyStarsModel.TotalStars), nameof(BaseTheme.CardStarsStatsIconColor))
+				.Bind(ChartSeries.ItemsSourceProperty, 
+					nameof(TrendsViewModel.DailyStarsList),
+					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
+			
 			StarsSeries.PropertyChanged += HandleStarSeriesPropertyChanged;
 
 			Series = [StarsSeries];
 
-			this.SetBinding(IsVisibleProperty, nameof(TrendsViewModel.IsStarsChartVisible));
+			this.Bind(IsVisibleProperty, 
+				nameof(TrendsViewModel.IsStarsChartVisible),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
 		}
 
 		public AreaSeries StarsSeries { get; }
