@@ -13,7 +13,6 @@ sealed class TrendsPage : BaseCarouselViewPage<TrendsViewModel>, IQueryAttributa
 		TrendsViewModel trendsViewModel,
 		IAnalyticsService analyticsService) : base(trendsViewModel, analyticsService)
 	{
-
 		ToolbarItems.Add(new ToolbarItem
 		{
 			Text = PageTitles.ReferringSitesPage,
