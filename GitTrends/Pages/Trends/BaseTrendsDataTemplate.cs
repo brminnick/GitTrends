@@ -52,11 +52,11 @@ abstract class BaseTrendsDataTemplate(
 			
 			new TrendsChartActivityIndicator(trendsPageType, deviceInfo)
 				.Row(Row.Chart)
-			
 		}
 	}.Padding(0, 16);
 
 	protected enum TrendsPageType { ViewsClonesTrendsPage, StarsTrendsPage }
+	
 	enum Row { Header, Indicator, Chart }
 	
 	protected IAnalyticsService AnalyticsService { get; } = analyticsService;
@@ -75,9 +75,7 @@ abstract class BaseTrendsDataTemplate(
 			IndicatorColor = Color.FromArgb("#BFBFBF");
 			AutomationId = TrendsPageAutomationIds.IndicatorView;
 
-
 			this.Center();
-
 
 			SetBinding(CountProperty, new Binding(nameof(TrendsPage.PageCount),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(TrendsPage))));
@@ -104,8 +102,12 @@ abstract class BaseTrendsDataTemplate(
 
 			this.Center()
 				.DynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor))
-				.Bind(IsVisibleProperty, isFetchingDataPath)
-				.Bind(IsRunningProperty, isFetchingDataPath);
+				.Bind(IsVisibleProperty, 
+					isFetchingDataPath,
+					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+				.Bind(IsRunningProperty, 
+					isFetchingDataPath,
+					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
 		}
 	}
 }

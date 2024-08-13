@@ -41,22 +41,34 @@ class StarsStatisticsGrid : Grid
 		Children.Add(new StarsStatisticsLabel(48) { AutomationId = TrendsPageAutomationIds.StarsStatisticsLabel }
 			.Row(Row.Stars).Column(Column.Text)
 			.Center()
-			.Bind<Label, bool, bool>(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingStarsData), convert: static isFetchingStarsData => !isFetchingStarsData)
-			.Bind<Label, double, string>(Label.TextProperty, nameof(TrendsViewModel.TotalStars), convert: static totalStars => totalStars.ToAbbreviatedText()));
+			.Bind<Label, bool, bool>(IsVisibleProperty, 
+				nameof(TrendsViewModel.IsFetchingStarsData), 
+				convert: static isFetchingStarsData => !isFetchingStarsData,
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.Bind<Label, double, string>(Label.TextProperty, 
+				nameof(TrendsViewModel.TotalStars), 
+				convert: static totalStars => totalStars.ToAbbreviatedText(),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 
 		Children.Add(new ActivityIndicator()
 			.Row(Row.Stars).Column(Column.Text)
 			.Center()
 			.DynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.ActivityIndicatorColor))
-			.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingStarsData))
-			.Bind(ActivityIndicator.IsRunningProperty, nameof(TrendsViewModel.IsFetchingStarsData)));
+			.Bind(IsVisibleProperty, 
+				nameof(TrendsViewModel.IsFetchingStarsData),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.Bind(ActivityIndicator.IsRunningProperty, 
+				nameof(TrendsViewModel.IsFetchingStarsData),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 
 		Children.Add(new StarSvg(deviceInfo)
 			.Row(Row.Stars).Column(Column.RightStar));
 
 		Children.Add(new StarsStatisticsLabel(_textSize) { AutomationId = TrendsPageAutomationIds.StarsHeaderMessageLabel }
 			.Row(Row.Message).ColumnSpan(All<Column>())
-			.Bind(Label.TextProperty, nameof(TrendsViewModel.StarsHeaderMessageText)));
+			.Bind(Label.TextProperty, 
+				nameof(TrendsViewModel.StarsHeaderMessageText),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 
 		Children.Add(new SeparatorLine()
 			.Row(Row.BottomLine).ColumnSpan(All<Column>()));

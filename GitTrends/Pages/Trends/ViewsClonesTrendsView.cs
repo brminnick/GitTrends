@@ -17,7 +17,13 @@ class ViewsClonesTrendsView(IDeviceInfo deviceInfo, IAnalyticsService analyticsS
 		CreateEmptyDataView)
 {
 	static EmptyDataView CreateEmptyDataView() => new EmptyDataView(TrendsPageAutomationIds.ViewsClonesEmptyDataView)
-		.Bind(EmptyDataView.IsVisibleProperty, nameof(TrendsViewModel.IsViewsClonesEmptyDataViewVisible))
-		.Bind(EmptyDataView.TitleProperty, nameof(TrendsViewModel.ViewsClonesEmptyDataViewTitleText))
-		.Bind(EmptyDataView.ImageSourceProperty, nameof(TrendsViewModel.ViewsClonesEmptyDataViewImage));
+		.Bind(EmptyDataView.IsVisibleProperty, 
+			nameof(TrendsViewModel.IsViewsClonesEmptyDataViewVisible),
+			source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+		.Bind(EmptyDataView.TitleProperty, 
+			nameof(TrendsViewModel.ViewsClonesEmptyDataViewTitleText),
+			source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+		.Bind(EmptyDataView.ImageSourceProperty, 
+			nameof(TrendsViewModel.ViewsClonesEmptyDataViewImage),
+			source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
 }

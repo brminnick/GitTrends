@@ -130,8 +130,12 @@ class StarsChart() : BaseChartView(new StarsTrendsChart())
 				ShowMajorGridLines = false;
 
 
-				this.SetBinding(MinimumProperty, nameof(TrendsViewModel.MinDailyStarsDate));
-				this.SetBinding(MaximumProperty, nameof(TrendsViewModel.MaxDailyStarsDate));
+				this.Bind(MinimumProperty,
+						nameof(TrendsViewModel.MinDailyStarsDate),
+						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+					.Bind(MaximumProperty,
+						nameof(TrendsViewModel.MaxDailyStarsDate),
+						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
 			}
 		}
 
@@ -151,9 +155,15 @@ class StarsChart() : BaseChartView(new StarsTrendsChart())
 					FontFamily = FontFamilyConstants.RobotoRegular,
 				}.DynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
 
-				this.Bind(MinimumProperty, nameof(TrendsViewModel.MinDailyStarsValue))
-					.Bind(MaximumProperty, nameof(TrendsViewModel.MaxDailyStarsValue))
-					.Bind(IntervalProperty, nameof(TrendsViewModel.StarsChartYAxisInterval));
+				this.Bind(MinimumProperty, 
+						nameof(TrendsViewModel.MinDailyStarsValue),
+						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+					.Bind(MaximumProperty, 
+						nameof(TrendsViewModel.MaxDailyStarsValue),
+						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+					.Bind(IntervalProperty, 
+						nameof(TrendsViewModel.StarsChartYAxisInterval),
+						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
 			}
 		}
 

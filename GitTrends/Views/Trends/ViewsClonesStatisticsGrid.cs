@@ -31,31 +31,63 @@ class ViewsClonesStatisticsGrid : Grid
 
 		Children.Add(new StatisticsCard(SortingConstants.Views, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor), TrendsPageAutomationIds.ViewsCard, TrendsPageAutomationIds.ViewsStatisticsLabel, deviceInfo)
 			.Row(Row.ViewsStats).Column(Column.Total)
-			.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsViewsSeriesVisible), convert: convertElevation)
-			.Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsViewsSeriesVisible))
-			.Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.ViewsStatisticsText))
-			.BindTapGesture(nameof(TrendsViewModel.ViewsCardTappedCommand)));
+			.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, 
+				nameof(TrendsViewModel.IsViewsSeriesVisible), 
+				convert: convertElevation,
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.Bind(StatisticsCard.IsSeriesVisibleProperty, 
+				nameof(TrendsViewModel.IsViewsSeriesVisible),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.Bind(StatisticsCard.TextProperty, 
+				nameof(TrendsViewModel.ViewsStatisticsText),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.BindTapGesture(nameof(TrendsViewModel.ViewsCardTappedCommand), 
+				commandSource: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 
 		Children.Add(new StatisticsCard(SortingConstants.UniqueViews, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor), TrendsPageAutomationIds.UniqueViewsCard, TrendsPageAutomationIds.UniqueViewsStatisticsLabel, deviceInfo)
 			.Row(Row.ViewsStats).Column(Column.Unique)
-			.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsUniqueViewsSeriesVisible), convert: convertElevation)
-			.Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsUniqueViewsSeriesVisible))
-			.Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.UniqueViewsStatisticsText))
-			.BindTapGesture(nameof(TrendsViewModel.UniqueViewsCardTappedCommand)));
+			.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, 
+				nameof(TrendsViewModel.IsUniqueViewsSeriesVisible), 
+				convert: convertElevation,
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.Bind(StatisticsCard.IsSeriesVisibleProperty, 
+				nameof(TrendsViewModel.IsUniqueViewsSeriesVisible),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.Bind(StatisticsCard.TextProperty, 
+				nameof(TrendsViewModel.UniqueViewsStatisticsText),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.BindTapGesture(nameof(TrendsViewModel.UniqueViewsCardTappedCommand),
+				commandSource: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 
 		Children.Add(new StatisticsCard(SortingConstants.Clones, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor), TrendsPageAutomationIds.ClonesCard, TrendsPageAutomationIds.ClonesStatisticsLabel, deviceInfo)
 			.Row(Row.ClonesStats).Column(Column.Total)
-			.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsClonesSeriesVisible), convert: convertElevation)
-			.Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsClonesSeriesVisible))
-			.Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.ClonesStatisticsText))
-			.BindTapGesture(nameof(TrendsViewModel.ClonesCardTappedCommand)));
+			.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, 
+				nameof(TrendsViewModel.IsClonesSeriesVisible), 
+				convert: convertElevation,
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.Bind(StatisticsCard.IsSeriesVisibleProperty, 
+				nameof(TrendsViewModel.IsClonesSeriesVisible),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.Bind(StatisticsCard.TextProperty, 
+				nameof(TrendsViewModel.ClonesStatisticsText),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.BindTapGesture(nameof(TrendsViewModel.ClonesCardTappedCommand),
+				commandSource: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 
 		Children.Add(new StatisticsCard(SortingConstants.UniqueClones, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor), TrendsPageAutomationIds.UniqueClonesCard, TrendsPageAutomationIds.UniqueClonesStatisticsLabel, deviceInfo)
 			.Row(Row.ClonesStats).Column(Column.Unique)
-			.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsUniqueClonesSeriesVisible), convert: convertElevation)
-			.Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsUniqueClonesSeriesVisible))
-			.Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.UniqueClonesStatisticsText))
-			.BindTapGesture(nameof(TrendsViewModel.UniqueClonesCardTappedCommand)));
+			.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, 
+				nameof(TrendsViewModel.IsUniqueClonesSeriesVisible), 
+				convert: convertElevation,
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.Bind(StatisticsCard.IsSeriesVisibleProperty, 
+				nameof(TrendsViewModel.IsUniqueClonesSeriesVisible),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.Bind(StatisticsCard.TextProperty, 
+				nameof(TrendsViewModel.UniqueClonesStatisticsText),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.BindTapGesture(nameof(TrendsViewModel.UniqueClonesCardTappedCommand),
+				commandSource: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 
 		static double convertElevation(bool isEnabled) => isEnabled ? 4 : 1;
 	}

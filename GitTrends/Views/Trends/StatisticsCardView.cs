@@ -73,11 +73,17 @@ class StatisticsCard : MaterialFrame
 			Children.Add(new TrendsStatisticsLabel(34, statisticsTextAutomationId)
 				.Row(Row.Number).Column(Column.Stats).ColumnSpan(2)
 				.Bind(Label.TextProperty, nameof(Text), source: statisticsCard)
-				.Bind<TrendsStatisticsLabel, bool, bool>(IsVisibleProperty, nameof(TrendsViewModel.IsFetchingViewsClonesData), convert: static isFetchingData => !isFetchingData));
+				.Bind<TrendsStatisticsLabel, bool, bool>(IsVisibleProperty, 
+					nameof(TrendsViewModel.IsFetchingViewsClonesData), 
+					convert: static isFetchingData => !isFetchingData,
+					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 			
 			Children.Add(new RepositoryStatSVGImage(svgImage, svgColorTheme, deviceInfo).Assign(out _svgImage)
 				.Row(Row.Title).Column(Column.Icon).RowSpan(2)
-				.Bind<SvgImage, bool, Color>(SvgImage.SvgColorProperty, nameof(IsSeriesVisible), convert: convertIsSeriesVisible, source: statisticsCard));
+				.Bind<SvgImage, bool, Color>(SvgImage.SvgColorProperty, 
+					nameof(IsSeriesVisible), 
+					convert: convertIsSeriesVisible, 
+					source: statisticsCard));
 
 			Color convertIsSeriesVisible(bool isVisible) => isVisible ? _svgImage.DefaultColor : Colors.Gray;
 		}
