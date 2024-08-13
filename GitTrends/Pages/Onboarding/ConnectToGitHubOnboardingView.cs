@@ -6,7 +6,7 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;
 
-public class ConnectToGitHubOnboardingView : BaseOnboardingContentView
+public class ConnectToGitHubOnboardingView : BaseOnboardingDataTemplate
 {
 	readonly IDispatcher _dispatcher;
 

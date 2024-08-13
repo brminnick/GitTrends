@@ -7,17 +7,12 @@ namespace GitTrends;
 
 sealed class TrendsPage : BaseCarouselViewPage<TrendsViewModel>, IQueryAttributable
 {
-	readonly IDeviceInfo _deviceInfo;
-
 	Repository? _repository;
 
 	public TrendsPage(IDeviceInfo deviceInfo,
-		StarsTrendsView starsTrendsView,
 		TrendsViewModel trendsViewModel,
-		IAnalyticsService analyticsService,
-		ViewsClonesTrendsView viewsClonesTrendsView) : base(trendsViewModel, analyticsService)
+		IAnalyticsService analyticsService) : base(trendsViewModel, analyticsService)
 	{
-		_deviceInfo = deviceInfo;
 
 		ToolbarItems.Add(new ToolbarItem
 		{
@@ -27,6 +22,9 @@ sealed class TrendsPage : BaseCarouselViewPage<TrendsViewModel>, IQueryAttributa
 		}.Invoke(referringSitesToolbarItem => referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked));
 
 		this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+		
+		Content.ItemsSource = Enumerable.Range(0, 1);
+		Content.ItemTemplate = new TrendsCarouselDataTemplateSelector(deviceInfo, analyticsService);
 	}
 
 	async void HandleReferringSitesToolbarItemClicked(object? sender, EventArgs e)

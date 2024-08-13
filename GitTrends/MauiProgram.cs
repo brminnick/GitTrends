@@ -143,6 +143,7 @@ public static class MauiProgram
 	{
 		services.AddSingleton<IAppInfo>(AppInfo.Current);
 		services.AddSingleton<IBrowser>(Browser.Default);
+		services.AddSingleton<IDeviceDisplay>(DeviceDisplay.Current);
 		services.AddSingleton<IDeviceInfo>(DeviceInfo.Current);
 		services.AddSingleton<IEmail>(Email.Default);
 		services.AddSingleton<IFileSystem>(FileSystem.Current);

@@ -1,19 +1,24 @@
-﻿using GitTrends.Mobile.Common;
-using GitTrends.Shared;
-using CommunityToolkit.Maui.Markup;
+﻿using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
 using GitTrends.Resources;
+using GitTrends.Shared;
 
 namespace GitTrends;
 
 class StarsTrendsView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService) 
-	: BaseTrendsContentView(AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor)), deviceInfo, 1, TrendsPageType.StarsTrendsPage, analyticsService)
+	: BaseTrendsDataTemplate(
+		AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor)), 
+		deviceInfo, 
+		1, 
+		TrendsPageType.StarsTrendsPage, 
+		analyticsService,
+		() => new StarsStatisticsGrid(deviceInfo),
+		() => new StarsChart(),
+		CreateEmptyDataView)
 {
-	protected override Layout CreateHeaderView() => new StarsStatisticsGrid(deviceInfo);
 	
-	protected override BaseChartView CreateChartView() => new StarsChart();
-	
-	protected override EmptyDataView CreateEmptyDataView() => new EmptyDataView(TrendsPageAutomationIds.StarsEmptyDataView)
-		.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsStarsEmptyDataViewVisible))
+	static EmptyDataView CreateEmptyDataView() => new EmptyDataView(TrendsPageAutomationIds.StarsEmptyDataView)
+		.Bind(EmptyDataView.IsVisibleProperty, nameof(TrendsViewModel.IsStarsEmptyDataViewVisible))
 		.Bind(EmptyDataView.TitleProperty, nameof(TrendsViewModel.StarsEmptyDataViewTitleText))
 		.Bind(EmptyDataView.ImageSourceProperty, nameof(TrendsViewModel.StarsEmptyDataViewImage))
 		.Bind(EmptyDataView.DescriptionProperty, nameof(TrendsViewModel.StarsEmptyDataViewDescriptionText));

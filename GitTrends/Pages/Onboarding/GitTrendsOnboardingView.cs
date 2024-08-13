@@ -9,7 +9,7 @@ namespace GitTrends
 	public class GitTrendsOnboardingView(
 		IDeviceInfo deviceInfo,
 		IAnalyticsService analyticsService)
-		: BaseOnboardingContentView(
+		: BaseOnboardingDataTemplate(
 			OnboardingConstants.SkipText,
 			deviceInfo,
 			Color.FromArgb(BaseTheme.LightTealColorHex),

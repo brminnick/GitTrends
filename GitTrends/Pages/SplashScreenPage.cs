@@ -27,12 +27,14 @@ public sealed class SplashScreenPage : BaseContentPage, IDisposable
 
 	readonly Label _loadingLabel;
 	readonly Image _gitTrendsImage;
+	readonly IDeviceDisplay _deviceDisplay;
 	readonly FirstRunService _firstRunService;
 	readonly AppInitializationService _appInitializationService;
 
 	CancellationTokenSource _animationCancellationToken = new();
 
 	public SplashScreenPage(
+		IDeviceDisplay deviceDisplay,
 		FirstRunService firstRunService,
 		IAnalyticsService analyticsService,
 		AppInitializationService appInitializationService)
@@ -40,7 +42,8 @@ public sealed class SplashScreenPage : BaseContentPage, IDisposable
 	{
 		Shell.SetNavBarIsVisible(this, false);
 		this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.GitTrendsImageBackgroundColor));
-		
+
+		_deviceDisplay = deviceDisplay;
 		_firstRunService = firstRunService;
 		_appInitializationService = appInitializationService;
 
@@ -55,7 +58,7 @@ public sealed class SplashScreenPage : BaseContentPage, IDisposable
 
 			Children =
 			{
-				new LoadingLabel().Center().Assign(out _loadingLabel)
+				new LoadingLabel(deviceDisplay).Center().Assign(out _loadingLabel)
 					.Row(Row.Text),
 
 				new GitTrendsImage().Center().Assign(out _gitTrendsImage)
@@ -111,10 +114,10 @@ public sealed class SplashScreenPage : BaseContentPage, IDisposable
 
 			//Label leaves the screen
 			await _loadingLabel.TranslateTo(10, 0, 100, Easing.CubicInOut);
-			await _loadingLabel.TranslateTo(-DeviceDisplay.MainDisplayInfo.Width / 2, 0, 250, Easing.CubicIn);
+			await _loadingLabel.TranslateTo(-_deviceDisplay.MainDisplayInfo.Width / 2, 0, 250, Easing.CubicIn);
 
 			//Move the label to the other side of the screen
-			_loadingLabel.TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2;
+			_loadingLabel.TranslationX = _deviceDisplay.MainDisplayInfo.Width / 2;
 
 			//Update Status Label Text
 			if (!_statusMessageEnumerator.MoveNext())
@@ -243,10 +246,10 @@ public sealed class SplashScreenPage : BaseContentPage, IDisposable
 
 	sealed class LoadingLabel : Label
 	{
-		public LoadingLabel()
+		public LoadingLabel(IDeviceDisplay deviceDisplay)
 		{
 			//Begin with Label off of the screen
-			TranslationX = DeviceDisplay.MainDisplayInfo.Width / 2;
+			TranslationX = deviceDisplay.MainDisplayInfo.Width / 2;
 
 			Margin = new Thickness(10, 0);
 			HorizontalTextAlignment = TextAlignment.Center;

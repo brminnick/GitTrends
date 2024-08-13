@@ -6,13 +6,13 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;
 
-public abstract class BaseOnboardingContentView(
+public abstract class BaseOnboardingDataTemplate(
 	string nextButtonText,
 	IDeviceInfo deviceInfo,
 	Color backgroundColor,
 	int carouselPositionIndex,
 	Func<View> createImageView,
-	Func<BaseOnboardingContentView.TitleLabel> createTitleLabel,
+	Func<BaseOnboardingDataTemplate.TitleLabel> createTitleLabel,
 	Func<View> createDescriptionBodyView,
 	IAnalyticsService analyticsService)
 	: DataTemplate(() => CreateGrid(nextButtonText, deviceInfo, backgroundColor, carouselPositionIndex, createImageView, createTitleLabel, createDescriptionBodyView))
