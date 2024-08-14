@@ -9,11 +9,11 @@ abstract class BaseTrendsDataTemplate(
 	Color indicatorColor,
 	IDeviceInfo deviceInfo,
 	int carouselPositionIndex,
-	BaseTrendsDataTemplate.TrendsPageType trendsPageType,
-	IAnalyticsService analyticsService,
 	Func<Layout> createHeaderView,
+	IAnalyticsService analyticsService,
 	Func<BaseChartView> createChartView,
-	Func<EmptyDataView> createEmptyDataView)
+	Func<EmptyDataView> createEmptyDataView,
+	BaseTrendsDataTemplate.TrendsPageType trendsPageType)
 	: DataTemplate(() => CreateGrid(indicatorColor, deviceInfo, carouselPositionIndex, trendsPageType, createHeaderView, createChartView, createEmptyDataView))
 {
 	static Grid CreateGrid(

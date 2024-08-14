@@ -10,11 +10,11 @@ class ViewsClonesTrendsView(IDeviceInfo deviceInfo, IAnalyticsService analyticsS
 		AppResources.GetResource<Color>(nameof(BaseTheme.CardViewsStatsIconColor)), 
 		deviceInfo, 
 		0, 
-		TrendsPageType.ViewsClonesTrendsPage, 
-		analyticsService,
 		() => new ViewsClonesStatisticsGrid(deviceInfo),
+		analyticsService,
 		() => new ViewsClonesChart(),
-		CreateEmptyDataView)
+		CreateEmptyDataView,
+		TrendsPageType.ViewsClonesTrendsPage) 
 {
 	static EmptyDataView CreateEmptyDataView() => new EmptyDataView(TrendsPageAutomationIds.ViewsClonesEmptyDataView)
 		.Bind(EmptyDataView.IsVisibleProperty, 

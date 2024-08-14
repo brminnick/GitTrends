@@ -1,17 +1,15 @@
-using GitTrends.Shared;
-
 namespace GitTrends;
 
-public class TrendsCarouselDataTemplateSelector(IDeviceInfo deviceInfo, IAnalyticsService analyticsService) : DataTemplateSelector
+class TrendsCarouselDataTemplateSelector(StarsTrendsView starsTrendsView, ViewsClonesTrendsView viewsClonesTrendsView) : DataTemplateSelector
 {
-	readonly DataTemplate _starsTrendsView = new StarsTrendsView(deviceInfo, analyticsService);
-	readonly DataTemplate _viewsClonesTrendsView = new ViewsClonesTrendsView(deviceInfo, analyticsService);
+	readonly DataTemplate _starsTrendsView = starsTrendsView;
+	readonly DataTemplate _viewsClonesTrendsView = viewsClonesTrendsView;
 	
 	protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
 	{
-		var page = (int)item;
+		var pageNumber = (int)item;
 
-		return page switch
+		return pageNumber switch
 		{
 			0 => _viewsClonesTrendsView,
 			1 => _starsTrendsView,

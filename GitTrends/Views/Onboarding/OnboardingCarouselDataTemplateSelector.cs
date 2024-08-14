@@ -1,18 +1,21 @@
-using GitTrends.Shared;
 namespace GitTrends;
 
-public class OnboardingCarouselDataTemplateSelector(IDeviceInfo deviceInfo, IDispatcher dispatcher, IAnalyticsService analyticsService) : DataTemplateSelector
+public class OnboardingCarouselDataTemplateSelector(
+	ChartOnboardingView chartOnboardingView, 
+	GitTrendsOnboardingView gitTrendsOnboardingView,
+	NotificationsOnboardingView notificationsOnboardingView,
+	ConnectToGitHubOnboardingView connectToGitHubOnboardingView) : DataTemplateSelector
 {
-	readonly DataTemplate _chartOnboardingView = new ChartOnboardingView(deviceInfo, analyticsService);
-	readonly DataTemplate _gitTrendsOnboardingView = new GitTrendsOnboardingView(deviceInfo, analyticsService);
-	readonly DataTemplate _notificationsOnboardingView = new NotificationsOnboardingView(deviceInfo, analyticsService);
-	readonly DataTemplate _connectToGitHubOnboardingView = new ConnectToGitHubOnboardingView(deviceInfo, dispatcher, analyticsService);
+	readonly DataTemplate _chartOnboardingView = chartOnboardingView;
+	readonly DataTemplate _gitTrendsOnboardingView = gitTrendsOnboardingView;
+	readonly DataTemplate _notificationsOnboardingView = notificationsOnboardingView;
+	readonly DataTemplate _connectToGitHubOnboardingView = connectToGitHubOnboardingView;
 
 	protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
 	{
-		var page = (int)item;
+		var pageNumber = (int)item;
 
-		return page switch
+		return pageNumber switch
 		{
 			0 => _gitTrendsOnboardingView,
 			1 => _chartOnboardingView,

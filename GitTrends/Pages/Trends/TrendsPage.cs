@@ -9,9 +9,11 @@ sealed class TrendsPage : BaseCarouselViewPage<TrendsViewModel>, IQueryAttributa
 {
 	Repository? _repository;
 
-	public TrendsPage(IDeviceInfo deviceInfo,
+	public TrendsPage(
 		TrendsViewModel trendsViewModel,
-		IAnalyticsService analyticsService) : base(trendsViewModel, analyticsService)
+		StarsTrendsView starsTrendsView,
+		IAnalyticsService analyticsService,
+		ViewsClonesTrendsView viewsClonesTrendsView) : base(trendsViewModel, analyticsService)
 	{
 		ToolbarItems.Add(new ToolbarItem
 		{
@@ -23,12 +25,15 @@ sealed class TrendsPage : BaseCarouselViewPage<TrendsViewModel>, IQueryAttributa
 		this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 		
 		Content.ItemsSource = Enumerable.Range(0, 1);
-		Content.ItemTemplate = new TrendsCarouselDataTemplateSelector(deviceInfo, analyticsService);
+		Content.ItemTemplate = new TrendsCarouselDataTemplateSelector(starsTrendsView, viewsClonesTrendsView);
 	}
 
 	async void HandleReferringSitesToolbarItemClicked(object? sender, EventArgs e)
 	{
 		AnalyticsService.Track("Referring Sites Button Tapped");
+
+		if (_repository is null)
+			throw new InvalidOperationException($"{nameof(_repository)} cannot be null");
 
 		var parameters = new Dictionary<string, object?>
 		{

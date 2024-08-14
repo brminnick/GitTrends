@@ -186,19 +186,27 @@ public static class MauiProgram
 
 	static void RegisterPagesAndViewModels(in IServiceCollection services)
 	{
+		// App + AppShell
 		services.AddSingleton<App>();
 		services.AddSingleton<AppShell>();
 
+		// Pages
 		services.AddTransientWithShellRoute<AboutPage, AboutViewModel>();
 		services.AddTransientWithShellRoute<OnboardingPage, OnboardingViewModel>();
 		services.AddTransientWithShellRoute<ReferringSitesPage, ReferringSitesViewModel>();
 		services.AddTransientWithShellRoute<RepositoryPage, RepositoryViewModel>();
 		services.AddTransientWithShellRoute<SettingsPage, SettingsViewModel>();
 		services.AddTransientWithShellRoute<TrendsPage, TrendsViewModel>();
+		services.AddTransient<WelcomePage, WelcomeViewModel>();
 		services.AddTransient<SplashScreenPage>();
+		
+		// Views
 		services.AddTransient<StarsTrendsView>();
 		services.AddTransient<ViewsClonesTrendsView>();
-		services.AddTransient<WelcomePage>();
+		services.AddTransient<ChartOnboardingView>();
+		services.AddTransient<ConnectToGitHubOnboardingView>();
+		services.AddTransient<GitTrendsOnboardingView>();
+		services.AddTransient<NotificationsOnboardingView>();
 	}
 
 	static void RegisterHttpClientServices(in IServiceCollection services)

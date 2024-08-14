@@ -8,8 +8,10 @@ namespace GitTrends;
 public class OnboardingPage : BaseCarouselViewPage<OnboardingViewModel>
 {
 	public OnboardingPage(
-		IDeviceInfo deviceInfo,
-		IDispatcher dispatcher,
+		ChartOnboardingView chartOnboardingView,
+		GitTrendsOnboardingView gitTrendsOnboardingView,
+		NotificationsOnboardingView notificationsOnboardingView,
+		ConnectToGitHubOnboardingView connectToGitHubOnboardingView,
 		IAnalyticsService analyticsService,
 		OnboardingViewModel onboardingViewModel) : base(onboardingViewModel, analyticsService)
 	{
@@ -26,7 +28,7 @@ public class OnboardingPage : BaseCarouselViewPage<OnboardingViewModel>
 		GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 
 		Content.ItemsSource = Enumerable.Range(0, 4);
-		Content.ItemTemplate = new OnboardingCarouselDataTemplateSelector(deviceInfo, dispatcher, analyticsService);
+		Content.ItemTemplate = new OnboardingCarouselDataTemplateSelector(chartOnboardingView, gitTrendsOnboardingView, notificationsOnboardingView, connectToGitHubOnboardingView);
 	}
 
 	//Disable the Hardware Back Button on Android

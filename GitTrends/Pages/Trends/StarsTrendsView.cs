@@ -10,11 +10,11 @@ class StarsTrendsView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService
 		AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor)), 
 		deviceInfo, 
 		1, 
-		TrendsPageType.StarsTrendsPage, 
-		analyticsService,
 		() => new StarsStatisticsGrid(deviceInfo),
+		analyticsService,
 		() => new StarsChart(),
-		CreateEmptyDataView)
+		CreateEmptyDataView,
+		TrendsPageType.StarsTrendsPage) 
 {
 	
 	static EmptyDataView CreateEmptyDataView() => new EmptyDataView(TrendsPageAutomationIds.StarsEmptyDataView)
