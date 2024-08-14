@@ -40,7 +40,7 @@ abstract class BaseTrendsDataTemplate(
 			
 			new TrendsIndicatorView(carouselPositionIndex, indicatorColor)
 				.Row(Row.Indicator)
-				.Fill(),
+				.Center(),
 			
 			createChartView().Assign(out BaseChartView chartView)
 				.Row(Row.Chart),
