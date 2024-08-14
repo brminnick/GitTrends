@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
 using Syncfusion.Maui.Charts;
 
 namespace GitTrends;
@@ -9,8 +10,10 @@ abstract class BaseTrendsChart : SfCartesianChart
 
 	protected BaseTrendsChart(in string automationId, in DateTimeAxis primaryAxis, in NumericalAxis secondaryAxis, in TrendsViewModel trendsViewModel)
 	{
+		ThemeService.PreferenceChanged += HandleThemePreferenceChanged;
+
 		BindingContext = trendsViewModel;
-		
+
 		AutomationId = automationId;
 
 		Margin = new Thickness(0, 24, 0, 4);
@@ -19,16 +22,22 @@ abstract class BaseTrendsChart : SfCartesianChart
 
 		PrimaryAxis = primaryAxis;
 		SecondaryAxis = secondaryAxis;
-		
+
 		XAxes.Add(PrimaryAxis);
 		YAxes.Add(SecondaryAxis);
 
 		ZoomPanBehavior = _chartZoomPanBehavior;
 		TrackballBehavior = new ChartTrackballBehavior();
+
+		SetPaletteBrushColors();
 	}
 
 	protected DateTimeAxis PrimaryAxis { get; }
 	protected NumericalAxis SecondaryAxis { get; }
+
+	protected abstract void SetPaletteBrushColors();
+
+	protected void HandleThemePreferenceChanged(object? sender, PreferredTheme e) => SetPaletteBrushColors();
 
 	protected Task SetZoom(double primaryAxisStart, double primaryAxisEnd, double secondaryAxisStart, double secondaryAxisEnd) => Dispatcher.DispatchAsync(() =>
 	{

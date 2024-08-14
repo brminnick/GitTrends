@@ -24,12 +24,16 @@ class StarsChart(TrendsViewModel trendsViewModel) : BaseChartView(new StarsTrend
 			StarsSeries.PropertyChanged += HandleStarSeriesPropertyChanged;
 
 			Series = [StarsSeries];
-			PaletteBrushes = [AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor))];
 
 			this.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsStarsChartVisible));
 		}
 
 		public AreaSeries StarsSeries { get; }
+		
+		protected override void SetPaletteBrushColors()
+		{
+			PaletteBrushes = [AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor))];
+		}
 
 		async Task ZoomStarsChart(IReadOnlyList<DailyStarsModel> dailyStarsList)
 		{

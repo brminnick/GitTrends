@@ -39,6 +39,16 @@ class ViewsClonesChart(TrendsViewModel trendsViewModel) : BaseChartView(new View
 				TotalUniqueClonesSeries
 			];
 
+			this.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsViewsClonesChartVisible));
+		}
+
+		public AreaSeries TotalViewsSeries { get; }
+		public AreaSeries TotalUniqueViewsSeries { get; }
+		public AreaSeries TotalClonesSeries { get; }
+		public AreaSeries TotalUniqueClonesSeries { get; }
+		
+		protected override void SetPaletteBrushColors()
+		{
 			PaletteBrushes =
 			[
 				AppResources.GetResource<Color>(nameof(BaseTheme.TotalViewsColor)),
@@ -47,14 +57,7 @@ class ViewsClonesChart(TrendsViewModel trendsViewModel) : BaseChartView(new View
 				AppResources.GetResource<Color>(nameof(BaseTheme.TotalClonesColor)),
 				AppResources.GetResource<Color>(nameof(BaseTheme.TotalUniqueClonesColor))
 			];
-
-			this.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsViewsClonesChartVisible));
 		}
-
-		public AreaSeries TotalViewsSeries { get; }
-		public AreaSeries TotalUniqueViewsSeries { get; }
-		public AreaSeries TotalClonesSeries { get; }
-		public AreaSeries TotalUniqueClonesSeries { get; }
 
 		sealed class ViewsClonesPrimaryAxis : DateTimeAxis
 		{

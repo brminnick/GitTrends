@@ -30,7 +30,7 @@ public class ThemeService(IAnalyticsService analyticsService, IPreferences prefe
 
 	internal Task Initialize()
 	{
-		if (Application.Current != null)
+		if (Application.Current is not null)
 			Application.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
 
 		return SetAppTheme(Preference);
