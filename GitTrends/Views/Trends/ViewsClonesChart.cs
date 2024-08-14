@@ -2,6 +2,7 @@
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using CommunityToolkit.Maui.Markup;
+using GitTrends.Resources;
 using Syncfusion.Maui.Charts;
 
 namespace GitTrends;
@@ -36,6 +37,15 @@ class ViewsClonesChart(TrendsViewModel trendsViewModel) : BaseChartView(new View
 
 				TotalClonesSeries,
 				TotalUniqueClonesSeries
+			];
+
+			PaletteBrushes =
+			[
+				AppResources.GetResource<Color>(nameof(BaseTheme.TotalViewsColor)),
+				AppResources.GetResource<Color>(nameof(BaseTheme.TotalUniqueViewsColor)),
+				
+				AppResources.GetResource<Color>(nameof(BaseTheme.TotalClonesColor)),
+				AppResources.GetResource<Color>(nameof(BaseTheme.TotalUniqueClonesColor))
 			];
 
 			this.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsViewsClonesChartVisible));

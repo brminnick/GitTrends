@@ -2,6 +2,7 @@
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using CommunityToolkit.Maui.Markup;
+using GitTrends.Resources;
 using Syncfusion.Maui.Charts;
 
 namespace GitTrends;
@@ -19,10 +20,11 @@ class StarsChart(TrendsViewModel trendsViewModel) : BaseChartView(new StarsTrend
 		{
 			StarsSeries = new TrendsAreaSeries(TrendsChartTitleConstants.StarsTitle, nameof(DailyStarsModel.LocalDay), nameof(DailyStarsModel.TotalStars), nameof(BaseTheme.CardStarsStatsIconColor))
 				.Bind(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyStarsList));
-			
+
 			StarsSeries.PropertyChanged += HandleStarSeriesPropertyChanged;
 
 			Series = [StarsSeries];
+			PaletteBrushes = [AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor))];
 
 			this.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsStarsChartVisible));
 		}

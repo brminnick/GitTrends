@@ -47,5 +47,7 @@ sealed class TrendsPage : BaseCarouselViewPage<TrendsViewModel>, IQueryAttributa
 	{
 		var repository = (Repository)query[TrendsViewModel.RepositoryQueryString];
 		_repository = repository;
+
+		Title = repository.Name;
 	}
 }
