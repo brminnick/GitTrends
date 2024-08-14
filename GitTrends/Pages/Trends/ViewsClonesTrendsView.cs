@@ -5,14 +5,14 @@ using GitTrends.Resources;
 
 namespace GitTrends;
 
-class ViewsClonesTrendsView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService) 
+class ViewsClonesTrendsView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService, TrendsViewModel trendsViewModel) 
 	: BaseTrendsDataTemplate(
 		AppResources.GetResource<Color>(nameof(BaseTheme.CardViewsStatsIconColor)), 
 		deviceInfo, 
 		0, 
 		() => new ViewsClonesStatisticsGrid(deviceInfo),
 		analyticsService,
-		() => new ViewsClonesChart(),
+		() => new ViewsClonesChart(trendsViewModel),
 		CreateEmptyDataView,
 		TrendsPageType.ViewsClonesTrendsPage) 
 {
