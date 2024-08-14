@@ -6,7 +6,7 @@ using Syncfusion.Maui.Charts;
 
 namespace GitTrends;
 
-class StarsChart() : BaseChartView(new StarsTrendsChart())
+class StarsChart(TrendsViewModel trendsViewModel) : BaseChartView(new StarsTrendsChart(trendsViewModel))
 {
 	sealed class StarsTrendsChart : BaseTrendsChart
 	{
@@ -15,20 +15,16 @@ class StarsChart() : BaseChartView(new StarsTrendsChart())
 		const int _minimumStarCount = 10;
 		const int _maximumStarCount = 100;
 
-		public StarsTrendsChart() : base(TrendsPageAutomationIds.StarsChart, new StarsChartPrimaryAxis(), new StarsChartSecondaryAxis())
+		public StarsTrendsChart(TrendsViewModel trendsViewModel) : base(TrendsPageAutomationIds.StarsChart, new StarsChartPrimaryAxis(), new StarsChartSecondaryAxis(), trendsViewModel)
 		{
 			StarsSeries = new TrendsAreaSeries(TrendsChartTitleConstants.StarsTitle, nameof(DailyStarsModel.LocalDay), nameof(DailyStarsModel.TotalStars), nameof(BaseTheme.CardStarsStatsIconColor))
-				.Bind(ChartSeries.ItemsSourceProperty, 
-					nameof(TrendsViewModel.DailyStarsList),
-					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
+				.Bind(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyStarsList));
 			
 			StarsSeries.PropertyChanged += HandleStarSeriesPropertyChanged;
 
 			Series = [StarsSeries];
 
-			this.Bind(IsVisibleProperty, 
-				nameof(TrendsViewModel.IsStarsChartVisible),
-				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
+			this.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsStarsChartVisible));
 		}
 
 		public AreaSeries StarsSeries { get; }
@@ -135,12 +131,8 @@ class StarsChart() : BaseChartView(new StarsTrendsChart())
 				ShowMajorGridLines = false;
 
 
-				this.Bind(MinimumProperty,
-						nameof(TrendsViewModel.MinDailyStarsDate),
-						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-					.Bind(MaximumProperty,
-						nameof(TrendsViewModel.MaxDailyStarsDate),
-						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
+				this.Bind(MinimumProperty, nameof(TrendsViewModel.MinDailyStarsDate))
+					.Bind(MaximumProperty, nameof(TrendsViewModel.MaxDailyStarsDate));
 			}
 		}
 
@@ -160,15 +152,9 @@ class StarsChart() : BaseChartView(new StarsTrendsChart())
 					FontFamily = FontFamilyConstants.RobotoRegular,
 				}.DynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
 
-				this.Bind(MinimumProperty, 
-						nameof(TrendsViewModel.MinDailyStarsValue),
-						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-					.Bind(MaximumProperty, 
-						nameof(TrendsViewModel.MaxDailyStarsValue),
-						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-					.Bind(IntervalProperty, 
-						nameof(TrendsViewModel.StarsChartYAxisInterval),
-						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
+				this.Bind(MinimumProperty, nameof(TrendsViewModel.MinDailyStarsValue))
+					.Bind(MaximumProperty, nameof(TrendsViewModel.MaxDailyStarsValue))
+					.Bind(IntervalProperty, nameof(TrendsViewModel.StarsChartYAxisInterval));
 			}
 		}
 

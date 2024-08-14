@@ -5,14 +5,14 @@ using GitTrends.Shared;
 
 namespace GitTrends;
 
-class StarsTrendsView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService) 
+class StarsTrendsView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService, TrendsViewModel trendsViewModel) 
 	: BaseTrendsDataTemplate(
 		AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor)), 
 		deviceInfo, 
 		1, 
 		() => new StarsStatisticsGrid(deviceInfo),
 		analyticsService,
-		() => new StarsChart(),
+		() => new StarsChart(trendsViewModel),
 		CreateEmptyDataView,
 		TrendsPageType.StarsTrendsPage) 
 {

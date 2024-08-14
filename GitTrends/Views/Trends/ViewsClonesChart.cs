@@ -6,44 +6,28 @@ using Syncfusion.Maui.Charts;
 
 namespace GitTrends;
 
-class ViewsClonesChart() : BaseChartView(new ViewsClonesTrendsChart())
+class ViewsClonesChart(TrendsViewModel trendsViewModel) : BaseChartView(new ViewsClonesTrendsChart(trendsViewModel))
 {
 	sealed class ViewsClonesTrendsChart : BaseTrendsChart
 	{
-		public ViewsClonesTrendsChart()
-			: base(TrendsPageAutomationIds.ViewsClonesChart, new ViewsClonesPrimaryAxis(), new ViewsClonesSecondaryAxis())
+		public ViewsClonesTrendsChart(TrendsViewModel trendsViewModel)
+			: base(TrendsPageAutomationIds.ViewsClonesChart, new ViewsClonesPrimaryAxis(), new ViewsClonesSecondaryAxis(), trendsViewModel)
 		{
 			TotalViewsSeries = new TrendsAreaSeries(TrendsChartTitleConstants.TotalViewsTitle, nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalViews), nameof(BaseTheme.TotalViewsColor))
-				.Bind(ChartSeries.ItemsSourceProperty,
-					nameof(TrendsViewModel.DailyViewsList),
-					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-				.Bind(ChartSeries.IsVisibleProperty,
-					nameof(TrendsViewModel.IsViewsSeriesVisible),
-					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
+				.Bind(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList))
+				.Bind(ChartSeries.IsVisibleProperty, nameof(TrendsViewModel.IsViewsSeriesVisible));
 
 			TotalUniqueViewsSeries = new TrendsAreaSeries(TrendsChartTitleConstants.UniqueViewsTitle, nameof(DailyViewsModel.LocalDay), nameof(DailyViewsModel.TotalUniqueViews), nameof(BaseTheme.TotalUniqueViewsColor))
-				.Bind(ChartSeries.ItemsSourceProperty,
-					nameof(TrendsViewModel.DailyViewsList),
-					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-				.Bind(ChartSeries.IsVisibleProperty,
-					nameof(TrendsViewModel.IsUniqueViewsSeriesVisible),
-					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
+				.Bind(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyViewsList))
+				.Bind(ChartSeries.IsVisibleProperty, nameof(TrendsViewModel.IsUniqueViewsSeriesVisible));
 
 			TotalClonesSeries = new TrendsAreaSeries(TrendsChartTitleConstants.TotalClonesTitle, nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalClones), nameof(BaseTheme.TotalClonesColor))
-				.Bind(ChartSeries.ItemsSourceProperty,
-					nameof(TrendsViewModel.DailyClonesList),
-					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-				.Bind(ChartSeries.IsVisibleProperty,
-					nameof(TrendsViewModel.IsClonesSeriesVisible),
-					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
+				.Bind(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyClonesList))
+				.Bind(ChartSeries.IsVisibleProperty, nameof(TrendsViewModel.IsClonesSeriesVisible));
 
 			TotalUniqueClonesSeries = new TrendsAreaSeries(TrendsChartTitleConstants.UniqueClonesTitle, nameof(DailyClonesModel.LocalDay), nameof(DailyClonesModel.TotalUniqueClones), nameof(BaseTheme.TotalUniqueClonesColor))
-				.Bind(ChartSeries.ItemsSourceProperty,
-					nameof(TrendsViewModel.DailyClonesList),
-					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-				.Bind(ChartSeries.IsVisibleProperty,
-					nameof(TrendsViewModel.IsUniqueClonesSeriesVisible),
-					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
+				.Bind(ChartSeries.ItemsSourceProperty, nameof(TrendsViewModel.DailyClonesList))
+				.Bind(ChartSeries.IsVisibleProperty, nameof(TrendsViewModel.IsUniqueClonesSeriesVisible));
 
 			Series =
 			[
@@ -54,9 +38,7 @@ class ViewsClonesChart() : BaseChartView(new ViewsClonesTrendsChart())
 				TotalUniqueClonesSeries
 			];
 
-			this.Bind(IsVisibleProperty, 
-				nameof(TrendsViewModel.IsViewsClonesChartVisible),
-				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
+			this.Bind(IsVisibleProperty, nameof(TrendsViewModel.IsViewsClonesChartVisible));
 		}
 
 		public AreaSeries TotalViewsSeries { get; }
@@ -86,12 +68,8 @@ class ViewsClonesChart() : BaseChartView(new ViewsClonesTrendsChart())
 					Margin = new Thickness(2, 4, 2, 0)
 				}.DynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
 
-				this.Bind(MinimumProperty, 
-						nameof(TrendsViewModel.MinViewsClonesDate),
-						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-					.Bind(MaximumProperty, 
-						nameof(TrendsViewModel.MaxViewsClonesDate),
-						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
+				this.Bind(MinimumProperty, nameof(TrendsViewModel.MinViewsClonesDate))
+					.Bind(MaximumProperty, nameof(TrendsViewModel.MaxViewsClonesDate));
 			}
 		}
 
@@ -109,15 +87,9 @@ class ViewsClonesChart() : BaseChartView(new ViewsClonesTrendsChart())
 					FontFamily = FontFamilyConstants.RobotoRegular,
 				}.DynamicResource(ChartLabelStyle.TextColorProperty, nameof(BaseTheme.ChartAxisTextColor));
 
-				this.Bind(MinimumProperty, 
-						nameof(TrendsViewModel.DailyViewsClonesMinValue),
-						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-					.Bind(MaximumProperty, 
-						nameof(TrendsViewModel.DailyViewsClonesMaxValue),
-						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-					.Bind(IntervalProperty, 
-						nameof(TrendsViewModel.ViewsClonesChartYAxisInterval),
-						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
+				this.Bind(MinimumProperty, nameof(TrendsViewModel.DailyViewsClonesMinValue))
+					.Bind(MaximumProperty, nameof(TrendsViewModel.DailyViewsClonesMaxValue))
+					.Bind(IntervalProperty, nameof(TrendsViewModel.ViewsClonesChartYAxisInterval));
 			}
 		}
 

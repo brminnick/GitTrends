@@ -7,8 +7,10 @@ abstract class BaseTrendsChart : SfCartesianChart
 {
 	readonly ChartZoomPanBehavior _chartZoomPanBehavior = new();
 
-	protected BaseTrendsChart(in string automationId, in DateTimeAxis primaryAxis, in NumericalAxis secondaryAxis)
+	protected BaseTrendsChart(in string automationId, in DateTimeAxis primaryAxis, in NumericalAxis secondaryAxis, in TrendsViewModel trendsViewModel)
 	{
+		BindingContext = trendsViewModel;
+		
 		AutomationId = automationId;
 
 		Margin = new Thickness(0, 24, 0, 4);
