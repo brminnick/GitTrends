@@ -307,7 +307,7 @@ class SettingsViewModelTests : BaseTest
 		var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
 		var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
 
-		SettingsViewModel.OrganizationsCarouselViewVisiblilityChanged += HandleOrganizationsCarouselViewVisiblilityChanged;
+		SettingsViewModel.OrganizationsCarouselViewVisibilityChanged += HandleOrganizationsCarouselViewVisiblilityChanged;
 
 		//Act
 		await gitTrendsStatisticsService.Initialize(CancellationToken.None).ConfigureAwait(false);
@@ -341,7 +341,7 @@ class SettingsViewModelTests : BaseTest
 
 		void HandleOrganizationsCarouselViewVisiblilityChanged(object? sender, bool e)
 		{
-			SettingsViewModel.OrganizationsCarouselViewVisiblilityChanged -= HandleOrganizationsCarouselViewVisiblilityChanged;
+			SettingsViewModel.OrganizationsCarouselViewVisibilityChanged -= HandleOrganizationsCarouselViewVisiblilityChanged;
 			organizationsCarouselViewVisibilityChangedTCS.SetResult(e);
 		}
 	}

@@ -12,6 +12,9 @@ partial class AppShell
 		if (pageType == typeof(RepositoryPage))
 			return $"/{nameof(RepositoryPage)}";
 		
+		if (pageType == typeof(WelcomePage))
+			return $"/{nameof(RepositoryPage)}/{nameof(WelcomePage)}";
+		
 		if (pageType == typeof(OnboardingPage))
 			return $"/{nameof(RepositoryPage)}/{nameof(OnboardingPage)}";
 		

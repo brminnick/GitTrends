@@ -197,7 +197,7 @@ public static class MauiProgram
 		services.AddTransientWithShellRoute<RepositoryPage, RepositoryViewModel>();
 		services.AddTransientWithShellRoute<SettingsPage, SettingsViewModel>();
 		services.AddTransientWithShellRoute<TrendsPage, TrendsViewModel>();
-		services.AddTransient<WelcomePage, WelcomeViewModel>();
+		services.AddTransientWithShellRoute<WelcomePage, WelcomeViewModel>();
 		services.AddTransient<SplashScreenPage>();
 		
 		// Views
