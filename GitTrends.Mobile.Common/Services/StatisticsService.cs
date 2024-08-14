@@ -15,15 +15,19 @@ public static class StatisticsService
 	public static string ToAbbreviatedText(this double? number)
 	{
 		if (number < 10e2)
-			return string.Format("{0:0}", number);
-		else if (number < 10e5)
-			return $"{string.Format("{0:0.0}", number / 10e2)}K";
-		else if (number < 10e8)
-			return $"{string.Format("{0:0.0}", number / 10e5)}M";
-		else if (number < 10e11)
-			return $"{string.Format("{0:0.0}", number / 10e8)}B";
-		else if (number < 10e14)
-			return $"{string.Format("{0:0.0}", number / 10e11)}T";
+			return $"{number:0}";
+
+		if (number < 10e5)
+			return $"{number / 10e2:0.0}K";
+		
+		if (number < 10e8)
+			return $"{number / 10e5:0.0}M";
+		
+		if (number < 10e11)
+			return $"{number / 10e8:0.0}B";
+		
+		if (number < 10e14)
+			return $"{number / 10e11:0.0}T";
 
 		return "0";
 	}

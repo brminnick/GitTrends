@@ -1,6 +1,7 @@
 ﻿using GitTrends.Mobile.Common.Constants;
 using Sharpnado.MaterialFrame;
 using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;
@@ -86,14 +87,19 @@ class ReferringSitesDataTemplate() : DataTemplate(() => new CardView())
 
 				Children.Add(new DescriptionLabel()
 					.Row(Row.Description).Column(Column.Site)
-					.Bind(Label.TextProperty, nameof(MobileReferringSiteModel.Referrer), BindingMode.OneTime));
+					.Bind(Label.TextProperty,
+						nameof(MobileReferringSiteModel.Referrer),
+						BindingMode.OneTime));
 
 				Children.Add(new TitleLabel(ReferringSitesPageConstants.Referrals, TextAlignment.End, LayoutOptions.End).Assign(out TitleLabel referralsTitleLabel)
 					.Row(Row.Title).Column(Column.Referrals));
 
 				Children.Add(new StatisticsLabel(referralsTitleLabel)
 					.Row(Row.Description).Column(Column.Referrals)
-					.Bind(Label.TextProperty, nameof(MobileReferringSiteModel.TotalCount), BindingMode.OneTime));
+					.Bind(Label.TextProperty,
+						nameof(MobileReferringSiteModel.TotalCount),
+						BindingMode.OneTime,
+						convert: static (long count) => count.ToAbbreviatedText()));
 
 				Children.Add(new Separator()
 					.Row(Row.Title).Column(Column.Separator).RowSpan(2));
@@ -103,7 +109,10 @@ class ReferringSitesDataTemplate() : DataTemplate(() => new CardView())
 
 				Children.Add(new StatisticsLabel(uniqueTitleLabel)
 					.Row(Row.Description).Column(Column.Uniques)
-					.Bind(Label.TextProperty, nameof(MobileReferringSiteModel.TotalUniqueCount), BindingMode.OneTime));
+					.Bind(Label.TextProperty,
+						nameof(MobileReferringSiteModel.TotalUniqueCount),
+						BindingMode.OneTime,
+						convert: static (long count) => count.ToAbbreviatedText()));
 			}
 
 			enum Row { Title, Description }
@@ -111,7 +120,6 @@ class ReferringSitesDataTemplate() : DataTemplate(() => new CardView())
 
 			sealed class TitleLabel : Label
 			{
-
 				public TitleLabel(in string text, TextAlignment horizontalTextAlignment, LayoutOptions horizontalOptions)
 				{
 					Text = text;

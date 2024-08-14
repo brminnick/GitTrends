@@ -141,7 +141,8 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 					Children.Add(new AvatarImage(_circleImageHeight)
 						.Row(Row.Title).Column(Column.Avatar).RowSpan(2)
 						.Bind(AvatarImage.ImageSourceProperty, nameof(Repository.OwnerAvatarUrl), BindingMode.OneTime)
-						.DynamicResources((CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
+						.DynamicResources(
+							(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
 							(CircleImage.ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
 							(CircleImage.LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource))));
 
@@ -164,7 +165,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 							binding1: new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
 							binding2: new Binding(nameof(Width), BindingMode.OneWay, source: this),
 							binding3: new Binding(nameof(Repository.IsFavorite), BindingMode.OneWay),
-							convert: ((bool IsTrending, double Width, bool IsFavorite) inputs) => IsTrendingImageVisible(inputs.IsTrending, inputs.Width, inputs.IsFavorite, largeScreenTrendingImageWidth => largeScreenTrendingImageWidth < (TrendingImage.SvgWidthRequest + 8))));
+							convert: static ((bool IsTrending, double Width, bool? IsFavorite) inputs) => IsTrendingImageVisible(inputs.IsTrending, inputs.Width, inputs.IsFavorite, largeScreenTrendingImageWidth => largeScreenTrendingImageWidth < (TrendingImage.SvgWidthRequest + 8))));
 
 					//On smaller screens, display TrendingImage under the Avatar
 					Children.Add(new TrendingImage(deviceInfo, RepositoryPageAutomationIds.SmallScreenTrendingImage)
@@ -173,7 +174,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 							binding1: new Binding(nameof(Repository.IsTrending), BindingMode.OneWay),
 							binding2: new Binding(nameof(Width), BindingMode.OneWay, source: largeScreenTrendingImage),
 							binding3: new Binding(nameof(Repository.IsFavorite), BindingMode.OneWay),
-							convert: ((bool IsTrending, double Width, bool IsFavorite) inputs) => IsTrendingImageVisible(inputs.IsTrending, inputs.Width, inputs.IsFavorite, largeScreenTrendingImageWidth => largeScreenTrendingImageWidth >= (TrendingImage.SvgWidthRequest + 8))));
+							convert: static ((bool IsTrending, double Width, bool? IsFavorite) inputs) => IsTrendingImageVisible(inputs.IsTrending, inputs.Width, inputs.IsFavorite, largeScreenTrendingImageWidth => largeScreenTrendingImageWidth >= (TrendingImage.SvgWidthRequest + 8))));
 
 					foreach (var child in dataTemplateChildren)
 					{
@@ -230,23 +231,23 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 						HorizontalOptions = LayoutOptions.Start;
 						VerticalOptions = LayoutOptions.End;
 
-						this.Bind(SvgImage.SourceProperty,
+						this.Bind(SourceProperty,
 							getter: (Repository repository) => repository.IsTrending,
 							mode: BindingMode.OneTime,
-							convert: static (bool isTrending) => isTrending ? "trending_tag.svg" : "favorite_tag.svg");
+							convert: static isTrending => isTrending ? "trending_tag.svg" : "favorite_tag.svg");
 
 						// this.DynamicResource(SvgImage.SvgColorProperty, nameof(BaseTheme.CardStarsStatsIconColor));
 
-						 this.Bind(SvgImage.SvgColorProperty,
+						 this.Bind(SvgColorProperty,
 						 	getter: (Repository repository) => repository.IsFavorite,
 						 	mode: BindingMode.OneTime,
-						 	convert: static (bool? isFavorite) => isFavorite is true
+						 	convert: static isFavorite => isFavorite is true
 						 		? AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor))
 						 		: AppResources.GetResource<Color>(nameof(BaseTheme.CardTrendingStatsColor)));
 					}
 				}
 
-				static bool IsTrendingImageVisible(bool isTrending, double width, bool isFavorite, Func<double, bool> isWidthValid)
+				static bool IsTrendingImageVisible(bool isTrending, double width, bool? isFavorite, Func<double, bool> isWidthValid)
 				{
 					// When `Width is -1`, Xamarin.Forms hasn't inflated the View
 					// Allow Xamarin.Forms to inflate the view, then validate its Width
