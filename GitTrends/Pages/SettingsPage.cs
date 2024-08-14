@@ -13,7 +13,8 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 
 	CancellationTokenSource _connectToGitHubCancellationTokenSource = new();
 
-	public SettingsPage(IDeviceInfo deviceInfo,
+	public SettingsPage(
+		IDeviceInfo deviceInfo,
 		IAnalyticsService analyticsService,
 		SettingsViewModel settingsViewModel)
 		: base(settingsViewModel, analyticsService)
@@ -21,7 +22,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 		const int separatorRowHeight = 1;
 		const int settingsRowHeight = 38;
 
-		SettingsViewModel.OrganizationsCarouselViewVisiblilityChanged += HandleOrganizationsCarouselViewVisiblilityChanged;
+		SettingsViewModel.OrganizationsCarouselViewVisibilityChanged += HandleOrganizationsCarouselViewVisibilityChanged;
 
 		var loginRowTapGesture = new TapGestureRecognizer();
 		loginRowTapGesture.Tapped += HandleLoginRowTapped;
@@ -214,7 +215,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 		}
 	}
 
-	async void HandleOrganizationsCarouselViewVisiblilityChanged(object? sender, bool isVisible) => await Dispatcher.DispatchAsync(async () =>
+	async void HandleOrganizationsCarouselViewVisibilityChanged(object? sender, bool isVisible) => await Dispatcher.DispatchAsync(async () =>
 	{
 		if (isVisible)
 			await _organizationsCarouselOverlay.Reveal(true);

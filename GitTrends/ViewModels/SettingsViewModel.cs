@@ -10,7 +10,9 @@ namespace GitTrends;
 
 public partial class SettingsViewModel : GitHubAuthenticationViewModel
 {
-	static readonly WeakEventManager<bool> _organizationsCarouselViewVisiblilityChangedEventManager = new();
+	public const string LoggedOutGitHubAliasLabelText = "";
+
+	static readonly WeakEventManager<bool> _organizationsCarouselViewVisibilityChangedEventManager = new();
 	static readonly WeakEventManager<AccessState?> _setNotificationsPreferenceCompletedEventManager = new();
 
 	readonly ThemeService _themeService;
@@ -44,18 +46,18 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 	int _themePickerSelectedIndex, _preferredChartsSelectedIndex, _languagePickerSelectedIndex;
 
 	public SettingsViewModel(IDispatcher dispatcher,
-								ThemeService themeService,
-								LanguageService languageService,
-								IVersionTracking versionTracking,
-								IAnalyticsService analyticsService,
-								GitHubUserService gitHubUserService,
-								DeepLinkingService deepLinkingService,
-								NotificationService notificationService,
-								AzureFunctionsApiService azureFunctionsApiService,
-								GitTrendsStatisticsService gitTrendsStatisticsService,
-								TrendsChartSettingsService trendsChartSettingsService,
-								GitHubAuthenticationService gitHubAuthenticationService)
-			: base(dispatcher, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
+		ThemeService themeService,
+		LanguageService languageService,
+		IVersionTracking versionTracking,
+		IAnalyticsService analyticsService,
+		GitHubUserService gitHubUserService,
+		DeepLinkingService deepLinkingService,
+		NotificationService notificationService,
+		AzureFunctionsApiService azureFunctionsApiService,
+		GitTrendsStatisticsService gitTrendsStatisticsService,
+		TrendsChartSettingsService trendsChartSettingsService,
+		GitHubAuthenticationService gitHubAuthenticationService)
+		: base(dispatcher, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
 	{
 		_themeService = themeService;
 		_versionTracking = versionTracking;
@@ -91,10 +93,10 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 		remove => _setNotificationsPreferenceCompletedEventManager.RemoveEventHandler(value);
 	}
 
-	public static event EventHandler<bool> OrganizationsCarouselViewVisiblilityChanged
+	public static event EventHandler<bool> OrganizationsCarouselViewVisibilityChanged
 	{
-		add => _organizationsCarouselViewVisiblilityChangedEventManager.AddEventHandler(value);
-		remove => _organizationsCarouselViewVisiblilityChangedEventManager.RemoveEventHandler(value);
+		add => _organizationsCarouselViewVisibilityChangedEventManager.AddEventHandler(value);
+		remove => _organizationsCarouselViewVisibilityChangedEventManager.RemoveEventHandler(value);
 	}
 
 	public IReadOnlyList<string> LanguagePickerItemsSource { get; } = CultureConstants.CulturePickerOptions.Values.ToList();
@@ -155,7 +157,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 				GitHubUserService.ShouldIncludeOrganizations = value;
 				OnPropertyChanged();
 
-				OnOrganizationsCarouselViewVisiblilityChanged(value);
+				OnOrganizationsCarouselViewVisibilityChanged(value);
 			}
 		}
 	}
@@ -222,7 +224,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 
 		AnalyticsService.Track("Manage Organizations Button Tapped");
 
-		OnOrganizationsCarouselViewVisiblilityChanged(false);
+		OnOrganizationsCarouselViewVisibilityChanged(false);
 
 		return _deepLinkingService.OpenBrowser(_gitTrendsStatisticsService.EnableOrganizationsUri, token);
 	}
@@ -245,8 +247,12 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 				result = await _notificationService.Register(true, token).ConfigureAwait(false);
 				AnalyticsService.Track("Register for Notifications Switch Toggled", new Dictionary<string, string>
 				{
-					{ nameof(isNotificationsEnabled), isNotificationsEnabled.ToString() },
-					{ nameof(result), result?.ToString() ?? "null" }
+					{
+						nameof(isNotificationsEnabled), isNotificationsEnabled.ToString()
+					},
+					{
+						nameof(result), result.ToString() ?? "null"
+					}
 				});
 			}
 			else
@@ -254,8 +260,12 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 				_notificationService.UnRegister();
 				AnalyticsService.Track("Register for Notifications Switch Toggled", new Dictionary<string, string>
 				{
-					{ nameof(isNotificationsEnabled), isNotificationsEnabled.ToString() },
-					{ nameof(result), result?.ToString() ?? "null" }
+					{
+						nameof(isNotificationsEnabled), isNotificationsEnabled.ToString()
+					},
+					{
+						nameof(result), result?.ToString() ?? "null"
+					}
 				});
 			}
 		}
@@ -334,32 +344,41 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 	{
 		LoginLabelText = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? GitHubLoginButtonConstants.Disconnect : GitHubLoginButtonConstants.ConnectToGitHub;
 
-		GitHubAliasLabelText = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? $"@{GitHubUserService.Alias}" : string.Empty;
-		GitHubNameLabelText = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? GitHubUserService.Name : GitHubLoginButtonConstants.NotLoggedIn;
-		GitHubAvatarImageSource = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser ? GitHubUserService.AvatarUrl : BaseTheme.GetDefaultProfileImageSource();
+		GitHubAliasLabelText = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser
+			? $"@{GitHubUserService.Alias}"
+			: LoggedOutGitHubAliasLabelText;
+
+		GitHubNameLabelText = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser
+			? GitHubUserService.Name
+			: GitHubLoginButtonConstants.NotLoggedIn;
+
+		GitHubAvatarImageSource = GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser
+			? GitHubUserService.AvatarUrl
+			: BaseTheme.GetDefaultProfileImageSource();
 
 		IsShouldIncludeOrganizationsSwitchEnabled = GitHubUserService.IsAuthenticated;
 	}
 
 	[RelayCommand(CanExecute = nameof(IsNotAuthenticating))]
-	Task GitHubUserViewTapped(CancellationToken token)
+	async Task GitHubUserViewTapped(CancellationToken token)
 	{
 		if (GitHubUserService.IsAuthenticated || GitHubUserService.IsDemoUser)
 		{
-			string alias = GitHubUserService.IsDemoUser ? nameof(GitTrends) : GitHubUserService.Alias;
+			var alias = GitHubUserService.IsDemoUser ? nameof(GitTrends) : GitHubUserService.Alias;
 			AnalyticsService.Track("Alias Label Tapped", "Alias", alias);
 
-			return _deepLinkingService.OpenApp(GitHubConstants.AppScheme, $"{GitHubConstants.GitHubBaseUrl}/{alias}", $"{GitHubConstants.GitHubBaseUrl}/{alias}", token);
+			using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(token, new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+			await _deepLinkingService.OpenApp(GitHubConstants.AppScheme, $"{GitHubConstants.GitHubBaseUrl}/{alias}", $"{GitHubConstants.GitHubBaseUrl}/{alias}", cancellationTokenSource.Token).ConfigureAwait(false);
 		}
 		else
 		{
-			var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-			return HandleConnectToGitHubButton((cancellationTokenSource.Token, null));
+			var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(token, new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token);
+			await HandleConnectToGitHubButton((cancellationTokenSource.Token, null)).ConfigureAwait(false);
 		}
 	}
 
 	void OnSetNotificationsCompleted(AccessState? accessState) => _setNotificationsPreferenceCompletedEventManager.RaiseEvent(this, accessState, nameof(SetNotificationsPreferenceCompleted));
-	void OnOrganizationsCarouselViewVisiblilityChanged(bool isVisible) => _organizationsCarouselViewVisiblilityChangedEventManager.RaiseEvent(this, isVisible, nameof(OrganizationsCarouselViewVisiblilityChanged));
+	void OnOrganizationsCarouselViewVisibilityChanged(bool isVisible) => _organizationsCarouselViewVisibilityChangedEventManager.RaiseEvent(this, isVisible, nameof(OrganizationsCarouselViewVisibilityChanged));
 
 	partial void OnThemePickerSelectedIndexChanged(int value)
 	{
