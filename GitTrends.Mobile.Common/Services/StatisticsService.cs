@@ -12,19 +12,15 @@ public static class StatisticsService
 	public static string ToAbbreviatedText(this long? number) => ToAbbreviatedText((double?)number);
 
 	public static string ToAbbreviatedText(this double number) => ToAbbreviatedText((double?)number);
-	public static string ToAbbreviatedText(this double? number)
+	public static string ToAbbreviatedText(this double? number) => number switch
 	{
-		return number switch
-		{
-			< 10e2 => $"{number:0}",
-			< 10e5 => $"{number / 10e2:0.0}K",
-			< 10e8 => $"{number / 10e5:0.0}M",
-			< 10e11 => $"{number / 10e8:0.0}B",
-			< 10e14 => $"{number / 10e11:0.0}T",
-			_ => "0"
-		};
-
-	}
+		< 10e2 => $"{number:0}",
+		< 10e5 => $"{number / 10e2:0.0}K",
+		< 10e8 => $"{number / 10e5:0.0}M",
+		< 10e11 => $"{number / 10e8:0.0}B",
+		< 10e14 => $"{number / 10e11:0.0}T",
+		_ => "0"
+	};
 
 	public static string GetInformationLabelText<TRepository>(in IReadOnlyList<TRepository> repositories, in MobileSortingService mobileSortingService) where TRepository : IRepository =>
 		GetInformationLabelText(repositories, MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption));
