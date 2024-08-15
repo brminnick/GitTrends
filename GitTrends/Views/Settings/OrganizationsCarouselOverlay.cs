@@ -193,7 +193,7 @@ class OrganizationsCarouselOverlay : Grid
 				{
 					new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.GitHubOrganizationsTitle, ManageOrganizationsConstants.GitHubOrganizationsDescription, 0, "Business", null),
 					new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.GitTrendsAccessTitle, ManageOrganizationsConstants.GitTrendsAccessDescription, 1, "Inspectocat", null),
-					new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.EnableOrganizationsTitle, ManageOrganizationsConstants.EnableOrganizationsDescription, 2, null, VideoConstants.EnableOranizationsFileName),
+					new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.EnableOrganizationsTitle, ManageOrganizationsConstants.EnableOrganizationsDescription, 2, null, VideoConstants.EnableOrganizationsFileName),
 				};
 
 				ItemTemplate = new EnableOrganizationsCarouselTemplateSelector(deviceInfo);
@@ -211,6 +211,8 @@ class OrganizationsCarouselOverlay : Grid
 		{
 			public EnableOrganizationsCarouselIndicatorView()
 			{
+				InputTransparent = true;
+				
 				Count = 3;
 				IsEnabled = false;
 				SelectedIndicatorColor = Colors.White;
