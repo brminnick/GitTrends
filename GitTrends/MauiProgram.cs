@@ -4,11 +4,9 @@ using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
-using GitTrends.Resources;
 using GitTrends.Shared;
 using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Platform;
 using Plugin.StoreReview;
 using Plugin.StoreReview.Abstractions;
 using Polly;
@@ -24,7 +22,7 @@ using Shiny;
 
 namespace GitTrends;
 
-public static class MauiProgram
+public static partial class MauiProgram
 {
 	public static MauiApp CreateMauiApp(IAppInfo appInfo)
 	{
@@ -57,8 +55,8 @@ public static class MauiProgram
 #if ANDROID || IOS || MACCATALYST
 		builder.Services.AddNotifications();
 		builder.Services.AddJob(typeof(BackgroundFetchService));
-#endif
 		CustomizeHandlers();
+#endif
 
 		RegisterCrossPlatformAPIs(builder.Services);
 		RegisterDatabases(builder.Services);
@@ -67,70 +65,6 @@ public static class MauiProgram
 		RegisterServices(builder.Services);
 
 		return builder.Build();
-	}
-
-	static void CustomizeHandlers()
-	{
-		Microsoft.Maui.Handlers.LabelHandler.Mapper.AppendToMapping("NoVerticalScrollBar", (handler, view) =>
-		{
-#if ANDROID
-			handler.PlatformView.VerticalScrollBarEnabled = false;
-#endif
-		});
-
-		Microsoft.Maui.Handlers.ButtonHandler.Mapper.AppendToMapping("LowercaseButton", (handler, view) =>
-		{
-#if ANDROID
-			handler.PlatformView.SetAllCaps(false);
-			handler.PlatformView.VerticalScrollBarEnabled = false;
-#endif
-		});
-
-		Microsoft.Maui.Handlers.PickerHandler.Mapper.AppendToMapping("PickerBorder", (handler, view) =>
-		{
-			ThemeService.PreferenceChanged += HandlePreferenceChanged;
-#if IOS
-			handler.PlatformView.TextAlignment = UIKit.UITextAlignment.Center;
-			handler.PlatformView.Layer.BorderWidth = 1;
-			handler.PlatformView.Layer.CornerRadius = 5;
-
-			SetPickerBorder();
-#elif ANDROID
-			handler.PlatformView.Background = null;
-			handler.PlatformView.Gravity = Android.Views.GravityFlags.Center;
-			handler.PlatformView.VerticalScrollBarEnabled = false;
-
-			SetPickerBorder();
-#endif
-
-			void SetPickerBorder()
-			{
-				if (Application.Current?.Resources is BaseTheme theme)
-				{
-#if IOS
-					var borderColor = AppResources.GetResource<Color>(nameof(BaseTheme.PickerBorderColor));
-					handler.PlatformView.Layer.BorderColor = borderColor.ToCGColor();
-#elif ANDROID
-					var borderColor = theme.PickerBorderColor;
-
-					var gradientDrawable = new Android.Graphics.Drawables.GradientDrawable();
-					gradientDrawable.SetCornerRadius(10);
-					gradientDrawable.SetStroke(2, borderColor.ToPlatform());
-
-					try
-					{
-						handler.PlatformView.Background = gradientDrawable;
-					}
-					catch (System.ObjectDisposedException)
-					{
-
-					}
-#endif
-				}
-			}
-
-			void HandlePreferenceChanged(object? sender, PreferredTheme e) => SetPickerBorder();
-		});
 	}
 
 	static void RegisterDatabases(in IServiceCollection services)
