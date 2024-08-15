@@ -46,6 +46,12 @@ public static partial class MauiProgram
 				fonts.AddFont("Roboto-Bold.ttf", FontFamilyConstants.RobotoBold);
 				fonts.AddFont("Roboto-Medium.ttf", FontFamilyConstants.RobotoMedium);
 				fonts.AddFont("Roboto-Regular.ttf", FontFamilyConstants.RobotoRegular);
+			})
+			.ConfigureMauiHandlers(handlers =>
+			{
+#if IOS || MACCATALYST
+				handlers.AddHandler<Shell, ShellWithLargeTitlesHandler>();
+#endif
 			});
 
 #if DEBUG
@@ -133,7 +139,7 @@ public static partial class MauiProgram
 		services.AddTransientWithShellRoute<TrendsPage, TrendsViewModel>();
 		services.AddTransientWithShellRoute<WelcomePage, WelcomeViewModel>();
 		services.AddTransient<SplashScreenPage>();
-		
+
 		// Views
 		services.AddTransient<StarsTrendsView>();
 		services.AddTransient<ViewsClonesTrendsView>();

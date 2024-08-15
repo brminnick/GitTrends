@@ -104,7 +104,6 @@ partial class MauiProgram
 				{
 					toolBar.Title = pageTitle;
 					toolBar.InflateMenu(ResourceConstant.Menu.MainMenu);
-
 					
 					if (toolBar.Menu?.FindItem(ResourceConstant.Id.ActionSearch)?.ActionView is SearchView searchView)
 					{

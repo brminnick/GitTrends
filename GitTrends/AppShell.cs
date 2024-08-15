@@ -7,12 +7,16 @@ partial class AppShell : Shell
 	public AppShell(SplashScreenPage splashScreenPage)
 	{
 		Items.Add(splashScreenPage);
-		
+
 		SetDynamicResource(ForegroundColorProperty, nameof(BaseTheme.NavigationBarTextColor));
-		SetDynamicResource(BackgroundColorProperty,nameof(BaseTheme.PageBackgroundColor));
-		SetDynamicResource(TitleColorProperty,nameof(BaseTheme.NavigationBarBackgroundColor));
+		SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
+		SetDynamicResource(TitleColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
 
 		Navigating += HandleNavigating;
+
+#if IOS || MACCATALYST
+		ShellAttachedProperties.SetPrefersLargeTitles(this, true);
+#endif
 	}
 
 	static void HandleNavigating(object? sender, ShellNavigatingEventArgs e)
