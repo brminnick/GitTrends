@@ -59,9 +59,7 @@ partial class MauiProgram
 	{
 		LabelHandler.Mapper.AppendToMapping("NoVerticalScrollBar", (handler, view) =>
 		{
-#if ANDROID
 			handler.PlatformView.VerticalScrollBarEnabled = false;
-#endif
 		});
 	}
 
@@ -69,10 +67,8 @@ partial class MauiProgram
 	{
 		ButtonHandler.Mapper.AppendToMapping("LowercaseButton", (handler, view) =>
 		{
-#if ANDROID
 			handler.PlatformView.SetAllCaps(false);
 			handler.PlatformView.VerticalScrollBarEnabled = false;
-#endif
 		});
 	}
 
