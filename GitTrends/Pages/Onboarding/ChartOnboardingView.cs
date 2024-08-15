@@ -37,10 +37,7 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 			BackgroundColor = Colors.White;
 			Padding = new Thickness(5);
 			
-#if AppStore
-#error 
-#endif
-#if !(IOS || !MACCATALYST)
+#if ANDROID
 
 			Content = new MediaElement
 				{
@@ -59,6 +56,8 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 
 			// This ensures that black bars don't appear on the sides of the video due to being improperly scaled
 			double convertWidthToMatchRecordedVideoDimensions(double imageViewHeight) => (imageViewHeight - Padding.VerticalThickness) / chartVideoHeight * chartVideoWidth;
+#elif AppStore && (IOS || MACCATALYST)
+#error 
 #endif
 		}
 	}
