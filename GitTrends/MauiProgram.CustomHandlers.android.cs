@@ -6,6 +6,7 @@ using GitTrends.Mobile.Common;
 using Google.Android.Material.AppBar;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
+
 namespace GitTrends;
 
 partial class MauiProgram

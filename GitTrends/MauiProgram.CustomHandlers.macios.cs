@@ -1,4 +1,6 @@
 using GitTrends.Mobile.Common;
+using GitTrends.Resources;
+using Microsoft.Maui.Controls.Handlers.Items;
 using Microsoft.Maui.Controls.Platform.Compatibility;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
@@ -12,6 +14,16 @@ partial class MauiProgram
 	{
 		AddPickerBorderCustomHandler();
 		AddSearchPageCustomHandler();
+		AddSwitchCustomHandler();
+	}
+	
+	static void AddSwitchCustomHandler()
+	{
+		SwitchHandler.Mapper.AppendToMapping("SwitchBackgroundColor", (handler, view) =>
+		{
+			var buttonBackgroundColor = AppResources.GetResource<Color>(nameof(BaseTheme.ButtonBackgroundColor));
+			handler.PlatformView.TintColor = buttonBackgroundColor.MultiplyAlpha(0.25f).ToPlatform();
+		});
 	}
 
 	static void AddPickerBorderCustomHandler()
@@ -41,8 +53,6 @@ partial class MauiProgram
 
 	static void AddSearchPageCustomHandler()
 	{
-		return;
-		
 		PageHandler.Mapper.AppendToMapping("SearchPage", (handler, view) =>
 		{
 			if (view is not (ISearchPage and ContentPage page))
@@ -63,14 +73,8 @@ partial class MauiProgram
 
 			void HandlePageLoaded(object? sender, EventArgs e)
 			{
-				var window = UIApplication.SharedApplication.Windows[0];
-				var temp = window.RootViewController;
-				var temp2 = temp?.NavigationController;
-				
 				if (Platform.GetCurrentUIViewController() is ShellFlyoutRenderer { NavigationItem.SearchController: null } flyoutRenderer)
 				{
-					flyoutRenderer.NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Always;
-
 					flyoutRenderer.NavigationItem.SearchController = searchController;
 					flyoutRenderer.DefinesPresentationContext = true;
 

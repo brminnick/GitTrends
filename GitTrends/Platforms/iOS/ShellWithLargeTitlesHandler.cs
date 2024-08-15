@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Reflection;
 using CoreGraphics;
 using Foundation;
+using GitTrends.Mobile.Common;
 using Microsoft.Maui.Controls.Handlers.Compatibility;
 using Microsoft.Maui.Controls.Internals;
 using Microsoft.Maui.Controls.Platform.Compatibility;
@@ -126,18 +127,31 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			var navDelegate = (UINavigationControllerDelegate)Delegate;
 			Delegate = new NavDelegate(navDelegate, this);
 			Context = context;
+			
 			UpdateLargeTitle();
+
+			var themePreference =  IPlatformApplication.Current?.Services.GetRequiredService<ThemeService>().Preference;
+			AddShadow(themePreference ?? PreferredTheme.Default);
+			
+			ThemeService.PreferenceChanged += HandlePreferenceChanged;
 		}
 
 		public IShellContext Context { get; }
 
 		public void SnagTracker()
 		{
-			if (ShellWithLargeTitlesHandler.Tracker is null)
+			if (Tracker is null)
 				return;
 
-			_trackers[ShellWithLargeTitlesHandler.Tracker.Page] = ShellWithLargeTitlesHandler.Tracker;
-			ShellWithLargeTitlesHandler.Tracker = null;
+			_trackers[Tracker.Page] = Tracker;
+			Tracker = null;
+		}
+		
+		public override void PushViewController(UIViewController viewController, bool animated)
+		{
+			SnagTracker();
+			base.PushViewController(viewController, animated);
+			SnagTracker();
 		}
 
 		protected override void HandleShellPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -174,13 +188,30 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			SnagTracker();
 		}
 
-		public override void PushViewController(UIViewController viewController, bool animated)
+		void HandlePreferenceChanged(object? sender, PreferredTheme e)
 		{
-			SnagTracker();
-			base.PushViewController(viewController, animated);
-			SnagTracker();
+			AddShadow(e);
 		}
 
+		void AddShadow(PreferredTheme preferredTheme)
+		{
+			if (isLightTheme(preferredTheme))
+			{
+				NavigationBar.Layer.ShadowColor = UIColor.Gray.CGColor;
+				NavigationBar.Layer.ShadowOffset = new CGSize();
+				NavigationBar.Layer.ShadowOpacity = 1;
+			}
+			else if (isDarkTheme(preferredTheme))
+			{
+				NavigationBar.Layer.ShadowColor = UIColor.White.CGColor;
+				NavigationBar.Layer.ShadowOffset = new CGSize(0, -3);
+				NavigationBar.Layer.ShadowOpacity = 0;
+			}
+
+			static bool isLightTheme(PreferredTheme theme) => theme is PreferredTheme.Light || theme is PreferredTheme.Default && Application.Current?.RequestedTheme is AppTheme.Light;
+			static bool isDarkTheme(PreferredTheme theme) => theme is PreferredTheme.Dark || theme is PreferredTheme.Default && Application.Current?.RequestedTheme is AppTheme.Dark;
+		}
+		
 		void UpdateLargeTitle()
 		{
 			var value = ShellAttachedProperties.GetPrefersLargeTitles(Shell.Current);
