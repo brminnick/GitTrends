@@ -27,14 +27,14 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 	private protected enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
 	private protected enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3 }
 
-	private protected sealed class CardView : ExtendedSwipeView
+	protected sealed class CardView : ExtendedSwipeView
 	{
 		public CardView(in IDeviceInfo deviceInfo, in IEnumerable<View> dataTemplateChildren)
 		{
 			this.Bind(TappedCommandParameterProperty, mode: BindingMode.OneTime)
-				.Bind(TappedCommandProperty, 
-					nameof(RepositoryPage.RepositoryDataTemplateTappedCommand), 
-					BindingMode.OneTime, 
+				.Bind(TappedCommandProperty,
+					nameof(RepositoryPage.RepositoryDataTemplateTappedCommand),
+					BindingMode.OneTime,
 					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(RepositoryPage)));
 
 			var sidePadding = IsSmallScreen ? 8 : 16;
@@ -53,8 +53,12 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 									? "star.svg"
 									: "star_outline.svg")
 
-					}.Bind(SwipeItemView.CommandProperty, nameof(RepositoryViewModel.ToggleIsFavoriteCommand), BindingMode.OneTime, source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))
-					.Bind(SwipeItemView.CommandParameterProperty, mode: BindingMode.OneTime)
+					}.Bind(SwipeItemView.CommandProperty,
+						nameof(RepositoryViewModel.ToggleIsFavoriteCommand),
+						BindingMode.OneTime,
+						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))
+					.Bind(SwipeItemView.CommandParameterProperty,
+						mode: BindingMode.OneTime)
 			];
 
 			LeftItems =
@@ -69,14 +73,18 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 							.Font(FontFamilyConstants.FontAwesome, 28).Center()
 							.Margins(left: sidePadding),
 
-					}.Bind(SwipeItemView.CommandProperty, nameof(RepositoryViewModel.NavigateToRepositoryWebsiteCommand), BindingMode.OneTime, source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))
-					.Bind(SwipeItemView.CommandParameterProperty, mode: BindingMode.OneTime)
+					}.Bind(SwipeItemView.CommandProperty,
+						nameof(RepositoryViewModel.NavigateToRepositoryWebsiteCommand),
+						BindingMode.OneTime,
+						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))
+					.Bind(SwipeItemView.CommandParameterProperty,
+						mode: BindingMode.OneTime)
 			];
 
 			Content = new Grid
 			{
 				InputTransparent = true,
-				
+
 				RowSpacing = 0,
 
 				RowDefinitions = Rows.Define(
@@ -103,7 +111,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 		{
 			public CardViewFrame(in IDeviceInfo deviceInfo, in IEnumerable<View> dataTemplateChildren)
 			{
-				Padding = IsSmallScreen ? new Thickness(8, 16, 6, 8) : new Thickness(16, 16, 12, 8);
+				Padding = IsSmallScreen ? new Thickness(8, 12, 6, 4) : new Thickness(16, 12, 12, 4);
 				CornerRadius = 4;
 				HasShadow = true;
 				Elevation = 4;
@@ -117,6 +125,8 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 			{
 				public ContentGrid(in IDeviceInfo deviceInfo, in IEnumerable<View> dataTemplateChildren)
 				{
+					Margin = Padding = 0;
+
 					this.Fill();
 
 					RowDefinitions = Rows.Define(
@@ -238,12 +248,12 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 
 						// this.DynamicResource(SvgImage.SvgColorProperty, nameof(BaseTheme.CardStarsStatsIconColor));
 
-						 this.Bind(SvgColorProperty,
-						 	getter: (Repository repository) => repository.IsFavorite,
-						 	mode: BindingMode.OneTime,
-						 	convert: static isFavorite => isFavorite is true
-						 		? AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor))
-						 		: AppResources.GetResource<Color>(nameof(BaseTheme.CardTrendingStatsColor)));
+						this.Bind(SvgColorProperty,
+							getter: (Repository repository) => repository.IsFavorite,
+							mode: BindingMode.OneTime,
+							convert: static isFavorite => isFavorite is true
+								? AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor))
+								: AppResources.GetResource<Color>(nameof(BaseTheme.CardTrendingStatsColor)));
 					}
 				}
 
@@ -255,6 +265,27 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 						&& (width is -1 || isWidthValid(width));
 				}
 			}
+		}
+	}
+
+	protected class StatisticsLabel : Label
+	{
+		public const int StatisticsFontSize = 12;
+
+		public StatisticsLabel(in string textColorThemeName)
+		{
+			FontSize = StatisticsFontSize;
+
+			HorizontalOptions = LayoutOptions.Fill;
+
+			HorizontalTextAlignment = TextAlignment.Start;
+			VerticalTextAlignment = TextAlignment.End;
+
+			LineBreakMode = LineBreakMode.TailTruncation;
+
+			Padding = new Thickness(2, 0, 0, 0);
+
+			this.DynamicResource(TextColorProperty, textColorThemeName);
 		}
 	}
 }
