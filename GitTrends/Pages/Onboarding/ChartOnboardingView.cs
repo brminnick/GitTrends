@@ -56,7 +56,7 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 
 			// This ensures that black bars don't appear on the sides of the video due to being improperly scaled
 			double convertWidthToMatchRecordedVideoDimensions(double imageViewHeight) => (imageViewHeight - Padding.VerticalThickness) / chartVideoHeight * chartVideoWidth;
-#elif AppStore && (IOS || MACCATALYST)
+#elif AppStore
 #error 
 #endif
 		}
