@@ -1,4 +1,6 @@
 ﻿using System.Windows.Input;
+using CommunityToolkit.Maui.Behaviors;
+using CommunityToolkit.Mvvm.Input;
 
 namespace GitTrends;
 
@@ -9,16 +11,18 @@ abstract class ExtendedSwipeView : SwipeView
 
 	protected ExtendedSwipeView()
 	{
-		CloseRequested += OnCloseRequested;
-		SwipeEnded += OnSwipeEnded;
+		SwipeEnded += HandleSwipeEnded;
+		SwipeChanging += HandleSwipeChanging;
+		CloseRequested += HandleCloseRequested;
 
-		var tappedGestureRecognizer = new TapGestureRecognizer();
-		tappedGestureRecognizer.Tapped += HandleTapped;
-
-		GestureRecognizers.Add(tappedGestureRecognizer);
+		Behaviors.Add(new TouchBehavior
+		{
+			Command = new RelayCommand(HandleTouch)
+		});
 	}
 
 	public bool IsSwiped { get; private set; }
+	public bool IsSwiping { get; private set; }
 
 	public ICommand? TappedCommand
 	{
@@ -32,24 +36,35 @@ abstract class ExtendedSwipeView : SwipeView
 		set => SetValue(TappedCommandParameterProperty, value);
 	}
 
-	void OnCloseRequested(object? sender, EventArgs e) => IsSwiped = false;
-
-	void OnSwipeEnded(object? sender, SwipeEndedEventArgs e)
+	void HandleSwipeChanging(object? sender, SwipeChangingEventArgs e)
 	{
-		if (GetSwipeMode(e.SwipeDirection) is SwipeMode.Reveal)
-			IsSwiped = true;
+		IsSwiping = IsSwiped = GetSwipeMode(e.SwipeDirection) is SwipeMode.Reveal;
 	}
 
-	void HandleTapped(object? sender, EventArgs e)
+	void HandleCloseRequested(object? sender, CloseRequestedEventArgs e)
 	{
+		IsSwiped = false;
+	}
+
+	void HandleSwipeEnded(object? sender, SwipeEndedEventArgs e)
+	{
+		IsSwiping = false;
+		IsSwiped = e.IsOpen;
+	}
+	
+	void HandleTouch()
+	{
+		if (IsSwiping)
+			return;
+
 		if (!IsSwiped)
 		{
 			if (TappedCommand?.CanExecute(TappedCommandParameter) is true)
-				TappedCommand?.Execute(TappedCommandParameter);
+				TappedCommand.Execute(TappedCommandParameter);
 		}
 		else
 		{
-			IsSwiped = false;
+			Close();
 		}
 	}
 

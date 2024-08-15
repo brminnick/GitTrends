@@ -89,6 +89,7 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 							ItemTemplate = new RepositoryDataTemplateSelector(deviceInfo, mobileSortingService),
 							BackgroundColor = Colors.Transparent,
 							AutomationId = RepositoryPageAutomationIds.CollectionView,
+							
 							//Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
 							Header = deviceInfo.Platform == DevicePlatform.Android ? new BoxView
 							{
@@ -113,16 +114,6 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 				new InformationButton(mobileSortingService, analyticsService).Row(Row.Information).Column(Column.Information)
 			}
 		};
-
-		_refreshView.PropertyChanged += HandleRefreshViewPropertyChanged;
-
-		void HandleRefreshViewPropertyChanged(object? sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == RefreshView.IsRefreshingProperty.PropertyName)
-			{
-
-			}
-		}
 	}
 
 	enum Row { CollectionView, Information }
