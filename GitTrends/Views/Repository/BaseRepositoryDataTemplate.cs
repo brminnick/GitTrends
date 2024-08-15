@@ -111,7 +111,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 		{
 			public CardViewFrame(in IDeviceInfo deviceInfo, in IEnumerable<View> dataTemplateChildren)
 			{
-				Padding = IsSmallScreen ? new Thickness(8, 12, 6, 4) : new Thickness(16, 12, 12, 4);
+				Padding = IsSmallScreen ? new Thickness(8, 14, 6, 8) : new Thickness(16, 14, 12, 8);
 				CornerRadius = 4;
 				HasShadow = true;
 				Elevation = 4;
@@ -134,7 +134,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 						(Row.Description, 40),
 						(Row.DescriptionPadding, 4),
 						(Row.Separator, 1),
-						(Row.SeparatorPadding, 4),
+						(Row.SeparatorPadding, 8),
 						(Row.Statistics, _statisticsRowHeight));
 
 					ColumnDefinitions = Columns.Define(
@@ -284,7 +284,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 			LineBreakMode = LineBreakMode.TailTruncation;
 
 			Padding = new Thickness(2, 0, 0, 0);
-
+			
 			this.DynamicResource(TextColorProperty, textColorThemeName);
 		}
 	}
