@@ -9,8 +9,7 @@ partial class AppShell : Shell
 		Items.Add(splashScreenPage);
 
 		SetDynamicResource(ForegroundColorProperty, nameof(BaseTheme.NavigationBarTextColor));
-		SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
-		SetDynamicResource(TitleColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
+		SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
 
 		Navigating += HandleNavigating;
 
