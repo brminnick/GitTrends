@@ -23,213 +23,214 @@
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</SupportedOSPlatformVersion>
     <TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">34</TargetPlatformVersion>
 
-    <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'&#xD;&#xA;                                    AND '$(Configuration)' == 'AppStore'">maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers>
-
-    <Configurations>Debug;Release;AppStore</Configurations>
+    <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'
+                                    AND '$(Configuration)' == 'AppStore'">maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- App Icon -->
-    <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+    <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4"/>
 
     <!-- Splash Screen -->
-    <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+    <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128"/>
 
     <!-- Images -->
-    <MauiImage Include="Resources\Images\*" />
-    <MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
+    <MauiImage Include="Resources\Images\*"/>
+    <MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185"/>
 
     <!-- Custom Fonts -->
-    <MauiFont Include="Resources\Fonts\*" />
+    <MauiFont Include="Resources\Fonts\*"/>
 
     <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
-    <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj" />
+    <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj"/>
   </ItemGroup>
 
-  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' &#xD;&#xA;                          OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'&#xD;&#xA;                          OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-    <PackageReference Include="Shiny.Hosting.Maui" Version="3.3.3" />
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' 
+                          OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'
+                          OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <PackageReference Include="Shiny.Hosting.Maui" Version="3.3.3"/>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Maui" Version="9.0.2" />
-    <PackageReference Include="CommunityToolkit.Maui.Markup" Version="4.0.0" />
+    <PackageReference Include="CommunityToolkit.Maui.Markup" Version="4.0.0"/>
     <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.0.1" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2"/>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.61"/>
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.7.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0"/>
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiPackageVersion)" />
-    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiPackageVersion)" />
-    <PackageReference Include="Plugin.StoreReview" Version="6.2.0" />
+    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiPackageVersion)"/>
+    <PackageReference Include="Plugin.StoreReview" Version="6.2.0"/>
     <PackageReference Include="Refit.HttpClientFactory" Version="7.1.2" />
     <PackageReference Include="Sentry.Maui" Version="4.9.0" />
-    <PackageReference Include="Sharpnado.MaterialFrame.Maui" Version="2.0.0" />
-    <PackageReference Include="Shiny.Jobs" Version="3.3.3" />
-    <PackageReference Include="Shiny.Notifications" Version="3.3.3" />
-    <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.8" />
-    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.8" />
+    <PackageReference Include="Sharpnado.MaterialFrame.Maui" Version="2.0.0"/>
+    <PackageReference Include="Shiny.Jobs" Version="3.3.3"/>
+    <PackageReference Include="Shiny.Notifications" Version="3.3.3"/>
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.8"/>
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172"/>
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.8"/>
     <PackageReference Include="Syncfusion.Maui.Charts" Version="26.1.38" />
-    <PackageReference Include="GitHubApiStatus" Version="3.0.0" />
+    <PackageReference Include="GitHubApiStatus" Version="3.0.0"/>
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-    <None Remove="Platforms\Android\linker.xml" />
-    <LinkDescription Include="Platforms\Android\linker.xml" />
-    <ProguardConfiguration Include="Platforms\Android\proguard.cfg" />
+    <None Remove="Platforms\Android\linker.xml"/>
+    <LinkDescription Include="Platforms\Android\linker.xml"/>
+    <ProguardConfiguration Include="Platforms\Android\proguard.cfg"/>
     <AndroidEnvironment Include="Platforms\Android\GarbageCollector.config" />
-    <AndroidResource Include="Platforms\Android\Resources\layout\Tabbar.axml" />
-    <AndroidResource Include="Platforms\Android\Resources\layout\Toolbar.axml" />
-    <AndroidResource Include="Platforms\Android\Resources\values\styles.xml" />
-    <AndroidResource Include="Platforms\Android\Resources\values\colors.xml" />
-    <AndroidResource Include="Platforms\Android\Resources\mipmap-anydpi-v26\icon.xml" />
-    <AndroidResource Include="Platforms\Android\Resources\mipmap-anydpi-v26\icon_round.xml" />
-    <AndroidResource Include="Platforms\Android\Resources\xml\auto_backup_rules.xml" />
-    <AndroidResource Include="Platforms\Android\Resources\menu\MainMenu.xml" />
-    <AndroidResource Include="Platforms\Android\Resources\values-night\styles.xml" />
-    <AndroidResource Include="Platforms\Android\Resources\mipmap-hdpi\icon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\mipmap-hdpi\launcher_foreground.png" />
-    <AndroidResource Include="Platforms\Android\Resources\mipmap-mdpi\icon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\mipmap-mdpi\launcher_foreground.png" />
-    <AndroidResource Include="Platforms\Android\Resources\mipmap-xhdpi\icon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\mipmap-xhdpi\launcher_foreground.png" />
-    <AndroidResource Include="Platforms\Android\Resources\mipmap-xxhdpi\icon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\mipmap-xxhdpi\launcher_foreground.png" />
-    <AndroidResource Include="Platforms\Android\Resources\mipmap-xxxhdpi\icon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\mipmap-xxxhdpi\launcher_foreground.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable\splash_screen.xml" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable\GitTrends.png" />
-    <AndroidResource Include="Platforms\Android\Resources\values-night\colors.xml" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\GitTrends.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night\GitTrends.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night-hdpi\GitTrends.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xhdpi\GitTrends.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxhdpi\GitTrends.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxxhdpi\GitTrends.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\GitTrends.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\GitTrends.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\GitTrends.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable\icon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable\DefaultProfileImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\DefaultProfileImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\DefaultProfileImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\DefaultProfileImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\DefaultProfileImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night\DefaultProfileImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night-hdpi\DefaultProfileImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xhdpi\DefaultProfileImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxhdpi\DefaultProfileImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxxhdpi\DefaultProfileImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\ReferringSitesIcon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable\ReferringSitesIcon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\ReferringSitesIcon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\ReferringSitesIcon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\ReferringSitesIcon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable\NotificationsOnboarding.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\NotificationsOnboarding.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\NotificationsOnboarding.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\NotificationsOnboarding.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\NotificationsOnboarding.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable\GitTrendsWhite.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\GitTrendsWhite.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\GitTrendsWhite.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\GitTrendsWhite.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\GitTrendsWhite.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable\ConnectToGitHubOnboarding.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\ConnectToGitHubOnboarding.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\ConnectToGitHubOnboarding.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\ConnectToGitHubOnboarding.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\ConnectToGitHubOnboarding.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable\GitTrendsGreen.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\GitTrendsGreen.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\GitTrendsGreen.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\GitTrendsGreen.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\GitTrendsGreen.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable\DefaultProfileImageGreen.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\DefaultProfileImageGreen.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable\WelcomeImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\WelcomeImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\WelcomeImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\WelcomeImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\WelcomeImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable\DefaultProfileImageWhite.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\DefaultProfileImageWhite.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\DefaultProfileImageWhite.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\DefaultProfileImageWhite.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\DefaultProfileImageWhite.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\DefaultReferringSiteImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\DefaultReferringSiteImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\DefaultReferringSiteImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\DefaultReferringSiteImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\DefaultReferringSiteImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\DefaultReferringSiteImage.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyRepositoriesList.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyRepositoriesList.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyRepositoriesList.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyRepositoriesList.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyRepositoriesList.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyRepositoriesList.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyReferringSitesList.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyReferringSitesList.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyReferringSitesList.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyReferringSitesList.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyReferringSitesList.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyReferringSitesList.png" />
-    <AndroidResource Include="Platforms\Android\Resources\values\sizes.xml" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyTrafficChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyTrafficChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyTrafficChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyTrafficChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyTrafficChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyTrafficChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyStarChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyStarChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyStarChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyStarChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyStarChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyStarChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyOneStarChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyOneStarChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyOneStarChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyOneStarChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyOneStarChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyOneStarChart.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\Business.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\Inspectocat.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\Business.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\Inspectocat.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\Business.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\Inspectocat.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\Business.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\Inspectocat.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\Business.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\Inspectocat.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\Business.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\Inspectocat.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-v26\splashscreenanimatedicon.xml" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable\splashscreenanimatedicon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\splashscreenanimatedicon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\splashscreenanimatedicon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night\splashscreenanimatedicon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night-hdpi\splashscreenanimatedicon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xhdpi\splashscreenanimatedicon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxhdpi\splashscreenanimatedicon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxxhdpi\splashscreenanimatedicon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\splashscreenanimatedicon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\splashscreenanimatedicon.png" />
-    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\layout\Tabbar.axml"/>
+    <AndroidResource Include="Platforms\Android\Resources\layout\Toolbar.axml"/>
+    <AndroidResource Include="Platforms\Android\Resources\values\styles.xml"/>
+    <AndroidResource Include="Platforms\Android\Resources\values\colors.xml"/>
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-anydpi-v26\icon.xml"/>
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-anydpi-v26\icon_round.xml"/>
+    <AndroidResource Include="Platforms\Android\Resources\xml\auto_backup_rules.xml"/>
+    <AndroidResource Include="Platforms\Android\Resources\menu\MainMenu.xml"/>
+    <AndroidResource Include="Platforms\Android\Resources\values-night\styles.xml"/>
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-hdpi\icon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-hdpi\launcher_foreground.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-mdpi\icon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-mdpi\launcher_foreground.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-xhdpi\icon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-xhdpi\launcher_foreground.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-xxhdpi\icon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-xxhdpi\launcher_foreground.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-xxxhdpi\icon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-xxxhdpi\launcher_foreground.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable\splash_screen.xml"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable\GitTrends.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\values-night\colors.xml"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\GitTrends.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night\GitTrends.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-hdpi\GitTrends.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xhdpi\GitTrends.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxhdpi\GitTrends.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxxhdpi\GitTrends.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\GitTrends.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\GitTrends.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\GitTrends.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable\icon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable\DefaultProfileImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\DefaultProfileImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\DefaultProfileImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\DefaultProfileImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\DefaultProfileImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night\DefaultProfileImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-hdpi\DefaultProfileImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xhdpi\DefaultProfileImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxhdpi\DefaultProfileImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxxhdpi\DefaultProfileImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\ReferringSitesIcon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable\ReferringSitesIcon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\ReferringSitesIcon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\ReferringSitesIcon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\ReferringSitesIcon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable\NotificationsOnboarding.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\NotificationsOnboarding.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\NotificationsOnboarding.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\NotificationsOnboarding.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\NotificationsOnboarding.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable\GitTrendsWhite.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\GitTrendsWhite.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\GitTrendsWhite.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\GitTrendsWhite.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\GitTrendsWhite.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable\ConnectToGitHubOnboarding.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\ConnectToGitHubOnboarding.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\ConnectToGitHubOnboarding.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\ConnectToGitHubOnboarding.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\ConnectToGitHubOnboarding.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable\GitTrendsGreen.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\GitTrendsGreen.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\GitTrendsGreen.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\GitTrendsGreen.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\GitTrendsGreen.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable\DefaultProfileImageGreen.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\DefaultProfileImageGreen.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable\WelcomeImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\WelcomeImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\WelcomeImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\WelcomeImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\WelcomeImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable\DefaultProfileImageWhite.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\DefaultProfileImageWhite.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\DefaultProfileImageWhite.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\DefaultProfileImageWhite.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\DefaultProfileImageWhite.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\DefaultReferringSiteImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\DefaultReferringSiteImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\DefaultReferringSiteImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\DefaultReferringSiteImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\DefaultReferringSiteImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\DefaultReferringSiteImage.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyRepositoriesList.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyRepositoriesList.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyRepositoriesList.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyRepositoriesList.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyRepositoriesList.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyRepositoriesList.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyReferringSitesList.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyReferringSitesList.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyReferringSitesList.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyReferringSitesList.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyReferringSitesList.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyReferringSitesList.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\values\sizes.xml"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyTrafficChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyTrafficChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyTrafficChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyTrafficChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyTrafficChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyTrafficChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyStarChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyStarChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyStarChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyStarChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyStarChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyStarChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyOneStarChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyOneStarChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyOneStarChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyOneStarChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyOneStarChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyOneStarChart.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\Business.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\Inspectocat.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\Business.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\Inspectocat.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\Business.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\Inspectocat.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\Business.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\Inspectocat.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\Business.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\Inspectocat.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\Business.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\Inspectocat.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-v26\splashscreenanimatedicon.xml"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable\splashscreenanimatedicon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\splashscreenanimatedicon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\splashscreenanimatedicon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night\splashscreenanimatedicon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-hdpi\splashscreenanimatedicon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xhdpi\splashscreenanimatedicon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxhdpi\splashscreenanimatedicon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxxhdpi\splashscreenanimatedicon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\splashscreenanimatedicon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\splashscreenanimatedicon.png"/>
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\splashscreenanimatedicon.png"/>
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
-    <BundleResource Include="Platforms\iOS\PrivacyInfo.xcprivacy" LogicalName="PrivacyInfo.xcprivacy" />
+    <BundleResource Include="Platforms\iOS\PrivacyInfo.xcprivacy" LogicalName="PrivacyInfo.xcprivacy"/>
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-    <BundleResource Include="Platforms\MacCatalyst\PrivacyInfo.xcprivacy" LogicalName="PrivacyInfo.xcprivacy" />
+    <BundleResource Include="Platforms\MacCatalyst\PrivacyInfo.xcprivacy" LogicalName="PrivacyInfo.xcprivacy"/>
   </ItemGroup>
 
 </Project>
