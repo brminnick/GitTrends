@@ -109,15 +109,10 @@ partial class MauiProgram
 					toolBar.Title = pageTitle;
 					toolBar.InflateMenu(ResourceConstant.Menu.MainMenu);
 
-					var temp = toolBar.Menu?.FindItem(ResourceConstant.Id.ActionSearch)?.ActionView;
 					
 					if (toolBar.Menu?.FindItem(ResourceConstant.Id.ActionSearch)?.ActionView is SearchView searchView)
 					{
 						searchView.QueryTextChange += HandleQueryTextChange;
-						// searchView.set
-						// searchView.SetImeOptions(ImeAction.Search);
-						// searchView.SetInputType(InputTypes.TextVariationFilter);
-						// searchView.SetMaxWidth(int.MaxValue); //Set to full width - http://stackoverflow.com/questions/31456102/searchview-doesnt-expand-full-width
 					}
 				}
 			}
