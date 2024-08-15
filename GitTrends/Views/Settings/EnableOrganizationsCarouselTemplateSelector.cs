@@ -19,10 +19,10 @@ class EnableOrganizationsCarouselTemplateSelector(IDeviceInfo deviceInfo) : Data
 		{
 			Children =
 			{
-				includeOrganizationsModel.Url is not null
+				includeOrganizationsModel.VideoSource is not null
 					? new MediaElement
 						{
-							Source = MediaSource.FromResource(VideoConstants.ChartVideoFileName),
+							Source = MediaSource.FromResource(includeOrganizationsModel.VideoSource),
 							Background = null,
 							ShouldAutoPlay = true,
 							ShouldShowPlaybackControls = false,
