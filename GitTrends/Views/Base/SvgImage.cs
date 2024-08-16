@@ -63,8 +63,12 @@ public class SvgImage : Image
 	{
 		if (e.PropertyName == SourceProperty.PropertyName)
 		{
-			if (_deviceInfo.Platform == DevicePlatform.iOS && Source is IFileImageSource fileImageSource)
+			if (_deviceInfo.Platform == DevicePlatform.iOS
+				&& Source is IFileImageSource fileImageSource
+				&& Path.GetExtension(fileImageSource.File).Trim().Equals(".svg", StringComparison.OrdinalIgnoreCase))
+			{
 				Source = Path.ChangeExtension(fileImageSource.File, ".png");
+			}
 		}
 	}
 }
