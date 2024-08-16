@@ -16,7 +16,7 @@ abstract class BaseTrendsChart : SfCartesianChart
 
 		AutomationId = automationId;
 
-		Margin = new Thickness(0, 24, 0, 4);
+		Margin = new Thickness(0, 4, 0, 4);
 
 		BackgroundColor = Colors.Transparent;
 

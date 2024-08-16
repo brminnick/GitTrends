@@ -23,7 +23,7 @@ abstract class BaseTrendsDataTemplate(
 		TrendsPageType trendsPageType,
 		Func<Layout> createHeaderView, 
 		Func<BaseChartView> createChartView,
-		Func<EmptyDataView> createEmptyDataView) => new Grid()
+		Func<EmptyDataView> createEmptyDataView) => new Grid
 	{
 		ColumnSpacing = 8,
 		RowSpacing = 12,

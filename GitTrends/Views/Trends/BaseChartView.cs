@@ -12,7 +12,7 @@ abstract class BaseChartView : MaterialFrame
 		Content = trendsChart;
 
 		Margin = new Thickness(16, 0);
-		Padding = new Thickness(4, 8, 4, 4);
+		Padding = new Thickness(0, 8, 4, 4);
 
 		this.DynamicResource(MaterialThemeProperty, nameof(BaseTheme.MaterialFrameTheme));
 	}
