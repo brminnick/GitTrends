@@ -80,18 +80,18 @@ class StatisticsCard : MaterialFrame
 			
 			Children.Add(new RepositoryStatSVGImage(svgImage, svgColorTheme, deviceInfo).Assign(out _svgImage)
 				.Row(Row.Title).Column(Column.Icon).RowSpan(2)
-				.Bind<SvgImage, bool, Color>(SvgImage.SvgColorProperty, 
+				.Bind<SvgImage, bool, Func<Color>>(SvgImage.GetSvgColorProperty, 
 					nameof(IsSeriesVisible), 
 					convert: convertIsSeriesVisible, 
 					source: statisticsCard));
 
-			Color convertIsSeriesVisible(bool isVisible) => isVisible ? _svgImage.DefaultColor : Colors.Gray;
+			Func<Color> convertIsSeriesVisible(bool isVisible) => isVisible ? () => _svgImage.DefaultColor : () => Colors.Gray;
 		}
 
 		sealed class RepositoryStatSVGImage : SvgImage
 		{
 			public RepositoryStatSVGImage(in string svgFileName, string baseThemeColor, in IDeviceInfo deviceInfo)
-				: base(deviceInfo, svgFileName, AppResources.GetResource<Color>(baseThemeColor), 32, 32)
+				: base(deviceInfo, svgFileName, () => AppResources.GetResource<Color>(baseThemeColor), 32, 32)
 			{
 				VerticalOptions = LayoutOptions.Center;
 				HorizontalOptions = LayoutOptions.End;

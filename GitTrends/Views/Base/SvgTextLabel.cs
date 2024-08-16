@@ -20,7 +20,7 @@ class SvgTextLabel : Border
 			Spacing = logoTextSpacing,
 			Children =
 			{
-				new SvgImage(deviceInfo, svgFileName, Colors.White),
+				new SvgImage(deviceInfo, svgFileName, () => Colors.White),
 				new TextLabel(text, fontSize,fontFamily)
 			}
 		};

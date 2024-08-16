@@ -79,7 +79,7 @@ class StarsStatisticsGrid : Grid
 
 	sealed class StarSvg : SvgImage
 	{
-		public StarSvg(in IDeviceInfo deviceInfo) : base(deviceInfo, "star.svg", Colors.White, 44, 44)
+		public StarSvg(in IDeviceInfo deviceInfo) : base(deviceInfo, "star.svg", () => Colors.White, 44, 44)
 		{
 			this.Center();
 		}

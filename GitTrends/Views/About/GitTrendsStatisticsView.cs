@@ -59,7 +59,7 @@ class GitTrendsStatisticsView : HorizontalStackLayout
 
 			sealed class AboutPageSvgImage : SvgImage
 			{
-				public AboutPageSvgImage(in IDeviceInfo deviceInfo, in string svgFileName, in Color textColor) : base(deviceInfo, svgFileName, textColor, 12, 12)
+				public AboutPageSvgImage(in IDeviceInfo deviceInfo, in string svgFileName, Color textColor) : base(deviceInfo, svgFileName, () => textColor, 12, 12)
 				{
 					HorizontalOptions = LayoutOptions.End;
 					VerticalOptions = LayoutOptions.Center;

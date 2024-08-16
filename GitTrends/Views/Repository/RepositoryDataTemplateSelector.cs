@@ -256,7 +256,7 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 	sealed class StatisticsSvgImage : SvgImage
 	{		
 		public StatisticsSvgImage(IDeviceInfo deviceInfo, string fileName, string baseThemeColor)
-			: base(deviceInfo, fileName, AppResources.GetResource<Color>(baseThemeColor), 14, 14)
+			: base(deviceInfo, fileName, () => AppResources.GetResource<Color>(baseThemeColor), 14, 14)
 		{
 			VerticalOptions = LayoutOptions.Center;
 			HorizontalOptions = LayoutOptions.Center;

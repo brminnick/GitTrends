@@ -99,9 +99,8 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 							new Separator()
 								.Row(SettingsRow.LoginSeparator).ColumnSpan(All<SettingsColumn>()),
 
-							new SvgImage(deviceInfo, "organization.svg", AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
-								.Row(SettingsRow.Organizations).Column(SettingsColumn.Icon)
-								.DynamicResource(SvgImage.SvgColorProperty, nameof(BaseTheme.IconColor)),
+							new SvgImage(deviceInfo, "organization.svg", () => AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
+								.Row(SettingsRow.Organizations).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.IncludeOrganizationsSwitch)
 								.Row(SettingsRow.Organizations).Column(SettingsColumn.Title)
 								.Bind(Label.TextProperty, nameof(SettingsViewModel.ShouldIncludeOrganizationsLabelText)),
@@ -109,7 +108,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 								.Row(SettingsRow.Organizations).Column(SettingsColumn.Button),
 							new Separator()
 								.Row(SettingsRow.OrganizationsSeparator).ColumnSpan(All<SettingsColumn>()),
-							new SvgImage(deviceInfo, "bell.svg", AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
+							new SvgImage(deviceInfo, "bell.svg", () => AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
 								.Row(SettingsRow.Notifications).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.RegisterForNotificationsTitleLabel)
 								.Row(SettingsRow.Notifications).Column(SettingsColumn.Title)
@@ -118,9 +117,8 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 								.Row(SettingsRow.Notifications).Column(SettingsColumn.Button),
 							new Separator()
 								.Row(SettingsRow.NotificationsSeparator).ColumnSpan(All<SettingsColumn>()),
-							new SvgImage(deviceInfo, "theme.svg", AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
-								.Row(SettingsRow.Theme).Column(SettingsColumn.Icon)
-								.DynamicResource(SvgImage.SvgColorProperty, nameof(BaseTheme.IconColor)),
+							new SvgImage(deviceInfo, "theme.svg", () => AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
+								.Row(SettingsRow.Theme).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.ThemeTitleLabel)
 								.Row(SettingsRow.Theme).Column(SettingsColumn.Title)
 								.Bind(Label.TextProperty, nameof(SettingsViewModel.ThemeLabelText)),
@@ -132,9 +130,8 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 							new Separator()
 								.Row(SettingsRow.ThemeSeparator).ColumnSpan(All<SettingsColumn>()),
 							
-							new SvgImage(deviceInfo, "language.svg", AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
-								.Row(SettingsRow.Language).Column(SettingsColumn.Icon)
-								.DynamicResource(SvgImage.SvgColorProperty, nameof(BaseTheme.IconColor)),
+							new SvgImage(deviceInfo, "language.svg", () => AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
+								.Row(SettingsRow.Language).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.LanguageTitleLabel)
 								.Row(SettingsRow.Language).Column(SettingsColumn.Title)
 								.Bind(Label.TextProperty, nameof(SettingsViewModel.LanguageLabelText)),
@@ -144,9 +141,8 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 								.Bind(Picker.SelectedIndexProperty, nameof(SettingsViewModel.LanguagePickerSelectedIndex)),
 							new Separator()
 								.Row(SettingsRow.LanguageSeparator).ColumnSpan(All<SettingsColumn>()),
-							new SvgImage(deviceInfo, "chart.svg", AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
-								.Row(SettingsRow.PreferredCharts).Column(SettingsColumn.Icon)
-								.DynamicResource(SvgImage.SvgColorProperty, nameof(BaseTheme.IconColor)),
+							new SvgImage(deviceInfo, "chart.svg", () => AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
+								.Row(SettingsRow.PreferredCharts).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.PreferredChartTitleLabel)
 								.Row(SettingsRow.PreferredCharts).Column(SettingsColumn.Title)
 								.Bind(Label.TextProperty, nameof(SettingsViewModel.PreferredChartsLabelText)),
@@ -235,12 +231,10 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 
 	sealed class LoginRowSvg : SvgImage, ILoginRowView
 	{
-		public LoginRowSvg(in IDeviceInfo deviceInfo, in string svgFileName) : base(deviceInfo, svgFileName, AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
+		public LoginRowSvg(in IDeviceInfo deviceInfo, in string svgFileName) : base(deviceInfo, svgFileName, () => AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
 		{
 			//Allow LoginRowTappableView to handle taps
 			InputTransparent = true;
-
-			this.DynamicResource(SvgImage.SvgColorProperty, nameof(BaseTheme.IconColor));
 		}
 	}
 
@@ -271,13 +265,11 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 
 	sealed class AboutRowSvg : SvgImage
 	{
-		public AboutRowSvg(in IDeviceInfo deviceInfo, in string svgFileName) : base(deviceInfo, svgFileName, AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
+		public AboutRowSvg(in IDeviceInfo deviceInfo, in string svgFileName) : base(deviceInfo, svgFileName, () => AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
 		{
 			//Allow AboutRowTappableView to handle taps
 			InputTransparent = true;
 			AutomationId = SettingsPageAutomationIds.AboutButton;
-
-			this.DynamicResource(SvgImage.SvgColorProperty, nameof(BaseTheme.IconColor));
 		}
 	}
 

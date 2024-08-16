@@ -246,14 +246,12 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 							mode: BindingMode.OneTime,
 							convert: static isTrending => isTrending ? "trending_tag.svg" : "favorite_tag.svg");
 
-						// this.DynamicResource(SvgImage.SvgColorProperty, nameof(BaseTheme.CardStarsStatsIconColor));
-
-						this.Bind(SvgColorProperty,
+						this.Bind(GetSvgColorProperty,
 							getter: (Repository repository) => repository.IsFavorite,
 							mode: BindingMode.OneTime,
 							convert: static isFavorite => isFavorite is true
-								? AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor))
-								: AppResources.GetResource<Color>(nameof(BaseTheme.CardTrendingStatsColor)));
+								? (Func<Color>)(() => AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor)))
+								: (Func<Color>)(() => AppResources.GetResource<Color>(nameof(BaseTheme.CardTrendingStatsColor))));
 					}
 				}
 
@@ -284,7 +282,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 			LineBreakMode = LineBreakMode.TailTruncation;
 
 			Padding = new Thickness(2, 0, 0, 0);
-			
+
 			this.DynamicResource(TextColorProperty, textColorThemeName);
 		}
 	}
