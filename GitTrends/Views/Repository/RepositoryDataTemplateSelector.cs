@@ -267,9 +267,9 @@ class RepositoryDataTemplateSelector(in IDeviceInfo deviceInfo, in MobileSorting
 	{
 		public StatisticsActivityIndicator()
 		{
+			Margin = 2;
+			
 			IsRunning = true;
-
-			Scale = 0.67;
 
 			HorizontalOptions = LayoutOptions.Start;
 			VerticalOptions = LayoutOptions.Center;
