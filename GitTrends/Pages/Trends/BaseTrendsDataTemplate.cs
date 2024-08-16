@@ -71,6 +71,8 @@ abstract class BaseTrendsDataTemplate(
 
 			IsEnabled = false;
 
+			InputTransparent = true;
+
 			SelectedIndicatorColor = indicatorColor;
 			IndicatorColor = Color.FromArgb("#BFBFBF");
 			AutomationId = TrendsPageAutomationIds.IndicatorView;
