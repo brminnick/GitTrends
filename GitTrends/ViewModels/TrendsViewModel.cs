@@ -42,28 +42,28 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 	ImageSource? _starsEmptyDataViewImage, _viewsClonesEmptyDataViewImage;
 
 	[ObservableProperty, NotifyPropertyChangedFor(nameof(IsViewsClonesChartVisible)), NotifyPropertyChangedFor(nameof(IsViewsClonesEmptyDataViewVisible)),
-		NotifyPropertyChangedFor(nameof(DailyViewsClonesMaxValue)), NotifyPropertyChangedFor(nameof(DailyViewsClonesMaxValue)), NotifyPropertyChangedFor(nameof(MinViewsClonesDate)),
-		NotifyPropertyChangedFor(nameof(MaxViewsClonesDate)), NotifyPropertyChangedFor(nameof(ViewsClonesChartYAxisInterval))]
+	 NotifyPropertyChangedFor(nameof(DailyViewsClonesMaxValue)), NotifyPropertyChangedFor(nameof(DailyViewsClonesMaxValue)), NotifyPropertyChangedFor(nameof(MinViewsClonesDate)),
+	 NotifyPropertyChangedFor(nameof(MaxViewsClonesDate)), NotifyPropertyChangedFor(nameof(ViewsClonesChartYAxisInterval))]
 	IReadOnlyList<DailyViewsModel> _dailyViewsList = [];
 
 	[ObservableProperty, NotifyPropertyChangedFor(nameof(IsViewsClonesChartVisible)), NotifyPropertyChangedFor(nameof(IsViewsClonesEmptyDataViewVisible)),
-		NotifyPropertyChangedFor(nameof(DailyViewsClonesMaxValue)), NotifyPropertyChangedFor(nameof(DailyViewsClonesMinValue)), NotifyPropertyChangedFor(nameof(MinViewsClonesDate)),
-		NotifyPropertyChangedFor(nameof(MaxViewsClonesDate)), NotifyPropertyChangedFor(nameof(ViewsClonesChartYAxisInterval))]
+	 NotifyPropertyChangedFor(nameof(DailyViewsClonesMaxValue)), NotifyPropertyChangedFor(nameof(DailyViewsClonesMinValue)), NotifyPropertyChangedFor(nameof(MinViewsClonesDate)),
+	 NotifyPropertyChangedFor(nameof(MaxViewsClonesDate)), NotifyPropertyChangedFor(nameof(ViewsClonesChartYAxisInterval))]
 	IReadOnlyList<DailyClonesModel> _dailyClonesList = [];
 
 	[ObservableProperty, NotifyPropertyChangedFor(nameof(IsStarsChartVisible)), NotifyPropertyChangedFor(nameof(IsStarsEmptyDataViewVisible)),
-		NotifyPropertyChangedFor(nameof(MaxDailyStarsValue)), NotifyPropertyChangedFor(nameof(MinDailyStarsValue)), NotifyPropertyChangedFor(nameof(MaxDailyStarsDate)),
-		NotifyPropertyChangedFor(nameof(MinDailyStarsDate)), NotifyPropertyChangedFor(nameof(TotalStars)), NotifyPropertyChangedFor(nameof(StarsChartYAxisInterval))]
+	 NotifyPropertyChangedFor(nameof(MaxDailyStarsValue)), NotifyPropertyChangedFor(nameof(MinDailyStarsValue)), NotifyPropertyChangedFor(nameof(MaxDailyStarsDate)),
+	 NotifyPropertyChangedFor(nameof(MinDailyStarsDate)), NotifyPropertyChangedFor(nameof(TotalStars)), NotifyPropertyChangedFor(nameof(StarsChartYAxisInterval))]
 	IReadOnlyList<DailyStarsModel> _dailyStarsList = [];
 
 	public TrendsViewModel(IDispatcher dispatcher,
-							IAnalyticsService analyticsService,
-							RepositoryDatabase repositoryDatabase,
-							GitHubApiV3Service gitHubApiV3Service,
-							IGitHubApiStatusService gitHubApiStatusService,
-							BackgroundFetchService backgroundFetchService,
-							GitHubGraphQLApiService gitHubGraphQLApiService,
-							TrendsChartSettingsService trendsChartSettingsService) : base(analyticsService, dispatcher)
+		IAnalyticsService analyticsService,
+		RepositoryDatabase repositoryDatabase,
+		GitHubApiV3Service gitHubApiV3Service,
+		IGitHubApiStatusService gitHubApiStatusService,
+		BackgroundFetchService backgroundFetchService,
+		GitHubGraphQLApiService gitHubGraphQLApiService,
+		TrendsChartSettingsService trendsChartSettingsService) : base(analyticsService, dispatcher)
 	{
 		_gitHubApiV3Service = gitHubApiV3Service;
 		_repositoryDatabase = repositoryDatabase;
@@ -160,7 +160,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 		if (starredAtDates.Any() && starredAtDates.Max().LocalDateTime.DayOfYear != DateTimeOffset.UtcNow.LocalDateTime.DayOfYear)
 			yield return new DailyStarsModel(totalStars, DateTimeOffset.UtcNow);
 	}
-	
+
 	public async Task FetchData(Repository repository, CancellationToken cancellationToken)
 	{
 		var minimumTimeTask = Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
@@ -175,8 +175,8 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 
 			var getGetStarsDataTask = isStarsDataComplete(repository) ? Task.FromResult(repository.StarredAt ?? throw new InvalidOperationException()) : GetStarsData(repository, getGetStarsDataCTS.Token);
 			var getViewsClonesDataTask = isViewsClonesDataComplete(repository)
-											? Task.FromResult((repository.DailyViewsList ?? throw new InvalidOperationException(), repository.DailyClonesList ?? throw new InvalidOperationException()))
-											: GetViewsClonesData(repository, getViewsClonesDataCTS.Token);
+				? Task.FromResult((repository.DailyViewsList ?? throw new InvalidOperationException(), repository.DailyClonesList ?? throw new InvalidOperationException()))
+				: GetViewsClonesData(repository, getViewsClonesDataCTS.Token);
 
 			// Update Views Clones Data first because `GetViewsClonesData` is quicker than `GetStarsData`
 			if (isViewsClonesDataComplete(repository))
@@ -242,10 +242,10 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 			OnRepositorySavedToDatabase(updatedRepository);
 
 			static bool isViewsClonesDataComplete(in Repository repository) => repository.ContainsViewsClonesData
-																				&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.ViewsClonesCacheLifeSpan);
+				&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.ViewsClonesCacheLifeSpan);
 
 			static bool isStarsDataComplete(in Repository repository) => repository.ContainsStarsData
-																			&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan);
+				&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan);
 		}
 		catch (Exception e) when (e is ApiException { StatusCode: HttpStatusCode.Unauthorized })
 		{
@@ -316,13 +316,13 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 		finally
 		{
 			if (!getGetStarsDataCTS.IsCancellationRequested)
-				await getGetStarsDataCTS.CancelAsync();
+				await getGetStarsDataCTS.CancelAsync().ConfigureAwait(false);
 
 			if (!getViewsClonesDataCTS.IsCancellationRequested)
-				await getViewsClonesDataCTS.CancelAsync();
+				await getViewsClonesDataCTS.CancelAsync().ConfigureAwait(false);
 
 			//Display the Activity Indicator for a minimum time to ensure consistent UX
-			await minimumTimeTask.ConfigureAwait(false);
+			await minimumTimeTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding | ConfigureAwaitOptions.None);
 			IsFetchingStarsData = IsFetchingViewsClonesData = false;
 		}
 
@@ -354,7 +354,16 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 		IReadOnlyList<DailyViewsModel> repositoryViews;
 		IReadOnlyList<DailyClonesModel> repositoryClones;
 
-		var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url, token).ConfigureAwait(false);
+		Repository? repositoryFromDatabase = null;
+
+		try
+		{
+			repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url, token).ConfigureAwait(false);
+		}
+		catch (OperationCanceledException e)
+		{
+			AnalyticsService.Report(e);
+		}
 
 		if (repositoryFromDatabase is null)
 		{
@@ -439,7 +448,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 		}
 
 		static bool isFetchingViewsClonesStarsInBackground(BackgroundFetchService backgroundFetchService, Repository repository) =>
-					backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository));
+			backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository));
 
 		async Task<(IReadOnlyList<DateTimeOffset> RepositoryStars, IReadOnlyList<DailyViewsModel> RepositoryViews, IReadOnlyList<DailyClonesModel> RepositoryClones)> getRepositoryViewsClonesStarsFromBackgroundService(Repository repository, CancellationToken cancellationToken)
 		{
@@ -461,8 +470,8 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 				{
 					BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted -= HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
 					backgroundStarsTCS.SetResult((e.StarredAt ?? throw new InvalidOperationException($"{nameof(e.StarredAt)} cannot be null"),
-													e.DailyViewsList ?? throw new InvalidOperationException($"{nameof(e.DailyViewsList)} cannot be null"),
-													e.DailyClonesList ?? throw new InvalidOperationException($"{nameof(e.DailyClonesList)} cannot be null")));
+						e.DailyViewsList ?? throw new InvalidOperationException($"{nameof(e.DailyViewsList)} cannot be null"),
+						e.DailyClonesList ?? throw new InvalidOperationException($"{nameof(e.DailyClonesList)} cannot be null")));
 				}
 			}
 		}
@@ -483,7 +492,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 		foreach (var viewDay in DailyViewsList.Select(static x => x.Day))
 			Trace.WriteLine(viewDay);
 	}
-	
+
 	async void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)
 	{
 		var repository = (Repository)query[RepositoryQueryString];

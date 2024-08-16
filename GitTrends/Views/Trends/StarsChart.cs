@@ -102,14 +102,12 @@ class StarsChart(TrendsViewModel trendsViewModel) : BaseChartView(new StarsTrend
 
 				async void HandleSFChartPropertyChanged(object? sender, PropertyChangedEventArgs e)
 				{
-					if (e.PropertyName is "Renderer")
+					if (e.PropertyName is nameof(SeriesBounds))
 					{
 						PropertyChanged -= HandleSFChartPropertyChanged;
 
 						//Yield to the UI thread to allow the render to finish
-						await Task.Yield();
-
-						await ZoomStarsChart(dailyStarsList);
+						await ZoomStarsChart(dailyStarsList).ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
 					}
 				}
 			}
