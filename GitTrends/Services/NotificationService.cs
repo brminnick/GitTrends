@@ -95,7 +95,7 @@ public class NotificationService
 
 	public Task<bool> AreNotificationsEnabled(CancellationToken token)
 	{
-#if !DEBUG
+#if AppStore
 		#error 
 		throw new NotImplementedException();
 #else
