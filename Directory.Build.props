@@ -6,7 +6,6 @@
     <IsTrimmable>false</IsTrimmable>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
-    <MauiPackageVersion>8.0.70</MauiPackageVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
