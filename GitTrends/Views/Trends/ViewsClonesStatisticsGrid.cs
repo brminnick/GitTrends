@@ -31,10 +31,6 @@ class ViewsClonesStatisticsGrid : Grid
 
 		Children.Add(new StatisticsCard(SortingConstants.Views, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor), TrendsPageAutomationIds.ViewsCard, TrendsPageAutomationIds.ViewsStatisticsLabel, deviceInfo)
 			.Row(Row.ViewsStats).Column(Column.Total)
-			.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, 
-				nameof(TrendsViewModel.IsViewsSeriesVisible), 
-				convert: convertElevation,
-				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
 			.Bind(StatisticsCard.IsSeriesVisibleProperty, 
 				nameof(TrendsViewModel.IsViewsSeriesVisible),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
@@ -46,10 +42,6 @@ class ViewsClonesStatisticsGrid : Grid
 
 		Children.Add(new StatisticsCard(SortingConstants.UniqueViews, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor), TrendsPageAutomationIds.UniqueViewsCard, TrendsPageAutomationIds.UniqueViewsStatisticsLabel, deviceInfo)
 			.Row(Row.ViewsStats).Column(Column.Unique)
-			.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, 
-				nameof(TrendsViewModel.IsUniqueViewsSeriesVisible), 
-				convert: convertElevation,
-				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
 			.Bind(StatisticsCard.IsSeriesVisibleProperty, 
 				nameof(TrendsViewModel.IsUniqueViewsSeriesVisible),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
@@ -61,10 +53,6 @@ class ViewsClonesStatisticsGrid : Grid
 
 		Children.Add(new StatisticsCard(SortingConstants.Clones, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor), TrendsPageAutomationIds.ClonesCard, TrendsPageAutomationIds.ClonesStatisticsLabel, deviceInfo)
 			.Row(Row.ClonesStats).Column(Column.Total)
-			.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, 
-				nameof(TrendsViewModel.IsClonesSeriesVisible), 
-				convert: convertElevation,
-				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
 			.Bind(StatisticsCard.IsSeriesVisibleProperty, 
 				nameof(TrendsViewModel.IsClonesSeriesVisible),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
@@ -76,10 +64,6 @@ class ViewsClonesStatisticsGrid : Grid
 
 		Children.Add(new StatisticsCard(SortingConstants.UniqueClones, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor), TrendsPageAutomationIds.UniqueClonesCard, TrendsPageAutomationIds.UniqueClonesStatisticsLabel, deviceInfo)
 			.Row(Row.ClonesStats).Column(Column.Unique)
-			.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, 
-				nameof(TrendsViewModel.IsUniqueClonesSeriesVisible), 
-				convert: convertElevation,
-				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
 			.Bind(StatisticsCard.IsSeriesVisibleProperty, 
 				nameof(TrendsViewModel.IsUniqueClonesSeriesVisible),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
@@ -88,8 +72,6 @@ class ViewsClonesStatisticsGrid : Grid
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
 			.BindTapGesture(nameof(TrendsViewModel.UniqueClonesCardTappedCommand),
 				commandSource: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
-
-		static double convertElevation(bool isEnabled) => isEnabled ? 4 : 1;
 	}
 
 	enum Row { ViewsStats, ClonesStats, Chart }
