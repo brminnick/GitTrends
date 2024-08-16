@@ -321,7 +321,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 			if (!getViewsClonesDataCTS.IsCancellationRequested)
 				await getViewsClonesDataCTS.CancelAsync();
 
-			//Display the Activity Indicator for a minimum time to ensure consistant UX
+			//Display the Activity Indicator for a minimum time to ensure consistent UX
 			await minimumTimeTask.ConfigureAwait(false);
 			IsFetchingStarsData = IsFetchingViewsClonesData = false;
 		}
