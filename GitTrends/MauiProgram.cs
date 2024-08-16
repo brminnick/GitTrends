@@ -41,7 +41,8 @@ public static partial class MauiProgram
 			.ConfigureSyncfusionCore()
 			.ConfigureFonts(fonts =>
 			{
-				fonts.AddFont("FontAwesome.otf", FontFamilyConstants.FontAwesome);
+				fonts.AddFont("FontAwesome.ttf", FontFamilyConstants.FontAwesome);
+				fonts.AddFont("FontAwesomeSolid.ttf", FontFamilyConstants.FontAwesomeSolid);
 				fonts.AddFont("FontAwesomeBrands.ttf", FontFamilyConstants.FontAwesomeBrands);
 				fonts.AddFont("Roboto-Bold.ttf", FontFamilyConstants.RobotoBold);
 				fonts.AddFont("Roboto-Medium.ttf", FontFamilyConstants.RobotoMedium);

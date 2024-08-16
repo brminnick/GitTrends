@@ -44,14 +44,22 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 			[
 				new SwipeItemView
 					{
-						Content = new SvgImage(deviceInfo, AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor)), 44, 44)
+						Content = new Label()
 							.Margins(right: sidePadding)
-							.Bind(SvgImage.SourceProperty,
+							.Font(size: 32).Center()
+							.Bind(Label.TextProperty,
 								nameof(Repository.IsFavorite),
 								BindingMode.OneTime,
 								convert: static (bool? isFavorite) => isFavorite is true
-									? "star.svg"
-									: "star_outline.svg")
+									? FontAwesomeConstants.StarFilled
+									: FontAwesomeConstants.StarOutline)
+							.Bind(Label.FontFamilyProperty,
+								nameof(Repository.IsFavorite),
+								BindingMode.OneTime,
+								convert: static (bool? isFavorite) => isFavorite is true
+									? FontFamilyConstants.FontAwesomeSolid
+									: FontFamilyConstants.FontAwesome)
+							.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.CardStarsStatsIconColor))
 
 					}.Bind(SwipeItemView.CommandProperty,
 						nameof(RepositoryViewModel.ToggleIsFavoriteCommand),

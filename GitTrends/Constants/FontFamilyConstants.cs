@@ -6,6 +6,7 @@
 		public const string RobotoMedium = "Roboto-Medium";
 		public const string RobotoRegular = "Roboto-Regular";
 		public const string FontAwesomeBrands = "Font Awesome 5 Brands";
-		public const string FontAwesome = "Font Awesome 5 Free";
+		public const string FontAwesome = "Font Awesome 6 Free";
+		public const string FontAwesomeSolid = "Font Awesome 6 Free Solid";
 	}
 }
