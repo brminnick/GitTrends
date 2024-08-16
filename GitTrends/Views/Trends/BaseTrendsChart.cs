@@ -37,8 +37,6 @@ abstract class BaseTrendsChart : SfCartesianChart
 
 	protected abstract void SetPaletteBrushColors();
 
-	protected void HandleThemePreferenceChanged(object? sender, PreferredTheme e) => SetPaletteBrushColors();
-
 	protected Task SetZoom(double primaryAxisStart, double primaryAxisEnd, double secondaryAxisStart, double secondaryAxisEnd) => Dispatcher.DispatchAsync(() =>
 	{
 		_chartZoomPanBehavior.ZoomByRange(PrimaryAxis, primaryAxisStart, primaryAxisEnd);
@@ -58,4 +56,6 @@ abstract class BaseTrendsChart : SfCartesianChart
 			this.DynamicResource(StrokeProperty, colorResource);
 		}
 	}
+	
+	void HandleThemePreferenceChanged(object? sender, PreferredTheme e) => SetPaletteBrushColors();
 }
