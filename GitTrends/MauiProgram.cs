@@ -59,6 +59,10 @@ public static partial class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
+#if ANDROID
+		AndroidX.Emoji2.Text.EmojiCompat.Init(Platform.AppContext);
+#endif
+
 #if ANDROID || IOS || MACCATALYST
 		builder.Services.AddNotifications();
 		builder.Services.AddJob(typeof(BackgroundFetchService));
