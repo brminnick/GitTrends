@@ -194,7 +194,6 @@ public static partial class MauiProgram
 
 	static void ConfigureSentryOptions(in SentryMauiOptions options, in IAppInfo appInfo)
 	{
-		options.Dsn = "https://4e21564ab4374deb8b95da8a25dc2cca@o166840.ingest.us.sentry.io/6568237";
 		options.TracesSampleRate = 1.0;
 		options.IncludeTextInBreadcrumbs = true;
 		options.IncludeTitleInBreadcrumbs = true;
@@ -219,6 +218,7 @@ public static partial class MauiProgram
 		[Conditional("DEBUG")]
 		static void ConfigureDebugSentryOptions(SentryMauiOptions options)
 		{
+			options.Dsn = "https://4e21564ab4374deb8b95da8a25dc2cca@o166840.ingest.us.sentry.io/6568237";
 			options.Debug = true;
 			options.Environment = "DEBUG";
 			options.DiagnosticLevel = SentryLevel.Debug;
@@ -227,12 +227,14 @@ public static partial class MauiProgram
 		[Conditional("RELEASE")]
 		static void ConfigureReleaseSentryOptions(SentryMauiOptions options)
 		{
+			options.Dsn = "https://4e21564ab4374deb8b95da8a25dc2cca@o166840.ingest.us.sentry.io/6568237";
 			options.Environment = "RELEASE";
 		}
 
 		[Conditional("AppStore")]
 		static void ConfigureAppStoreSentryOptions(SentryMauiOptions options)
 		{
+			options.Dsn = "https://8832afb11833071cabf263932c80a10d@o166840.ingest.us.sentry.io/4507805605363712";
 			options.Environment = "AppStore";
 		}
 	}
