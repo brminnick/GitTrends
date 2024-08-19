@@ -7,8 +7,14 @@ public abstract class BaseCarouselViewPage<T> : BaseContentPage<T> where T : Bas
 {
 	protected BaseCarouselViewPage(T viewModel, IAnalyticsService analyticsService) : base(viewModel, analyticsService)
 	{
-		base.Content = new CarouselView();
-		Content.Loop = false;
+		base.Content = new CarouselView
+		{
+			Loop = false,
+			PeekAreaInsets = 0
+		};
+
+		Content.ItemsLayout.SnapPointsAlignment = SnapPointsAlignment.Center;
+		Content.ItemsLayout.SnapPointsType = SnapPointsType.MandatorySingle;
 
 		Content.PropertyChanged += HandleCarouselViewPropertyChanged;
 	}

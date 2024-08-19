@@ -187,13 +187,16 @@ class OrganizationsCarouselOverlay : Grid
 				_analyticsService = analyticsService;
 
 				Loop = false;
+				ItemsLayout.SnapPointsAlignment = SnapPointsAlignment.Center;
+				ItemsLayout.SnapPointsType = SnapPointsType.MandatorySingle;
+				
 				HorizontalScrollBarVisibility = ScrollBarVisibility.Never;
 
-				ItemsSource = new[]
+				ItemsSource = new List<IncludeOrganizationsCarouselModel>(3)
 				{
-					new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.GitHubOrganizationsTitle, ManageOrganizationsConstants.GitHubOrganizationsDescription, 0, "Business", null),
-					new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.GitTrendsAccessTitle, ManageOrganizationsConstants.GitTrendsAccessDescription, 1, "Inspectocat", null),
-					new IncludeOrganizationsCarouselModel(ManageOrganizationsConstants.EnableOrganizationsTitle, ManageOrganizationsConstants.EnableOrganizationsDescription, 2, null, VideoConstants.EnableOrganizationsFileName),
+					new(ManageOrganizationsConstants.GitHubOrganizationsTitle, ManageOrganizationsConstants.GitHubOrganizationsDescription, 0, "Business", null),
+					new(ManageOrganizationsConstants.GitTrendsAccessTitle, ManageOrganizationsConstants.GitTrendsAccessDescription, 1, "Inspectocat", null),
+					new(ManageOrganizationsConstants.EnableOrganizationsTitle, ManageOrganizationsConstants.EnableOrganizationsDescription, 2, null, VideoConstants.EnableOrganizationsFileName),
 				};
 
 				ItemTemplate = new EnableOrganizationsCarouselTemplateSelector(deviceInfo);
@@ -217,9 +220,6 @@ class OrganizationsCarouselOverlay : Grid
 				IsEnabled = false;
 				SelectedIndicatorColor = Colors.White;
 				IndicatorColor = SelectedIndicatorColor.MultiplyAlpha(0.25f);
-
-				WidthRequest = 112;
-				HeightRequest = 50;
 
 				IndicatorSize = 12;
 
