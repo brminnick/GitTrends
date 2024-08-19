@@ -178,18 +178,10 @@ class OrganizationsCarouselOverlay : Grid
 			}
 		}
 
-		sealed class OrganizationsCarouselView : CarouselView
+		sealed class OrganizationsCarouselView : BaseCarouselView
 		{
-			readonly IAnalyticsService _analyticsService;
-
-			public OrganizationsCarouselView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService)
+			public OrganizationsCarouselView(IDeviceInfo deviceInfo, IAnalyticsService analyticsService) : base(analyticsService)
 			{
-				_analyticsService = analyticsService;
-
-				Loop = false;
-				ItemsLayout.SnapPointsAlignment = SnapPointsAlignment.Center;
-				ItemsLayout.SnapPointsType = SnapPointsType.MandatorySingle;
-				
 				HorizontalScrollBarVisibility = ScrollBarVisibility.Never;
 
 				ItemsSource = new List<IncludeOrganizationsCarouselModel>(3)
@@ -206,7 +198,7 @@ class OrganizationsCarouselOverlay : Grid
 			{
 				base.OnPositionChanged(args);
 
-				_analyticsService.Track($"{GetType().Name} Page {args.CurrentPosition} Appeared");
+				AnalyticsService.Track($"{GetType().Name} Page {args.CurrentPosition} Appeared");
 			}
 		}
 
