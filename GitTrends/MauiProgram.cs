@@ -59,6 +59,8 @@ public static partial class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
+		builder.Services.AddLogging();
+
 #if ANDROID
 		AndroidX.Emoji2.Text.EmojiCompat.Init(Platform.AppContext);
 #endif

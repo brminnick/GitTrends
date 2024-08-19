@@ -6,13 +6,11 @@ public interface IAnalyticsService
 {
 	bool Configured { get; }
 
-	void Track(string trackIdentifier, IDictionary<string, string>? table = null);
+	void Track(string trackIdentifier);
+	
+	void Track(string trackIdentifier, IDictionary<string, string>? table);
 
 	void Track(string trackIdentifier, string key, string value);
-
-	ITimedEvent TrackTime(string trackIdentifier, IDictionary<string, string>? table = null);
-
-	ITimedEvent TrackTime(string trackIdentifier, string key, string value);
 
 	void Report(Exception exception,
 					   string key,
@@ -26,9 +24,4 @@ public interface IAnalyticsService
 							  [CallerMemberName] string callerMemberName = "",
 							  [CallerLineNumber] int lineNumber = 0,
 							  [CallerFilePath] string filePath = "");
-}
-
-public interface ITimedEvent : IDisposable
-{
-	IDictionary<string, string> Data { get; }
 }

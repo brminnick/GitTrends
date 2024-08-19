@@ -233,8 +233,6 @@ public class BackgroundFetchService
 			if (delay is not null)
 				await Task.Delay(delay.Value, cancellationToken).ConfigureAwait(false);
 
-			using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesViewsClonesStars)} Executed");
-
 			try
 			{
 				await foreach (var repositoryWithViewsClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(new List<Repository> { repository }, cancellationToken).ConfigureAwait(false))
@@ -266,8 +264,6 @@ public class BackgroundFetchService
 
 			if (delay is not null)
 				await Task.Delay(delay.Value, cancellationToken).ConfigureAwait(false);
-
-			using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleRetryRepositoriesStars)} Executed");
 
 			try
 			{
@@ -322,8 +318,6 @@ public class BackgroundFetchService
 
 		_jobManager.RunTask(CleanUpDatabaseIdentifier, async cancellationToken =>
 		{
-			using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleCleanUpDatabase)} Triggered");
-
 			try
 			{
 				await Task.WhenAll(_referringSitesDatabase.DeleteExpiredData(cancellationToken), _repositoryDatabase.DeleteExpiredData(cancellationToken)).ConfigureAwait(false);
@@ -347,8 +341,6 @@ public class BackgroundFetchService
 		{
 			try
 			{
-				using var timedEvent = _analyticsService.TrackTime($"{nameof(BackgroundFetchService)}.{nameof(ScheduleNotifyTrendingRepositories)} Triggered");
-
 				if (!_gitHubUserService.IsAuthenticated || _gitHubUserService.IsDemoUser)
 				{
 					OnScheduleNotifyTrendingRepositoriesCompleted(false);

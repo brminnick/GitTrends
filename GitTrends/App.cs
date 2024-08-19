@@ -24,15 +24,7 @@ class App : Microsoft.Maui.Controls.Application
 		_notificationService = notificationService;
 		_appInitializationService = appInitializationService;
 
-		analyticsService.Track("App Initialized", new Dictionary<string, string>
-		{
-			{
-				nameof(LanguageService.PreferredLanguage), languageService.PreferredLanguage ?? "default"
-			},
-			{
-				nameof(CultureInfo.CurrentUICulture), CultureInfo.CurrentUICulture.TwoLetterISOLanguageName
-			}
-		});
+		analyticsService.Track("App Initialized");
 
 		MainPage = appShell;
 

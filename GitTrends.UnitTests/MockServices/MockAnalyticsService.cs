@@ -11,7 +11,9 @@ class MockAnalyticsService : IAnalyticsService
 
 	public void Start(string apiKey) => Configured = true;
 
-	public void Track(string trackIdentifier, IDictionary<string, string>? table = null)
+	public void Track(string trackIdentifier) => Track(trackIdentifier, null);
+
+	public void Track(string trackIdentifier, IDictionary<string, string>? table)
 	{
 		PrintHeader();
 		Trace.WriteLine(trackIdentifier);
@@ -24,11 +26,6 @@ class MockAnalyticsService : IAnalyticsService
 	}
 
 	public void Track(string trackIdentifier, string key, string value) => Track(trackIdentifier, new Dictionary<string, string> { { key, value } });
-
-	public ITimedEvent TrackTime(string trackIdentifier, IDictionary<string, string>? table = null) => new TimedEvent(this, trackIdentifier, table);
-
-	public ITimedEvent TrackTime(string trackIdentifier, string key, string value) =>
-		TrackTime(trackIdentifier, new Dictionary<string, string> { { key, value } });
 
 	public void Report(Exception exception,
 		string key,
