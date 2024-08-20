@@ -34,8 +34,7 @@ class OrganizationsCarouselOverlay : Grid
 
 		Children.Add(new CloseButton(() => Dismiss(true), analyticsService)
 			.Row(Row.CloseButton).Column(Column.Right));
-
-
+		
 		Children.Add(new OrganizationsCarouselFrame(deviceInfo, analyticsService)
 			.Row(Row.CarouselFrame).Column(Column.Center));
 
@@ -191,7 +190,7 @@ class OrganizationsCarouselOverlay : Grid
 					new(ManageOrganizationsConstants.EnableOrganizationsTitle, ManageOrganizationsConstants.EnableOrganizationsDescription, 2, null, VideoConstants.EnableOrganizationsFileName),
 				};
 
-				ItemTemplate = new EnableOrganizationsCarouselTemplateSelector(deviceInfo);
+				ItemTemplate = new EnableOrganizationsCarouselTemplate(deviceInfo, this);
 			}
 
 			protected override void OnPositionChanged(PositionChangedEventArgs args)
