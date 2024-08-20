@@ -72,12 +72,10 @@ jobs:
           jdkArchitectureOption: 'x64'
           jdkSourceOption: 'PreInstalled'
 
-      - task: VSBuild@1
-        displayName: 'Build MAUI App'
+      - task: CmdLine@2
+        displayName: 'Build GitTrends'
         inputs:
-          solution: '$(PathToGitTrendsCsproj)'
-          configuration: 'Release'
-          msbuildArgs: '/restore'
+          script: 'dotnet build $(PathToGitTrendsCsproj) -c Release'
 
   - job: Build_UnitTests
     displayName: Build Unit Tests
@@ -96,6 +94,11 @@ jobs:
         inputs:
           packageType: 'sdk'
           version: '$(NET_CORE_VERSION)'
+
+      - task: CmdLine@2
+        displayName: 'Install Latest .NET MAUI Workload'
+        inputs:
+          script: 'dotnet workload install maui'
 
       - task: VSBuild@1
         displayName: 'Build Unit Tests'
