@@ -22,14 +22,17 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 				.Margin(24, 12).Aspect(Aspect.AspectFit)
 				.Bind(Image.IsVisibleProperty,
 					nameof(IncludeOrganizationsCarouselModel.ImageSource),
-					convert: (ImageSource? source) => source is not null)
+					convert: (ImageSource? source) => source is not null,
+					mode: BindingMode.OneTime)
 				.Bind(Image.SourceProperty,
-					nameof(IncludeOrganizationsCarouselModel.ImageSource)),
+					nameof(IncludeOrganizationsCarouselModel.ImageSource),
+					mode: BindingMode.OneTime),
 
 			new TitleLabel()
 				.Row(EnableOrganizationsGrid.Row.Title)
 				.Bind(Label.TextProperty,
-					nameof(IncludeOrganizationsCarouselModel.Title)),
+					nameof(IncludeOrganizationsCarouselModel.Title),
+					mode: BindingMode.OneTime),
 
 			IsSmallScreen
 				? new ScrollView
@@ -38,12 +41,14 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 					Padding = 0,
 					Content = new DescriptionLabel()
 						.Bind(Label.TextProperty,
-							nameof(IncludeOrganizationsCarouselModel.Text))
+							nameof(IncludeOrganizationsCarouselModel.Text),
+							mode: BindingMode.OneTime)
 				}.Row(EnableOrganizationsGrid.Row.Description)
 				: new DescriptionLabel()
 					.Row(EnableOrganizationsGrid.Row.Description)
 					.Bind(Label.TextProperty,
-						nameof(IncludeOrganizationsCarouselModel.Text)),
+						nameof(IncludeOrganizationsCarouselModel.Text),
+						mode: BindingMode.OneTime),
 
 			new GitHubButton(deviceInfo, SettingsPageAutomationIds.GitHubButton, SettingsPageConstants.ManageOrganizations)
 				{
@@ -53,7 +58,8 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 				.Row(EnableOrganizationsGrid.Row.GitHubButton)
 				.Bind(GitHubButton.CommandProperty,
 					nameof(SettingsViewModel.OpenGitTrendsOrganizationBrowserCommand),
-					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(SettingsViewModel)))
+					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(SettingsViewModel)),
+					mode: BindingMode.OneTime)
 				.Invoke(button =>
 				{
 					organizationsCarouselView.Scrolled += async (s, e) =>
