@@ -26,6 +26,17 @@
     <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'
                                     AND '$(Configuration)' == 'AppStore'">maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers>
   </PropertyGroup>
+  
+  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' AND '$(Configuration)' == 'Debug' ">
+    <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
+    <AndroidDexTool>d8</AndroidDexTool>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' AND '$(Configuration)' != 'Debug' ">
+    <AndroidSupportedAbis>armeabi-v7a;x86;arm64-v8a;x86_64</AndroidSupportedAbis>
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <AndroidLinkTool>r8</AndroidLinkTool>
+  </PropertyGroup>
 
   <ItemGroup>
     <!-- App Icon -->
@@ -81,6 +92,7 @@
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
     <None Remove="Platforms\Android\linker.xml"/>
     <LinkDescription Include="Platforms\Android\linker.xml"/>
+    <AndroidDexTool>d8</AndroidDexTool>
     <ProguardConfiguration Include="Platforms\Android\proguard.cfg"/>
     <AndroidEnvironment Include="Platforms\Android\GarbageCollector.config" />
     <AndroidResource Include="Platforms\Android\Resources\layout\Tabbar.axml"/>
