@@ -1,139 +1,139 @@
 variables:
-  NET_VERSION: '8.0.x'
-  NET_CORE_VERSION: '3.1.x'
-  PathToSolution: 'GitTrends.sln'
-  PathToGitTrendsCsproj: 'GitTrends/GitTrends.csproj'
-  PathToUITestsCsproj: 'GitTrends.UITests/GitTrends.UITests.csproj'
-  PathToUnitTestsCsproj: 'GitTrends.UnitTests/GitTrends.UnitTests.csproj'
-  PathToAzureFunctionsCsproj: 'GitTrends.Functions/GitTrends.Functions.csproj'
-  XcodeVersion: '15.4'
+  NET_VERSION: "8.0.x"
+  NET_CORE_VERSION: "3.1.x"
+  PathToSolution: "GitTrends.sln"
+  PathToGitTrendsCsproj: "GitTrends/GitTrends.csproj"
+  PathToUITestsCsproj: "GitTrends.UITests/GitTrends.UITests.csproj"
+  PathToUnitTestsCsproj: "GitTrends.UnitTests/GitTrends.UnitTests.csproj"
+  PathToAzureFunctionsCsproj: "GitTrends.Functions/GitTrends.Functions.csproj"
+  XcodeVersion: "15.4"
 
 trigger:
   branches:
     include:
-    - main
+      - main
   tags:
     include:
-    - '*'
+      - "*"
   paths:
     exclude:
-    - README.md
+      - README.md
 
 pr:
-  autoCancel: 'true'
+  autoCancel: "true"
   branches:
     include:
-    - main
+      - main
   paths:
     exclude:
-    - README.md
+      - README.md
 
 jobs:
   - job: Build_AzureFunctions
     displayName: Build Azure Functions
-    pool: 
+    pool:
       vmImage: windows-latest
 
-    steps:      
+    steps:
       - task: UseDotNet@2
-        displayName: 'Install Latest .NET SDK'
+        displayName: "Install Latest .NET SDK"
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_VERSION)'
+          packageType: "sdk"
+          version: "$(NET_VERSION)"
 
       - task: VSBuild@1
-        displayName: 'Build Azure Functions'
+        displayName: "Build Azure Functions"
         inputs:
-          solution: '$(PathToAzureFunctionsCsproj)'
-          configuration: 'Release'
-          msbuildArgs: '/restore'
+          solution: "$(PathToAzureFunctionsCsproj)"
+          configuration: "Release"
+          msbuildArgs: "/restore"
 
   - job: Build_MAUI_App
     displayName: Build .NET MAUI App
-    pool: 
+    pool:
       vmImage: macos-latest
 
-    steps:      
+    steps:
       - task: UseDotNet@2
-        displayName: 'Install Latest .NET SDK'
+        displayName: "Install Latest .NET SDK"
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_VERSION)'
+          packageType: "sdk"
+          version: "$(NET_VERSION)"
 
       - task: CmdLine@2
-        displayName: 'Install Latest .NET MAUI Workload'
+        displayName: "Install Latest .NET MAUI Workload"
         inputs:
-          script: 'dotnet workload install maui'
+          script: "dotnet workload install maui"
 
       - task: JavaToolInstaller@0
-        displayName: 'Install Java'
+        displayName: "Install Java"
         inputs:
-          versionSpec: '11'
-          jdkArchitectureOption: 'x64'
-          jdkSourceOption: 'PreInstalled'
+          versionSpec: "11"
+          jdkArchitectureOption: "x64"
+          jdkSourceOption: "PreInstalled"
 
       - task: CmdLine@2
-        displayName: 'Build GitTrends'
+        displayName: "Build GitTrends"
         inputs:
-          script: 'dotnet build $(PathToGitTrendsCsproj) -c Release'
+          script: "dotnet build $(PathToGitTrendsCsproj) -c Release"
 
   - job: Build_UnitTests
     displayName: Build Unit Tests
-    pool: 
+    pool:
       vmImage: windows-latest
 
-    steps:      
+    steps:
       - task: UseDotNet@2
-        displayName: 'Install Latest .NET SDK'
+        displayName: "Install Latest .NET SDK"
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_VERSION)'
+          packageType: "sdk"
+          version: "$(NET_VERSION)"
 
       - task: UseDotNet@2
-        displayName: 'Install $(NET_CORE_VERSION)'
+        displayName: "Install $(NET_CORE_VERSION)"
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_CORE_VERSION)'
+          packageType: "sdk"
+          version: "$(NET_CORE_VERSION)"
 
       - task: CmdLine@2
-        displayName: 'Install Latest .NET MAUI Workload'
+        displayName: "Install Latest .NET MAUI Workload"
         inputs:
-          script: 'dotnet workload install maui'
+          script: "dotnet workload install maui"
 
       - task: VSBuild@1
-        displayName: 'Build Unit Tests'
+        displayName: "Build Unit Tests"
         inputs:
-          solution: '$(PathToUnitTestsCsproj)'
-          configuration: 'Release'
-          msbuildArgs: '/restore'
+          solution: "$(PathToUnitTestsCsproj)"
+          configuration: "Release"
+          msbuildArgs: "/restore"
 
   - job: Run_UnitTests
     displayName: Run Unit Tests
     dependsOn: [Build_UnitTests, Build_MAUI_App]
-    pool: 
+    pool:
       vmImage: macos-14
 
-    steps:      
+    steps:
       - task: CmdLine@2
-        displayName: 'Set Xcode v$(XcodeVersion)'
+        displayName: "Set Xcode v$(XcodeVersion)"
         condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
         inputs:
           script: echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_$(XcodeVersion).app;sudo xcode-select --switch /Applications/Xcode_$(XcodeVersion).app/Contents/Developer
 
       - task: UseDotNet@2
-        displayName: 'Install Latest .NET SDK'
+        displayName: "Install Latest .NET SDK"
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_VERSION)'
+          packageType: "sdk"
+          version: "$(NET_VERSION)"
 
       - task: UseDotNet@2
-        displayName: 'Install .NET Core 3.1 SDK'
+        displayName: "Install .NET Core 3.1 SDK"
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_CORE_VERSION)'
+          packageType: "sdk"
+          version: "$(NET_CORE_VERSION)"
 
       - task: CmdLine@2
-        displayName: 'Inject API Keys'
+        displayName: "Inject API Keys"
         inputs:
           script: |
             set -e
@@ -148,6 +148,6 @@ jobs:
             sed -i '' "s/#error Missing API Keys/\/\/#error Missing API Keys/g" "$AzureConstantsFile"
 
       - task: CmdLine@2
-        displayName: 'Run Unit Tests'
+        displayName: "Run Unit Tests"
         inputs:
-          script: 'dotnet test $(PathToUnitTestsCsproj) -c Release -d detailed'
+          script: "dotnet test $(PathToUnitTestsCsproj) -c Release -d detailed"
