@@ -48,10 +48,10 @@ jobs:
           configuration: 'Release'
           msbuildArgs: '/restore'
 
-  - job: Build_UITests
-    displayName: Build UI Tests
+  - job: Build_MAUI_App
+    displayName: Build .NET MAUI App
     pool: 
-      vmImage: windows-latest
+      vmImage: macos-latest
 
     steps:      
       - task: UseDotNet@2
@@ -60,55 +60,10 @@ jobs:
           packageType: 'sdk'
           version: '$(NET_VERSION)'
 
-      - task: UseDotNet@2
-        displayName: 'Install .NET Core 3.1 SDK'
+      - task: CmdLine@2
+        displayName: 'Install Latest .NET MAUI Workload'
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_CORE_VERSION)'
-
-      - task: VSBuild@1
-        displayName: 'Build UI Tests'
-        inputs:
-          solution: '$(PathToUITestsCsproj)'
-          configuration: 'Release'
-          msbuildArgs: '/restore'
-
-  - job: Build_iOS_App
-    displayName: Build iOS App
-    pool: 
-      vmImage: windows-latest
-
-    steps:      
-      - task: UseDotNet@2
-        displayName: 'Install Latest .NET SDK'
-        inputs:
-          packageType: 'sdk'
-          version: '$(NET_VERSION)'
-
-      - task: UseDotNet@2
-        displayName: 'Install .NET Core 3.1 SDK'
-        inputs:
-          packageType: 'sdk'
-          version: '$(NET_CORE_VERSION)'
-
-      - task: VSBuild@1
-        displayName: 'Build iOS App'
-        inputs:
-          solution: '$(PathToiOSAppCsproj)'
-          configuration: 'Release'
-          msbuildArgs: '/restore'
-
-  - job: Build_Android_App
-    displayName: Build Android App
-    pool: 
-      vmImage: windows-latest
-
-    steps:      
-      - task: UseDotNet@2
-        displayName: 'Install Latest .NET SDK'
-        inputs:
-          packageType: 'sdk'
-          version: '$(NET_VERSION)'
+          script: 'dotnet workload install maui'
 
       - task: JavaToolInstaller@0
         displayName: 'Install Java'
@@ -117,16 +72,10 @@ jobs:
           jdkArchitectureOption: 'x64'
           jdkSourceOption: 'PreInstalled'
 
-      - task: UseDotNet@2
-        displayName: 'Install .NET Core 3.1 SDK'
-        inputs:
-          packageType: 'sdk'
-          version: '$(NET_CORE_VERSION)'
-
       - task: VSBuild@1
-        displayName: 'Build Android App'
+        displayName: 'Build MAUI App'
         inputs:
-          solution: '$(PathToAndroidAppCsproj)'
+          solution: '$(PathToGitTrendsCsproj)'
           configuration: 'Release'
           msbuildArgs: '/restore'
 
@@ -143,7 +92,7 @@ jobs:
           version: '$(NET_VERSION)'
 
       - task: UseDotNet@2
-        displayName: 'Install .NET Core 3.1 SDK'
+        displayName: 'Install $(NET_CORE_VERSION)''
         inputs:
           packageType: 'sdk'
           version: '$(NET_CORE_VERSION)'
@@ -157,7 +106,7 @@ jobs:
 
   - job: Run_UnitTests
     displayName: Run Unit Tests
-    dependsOn: [Build_UnitTests, Build_Android_App, Build_iOS_App, Build_UITests]
+    dependsOn: [Build_UnitTests, Build_MAUI_App]
     pool: 
       vmImage: macos-14
 
