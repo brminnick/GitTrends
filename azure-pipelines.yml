@@ -92,7 +92,7 @@ jobs:
           version: '$(NET_VERSION)'
 
       - task: UseDotNet@2
-        displayName: 'Install $(NET_CORE_VERSION)''
+        displayName: 'Install $(NET_CORE_VERSION)'
         inputs:
           packageType: 'sdk'
           version: '$(NET_CORE_VERSION)'
