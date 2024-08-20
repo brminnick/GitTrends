@@ -54,6 +54,13 @@ jobs:
       vmImage: macos-latest
 
     steps:
+
+      - task: CmdLine@2
+        displayName: "Set Xcode v$(XcodeVersion)"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
+        inputs:
+          script: echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_$(XcodeVersion).app;sudo xcode-select --switch /Applications/Xcode_$(XcodeVersion).app/Contents/Developer
+          
       - task: UseDotNet@2
         displayName: "Install Latest .NET SDK"
         inputs:
