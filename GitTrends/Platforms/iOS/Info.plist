@@ -52,6 +52,10 @@
 	<array>
 		<string>com.minnick.GitTrends.NotifyTrendingRepositories</string>
 		<string>com.minnick.GitTrends.CleanUpDatabase</string>
+        <string>com.shiny.job</string>
+        <string>com.shiny.jobpower</string>
+        <string>com.shiny.jobnet</string>
+        <string>com.shiny.jobpowernet</string>
 	</array>
 	<key>CFBundleLocalizations</key>
 	<array>

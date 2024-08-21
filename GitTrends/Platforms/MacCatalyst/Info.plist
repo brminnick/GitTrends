@@ -56,16 +56,13 @@
 	</array>
     <key>BGTaskSchedulerPermittedIdentifiers</key>
     <array>
+        <string>com.minnick.GitTrends.NotifyTrendingRepositories</string>
+        <string>com.minnick.GitTrends.CleanUpDatabase</string>
         <string>com.shiny.job</string>
         <string>com.shiny.jobpower</string>
         <string>com.shiny.jobnet</string>
         <string>com.shiny.jobpowernet</string>
-    </array>  
-	<key>BGTaskSchedulerPermittedIdentifiers</key>
-	<array>
-		<string>com.minnick.GitTrends.NotifyTrendingRepositories</string>
-		<string>com.minnick.GitTrends.CleanUpDatabase</string>
-	</array>
+    </array>
 	<key>CFBundleVersion</key>
 	<string>64</string>
 	<key>CFBundleLocalizations</key>
