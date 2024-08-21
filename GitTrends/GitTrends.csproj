@@ -24,9 +24,10 @@
     <TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">34</TargetPlatformVersion>
 
     <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'
-                                    AND '$(Configuration)' == 'AppStore'">maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers>
+                                    AND '$(Configuration)' == 'AppStore'">maccatalyst-x64;maccatalyst-arm64
+    </RuntimeIdentifiers>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' AND '$(Configuration)' == 'Debug' ">
     <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
     <AndroidDexTool>d8</AndroidDexTool>
@@ -68,33 +69,38 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Maui" Version="9.0.3" />
-    <PackageReference Include="CommunityToolkit.Maui.Markup" Version="4.1.0" />
-    <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.1.0" />
+    <PackageReference Include="CommunityToolkit.Maui" Version="9.0.3"/>
+    <PackageReference Include="CommunityToolkit.Maui.Markup" Version="4.1.0"/>
+    <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.1.0"/>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2"/>
     <PackageReference Include="GitHubApiStatus" Version="3.0.0"/>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.63" />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.8.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.63"/>
+    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.8.0"/>
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0"/>
-    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.80" />
-    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.80" />
+    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.80"/>
+    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.80"/>
     <PackageReference Include="Plugin.StoreReview" Version="6.2.0"/>
-    <PackageReference Include="Refit.HttpClientFactory" Version="7.1.2" />
-    <PackageReference Include="Sentry.Maui" Version="4.10.1" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="7.1.2"/>
+    <PackageReference Include="Sentry.Maui" Version="4.10.1"/>
     <PackageReference Include="Sharpnado.MaterialFrame.Maui" Version="2.0.0"/>
     <PackageReference Include="Shiny.Jobs" Version="3.3.3"/>
     <PackageReference Include="Shiny.Notifications" Version="3.3.3"/>
     <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.8"/>
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172"/>
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.9" />
-    <PackageReference Include="Syncfusion.Maui.Charts" Version="26.1.38" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.9"/>
+    <PackageReference Include="Syncfusion.Maui.Charts" Version="26.1.38"/>
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <PackageReference Include="Xamarin.Firebase.Messaging" Version="124.0.0.1"/>
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
     <None Remove="Platforms\Android\linker.xml"/>
     <LinkDescription Include="Platforms\Android\linker.xml"/>
     <ProguardConfiguration Include="Platforms\Android\proguard.cfg"/>
-    <AndroidEnvironment Include="Platforms\Android\GarbageCollector.config" />
+    <AndroidEnvironment Include="Platforms\Android\GarbageCollector.config"/>
     <AndroidResource Include="Platforms\Android\Resources\layout\Tabbar.axml"/>
     <AndroidResource Include="Platforms\Android\Resources\layout\Toolbar.axml"/>
     <AndroidResource Include="Platforms\Android\Resources\values\styles.xml"/>
@@ -235,6 +241,8 @@
     <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\splashscreenanimatedicon.png"/>
     <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\splashscreenanimatedicon.png"/>
     <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\splashscreenanimatedicon.png"/>
+    <Compile Remove="Services\FirebaseService.android.cs" />
+    <None Include="Services\FirebaseService.android.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">

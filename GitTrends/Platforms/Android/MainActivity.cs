@@ -9,6 +9,7 @@ namespace GitTrends;
 
 [Activity(Label = "GitTrends", Exported = true, Icon = "@mipmap/icon", RoundIcon = "@mipmap/icon_round", Theme = "@style/LaunchTheme", LaunchMode = LaunchMode.SingleTop, MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait)]
 [IntentFilter([Intent.ActionView], Categories = [Intent.CategoryDefault, Intent.CategoryBrowsable], DataSchemes = ["gittrends"])]
+[IntentFilter([Shiny.ShinyNotificationIntents.NotificationClickAction], Categories = ["android.intent.category.DEFAULT"])]
 public class MainActivity : MauiAppCompatActivity
 {
 	protected override void OnCreate(Bundle? savedInstanceState)

@@ -67,7 +67,7 @@ public static partial class MauiProgram
 
 #if ANDROID || IOS || MACCATALYST
 		builder.Services.AddNotifications();
-		builder.Services.AddJob(typeof(BackgroundFetchService));
+		builder.Services.AddJobs();
 		CustomizeHandlers();
 #endif
 

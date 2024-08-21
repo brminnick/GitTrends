@@ -93,14 +93,10 @@ public class NotificationService
 	public static string CreateSingleRepositoryNotificationMessage(in string repositoryName, in string repositoryOwner) => string.Format(NotificationConstants.SingleRepositoryNotificationMessage, repositoryName, repositoryOwner);
 	public static string CreateMultipleRepositoryNotificationMessage(in int count) => string.Format(NotificationConstants.MultipleRepositoryNotificationMessage, count);
 
-	public Task<bool> AreNotificationsEnabled(CancellationToken token)
+	public async Task<bool> AreNotificationsEnabled(CancellationToken token)
 	{
-#if AppStore
-		#error 
-		throw new NotImplementedException();
-#else
-		return Task.FromResult(false);
-#endif
+		var result = await Microsoft.Maui.ApplicationModel.Permissions.CheckStatusAsync<Microsoft.Maui.ApplicationModel.Permissions.PostNotifications>().WaitAsync(token).ConfigureAwait(false);
+		return result is PermissionStatus.Granted or PermissionStatus.Limited;
 	}
 
 	public async ValueTask Initialize(CancellationToken cancellationToken)
@@ -144,7 +140,7 @@ public class NotificationService
 
 	public async Task<NotificationHubInformation> GetNotificationHubInformation(CancellationToken cancellationToken)
 	{
-		var serializedToken = await _secureStorage.GetAsync(_getNotificationHubInformationKey).ConfigureAwait(false);
+		var serializedToken = await _secureStorage.GetAsync(_getNotificationHubInformationKey).WaitAsync(cancellationToken).ConfigureAwait(false);
 
 		if (serializedToken is null)
 			return NotificationHubInformation.Empty;
@@ -316,7 +312,7 @@ public class NotificationService
 		}
 		else
 		{
-			throw new ArgumentOutOfRangeException(nameof(badgeCount), $"{badgeCount} must be greater than zero");
+			throw new ArgumentOutOfRangeException(nameof(badgeCount), @$"{badgeCount} must be greater than zero");
 		}
 	}
 
