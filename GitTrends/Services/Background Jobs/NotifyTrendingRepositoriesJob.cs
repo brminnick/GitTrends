@@ -20,7 +20,7 @@ public class NotifyTrendingRepositoriesJob(
 	readonly RepositoryDatabase _repositoryDatabase = repositoryDatabase;
 	readonly NotificationService _notificationService = notificationService;
 	readonly GitHubGraphQLApiService _gitHubGraphQLApiService = gitHubGraphQlApiService;
-	GitHubApiRepositoriesService _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
+	readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
 
 	public static event EventHandler<bool> JobCompleted
 	{
@@ -34,7 +34,7 @@ public class NotifyTrendingRepositoriesJob(
 		NotifyTrendingRepositoriesIdentifier,
 		typeof(NotifyTrendingRepositoriesJob),
 		shouldRunInForeground,
-		RequiredInternetAccess: InternetAccess.None);
+		RequiredInternetAccess: InternetAccess.Unmetered);
 	
 	public async Task Run(JobInfo jobInfo, CancellationToken cancellationToken)
 	{

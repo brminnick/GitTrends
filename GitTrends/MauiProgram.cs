@@ -68,6 +68,7 @@ public static partial class MauiProgram
 #if ANDROID || IOS || MACCATALYST
 		builder.Services.AddNotifications();
 		builder.Services.AddJob(typeof(CleanDatabaseJob));
+		builder.Services.AddJob(typeof(NotifyTrendingRepositoriesJob));
 		CustomizeHandlers();
 #endif
 
