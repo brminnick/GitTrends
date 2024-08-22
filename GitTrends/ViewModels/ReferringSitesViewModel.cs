@@ -48,7 +48,7 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 		_gitHubAuthenticationService = gitHubAuthenticationService;
 		_gitHubApiRepositoriesService = gitHubApiRepositoriesService;
 
-		BackgroundFetchService.MobileReferringSiteRetrieved += HandleMobileReferringSiteRetrieved;
+		RetryGetReferringSitesJob.MobileReferringSiteRetrieved += HandleMobileReferringSiteRetrieved;
 
 		RefreshState = RefreshState.Uninitialized;
 	}

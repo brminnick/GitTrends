@@ -36,7 +36,7 @@ class RepositoryViewModelTests : BaseTest
 
 		await repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
-		if (backgroundFetchService.QueuedJobs.Any())
+		if (backgroundFetchService.QueuedForegroundJobsList.Any())
 		{
 			var fetchStarsInBackgroundTCSResult = await fetchStarsInBackgroundTCS.Task.ConfigureAwait(false);
 			Assert.That(fetchStarsInBackgroundTCSResult, Is.Not.Empty);
@@ -89,7 +89,7 @@ class RepositoryViewModelTests : BaseTest
 
 		void HandleScheduleRetryRepositoriesStarsCompleted(object? sender, Repository e)
 		{
-			if (!backgroundFetchService.QueuedJobs.Any())
+			if (!backgroundFetchService.QueuedForegroundJobsList.Any())
 			{
 				BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
 			}
@@ -107,7 +107,7 @@ class RepositoryViewModelTests : BaseTest
 
 			repositoriesUpdatedInBackground.Add(e);
 
-			if (!backgroundFetchService.QueuedJobs.Any())
+			if (!backgroundFetchService.QueuedForegroundJobsList.Any())
 			{
 				fetchStarsInBackgroundTCS.SetResult(repositoriesUpdatedInBackground);
 			}

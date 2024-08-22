@@ -35,7 +35,7 @@ public static class DateTimeService
 		if (starCount is 0)
 			return [];
 
-		var incompleteStarredAtList = new List<DateTimeOffset>(repositoryFromDatabase.StarredAt ?? new List<DateTimeOffset> { DateTimeOffset.MinValue });
+		var incompleteStarredAtList = new List<DateTimeOffset>(repositoryFromDatabase.StarredAt ?? [DateTimeOffset.MinValue]);
 		incompleteStarredAtList.Sort();
 
 		var totalMissingTime = DateTimeOffset.UtcNow.Subtract(incompleteStarredAtList.Last());

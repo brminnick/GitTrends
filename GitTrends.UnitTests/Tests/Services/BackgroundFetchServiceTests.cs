@@ -19,7 +19,7 @@ class BackgroundFetchServiceTests : BaseTest
 		{
 			Assert.That(backgroundFetchService.GetRetryGetReferringSitesIdentifier(repository), Is.EqualTo($"{backgroundFetchService.RetryGetReferringSitesIdentifier}.{repository.Url}"));
 			Assert.That(backgroundFetchService.GetRetryRepositoriesStarsIdentifier(repository), Is.EqualTo($"{backgroundFetchService.RetryRepositoriesStarsIdentifier}.{repository.Url}"));
-			Assert.That(backgroundFetchService.GetRetryOrganizationsRepositoriesIdentifier(organizationName), Is.EqualTo($"{backgroundFetchService.RetryOrganizationsReopsitoriesIdentifier}.{organizationName}"));
+			Assert.That(backgroundFetchService.GetRetryOrganizationsRepositoriesIdentifier(organizationName), Is.EqualTo($"{backgroundFetchService.RetryOrganizationsRepositoriesIdentifier}.{organizationName}"));
 			Assert.That(backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository), Is.EqualTo($"{backgroundFetchService.RetryRepositoriesViewsClonesStarsIdentifier}.{repository.Url}"));
 		});
 	}

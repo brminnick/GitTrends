@@ -67,7 +67,7 @@ public static partial class MauiProgram
 
 #if ANDROID || IOS || MACCATALYST
 		builder.Services.AddNotifications();
-		builder.Services.AddJobs();
+		builder.Services.AddJob(typeof(CleanDatabaseJob));
 		CustomizeHandlers();
 #endif
 
@@ -76,6 +76,7 @@ public static partial class MauiProgram
 		RegisterPagesAndViewModels(builder.Services);
 		RegisterHttpClientServices(builder.Services);
 		RegisterServices(builder.Services);
+		RegisterBackgroundJobs(builder.Services);
 
 		return builder.Build();
 	}
@@ -189,6 +190,16 @@ public static partial class MauiProgram
 			});
 
 		static DecompressionMethods GetDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.Brotli;
+	}
+
+	static void RegisterBackgroundJobs(in IServiceCollection services)
+	{
+		services.AddTransient<CleanDatabaseJob>();
+		services.AddTransient<RetryRepositoryStarsJob>();
+		services.AddTransient<RetryGetReferringSitesJob>();
+		services.AddTransient<NotifyTrendingRepositoriesJob>();
+		services.AddTransient<RetryOrganizationsRepositoriesJob>();
+		services.AddTransient<RetryRepositoriesViewsClonesStarsJob>();
 	}
 
 	static IServiceCollection AddTransientWithShellRoute<TPage, TViewModel>(this IServiceCollection services) where TPage : BaseContentPage

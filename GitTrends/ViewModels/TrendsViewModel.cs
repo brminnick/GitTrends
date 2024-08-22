@@ -389,7 +389,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 
 	async Task<IReadOnlyList<DateTimeOffset>> GetStarsData(Repository repository, CancellationToken cancellationToken)
 	{
-		if (isFetchingStarsInBackground(_backgroundFetchService, repository))
+		if (_backgroundFetchService.IsFetchingStarsInBackground(_backgroundFetchService, repository))
 		{
 			return await getRepositoryStarsFromBackgroundService(repository, cancellationToken).ConfigureAwait(false);
 		}
@@ -399,18 +399,15 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 			return getStarGazers.StarredAt.Select(static x => x.StarredAt).ToList();
 		}
 
-		static bool isFetchingStarsInBackground(BackgroundFetchService backgroundFetchService, Repository repository) =>
-			backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesStarsIdentifier(repository));
-
 		async Task<IReadOnlyList<DateTimeOffset>> getRepositoryStarsFromBackgroundService(Repository repository, CancellationToken cancellationToken)
 		{
 			var backgroundStarsTCS = new TaskCompletionSource<IReadOnlyList<DateTimeOffset>>();
 
-			BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
+			RetryRepositoryStarsJob.JobCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
 
 			await using var cancellationTokenRegistration = cancellationToken.Register(() =>
 			{
-				BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
+				RetryRepositoryStarsJob.JobCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
 				backgroundStarsTCS.SetCanceled(cancellationToken);
 			}); // Work-around to use a CancellationToken with a TaskCompletionSource: https://stackoverflow.com/a/39897392/5953643
 
@@ -420,7 +417,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 			{
 				if (e.Url == repository.Url)
 				{
-					BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
+					RetryRepositoryStarsJob.JobCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
 					backgroundStarsTCS.SetResult(e.StarredAt ?? throw new InvalidOperationException($"{nameof(e.StarredAt)} cannot be null"));
 				}
 			}
@@ -429,7 +426,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 
 	async Task<(IReadOnlyList<DailyViewsModel> RepositoryViews, IReadOnlyList<DailyClonesModel> RepositoryClones)> GetViewsClonesData(Repository repository, CancellationToken cancellationToken)
 	{
-		if (isFetchingViewsClonesStarsInBackground(_backgroundFetchService, repository))
+		if (_backgroundFetchService.IsFetchingViewsClonesStarsInBackground(repository))
 		{
 			var backgroundServiceResults = await getRepositoryViewsClonesStarsFromBackgroundService(repository, cancellationToken).ConfigureAwait(false);
 			return (backgroundServiceResults.RepositoryViews, backgroundServiceResults.RepositoryClones);
@@ -447,18 +444,15 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 			return (repositoryViewsResponse.DailyViewsList, repositoryClonesResponse.DailyClonesList);
 		}
 
-		static bool isFetchingViewsClonesStarsInBackground(BackgroundFetchService backgroundFetchService, Repository repository) =>
-			backgroundFetchService.QueuedJobs.Any(x => x == backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository));
-
 		async Task<(IReadOnlyList<DateTimeOffset> RepositoryStars, IReadOnlyList<DailyViewsModel> RepositoryViews, IReadOnlyList<DailyClonesModel> RepositoryClones)> getRepositoryViewsClonesStarsFromBackgroundService(Repository repository, CancellationToken cancellationToken)
 		{
 			var backgroundStarsTCS = new TaskCompletionSource<(IReadOnlyList<DateTimeOffset> RepositoryStars, IReadOnlyList<DailyViewsModel> RepositoryViews, IReadOnlyList<DailyClonesModel> RepositoryClones)>();
 
-			BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted += HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
+			RetryRepositoriesViewsClonesStarsJob.JobCompleted += HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
 
 			await using var cancellationTokenRegistration = cancellationToken.Register(() =>
 			{
-				BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted -= HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
+				RetryRepositoriesViewsClonesStarsJob.JobCompleted -= HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
 				backgroundStarsTCS.SetCanceled();
 			}); // Work-around to use a CancellationToken with a TaskCompletionSource: https://stackoverflow.com/a/39897392/5953643
 
@@ -468,7 +462,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 			{
 				if (e.Url == repository.Url)
 				{
-					BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted -= HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
+					RetryRepositoriesViewsClonesStarsJob.JobCompleted -= HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
 					backgroundStarsTCS.SetResult((e.StarredAt ?? throw new InvalidOperationException($"{nameof(e.StarredAt)} cannot be null"),
 						e.DailyViewsList ?? throw new InvalidOperationException($"{nameof(e.DailyViewsList)} cannot be null"),
 						e.DailyClonesList ?? throw new InvalidOperationException($"{nameof(e.DailyClonesList)} cannot be null")));

@@ -80,8 +80,8 @@ public partial class RepositoryViewModel : BaseViewModel
 
 		GitHubUserService.ShouldIncludeOrganizationsChanged += HandleShouldIncludeOrganizationsChanged;
 
-		BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
-		BackgroundFetchService.ScheduleRetryRepositoriesViewsClonesStarsCompleted += HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
+		RetryRepositoryStarsJob.JobCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
+		RetryRepositoriesViewsClonesStarsJob.JobCompleted += HandleJobCompleted;
 
 		UpdateText();
 	}
@@ -503,5 +503,5 @@ public partial class RepositoryViewModel : BaseViewModel
 
 	void HandleScheduleRetryRepositoriesStarsCompleted(object? sender, Repository e) => AddRepositoriesToCollection([e], _searchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
 	void HandleTrendsViewModelRepositorySavedToDatabase(object? sender, Repository e) => AddRepositoriesToCollection([e], _searchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
-	void HandleScheduleRetryRepositoriesViewsClonesStarsCompleted(object? sender, Repository e) => AddRepositoriesToCollection([e], _searchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
+	void HandleJobCompleted(object? sender, Repository e) => AddRepositoriesToCollection([e], _searchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
 }

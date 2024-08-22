@@ -23,14 +23,14 @@ static class ServiceCollection
 	{
 		var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
 
-		//GitTrends Refit Services
+		// GitTrends Refit Services
 		services.AddHttpClient();
 		services.AddSingleton(gitHubApiV3);
 		services.AddSingleton(gitHubGraphQLApi);
 		services.AddSingleton(azureFunctionsApi);
 
 
-		//GitTrends Services
+		// GitTrends Services
 		services.AddSingleton<AppInitializationService>();
 		services.AddSingleton<AzureFunctionsApiService>();
 		services.AddSingleton<DeepLinkingService>();
@@ -55,7 +55,7 @@ static class ServiceCollection
 		services.AddSingleton<ThemeService>();
 		services.AddSingleton<TrendsChartSettingsService>();
 
-		//GitTrends ViewModels
+		// GitTrends ViewModels
 		services.AddTransient<AboutViewModel>();
 		services.AddTransient<OnboardingViewModel>();
 		services.AddTransient<ReferringSitesViewModel>();
@@ -63,8 +63,16 @@ static class ServiceCollection
 		services.AddTransient<SettingsViewModel>();
 		services.AddTransient<TrendsViewModel>();
 		services.AddTransient<WelcomeViewModel>();
+		
+		// Background Jobs
+		services.AddTransient<CleanDatabaseJob>();
+		services.AddTransient<RetryRepositoryStarsJob>();
+		services.AddTransient<RetryGetReferringSitesJob>();
+		services.AddTransient<NotifyTrendingRepositoriesJob>();
+		services.AddTransient<RetryOrganizationsRepositoriesJob>();
+		services.AddTransient<RetryRepositoriesViewsClonesStarsJob>();
 
-		//Mocks
+		// Mocks
 		services.AddSingleton<IAnalyticsService, MockAnalyticsService>();
 		services.AddSingleton<IAppInfo, MockAppInfo>();
 		services.AddSingleton<IBrowser, MockBrowser>();

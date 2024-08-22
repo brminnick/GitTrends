@@ -34,6 +34,6 @@ class ExtendedBackgroundFetchService : BackgroundFetchService
 	public void CancelAllJobs()
 	{
 		_jobManager.CancelAll();
-		QueuedJobsHash.Clear();
+		QueuedForegroundJobsHash.Clear();
 	}
 }
