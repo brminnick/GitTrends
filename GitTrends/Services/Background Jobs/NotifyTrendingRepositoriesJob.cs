@@ -27,19 +27,19 @@ public class NotifyTrendingRepositoriesJob(
 		add => _jobCompletedEventManager.AddEventHandler(value);
 		remove => _jobCompletedEventManager.RemoveEventHandler(value);
 	}
-	
+
 	public string NotifyTrendingRepositoriesIdentifier { get; } = $"{appInfo.PackageName}.{nameof(NotifyTrendingRepositoriesJob)}";
-	
+
 	public JobInfo GetJobInfo(bool shouldRunInForeground) => new(
 		NotifyTrendingRepositoriesIdentifier,
 		typeof(NotifyTrendingRepositoriesJob),
 		shouldRunInForeground,
 		RequiredInternetAccess: InternetAccess.Unmetered);
-	
+
 	public async Task Run(JobInfo jobInfo, CancellationToken cancellationToken)
 	{
 		_analyticsService.Track($"{nameof(NotifyTrendingRepositoriesJob)} Triggered");
-		
+
 		try
 		{
 			if (!_gitHubUserService.IsAuthenticated || _gitHubUserService.IsDemoUser)
@@ -60,10 +60,10 @@ public class NotifyTrendingRepositoriesJob(
 			OnScheduleNotifyTrendingRepositoriesCompleted(false);
 		}
 	}
-	
+
 	async Task<IReadOnlyList<Repository>> GetTrendingRepositories(CancellationToken cancellationToken)
 	{
-		if (_gitHubUserService.IsDemoUser || string.IsNullOrEmpty(_gitHubUserService.Alias)) 
+		if (_gitHubUserService.IsDemoUser || string.IsNullOrEmpty(_gitHubUserService.Alias))
 			return [];
 
 		var repositoriesFromDatabase = await _repositoryDatabase.GetRepositories(cancellationToken).ConfigureAwait(false);
@@ -114,7 +114,7 @@ public class NotifyTrendingRepositoriesJob(
 		return trendingRepositories;
 
 	}
-	
+
 	void OnScheduleNotifyTrendingRepositoriesCompleted(in bool result) =>
 		_jobCompletedEventManager.RaiseEvent(this, result, nameof(JobCompleted));
 }

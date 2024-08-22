@@ -38,7 +38,7 @@ class CleanDatabaseJobTests : BaseJobTest
 		wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleCleanUpDatabase();
 		wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleCleanUpDatabase();
 
-		await databaseCleanupCompletedTCS.Task.ConfigureAwait(false);
+		await databaseCleanupCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		repositoryDatabaseCount_Final = await getRepositoryDatabaseCount(repositoryDatabase).ConfigureAwait(false);
 		referringSitesDatabaseCount_Final = await getReferringSitesDatabaseCount(referringSitesDatabase, expiredRepository_Initial.Url, unexpiredRepository_Initial.Url).ConfigureAwait(false);

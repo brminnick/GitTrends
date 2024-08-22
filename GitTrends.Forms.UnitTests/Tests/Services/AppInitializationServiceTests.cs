@@ -22,8 +22,8 @@ namespace GitTrends.UnitTests
 			Assert.IsFalse(appInitializationService.IsInitializationComplete);
 
 			//Act
-			var isInitializationSuccessful = await appInitializationService.InitializeApp(CancellationToken.None).ConfigureAwait(false);
-			var initializationCompleteEventArgs = await initializeAppCommandTCS.Task.ConfigureAwait(false);
+			var isInitializationSuccessful = await appInitializationService.InitializeApp(TestCancellationTokenSource.Token).ConfigureAwait(false);
+			var initializationCompleteEventArgs = await initializeAppCommandTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsTrue(isInitializationSuccessful);

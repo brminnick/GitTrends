@@ -51,7 +51,7 @@ namespace GitTrends.UnitTests
 			dailyClonesList_Initial = trendsViewModel.DailyClonesList;
 
 			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository_OldData, CancellationToken.None)).ConfigureAwait(false);
-			repository_RepositorySavedToDatabaseResult = await repositorySavedToDatabaseTCS.Task.ConfigureAwait(false);
+			repository_RepositorySavedToDatabaseResult = await repositorySavedToDatabaseTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			dailyStarsList_Final = trendsViewModel.DailyStarsList;
 			dailyViewsList_Final = trendsViewModel.DailyViewsList;
@@ -134,7 +134,7 @@ namespace GitTrends.UnitTests
 			dailyClonesList_Initial = trendsViewModel.DailyClonesList;
 
 			await trendsViewModel.FetchDataCommand.ExecuteAsync((repository_Initial, CancellationToken.None)).ConfigureAwait(false);
-			repository_RepositorySavedToDatabaseResult = await repositorySavedToDatabaseTCS.Task.ConfigureAwait(false);
+			repository_RepositorySavedToDatabaseResult = await repositorySavedToDatabaseTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			dailyStarsList_Final = trendsViewModel.DailyStarsList;
 			dailyViewsList_Final = trendsViewModel.DailyViewsList;

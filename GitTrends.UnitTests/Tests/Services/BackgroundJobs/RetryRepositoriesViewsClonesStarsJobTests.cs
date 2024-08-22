@@ -15,15 +15,18 @@ class RetryRepositoriesViewsClonesStarsJobTests : BaseJobTest
 		Assert.That(retryRepositoriesViewsClonesStarsJob.GetJobIdentifier(repository), Is.EqualTo($"{retryRepositoriesViewsClonesStarsJob.Identifier}.{repository.Url}"));
 	}
 
-	[Test]
-	public async Task ScheduleRetryRepositoriesStarsTest_AuthenticatedUser()
+		[Test]
+	public async Task ScheduleRetryRepositoriesViewsClonesStarsTest_AuthenticatedUser()
 	{
 		//Arrange
 		bool wasScheduledSuccessfully_First, wasScheduledSuccessfully_Second;
 		Repository repository_Initial, repository_Final, repository_Database;
 
-		var scheduleRetryRepositoriesStarsCompletedTCS = new TaskCompletionSource<Repository>();
-		RetryRepositoriesViewsClonesStarsJob.JobCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
+		repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
+			GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
+
+		var scheduleRetryRepositoriesViewsClonesStarsCompletedTCS = new TaskCompletionSource<Repository>();
+		RetryRepositoriesViewsClonesStarsJob.JobCompleted += HandleRetryRepositoriesViewsClonesStarsJobCompleted;
 
 		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 		var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
@@ -32,14 +35,12 @@ class RetryRepositoriesViewsClonesStarsJobTests : BaseJobTest
 
 		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService, TestCancellationTokenSource.Token).ConfigureAwait(false);
 
-		repository_Initial = new Repository(GitHubConstants.GitTrendsRepoName, GitHubConstants.GitTrendsRepoName, 1, GitHubConstants.GitTrendsRepoOwner,
-			GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
 
 		//Act
-		wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryRepositoriesStars(repository_Initial);
-		wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryRepositoriesStars(repository_Initial);
+		wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository_Initial);
+		wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository_Initial);
 
-		repository_Final = await scheduleRetryRepositoriesStarsCompletedTCS.Task.ConfigureAwait(false);
+		repository_Final = await scheduleRetryRepositoriesViewsClonesStarsCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 		repository_Database = await repositoryDatabase.GetRepository(repository_Initial.Url, TestCancellationTokenSource.Token).ConfigureAwait(false) ?? throw new NullReferenceException();
 
 		Assert.Multiple(() =>
@@ -48,12 +49,9 @@ class RetryRepositoriesViewsClonesStarsJobTests : BaseJobTest
 			Assert.That(wasScheduledSuccessfully_First);
 			Assert.That(wasScheduledSuccessfully_Second, Is.False);
 
-			Assert.That(repository_Initial.ContainsViewsClonesData, Is.False);
-			Assert.That(repository_Initial.ContainsViewsClonesStarsData, Is.False);
-			Assert.That(repository_Final.ContainsViewsClonesData, Is.False);
-			Assert.That(repository_Final.ContainsViewsClonesStarsData, Is.False);
-			Assert.That(repository_Database.ContainsViewsClonesData, Is.False);
-			Assert.That(repository_Database.ContainsViewsClonesStarsData, Is.False);
+			Assert.That(repository_Initial.StarredAt, Is.Null);
+			Assert.That(repository_Final.StarredAt, Is.Not.Null);
+			Assert.That(repository_Database.StarredAt, Is.Not.Null);
 
 			Assert.That(repository_Initial.DailyClonesList, Is.Null);
 			Assert.That(repository_Initial.DailyViewsList, Is.Null);
@@ -64,13 +62,12 @@ class RetryRepositoriesViewsClonesStarsJobTests : BaseJobTest
 			Assert.That(repository_Initial.TotalViews, Is.Null);
 
 			Assert.That(repository_Final.StarredAt, Is.Not.Null);
-			Assert.That(repository_Final.StarredAt ?? [], Is.Not.Empty);
-			Assert.That(repository_Final.DailyClonesList, Is.Null);
-			Assert.That(repository_Final.DailyViewsList, Is.Null);
-			Assert.That(repository_Final.TotalClones, Is.Null);
-			Assert.That(repository_Final.TotalUniqueClones, Is.Null);
-			Assert.That(repository_Final.TotalUniqueViews, Is.Null);
-			Assert.That(repository_Final.TotalViews, Is.Null);
+			Assert.That(repository_Final.DailyClonesList, Is.Not.Null);
+			Assert.That(repository_Final.DailyViewsList, Is.Not.Null);
+			Assert.That(repository_Final.TotalClones, Is.Not.Null);
+			Assert.That(repository_Final.TotalUniqueClones, Is.Not.Null);
+			Assert.That(repository_Final.TotalUniqueViews, Is.Not.Null);
+			Assert.That(repository_Final.TotalViews, Is.Not.Null);
 
 			Assert.That(repository_Final.Name, Is.EqualTo(repository_Initial.Name));
 			Assert.That(repository_Final.Description, Is.EqualTo(repository_Initial.Description));
@@ -80,13 +77,12 @@ class RetryRepositoriesViewsClonesStarsJobTests : BaseJobTest
 			Assert.That(repository_Final.IssuesCount, Is.EqualTo(repository_Initial.IssuesCount));
 
 			Assert.That(repository_Database.StarredAt, Is.Not.Null);
-			Assert.That(repository_Database.StarredAt ?? [], Is.Not.Empty);
-			Assert.That(repository_Database.DailyClonesList, Is.Null);
-			Assert.That(repository_Database.DailyViewsList, Is.Null);
-			Assert.That(repository_Database.TotalClones, Is.Null);
-			Assert.That(repository_Database.TotalUniqueClones, Is.Null);
-			Assert.That(repository_Database.TotalUniqueViews, Is.Null);
-			Assert.That(repository_Database.TotalViews, Is.Null);
+			Assert.That(repository_Database.DailyClonesList, Is.Not.Null);
+			Assert.That(repository_Database.DailyViewsList, Is.Not.Null);
+			Assert.That(repository_Database.TotalClones, Is.Not.Null);
+			Assert.That(repository_Database.TotalUniqueClones, Is.Not.Null);
+			Assert.That(repository_Database.TotalUniqueViews, Is.Not.Null);
+			Assert.That(repository_Database.TotalViews, Is.Not.Null);
 
 			Assert.That(repository_Database.Name, Is.EqualTo(repository_Final.Name));
 			Assert.That(repository_Database.Description, Is.EqualTo(repository_Final.Description));
@@ -97,10 +93,13 @@ class RetryRepositoriesViewsClonesStarsJobTests : BaseJobTest
 			Assert.That(repository_Database.IsTrending, Is.EqualTo(repository_Final.IsTrending));
 		});
 
-		void HandleScheduleRetryRepositoriesStarsCompleted(object? sender, Repository e)
+		void HandleRetryRepositoriesViewsClonesStarsJobCompleted(object? sender, Repository e)
 		{
-			RetryRepositoriesViewsClonesStarsJob.JobCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
-			scheduleRetryRepositoriesStarsCompletedTCS.SetResult(e);
+			if (e.Url == repository_Initial.Url)
+			{
+				RetryRepositoryStarsJob.UpdatedRepositorySavedToDatabase -= HandleRetryRepositoriesViewsClonesStarsJobCompleted;
+				scheduleRetryRepositoriesViewsClonesStarsCompletedTCS.SetResult(e);
+			}
 		}
 	}
 }

@@ -411,7 +411,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 				backgroundStarsTCS.SetCanceled(cancellationToken);
 			}); // Work-around to use a CancellationToken with a TaskCompletionSource: https://stackoverflow.com/a/39897392/5953643
 
-			return await backgroundStarsTCS.Task.ConfigureAwait(false);
+			return await backgroundStarsTCS.Task.WaitAsync(cancellationToken).ConfigureAwait(false);
 
 			void HandleScheduleRetryRepositoriesStarsCompleted(object? sender, Repository e)
 			{
@@ -456,7 +456,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 				backgroundStarsTCS.SetCanceled();
 			}); // Work-around to use a CancellationToken with a TaskCompletionSource: https://stackoverflow.com/a/39897392/5953643
 
-			return await backgroundStarsTCS.Task.ConfigureAwait(false);
+			return await backgroundStarsTCS.Task.WaitAsync(cancellationToken).ConfigureAwait(false);
 
 			void HandleScheduleRetryRepositoriesViewsClonesStarsCompleted(object? sender, Repository e)
 			{

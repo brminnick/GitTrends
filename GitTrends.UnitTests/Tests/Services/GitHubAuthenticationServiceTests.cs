@@ -18,7 +18,7 @@ class GitHubAuthenticationServiceTests : BaseTest
 
 		//Act
 		Assert.ThrowsAsync<Exception>(async () => await gitHubAuthenticationService.AuthorizeSession(new Uri("https://google.com"), CancellationToken.None).ConfigureAwait(false));
-		await authorizeSessionStartedTCS.Task.ConfigureAwait(false);
+		await authorizeSessionStartedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert
 		Assert.That(didAuthorizeSessionStartedFire, Is.True);
@@ -45,7 +45,7 @@ class GitHubAuthenticationServiceTests : BaseTest
 
 		//Act
 		Assert.ThrowsAsync<Exception>(async () => await gitHubAuthenticationService.AuthorizeSession(new Uri("https://google.com"), CancellationToken.None).ConfigureAwait(false));
-		isAuthorizationSuccessful = await authorizeSessionCompletedTCS.Task.ConfigureAwait(false);
+		isAuthorizationSuccessful = await authorizeSessionCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		Assert.Multiple(() =>
 		{
@@ -76,7 +76,7 @@ class GitHubAuthenticationServiceTests : BaseTest
 
 		//Act
 		await gitHubAuthenticationService.ActivateDemoUser(TestCancellationTokenSource.Token).ConfigureAwait(false);
-		await demoUserActivatedTCS.Task.ConfigureAwait(false);
+		await demoUserActivatedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert
 		Assert.Multiple(() =>
@@ -115,7 +115,7 @@ class GitHubAuthenticationServiceTests : BaseTest
 		gitHubUserAlias_Initial = gitHubUserService.Alias;
 
 		await gitHubAuthenticationService.LogOut(TestCancellationTokenSource.Token).ConfigureAwait(false);
-		await loggedOutTCS.Task.ConfigureAwait(false);
+		await loggedOutTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		gitHubUserAlias_Final = gitHubUserService.Alias;
 		gitHubUserName_Final = gitHubUserService.Name;

@@ -137,7 +137,7 @@ namespace GitTrends
 
 			Application.Current.PageAppearing += HandlePageAppearing;
 
-			return await tcs.Task.ConfigureAwait(false);
+			return await TCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			void HandlePageAppearing(object sender, Page page)
 			{

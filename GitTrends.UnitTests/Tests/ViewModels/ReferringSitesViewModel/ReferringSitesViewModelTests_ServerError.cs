@@ -49,7 +49,7 @@ class ReferringSitesViewModelTests_ServerError : BaseTest
 		mobileReferringSites_Final = referringSitesViewModel.MobileReferringSitesList;
 		emptyDataViewDescription_Final = referringSitesViewModel.EmptyDataViewDescription;
 
-		pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
+		pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert
 		Assert.Multiple(() =>

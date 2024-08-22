@@ -68,7 +68,7 @@ namespace GitTrends.UnitTests
 
 			//Act
 			await notificationService.HandleNotification(title, message, badgeCount).ConfigureAwait(false);
-			sortingOption = await sortingOptionRequestedTCS.Task.ConfigureAwait(false);
+			sortingOption = await sortingOptionRequestedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsTrue(didSortingOptionRequestedFire);
@@ -181,7 +181,7 @@ namespace GitTrends.UnitTests
 			shouldSendNotifications_Initial = notificationService.ShouldSendNotifications;
 
 			var registrationResult = await notificationService.Register(false).ConfigureAwait(false);
-			var (isRegistrationSuccessful, registrationErrorMessage) = await registrationCompletedTCS.Task.ConfigureAwait(false);
+			var (isRegistrationSuccessful, registrationErrorMessage) = await registrationCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			areNotificationsEnabled_AfterRegistration = await notificationService.AreNotificationsEnabled().ConfigureAwait(false);
 			shouldSendNotifications_AfterRegistration = notificationService.ShouldSendNotifications;
@@ -232,7 +232,7 @@ namespace GitTrends.UnitTests
 			await notificationService.Initialize(CancellationToken.None).ConfigureAwait(false);
 
 			notificationHubInformation_AfterInitialization = await notificationService.GetNotificationHubInformation().ConfigureAwait(false);
-			await initializationCompletedTCS.Task.ConfigureAwait(false);
+			await initializationCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsTrue(didInitializationCompletedFire);

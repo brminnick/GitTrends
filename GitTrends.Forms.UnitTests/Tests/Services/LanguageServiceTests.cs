@@ -81,7 +81,7 @@ namespace GitTrends.UnitTests
 				currentUICulture_Initial = CultureInfo.DefaultThreadCurrentUICulture;
 
 				languageService.PreferredLanguage = language;
-				var preferredLanguageChangedResult = await preferredLanguageChangedTCS.Task.ConfigureAwait(false);
+				var preferredLanguageChangedResult = await preferredLanguageChangedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 				currentCulture_Final = CultureInfo.DefaultThreadCurrentCulture;
 				currentUICulture_Final = CultureInfo.DefaultThreadCurrentUICulture;

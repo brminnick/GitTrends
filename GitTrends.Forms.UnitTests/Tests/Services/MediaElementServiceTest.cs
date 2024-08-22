@@ -44,8 +44,8 @@ namespace GitTrends.UnitTests
 
 			await mediaElementService.InitializeManifests(CancellationToken.None).ConfigureAwait(false);
 
-			onboardingChartStreamingManifest_EventHandlerResult = await onboardingChartManifestChangedTCS.Task.ConfigureAwait(false);
-			enableOrganizationsStreamingManifest_EventHandlerResult = await enableOrganizationsManifestChangedTCS.Task.ConfigureAwait(false);
+			onboardingChartStreamingManifest_EventHandlerResult = await onboardingChartManifestChangedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
+			enableOrganizationsStreamingManifest_EventHandlerResult = await enableOrganizationsManifestChangedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			onboardingChartUrl_Final = mediaElementService.OnboardingChartUrl;
 			enableOrganizationsUrl_Final = mediaElementService.EnableOrganizationsUrl;

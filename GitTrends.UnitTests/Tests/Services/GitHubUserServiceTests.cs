@@ -26,7 +26,7 @@ class GitHubUserServiceTests : BaseTest
 
 		//Act
 		gitHubUserService.Alias = GitHubConstants.GitTrendsRepoOwner;
-		aliasChangedResult = await aliasChangedTCS.Task.ConfigureAwait(false);
+		aliasChangedResult = await aliasChangedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 		alias_Final = gitHubUserService.Alias;
 
 		//Assert
@@ -65,7 +65,7 @@ class GitHubUserServiceTests : BaseTest
 
 		//Act
 		gitHubUserService.Name = expectedName;
-		nameChangedResult = await nameChangedTCS.Task.ConfigureAwait(false);
+		nameChangedResult = await nameChangedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 		name_Final = gitHubUserService.Name;
 
 		Assert.Multiple(() =>
@@ -102,7 +102,7 @@ class GitHubUserServiceTests : BaseTest
 
 		//Act
 		gitHubUserService.AvatarUrl = AuthenticatedGitHubUserAvatarUrl;
-		avatarUrlChangedResult = await avatarUrlChangedTCS.Task.ConfigureAwait(false);
+		avatarUrlChangedResult = await avatarUrlChangedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 		avatarUrl_Final = gitHubUserService.AvatarUrl;
 
 		Assert.Multiple(() =>
@@ -212,7 +212,7 @@ class GitHubUserServiceTests : BaseTest
 		shouldIncludeOrganizations_Initial = gitHubUserService.ShouldIncludeOrganizations;
 
 		gitHubUserService.ShouldIncludeOrganizations = !gitHubUserService.ShouldIncludeOrganizations;
-		var shouldIncludeOrganizationsChangedResult = await shouldIncludeOrganizationsChangedTCS.Task.ConfigureAwait(false);
+		var shouldIncludeOrganizationsChangedResult = await shouldIncludeOrganizationsChangedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		shouldIncludeOrganizations_Final = gitHubUserService.ShouldIncludeOrganizations;
 

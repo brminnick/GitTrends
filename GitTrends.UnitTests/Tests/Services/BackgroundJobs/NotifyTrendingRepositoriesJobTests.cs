@@ -14,7 +14,7 @@ class NotifyTrendingRepositoriesJobTests : BaseJobTest
 		//Act
 		backgroundFetchService.TryScheduleNotifyTrendingRepositories();
 
-		var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
+		var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert
 		Assert.That(result, Is.False);
@@ -43,7 +43,7 @@ class NotifyTrendingRepositoriesJobTests : BaseJobTest
 		//Act
 		backgroundFetchService.TryScheduleNotifyTrendingRepositories();
 
-		var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
+		var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert
 		Assert.Multiple(() =>
@@ -78,7 +78,7 @@ class NotifyTrendingRepositoriesJobTests : BaseJobTest
 		wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleNotifyTrendingRepositories();
 		wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleNotifyTrendingRepositories();
 
-		var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
+		var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert
 		Assert.Multiple(() =>

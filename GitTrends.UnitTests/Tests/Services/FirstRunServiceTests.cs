@@ -26,7 +26,7 @@ class FirstRunServiceTests : BaseTest
 		isFirstRun_Initial = firstRunService.IsFirstRun;
 
 		await gitHubAuthenticationService.ActivateDemoUser(TestCancellationTokenSource.Token).ConfigureAwait(false);
-		await activateDemoUserTCS.Task.ConfigureAwait(false);
+		await activateDemoUserTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert
 		isFirstRun_Final = firstRunService.IsFirstRun;

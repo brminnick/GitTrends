@@ -29,7 +29,7 @@ public sealed class FirebaseService : FirebaseMessagingService
 			var notificationHubInformation = await notificationService.GetNotificationHubInformation(cancellationTokenSource.Token).ConfigureAwait(false);
 
 			if (notificationHubInformation.IsEmpty())
-				notificationHubInformation = await _notificationHubInformationTCS.Task.ConfigureAwait(false);
+				notificationHubInformation = await _notificationHubInformationTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			await RegisterWithNotificationHub(notificationHubInformation, token).ConfigureAwait(false);
 		}

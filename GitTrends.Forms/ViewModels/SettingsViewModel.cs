@@ -201,7 +201,7 @@ namespace GitTrends
 
 				AnalyticsService.Track("Settings Try Demo Button Tapped");
 				await GitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-				await demoUserActivatedTCS.Task.ConfigureAwait(false);
+				await demoUserActivatedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 			}
 			finally
 			{

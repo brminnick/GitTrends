@@ -23,7 +23,7 @@ namespace GitTrends.UnitTests
 
 			//Act
 			await onboardingViewModel.HandleDemoButtonTappedCommand.ExecuteAsync(OnboardingConstants.SkipText).ConfigureAwait(false);
-			await skipButtonTappedTCS.Task.ConfigureAwait(false);
+			await skipButtonTappedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsTrue(didSkipButtonTappedFire);
@@ -79,7 +79,7 @@ namespace GitTrends.UnitTests
 			isDemoButtonVisible_DuringCommand = onboardingViewModel.IsDemoButtonVisible;
 
 			await connectToGitHubButtonCommandTask.ConfigureAwait(false);
-			var openedUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
+			var openedUri = await openAsyncExecutedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 			openedUrl = openedUri.AbsoluteUri;
 
 			isAuthenticating_AfterCommand = onboardingViewModel.IsAuthenticating;

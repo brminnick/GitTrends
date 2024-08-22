@@ -39,9 +39,9 @@ class RetryOrganizationsRepositoriesJobTests : BaseJobTest
 		wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryOrganizationsRepositories(organizationName_Initial);
 		wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryOrganizationsRepositories(organizationName_Initial);
 
-		organizationName_Final = await scheduleRetryOrganizationsRepositoriesCompletedTCS.Task.ConfigureAwait(false);
+		organizationName_Final = await scheduleRetryOrganizationsRepositoriesCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
-		repository_Final = await scheduleRetryRepositoriesViewsClonesCompletedTCS.Task.ConfigureAwait(false);
+		repository_Final = await scheduleRetryRepositoriesViewsClonesCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 		repository_Database = await repositoryDatabase.GetRepository(repository_Final.Url, TestCancellationTokenSource.Token).ConfigureAwait(false) ?? throw new NullReferenceException();
 
 		//Assert

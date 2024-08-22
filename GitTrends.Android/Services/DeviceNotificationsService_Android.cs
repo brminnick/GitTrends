@@ -59,7 +59,7 @@ namespace GitTrends.Droid
                 var notificationHubInformation = await notificationService.GetNotificationHubInformation().ConfigureAwait(false);
 
                 if (notificationHubInformation.IsEmpty())
-                    notificationHubInformation = await _notificationHubInformationTCS.Task.ConfigureAwait(false);
+                    notificationHubInformation = await _notificationHubInformationTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
                 await RegisterWithNotificationHub(notificationHubInformation, token).ConfigureAwait(false);
             }

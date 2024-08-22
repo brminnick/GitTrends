@@ -17,7 +17,7 @@ class OnboardingViewModelTests : BaseTest
 
 		//Act
 		await onboardingViewModel.HandleDemoButtonTappedCommand.ExecuteAsync(OnboardingConstants.SkipText).ConfigureAwait(false);
-		await skipButtonTappedTCS.Task.ConfigureAwait(false);
+		await skipButtonTappedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert
 		Assert.That(didSkipButtonTappedFire);
@@ -73,7 +73,7 @@ class OnboardingViewModelTests : BaseTest
 		isDemoButtonVisible_DuringCommand = onboardingViewModel.IsDemoButtonVisible;
 
 		await connectToGitHubButtonCommandTask.ConfigureAwait(false);
-		var openedUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
+		var openedUri = await openAsyncExecutedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 		openedUrl = openedUri.AbsoluteUri;
 
 		isAuthenticating_AfterCommand = onboardingViewModel.IsAuthenticating;

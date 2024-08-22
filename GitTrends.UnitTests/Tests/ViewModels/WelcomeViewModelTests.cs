@@ -28,7 +28,7 @@ class WelcomeViewModelTests : BaseTest
 		isDemoButtonVisible_DuringCommand = welcomeViewModel.IsDemoButtonVisible;
 
 		await connectToGitHubButtonCommandTask.ConfigureAwait(false);
-		var openedUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
+		var openedUri = await openAsyncExecutedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 		openedUrl = openedUri.AbsoluteUri;
 
 		isAuthenticating_AfterCommand = welcomeViewModel.IsAuthenticating;

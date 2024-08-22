@@ -36,7 +36,7 @@ namespace GitTrends.UnitTests
 			isRegisterForNotificationsSwitchToggled_Initial = settingsViewModel.IsRegisterForNotificationsSwitchToggled;
 
 			settingsViewModel.IsRegisterForNotificationsSwitchToggled = true;
-			var accessState = await setNotificationsPreferenceCompletedTCS.Task.ConfigureAwait(false);
+			var accessState = await setNotificationsPreferenceCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			shouldSendNotifications_Final = notificationService.ShouldSendNotifications;
 
@@ -189,7 +189,7 @@ namespace GitTrends.UnitTests
 			isDemoButtonVisible_DuringCommand = settingsViewModel.IsDemoButtonVisible;
 
 			await connectToGitHubButtonCommandTask.ConfigureAwait(false);
-			var openedUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
+			var openedUri = await openAsyncExecutedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 			openedUrl = openedUri.AbsoluteUri;
 
 			isNotAuthenticating_AfterCommand = settingsViewModel.IsNotAuthenticating;
@@ -269,7 +269,7 @@ namespace GitTrends.UnitTests
 
 			//Act
 			await settingsViewModel.CopyrightLabelTappedCommand.ExecuteAsync(null).ConfigureAwait(false);
-			await openAsyncTCS.Task.ConfigureAwait(false);
+			await openAsyncTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsTrue(didOpenAsyncFire);
@@ -314,7 +314,7 @@ namespace GitTrends.UnitTests
 			isShouldIncludeOrganizationsSwitchEnabled_Final = settingsViewModel.IsShouldIncludeOrganizationsSwitchEnabled;
 
 			settingsViewModel.IsShouldIncludeOrganizationsSwitchToggled = true;
-			var organizationsCarouselViewVisiblilityChangedResult = await organizationsCarouselViewVisibilityChangedTCS.Task.ConfigureAwait(false);
+			var organizationsCarouselViewVisiblilityChangedResult = await organizationsCarouselViewVisibilityChangedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			isShouldIncludeOrganizationsSwitchToggled_Final = settingsViewModel.IsShouldIncludeOrganizationsSwitchToggled;
 

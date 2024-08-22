@@ -42,7 +42,7 @@ namespace GitTrends.UnitTests
 			visibleRepositoryList_Final = new List<Repository>(repositoryViewModel.VisibleRepositoryList);
 			emptyDataViewDescription_Final = repositoryViewModel.EmptyDataViewDescription;
 
-			pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
+			pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsEmpty(visibleRepositoryList_Initial);

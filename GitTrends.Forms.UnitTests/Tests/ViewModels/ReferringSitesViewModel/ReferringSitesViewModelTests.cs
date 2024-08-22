@@ -43,7 +43,7 @@ namespace GitTrends.UnitTests
 			mobileReferringSites_DuringRefresh = referringSitesViewModel.MobileReferringSitesList;
 
 			await refreshCommandTask.ConfigureAwait(false);
-			var pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
+			var pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			emptyDataViewTitle_Final = referringSitesViewModel.EmptyDataViewTitle;
 			mobileReferringSites_Final = referringSitesViewModel.MobileReferringSitesList;

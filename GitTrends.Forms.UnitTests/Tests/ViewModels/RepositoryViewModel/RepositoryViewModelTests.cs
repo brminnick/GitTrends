@@ -45,7 +45,7 @@ namespace GitTrends.UnitTests
 
 			if (backgroundFetchService.QueuedJobs.Any())
 			{
-				var fetchStarsInBackgroundTCSResult = await fetchStarsInBackgroundTCS.Task.ConfigureAwait(false);
+				var fetchStarsInBackgroundTCSResult = await fetchStarsInBackgroundTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 				Assert.IsNotEmpty(fetchStarsInBackgroundTCSResult);
 			}
 			else
@@ -137,7 +137,7 @@ namespace GitTrends.UnitTests
 			gitHubUserService.ShouldIncludeOrganizations = !gitHubUserService.ShouldIncludeOrganizations;
 
 			await pullToRefreshCommandTask.ConfigureAwait(false);
-			var handlePullToRefreshFailedResult = await handlePullToRefreshFailedTCS.Task.ConfigureAwait(false);
+			var handlePullToRefreshFailedResult = await handlePullToRefreshFailedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsEmpty(repositoryViewModel.VisibleRepositoryList);
@@ -170,7 +170,7 @@ namespace GitTrends.UnitTests
 			await gitHubAuthenticationService.LogOut().ConfigureAwait(false);
 
 			await pullToRefreshCommandTask.ConfigureAwait(false);
-			var handlePullToRefreshFailedResult = await handlePullToRefreshFailedTCS.Task.ConfigureAwait(false);
+			var handlePullToRefreshFailedResult = await handlePullToRefreshFailedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsEmpty(repositoryViewModel.VisibleRepositoryList);
@@ -210,7 +210,7 @@ namespace GitTrends.UnitTests
 			}
 
 			await pullToRefreshCommandTask.ConfigureAwait(false);
-			var handlePullToRefreshFailedResult = await handlePullToRefreshFailedTCS.Task.ConfigureAwait(false);
+			var handlePullToRefreshFailedResult = await handlePullToRefreshFailedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsEmpty(repositoryViewModel.VisibleRepositoryList);
@@ -246,7 +246,7 @@ namespace GitTrends.UnitTests
 			var pullToRefreshCommandTask = repositoryViewModel.ExecuteRefreshCommand.ExecuteAsync(null);
 
 			await pullToRefreshCommandTask.ConfigureAwait(false);
-			var pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.ConfigureAwait(false);
+			var pullToRefreshFailedEventArgs = await pullToRefreshFailedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			emptyDataViewTitle_Final = repositoryViewModel.EmptyDataViewTitle;
 			visibleRepositoryList_Final = repositoryViewModel.VisibleRepositoryList;

@@ -46,8 +46,8 @@ class RetryGetReferringSitesJobTests : BaseJobTest
 		wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryGetReferringSites(repository_Initial);
 		wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryGetReferringSites(repository_Initial);
 
-		mobileReferringSiteModel = await mobileReferringSiteRetrievedTCS.Task.ConfigureAwait(false);
-		repository_Final = await scheduleRetryGetReferringSiteCompletedTCS.Task.ConfigureAwait(false);
+		mobileReferringSiteModel = await mobileReferringSiteRetrievedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
+		repository_Final = await scheduleRetryGetReferringSiteCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		mobileReferringSitesList_Final = referringSitesViewModel.MobileReferringSitesList;
 

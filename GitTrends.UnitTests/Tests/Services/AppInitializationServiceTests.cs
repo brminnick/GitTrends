@@ -18,7 +18,7 @@ class AppInitializationServiceTests : BaseTest
 
 		//Act
 		var isInitializationSuccessful = await appInitializationService.InitializeApp(CancellationToken.None).ConfigureAwait(false);
-		var initializationCompleteEventArgs = await initializeAppCommandTCS.Task.ConfigureAwait(false);
+		var initializationCompleteEventArgs = await initializeAppCommandTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert
 		Assert.Multiple(() =>

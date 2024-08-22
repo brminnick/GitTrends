@@ -30,7 +30,7 @@ namespace GitTrends.UnitTests
 			isFirstRun_Initial = firstRunService.IsFirstRun;
 
 			await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-			await activateDemoUserTCS.Task.ConfigureAwait(false);
+			await activateDemoUserTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			isFirstRun_Final = firstRunService.IsFirstRun;

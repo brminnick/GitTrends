@@ -54,7 +54,7 @@ namespace GitTrends.UnitTests
 			wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository_Initial);
 			wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryRepositoriesViewsClonesStars(repository_Initial);
 
-			repository_Final = await scheduleRetryRepositoriesViewsClonesStarsCompletedTCS.Task.ConfigureAwait(false);
+			repository_Final = await scheduleRetryRepositoriesViewsClonesStarsCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 			repository_Database = await repositoryDatabase.GetRepository(repository_Initial.Url).ConfigureAwait(false) ?? throw new NullReferenceException();
 
 			//Assert
@@ -138,7 +138,7 @@ namespace GitTrends.UnitTests
 			wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryRepositoriesStars(repository_Initial);
 			wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryRepositoriesStars(repository_Initial);
 
-			repository_Final = await scheduleRetryRepositoriesStarsCompletedTCS.Task.ConfigureAwait(false);
+			repository_Final = await scheduleRetryRepositoriesStarsCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 			repository_Database = await repositoryDatabase.GetRepository(repository_Initial.Url).ConfigureAwait(false) ?? throw new NullReferenceException();
 
 			//Assert
@@ -224,9 +224,9 @@ namespace GitTrends.UnitTests
 			wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryOrganizationsRepositories(organizationName_Initial);
 			wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryOrganizationsRepositories(organizationName_Initial);
 
-			organizationName_Final = await scheduleRetryOrganizationsRepositoriesCompletedTCS.Task.ConfigureAwait(false);
+			organizationName_Final = await scheduleRetryOrganizationsRepositoriesCompleted.ConfigureAwait(false);
 
-			repository_Final = await scheduleRetryRepositoriesViewsClonesCompletedTCS.Task.ConfigureAwait(false);
+			repository_Final = await scheduleRetryRepositoriesViewsClonesCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 			repository_Database = await repositoryDatabase.GetRepository(repository_Final.Url).ConfigureAwait(false) ?? throw new NullReferenceException();
 
 			//Assert
@@ -306,8 +306,8 @@ namespace GitTrends.UnitTests
 			wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleRetryGetReferringSites(repository_Initial);
 			wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleRetryGetReferringSites(repository_Initial);
 
-			mobileReferringSiteModel = await mobileReferringSiteRetrievedTCS.Task.ConfigureAwait(false);
-			repository_Final = await scheduleRetryGetReferringSiteCompletedTCS.Task.ConfigureAwait(false);
+			mobileReferringSiteModel = await mobileReferringSiteRetrievedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
+			repository_Final = await scheduleRetryGetReferringSiteCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			mobileReferringSitesList_Final = referringSitesViewModel.MobileReferringSitesList;
 
@@ -435,7 +435,7 @@ namespace GitTrends.UnitTests
 			wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleCleanUpDatabase();
 			wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleCleanUpDatabase();
 
-			await databaseCleanupCompletedTCS.Task.ConfigureAwait(false);
+			await databaseCleanupCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			repositoryDatabaseCount_Final = await getRepositoryDatabaseCount(repositoryDatabase).ConfigureAwait(false);
 			referringSitesDatabaseCount_Final = await getReferringSitesDatabaseCount(referringSitesDatabase, expiredRepository_Initial.Url, unexpiredRepository_Initial.Url).ConfigureAwait(false);
@@ -509,7 +509,7 @@ namespace GitTrends.UnitTests
 			//Act
 			backgroundFetchService.TryScheduleNotifyTrendingRepositories(CancellationToken.None);
 
-			var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
+			var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsFalse(result);
@@ -538,7 +538,7 @@ namespace GitTrends.UnitTests
 			//Act
 			backgroundFetchService.TryScheduleNotifyTrendingRepositories(CancellationToken.None);
 
-			var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
+			var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsTrue(gitHubUserService.IsDemoUser);
@@ -570,7 +570,7 @@ namespace GitTrends.UnitTests
 			wasScheduledSuccessfully_First = backgroundFetchService.TryScheduleNotifyTrendingRepositories(CancellationToken.None);
 			wasScheduledSuccessfully_Second = backgroundFetchService.TryScheduleNotifyTrendingRepositories(CancellationToken.None);
 
-			var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.ConfigureAwait(false);
+			var result = await scheduleNotifyTrendingRepositoriesCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsTrue(wasScheduledSuccessfully_First);

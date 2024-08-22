@@ -79,7 +79,7 @@ class AboutViewModelTests : BaseTest
 		//Act
 
 		await aboutViewModel.ViewOnGitHubCommand.ExecuteAsync(null).ConfigureAwait(false);
-		var openedBrowserUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
+		var openedBrowserUri = await openAsyncExecutedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert
 		Assert.Multiple(() =>
@@ -115,7 +115,7 @@ class AboutViewModelTests : BaseTest
 		//Act
 
 		await aboutViewModel.RequestFeatureCommand.ExecuteAsync(null).ConfigureAwait(false);
-		var openedBrowserUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
+		var openedBrowserUri = await openAsyncExecutedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert
 		Assert.Multiple(() =>

@@ -197,7 +197,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 
 			AnalyticsService.Track("Settings Try Demo Button Tapped");
 			await GitHubAuthenticationService.ActivateDemoUser(token).ConfigureAwait(false);
-			await demoUserActivatedTCS.Task.ConfigureAwait(false);
+			await demoUserActivatedTCS.Task.WaitAsync(token).ConfigureAwait(false);
 		}
 		finally
 		{

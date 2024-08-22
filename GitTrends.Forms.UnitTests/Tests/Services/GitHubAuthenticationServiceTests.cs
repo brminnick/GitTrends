@@ -25,7 +25,7 @@ namespace GitTrends.UnitTests
 
 			//Act
 			Assert.ThrowsAsync<Exception>(async () => await gitHubAuthenticationService.AuthorizeSession(new Uri("https://google.com"), CancellationToken.None).ConfigureAwait(false));
-			await authorizeSessionStartedTCS.Task.ConfigureAwait(false);
+			await authorizeSessionStartedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsTrue(didAuthorizeSessionStartedFire);
@@ -53,7 +53,7 @@ namespace GitTrends.UnitTests
 
 			//Act
 			Assert.ThrowsAsync<Exception>(async () => await gitHubAuthenticationService.AuthorizeSession(new Uri("https://google.com"), CancellationToken.None).ConfigureAwait(false));
-			isAuthorizationSuccessful = await authorizeSessionCompletedTCS.Task.ConfigureAwait(false);
+			isAuthorizationSuccessful = await authorizeSessionCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsTrue(didAuthorizeSessionCompletedFire);
@@ -82,7 +82,7 @@ namespace GitTrends.UnitTests
 
 			//Act
 			await gitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-			await demoUserActivatedTCS.Task.ConfigureAwait(false);
+			await demoUserActivatedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			//Assert
 			Assert.IsTrue(didDemoUserActivatedFire);
@@ -119,7 +119,7 @@ namespace GitTrends.UnitTests
 			gitHubUserAlias_Initial = gitHubUserService.Alias;
 
 			await gitHubAuthenticationService.LogOut().ConfigureAwait(false);
-			await loggedOutTCS.Task.ConfigureAwait(false);
+			await loggedOutTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 			gitHubUserAlias_Final = gitHubUserService.Alias;
 			gitHubUserName_Final = gitHubUserService.Name;

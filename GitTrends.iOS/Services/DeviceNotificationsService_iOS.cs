@@ -34,7 +34,7 @@ namespace GitTrends.iOS
                     tcs.SetResult(false);
             });
 
-            return tcs.Task;
+            return TCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
         });
 
         async void HandleRegisterForNotificationsCompleted(object sender, (bool isSuccessful, string errorMessage) e)

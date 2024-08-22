@@ -61,7 +61,7 @@ class NotificationServiceTests : BaseTest
 
 		//Act
 		await notificationService.HandleNotification(title, message, badgeCount, TestCancellationTokenSource.Token).ConfigureAwait(false);
-		sortingOption = await sortingOptionRequestedTCS.Task.ConfigureAwait(false);
+		sortingOption = await sortingOptionRequestedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert
 		Assert.Multiple(() =>
@@ -183,7 +183,7 @@ class NotificationServiceTests : BaseTest
 		shouldSendNotifications_Initial = notificationService.ShouldSendNotifications;
 
 		var registrationResult = await notificationService.Register(false, TestCancellationTokenSource.Token).ConfigureAwait(false);
-		var (isRegistrationSuccessful, registrationErrorMessage) = await registrationCompletedTCS.Task.ConfigureAwait(false);
+		var (isRegistrationSuccessful, registrationErrorMessage) = await registrationCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		areNotificationsEnabled_AfterRegistration = await notificationService.AreNotificationsEnabled(TestCancellationTokenSource.Token).ConfigureAwait(false);
 		shouldSendNotifications_AfterRegistration = notificationService.ShouldSendNotifications;
@@ -231,7 +231,7 @@ class NotificationServiceTests : BaseTest
 		//Act
 		notificationService.Initialize();
 		
-		await initializationCompletedTCS.Task.ConfigureAwait(false);
+		await initializationCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert
 		Assert.That(didInitializationCompletedFire);
