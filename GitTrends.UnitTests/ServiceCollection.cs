@@ -83,6 +83,7 @@ static class ServiceCollection
 		services.AddSingleton<ILauncher, MockLauncher>();
 		services.AddSingleton<IJobManager, MockJobManager>();
 		services.AddSingleton<INotificationManager, MockNotificationManager>();
+		services.AddSingleton<INotificationPermissionStatus, MockNotificationPermissionService>();
 		services.AddSingleton<ISecureStorage, MockSecureStorage>();
 		services.AddSingleton<IStoreReview, MockStoreReview>();
 		services.AddSingleton<IPreferences, MockPreferences>();

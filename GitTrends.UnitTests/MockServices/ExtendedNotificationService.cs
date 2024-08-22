@@ -7,13 +7,12 @@ namespace GitTrends.UnitTests;
 public class ExtendedNotificationService(
 	IDeviceInfo deviceInfo,
 	IPreferences preferences,
-	ISecureStorage secureStorage,
 	IAnalyticsService analyticsService,
 	MobileSortingService sortingService,
 	DeepLinkingService deepLinkingService,
 	INotificationManager notificationManager,
-	AzureFunctionsApiService azureFunctionsApiService)
-	: NotificationService(deviceInfo, preferences, secureStorage, analyticsService, sortingService, deepLinkingService, notificationManager, azureFunctionsApiService)
+	INotificationPermissionStatus notificationPermissionStatus)
+	: NotificationService(deviceInfo, preferences, analyticsService, sortingService, deepLinkingService, notificationManager, notificationPermissionStatus)
 {
 	public override void UnRegister()
 	{

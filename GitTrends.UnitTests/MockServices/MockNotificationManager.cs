@@ -3,10 +3,13 @@ using Shiny.Notifications;
 
 namespace GitTrends.UnitTests;
 
-public class MockNotificationManager : INotificationManager
+public class MockNotificationManager(INotificationPermissionStatus notificationPermissionService) : ICanManageBadge
 {
 	readonly Dictionary<string, Channel> _channelsDictionary = [];
 	readonly Dictionary<int, Notification> _pendingNotificationsDictionary = [];
+	readonly MockNotificationPermissionService _notificationPermissionService = (MockNotificationPermissionService)notificationPermissionService;
+
+	int _badgeValue;
 
 	public Task Cancel(int id)
 	{
@@ -37,7 +40,7 @@ public class MockNotificationManager : INotificationManager
 
 	public Task<AccessState> RequestAccess(AccessRequestFlags flags = AccessRequestFlags.Notification)
 	{
-		throw new NotImplementedException();
+		_notificationPermissionService.SetNotificationsEnabled(true);
 		return Task.FromResult(AccessState.Available);
 	}
 
@@ -66,5 +69,13 @@ public class MockNotificationManager : INotificationManager
 		_channelsDictionary.Remove(channelId);
 	}
 
-	public Task<Notification> GetNotification(int notificationId) => Task.FromResult<Notification>(_pendingNotificationsDictionary[notificationId]);
+	public Task<Notification> GetNotification(int notificationId) => Task.FromResult(_pendingNotificationsDictionary[notificationId]);
+
+	public Task SetBadge(int value)
+	{
+		_badgeValue = value;
+		return Task.CompletedTask;
+	}
+
+	public Task<int> GetBadge() => Task.FromResult(_badgeValue);
 }

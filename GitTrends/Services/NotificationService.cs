@@ -16,32 +16,30 @@ public class NotificationService
 
 	readonly IDeviceInfo _deviceInfo;
 	readonly IPreferences _preferences;
-	readonly ISecureStorage _secureStorage;
 	readonly MobileSortingService _sortingService;
 	readonly IAnalyticsService _analyticsService;
 	readonly DeepLinkingService _deepLinkingService;
 	readonly INotificationManager _notificationManager;
-	readonly AzureFunctionsApiService _azureFunctionsApiService;
+	readonly INotificationPermissionStatus _notificationPermissionService;
 
 	TaskCompletionSource<AccessState>? _settingsResultCompletionSource;
 
-	public NotificationService(IDeviceInfo deviceInfo,
+	public NotificationService(
+		IDeviceInfo deviceInfo,
 		IPreferences preferences,
-		ISecureStorage secureStorage,
 		IAnalyticsService analyticsService,
 		MobileSortingService sortingService,
 		DeepLinkingService deepLinkingService,
 		INotificationManager notificationManager,
-		AzureFunctionsApiService azureFunctionsApiService)
+		INotificationPermissionStatus notificationPermissionService)
 	{
 		_deviceInfo = deviceInfo;
 		_preferences = preferences;
-		_secureStorage = secureStorage;
 		_sortingService = sortingService;
 		_analyticsService = analyticsService;
 		_deepLinkingService = deepLinkingService;
 		_notificationManager = notificationManager;
-		_azureFunctionsApiService = azureFunctionsApiService;
+		_notificationPermissionService = notificationPermissionService;
 
 		App.Resumed += HandleAppResumed;
 	}
@@ -91,11 +89,7 @@ public class NotificationService
 	public static string CreateSingleRepositoryNotificationMessage(in string repositoryName, in string repositoryOwner) => string.Format(NotificationConstants.SingleRepositoryNotificationMessage, repositoryName, repositoryOwner);
 	public static string CreateMultipleRepositoryNotificationMessage(in int count) => string.Format(NotificationConstants.MultipleRepositoryNotificationMessage, count);
 
-	public async Task<bool> AreNotificationsEnabled(CancellationToken token)
-	{
-		var result = await Microsoft.Maui.ApplicationModel.Permissions.CheckStatusAsync<Microsoft.Maui.ApplicationModel.Permissions.PostNotifications>().WaitAsync(token).ConfigureAwait(false);
-		return result is PermissionStatus.Granted or PermissionStatus.Limited;
-	}
+	public Task<bool> AreNotificationsEnabled(CancellationToken token) => _notificationPermissionService.AreNotificationsEnabled(token);
 
 	public void Initialize()
 	{
