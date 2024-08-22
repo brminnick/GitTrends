@@ -89,7 +89,7 @@ class RepositoryViewModelTests : BaseTest
 
 		void HandleScheduleRetryRepositoriesStarsCompleted(object? sender, Repository e)
 		{
-			if (!backgroundFetchService.QueuedForegroundJobsList.Any())
+			if (backgroundFetchService.QueuedForegroundJobsList.Count <= 1) // Job is removed from QueuedForegroundJobsList after `RetryRepositoryStarsJob.UpdatedRepositorySavedToDatabase` event fires
 			{
 				RetryRepositoryStarsJob.UpdatedRepositorySavedToDatabase -= HandleScheduleRetryRepositoriesStarsCompleted;
 			}
@@ -107,7 +107,7 @@ class RepositoryViewModelTests : BaseTest
 
 			repositoriesUpdatedInBackground.Add(e);
 
-			if (!backgroundFetchService.QueuedForegroundJobsList.Any())
+			if (backgroundFetchService.QueuedForegroundJobsList.Count <= 1)
 			{
 				fetchStarsInBackgroundTCS.SetResult(repositoriesUpdatedInBackground);
 			}
