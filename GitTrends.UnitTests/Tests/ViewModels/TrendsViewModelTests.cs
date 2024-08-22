@@ -310,11 +310,10 @@ class TrendsViewModelTests : BaseTest
 
 		await cancellationTokenSource.CancelAsync();
 
-		await fetchDataCommandTask.ConfigureAwait(false);
-
 		//Assert
 		Assert.Multiple(() =>
 		{
+			Assert.ThrowsAsync<TaskCanceledException>(() => fetchDataCommandTask);
 			Assert.That(trendsViewModel.StarsHeaderMessageText, Is.EqualTo(EmptyDataViewService.GetStarsHeaderMessageText(RefreshState.Error, trendsViewModel.TotalStars)));
 			Assert.That(((FileImageSource?)trendsViewModel.StarsEmptyDataViewImage)?.File, Is.EqualTo(EmptyDataViewService.GetStarsEmptyDataViewImage(RefreshState.Error, trendsViewModel.TotalStars)));
 			Assert.That(trendsViewModel.StarsEmptyDataViewTitleText, Is.EqualTo(EmptyDataViewService.GetStarsEmptyDataViewTitleText(RefreshState.Error, trendsViewModel.TotalStars)));

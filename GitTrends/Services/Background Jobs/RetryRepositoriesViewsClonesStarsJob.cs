@@ -53,7 +53,7 @@ public class RetryRepositoriesViewsClonesStarsJob(
 		_analyticsService.Track($"{nameof(RetryOrganizationsRepositoriesJob)} Triggered");
 
 		var serializedRepository = jobInfo.Parameters?[RepositoryKey] ?? throw new ArgumentNullException(nameof(jobInfo), $@"{nameof(jobInfo.Parameters)} cannot be null");
-		var repository = JsonSerializer.Deserialize<Repository>(serializedRepository) ?? throw new InvalidOperationException("Repository cannot be null");
+		var repository = Repository.Deserialize(serializedRepository);
 
 		try
 		{
