@@ -135,23 +135,23 @@ public record Repository : IRepository
 		var repositoryJsonObject = JsonNode.Parse(json) ?? throw new InvalidOperationException("Failed to parse string to JsonNode");
 		
 		return new Repository(
-			repositoryJsonObject[nameof(Repository.Name)]?.GetValue<string>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Repository.Name)}"),
-			repositoryJsonObject[nameof(Repository.Description)]?.GetValue<string>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Repository.Description)}"),
-			repositoryJsonObject[nameof(Repository.ForkCount)]?.GetValue<long>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Repository.ForkCount)}"),
-			repositoryJsonObject[nameof(Repository.OwnerLogin)]?.GetValue<string>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Repository.OwnerLogin)}"),
-			repositoryJsonObject[nameof(Repository.OwnerAvatarUrl)]?.GetValue<string>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Repository.OwnerAvatarUrl)}"),
-			repositoryJsonObject[nameof(Repository.IssuesCount)]?.GetValue<long>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Repository.IssuesCount)}"),
-			repositoryJsonObject[nameof(Repository.WatchersCount)]?.GetValue<long>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Repository.WatchersCount)}"),
-			repositoryJsonObject[nameof(Repository.StarCount)]?.GetValue<long>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Repository.StarCount)}"),
-			repositoryJsonObject[nameof(Repository.Url)]?.GetValue<string>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Repository.Url)}"),
-			repositoryJsonObject[nameof(Repository.IsFork)]?.GetValue<bool>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Repository.IsFork)}"),
-			repositoryJsonObject[nameof(Repository.DataDownloadedAt)]?.GetValue<DateTimeOffset>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Repository.DataDownloadedAt)}"),
-			(RepositoryPermission)(repositoryJsonObject[nameof(Repository.Permission)]?.GetValue<int>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Repository.Permission)}")),
-			repositoryJsonObject[nameof(Repository.IsArchived)]?.GetValue<bool>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Repository.IsArchived)}"),
-			repositoryJsonObject[nameof(Repository.IsFavorite)]?.GetValue<bool?>(),
-			repositoryJsonObject[nameof(Repository.DailyViewsList)]?.Deserialize<IEnumerable<DailyViewsModel>>(),
-			repositoryJsonObject[nameof(Repository.DailyClonesList)]?.Deserialize<IEnumerable<DailyClonesModel>>(),
-			repositoryJsonObject[nameof(Repository.StarredAt)]?.Deserialize<IEnumerable<DateTimeOffset>>());
+			repositoryJsonObject[nameof(Name)]?.GetValue<string>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Name)}"),
+			repositoryJsonObject[nameof(Description)]?.GetValue<string>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Description)}"),
+			repositoryJsonObject[nameof(ForkCount)]?.GetValue<long>() ?? throw new InvalidOperationException($"Error deserializing {nameof(ForkCount)}"),
+			repositoryJsonObject[nameof(OwnerLogin)]?.GetValue<string>() ?? throw new InvalidOperationException($"Error deserializing {nameof(OwnerLogin)}"),
+			repositoryJsonObject[nameof(OwnerAvatarUrl)]?.GetValue<string>() ?? throw new InvalidOperationException($"Error deserializing {nameof(OwnerAvatarUrl)}"),
+			repositoryJsonObject[nameof(IssuesCount)]?.GetValue<long>() ?? throw new InvalidOperationException($"Error deserializing {nameof(IssuesCount)}"),
+			repositoryJsonObject[nameof(WatchersCount)]?.GetValue<long>() ?? throw new InvalidOperationException($"Error deserializing {nameof(WatchersCount)}"),
+			repositoryJsonObject[nameof(StarCount)]?.GetValue<long>() ?? throw new InvalidOperationException($"Error deserializing {nameof(StarCount)}"),
+			repositoryJsonObject[nameof(Url)]?.GetValue<string>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Url)}"),
+			repositoryJsonObject[nameof(IsFork)]?.GetValue<bool>() ?? throw new InvalidOperationException($"Error deserializing {nameof(IsFork)}"),
+			repositoryJsonObject[nameof(DataDownloadedAt)]?.GetValue<DateTimeOffset>() ?? throw new InvalidOperationException($"Error deserializing {nameof(DataDownloadedAt)}"),
+			(RepositoryPermission)(repositoryJsonObject[nameof(Permission)]?.GetValue<int>() ?? throw new InvalidOperationException($"Error deserializing {nameof(Permission)}")),
+			repositoryJsonObject[nameof(IsArchived)]?.GetValue<bool>() ?? throw new InvalidOperationException($"Error deserializing {nameof(IsArchived)}"),
+			repositoryJsonObject[nameof(IsFavorite)]?.GetValue<bool?>(),
+			repositoryJsonObject[nameof(DailyViewsList)]?.Deserialize<IEnumerable<DailyViewsModel>>(),
+			repositoryJsonObject[nameof(DailyClonesList)]?.Deserialize<IEnumerable<DailyClonesModel>>(),
+			repositoryJsonObject[nameof(StarredAt)]?.Deserialize<IEnumerable<DateTimeOffset>>());
 	}
 
 	static IReadOnlyList<DailyViewsModel> AddMissingDates(in IEnumerable<DailyViewsModel> dailyViews)
