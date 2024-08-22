@@ -102,6 +102,16 @@ abstract class BaseTest : IDisposable
 			DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(), starredAt.Count,
 			gitTrendsAvatarUrl, false, downloadedAt, RepositoryPermission.ADMIN, false, false, dailyViewsList, dailyClonesList, starredAt);
 	}
+	
+	protected static MobileReferringSiteModel CreateMobileReferringSite(DateTimeOffset downloadedAt, string referrer)
+	{
+		return new MobileReferringSiteModel(new ReferringSiteModel(DemoDataConstants.GetRandomNumber(),
+			DemoDataConstants.GetRandomNumber(),
+			referrer))
+		{
+			DownloadedAt = downloadedAt
+		};
+	}
 
 	protected virtual void Dispose(bool disposing)
 	{

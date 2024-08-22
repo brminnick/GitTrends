@@ -5,12 +5,12 @@ namespace GitTrends.UnitTests;
 
 public class MockNotificationManager : INotificationManager
 {
-	readonly Dictionary<string, Channel> _channelsDictionary = new();
-	readonly Dictionary<int, Notification> _pendingNotificationsDitcionary = new();
+	readonly Dictionary<string, Channel> _channelsDictionary = [];
+	readonly Dictionary<int, Notification> _pendingNotificationsDictionary = [];
 
 	public Task Cancel(int id)
 	{
-		_pendingNotificationsDitcionary.Remove(id);
+		_pendingNotificationsDictionary.Remove(id);
 		return Task.CompletedTask;
 	}
 
@@ -20,7 +20,7 @@ public class MockNotificationManager : INotificationManager
 		{
 			case CancelScope.Pending:
 			case CancelScope.All:
-				_pendingNotificationsDitcionary.Clear();
+				_pendingNotificationsDictionary.Clear();
 				break;
 
 			case CancelScope.DisplayedOnly:
@@ -33,7 +33,7 @@ public class MockNotificationManager : INotificationManager
 		return Task.CompletedTask;
 	}
 
-	public Task<IList<Notification>> GetPendingNotifications() => Task.FromResult<IList<Notification>>([.. _pendingNotificationsDitcionary.Values]);
+	public Task<IList<Notification>> GetPendingNotifications() => Task.FromResult<IList<Notification>>([.. _pendingNotificationsDictionary.Values]);
 
 	public Task<AccessState> RequestAccess(AccessRequestFlags flags = AccessRequestFlags.Notification)
 	{
@@ -43,7 +43,7 @@ public class MockNotificationManager : INotificationManager
 
 	public Task Send(Notification notification)
 	{
-		_pendingNotificationsDitcionary.Add(notification.Id, notification);
+		_pendingNotificationsDictionary.Add(notification.Id, notification);
 		return Task.CompletedTask;
 	}
 
@@ -66,5 +66,5 @@ public class MockNotificationManager : INotificationManager
 		_channelsDictionary.Remove(channelId);
 	}
 
-	public Task<Notification> GetNotification(int notificationId) => Task.FromResult<Notification>(_pendingNotificationsDitcionary[notificationId]);
+	public Task<Notification> GetNotification(int notificationId) => Task.FromResult<Notification>(_pendingNotificationsDictionary[notificationId]);
 }

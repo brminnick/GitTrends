@@ -24,7 +24,7 @@ class RepositoryViewModelTests : BaseTest
 
 		var repositoriesUpdatedInBackground = new List<Repository>();
 		var fetchStarsInBackgroundTCS = new TaskCompletionSource<IReadOnlyList<Repository>>();
-		BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
+		RetryRepositoryStarsJob.JobCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
 
 		//Act
 		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService, TestCancellationTokenSource.Token).ConfigureAwait(false);
@@ -43,7 +43,7 @@ class RepositoryViewModelTests : BaseTest
 		}
 		else
 		{
-			BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
+			RetryRepositoryStarsJob.JobCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
 		}
 
 		afterPullToRefresh = DateTimeOffset.UtcNow;
@@ -91,7 +91,7 @@ class RepositoryViewModelTests : BaseTest
 		{
 			if (!backgroundFetchService.QueuedForegroundJobsList.Any())
 			{
-				BackgroundFetchService.ScheduleRetryRepositoriesStarsCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
+				RetryRepositoryStarsJob.JobCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
 			}
 
 			Assert.Multiple(() =>

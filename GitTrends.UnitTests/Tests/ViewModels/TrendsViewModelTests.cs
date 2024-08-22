@@ -208,7 +208,7 @@ class TrendsViewModelTests : BaseTest
 
 		await FetchDataCommandTest_AuthenticatedUser_NoData().ConfigureAwait(false);
 
-		var isTryScheduleRetryRepositoriesStarsRunningAfterTest = backgroundFetchService.QueuedForegroundJobsList.Any(x => x == backgroundFetchService.GetRetryRepositoriesStarsIdentifier(repository_Initial));
+		var isTryScheduleRetryRepositoriesStarsRunningAfterTest = backgroundFetchService.IsFetchingStarsInBackground(repository_Initial);
 
 		//Assert
 		Assert.Multiple(() =>
@@ -340,7 +340,7 @@ class TrendsViewModelTests : BaseTest
 
 		await FetchDataCommandTest_AuthenticatedUser_NoData().ConfigureAwait(false);
 
-		var isTryScheduleRetryRepositoriesViewsClonesStarsRunningAfterTest = backgroundFetchService.QueuedForegroundJobsList.Any(x => x == backgroundFetchService.GetRetryRepositoriesViewsClonesStarsIdentifier(repository_Initial));
+		var isTryScheduleRetryRepositoriesViewsClonesStarsRunningAfterTest = backgroundFetchService.IsFetchingStarsInBackground(repository_Initial);
 
 		//Assert
 		Assert.Multiple(() =>

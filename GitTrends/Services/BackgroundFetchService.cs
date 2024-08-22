@@ -50,8 +50,8 @@ public class BackgroundFetchService
 	public bool IsFetchingViewsClonesStarsInBackground(Repository repository) =>
 		QueuedForegroundJobsList.Any(x => x == _retryRepositoriesViewsClonesStarsJob.GetJobIdentifier(repository));
 	
-	public bool IsFetchingStarsInBackground(BackgroundFetchService backgroundFetchService, Repository repository) =>
-		backgroundFetchService.QueuedForegroundJobsList.Any(x => x == _retryRepositoryStarsJob.GetJobIdentifier(repository));
+	public bool IsFetchingStarsInBackground(Repository repository) =>
+		QueuedForegroundJobsList.Any(x => x == _retryRepositoryStarsJob.GetJobIdentifier(repository));
 
 	public bool TryScheduleRetryOrganizationsRepositories(string organizationName, TimeSpan? delay = null)
 	{

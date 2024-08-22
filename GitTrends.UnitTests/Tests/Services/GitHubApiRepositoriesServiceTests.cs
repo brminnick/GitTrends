@@ -165,7 +165,7 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
 
 		//Act
-		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(new List<Repository>(), CancellationToken.None).ConfigureAwait(false))
+		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData([], CancellationToken.None).ConfigureAwait(false))
 		{
 			repositories.Add(repository);
 		}
@@ -183,7 +183,7 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
 
 		//Act
-		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(new List<Repository>(), CancellationToken.None).ConfigureAwait(false))
+		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData([], CancellationToken.None).ConfigureAwait(false))
 		{
 			repositories.Add(repository);
 		}
@@ -548,10 +548,10 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
 
 		// Act 
-		await foreach (var mobileReferringSite in gitHubApiRepositoriesService.GetMobileReferringSites(new List<ReferringSiteModel>
-		{
+		await foreach (var mobileReferringSite in gitHubApiRepositoriesService.GetMobileReferringSites(
+		[
 			referringSite
-		}, string.Empty, CancellationToken.None))
+		], string.Empty, CancellationToken.None))
 		{
 			mobileReferringSiteModel = mobileReferringSite;
 		}

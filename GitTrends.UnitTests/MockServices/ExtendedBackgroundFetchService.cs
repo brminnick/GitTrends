@@ -3,33 +3,23 @@ using Shiny.Jobs;
 
 namespace GitTrends.UnitTests;
 
-class ExtendedBackgroundFetchService : BackgroundFetchService
+class ExtendedBackgroundFetchService(
+	IJobManager jobManager,
+	CleanDatabaseJob cleanDatabaseJob,
+	RetryRepositoryStarsJob retryRepositoryStarsJob,
+	RetryGetReferringSitesJob retryGetReferringSitesJob,
+	NotifyTrendingRepositoriesJob notifyTrendingRepositoriesJob,
+	RetryOrganizationsRepositoriesJob retryOrganizationsRepositoriesJob,
+	RetryRepositoriesViewsClonesStarsJob retryRepositoriesViewsClonesStarsJob)
+	: BackgroundFetchService(jobManager,
+		cleanDatabaseJob,
+		retryRepositoryStarsJob,
+		retryGetReferringSitesJob,
+		notifyTrendingRepositoriesJob,
+		retryOrganizationsRepositoriesJob,
+		retryRepositoriesViewsClonesStarsJob)
 {
-	readonly IJobManager _jobManager;
-
-	public ExtendedBackgroundFetchService(IAppInfo appInfo,
-		IJobManager jobManager,
-		IAnalyticsService analyticsService,
-		GitHubUserService gitHubUserService,
-		GitHubApiV3Service gitHubApiV3Service,
-		RepositoryDatabase repositoryDatabase,
-		NotificationService notificationService,
-		ReferringSitesDatabase referringSitesDatabase,
-		GitHubGraphQLApiService gitHubGraphQLApiService,
-		GitHubApiRepositoriesService gitHubApiRepositoriesService)
-		: base(appInfo,
-			jobManager,
-			analyticsService,
-			gitHubUserService,
-			gitHubApiV3Service,
-			repositoryDatabase,
-			notificationService,
-			referringSitesDatabase,
-			gitHubGraphQLApiService,
-			gitHubApiRepositoriesService)
-	{
-		_jobManager = jobManager;
-	}
+	readonly IJobManager _jobManager = jobManager;
 
 	public void CancelAllJobs()
 	{

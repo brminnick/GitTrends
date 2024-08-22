@@ -5,7 +5,7 @@ namespace GitTrends.UnitTests;
 
 class MockJobManager : IJobManager
 {
-	readonly Dictionary<string, JobInfo> _jobDictionary = new();
+	readonly Dictionary<string, JobInfo> _jobDictionary = [];
 
 	public bool IsRunning { get; private set; }
 

@@ -20,7 +20,7 @@ class FavIconServiceTests : BaseTest
 		});
 	}
 
-	[TestCase("https://outlook.live.com/owa/", "https://logincdn.msftauth.net/16.000.30275.14/images/favicon.ico")] //Shortcut icon Uri
+	[TestCase("https://outlook.live.com/owa/", "https://logincdn.msftauth.net/16.000.30324.2/images/favicon.ico")] //Shortcut icon Uri
 	[TestCase("https://chrissainty.com/", "https://chrissainty.com/favicon-32x32.png")] // Icon Url
 	[TestCase("https://visualstudiomagazine.com/", "https://visualstudiomagazine.com/design/ECG/VisualStudioMagazine/img/vsm_apple_icon.png")] //Apple Touch Icon Url
 	[TestCase("https://mondaypunday.com/", "https://mondaypunday.com/favicon.ico")] //FavIcon Url

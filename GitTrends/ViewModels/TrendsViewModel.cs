@@ -389,7 +389,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 
 	async Task<IReadOnlyList<DateTimeOffset>> GetStarsData(Repository repository, CancellationToken cancellationToken)
 	{
-		if (_backgroundFetchService.IsFetchingStarsInBackground(_backgroundFetchService, repository))
+		if (_backgroundFetchService.IsFetchingStarsInBackground(repository))
 		{
 			return await getRepositoryStarsFromBackgroundService(repository, cancellationToken).ConfigureAwait(false);
 		}
