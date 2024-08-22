@@ -23,7 +23,8 @@ class ReferringSitesViewModelTests : BaseTest
 
 		ReferringSitesViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 
-		var referringSitesViewModel = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesViewModel>();
+		var referringSitesViewModel = (ExtendedReferringSitesViewModel)ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesViewModel>();
+		referringSitesViewModel.SetRepository(mockGitTrendsRepository);
 
 		//Act
 		emptyDataViewTitle_Initial = referringSitesViewModel.EmptyDataViewTitle;
@@ -31,7 +32,7 @@ class ReferringSitesViewModelTests : BaseTest
 		isEmptyDataViewEnabled_Initial = referringSitesViewModel.IsEmptyDataViewEnabled;
 		emptyDataViewDescription_Initial = referringSitesViewModel.EmptyDataViewDescription;
 
-		var refreshCommandTask = referringSitesViewModel.ExecuteRefreshCommand.ExecuteAsync((mockGitTrendsRepository, CancellationToken.None));
+		var refreshCommandTask = referringSitesViewModel.ExecuteRefreshCommand.ExecuteAsync(TestCancellationTokenSource.Token);
 
 		isEmptyDataViewEnabled_DuringRefresh = referringSitesViewModel.IsEmptyDataViewEnabled;
 		mobileReferringSites_DuringRefresh = referringSitesViewModel.MobileReferringSitesList;
@@ -88,8 +89,10 @@ class ReferringSitesViewModelTests : BaseTest
 			$"https://github.com/{GitHubConstants.GitTrendsRepoOwner}/{GitHubConstants.GitTrendsRepoName}", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
 
 		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-		var referringSitesViewModel = ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesViewModel>();
+		var referringSitesViewModel = (ExtendedReferringSitesViewModel)ServiceCollection.ServiceProvider.GetRequiredService<ReferringSitesViewModel>();
 		var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
+
+		referringSitesViewModel.SetRepository(mockGitTrendsRepository);
 
 		//Act
 		await AuthenticateUser(gitHubUserService, gitHubGraphQLApiService, TestCancellationTokenSource.Token).ConfigureAwait(false);
@@ -100,7 +103,7 @@ class ReferringSitesViewModelTests : BaseTest
 		mobileReferringSites_Initial = referringSitesViewModel.MobileReferringSitesList;
 		emptyDataViewDescription_Initial = referringSitesViewModel.EmptyDataViewDescription;
 
-		var refreshCommandTask = referringSitesViewModel.ExecuteRefreshCommand.ExecuteAsync((mockGitTrendsRepository, CancellationToken.None));
+		var refreshCommandTask = referringSitesViewModel.ExecuteRefreshCommand.ExecuteAsync(TestCancellationTokenSource.Token);
 
 		isEmptyDataViewEnabled_DuringRefresh = referringSitesViewModel.IsEmptyDataViewEnabled;
 		mobileReferringSites_DuringRefresh = referringSitesViewModel.MobileReferringSitesList;

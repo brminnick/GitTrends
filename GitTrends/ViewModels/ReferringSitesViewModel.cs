@@ -23,8 +23,6 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 	readonly GitHubAuthenticationService _gitHubAuthenticationService;
 	readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
-	Repository? _repository;
-
 	[ObservableProperty]
 	IReadOnlyList<MobileReferringSiteModel> _mobileReferringSitesList = [];
 
@@ -52,6 +50,8 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 
 		RefreshState = RefreshState.Uninitialized;
 	}
+	
+	protected Repository? Repository { get; set; }
 
 	public static event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
 	{
@@ -77,22 +77,22 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 	[RelayCommand(AllowConcurrentExecutions = true)]
 	async Task ExecuteRefresh(CancellationToken cancellationToken)
 	{
-		if (_repository is null)
+		if (Repository is null)
 			return;
 		
 		var minimumTimerDisplayTimeTask = Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
-		var referringSitesList = await GetReferringSites(_repository, cancellationToken).ConfigureAwait(false);
+		var referringSitesList = await GetReferringSites(Repository, cancellationToken).ConfigureAwait(false);
 		MobileReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList.Select(static x => new MobileReferringSiteModel(x))).ToList();
 
 		if (!_gitHubUserService.IsDemoUser)
 		{
-			await foreach (var mobileReferringSite in _gitHubApiRepositoriesService.GetMobileReferringSites(referringSitesList, _repository.Url, cancellationToken).ConfigureAwait(false))
+			await foreach (var mobileReferringSite in _gitHubApiRepositoriesService.GetMobileReferringSites(referringSitesList, Repository.Url, cancellationToken).ConfigureAwait(false))
 			{
 				var referringSite = MobileReferringSitesList.Single(x => x.Referrer == mobileReferringSite.Referrer);
 				referringSite.FavIcon = mobileReferringSite.FavIcon;
 
 				if (!string.IsNullOrWhiteSpace(mobileReferringSite.FavIconImageUrl))
-					await _referringSitesDatabase.SaveReferringSite(referringSite, _repository.Url, cancellationToken).ConfigureAwait(false);
+					await _referringSitesDatabase.SaveReferringSite(referringSite, Repository.Url, cancellationToken).ConfigureAwait(false);
 			}
 		}
 
@@ -176,6 +176,6 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 	void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)
 	{
 		var repository = (Repository)query[RepositoryQueryString];
-		_repository = repository;
+		Repository = repository;
 	}
 }

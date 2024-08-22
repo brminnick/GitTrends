@@ -58,7 +58,7 @@ static class ServiceCollection
 		// GitTrends ViewModels
 		services.AddTransient<AboutViewModel>();
 		services.AddTransient<OnboardingViewModel>();
-		services.AddTransient<ReferringSitesViewModel>();
+		services.AddTransient<ReferringSitesViewModel, ExtendedReferringSitesViewModel>();
 		services.AddTransient<RepositoryViewModel>();
 		services.AddTransient<SettingsViewModel>();
 		services.AddTransient<TrendsViewModel>();
