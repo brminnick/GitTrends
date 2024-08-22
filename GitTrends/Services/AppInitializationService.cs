@@ -39,6 +39,7 @@ public class AppInitializationService(ThemeService themeService,
 		{
 			#region First, Initialize Services That Dont Require API Response
 			_languageService.Initialize();
+			_notificationService.Initialize();
 			_backgroundFetchService.Initialize();
 			await _themeService.Initialize().ConfigureAwait(false);
 			#endregion
@@ -46,18 +47,14 @@ public class AppInitializationService(ThemeService themeService,
 			#region Then, Initialize Services Requiring API Response
 			var initializeSyncFusionServiceTask = _syncfusionService.Initialize(cancellationToken);
 			var initializeLibrariesServiceValueTask = _librariesService.Initialize(cancellationToken);
-			var initializeNotificationServiceValueTask = _notificationService.Initialize(cancellationToken);
 			var initializeGitTrendsStatisticsValueTask = _gitTrendsStatisticsService.Initialize(cancellationToken);
-			
 			await initializeGitTrendsStatisticsValueTask.ConfigureAwait(false);
 #if DEBUG
 			initializeSyncFusionServiceTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
 			initializeLibrariesServiceValueTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
-			initializeNotificationServiceValueTask.SafeFireAndForget(ex => _analyticsService.Report(ex));
 #else
 			await initializeSyncFusionServiceTask.ConfigureAwait(false);
 			await initializeLibrariesServiceValueTask.ConfigureAwait(false);
-			await initializeNotificationServiceValueTask.ConfigureAwait(false);
 #endif
 
 			#endregion

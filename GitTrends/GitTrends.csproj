@@ -93,10 +93,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-    <PackageReference Include="Xamarin.Firebase.Messaging" Version="124.0.0.1"/>
-  </ItemGroup>
-
-  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
     <None Remove="Platforms\Android\linker.xml"/>
     <LinkDescription Include="Platforms\Android\linker.xml"/>
     <ProguardConfiguration Include="Platforms\Android\proguard.cfg"/>

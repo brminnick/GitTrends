@@ -222,43 +222,25 @@ class NotificationServiceTests : BaseTest
 	public async Task InitializeTest()
 	{
 		//Arrange
-		NotificationHubInformation notificationHubInformation_BeforeInitialization, notificationHubInformation_AfterInitialization;
-
 		bool didInitializationCompletedFire = false;
-		var initializationCompletedTCS = new TaskCompletionSource<NotificationHubInformation>();
+		var initializationCompletedTCS = new TaskCompletionSource();
 
 		var notificationService = ServiceCollection.ServiceProvider.GetRequiredService<NotificationService>();
 		NotificationService.InitializationCompleted += HandleInitializationCompleted;
 
 		//Act
-		notificationHubInformation_BeforeInitialization = await notificationService.GetNotificationHubInformation(TestCancellationTokenSource.Token).ConfigureAwait(false);
-
-		await notificationService.Initialize(CancellationToken.None).ConfigureAwait(false);
-
-		notificationHubInformation_AfterInitialization = await notificationService.GetNotificationHubInformation(TestCancellationTokenSource.Token).ConfigureAwait(false);
+		notificationService.Initialize();
+		
 		await initializationCompletedTCS.Task.ConfigureAwait(false);
 
 		//Assert
-		Assert.Multiple(() =>
-		{
-			Assert.That(didInitializationCompletedFire);
+		Assert.That(didInitializationCompletedFire);
 
-			Assert.That(notificationHubInformation_BeforeInitialization.ConnectionString, Is.EqualTo(NotificationHubInformation.Empty.ConnectionString));
-			Assert.That(notificationHubInformation_BeforeInitialization.ConnectionString_Debug, Is.EqualTo(NotificationHubInformation.Empty.ConnectionString_Debug));
-			Assert.That(notificationHubInformation_BeforeInitialization.Name, Is.EqualTo(NotificationHubInformation.Empty.Name));
-			Assert.That(notificationHubInformation_BeforeInitialization.Name_Debug, Is.EqualTo(NotificationHubInformation.Empty.Name_Debug));
-
-			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation_AfterInitialization.Name), Is.False);
-			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation_AfterInitialization.Name_Debug), Is.False);
-			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation_AfterInitialization.ConnectionString), Is.False);
-			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation_AfterInitialization.ConnectionString_Debug), Is.False);
-		});
-
-		void HandleInitializationCompleted(object? sender, NotificationHubInformation e)
+		void HandleInitializationCompleted(object? sender, EventArgs e)
 		{
 			NotificationService.InitializationCompleted -= HandleInitializationCompleted;
 			didInitializationCompletedFire = true;
-			initializationCompletedTCS.SetResult(e);
+			initializationCompletedTCS.SetResult();
 		}
 	}
 }

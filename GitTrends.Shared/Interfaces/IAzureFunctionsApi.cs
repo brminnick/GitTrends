@@ -17,20 +17,11 @@ public interface IAzureFunctionsApi
 	[Get("/GetTestToken")]
 	Task<GitHubToken> GetTestToken(CancellationToken token, [AliasAs("code")] string functionKey = AzureConstants.GetTestTokenApiKey);
 
-	[Get("/GetStreamingManifests")]
-	Task<Dictionary<string, StreamingManifest>> GetStreamingManifests(CancellationToken token); // On iOS, Newtonsoft.Json Cannot Deserialize to IReadOnlyDictionary
-
-	[Get("/GetNotificationHubInformation")]
-	Task<NotificationHubInformation> GetNotificationHubInformation(CancellationToken token, [AliasAs("code")] string functionKey = AzureConstants.GetNotificationHubInformationApiKey);
-
 	[Get("/GetLibraries")]
 	Task<IReadOnlyList<NuGetPackageModel>> GetLibraries(CancellationToken token);
 
 	[Get("/GetGitTrendsStatistics")]
 	Task<GitTrendsStatisticsDTO> GetGitTrendsStatistics(CancellationToken token);
-
-	[Get("/GetAppCenterApiKeys")]
-	Task<AppCenterApiKeyDTO> GetAppCenterApiKeys(CancellationToken token, [AliasAs("code")] string functionKey = AzureConstants.GetAppCenterApiKeysKey);
 
 	[Get("/GetGitTrendsEnableOrganizationsUri")]
 	Task<GitTrendsEnableOrganizationsUriDTO> GetGitTrendsEnableOrganizationsUri(CancellationToken token);

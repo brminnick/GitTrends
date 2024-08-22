@@ -65,58 +65,6 @@ class AzureFunctionsApiServiceTests : BaseTest
 	}
 
 	[Test]
-	public async Task GetStreamingManifestsTest()
-	{
-		//Arrange
-		IReadOnlyDictionary<string, StreamingManifest>? streamingManifests;
-		var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
-
-		//Act
-		streamingManifests = await azureFunctionsApiService.GetStreamingManifests(CancellationToken.None).ConfigureAwait(false);
-
-		//Assert
-		Assert.Multiple(() =>
-		{
-			Assert.That(streamingManifests, Is.Not.Null);
-
-			Assert.That(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.Chart].HlsUrl, UriKind.Absolute));
-			Assert.That(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.Chart].ManifestUrl, UriKind.Absolute));
-
-			Assert.That(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.EnableOrganizations].HlsUrl, UriKind.Absolute));
-			Assert.That(Uri.IsWellFormedUriString(streamingManifests[StreamingConstants.EnableOrganizations].ManifestUrl, UriKind.Absolute));
-
-			Assert.That(streamingManifests[StreamingConstants.EnableOrganizations].HlsUrl, Is.Not.EqualTo(streamingManifests[StreamingConstants.Chart].HlsUrl));
-			Assert.That(streamingManifests[StreamingConstants.EnableOrganizations].ManifestUrl, Is.Not.EqualTo(streamingManifests[StreamingConstants.Chart].ManifestUrl));
-		});
-	}
-
-	[Test]
-	public async Task GetNotificationHubInformationTest()
-	{
-		//Arrange
-		NotificationHubInformation? notificationHubInformation;
-		var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
-
-		//Act
-		notificationHubInformation = await azureFunctionsApiService.GetNotificationHubInformation(CancellationToken.None).ConfigureAwait(false);
-
-		//Assert
-		Assert.Multiple(() =>
-		{
-			Assert.That(notificationHubInformation, Is.Not.Null);
-			Assert.That(notificationHubInformation.ConnectionString, Is.Not.Null);
-			Assert.That(notificationHubInformation.ConnectionString_Debug, Is.Not.Null);
-			Assert.That(notificationHubInformation.Name, Is.Not.Null);
-			Assert.That(notificationHubInformation.Name_Debug, Is.Not.Null);
-
-			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation.ConnectionString), Is.False);
-			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation.ConnectionString_Debug), Is.False);
-			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation.Name), Is.False);
-			Assert.That(string.IsNullOrWhiteSpace(notificationHubInformation.Name_Debug), Is.False);
-		});
-	}
-
-	[Test]
 	public async Task GetLibrariesTest()
 	{
 		//Arrange
@@ -172,42 +120,22 @@ class AzureFunctionsApiServiceTests : BaseTest
 			Assert.That(gitTrendsStatisticsDTO.GitHubUri.IsWellFormedOriginalString());
 		});
 	}
-
-	[Test]
-	public async Task GetAppCenterApiKeysTest()
-	{
-		//Arrange
-		AppCenterApiKeyDTO? appCenterApiKeyDTO;
-		var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
-
-		//Act
-		appCenterApiKeyDTO = await azureFunctionsApiService.GetAppCenterApiKeys(CancellationToken.None).ConfigureAwait(false);
-
-		//Assert
-		Assert.Multiple(() =>
-		{
-			Assert.That(appCenterApiKeyDTO, Is.Not.Null);
-			Assert.That(appCenterApiKeyDTO.iOS, Is.Not.Null);
-			Assert.That(appCenterApiKeyDTO.Android, Is.Not.Null);
-		});
-	}
-
+	
 	[Test]
 	public async Task GetGitTrendsEnableOrganizationsUriTest()
 	{
 		//Arrange
-		AppCenterApiKeyDTO? appCenterApiKeyDTO;
+		GitTrendsEnableOrganizationsUriDTO? gitTrendsEnableOrganizationsUriDTO;
 		var azureFunctionsApiService = ServiceCollection.ServiceProvider.GetRequiredService<AzureFunctionsApiService>();
 
 		//Act
-		appCenterApiKeyDTO = await azureFunctionsApiService.GetAppCenterApiKeys(CancellationToken.None).ConfigureAwait(false);
+		gitTrendsEnableOrganizationsUriDTO = await azureFunctionsApiService.GetGitTrendsEnableOrganizationsUri(CancellationToken.None).ConfigureAwait(false);
 
 		//Assert
 		Assert.Multiple(() =>
 		{
-			Assert.That(appCenterApiKeyDTO, Is.Not.Null);
-			Assert.That(appCenterApiKeyDTO.iOS, Is.Not.Null);
-			Assert.That(appCenterApiKeyDTO.Android, Is.Not.Null);
+			Assert.That(gitTrendsEnableOrganizationsUriDTO, Is.Not.Null);
+			Assert.That(gitTrendsEnableOrganizationsUriDTO.Uri, Is.Not.Null);
 		});
 	}
 }

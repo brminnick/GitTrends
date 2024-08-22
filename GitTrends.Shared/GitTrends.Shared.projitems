@@ -51,7 +51,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\StreamingUrl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IDailyClonesModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IDailyViewsModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\NotificationHubInformation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IAzureFunctionsApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGitHubApiV3.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGitHubAuthApi.cs" />

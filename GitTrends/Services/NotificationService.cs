@@ -10,10 +10,8 @@ namespace GitTrends;
 
 public class NotificationService
 {
-	const string _getNotificationHubInformationKey = "GetNotificationHubInformation";
-
+	static readonly AsyncAwaitBestPractices.WeakEventManager _initializationCompletedEventManager = new();
 	static readonly WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new();
-	static readonly WeakEventManager<NotificationHubInformation> _initializationCompletedEventManager = new();
 	static readonly WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new();
 
 	readonly IDeviceInfo _deviceInfo;
@@ -48,7 +46,7 @@ public class NotificationService
 		App.Resumed += HandleAppResumed;
 	}
 
-	public static event EventHandler<NotificationHubInformation> InitializationCompleted
+	public static event EventHandler InitializationCompleted
 	{
 		add => _initializationCompletedEventManager.AddEventHandler(value);
 		remove => _initializationCompletedEventManager.RemoveEventHandler(value);
@@ -99,15 +97,8 @@ public class NotificationService
 		return result is PermissionStatus.Granted or PermissionStatus.Limited;
 	}
 
-	public async ValueTask Initialize(CancellationToken cancellationToken)
+	public void Initialize()
 	{
-		var notificationHubInformation = await GetNotificationHubInformation(cancellationToken).ConfigureAwait(false);
-
-		if (notificationHubInformation.IsEmpty())
-			await initalizeNotificationHub().ConfigureAwait(false);
-		else
-			initalizeNotificationHub().SafeFireAndForget(ex => _analyticsService.Report(ex));
-
 		var channels = _notificationManager.GetChannels();
 		if (!channels.Any()
 			&& (_deviceInfo.Platform != DevicePlatform.Android || _deviceInfo.Version.Major >= 8)) // Channels only supported in Android v8.0+
@@ -120,45 +111,7 @@ public class NotificationService
 			});
 		}
 
-		async Task initalizeNotificationHub()
-		{
-			try
-			{
-				notificationHubInformation = await _azureFunctionsApiService.GetNotificationHubInformation(cancellationToken).ConfigureAwait(false);
-				await _secureStorage.SetAsync(_getNotificationHubInformationKey, JsonSerializer.Serialize(notificationHubInformation)).ConfigureAwait(false);
-			}
-			catch (Exception e)
-			{
-				_analyticsService.Report(e);
-			}
-			finally
-			{
-				OnInitializationCompleted(notificationHubInformation);
-			}
-		}
-	}
-
-	public async Task<NotificationHubInformation> GetNotificationHubInformation(CancellationToken cancellationToken)
-	{
-		var serializedToken = await _secureStorage.GetAsync(_getNotificationHubInformationKey).WaitAsync(cancellationToken).ConfigureAwait(false);
-
-		if (serializedToken is null)
-			return NotificationHubInformation.Empty;
-
-		try
-		{
-			var token = JsonSerializer.Deserialize<NotificationHubInformation?>(serializedToken) ?? throw new InvalidOperationException("Deserialized token cannot be null");
-
-			return token;
-		}
-		catch (ArgumentNullException)
-		{
-			return NotificationHubInformation.Empty;
-		}
-		catch (JsonException)
-		{
-			return NotificationHubInformation.Empty;
-		}
+		OnInitializationCompleted();
 	}
 
 	public virtual void UnRegister() => ShouldSendNotifications = false;
@@ -373,7 +326,7 @@ public class NotificationService
 		}
 	}
 
-	void OnInitializationCompleted(NotificationHubInformation notificationHubInformation) => _initializationCompletedEventManager.RaiseEvent(this, notificationHubInformation, nameof(InitializationCompleted));
+	void OnInitializationCompleted() => _initializationCompletedEventManager.RaiseEvent(this, EventArgs.Empty, nameof(InitializationCompleted));
 
 	void OnSortingOptionRequested(SortingOption sortingOption) => _sortingOptionRequestedEventManager.RaiseEvent(this, sortingOption, nameof(SortingOptionRequested));
 
