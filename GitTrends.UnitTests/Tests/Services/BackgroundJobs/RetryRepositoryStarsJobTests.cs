@@ -27,7 +27,7 @@ class RetryRepositoryStarsJobTests : BaseJobTest
 			GitHubConstants.GitTrendsAvatarUrl, 1, 2, 3, "https://github.com/brminnick/gittrends", false, DateTimeOffset.UtcNow, RepositoryPermission.ADMIN, false);
 
 		var scheduleRetryRepositoriesViewsClonesStarsCompletedTCS = new TaskCompletionSource<Repository>();
-		RetryRepositoryStarsJob.JobCompleted += HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
+		RetryRepositoryStarsJob.UpdatedRepositorySavedToDatabase += HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
 
 		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 		var repositoryDatabase = ServiceCollection.ServiceProvider.GetRequiredService<RepositoryDatabase>();
@@ -98,7 +98,7 @@ class RetryRepositoryStarsJobTests : BaseJobTest
 		{
 			if (e.Url == repository_Initial.Url)
 			{
-				RetryRepositoryStarsJob.JobCompleted -= HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
+				RetryRepositoryStarsJob.UpdatedRepositorySavedToDatabase -= HandleScheduleRetryRepositoriesViewsClonesStarsCompleted;
 				scheduleRetryRepositoriesViewsClonesStarsCompletedTCS.SetResult(e);
 			}
 		}

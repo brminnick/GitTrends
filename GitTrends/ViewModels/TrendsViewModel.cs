@@ -403,11 +403,11 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 		{
 			var backgroundStarsTCS = new TaskCompletionSource<IReadOnlyList<DateTimeOffset>>();
 
-			RetryRepositoryStarsJob.JobCompleted += HandleScheduleRetryRepositoriesStarsCompleted;
+			RetryRepositoryStarsJob.UpdatedRepositorySavedToDatabase += HandleScheduleRetryRepositoriesStarsCompleted;
 
 			await using var cancellationTokenRegistration = cancellationToken.Register(() =>
 			{
-				RetryRepositoryStarsJob.JobCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
+				RetryRepositoryStarsJob.UpdatedRepositorySavedToDatabase -= HandleScheduleRetryRepositoriesStarsCompleted;
 				backgroundStarsTCS.SetCanceled(cancellationToken);
 			}); // Work-around to use a CancellationToken with a TaskCompletionSource: https://stackoverflow.com/a/39897392/5953643
 
@@ -417,7 +417,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 			{
 				if (e.Url == repository.Url)
 				{
-					RetryRepositoryStarsJob.JobCompleted -= HandleScheduleRetryRepositoriesStarsCompleted;
+					RetryRepositoryStarsJob.UpdatedRepositorySavedToDatabase -= HandleScheduleRetryRepositoriesStarsCompleted;
 					backgroundStarsTCS.SetResult(e.StarredAt ?? throw new InvalidOperationException($"{nameof(e.StarredAt)} cannot be null"));
 				}
 			}
