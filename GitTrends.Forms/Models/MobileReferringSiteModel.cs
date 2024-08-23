@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using GitTrends.Shared;
-using Newtonsoft.Json;
+
 using Xamarin.Forms;
 
 namespace GitTrends

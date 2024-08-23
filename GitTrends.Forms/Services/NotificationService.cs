@@ -7,7 +7,7 @@ using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
-using Newtonsoft.Json;
+
 using Shiny;
 using Shiny.Notifications;
 using Xamarin.Essentials.Interfaces;

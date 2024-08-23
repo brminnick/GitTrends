@@ -2,7 +2,7 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+
 
 namespace GitTrends.Functions;
 
@@ -25,10 +25,7 @@ public static class GetSyncfusionInformation
 		}
 
 		var okResponse = req.CreateResponse(System.Net.HttpStatusCode.OK);
-
-		var syncFusionDtoJson = JsonConvert.SerializeObject(new SyncFusionDTO(licenseKey, licenseVersion));
-
-		await okResponse.WriteStringAsync(syncFusionDtoJson).ConfigureAwait(false);
+		await okResponse.WriteAsJsonAsync(new SyncFusionDTO(licenseKey, licenseVersion)).ConfigureAwait(false);
 
 		return okResponse;
 	}

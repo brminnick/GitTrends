@@ -5,7 +5,7 @@ using GitTrends.Shared;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+
 
 namespace GitTrends.Functions;
 
@@ -51,10 +51,7 @@ class GetTestToken(GitHubApiV3Service gitHubApiV3Service,
 					var gitHubToken = new GitHubToken(testTokenPair.Value, GitHubConstants.OAuthScope, "Bearer");
 
 					var okResponse = req.CreateResponse(HttpStatusCode.OK);
-
-					var gitHubTokenJson = JsonConvert.SerializeObject(gitHubToken);
-
-					await okResponse.WriteStringAsync(gitHubTokenJson).ConfigureAwait(false);
+					await okResponse.WriteAsJsonAsync(gitHubToken, cancellationTokenSource.Token).ConfigureAwait(false);
 
 					return okResponse;
 				}

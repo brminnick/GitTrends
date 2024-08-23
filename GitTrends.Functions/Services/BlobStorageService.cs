@@ -1,7 +1,8 @@
+using System.Text.Json;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using GitTrends.Shared;
-using Newtonsoft.Json;
+
 
 namespace GitTrends.Functions;
 
@@ -29,8 +30,7 @@ class BlobStorageService
 
 		var blobClient = containerClient.GetBlobClient(blobName);
 
-		var blobContent = JsonConvert.SerializeObject(data);
-
+		var blobContent = JsonSerializer.Serialize(data);
 		await blobClient.UploadAsync(new BinaryData(blobContent)).ConfigureAwait(false);
 	}
 
@@ -49,7 +49,7 @@ class BlobStorageService
 
 		var serializedBlobContents = blobContentResponse.Value.Content;
 
-		return JsonConvert.DeserializeObject<T>(serializedBlobContents.ToString()) ?? throw new NullReferenceException();
+		return JsonSerializer.Deserialize<T>(serializedBlobContents.ToString()) ?? throw new NullReferenceException();
 	}
 
 	async IAsyncEnumerable<BlobItem> GetBlobs(string containerName)

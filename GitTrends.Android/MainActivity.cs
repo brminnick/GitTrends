@@ -8,7 +8,7 @@ using Android.OS;
 using Android.Runtime;
 using Autofac;
 using GitTrends.Shared;
-using Newtonsoft.Json;
+
 using Shiny;
 using Xamarin.Forms;
 

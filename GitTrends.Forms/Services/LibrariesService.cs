@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
 using GitTrends.Shared;
-using Newtonsoft.Json;
+
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends

@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using GitHubApiStatus;
 using GitTrends.Shared;
-using Newtonsoft.Json;
 using Refit;
 using RichardSzalay.MockHttp;
 
@@ -36,7 +36,7 @@ class RepositoryViewModelTests_AbuseApiLimit_GraphQLApi : RepositoryViewModelTes
 		ServiceCollection.Initialize(azureFunctionsClient, gitHubApiV3Client, gitHubGraphQLCLient);
 	}
 
-	protected static HttpClient CreateAbuseApiLimitHttpClient(string url)
+	static HttpClient CreateAbuseApiLimitHttpClient(string url)
 	{
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 		var gitHubUserResponse = new GraphQLResponse<GitHubUserResponse>(null, [new GraphQLError(string.Empty, [])]);
@@ -45,22 +45,22 @@ class RepositoryViewModelTests_AbuseApiLimit_GraphQLApi : RepositoryViewModelTes
 
 		var errorResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
 		{
-			Content = new StringContent(JsonConvert.SerializeObject(gitHubUserResponse))
+			Content = new StringContent(JsonSerializer.Serialize(gitHubUserResponse))
 		};
 		errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitHeader, "5000");
 		errorResponseMessage.Headers.RetryAfter = new RetryConditionHeaderValue(TimeSpan.FromMinutes(1));
 
 		var viewerLoginResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
 		{
-			Content = new StringContent(JsonConvert.SerializeObject(viewerLoginResponse))
+			Content = new StringContent(JsonSerializer.Serialize(viewerLoginResponse))
 		};
 
 		var repositoryConnectionQueryContent = new UserRepositoryConnectionQueryContent(GitHubConstants.GitTrendsRepoOwner, string.Empty);
 		var viewerLoginQueryContent = new ViewerLoginQueryContent();
 
 		var httpMessageHandler = new MockHttpMessageHandler();
-		httpMessageHandler.When(url).WithContent(JsonConvert.SerializeObject(repositoryConnectionQueryContent)).Respond(request => errorResponseMessage);
-		httpMessageHandler.When(url).WithContent(JsonConvert.SerializeObject(viewerLoginQueryContent)).Respond(request => viewerLoginResponseMessage);
+		httpMessageHandler.When(url).WithContent(JsonSerializer.Serialize(repositoryConnectionQueryContent)).Respond(request => errorResponseMessage);
+		httpMessageHandler.When(url).WithContent(JsonSerializer.Serialize(viewerLoginQueryContent)).Respond(request => viewerLoginResponseMessage);
 
 		var httpClient = httpMessageHandler.ToHttpClient();
 		httpClient.BaseAddress = new Uri(url);

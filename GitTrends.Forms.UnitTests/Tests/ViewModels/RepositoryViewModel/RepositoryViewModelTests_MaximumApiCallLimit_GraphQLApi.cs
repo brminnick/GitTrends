@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using GitHubApiStatus;
 using GitTrends.Shared;
-using Newtonsoft.Json;
+
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
 

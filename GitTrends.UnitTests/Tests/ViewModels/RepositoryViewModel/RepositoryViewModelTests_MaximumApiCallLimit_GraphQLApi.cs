@@ -1,7 +1,8 @@
 ﻿using System.Net;
+using System.Text.Json;
 using GitHubApiStatus;
 using GitTrends.Shared;
-using Newtonsoft.Json;
+
 using Refit;
 using RichardSzalay.MockHttp;
 
@@ -44,7 +45,7 @@ class RepositoryViewModelTests_MaximumApiCallLimit_GraphQLApi : RepositoryViewMo
 
 		var errorResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
 		{
-			Content = new StringContent(JsonConvert.SerializeObject(gitHubUserResponse))
+			Content = new StringContent(JsonSerializer.Serialize(gitHubUserResponse))
 		};
 		errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitHeader, "5000");
 		errorResponseMessage.Headers.Add(GitHubApiStatusService.RateLimitRemainingHeader, "0");
@@ -52,15 +53,15 @@ class RepositoryViewModelTests_MaximumApiCallLimit_GraphQLApi : RepositoryViewMo
 
 		var viewerLoginResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
 		{
-			Content = new StringContent(JsonConvert.SerializeObject(viewerLoginResponse))
+			Content = new StringContent(JsonSerializer.Serialize(viewerLoginResponse))
 		};
 
 		var repositoryConnectionQueryContent = new UserRepositoryConnectionQueryContent(GitHubConstants.GitTrendsRepoOwner, string.Empty);
 		var viewerLoginQueryContent = new ViewerLoginQueryContent();
 
 		var httpMessageHandler = new MockHttpMessageHandler();
-		httpMessageHandler.When(url).WithContent(JsonConvert.SerializeObject(repositoryConnectionQueryContent)).Respond(request => errorResponseMessage);
-		httpMessageHandler.When(url).WithContent(JsonConvert.SerializeObject(viewerLoginQueryContent)).Respond(request => viewerLoginResponseMessage);
+		httpMessageHandler.When(url).WithContent(JsonSerializer.Serialize(repositoryConnectionQueryContent)).Respond(request => errorResponseMessage);
+		httpMessageHandler.When(url).WithContent(JsonSerializer.Serialize(viewerLoginQueryContent)).Respond(request => viewerLoginResponseMessage);
 
 		var httpClient = httpMessageHandler.ToHttpClient();
 		httpClient.BaseAddress = new Uri(url);

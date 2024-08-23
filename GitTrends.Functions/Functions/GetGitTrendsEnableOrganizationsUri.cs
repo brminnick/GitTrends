@@ -2,7 +2,7 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+
 
 namespace GitTrends.Functions;
 
@@ -33,10 +33,7 @@ public static class GetGitTrendsEnableOrganizationsUri
 		}
 
 		var okResponse = req.CreateResponse(System.Net.HttpStatusCode.OK);
-
-		var getGitTrendsEnableOrganizationsUri = JsonConvert.SerializeObject(new GitTrendsEnableOrganizationsUriDTO(new Uri(_enableOrganizationsUrl + GetGitHubClientId.ClientId)));
-
-		await okResponse.WriteStringAsync(getGitTrendsEnableOrganizationsUri).ConfigureAwait(false);
+		await okResponse.WriteAsJsonAsync(new GitTrendsEnableOrganizationsUriDTO(new Uri(_enableOrganizationsUrl + GetGitHubClientId.ClientId))).ConfigureAwait(false);
 
 		return okResponse;
 	}

@@ -5,7 +5,7 @@ using AsyncAwaitBestPractices;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
-using Newtonsoft.Json;
+
 using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
