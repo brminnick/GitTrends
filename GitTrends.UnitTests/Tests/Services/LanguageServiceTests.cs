@@ -61,7 +61,7 @@ class LanguageServiceTests : BaseTest
 
 		//Don't execute null or string.Empty first to ensure PreferredLanguageChanged fires (default value of LanguageService.PerferredLanguage is null)
 		var availableLanguages = new List<string?>();
-		availableLanguages.AddRange(CultureConstants.CulturePickerOptions.Keys.Reverse().ToList());
+		availableLanguages.AddRange(CultureConstants.CulturePickerOptions.Keys.Reverse());
 		availableLanguages.Insert(1, null);
 
 		var languageService = ServiceCollection.ServiceProvider.GetRequiredService<LanguageService>();
@@ -135,10 +135,10 @@ class LanguageServiceTests : BaseTest
 	public void ConfirmError_SetPreferredLanguage(string language)
 	{
 		//Ensure test case is not supported by GitTrends
-		Assert.That(CultureConstants.CulturePickerOptions.Keys.ToList(), Does.Not.Contain(language));
+		Assert.That(CultureConstants.CulturePickerOptions.Keys, Does.Not.Contain(language));
 
 		//Arrange
-		var availableLanguages = CultureConstants.CulturePickerOptions.Keys.ToList();
+		var availableLanguages = CultureConstants.CulturePickerOptions.Keys;
 		var languageService = ServiceCollection.ServiceProvider.GetRequiredService<LanguageService>();
 
 		bool didPreferredLanguageChangeFire = false;

@@ -82,7 +82,7 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 		
 		var minimumTimerDisplayTimeTask = Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
 		var referringSitesList = await GetReferringSites(Repository, cancellationToken).ConfigureAwait(false);
-		MobileReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList.Select(static x => new MobileReferringSiteModel(x))).ToList();
+		MobileReferringSitesList = [.. MobileSortingService.SortReferringSites(referringSitesList.Select(static x => new MobileReferringSiteModel(x)))];
 
 		if (!_gitHubUserService.IsDemoUser)
 		{
@@ -120,7 +120,7 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 		catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryDelay))
 		{
 			var mobileReferringSitesList = await _referringSitesDatabase.GetReferringSites(repository.Url, cancellationToken).ConfigureAwait(false);
-			referringSitesList = MobileSortingService.SortReferringSites(mobileReferringSitesList).ToList();
+			referringSitesList = [.. MobileSortingService.SortReferringSites(mobileReferringSitesList)];
 
 			OnAbuseRateLimitFound_GetReferringSites(repository);
 			OnPullToRefreshFailed(new AbuseLimitPullToRefreshEventArgs(retryDelay.Value, referringSitesList.Any()));
@@ -170,7 +170,7 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 	void HandleMobileReferringSiteRetrieved(object? sender, MobileReferringSiteModel e)
 	{
 		var updatedReferringSitesList = MobileReferringSitesList.Concat([e]);
-		MobileReferringSitesList = MobileSortingService.SortReferringSites(updatedReferringSitesList).ToList();
+		MobileReferringSitesList = [.. MobileSortingService.SortReferringSites(updatedReferringSitesList)];
 	}
 	
 	void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)

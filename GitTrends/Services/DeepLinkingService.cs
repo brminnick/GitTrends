@@ -94,7 +94,7 @@ namespace GitTrends
 				{
 					Subject = subject,
 					Body = body,
-					To = recipients.ToList()
+					To = [.. recipients]
 				};
 
 				try

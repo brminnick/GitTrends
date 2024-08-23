@@ -32,7 +32,7 @@ class ResxTests : BaseTest
 	public void ConfirmCulturesExists(Type resxType)
 	{
 		//Arrange
-		var cultureNames = CultureConstants.CulturePickerOptions.Keys.ToList();
+		var cultureNames = CultureConstants.CulturePickerOptions.Keys;
 		var resxCultureInfoList = GetAvailableResxCultureInfos(resxType.Assembly);
 
 		//Act

@@ -77,9 +77,10 @@ class NuGetService(GitHubApiV3Service gitHubApiV3Service, HttpClient httpClient,
 			}
 		});
 
-		var remainingTasks = getInstalledPackageInfoTCSList.Select(static x => x.PackageInfoTCS.Task).ToList();
 
-		while (remainingTasks.Any())
+		List<Task<( string Title, Uri IconUri, Uri NuGetUri)?>> remainingTasks = [.. getInstalledPackageInfoTCSList.Select(static x => x.PackageInfoTCS.Task)];
+
+		while (remainingTasks.Count is not 0)
 		{
 			var completedTask = await Task.WhenAny(remainingTasks).ConfigureAwait(false);
 			remainingTasks.Remove(completedTask);
@@ -108,7 +109,7 @@ class NuGetService(GitHubApiV3Service gitHubApiV3Service, HttpClient httpClient,
 		var doc = XDocument.Parse(csProjSourceCode);
 		var nugetPackageNames = doc.XPathSelectElements("//PackageReference").Select(pr => pr.Attribute("Include")?.Value);
 
-		return nugetPackageNames?.OfType<string>().ToArray() ?? [];
+		return [.. nugetPackageNames.OfType<string>()];
 	}
 
 	async IAsyncEnumerable<string> GetCsprojFiles([EnumeratorCancellation] CancellationToken cancellationToken)
@@ -122,14 +123,14 @@ class NuGetService(GitHubApiV3Service gitHubApiV3Service, HttpClient httpClient,
 		Parallel.ForEach(getCSProjFileTaskList, async getCSProjFileTask =>
 		{
 			var repositoryFile = await _gitHubApiV3Service.GetGitTrendsFile(getCSProjFileTask.csprojFilePath, cancellationToken).ConfigureAwait(false);
-			var file = await _client.GetStringAsync(repositoryFile.DownloadUrl).ConfigureAwait(false);
+			var file = await _client.GetStringAsync(repositoryFile.DownloadUrl, cancellationToken).ConfigureAwait(false);
 
 			getCSProjFileTask.csprojSourceCodeTCS.SetResult(file);
 		});
 
-		var remainingTasks = getCSProjFileTaskList.Select(static x => x.csprojSourceCodeTCS.Task).ToList();
+		List<Task<string>> remainingTasks = [.. getCSProjFileTaskList.Select(static x => x.csprojSourceCodeTCS.Task)];
 
-		while (remainingTasks.Any())
+		while (remainingTasks.Count is not 0)
 		{
 			var completedTask = await Task.WhenAny(remainingTasks).ConfigureAwait(false);
 			remainingTasks.Remove(completedTask);

@@ -335,7 +335,7 @@ public partial class RepositoryViewModel : BaseViewModel
 		}
 
 		static IReadOnlyList<Repository> getDistinctRepositories(in IEnumerable<Repository> repositoriesList1, in IEnumerable<Repository> repositoriesList2, Func<Repository, bool>? filter = null) =>
-			repositoriesList1.Concat(repositoriesList2).Where(filter ?? (_ => true)).GroupBy(static x => x.Url).Where(g => g.Count() is 1).Select(g => g.First()).ToList();
+			[.. repositoriesList1.Concat(repositoriesList2).Where(filter ?? (_ => true)).GroupBy(static x => x.Url).Where(g => g.Count() is 1).Select(g => g.First())];
 
 		void HandleLoggedOut(object? sender, EventArgs e) => cancellationTokenSource.Cancel();
 		void HandleAuthorizeSessionStarted(object? sender, EventArgs e) => cancellationTokenSource.Cancel();
@@ -409,7 +409,7 @@ public partial class RepositoryViewModel : BaseViewModel
 		duplicateRepositoryPriorityFilter ??= _ => true;
 
 		var updatedRepositoryList = _repositoryList.Concat(repositories);
-		_repositoryList = updatedRepositoryList.RemoveForksDuplicatesAndArchives(duplicateRepositoryPriorityFilter).ToList();
+		_repositoryList = [.. updatedRepositoryList.RemoveForksDuplicatesAndArchives(duplicateRepositoryPriorityFilter)];
 
 		if (shouldUpdateVisibleRepositoryList)
 			UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
@@ -426,7 +426,7 @@ public partial class RepositoryViewModel : BaseViewModel
 			updatedRepositoryList.Remove(repositoryToRemove);
 		}
 
-		_repositoryList = updatedRepositoryList.RemoveForksDuplicatesAndArchives(static x => x.ContainsViewsClonesStarsData).ToList();
+		_repositoryList = [.. updatedRepositoryList.RemoveForksDuplicatesAndArchives(static x => x.ContainsViewsClonesStarsData)];
 
 		if (shouldUpdateVisibleRepositoryList)
 			UpdateVisibleRepositoryList(searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
@@ -436,7 +436,7 @@ public partial class RepositoryViewModel : BaseViewModel
 	{
 		var filteredRepositoryList = GetRepositoriesFilteredBySearchBar(_repositoryList, searchBarText);
 
-		VisibleRepositoryList = MobileSortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed).ToList();
+		VisibleRepositoryList = [.. MobileSortingService.SortRepositories(filteredRepositoryList, sortingOption, isReversed)];
 	}
 
 	void UpdateListForLoggedOutUser()

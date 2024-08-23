@@ -69,9 +69,9 @@ public class GitHubGraphQLApiService(
 			var starCount = DemoDataConstants.GetRandomNumber();
 			var starredAtDates = DemoDataConstants.GenerateStarredAtDates(starCount);
 
-			var starGazerInfoList = starredAtDates.Select(static x => new StarGazerInfo(x, string.Empty)).ToList();
+			var starGazerInfoList = starredAtDates.Select(static x => new StarGazerInfo(x, string.Empty));
 
-			return new StarGazers(starCount, starGazerInfoList);
+			return new StarGazers(starCount, [.. starGazerInfoList]);
 		}
 		else
 		{

@@ -392,7 +392,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 		else
 		{
 			var getStarGazers = await _gitHubGraphQLApiService.GetStarGazers(repository.Name, repository.OwnerLogin, cancellationToken).ConfigureAwait(false);
-			return getStarGazers.StarredAt.Select(static x => x.StarredAt).ToList();
+			return [.. getStarGazers.StarredAt.Select(static x => x.StarredAt)];
 		}
 
 		async Task<IReadOnlyList<DateTimeOffset>> getRepositoryStarsFromBackgroundService(Repository repository, CancellationToken cancellationToken)

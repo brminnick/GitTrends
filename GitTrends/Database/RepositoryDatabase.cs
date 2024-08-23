@@ -25,8 +25,8 @@ public class RepositoryDatabase : BaseDatabase
 		var dailyClones = await Execute<List<DailyClonesDatabaseModel>, DailyClonesDatabaseModel>(static dailyClonesDatabaseConnection => dailyClonesDatabaseConnection.Table<DailyClonesDatabaseModel>().ToListAsync(), token).ConfigureAwait(false);
 		var dailyViews = await Execute<List<DailyViewsDatabaseModel>, DailyViewsDatabaseModel>(static dailyViewsDatabaseConnection => dailyViewsDatabaseConnection.Table<DailyViewsDatabaseModel>().ToListAsync(), token).ConfigureAwait(false);
 
-		var expiredDailyClones = dailyClones.Where(x => IsExpired(x.DownloadedAt)).ToList();
-		var expiredDailyViews = dailyViews.Where(x => IsExpired(x.DownloadedAt)).ToList();
+		var expiredDailyClones = dailyClones.Where(x => IsExpired(x.DownloadedAt));
+		var expiredDailyViews = dailyViews.Where(x => IsExpired(x.DownloadedAt));
 
 		foreach (var expiredDailyClone in expiredDailyClones)
 			await Execute<int, DailyClonesDatabaseModel>(dailyClonesDatabaseConnection => dailyClonesDatabaseConnection.DeleteAsync(expiredDailyClone), token).ConfigureAwait(false);
@@ -71,7 +71,7 @@ public class RepositoryDatabase : BaseDatabase
 					token)
 				.ConfigureAwait(false);
 
-		return favoriteRepositories.Select(static x => x.Url).ToList();
+		return [.. favoriteRepositories.Select(static x => x.Url)];
 	}
 
 	public async Task<Repository?> GetRepository(string repositoryUrl, CancellationToken token)
@@ -331,8 +331,8 @@ public class RepositoryDatabase : BaseDatabase
 			in IEnumerable<DailyViewsDatabaseModel>? dailyViewsDatabaseModels,
 			in IEnumerable<StarGazerInfoDatabaseModel>? starGazerInfoDatabaseModels)
 		{
-			var clonesList = dailyClonesDatabaseModels?.Select(static x => DailyClonesDatabaseModel.ToDailyClonesModel(x)).ToList();
-			var viewsList = dailyViewsDatabaseModels?.Select(static x => DailyViewsDatabaseModel.ToDailyViewsModel(x)).ToList();
+			var clonesList = dailyClonesDatabaseModels?.Select(static x => DailyClonesDatabaseModel.ToDailyClonesModel(x));
+			var viewsList = dailyViewsDatabaseModels?.Select(static x => DailyViewsDatabaseModel.ToDailyViewsModel(x));
 
 			return new Repository(repositoryDatabaseModel.Name,
 				repositoryDatabaseModel.Description,

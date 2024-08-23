@@ -12,7 +12,7 @@ public class ReferringSitesDatabase(IFileSystem fileSystem, IAnalyticsService an
 		Execute<int, MobileReferringSitesDatabaseModel>(async databaseConnection =>
 		{
 			var referringSites = await databaseConnection.Table<MobileReferringSitesDatabaseModel>().ToListAsync();
-			var expiredReferringSites = referringSites.Where(x => IsExpired(x.DownloadedAt)).ToList();
+			var expiredReferringSites = referringSites.Where(x => IsExpired(x.DownloadedAt));
 
 			foreach (var expiredReferringSite in expiredReferringSites)
 				await databaseConnection.DeleteAsync(expiredReferringSite).ConfigureAwait(false);
@@ -44,7 +44,7 @@ public class ReferringSitesDatabase(IFileSystem fileSystem, IAnalyticsService an
 		{
 			var referringSitesDatabaseModelList = await databaseConnection.Table<MobileReferringSitesDatabaseModel>().Where(x => x.RepositoryUrl == repositoryUrl).ToListAsync().ConfigureAwait(false);
 
-			return referringSitesDatabaseModelList.Select(static x => MobileReferringSitesDatabaseModel.ToReferringSitesModel(x)).ToList();
+			return [.. referringSitesDatabaseModelList.Select(static x => MobileReferringSitesDatabaseModel.ToReferringSitesModel(x))];
 		}, token);
 
 	public Task<int> SaveReferringSite(MobileReferringSiteModel referringSiteModel, string repositoryUrl, CancellationToken token) =>

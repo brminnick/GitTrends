@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Refit;
@@ -24,30 +25,32 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		IReadOnlyList<Repository> repositories_Filtered;
 		IReadOnlyList<Repository> repositories_NoViewsClonesStarsData_Filtered;
 
-		var repositories = new List<Repository>();
-		var repositories_NoStarsData = new List<Repository>();
-		var repositories_NoViewsClonesStarsData = new List<Repository>();
+		List<Repository> repositories = [];
+		List<Repository> repositories_NoStarsData = [];
+		List<Repository> repositories_NoViewsClonesStarsData = [];
 
 		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
 		var gitHubGraphQLApiService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubGraphQLApiService>();
 		var gitHubApiRepositoriesService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubApiRepositoriesService>();
 
+		var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(1));
+
 		//Act
-		await foreach (var repository in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, CancellationToken.None).ConfigureAwait(false))
+		await foreach (var repository in gitHubGraphQLApiService.GetRepositories(gitHubUserService.Alias, cancellationTokenSource.Token).ConfigureAwait(false))
 		{
 			repositories_NoViewsClonesStarsData.Add(repository);
 		}
 
-		repositories_NoViewsClonesStarsData_Filtered = repositories_NoViewsClonesStarsData.RemoveForksDuplicatesAndArchives().ToList();
+		repositories_NoViewsClonesStarsData_Filtered = [.. repositories_NoViewsClonesStarsData.RemoveForksDuplicatesAndArchives()];
 
-		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
+		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesStarsData_Filtered, cancellationTokenSource.Token).ConfigureAwait(false))
 		{
 			repositories_NoStarsData.Add(repository);
 		}
 
-		repositories_Filtered = repositories_NoStarsData.RemoveForksDuplicatesAndArchives().ToList();
+		repositories_Filtered = [.. repositories_NoStarsData.RemoveForksDuplicatesAndArchives()];
 
-		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositories_Filtered, CancellationToken.None).ConfigureAwait(false))
+		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositories_Filtered, cancellationTokenSource.Token).ConfigureAwait(false))
 		{
 			repositories.Add(repository);
 		}
@@ -84,13 +87,25 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 			});
 		}
 
+		foreach (var repository in repositories)
+		{
+			Trace.WriteLine(repository);
+			if (repository.Name is "ICommandAttribute_NullableParameter_Repro")
+			{
+				
+			}
+			
+			Assert.Multiple(() =>
+			{
+				Assert.That(repository.StarredAt, Is.Not.Empty);
+				Assert.That(repository.DailyViewsList, Is.Not.Empty);
+				Assert.That(repository.DailyClonesList, Is.Not.Empty);
+				Assert.That(repository.StarredAt?.Count, Is.EqualTo(repository.StarCount));
+			});
+		}
+		
 		Assert.Multiple(() =>
 		{
-			Assert.That(repositories.SelectMany(static x => x.StarredAt ?? throw new InvalidOperationException()), Is.Not.Empty);
-			Assert.That(repositories.SelectMany(static x => x.DailyViewsList ?? throw new InvalidOperationException()), Is.Not.Empty);
-			Assert.That(repositories.SelectMany(static x => x.DailyClonesList ?? throw new InvalidOperationException()), Is.Not.Empty);
-
-			Assert.That(repositories.Sum(static x => x.StarredAt?.Count ?? throw new InvalidOperationException()), Is.EqualTo(repositories.Sum(static x => x.StarCount)));
 			Assert.That(repositories.Sum(static x => x.TotalClones ?? throw new InvalidOperationException($"{nameof(x.TotalClones)} cannot be null")), Is.GreaterThan(0));
 			Assert.That(repositories.Sum(static x => x.TotalUniqueClones ?? throw new InvalidOperationException($"{nameof(x.TotalUniqueClones)} cannot be null")), Is.GreaterThan(0));
 			Assert.That(repositories.Sum(static x => x.TotalViews ?? throw new InvalidOperationException($"{nameof(x.TotalViews)} cannot be null")), Is.GreaterThan(0));
@@ -214,7 +229,7 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 			repositories_NoViewsClonesStarsData.Add(repository);
 		}
 
-		repositories_NoViewsClonesStarsData_Filtered = repositories_NoViewsClonesStarsData.RemoveForksDuplicatesAndArchives().ToList();
+		repositories_NoViewsClonesStarsData_Filtered = [.. repositories_NoViewsClonesStarsData.RemoveForksDuplicatesAndArchives()];
 
 		gitHubUserService.InvalidateToken();
 
@@ -223,7 +238,7 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 			repositories_NoStarsData.Add(repository);
 		}
 
-		repositories_NoStarsData_Filtered = repositories_NoStarsData.RemoveForksDuplicatesAndArchives().ToList();
+		repositories_NoStarsData_Filtered = [.. repositories_NoStarsData.RemoveForksDuplicatesAndArchives()];
 
 		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositories_NoStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
 		{
@@ -262,7 +277,7 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 			repositories_NoViewsClonesStarsData.Add(repository);
 		}
 
-		repositories_NoViewsClonesStarsData_Filtered = repositories_NoViewsClonesStarsData.RemoveForksDuplicatesAndArchives().ToList();
+		repositories_NoViewsClonesStarsData_Filtered = [.. repositories_NoViewsClonesStarsData.RemoveForksDuplicatesAndArchives()];
 
 		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(repositories_NoViewsClonesStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
 		{
@@ -270,7 +285,7 @@ class GitHubApiRepositoriesServiceTests : BaseTest
 		}
 		;
 
-		repositories_NoStarsData_Filtered = repositories_NoStarsData.RemoveForksDuplicatesAndArchives().ToList();
+		repositories_NoStarsData_Filtered = [.. repositories_NoStarsData.RemoveForksDuplicatesAndArchives()];
 
 		await foreach (var repository in gitHubApiRepositoriesService.UpdateRepositoriesWithStarsData(repositories_NoStarsData_Filtered, CancellationToken.None).ConfigureAwait(false))
 		{

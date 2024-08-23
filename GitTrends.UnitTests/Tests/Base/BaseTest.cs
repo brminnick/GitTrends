@@ -95,7 +95,7 @@ abstract class BaseTest : IDisposable
 			dailyClonesList.Add(new DailyClonesModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
 		}
 
-		var starredAt = DemoDataConstants.GenerateStarredAtDates(DemoDataConstants.GetRandomNumber(1)).ToList();
+		IList<DateTimeOffset> starredAt = [.. DemoDataConstants.GenerateStarredAtDates(DemoDataConstants.GetRandomNumber(1))];
 
 		return new Repository($"Repository " + DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomText(), DemoDataConstants.GetRandomNumber(),
 			DemoUserConstants.Alias, gitTrendsAvatarUrl,

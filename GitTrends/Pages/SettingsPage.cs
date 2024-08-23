@@ -201,7 +201,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 
 		if (BindingContext.IsNotAuthenticating)
 		{
-			var loginRowViews = _contentGrid.Children.OfType<ILoginRowView>().Cast<View>().ToList();
+			var loginRowViews = _contentGrid.Children.OfType<ILoginRowView>().Cast<View>();
 
 			await Task.WhenAll(loginRowViews.Select(static x => x.FadeTo(0.3, 75)));
 

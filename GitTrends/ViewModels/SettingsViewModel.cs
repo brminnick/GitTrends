@@ -99,7 +99,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 		remove => _organizationsCarouselViewVisibilityChangedEventManager.RemoveEventHandler(value);
 	}
 
-	public IReadOnlyList<string> LanguagePickerItemsSource { get; } = CultureConstants.CulturePickerOptions.Values.ToList();
+	public IReadOnlyList<string> LanguagePickerItemsSource { get; } = [.. CultureConstants.CulturePickerOptions.Values];
 
 	public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText == GitHubLoginButtonConstants.Disconnect;
 
@@ -312,8 +312,8 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 		RegisterForNotificationsLabelText = SettingsPageConstants.RegisterForNotifications;
 		ShouldIncludeOrganizationsLabelText = SettingsPageConstants.IncludeOrganizations;
 
-		ThemePickerItemsSource = ThemePickerConstants.ThemePickerTitles.Values.ToList();
-		PreferredChartsItemsSource = TrendsChartConstants.TrendsChartTitles.Values.ToList();
+		ThemePickerItemsSource = [.. ThemePickerConstants.ThemePickerTitles.Values];
+		PreferredChartsItemsSource = [.. TrendsChartConstants.TrendsChartTitles.Values];
 
 		ThemePickerSelectedIndex = originalThemePickerIndex;
 		PreferredChartsSelectedIndex = originalPreferredChartsIndex;

@@ -59,9 +59,9 @@ public class GitHubApiRepositoriesService(
 
 	public async IAsyncEnumerable<MobileReferringSiteModel> GetMobileReferringSites(IEnumerable<ReferringSiteModel> referringSites, string repositoryUrl, [EnumeratorCancellation] CancellationToken cancellationToken)
 	{
-		var favIconTaskList = referringSites.Select(x => setFavIcon(_referringSitesDatabase, _favIconService, x, repositoryUrl, cancellationToken)).ToList();
+		List<Task<MobileReferringSiteModel>> favIconTaskList = [.. referringSites.Select(x => setFavIcon(_referringSitesDatabase, _favIconService, x, repositoryUrl, cancellationToken))];
 
-		while (favIconTaskList.Any())
+		while (favIconTaskList.Count is not 0)
 		{
 			var completedFavIconTask = await Task.WhenAny(favIconTaskList).ConfigureAwait(false);
 			favIconTaskList.Remove(completedFavIconTask);
@@ -93,8 +93,8 @@ public class GitHubApiRepositoriesService(
 
 	public async IAsyncEnumerable<Repository> UpdateRepositoriesWithViewsAndClonesData(IEnumerable<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
 	{
-		repositories = repositories.ToList();
-		
+		repositories = repositories;
+
 		var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsModel?, RepositoryClonesModel?)>>(repositories.Select(x => GetViewsAndClonesStatistics(x, cancellationToken)));
 
 		while (getRepositoryStatisticsTaskList.Any())
@@ -120,8 +120,8 @@ public class GitHubApiRepositoriesService(
 
 	public async IAsyncEnumerable<Repository> UpdateRepositoriesWithStarsData(IEnumerable<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
 	{
-		repositories = repositories.ToList();
-		
+		repositories = repositories;
+
 		var getRepositoryStatisticsTaskList = new List<Task<(string RepositoryName, StarGazers? StarGazers)>>(repositories.Select(x => GetStarGazersStatistics(x, cancellationToken)));
 
 		while (getRepositoryStatisticsTaskList.Any())
@@ -135,7 +135,7 @@ public class GitHubApiRepositoriesService(
 			{
 				var updatedRepository = repositories.Single(x => x.Name == starsResponse.RepositoryName) with
 				{
-					StarredAt = starsResponse.StarGazers.StarredAt.Select(static x => x.StarredAt).ToList()
+					StarredAt = [.. starsResponse.StarGazers.StarredAt.Select(static x => x.StarredAt)]
 				};
 
 				yield return updatedRepository;

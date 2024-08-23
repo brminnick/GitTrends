@@ -35,7 +35,7 @@ public static class StatisticsService
 	};
 
 	public static string GetFloatingActionTextButtonText<TRepository>(in MobileSortingService mobileSortingService, in IReadOnlyList<TRepository> repositories, in FloatingActionButtonType floatingActionButtonType) where TRepository : IRepository =>
-		GetFloatingActionTextButtonText(MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption), repositories.ToList(), floatingActionButtonType);
+		GetFloatingActionTextButtonText(MobileSortingService.GetSortingCategory(mobileSortingService.CurrentOption), repositories, floatingActionButtonType);
 
 	public static string GetFloatingActionTextButtonText<TRepository>(in SortingCategory sortingCategory, in IReadOnlyList<TRepository> repositories, in FloatingActionButtonType floatingActionButtonType) where TRepository : IRepository
 	{

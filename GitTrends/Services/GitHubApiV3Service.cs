@@ -105,7 +105,7 @@ public class GitHubApiV3Service(
 		var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);
 		var referringSites = await _githubApiClient.GetReferringSites(owner, repo, GetGitHubBearerTokenHeader(token), cancellationToken).ConfigureAwait(false);
 
-		return referringSites.Select(static x => new ReferringSiteModel(x.Count, x.Uniques, x.Referrer)).ToList();
+		return [.. referringSites.Select(static x => new ReferringSiteModel(x.Count, x.Uniques, x.Referrer))];
 	}
 
 	public async Task<StarGazers> GetStarGazers(string owner, string repo, CancellationToken cancellationToken, int starGazersPerRequest = 100)
@@ -115,7 +115,7 @@ public class GitHubApiV3Service(
 			var starCount = DemoDataConstants.GetRandomNumber();
 			var starredAtDates = DemoDataConstants.GenerateStarredAtDates(starCount);
 
-			return new StarGazers(starCount, starredAtDates.Select(static x => new StarGazerInfo(x, string.Empty)).ToList());
+			return new StarGazers(starCount, [.. starredAtDates.Select(static x => new StarGazerInfo(x, string.Empty))]);
 		}
 
 		var totalStarGazers = new List<StarGazer>();
@@ -131,6 +131,6 @@ public class GitHubApiV3Service(
 			currentPageNumber++;
 		} while (starGazerResponse.Count > 0);
 
-		return new StarGazers(totalStarGazers.Count, totalStarGazers.Select(static x => new StarGazerInfo(x.StarredAt, string.Empty)).ToList());
+		return new StarGazers(totalStarGazers.Count, [.. totalStarGazers.Select(static x => new StarGazerInfo(x.StarredAt, string.Empty))]);
 	}
 }

@@ -25,7 +25,7 @@ class MobileSortingServiceTests : BaseTest
 		];
 
 		//Act
-		var sortedReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList).ToList();
+		var sortedReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList);
 
 		//Assert
 		Assert.Multiple(() =>
@@ -65,7 +65,7 @@ class MobileSortingServiceTests : BaseTest
 		}
 
 		//Act
-		var sortedRepositoryList = MobileSortingService.SortRepositories(repositoryList, sortingOption, isReversed).ToList();
+		var sortedRepositoryList = MobileSortingService.SortRepositories(repositoryList, sortingOption, isReversed);
 		topRepository = sortedRepositoryList.First();
 		bottomRepository = sortedRepositoryList.Last();
 

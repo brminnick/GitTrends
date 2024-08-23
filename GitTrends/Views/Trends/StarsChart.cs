@@ -72,7 +72,7 @@ class StarsChart(TrendsViewModel trendsViewModel) : BaseChartView(new StarsTrend
 			//https://stackoverflow.com/a/1757221/5953643
 			static DailyStarsModel getNearestDailyStarsModelToTimeStamp(in IReadOnlyList<DailyStarsModel> dailyStarsList, DateTimeOffset timeStamp)
 			{
-				var starsListOrderedByProximityToTimeStamp = dailyStarsList.OrderBy(t => Math.Abs((t.Day - timeStamp).Ticks)).ToList();
+				var starsListOrderedByProximityToTimeStamp = dailyStarsList.OrderBy(t => Math.Abs((t.Day - timeStamp).Ticks));
 
 				foreach (var dailyStarsModel in starsListOrderedByProximityToTimeStamp)
 				{

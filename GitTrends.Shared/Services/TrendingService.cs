@@ -10,9 +10,9 @@ static class TrendingService
 		if (dailyClones is null)
 			return false;
 
-		var sortedDailyClonesList = dailyClones.OrderBy(static x => x.TotalClones).ToList();
+		var sortedDailyClonesList = dailyClones.OrderBy(static x => x.TotalClones);
 
-		return DoesContainUpperOutlier(sortedDailyClonesList);
+		return DoesContainUpperOutlier([.. sortedDailyClonesList]);
 	}
 
 	public static bool? IsTrending(this IEnumerable<DailyViewsModel>? dailyViews)
@@ -20,9 +20,9 @@ static class TrendingService
 		if (dailyViews is null)
 			return false;
 
-		var sortedDailyViewsList = dailyViews.OrderBy(static x => x.TotalViews).ToList();
+		var sortedDailyViewsList = dailyViews.OrderBy(static x => x.TotalViews);
 
-		return DoesContainUpperOutlier(sortedDailyViewsList);
+		return DoesContainUpperOutlier([.. sortedDailyViewsList]);
 	}
 
 	static bool? DoesContainUpperOutlier(in IList<DailyViewsModel> dailyViewsModels)
