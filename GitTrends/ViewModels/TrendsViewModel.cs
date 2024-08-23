@@ -205,12 +205,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 			{
 				var repositoryFromDatabase = await _repositoryDatabase.GetRepository(repository.Url, cancellationToken).ConfigureAwait(false);
 
-				if (repositoryFromDatabase is null || repositoryFromDatabase.StarredAt?.Count is 0)
-				{
-					repositoryStars = await getGetStarsDataTask.ConfigureAwait(false);
-					updateStarsData(repositoryStars);
-				}
-				else
+				if (repositoryFromDatabase is not null && repositoryFromDatabase.StarredAt?.Count is not 0)
 				{
 					var estimatedRepositoryStars = DateTimeService.GetEstimatedStarredAtList(repositoryFromDatabase, repository.StarCount);
 					updateStarsData(estimatedRepositoryStars);
@@ -218,12 +213,12 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 					// Display the estimated Data
 					StarsRefreshState = RefreshState.Succeeded;
 					IsFetchingStarsData = false;
-
-					// Continue to fetch the actual StarredAt Data in the background
-					// This allows us to save the downloaded data to the database at the end of the `try` block
-					repositoryStars = await getGetStarsDataTask.ConfigureAwait(false);
-					updateStarsData(repositoryStars);
 				}
+				
+				// Continue to fetch the actual StarredAt Data in the background
+				// This allows us to save the downloaded data to the database at the end of the `try` block
+				repositoryStars = await getGetStarsDataTask.ConfigureAwait(false);
+				updateStarsData(repositoryStars);
 			}
 
 			//Set StarsRefreshState last, because EmptyDataViews are dependent on the Chart ItemSources, e.g. DailyStarsList
@@ -245,7 +240,8 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 				&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.ViewsClonesCacheLifeSpan);
 
 			static bool isStarsDataComplete(in Repository repository) => repository.ContainsStarsData
-				&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan);
+				&& repository.DataDownloadedAt > DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan)
+				&& repository.StarredAt?.Count == repository.StarCount;
 		}
 		catch (Exception e) when (e is ApiException { StatusCode: HttpStatusCode.Unauthorized })
 		{

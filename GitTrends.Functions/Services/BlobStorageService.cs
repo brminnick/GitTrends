@@ -3,7 +3,6 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using GitTrends.Shared;
 
-
 namespace GitTrends.Functions;
 
 class BlobStorageService
