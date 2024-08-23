@@ -120,11 +120,11 @@ public class GitHubApiRepositoriesService(
 
 	public async IAsyncEnumerable<Repository> UpdateRepositoriesWithStarsData(IEnumerable<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
 	{
-		repositories = repositories;
+		repositories = repositories.ToList();
 
 		var getRepositoryStatisticsTaskList = new List<Task<(string RepositoryName, StarGazers? StarGazers)>>(repositories.Select(x => GetStarGazersStatistics(x, cancellationToken)));
 
-		while (getRepositoryStatisticsTaskList.Any())
+		while (getRepositoryStatisticsTaskList.Count is not 0)
 		{
 			var completedStatisticsTask = await Task.WhenAny(getRepositoryStatisticsTaskList).ConfigureAwait(false);
 			getRepositoryStatisticsTaskList.Remove(completedStatisticsTask);
