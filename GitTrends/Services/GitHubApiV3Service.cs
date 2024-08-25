@@ -25,13 +25,13 @@ public class GitHubApiV3Service(
 			for (int i = 0; i < 14; i++)
 			{
 				var count = DemoDataConstants.GetRandomNumber();
-				var uniqeCount = count / 2; //Ensures uniqueCount is always less than count
+				var uniqueCount = count / 2; //Ensures uniqueCount is always less than count
 
 				//Ensures one Demo repo is Trending
 				if (i is 13 && new Random().Next(0, DemoDataConstants.RepoCount) is DemoDataConstants.RepoCount - 1 or DemoDataConstants.RepoCount - 2)
 					dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow, DemoDataConstants.MaximumRandomNumber * 4, DemoDataConstants.MaximumRandomNumber / 2));
 				else
-					dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
+					dailyViewsModelList.Add(new DailyViewsModel(DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(i)), count, uniqueCount));
 			}
 
 			return new RepositoryViewsModel(dailyViewsModelList.Sum(static x => x.TotalViews), dailyViewsModelList.Sum(static x => x.TotalUniqueViews), dailyViewsModelList, repo, owner);
