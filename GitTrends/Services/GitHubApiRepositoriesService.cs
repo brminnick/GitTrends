@@ -93,7 +93,7 @@ public class GitHubApiRepositoriesService(
 
 	public async IAsyncEnumerable<Repository> UpdateRepositoriesWithViewsAndClonesData(IEnumerable<Repository> repositories, [EnumeratorCancellation] CancellationToken cancellationToken)
 	{
-		repositories = repositories;
+		repositories = repositories.ToList();
 
 		var getRepositoryStatisticsTaskList = new List<Task<(RepositoryViewsModel?, RepositoryClonesModel?)>>(repositories.Select(x => GetViewsAndClonesStatistics(x, cancellationToken)));
 

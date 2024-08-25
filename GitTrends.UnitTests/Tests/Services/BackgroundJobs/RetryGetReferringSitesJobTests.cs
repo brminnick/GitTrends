@@ -7,7 +7,6 @@ class RetryGetReferringSitesJobTests : BaseJobTest
 	public void VerifyIdentifiers()
 	{
 		// Assert
-		const string organizationName = "GitTrends";
 		var repository = CreateRepository(false);
 		var retryGetReferringSitesJob = ServiceCollection.ServiceProvider.GetRequiredService<RetryGetReferringSitesJob>();
 

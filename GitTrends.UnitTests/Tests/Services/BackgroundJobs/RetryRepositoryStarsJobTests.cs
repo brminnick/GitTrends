@@ -8,7 +8,6 @@ class RetryRepositoryStarsJobTests : BaseJobTest
 	public void VerifyIdentifiers()
 	{
 		// Assert
-		const string organizationName = "GitTrends";
 		var repository = CreateRepository(false);
 		var retryRepositoryStarsJob = ServiceCollection.ServiceProvider.GetRequiredService<RetryRepositoryStarsJob>();
 

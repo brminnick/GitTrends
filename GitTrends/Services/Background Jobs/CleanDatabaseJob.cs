@@ -32,7 +32,7 @@ public class CleanDatabaseJob(
 
 	public async Task Run(JobInfo jobInfo, CancellationToken cancellationToken)
 	{
-		analyticsService.Track($"{nameof(CleanDatabaseJob)} Triggered");
+		_analyticsService.Track($"{nameof(CleanDatabaseJob)} Triggered");
 
 		try
 		{

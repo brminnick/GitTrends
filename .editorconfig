@@ -40,6 +40,9 @@ indent_size = 2
 # Organize usings
 dotnet_sort_system_directives_first = true
 
+# CS9124: Parameter is captured into the state of the enclosing type and its value is also used to initialize a field, property, or event
+dotnet_diagnostic.CS9124.severity = error
+
 # CS4014: Because this call is not awaited, execution of the current method continues before the call is completed
 dotnet_diagnostic.CS4014.severity = error
 

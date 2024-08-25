@@ -7,7 +7,6 @@ class RetryRepositoriesViewsClonesStarsJobTests : BaseJobTest
 	public void VerifyIdentifiers()
 	{
 		// Assert
-		const string organizationName = "GitTrends";
 		var repository = CreateRepository(false);
 		var retryRepositoriesViewsClonesStarsJob = ServiceCollection.ServiceProvider.GetRequiredService<RetryRepositoriesViewsClonesStarsJob>();
 
