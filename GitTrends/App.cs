@@ -1,5 +1,3 @@
-using System.Globalization;
-using AsyncAwaitBestPractices;
 using GitTrends.Shared;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
