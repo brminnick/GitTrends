@@ -200,6 +200,7 @@ class ReferringSitesDataTemplate() : DataTemplate(() => new CardView())
 
 					Content = new CircleImage
 					{
+						GetBorderColor = () => Colors.Transparent,
 						ErrorPlaceholder = FavIconService.DefaultFavIcon,
 						LoadingPlaceholder = FavIconService.DefaultFavIcon
 					}.Bind(CircleImage.ImageSourceProperty, nameof(MobileReferringSiteModel.FavIcon), BindingMode.OneWay);
