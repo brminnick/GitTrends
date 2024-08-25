@@ -189,7 +189,7 @@ public class NotificationService
 #if DEBUG
 		await SendTrendingNotification(trendingRepositories, notificationDateTime).ConfigureAwait(false);
 #else
-		var repositoriesToNotify = trendingRepositories.Where(shouldSendNotification);
+		IReadOnlyList<Repository> repositoriesToNotify = [.. trendingRepositories.Where(shouldSendNotification)];
 		await SendTrendingNotification(repositoriesToNotify, notificationDateTime).ConfigureAwait(false);
 
 		bool shouldSendNotification(Repository trendingRepository)
