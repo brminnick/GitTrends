@@ -78,7 +78,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 								Text = FontAwesomeConstants.ExternalLink.ToString()
 							}
 							.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
-							.Font(FontFamilyConstants.FontAwesome, 28).Center()
+							.Font(FontFamilyConstants.FontAwesomeSolid, 28).Center()
 							.Margins(left: sidePadding),
 
 					}.Bind(SwipeItemView.CommandProperty,
