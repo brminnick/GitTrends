@@ -15,8 +15,8 @@
     <ApplicationId>com.minnick.gittrends</ApplicationId>
 
     <!-- Versions -->
-    <ApplicationDisplayVersion>2.25.10</ApplicationDisplayVersion>
-    <ApplicationVersion>64</ApplicationVersion>
+    <ApplicationDisplayVersion>3.0.0</ApplicationDisplayVersion>
+    <ApplicationVersion>66</ApplicationVersion>
 
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">16.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">16.0</SupportedOSPlatformVersion>
