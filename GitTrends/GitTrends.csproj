@@ -10,11 +10,11 @@
         <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-      <DebugType></DebugType>
+      <DebugType>None</DebugType>
       <Optimize>true</Optimize>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
-      <DebugType></DebugType>
+      <DebugType>None</DebugType>
       <Optimize>true</Optimize>
       <DefineConstants>AppStore</DefineConstants>
       <NoWarn>1701;1702</NoWarn>
