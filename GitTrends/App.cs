@@ -17,8 +17,7 @@ class App : Microsoft.Maui.Controls.Application
 	public App(AppShell appShell,
 		IAnalyticsService analyticsService,
 		NotificationService notificationService,
-		AppInitializationService appInitializationService,
-		RetryOrganizationsRepositoriesJob retryOrganizationsRepositoriesJob)
+		AppInitializationService appInitializationService)
 	{
 		_analyticsService = analyticsService;
 		_notificationService = notificationService;
@@ -29,14 +28,6 @@ class App : Microsoft.Maui.Controls.Application
 		MainPage = appShell;
 
 		On<iOS>().SetHandleControlUpdatesOnMainThread(true);
-
-		RetryOrganizationsRepositoriesJob.JobCompleted += HandleScheduleRetryOrganizationsRepositoriesJobCompleted;
-		retryOrganizationsRepositoriesJob.Run(retryOrganizationsRepositoriesJob.GetJobInfo("CommunityToolkit", true), CancellationToken.None).SafeFireAndForget();
-	}
-	
-	void HandleScheduleRetryOrganizationsRepositoriesJobCompleted(object? sender, string organizationName)
-	{
-		
 	}
 
 	public static event EventHandler Resumed
