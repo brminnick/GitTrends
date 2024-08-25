@@ -50,6 +50,8 @@ namespace GitTrends
 
 				AutomationId = SettingsPageAutomationIds.GitHubAvatarImage;
 
+				Stroke = Colors.Transparent;
+
 				this.Bind(ImageSourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource))
 					.DynamicResources(
 						(ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
