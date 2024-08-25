@@ -1,7 +1,6 @@
-﻿using System.Net;
-using Android.App;
+﻿using Android.App;
 using Android.Runtime;
-using Xamarin.Android.Net;
+using AndroidX.Emoji2.Text;
 
 namespace GitTrends;
 
@@ -10,7 +9,12 @@ namespace GitTrends;
 #else
 [Application(Debuggable = true)]
 #endif
-public class MainApplication(IntPtr handle, JniHandleOwnership ownership) : MauiApplication(handle, ownership)
+public class MainApplication : MauiApplication
 {
+	public MainApplication(IntPtr handle, JniHandleOwnership ownership) : base(handle, ownership)
+	{
+		EmojiCompat.Init(Context);
+	}
+
 	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp(AppInfo.Current);
 }

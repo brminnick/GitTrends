@@ -61,10 +61,6 @@ public static partial class MauiProgram
 
 		builder.Services.AddLogging();
 
-#if ANDROID
-		AndroidX.Emoji2.Text.EmojiCompat.Init(Platform.AppContext);
-#endif
-
 #if ANDROID || IOS || MACCATALYST
 		builder.Services.AddNotifications();
 		builder.Services.AddJob(typeof(CleanDatabaseJob));
@@ -115,6 +111,7 @@ public static partial class MauiProgram
 		services.AddSingleton<FavIconService>();
 		services.AddSingleton<FirstRunService>();
 		services.AddSingleton<IGitHubApiStatusService>(_ => new GitHubApiStatusService());
+		services.AddSingleton<INotificationPermissionStatus, NotificationPermissionService>();
 		services.AddSingleton<GitHubApiRepositoriesService>();
 		services.AddSingleton<GitHubApiV3Service>();
 		services.AddSingleton<GitHubAuthenticationService>();
