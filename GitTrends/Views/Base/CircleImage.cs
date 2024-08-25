@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
 
 namespace GitTrends;
 
@@ -7,7 +8,7 @@ public class CircleImage : CircleBorder
 {
 	public static readonly BindableProperty AspectProperty = BindableProperty.Create(nameof(Aspect), typeof(Aspect), typeof(CircleImage), Aspect.AspectFit);
 	public static readonly BindableProperty ImageSourceProperty = BindableProperty.Create(nameof(ImageSource), typeof(ImageSource), typeof(CircleImage), null);
-	public static readonly BindableProperty BorderColorProperty = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(CircleImage), default(Color));
+	public static readonly BindableProperty GetBorderColorProperty = BindableProperty.Create(nameof(GetBorderColor), typeof(Func<Color>), typeof(CircleImage), () => default(Color));
 	public static readonly BindableProperty ErrorPlaceholderProperty = BindableProperty.Create(nameof(ErrorPlaceholder), typeof(ImageSource), typeof(CircleImage), null);
 	public static readonly BindableProperty LoadingPlaceholderProperty = BindableProperty.Create(nameof(LoadingPlaceholder), typeof(ImageSource), typeof(CircleImage), null);
 
@@ -20,18 +21,23 @@ public class CircleImage : CircleBorder
 
 	public CircleImage()
 	{
-		this.Bind(StrokeProperty, nameof(BorderColor), source: this);
+		this.Bind(StrokeProperty, 
+			nameof(GetBorderColor), 
+			source: this,
+			convert: static (Func<Color>? getColorFunc) => getColorFunc?.Invoke() ?? default);
 
 		Content = new Image()
 			.Bind(Image.AspectProperty, nameof(Aspect), source: this)
 			.Bind(Image.SourceProperty, nameof(ImageSource), source: this)
 			.Invoke(image => image.PropertyChanged += HandleCircleImagePropertyChanged);
+
+		ThemeService.PreferenceChanged += HandleThemePreferenceChanged;
 	}
 
-	public Color BorderColor
+	public Func<Color> GetBorderColor
 	{
-		get => (Color)GetValue(BorderColorProperty);
-		set => SetValue(BorderColorProperty, value);
+		get => (Func<Color>)GetValue(GetBorderColorProperty);
+		set => SetValue(GetBorderColorProperty, value);
 	}
 
 	public Aspect Aspect
@@ -83,10 +89,15 @@ public class CircleImage : CircleBorder
 				await image.Source.GetPlatformImageAsync(image.Handler.MauiContext);
 				image.Source = ImageSource;
 			}
-			catch (Exception)
+			catch
 			{
 				image.Source = ErrorPlaceholder;
 			}
 		}
+	}
+	
+	void HandleThemePreferenceChanged(object? sender, PreferredTheme e)
+	{
+		Stroke = GetBorderColor();
 	}
 }

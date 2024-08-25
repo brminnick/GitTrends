@@ -160,7 +160,6 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 						.Row(Row.Title).Column(Column.Avatar).RowSpan(2)
 						.Bind(AvatarImage.ImageSourceProperty, nameof(Repository.OwnerAvatarUrl), BindingMode.OneTime)
 						.DynamicResources(
-							(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
 							(CircleImage.ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
 							(CircleImage.LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource))));
 

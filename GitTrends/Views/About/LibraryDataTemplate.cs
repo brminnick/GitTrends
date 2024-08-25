@@ -34,12 +34,18 @@ namespace GitTrends
 
 			Children =
 			{
-				new AvatarImage(_circleDiameter){ BackgroundColor = Colors.White, Padding = 12 }.Fill()
+				new AvatarImage(_circleDiameter)
+					{
+						BackgroundColor = Colors.White,
+						Padding = 12
+					}.Fill()
 					.Row(Row.Avatar).Column(Column.Image)
-					.Bind(CircleImage.ImageSourceProperty, nameof(NuGetPackageModel.IconUri), BindingMode.OneTime)
-					.DynamicResource(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
+					.Bind(CircleImage.ImageSourceProperty, nameof(NuGetPackageModel.IconUri), BindingMode.OneTime),
 
-				new Label { LineBreakMode = LineBreakMode.TailTruncation }.FillHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, IsSmallScreen ? 10 : 12)
+				new Label
+					{
+						LineBreakMode = LineBreakMode.TailTruncation
+					}.FillHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, IsSmallScreen ? 10 : 12)
 					.Row(Row.Login).Column(Column.LeftText).ColumnSpan(3)
 					.Bind(Label.TextProperty, nameof(NuGetPackageModel.PackageName), BindingMode.OneTime)
 					.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
