@@ -31,14 +31,19 @@ public class OnboardingPage : BaseCarouselViewPage<OnboardingViewModel>
 		Content.ItemTemplate = new OnboardingCarouselDataTemplateSelector(chartOnboardingView, gitTrendsOnboardingView, notificationsOnboardingView, connectToGitHubOnboardingView);
 	}
 
-	//Disable the Hardware Back Button on Android
+	// Disable the Hardware Back Button on Android to prevent the user from dismissing the Modal Page
 	protected override bool OnBackButtonPressed() => false;
 
 	void HandleSkipButtonTapped(object? sender, EventArgs e)
 	{
 		AnalyticsService.Track("Skip Button Tapped");
 
+		// Animated scrolling is preferred but is broken on iOS
+#if IOS || MACCATALYST
+		Content.ScrollTo(PageCount - 1, animate: false);
+#else
 		Content.ScrollTo(PageCount - 1);
+#endif
 	}
 
 	void HandleDemoUserActivated(object? sender, EventArgs e) => Dispatcher.Dispatch(() => Shell.Current.GoToAsync(".."));
