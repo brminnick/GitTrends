@@ -57,7 +57,7 @@ namespace GitTrends
 				};
 			}
 
-			return browserLaunchOptions is null ? _browser.OpenAsync(url) : _browser.OpenAsync(url, browserLaunchOptions);
+			return browserLaunchOptions is null ? _browser.OpenAsync(url).WaitAsync(token) : _browser.OpenAsync(url, browserLaunchOptions).WaitAsync(token);
 
 		}).WaitAsync(token);
 

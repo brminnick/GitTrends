@@ -12,7 +12,7 @@ public abstract partial class GitHubAuthenticationViewModel : BaseViewModel
 	[ObservableProperty]
 	[NotifyCanExecuteChangedFor(nameof(HandleConnectToGitHubButtonCommand))]
 	[NotifyPropertyChangedFor(nameof(IsNotAuthenticating), nameof(IsDemoButtonVisible))]
-	bool _isAuthenticating = false;
+	bool _isAuthenticating;
 
 	protected GitHubAuthenticationViewModel(IDispatcher dispatcher,
 												IAnalyticsService analyticsService,
@@ -62,8 +62,6 @@ public abstract partial class GitHubAuthenticationViewModel : BaseViewModel
 		try
 		{
 			var loginUrl = GitHubAuthenticationService.GetGitHubLoginUrl();
-
-			cancellationToken.ThrowIfCancellationRequested();
 
 			if (!string.IsNullOrWhiteSpace(loginUrl))
 			{

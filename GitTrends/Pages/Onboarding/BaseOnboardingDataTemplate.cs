@@ -140,7 +140,8 @@ public abstract class BaseOnboardingDataTemplate(
 				{
 					CommandParameter = text
 				}
-				.Bind(TapGestureRecognizer.CommandProperty, nameof(OnboardingViewModel.HandleDemoButtonTappedCommand),
+				.Bind(TapGestureRecognizer.CommandProperty, 
+					nameof(OnboardingViewModel.HandleDemoButtonTappedCommand),
 					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(OnboardingViewModel))));
 
 			this.SetBinding(IsVisibleProperty, nameof(OnboardingViewModel.IsDemoButtonVisible));

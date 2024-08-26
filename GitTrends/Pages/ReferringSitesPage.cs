@@ -32,6 +32,8 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
 #if IOS || MACCATALYST
 		Shell.SetPresentationMode(this, PresentationMode.ModalAnimated);
 #endif
+		
+		On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
 
 		Title = PageTitles.ReferringSitesPage;
 

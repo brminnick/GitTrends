@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using AsyncAwaitBestPractices;
+﻿using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
@@ -89,7 +88,7 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 							ItemTemplate = new RepositoryDataTemplateSelector(deviceInfo, mobileSortingService),
 							BackgroundColor = Colors.Transparent,
 							AutomationId = RepositoryPageAutomationIds.CollectionView,
-							
+
 							//Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
 							Header = deviceInfo.Platform == DevicePlatform.Android ? new BoxView
 							{
@@ -124,10 +123,16 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 		add => _searchTextChangedEventManager.AddEventHandler(value);
 		remove => _searchTextChangedEventManager.RemoveEventHandler(value);
 	}
-
+	
+#if ANDROID
 	protected override async void OnNavigatedTo(NavigatedToEventArgs args)
 	{
 		base.OnNavigatedTo(args);
+#else
+	protected override async void OnAppearing()
+	{
+		base.OnAppearing();
+#endif
 
 		var token = await _gitHubUserService.GetGitHubToken();
 
