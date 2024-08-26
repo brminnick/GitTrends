@@ -123,7 +123,11 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 		add => _searchTextChangedEventManager.AddEventHandler(value);
 		remove => _searchTextChangedEventManager.RemoveEventHandler(value);
 	}
-	
+
+	// Work-around to avoid user "returning" to the SplashScreenPage
+	// (For some reason, MAUI retians the SplashScreenPage in the NavigationStack after `Shell.GotoAsync("/RepositoryPage")`
+	protected override bool OnBackButtonPressed() => false;
+
 #if ANDROID
 	protected override async void OnNavigatedTo(NavigatedToEventArgs args)
 	{
