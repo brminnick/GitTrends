@@ -50,14 +50,14 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 				.Bind(WidthRequestProperty,
 					source: this,
 					getter: imageView => imageView.Height,
-					convert: convertWidthToMatchRecordedVideoDimensions);
+					convert: imageHeight => convertWidthToMatchRecordedVideoDimensions(imageHeight, Padding.VerticalThickness));
 
 			// This ensures that black bars don't appear on the sides of the video due to being improperly scaled
-			double convertWidthToMatchRecordedVideoDimensions(double imageViewHeight)
+			static double convertWidthToMatchRecordedVideoDimensions(double imageViewHeight, double paddingVerticalThickness)
 			{
 				return imageViewHeight is -1
 					? -1
-					: (imageViewHeight - Padding.VerticalThickness) / chartVideoHeight * chartVideoWidth;
+					: (imageViewHeight - paddingVerticalThickness) / chartVideoHeight * chartVideoWidth;
 			}
 		}
 	}
