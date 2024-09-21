@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
     <NetVersion>net8.0</NetVersion>
     <IsTrimmable>false</IsTrimmable>
+    <MauiVersion>8.0.90</MauiVersion>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>

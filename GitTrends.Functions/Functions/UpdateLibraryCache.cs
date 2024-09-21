@@ -18,13 +18,13 @@ class UpdateLibraryCache(NuGetService nuGetService, BlobStorageService blobStora
 		log.LogInformation("Retrieving NuGet Packages");
 
 		var nugetPackageDictionary = new Dictionary<string, (Uri IconUri, Uri NugetUri)>();
-		await foreach (var (Title, ImageUri, NugetUri) in _nuGetService.GetPackageInfo(cancellationTokenSource.Token))
+		await foreach (var (title, imageUri, nugetUri) in _nuGetService.GetPackageInfo(cancellationTokenSource.Token).ConfigureAwait(false))
 		{
-			log.LogInformation($"Found {Title}");
-			if (!nugetPackageDictionary.Any(x => x.Key.Equals(Title, StringComparison.OrdinalIgnoreCase)))
+			log.LogInformation($"Found {title}");
+			if (!nugetPackageDictionary.Any(x => x.Key.Equals(title, StringComparison.OrdinalIgnoreCase)))
 			{
-				log.LogInformation($"Added NuGet Package: {Title}");
-				nugetPackageDictionary.Add(Title, (ImageUri, NugetUri));
+				log.LogInformation($"Added NuGet Package: {title}");
+				nugetPackageDictionary.Add(title, (imageUri, nugetUri));
 			}
 		}
 
@@ -33,7 +33,7 @@ class UpdateLibraryCache(NuGetService nuGetService, BlobStorageService blobStora
 			nugetPackageModelList.Add(new NuGetPackageModel(nugetPackage.Key, nugetPackage.Value.IconUri, nugetPackage.Value.NugetUri));
 
 		var blobName = $"Libraries_{DateTime.UtcNow:o}.json";
-		log.LogInformation($"Saving NuGet Pacakges to Blob Storage: {blobName}");
+		log.LogInformation($"Saving NuGet Packages to Blob Storage: {blobName}");
 
 		await _blobStorageService.UploadNuGetLibraries(nugetPackageModelList, blobName).ConfigureAwait(false);
 	}

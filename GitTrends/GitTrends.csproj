@@ -70,24 +70,24 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Maui" Version="9.0.3"/>
     <PackageReference Include="CommunityToolkit.Maui.Markup" Version="4.1.0"/>
-    <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.1.0"/>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2"/>
+    <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.1.1" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageReference Include="GitHubApiStatus" Version="3.0.0"/>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.64" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.65" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.8.0"/>
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.9.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0"/>
-    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.80"/>
-    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.80"/>
+    <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
     <PackageReference Include="Plugin.StoreReview" Version="6.2.0"/>
-    <PackageReference Include="Refit.HttpClientFactory" Version="7.1.2"/>
+    <PackageReference Include="Refit.HttpClientFactory" Version="7.2.1" />
     <PackageReference Include="Sentry.Maui" Version="4.10.2" />
     <PackageReference Include="Sharpnado.MaterialFrame.Maui" Version="2.0.0"/>
     <PackageReference Include="Shiny.Jobs" Version="3.3.3"/>
     <PackageReference Include="Shiny.Notifications" Version="3.3.3"/>
     <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.8"/>
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172"/>
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.9"/>
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.10" />
     <PackageReference Include="Syncfusion.Maui.Charts" Version="26.1.38"/>
   </ItemGroup>
 
