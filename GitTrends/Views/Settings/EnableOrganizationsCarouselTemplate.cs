@@ -12,14 +12,10 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 	{
 		Children =
 		{
-#if ANDROID
 			new MediaElementContentView()
 				.Row(EnableOrganizationsGrid.Row.Image)
 				.Center()
 				.Margin(24, 12),
-#elif AppStore
-#error MediaElement not implemented on iOS and Maccatalyst
-#endif
 
 			new Image()
 				.Row(EnableOrganizationsGrid.Row.Image)

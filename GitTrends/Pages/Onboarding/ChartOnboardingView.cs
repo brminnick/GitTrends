@@ -36,8 +36,7 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 			Stroke = Color.FromArgb("E0E0E0");
 			BackgroundColor = Colors.White;
 			Padding = new Thickness(5);
-
-#if ANDROID
+			
 			Content = new MediaElement
 				{
 					Source = MediaSource.FromResource(VideoConstants.ChartVideoFileName),
@@ -60,10 +59,6 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 					? -1
 					: (imageViewHeight - Padding.VerticalThickness) / chartVideoHeight * chartVideoWidth;
 			}
-			
-#elif AppStore
-#error MediaElement not implemented on iOS and Maccatalyst
-#endif
 		}
 	}
 
