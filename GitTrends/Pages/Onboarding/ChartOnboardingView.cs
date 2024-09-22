@@ -1,4 +1,5 @@
-﻿using GitTrends.Mobile.Common.Constants;
+﻿using System.ComponentModel;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
@@ -24,11 +25,11 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 
 	sealed class ImageView : Border
 	{
+		const double _chartVideoHeight = 1080;
+		const double _chartVideoWidth = 860;
+
 		public ImageView()
 		{
-			const int chartVideoHeight = 1080;
-			const int chartVideoWidth = 860;
-
 			StrokeShape = new RoundRectangle
 			{
 				CornerRadius = 4,
@@ -36,28 +37,39 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 			Stroke = Color.FromArgb("E0E0E0");
 			BackgroundColor = Colors.White;
 			Padding = new Thickness(5);
-			
-			Content = new MediaElement
-				{
-					Source = MediaSource.FromResource(VideoConstants.ChartVideoFileName),
-					Background = null,
-					ShouldAutoPlay = true,
-					ShouldShowPlaybackControls = false,
-					ShouldLoopPlayback = true,
-					Volume = 0.0,
-					Margin = 0,
-				}.Center()
-				.Bind(WidthRequestProperty,
-					source: this,
-					getter: imageView => imageView.Height,
-					convert: imageHeight => convertWidthToMatchRecordedVideoDimensions(imageHeight, Padding.VerticalThickness));
 
-			// This ensures that black bars don't appear on the sides of the video due to being improperly scaled
-			static double convertWidthToMatchRecordedVideoDimensions(double imageViewHeight, double paddingVerticalThickness)
+			Content = new MediaElement
 			{
-				return imageViewHeight is -1
-					? -1
-					: (imageViewHeight - paddingVerticalThickness) / chartVideoHeight * chartVideoWidth;
+				Source = MediaSource.FromResource(VideoConstants.ChartVideoFileName),
+				Background = null,
+				ShouldAutoPlay = true,
+				ShouldShowPlaybackControls = false,
+				ShouldLoopPlayback = true,
+				Volume = 0.0,
+				Margin = 0,
+				HeightRequest = 250, // Assign any value to MediaElement.HeightRequest; workaround to ensure MediaElement is inflated on iOS
+				WidthRequest = 250 // Assign any value to MediaElement.WidthRequest; workaround to ensure MediaElement is inflated on iOS
+			}.Center();
+
+			PropertyChanged += HandlePropertyChanged;
+		}
+
+		static void HandlePropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			ArgumentNullException.ThrowIfNull(sender);
+
+			var imageView = (ImageView)sender;
+
+			// Ensure both Width + Height have been initialized 
+			if ((e.PropertyName == HeightProperty.PropertyName
+				|| e.PropertyName == WidthProperty.PropertyName)
+				&& imageView.Height is not -1
+				&& imageView.Width is not -1)
+			{
+				var mediaElement = (MediaElement)(imageView.Content ?? throw new InvalidOperationException($"{nameof(ImageView)}.{nameof(Content)} must be set to a MediaElement in the Constructor"));
+
+				mediaElement.HeightRequest = imageView.Height - imageView.Padding.VerticalThickness;
+				mediaElement.WidthRequest = Math.Round(mediaElement.HeightRequest / _chartVideoHeight * _chartVideoWidth, MidpointRounding.ToPositiveInfinity);
 			}
 		}
 	}

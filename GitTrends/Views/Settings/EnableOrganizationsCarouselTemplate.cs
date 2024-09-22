@@ -1,8 +1,10 @@
-﻿using GitTrends.Mobile.Common;
+﻿using System.ComponentModel;	
+using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
 using static GitTrends.MauiService;
+using ScrollView = Microsoft.Maui.Controls.ScrollView;
 
 namespace GitTrends;
 
@@ -89,11 +91,11 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 
 	sealed class MediaElementContentView : ContentView
 	{
+		const int _chartVideoHeight = 1080;
+		const int _chartVideoWidth = 1350;
+		
 		public MediaElementContentView()
 		{
-			const int chartVideoHeight = 1080;
-			const int chartVideoWidth = 1350;
-
 			Content = new MediaElement
 				{
 					Background = null,
@@ -102,24 +104,35 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 					ShouldLoopPlayback = true,
 					Volume = 0.0,
 					Margin = 0,
+					HeightRequest = 250, // Assign any value to MediaElement.HeightRequest; workaround to ensure MediaElement is inflated on iOS
+					WidthRequest = 250 // Assign any value to MediaElement.WidthRequest; workaround to ensure MediaElement is inflated on iOS
 				}.Center()
 				.Bind(MediaElement.SourceProperty,
 					nameof(IncludeOrganizationsCarouselModel.VideoSource),
 					convert: (string? videoSource) => MediaSource.FromResource(videoSource))
 				.Bind(IsVisibleProperty,
 					nameof(IncludeOrganizationsCarouselModel.VideoSource),
-					convert: (string? source) => source is not null)
-				.Bind(HeightRequestProperty,
-					source: this,
-					getter: contentView => contentView.Width,
-					convert: convertHeightToMatchRecordedVideoDimensions);
+					convert: (string? source) => source is not null);
+			
+			PropertyChanged += HandlePropertyChanged;
+		}
+		
+		static void HandlePropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			ArgumentNullException.ThrowIfNull(sender);
 
-			// This ensures that black bars don't appear on the sides of the video due to being improperly scaled
-			static double convertHeightToMatchRecordedVideoDimensions(double contentViewWidth)
+			var contentView = (MediaElementContentView)sender;
+
+			// Ensure both Width + Height have been initialized 
+			if ((e.PropertyName == HeightProperty.PropertyName
+				|| e.PropertyName == WidthProperty.PropertyName)
+				&& contentView.Height is not -1
+				&& contentView.Width is not -1)
 			{
-				return contentViewWidth is -1
-					? -1
-					: contentViewWidth / chartVideoWidth * chartVideoHeight;
+				var mediaElement = (MediaElement)(contentView.Content ?? throw new InvalidOperationException($"{nameof(ContentView)}.{nameof(Content)} must be set to a MediaElement in the Constructor"));
+
+				mediaElement.HeightRequest = contentView.Height - contentView.Padding.VerticalThickness;
+				mediaElement.WidthRequest = Math.Round(mediaElement.HeightRequest / _chartVideoHeight * _chartVideoWidth, MidpointRounding.ToPositiveInfinity);
 			}
 		}
 	}
