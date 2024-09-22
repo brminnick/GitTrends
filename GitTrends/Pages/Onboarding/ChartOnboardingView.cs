@@ -69,7 +69,7 @@ public class ChartOnboardingView(IDeviceInfo deviceInfo, IAnalyticsService analy
 				var mediaElement = (MediaElement)(imageView.Content ?? throw new InvalidOperationException($"{nameof(ImageView)}.{nameof(Content)} must be set to a MediaElement in the Constructor"));
 
 				mediaElement.HeightRequest = imageView.Height - imageView.Padding.VerticalThickness;
-				mediaElement.WidthRequest = Math.Round(mediaElement.HeightRequest / _chartVideoHeight * _chartVideoWidth, MidpointRounding.ToPositiveInfinity);
+				mediaElement.WidthRequest = mediaElement.HeightRequest / _chartVideoHeight * _chartVideoWidth;
 			}
 		}
 	}

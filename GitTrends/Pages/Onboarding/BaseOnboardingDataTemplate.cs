@@ -40,8 +40,8 @@ public abstract class BaseOnboardingDataTemplate(
 			(Row.Indicator, 44)),
 
 		ColumnDefinitions = Columns.Define(
-			(Column.Indicator, Stars(1)),
-			(Column.Button, Stars(1))),
+			(Column.Indicator, Star),
+			(Column.Button, Star)),
 
 		Children =
 		{
@@ -50,7 +50,7 @@ public abstract class BaseOnboardingDataTemplate(
 
 			createImageView()
 				.Row(Row.Image).ColumnSpan(All<Column>())
-				.Margin(deviceInfo.Platform == DevicePlatform.iOS ? new Thickness(32, 44 + 32, 32, 32) : new Thickness(32, 16)),
+				.Margin(32, 16),
 
 			new VerticalStackLayout
 				{

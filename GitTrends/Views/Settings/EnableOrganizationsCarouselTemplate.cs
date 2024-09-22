@@ -140,7 +140,7 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 				var mediaElement = (MediaElement)(contentView.Content ?? throw new InvalidOperationException($"{nameof(ContentView)}.{nameof(Content)} must be set to a MediaElement in the Constructor"));
 
 				mediaElement.WidthRequest = contentView.Width - contentView.Padding.HorizontalThickness;
-				mediaElement.HeightRequest = Math.Round(mediaElement.WidthRequest / _chartVideoWidth * _chartVideoHeight, MidpointRounding.ToPositiveInfinity);
+				mediaElement.HeightRequest = mediaElement.WidthRequest / _chartVideoWidth * _chartVideoHeight;
 			}
 		}
 	}
