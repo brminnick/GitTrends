@@ -6,6 +6,7 @@ class EnableOrganizationsGrid : Grid
 {
 	public EnableOrganizationsGrid()
 	{
+		Padding = 0;
 		RowSpacing = 0;
 
 		RowDefinitions = Rows.Define(

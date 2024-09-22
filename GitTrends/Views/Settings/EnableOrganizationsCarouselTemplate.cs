@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;	
+﻿using System.ComponentModel;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using CommunityToolkit.Maui.Markup;
@@ -17,7 +17,7 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 			new MediaElementContentView()
 				.Row(EnableOrganizationsGrid.Row.Image)
 				.Center()
-				.Margin(24, 12),
+				.Margin(6, 12),
 
 			new Image()
 				.Row(EnableOrganizationsGrid.Row.Image)
@@ -93,11 +93,17 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 	{
 		const int _chartVideoHeight = 1080;
 		const int _chartVideoWidth = 1350;
-		
+
 		public MediaElementContentView()
 		{
-			Padding = new Thickness(5);	
-			
+			Shadow = new Shadow
+			{
+				Brush = Colors.Black,
+				Offset = new Point(5, 5),
+				Radius = 10,
+				Opacity = 0.2f
+			};
+
 			Content = new MediaElement
 				{
 					Background = null,
@@ -115,10 +121,10 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 				.Bind(IsVisibleProperty,
 					nameof(IncludeOrganizationsCarouselModel.VideoSource),
 					convert: (string? source) => source is not null);
-			
+
 			PropertyChanged += HandlePropertyChanged;
 		}
-		
+
 		static void HandlePropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			ArgumentNullException.ThrowIfNull(sender);
@@ -133,8 +139,8 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 			{
 				var mediaElement = (MediaElement)(contentView.Content ?? throw new InvalidOperationException($"{nameof(ContentView)}.{nameof(Content)} must be set to a MediaElement in the Constructor"));
 
-				mediaElement.HeightRequest = contentView.Height - contentView.Padding.VerticalThickness;
-				mediaElement.WidthRequest = Math.Round(mediaElement.HeightRequest / _chartVideoHeight * _chartVideoWidth, MidpointRounding.ToPositiveInfinity);
+				mediaElement.WidthRequest = contentView.Width - contentView.Padding.HorizontalThickness;
+				mediaElement.HeightRequest = Math.Round(mediaElement.WidthRequest / _chartVideoWidth * _chartVideoHeight, MidpointRounding.ToPositiveInfinity);
 			}
 		}
 	}

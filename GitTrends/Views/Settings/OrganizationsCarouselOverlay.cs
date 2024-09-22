@@ -18,6 +18,7 @@ class OrganizationsCarouselOverlay : Grid
 	public OrganizationsCarouselOverlay(IDeviceInfo deviceInfo, IAnalyticsService analyticsService)
 	{
 		_analyticsService = analyticsService;
+		InputTransparent = false;
 
 		RowDefinitions = Rows.Define(
 			(Row.CloseButton, Star),
@@ -72,6 +73,7 @@ class OrganizationsCarouselOverlay : Grid
 	{
 		public BackgroundOverlay()
 		{
+			InputTransparent = false;
 			SetBackgroundColor();
 			ThemeService.PreferenceChanged += HandlePreferenceChanged;
 		}
@@ -87,25 +89,18 @@ class OrganizationsCarouselOverlay : Grid
 
 	sealed class CloseButton : Label
 	{
-		public CloseButton(Func<Task> dismissOverlay, IAnalyticsService analyticsService)
+		readonly IAnalyticsService _analyticsService;
+		readonly Func<Task> _onOverlayDismissed;
+
+		public CloseButton(Func<Task> onOverlayDismissed, IAnalyticsService analyticsService)
 		{
 			Text = "x";
+			_analyticsService = analyticsService;
+			_onOverlayDismissed = onOverlayDismissed;
 
 			GestureRecognizers.Add(new TapGestureRecognizer
 			{
-				Command = new AsyncRelayCommand(async () =>
-				{
-					IsEnabled = false;
-
-					analyticsService.Track($"{nameof(OrganizationsCarouselOverlay)} Close Button Tapped");
-
-					// Make the button disappear before OrganizationsCarouselFrame
-					await Task.WhenAll(dismissOverlay(), this.FadeTo(0));
-
-					//Ensure the Button is visible and reenabled when it next appears
-					Opacity = 1;
-					IsEnabled = true;
-				}),
+				Command = new AsyncRelayCommand(OnCloseButtonCommand),
 				NumberOfTapsRequired = 1
 			});
 
@@ -115,6 +110,20 @@ class OrganizationsCarouselOverlay : Grid
 			FontFamily = FontFamilyConstants.RobotoBold;
 
 			this.DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
+		}
+
+		async Task OnCloseButtonCommand()
+		{
+			IsEnabled = false;
+
+			_analyticsService.Track($"{nameof(OrganizationsCarouselOverlay)} Close Button Tapped");
+
+			// Make the button disappear before OrganizationsCarouselFrame
+			await Task.WhenAll(_onOverlayDismissed(), this.FadeTo(0));
+
+			//Ensure the Button is visible and reenabled when it next appears
+			Opacity = 1;
+			IsEnabled = true;
 		}
 	}
 
@@ -139,15 +148,17 @@ class OrganizationsCarouselOverlay : Grid
 
 			Content = new EnableOrganizationsGrid
 			{
+				Padding = 0,
 				IsClippedToBounds = true,
 
 				Children =
 				{
 					new OpacityOverlay()
-						.Row(EnableOrganizationsGrid.Row.Image),
+						.Row(EnableOrganizationsGrid.Row.Image)
+						.Fill(),
 
 					new OrganizationsCarouselView(deviceInfo, analyticsService)
-						.Row(EnableOrganizationsGrid.Row.Image).RowSpan(All<EnableOrganizationsGrid.Row>())
+						.RowSpan(All<EnableOrganizationsGrid.Row>())
 						.Invoke(view => view.PositionChanged += HandlePositionChanged)
 						.Fill(),
 
@@ -174,6 +185,7 @@ class OrganizationsCarouselOverlay : Grid
 		{
 			public OpacityOverlay()
 			{
+				Padding = Margin = 0;
 				BackgroundColor = Colors.White.MultiplyAlpha(0.25f);
 				StrokeShape = new RoundRectangle
 				{
