@@ -127,12 +127,12 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			var navDelegate = (UINavigationControllerDelegate)Delegate;
 			Delegate = new NavDelegate(navDelegate, this);
 			Context = context;
-			
+
 			UpdateLargeTitle();
 
-			var themePreference =  IPlatformApplication.Current?.Services.GetRequiredService<ThemeService>().Preference;
+			var themePreference = IPlatformApplication.Current?.Services.GetRequiredService<ThemeService>().Preference;
 			AddShadow(themePreference ?? PreferredTheme.Default);
-			
+
 			ThemeService.PreferenceChanged += HandlePreferenceChanged;
 		}
 
@@ -146,7 +146,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			_trackers[Tracker.Page] = Tracker;
 			Tracker = null;
 		}
-		
+
 		public override void PushViewController(UIViewController viewController, bool animated)
 		{
 			SnagTracker();
@@ -211,7 +211,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			static bool isLightTheme(PreferredTheme theme) => theme is PreferredTheme.Light || theme is PreferredTheme.Default && Application.Current?.RequestedTheme is AppTheme.Light;
 			static bool isDarkTheme(PreferredTheme theme) => theme is PreferredTheme.Dark || theme is PreferredTheme.Default && Application.Current?.RequestedTheme is AppTheme.Dark;
 		}
-		
+
 		void UpdateLargeTitle()
 		{
 			var value = ShellAttachedProperties.GetPrefersLargeTitles(Shell.Current);
@@ -311,14 +311,35 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			base.UpdateTitle();
 		}
 
-		protected override void UpdateTitleView()
+		protected override async void UpdateTitleView()
 		{
 			if (!IsToolbarReady())
 				return;
 
+			await UpdateBarButtonItems(ViewController, Page);
+
 			if (ViewController?.NavigationItem is null)
 			{
 				return;
+			}
+
+			if (Page is ISearchPage && Page.Handler is not null)
+			{
+				var searchController = new UISearchController(searchResultsController: null)
+				{
+					ObscuresBackgroundDuringPresentation = false,
+					HidesNavigationBarDuringPresentation = false,
+					HidesBottomBarWhenPushed = true
+				};
+				searchController.SearchBar.Placeholder = string.Empty;
+				searchController.SearchBar.TextChanged += HandleTextChanged;
+
+				ViewController.NavigationItem.SearchController = searchController;
+				ViewController.DefinesPresentationContext = true;
+
+				//Work-around to ensure the SearchController appears when the page first appears https://stackoverflow.com/a/46313164/5953643
+				ViewController.NavigationItem.SearchController.Active = true;
+				ViewController.NavigationItem.SearchController.Active = false;
 			}
 
 			var titleView = Shell.GetTitleView(Page) ?? Shell.GetTitleView(Context.Shell);
@@ -333,6 +354,90 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 				var view = new CustomTitleViewContainer(titleView);
 				ViewController.NavigationItem.TitleView = view;
 			}
+		}
+
+		void HandleTextChanged(object? sender, UISearchBarTextChangedEventArgs e)
+		{
+			var searchPage = (ISearchPage)Page;
+			searchPage.OnSearchBarTextChanged(e.SearchText);
+		}
+
+		static async Task<UIBarButtonItem> GetUIBarButtonItem(ToolbarItem toolbarItem)
+		{
+			var image = await GetUIImage(toolbarItem.IconImageSource);
+
+			return image switch
+			{
+				null => new UIBarButtonItem(toolbarItem.Text, UIBarButtonItemStyle.Plain, (_, _) =>
+				{
+					if (toolbarItem.Command?.CanExecute(toolbarItem.CommandParameter) is true)
+					{
+						toolbarItem.Command.Execute(toolbarItem.CommandParameter);
+					}
+				})
+				{
+					AccessibilityIdentifier = toolbarItem.AutomationId
+				},
+				_ => new UIBarButtonItem(image, UIBarButtonItemStyle.Plain, (sender, e) =>
+				{
+					if (toolbarItem.Command?.CanExecute(toolbarItem.CommandParameter) is true)
+					{
+						toolbarItem.Command?.Execute(toolbarItem.CommandParameter);
+					}
+				})
+				{
+					AccessibilityIdentifier = toolbarItem.AutomationId
+				}
+			};
+		}
+
+		static async Task<UIImage?> GetUIImage(ImageSource source)
+		{
+			var imageSourceServiceResult = source switch
+			{
+				FileImageSource => await new FileImageSourceService().GetImageAsync(source),
+				UriImageSource => await new UriImageSourceService().GetImageAsync(source),
+				StreamImageSource => await new StreamImageSourceService().GetImageAsync(source),
+				_ => throw new NotSupportedException($"{source.GetType().FullName} is not yet supported")
+			};
+
+			return imageSourceServiceResult?.Value;
+		}
+
+		async Task UpdateBarButtonItems(UIViewController parentViewController, Page page)
+		{
+			var (leftBarButtonItems, rightBarButtonItems) = await GetToolbarItems(page.ToolbarItems);
+
+			parentViewController.NavigationItem.LeftBarButtonItems = leftBarButtonItems?.Any() switch
+			{
+				true => [.. leftBarButtonItems],
+				false or null => []
+			};
+
+			parentViewController.NavigationItem.RightBarButtonItems = rightBarButtonItems.Any() switch
+			{
+				true => [.. rightBarButtonItems],
+				false => []
+			};
+		}
+
+		async Task<(IReadOnlyList<UIBarButtonItem>? LeftBarButtonItem, IReadOnlyList<UIBarButtonItem> RightBarButtonItems)> GetToolbarItems(IList<ToolbarItem> items)
+		{
+			var leftBarButtonItems = new List<UIBarButtonItem>();
+			foreach (var item in items.Where(static x => x.Priority is 1))
+			{
+				var barButtonItem = await GetUIBarButtonItem(item);
+				leftBarButtonItems.Add(barButtonItem);
+			}
+
+			var rightBarButtonItems = new List<UIBarButtonItem>();
+			foreach (var item in items.Where(static x => x.Priority != 1))
+			{
+				var barButtonItem = await GetUIBarButtonItem(item);
+				rightBarButtonItems.Add(barButtonItem);
+			}
+
+			return (leftBarButtonItems, rightBarButtonItems);
 		}
 
 		bool IsToolbarReady()

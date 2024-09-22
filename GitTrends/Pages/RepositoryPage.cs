@@ -10,7 +10,7 @@ namespace GitTrends;
 
 public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISearchPage
 {
-	readonly WeakEventManager<string> _searchTextChangedEventManager = new();
+	static readonly WeakEventManager<string> _searchTextChangedEventManager = new();
 
 	readonly RefreshView _refreshView;
 	readonly FirstRunService _firstRunService;
@@ -35,8 +35,7 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 		_firstRunService = firstRunService;
 		_gitHubUserService = gitHubUserService;
 		_deepLinkingService = deepLinkingService;
-
-		SearchBarTextChanged += HandleSearchBarTextChanged;
+		
 		RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 		LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 
@@ -118,7 +117,7 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 	enum Row { CollectionView, Information }
 	enum Column { CollectionView, Information }
 
-	public event EventHandler<string> SearchBarTextChanged
+	public static event EventHandler<string> SearchBarTextChanged
 	{
 		add => _searchTextChangedEventManager.AddEventHandler(value);
 		remove => _searchTextChangedEventManager.RemoveEventHandler(value);
@@ -276,8 +275,6 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 		sortItem.Text = RepositoryPageConstants.SortToolbarItemText;
 		settingsItem.Text = PageTitles.SettingsPage;
 	}
-
-	void HandleSearchBarTextChanged(object? sender, string searchBarText) => BindingContext.SetSearchBarTextCommand.Execute(searchBarText);
 
 	void ISearchPage.OnSearchBarTextChanged(in string text) => _searchTextChangedEventManager.RaiseEvent(this, text, nameof(SearchBarTextChanged));
 }

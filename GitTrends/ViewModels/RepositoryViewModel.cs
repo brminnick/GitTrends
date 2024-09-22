@@ -52,7 +52,6 @@ public partial class RepositoryViewModel : BaseViewModel
 		GitHubAuthenticationService gitHubAuthenticationService,
 		GitHubApiRepositoriesService gitHubApiRepositoriesService) : base(analyticsService, dispatcher)
 	{
-
 		_gitHubUserService = gitHubUserService;
 		_repositoryDatabase = repositoryDatabase;
 		_deepLinkingService = deepLinkingService;
@@ -82,6 +81,8 @@ public partial class RepositoryViewModel : BaseViewModel
 
 		RetryRepositoryStarsJob.UpdatedRepositorySavedToDatabase += HandleScheduleRetryUpdatedRepositoriesStarsCompleted;
 		RetryRepositoriesViewsClonesStarsJob.JobCompleted += HandleJobCompleted;
+
+		RepositoryPage.SearchBarTextChanged += HandleSearchBarTextChanged;
 
 		UpdateText();
 	}
@@ -444,8 +445,7 @@ public partial class RepositoryViewModel : BaseViewModel
 		_repositoryList = [];
 		UpdateVisibleRepositoryList(string.Empty, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
 	}
-
-	[RelayCommand]
+	
 	void SetSearchBarText(string text)
 	{
 		if (EqualityComparer<string>.Default.Equals(_searchBarText, text))
@@ -500,6 +500,8 @@ public partial class RepositoryViewModel : BaseViewModel
 
 		_pullToRefreshFailedEventManager.RaiseEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
 	}
+	
+	void HandleSearchBarTextChanged(object? sender, string searchBarText) => SetSearchBarText(searchBarText);
 
 	void HandleScheduleRetryUpdatedRepositoriesStarsCompleted(object? sender, Repository e) => AddRepositoriesToCollection([e], _searchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
 	void HandleTrendsViewModelRepositorySavedToDatabase(object? sender, Repository e) => AddRepositoriesToCollection([e], _searchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
