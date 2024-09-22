@@ -96,6 +96,8 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 		
 		public MediaElementContentView()
 		{
+			Padding = new Thickness(5);	
+			
 			Content = new MediaElement
 				{
 					Background = null,
