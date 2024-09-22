@@ -34,7 +34,7 @@ class OrganizationsCarouselOverlay : Grid
 
 		Children.Add(new CloseButton(() => Dismiss(true), analyticsService)
 			.Row(Row.CloseButton).Column(Column.Right));
-		
+
 		Children.Add(new OrganizationsCarouselFrame(deviceInfo, analyticsService)
 			.Row(Row.CarouselFrame).Column(Column.Center));
 
@@ -85,23 +85,28 @@ class OrganizationsCarouselOverlay : Grid
 		}
 	}
 
-	sealed class CloseButton : BounceButton
+	sealed class CloseButton : Label
 	{
 		public CloseButton(Func<Task> dismissOverlay, IAnalyticsService analyticsService)
 		{
 			Text = "x";
-			Command = new AsyncRelayCommand(async () =>
+
+			GestureRecognizers.Add(new TapGestureRecognizer
 			{
-				IsEnabled = false;
+				Command = new AsyncRelayCommand(async () =>
+				{
+					IsEnabled = false;
 
-				analyticsService.Track($"{nameof(OrganizationsCarouselOverlay)} Close Button Tapped");
+					analyticsService.Track($"{nameof(OrganizationsCarouselOverlay)} Close Button Tapped");
 
-				// Make the button disappear before OrganizationsCarouselFrame
-				await Task.WhenAll(dismissOverlay(), this.FadeTo(0));
+					// Make the button disappear before OrganizationsCarouselFrame
+					await Task.WhenAll(dismissOverlay(), this.FadeTo(0));
 
-				//Ensure the Button is visible and reenabled when it next appears
-				Opacity = 1;
-				IsEnabled = true;
+					//Ensure the Button is visible and reenabled when it next appears
+					Opacity = 1;
+					IsEnabled = true;
+				}),
+				NumberOfTapsRequired = 1
 			});
 
 			BackgroundColor = Colors.Transparent;
@@ -206,7 +211,7 @@ class OrganizationsCarouselOverlay : Grid
 			public EnableOrganizationsCarouselIndicatorView()
 			{
 				InputTransparent = true;
-				
+
 				Count = 3;
 				IsEnabled = false;
 				SelectedIndicatorColor = Colors.White;
