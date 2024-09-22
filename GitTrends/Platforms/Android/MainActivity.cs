@@ -48,15 +48,13 @@ public class MainActivity : MauiAppCompatActivity
 		}
 	}
 
-	async void TryHandleOpenedFromNotification(Intent? intent)
+	static async void TryHandleOpenedFromNotification(Intent? intent)
 	{
 		try
 		{
 			if (intent?.GetStringExtra("ShinyNotification") is string notificationString)
 			{
 				var notification = JsonSerializer.Deserialize<Shiny.Notifications.Notification>(notificationString);
-
-				var analyticsService = IPlatformApplication.Current?.Services.GetRequiredService<IAnalyticsService>();
 				var notificationService = IPlatformApplication.Current?.Services.GetRequiredService<NotificationService>();
 
 				if (notificationService is not null
@@ -77,7 +75,7 @@ public class MainActivity : MauiAppCompatActivity
 		}
 	}
 
-	async void TryHandleOpenedFromUri(Android.Net.Uri? callbackUri)
+	static async void TryHandleOpenedFromUri(Android.Net.Uri? callbackUri)
 	{
 		if (callbackUri is not null)
 		{
