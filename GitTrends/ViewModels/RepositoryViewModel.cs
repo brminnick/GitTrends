@@ -106,10 +106,7 @@ public partial class RepositoryViewModel : BaseViewModel
 
 	static IEnumerable<Repository> GetRepositoriesFilteredBySearchBar(in IEnumerable<Repository> repositories, string searchBarText)
 	{
-		if (string.IsNullOrWhiteSpace(searchBarText))
-			return repositories;
-
-		return repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
+		return string.IsNullOrWhiteSpace(searchBarText) ? repositories : repositories.Where(x => x.Name.Contains(searchBarText, StringComparison.OrdinalIgnoreCase));
 	}
 
 	static bool IsNavigateToRepositoryWebsiteCommandEnabled(Repository? repository) => repository?.IsRepositoryUrlValid() is true;
@@ -446,6 +443,7 @@ public partial class RepositoryViewModel : BaseViewModel
 		UpdateVisibleRepositoryList(string.Empty, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
 	}
 	
+	[RelayCommand]
 	void SetSearchBarText(string text)
 	{
 		if (EqualityComparer<string>.Default.Equals(_searchBarText, text))

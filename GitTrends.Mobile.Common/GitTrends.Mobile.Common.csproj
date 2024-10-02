@@ -217,8 +217,8 @@
     <PackageReference Include="Refit.HttpClientFactory" Version="7.2.1" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.9.1" />
-    <PackageReference Update="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-    <PackageReference Update="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+    <PackageReference Update="Microsoft.Maui.Controls" Version="8.0.91" />
+    <PackageReference Update="Microsoft.Maui.Controls.Compatibility" Version="8.0.91" />
   </ItemGroup>
   <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')"/>
 </Project>

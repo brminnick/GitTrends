@@ -9,11 +9,11 @@
     <ItemGroup>
         <PackageReference Include="GitHubApiStatus.Extensions" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.9.1" />
-        <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.4" OutputItemType="Analyzer" />
+        <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.18.0" OutputItemType="Analyzer" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.23.0" />
         <PackageReference Include="Refit.HttpClientFactory" Version="7.2.1" />
         <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.2.0" />
-        <PackageReference Include="NuGet.Protocol" Version="6.11.0" />
+        <PackageReference Include="NuGet.Protocol" Version="6.11.1" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.2.0" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
         <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="5.3.2" />
