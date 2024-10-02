@@ -1,132 +1,136 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
+﻿namespace GitTrends.UnitTests;
 
-namespace GitTrends.UnitTests
+class AboutViewModelTests : BaseTest
 {
-	class AboutViewModelTests : BaseTest
+	[Test]
+	public void VerifyUninitializedServicesTest()
 	{
-		[Test]
-		public void VerifyUninitializedServicesTest()
+		//Arrange
+		var aboutViewModel = ServiceCollection.ServiceProvider.GetRequiredService<AboutViewModel>();
+
+		//Act
+
+		//Assert
+		Assert.Multiple(() =>
 		{
-			//Arrange
-			var aboutViewModel = ServiceCollection.ServiceProvider.GetRequiredService<AboutViewModel>();
+			Assert.That(aboutViewModel.Watchers, Is.Null);
+			Assert.That(aboutViewModel.Stars, Is.Null);
+			Assert.That(aboutViewModel.Forks, Is.Null);
 
-			//Act
+			Assert.That(aboutViewModel.InstalledLibraries, Is.Empty);
+			Assert.That(aboutViewModel.GitTrendsContributors, Is.Empty);
+		});
+	}
 
-			//Assert
-			Assert.IsNull(aboutViewModel.Watchers);
-			Assert.IsNull(aboutViewModel.Stars);
-			Assert.IsNull(aboutViewModel.Forks);
+	[Test]
+	public async Task VerifyStatisticsTest()
+	{
+		//Arrange
+		await ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>().Initialize(CancellationToken.None).ConfigureAwait(false);
 
-			Assert.IsEmpty(aboutViewModel.InstalledLibraries);
-			Assert.IsEmpty(aboutViewModel.GitTrendsContributors);
+		var aboutViewModel = ServiceCollection.ServiceProvider.GetRequiredService<AboutViewModel>();
+
+		//Act
+
+		//Assert
+		Assert.Multiple(() =>
+		{
+			Assert.That(aboutViewModel.Watchers, Is.Not.Null);
+			Assert.That(aboutViewModel.Stars, Is.Not.Null);
+			Assert.That(aboutViewModel.Forks, Is.Not.Null);
+			Assert.That(aboutViewModel.GitTrendsContributors, Is.Not.Empty);
+
+			Assert.That(aboutViewModel.Watchers, Is.GreaterThan(0));
+			Assert.That(aboutViewModel.Stars, Is.GreaterThan(0));
+			Assert.That(aboutViewModel.Forks, Is.GreaterThan(0));
+			Assert.That(aboutViewModel.GitTrendsContributors, Is.Not.Empty);
+		});
+	}
+
+	[Test]
+	public async Task VerifyInstalledLibrariesTest()
+	{
+		//Arrange
+		var librariesService = ServiceCollection.ServiceProvider.GetRequiredService<LibrariesService>();
+		await librariesService.Initialize(CancellationToken.None).ConfigureAwait(false);
+
+		var aboutViewModel = ServiceCollection.ServiceProvider.GetRequiredService<AboutViewModel>();
+
+		//Act
+
+		//Assert
+		Assert.That(aboutViewModel.InstalledLibraries, Is.Not.Empty);
+	}
+
+	[Test]
+	public async Task VerifyViewOnGitHubCommandTest()
+	{
+		//Arrange
+		var didBrowserOpen = false;
+		var openAsyncExecutedTCS = new TaskCompletionSource<Uri>();
+
+		await ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>().Initialize(CancellationToken.None).ConfigureAwait(false);
+
+		var aboutViewModel = ServiceCollection.ServiceProvider.GetRequiredService<AboutViewModel>();
+		var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
+
+		MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
+
+		//Act
+
+		await aboutViewModel.ViewOnGitHubCommand.ExecuteAsync(null).ConfigureAwait(false);
+		var openedBrowserUri = await openAsyncExecutedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
+
+		//Assert
+		Assert.Multiple(() =>
+		{
+			Assert.That(didBrowserOpen);
+			Assert.That(gitTrendsStatisticsService.GitHubUri, Is.Not.Null);
+			Assert.That(openedBrowserUri, Is.EqualTo(gitTrendsStatisticsService.GitHubUri));
+		});
+
+		void HandleOpenAsyncExecuted(object? sender, Uri e)
+		{
+			MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
+
+			didBrowserOpen = true;
+			openAsyncExecutedTCS.SetResult(e);
 		}
+	}
 
-		[Test]
-		public async Task VerifyStatisticsTest()
+	[Test]
+	public async Task VerifyRequestFeatureCommandTest()
+	{
+		//Arrange
+		var didBrowserOpen = false;
+		var openAsyncExecutedTCS = new TaskCompletionSource<Uri>();
+
+		await ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>().Initialize(CancellationToken.None).ConfigureAwait(false);
+
+		var aboutViewModel = ServiceCollection.ServiceProvider.GetRequiredService<AboutViewModel>();
+		var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
+
+		MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
+
+		//Act
+
+		await aboutViewModel.RequestFeatureCommand.ExecuteAsync(null).ConfigureAwait(false);
+		var openedBrowserUri = await openAsyncExecutedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
+
+		//Assert
+		Assert.Multiple(() =>
 		{
-			//Arrange
-			await ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>().Initialize(CancellationToken.None).ConfigureAwait(false);
+			Assert.That(didBrowserOpen);
+			Assert.That(gitTrendsStatisticsService.GitHubUri, Is.Not.Null);
+			Assert.That(openedBrowserUri, Is.EqualTo(new Uri(gitTrendsStatisticsService.GitHubUri + "/issues/new?template=feature_request.md")));
+		});
 
-			var aboutViewModel = ServiceCollection.ServiceProvider.GetRequiredService<AboutViewModel>();
-
-			//Act
-
-			//Assert
-			Assert.IsNotNull(aboutViewModel.Watchers);
-			Assert.IsNotNull(aboutViewModel.Stars);
-			Assert.IsNotNull(aboutViewModel.Forks);
-			Assert.IsNotEmpty(aboutViewModel.GitTrendsContributors);
-
-			Assert.Greater(aboutViewModel.Watchers, 0);
-			Assert.Greater(aboutViewModel.Stars, 0);
-			Assert.Greater(aboutViewModel.Forks, 0);
-			Assert.Greater(aboutViewModel.GitTrendsContributors.Count, 0);
-		}
-
-		[Test]
-		public async Task VerifyInstalledLibrariesTest()
+		void HandleOpenAsyncExecuted(object? sender, Uri e)
 		{
-			//Arrange
-			var librariesService = ServiceCollection.ServiceProvider.GetRequiredService<LibrariesService>();
-			await librariesService.Initialize(CancellationToken.None).ConfigureAwait(false);
+			MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
 
-			var aboutViewModel = ServiceCollection.ServiceProvider.GetRequiredService<AboutViewModel>();
-
-			//Act
-
-			//Assert
-			Assert.IsNotEmpty(aboutViewModel.InstalledLibraries);
-			Assert.Greater(aboutViewModel.InstalledLibraries.Count, 0);
-		}
-
-		[Test]
-		public async Task VerifyViewOnGitHubCommandTest()
-		{
-			//Arrange
-			var didBrowserOpen = false;
-			var openAsyncExecutedTCS = new TaskCompletionSource<Uri>();
-
-			await ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>().Initialize(CancellationToken.None).ConfigureAwait(false);
-
-			var aboutViewModel = ServiceCollection.ServiceProvider.GetRequiredService<AboutViewModel>();
-			var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
-
-			MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
-
-			//Act
-
-			await aboutViewModel.ViewOnGitHubCommand.ExecuteAsync(null).ConfigureAwait(false);
-			var openedBrowserUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
-
-			//Assert
-			Assert.IsTrue(didBrowserOpen);
-			Assert.IsNotNull(gitTrendsStatisticsService.GitHubUri);
-			Assert.AreEqual(gitTrendsStatisticsService.GitHubUri, openedBrowserUri);
-
-			void HandleOpenAsyncExecuted(object? sender, Uri e)
-			{
-				MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
-
-				didBrowserOpen = true;
-				openAsyncExecutedTCS.SetResult(e);
-			}
-		}
-
-		[Test]
-		public async Task VerifyRequestFeatureCommandTest()
-		{
-			//Arrange
-			var didBrowserOpen = false;
-			var openAsyncExecutedTCS = new TaskCompletionSource<Uri>();
-
-			await ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>().Initialize(CancellationToken.None).ConfigureAwait(false);
-
-			var aboutViewModel = ServiceCollection.ServiceProvider.GetRequiredService<AboutViewModel>();
-			var gitTrendsStatisticsService = ServiceCollection.ServiceProvider.GetRequiredService<GitTrendsStatisticsService>();
-
-			MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
-
-			//Act
-
-			await aboutViewModel.RequestFeatureCommand.ExecuteAsync(null).ConfigureAwait(false);
-			var openedBrowserUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
-
-			//Assert
-			Assert.IsTrue(didBrowserOpen);
-			Assert.IsNotNull(gitTrendsStatisticsService.GitHubUri);
-			Assert.AreEqual(new Uri(gitTrendsStatisticsService.GitHubUri + "/issues/new?template=feature_request.md"), openedBrowserUri);
-
-			void HandleOpenAsyncExecuted(object? sender, Uri e)
-			{
-				MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
-
-				didBrowserOpen = true;
-				openAsyncExecutedTCS.SetResult(e);
-			}
+			didBrowserOpen = true;
+			openAsyncExecutedTCS.SetResult(e);
 		}
 	}
 }

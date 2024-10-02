@@ -9,7 +9,6 @@
     <Import_RootNamespace>GitTrends.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Models\" />
     <Folder Include="$(MSBuildThisFileDirectory)Services\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\Base\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\Base\GraphQLModels\" />
@@ -21,17 +20,19 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Constants\AzureConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\GithubConstants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\BaseApiService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DailyClonesModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DailyViewsModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GitHubToken.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Issue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\IssueConnection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ReferrersResponseModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ReferringSiteModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Repository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryClonesModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryClonesResponseModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryConnection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryViewsModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\RepositoryViewsResponseModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\User.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Base\BaseDailyModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Base\BaseRepositoryModel.cs" />
@@ -50,7 +51,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\StreamingUrl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IDailyClonesModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IDailyViewsModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\NotificationHubInformation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IAzureFunctionsApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGitHubApiV3.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGitHubAuthApi.cs" />
@@ -67,7 +67,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\NuGetPackageModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GetRepositoryResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StringExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)RefitExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitTrendsStatisticsDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\AppCenterApiKeyDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTOs\GitHubViewerLoginResponse.cs" />

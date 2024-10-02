@@ -1,7 +1,7 @@
 ﻿using GitTrends.Mobile.Common;
-using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Forms;
-using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common.Constants;
+using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -40,7 +40,7 @@ namespace GitTrends
 
 		enum Row { Image, Name, Alias }
 
-		class GitHubAvatarImage : CircleImage
+		sealed class GitHubAvatarImage : CircleImage
 		{
 			public GitHubAvatarImage()
 			{
@@ -50,13 +50,16 @@ namespace GitTrends
 
 				AutomationId = SettingsPageAutomationIds.GitHubAvatarImage;
 
+				Stroke = Colors.Transparent;
+
 				this.Bind(ImageSourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource))
-					.DynamicResources((ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
-										(LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)));
+					.DynamicResources(
+						(ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
+						(LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)));
 			}
 		}
 
-		class NameLabel : Label
+		sealed class NameLabel : Label
 		{
 			public NameLabel()
 			{
@@ -73,7 +76,7 @@ namespace GitTrends
 			}
 		}
 
-		class AliasLabel : Label
+		sealed class AliasLabel : Label
 		{
 			public AliasLabel()
 			{
@@ -91,7 +94,7 @@ namespace GitTrends
 			}
 		}
 
-		class TryDemoButton : Button
+		sealed class TryDemoButton : Label
 		{
 			public TryDemoButton()
 			{
@@ -103,15 +106,23 @@ namespace GitTrends
 				FontSize = _aliasLabelHeight - 4;
 				FontFamily = FontFamilyConstants.RobotoRegular;
 
-				this.Bind(nameof(SettingsViewModel.HandleDemoButtonTappedCommand))
+				Text = GitHubLoginButtonConstants.TryDemo;
+
+				GestureRecognizers.Add(new TapGestureRecognizer()
+					.Bind(TapGestureRecognizer.CommandProperty, nameof(SettingsViewModel.HandleDemoButtonTappedCommand))
+					.Bind(TapGestureRecognizer.CommandParameterProperty,
+						getter: static (Label label) => label.Text,
+						source: this));
+
+				this.Bind(IsVisibleProperty, nameof(SettingsViewModel.IsDemoButtonVisible))
 					.Bind(TextProperty, nameof(SettingsViewModel.TryDemoButtonText))
-					.Bind(IsVisibleProperty, nameof(SettingsViewModel.IsDemoButtonVisible))
-					.DynamicResources((BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)),
-										(TextColorProperty, nameof(BaseTheme.GitHubHandleColor)));
+					.DynamicResources(
+						(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)),
+						(TextColorProperty, nameof(BaseTheme.GitHubHandleColor)));
 			}
 		}
 
-		class IsAuthenticatingActivityIndicator : ActivityIndicator
+		sealed class IsAuthenticatingActivityIndicator : ActivityIndicator
 		{
 			public IsAuthenticatingActivityIndicator()
 			{

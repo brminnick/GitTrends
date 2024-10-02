@@ -47,10 +47,10 @@ Monitor the traffic to your GitHub Repos!<br/>
 
 Mobile App
 - [GitHubApiStatus](https://github.com/brminnick/GitHubApiStatus) - A .NET library that makes it easy to understand GitHub's API Rate Limit
-- [Xamarin](https://docs.microsoft.com/xamarin/?WT.mc_id=mobile-0000-bramin) - build native apps for Android, iOS, and macOS using .NET code and platform-specific user interfaces
-- [Xamarin.Essentials](https://docs.microsoft.com/xamarin/essentials/?WT.mc_id=mobile-0000-bramin) - provides cross-platform APIs for their mobile applications
-- [Xamarin.Forms](https://docs.microsoft.com/xamarin/get-started/what-is-xamarin-forms?WT.mc_id=mobile-0000-bramin) - an open-source UI framework to build Android, iOS, and Windows applications from a single shared codebase
-- [AppCenter](https://docs.microsoft.com/appcenter/?WT.mc_id=mobile-0000-bramin) - continuously build, test, release, and monitor mobile apps
+- [Xamarin](https://docs.microsoft.com/xamarin/) - build native apps for Android, iOS, and macOS using .NET code and platform-specific user interfaces
+- [Xamarin.Essentials](https://docs.microsoft.com/xamarin/essentials/) - provides cross-platform APIs for their mobile applications
+- [Xamarin.Forms](https://docs.microsoft.com/xamarin/get-started/what-is-xamarin-forms) - an open-source UI framework to build Android, iOS, and Windows applications from a single shared codebase
+- [AppCenter](https://docs.microsoft.com/appcenter/) - continuously build, test, release, and monitor mobile apps
 - [AsyncAwaitBestPractices](https://github.com/brminnick/AsyncAwaitBestPractices) - Extensions for System.Threading.Tasks.Task
 - [Autofac](https://github.com/autofac/Autofac) - an IoC container for .NET
 - [Debug Rainbows](https://github.com/sthewissen/Xamarin.Forms.DebugRainbows) - Xamarin.Forms UI layout tool
@@ -66,11 +66,11 @@ Mobile App
 - [GitHub Octocat Ocodex](https://octodex.github.com/inspectocat/) - A gallery of custom Octocats
 
 Cloud Backend
-- [.NET Core](https://docs.microsoft.com/dotnet/core/?WT.mc_id=mobile-0000-bramin) - an [open-source](https://github.com/dotnet/core), general-purpose development platform maintained by Microsoft and the .NET community on [GitHub](https://github.com/dotnet/core)
-- [Azure Functions](https://docs.microsoft.com/azure/azure-functions/?WT.mc_id=mobile-0000-bramin) - a serverless compute service that lets you run event-triggered code without having to explicitly provision or manage infrastructure
-- [Azure Functions Dependency Injection](https://docs.microsoft.com/azure/azure-functions/functions-dotnet-dependency-injection?WT.mc_id=mobile-0000-bramin) - Azure Functions supports the dependency injection (DI) software design pattern, which is a technique to achieve [Inversion of Control (IoC)](https://docs.microsoft.com/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles?WT.mc_id=mobile-0000-bramin#dependency-inversion) between classes and their dependencies
-- [Polly + HttpClientFactory](https://docs.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/implement-http-call-retries-exponential-backoff-polly?WT.mc_id=mobile-0000-bramin) - the recommended approach for retries with exponential backoff is to take advantage of more advanced .NET libraries
-- [Refit + HttpClientFactory](https://docs.microsoft.com/aspnet/core/fundamentals/http-requests?WT.mc_id=mobile-0000-bramin#generated-clients) - `IHttpClientFactory` can be used in combination with third-party libraries such as Refit
+- [.NET Core](https://docs.microsoft.com/dotnet/core/) - an [open-source](https://github.com/dotnet/core), general-purpose development platform maintained by Microsoft and the .NET community on [GitHub](https://github.com/dotnet/core)
+- [Azure Functions](https://docs.microsoft.com/azure/azure-functions/) - a serverless compute service that lets you run event-triggered code without having to explicitly provision or manage infrastructure
+- [Azure Functions Dependency Injection](https://docs.microsoft.com/azure/azure-functions/functions-dotnet-dependency-injection) - Azure Functions supports the dependency injection (DI) software design pattern, which is a technique to achieve [Inversion of Control (IoC)](https://docs.microsoft.com/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles#dependency-inversion) between classes and their dependencies
+- [Polly + HttpClientFactory](https://docs.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/implement-http-call-retries-exponential-backoff-polly) - the recommended approach for retries with exponential backoff is to take advantage of more advanced .NET libraries
+- [Refit + HttpClientFactory](https://docs.microsoft.com/aspnet/core/fundamentals/http-requests#generated-clients) - `IHttpClientFactory` can be used in combination with third-party libraries such as Refit
 
 ## Author
 

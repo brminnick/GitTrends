@@ -22,7 +22,7 @@ namespace GitTrends.UITests
 		{
 			await base.BeforeEachTest().ConfigureAwait(false);
 
-			IReadOnlyList<ReferringSiteModel> referringSites = Array.Empty<ReferringSiteModel>();
+			IReadOnlyList<ReferringSiteModel> referringSites = [];
 
 			var repositories = RepositoryPage.VisibleCollection;
 			var repositoriesEnumerator = repositories.GetEnumerator();

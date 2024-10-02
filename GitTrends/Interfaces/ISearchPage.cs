@@ -1,9 +1,6 @@
-﻿using System;
-namespace GitTrends
+﻿namespace GitTrends;
+
+public interface ISearchPage
 {
-	public interface ISearchPage
-	{
-		void OnSearchBarTextChanged(in string text);
-		event EventHandler<string> SearchBarTextChanged;
-	}
+	void OnSearchBarTextChanged(in string text);
 }

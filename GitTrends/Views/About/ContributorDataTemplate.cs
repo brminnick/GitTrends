@@ -1,8 +1,7 @@
 ﻿using GitTrends.Shared;
-using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Forms;
-using static GitTrends.XamarinFormsService;
-using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+using CommunityToolkit.Maui.Markup;
+using static GitTrends.MauiService;
+using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends
 {
@@ -40,12 +39,11 @@ namespace GitTrends
 
 			Children =
 			{
-				new AvatarImage(_circleDiameter).FillExpand()
+				new AvatarImage(_circleDiameter).Fill()
 					.Row(Row.Avatar).Column(Column.Image)
-					.Bind(CircleImage.ImageSourceProperty, nameof(Contributor.AvatarUrl), BindingMode.OneTime)
-					.DynamicResource(CircleImage.BorderColorProperty, nameof(BaseTheme.SeparatorColor)),
+					.Bind(CircleImage.ImageSourceProperty, nameof(Contributor.AvatarUrl), BindingMode.OneTime),
 
-				new Label { LineBreakMode = LineBreakMode.TailTruncation }.FillExpandHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, IsSmallScreen ? 10 : 12)
+				new Label { LineBreakMode = LineBreakMode.TailTruncation }.FillHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, IsSmallScreen ? 10 : 12)
 					.Row(Row.Login).Column(Column.LeftText).ColumnSpan(3)
 					.Bind<Label, string, string>(Label.TextProperty, nameof(Contributor.Login), BindingMode.OneTime, convert: static  login => $"@{login}")
 					.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))

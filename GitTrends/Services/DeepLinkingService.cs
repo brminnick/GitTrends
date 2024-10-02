@@ -1,157 +1,111 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Autofac;
-using GitTrends.Shared;
-using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
+﻿using GitTrends.Shared;
 
 namespace GitTrends
 {
-	public class DeepLinkingService
+	public class DeepLinkingService(
+		IEmail email,
+		IBrowser browser,
+		IAppInfo appInfo,
+		ILauncher launcher,
+		IDispatcher mainThread)
 	{
-		readonly IEmail _email;
-		readonly IAppInfo _appInfo;
-		readonly IBrowser _browser;
-		readonly ILauncher _launcher;
-		readonly IMainThread _mainThread;
+		readonly IEmail _email = email;
+		readonly IAppInfo _appInfo = appInfo;
+		readonly IBrowser _browser = browser;
+		readonly ILauncher _launcher = launcher;
+		readonly IDispatcher _dispatcher = mainThread;
 
-		public DeepLinkingService(IEmail email,
-									IBrowser browser,
-									IAppInfo appInfo,
-									ILauncher launcher,
-									IMainThread mainThread)
+		public Task ShowSettingsUI(CancellationToken token) => _dispatcher.DispatchAsync(_appInfo.ShowSettingsUI).WaitAsync(token);
+
+		public Task DisplayAlert(string title, string message, string cancel, CancellationToken token)
 		{
-			_email = email;
-			_appInfo = appInfo;
-			_browser = browser;
-			_launcher = launcher;
-			_mainThread = mainThread;
-		}
-
-		public Task ShowSettingsUI() => _mainThread.InvokeOnMainThreadAsync(_appInfo.ShowSettingsUI);
-
-		public Task DisplayAlert(string title, string message, string cancel)
-		{
-			if (Application.Current is App app)
-				return _mainThread.InvokeOnMainThreadAsync(() => app.MainPage.DisplayAlert(title, message, cancel));
+			if (Application.Current?.MainPage is not null)
+				return _dispatcher.DispatchAsync(() => Application.Current.MainPage.DisplayAlert(title, message, cancel)).WaitAsync(token);
 			else
 				return Task.CompletedTask;
 		}
 
-		public Task<bool> DisplayAlert(string title, string message, string accept, string decline)
+		public Task<bool?> DisplayAlert(string title, string message, string accept, string decline, CancellationToken token)
 		{
-			if (Application.Current is App app)
-				return _mainThread.InvokeOnMainThreadAsync(() => app.MainPage.DisplayAlert(title, message, accept, decline));
+			if (Application.Current?.MainPage is not null)
+			{
+				return _dispatcher.DispatchAsync(async () =>
+				{
+					var result = await Application.Current.MainPage.DisplayAlert(title, message, accept, decline);
+					return (bool?)result;
+				}).WaitAsync(token);
+			}
 			else
-				return Task.FromResult(true);
+			{
+				return Task.FromResult((bool?)null);
+			}
 		}
 
-		public Task OpenBrowser(Uri uri) => OpenBrowser(uri.ToString());
+		public Task OpenBrowser(Uri uri, CancellationToken token) => OpenBrowser(uri.ToString(), token);
 
-		public Task OpenBrowser(string url, Xamarin.Essentials.BrowserLaunchOptions? browserLaunchOptions = null)
+		public Task OpenBrowser(string url, CancellationToken token, BrowserLaunchOptions? browserLaunchOptions = null) => _dispatcher.DispatchAsync(() =>
 		{
-			return _mainThread.InvokeOnMainThreadAsync(() =>
+			var currentTheme = (BaseTheme?)Application.Current?.Resources;
+
+			if (currentTheme is not null)
 			{
-				var currentTheme = (BaseTheme?)Application.Current?.Resources;
-
-				if (currentTheme != null)
+				browserLaunchOptions ??= new BrowserLaunchOptions
 				{
-					browserLaunchOptions ??= new Xamarin.Essentials.BrowserLaunchOptions
-					{
-						PreferredControlColor = currentTheme.NavigationBarTextColor,
-						PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor,
-						Flags = Xamarin.Essentials.BrowserLaunchFlags.PresentAsFormSheet
-					};
-				}
+					PreferredControlColor = currentTheme.NavigationBarTextColor,
+					PreferredToolbarColor = currentTheme.NavigationBarBackgroundColor,
+					Flags = BrowserLaunchFlags.PresentAsFormSheet
+				};
+			}
 
-				return _browser.OpenAsync(url, browserLaunchOptions);
-			});
-		}
+			return browserLaunchOptions is null ? _browser.OpenAsync(url).WaitAsync(token) : _browser.OpenAsync(url, browserLaunchOptions).WaitAsync(token);
 
-		public Task NavigateToTrendsPage(Repository repository)
+		}).WaitAsync(token);
+
+		public Task NavigateToTrendsPage(Repository repository, CancellationToken token)
 		{
-			if (Application.Current is App)
+			if (IPlatformApplication.Current is not null)
 			{
-				var trendsPage = ContainerService.Container.Resolve<ViewsClonesTrendsPage>(new TypedParameter(typeof(Repository), repository));
-
-				return _mainThread.InvokeOnMainThreadAsync(async () =>
-				{
-					var baseNavigationPage = await GetBaseNavigationPage();
-
-					await baseNavigationPage.PopToRootAsync();
-					await baseNavigationPage.Navigation.PushAsync(trendsPage);
-				});
+				throw new NotImplementedException("Use Shell Navigation");
 			}
 
 			return Task.CompletedTask;
 		}
 
-		public Task OpenApp(string deepLinkingUrl, string browserUrl) => OpenApp(deepLinkingUrl, deepLinkingUrl, browserUrl);
+		public Task OpenApp(string deepLinkingUrl, string browserUrl, CancellationToken token) => OpenApp(deepLinkingUrl, deepLinkingUrl, browserUrl, token);
 
-		public Task OpenApp(string appScheme, string deepLinkingUrl, string browserUrl)
+		public Task OpenApp(string appScheme, string deepLinkingUrl, string browserUrl, CancellationToken token)
 		{
-			return _mainThread.InvokeOnMainThreadAsync(async () =>
+			return _dispatcher.DispatchAsync(async () =>
 			{
 				var supportsUri = await _launcher.CanOpenAsync(appScheme);
 
 				if (supportsUri)
-					await _launcher.OpenAsync(deepLinkingUrl);
+					await _launcher.OpenAsync(deepLinkingUrl).WaitAsync(token);
 				else
-					await OpenBrowser(browserUrl);
-			});
+					await OpenBrowser(browserUrl, token);
+			}).WaitAsync(token);
 		}
 
-		public Task SendEmail(string subject, string body, IEnumerable<string> recipients)
+		public Task SendEmail(string subject, string body, IEnumerable<string> recipients, CancellationToken token)
 		{
-			return _mainThread.InvokeOnMainThreadAsync(async () =>
+			return _dispatcher.DispatchAsync(async () =>
 			{
-				var message = new Xamarin.Essentials.EmailMessage
+				var message = new EmailMessage
 				{
 					Subject = subject,
 					Body = body,
-					To = recipients.ToList()
+					To = [.. recipients]
 				};
 
 				try
 				{
-					await _email.ComposeAsync(message).ConfigureAwait(false);
+					await _email.ComposeAsync(message).WaitAsync(token).ConfigureAwait(false);
 				}
-				catch (Xamarin.Essentials.FeatureNotSupportedException)
+				catch (FeatureNotSupportedException)
 				{
-					await DisplayAlert("No Email Client Found", "We'd love to hear your fedback!\nsupport@GitTrends.com", "OK").ConfigureAwait(false);
+					await DisplayAlert("No Email Client Found", "We'd love to hear your fedback!\nsupport@GitTrends.com", "OK", token).ConfigureAwait(false);
 				}
-			});
-		}
-
-		async ValueTask<BaseNavigationPage> GetBaseNavigationPage()
-		{
-			if (Application.Current.MainPage is null)
-				throw new InvalidNavigationException("Application.Current Cannot Be Null");
-
-			if (Application.Current.MainPage is BaseNavigationPage baseNavigationPage)
-				return baseNavigationPage;
-
-			var tcs = new TaskCompletionSource<BaseNavigationPage>();
-
-			Application.Current.PageAppearing += HandlePageAppearing;
-
-			return await tcs.Task.ConfigureAwait(false);
-
-			void HandlePageAppearing(object sender, Page page)
-			{
-				if (page is BaseNavigationPage baseNavigationPage)
-				{
-					Application.Current.PageAppearing -= HandlePageAppearing;
-					tcs.SetResult(baseNavigationPage);
-				}
-				else if (page.Parent is BaseNavigationPage baseNavigation)
-				{
-					Application.Current.PageAppearing -= HandlePageAppearing;
-					tcs.SetResult(baseNavigation);
-				}
-			}
+			}).WaitAsync(token);
 		}
 	}
 }

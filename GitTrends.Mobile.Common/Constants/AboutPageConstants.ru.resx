@@ -19,7 +19,7 @@
     <value>Соавторы</value>
   </data>
   <data name="DescriptionText" xml:space="preserve">
-    <value>GitTrends - это приложение с открытым исходным кодом, созданное на C# с использованием Xamarin.Forms, которое помогает следить за Вашими репозиториями на GitHub!</value>
+    <value>GitTrends - это приложение с открытым исходным кодом, созданное на C# с использованием .NET MAUI, которое помогает следить за Вашими репозиториями на GitHub!</value>
   </data>
   <data name="Forks" xml:space="preserve">
     <value>Ветки</value>

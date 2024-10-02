@@ -1,23 +1,21 @@
-﻿using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Forms;
+﻿using CommunityToolkit.Maui.Markup;
 
-namespace GitTrends
+namespace GitTrends;
+
+abstract class TitleLabel : Label
 {
-	abstract class TitleLabel : Label
+	protected TitleLabel()
 	{
-		protected TitleLabel()
-		{
-			FontSize = 14;
+		FontSize = 14;
 
-			HorizontalOptions = LayoutOptions.FillAndExpand;
-			VerticalOptions = LayoutOptions.CenterAndExpand;
+		HorizontalOptions = LayoutOptions.Fill;
+		VerticalOptions = LayoutOptions.Center;
 
-			VerticalTextAlignment = TextAlignment.Center;
+		VerticalTextAlignment = TextAlignment.Center;
 
-			FontFamily = FontFamilyConstants.RobotoMedium;
-			LineBreakMode = LineBreakMode.TailTruncation;
+		FontFamily = FontFamilyConstants.RobotoMedium;
+		LineBreakMode = LineBreakMode.TailTruncation;
 
-			this.DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
-		}
+		this.DynamicResource(TextColorProperty, nameof(BaseTheme.SettingsLabelTextColor));
 	}
 }

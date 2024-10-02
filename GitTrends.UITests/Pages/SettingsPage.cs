@@ -188,7 +188,7 @@ namespace GitTrends.UITests
 
 		public Task SelectLanguage(string? languagePickerOption)
 		{
-			var languageValueList = CultureConstants.CulturePickerOptions.Values.ToList();
+			var languageValueList = CultureConstants.CulturePickerOptions.Values;
 
 			var languageIndex = languageValueList.IndexOf(languagePickerOption ?? string.Empty);
 			var totalRows = languageValueList.Count;

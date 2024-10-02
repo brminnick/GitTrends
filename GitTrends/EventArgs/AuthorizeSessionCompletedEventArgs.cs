@@ -1,9 +1,6 @@
-﻿namespace GitTrends
-{
-	public class AuthorizeSessionCompletedEventArgs : System.EventArgs
-	{
-		public AuthorizeSessionCompletedEventArgs(bool isSessionAuthorized) => IsSessionAuthorized = isSessionAuthorized;
+﻿namespace GitTrends;
 
-		public bool IsSessionAuthorized { get; }
-	}
+public class AuthorizeSessionCompletedEventArgs(bool isSessionAuthorized) : EventArgs
+{
+	public bool IsSessionAuthorized { get; } = isSessionAuthorized;
 }

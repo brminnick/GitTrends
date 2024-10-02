@@ -13,7 +13,7 @@
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
   <data name="DescriptionText" xml:space="preserve">
-    <value>GitTrends je open-source aplikacija kreirana sa C# pomoću Xamarin.Forms koji vam pomaže nadgledati vaše GitHub repozitorije!</value>
+    <value>GitTrends je open-source aplikacija kreirana sa C# pomoću .NET MAUI koji vam pomaže nadgledati vaše GitHub repozitorije!</value>
   </data>
   <data name="Stars" xml:space="preserve">
     <value>Stars</value>

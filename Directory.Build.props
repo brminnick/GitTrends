@@ -1,10 +1,35 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Project>
-	<PropertyGroup>
-		<LangVersion>latest</LangVersion>
-		<Nullable>enable</Nullable>
-		<WarningsAsErrors>nullable</WarningsAsErrors>
-		<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
-		<GenerateErrorForMissingTargetingPacks>false</GenerateErrorForMissingTargetingPacks>
-	</PropertyGroup>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <NetVersion>net8.0</NetVersion>
+    <IsTrimmable>false</IsTrimmable>
+    <MauiVersion>8.0.90</MauiVersion>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+    <GenerateErrorForMissingTargetingPacks>false</GenerateErrorForMissingTargetingPacks>
+    <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
+
+    <WarningsAsErrors>nullable, NUnit2019, NUnit2017, NUnit2045, NUnit2002, NUnit2046, NUnit2007, CS0618</WarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'AppStore' ">
+    <Optimize>true</Optimize>
+    <DefineConstants>AppStore</DefineConstants>
+    <NoWarn>1701;1702</NoWarn>
+    <NoStdLib>false</NoStdLib>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <NoWarn>1701;1702</NoWarn>
+    <NoStdLib>false</NoStdLib>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
 </Project>

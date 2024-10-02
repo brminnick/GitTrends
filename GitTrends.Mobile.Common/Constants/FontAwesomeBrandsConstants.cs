@@ -1,7 +1,6 @@
-﻿namespace GitTrends.Mobile.Common
+﻿namespace GitTrends.Mobile.Common;
+
+public static class FontAwesomeBrandsConstants
 {
-	public static class FontAwesomeBrandsConstants
-	{
-		public const string GitHubOctocat = "\uf09b";
-	}
+	public const string GitHubOctocat = "\uf09b";
 }

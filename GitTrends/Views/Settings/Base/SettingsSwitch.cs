@@ -1,16 +1,14 @@
-﻿using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Forms;
+﻿using CommunityToolkit.Maui.Markup;
 
-namespace GitTrends
+namespace GitTrends;
+
+abstract class SettingsSwitch : Switch
 {
-	abstract class SettingsSwitch : Switch
+	protected SettingsSwitch(in IDeviceInfo deviceInfo)
 	{
-		public SettingsSwitch()
-		{
-			HorizontalOptions = LayoutOptions.End;
+		HorizontalOptions = LayoutOptions.End;
 
-			if (Device.RuntimePlatform is Device.iOS)
-				this.DynamicResource(OnColorProperty, nameof(BaseTheme.PrimaryColor));
-		}
+		if (deviceInfo.Platform == DevicePlatform.iOS)
+			this.DynamicResource(OnColorProperty, nameof(BaseTheme.PrimaryColor));
 	}
 }

@@ -1,27 +1,17 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Common;
 using GitTrends.Shared;
-using Xamarin.Essentials.Interfaces;
 
 namespace GitTrends
 {
-	public class LanguageService
+	public class LanguageService(IAnalyticsService analyticsService, IPreferences preferences, IDispatcher dispatcher)
 	{
 		static readonly WeakEventManager<string?> _preferredLanguageChangedEventManager = new();
 
-		readonly IMainThread _mainThread;
-		readonly IPreferences _preferences;
-		readonly IAnalyticsService _analyticsService;
-
-		public LanguageService(IAnalyticsService analyticsService, IPreferences preferences, IMainThread mainThread)
-		{
-			_mainThread = mainThread;
-			_preferences = preferences;
-			_analyticsService = analyticsService;
-		}
+		readonly IDispatcher _dispatcher = dispatcher;
+		readonly IPreferences _preferences = preferences;
+		readonly IAnalyticsService _analyticsService = analyticsService;
 
 		public static event EventHandler<string?> PreferredLanguageChanged
 		{
@@ -31,7 +21,7 @@ namespace GitTrends
 
 		public string? PreferredLanguage
 		{
-			get => _preferences.Get(nameof(PreferredLanguage), null);
+			get => _preferences.Get<string?>(nameof(PreferredLanguage), null);
 			set
 			{
 				if (string.IsNullOrWhiteSpace(value))

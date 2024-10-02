@@ -1,111 +1,99 @@
-﻿using System;
-using System.Threading.Tasks;
-using AsyncAwaitBestPractices;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Shiny;
-using Xamarin.Essentials.Interfaces;
 
-namespace GitTrends
+namespace GitTrends;
+
+public partial class OnboardingViewModel : GitHubAuthenticationViewModel
 {
-	public partial class OnboardingViewModel : GitHubAuthenticationViewModel
+	static readonly AsyncAwaitBestPractices.WeakEventManager _skipButtonTappedEventManager = new();
+
+	readonly IAnalyticsService _analyticsService;
+	readonly NotificationService _notificationService;
+	readonly FirstRunService _firstRunService;
+
+	string _notificationStatusSvgImageSource = "";
+
+	public OnboardingViewModel(IDispatcher dispatcher,
+								FirstRunService firstRunService,
+								IAnalyticsService analyticsService,
+								GitHubUserService gitHubUserService,
+								DeepLinkingService deepLinkingService,
+								NotificationService notificationService,
+								GitHubAuthenticationService gitHubAuthenticationService)
+			: base(dispatcher, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
 	{
-		static readonly WeakEventManager _skipButtonTappedEventManager = new();
+		const string defaultNotificationSvg = "bell.svg";
 
-		readonly IAnalyticsService _analyticsService;
-		readonly NotificationService _notificationService;
-		readonly FirstRunService _firstRunService;
+		_notificationService = notificationService;
+		_analyticsService = analyticsService;
+		_firstRunService = firstRunService;
 
-		string _notificationStatusSvgImageSource = "";
+		NotificationStatusSvgImageSource = defaultNotificationSvg;
+	}
 
-		public OnboardingViewModel(IMainThread mainThread,
-									FirstRunService firstRunService,
-									IAnalyticsService analyticsService,
-									GitHubUserService gitHubUserService,
-									DeepLinkingService deepLinkingService,
-									NotificationService notificationService,
-									GitHubAuthenticationService gitHubAuthenticationService)
-				: base(mainThread, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
+	public static event EventHandler SkipButtonTapped
+	{
+		add => _skipButtonTappedEventManager.AddEventHandler(value);
+		remove => _skipButtonTappedEventManager.RemoveEventHandler(value);
+	}
+
+	public override bool IsDemoButtonVisible => IsNotAuthenticating;
+
+	public string NotificationStatusSvgImageSource
+	{
+		get => _notificationStatusSvgImageSource;
+		private set => SetProperty(ref _notificationStatusSvgImageSource, value);
+	}
+
+	protected override async Task HandleDemoButtonTapped(string? buttonText, CancellationToken token)
+	{
+		try
 		{
-			const string defaultNotificationSvg = "bell.svg";
+			await base.HandleDemoButtonTapped(buttonText, token).ConfigureAwait(false);
 
-			_notificationService = notificationService;
-			_analyticsService = analyticsService;
-			_firstRunService = firstRunService;
-
-			NotificationStatusSvgImageSource = defaultNotificationSvg;
-		}
-
-		public static event EventHandler SkipButtonTapped
-		{
-			add => _skipButtonTappedEventManager.AddEventHandler(value);
-			remove => _skipButtonTappedEventManager.RemoveEventHandler(value);
-		}
-
-		public override bool IsDemoButtonVisible => IsNotAuthenticating;
-
-		public string NotificationStatusSvgImageSource
-		{
-			get => _notificationStatusSvgImageSource;
-			private set => SetProperty(ref _notificationStatusSvgImageSource, SvgService.GetFullPath(value));
-		}
-
-		protected override async Task HandleDemoButtonTapped(string? buttonText)
-		{
-			try
+			if (buttonText == OnboardingConstants.SkipText)
 			{
-				await base.HandleDemoButtonTapped(buttonText).ConfigureAwait(false);
-
-				if (buttonText == OnboardingConstants.SkipText)
-				{
-					OnSkipButtonTapped();
-				}
-				else if (buttonText == OnboardingConstants.TryDemoText)
-				{
-					AnalyticsService.Track("Onboarding Demo Button Tapped");
-
-					//Allow Activity Indicator to run for a minimum of 1500ms
-					var minimumActivityIndicatorTimeSpan = TimeSpan.FromSeconds(1.5);
-					await Task.WhenAll(GitHubAuthenticationService.ActivateDemoUser(), Task.Delay(minimumActivityIndicatorTimeSpan)).ConfigureAwait(false);
-				}
-				else
-				{
-					throw new NotSupportedException($"{nameof(HandleDemoButtonTapped)} Does Not Support {buttonText}");
-				}
+				OnSkipButtonTapped();
 			}
-			finally
+			else if (buttonText == OnboardingConstants.TryDemoText)
 			{
-				IsAuthenticating = false;
-			}
-		}
+				AnalyticsService.Track("Onboarding Demo Button Tapped");
 
-		[RelayCommand]
-		async Task HandleEnableNotificationsButtonTapped()
-		{
-			const string successSvg = "check.svg";
-			const string failSvg = "error.svg";
-
-			var result = await _notificationService.Register(NotificationStatusSvgImageSource == SvgService.GetFullPath(failSvg)).ConfigureAwait(false);
-
-			if (isNotificationResultSuccessful(result))
-			{
-				NotificationStatusSvgImageSource = successSvg;
+				//Allow Activity Indicator to run for a minimum of 1500ms
+				var minimumActivityIndicatorTimeSpan = TimeSpan.FromSeconds(1.5);
+				await Task.WhenAll(GitHubAuthenticationService.ActivateDemoUser(token), Task.Delay(minimumActivityIndicatorTimeSpan, token)).ConfigureAwait(false);
 			}
 			else
 			{
-				NotificationStatusSvgImageSource = failSvg;
+				throw new NotSupportedException($"{nameof(HandleDemoButtonTapped)} Does Not Support {buttonText}");
 			}
-
-			_analyticsService.Track("Onboarding Notification Button Tapped", "Result", result.ToString());
-
-			static bool isNotificationResultSuccessful(in AccessState result) => result switch
-			{
-				AccessState.Available or AccessState.Restricted => true,
-				_ => false,
-			};
 		}
-
-		static void OnSkipButtonTapped() => _skipButtonTappedEventManager.RaiseEvent(null, EventArgs.Empty, nameof(SkipButtonTapped));
+		finally
+		{
+			IsAuthenticating = false;
+		}
 	}
+
+	[RelayCommand]
+	async Task HandleEnableNotificationsButtonTapped(CancellationToken token)
+	{
+		const string successSvg = "check.svg";
+		const string failSvg = "error.svg";
+
+		var result = await _notificationService.Register(NotificationStatusSvgImageSource == failSvg, token).ConfigureAwait(false);
+
+		NotificationStatusSvgImageSource = isNotificationResultSuccessful(result) ? successSvg : failSvg;
+
+		_analyticsService.Track("Onboarding Notification Button Tapped", "Result", result.ToString());
+
+		static bool isNotificationResultSuccessful(in AccessState result) => result switch
+		{
+			AccessState.Available or AccessState.Restricted => true,
+			_ => false,
+		};
+	}
+
+	static void OnSkipButtonTapped() => _skipButtonTappedEventManager.RaiseEvent(null, EventArgs.Empty, nameof(SkipButtonTapped));
 }

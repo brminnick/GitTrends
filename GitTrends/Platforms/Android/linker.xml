@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<linker>
+  <assembly fullname="Mono.Android">
+    <type fullname="Xamarin.Android.Net.AndroidClientHandler" preserve="all" />
+  </assembly>
+</linker>
