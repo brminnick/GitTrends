@@ -216,7 +216,7 @@
     <PackageReference Include="AsyncAwaitBestPractices" Version="8.0.0" />
     <PackageReference Include="Refit.HttpClientFactory" Version="7.2.1" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.9.1" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.10.0" />
     <PackageReference Update="Microsoft.Maui.Controls" Version="8.0.91" />
     <PackageReference Update="Microsoft.Maui.Controls.Compatibility" Version="8.0.91" />
   </ItemGroup>
