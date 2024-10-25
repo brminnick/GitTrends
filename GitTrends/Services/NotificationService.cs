@@ -56,7 +56,7 @@ public class NotificationService
 		remove => _sortingOptionRequestedEventManager.RemoveEventHandler(value);
 	}
 
-	public static event EventHandler<(bool isSuccessful, string errorMessage)> RegisterForNotificationsCompleted
+	public static event EventHandler<(bool IsSuccessful, string ErrorMessage)> RegisterForNotificationsCompleted
 	{
 		add => _registerForNotificationCompletedEventHandler.AddEventHandler(value);
 		remove => _registerForNotificationCompletedEventHandler.RemoveEventHandler(value);

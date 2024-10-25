@@ -1,37 +1,31 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Shiny;
 
 namespace GitTrends;
 
-public partial class OnboardingViewModel : GitHubAuthenticationViewModel
+public partial class OnboardingViewModel(
+	IDispatcher dispatcher,
+	IAnalyticsService analyticsService,
+	GitHubUserService gitHubUserService,
+	DeepLinkingService deepLinkingService,
+	NotificationService notificationService,
+	GitHubAuthenticationService gitHubAuthenticationService)
+	: GitHubAuthenticationViewModel(dispatcher, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
 {
+	public const string BellSvgSourceName = "bell.svg";
+	public const string SuccessSvgSourceName = "check.svg";
+	public const string FailSvgSourceName = "error.svg";
+
 	static readonly AsyncAwaitBestPractices.WeakEventManager _skipButtonTappedEventManager = new();
 
-	readonly IAnalyticsService _analyticsService;
-	readonly NotificationService _notificationService;
-	readonly FirstRunService _firstRunService;
+	readonly IAnalyticsService _analyticsService = analyticsService;
+	readonly NotificationService _notificationService = notificationService;
 
-	string _notificationStatusSvgImageSource = "";
-
-	public OnboardingViewModel(IDispatcher dispatcher,
-								FirstRunService firstRunService,
-								IAnalyticsService analyticsService,
-								GitHubUserService gitHubUserService,
-								DeepLinkingService deepLinkingService,
-								NotificationService notificationService,
-								GitHubAuthenticationService gitHubAuthenticationService)
-			: base(dispatcher, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
-	{
-		const string defaultNotificationSvg = "bell.svg";
-
-		_notificationService = notificationService;
-		_analyticsService = analyticsService;
-		_firstRunService = firstRunService;
-
-		NotificationStatusSvgImageSource = defaultNotificationSvg;
-	}
+	[ObservableProperty]
+	string _notificationStatusSvgImageSource = BellSvgSourceName;
 
 	public static event EventHandler SkipButtonTapped
 	{
@@ -40,12 +34,6 @@ public partial class OnboardingViewModel : GitHubAuthenticationViewModel
 	}
 
 	public override bool IsDemoButtonVisible => IsNotAuthenticating;
-
-	public string NotificationStatusSvgImageSource
-	{
-		get => _notificationStatusSvgImageSource;
-		private set => SetProperty(ref _notificationStatusSvgImageSource, value);
-	}
 
 	protected override async Task HandleDemoButtonTapped(string? buttonText, CancellationToken token)
 	{
@@ -79,12 +67,9 @@ public partial class OnboardingViewModel : GitHubAuthenticationViewModel
 	[RelayCommand]
 	async Task HandleEnableNotificationsButtonTapped(CancellationToken token)
 	{
-		const string successSvg = "check.svg";
-		const string failSvg = "error.svg";
+		var result = await _notificationService.Register(NotificationStatusSvgImageSource == FailSvgSourceName, token).ConfigureAwait(false);
 
-		var result = await _notificationService.Register(NotificationStatusSvgImageSource == failSvg, token).ConfigureAwait(false);
-
-		NotificationStatusSvgImageSource = isNotificationResultSuccessful(result) ? successSvg : failSvg;
+		NotificationStatusSvgImageSource = isNotificationResultSuccessful(result) ? SuccessSvgSourceName : FailSvgSourceName;
 
 		_analyticsService.Track("Onboarding Notification Button Tapped", "Result", result.ToString());
 
