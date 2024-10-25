@@ -3,5 +3,5 @@ namespace GitTrends;
 
 public interface IMobileReferringSiteModel : IReferringSiteModel
 {
-	public string FavIconImageUrl { get; }
+	string FavIconImageUrl { get; }
 }
