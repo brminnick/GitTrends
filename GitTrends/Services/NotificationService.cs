@@ -1,5 +1,5 @@
-﻿using System.Text.Json;
-using AsyncAwaitBestPractices;
+﻿using AsyncAwaitBestPractices;
+using CommunityToolkit.Maui.ApplicationModel;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
@@ -17,6 +17,7 @@ public class NotificationService
 	static readonly WeakEventManager<SortingOption> _sortingOptionRequestedEventManager = new();
 	static readonly WeakEventManager<(bool isSuccessful, string errorMessage)> _registerForNotificationCompletedEventHandler = new();
 
+	readonly IBadge _badge;
 	readonly IDeviceInfo _deviceInfo;
 	readonly IPreferences _preferences;
 	readonly MobileSortingService _sortingService;
@@ -28,6 +29,7 @@ public class NotificationService
 	TaskCompletionSource<AccessState>? _settingsResultCompletionSource;
 
 	public NotificationService(
+		IBadge badge,
 		IDeviceInfo deviceInfo,
 		IPreferences preferences,
 		IAnalyticsService analyticsService,
@@ -36,6 +38,7 @@ public class NotificationService
 		INotificationManager notificationManager,
 		INotificationPermissionStatus notificationPermissionService)
 	{
+		_badge = badge;
 		_deviceInfo = deviceInfo;
 		_preferences = preferences;
 		_sortingService = sortingService;
@@ -46,9 +49,9 @@ public class NotificationService
 
 		App.Resumed += HandleAppResumed;
 
-		#if IOS || MACCATALYST
+#if IOS || MACCATALYST
 		UNUserNotificationCenter.Current.Delegate = new NotificationReceiver();
-		#endif
+#endif
 	}
 
 	public static event EventHandler InitializationCompleted
@@ -183,9 +186,13 @@ public class NotificationService
 
 	public async ValueTask SetAppBadgeCount(int count, CancellationToken token)
 	{
-		if (HaveNotificationsBeenRequested)
+		if (HaveNotificationsBeenRequested || count is 0)
 		{
-			await _notificationManager.TrySetBadge(count).WaitAsync(token).ConfigureAwait(false);
+			var isSuccessful = await _notificationManager.TrySetBadge(count).WaitAsync(token).ConfigureAwait(false);
+			if (!isSuccessful)
+			{
+				_badge.SetCount(Convert.ToUInt32(count));
+			}
 		}
 	}
 

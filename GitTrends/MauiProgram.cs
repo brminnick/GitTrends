@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net;
 using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.ApplicationModel;
 using CommunityToolkit.Maui.Markup;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
@@ -87,6 +88,7 @@ public static partial class MauiProgram
 	static void RegisterCrossPlatformAPIs(in IServiceCollection services)
 	{
 		services.AddSingleton<IAppInfo>(AppInfo.Current);
+		services.AddSingleton<IBadge>(Badge.Default);
 		services.AddSingleton<IBrowser>(Browser.Default);
 		services.AddSingleton<IDeviceDisplay>(DeviceDisplay.Current);
 		services.AddSingleton<IDeviceInfo>(DeviceInfo.Current);
