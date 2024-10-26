@@ -5,6 +5,9 @@ using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using Shiny;
 using Shiny.Notifications;
+#if IOS || MACCATALYST
+using UserNotifications;
+#endif
 
 namespace GitTrends;
 
@@ -42,6 +45,10 @@ public class NotificationService
 		_notificationPermissionService = notificationPermissionService;
 
 		App.Resumed += HandleAppResumed;
+
+		#if IOS || MACCATALYST
+		UNUserNotificationCenter.Current.Delegate = new NotificationReceiver();
+		#endif
 	}
 
 	public static event EventHandler InitializationCompleted
@@ -267,7 +274,7 @@ public class NotificationService
 	{
 		if (trendingRepositories.Count is 1)
 		{
-			var trendingRepository = trendingRepositories.First();
+			var trendingRepository = trendingRepositories[0];
 
 			var notification = new Notification
 			{

@@ -82,5 +82,7 @@
 	<false/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>GitTrends does not require your location</string>
+    <key>com.apple.developer.usernotifications.time-sensitive</key>
+    <true />
 </dict>
 </plist>

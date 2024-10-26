@@ -35,13 +35,5 @@ public class AppDelegate : MauiUIApplicationDelegate
 
 	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp(AppInfo.Current);
 
-	Task HandleLocalNotification(in UILocalNotification notification)
-	{
-		var notificationService = IPlatformApplication.Current?.Services.GetRequiredService<NotificationService>() ?? throw new InvalidOperationException($"Could not retrieve {nameof(NotificationService)}");
 
-		if (notification.AlertTitle is null || notification.AlertBody is null)
-			return Task.CompletedTask;
-
-		return notificationService.HandleNotification(notification.AlertTitle, notification.AlertBody, (int)notification.ApplicationIconBadgeNumber, CancellationToken.None);
-	}
 }
