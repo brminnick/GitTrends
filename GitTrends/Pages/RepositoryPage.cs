@@ -12,12 +12,14 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 {
 	static readonly WeakEventManager<string> _searchTextChangedEventManager = new();
 
+	readonly IDeviceInfo _deviceInfo;
 	readonly RefreshView _refreshView;
 	readonly FirstRunService _firstRunService;
 	readonly GitHubUserService _gitHubUserService;
 	readonly DeepLinkingService _deepLinkingService;
 
-	public RepositoryPage(IDeviceInfo deviceInfo,
+	public RepositoryPage(
+		IDeviceInfo deviceInfo,
 		FirstRunService firstRunService,
 		IAnalyticsService analyticsService,
 		GitHubUserService gitHubUserService,
@@ -32,10 +34,11 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 			IsEnabled = false
 		});
 
+		_deviceInfo = deviceInfo;
 		_firstRunService = firstRunService;
 		_gitHubUserService = gitHubUserService;
 		_deepLinkingService = deepLinkingService;
-		
+
 		RepositoryViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 		LanguageService.PreferredLanguageChanged += HandlePreferredLanguageChanged;
 
@@ -85,26 +88,28 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 					{
 						AutomationId = RepositoryPageAutomationIds.RefreshView,
 						Content = new CollectionView
-						{
-							ItemTemplate = new RepositoryDataTemplateSelector(deviceInfo, mobileSortingService),
-							BackgroundColor = Colors.Transparent,
-							AutomationId = RepositoryPageAutomationIds.CollectionView,
-
-							//Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
-							Header = deviceInfo.Platform == DevicePlatform.Android ? new BoxView
 							{
-								HeightRequest = BaseRepositoryDataTemplate.BottomPadding
-							} : null,
-							Footer = deviceInfo.Platform == DevicePlatform.Android ? new BoxView
-							{
-								HeightRequest = BaseRepositoryDataTemplate.TopPadding
-							} : null,
-							EmptyView = new EmptyDataView("EmptyRepositoriesList", RepositoryPageAutomationIds.EmptyDataView)
-								.Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(RepositoryViewModel.IsRefreshing), convert: static isRefreshing => !isRefreshing)
-								.Bind(EmptyDataView.TitleProperty, nameof(RepositoryViewModel.EmptyDataViewTitle))
-								.Bind(EmptyDataView.DescriptionProperty, nameof(RepositoryViewModel.EmptyDataViewDescription))
+								ItemTemplate = new RepositoryDataTemplateSelector(deviceInfo, mobileSortingService),
+								BackgroundColor = Colors.Transparent,
+								AutomationId = RepositoryPageAutomationIds.CollectionView,
+								SelectionMode = deviceInfo.Platform == DevicePlatform.Android ? SelectionMode.None : SelectionMode.Single,
 
-						}.Bind(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList))
+								//Work around for https://github.com/xamarin/Xamarin.Forms/issues/9879
+								Header = deviceInfo.Platform == DevicePlatform.Android ? new BoxView
+								{
+									HeightRequest = BaseRepositoryDataTemplate.BottomPadding
+								} : null,
+								Footer = deviceInfo.Platform == DevicePlatform.Android ? new BoxView
+								{
+									HeightRequest = BaseRepositoryDataTemplate.TopPadding
+								} : null,
+								EmptyView = new EmptyDataView("EmptyRepositoriesList", RepositoryPageAutomationIds.EmptyDataView)
+									.Bind<EmptyDataView, bool, bool>(IsVisibleProperty, nameof(RepositoryViewModel.IsRefreshing), convert: static isRefreshing => !isRefreshing)
+									.Bind(EmptyDataView.TitleProperty, nameof(RepositoryViewModel.EmptyDataViewTitle))
+									.Bind(EmptyDataView.DescriptionProperty, nameof(RepositoryViewModel.EmptyDataViewDescription))
+
+							}.Bind(CollectionView.ItemsSourceProperty, nameof(RepositoryViewModel.VisibleRepositoryList))
+							.Invoke(collectionView => collectionView.SelectionChanged += HandleSelectionChanged)
 
 					}.RowSpan(All<Row>()).ColumnSpan(All<Column>()).Assign(out _refreshView)
 					.Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
@@ -173,6 +178,7 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 	{
 		AnalyticsService.Track("Repository Tapped", new Dictionary<string, string>
 		{
+
 			{
 				nameof(Repository) + nameof(Repository.OwnerLogin), repository.OwnerLogin
 			},
@@ -182,6 +188,22 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 		});
 
 		return NavigateToTrendsPage(repository);
+	}
+
+	async void HandleSelectionChanged(object? sender, SelectionChangedEventArgs e)
+	{
+		if (_deviceInfo.Platform == DevicePlatform.Android)
+			return;
+
+		ArgumentNullException.ThrowIfNull(sender);
+		var collectionView = (CollectionView)sender;
+
+		if (e.CurrentSelection.FirstOrDefault() is Repository repository)
+		{
+			await RepositoryDataTemplateTappedCommand.ExecuteAsync(repository);
+		}
+
+		collectionView.SelectedItem = null;
 	}
 
 	async Task NavigateToWelcomePage()

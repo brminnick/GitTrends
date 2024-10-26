@@ -343,6 +343,8 @@ public partial class RepositoryViewModel : BaseViewModel
 	[RelayCommand]
 	async Task ToggleIsFavorite(Repository repository, CancellationToken token)
 	{
+		await Task.Yield();
+
 		var updatedRepository = repository with
 		{
 			IsFavorite = repository.IsFavorite.HasValue ? !repository.IsFavorite : true
@@ -365,7 +367,7 @@ public partial class RepositoryViewModel : BaseViewModel
 	{
 		ArgumentNullException.ThrowIfNull(repository);
 
-		AnalyticsService.Track("Open External Repostory Link Tapped", nameof(repository.Url), repository.Url);
+		AnalyticsService.Track("Open External Repository Link Tapped", nameof(repository.Url), repository.Url);
 		return _deepLinkingService.OpenApp(GitHubConstants.AppScheme, repository.Url, repository.Url, token);
 	}
 

@@ -51,20 +51,20 @@ abstract class ExtendedSwipeView : SwipeView
 		IsSwiping = false;
 		IsSwiped = e.IsOpen;
 	}
-	
+
 	void HandleTouch()
 	{
 		if (IsSwiping)
 			return;
 
-		if (!IsSwiped)
+		if (IsSwiped)
 		{
-			if (TappedCommand?.CanExecute(TappedCommandParameter) is true)
-				TappedCommand.Execute(TappedCommandParameter);
+			Close();
 		}
 		else
 		{
-			Close();
+			if (TappedCommand?.CanExecute(TappedCommandParameter) is true)
+				TappedCommand.Execute(TappedCommandParameter);
 		}
 	}
 

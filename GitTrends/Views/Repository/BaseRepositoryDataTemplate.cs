@@ -27,18 +27,23 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 	private protected enum Row { Title, Description, DescriptionPadding, Separator, SeparatorPadding, Statistics }
 	private protected enum Column { Avatar, AvatarPadding, Trending, Emoji1, Statistic1, Emoji2, Statistic2, Emoji3, Statistic3 }
 
+#if ANDROID
 	protected sealed class CardView : ExtendedSwipeView
+#else
+	protected sealed class CardView : SwipeView
+#endif
 	{
 		public CardView(in IDeviceInfo deviceInfo, in IEnumerable<View> dataTemplateChildren)
 		{
+#if ANDROID
 			this.Bind(TappedCommandParameterProperty, mode: BindingMode.OneTime)
 				.Bind(TappedCommandProperty,
 					nameof(RepositoryPage.RepositoryDataTemplateTappedCommand),
 					BindingMode.OneTime,
 					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(RepositoryPage)));
-
+#endif
 			var sidePadding = IsSmallScreen ? 8 : 16;
-			BackgroundColor = Colors.Transparent;
+			this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 
 			RightItems =
 			[
