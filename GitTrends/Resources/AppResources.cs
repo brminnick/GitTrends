@@ -1,7 +1,23 @@
+using System.Diagnostics.CodeAnalysis;
 namespace GitTrends.Resources;
 
 static class AppResources
 {
+	public static bool TryGetResource<T>(string resourceName, [NotNullIfNotNull(nameof(defaultValue))] out T? resource, T? defaultValue = default)
+	{
+		try
+		{
+			resource = GetResource(resourceName, defaultValue);
+			return true;
+		}
+		catch
+		{
+			resource = default;
+			return false;
+		}
+	}
+
+	[return: NotNullIfNotNull(nameof(defaultValue))]
 	public static T GetResource<T>(string resourceName, T? defaultValue = default)
 	{
 		if (Application.Current is null)

@@ -3,6 +3,7 @@ using System.Reflection;
 using CoreGraphics;
 using Foundation;
 using GitTrends.Mobile.Common;
+using GitTrends.Resources;
 using Microsoft.Maui.Controls.Handlers.Compatibility;
 using Microsoft.Maui.Controls.Internals;
 using Microsoft.Maui.Controls.Platform.Compatibility;
@@ -55,13 +56,13 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 
 	sealed class CustomShellSectionRootRenderer(ShellSection shellSection, IShellContext shellContext, CustomShellSectionRenderer customShellSectionRenderer) : ShellSectionRootRenderer(shellSection, shellContext)
 	{
+		readonly ShellSection _shellSection = shellSection;
+
 		UIEdgeInsets _additionalSafeArea = UIEdgeInsets.Zero;
 
-		public ShellSection ShellSection { get; } = shellSection;
+		public CustomShellSectionRootHeader? CustomShellSectionRootHeader { get; private set; }
 
-		public CustomShellSectionRootHeader? CustomShellSectionRootHeader { get; set; }
-
-		IShellSectionController ShellSectionController => ShellSection;
+		IShellSectionController ShellSectionController => _shellSection;
 
 		public override void AddChildViewController(UIViewController childController)
 		{
@@ -128,7 +129,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			Delegate = new NavDelegate(navDelegate, this);
 			Context = context;
 
-			UpdateLargeTitle();
+			UpdateLargeTitleSettings();
 
 			var themePreference = IPlatformApplication.Current?.Services.GetRequiredService<ThemeService>().Preference;
 			AddShadow(themePreference ?? PreferredTheme.Default);
@@ -159,7 +160,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			base.HandleShellPropertyChanged(sender, e);
 
 			if (e.PropertyName == ShellAttachedProperties.PrefersLargeTitlesProperty.PropertyName)
-				UpdateLargeTitle();
+				UpdateLargeTitleSettings();
 		}
 
 		protected override IShellSectionRootRenderer CreateShellSectionRootRenderer(ShellSection shellSection, IShellContext shellContext)
@@ -212,7 +213,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			static bool isDarkTheme(PreferredTheme theme) => theme is PreferredTheme.Dark || theme is PreferredTheme.Default && Application.Current?.RequestedTheme is AppTheme.Dark;
 		}
 
-		void UpdateLargeTitle()
+		void UpdateLargeTitleSettings()
 		{
 			var value = ShellAttachedProperties.GetPrefersLargeTitles(Shell.Current);
 			ViewController.NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Always;
@@ -255,7 +256,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 
 				// Because the back button title needs to be set on the previous VC
 				// We want to set the BackButtonItem as early as possible so there is no flickering
-				var currentPage = customShellSectionRenderer.Context?.Shell?.CurrentPage;
+				var currentPage = customShellSectionRenderer.Context.Shell?.CurrentPage;
 				var trackers = customShellSectionRenderer._trackers;
 				if (currentPage?.Handler is IPlatformViewHandler pvh &&
 					ReferenceEquals(pvh.ViewController, viewController) &&
@@ -316,12 +317,12 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			if (!IsToolbarReady())
 				return;
 
-			await UpdateBarButtonItems(ViewController, Page);
-
 			if (ViewController?.NavigationItem is null)
 			{
 				return;
 			}
+
+			await UpdateBarButtonItems(ViewController, Page);
 
 			if (Page is ISearchPage && Page.Handler is not null)
 			{
@@ -354,12 +355,28 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 				var view = new CustomTitleViewContainer(titleView);
 				ViewController.NavigationItem.TitleView = view;
 			}
-		}
 
-		void HandleTextChanged(object? sender, UISearchBarTextChangedEventArgs e)
-		{
-			var searchPage = (ISearchPage)Page;
-			searchPage.OnSearchBarTextChanged(e.SearchText);
+			if (AppResources.TryGetResource<Color>(nameof(BaseTheme.NavigationBarTextColor), out var barTextColor)
+				&& AppResources.TryGetResource<Color>(nameof(BaseTheme.NavigationBarBackgroundColor), out var barBackgroundColor)
+				&& barTextColor is not null
+				&& barBackgroundColor is not null)
+			{
+				var titleAttributes = new UIStringAttributes
+				{
+					BackgroundColor = barBackgroundColor.ToPlatform(),
+					ForegroundColor = barTextColor.ToPlatform()
+				};
+
+				var appearance = new UINavigationBarAppearance
+				{
+					TitleTextAttributes = titleAttributes,
+					LargeTitleTextAttributes = titleAttributes,
+					BackgroundColor = barBackgroundColor.ToPlatform()
+				};
+
+				ViewController.NavigationItem.StandardAppearance = appearance;
+				ViewController.NavigationItem.ScrollEdgeAppearance = appearance;
+			}
 		}
 
 		static async Task<UIBarButtonItem> GetUIBarButtonItem(ToolbarItem toolbarItem)
@@ -402,6 +419,12 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			};
 
 			return imageSourceServiceResult?.Value;
+		}
+
+		void HandleTextChanged(object? sender, UISearchBarTextChangedEventArgs e)
+		{
+			var searchPage = (ISearchPage)Page;
+			searchPage.OnSearchBarTextChanged(e.SearchText);
 		}
 
 		async Task UpdateBarButtonItems(UIViewController parentViewController, Page page)
@@ -454,7 +477,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 
 			if (navController is not null)
 			{
-				var viewControllers = ViewController?.NavigationController?.ViewControllers ?? throw new InvalidOperationException($"{nameof(ViewController.NavigationController.ViewControllers)} cannot be null");
+				var viewControllers = navController.ViewControllers ?? throw new InvalidOperationException($"{nameof(ViewController.NavigationController.ViewControllers)} cannot be null");
 				var count = viewControllers.Length;
 
 				if (count > 1 && ReferenceEquals(viewControllers[count - 1], ViewController))
@@ -487,7 +510,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			get => base.Frame;
 			set
 			{
-				if (!(OperatingSystem.IsIOSVersionAtLeast(11) || OperatingSystem.IsTvOSVersionAtLeast(11)) && Superview is not null)
+				if (!(OperatingSystem.IsIOSVersionAtLeast(11) || OperatingSystem.IsTvOSVersionAtLeast(11) || OperatingSystem.IsMacCatalystVersionAtLeast(11)))
 				{
 					value.Y = Superview.Bounds.Y;
 					value.Height = Superview.Bounds.Height;
@@ -682,7 +705,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 		{
 			var current = self;
 
-			while (!(current?.RealParent is not null or IApplication))
+			while (current?.RealParent is not ((not null) or IApplication))
 			{
 				if (current is not null)
 				{
