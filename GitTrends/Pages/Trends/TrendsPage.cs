@@ -2,6 +2,7 @@
 using GitTrends.Mobile.Common.Constants;
 using GitTrends.Shared;
 using CommunityToolkit.Maui.Markup;
+using CommunityToolkit.Mvvm.Input;
 
 namespace GitTrends;
 
@@ -18,8 +19,9 @@ sealed class TrendsPage : BaseCarouselViewPage<TrendsViewModel>, IQueryAttributa
 		{
 			Text = PageTitles.ReferringSitesPage,
 			IconImageSource = "ReferringSitesIcon",
-			AutomationId = TrendsPageAutomationIds.ReferringSitesButton
-		}.Invoke(referringSitesToolbarItem => referringSitesToolbarItem.Clicked += HandleReferringSitesToolbarItemClicked));
+			AutomationId = TrendsPageAutomationIds.ReferringSitesButton,
+			Command = new AsyncRelayCommand(HandleReferringSitesToolbarItemClicked)
+		});
 
 		this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 		
@@ -27,7 +29,7 @@ sealed class TrendsPage : BaseCarouselViewPage<TrendsViewModel>, IQueryAttributa
 		Content.ItemTemplate = new TrendsCarouselDataTemplateSelector(deviceInfo, analyticsService, trendsViewModel);
 	}
 
-	async void HandleReferringSitesToolbarItemClicked(object? sender, EventArgs e)
+	async Task HandleReferringSitesToolbarItemClicked()
 	{
 		AnalyticsService.Track("Referring Sites Button Tapped");
 

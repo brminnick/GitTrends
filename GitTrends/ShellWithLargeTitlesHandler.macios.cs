@@ -371,27 +371,23 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 
 			return image switch
 			{
-				null => new UIBarButtonItem(toolbarItem.Text, UIBarButtonItemStyle.Plain, (_, _) =>
-				{
-					if (toolbarItem.Command?.CanExecute(toolbarItem.CommandParameter) is true)
-					{
-						toolbarItem.Command.Execute(toolbarItem.CommandParameter);
-					}
-				})
+				null => new UIBarButtonItem(toolbarItem.Text, UIBarButtonItemStyle.Plain, ExecuteBarButtonItem)
 				{
 					AccessibilityIdentifier = toolbarItem.AutomationId
 				},
-				_ => new UIBarButtonItem(image, UIBarButtonItemStyle.Plain, (sender, e) =>
-				{
-					if (toolbarItem.Command?.CanExecute(toolbarItem.CommandParameter) is true)
-					{
-						toolbarItem.Command?.Execute(toolbarItem.CommandParameter);
-					}
-				})
+				_ => new UIBarButtonItem(image, UIBarButtonItemStyle.Plain, ExecuteBarButtonItem)
 				{
 					AccessibilityIdentifier = toolbarItem.AutomationId
 				}
 			};
+
+			void ExecuteBarButtonItem(object? sender, EventArgs e)
+			{
+				if (toolbarItem.Command?.CanExecute(toolbarItem.CommandParameter) is true)
+				{
+					toolbarItem.Command.Execute(toolbarItem.CommandParameter);
+				}
+			}
 		}
 
 		static async Task<UIImage?> GetUIImage(ImageSource source)
@@ -457,7 +453,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			};
 		}
 
-		async Task<(IReadOnlyList<UIBarButtonItem>? LeftBarButtonItem, IReadOnlyList<UIBarButtonItem> RightBarButtonItems)> GetToolbarItems(IList<ToolbarItem> items)
+		static async Task<(IReadOnlyList<UIBarButtonItem>? LeftBarButtonItem, IReadOnlyList<UIBarButtonItem> RightBarButtonItems)> GetToolbarItems(IList<ToolbarItem> items)
 		{
 			var leftBarButtonItems = new List<UIBarButtonItem>();
 			foreach (var item in items.Where(static x => x.Priority is 1))
