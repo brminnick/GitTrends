@@ -28,6 +28,9 @@ public class ThemeService(IAnalyticsService analyticsService, IPreferences prefe
 		}
 	}
 
+	public bool IsLightTheme() => Preference is PreferredTheme.Light || Preference is PreferredTheme.Default && Application.Current?.RequestedTheme is AppTheme.Light;
+	public bool IsDarkTheme() => Preference is PreferredTheme.Dark || Preference is PreferredTheme.Default && Application.Current?.RequestedTheme is AppTheme.Dark;
+
 	internal Task Initialize()
 	{
 		if (Application.Current is not null)

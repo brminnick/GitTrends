@@ -130,9 +130,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			Context = context;
 
 			UpdateLargeTitleSettings();
-
-			var themePreference = IPlatformApplication.Current?.Services.GetRequiredService<ThemeService>().Preference;
-			AddShadow(themePreference ?? PreferredTheme.Default);
+			AddShadow();
 
 			ThemeService.PreferenceChanged += HandlePreferenceChanged;
 		}
@@ -191,26 +189,26 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 
 		void HandlePreferenceChanged(object? sender, PreferredTheme e)
 		{
-			AddShadow(e);
+			AddShadow();
 		}
 
-		void AddShadow(PreferredTheme preferredTheme)
+		void AddShadow()
 		{
-			if (isLightTheme(preferredTheme))
+			var themeService = IPlatformApplication.Current?.Services.GetRequiredService<ThemeService>()
+				?? throw new InvalidOperationException($"{nameof(ThemeService)} not found");
+
+			if (themeService.IsLightTheme())
 			{
 				NavigationBar.Layer.ShadowColor = UIColor.Gray.CGColor;
 				NavigationBar.Layer.ShadowOffset = new CGSize();
 				NavigationBar.Layer.ShadowOpacity = 1;
 			}
-			else if (isDarkTheme(preferredTheme))
+			else if (themeService.IsDarkTheme())
 			{
 				NavigationBar.Layer.ShadowColor = UIColor.White.CGColor;
 				NavigationBar.Layer.ShadowOffset = new CGSize(0, -3);
 				NavigationBar.Layer.ShadowOpacity = 0;
 			}
-
-			static bool isLightTheme(PreferredTheme theme) => theme is PreferredTheme.Light || theme is PreferredTheme.Default && Application.Current?.RequestedTheme is AppTheme.Light;
-			static bool isDarkTheme(PreferredTheme theme) => theme is PreferredTheme.Dark || theme is PreferredTheme.Default && Application.Current?.RequestedTheme is AppTheme.Dark;
 		}
 
 		void UpdateLargeTitleSettings()

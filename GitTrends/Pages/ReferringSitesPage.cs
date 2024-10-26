@@ -32,7 +32,7 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
 #if IOS || MACCATALYST
 		Shell.SetPresentationMode(this, PresentationMode.ModalAnimated);
 #endif
-		
+
 		On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
 
 		Title = PageTitles.ReferringSitesPage;
@@ -49,9 +49,9 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
 		var shadowHeight = isiOS ? 1 : 0;
 
 		var collectionView = new ReferringSitesCollectionView(deviceInfo)
-			.Bind(IsVisibleProperty, 
+			.Bind(IsVisibleProperty,
 				getter: (ReferringSitesViewModel vm) => vm.IsEmptyDataViewEnabled)
-			.Bind(CollectionView.ItemsSourceProperty, 
+			.Bind(CollectionView.ItemsSourceProperty,
 				getter: (ReferringSitesViewModel vm) => vm.MobileReferringSitesList)
 			.Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged);
 
@@ -228,17 +228,16 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
 			HeightRequest = heightRequest;
 
 			this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
-			if (isLightTheme(themeService.Preference))
+			if (themeService.IsLightTheme())
 			{
-				On<iOS>()
-					.SetIsShadowEnabled(true)
-					.SetShadowColor(Colors.Gray)
-					.SetShadowOffset(new Size(0, shadowHeight))
-					.SetShadowOpacity(0.5)
-					.SetShadowRadius(4);
+				Shadow = new Shadow
+				{
+					Brush = Colors.Gray,
+					Offset = new(new Size(0, shadowHeight)),
+					Opacity = 0.5f,
+					Radius = 4
+				};
 			}
-
-			static bool isLightTheme(in PreferredTheme preferredTheme) => preferredTheme is PreferredTheme.Light || preferredTheme is PreferredTheme.Default && Microsoft.Maui.Controls.Application.Current?.RequestedTheme is AppTheme.Light;
 		}
 	}
 
@@ -261,6 +260,8 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
 		{
 			Text = ReferringSitesPageConstants.CloseButtonText;
 			AutomationId = ReferringSitesPageAutomationIds.CloseButton;
+
+			CornerRadius = 4;
 
 			this.Font(family: FontFamilyConstants.RobotoRegular);
 			this.End().CenterVertical().Margins(right: 10).Height(titleRowHeight * 3.0f / 5.0f).Padding(5, 0);
