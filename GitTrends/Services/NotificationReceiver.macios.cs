@@ -35,6 +35,6 @@ public class NotificationReceiver : UNUserNotificationCenterDelegate
 		var service = IPlatformApplication.Current?.Services.GetRequiredService<NotificationService>()
 			?? throw new InvalidOperationException($"{nameof(NotificationService)} not found in {nameof(IServiceProvider)}");
 
-		return service.HandleNotification(title, message, badgeNumber?.Int32Value ?? 0, CancellationToken.None);
+		return service.HandleNotification(title, message, badgeNumber?.Int32Value ?? 1, CancellationToken.None);
 	}
 }
