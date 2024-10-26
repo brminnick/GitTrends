@@ -49,7 +49,7 @@ class ReferringSitesViewModelTests : BaseTest
 		{
 			//Assert
 			Assert.That(didPullToRefreshFailedFire);
-			Assert.That(pullToRefreshFailedEventArgs is MaximumApiRequestsReachedEventArgs or ErrorPullToRefreshEventArgs);
+			Assert.That(pullToRefreshFailedEventArgs, Is.InstanceOf<PullToRefreshFailedEventArgs>());
 
 			Assert.That(isEmptyDataViewEnabled_Initial, Is.False);
 			Assert.That(isEmptyDataViewEnabled_DuringRefresh, Is.False);

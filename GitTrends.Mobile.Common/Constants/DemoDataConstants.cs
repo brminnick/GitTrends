@@ -21,9 +21,6 @@ public static class DemoDataConstants
 
 		length ??= _random.Next(maximumLength);
 
-		//Ensure Length is not out of bounds
-		Math.Min(length.Value, maximumLength);
-
 		return _loremIpsum.Substring(startIndex, length.Value);
 	}
 
@@ -40,8 +37,6 @@ public static class DemoDataConstants
 	public static IEnumerable<DateTimeOffset> GenerateStarredAtDates(in int starCount)
 	{
 		var starGazerList = new List<DateTimeOffset>();
-
-		var startDate = GetRandomDate();
 
 		for (int i = 0; i < starCount; i++)
 			starGazerList.Add(GetRandomDate());

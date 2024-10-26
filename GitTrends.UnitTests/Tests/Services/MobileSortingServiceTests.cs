@@ -25,14 +25,14 @@ class MobileSortingServiceTests : BaseTest
 		];
 
 		//Act
-		var sortedReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList);
+		var sortedReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList).ToList();
 
 		//Assert
 		Assert.Multiple(() =>
 		{
-			Assert.That(sortedReferringSitesList.First().TotalCount is largestTotalCount, Is.True);
-			Assert.That(sortedReferringSitesList.Skip(1).First().TotalUniqueCount is largestTotalUniqueCount, Is.True);
-			Assert.That(sortedReferringSitesList.Last().Referrer is lastReferer, Is.True);
+			Assert.That(sortedReferringSitesList[0].TotalCount, Is.EqualTo(largestTotalCount));
+			Assert.That(sortedReferringSitesList.Skip(1).First().TotalUniqueCount, Is.EqualTo(largestTotalUniqueCount));
+			Assert.That(sortedReferringSitesList.Last().Referrer, Is.EqualTo(lastReferer));
 		});
 	}
 

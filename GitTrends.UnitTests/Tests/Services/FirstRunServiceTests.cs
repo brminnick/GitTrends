@@ -3,7 +3,7 @@ namespace GitTrends.UnitTests;
 
 class FirstRunServiceTests : BaseTest
 {
-	//[Test] ToDo
+	[Test, Ignore("ToDo")]
 	public Task FirstRunServiceTest_AuthorizeSessionCompleted()
 	{
 		throw new NotImplementedException();

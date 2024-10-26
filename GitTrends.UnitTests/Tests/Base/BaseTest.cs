@@ -13,7 +13,7 @@ abstract class BaseTest : IDisposable
 	protected static string AuthenticatedGitHubUserAvatarUrl { get; } = "https://avatars.githubusercontent.com/u/13558917?u=6e0d77ca0420f418c8ad5110cb155dea5d427a35&v=4";
 	protected CancellationTokenSource TestCancellationTokenSource { get; private set; } = new();
 
-	public static DecompressionMethods GetDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.Brotli;
+	protected static DecompressionMethods GetDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.Brotli;
 	
 	public void Dispose()
 	{
@@ -89,10 +89,10 @@ abstract class BaseTest : IDisposable
 		for (int i = 0; i < 14 && createViewsAndClones; i++)
 		{
 			var count = DemoDataConstants.GetRandomNumber();
-			var uniqeCount = count / 2; //Ensures uniqueCount is always less than count
+			var uniqueCount = count / 2; //Ensures uniqueCount is always less than count
 
-			dailyViewsList.Add(new DailyViewsModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
-			dailyClonesList.Add(new DailyClonesModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqeCount));
+			dailyViewsList.Add(new DailyViewsModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqueCount));
+			dailyClonesList.Add(new DailyClonesModel(downloadedAt.Subtract(TimeSpan.FromDays(i)), count, uniqueCount));
 		}
 
 		IList<DateTimeOffset> starredAt = [.. DemoDataConstants.GenerateStarredAtDates(DemoDataConstants.GetRandomNumber(1))];

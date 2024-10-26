@@ -166,7 +166,7 @@ class GitHubAuthenticationServiceTests : BaseTest
 		});
 	}
 
-	//[Test] Todo
+	[Test, Ignore("ToDo")]
 	public void AuthorizeSessionTest()
 	{
 		throw new NotImplementedException();

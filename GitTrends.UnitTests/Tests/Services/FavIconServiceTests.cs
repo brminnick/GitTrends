@@ -53,7 +53,7 @@ class FavIconServiceTests : BaseTest
 		{
 			Assert.That(uriImageSource, Is.Not.Null);
 			Assert.That(uriImageSource.Uri, Is.EqualTo(new Uri(expectedFavIconUrl)));
-			Assert.That(uriImageSource.Uri.ToString().Contains("https://favicons.githubusercontent.com"), Is.False);
+			Assert.That(uriImageSource.Uri.ToString(), Does.Not.Contain("https://favicons.githubusercontent.com"));
 		});
 	}
 }

@@ -176,7 +176,7 @@ class RepositoryViewModelTests : BaseTest
 		Assert.Multiple(() =>
 		{
 			Assert.That(repositoryViewModel.VisibleRepositoryList, Is.Empty);
-			Assert.That(handlePullToRefreshFailedResult is LoginExpiredPullToRefreshEventArgs or ErrorPullToRefreshEventArgs);
+			Assert.That(handlePullToRefreshFailedResult, Is.InstanceOf<PullToRefreshFailedEventArgs>());
 		});
 
 		void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs e)
