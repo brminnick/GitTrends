@@ -427,8 +427,10 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 					BackgroundColor = barBackgroundColor.ToPlatform()
 				};
 
+				ViewController.NavigationItem.CompactAppearance = appearance;
 				ViewController.NavigationItem.StandardAppearance = appearance;
 				ViewController.NavigationItem.ScrollEdgeAppearance = appearance;
+				ViewController.NavigationItem.CompactScrollEdgeAppearance = appearance;
 			}
 		}
 

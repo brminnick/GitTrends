@@ -10,6 +10,7 @@ partial class AppShell : Shell
 
 		SetDynamicResource(ForegroundColorProperty, nameof(BaseTheme.NavigationBarTextColor));
 		SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
+		SetDynamicResource(FlyoutBackgroundColorProperty, nameof(BaseTheme.NavigationBarBackgroundColor));
 
 		Navigating += HandleNavigating;
 
