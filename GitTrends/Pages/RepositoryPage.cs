@@ -62,6 +62,8 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
 
 		Content = new Grid
 		{
+			IgnoreSafeArea = true,
+
 			RowDefinitions = Rows.Define(
 				(Row.CollectionView, Star),
 				(Row.Information, InformationButton.Diameter)),
