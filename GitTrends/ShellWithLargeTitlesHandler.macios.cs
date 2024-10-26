@@ -298,7 +298,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 				UpdateToolbarItems();
 		}
 
-		protected override void UpdateToolbarItems()
+		protected override async void UpdateToolbarItems()
 		{
 			base.UpdateToolbarItems();
 
@@ -308,6 +308,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			}
 
 			UpdateBackButtonTitle();
+			await UpdateBarButtonItems(ViewController, Page);
 		}
 
 		protected override void UpdateTitle()
@@ -327,8 +328,6 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			{
 				return;
 			}
-
-			await UpdateBarButtonItems(ViewController, Page);
 
 			if (Page is ISearchPage && Page.Handler is not null)
 			{
@@ -363,6 +362,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			}
 
 			UpdateNavigationBarColors();
+			await UpdateBarButtonItems(ViewController, Page);
 		}
 
 		static async Task<UIBarButtonItem> GetUIBarButtonItem(ToolbarItem toolbarItem)
@@ -509,9 +509,10 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			}
 		}
 
-		void HandleThemePreferenceChanged(object? sender, PreferredTheme e)
+		async void HandleThemePreferenceChanged(object? sender, PreferredTheme e)
 		{
 			UpdateNavigationBarColors();
+			await UpdateBarButtonItems(ViewController, Page);
 		}
 	}
 
