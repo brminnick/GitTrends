@@ -269,9 +269,15 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 		}
 	}
 
-	sealed class CustomShellPageRendererTracker(IShellContext context) : ShellPageRendererTracker(context)
+	sealed class CustomShellPageRendererTracker : ShellPageRendererTracker
 	{
-		public IShellContext Context { get; } = context;
+		public CustomShellPageRendererTracker(IShellContext context) : base(context)
+		{
+			Context = context;
+			ThemeService.PreferenceChanged += HandleThemePreferenceChanged;
+		}
+
+		public IShellContext Context { get; }
 
 		Page? ToolbarCurrentPage
 		{
@@ -356,27 +362,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 				ViewController.NavigationItem.TitleView = view;
 			}
 
-			if (AppResources.TryGetResource<Color>(nameof(BaseTheme.NavigationBarTextColor), out var barTextColor)
-				&& AppResources.TryGetResource<Color>(nameof(BaseTheme.NavigationBarBackgroundColor), out var barBackgroundColor)
-				&& barTextColor is not null
-				&& barBackgroundColor is not null)
-			{
-				var titleAttributes = new UIStringAttributes
-				{
-					BackgroundColor = barBackgroundColor.ToPlatform(),
-					ForegroundColor = barTextColor.ToPlatform()
-				};
-
-				var appearance = new UINavigationBarAppearance
-				{
-					TitleTextAttributes = titleAttributes,
-					LargeTitleTextAttributes = titleAttributes,
-					BackgroundColor = barBackgroundColor.ToPlatform()
-				};
-
-				ViewController.NavigationItem.StandardAppearance = appearance;
-				ViewController.NavigationItem.ScrollEdgeAppearance = appearance;
-			}
+			UpdateNavigationBarColors();
 		}
 
 		static async Task<UIBarButtonItem> GetUIBarButtonItem(ToolbarItem toolbarItem)
@@ -419,6 +405,31 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			};
 
 			return imageSourceServiceResult?.Value;
+		}
+
+		void UpdateNavigationBarColors()
+		{
+			if (AppResources.TryGetResource<Color>(nameof(BaseTheme.NavigationBarTextColor), out var barTextColor)
+				&& AppResources.TryGetResource<Color>(nameof(BaseTheme.NavigationBarBackgroundColor), out var barBackgroundColor)
+				&& barTextColor is not null
+				&& barBackgroundColor is not null)
+			{
+				var titleAttributes = new UIStringAttributes
+				{
+					BackgroundColor = barBackgroundColor.ToPlatform(),
+					ForegroundColor = barTextColor.ToPlatform()
+				};
+
+				var appearance = new UINavigationBarAppearance
+				{
+					TitleTextAttributes = titleAttributes,
+					LargeTitleTextAttributes = titleAttributes,
+					BackgroundColor = barBackgroundColor.ToPlatform()
+				};
+
+				ViewController.NavigationItem.StandardAppearance = appearance;
+				ViewController.NavigationItem.ScrollEdgeAppearance = appearance;
+			}
 		}
 
 		void HandleTextChanged(object? sender, UISearchBarTextChangedEventArgs e)
@@ -494,6 +505,11 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 					}
 				}
 			}
+		}
+
+		void HandleThemePreferenceChanged(object? sender, PreferredTheme e)
+		{
+			UpdateNavigationBarColors();
 		}
 	}
 
