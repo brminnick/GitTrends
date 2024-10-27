@@ -36,6 +36,19 @@
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
     <EnableSGenConc>true</EnableSGenConc>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <AndroidDexTool>d8</AndroidDexTool>
+    <AndroidLinkTool>r8</AndroidLinkTool>
+    <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
+    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <OptimizePNGs>true</OptimizePNGs>
+    <EnableSGenConc>true</EnableSGenConc>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'AppStore' ">
@@ -49,20 +62,6 @@
     <OptimizePNGs>true</OptimizePNGs>
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <EnableSGenConc>true</EnableSGenConc>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
-    <AndroidDexTool>d8</AndroidDexTool>
-    <AndroidLinkTool>r8</AndroidLinkTool>
-    <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
-    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
-    <MtouchLink>SdkOnly</MtouchLink>
-    <CodesignKey>iPhone Developer</CodesignKey>
-    <OptimizePNGs>true</OptimizePNGs>
-    <EnableSGenConc>true</EnableSGenConc>
-    <ProvisioningType>manual</ProvisioningType>
-    <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
 
   <ItemGroup>
