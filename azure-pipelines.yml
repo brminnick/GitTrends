@@ -49,8 +49,14 @@ jobs:
 
   - job: Build_MAUI_App
     displayName: Build .NET MAUI App
+    strategy:
+      matrix:
+        'Windows':
+          image: 'windows-latest'
+        'macOS':
+          image: 'macos-14'
     pool:
-      vmImage: macos-14
+      vmImage: $(image)
 
     steps:
       - task: CmdLine@2
@@ -98,10 +104,36 @@ jobs:
 
   - job: Build_UnitTests
     displayName: Build Unit Tests
+    strategy:
+      matrix:
+        'Windows':
+          image: 'windows-latest'
+        'macOS':
+          image: 'macos-14'
     pool:
-      vmImage: windows-latest # Use Winodws to avoid setting Xcode Version, Signing Certificate + Provisioning Profile
+      vmImage: $(image)
 
     steps:
+      - task: CmdLine@2
+        displayName: "Set Xcode v$(XcodeVersion)"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
+        inputs:
+          script: echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_$(XcodeVersion).app;sudo xcode-select --switch /Applications/Xcode_$(XcodeVersion).app/Contents/Developer
+
+      - task: InstallAppleCertificate@2
+        displayName: "Set Xcode Signing Certificate"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
+        inputs:
+            certSecureFile: 'Certificate.p12'
+            certPwd: '$(APPLECERTIFICATEPASSWORD)'
+
+      - task: InstallAppleProvisioningProfile@1
+        displayName: "Set Xcode Provisioning Profile"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
+        inputs:
+          provisioningProfileLocation: 'secureFiles'
+          provProfileSecureFile: 'GitTrends_Development_Profile.mobileprovision'
+
       - task: UseDotNet@2
         displayName: "Install Latest .NET SDK"
         inputs:
@@ -122,14 +154,38 @@ jobs:
     displayName: Run Unit Tests
     dependsOn: [Build_UnitTests, Build_MAUI_App]
     pool:
-      vmImage: windows-latest # Use Winodws to avoid setting Xcode Version, Signing Certificate + Provisioning Profile
+      vmImage: macos-14
 
     steps:
+      - task: CmdLine@2
+        displayName: "Set Xcode v$(XcodeVersion)"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
+        inputs:
+          script: echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_$(XcodeVersion).app;sudo xcode-select --switch /Applications/Xcode_$(XcodeVersion).app/Contents/Developer
+
+      - task: InstallAppleCertificate@2
+        displayName: "Set Xcode Signing Certificate"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
+        inputs:
+            certSecureFile: 'Certificate.p12'
+            certPwd: '$(APPLECERTIFICATEPASSWORD)'
+
+      - task: InstallAppleProvisioningProfile@1
+        displayName: "Set Xcode Provisioning Profile"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
+        inputs:
+          provisioningProfileLocation: 'secureFiles'
+          provProfileSecureFile: 'GitTrends_Development_Profile.mobileprovision'
       - task: UseDotNet@2
         displayName: "Install Latest .NET SDK"
         inputs:
           packageType: "sdk"
           version: "$(NET_VERSION)"
+
+      - task: CmdLine@2
+        displayName: "Install Latest .NET MAUI Workload"
+        inputs:
+          script: "dotnet workload install maui"
 
       - task: CmdLine@2
         displayName: "Inject API Keys"
