@@ -87,7 +87,7 @@ jobs:
       - task: CmdLine@2
         displayName: "Build GitTrends"
         inputs:
-          script: "dotnet build $(PathToGitTrendsCsproj) -c Release"
+          script: "dotnet build $(PathToGitTrendsCsproj)"
 
   - job: Build_UnitTests
     displayName: Build Unit Tests
@@ -150,4 +150,4 @@ jobs:
       - task: CmdLine@2
         displayName: "Run Unit Tests"
         inputs:
-          script: "dotnet test $(PathToUnitTestsCsproj) -c Release -d detailed"
+          script: "dotnet test $(PathToUnitTestsCsproj) -d detailed"
