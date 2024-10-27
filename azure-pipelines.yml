@@ -106,12 +106,10 @@ jobs:
         inputs:
           script: "dotnet workload install maui"
 
-      - task: VSBuild@1
+      - task: CmdLine@2
         displayName: "Build Unit Tests"
         inputs:
-          solution: "$(PathToUnitTestsCsproj)"
-          configuration: "Release"
-          msbuildArgs: "/restore"
+          script: "dotnet build $(PathToUnitTestsCsproj)"
 
   - job: Run_UnitTests
     displayName: Run Unit Tests
