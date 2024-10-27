@@ -50,7 +50,7 @@ jobs:
   - job: Build_MAUI_App
     displayName: Build .NET MAUI App
     pool:
-      vmImage: macos-15
+      vmImage: macos-14
 
     steps:
       - task: CmdLine@2
@@ -92,7 +92,7 @@ jobs:
   - job: Build_UnitTests
     displayName: Build Unit Tests
     pool:
-      vmImage: macos-15
+      vmImage: macos-14
 
     steps:
       - task: UseDotNet@2
@@ -115,7 +115,7 @@ jobs:
     displayName: Run Unit Tests
     dependsOn: [Build_UnitTests, Build_MAUI_App]
     pool:
-      vmImage: macos-15
+      vmImage: macos-14
 
     steps:
       - task: CmdLine@2
