@@ -1,6 +1,5 @@
 variables:
   NET_VERSION: "8.0.x"
-  NET_CORE_VERSION: "3.1.x"
   PathToSolution: "GitTrends.sln"
   PathToGitTrendsCsproj: "GitTrends/GitTrends.csproj"
   PathToUITestsCsproj: "GitTrends.UITests/GitTrends.UITests.csproj"
@@ -75,7 +74,7 @@ jobs:
       - task: JavaToolInstaller@0
         displayName: "Install Java"
         inputs:
-          versionSpec: "11"
+          versionSpec: "17"
           jdkArchitectureOption: "x64"
           jdkSourceOption: "PreInstalled"
 
@@ -95,12 +94,6 @@ jobs:
         inputs:
           packageType: "sdk"
           version: "$(NET_VERSION)"
-
-      - task: UseDotNet@2
-        displayName: "Install $(NET_CORE_VERSION)"
-        inputs:
-          packageType: "sdk"
-          version: "$(NET_CORE_VERSION)"
 
       - task: CmdLine@2
         displayName: "Install Latest .NET MAUI Workload"
@@ -132,12 +125,6 @@ jobs:
         inputs:
           packageType: "sdk"
           version: "$(NET_VERSION)"
-
-      - task: UseDotNet@2
-        displayName: "Install .NET Core 3.1 SDK"
-        inputs:
-          packageType: "sdk"
-          version: "$(NET_CORE_VERSION)"
 
       - task: CmdLine@2
         displayName: "Inject API Keys"
