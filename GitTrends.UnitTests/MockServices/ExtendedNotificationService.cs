@@ -1,10 +1,12 @@
-﻿using GitTrends.Mobile.Common;
+﻿using CommunityToolkit.Maui.ApplicationModel;
+using GitTrends.Mobile.Common;
 using GitTrends.Shared;
 using Shiny.Notifications;
 
 namespace GitTrends.UnitTests;
 
 public class ExtendedNotificationService(
+	IBadge badge,
 	IDeviceInfo deviceInfo,
 	IPreferences preferences,
 	IAnalyticsService analyticsService,
@@ -12,7 +14,7 @@ public class ExtendedNotificationService(
 	DeepLinkingService deepLinkingService,
 	INotificationManager notificationManager,
 	INotificationPermissionStatus notificationPermissionStatus)
-	: NotificationService(deviceInfo, preferences, analyticsService, sortingService, deepLinkingService, notificationManager, notificationPermissionStatus)
+	: NotificationService(badge, deviceInfo, preferences, analyticsService, sortingService, deepLinkingService, notificationManager, notificationPermissionStatus)
 {
 	public override void UnRegister()
 	{

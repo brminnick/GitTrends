@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
+using CommunityToolkit.Maui.ApplicationModel;
 using GitHubApiStatus;
 using GitHubApiStatus.Extensions;
 using GitTrends.Mobile.Common;
@@ -75,6 +76,7 @@ static class ServiceCollection
 		// Mocks
 		services.AddSingleton<IAnalyticsService, MockAnalyticsService>();
 		services.AddSingleton<IAppInfo, MockAppInfo>();
+		services.AddSingleton<IBadge, MockBadge>();
 		services.AddSingleton<IBrowser, MockBrowser>();
 		services.AddSingleton<IDeviceInfo, MockDeviceInfo>();
 		services.AddSingleton<IDispatcher, MockDispatcher>();
