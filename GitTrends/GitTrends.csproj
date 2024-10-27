@@ -12,7 +12,7 @@
     <ApplicationTitle>GitTrends</ApplicationTitle>
 
     <!-- App Identifier -->
-    <ApplicationId>com.minnick.gittrends</ApplicationId>
+    <ApplicationId>com.minnick.GitTrends</ApplicationId>
 
     <!-- Versions -->
     <ApplicationDisplayVersion>3.0.0</ApplicationDisplayVersion>
