@@ -208,5 +208,7 @@ jobs:
 
       - task: CmdLine@2
         displayName: "Run Unit Tests"
+        env:
+          VSTEST_TESTHOST_SHUTDOWN_TIMEOUT: 1100 # Fixes "The active test run was aborted. Reason: Test host process crashed" (source: https://github.com/microsoft/vstest/issues/2952#issuecomment-2234253765)
         inputs:
           script: "dotnet test $(PathToUnitTestsCsproj) -c Release -d detailed"
