@@ -1,130 +1,140 @@
-﻿using GitTrends.Mobile.Common;
-using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Forms;
-using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+﻿using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
+using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
-namespace GitTrends
+namespace GitTrends;
+
+class GitHubUserView : Grid
 {
-	class GitHubUserView : Grid
+	public const int TotalHeight = _imageHeight + _nameLabelHeight + _aliasLabelHeight + _topMargin + _bottomMargin + _rowSpacing * 3;
+
+	const int _imageHeight = 140;
+	const int _topMargin = 16;
+	const int _bottomMargin = 8;
+	const int _widthMargin = 16;
+	const int _nameLabelHeight = 24;
+	const int _aliasLabelHeight = 18;
+	const int _rowSpacing = 4;
+
+	public GitHubUserView()
 	{
-		public const int TotalHeight = _imageHeight + _nameLabelHeight + _aliasLabelHeight + _topMargin + _bottomMargin + _rowSpacing * 3;
+		AutomationId = SettingsPageAutomationIds.GitHubUserView;
 
-		const int _imageHeight = 140;
-		const int _topMargin = 16;
-		const int _bottomMargin = 8;
-		const int _widthMargin = 16;
-		const int _nameLabelHeight = 24;
-		const int _aliasLabelHeight = 18;
-		const int _rowSpacing = 4;
+		Margin = new Thickness(_widthMargin, _topMargin, _widthMargin, _bottomMargin);
+		RowSpacing = 4;
 
-		public GitHubUserView()
+		RowDefinitions = Rows.Define(
+			(Row.Image, _imageHeight),
+			(Row.Name, _nameLabelHeight),
+			(Row.Alias, _aliasLabelHeight));
+
+		Children.Add(new GitHubAvatarImage().Row(Row.Image));
+		Children.Add(new NameLabel().Row(Row.Name));
+		Children.Add(new IsAuthenticatingActivityIndicator().Row(Row.Name).RowSpan(2));
+		Children.Add(new AliasLabel().Row(Row.Alias));
+		Children.Add(new TryDemoButton().Row(Row.Alias));
+
+		this.BindTapGesture(nameof(SettingsViewModel.GitHubUserViewTappedCommand));
+	}
+
+	enum Row { Image, Name, Alias }
+
+	sealed class GitHubAvatarImage : CircleImage
+	{
+		public GitHubAvatarImage()
 		{
-			AutomationId = SettingsPageAutomationIds.GitHubUserView;
+			this.Center();
 
-			Margin = new Thickness(_widthMargin, _topMargin, _widthMargin, _bottomMargin);
-			RowSpacing = 4;
+			HeightRequest = WidthRequest = _imageHeight;
 
-			RowDefinitions = Rows.Define(
-				(Row.Image, _imageHeight),
-				(Row.Name, _nameLabelHeight),
-				(Row.Alias, _aliasLabelHeight));
+			AutomationId = SettingsPageAutomationIds.GitHubAvatarImage;
 
-			Children.Add(new GitHubAvatarImage().Row(Row.Image));
-			Children.Add(new NameLabel().Row(Row.Name));
-			Children.Add(new IsAuthenticatingActivityIndicator().Row(Row.Name).RowSpan(2));
-			Children.Add(new AliasLabel().Row(Row.Alias));
-			Children.Add(new TryDemoButton().Row(Row.Alias));
+			Stroke = Colors.Transparent;
 
-			this.BindTapGesture(nameof(SettingsViewModel.GitHubUserViewTappedCommand));
+			this.Bind(ImageSourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource))
+				.DynamicResources(
+					(ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
+					(LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)));
 		}
+	}
 
-		enum Row { Image, Name, Alias }
-
-		class GitHubAvatarImage : CircleImage
+	sealed class NameLabel : Label
+	{
+		public NameLabel()
 		{
-			public GitHubAvatarImage()
-			{
-				this.Center();
+			this.Center();
 
-				HeightRequest = WidthRequest = _imageHeight;
+			AutomationId = SettingsPageAutomationIds.GitHubNameLabel;
 
-				AutomationId = SettingsPageAutomationIds.GitHubAvatarImage;
+			FontSize = _nameLabelHeight - 6;
+			FontFamily = FontFamilyConstants.RobotoMedium;
 
-				this.Bind(ImageSourceProperty, nameof(SettingsViewModel.GitHubAvatarImageSource))
-					.DynamicResources((ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
-										(LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)));
-			}
+			this.Bind(nameof(SettingsViewModel.GitHubNameLabelText))
+				.Bind(IsVisibleProperty, nameof(SettingsViewModel.IsNotAuthenticating))
+				.DynamicResource(TextColorProperty, nameof(BaseTheme.GitHubHandleColor));
 		}
+	}
 
-		class NameLabel : Label
+	sealed class AliasLabel : Label
+	{
+		public AliasLabel()
 		{
-			public NameLabel()
-			{
-				this.Center();
+			this.Center();
+			Opacity = 0.6;
 
-				AutomationId = SettingsPageAutomationIds.GitHubNameLabel;
+			AutomationId = SettingsPageAutomationIds.GitHubAliasLabel;
 
-				FontSize = _nameLabelHeight - 6;
-				FontFamily = FontFamilyConstants.RobotoMedium;
+			FontSize = _aliasLabelHeight - 4;
+			FontFamily = FontFamilyConstants.RobotoRegular;
 
-				this.Bind(nameof(SettingsViewModel.GitHubNameLabelText))
-					.Bind(IsVisibleProperty, nameof(SettingsViewModel.IsNotAuthenticating))
-					.DynamicResource(TextColorProperty, nameof(BaseTheme.GitHubHandleColor));
-			}
+			this.Bind(nameof(SettingsViewModel.GitHubAliasLabelText))
+				.Bind(IsVisibleProperty, nameof(SettingsViewModel.IsAliasLabelVisible))
+				.DynamicResource(TextColorProperty, nameof(BaseTheme.GitHubHandleColor));
 		}
+	}
 
-		class AliasLabel : Label
+	sealed class TryDemoButton : Label
+	{
+		public TryDemoButton()
 		{
-			public AliasLabel()
-			{
-				this.Center();
-				Opacity = 0.6;
+			this.Center();
+			Opacity = 0.6;
 
-				AutomationId = SettingsPageAutomationIds.GitHubAliasLabel;
+			AutomationId = SettingsPageAutomationIds.TryDemoButton;
 
-				FontSize = _aliasLabelHeight - 4;
-				FontFamily = FontFamilyConstants.RobotoRegular;
+			FontSize = _aliasLabelHeight - 4;
+			FontFamily = FontFamilyConstants.RobotoRegular;
 
-				this.Bind(nameof(SettingsViewModel.GitHubAliasLabelText))
-					.Bind(IsVisibleProperty, nameof(SettingsViewModel.IsAliasLabelVisible))
-					.DynamicResource(TextColorProperty, nameof(BaseTheme.GitHubHandleColor));
-			}
+			Text = GitHubLoginButtonConstants.TryDemo;
+
+			GestureRecognizers.Add(new TapGestureRecognizer()
+				.Bind(TapGestureRecognizer.CommandProperty, nameof(SettingsViewModel.HandleDemoButtonTappedCommand))
+				.Bind(TapGestureRecognizer.CommandParameterProperty,
+					getter: static (Label label) => label.Text,
+					source: this));
+
+			this.Bind(IsVisibleProperty, nameof(SettingsViewModel.IsDemoButtonVisible))
+				.Bind(TextProperty, nameof(SettingsViewModel.TryDemoButtonText))
+				.DynamicResources(
+					(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)),
+					(TextColorProperty, nameof(BaseTheme.GitHubHandleColor)));
 		}
+	}
 
-		class TryDemoButton : Button
+	sealed class IsAuthenticatingActivityIndicator : ActivityIndicator
+	{
+		public IsAuthenticatingActivityIndicator()
 		{
-			public TryDemoButton()
-			{
-				this.Center();
-				Opacity = 0.6;
+			AutomationId = SettingsPageAutomationIds.GitHubSettingsViewActivityIndicator;
 
-				AutomationId = SettingsPageAutomationIds.TryDemoButton;
+			HeightRequest = _nameLabelHeight;
+			WidthRequest = _nameLabelHeight;
 
-				FontSize = _aliasLabelHeight - 4;
-				FontFamily = FontFamilyConstants.RobotoRegular;
-
-				this.Bind(nameof(SettingsViewModel.HandleDemoButtonTappedCommand))
-					.Bind(TextProperty, nameof(SettingsViewModel.TryDemoButtonText))
-					.Bind(IsVisibleProperty, nameof(SettingsViewModel.IsDemoButtonVisible))
-					.DynamicResources((BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor)),
-										(TextColorProperty, nameof(BaseTheme.GitHubHandleColor)));
-			}
-		}
-
-		class IsAuthenticatingActivityIndicator : ActivityIndicator
-		{
-			public IsAuthenticatingActivityIndicator()
-			{
-				AutomationId = SettingsPageAutomationIds.GitHubSettingsViewActivityIndicator;
-
-				HeightRequest = _nameLabelHeight;
-				WidthRequest = _nameLabelHeight;
-
-				this.Center()
-					.Bind(IsVisibleProperty, nameof(SettingsViewModel.IsAuthenticating))
-					.Bind(IsRunningProperty, nameof(SettingsViewModel.IsAuthenticating))
-					.DynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor));
-			}
+			this.Center()
+				.Bind(IsVisibleProperty, nameof(SettingsViewModel.IsAuthenticating))
+				.Bind(IsRunningProperty, nameof(SettingsViewModel.IsAuthenticating))
+				.DynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor));
 		}
 	}
 }

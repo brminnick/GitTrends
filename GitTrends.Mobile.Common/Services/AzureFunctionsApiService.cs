@@ -1,16 +1,13 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using GitTrends.Shared;
+﻿using GitTrends.Common;
+using Refit;
 
-namespace GitTrends.Mobile.Common
+namespace GitTrends.Mobile.Common;
+
+public abstract class AzureFunctionsApiService
 {
-	public abstract class AzureFunctionsApiService : BaseApiService
-	{
-		static readonly Lazy<IAzureFunctionsApi> _azureFunctionsApiClientHolder = new(() => RefitExtensions.For<IAzureFunctionsApi>(CreateHttpClient(AzureConstants.AzureFunctionsApiUrl)));
+	static readonly Lazy<IAzureFunctionsApi> _azureFunctionsApiClientHolder = new(() => RestService.For<IAzureFunctionsApi>(new HttpClient { BaseAddress = new Uri(AzureConstants.AzureFunctionsApiUrl) }));
 
-		static IAzureFunctionsApi AzureFunctionsApiClient => _azureFunctionsApiClientHolder.Value;
+	static IAzureFunctionsApi AzureFunctionsApiClient => _azureFunctionsApiClientHolder.Value;
 
-		public static Task<GitHubToken> GetTestToken() => AttemptAndRetry(() => AzureFunctionsApiClient.GetTestToken(), CancellationToken.None);
-	}
+	public static Task<GitHubToken> GetTestToken(CancellationToken token) => AzureFunctionsApiClient.GetTestToken(token);
 }

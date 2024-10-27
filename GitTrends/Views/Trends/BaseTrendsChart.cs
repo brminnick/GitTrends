@@ -1,51 +1,61 @@
-﻿using System.Threading.Tasks;
-using Syncfusion.SfChart.XForms;
-using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Essentials.Interfaces;
-using Xamarin.Forms;
+﻿using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
+using Syncfusion.Maui.Charts;
 
-namespace GitTrends
+namespace GitTrends;
+
+abstract class BaseTrendsChart : SfCartesianChart
 {
-	abstract class BaseTrendsChart : SfChart
+	readonly ChartZoomPanBehavior _chartZoomPanBehavior = new();
+
+	protected BaseTrendsChart(in string automationId, in DateTimeAxis primaryAxis, in NumericalAxis secondaryAxis, in TrendsViewModel trendsViewModel)
 	{
-		readonly IMainThread _mainThread;
-		readonly ChartZoomPanBehavior _chartZoomPanBehavior = new();
+		ThemeService.PreferenceChanged += HandleThemePreferenceChanged;
 
-		protected BaseTrendsChart(in IMainThread mainThread, in string automationId)
+		BindingContext = trendsViewModel;
+
+		AutomationId = automationId;
+
+		Margin = new Thickness(0, 4, 0, 4);
+
+		BackgroundColor = Colors.Transparent;
+
+		PrimaryAxis = primaryAxis;
+		SecondaryAxis = secondaryAxis;
+
+		XAxes.Add(PrimaryAxis);
+		YAxes.Add(SecondaryAxis);
+
+		ZoomPanBehavior = _chartZoomPanBehavior;
+		TrackballBehavior = new ChartTrackballBehavior();
+
+		SetPaletteBrushColors();
+	}
+
+	protected DateTimeAxis PrimaryAxis { get; }
+	protected NumericalAxis SecondaryAxis { get; }
+
+	protected abstract void SetPaletteBrushColors();
+
+	protected Task SetZoom(double primaryAxisStart, double primaryAxisEnd, double secondaryAxisStart, double secondaryAxisEnd) => Dispatcher.DispatchAsync(() =>
+	{
+		_chartZoomPanBehavior.ZoomByRange(PrimaryAxis, primaryAxisStart, primaryAxisEnd);
+		_chartZoomPanBehavior.ZoomByRange(SecondaryAxis, secondaryAxisStart, secondaryAxisEnd);
+	});
+
+	protected class TrendsAreaSeries : AreaSeries
+	{
+		public TrendsAreaSeries(in string title, in string xDataTitle, in string yDataTitle, in string colorResource)
 		{
-			_mainThread = mainThread;
-			AutomationId = automationId;
+			Opacity = 0.9;
+			Label = title;
+			XBindingPath = xDataTitle;
+			YBindingPath = yDataTitle;
+			LegendIcon = ChartLegendIconType.SeriesType;
 
-			Margin = 0;
-			ChartPadding = new Thickness(0, 24, 0, 4);
-
-			BackgroundColor = Color.Transparent;
-
-			ChartBehaviors = new ChartBehaviorCollection
-			{
-				_chartZoomPanBehavior,
-				new ChartTrackballBehavior()
-			};
-		}
-
-		protected Task SetZoom(double primaryAxisStart, double primaryAxisEnd, double secondaryAxisStart, double secondaryAxisEnd) => _mainThread.InvokeOnMainThreadAsync(() =>
-		{
-			_chartZoomPanBehavior.ZoomByRange(PrimaryAxis, primaryAxisStart, primaryAxisEnd);
-			_chartZoomPanBehavior.ZoomByRange(SecondaryAxis, secondaryAxisStart, secondaryAxisEnd);
-		});
-
-		protected class TrendsAreaSeries : AreaSeries
-		{
-			public TrendsAreaSeries(in string title, in string xDataTitle, in string yDataTitle, in string colorResource)
-			{
-				Opacity = 0.9;
-				Label = title;
-				XBindingPath = xDataTitle;
-				YBindingPath = yDataTitle;
-				LegendIcon = ChartLegendIcon.SeriesType;
-
-				this.DynamicResource(ColorProperty, colorResource);
-			}
+			this.DynamicResource(StrokeProperty, colorResource);
 		}
 	}
+
+	void HandleThemePreferenceChanged(object? sender, PreferredTheme e) => SetPaletteBrushColors();
 }

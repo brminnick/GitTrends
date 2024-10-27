@@ -1,15 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using GitTrends.Shared;
-using Xamarin.Essentials.Interfaces;
+using GitTrends.Common;
 
-namespace GitTrends
+namespace GitTrends;
+
+public abstract class BaseViewModel(IAnalyticsService analyticsService, IDispatcher dispatcher) : ObservableObject
 {
-	public abstract class BaseViewModel : ObservableObject
-	{
-		public BaseViewModel(IAnalyticsService analyticsService, IMainThread mainThread) =>
-			(AnalyticsService, MainThread) = (analyticsService, mainThread);
-
-		protected IAnalyticsService AnalyticsService { get; }
-		protected IMainThread MainThread { get; }
-	}
+	protected IAnalyticsService AnalyticsService { get; } = analyticsService;
+	protected IDispatcher Dispatcher { get; } = dispatcher;
 }

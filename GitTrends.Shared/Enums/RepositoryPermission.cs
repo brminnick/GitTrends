@@ -1,4 +1,3 @@
-﻿namespace GitTrends.Shared
-{
-	public enum RepositoryPermission { UNKNOWN, ADMIN, MAINTAIN, WRITE, TRIAGE, READ }
-}
+﻿namespace  GitTrends.Common;
+
+public enum RepositoryPermission { UNKNOWN, ADMIN, MAINTAIN, WRITE, TRIAGE, READ }

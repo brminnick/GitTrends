@@ -1,15 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
-namespace GitTrends.Shared
+namespace  GitTrends.Common;
+
+public abstract record GraphQLRequest
 {
-	public abstract record GraphQLRequest
-	{
-		protected GraphQLRequest(string query, string variables = "") => (Query, Variables) = (query, variables);
+	protected GraphQLRequest(string query, string variables = "") => (Query, Variables) = (query, variables);
 
-		[JsonProperty("query")]
-		public string Query { get; }
+	[JsonPropertyName("query")]
+	public string Query { get; }
 
-		[JsonProperty("variables")]
-		public string Variables { get; }
-	}
+	[JsonPropertyName("variables")]
+	public string Variables { get; }
 }

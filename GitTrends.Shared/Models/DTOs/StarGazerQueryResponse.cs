@@ -1,6 +1,5 @@
-﻿namespace GitTrends.Shared
-{
-	public record StarGazerResponse(RepositoryStarGazers Repository);
+﻿namespace  GitTrends.Common;
 
-	public record RepositoryStarGazers(StarGazers StarGazers);
-}
+public record StarGazerResponse(RepositoryStarGazers Repository);
+
+public record RepositoryStarGazers(StarGazers StarGazers);

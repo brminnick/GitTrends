@@ -1,74 +1,62 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Headers;
 
-namespace GitTrends.Shared
+namespace  GitTrends.Common;
+
+public class GraphQLException<T>(
+	in T data,
+	in GraphQLError[] errors,
+	in HttpStatusCode statusCode,
+	in HttpResponseHeaders responseHeaders) : GraphQLException(errors, statusCode, responseHeaders)
 {
-	public class GraphQLException<T> : GraphQLException
-	{
-		public GraphQLException(in T data,
-								in GraphQLError[] errors,
-								in HttpStatusCode statusCode,
-								in HttpResponseHeaders responseHeaders) : base(errors, statusCode, responseHeaders)
-		{
-			GraphQLData = data;
-		}
+	public T GraphQLData { get; } = data;
+}
 
-		public T GraphQLData { get; }
+public class GraphQLException(
+	in GraphQLError[] errors,
+	in HttpStatusCode statusCode,
+	in HttpResponseHeaders responseHeaders) : Exception
+{
+	public IReadOnlyList<GraphQLError> Errors { get; } = errors;
+	public HttpStatusCode StatusCode { get; } = statusCode;
+	public HttpResponseHeaders ResponseHeaders { get; } = responseHeaders;
+
+	public bool IsForbidden()
+	{
+		return Errors.Any(static x => x.AdditionalEntries?.TryGetValue("type", out var jsonElement) is true && jsonElement.GetString()?.Equals("FORBIDDEN", StringComparison.OrdinalIgnoreCase) is true);
 	}
 
-	public class GraphQLException : Exception
+	public bool ContainsSamlOrganizationAuthenticationError(out IReadOnlyList<Uri> ssoUris)
 	{
-		public GraphQLException(in GraphQLError[] errors,
-								in HttpStatusCode statusCode,
-								in HttpResponseHeaders responseHeaders)
+		var doesContainError = ResponseHeaders.TryGetValues("x-github-sso", out var values);
+
+		if (doesContainError)
 		{
-			Errors = errors;
-			StatusCode = statusCode;
-			ResponseHeaders = responseHeaders;
-		}
+			var ssoUriList = new List<Uri>();
 
-		public IReadOnlyList<GraphQLError> Errors { get; }
-		public HttpStatusCode StatusCode { get; }
-		public HttpResponseHeaders ResponseHeaders { get; }
-	}
-
-	public static class GraphQLExceptionExtensions
-	{
-		public static bool ContainsSamlOrganizationAthenticationError<T>(this GraphQLException<T> graphQLException, out IReadOnlyList<Uri> ssoUris)
-		{
-			var doesContainError = graphQLException.ResponseHeaders.TryGetValues("x-github-sso", out var values);
-
-			if (doesContainError)
+			foreach (var value in values ?? [])
 			{
-				var ssoUriList = new List<Uri>();
+				var semicolonSeparatedValues = value.Split(';');
 
-				foreach (var value in values ?? Enumerable.Empty<string>())
+				foreach (var semicolonSeparatedValue in semicolonSeparatedValues)
 				{
-					var semicolonSeparatedValues = value.Split(';');
+					var urlStartIndex = semicolonSeparatedValue.IndexOf(Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase);
+					var urlString = urlStartIndex < 0 ? string.Empty : semicolonSeparatedValue[urlStartIndex..];
 
-					foreach (var semicolonSeparatedValue in semicolonSeparatedValues)
-					{
-						var urlStartIndex = semicolonSeparatedValue.IndexOf("http", StringComparison.OrdinalIgnoreCase);
-						var urlString = urlStartIndex < 0 ? string.Empty : semicolonSeparatedValue.Substring(urlStartIndex);
+					var isValidUri = Uri.TryCreate(urlString, UriKind.Absolute, out var uri);
 
-						var isValidUri = Uri.TryCreate(urlString, UriKind.Absolute, out var uri);
-
-						if (isValidUri && uri != null)
-							ssoUriList.Add(uri);
-					}
+					if (isValidUri && uri != null)
+						ssoUriList.Add(uri);
 				}
-
-				ssoUris = ssoUriList;
-			}
-			else
-			{
-				ssoUris = Array.Empty<Uri>();
 			}
 
-			return doesContainError;
+			ssoUris = ssoUriList;
 		}
+		else
+		{
+			ssoUris = [];
+		}
+
+		return doesContainError;
 	}
 }

@@ -1,5 +1,5 @@
 ﻿
-namespace GitTrends.Shared
+namespace  GitTrends.Common
 {
     public class GetChartVideoDTO
     {

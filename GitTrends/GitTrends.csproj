@@ -1,76 +1,612 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
-        <Configurations>Debug;Release;AppStore</Configurations>
-        <BuildWithMSBuildOnMono>true</BuildWithMSBuildOnMono>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DebugType>pdbonly</DebugType>
-        <DebugSymbols>true</DebugSymbols>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-      <DebugType>None</DebugType>
-      <Optimize>true</Optimize>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
-      <DebugType>None</DebugType>
-      <Optimize>true</Optimize>
-      <DefineConstants>AppStore</DefineConstants>
-      <NoWarn>1701;1702</NoWarn>
-      <NoStdLib>false</NoStdLib>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="23.1.42" />
-        <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
-        <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
-        <PackageReference Include="Autofac" Version="8.0.0" />
-        <PackageReference Include="Xamarin.Forms.DebugRainbows" Version="1.1.4" />
-        <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
-        <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.3" />
-        <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.3" />
-        <PackageReference Include="Xamarin.Forms" Version="5.0.0.2662" />
-        <PackageReference Include="Shiny.Notifications" Version="2.7.3" />
-        <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.763-beta" />
-        <PackageReference Include="Plugin.StoreReview" Version="6.2.0" />
-        <PackageReference Include="Sharpnado.MaterialFrame" Version="1.3.0" />
-        <PackageReference Include="Xamarin.CommunityToolkit.Markup" Version="2.0.6" />
-        <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.7" />
-        <PackageReference Include="Shiny.Jobs" Version="2.7.3" />
-    </ItemGroup>
-    <ItemGroup>
-      <EmbeddedResource Include="Resources\SVGs\chart.svg" />
-      <EmbeddedResource Include="Resources\SVGs\issue_opened.svg" />
-      <EmbeddedResource Include="Resources\SVGs\megaphone.svg" />
-      <EmbeddedResource Include="Resources\SVGs\repo_forked.svg" />
-      <EmbeddedResource Include="Resources\SVGs\star.svg" />
-      <EmbeddedResource Include="Resources\SVGs\total_clones.svg" />
-      <EmbeddedResource Include="Resources\SVGs\total_views.svg" />
-      <EmbeddedResource Include="Resources\SVGs\trending_tag.svg" />
-      <EmbeddedResource Include="Resources\SVGs\unique_clones.svg" />
-      <EmbeddedResource Include="Resources\SVGs\unique_views.svg" />
-      <EmbeddedResource Include="Resources\Fonts\FontAwesomeBrands.ttf" />
-      <EmbeddedResource Include="Resources\Fonts\Roboto-Bold.ttf" />
-      <EmbeddedResource Include="Resources\Fonts\Roboto-Medium.ttf" />
-      <EmbeddedResource Include="Resources\Fonts\Roboto-Regular.ttf" />
-      <EmbeddedResource Include="Resources\SVGs\zoom_gesture.svg" />
-      <EmbeddedResource Include="Resources\SVGs\longpress_gesture.svg" />
-      <EmbeddedResource Include="Resources\Fonts\FontAwesome.otf" />
-      <EmbeddedResource Include="Resources\SVGs\bell.svg" />
-      <EmbeddedResource Include="Resources\SVGs\check.svg" />
-      <EmbeddedResource Include="Resources\SVGs\error.svg" />
-      <EmbeddedResource Include="Resources\SVGs\github.svg" />
-      <EmbeddedResource Include="Resources\SVGs\theme.svg" />
-      <EmbeddedResource Include="Resources\SVGs\logout.svg" />
-      <EmbeddedResource Include="Resources\SVGs\right_arrow.svg" />
-      <EmbeddedResource Include="Resources\SVGs\language.svg" />
-      <EmbeddedResource Include="Resources\SVGs\about.svg" />
-      <EmbeddedResource Include="Resources\SVGs\favorite_tag.svg" />
-      <EmbeddedResource Include="Resources\SVGs\star_outline.svg" />
-      <EmbeddedResource Include="Resources\SVGs\sparkle.svg" />
-      <EmbeddedResource Include="Resources\SVGs\organization.svg" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj" />
-    </ItemGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(NetVersion);$(NetVersion)-android;$(NetVersion)-ios;$(NetVersion)-maccatalyst</TargetFrameworks>
+    <Configurations>Debug;Release;AppStore</Configurations>
+    <OutputType Condition="'$(TargetFramework)' != '$(NetVersion)'">Exe</OutputType>
+    <RootNamespace>GitTrends</RootNamespace>
+    <UseMaui>true</UseMaui>
+    <SingleProject>true</SingleProject>
+
+    <!-- Display name -->
+    <ApplicationTitle>GitTrends</ApplicationTitle>
+
+    <!-- App Identifier -->
+    <ApplicationId>com.minnick.GitTrends</ApplicationId>
+
+    <!-- Versions -->
+    <ApplicationDisplayVersion>3.0.0</ApplicationDisplayVersion>
+    <ApplicationVersion>66</ApplicationVersion>
+
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">16.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">16.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">26.0</SupportedOSPlatformVersion>
+    <TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">34.0</TargetPlatformVersion>
+
+    <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst' AND '$(Configuration)' == 'AppStore'">
+      maccatalyst-x64;maccatalyst-arm64
+    </RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' ">
+    <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
+    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+    <AndroidDexTool>d8</AndroidDexTool>
+    <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <MtouchDebug>true</MtouchDebug>
+    <EnableSGenConc>true</EnableSGenConc>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <AndroidDexTool>d8</AndroidDexTool>
+    <AndroidLinkTool>r8</AndroidLinkTool>
+    <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
+    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <OptimizePNGs>true</OptimizePNGs>
+    <EnableSGenConc>true</EnableSGenConc>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'AppStore' ">
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <AndroidDexTool>d8</AndroidDexTool>
+    <AndroidLinkTool>r8</AndroidLinkTool>
+    <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
+    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <OptimizePNGs>true</OptimizePNGs>
+    <MtouchUseLlvm>true</MtouchUseLlvm>
+    <EnableSGenConc>true</EnableSGenConc>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Images -->
+    <MauiImage Include="Resources\Images\*" />
+
+    <!-- Custom Fonts -->
+    <MauiFont Include="Resources\Fonts\*" />
+
+    <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+    <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GitTrends.Mobile.Common\GitTrends.Mobile.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'&#xD;&#xA;                          OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <PackageReference Include="Shiny.Hosting.Maui" Version="3.3.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Maui" Version="9.1.0" />
+    <PackageReference Include="CommunityToolkit.Maui.Markup" Version="4.2.0" />
+    <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.1.2" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="GitHubApiStatus" Version="3.0.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.70" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+    <PackageReference Include="Plugin.StoreReview" Version="6.2.0" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="7.2.1" />
+    <PackageReference Include="Sentry.Maui" Version="4.12.1" />
+    <PackageReference Include="Sharpnado.MaterialFrame.Maui" Version="2.0.0" />
+    <PackageReference Include="Shiny.Jobs" Version="3.3.3" />
+    <PackageReference Include="Shiny.Notifications" Version="3.3.3" />
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.8" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.10" />
+    <PackageReference Include="Syncfusion.Maui.Charts" Version="27.1.56" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <None Remove="Platforms\Android\linker.xml" />
+    <LinkDescription Include="Platforms\Android\linker.xml" />
+    <ProguardConfiguration Include="Platforms\Android\proguard.cfg" />
+    <AndroidEnvironment Include="Platforms\Android\GarbageCollector.config" />
+    <AndroidResource Include="Platforms\Android\Resources\layout\Tabbar.axml" />
+    <AndroidResource Include="Platforms\Android\Resources\layout\Toolbar.axml" />
+    <AndroidResource Include="Platforms\Android\Resources\values\styles.xml" />
+    <AndroidResource Include="Platforms\Android\Resources\values\colors.xml" />
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-anydpi-v26\icon.xml" />
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-anydpi-v26\icon_round.xml" />
+    <AndroidResource Include="Platforms\Android\Resources\xml\auto_backup_rules.xml" />
+    <AndroidResource Include="Platforms\Android\Resources\menu\MainMenu.xml" />
+    <AndroidResource Include="Platforms\Android\Resources\values-night\styles.xml" />
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-hdpi\icon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-hdpi\launcher_foreground.png" />
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-mdpi\icon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-mdpi\launcher_foreground.png" />
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-xhdpi\icon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-xhdpi\launcher_foreground.png" />
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-xxhdpi\icon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-xxhdpi\launcher_foreground.png" />
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-xxxhdpi\icon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\mipmap-xxxhdpi\launcher_foreground.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable\splash_screen.xml" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable\GitTrends.png" />
+    <AndroidResource Include="Platforms\Android\Resources\values-night\colors.xml" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\GitTrends.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night\GitTrends.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-hdpi\GitTrends.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xhdpi\GitTrends.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxhdpi\GitTrends.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxxhdpi\GitTrends.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\GitTrends.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\GitTrends.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\GitTrends.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable\icon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable\DefaultProfileImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night\DefaultProfileImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-hdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xhdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxhdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxxhdpi\DefaultProfileImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\ReferringSitesIcon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable\ReferringSitesIcon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\ReferringSitesIcon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\ReferringSitesIcon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\ReferringSitesIcon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable\NotificationsOnboarding.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\NotificationsOnboarding.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\NotificationsOnboarding.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\NotificationsOnboarding.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\NotificationsOnboarding.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable\GitTrendsWhite.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\GitTrendsWhite.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\GitTrendsWhite.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\GitTrendsWhite.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\GitTrendsWhite.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable\ConnectToGitHubOnboarding.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\ConnectToGitHubOnboarding.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\ConnectToGitHubOnboarding.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\ConnectToGitHubOnboarding.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\ConnectToGitHubOnboarding.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable\GitTrendsGreen.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\GitTrendsGreen.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\GitTrendsGreen.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\GitTrendsGreen.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\GitTrendsGreen.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable\DefaultProfileImageGreen.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\DefaultProfileImageGreen.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable\WelcomeImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\WelcomeImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\WelcomeImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\WelcomeImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\WelcomeImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable\DefaultProfileImageWhite.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\DefaultProfileImageWhite.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\DefaultProfileImageWhite.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\DefaultProfileImageWhite.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\DefaultProfileImageWhite.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\DefaultReferringSiteImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\DefaultReferringSiteImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\DefaultReferringSiteImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\DefaultReferringSiteImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\DefaultReferringSiteImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\DefaultReferringSiteImage.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyRepositoriesList.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyRepositoriesList.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyRepositoriesList.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyRepositoriesList.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyRepositoriesList.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyRepositoriesList.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyReferringSitesList.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyReferringSitesList.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyReferringSitesList.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyReferringSitesList.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyReferringSitesList.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyReferringSitesList.png" />
+    <AndroidResource Include="Platforms\Android\Resources\values\sizes.xml" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyTrafficChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyTrafficChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyTrafficChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyTrafficChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyTrafficChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyTrafficChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyStarChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyStarChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyStarChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyStarChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyStarChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyStarChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\EmptyOneStarChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\EmptyOneStarChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\EmptyOneStarChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\EmptyOneStarChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\EmptyOneStarChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\EmptyOneStarChart.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\Business.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\Inspectocat.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\Business.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-ldpi\Inspectocat.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\Business.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\Inspectocat.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\Business.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\Inspectocat.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\Business.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\Inspectocat.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\Business.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\Inspectocat.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-v26\splashscreenanimatedicon.xml" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-hdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-mdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-hdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xhdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxhdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-night-xxxhdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xhdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxhdpi\splashscreenanimatedicon.png" />
+    <AndroidResource Include="Platforms\Android\Resources\drawable-xxxhdpi\splashscreenanimatedicon.png" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
+    <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImage.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrends.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrendsBackgroundColor.colorset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Sort.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Sort.imageset\sort%401x_light.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Sort.imageset\sort%402x_light.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Sort.imageset\sort%403x_light-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrends.imageset\GitTrends_Light-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrends.imageset\GitTreands_Dark-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrends.imageset\GitTrends_Dark%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrends.imageset\GitTrends_Dark%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrends.imageset\GitTrends_Light-2.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrends.imageset\GitTrends_Light%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrends.imageset\GitTrends_Light%403x-2.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_20pt%402x-2.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_20pt%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_29pt%402x-2.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_29pt%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_40pt%402x-2.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_40pt%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_60pt%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_60pt%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_20pt-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_20pt%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_29pt%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_29pt-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_40pt-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_40pt%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_76pt-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_76pt%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\icon_83.5%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\AppIcon.appiconset\App Store Icon-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageLight-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageLight%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageLight%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImage.imageset\DefaultProfileImageDark%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\NotificationsOnboarding.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\NotificationsOnboarding.imageset\Notifications Onboarding%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrendsWhite.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrendsWhite.imageset\GitTreands_Dark-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrendsWhite.imageset\GitTrends_Dark%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrendsWhite.imageset\GitTrends_Dark%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\ConnectToGitHubOnboarding.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\ConnectToGitHubOnboarding.imageset\ConnectToGitHubOnboarding%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\ReferringSitesIcon.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\ReferringSitesIcon.imageset\RefferingSitesIcon%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\ReferringSitesIcon.imageset\RefferingSitesIcon%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\ReferringSitesIcon.imageset\RefferingSitesIcon-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrendsGreen.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrendsGreen.imageset\GitTrends_Light.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrendsGreen.imageset\GitTrends_Light%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\GitTrendsGreen.imageset\GitTrends_Light%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImageGreen.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageDark%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageDark%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageDark-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight-1-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight%402x-1-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImageGreen.imageset\DefaultProfileImageLight%403x-1-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\WelcomeImage.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\WelcomeImage.imageset\WelcomeImage.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\WelcomeImage.imageset\WelcomeImage%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\WelcomeImage.imageset\WelcomeImage%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImageWhite.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImageWhite.imageset\DefaultProfileImageDark-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImageWhite.imageset\DefaultProfileImageDark%402x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultProfileImageWhite.imageset\DefaultProfileImageDark%403x-1.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultReferringSiteImage.imageset\DefaultReferringSiteImage%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultReferringSiteImage.imageset\DefaultReferringSiteImage%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultReferringSiteImage.imageset\DefaultReferringSiteImage.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\DefaultReferringSiteImage.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Settings.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Settings.imageset\Settings.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Settings.imageset\Settings%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Settings.imageset\Settings%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyRepositoriesList.imageset\EmptyRepositoriesList%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyRepositoriesList.imageset\EmptyRepositoriesList%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyRepositoriesList.imageset\EmptyRepositoriesList.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyRepositoriesList.imageset\Contents.json">
+      <Visible>False</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyReferringSitesList.imageset\Contents.json">
+      <Visible>False</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyTrafficChart.imageset\Contents.json">
+      <Visible>False</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyTrafficChart.imageset\EmptyTrafficChart.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyTrafficChart.imageset\EmptyTrafficChart%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyTrafficChart.imageset\EmptyTrafficChart%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyReferringSitesList.imageset\EmptyReferringSitesList%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyStarChart.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyStarChart.imageset\EmptyStarChart.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyStarChart.imageset\EmptyStarChart%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyStarChart.imageset\EmptyStarChart%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyOneStarChart.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\EmptyOneStarChart.imageset\EmptyOneStarChart%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Business.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Business.imageset\Business.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Business.imageset\Business%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Business.imageset\Business%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Inspectocat.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Inspectocat.imageset\inspectocat.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Inspectocat.imageset\inspectocat%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Platforms\iOS\Assets.xcassets\Inspectocat.imageset\inspectocat%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+    <BundleResource Include="Platforms\iOS\PrivacyInfo.xcprivacy" LogicalName="PrivacyInfo.xcprivacy" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
+    <BundleResource Include="Platforms\MacCatalyst\PrivacyInfo.xcprivacy" LogicalName="PrivacyInfo.xcprivacy" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,5 @@
-﻿namespace GitTrends.Shared
-{
-	public record GitHubUserResponse(User User);
+﻿namespace  GitTrends.Common;
 
-	public record GitHubOrganizationResponse(User Organization);
-}
+public record GitHubUserResponse(User User);
+
+public record GitHubOrganizationResponse(User Organization);

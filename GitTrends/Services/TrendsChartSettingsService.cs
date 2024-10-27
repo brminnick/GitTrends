@@ -1,105 +1,102 @@
-﻿using System;
+﻿using GitTrends.Common;
 using GitTrends.Mobile.Common;
-using GitTrends.Shared;
-using Xamarin.Essentials.Interfaces;
 
-namespace GitTrends
+namespace GitTrends;
+
+public class TrendsChartSettingsService
 {
-	public class TrendsChartSettingsService
+	readonly IPreferences _preferences;
+	readonly IAnalyticsService _analyticsService;
+
+	public TrendsChartSettingsService(IAnalyticsService analyticsService, IPreferences preferences) =>
+		(_analyticsService, _preferences) = (analyticsService, preferences);
+
+	public TrendsChartOption CurrentTrendsChartOption
 	{
-		readonly IPreferences _preferences;
-		readonly IAnalyticsService _analyticsService;
+		get => GetCurrentTrendsChartOption();
+		set => SetCurrentTrendsChartOption(value);
+	}
 
-		public TrendsChartSettingsService(IAnalyticsService analyticsService, IPreferences preferences) =>
-			(_analyticsService, _preferences) = (analyticsService, preferences);
+	public bool ShouldShowClonesByDefault
+	{
+		get => _preferences.Get(nameof(ShouldShowClonesByDefault), true);
+		set => _preferences.Set(nameof(ShouldShowClonesByDefault), value);
+	}
 
-		public TrendsChartOption CurrentTrendsChartOption
+	public bool ShouldShowUniqueClonesByDefault
+	{
+		get => _preferences.Get(nameof(ShouldShowUniqueClonesByDefault), true);
+		set => _preferences.Set(nameof(ShouldShowUniqueClonesByDefault), value);
+	}
+
+	public bool ShouldShowViewsByDefault
+	{
+		get => _preferences.Get(nameof(ShouldShowViewsByDefault), true);
+		set => _preferences.Set(nameof(ShouldShowViewsByDefault), value);
+	}
+
+	public bool ShouldShowUniqueViewsByDefault
+	{
+		get => _preferences.Get(nameof(ShouldShowUniqueViewsByDefault), true);
+		set => _preferences.Set(nameof(ShouldShowUniqueViewsByDefault), value);
+	}
+
+	TrendsChartOption GetCurrentTrendsChartOption()
+	{
+		if (!ShouldShowUniqueClonesByDefault
+			&& !ShouldShowUniqueViewsByDefault
+			&& ShouldShowClonesByDefault
+			&& ShouldShowViewsByDefault)
 		{
-			get => GetCurrentTrendsChartOption();
-			set => SetCurrentTrendsChartOption(value);
+			return TrendsChartOption.NoUniques;
 		}
 
-		public bool ShouldShowClonesByDefault
+		if (ShouldShowUniqueClonesByDefault
+			&& ShouldShowUniqueViewsByDefault
+			&& !ShouldShowClonesByDefault
+			&& !ShouldShowViewsByDefault)
 		{
-			get => _preferences.Get(nameof(ShouldShowClonesByDefault), true);
-			set => _preferences.Set(nameof(ShouldShowClonesByDefault), value);
+			return TrendsChartOption.JustUniques;
 		}
 
-		public bool ShouldShowUniqueClonesByDefault
+		//All is the Default Value 
+		ShouldShowUniqueClonesByDefault = true;
+		ShouldShowUniqueViewsByDefault = true;
+		ShouldShowClonesByDefault = true;
+		ShouldShowViewsByDefault = true;
+
+		return TrendsChartOption.All;
+	}
+
+	void SetCurrentTrendsChartOption(in TrendsChartOption currentTrendsChartOption)
+	{
+		_analyticsService.Track($"{nameof(TrendsChartOption)} changed", nameof(TrendsChartOption), currentTrendsChartOption.ToString());
+
+		switch (currentTrendsChartOption)
 		{
-			get => _preferences.Get(nameof(ShouldShowUniqueClonesByDefault), true);
-			set => _preferences.Set(nameof(ShouldShowUniqueClonesByDefault), value);
-		}
+			case TrendsChartOption.All:
+				ShouldShowUniqueClonesByDefault = true;
+				ShouldShowUniqueViewsByDefault = true;
+				ShouldShowClonesByDefault = true;
+				ShouldShowViewsByDefault = true;
+				break;
 
-		public bool ShouldShowViewsByDefault
-		{
-			get => _preferences.Get(nameof(ShouldShowViewsByDefault), true);
-			set => _preferences.Set(nameof(ShouldShowViewsByDefault), value);
-		}
+			case TrendsChartOption.JustUniques:
+				ShouldShowUniqueClonesByDefault = true;
+				ShouldShowUniqueViewsByDefault = true;
+				ShouldShowClonesByDefault = false;
+				ShouldShowViewsByDefault = false;
+				break;
 
-		public bool ShouldShowUniqueViewsByDefault
-		{
-			get => _preferences.Get(nameof(ShouldShowUniqueViewsByDefault), true);
-			set => _preferences.Set(nameof(ShouldShowUniqueViewsByDefault), value);
-		}
+			case TrendsChartOption.NoUniques:
+				ShouldShowUniqueClonesByDefault = false;
+				ShouldShowUniqueViewsByDefault = false;
+				ShouldShowClonesByDefault = true;
+				ShouldShowViewsByDefault = true;
+				break;
 
-		TrendsChartOption GetCurrentTrendsChartOption()
-		{
-			if (!ShouldShowUniqueClonesByDefault
-				&& !ShouldShowUniqueViewsByDefault
-				&& ShouldShowClonesByDefault
-				&& ShouldShowViewsByDefault)
-			{
-				return TrendsChartOption.NoUniques;
-			}
-
-			if (ShouldShowUniqueClonesByDefault
-				&& ShouldShowUniqueViewsByDefault
-				&& !ShouldShowClonesByDefault
-				&& !ShouldShowViewsByDefault)
-			{
-				return TrendsChartOption.JustUniques;
-			}
-
-			//All is the Default Value 
-			ShouldShowUniqueClonesByDefault = true;
-			ShouldShowUniqueViewsByDefault = true;
-			ShouldShowClonesByDefault = true;
-			ShouldShowViewsByDefault = true;
-
-			return TrendsChartOption.All;
-		}
-
-		void SetCurrentTrendsChartOption(in TrendsChartOption currentTrendsChartOption)
-		{
-			_analyticsService.Track($"{nameof(TrendsChartOption)} changed", nameof(TrendsChartOption), currentTrendsChartOption.ToString());
-
-			switch (currentTrendsChartOption)
-			{
-				case TrendsChartOption.All:
-					ShouldShowUniqueClonesByDefault = true;
-					ShouldShowUniqueViewsByDefault = true;
-					ShouldShowClonesByDefault = true;
-					ShouldShowViewsByDefault = true;
-					break;
-
-				case TrendsChartOption.JustUniques:
-					ShouldShowUniqueClonesByDefault = true;
-					ShouldShowUniqueViewsByDefault = true;
-					ShouldShowClonesByDefault = false;
-					ShouldShowViewsByDefault = false;
-					break;
-
-				case TrendsChartOption.NoUniques:
-					ShouldShowUniqueClonesByDefault = false;
-					ShouldShowUniqueViewsByDefault = false;
-					ShouldShowClonesByDefault = true;
-					ShouldShowViewsByDefault = true;
-					break;
-
-				default:
-					throw new NotSupportedException($"{currentTrendsChartOption} not supported");
-			}
+			default:
+				throw new NotSupportedException($"{currentTrendsChartOption} not supported");
 		}
 	}
 }

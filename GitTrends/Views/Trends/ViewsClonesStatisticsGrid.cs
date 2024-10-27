@@ -1,68 +1,79 @@
-﻿using GitTrends.Mobile.Common;
+﻿using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using Sharpnado.MaterialFrame;
-using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Forms;
-using static GitTrends.MarkupExtensions;
-using static Xamarin.CommunityToolkit.Markup.GridRowsColumns;
+using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
-namespace GitTrends
+namespace GitTrends;
+
+class ViewsClonesStatisticsGrid : Grid
 {
-	class ViewsClonesStatisticsGrid : Grid
+	public const int StatisticsGridHeight = _rowSpacing + _rowHeight * 2;
+
+	const int _rowSpacing = 8;
+	const int _columnSpacing = 8;
+	const int _rowHeight = 96;
+
+	public ViewsClonesStatisticsGrid(IDeviceInfo deviceInfo)
 	{
-		public const int StatisticsGridHeight = _rowSpacing + _rowHeight * 2;
+		ColumnSpacing = _columnSpacing;
+		RowSpacing = _rowSpacing;
 
-		const int _rowSpacing = 8;
-		const int _columnSpacing = 8;
-		const int _rowHeight = 96;
+		Padding = new Thickness(16, 0);
 
-		public ViewsClonesStatisticsGrid()
-		{
-			ColumnSpacing = _columnSpacing;
-			RowSpacing = _rowSpacing;
+		RowDefinitions = Rows.Define(
+			(Row.ViewsStats, _rowHeight),
+			(Row.ClonesStats, _rowHeight));
 
-			Padding = new Thickness(16, 0);
+		ColumnDefinitions = Columns.Define(
+			(Column.Total, Stars(1)),
+			(Column.Unique, Stars(1)));
 
-			RowDefinitions = Rows.Define(
-				(Row.ViewsStats, _rowHeight),
-				(Row.ClonesStats, _rowHeight));
+		Children.Add(new StatisticsCard(SortingConstants.Views, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor), TrendsPageAutomationIds.ViewsCard, TrendsPageAutomationIds.ViewsStatisticsLabel, deviceInfo)
+			.Row(Row.ViewsStats).Column(Column.Total)
+			.Bind(StatisticsCard.IsSeriesVisibleProperty,
+				nameof(TrendsViewModel.IsViewsSeriesVisible),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.Bind(StatisticsCard.TextProperty,
+				nameof(TrendsViewModel.ViewsStatisticsText),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.BindTapGesture(nameof(TrendsViewModel.ViewsCardTappedCommand),
+				commandSource: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 
-			ColumnDefinitions = Columns.Define(
-				(Column.Total, Stars(1)),
-				(Column.Unique, Stars(1)));
+		Children.Add(new StatisticsCard(SortingConstants.UniqueViews, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor), TrendsPageAutomationIds.UniqueViewsCard, TrendsPageAutomationIds.UniqueViewsStatisticsLabel, deviceInfo)
+			.Row(Row.ViewsStats).Column(Column.Unique)
+			.Bind(StatisticsCard.IsSeriesVisibleProperty,
+				nameof(TrendsViewModel.IsUniqueViewsSeriesVisible),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.Bind(StatisticsCard.TextProperty,
+				nameof(TrendsViewModel.UniqueViewsStatisticsText),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.BindTapGesture(nameof(TrendsViewModel.UniqueViewsCardTappedCommand),
+				commandSource: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 
-			Children.Add(new StatisticsCard(SortingConstants.Views, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor), TrendsPageAutomationIds.ViewsCard, TrendsPageAutomationIds.ViewsStatisticsLabel)
-				.Row(Row.ViewsStats).Column(Column.Total)
-				.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsViewsSeriesVisible), convert: convertElevation)
-				.Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsViewsSeriesVisible))
-				.Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.ViewsStatisticsText))
-				.BindTapGesture(nameof(TrendsViewModel.ViewsCardTappedCommand)));
+		Children.Add(new StatisticsCard(SortingConstants.Clones, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor), TrendsPageAutomationIds.ClonesCard, TrendsPageAutomationIds.ClonesStatisticsLabel, deviceInfo)
+			.Row(Row.ClonesStats).Column(Column.Total)
+			.Bind(StatisticsCard.IsSeriesVisibleProperty,
+				nameof(TrendsViewModel.IsClonesSeriesVisible),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.Bind(StatisticsCard.TextProperty,
+				nameof(TrendsViewModel.ClonesStatisticsText),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.BindTapGesture(nameof(TrendsViewModel.ClonesCardTappedCommand),
+				commandSource: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 
-			Children.Add(new StatisticsCard(SortingConstants.UniqueViews, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor), TrendsPageAutomationIds.UniqueViewsCard, TrendsPageAutomationIds.UniqueViewsStatisticsLabel)
-				.Row(Row.ViewsStats).Column(Column.Unique)
-				.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsUniqueViewsSeriesVisible), convert: convertElevation)
-				.Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsUniqueViewsSeriesVisible))
-				.Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.UniqueViewsStatisticsText))
-				.BindTapGesture(nameof(TrendsViewModel.UniqueViewsCardTappedCommand)));
-
-			Children.Add(new StatisticsCard(SortingConstants.Clones, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor), TrendsPageAutomationIds.ClonesCard, TrendsPageAutomationIds.ClonesStatisticsLabel)
-				.Row(Row.ClonesStats).Column(Column.Total)
-				.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsClonesSeriesVisible), convert: convertElevation)
-				.Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsClonesSeriesVisible))
-				.Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.ClonesStatisticsText))
-				.BindTapGesture(nameof(TrendsViewModel.ClonesCardTappedCommand)));
-
-			Children.Add(new StatisticsCard(SortingConstants.UniqueClones, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor), TrendsPageAutomationIds.UniqueClonesCard, TrendsPageAutomationIds.UniqueClonesStatisticsLabel)
-				.Row(Row.ClonesStats).Column(Column.Unique)
-				.Bind<StatisticsCard, bool, double>(MaterialFrame.ElevationProperty, nameof(TrendsViewModel.IsUniqueClonesSeriesVisible), convert: convertElevation)
-				.Bind(StatisticsCard.IsSeriesVisibleProperty, nameof(TrendsViewModel.IsUniqueClonesSeriesVisible))
-				.Bind(StatisticsCard.TextProperty, nameof(TrendsViewModel.UniqueClonesStatisticsText))
-				.BindTapGesture(nameof(TrendsViewModel.UniqueClonesCardTappedCommand)));
-
-			static double convertElevation(bool isEnabled) => isEnabled ? 4 : 1;
-		}
-
-		enum Row { ViewsStats, ClonesStats, Chart }
-		enum Column { Total, Unique }
+		Children.Add(new StatisticsCard(SortingConstants.UniqueClones, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor), TrendsPageAutomationIds.UniqueClonesCard, TrendsPageAutomationIds.UniqueClonesStatisticsLabel, deviceInfo)
+			.Row(Row.ClonesStats).Column(Column.Unique)
+			.Bind(StatisticsCard.IsSeriesVisibleProperty,
+				nameof(TrendsViewModel.IsUniqueClonesSeriesVisible),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.Bind(StatisticsCard.TextProperty,
+				nameof(TrendsViewModel.UniqueClonesStatisticsText),
+				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
+			.BindTapGesture(nameof(TrendsViewModel.UniqueClonesCardTappedCommand),
+				commandSource: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 	}
+
+	enum Row { ViewsStats, ClonesStats, Chart }
+	enum Column { Total, Unique }
 }

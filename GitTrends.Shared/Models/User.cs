@@ -1,47 +1,24 @@
-﻿using System;
-using System.Text;
-using Newtonsoft.Json;
+﻿using System.Text;
+using System.Text.Json.Serialization;
 
-namespace GitTrends.Shared
+namespace  GitTrends.Common;
+
+public record User(
+	[property: JsonPropertyName("repositories")] RepositoryConnection RepositoryConnection,
+	[property: JsonPropertyName("name")] string Name,
+	[property: JsonPropertyName("company")] string Company,
+	[property: JsonPropertyName("createdAt")] DateTimeOffset AccountCreationDate,
+	[property: JsonPropertyName("login")] string Alias,
+	[property: JsonPropertyName("avatarUrl")] Uri AvatarUri)
 {
-	public record User
+
+	public override string ToString()
 	{
-		public User(RepositoryConnection repositories, string name, string company, DateTimeOffset createdAt, string login, Uri avatarUrl)
-		{
-			RepositoryConnection = repositories;
-			Name = name;
-			Company = company;
-			AccountCreationDate = createdAt;
-			Alias = login;
-			AvatarUri = avatarUrl;
-		}
+		var stringBuilder = new StringBuilder();
+		stringBuilder.AppendLine($"{nameof(Name)}: {Name}");
+		stringBuilder.AppendLine($"{nameof(Company)}: {Company}");
+		stringBuilder.AppendLine($"{nameof(AccountCreationDate)}: {AccountCreationDate}");
 
-		[JsonProperty("repositories")]
-		public RepositoryConnection RepositoryConnection { get; }
-
-		[JsonProperty("name")]
-		public string Name { get; }
-
-		[JsonProperty("company")]
-		public string Company { get; }
-
-		[JsonProperty("createdAt")]
-		public DateTimeOffset AccountCreationDate { get; }
-
-		[JsonProperty("login")]
-		public string Alias { get; }
-
-		[JsonProperty("avatarUrl")]
-		public Uri AvatarUri { get; }
-
-		public override string ToString()
-		{
-			var stringBuilder = new StringBuilder();
-			stringBuilder.AppendLine($"{nameof(Name)}: {Name}");
-			stringBuilder.AppendLine($"{nameof(Company)}: {Company}");
-			stringBuilder.AppendLine($"{nameof(AccountCreationDate)}: {AccountCreationDate}");
-
-			return stringBuilder.ToString();
-		}
+		return stringBuilder.ToString();
 	}
 }

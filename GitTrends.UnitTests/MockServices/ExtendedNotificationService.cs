@@ -1,30 +1,24 @@
-﻿using GitTrends.Mobile.Common;
-using GitTrends.Shared;
+﻿using CommunityToolkit.Maui.ApplicationModel;
+using GitTrends.Common;
+using GitTrends.Mobile.Common;
 using Shiny.Notifications;
-using Xamarin.Essentials.Interfaces;
 
-namespace GitTrends.UnitTests
+namespace GitTrends.UnitTests;
+
+public class ExtendedNotificationService(
+	IBadge badge,
+	IDeviceInfo deviceInfo,
+	IPreferences preferences,
+	IAnalyticsService analyticsService,
+	MobileSortingService sortingService,
+	DeepLinkingService deepLinkingService,
+	INotificationManager notificationManager,
+	INotificationPermissionStatus notificationPermissionStatus)
+	: NotificationService(badge, deviceInfo, preferences, analyticsService, sortingService, deepLinkingService, notificationManager, notificationPermissionStatus)
 {
-	public class ExtendedNotificationService : NotificationService
+	public override void UnRegister()
 	{
-		public ExtendedNotificationService(IDeviceInfo deviceInfo,
-											IPreferences preferences,
-											ISecureStorage secureStorage,
-											IAnalyticsService analyticsService,
-											MobileSortingService sortingService,
-											DeepLinkingService deepLinkingService,
-											INotificationManager notificationManager,
-											AzureFunctionsApiService azureFunctionsApiService,
-											IDeviceNotificationsService deviceNotificationsService) :
-										base(deviceInfo, preferences, secureStorage, analyticsService, sortingService, deepLinkingService, notificationManager, deviceNotificationsService, azureFunctionsApiService)
-		{
-
-		}
-
-		public override void UnRegister()
-		{
-			base.UnRegister();
-			HaveNotificationsBeenRequested = false;
-		}
+		base.UnRegister();
+		HaveNotificationsBeenRequested = false;
 	}
 }

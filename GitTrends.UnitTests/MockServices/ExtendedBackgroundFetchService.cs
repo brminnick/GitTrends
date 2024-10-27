@@ -1,42 +1,29 @@
-﻿using System;
-using GitTrends.Shared;
+﻿using GitTrends.Common;
 using Shiny.Jobs;
-using Xamarin.Essentials.Interfaces;
 
-namespace GitTrends.UnitTests
+namespace GitTrends.UnitTests;
+
+class ExtendedBackgroundFetchService(
+	IJobManager jobManager,
+	CleanDatabaseJob cleanDatabaseJob,
+	RetryRepositoryStarsJob retryRepositoryStarsJob,
+	RetryGetReferringSitesJob retryGetReferringSitesJob,
+	NotifyTrendingRepositoriesJob notifyTrendingRepositoriesJob,
+	RetryOrganizationsRepositoriesJob retryOrganizationsRepositoriesJob,
+	RetryRepositoriesViewsClonesStarsJob retryRepositoriesViewsClonesStarsJob)
+	: BackgroundFetchService(jobManager,
+		cleanDatabaseJob,
+		retryRepositoryStarsJob,
+		retryGetReferringSitesJob,
+		notifyTrendingRepositoriesJob,
+		retryOrganizationsRepositoriesJob,
+		retryRepositoriesViewsClonesStarsJob)
 {
-	class ExtendedBackgroundFetchService : BackgroundFetchService
+	readonly IJobManager _jobManager = jobManager;
+
+	public void CancelAllJobs()
 	{
-		readonly IJobManager _jobManager;
-
-		public ExtendedBackgroundFetchService(IAppInfo appInfo,
-												IJobManager jobManager,
-												IAnalyticsService analyticsService,
-												GitHubUserService gitHubUserService,
-												GitHubApiV3Service gitHubApiV3Service,
-												RepositoryDatabase repositoryDatabase,
-												NotificationService notificationService,
-												ReferringSitesDatabase referringSitesDatabase,
-												GitHubGraphQLApiService gitHubGraphQLApiService,
-												GitHubApiRepositoriesService gitHubApiRepositoriesService)
-			: base(appInfo,
-					  jobManager,
-					  analyticsService,
-					  gitHubUserService,
-					  gitHubApiV3Service,
-					  repositoryDatabase,
-					  notificationService,
-					  referringSitesDatabase,
-					  gitHubGraphQLApiService,
-					  gitHubApiRepositoriesService)
-		{
-			_jobManager = jobManager;
-		}
-
-		public void CancelAllJobs()
-		{
-			_jobManager.CancelAll();
-			QueuedJobsHash.Clear();
-		}
+		_jobManager.CancelAll();
+		QueuedForegroundJobsHash.Clear();
 	}
 }

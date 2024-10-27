@@ -1,53 +1,94 @@
-﻿using System;
-using GitTrends.Mobile.Common.Constants;
-using Xamarin.Forms;
+﻿using GitTrends.Mobile.Common.Constants;
 
-namespace GitTrends
+namespace GitTrends;
+
+public class AppStoreConstants(IDeviceInfo deviceInfo)
 {
-	public static class AppStoreConstants
+	const string _appStoreLink = "itms://apps.apple.com/app/gittrends-github-insights/id1500300399?action=write-review";
+	const string _googlePlayStoreLink = "market://details?id=com.minnick.gittrends";
+
+	const string _appleAppStoreUrl = "https://apps.apple.com/app/gittrends-github-insights/id1500300399?action=write-review";
+	const string _googlePlayStoreUrl = "https://play.google.com/store/apps/details?id=com.minnick.gittrends";
+
+	const string _placeHolderUrl = "https://gittrends.com";
+
+	readonly IDeviceInfo _deviceInfo = deviceInfo;
+
+	public string RatingRequest
 	{
-		const string _appStoreLink = "itms://apps.apple.com/app/gittrends-github-insights/id1500300399?action=write-review";
-		const string _googlePlayStoreLink = "market://details?id=com.minnick.gittrends";
-
-		const string _appleAppStoreUrl = "https://apps.apple.com/app/gittrends-github-insights/id1500300399?action=write-review";
-		const string _googlePlayStoreUrl = "https://play.google.com/store/apps/details?id=com.minnick.gittrends";
-
-		const string _placeHolderUrl = "https://gittrends.com";
-
-		public static string RatingRequest { get; } = Device.RuntimePlatform switch
+		get
 		{
-			Device.iOS => AppStoreRatingRequestConstants.iOS,
-			Device.Android => AppStoreRatingRequestConstants.Android,
-			Device.UWP => AppStoreRatingRequestConstants.Windows,
-			Device.GTK => throw new NotImplementedException(),
-			Device.macOS => throw new NotImplementedException(),
-			Device.WPF => throw new NotImplementedException(),
-			Device.Tizen => throw new NotImplementedException(),
-			_ => AppStoreRatingRequestConstants.Other
-		};
+			if (_deviceInfo.Platform == DevicePlatform.iOS)
+				return AppStoreRatingRequestConstants.iOS;
 
-		public static string AppLink { get; } = Device.RuntimePlatform switch
-		{
-			Device.iOS => _appStoreLink,
-			Device.Android => _googlePlayStoreLink,
-			Device.UWP => throw new NotImplementedException(),
-			Device.GTK => throw new NotImplementedException(),
-			Device.macOS => throw new NotImplementedException(),
-			Device.WPF => throw new NotImplementedException(),
-			Device.Tizen => throw new NotImplementedException(),
-			_ => _placeHolderUrl
-		};
+			if (_deviceInfo.Platform == DevicePlatform.Android)
+				return AppStoreRatingRequestConstants.Android;
 
-		public static string Url { get; } = Device.RuntimePlatform switch
+			if (_deviceInfo.Platform == DevicePlatform.WinUI)
+				throw new NotImplementedException();
+
+			if (_deviceInfo.Platform == DevicePlatform.watchOS)
+				throw new NotImplementedException();
+
+			if (_deviceInfo.Platform == DevicePlatform.tvOS)
+				throw new NotImplementedException();
+
+			if (_deviceInfo.Platform == DevicePlatform.Tizen)
+				throw new NotImplementedException();
+
+			return AppStoreRatingRequestConstants.Other;
+		}
+	}
+
+	public string AppLink
+	{
+		get
 		{
-			Device.iOS => _appleAppStoreUrl,
-			Device.Android => _googlePlayStoreUrl,
-			Device.UWP => throw new NotImplementedException(),
-			Device.GTK => throw new NotImplementedException(),
-			Device.macOS => throw new NotImplementedException(),
-			Device.WPF => throw new NotImplementedException(),
-			Device.Tizen => throw new NotImplementedException(),
-			_ => _placeHolderUrl
-		};
+			if (_deviceInfo.Platform == DevicePlatform.iOS)
+				return _appStoreLink;
+
+			if (_deviceInfo.Platform == DevicePlatform.Android)
+				return _googlePlayStoreLink;
+
+			if (_deviceInfo.Platform == DevicePlatform.WinUI)
+				throw new NotImplementedException();
+
+			if (_deviceInfo.Platform == DevicePlatform.watchOS)
+				throw new NotImplementedException();
+
+			if (_deviceInfo.Platform == DevicePlatform.tvOS)
+				throw new NotImplementedException();
+
+			if (_deviceInfo.Platform == DevicePlatform.Tizen)
+				throw new NotImplementedException();
+
+			return _placeHolderUrl;
+		}
+	}
+
+	public string Url
+	{
+		get
+		{
+			if (_deviceInfo.Platform == DevicePlatform.iOS)
+				return _appleAppStoreUrl;
+
+			if (_deviceInfo.Platform == DevicePlatform.Android)
+				return _googlePlayStoreUrl;
+
+			if (_deviceInfo.Platform == DevicePlatform.WinUI)
+				throw new NotImplementedException();
+
+			if (_deviceInfo.Platform == DevicePlatform.watchOS)
+				throw new NotImplementedException();
+
+			if (_deviceInfo.Platform == DevicePlatform.tvOS)
+				throw new NotImplementedException();
+
+			if (_deviceInfo.Platform == DevicePlatform.Tizen)
+				throw new NotImplementedException();
+
+			return _placeHolderUrl;
+		}
 	}
 }

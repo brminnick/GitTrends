@@ -1,73 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using GitTrends.Mobile.Common;
-using GitTrends.Shared;
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+using GitTrends.Common;
 
-namespace GitTrends
+namespace GitTrends;
+
+public class AnalyticsService(ISentryClient client) : IAnalyticsService
 {
-	public class AnalyticsService : IAnalyticsService
+	readonly ISentryClient _client = client;
+
+	public bool Configured => _client.IsEnabled;
+
+	public void Track(string trackIdentifier) => Trace.WriteLine(trackIdentifier);
+
+	public void Track(string trackIdentifier, string key, string value) => Track(trackIdentifier);
+
+	public void Track(string trackIdentifier, IDictionary<string, string>? table) => Track(trackIdentifier);
+
+	public void Report(Exception exception,
+							  string key,
+							  string value,
+							  [CallerMemberName] string callerMemberName = "",
+							  [CallerLineNumber] int lineNumber = 0,
+							  [CallerFilePath] string filePath = "")
 	{
-		public bool Configured => AppCenter.Configured;
+		Report(exception, new Dictionary<string, string> { { key, value } }, callerMemberName, lineNumber, filePath);
+	}
 
-		public void Start(string apiKey) =>
-			AppCenter.Start(apiKey, typeof(Analytics), typeof(Crashes));
+	public void Report(Exception exception,
+							  IDictionary<string, string>? properties = null,
+							  [CallerMemberName] string callerMemberName = "",
+							  [CallerLineNumber] int lineNumber = 0,
+							  [CallerFilePath] string filePath = "")
+	{
+		PrintException(exception, callerMemberName, lineNumber, filePath, properties);
 
-		public void Track(string trackIdentifier, IDictionary<string, string>? table = null) =>
-			Analytics.TrackEvent(trackIdentifier, table);
+		_client.CaptureException(exception);
+	}
 
-		public void Track(string trackIdentifier, string key, string value) =>
-			Analytics.TrackEvent(trackIdentifier, new Dictionary<string, string> { { key, value } });
+	[Conditional("DEBUG")]
+	static void PrintException(Exception exception, string callerMemberName, int lineNumber, string filePath, IDictionary<string, string>? properties = null)
+	{
+		var fileName = Path.GetFileName(filePath);
 
-		public ITimedEvent TrackTime(string trackIdentifier, IDictionary<string, string>? table = null) =>
-			new TimedEvent(this, trackIdentifier, table);
+		Trace.WriteLine(exception.GetType());
+		Trace.WriteLine($"Error: {exception.Message}");
+		Trace.WriteLine($"Line Number: {lineNumber}");
+		Trace.WriteLine($"Caller Name: {callerMemberName}");
+		Trace.WriteLine($"File Name: {fileName}");
 
-		public ITimedEvent TrackTime(string trackIdentifier, string key, string value) =>
-			TrackTime(trackIdentifier, new Dictionary<string, string> { { key, value } });
-
-		public void Report(Exception exception,
-								  string key,
-								  string value,
-								  [CallerMemberName] string callerMemberName = "",
-								  [CallerLineNumber] int lineNumber = 0,
-								  [CallerFilePath] string filePath = "")
+		if (properties is not null)
 		{
-			Report(exception, new Dictionary<string, string> { { key, value } }, callerMemberName, lineNumber, filePath);
+			foreach (var property in properties)
+				Trace.WriteLine($"{property.Key}: {property.Value}");
 		}
 
-		public void Report(Exception exception,
-								  IDictionary<string, string>? properties = null,
-								  [CallerMemberName] string callerMemberName = "",
-								  [CallerLineNumber] int lineNumber = 0,
-								  [CallerFilePath] string filePath = "")
-		{
-			PrintException(exception, callerMemberName, lineNumber, filePath, properties);
-
-			Crashes.TrackError(exception, properties);
-		}
-
-		[Conditional("DEBUG")]
-		static void PrintException(Exception exception, string callerMemberName, int lineNumber, string filePath, IDictionary<string, string>? properties = null)
-		{
-			var fileName = System.IO.Path.GetFileName(filePath);
-
-			Debug.WriteLine(exception.GetType());
-			Debug.WriteLine($"Error: {exception.Message}");
-			Debug.WriteLine($"Line Number: {lineNumber}");
-			Debug.WriteLine($"Caller Name: {callerMemberName}");
-			Debug.WriteLine($"File Name: {fileName}");
-
-			if (properties != null)
-			{
-				foreach (var property in properties)
-					Debug.WriteLine($"{property.Key}: {property.Value}");
-			}
-
-			Debug.WriteLine(exception);
-		}
+		Trace.WriteLine(exception);
 	}
 }

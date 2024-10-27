@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends.UITests
 {
@@ -43,8 +43,8 @@ namespace GitTrends.UITests
 
 		public bool? IsFavorite { get; init; }
 
-		public IReadOnlyList<DailyViewsModel>? DailyViewsList { get; init; } = Array.Empty<DailyViewsModel>();
+		public IReadOnlyList<DailyViewsModel>? DailyViewsList { get; init; } = [];
 
-		public IReadOnlyList<DailyClonesModel>? DailyClonesList { get; init; } = Array.Empty<DailyClonesModel>();
+		public IReadOnlyList<DailyClonesModel>? DailyClonesList { get; init; } = [];
 	}
 }

@@ -1,19 +1,9 @@
-﻿using System;
-namespace GitTrends.Shared
-{
-	public class RepositoryFile
-	{
-		public RepositoryFile(string name, string sha, string path, Uri? download_url)
-		{
-			FileName = name;
-			Sha = sha;
-			Path = path;
-			DownloadUrl = download_url;
-		}
+﻿namespace  GitTrends.Common;
 
-		public string FileName { get; }
-		public string Sha { get; }
-		public string Path { get; }
-		public Uri? DownloadUrl { get; }
-	}
+public class RepositoryFile(string name, string sha, string path, Uri? download_url)
+{
+	public string FileName { get; } = name;
+	public string Sha { get; } = sha;
+	public string Path { get; } = path;
+	public Uri? DownloadUrl { get; } = download_url;
 }

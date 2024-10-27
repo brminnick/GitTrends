@@ -1,8 +1,6 @@
-﻿using System;
-namespace GitTrends
+﻿namespace GitTrends;
+
+public record DailyStarsModel(double TotalStars, DateTimeOffset Day)
 {
-	public record DailyStarsModel(double TotalStars, DateTimeOffset Day)
-	{
-		public DateTime LocalDay => Day.LocalDateTime;
-	}
+	public DateTime LocalDay => Day.LocalDateTime;
 }

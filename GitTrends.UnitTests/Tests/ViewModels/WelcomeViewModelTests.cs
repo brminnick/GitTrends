@@ -1,90 +1,89 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using GitTrends.Shared;
-using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
-using Xamarin.Essentials.Interfaces;
+﻿using GitTrends.Common;
 
-namespace GitTrends.UnitTests
+namespace GitTrends.UnitTests;
+
+class WelcomeViewModelTests : BaseTest
 {
-	class WelcomeViewModelTests : BaseTest
+	[Test]
+	public async Task ConnectToGitHubButtonCommandTest()
 	{
-		[Test]
-		public async Task ConnectToGitHubButtonCommandTest()
+		//Arrange
+		string openedUrl;
+		bool isAuthenticating_BeforeCommand, isAuthenticating_DuringCommand, isAuthenticating_AfterCommand;
+		bool isDemoButtonVisible_BeforeCommand, isDemoButtonVisible_DuringCommand, isDemoButtonVisible_AfterCommand;
+
+		bool didOpenAsyncFire = false;
+		var openAsyncExecutedTCS = new TaskCompletionSource<Uri>();
+
+		MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
+
+		var welcomeViewModel = ServiceCollection.ServiceProvider.GetRequiredService<WelcomeViewModel>();
+
+		//Act
+		isAuthenticating_BeforeCommand = welcomeViewModel.IsAuthenticating;
+		isDemoButtonVisible_BeforeCommand = welcomeViewModel.IsDemoButtonVisible;
+
+		var connectToGitHubButtonCommandTask = welcomeViewModel.HandleConnectToGitHubButtonCommand.ExecuteAsync((CancellationToken.None, null));
+		isAuthenticating_DuringCommand = welcomeViewModel.IsAuthenticating;
+		isDemoButtonVisible_DuringCommand = welcomeViewModel.IsDemoButtonVisible;
+
+		await connectToGitHubButtonCommandTask.ConfigureAwait(false);
+		var openedUri = await openAsyncExecutedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
+		openedUrl = openedUri.AbsoluteUri;
+
+		isAuthenticating_AfterCommand = welcomeViewModel.IsAuthenticating;
+		isDemoButtonVisible_AfterCommand = welcomeViewModel.IsDemoButtonVisible;
+
+		//Assert
+		Assert.Multiple(() =>
 		{
-			//Arrange
-			string openedUrl;
-			bool isAuthenticating_BeforeCommand, isAuthenticating_DuringCommand, isAuthenticating_AfterCommand;
-			bool isDemoButtonVisible_BeforeCommand, isDemoButtonVisible_DuringCommand, isDemoButtonVisible_AfterCommand;
+			Assert.That(didOpenAsyncFire);
 
-			bool didOpenAsyncFire = false;
-			var openAsyncExecutedTCS = new TaskCompletionSource<Uri>();
+			Assert.That(isAuthenticating_BeforeCommand, Is.False);
+			Assert.That(isDemoButtonVisible_BeforeCommand);
 
-			MockBrowser.OpenAsyncExecuted += HandleOpenAsyncExecuted;
+			Assert.That(isAuthenticating_DuringCommand);
+			Assert.That(isDemoButtonVisible_DuringCommand, Is.False);
 
-			var welcomeViewModel = ServiceCollection.ServiceProvider.GetRequiredService<WelcomeViewModel>();
+			Assert.That(isAuthenticating_AfterCommand, Is.False);
+			Assert.That(isDemoButtonVisible_AfterCommand);
 
-			//Act
-			isAuthenticating_BeforeCommand = welcomeViewModel.IsAuthenticating;
-			isDemoButtonVisible_BeforeCommand = welcomeViewModel.IsDemoButtonVisible;
+			Assert.That(openedUrl, Does.Contain($"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id="));
+			Assert.That(openedUrl, Does.Contain($"&scope={GitHubConstants.OAuthScope}&state="));
+		});
 
-			var connectToGitHubButtonCommandTask = welcomeViewModel.HandleConnectToGitHubButtonCommand.ExecuteAsync((CancellationToken.None, null));
-			isAuthenticating_DuringCommand = welcomeViewModel.IsAuthenticating;
-			isDemoButtonVisible_DuringCommand = welcomeViewModel.IsDemoButtonVisible;
-
-			await connectToGitHubButtonCommandTask.ConfigureAwait(false);
-			var openedUri = await openAsyncExecutedTCS.Task.ConfigureAwait(false);
-			openedUrl = openedUri.AbsoluteUri;
-
-			isAuthenticating_AfterCommand = welcomeViewModel.IsAuthenticating;
-			isDemoButtonVisible_AfterCommand = welcomeViewModel.IsDemoButtonVisible;
-
-			//Assert
-			Assert.IsTrue(didOpenAsyncFire);
-
-			Assert.IsFalse(isAuthenticating_BeforeCommand);
-			Assert.True(isDemoButtonVisible_BeforeCommand);
-
-			Assert.IsTrue(isAuthenticating_DuringCommand);
-			Assert.False(isDemoButtonVisible_DuringCommand);
-
-			Assert.IsFalse(isAuthenticating_AfterCommand);
-			Assert.True(isDemoButtonVisible_AfterCommand);
-
-			Assert.IsTrue(openedUrl.Contains($"{GitHubConstants.GitHubBaseUrl}/login/oauth/authorize?client_id="));
-			Assert.IsTrue(openedUrl.Contains($"&scope={GitHubConstants.OAuthScope}&state="));
-
-			void HandleOpenAsyncExecuted(object? sender, Uri e)
-			{
-				MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
-				didOpenAsyncFire = true;
-
-				openAsyncExecutedTCS.SetResult(e);
-			}
-		}
-
-		[Test]
-		public async Task DemoButtonCommandTest()
+		void HandleOpenAsyncExecuted(object? sender, Uri e)
 		{
-			//Arrange
-			bool isDemoButtonVisible_Initial, isDemoButtonVisible_Final;
+			MockBrowser.OpenAsyncExecuted -= HandleOpenAsyncExecuted;
+			didOpenAsyncFire = true;
 
-			var welcomeViewModel = ServiceCollection.ServiceProvider.GetRequiredService<WelcomeViewModel>();
-			var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
-
-			//Act
-			isDemoButtonVisible_Initial = welcomeViewModel.IsDemoButtonVisible;
-
-			await welcomeViewModel.HandleDemoButtonTappedCommand.ExecuteAsync(null).ConfigureAwait(false);
-
-			isDemoButtonVisible_Final = welcomeViewModel.IsDemoButtonVisible;
-
-			//Assert
-			Assert.IsTrue(gitHubUserService.IsDemoUser);
-
-			Assert.IsTrue(isDemoButtonVisible_Initial);
-			Assert.IsFalse(isDemoButtonVisible_Final);
+			openAsyncExecutedTCS.SetResult(e);
 		}
+	}
+
+	[Test]
+	public async Task DemoButtonCommandTest()
+	{
+		//Arrange
+		bool isDemoButtonVisible_Initial, isDemoButtonVisible_Final;
+
+		var welcomeViewModel = ServiceCollection.ServiceProvider.GetRequiredService<WelcomeViewModel>();
+		var gitHubUserService = ServiceCollection.ServiceProvider.GetRequiredService<GitHubUserService>();
+
+		//Act
+		isDemoButtonVisible_Initial = welcomeViewModel.IsDemoButtonVisible;
+
+		await welcomeViewModel.HandleDemoButtonTappedCommand.ExecuteAsync(null).ConfigureAwait(false);
+
+		isDemoButtonVisible_Final = welcomeViewModel.IsDemoButtonVisible;
+
+		//Assert
+		Assert.Multiple(() =>
+		{
+			Assert.That(gitHubUserService.IsDemoUser);
+
+			Assert.That(isDemoButtonVisible_Initial);
+			Assert.That(isDemoButtonVisible_Final, Is.False);
+		});
 	}
 }

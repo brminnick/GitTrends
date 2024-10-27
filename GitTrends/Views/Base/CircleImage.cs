@@ -1,65 +1,83 @@
-﻿using FFImageLoading.Forms;
-using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Forms;
-using Xamarin.Forms.PancakeView;
+﻿using System.ComponentModel;
+using CommunityToolkit.Maui.Markup;
 
-namespace GitTrends
+namespace GitTrends;
+
+public class CircleImage : CircleBorder
 {
-	public class CircleImage : CirclePancakeView
+	public static readonly BindableProperty AspectProperty = BindableProperty.Create(nameof(Aspect), typeof(Aspect), typeof(CircleImage), Aspect.AspectFit);
+	public static readonly BindableProperty ImageSourceProperty = BindableProperty.Create(nameof(ImageSource), typeof(ImageSource), typeof(CircleImage), null);
+	public static readonly BindableProperty ErrorPlaceholderProperty = BindableProperty.Create(nameof(ErrorPlaceholder), typeof(ImageSource), typeof(CircleImage), null);
+	public static readonly BindableProperty LoadingPlaceholderProperty = BindableProperty.Create(nameof(LoadingPlaceholder), typeof(ImageSource), typeof(CircleImage), null);
+
+	public CircleImage(in ImageSource imageSource, in ImageSource errorPlaceholder, in ImageSource loadingPlaceholder) : this()
 	{
-		public static readonly BindableProperty AspectProperty = BindableProperty.Create(nameof(Aspect), typeof(Aspect), typeof(CircleImage), Aspect.AspectFit);
-		public static readonly BindableProperty ImageSourceProperty = BindableProperty.Create(nameof(ImageSource), typeof(ImageSource), typeof(CircleImage), null);
-		public static readonly BindableProperty BorderColorProperty = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(CircleImage), default(Color));
-		public static readonly BindableProperty ErrorPlaceholderProperty = BindableProperty.Create(nameof(ErrorPlaceholder), typeof(ImageSource), typeof(CircleImage), null);
-		public static readonly BindableProperty LoadingPlaceholderProperty = BindableProperty.Create(nameof(LoadingPlaceholder), typeof(ImageSource), typeof(CircleImage), null);
+		ImageSource = imageSource;
+		ErrorPlaceholder = errorPlaceholder;
+		LoadingPlaceholder = loadingPlaceholder;
+	}
 
-		public CircleImage(in ImageSource imageSource, in ImageSource errorPlaceholder, in ImageSource loadingPlaceholder) : this()
+	public CircleImage()
+	{
+		Content = new Image()
+			.Bind(Image.AspectProperty, nameof(Aspect), source: this)
+			.Bind(Image.SourceProperty, nameof(ImageSource), source: this)
+			.Invoke(image => image.PropertyChanged += HandleCircleImagePropertyChanged);
+	}
+
+	public Aspect Aspect
+	{
+		get => (Aspect)GetValue(AspectProperty);
+		set => SetValue(AspectProperty, value);
+	}
+
+	public ImageSource? ImageSource
+	{
+		get => (ImageSource?)GetValue(ImageSourceProperty);
+		set => SetValue(ImageSourceProperty, value);
+	}
+
+	public ImageSource? ErrorPlaceholder
+	{
+		get => (ImageSource?)GetValue(ErrorPlaceholderProperty);
+		set => SetValue(ErrorPlaceholderProperty, value);
+	}
+
+	public ImageSource? LoadingPlaceholder
+	{
+		get => (ImageSource?)GetValue(LoadingPlaceholderProperty);
+		set => SetValue(LoadingPlaceholderProperty, value);
+	}
+
+	async void HandleCircleImagePropertyChanged(object? sender, PropertyChangedEventArgs e)
+	{
+		ArgumentNullException.ThrowIfNull(sender);
+
+		var image = (Image)sender;
+
+		if (e.PropertyName != Image.IsLoadingProperty.PropertyName || image.Source == ImageSource)
+			return;
+
+		if (image.IsLoading)
 		{
-			ImageSource = imageSource;
-			ErrorPlaceholder = errorPlaceholder;
-			LoadingPlaceholder = loadingPlaceholder;
+			image.Source = LoadingPlaceholder;
 		}
-
-		public CircleImage()
+		else
 		{
-			Border ??= new Border();
-			this.Bind(Frame.BorderColorProperty, nameof(BorderColor), source: this);
+			if (image.Handler?.MauiContext is null)
+			{
+				throw new InvalidOperationException("Handler cannot be null");
+			}
 
-			Content = new CachedImage()
-						.Bind(CachedImage.AspectProperty, nameof(Aspect), source: this)
-						.Bind(CachedImage.SourceProperty, nameof(ImageSource), source: this)
-						.Bind(CachedImage.ErrorPlaceholderProperty, nameof(ErrorPlaceholder), source: this)
-						.Bind(CachedImage.LoadingPlaceholderProperty, nameof(LoadingPlaceholder), source: this);
-		}
-
-		public Color BorderColor
-		{
-			get => (Color)GetValue(BorderColorProperty);
-			set => SetValue(BorderColorProperty, value);
-		}
-
-		public Aspect Aspect
-		{
-			get => (Aspect)GetValue(AspectProperty);
-			set => SetValue(AspectProperty, value);
-		}
-
-		public ImageSource? ImageSource
-		{
-			get => (ImageSource?)GetValue(ImageSourceProperty);
-			set => SetValue(ImageSourceProperty, value);
-		}
-
-		public ImageSource? ErrorPlaceholder
-		{
-			get => (ImageSource?)GetValue(ErrorPlaceholderProperty);
-			set => SetValue(ErrorPlaceholderProperty, value);
-		}
-
-		public ImageSource? LoadingPlaceholder
-		{
-			get => (ImageSource?)GetValue(LoadingPlaceholderProperty);
-			set => SetValue(LoadingPlaceholderProperty, value);
+			try
+			{
+				await image.Source.GetPlatformImageAsync(image.Handler.MauiContext);
+				image.Source = ImageSource;
+			}
+			catch
+			{
+				image.Source = ErrorPlaceholder;
+			}
 		}
 	}
 }

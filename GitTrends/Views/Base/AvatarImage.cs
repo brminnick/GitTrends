@@ -1,27 +1,22 @@
-﻿using Xamarin.CommunityToolkit.Markup;
-using Xamarin.Forms;
-using Xamarin.Forms.PancakeView;
+﻿using CommunityToolkit.Maui.Markup;
+using GitTrends.Resources;
 
-namespace GitTrends
+namespace GitTrends;
+
+class AvatarImage : CircleImage
 {
-	class AvatarImage : CircleImage
+	public AvatarImage(in ImageSource imageSource, in double diameter) : this(diameter)
 	{
-		public AvatarImage(in ImageSource imageSource, in double diameter) : this(diameter)
-		{
-			ImageSource = imageSource;
-		}
+		ImageSource = imageSource;
+	}
 
-		public AvatarImage(in double diameter)
-		{
-			this.CenterExpand();
+	public AvatarImage(in double diameter)
+	{
+		this.Center();
 
-			WidthRequest = HeightRequest = diameter;
+		WidthRequest = HeightRequest = diameter;
+		GetBorderColor = () => AppResources.GetResource<Color>(nameof(BaseTheme.SeparatorColor));
 
-			Border = new Border
-			{
-				Thickness = 1,
-				Color = Color.Black
-			};
-		}
+		StrokeThickness = 1;
 	}
 }

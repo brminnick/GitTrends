@@ -1,4 +1,9 @@
-﻿namespace GitTrends.Shared
+﻿namespace  GitTrends.Common;
+
+public interface IBaseRepositoryModel
 {
-	public abstract record BaseRepositoryModel(long TotalCount, long TotalUniqueCount, string RepositoryName, string RepositoryOwner);
+	long TotalCount { get; }
+	long TotalUniqueCount { get; }
+	string RepositoryName { get; }
+	string RepositoryOwner { get; }
 }

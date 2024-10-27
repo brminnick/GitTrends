@@ -1,25 +1,17 @@
-﻿using System.Threading.Tasks;
-using GitTrends.Shared;
-using Xamarin.Essentials.Interfaces;
+﻿using GitTrends.Common;
 
-namespace GitTrends
+namespace GitTrends;
+
+public class WelcomeViewModel(IDispatcher dispatcher,
+								IAnalyticsService analyticsService,
+								GitHubUserService gitHubUserService,
+								DeepLinkingService deepLinkingService,
+								GitHubAuthenticationService gitHubAuthenticationService) : GitHubAuthenticationViewModel(dispatcher, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
 {
-	public class WelcomeViewModel : GitHubAuthenticationViewModel
+	protected override async Task HandleDemoButtonTapped(string? buttonText, CancellationToken token)
 	{
-		public WelcomeViewModel(IMainThread mainThread,
-									IAnalyticsService analyticsService,
-									GitHubUserService gitHubUserService,
-									DeepLinkingService deepLinkingService,
-									GitHubAuthenticationService gitHubAuthenticationService)
-			: base(mainThread, analyticsService, gitHubUserService, deepLinkingService, gitHubAuthenticationService)
-		{
-		}
+		await base.HandleDemoButtonTapped(buttonText, token).ConfigureAwait(false);
 
-		protected override async Task HandleDemoButtonTapped(string? buttonText)
-		{
-			await base.HandleDemoButtonTapped(buttonText).ConfigureAwait(false);
-
-			await GitHubAuthenticationService.ActivateDemoUser().ConfigureAwait(false);
-		}
+		await GitHubAuthenticationService.ActivateDemoUser(token).ConfigureAwait(false);
 	}
 }

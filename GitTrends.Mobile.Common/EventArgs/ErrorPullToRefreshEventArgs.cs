@@ -1,11 +1,7 @@
 ﻿using GitTrends.Mobile.Common.Constants;
 
-namespace GitTrends.Mobile.Common
+namespace GitTrends.Mobile.Common;
+
+public class ErrorPullToRefreshEventArgs(string message) : PullToRefreshFailedEventArgs(PullToRefreshFailedConstants.UnableToConnectToGitHub, message)
 {
-	public class ErrorPullToRefreshEventArgs : PullToRefreshFailedEventArgs
-	{
-		public ErrorPullToRefreshEventArgs(string message) : base(PullToRefreshFailedConstants.UnableToConnectToGitHub, message)
-		{
-		}
-	}
 }

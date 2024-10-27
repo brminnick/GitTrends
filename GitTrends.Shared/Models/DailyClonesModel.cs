@@ -1,19 +1,19 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
-namespace GitTrends.Shared
+namespace  GitTrends.Common;
+
+public record DailyClonesModel(
+	[property: JsonPropertyName("timestamp")] DateTimeOffset Day,
+	[property: JsonPropertyName("count")] long TotalClones,
+	[property: JsonPropertyName("uniques")] long TotalUniqueClones)
+	: IBaseDailyModel, IDailyClonesModel
 {
-	public record DailyClonesModel : BaseDailyModel, IDailyClonesModel
-	{
-		public DailyClonesModel(DateTimeOffset timestamp, long count, long uniques) : base(timestamp, count, uniques)
-		{
+	[JsonIgnore]
+	public DateTime LocalDay => Day.LocalDateTime;
+	
+	[JsonIgnore]
+	long IBaseDailyModel.TotalCount => TotalClones;
 
-		}
-
-		[JsonIgnore]
-		public long TotalClones => TotalCount;
-
-		[JsonIgnore]
-		public long TotalUniqueClones => TotalUniqueCount;
-	}
+	[JsonIgnore]
+	long IBaseDailyModel.TotalUniqueCount => TotalUniqueClones;
 }

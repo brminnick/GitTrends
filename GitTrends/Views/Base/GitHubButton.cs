@@ -1,52 +1,50 @@
 ﻿using System.Windows.Input;
-using Xamarin.Forms;
 
-namespace GitTrends
+namespace GitTrends;
+
+class GitHubButton : SvgTextLabel
 {
-	class GitHubButton : SvgTextLabel
+	public static readonly BindableProperty CommandProperty =
+		BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(GitHubButton), null, propertyChanged: OnCommandPropertyChanged);
+
+	public static readonly BindableProperty CommandParameterProperty =
+		BindableProperty.Create(nameof(CommandParameter), typeof(object), typeof(GitHubButton), null, propertyChanged: OnCommandParameterPropertyChanged);
+
+	public GitHubButton(in IDeviceInfo deviceInfo, in string automationId, in string buttonText)
+		: base(deviceInfo, "github.svg", buttonText, automationId, 18, FontFamilyConstants.RobotoRegular, 16)
 	{
-		public static readonly BindableProperty CommandProperty =
-			BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(GitHubButton), null, propertyChanged: OnCommandPropertyChanged);
+		BackgroundColor = Color.FromArgb("231F20");
 
-		public static readonly BindableProperty CommandParameterProperty =
-			BindableProperty.Create(nameof(CommandParameter), typeof(object), typeof(GitHubButton), null, propertyChanged: OnCommandParameterPropertyChanged);
+		GestureRecognizers.Add(TapGestureRecognizer);
+	}
 
-		public GitHubButton(in string automationId, in string buttonText)
-			: base("github.svg", buttonText, automationId, 18, FontFamilyConstants.RobotoRegular, 16)
-		{
-			BackgroundColor = Color.FromHex("231F20");
+	public TapGestureRecognizer TapGestureRecognizer { get; } = new();
 
-			GestureRecognizers.Add(TapGestureRecognizer);
-		}
+	public ICommand? Command
+	{
+		get => (ICommand?)GetValue(CommandProperty);
+		set => SetValue(CommandProperty, value);
+	}
 
-		public TapGestureRecognizer TapGestureRecognizer { get; } = new();
+	public object? CommandParameter
+	{
+		get => GetValue(CommandParameterProperty);
+		set => SetValue(CommandParameterProperty, value);
+	}
 
-		public ICommand? Command
-		{
-			get => (ICommand?)GetValue(CommandProperty);
-			set => SetValue(CommandProperty, value);
-		}
+	static void OnCommandPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+	{
+		var gitHubButton = (GitHubButton)bindable;
+		var command = (ICommand)newValue;
 
-		public object? CommandParameter
-		{
-			get => GetValue(CommandParameterProperty);
-			set => SetValue(CommandParameterProperty, value);
-		}
+		gitHubButton.TapGestureRecognizer.Command = command;
+	}
 
-		static void OnCommandPropertyChanged(BindableObject bindable, object oldValue, object newValue)
-		{
-			var gitHubButton = (GitHubButton)bindable;
-			var command = (ICommand)newValue;
+	static void OnCommandParameterPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+	{
+		var gitHubButton = (GitHubButton)bindable;
+		var commandParameter = (object?)newValue;
 
-			gitHubButton.TapGestureRecognizer.Command = command;
-		}
-
-		static void OnCommandParameterPropertyChanged(BindableObject bindable, object oldValue, object newValue)
-		{
-			var gitHubButton = (GitHubButton)bindable;
-			var commandParameter = (object?)newValue;
-
-			gitHubButton.TapGestureRecognizer.CommandParameter = commandParameter;
-		}
+		gitHubButton.TapGestureRecognizer.CommandParameter = commandParameter;
 	}
 }

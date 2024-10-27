@@ -1,18 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+namespace  GitTrends.Common;
 
-namespace GitTrends.Shared
+public record RepositoryViewsModel : RepositoryViewsResponseModel, IBaseRepositoryModel
 {
-	public record RepositoryViewsResponseModel : BaseRepositoryModel
+	public RepositoryViewsModel(long totalCount, long totalUniqueCount, IEnumerable<DailyViewsModel> dailyViewsList, string repositoryName, string repositoryOwner)
+		: base(totalCount, totalUniqueCount, [.. dailyViewsList])
 	{
-		public RepositoryViewsResponseModel(long count, long uniques, IEnumerable<DailyViewsModel> views, string repositoryName = "", string repositoryOwner = "")
-			: base(count, uniques, repositoryName, repositoryOwner)
-		{
-			DailyViewsList = views.ToList();
-		}
-
-		[JsonProperty("views")]
-		public List<DailyViewsModel> DailyViewsList { get; }
+		(RepositoryName, RepositoryOwner) = (repositoryName, repositoryOwner);
 	}
+
+	public string RepositoryName { get; }
+	public string RepositoryOwner { get; }
 }

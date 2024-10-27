@@ -1,5 +1,5 @@
 ﻿using System;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends.UITests
 {

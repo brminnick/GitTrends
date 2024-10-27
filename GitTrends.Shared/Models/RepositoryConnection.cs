@@ -1,40 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
-namespace GitTrends.Shared
+namespace  GitTrends.Common;
+
+public record RepositoryConnection(
+	[property: JsonPropertyName("nodes")] IReadOnlyList<RepositoryConnectionNode?> RepositoryList,
+	[property: JsonPropertyName("pageInfo")] PageInfo PageInfo
+);
+
+public record RepositoryConnectionNode(bool IsArchived, string ViewerPermission, string Name, string Description, long ForkCount, Uri Url, RepositoryOwner Owner, bool IsFork, IssuesConnection Issues, Watchers Watchers, StarGazersConnection Stargazers)
 {
-	public record RepositoryConnection
-	{
-		public RepositoryConnection(IEnumerable<RepositoryConnectionNode>? nodes, PageInfo pageInfo)
-		{
-			RepositoryList = (nodes ?? Array.Empty<RepositoryConnectionNode>()).ToList();
-			PageInfo = pageInfo;
-		}
+	public DateTimeOffset DataDownloadedAt { get; } = DateTimeOffset.UtcNow;
 
-		[JsonProperty("nodes")]
-		public IReadOnlyList<RepositoryConnectionNode?> RepositoryList { get; }
-
-		[JsonProperty("pageInfo")]
-		public PageInfo PageInfo { get; }
-	}
-
-	public record RepositoryConnectionNode(bool IsArchived, string ViewerPermission, string Name, string Description, long ForkCount, Uri Url, RepositoryOwner Owner, bool IsFork, IssuesConnection Issues, Watchers Watchers, StarGazersConnection Stargazers)
-	{
-		public DateTimeOffset DataDownloadedAt { get; } = DateTimeOffset.UtcNow;
-
-		public RepositoryPermission Permission
-		{
-			get
-			{
-				if (Enum.TryParse<RepositoryPermission>(ViewerPermission, out var permission))
-					return permission;
-
-				return RepositoryPermission.UNKNOWN;
-			}
-		}
-	}
-
-	public record RepositoryOwner(string Login, string AvatarUrl);
+	public RepositoryPermission Permission { get; } = Enum.TryParse<RepositoryPermission>(ViewerPermission, out var permission) ? permission : RepositoryPermission.UNKNOWN;
 }
+
+public record RepositoryOwner(string Login, string AvatarUrl);

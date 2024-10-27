@@ -40,6 +40,9 @@ indent_size = 2
 # Organize usings
 dotnet_sort_system_directives_first = true
 
+# IDE0160: Use file scoped namespace
+csharp_style_namespace_declarations = file_scoped:error
+
 # CS4014: Because this call is not awaited, execution of the current method continues before the call is completed
 dotnet_diagnostic.CS4014.severity = error
 
@@ -70,7 +73,11 @@ csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
 csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
 csharp_style_inlined_variable_declaration = true:suggestion
 csharp_style_throw_expression = true:suggestion
-csharp_style_conditional_delegate_call = true:suggestions
+csharp_style_conditional_delegate_call = true:suggestion
+
+# Collection Expressions
+dotnet_style_prefer_collection_expression = when_types_loosely_match:suggestion
+dotnet_diagnostic.IDE0303.severity = suggestion
 
 # Naming rules
 
@@ -78,7 +85,7 @@ dotnet_diagnostic.IDE1006.severity = error
 
 ## Public Fields are kept Pascal Case
 dotnet_naming_symbols.public_symbols.applicable_kinds           = field
-dotnet_naming_symbols.public_symbols.applicable_accessibilities = public
+dotnet_naming_symbols.public_symbols.applicable_accessibilities = public, internal
 
 dotnet_naming_style.first_word_upper_case_style.capitalization = first_word_upper
 
@@ -103,7 +110,7 @@ dotnet_naming_rule.static_fields_should_be_camel_case.style = static_field_style
 
 dotnet_naming_symbols.static_fields.applicable_kinds = field
 dotnet_naming_symbols.static_fields.required_modifiers = static
-dotnet_naming_symbols.static_fields.applicable_accessibilities = internal, private, protected, protected_internal, private_protected
+dotnet_naming_symbols.static_fields.applicable_accessibilities = private, protected, protected_internal, private_protected
 
 dotnet_naming_style.static_field_style.capitalization = camel_case
 dotnet_naming_style.static_field_style.required_prefix = _
@@ -113,13 +120,16 @@ csharp_prefer_static_local_function = true:suggestion
 csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:error
 
 # CA1822: Member does not access instance data and can be marked as static
-dotnet_diagnostic.CA1822.severity = error
+dotnet_diagnostic.CA1822.severity = suggestion
 
 # CA1050: Declare types in namespaces
 dotnet_diagnostic.CA1050.severity = error
 
 # CA2016: Forward the 'cancellationToken' parameter methods that take one
 dotnet_diagnostic.CA2016.severity = error
+
+# CA1068: CancellationToken parameters must come last
+dotnet_diagnostic.CA1068.severity = error
 
 # CA2208: Method passes parameter as the paramName argument to a ArgumentNullException constructor. Replace this argument with one of the method's parameter names. Note that the provided parameter name should have the exact casing as declared on the method.
 dotnet_diagnostic.CA2208.severity = error

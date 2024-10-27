@@ -1,75 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 using AsyncAwaitBestPractices;
-using GitTrends.Shared;
-using Newtonsoft.Json;
-using Xamarin.Essentials.Interfaces;
+using GitTrends.Common;
 
-namespace GitTrends
-{
-	public class LibrariesService
-	{
-		readonly IPreferences _preferences;
-		readonly IAnalyticsService _analyticsService;
-		readonly ImageCachingService _imageCachingService;
-		readonly AzureFunctionsApiService _azureFunctionsApiService;
+namespace GitTrends;
 
-		public LibrariesService(IPreferences preferences,
+public class LibrariesService(IPreferences preferences,
 								IAnalyticsService analyticsService,
-								ImageCachingService imageCachingService,
 								AzureFunctionsApiService azureFunctionsApiService)
+{
+	readonly IPreferences _preferences = preferences;
+	readonly IAnalyticsService _analyticsService = analyticsService;
+	readonly AzureFunctionsApiService _azureFunctionsApiService = azureFunctionsApiService;
+
+	public IReadOnlyList<NuGetPackageModel> InstalledLibraries
+	{
+		get
 		{
-			_preferences = preferences;
-			_analyticsService = analyticsService;
-			_imageCachingService = imageCachingService;
-			_azureFunctionsApiService = azureFunctionsApiService;
+			var serializedInstalledNuGetPackages = _preferences.Get<string?>(nameof(InstalledLibraries), null);
+
+			return serializedInstalledNuGetPackages is not null
+				? JsonSerializer.Deserialize<IReadOnlyList<NuGetPackageModel>>(serializedInstalledNuGetPackages) ?? throw new JsonException()
+				: [];
 		}
-
-		public IReadOnlyList<NuGetPackageModel> InstalledLibraries
+		private set
 		{
-			get
-			{
-				var serializedInstalledNuGetPackages = _preferences.Get(nameof(InstalledLibraries), null);
-
-				return serializedInstalledNuGetPackages is null
-					? Array.Empty<NuGetPackageModel>()
-					: JsonConvert.DeserializeObject<IReadOnlyList<NuGetPackageModel>>(serializedInstalledNuGetPackages) ?? throw new JsonException();
-			}
-			private set
-			{
-				var serializedInstalledNuGetPackages = JsonConvert.SerializeObject(value);
-				_preferences.Set(nameof(InstalledLibraries), serializedInstalledNuGetPackages);
-			}
+			var serializedInstalledNuGetPackages = JsonSerializer.Serialize(value);
+			_preferences.Set(nameof(InstalledLibraries), serializedInstalledNuGetPackages);
 		}
+	}
 
-		public async ValueTask Initialize(CancellationToken cancellationToken)
+	public async ValueTask Initialize(CancellationToken cancellationToken)
+	{
+		if (InstalledLibraries.Any())
+			initialize().SafeFireAndForget(ex => _analyticsService.Report(ex));
+		else
+			await initialize().ConfigureAwait(false);
+
+		async Task initialize()
 		{
-			if (InstalledLibraries.Any())
-				initialize().SafeFireAndForget(ex => _analyticsService.Report(ex));
-			else
-				await initialize().ConfigureAwait(false);
+			var libraries = await _azureFunctionsApiService.GetLibraries(cancellationToken).ConfigureAwait(false);
 
-			async Task initialize()
-			{
-				var libraries = await _azureFunctionsApiService.GetLibraries(cancellationToken).ConfigureAwait(false);
-
-				InstalledLibraries = libraries.OrderBy(static x => x.PackageName).ToList();
-
-				foreach (var nugetPackageModel in InstalledLibraries)
-				{
-					_imageCachingService.PreloadImage(nugetPackageModel.IconUri).SafeFireAndForget(ex =>
-					{
-						_analyticsService.Report(ex, new Dictionary<string, string>
-						{
-							{ nameof(nugetPackageModel.PackageName), nugetPackageModel.PackageName },
-							{ nameof(nugetPackageModel.IconUri), nugetPackageModel.IconUri.ToString() }
-						});
-					});
-				}
-			}
+			InstalledLibraries = [.. libraries.OrderBy(static x => x.PackageName)];
 		}
 	}
 }

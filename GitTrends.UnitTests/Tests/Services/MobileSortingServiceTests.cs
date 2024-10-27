@@ -1,217 +1,231 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
+using GitTrends.Common;
 using GitTrends.Mobile.Common;
-using GitTrends.Shared;
-using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
 
-namespace GitTrends.UnitTests
+namespace GitTrends.UnitTests;
+
+class MobileSortingServiceTests : BaseTest
 {
-	class MobileSortingServiceTests : BaseTest
+	[Test]
+	public void SortReferringSitesTests()
 	{
-		[Test]
-		public void SortReferringSitesTests()
+		const int largestTotalCount = 1000;
+		const int largestTotalUniqueCount = 11;
+		const string lastReferer = "t.co";
+
+		//Arrange
+		IReadOnlyList<MobileReferringSiteModel> referringSitesList =
+		[
+			new MobileReferringSiteModel(new ReferringSiteModel(10, 10, "Google")),
+			new MobileReferringSiteModel(new ReferringSiteModel(10, 10, "codetraveler.io")),
+			new MobileReferringSiteModel(new ReferringSiteModel(10, 10, lastReferer)),
+			new MobileReferringSiteModel(new ReferringSiteModel(100, largestTotalUniqueCount, "facebook.com")),
+			new MobileReferringSiteModel(new ReferringSiteModel(100, 9, "linkedin.com")),
+			new MobileReferringSiteModel(new ReferringSiteModel(largestTotalCount, 9, "reddit.com"))
+		];
+
+		//Act
+		var sortedReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList).ToList();
+
+		//Assert
+		Assert.Multiple(() =>
 		{
-			const int largestTotalCount = 1000;
-			const int largestTotalUniqueCount = 11;
-			const string lastReferer = "t.co";
+			Assert.That(sortedReferringSitesList[0].TotalCount, Is.EqualTo(largestTotalCount));
+			Assert.That(sortedReferringSitesList.Skip(1).First().TotalUniqueCount, Is.EqualTo(largestTotalUniqueCount));
+			Assert.That(sortedReferringSitesList.Last().Referrer, Is.EqualTo(lastReferer));
+		});
+	}
 
-			//Arrange
-			IReadOnlyList<MobileReferringSiteModel> referringSitesList = new[]
-			{
-				new MobileReferringSiteModel(new ReferringSiteModel(10, 10, "Google")),
-				new MobileReferringSiteModel(new ReferringSiteModel(10, 10, "codetraver.io")),
-				new MobileReferringSiteModel(new ReferringSiteModel(10, 10, lastReferer)),
-				new MobileReferringSiteModel(new ReferringSiteModel(100, largestTotalUniqueCount, "facebook.com")),
-				new MobileReferringSiteModel(new ReferringSiteModel(100, 9, "linkedin.com")),
-				new MobileReferringSiteModel(new ReferringSiteModel(largestTotalCount, 9, "reddit.com"))
-			};
+	[TestCase(SortingOption.Clones, true)]
+	[TestCase(SortingOption.Forks, true)]
+	[TestCase(SortingOption.Issues, true)]
+	[TestCase(SortingOption.Stars, true)]
+	[TestCase(SortingOption.UniqueClones, true)]
+	[TestCase(SortingOption.UniqueViews, true)]
+	[TestCase(SortingOption.Views, true)]
+	[TestCase(SortingOption.Clones, false)]
+	[TestCase(SortingOption.Forks, false)]
+	[TestCase(SortingOption.Issues, false)]
+	[TestCase(SortingOption.Stars, false)]
+	[TestCase(SortingOption.UniqueClones, false)]
+	[TestCase(SortingOption.UniqueViews, false)]
+	[TestCase(SortingOption.Views, false)]
+	public void SortRepositoriesTests(SortingOption sortingOption, bool isReversed)
+	{
+		//Assert
+		Assert.That(MobileSortingService.DefaultSortingOption, Is.EqualTo(SortingOption.Views));
 
-			//Act
-			var sortedReferringSitesList = MobileSortingService.SortReferringSites(referringSitesList);
+		//Arrange
+		Repository topRepository, bottomRepository;
 
-			//Assert
-			Assert.IsTrue(sortedReferringSitesList.First().TotalCount is largestTotalCount);
-			Assert.IsTrue(sortedReferringSitesList.Skip(1).First().TotalUniqueCount is largestTotalUniqueCount);
-			Assert.IsTrue(sortedReferringSitesList.Last().Referrer is lastReferer);
+		List<Repository> repositoryList = [];
+		for (int i = 0; i < DemoDataConstants.RepoCount; i++)
+		{
+			repositoryList.Add(CreateRepository());
 		}
 
-		[TestCase(SortingOption.Clones, true)]
-		[TestCase(SortingOption.Forks, true)]
-		[TestCase(SortingOption.Issues, true)]
-		[TestCase(SortingOption.Stars, true)]
-		[TestCase(SortingOption.UniqueClones, true)]
-		[TestCase(SortingOption.UniqueViews, true)]
-		[TestCase(SortingOption.Views, true)]
-		[TestCase(SortingOption.Clones, false)]
-		[TestCase(SortingOption.Forks, false)]
-		[TestCase(SortingOption.Issues, false)]
-		[TestCase(SortingOption.Stars, false)]
-		[TestCase(SortingOption.UniqueClones, false)]
-		[TestCase(SortingOption.UniqueViews, false)]
-		[TestCase(SortingOption.Views, false)]
-		public void SortRepositoriesTests(SortingOption sortingOption, bool isReversed)
+		//Act
+		var sortedRepositoryList = MobileSortingService.SortRepositories(repositoryList, sortingOption, isReversed);
+		topRepository = sortedRepositoryList.First();
+		bottomRepository = sortedRepositoryList.Last();
+
+		//Assert
+		switch (sortingOption)
 		{
-			//Assert
-			Assert.AreEqual(SortingOption.Views, MobileSortingService.DefaultSortingOption);
-
-			//Arrange
-			Repository topRepository, bottomRepository;
-
-			List<Repository> repositoryList = new List<Repository>();
-			for (int i = 0; i < DemoDataConstants.RepoCount; i++)
-			{
-				repositoryList.Add(CreateRepository());
-			}
-
-			//Act
-			var sortedRepositoryList = MobileSortingService.SortRepositories(repositoryList, sortingOption, isReversed);
-			topRepository = sortedRepositoryList.First();
-			bottomRepository = sortedRepositoryList.Last();
-
-			//Assert
-			switch (sortingOption)
-			{
-				case SortingOption.Clones when isReversed:
-					Assert.Less(topRepository.TotalClones, bottomRepository.TotalClones);
-					break;
-				case SortingOption.Clones:
-					Assert.Greater(topRepository.TotalClones, bottomRepository.TotalClones);
-					break;
-				case SortingOption.Forks when isReversed:
-					Assert.Less(topRepository.ForkCount, bottomRepository.ForkCount);
-					break;
-				case SortingOption.Forks:
-					Assert.Greater(topRepository.ForkCount, bottomRepository.ForkCount);
-					break;
-				case SortingOption.Issues when isReversed:
-					Assert.Less(topRepository.IssuesCount, bottomRepository.IssuesCount);
-					break;
-				case SortingOption.Issues:
-					Assert.Greater(topRepository.IssuesCount, bottomRepository.IssuesCount);
-					break;
-				case SortingOption.Stars when isReversed:
-					Assert.Less(topRepository.StarCount, bottomRepository.StarCount);
-					break;
-				case SortingOption.Stars:
-					Assert.Greater(topRepository.StarCount, bottomRepository.StarCount);
-					break;
-				case SortingOption.UniqueClones when isReversed:
-					Assert.Less(topRepository.TotalUniqueClones, bottomRepository.TotalUniqueClones);
-					break;
-				case SortingOption.UniqueClones:
-					Assert.Greater(topRepository.TotalUniqueClones, bottomRepository.TotalUniqueClones);
-					break;
-				case SortingOption.UniqueViews when isReversed:
-					Assert.Less(topRepository.TotalUniqueViews, bottomRepository.TotalUniqueViews);
-					break;
-				case SortingOption.UniqueViews:
-					Assert.Greater(topRepository.TotalUniqueViews, bottomRepository.TotalUniqueViews);
-					break;
-				case SortingOption.Views when isReversed:
-					Assert.Less(topRepository.TotalViews, bottomRepository.TotalViews);
-					break;
-				case SortingOption.Views:
-					Assert.Greater(topRepository.TotalViews, bottomRepository.TotalViews);
-					break;
-				default:
-					throw new NotSupportedException();
-			}
+			case SortingOption.Clones when isReversed:
+				ArgumentNullException.ThrowIfNull(bottomRepository.TotalClones);
+				Assert.That(topRepository.TotalClones, Is.LessThan(bottomRepository.TotalClones));
+				break;
+			case SortingOption.Clones:
+				ArgumentNullException.ThrowIfNull(bottomRepository.TotalClones);
+				Assert.That(topRepository.TotalClones, Is.GreaterThan(bottomRepository.TotalClones));
+				break;
+			case SortingOption.Forks when isReversed:
+				Assert.That(topRepository.ForkCount, Is.LessThan(bottomRepository.ForkCount));
+				break;
+			case SortingOption.Forks:
+				Assert.That(topRepository.ForkCount, Is.GreaterThan(bottomRepository.ForkCount));
+				break;
+			case SortingOption.Issues when isReversed:
+				Assert.That(topRepository.IssuesCount, Is.LessThan(bottomRepository.IssuesCount));
+				break;
+			case SortingOption.Issues:
+				Assert.That(topRepository.IssuesCount, Is.GreaterThan(bottomRepository.IssuesCount));
+				break;
+			case SortingOption.Stars when isReversed:
+				Assert.That(topRepository.StarCount, Is.LessThan(bottomRepository.StarCount));
+				break;
+			case SortingOption.Stars:
+				Assert.That(topRepository.StarCount, Is.GreaterThan(bottomRepository.StarCount));
+				break;
+			case SortingOption.UniqueClones when isReversed:
+				ArgumentNullException.ThrowIfNull(bottomRepository.TotalUniqueClones);
+				Assert.That(topRepository.TotalUniqueClones, Is.LessThan(bottomRepository.TotalUniqueClones));
+				break;
+			case SortingOption.UniqueClones:
+				ArgumentNullException.ThrowIfNull(bottomRepository.TotalUniqueClones);
+				Assert.That(topRepository.TotalUniqueClones, Is.GreaterThan(bottomRepository.TotalUniqueClones));
+				break;
+			case SortingOption.UniqueViews when isReversed:
+				ArgumentNullException.ThrowIfNull(bottomRepository.TotalUniqueViews);
+				Assert.That(topRepository.TotalUniqueViews, Is.LessThan(bottomRepository.TotalUniqueViews));
+				break;
+			case SortingOption.UniqueViews:
+				ArgumentNullException.ThrowIfNull(bottomRepository.TotalUniqueViews);
+				Assert.That(topRepository.TotalUniqueViews, Is.GreaterThan(bottomRepository.TotalUniqueViews));
+				break;
+			case SortingOption.Views when isReversed:
+				ArgumentNullException.ThrowIfNull(bottomRepository.TotalViews);
+				Assert.That(topRepository.TotalViews, Is.LessThan(bottomRepository.TotalViews));
+				break;
+			case SortingOption.Views:
+				ArgumentNullException.ThrowIfNull(bottomRepository.TotalViews);
+				Assert.That(topRepository.TotalViews, Is.GreaterThan(bottomRepository.TotalViews));
+				break;
+			default:
+				throw new NotSupportedException();
 		}
+	}
 
-		[Test]
-		public void IsReversedTest()
+	[Test]
+	public void IsReversedTest()
+	{
+		//Arrange
+		bool isReversed_Initial, isReversed_AfterTrue, isReversed_AfterFalse;
+		var sortingService = ServiceCollection.ServiceProvider.GetRequiredService<MobileSortingService>();
+
+		//Act
+		isReversed_Initial = sortingService.IsReversed;
+
+		sortingService.IsReversed = true;
+		isReversed_AfterTrue = sortingService.IsReversed;
+
+		sortingService.IsReversed = false;
+		isReversed_AfterFalse = sortingService.IsReversed;
+
+		//Assert
+		Assert.Multiple(() =>
 		{
-			//Arrange
-			bool isReversed_Initial, isReversed_AfterTrue, isReversed_AfterFalse;
-			var sortingService = ServiceCollection.ServiceProvider.GetRequiredService<MobileSortingService>();
+			Assert.That(isReversed_Initial, Is.False);
+			Assert.That(isReversed_AfterTrue);
+			Assert.That(isReversed_AfterFalse, Is.False);
+		});
+	}
 
-			//Act
-			isReversed_Initial = sortingService.IsReversed;
+	[TestCase(SortingOption.Clones, SortingCategory.Clones)]
+	[TestCase(SortingOption.Forks, SortingCategory.IssuesForks)]
+	[TestCase(SortingOption.Issues, SortingCategory.IssuesForks)]
+	[TestCase(SortingOption.Stars, SortingCategory.Views)]
+	[TestCase(SortingOption.UniqueClones, SortingCategory.Clones)]
+	[TestCase(SortingOption.UniqueViews, SortingCategory.Views)]
+	[TestCase(SortingOption.Views, SortingCategory.Views)]
+	public void GetSortingCategoryTest_ValidOption(SortingOption sortingOption, SortingCategory expectedSortingCategory)
+	{
+		//Arrange
+		SortingCategory actualSortingCategory;
 
-			sortingService.IsReversed = true;
-			isReversed_AfterTrue = sortingService.IsReversed;
+		//Act
+		actualSortingCategory = MobileSortingService.GetSortingCategory(sortingOption);
 
-			sortingService.IsReversed = false;
-			isReversed_AfterFalse = sortingService.IsReversed;
+		//Assert
+		Assert.That(actualSortingCategory, Is.EqualTo(expectedSortingCategory));
+	}
 
-			//Assert
-			Assert.IsFalse(isReversed_Initial);
-			Assert.IsTrue(isReversed_AfterTrue);
-			Assert.IsFalse(isReversed_AfterFalse);
-		}
+	[TestCase(int.MinValue)]
+	[TestCase(-1)]
+	[TestCase(7)]
+	[TestCase(int.MaxValue)]
+	public void GetSortingCategoryTest_InvalidOption(SortingOption sortingOption)
+	{
+		//Arrange
 
-		[TestCase(SortingOption.Clones, SortingCategory.Clones)]
-		[TestCase(SortingOption.Forks, SortingCategory.IssuesForks)]
-		[TestCase(SortingOption.Issues, SortingCategory.IssuesForks)]
-		[TestCase(SortingOption.Stars, SortingCategory.Views)]
-		[TestCase(SortingOption.UniqueClones, SortingCategory.Clones)]
-		[TestCase(SortingOption.UniqueViews, SortingCategory.Views)]
-		[TestCase(SortingOption.Views, SortingCategory.Views)]
-		public void GetSortingCategoryTest_ValidOption(SortingOption sortingOption, SortingCategory expectedSortingCategory)
+		//Act //Assert
+		Assert.Throws<NotSupportedException>(() => MobileSortingService.GetSortingCategory(sortingOption));
+	}
+
+	[TestCase(SortingOption.Clones)]
+	[TestCase(SortingOption.Forks)]
+	[TestCase(SortingOption.Issues)]
+	[TestCase(SortingOption.Stars)]
+	[TestCase(SortingOption.UniqueClones)]
+	[TestCase(SortingOption.UniqueViews)]
+	[TestCase(SortingOption.Views)]
+	public void CurrentOptionTest_ValidOption(SortingOption sortingOption)
+	{
+		//Arrange
+		SortingOption currentOption_Initial, currentOption_Final;
+
+		var sortingService = ServiceCollection.ServiceProvider.GetRequiredService<MobileSortingService>();
+
+		//Act
+		currentOption_Initial = sortingService.CurrentOption;
+
+		sortingService.CurrentOption = sortingOption;
+		currentOption_Final = sortingService.CurrentOption;
+
+		//Assert
+		Assert.Multiple(() =>
 		{
-			//Arrange
-			SortingCategory actualSortingCategory;
+			Assert.That(currentOption_Initial, Is.EqualTo(MobileSortingService.DefaultSortingOption));
+			Assert.That(currentOption_Final, Is.EqualTo(sortingOption));
+		});
+	}
 
-			//Act
-			actualSortingCategory = MobileSortingService.GetSortingCategory(sortingOption);
+	[Test]
+	public void CurrentOptionTest_InvalidOption()
+	{
+		//Arrange
+		SortingOption currentOption_Initial;
 
-			//Assert
-			Assert.AreEqual(expectedSortingCategory, actualSortingCategory);
-		}
+		var sortingService = ServiceCollection.ServiceProvider.GetRequiredService<MobileSortingService>();
 
-		[TestCase(int.MinValue)]
-		[TestCase(-1)]
-		[TestCase(7)]
-		[TestCase(int.MaxValue)]
-		public void GetSortingCategoryTest_InvalidOption(SortingOption sortingOption)
+		//Act
+		currentOption_Initial = sortingService.CurrentOption;
+
+		// Assert
+		Assert.Multiple(() =>
 		{
-			//Arrange
-
-			//Act //Assert
-			Assert.Throws<NotSupportedException>(() => MobileSortingService.GetSortingCategory(sortingOption));
-		}
-
-		[TestCase(SortingOption.Clones)]
-		[TestCase(SortingOption.Forks)]
-		[TestCase(SortingOption.Issues)]
-		[TestCase(SortingOption.Stars)]
-		[TestCase(SortingOption.UniqueClones)]
-		[TestCase(SortingOption.UniqueViews)]
-		[TestCase(SortingOption.Views)]
-		public void CurrentOptionTest_ValidOption(SortingOption sortingOption)
-		{
-			//Arrange
-			SortingOption currentOption_Initial, currentOption_Final;
-
-			var sortingService = ServiceCollection.ServiceProvider.GetRequiredService<MobileSortingService>();
-
-			//Act
-			currentOption_Initial = sortingService.CurrentOption;
-
-			sortingService.CurrentOption = sortingOption;
-			currentOption_Final = sortingService.CurrentOption;
-
-			//Assert
-			Assert.AreEqual(MobileSortingService.DefaultSortingOption, currentOption_Initial);
-			Assert.AreEqual(sortingOption, currentOption_Final);
-		}
-
-		[Test]
-		public void CurrentOptionTest_InvalidOption()
-		{
-			//Arrange
-			SortingOption currentOption_Initial;
-
-			var sortingService = ServiceCollection.ServiceProvider.GetRequiredService<MobileSortingService>();
-
-			//Act
-			currentOption_Initial = sortingService.CurrentOption;
-
-			// Assert
-			Assert.AreEqual(MobileSortingService.DefaultSortingOption, currentOption_Initial);
+			Assert.That(currentOption_Initial, Is.EqualTo(MobileSortingService.DefaultSortingOption));
 
 			Assert.Throws<InvalidEnumArgumentException>(() =>
 			{
@@ -222,6 +236,6 @@ namespace GitTrends.UnitTests
 			{
 				sortingService.CurrentOption = (SortingOption)(-1);
 			});
-		}
+		});
 	}
 }

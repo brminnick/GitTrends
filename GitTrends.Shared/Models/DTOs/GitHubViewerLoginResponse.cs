@@ -1,4 +1,5 @@
-﻿namespace GitTrends.Shared
-{
-	public record GitHubViewerLoginResponse(User Viewer);
-}
+﻿using System.Text.Json.Serialization;
+
+namespace  GitTrends.Common;
+
+public record GitHubViewerLoginResponse([property: JsonPropertyName("viewer")] User Viewer);

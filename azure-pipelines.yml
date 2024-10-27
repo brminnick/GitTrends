@@ -1,183 +1,198 @@
 variables:
-  NET_VERSION: '7.0.x'
-  NET_CORE_VERSION: '3.1.x'
-  PathToSolution: 'GitTrends.sln'
-  PathToGitTrendsCsproj: 'GitTrends/GitTrends.csproj'
-  PathToiOSAppCsproj: 'GitTrends.iOS/GitTrends.iOS.csproj'
-  PathToUITestsCsproj: 'GitTrends.UITests/GitTrends.UITests.csproj'
-  PathToAndroidAppCsproj: 'GitTrends.Android/GitTrends.Android.csproj'
-  PathToUnitTestsCsproj: 'GitTrends.UnitTests/GitTrends.UnitTests.csproj'
-  PathToAzureFunctionsCsproj: 'GitTrends.Functions/GitTrends.Functions.csproj'
-  XcodeVersion: '13.3.1'
+  NET_VERSION: "8.0.x"
+  PathToSolution: "GitTrends.sln"
+  PathToGitTrendsCsproj: "GitTrends/GitTrends.csproj"
+  PathToUITestsCsproj: "GitTrends.UITests/GitTrends.UITests.csproj"
+  PathToUnitTestsCsproj: "GitTrends.UnitTests/GitTrends.UnitTests.csproj"
+  PathToAzureFunctionsCsproj: "GitTrends.Functions/GitTrends.Functions.csproj"
+  XcodeVersion: "16"
 
 trigger:
   branches:
     include:
-    - main
+      - main
   tags:
     include:
-    - '*'
+      - "*"
   paths:
     exclude:
-    - README.md
+      - README.md
 
 pr:
-  autoCancel: 'true'
+  autoCancel: "true"
   branches:
     include:
-    - main
+      - main
   paths:
     exclude:
-    - README.md
+      - README.md
 
 jobs:
   - job: Build_AzureFunctions
     displayName: Build Azure Functions
-    pool: 
-      vmImage: windows-latest
+    strategy:
+      matrix:
+        'Windows':
+          image: 'windows-latest'
+        'macOS':
+          image: 'macos-14'
+    pool:
+      vmImage: $(image)
 
-    steps:      
+    steps:
       - task: UseDotNet@2
-        displayName: 'Install Latest .NET SDK'
+        displayName: "Install Latest .NET SDK"
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_VERSION)'
+          packageType: "sdk"
+          version: "$(NET_VERSION)"
 
-      - task: VSBuild@1
-        displayName: 'Build Azure Functions'
+      - task: CmdLine@2
+        displayName: "Build GitTrends"
         inputs:
-          solution: '$(PathToAzureFunctionsCsproj)'
-          configuration: 'Release'
-          msbuildArgs: '/restore'
+          script: "dotnet build $(PathToAzureFunctionsCsproj) -c Release"
 
-  - job: Build_UITests
-    displayName: Build UI Tests
-    pool: 
-      vmImage: windows-latest
+  - job: Build_MAUI_App
+    displayName: Build .NET MAUI App
+    strategy:
+      matrix:
+        'Windows':
+          image: 'windows-latest'
+        'macOS':
+          image: 'macos-14'
+    pool:
+      vmImage: $(image)
 
-    steps:      
-      - task: UseDotNet@2
-        displayName: 'Install Latest .NET SDK'
+    steps:
+      - task: CmdLine@2
+        displayName: "Set Xcode v$(XcodeVersion)"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_VERSION)'
+          script: echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_$(XcodeVersion).app;sudo xcode-select --switch /Applications/Xcode_$(XcodeVersion).app/Contents/Developer
 
-      - task: UseDotNet@2
-        displayName: 'Install .NET Core 3.1 SDK'
+      - task: InstallAppleCertificate@2
+        displayName: "Set Xcode Signing Certificate"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_CORE_VERSION)'
+            certSecureFile: 'Certificate.p12'
+            certPwd: '$(APPLECERTIFICATEPASSWORD)'
 
-      - task: VSBuild@1
-        displayName: 'Build UI Tests'
+      - task: InstallAppleProvisioningProfile@1
+        displayName: "Set Xcode Provisioning Profile"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
         inputs:
-          solution: '$(PathToUITestsCsproj)'
-          configuration: 'Release'
-          msbuildArgs: '/restore'
-
-  - job: Build_iOS_App
-    displayName: Build iOS App
-    pool: 
-      vmImage: windows-latest
-
-    steps:      
-      - task: UseDotNet@2
-        displayName: 'Install Latest .NET SDK'
-        inputs:
-          packageType: 'sdk'
-          version: '$(NET_VERSION)'
+          provisioningProfileLocation: 'secureFiles'
+          provProfileSecureFile: 'GitTrends_Development_Profile.mobileprovision'
 
       - task: UseDotNet@2
-        displayName: 'Install .NET Core 3.1 SDK'
+        displayName: "Install Latest .NET SDK"
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_CORE_VERSION)'
+          packageType: "sdk"
+          version: "$(NET_VERSION)"
 
-      - task: VSBuild@1
-        displayName: 'Build iOS App'
+      - task: CmdLine@2
+        displayName: "Install Latest .NET MAUI Workload"
         inputs:
-          solution: '$(PathToiOSAppCsproj)'
-          configuration: 'Release'
-          msbuildArgs: '/restore'
-
-  - job: Build_Android_App
-    displayName: Build Android App
-    pool: 
-      vmImage: windows-latest
-
-    steps:      
-      - task: UseDotNet@2
-        displayName: 'Install Latest .NET SDK'
-        inputs:
-          packageType: 'sdk'
-          version: '$(NET_VERSION)'
+          script: "dotnet workload install maui"
 
       - task: JavaToolInstaller@0
-        displayName: 'Install Java'
+        displayName: "Install Java"
         inputs:
-          versionSpec: '11'
-          jdkArchitectureOption: 'x64'
-          jdkSourceOption: 'PreInstalled'
+          versionSpec: "17"
+          jdkArchitectureOption: "x64"
+          jdkSourceOption: "PreInstalled"
 
-      - task: UseDotNet@2
-        displayName: 'Install .NET Core 3.1 SDK'
+      - task: CmdLine@2
+        displayName: "Build GitTrends"
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_CORE_VERSION)'
-
-      - task: VSBuild@1
-        displayName: 'Build Android App'
-        inputs:
-          solution: '$(PathToAndroidAppCsproj)'
-          configuration: 'Release'
-          msbuildArgs: '/restore'
+          script: "dotnet build $(PathToGitTrendsCsproj) -c Release"
 
   - job: Build_UnitTests
     displayName: Build Unit Tests
-    pool: 
-      vmImage: windows-latest
+    strategy:
+      matrix:
+        'Windows':
+          image: 'windows-latest'
+        'macOS':
+          image: 'macos-14'
+    pool:
+      vmImage: $(image)
 
-    steps:      
+    steps:
+      - task: CmdLine@2
+        displayName: "Set Xcode v$(XcodeVersion)"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
+        inputs:
+          script: echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_$(XcodeVersion).app;sudo xcode-select --switch /Applications/Xcode_$(XcodeVersion).app/Contents/Developer
+
+      - task: InstallAppleCertificate@2
+        displayName: "Set Xcode Signing Certificate"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
+        inputs:
+            certSecureFile: 'Certificate.p12'
+            certPwd: '$(APPLECERTIFICATEPASSWORD)'
+
+      - task: InstallAppleProvisioningProfile@1
+        displayName: "Set Xcode Provisioning Profile"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
+        inputs:
+          provisioningProfileLocation: 'secureFiles'
+          provProfileSecureFile: 'GitTrends_Development_Profile.mobileprovision'
+
       - task: UseDotNet@2
-        displayName: 'Install Latest .NET SDK'
+        displayName: "Install Latest .NET SDK"
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_VERSION)'
+          packageType: "sdk"
+          version: "$(NET_VERSION)"
 
-      - task: UseDotNet@2
-        displayName: 'Install .NET Core 3.1 SDK'
+      - task: CmdLine@2
+        displayName: "Install Latest .NET MAUI Workload"
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_CORE_VERSION)'
+          script: "dotnet workload install maui"
 
-      - task: VSBuild@1
-        displayName: 'Build Unit Tests'
+      - task: CmdLine@2
+        displayName: "Build Unit Tests"
         inputs:
-          solution: '$(PathToUnitTestsCsproj)'
-          configuration: 'Release'
-          msbuildArgs: '/restore'
+          script: "dotnet build $(PathToUnitTestsCsproj)"
 
   - job: Run_UnitTests
     displayName: Run Unit Tests
-    dependsOn: [Build_UnitTests, Build_Android_App, Build_iOS_App, Build_UITests]
-    pool: 
-      vmImage: macos-12
+    dependsOn: [Build_UnitTests, Build_MAUI_App]
+    pool:
+      vmImage: macos-14
 
-    steps:      
-      - task: UseDotNet@2
-        displayName: 'Install Latest .NET SDK'
+    steps:
+      - task: CmdLine@2
+        displayName: "Set Xcode v$(XcodeVersion)"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_VERSION)'
+          script: echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_$(XcodeVersion).app;sudo xcode-select --switch /Applications/Xcode_$(XcodeVersion).app/Contents/Developer
 
-      - task: UseDotNet@2
-        displayName: 'Install .NET Core 3.1 SDK'
+      - task: InstallAppleCertificate@2
+        displayName: "Set Xcode Signing Certificate"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
         inputs:
-          packageType: 'sdk'
-          version: '$(NET_CORE_VERSION)'
+            certSecureFile: 'Certificate.p12'
+            certPwd: '$(APPLECERTIFICATEPASSWORD)'
+
+      - task: InstallAppleProvisioningProfile@1
+        displayName: "Set Xcode Provisioning Profile"
+        condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
+        inputs:
+          provisioningProfileLocation: 'secureFiles'
+          provProfileSecureFile: 'GitTrends_Development_Profile.mobileprovision'
+      - task: UseDotNet@2
+        displayName: "Install Latest .NET SDK"
+        inputs:
+          packageType: "sdk"
+          version: "$(NET_VERSION)"
 
       - task: CmdLine@2
-        displayName: 'Inject API Keys'
+        displayName: "Install Latest .NET MAUI Workload"
+        inputs:
+          script: "dotnet workload install maui"
+
+      - task: CmdLine@2
+        displayName: "Inject API Keys"
         inputs:
           script: |
             set -e
@@ -192,6 +207,8 @@ jobs:
             sed -i '' "s/#error Missing API Keys/\/\/#error Missing API Keys/g" "$AzureConstantsFile"
 
       - task: CmdLine@2
-        displayName: 'Run Unit Tests'
+        displayName: "Run Unit Tests"
+        env:
+          VSTEST_TESTHOST_SHUTDOWN_TIMEOUT: 1100 # Fixes "The active test run was aborted. Reason: Test host process crashed" (source: https://github.com/microsoft/vstest/issues/2952#issuecomment-2234253765)
         inputs:
-          script: 'dotnet test $(PathToUnitTestsCsproj) -c Release -d detailed'
+          script: "dotnet test $(PathToUnitTestsCsproj) -c Release -d detailed"

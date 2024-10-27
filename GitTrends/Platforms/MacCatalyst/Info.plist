@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>CFBundleDisplayName</key>
+	<string>GitTrends</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.minnick.GitTrends</string>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>CFBundleName</key>
+	<string>GitTrends</string>
+	<key>XSAppIconAssets</key>
+	<string>Assets.xcassets/AppIcon.appiconset</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>aps-environment</key>
+			<string>development OR production</string>
+			<key>CFBundleURLName</key>
+			<string>com.minnick.GitTrends</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>gittrends</string>
+			</array>
+		</dict>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>github</string>
+		<string>twitter</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+		<string>processing</string>
+	</array>
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>com.minnick.GitTrends.NotifyTrendingRepositories</string>
+        <string>com.minnick.GitTrends.CleanUpDatabase</string>
+        <string>com.shiny.job</string>
+        <string>com.shiny.jobpower</string>
+        <string>com.shiny.jobnet</string>
+        <string>com.shiny.jobpowernet</string>
+    </array>
+	<key>CFBundleVersion</key>
+	<string>64</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>nl</string>
+		<string>ru</string>
+		<string>de</string>
+		<string>es</string>
+		<string>fr</string>
+		<string>pt</string>
+		<string>bs</string>
+		<string>uk</string>
+		<string>cs</string>
+	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>GitTrends does not require your location</string>
+    <key>com.apple.developer.usernotifications.time-sensitive</key>
+    <true />
+</dict>
+</plist>
