@@ -30,8 +30,14 @@ pr:
 jobs:
   - job: Build_AzureFunctions
     displayName: Build Azure Functions
+    strategy:
+      matrix:
+        'Windows':
+          image: 'windows-latest'
+        'macOS':
+          image: 'macos-14'
     pool:
-      vmImage: windows-latest
+      vmImage: $(image)
 
     steps:
       - task: UseDotNet@2
@@ -40,12 +46,10 @@ jobs:
           packageType: "sdk"
           version: "$(NET_VERSION)"
 
-      - task: VSBuild@1
-        displayName: "Build Azure Functions"
+      - task: CmdLine@2
+        displayName: "Build GitTrends"
         inputs:
-          solution: "$(PathToAzureFunctionsCsproj)"
-          configuration: "Release"
-          msbuildArgs: "/restore"
+          script: "dotnet build $(PathToAzureFunctionsCsproj) -c Release"
 
   - job: Build_MAUI_App
     displayName: Build .NET MAUI App
