@@ -4,8 +4,10 @@
     <Nullable>enable</Nullable>
     <NetVersion>net8.0</NetVersion>
     <IsTrimmable>false</IsTrimmable>
+    <NuGetAudit>enable</NuGetAudit>
     <MauiVersion>8.0.92</MauiVersion>
     <LangVersion>latest</LangVersion>
+    <NuGetAuditMode>all</NuGetAuditMode>
     <ImplicitUsings>enable</ImplicitUsings>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
