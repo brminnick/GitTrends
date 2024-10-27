@@ -1,5 +1,5 @@
 using GitHubApiStatus;
-using GitTrends.Shared;
+using GitTrends.Common;
 namespace GitTrends.UnitTests;
 
 public class ExtendedReferringSitesViewModel(

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using GitTrends.Mobile.Common;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends.UnitTests;
 

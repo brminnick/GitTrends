@@ -5,7 +5,7 @@ using CommunityToolkit.Maui.ApplicationModel;
 using CommunityToolkit.Maui.Markup;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
-using GitTrends.Shared;
+using GitTrends.Common;
 using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Logging;
 using Plugin.StoreReview;

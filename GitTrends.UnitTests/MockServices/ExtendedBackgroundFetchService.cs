@@ -1,4 +1,4 @@
-﻿using GitTrends.Shared;
+﻿using GitTrends.Common;
 using Shiny.Jobs;
 
 namespace GitTrends.UnitTests;

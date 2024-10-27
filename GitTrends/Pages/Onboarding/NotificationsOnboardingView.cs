@@ -1,6 +1,6 @@
 ﻿using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Shared;
+using GitTrends.Common;
 using CommunityToolkit.Maui.Markup;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.Shapes;

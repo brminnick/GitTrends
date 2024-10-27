@@ -1,4 +1,4 @@
-﻿using GitTrends.Shared;
+﻿using GitTrends.Common;
 using Polly;
 using Polly.Retry;
 using SQLite;

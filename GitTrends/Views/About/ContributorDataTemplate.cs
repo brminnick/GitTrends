@@ -1,4 +1,4 @@
-﻿using GitTrends.Shared;
+﻿using GitTrends.Common;
 using CommunityToolkit.Maui.Markup;
 using static GitTrends.MauiService;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;

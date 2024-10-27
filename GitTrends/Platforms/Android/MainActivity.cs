@@ -3,7 +3,7 @@ using Android.App;
 using Android.Content.PM;
 using Android.Content;
 using Android.OS;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends;
 

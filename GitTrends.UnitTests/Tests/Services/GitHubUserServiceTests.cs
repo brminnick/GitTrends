@@ -1,5 +1,5 @@
 ﻿using System.Web;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends.UnitTests;
 

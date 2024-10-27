@@ -8,8 +8,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{30BA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{542E2517-3912-4324-B383-9F1FC42AA3CD}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GitTrends.Shared", "GitTrends.Shared\GitTrends.Shared.shproj", "{D14F8262-1D13-493F-B78B-5C34F282EF07}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{277A4FFB-91D3-4028-A47C-C39726594FC1}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -28,7 +26,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Old", "Old", "{D22640FA-D28
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends", "GitTrends\GitTrends.csproj", "{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.UnitTests", "GitTrends.UnitTests\GitTrends.UnitTests.csproj", "{3F251717-44E1-4F06-BD04-6B231C84E202}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitTrends.UnitTests", "GitTrends.UnitTests\GitTrends.UnitTests.csproj", "{3F251717-44E1-4F06-BD04-6B231C84E202}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitTrends.Common", "GitTrends.Common\GitTrends.Common.csproj", "{DF80C010-E4FD-4D5A-BE25-D6FAD6E04915}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,9 +39,7 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
 		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{936AEAD4-A683-44AD-A903-F3196454C244}.AppStore|Any CPU.ActiveCfg = AppStore|Any CPU
 		{936AEAD4-A683-44AD-A903-F3196454C244}.AppStore|Any CPU.Build.0 = AppStore|Any CPU
 		{936AEAD4-A683-44AD-A903-F3196454C244}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -49,43 +47,45 @@ Global
 		{936AEAD4-A683-44AD-A903-F3196454C244}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{936AEAD4-A683-44AD-A903-F3196454C244}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CFACA73E-79DF-4F7C-AC9C-84B60F014D30}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{CFACA73E-79DF-4F7C-AC9C-84B60F014D30}.AppStore|Any CPU.Build.0 = Release|Any CPU
 		{CFACA73E-79DF-4F7C-AC9C-84B60F014D30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CFACA73E-79DF-4F7C-AC9C-84B60F014D30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFACA73E-79DF-4F7C-AC9C-84B60F014D30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFACA73E-79DF-4F7C-AC9C-84B60F014D30}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.AppStore|Any CPU.ActiveCfg = AppStore|Any CPU
 		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.AppStore|Any CPU.Build.0 = AppStore|Any CPU
 		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.AppStore|Any CPU.Deploy.0 = AppStore|Any CPU
+		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{3F251717-44E1-4F06-BD04-6B231C84E202}.AppStore|Any CPU.ActiveCfg = Debug|Any CPU
 		{3F251717-44E1-4F06-BD04-6B231C84E202}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3F251717-44E1-4F06-BD04-6B231C84E202}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F251717-44E1-4F06-BD04-6B231C84E202}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F251717-44E1-4F06-BD04-6B231C84E202}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF80C010-E4FD-4D5A-BE25-D6FAD6E04915}.AppStore|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF80C010-E4FD-4D5A-BE25-D6FAD6E04915}.AppStore|Any CPU.Build.0 = Debug|Any CPU
+		{DF80C010-E4FD-4D5A-BE25-D6FAD6E04915}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF80C010-E4FD-4D5A-BE25-D6FAD6E04915}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF80C010-E4FD-4D5A-BE25-D6FAD6E04915}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF80C010-E4FD-4D5A-BE25-D6FAD6E04915}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{D14F8262-1D13-493F-B78B-5C34F282EF07} = {542E2517-3912-4324-B383-9F1FC42AA3CD}
 		{F8F450DD-09C2-4BDD-B46B-A81BDAEC25BE} = {D22640FA-D287-4D63-B6F4-2253FDCF599D}
 		{936AEAD4-A683-44AD-A903-F3196454C244} = {BA9E6A61-3143-42DF-9669-97F7F557B7A2}
 		{CFACA73E-79DF-4F7C-AC9C-84B60F014D30} = {30BA162E-26D2-4B3D-9347-986271EF77A7}
 		{D22640FA-D287-4D63-B6F4-2253FDCF599D} = {BA9E6A61-3143-42DF-9669-97F7F557B7A2}
 		{EA0540A6-B98B-450C-B7EB-447FBEDD8D29} = {BA9E6A61-3143-42DF-9669-97F7F557B7A2}
 		{3F251717-44E1-4F06-BD04-6B231C84E202} = {BA9E6A61-3143-42DF-9669-97F7F557B7A2}
+		{DF80C010-E4FD-4D5A-BE25-D6FAD6E04915} = {542E2517-3912-4324-B383-9F1FC42AA3CD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C9CC4446-8D01-4DD5-90B3-0A650B0DE0DD}
-	EndGlobalSection
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		GitTrends.Shared\GitTrends.Shared.projitems*{936aead4-a683-44ad-a903-f3196454c244}*SharedItemsImports = 5
-		GitTrends.Shared\GitTrends.Shared.projitems*{cfaca73e-79df-4f7c-ac9c-84b60f014d30}*SharedItemsImports = 5
-		GitTrends.Shared\GitTrends.Shared.projitems*{d14f8262-1d13-493f-b78b-5c34f282ef07}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

@@ -1,6 +1,6 @@
 ﻿using Refit;
 
-namespace GitTrends.Shared;
+namespace  GitTrends.Common;
 
 [Headers("User-Agent: " + nameof(GitTrends))]
 public interface IGitHubGraphQLApi

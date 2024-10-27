@@ -3,7 +3,7 @@ using System.Text.Json;
 using AsyncAwaitBestPractices;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends;
 

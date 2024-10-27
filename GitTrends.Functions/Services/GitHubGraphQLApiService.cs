@@ -1,5 +1,5 @@
 ﻿using GitHubApiStatus;
-using GitTrends.Shared;
+using GitTrends.Common;
 using Microsoft.Extensions.Logging;
 using Refit;
 

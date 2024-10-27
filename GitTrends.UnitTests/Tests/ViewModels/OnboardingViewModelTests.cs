@@ -1,5 +1,5 @@
 ﻿using GitTrends.Mobile.Common.Constants;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends.UnitTests;
 

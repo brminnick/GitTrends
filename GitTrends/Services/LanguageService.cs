@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Common;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends
 {

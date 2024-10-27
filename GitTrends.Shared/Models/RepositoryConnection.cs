@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace GitTrends.Shared;
+namespace  GitTrends.Common;
 
 public record RepositoryConnection(
 	[property: JsonPropertyName("nodes")] IReadOnlyList<RepositoryConnectionNode?> RepositoryList,

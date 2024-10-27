@@ -1,5 +1,5 @@
 ﻿using GitTrends.Mobile.Common;
-using GitTrends.Shared;
+using GitTrends.Common;
 using Sharpnado.MaterialFrame;
 using CommunityToolkit.Maui.Markup;
 using GitTrends.Resources;

@@ -1,4 +1,4 @@
-﻿using GitTrends.Shared;
+﻿using GitTrends.Common;
 
 namespace GitTrends.Mobile.Common;
 

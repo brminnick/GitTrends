@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends.Functions;
 

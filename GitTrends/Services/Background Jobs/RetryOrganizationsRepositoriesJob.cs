@@ -1,6 +1,6 @@
 using System.Text.Json;
 using AsyncAwaitBestPractices;
-using GitTrends.Shared;
+using GitTrends.Common;
 using Shiny.Jobs;
 
 namespace GitTrends;

@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json;
 using GitHubApiStatus;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 using Refit;
 using RichardSzalay.MockHttp;

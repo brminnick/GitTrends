@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends;
 

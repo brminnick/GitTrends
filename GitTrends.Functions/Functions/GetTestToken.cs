@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using GitHubApiStatus;
-using GitTrends.Shared;
+using GitTrends.Common;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;

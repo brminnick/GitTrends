@@ -1,6 +1,6 @@
 ﻿using AsyncAwaitBestPractices;
 using Foundation;
-using GitTrends.Shared;
+using GitTrends.Common;
 using UIKit;
 
 namespace GitTrends;

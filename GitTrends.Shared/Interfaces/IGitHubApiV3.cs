@@ -1,6 +1,6 @@
 ﻿using Refit;
 
-namespace GitTrends.Shared;
+namespace  GitTrends.Common;
 
 [Headers("User-Agent: " + nameof(GitTrends), "Accept-Encoding: gzip", "Accept: application/json")]
 public interface IGitHubApiV3

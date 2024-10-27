@@ -2,7 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using GitHubApiStatus;
-using GitTrends.Shared;
+using GitTrends.Common;
 using Refit;
 using RichardSzalay.MockHttp;
 

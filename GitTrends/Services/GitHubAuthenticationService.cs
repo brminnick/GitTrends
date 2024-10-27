@@ -2,7 +2,7 @@
 using AsyncAwaitBestPractices;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends;
 

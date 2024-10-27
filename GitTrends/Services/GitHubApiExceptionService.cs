@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using GitHubApiStatus;
-using GitTrends.Shared;
+using GitTrends.Common;
 using Refit;
 
 namespace GitTrends;

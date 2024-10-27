@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Shared;
+using GitTrends.Common;
 using Shiny;
 
 namespace GitTrends;

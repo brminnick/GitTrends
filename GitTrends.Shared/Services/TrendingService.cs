@@ -1,4 +1,4 @@
-﻿namespace GitTrends.Shared;
+﻿namespace  GitTrends.Common;
 
 static class TrendingService
 {

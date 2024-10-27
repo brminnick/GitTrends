@@ -1,5 +1,5 @@
 ﻿using AsyncAwaitBestPractices;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends;
 

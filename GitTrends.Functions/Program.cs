@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using GitHubApiStatus.Extensions;
-using GitTrends.Shared;
+using GitTrends.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

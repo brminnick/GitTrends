@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using GitHubApiStatus;
 using GitTrends.Mobile.Common;
-using GitTrends.Shared;
+using GitTrends.Common;
 using Refit;
 using RichardSzalay.MockHttp;
 

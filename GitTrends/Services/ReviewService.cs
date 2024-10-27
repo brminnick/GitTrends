@@ -1,4 +1,4 @@
-﻿using GitTrends.Shared;
+﻿using GitTrends.Common;
 using Plugin.StoreReview.Abstractions;
 
 namespace GitTrends;

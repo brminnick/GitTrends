@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Shared;
+using GitTrends.Common;
 using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
 using Microsoft.Maui.Controls.Shapes;

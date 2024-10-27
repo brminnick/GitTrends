@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>$(NetVersion);$(NetVersion)-android;$(NetVersion)-ios;$(NetVersion)-maccatalyst</TargetFrameworks>
@@ -88,11 +88,9 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageReference Include="GitHubApiStatus" Version="3.0.0"/>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.70" />
-    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.10.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
-    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.91" />
-    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.91" />
+    <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
     <PackageReference Include="Plugin.StoreReview" Version="6.2.0"/>
     <PackageReference Include="Refit.HttpClientFactory" Version="7.2.1" />
     <PackageReference Include="Sentry.Maui" Version="4.12.1" />

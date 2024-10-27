@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends;
 

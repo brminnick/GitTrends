@@ -1,4 +1,4 @@
-﻿using GitTrends.Shared;
+﻿using GitTrends.Common;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 

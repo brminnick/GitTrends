@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using GitTrends.Shared;
+using GitTrends.Common;
 using HtmlAgilityPack;
 
 namespace GitTrends;

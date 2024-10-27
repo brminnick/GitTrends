@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using GitTrends.Mobile.Common;
-using GitTrends.Shared;
+using GitTrends.Common;
 using Refit;
 using RichardSzalay.MockHttp;
 

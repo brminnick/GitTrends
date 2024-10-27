@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends;
 

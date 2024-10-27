@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using GitTrends.Mobile.Common;
-using GitTrends.Shared;
+using GitTrends.Common;
 using NUnit.Framework;
 
 using Xamarin.UITest;

@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using GitTrends.Mobile.Common;
-using GitTrends.Shared;
+using GitTrends.Common;
 using CommunityToolkit.Maui.Markup;
 using GitTrends.Resources;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;

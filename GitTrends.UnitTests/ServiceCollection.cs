@@ -4,7 +4,7 @@ using CommunityToolkit.Maui.ApplicationModel;
 using GitHubApiStatus;
 using GitHubApiStatus.Extensions;
 using GitTrends.Mobile.Common;
-using GitTrends.Shared;
+using GitTrends.Common;
 using Plugin.StoreReview.Abstractions;
 using Shiny.Jobs;
 using Shiny.Notifications;

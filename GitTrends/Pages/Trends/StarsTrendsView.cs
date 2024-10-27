@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Maui.Markup;
 using GitTrends.Mobile.Common;
 using GitTrends.Resources;
-using GitTrends.Shared;
+using GitTrends.Common;
 
 namespace GitTrends;
 

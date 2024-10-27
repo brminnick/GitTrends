@@ -1,32 +1,42 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>$(NetVersion)</TargetFramework>
-        <AzureFunctionsVersion>v4</AzureFunctionsVersion>
-        <OutputType>Exe</OutputType>
-        <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="GitHubApiStatus.Extensions" Version="3.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.10.0" />
-        <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.18.1" OutputItemType="Analyzer" />
-        <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.23.0" />
-        <PackageReference Include="Refit.HttpClientFactory" Version="7.2.1" />
-        <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.2.0" />
-        <PackageReference Include="NuGet.Protocol" Version="6.11.1" />
-        <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.2.0" />
-        <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
-        <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="5.3.3" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Update="host.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="local.settings.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <CopyToPublishDirectory>Never</CopyToPublishDirectory>
-        </None>
-    </ItemGroup>
 
-    <Import Project="..\GitTrends.Shared\GitTrends.Shared.projitems" Label="Shared" Condition="Exists('..\GitTrends.Shared\GitTrends.Shared.projitems')" />
+  <PropertyGroup>
+    <TargetFramework>$(NetVersion)</TargetFramework>
+    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <OutputType>Exe</OutputType>
+    <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GitHubApiStatus.Extensions" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.23.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.18.1" OutputItemType="Analyzer" />
+    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.2.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="5.3.3" />
+    <PackageReference Include="NuGet.Protocol" Version="6.11.1" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="7.2.1" />
+  </ItemGroup>
+
+  <!-- Fix Transitive NuGet Packages with Vulnerablities-->
+  <ItemGroup>
+    <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GitTrends.Common\GitTrends.Common.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+  
 </Project>

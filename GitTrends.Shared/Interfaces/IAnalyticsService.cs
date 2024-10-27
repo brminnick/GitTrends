@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace GitTrends.Shared;
+namespace  GitTrends.Common;
 
 public interface IAnalyticsService
 {

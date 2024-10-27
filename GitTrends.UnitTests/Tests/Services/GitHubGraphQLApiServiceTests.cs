@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Shared;
+using GitTrends.Common;
 using Refit;
 
 namespace GitTrends.UnitTests;

@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using AsyncAwaitBestPractices;
 using GitHubApiStatus;
-using GitTrends.Shared;
+using GitTrends.Common;
 using Refit;
 
 namespace GitTrends;
