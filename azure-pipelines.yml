@@ -5,7 +5,6 @@ variables:
   PathToUITestsCsproj: "GitTrends.UITests/GitTrends.UITests.csproj"
   PathToUnitTestsCsproj: "GitTrends.UnitTests/GitTrends.UnitTests.csproj"
   PathToAzureFunctionsCsproj: "GitTrends.Functions/GitTrends.Functions.csproj"
-  AndroidBuildToolsVersion: "34.0.143"
   XcodeVersion: "16"
 
 trigger:
@@ -66,9 +65,6 @@ jobs:
         inputs:
           provisioningProfileLocation: 'secureFiles'
           provProfileSecureFile: 'GitTrends_Development_Profile.mobileprovision'
-
-      - script: $ANDROID_HOME/tools/bin/sdkmanager --uninstall 'build-tools;$(AndroidBuildToolsVersion)'
-        displayName: 'Set Android Build Tools v$(AndroidBuildToolsVersion)'
 
       - task: UseDotNet@2
         displayName: "Install Latest .NET SDK"
