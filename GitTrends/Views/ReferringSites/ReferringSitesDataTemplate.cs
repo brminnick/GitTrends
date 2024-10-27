@@ -1,7 +1,7 @@
-﻿using GitTrends.Mobile.Common.Constants;
-using Sharpnado.MaterialFrame;
-using CommunityToolkit.Maui.Markup;
+﻿using CommunityToolkit.Maui.Markup;
 using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
+using Sharpnado.MaterialFrame;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;

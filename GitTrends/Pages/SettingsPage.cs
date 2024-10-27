@@ -1,6 +1,6 @@
-﻿using GitTrends.Mobile.Common;
+﻿using CommunityToolkit.Maui.Markup;
 using GitTrends.Common;
-using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
 using GitTrends.Resources;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
@@ -126,10 +126,10 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 								.Row(SettingsRow.Theme).Column(SettingsColumn.Button)
 								.Bind(Picker.ItemsSourceProperty, nameof(SettingsViewModel.ThemePickerItemsSource))
 								.Bind(Picker.SelectedIndexProperty, nameof(SettingsViewModel.ThemePickerSelectedIndex)),
-							
+
 							new Separator()
 								.Row(SettingsRow.ThemeSeparator).ColumnSpan(All<SettingsColumn>()),
-							
+
 							new SvgImage(deviceInfo, "language.svg", () => AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
 								.Row(SettingsRow.Language).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.LanguageTitleLabel)

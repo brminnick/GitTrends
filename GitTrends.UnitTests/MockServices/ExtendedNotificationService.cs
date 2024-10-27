@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Maui.ApplicationModel;
-using GitTrends.Mobile.Common;
 using GitTrends.Common;
+using GitTrends.Mobile.Common;
 using Shiny.Notifications;
 
 namespace GitTrends.UnitTests;

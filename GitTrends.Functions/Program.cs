@@ -54,15 +54,15 @@ class Program
 				services.AddSingleton<BlobStorageService>();
 				services.AddSingleton<GitHubGraphQLApiService>();
 				services.AddSingleton<BlobServiceClient>(new BlobServiceClient(_storageConnectionString));
-				
-				static DecompressionMethods GetDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip; 
-				
+
+				static DecompressionMethods GetDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip;
+
 			})
 			.Build();
 
 		return host.RunAsync();
 	}
-	
+
 	sealed class ServerlessHttpRetryStrategyOptions : HttpRetryStrategyOptions
 	{
 		public ServerlessHttpRetryStrategyOptions()

@@ -1,6 +1,6 @@
-﻿using GitTrends.Mobile.Common;
+﻿using CommunityToolkit.Maui.Markup;
 using GitTrends.Common;
-using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;
@@ -21,44 +21,44 @@ abstract class BaseTrendsDataTemplate(
 		IDeviceInfo deviceInfo,
 		int carouselPositionIndex,
 		TrendsPageType trendsPageType,
-		Func<Layout> createHeaderView, 
+		Func<Layout> createHeaderView,
 		Func<BaseChartView> createChartView,
 		Func<EmptyDataView> createEmptyDataView) => new Grid
-	{
-		ColumnSpacing = 8,
-		RowSpacing = 12,
-		
-		RowDefinitions = Rows.Define(
+		{
+			ColumnSpacing = 8,
+			RowSpacing = 12,
+
+			RowDefinitions = Rows.Define(
 			(Row.Header, ViewsClonesStatisticsGrid.StatisticsGridHeight),
 			(Row.Indicator, 12),
 			(Row.Chart, Star)),
-		
-		Children =
+
+			Children =
 		{
 			createHeaderView()
 				.Row(Row.Header),
-			
+
 			new TrendsIndicatorView(carouselPositionIndex, indicatorColor)
 				.Row(Row.Indicator)
 				.Center(),
-			
+
 			createChartView().Assign(out BaseChartView chartView)
 				.Row(Row.Chart),
-			
+
 			createEmptyDataView()
 				.Margin(chartView.Margin)
 				.Padding(new Thickness(chartView.Padding.Left + 4, chartView.Padding.Top + 4, chartView.Padding.Right + 4, chartView.Padding.Bottom + 4))
 				.Row(Row.Chart),
-			
+
 			new TrendsChartActivityIndicator(trendsPageType, deviceInfo)
 				.Row(Row.Chart)
 		}
-	}.Padding(0, 16);
+		}.Padding(0, 16);
 
 	protected enum TrendsPageType { ViewsClonesTrendsPage, StarsTrendsPage }
-	
+
 	enum Row { Header, Indicator, Chart }
-	
+
 	protected IAnalyticsService AnalyticsService { get; } = analyticsService;
 
 	sealed class TrendsIndicatorView : IndicatorView
@@ -104,10 +104,10 @@ abstract class BaseTrendsDataTemplate(
 
 			this.Center()
 				.DynamicResource(ColorProperty, nameof(BaseTheme.ActivityIndicatorColor))
-				.Bind(IsVisibleProperty, 
+				.Bind(IsVisibleProperty,
 					isFetchingDataPath,
 					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-				.Bind(IsRunningProperty, 
+				.Bind(IsRunningProperty,
 					isFetchingDataPath,
 					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)));
 		}

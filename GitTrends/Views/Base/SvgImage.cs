@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
-using GitTrends.Mobile.Common;
-using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Behaviors;
+using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
 
 namespace GitTrends;
 

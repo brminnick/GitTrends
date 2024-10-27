@@ -1,12 +1,12 @@
-﻿using GitTrends.Mobile.Common;
+﻿using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
+using GitTrends.Resources;
 using SkiaSharp;
 using SkiaSharp.Views.Maui;
-using CommunityToolkit.Maui.Markup;
-using GitTrends.Resources;
 using SkiaSharp.Views.Maui.Controls;
-using static GitTrends.MauiService;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
+using static GitTrends.MauiService;
 
 namespace GitTrends;
 

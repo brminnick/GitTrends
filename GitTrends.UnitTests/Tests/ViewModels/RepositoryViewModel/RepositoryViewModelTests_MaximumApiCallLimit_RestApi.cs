@@ -18,14 +18,14 @@ class RepositoryViewModelTests_MaximumApiCallLimit_RestApi : RepositoryViewModel
 		{
 			AutomaticDecompression = GetDecompressionMethods()
 		};
-			
+
 		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(CreateMaximumApiLimitHttpClient(GitHubConstants.GitHubRestApiUrl));
-			
+
 		var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(new HttpClient(handler)
 		{
 			BaseAddress = new(GitHubConstants.GitHubGraphQLApi)
 		});
-			
+
 		var azureFunctionsClient = RestService.For<IAzureFunctionsApi>(new HttpClient(handler)
 		{
 			BaseAddress = new(AzureConstants.AzureFunctionsApiUrl)

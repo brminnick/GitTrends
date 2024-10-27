@@ -120,7 +120,7 @@ class AzureFunctionsApiServiceTests : BaseTest
 			Assert.That(gitTrendsStatisticsDTO.GitHubUri.IsWellFormedOriginalString());
 		});
 	}
-	
+
 	[Test]
 	public async Task GetGitTrendsEnableOrganizationsUriTest()
 	{

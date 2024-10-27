@@ -9,7 +9,7 @@ public class ExtendedReferringSitesViewModel(
 	ReferringSitesDatabase referringSitesDatabase,
 	IGitHubApiStatusService gitHubApiStatusService,
 	GitHubAuthenticationService gitHubAuthenticationService,
-	GitHubApiRepositoriesService gitHubApiRepositoriesService) 
+	GitHubApiRepositoriesService gitHubApiRepositoriesService)
 	: ReferringSitesViewModel(mainThread, analyticsService, gitHubUserService, referringSitesDatabase, gitHubApiStatusService, gitHubAuthenticationService, gitHubApiRepositoriesService)
 {
 	public void SetRepository(Repository repository) => Repository = repository;

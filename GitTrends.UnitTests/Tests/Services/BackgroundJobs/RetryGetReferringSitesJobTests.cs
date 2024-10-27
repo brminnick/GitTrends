@@ -13,7 +13,7 @@ class RetryGetReferringSitesJobTests : BaseJobTest
 		// Assert
 		Assert.That(retryGetReferringSitesJob.GetJobIdentifier(repository), Is.EqualTo($"{retryGetReferringSitesJob.Identifier}.{repository.Url}"));
 	}
-	
+
 	[Test]
 	public async Task ScheduleRetryGetReferringSitesTest_AuthenticatedUser()
 	{

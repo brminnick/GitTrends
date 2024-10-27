@@ -14,7 +14,7 @@ class RetryRepositoryStarsJobTests : BaseJobTest
 		// Assert
 		Assert.That(retryRepositoryStarsJob.GetJobIdentifier(repository), Is.EqualTo($"{retryRepositoryStarsJob.Identifier}.{repository.Url}"));
 	}
-	
+
 	[Test]
 	public async Task ScheduleRetryRepositoriesStarsTest_AuthenticatedUser()
 	{

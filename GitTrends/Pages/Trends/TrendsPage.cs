@@ -1,8 +1,8 @@
-﻿using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
-using GitTrends.Common;
-using CommunityToolkit.Maui.Markup;
+﻿using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Mvvm.Input;
+using GitTrends.Common;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 
 namespace GitTrends;
 
@@ -11,7 +11,7 @@ sealed class TrendsPage : BaseCarouselViewPage<TrendsViewModel>, IQueryAttributa
 	Repository? _repository;
 
 	public TrendsPage(
-		IDeviceInfo	deviceInfo,
+		IDeviceInfo deviceInfo,
 		TrendsViewModel trendsViewModel,
 		IAnalyticsService analyticsService) : base(trendsViewModel, analyticsService)
 	{
@@ -24,7 +24,7 @@ sealed class TrendsPage : BaseCarouselViewPage<TrendsViewModel>, IQueryAttributa
 		});
 
 		this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
-		
+
 		Content.ItemsSource = Enumerable.Range(0, 2);
 		Content.ItemTemplate = new TrendsCarouselDataTemplateSelector(deviceInfo, analyticsService, trendsViewModel);
 	}
@@ -44,7 +44,7 @@ sealed class TrendsPage : BaseCarouselViewPage<TrendsViewModel>, IQueryAttributa
 		};
 		await Shell.Current.GoToAsync(AppShell.GetPageRoute<ReferringSitesPage>(), parameters);
 	}
-	
+
 	void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)
 	{
 		var repository = (Repository)query[TrendsViewModel.RepositoryQueryString];

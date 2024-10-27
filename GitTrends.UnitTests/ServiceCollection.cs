@@ -3,8 +3,8 @@ using System.Net.Http.Headers;
 using CommunityToolkit.Maui.ApplicationModel;
 using GitHubApiStatus;
 using GitHubApiStatus.Extensions;
-using GitTrends.Mobile.Common;
 using GitTrends.Common;
+using GitTrends.Mobile.Common;
 using Plugin.StoreReview.Abstractions;
 using Shiny.Jobs;
 using Shiny.Notifications;
@@ -64,7 +64,7 @@ static class ServiceCollection
 		services.AddTransient<SettingsViewModel>();
 		services.AddTransient<TrendsViewModel>();
 		services.AddTransient<WelcomeViewModel>();
-		
+
 		// Background Jobs
 		services.AddTransient<CleanDatabaseJob>();
 		services.AddTransient<RetryRepositoryStarsJob>();

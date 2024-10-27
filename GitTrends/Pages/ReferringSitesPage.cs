@@ -1,7 +1,7 @@
+using CommunityToolkit.Maui.Markup;
+using GitTrends.Common;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Common;
-using CommunityToolkit.Maui.Markup;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;

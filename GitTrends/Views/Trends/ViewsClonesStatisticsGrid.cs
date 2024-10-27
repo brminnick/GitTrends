@@ -1,7 +1,7 @@
-﻿using GitTrends.Mobile.Common;
+﻿using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
 using Sharpnado.MaterialFrame;
-using CommunityToolkit.Maui.Markup;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;
@@ -31,21 +31,21 @@ class ViewsClonesStatisticsGrid : Grid
 
 		Children.Add(new StatisticsCard(SortingConstants.Views, "total_views.svg", nameof(BaseTheme.CardViewsStatsIconColor), TrendsPageAutomationIds.ViewsCard, TrendsPageAutomationIds.ViewsStatisticsLabel, deviceInfo)
 			.Row(Row.ViewsStats).Column(Column.Total)
-			.Bind(StatisticsCard.IsSeriesVisibleProperty, 
+			.Bind(StatisticsCard.IsSeriesVisibleProperty,
 				nameof(TrendsViewModel.IsViewsSeriesVisible),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-			.Bind(StatisticsCard.TextProperty, 
+			.Bind(StatisticsCard.TextProperty,
 				nameof(TrendsViewModel.ViewsStatisticsText),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-			.BindTapGesture(nameof(TrendsViewModel.ViewsCardTappedCommand), 
+			.BindTapGesture(nameof(TrendsViewModel.ViewsCardTappedCommand),
 				commandSource: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 
 		Children.Add(new StatisticsCard(SortingConstants.UniqueViews, "unique_views.svg", nameof(BaseTheme.CardUniqueViewsStatsIconColor), TrendsPageAutomationIds.UniqueViewsCard, TrendsPageAutomationIds.UniqueViewsStatisticsLabel, deviceInfo)
 			.Row(Row.ViewsStats).Column(Column.Unique)
-			.Bind(StatisticsCard.IsSeriesVisibleProperty, 
+			.Bind(StatisticsCard.IsSeriesVisibleProperty,
 				nameof(TrendsViewModel.IsUniqueViewsSeriesVisible),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-			.Bind(StatisticsCard.TextProperty, 
+			.Bind(StatisticsCard.TextProperty,
 				nameof(TrendsViewModel.UniqueViewsStatisticsText),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
 			.BindTapGesture(nameof(TrendsViewModel.UniqueViewsCardTappedCommand),
@@ -53,10 +53,10 @@ class ViewsClonesStatisticsGrid : Grid
 
 		Children.Add(new StatisticsCard(SortingConstants.Clones, "total_clones.svg", nameof(BaseTheme.CardClonesStatsIconColor), TrendsPageAutomationIds.ClonesCard, TrendsPageAutomationIds.ClonesStatisticsLabel, deviceInfo)
 			.Row(Row.ClonesStats).Column(Column.Total)
-			.Bind(StatisticsCard.IsSeriesVisibleProperty, 
+			.Bind(StatisticsCard.IsSeriesVisibleProperty,
 				nameof(TrendsViewModel.IsClonesSeriesVisible),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-			.Bind(StatisticsCard.TextProperty, 
+			.Bind(StatisticsCard.TextProperty,
 				nameof(TrendsViewModel.ClonesStatisticsText),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
 			.BindTapGesture(nameof(TrendsViewModel.ClonesCardTappedCommand),
@@ -64,10 +64,10 @@ class ViewsClonesStatisticsGrid : Grid
 
 		Children.Add(new StatisticsCard(SortingConstants.UniqueClones, "unique_clones.svg", nameof(BaseTheme.CardUniqueClonesStatsIconColor), TrendsPageAutomationIds.UniqueClonesCard, TrendsPageAutomationIds.UniqueClonesStatisticsLabel, deviceInfo)
 			.Row(Row.ClonesStats).Column(Column.Unique)
-			.Bind(StatisticsCard.IsSeriesVisibleProperty, 
+			.Bind(StatisticsCard.IsSeriesVisibleProperty,
 				nameof(TrendsViewModel.IsUniqueClonesSeriesVisible),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-			.Bind(StatisticsCard.TextProperty, 
+			.Bind(StatisticsCard.TextProperty,
 				nameof(TrendsViewModel.UniqueClonesStatisticsText),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
 			.BindTapGesture(nameof(TrendsViewModel.UniqueClonesCardTappedCommand),

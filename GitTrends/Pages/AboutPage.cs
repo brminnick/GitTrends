@@ -1,9 +1,9 @@
-﻿using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
+﻿using CommunityToolkit.Maui.Markup;
 using GitTrends.Common;
-using CommunityToolkit.Maui.Markup;
-using static GitTrends.MauiService;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
+using static GitTrends.MauiService;
 
 namespace GitTrends;
 
@@ -177,12 +177,12 @@ class AboutPage : BaseContentPage<AboutViewModel>
 			Children.Add(new RequestFeatureButton(deviceInfo).Start());
 		}
 
-		sealed class ViewOnGitHubButton(IDeviceInfo deviceInfo) 
+		sealed class ViewOnGitHubButton(IDeviceInfo deviceInfo)
 			: AboutPageButton("github.svg", AboutPageConstants.GitHubButton, AboutPageAutomationIds.ViewOnGitHubButton, Color.FromArgb("231F20"), nameof(AboutViewModel.ViewOnGitHubCommand), deviceInfo)
 		{
 		}
 
-		sealed class RequestFeatureButton(IDeviceInfo deviceInfo) 
+		sealed class RequestFeatureButton(IDeviceInfo deviceInfo)
 			: AboutPageButton("sparkle.svg", AboutPageConstants.RequestFeatureButton, AboutPageAutomationIds.RequestFeatureButton, Color.FromArgb("F97B4F"), nameof(AboutViewModel.RequestFeatureCommand), deviceInfo)
 		{
 		}

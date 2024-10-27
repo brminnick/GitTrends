@@ -2,8 +2,8 @@
 using System.Text.Json;
 using AsyncAwaitBestPractices;
 using GitHubApiStatus;
-using GitTrends.Mobile.Common;
 using GitTrends.Common;
+using GitTrends.Mobile.Common;
 
 namespace GitTrends;
 

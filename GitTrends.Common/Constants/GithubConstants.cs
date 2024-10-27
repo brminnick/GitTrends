@@ -1,6 +1,6 @@
 ﻿using System.Web;
 
-namespace  GitTrends.Common;
+namespace GitTrends.Common;
 
 public static class GitHubConstants
 {

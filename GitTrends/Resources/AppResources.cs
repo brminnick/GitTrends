@@ -24,7 +24,7 @@ static class AppResources
 		{
 			return defaultValue ?? throw new InvalidOperationException("Application cannot be null");
 		}
-		
+
 		if (Application.Current.Resources.TryGetValue(resourceName, out var resource))
 		{
 			return (T)resource;

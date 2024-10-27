@@ -86,8 +86,8 @@ public sealed class DarkTheme : BaseTheme
 
 	//Indicators
 	public override Color ActivityIndicatorColor { get; } = Color.FromArgb(_lightPrimaryTealHex);
-	public override Color PullToRefreshColor { get; } = DeviceInfo.Platform == DevicePlatform.iOS 
-														? Color.FromArgb(_lightPrimaryTealHex) 
+	public override Color PullToRefreshColor { get; } = DeviceInfo.Platform == DevicePlatform.iOS
+														? Color.FromArgb(_lightPrimaryTealHex)
 														: Color.FromArgb(_toolbarSurfaceHex);
 
 	//Card

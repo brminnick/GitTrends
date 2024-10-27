@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-namespace  GitTrends.Common;
+namespace GitTrends.Common;
 
 public record ReferringSiteModel : BaseTotalCountModel, IReferringSiteModel
 {
@@ -25,7 +25,7 @@ public record ReferringSiteModel : BaseTotalCountModel, IReferringSiteModel
 	}
 
 	public DateTimeOffset DownloadedAt { get; init; } = DateTimeOffset.UtcNow;
-	
+
 	[JsonPropertyName("referrer")]
 	public string Referrer { get; }
 	public bool IsReferrerUriValid { get; }

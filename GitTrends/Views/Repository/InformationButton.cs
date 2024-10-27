@@ -1,9 +1,9 @@
 ﻿using System.Globalization;
 using System.Windows.Input;
-using CommunityToolkit.Mvvm.Input;
-using GitTrends.Mobile.Common;
-using GitTrends.Common;
 using CommunityToolkit.Maui.Markup;
+using CommunityToolkit.Mvvm.Input;
+using GitTrends.Common;
+using GitTrends.Mobile.Common;
 using GitTrends.Resources;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
@@ -12,7 +12,7 @@ namespace GitTrends;
 class InformationButton : Grid
 {
 	public const int Diameter = 100;
-	
+
 	readonly IAnalyticsService _analyticsService;
 	readonly FloatingActionTextButton _totalButton, _statistic1FloatingActionButton, _statistic2FloatingActionButton, _statistic3FloatingActionButton;
 

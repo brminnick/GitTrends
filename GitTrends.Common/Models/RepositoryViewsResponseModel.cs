@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace  GitTrends.Common;
+namespace GitTrends.Common;
 
 public record RepositoryViewsResponseModel(
 	[property: JsonPropertyName("count")] long TotalCount,

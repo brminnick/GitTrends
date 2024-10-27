@@ -56,6 +56,6 @@ abstract class BaseTrendsChart : SfCartesianChart
 			this.DynamicResource(StrokeProperty, colorResource);
 		}
 	}
-	
+
 	void HandleThemePreferenceChanged(object? sender, PreferredTheme e) => SetPaletteBrushColors();
 }

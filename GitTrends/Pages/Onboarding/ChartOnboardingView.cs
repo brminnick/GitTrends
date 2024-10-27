@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
-using GitTrends.Mobile.Common.Constants;
-using GitTrends.Common;
 using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
+using GitTrends.Common;
+using GitTrends.Mobile.Common.Constants;
 using Microsoft.Maui.Controls.Shapes;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 

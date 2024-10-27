@@ -40,8 +40,8 @@ indent_size = 2
 # Organize usings
 dotnet_sort_system_directives_first = true
 
-# CS9124: Parameter is captured into the state of the enclosing type and its value is also used to initialize a field, property, or event
-dotnet_diagnostic.CS9124.severity = error
+# IDE0160: Use file scoped namespace
+csharp_style_namespace_declarations = file_scoped:error
 
 # CS4014: Because this call is not awaited, execution of the current method continues before the call is completed
 dotnet_diagnostic.CS4014.severity = error
@@ -77,7 +77,7 @@ csharp_style_conditional_delegate_call = true:suggestion
 
 # Collection Expressions
 dotnet_style_prefer_collection_expression = when_types_loosely_match:suggestion
-dotnet_diagnostic.IDE0028.severity = error 
+dotnet_diagnostic.IDE0303.severity = suggestion
 
 # Naming rules
 

@@ -78,7 +78,7 @@ class NuGetService(GitHubApiV3Service gitHubApiV3Service, HttpClient httpClient,
 		});
 
 
-		List<Task<( string Title, Uri IconUri, Uri NuGetUri)?>> remainingTasks = [.. getInstalledPackageInfoTCSList.Select(static x => x.PackageInfoTCS.Task)];
+		List<Task<(string Title, Uri IconUri, Uri NuGetUri)?>> remainingTasks = [.. getInstalledPackageInfoTCSList.Select(static x => x.PackageInfoTCS.Task)];
 
 		while (remainingTasks.Count is not 0)
 		{

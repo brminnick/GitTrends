@@ -7,22 +7,22 @@ namespace GitTrends;
 public class CircleBorder : Border
 {
 	public static readonly BindableProperty GetBorderColorProperty = BindableProperty.Create(nameof(GetBorderColor), typeof(Func<Color>), typeof(CircleImage), () => default(Color));
-	
+
 	public CircleBorder()
 	{
 		ThemeService.PreferenceChanged += HandleThemePreferenceChanged;
-		
-		HeightRequest = WidthRequest = Math.Min(HeightRequest, WidthRequest); 
-		
-		this.Bind(StrokeProperty, 
-			nameof(GetBorderColor), 
+
+		HeightRequest = WidthRequest = Math.Min(HeightRequest, WidthRequest);
+
+		this.Bind(StrokeProperty,
+			nameof(GetBorderColor),
 			source: this,
 			convert: static (Func<Color>? getColorFunc) => getColorFunc?.Invoke() ?? default);
 
 		StrokeShape = new RoundRectangle()
-			.Bind(RoundRectangle.CornerRadiusProperty, 
-				getter: circleBorder => circleBorder.Width, 
-				convert: ConvertWidthToCornerRadius, 
+			.Bind(RoundRectangle.CornerRadiusProperty,
+				getter: circleBorder => circleBorder.Width,
+				convert: ConvertWidthToCornerRadius,
 				source: this);
 
 		static CornerRadius ConvertWidthToCornerRadius(double width) => width is -1 ? -1 : width / 2;
@@ -33,7 +33,7 @@ public class CircleBorder : Border
 		get => (Func<Color>)GetValue(GetBorderColorProperty);
 		set => SetValue(GetBorderColorProperty, value);
 	}
-	
+
 	void HandleThemePreferenceChanged(object? sender, PreferredTheme e)
 	{
 		Stroke = GetBorderColor();

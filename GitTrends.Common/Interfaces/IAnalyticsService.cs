@@ -1,13 +1,13 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace  GitTrends.Common;
+namespace GitTrends.Common;
 
 public interface IAnalyticsService
 {
 	bool Configured { get; }
 
 	void Track(string trackIdentifier);
-	
+
 	void Track(string trackIdentifier, IDictionary<string, string>? table);
 
 	void Track(string trackIdentifier, string key, string value);

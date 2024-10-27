@@ -1,5 +1,5 @@
-﻿using Sharpnado.MaterialFrame;
-using CommunityToolkit.Maui.Markup;
+﻿using CommunityToolkit.Maui.Markup;
+using Sharpnado.MaterialFrame;
 
 namespace GitTrends;
 

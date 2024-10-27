@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
-using GitTrends.Mobile.Common.Constants;
 using GitTrends.Common;
+using GitTrends.Mobile.Common.Constants;
 
 namespace GitTrends.Mobile.Common;
 

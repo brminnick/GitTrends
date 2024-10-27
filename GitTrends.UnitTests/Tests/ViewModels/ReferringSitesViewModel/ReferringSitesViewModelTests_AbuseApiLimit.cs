@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
-using GitTrends.Mobile.Common;
 using GitTrends.Common;
+using GitTrends.Mobile.Common;
 using Refit;
 using RichardSzalay.MockHttp;
 
@@ -28,7 +28,7 @@ class ReferringSitesViewModelTests_AbuseApiLimit : BaseTest
 
 		var pullToRefreshFailedTCS = new TaskCompletionSource<PullToRefreshFailedEventArgs>();
 		ReferringSitesViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
-		
+
 		referringSitesViewModel.SetRepository(mockGitTrendsRepository);
 
 		//Act

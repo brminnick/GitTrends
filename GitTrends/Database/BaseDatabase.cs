@@ -44,7 +44,7 @@ public abstract class BaseDatabase
 
 	async ValueTask<SQLiteAsyncConnection> GetDatabaseConnection<T>()
 	{
-		if (DatabaseConnection.TableMappings.Any(static x => x.MappedType == typeof(T))) 
+		if (DatabaseConnection.TableMappings.Any(static x => x.MappedType == typeof(T)))
 			return DatabaseConnection;
 
 		await DatabaseConnection.EnableWriteAheadLoggingAsync().ConfigureAwait(false);

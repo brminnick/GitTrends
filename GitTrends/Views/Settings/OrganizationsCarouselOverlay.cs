@@ -1,12 +1,12 @@
 ﻿using AsyncAwaitBestPractices;
+using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Mvvm.Input;
+using GitTrends.Common;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Common;
-using Sharpnado.MaterialFrame;
-using CommunityToolkit.Maui.Markup;
 using GitTrends.Resources;
 using Microsoft.Maui.Controls.Shapes;
+using Sharpnado.MaterialFrame;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;

@@ -9,7 +9,7 @@ public class AnalyticsService(ISentryClient client) : IAnalyticsService
 	readonly ISentryClient _client = client;
 
 	public bool Configured => _client.IsEnabled;
-	
+
 	public void Track(string trackIdentifier) => Trace.WriteLine(trackIdentifier);
 
 	public void Track(string trackIdentifier, string key, string value) => Track(trackIdentifier);

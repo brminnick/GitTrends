@@ -18,7 +18,7 @@ class RepositoryViewModelTests_AbuseLimit_RestApi : RepositoryViewModelTests_Abu
 		{
 			AutomaticDecompression = GetDecompressionMethods()
 		};
-		
+
 		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(CreateAbuseApiLimitHttpClient(GitHubConstants.GitHubRestApiUrl));
 		var gitHubGraphQLCLient = RestService.For<IGitHubGraphQLApi>(new HttpClient(handler)
 		{

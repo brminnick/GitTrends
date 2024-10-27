@@ -1,5 +1,5 @@
-﻿using GitTrends.Mobile.Common;
-using CommunityToolkit.Maui.Markup;
+﻿using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;
@@ -41,12 +41,12 @@ class StarsStatisticsGrid : Grid
 		Children.Add(new StarsStatisticsLabel(48) { AutomationId = TrendsPageAutomationIds.StarsStatisticsLabel }
 			.Row(Row.Stars).Column(Column.Text)
 			.Center()
-			.Bind<Label, bool, bool>(IsVisibleProperty, 
-				nameof(TrendsViewModel.IsFetchingStarsData), 
+			.Bind<Label, bool, bool>(IsVisibleProperty,
+				nameof(TrendsViewModel.IsFetchingStarsData),
 				convert: static isFetchingStarsData => !isFetchingStarsData,
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-			.Bind<Label, double, string>(Label.TextProperty, 
-				nameof(TrendsViewModel.TotalStars), 
+			.Bind<Label, double, string>(Label.TextProperty,
+				nameof(TrendsViewModel.TotalStars),
 				convert: static totalStars => totalStars.ToAbbreviatedText(),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 
@@ -54,10 +54,10 @@ class StarsStatisticsGrid : Grid
 			.Row(Row.Stars).Column(Column.Text)
 			.Center()
 			.DynamicResource(ActivityIndicator.ColorProperty, nameof(BaseTheme.ActivityIndicatorColor))
-			.Bind(IsVisibleProperty, 
+			.Bind(IsVisibleProperty,
 				nameof(TrendsViewModel.IsFetchingStarsData),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel)))
-			.Bind(ActivityIndicator.IsRunningProperty, 
+			.Bind(ActivityIndicator.IsRunningProperty,
 				nameof(TrendsViewModel.IsFetchingStarsData),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 
@@ -66,7 +66,7 @@ class StarsStatisticsGrid : Grid
 
 		Children.Add(new StarsStatisticsLabel(_textSize) { AutomationId = TrendsPageAutomationIds.StarsHeaderMessageLabel }
 			.Row(Row.Message).ColumnSpan(All<Column>())
-			.Bind(Label.TextProperty, 
+			.Bind(Label.TextProperty,
 				nameof(TrendsViewModel.StarsHeaderMessageText),
 				source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
 

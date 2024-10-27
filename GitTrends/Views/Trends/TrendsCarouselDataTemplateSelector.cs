@@ -6,7 +6,7 @@ class TrendsCarouselDataTemplateSelector(IDeviceInfo deviceInfo, IAnalyticsServi
 {
 	readonly DataTemplate _starsTrendsView = new StarsTrendsView(deviceInfo, analyticsService, trendsViewModel);
 	readonly DataTemplate _viewsClonesTrendsView = new ViewsClonesTrendsView(deviceInfo, analyticsService, trendsViewModel);
-	
+
 	protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
 	{
 		var pageNumber = (int)item;

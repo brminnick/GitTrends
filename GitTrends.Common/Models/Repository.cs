@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace  GitTrends.Common;
+namespace GitTrends.Common;
 
 public record Repository : IRepository
 {

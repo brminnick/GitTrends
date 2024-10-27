@@ -1,9 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
 using AsyncAwaitBestPractices;
 using GitHubApiStatus;
+using GitTrends.Common;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Common;
 using Refit;
 
 namespace GitTrends;
@@ -161,7 +161,7 @@ public class GitHubGraphQLApiService(
 
 				// Views + Clones statistics are only available for repositories with write access
 				repositoryList.AddRange(repositoryConnection.RepositoryList.Where(static x => x?.Permission is RepositoryPermission.ADMIN or RepositoryPermission.MAINTAIN or RepositoryPermission.WRITE).OfType<RepositoryConnectionNode>().Select(repository => new Repository(repository.Name, repository.Description, repository.ForkCount, repository.Owner.Login, repository.Owner.AvatarUrl, repository.Issues.IssuesCount, repository.Watchers.TotalCount, repository.Stargazers.TotalCount, repository.Url.ToString(), repository.IsFork, repository.DataDownloadedAt, repository.Permission, repository.IsArchived)));
-				
+
 			} while (repositoryConnection.PageInfo.HasNextPage);
 		}
 		catch (ApiException e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryDelta))
@@ -194,8 +194,8 @@ public class GitHubGraphQLApiService(
 
 	async IAsyncEnumerable<StarGazers> GetStarGazers(string repositoryName, string repositoryOwner, [EnumeratorCancellation] CancellationToken cancellationToken, int numberOfStarGazersPerRequest = 100)
 	{
-		
-		
+
+
 		StarGazerResponse? starGazerResponse = null;
 
 		var token = await _gitHubUserService.GetGitHubToken().ConfigureAwait(false);

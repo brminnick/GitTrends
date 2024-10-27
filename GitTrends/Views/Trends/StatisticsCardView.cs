@@ -1,6 +1,6 @@
-﻿using Sharpnado.MaterialFrame;
-using CommunityToolkit.Maui.Markup;
+﻿using CommunityToolkit.Maui.Markup;
 using GitTrends.Resources;
+using Sharpnado.MaterialFrame;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;
@@ -10,11 +10,11 @@ class StatisticsCard : MaterialFrame
 	public static readonly BindableProperty IsSeriesVisibleProperty = BindableProperty.Create(nameof(IsSeriesVisible), typeof(bool), typeof(StatisticsCard), false);
 	public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(string), typeof(StatisticsCard), string.Empty);
 
-	public StatisticsCard(in string title, 
-		in string svgImage, 
-		in string svgColorTheme, 
-		in string cardAutomationId, 
-		in string statisticsTextAutomationId, 
+	public StatisticsCard(in string title,
+		in string svgImage,
+		in string svgColorTheme,
+		in string cardAutomationId,
+		in string statisticsTextAutomationId,
 		in IDeviceInfo deviceInfo)
 	{
 		Elevation = 4;
@@ -48,9 +48,9 @@ class StatisticsCard : MaterialFrame
 		readonly RepositoryStatSVGImage _svgImage;
 
 		public StatisticsCardContent(in string title,
-			in string svgImage, 
-			in string svgColorTheme, 
-			in string statisticsTextAutomationId, 
+			in string svgImage,
+			in string svgColorTheme,
+			in string statisticsTextAutomationId,
 			in StatisticsCard statisticsCard,
 			in IDeviceInfo deviceInfo)
 		{
@@ -69,20 +69,20 @@ class StatisticsCard : MaterialFrame
 
 			Children.Add(new PrimaryColorLabel(14, title)
 				.Row(Row.Title).Column(Column.Stats));
-			
+
 			Children.Add(new TrendsStatisticsLabel(34, statisticsTextAutomationId)
 				.Row(Row.Number).Column(Column.Stats).ColumnSpan(2)
 				.Bind(Label.TextProperty, nameof(Text), source: statisticsCard)
-				.Bind<TrendsStatisticsLabel, bool, bool>(IsVisibleProperty, 
-					nameof(TrendsViewModel.IsFetchingViewsClonesData), 
+				.Bind<TrendsStatisticsLabel, bool, bool>(IsVisibleProperty,
+					nameof(TrendsViewModel.IsFetchingViewsClonesData),
 					convert: static isFetchingData => !isFetchingData,
 					source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(TrendsViewModel))));
-			
+
 			Children.Add(new RepositoryStatSVGImage(svgImage, svgColorTheme, deviceInfo).Assign(out _svgImage)
 				.Row(Row.Title).Column(Column.Icon).RowSpan(2)
-				.Bind<SvgImage, bool, Func<Color>>(SvgImage.GetSvgColorProperty, 
-					nameof(IsSeriesVisible), 
-					convert: convertIsSeriesVisible, 
+				.Bind<SvgImage, bool, Func<Color>>(SvgImage.GetSvgColorProperty,
+					nameof(IsSeriesVisible),
+					convert: convertIsSeriesVisible,
 					source: statisticsCard));
 
 			Func<Color> convertIsSeriesVisible(bool isVisible) => isVisible ? () => _svgImage.DefaultColor : () => Colors.Gray;

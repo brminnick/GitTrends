@@ -19,14 +19,14 @@ public class MockPreferences : IPreferences
 
 		return defaultValue;
 	}
-	public  void Set<T>(string key, T value, string? sharedName)
+	public void Set<T>(string key, T value, string? sharedName)
 	{
 		if (Hashtable.ContainsKey(key))
 			Hashtable[key] = value;
 		else
 			Hashtable.Add(key, value);
 	}
-	
+
 	public void Remove(string key, string? sharedName = null)
 	{
 		if (Hashtable.ContainsKey(key))

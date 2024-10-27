@@ -12,7 +12,7 @@ partial class MauiProgram
 		AddPickerBorderCustomHandler();
 		AddSwitchCustomHandler();
 	}
-	
+
 	static void AddSwitchCustomHandler()
 	{
 		SwitchHandler.Mapper.AppendToMapping("SwitchBackgroundColor", (handler, view) =>

@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace  GitTrends.Common;
+namespace GitTrends.Common;
 
 public static partial class StringExtensions
 {
@@ -23,7 +23,7 @@ public static partial class StringExtensions
 	}
 
 	public static string RemoveEmoji(this string text) => RemoveEmojiRegEx().Replace(text, "");
-	
+
 	[GeneratedRegex("\\p{Cs}")]
 	private static partial Regex RemoveEmojiRegEx();
 }

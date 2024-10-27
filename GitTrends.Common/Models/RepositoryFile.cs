@@ -1,4 +1,4 @@
-﻿namespace  GitTrends.Common;
+﻿namespace GitTrends.Common;
 
 public class RepositoryFile(string name, string sha, string path, Uri? download_url)
 {

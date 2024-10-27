@@ -1,6 +1,6 @@
-﻿using GitTrends.Mobile.Common;
+﻿using GitTrends.Common;
+using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Common;
 using Shiny;
 using Shiny.Notifications;
 
@@ -230,7 +230,7 @@ class NotificationServiceTests : BaseTest
 
 		//Act
 		notificationService.Initialize();
-		
+
 		await initializationCompletedTCS.Task.WaitAsync(TestCancellationTokenSource.Token).ConfigureAwait(false);
 
 		//Assert

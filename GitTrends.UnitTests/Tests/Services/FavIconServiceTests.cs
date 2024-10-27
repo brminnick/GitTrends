@@ -19,7 +19,7 @@ class FavIconServiceTests : BaseTest
 			Assert.That(FavIconService.DefaultFavIcon, Is.EqualTo(fileImageSource.File));
 		});
 	}
-	
+
 	[TestCase("https://chrissainty.com/", "https://chrissainty.com/favicon-32x32.png")] // Icon Url
 	[TestCase("https://visualstudiomagazine.com/", "https://visualstudiomagazine.com/design/ECG/VisualStudioMagazine/img/vsm_apple_icon.png")] //Apple Touch Icon Url
 	[TestCase("https://mondaypunday.com/", "https://mondaypunday.com/favicon.ico")] //FavIcon Url

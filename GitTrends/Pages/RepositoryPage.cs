@@ -1,9 +1,9 @@
 ﻿using AsyncAwaitBestPractices;
+using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Mvvm.Input;
+using GitTrends.Common;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Common;
-using CommunityToolkit.Maui.Markup;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace GitTrends;

@@ -38,7 +38,7 @@ public abstract class BaseCarouselViewPage<T> : BaseContentPage<T> where T : Bas
 			var carouselView = (CarouselView)sender;
 
 			PageCount = ((IEnumerable<int>)carouselView.ItemsSource).Count();
-			
+
 			OnPropertyChanged(nameof(PageCount));
 		}
 	}

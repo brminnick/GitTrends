@@ -3,9 +3,9 @@ using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GitHubApiStatus;
+using GitTrends.Common;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Common;
 using Refit;
 
 namespace GitTrends;
@@ -39,7 +39,8 @@ public partial class RepositoryViewModel : BaseViewModel
 	[ObservableProperty]
 	IReadOnlyList<Repository> _visibleRepositoryList = [];
 
-	public RepositoryViewModel(IDispatcher dispatcher,
+	public RepositoryViewModel(
+		IDispatcher dispatcher,
 		IAnalyticsService analyticsService,
 		GitHubUserService gitHubUserService,
 		RepositoryDatabase repositoryDatabase,
@@ -444,7 +445,7 @@ public partial class RepositoryViewModel : BaseViewModel
 		_repositoryList = [];
 		UpdateVisibleRepositoryList(string.Empty, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
 	}
-	
+
 	[RelayCommand]
 	void SetSearchBarText(string text)
 	{
@@ -500,7 +501,7 @@ public partial class RepositoryViewModel : BaseViewModel
 
 		_pullToRefreshFailedEventManager.RaiseEvent(this, pullToRefreshFailedEventArgs, nameof(PullToRefreshFailed));
 	}
-	
+
 	void HandleSearchBarTextChanged(object? sender, string searchBarText) => SetSearchBarText(searchBarText);
 
 	void HandleScheduleRetryUpdatedRepositoriesStarsCompleted(object? sender, Repository e) => AddRepositoriesToCollection([e], _searchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);

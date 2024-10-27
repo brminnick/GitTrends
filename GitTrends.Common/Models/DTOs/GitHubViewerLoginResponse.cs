@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace  GitTrends.Common;
+namespace GitTrends.Common;
 
 public record GitHubViewerLoginResponse([property: JsonPropertyName("viewer")] User Viewer);

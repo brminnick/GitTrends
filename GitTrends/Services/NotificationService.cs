@@ -1,8 +1,8 @@
 ﻿using AsyncAwaitBestPractices;
 using CommunityToolkit.Maui.ApplicationModel;
+using GitTrends.Common;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Common;
 using Shiny;
 using Shiny.Notifications;
 #if IOS || MACCATALYST

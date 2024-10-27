@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using GitTrends.Mobile.Common.Constants;
 using GitTrends.Common;
+using GitTrends.Mobile.Common.Constants;
 
 namespace GitTrends;
 

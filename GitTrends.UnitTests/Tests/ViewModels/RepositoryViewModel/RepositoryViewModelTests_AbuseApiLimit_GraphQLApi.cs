@@ -20,7 +20,7 @@ class RepositoryViewModelTests_AbuseApiLimit_GraphQLApi : RepositoryViewModelTes
 		{
 			AutomaticDecompression = GetDecompressionMethods()
 		};
-		
+
 		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(new HttpClient(handler)
 		{
 			BaseAddress = new(GitHubConstants.GitHubRestApiUrl)

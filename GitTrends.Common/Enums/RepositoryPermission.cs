@@ -1,3 +1,3 @@
-﻿namespace  GitTrends.Common;
+﻿namespace GitTrends.Common;
 
 public enum RepositoryPermission { UNKNOWN, ADMIN, MAINTAIN, WRITE, TRIAGE, READ }

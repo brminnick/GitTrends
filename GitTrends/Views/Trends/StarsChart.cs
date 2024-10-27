@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
+using CommunityToolkit.Maui.Markup;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using CommunityToolkit.Maui.Markup;
 using GitTrends.Resources;
 using Syncfusion.Maui.Charts;
 
@@ -29,7 +29,7 @@ class StarsChart(TrendsViewModel trendsViewModel) : BaseChartView(new StarsTrend
 		}
 
 		public AreaSeries StarsSeries { get; }
-		
+
 		protected override void SetPaletteBrushColors()
 		{
 			PaletteBrushes = [AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor))];

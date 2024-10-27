@@ -1,3 +1,3 @@
-﻿namespace  GitTrends.Common;
+﻿namespace GitTrends.Common;
 
 public record SyncFusionDTO(string LicenseKey, long LicenseVersion);

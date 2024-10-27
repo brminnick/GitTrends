@@ -1,7 +1,7 @@
-﻿using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
+﻿using CommunityToolkit.Maui.Markup;
 using GitTrends.Common;
-using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using GitTrends.Resources;
 using Syncfusion.Maui.Charts;
 
@@ -46,14 +46,14 @@ class ViewsClonesChart(TrendsViewModel trendsViewModel) : BaseChartView(new View
 		public AreaSeries TotalUniqueViewsSeries { get; }
 		public AreaSeries TotalClonesSeries { get; }
 		public AreaSeries TotalUniqueClonesSeries { get; }
-		
+
 		protected override void SetPaletteBrushColors()
 		{
 			PaletteBrushes =
 			[
 				AppResources.GetResource<Color>(nameof(BaseTheme.TotalViewsColor)),
 				AppResources.GetResource<Color>(nameof(BaseTheme.TotalUniqueViewsColor)),
-				
+
 				AppResources.GetResource<Color>(nameof(BaseTheme.TotalClonesColor)),
 				AppResources.GetResource<Color>(nameof(BaseTheme.TotalUniqueClonesColor))
 			];

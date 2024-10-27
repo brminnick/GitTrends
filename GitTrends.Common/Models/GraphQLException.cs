@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 
-namespace  GitTrends.Common;
+namespace GitTrends.Common;
 
 public class GraphQLException<T>(
 	in T data,

@@ -1,7 +1,7 @@
 namespace GitTrends;
 
 public class OnboardingCarouselDataTemplateSelector(
-	ChartOnboardingView chartOnboardingView, 
+	ChartOnboardingView chartOnboardingView,
 	GitTrendsOnboardingView gitTrendsOnboardingView,
 	NotificationsOnboardingView notificationsOnboardingView,
 	ConnectToGitHubOnboardingView connectToGitHubOnboardingView) : DataTemplateSelector

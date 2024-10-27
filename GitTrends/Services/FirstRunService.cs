@@ -7,7 +7,7 @@ public class FirstRunService
 	public FirstRunService(IPreferences preferences)
 	{
 		_preferences = preferences;
-		
+
 		GitHubAuthenticationService.AuthorizeSessionCompleted += HandleAuthorizeSessionCompleted;
 		GitHubAuthenticationService.DemoUserActivated += HandleDemoUserActivated;
 	}

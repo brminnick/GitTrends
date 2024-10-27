@@ -1,6 +1,6 @@
 ﻿using System.Net;
-using GitTrends.Mobile.Common;
 using GitTrends.Common;
+using GitTrends.Mobile.Common;
 using Refit;
 using RichardSzalay.MockHttp;
 
@@ -28,7 +28,7 @@ class ReferringSitesViewModelTests_ServerError : BaseTest
 
 		var pullToRefreshFailedTCS = new TaskCompletionSource<PullToRefreshFailedEventArgs>();
 		ReferringSitesViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
-		
+
 		referringSitesViewModel.SetRepository(mockGitTrendsRepository);
 
 		//Act

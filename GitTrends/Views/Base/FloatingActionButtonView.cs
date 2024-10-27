@@ -41,7 +41,7 @@ class FloatingActionButtonView : AbsoluteLayout
 		Children.Add(Shadow
 						.LayoutBounds(new Rect(.51, .55, -1, -1))
 						.LayoutFlags(AbsoluteLayoutFlags.PositionProportional));
-		
+
 		Children.Add(FloatingActionButton.
 						LayoutBounds(new Rect(.5, .5, -1, -1))
 						.LayoutFlags(AbsoluteLayoutFlags.PositionProportional));

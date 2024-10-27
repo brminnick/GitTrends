@@ -20,7 +20,7 @@ public class RetryRepositoryStarsJob(
 	readonly IAnalyticsService _analyticsService = analyticsService;
 	readonly RepositoryDatabase _repositoryDatabase = repositoryDatabase;
 	readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService = gitHubApiRepositoriesService;
-	
+
 	public static event EventHandler<Repository> UpdatedRepositorySavedToDatabase
 	{
 		add => _repositoryEventManager.AddEventHandler(value);
@@ -78,7 +78,7 @@ public class RetryRepositoryStarsJob(
 		{
 			_analyticsService.Report(e);
 		}
-		
+
 		OnJobCompleted();
 	}
 

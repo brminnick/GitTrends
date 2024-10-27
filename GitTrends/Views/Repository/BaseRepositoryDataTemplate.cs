@@ -1,10 +1,10 @@
-﻿using GitTrends.Mobile.Common;
+﻿using CommunityToolkit.Maui.Markup;
 using GitTrends.Common;
-using Sharpnado.MaterialFrame;
-using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
 using GitTrends.Resources;
-using static GitTrends.MauiService;
+using Sharpnado.MaterialFrame;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
+using static GitTrends.MauiService;
 
 namespace GitTrends;
 
@@ -48,8 +48,8 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 			RightItems =
 			[
 				new SwipeItemView
-					{
-						Content = new Label()
+				{
+					Content = new Label()
 							.Margins(right: sidePadding)
 							.Font(size: 32).Center()
 							.Bind(Label.TextProperty,
@@ -66,7 +66,7 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 									: FontFamilyConstants.FontAwesome)
 							.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.CardStarsStatsIconColor))
 
-					}.Bind(SwipeItemView.CommandProperty,
+				}.Bind(SwipeItemView.CommandProperty,
 						nameof(RepositoryViewModel.ToggleIsFavoriteCommand),
 						BindingMode.OneTime,
 						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))
@@ -77,16 +77,16 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 			LeftItems =
 			[
 				new SwipeItemView
+				{
+					Content = new Label
 					{
-						Content = new Label
-							{
-								Text = FontAwesomeConstants.ExternalLink.ToString()
-							}
+						Text = FontAwesomeConstants.ExternalLink.ToString()
+					}
 							.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
 							.Font(FontFamilyConstants.FontAwesomeSolid, 28).Center()
 							.Margins(left: sidePadding),
 
-					}.Bind(SwipeItemView.CommandProperty,
+				}.Bind(SwipeItemView.CommandProperty,
 						nameof(RepositoryViewModel.NavigateToRepositoryWebsiteCommand),
 						BindingMode.OneTime,
 						source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(RepositoryViewModel)))

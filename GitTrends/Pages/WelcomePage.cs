@@ -1,7 +1,7 @@
-﻿using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
+﻿using CommunityToolkit.Maui.Markup;
 using GitTrends.Common;
-using CommunityToolkit.Maui.Markup;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
@@ -22,7 +22,7 @@ public sealed class WelcomePage : BaseContentPage<WelcomeViewModel>, IDisposable
 		: base(welcomeViewModel, analyticsService, shouldUseSafeArea: true)
 	{
 		_appInfo = appInfo;
-		
+
 		Shell.SetPresentationMode(this, PresentationMode.ModalAnimated);
 
 		RemoveDynamicResource(BackgroundColorProperty);
@@ -79,7 +79,7 @@ public sealed class WelcomePage : BaseContentPage<WelcomeViewModel>, IDisposable
 	}
 
 	enum Row { WelcomeLabel, Image, GitHubButton, DemoButton, VersionLabel }
-		
+
 	public void Dispose()
 	{
 		_connectToGitHubCancellationTokenSource.Dispose();

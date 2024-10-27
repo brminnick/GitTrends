@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Maui.Markup;
-using static GitTrends.MauiService;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
+using static GitTrends.MauiService;
 
 namespace GitTrends;
 

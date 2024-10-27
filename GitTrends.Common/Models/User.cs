@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json.Serialization;
 
-namespace  GitTrends.Common;
+namespace GitTrends.Common;
 
 public record User(
 	[property: JsonPropertyName("repositories")] RepositoryConnection RepositoryConnection,

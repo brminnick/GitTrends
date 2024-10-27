@@ -5,8 +5,8 @@ using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GitHubApiStatus;
-using GitTrends.Mobile.Common;
 using GitTrends.Common;
+using GitTrends.Mobile.Common;
 using Refit;
 
 namespace GitTrends;
@@ -214,7 +214,7 @@ public partial class TrendsViewModel : BaseViewModel, IQueryAttributable
 					StarsRefreshState = RefreshState.Succeeded;
 					IsFetchingStarsData = false;
 				}
-				
+
 				// Continue to fetch the actual StarredAt Data in the background
 				// This allows us to save the downloaded data to the database at the end of the `try` block
 				repositoryStars = await getGetStarsDataTask.ConfigureAwait(false);

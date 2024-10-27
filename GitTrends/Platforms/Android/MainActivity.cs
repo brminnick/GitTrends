@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Android.App;
-using Android.Content.PM;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using GitTrends.Common;
 

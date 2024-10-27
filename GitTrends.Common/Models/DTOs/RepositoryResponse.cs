@@ -1,4 +1,4 @@
-﻿namespace  GitTrends.Common;
+﻿namespace GitTrends.Common;
 
 public record RepositoryResponse(RepositoryResponseData Repository);
 

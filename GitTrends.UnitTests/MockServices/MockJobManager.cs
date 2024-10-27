@@ -58,7 +58,7 @@ class MockJobManager : IJobManager
 
 	public async Task<IEnumerable<JobRunResult>> RunAll(CancellationToken cancelToken = default, bool runSequentially = false)
 	{
-		if (!runSequentially) 
+		if (!runSequentially)
 			return await Task.WhenAll(_jobDictionary.Select(x => Run(x.Key, cancelToken))).ConfigureAwait(false);
 
 		var resultList = new List<JobRunResult>();

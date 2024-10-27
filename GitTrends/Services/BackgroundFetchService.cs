@@ -49,7 +49,7 @@ public class BackgroundFetchService
 
 	public bool IsFetchingViewsClonesStarsInBackground(Repository repository) =>
 		QueuedForegroundJobsList.Any(x => x == _retryRepositoriesViewsClonesStarsJob.GetJobIdentifier(repository));
-	
+
 	public bool IsFetchingStarsInBackground(Repository repository) =>
 		QueuedForegroundJobsList.Any(x => x == _retryRepositoryStarsJob.GetJobIdentifier(repository));
 
@@ -173,7 +173,7 @@ public class BackgroundFetchService
 		QueuedForegroundJobsHash.Add(_retryRepositoryStarsJob.GetJobIdentifier(repository));
 
 		var retryRepositoriesStarsTCS = new TaskCompletionSource();
-			
+
 		_jobManager.RunTask(_retryRepositoryStarsJob.GetJobIdentifier(repository), async cancellationToken =>
 		{
 			if (delay is not null)
@@ -184,7 +184,7 @@ public class BackgroundFetchService
 		});
 
 		await retryRepositoriesStarsTCS.Task.ConfigureAwait(false);
-		
+
 		QueuedForegroundJobsHash.Remove(_retryRepositoryStarsJob.GetJobIdentifier(repository));
 	}
 
@@ -204,7 +204,7 @@ public class BackgroundFetchService
 		});
 
 		await retryGetReferringSitesTCS.Task.ConfigureAwait(false);
-		
+
 		QueuedForegroundJobsHash.Remove(_retryGetReferringSitesJob.GetJobIdentifier(repository));
 	}
 
@@ -238,7 +238,7 @@ public class BackgroundFetchService
 		});
 
 		await notifyTrendingRepositoriesTCS.Task.ConfigureAwait(false);
-		
+
 		QueuedForegroundJobsHash.Remove(_notifyTrendingRepositoriesJob.NotifyTrendingRepositoriesIdentifier);
 	}
 

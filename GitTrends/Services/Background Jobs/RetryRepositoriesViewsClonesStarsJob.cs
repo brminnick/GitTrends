@@ -12,7 +12,7 @@ public class RetryRepositoriesViewsClonesStarsJob(
 	: IJob
 {
 	static readonly WeakEventManager<Repository> _jobCompletedEventManager = new();
-	
+
 	public const string RepositoryKey = nameof(RepositoryKey);
 
 	readonly IAnalyticsService _analyticsService = analyticsService;
@@ -24,7 +24,7 @@ public class RetryRepositoriesViewsClonesStarsJob(
 		add => _jobCompletedEventManager.AddEventHandler(value);
 		remove => _jobCompletedEventManager.RemoveEventHandler(value);
 	}
-	
+
 	public string Identifier { get; } = $"{appInfo.PackageName}.{nameof(RetryRepositoriesViewsClonesStarsJob)}";
 
 	public JobInfo GetJobInfo(Repository repository, bool shouldRunInForeground)
@@ -37,7 +37,7 @@ public class RetryRepositoriesViewsClonesStarsJob(
 				RepositoryKey, serializedRepository
 			}
 		};
-		
+
 		return new(
 			GetJobIdentifier(repository),
 			typeof(RetryRepositoriesViewsClonesStarsJob),

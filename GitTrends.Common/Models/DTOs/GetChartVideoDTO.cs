@@ -1,10 +1,9 @@
 ﻿
-namespace  GitTrends.Common
-{
-    public class GetChartVideoDTO
-    {
-        public GetChartVideoDTO(string url) => Url = url;
+namespace GitTrends.Common;
 
-        public string Url { get; }
-    }
+public class GetChartVideoDTO
+{
+	public GetChartVideoDTO(string url) => Url = url;
+
+	public string Url { get; }
 }

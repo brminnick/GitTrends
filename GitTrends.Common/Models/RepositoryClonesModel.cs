@@ -1,4 +1,4 @@
-namespace  GitTrends.Common;
+namespace GitTrends.Common;
 
 public record RepositoryClonesModel : RepositoryClonesResponseModel, IBaseRepositoryModel
 {

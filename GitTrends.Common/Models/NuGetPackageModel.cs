@@ -1,3 +1,3 @@
-﻿namespace  GitTrends.Common;
+﻿namespace GitTrends.Common;
 
 public record NuGetPackageModel(string PackageName, Uri IconUri, Uri WebsiteUri);

@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using System.Net;
+using GitTrends.Common;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Common;
 using Refit;
 
 [assembly: NonParallelizable]
@@ -14,7 +14,7 @@ abstract class BaseTest : IDisposable
 	protected CancellationTokenSource TestCancellationTokenSource { get; private set; } = new();
 
 	protected static DecompressionMethods GetDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.Brotli;
-	
+
 	public void Dispose()
 	{
 		Dispose(true);
@@ -102,7 +102,7 @@ abstract class BaseTest : IDisposable
 			DemoDataConstants.GetRandomNumber(), DemoDataConstants.GetRandomNumber(), starredAt.Count,
 			gitTrendsAvatarUrl, false, downloadedAt, RepositoryPermission.ADMIN, false, false, dailyViewsList, dailyClonesList, starredAt);
 	}
-	
+
 	protected static MobileReferringSiteModel CreateMobileReferringSite(DateTimeOffset downloadedAt, string referrer)
 	{
 		return new MobileReferringSiteModel(new ReferringSiteModel(DemoDataConstants.GetRandomNumber(),
@@ -127,7 +127,7 @@ abstract class BaseTest : IDisposable
 		{
 			AutomaticDecompression = GetDecompressionMethods()
 		};
-		
+
 		var gitHubApiV3Client = RestService.For<IGitHubApiV3>(new HttpClient(handler)
 		{
 			BaseAddress = new Uri(GitHubConstants.GitHubRestApiUrl)

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
-using GitTrends.Mobile.Common;
-using GitTrends.Mobile.Common.Constants;
 using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
+using GitTrends.Mobile.Common;
+using GitTrends.Mobile.Common.Constants;
 using static GitTrends.MauiService;
 using ScrollView = Microsoft.Maui.Controls.ScrollView;
 
@@ -105,16 +105,16 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 			};
 
 			Content = new MediaElement
-				{
-					Background = null,
-					ShouldAutoPlay = true,
-					ShouldShowPlaybackControls = false,
-					ShouldLoopPlayback = true,
-					Volume = 0.0,
-					Margin = 0,
-					HeightRequest = 250, // Assign any value to MediaElement.HeightRequest; workaround to ensure MediaElement is inflated on iOS
-					WidthRequest = 250 // Assign any value to MediaElement.WidthRequest; workaround to ensure MediaElement is inflated on iOS
-				}.Center()
+			{
+				Background = null,
+				ShouldAutoPlay = true,
+				ShouldShowPlaybackControls = false,
+				ShouldLoopPlayback = true,
+				Volume = 0.0,
+				Margin = 0,
+				HeightRequest = 250, // Assign any value to MediaElement.HeightRequest; workaround to ensure MediaElement is inflated on iOS
+				WidthRequest = 250 // Assign any value to MediaElement.WidthRequest; workaround to ensure MediaElement is inflated on iOS
+			}.Center()
 				.Bind(MediaElement.SourceProperty,
 					nameof(IncludeOrganizationsCarouselModel.VideoSource),
 					convert: (string? videoSource) => MediaSource.FromResource(videoSource))

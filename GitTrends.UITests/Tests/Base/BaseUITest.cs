@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GitTrends.Mobile.Common;
 using GitTrends.Common;
+using GitTrends.Mobile.Common;
 using NUnit.Framework;
-
 using Xamarin.UITest;
 
 namespace GitTrends.UITests

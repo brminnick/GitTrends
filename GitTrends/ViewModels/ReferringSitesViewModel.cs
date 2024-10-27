@@ -3,9 +3,9 @@ using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GitHubApiStatus;
+using GitTrends.Common;
 using GitTrends.Mobile.Common;
 using GitTrends.Mobile.Common.Constants;
-using GitTrends.Common;
 using Refit;
 
 namespace GitTrends;
@@ -13,7 +13,7 @@ namespace GitTrends;
 public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 {
 	public const string RepositoryQueryString = nameof(RepositoryQueryString);
-	
+
 	static readonly WeakEventManager<PullToRefreshFailedEventArgs> _pullToRefreshFailedEventManager = new();
 	static readonly WeakEventManager<Repository> _abuseRateLimitFound_GetReferringSites_EventManager = new();
 
@@ -50,7 +50,7 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 
 		RefreshState = RefreshState.Uninitialized;
 	}
-	
+
 	protected Repository? Repository { get; set; }
 
 	public static event EventHandler<PullToRefreshFailedEventArgs> PullToRefreshFailed
@@ -79,7 +79,7 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 	{
 		if (Repository is null)
 			return;
-		
+
 		var minimumTimerDisplayTimeTask = Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
 		var referringSitesList = await GetReferringSites(Repository, cancellationToken).ConfigureAwait(false);
 		MobileReferringSitesList = [.. MobileSortingService.SortReferringSites(referringSitesList.Select(static x => new MobileReferringSiteModel(x)))];
@@ -172,7 +172,7 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 		var updatedReferringSitesList = MobileReferringSitesList.Concat([e]);
 		MobileReferringSitesList = [.. MobileSortingService.SortReferringSites(updatedReferringSitesList)];
 	}
-	
+
 	void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)
 	{
 		var repository = (Repository)query[RepositoryQueryString];

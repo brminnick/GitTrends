@@ -1,6 +1,6 @@
 ﻿using Refit;
 
-namespace  GitTrends.Common;
+namespace GitTrends.Common;
 
 [Headers("Accept-Encoding: gzip", "Accept: application/json")]
 public interface IAzureFunctionsApi

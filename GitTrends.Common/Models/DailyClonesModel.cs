@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace  GitTrends.Common;
+namespace GitTrends.Common;
 
 public record DailyClonesModel(
 	[property: JsonPropertyName("timestamp")] DateTimeOffset Day,
@@ -10,7 +10,7 @@ public record DailyClonesModel(
 {
 	[JsonIgnore]
 	public DateTime LocalDay => Day.LocalDateTime;
-	
+
 	[JsonIgnore]
 	long IBaseDailyModel.TotalCount => TotalClones;
 

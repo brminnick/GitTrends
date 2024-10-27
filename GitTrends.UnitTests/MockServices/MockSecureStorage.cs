@@ -7,7 +7,7 @@ class MockSecureStorage : ISecureStorage
 	static readonly Lazy<Hashtable> _hashtableHolder = new();
 
 	static Hashtable Hashtable => _hashtableHolder.Value;
-	
+
 	public Task<string?> GetAsync(string key) => Task.FromResult((string?)Hashtable[key]);
 
 	public bool Remove(string key)

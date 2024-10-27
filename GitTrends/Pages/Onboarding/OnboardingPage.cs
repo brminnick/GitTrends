@@ -1,5 +1,5 @@
-﻿using GitTrends.Mobile.Common;
-using GitTrends.Common;
+﻿using GitTrends.Common;
+using GitTrends.Mobile.Common;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 
