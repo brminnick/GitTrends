@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Refit.HttpClientFactory" Version="7.2.1" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
     <PackageReference Include="AsyncAwaitBestPractices" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.10.0" />
   </ItemGroup>

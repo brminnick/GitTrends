@@ -16,7 +16,6 @@
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.2.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="5.3.3" />
     <PackageReference Include="NuGet.Protocol" Version="6.11.1" />
-    <PackageReference Include="Refit.HttpClientFactory" Version="7.2.1" />
   </ItemGroup>
 
   <!-- Fix Transitive NuGet Packages with Vulnerablities-->

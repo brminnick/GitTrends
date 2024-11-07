@@ -94,7 +94,6 @@
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
     <PackageReference Include="Plugin.StoreReview" Version="6.2.0" />
-    <PackageReference Include="Refit.HttpClientFactory" Version="7.2.1" />
     <PackageReference Include="Sentry.Maui" Version="4.12.1" />
     <PackageReference Include="Sharpnado.MaterialFrame.Maui" Version="2.0.0" />
     <PackageReference Include="Shiny.Jobs" Version="3.3.3" />
