@@ -21,7 +21,7 @@
   <!-- Fix Transitive NuGet Packages with Vulnerablities-->
   <ItemGroup>
     <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
-    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
