@@ -10,6 +10,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GitTrends.Common\GitTrends.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0-preview2" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
+    <PackageReference Update="Microsoft.Maui.Controls" Version="$(MauiPackageVersion)" />
+    <PackageReference Update="Microsoft.Maui.Essentials" Version="$(MauiPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Update="Constants\AboutPageConstants.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>AboutPageConstants.Designer.cs</LastGenOutput>
@@ -211,16 +222,5 @@
     <Compile Update="Constants\ManageOrganizationsConstants.Designer.cs">
       <DependentUpon>ManageOrganizationsConstants.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GitTrends.Common\GitTrends.Common.csproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.10.0" />
-    <PackageReference Update="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-    <PackageReference Update="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
   </ItemGroup>
 </Project>
