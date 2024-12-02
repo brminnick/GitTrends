@@ -32,7 +32,6 @@
     <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidDexTool>d8</AndroidDexTool>
-    <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
     <EnableSGenConc>true</EnableSGenConc>
@@ -43,7 +42,6 @@
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <AndroidDexTool>d8</AndroidDexTool>
     <AndroidLinkTool>r8</AndroidLinkTool>
-    <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <MtouchLink>SdkOnly</MtouchLink>
     <CodesignKey>iPhone Developer</CodesignKey>
@@ -87,17 +85,17 @@
     <PackageReference Include="CommunityToolkit.Maui" Version="9.1.1" />
     <PackageReference Include="CommunityToolkit.Maui.Markup" Version="5.1.0" />
     <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.1.2" />
-    <PackageReference Include="GitHubApiStatus" Version="3.0.0" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.70" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
+    <PackageReference Include="GitHubApiStatus" Version="4.0.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.71" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiPackageVersion)" />
     <PackageReference Include="Microsoft.Maui.Essentials" Version="$(MauiPackageVersion)" />
     <PackageReference Include="Plugin.StoreReview" Version="6.2.0" />
-    <PackageReference Include="Sentry.Maui" Version="4.12.1" />
+    <PackageReference Include="Sentry.Maui" Version="4.13.0" />
     <PackageReference Include="Sharpnado.MaterialFrame.Maui" Version="2.0.0" />
     <PackageReference Include="Shiny.Jobs" Version="3.3.3" />
     <PackageReference Include="Shiny.Notifications" Version="3.3.3" />
-    <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.8" />
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.9" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
     <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.10" />
     <PackageReference Include="Syncfusion.Maui.Charts" Version="27.1.56" />

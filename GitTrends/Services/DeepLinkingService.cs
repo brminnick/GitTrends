@@ -19,26 +19,24 @@ public class DeepLinkingService(
 
 	public Task DisplayAlert(string title, string message, string cancel, CancellationToken token)
 	{
-		if (Application.Current?.MainPage is not null)
-			return _dispatcher.DispatchAsync(() => Application.Current.MainPage.DisplayAlert(title, message, cancel)).WaitAsync(token);
-		else
-			return Task.CompletedTask;
+		if (Application.Current?.Windows.FirstOrDefault() is { Page: Page currentPage })
+			return _dispatcher.DispatchAsync(() => currentPage.DisplayAlert(title, message, cancel)).WaitAsync(token);
+		
+		return Task.CompletedTask;
 	}
 
 	public Task<bool?> DisplayAlert(string title, string message, string accept, string decline, CancellationToken token)
 	{
-		if (Application.Current?.MainPage is not null)
+		if (Application.Current?.Windows.FirstOrDefault() is { Page: Page currentPage })
 		{
 			return _dispatcher.DispatchAsync(async () =>
 			{
-				var result = await Application.Current.MainPage.DisplayAlert(title, message, accept, decline);
+				var result = await currentPage.DisplayAlert(title, message, accept, decline);
 				return (bool?)result;
 			}).WaitAsync(token);
 		}
-		else
-		{
-			return Task.FromResult((bool?)null);
-		}
+
+		return Task.FromResult((bool?)null);
 	}
 
 	public Task OpenBrowser(Uri uri, CancellationToken token) => OpenBrowser(uri.ToString(), token);
