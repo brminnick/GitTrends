@@ -1,11 +1,11 @@
 variables:
-  NET_VERSION: "8.0.x"
+  NET_VERSION: "9.0.x"
   PathToSolution: "GitTrends.sln"
   PathToGitTrendsCsproj: "GitTrends/GitTrends.csproj"
   PathToUITestsCsproj: "GitTrends.UITests/GitTrends.UITests.csproj"
   PathToUnitTestsCsproj: "GitTrends.UnitTests/GitTrends.UnitTests.csproj"
   PathToAzureFunctionsCsproj: "GitTrends.Functions/GitTrends.Functions.csproj"
-  XcodeVersion: "16"
+  XcodeVersion: "16.1"
 
 trigger:
   branches:
@@ -35,7 +35,7 @@ jobs:
         'Windows':
           image: 'windows-latest'
         'macOS':
-          image: 'macos-14'
+          image: 'macos-15'
     pool:
       vmImage: $(image)
 
@@ -58,16 +58,17 @@ jobs:
         'Windows':
           image: 'windows-latest'
         'macOS':
-          image: 'macos-14'
+          image: 'macos-15'
     pool:
       vmImage: $(image)
 
     steps:
-      - task: CmdLine@2
-        displayName: "Set Xcode v$(XcodeVersion)"
+      - script: |
+          echo Installed Xcode Versions:
+          ls -al  /Applications | grep Xcode
+          echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_$(XcodeVersion).app;sudo xcode-select --switch /Applications/Xcode_$(XcodeVersion).app/Contents/Developer
+        displayName: 'Set Xcode v$(XcodeVersion)'
         condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
-        inputs:
-          script: echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_$(XcodeVersion).app;sudo xcode-select --switch /Applications/Xcode_$(XcodeVersion).app/Contents/Developer
 
       - task: InstallAppleCertificate@2
         displayName: "Set Xcode Signing Certificate"
@@ -118,11 +119,12 @@ jobs:
       vmImage: $(image)
 
     steps:
-      - task: CmdLine@2
-        displayName: "Set Xcode v$(XcodeVersion)"
+      - script: |
+          echo Installed Xcode Versions:
+          ls -al  /Applications | grep Xcode
+          echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_$(XcodeVersion).app;sudo xcode-select --switch /Applications/Xcode_$(XcodeVersion).app/Contents/Developer
+        displayName: 'Set Xcode v$(XcodeVersion)'
         condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
-        inputs:
-          script: echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_$(XcodeVersion).app;sudo xcode-select --switch /Applications/Xcode_$(XcodeVersion).app/Contents/Developer
 
       - task: InstallAppleCertificate@2
         displayName: "Set Xcode Signing Certificate"
@@ -161,11 +163,12 @@ jobs:
       vmImage: macos-14
 
     steps:
-      - task: CmdLine@2
-        displayName: "Set Xcode v$(XcodeVersion)"
+      - script: |
+          echo Installed Xcode Versions:
+          ls -al  /Applications | grep Xcode
+          echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_$(XcodeVersion).app;sudo xcode-select --switch /Applications/Xcode_$(XcodeVersion).app/Contents/Developer
+        displayName: 'Set Xcode v$(XcodeVersion)'
         condition: eq(variables['Agent.OS'], 'Darwin') # Only run this step on macOS
-        inputs:
-          script: echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_$(XcodeVersion).app;sudo xcode-select --switch /Applications/Xcode_$(XcodeVersion).app/Contents/Developer
 
       - task: InstallAppleCertificate@2
         displayName: "Set Xcode Signing Certificate"

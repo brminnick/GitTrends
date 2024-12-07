@@ -382,13 +382,13 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 
 	partial void OnThemePickerSelectedIndexChanged(int value)
 	{
-		if (Enum.IsDefined(typeof(PreferredTheme), value))
+		if (Enum.IsDefined((PreferredTheme)value))
 			_themeService.Preference = (PreferredTheme)value;
 	}
 
 	partial void OnPreferredChartsSelectedIndexChanged(int value)
 	{
-		if (Enum.IsDefined(typeof(TrendsChartOption), value))
+		if (Enum.IsDefined((TrendsChartOption)value))
 			_trendsChartSettingsService.CurrentTrendsChartOption = (TrendsChartOption)value;
 	}
 

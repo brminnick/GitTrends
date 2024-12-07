@@ -8,6 +8,7 @@ class App : Microsoft.Maui.Controls.Application
 {
 	static readonly AsyncAwaitBestPractices.WeakEventManager _resumedEventManager = new();
 
+	readonly AppShell _appShell;
 	readonly IAnalyticsService _analyticsService;
 	readonly NotificationService _notificationService;
 	readonly AppInitializationService _appInitializationService;
@@ -17,13 +18,12 @@ class App : Microsoft.Maui.Controls.Application
 		NotificationService notificationService,
 		AppInitializationService appInitializationService)
 	{
+		_appShell = appShell;
 		_analyticsService = analyticsService;
 		_notificationService = notificationService;
 		_appInitializationService = appInitializationService;
 
 		analyticsService.Track("App Initialized");
-
-		MainPage = appShell;
 
 		On<iOS>().SetHandleControlUpdatesOnMainThread(true);
 	}
@@ -33,6 +33,8 @@ class App : Microsoft.Maui.Controls.Application
 		add => _resumedEventManager.AddEventHandler(value);
 		remove => _resumedEventManager.RemoveEventHandler(value);
 	}
+
+	protected override Window CreateWindow(IActivationState? activationState) => new(_appShell);
 
 	protected override async void OnStart()
 	{

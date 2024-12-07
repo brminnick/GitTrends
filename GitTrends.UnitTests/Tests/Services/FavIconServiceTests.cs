@@ -29,14 +29,24 @@ class FavIconServiceTests : BaseTest
 		var favIconService = ServiceCollection.ServiceProvider.GetRequiredService<FavIconService>();
 
 		//Act
-		var uriImageSource = (UriImageSource)await favIconService.GetFavIconImageSource(new Uri(url), CancellationToken.None).ConfigureAwait(false);
+		var favIconImageSource = await favIconService.GetFavIconImageSource(new Uri(url), CancellationToken.None).ConfigureAwait(false);
+
+		if (favIconImageSource == ImageSource.FromFile(FavIconService.DefaultFavIcon))
+			Assert.Fail($"{nameof(FavIconService.GetFavIconImageSource)} returned the default image source");
 
 		//Assert
-		Assert.Multiple(() =>
+		if (favIconImageSource is not UriImageSource uriImageSource)
 		{
-			Assert.That(uriImageSource, Is.Not.Null);
-			Assert.That(uriImageSource.Uri, Is.EqualTo(new Uri(expectedFavIconUrl)));
-		});
+			Assert.Fail($"{nameof(FavIconService.GetFavIconImageSource)} returned an unexpected image source");
+		}
+		else
+		{
+			Assert.Multiple(() =>
+			{
+				Assert.That(uriImageSource, Is.Not.Null);
+				Assert.That(uriImageSource.Uri, Is.EqualTo(new Uri(expectedFavIconUrl)));
+			});
+		}
 	}
 
 	[TestCase("https://www.amazon.co.uk", "https://amazon.co.uk/favicon.ico")]

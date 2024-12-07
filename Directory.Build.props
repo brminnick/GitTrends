@@ -2,41 +2,75 @@
 <Project>
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <NetVersion>net8.0</NetVersion>
-    <IsTrimmable>false</IsTrimmable>
-    <NuGetAudit>enable</NuGetAudit>
-    <MauiVersion>8.0.92</MauiVersion>
-    <LangVersion>latest</LangVersion>
-    <NuGetAuditMode>all</NuGetAuditMode>
+    <NoWarn>NETSDK1023</NoWarn>
+    <NetVersion>net9.0</NetVersion>
+    <LangVersion>preview</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-    <MauiStrictXamlCompilation>true</MauiStrictXamlCompilation>
     <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
     <GenerateErrorForMissingTargetingPacks>false</GenerateErrorForMissingTargetingPacks>
+
+    <!-- Support NativeAOT https://learn.microsoft.com/dotnet/core/deploying/native-aot/?tabs=net8plus%2Cwindows -->
+    <StripSymbols>false</StripSymbols>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+
+    <!-- Prevent NuGet Package Vulnerabilities -->
+    <NuGetAudit>enable</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+
+    <!-- MAUI Specific -->
+    <MauiPackageVersion>9.0.10</MauiPackageVersion>
+    <NextMauiPackageVersion>10.0.0</NextMauiPackageVersion>
+    <MauiCommunityToolkitPackageVersion>9.1.1</MauiCommunityToolkitPackageVersion>
+    <MauiStrictXamlCompilation>true</MauiStrictXamlCompilation>
     <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
     <MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
 
     <!-- WarningsAsErrors
-        CsWinRT1028: Class implements WinRT interfaces but isn't marked partial
-        CsWinRT1030: Class implements WinRT interfaces that require unsafe code
-        XC0045: Binding: Property not found
-        XC0103: Consider attributing the markup extension with [RequireService] or [AcceptEmptyServiceProvider] if it doesn't require any
-        NU1900	Error communicating with package source, while getting vulnerability information.
-        NU1901	Package with low severity detected
-        NU1902	Package with moderate severity detected
-        NU1903	Package with high severity detected
-        NU1904	Package with critical severity detected
-        NU1905	An audit source does not provide a vulnerability database
-        NUnit*: NUnit Analyzers
-        IL2***: Trim Warnings
-        IL3***: AOT Warnings-->
+     CS0419: Ambiguous reference in cref attribute
+     CS0618: Is obsolete
+     CS1570: XML comment has badly formed XML 'Expected an end tag for element [parameter]
+     CS1571: XML comment on [construct] has a duplicate param tag for [parameter]
+     CS1572: XML comment has a param tag for '[parameter]', but there is no parameter by that name
+     CS1573: Parameter has no matching param tag in the XML comment
+     CS1574: XML comment has cref attribute that could not be resolved
+     CS1580: Invalid type for parameter 'parameter number' in XML comment cref attribute
+     CS1581: Invalid return type in XML comment cref attribute
+     CS1584: XML comment has syntactically incorrect cref attribute
+     CS1587: XML comment is not placed on a valid language element
+     CS1589: The syntax of a tag which referenced a file was incorrect
+     CS1590: Invalid XML include element Missing file attribute
+     CS1591: Missing XML comment for publicly visible type or member
+     CS1592: Badly formed XML in included comments file
+     CS1598: XML parser could not be loaded. The XML documentation file will not be generated.
+     CS1658: Identifier expected; 'true' is a keyword
+     CS1710: XML comment on 'type' has a duplicate typeparam tag for 'parameter'
+     CS1711: XML comment has a typeparam tag, but there is no type parameter by that name
+     CS1712: Type parameter has no matching typeparam tag in the XML comment
+     CS1723: XML comment has cref attribute that refers to a type parameter
+     CS1734: XML comment has a paramref tag, but there is no parameter by that name
+     MVMTK0042: The field [ObservableProperty] can be converted to a partial property
+     CsWinRT1028: Class implements WinRT interfaces but isn't marked partial
+     CsWinRT1030: Class implements WinRT interfaces that require unsafe code
+     XC0045: Binding: Property not found
+     XC0103: Consider attributing the markup extension with [RequireService] or [AcceptEmptyServiceProvider] if it doesn't require any
+     NU1900	Error communicating with package source, while getting vulnerability information.
+     NU1901	Package with low severity detected
+     NU1902	Package with moderate severity detected
+     NU1903	Package with high severity detected
+     NU1904	Package with critical severity detected
+     NU1905	An audit source does not provide a vulnerability database
+     NUnit*: NUnit Analyzers
+     IL2***: Trim Warnings
+     IL3***: AOT Warnings-->
     <WarningsAsErrors>
       nullable,
+      CS0419,CS0618,CS1570,CS1571,CS1572,CS1573,CS1574,CS1580,CS1581,CS1584,CS1587,CS1589,CS1590,CS1591,CS1592,CS1598,CS1658,CS1710,CS1711,CS1712,CS1723,CS1734,
+      MVMTK0042,
       CsWinRT1028,CsWinRT1030,
       XC0045,XC0103,
       NU1900,NU1901,NU1902,NU1903,NU1904,NU1905,
-      CS0618,CA2012,
       NUnit1001,NUnit1002,NUnit1003,NUnit1004,NUnit1005,NUnit1006,NUnit1007,NUnit1008,NUnit1009,NUnit1010,NUnit1011,NUnit1012,NUnit1013,NUnit1014,NUnit1015,NUnit1016,NUnit1017,NUnit1018,NUnit1019,NUnit1020,NUnit1021,NUnit1022,NUnit1023,NUnit1024,NUnit1025,NUnit1026,NUnit1027,NUnit1028,NUnit1029,NUnit1030,NUnit1031,NUnit1032,NUnit1033,
       NUnit2001,NUnit2002,NUnit2003,NUnit2004,NUnit2005,NUnit2006,NUnit2007,NUnit2008,NUnit2009,NUnit2010,NUnit2011,NUnit2012,NUnit2013,NUnit2014,NUnit2015,NUnit2016,NUnit2017,NUnit2018,NUnit2019,NUnit2020,NUnit2021,NUnit2022,NUnit2023,NUnit2024,NUnit2025,NUnit2026,NUnit2027,NUnit2028,NUnit2029,NUnit2030,NUnit2031,NUnit2032,NUnit2033,NUnit2034,NUnit2035,NUnit2036,NUnit2037,NUnit2038,NUnit2039,NUnit2040,NUnit2041,NUnit2042,NUnit2043,NUnit2044,NUnit2045,NUnit2046,NUnit2047,NUnit2048,NUnit2049,NUnit2050,
       NUnit3001,NUnit3002,NUnit3003,NUnit3004,
@@ -58,20 +92,11 @@
     </WarningsAsErrors>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'AppStore' ">
-    <Optimize>true</Optimize>
-    <DefineConstants>AppStore</DefineConstants>
-    <NoWarn>1701;1702</NoWarn>
-    <NoStdLib>false</NoStdLib>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>pdbonly</DebugType>
-  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="CommunityToolkit.Maui.Markup.UnitTests" />
+  </ItemGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <NoWarn>1701;1702</NoWarn>
-    <NoStdLib>false</NoStdLib>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+  <PropertyGroup Condition="'$(TF_BUILD)' == 'true' and $([MSBuild]::IsOSPlatform('windows')) == 'true'">
+    <IncludeTizenTargetFrameworks>true</IncludeTizenTargetFrameworks>
   </PropertyGroup>
 </Project>

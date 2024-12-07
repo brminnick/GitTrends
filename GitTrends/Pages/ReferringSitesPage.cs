@@ -10,264 +10,288 @@ namespace GitTrends;
 
 sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDisposable
 {
-	const int _titleTopMargin = 10;
+    const int _titleTopMargin = 10;
 
-	readonly CancellationTokenSource _refreshViewCancellationTokenSource = new();
+    readonly CancellationTokenSource _refreshViewCancellationTokenSource = new();
 
-	readonly RefreshView _refreshView;
-	readonly ThemeService _themeService;
-	readonly ReviewService _reviewService;
-	readonly GitHubUserService _gitHubUserService;
-	readonly DeepLinkingService _deepLinkingService;
+    readonly RefreshView _refreshView;
+    readonly ThemeService _themeService;
+    readonly ReviewService _reviewService;
+    readonly GitHubUserService _gitHubUserService;
+    readonly DeepLinkingService _deepLinkingService;
 
-	public ReferringSitesPage(
-		IDeviceInfo deviceInfo,
-		ThemeService themeService,
-		ReviewService reviewService,
-		IAnalyticsService analyticsService,
-		GitHubUserService gitHubUserService,
-		DeepLinkingService deepLinkingService,
-		ReferringSitesViewModel referringSitesViewModel) : base(referringSitesViewModel, analyticsService)
-	{
+    public ReferringSitesPage(
+        IDeviceInfo deviceInfo,
+        ThemeService themeService,
+        ReviewService reviewService,
+        IAnalyticsService analyticsService,
+        GitHubUserService gitHubUserService,
+        DeepLinkingService deepLinkingService,
+        ReferringSitesViewModel referringSitesViewModel) : base(referringSitesViewModel, analyticsService)
+    {
 #if IOS || MACCATALYST
 		Shell.SetPresentationMode(this, PresentationMode.ModalAnimated);
 #endif
 
-		On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
+        On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
 
-		Title = PageTitles.ReferringSitesPage;
+        Title = PageTitles.ReferringSitesPage;
 
-		_themeService = themeService;
-		_reviewService = reviewService;
-		_gitHubUserService = gitHubUserService;
-		_deepLinkingService = deepLinkingService;
+        _themeService = themeService;
+        _reviewService = reviewService;
+        _gitHubUserService = gitHubUserService;
+        _deepLinkingService = deepLinkingService;
 
-		ReferringSitesViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
+        ReferringSitesViewModel.PullToRefreshFailed += HandlePullToRefreshFailed;
 
-		var isiOS = deviceInfo.Platform == DevicePlatform.iOS;
-		var titleRowHeight = isiOS ? 50 : 0;
-		var shadowHeight = isiOS ? 1 : 0;
+        var isiOS = deviceInfo.Platform == DevicePlatform.iOS;
+        var titleRowHeight = isiOS ? 50 : 0;
+        var shadowHeight = isiOS ? 1 : 0;
 
-		var collectionView = new ReferringSitesCollectionView(deviceInfo)
-			.Bind(IsVisibleProperty,
-				getter: (ReferringSitesViewModel vm) => vm.IsEmptyDataViewEnabled)
-			.Bind(CollectionView.ItemsSourceProperty,
-				getter: (ReferringSitesViewModel vm) => vm.MobileReferringSitesList)
-			.Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged);
+        var collectionView = new ReferringSitesCollectionView(deviceInfo)
+            .Bind(IsVisibleProperty,
+                getter: (ReferringSitesViewModel vm) => vm.IsEmptyDataViewEnabled)
+            .Bind(CollectionView.ItemsSourceProperty,
+                getter: (ReferringSitesViewModel vm) => vm.MobileReferringSitesList)
+            .Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged);
 
-		Content = new Grid
-		{
-			RowSpacing = 0,
+        Content = new Grid
+        {
+            RowSpacing = 0,
 
-			RowDefinitions = Rows.Define(
-				(Row.Title, Auto),
-				(Row.TitleShadow, shadowHeight),
-				(Row.List, Star)),
+            RowDefinitions = Rows.Define(
+                (Row.Title, Auto),
+                (Row.TitleShadow, shadowHeight),
+                (Row.List, Star)),
 
-			ColumnDefinitions = Columns.Define(
-				(Column.Title, Stars(3)),
-				(Column.Button, Stars(1))),
+            ColumnDefinitions = Columns.Define(
+                (Column.Title, Stars(3)),
+                (Column.Button, Stars(1))),
 
-			Children =
-			{
-				new ReferringSitesRefreshView(collectionView).Assign(out _refreshView)
-					.Row(Row.TitleShadow).RowSpan(3).ColumnSpan(All<Column>())
-					.DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor))
-					.Bind(RefreshView.CommandProperty,
-						getter: (ReferringSitesViewModel vm) => vm.ExecuteRefreshCommand,
-						mode: BindingMode.OneTime)
-					.Bind(RefreshView.IsRefreshingProperty,
-						getter: (ReferringSitesViewModel vm) => vm.IsRefreshing,
-						setter: (ReferringSitesViewModel vm, bool isRefreshing) => vm.IsRefreshing = isRefreshing)
-			}
-		};
+            Children =
+            {
+                new ReferringSitesRefreshView(collectionView).Assign(out _refreshView)
+                    .Row(Row.TitleShadow).RowSpan(3).ColumnSpan(All<Column>())
+                    .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor))
+                    .Bind(RefreshView.CommandProperty,
+                        getter: (ReferringSitesViewModel vm) => vm.ExecuteRefreshCommand,
+                        mode: BindingMode.OneTime)
+                    .Bind(RefreshView.IsRefreshingProperty,
+                        getter: (ReferringSitesViewModel vm) => vm.IsRefreshing,
+                        setter: (ReferringSitesViewModel vm, bool isRefreshing) => vm.IsRefreshing = isRefreshing)
+            }
+        };
 
-		if (isiOS)
-		{
-			var grid = (Grid)Content;
+        if (isiOS)
+        {
+            var grid = (Grid)Content;
 
-			grid.Children.Add(new TitleShadowView(themeService, titleRowHeight, shadowHeight).Row(Row.Title).ColumnSpan(All<Column>()));
-			grid.Children.Add(new TitleLabel().Row(Row.Title).Column(Column.Title));
-			grid.Children.Add(new CloseButton(titleRowHeight).Invoke(closeButton => closeButton.Clicked += HandleCloseButtonClicked).Row(Row.Title).Column(Column.Button));
-		}
-	}
+            grid.Children.Add(new TitleShadowView(themeService, titleRowHeight, shadowHeight).Row(Row.Title)
+                .ColumnSpan(All<Column>()));
+            grid.Children.Add(new TitleLabel().Row(Row.Title).Column(Column.Title));
+            grid.Children.Add(new CloseButton(titleRowHeight)
+                .Invoke(closeButton => closeButton.Clicked += HandleCloseButtonClicked).Row(Row.Title)
+                .Column(Column.Button));
+        }
+    }
 
-	enum Row { Title, TitleShadow, List }
-	enum Column { Title, Button }
+    enum Row
+    {
+        Title,
+        TitleShadow,
+        List
+    }
 
-	public void Dispose()
-	{
-		_refreshViewCancellationTokenSource.Dispose();
-	}
+    enum Column
+    {
+        Title,
+        Button
+    }
 
-	protected override async void OnAppearing()
-	{
-		base.OnAppearing();
+    public void Dispose()
+    {
+        _refreshViewCancellationTokenSource.Dispose();
+    }
 
-		if (_refreshView.Content is CollectionView collectionView
-			&& collectionView.ItemsSource.IsNullOrEmpty())
-		{
-			_refreshView.IsRefreshing = true;
-			await _reviewService.TryRequestReviewPrompt();
-		}
-	}
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
 
-	protected override void OnDisappearing()
-	{
-		base.OnDisappearing();
+        if (_refreshView.Content is CollectionView collectionView
+            && collectionView.ItemsSource.IsNullOrEmpty())
+        {
+            _refreshView.IsRefreshing = true;
+            await _reviewService.TryRequestReviewPrompt();
+        }
+    }
 
-		_refreshViewCancellationTokenSource.Cancel();
-	}
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
 
-	async void HandleCollectionViewSelectionChanged(object? sender, SelectionChangedEventArgs e)
-	{
-		ArgumentNullException.ThrowIfNull(sender);
+        _refreshViewCancellationTokenSource.Cancel();
+    }
 
-		var collectionView = (CollectionView)sender;
-		collectionView.SelectedItem = null;
+    async void HandleCollectionViewSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        ArgumentNullException.ThrowIfNull(sender);
 
-		if (e.CurrentSelection.FirstOrDefault() is
-			ReferringSiteModel { IsReferrerUriValid: true, ReferrerUri: not null } referringSite)
-		{
-			AnalyticsService.Track("Referring Site Tapped", new Dictionary<string, string>
-			{
-				{
-					nameof(ReferringSiteModel) + nameof(ReferringSiteModel.Referrer), referringSite.Referrer
-				},
-				{
-					nameof(ReferringSiteModel) + nameof(ReferringSiteModel.ReferrerUri), referringSite.ReferrerUri.ToString()
-				}
-			});
+        var collectionView = (CollectionView)sender;
+        collectionView.SelectedItem = null;
 
-			await _deepLinkingService.OpenBrowser(referringSite.ReferrerUri, CancellationToken.None);
-		}
-	}
+        if (e.CurrentSelection.FirstOrDefault() is
+            ReferringSiteModel { IsReferrerUriValid: true, ReferrerUri: not null } referringSite)
+        {
+            AnalyticsService.Track("Referring Site Tapped", new Dictionary<string, string>
+            {
+                {
+                    nameof(ReferringSiteModel) + nameof(ReferringSiteModel.Referrer), referringSite.Referrer
+                },
+                {
+                    nameof(ReferringSiteModel) + nameof(ReferringSiteModel.ReferrerUri),
+                    referringSite.ReferrerUri.ToString()
+                }
+            });
 
-	void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs eventArgs) => Dispatcher.DispatchAsync(async () =>
-	{
-		if (Microsoft.Maui.Controls.Application.Current?.MainPage?.Navigation.ModalStack.LastOrDefault() is not ReferringSitesPage
-			&& Microsoft.Maui.Controls.Application.Current?.MainPage?.Navigation.NavigationStack.Last() is not ReferringSitesPage)
-		{
-			return;
-		}
+            await _deepLinkingService.OpenBrowser(referringSite.ReferrerUri, CancellationToken.None);
+        }
+    }
 
-		switch (eventArgs)
-		{
-			case MaximumApiRequestsReachedEventArgs:
-				var isAccepted = await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Accept, eventArgs.Cancel);
-				if (isAccepted)
-					await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs, CancellationToken.None);
-				break;
+    void HandlePullToRefreshFailed(object? sender, PullToRefreshFailedEventArgs eventArgs) => Dispatcher.DispatchAsync(
+        async () =>
+        {
+            if (Microsoft.Maui.Controls.Application.Current?.Windows.FirstOrDefault() is { Page: Microsoft.Maui.Controls.Page currentPage }
+                && currentPage.Navigation.ModalStack.LastOrDefault() is not ReferringSitesPage
+                && currentPage.Navigation.NavigationStack.Last() is not ReferringSitesPage)
+            {
+                return;
+            }
 
-			case AbuseLimitPullToRefreshEventArgs when _gitHubUserService.GitHubApiAbuseLimitCount <= 1:
-				var isAlertAccepted = await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Accept, eventArgs.Cancel);
-				if (isAlertAccepted)
-					await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubApiAbuseDocs, CancellationToken.None);
-				break;
+            switch (eventArgs)
+            {
+                case MaximumApiRequestsReachedEventArgs:
+                    var isAccepted = await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Accept,
+                        eventArgs.Cancel);
+                    if (isAccepted)
+                        await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubRateLimitingDocs,
+                            CancellationToken.None);
+                    break;
 
-			case AbuseLimitPullToRefreshEventArgs:
-				// Don't display error message when GitHubUserService.GitHubApiAbuseLimitCount > 1
-				break;
+                case AbuseLimitPullToRefreshEventArgs when _gitHubUserService.GitHubApiAbuseLimitCount <= 1:
+                    var isAlertAccepted = await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Accept,
+                        eventArgs.Cancel);
+                    if (isAlertAccepted)
+                        await _deepLinkingService.OpenBrowser(GitHubConstants.GitHubApiAbuseDocs,
+                            CancellationToken.None);
+                    break;
 
-			case LoginExpiredPullToRefreshEventArgs:
-				await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Cancel);
-				await Navigation.PopToRootAsync();
-				break;
+                case AbuseLimitPullToRefreshEventArgs:
+                    // Don't display error message when GitHubUserService.GitHubApiAbuseLimitCount > 1
+                    break;
 
-			case ErrorPullToRefreshEventArgs:
-				await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Cancel);
-				break;
+                case LoginExpiredPullToRefreshEventArgs:
+                    await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Cancel);
+                    await Navigation.PopToRootAsync();
+                    break;
 
-			default:
-				throw new NotSupportedException();
-		}
-	});
+                case ErrorPullToRefreshEventArgs:
+                    await DisplayAlert(eventArgs.Title, eventArgs.Message, eventArgs.Cancel);
+                    break;
 
-	async void HandleCloseButtonClicked(object? sender, EventArgs e) => await Navigation.PopModalAsync();
+                default:
+                    throw new NotSupportedException();
+            }
+        });
 
-	sealed class ReferringSitesRefreshView : RefreshView
-	{
-		public ReferringSitesRefreshView(in CollectionView collectionView)
-		{
-			Content = collectionView;
-			AutomationId = ReferringSitesPageAutomationIds.RefreshView;
-		}
-	}
+    async void HandleCloseButtonClicked(object? sender, EventArgs e) => await Navigation.PopModalAsync();
 
-	sealed class ReferringSitesCollectionView : CollectionView
-	{
-		public ReferringSitesCollectionView(IDeviceInfo deviceInfo)
-		{
-			AutomationId = ReferringSitesPageAutomationIds.CollectionView;
-			BackgroundColor = Colors.Transparent;
-			SelectionMode = SelectionMode.Single;
-			ItemTemplate = new ReferringSitesDataTemplate();
-			ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical);
+    sealed class ReferringSitesRefreshView : RefreshView
+    {
+        public ReferringSitesRefreshView(in CollectionView collectionView)
+        {
+            Content = collectionView;
+            AutomationId = ReferringSitesPageAutomationIds.RefreshView;
+        }
+    }
 
-			//iOS Header + Footer break CollectionView after Refresh bug: https://github.com/xamarin/Xamarin.Forms/issues/9879
-			Header = deviceInfo.Platform == DevicePlatform.iOS ? null : new BoxView
-			{
-				HeightRequest = ReferringSitesDataTemplate.BottomPadding
-			};
+    sealed class ReferringSitesCollectionView : CollectionView
+    {
+        public ReferringSitesCollectionView(IDeviceInfo deviceInfo)
+        {
+            AutomationId = ReferringSitesPageAutomationIds.CollectionView;
+            BackgroundColor = Colors.Transparent;
+            SelectionMode = SelectionMode.Single;
+            ItemTemplate = new ReferringSitesDataTemplate();
+            ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical);
 
-			Footer = deviceInfo.Platform == DevicePlatform.iOS ? null : new BoxView
-			{
-				HeightRequest = ReferringSitesDataTemplate.TopPadding
-			};
+            //iOS Header + Footer break CollectionView after Refresh bug: https://github.com/xamarin/Xamarin.Forms/issues/9879
+            Header = deviceInfo.Platform == DevicePlatform.iOS
+                ? null
+                : new BoxView
+                {
+                    HeightRequest = ReferringSitesDataTemplate.BottomPadding
+                };
 
-			EmptyView = new EmptyDataView("EmptyReferringSitesList", ReferringSitesPageAutomationIds.EmptyDataView)
-				.Bind(EmptyDataView.TitleProperty, nameof(ReferringSitesViewModel.EmptyDataViewTitle))
-				.Bind(EmptyDataView.DescriptionProperty, nameof(ReferringSitesViewModel.EmptyDataViewDescription));
-		}
-	}
+            Footer = deviceInfo.Platform == DevicePlatform.iOS
+                ? null
+                : new BoxView
+                {
+                    HeightRequest = ReferringSitesDataTemplate.TopPadding
+                };
 
-	sealed class TitleShadowView : BoxView
-	{
-		public TitleShadowView(in ThemeService themeService, in double heightRequest, in double shadowHeight)
-		{
-			HeightRequest = heightRequest;
+            EmptyView = new EmptyDataView("EmptyReferringSitesList", ReferringSitesPageAutomationIds.EmptyDataView)
+                .Bind(EmptyDataView.TitleProperty, nameof(ReferringSitesViewModel.EmptyDataViewTitle))
+                .Bind(EmptyDataView.DescriptionProperty, nameof(ReferringSitesViewModel.EmptyDataViewDescription));
+        }
+    }
 
-			this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
-			if (themeService.IsLightTheme())
-			{
-				Shadow = new Shadow
-				{
-					Brush = Colors.Gray,
-					Offset = new(new Size(0, shadowHeight)),
-					Opacity = 0.5f,
-					Radius = 4
-				};
-			}
-		}
-	}
+    sealed class TitleShadowView : BoxView
+    {
+        public TitleShadowView(in ThemeService themeService, in double heightRequest, in double shadowHeight)
+        {
+            HeightRequest = heightRequest;
 
-	sealed class TitleLabel : Label
-	{
-		public TitleLabel()
-		{
-			Text = PageTitles.ReferringSitesPage;
-			Padding = new Thickness(10, 5, 0, 5);
+            this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.CardSurfaceColor));
+            if (themeService.IsLightTheme())
+            {
+                Shadow = new Shadow
+                {
+                    Brush = Colors.Gray,
+                    Offset = new(new Size(0, shadowHeight)),
+                    Opacity = 0.5f,
+                    Radius = 4
+                };
+            }
+        }
+    }
 
-			this.Font(family: FontFamilyConstants.RobotoMedium, size: 30);
-			this.Start().TextCenterVertical().TextStart();
-			this.DynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
-		}
-	}
+    sealed class TitleLabel : Label
+    {
+        public TitleLabel()
+        {
+            Text = PageTitles.ReferringSitesPage;
+            Padding = new Thickness(10, 5, 0, 5);
 
-	sealed class CloseButton : Button
-	{
-		public CloseButton(in int titleRowHeight)
-		{
-			Text = ReferringSitesPageConstants.CloseButtonText;
-			AutomationId = ReferringSitesPageAutomationIds.CloseButton;
+            this.Font(family: FontFamilyConstants.RobotoMedium, size: 30);
+            this.Start().TextCenterVertical().TextStart();
+            this.DynamicResource(TextColorProperty, nameof(BaseTheme.TextColor));
+        }
+    }
 
-			CornerRadius = 4;
+    sealed class CloseButton : Button
+    {
+        public CloseButton(in int titleRowHeight)
+        {
+            Text = ReferringSitesPageConstants.CloseButtonText;
+            AutomationId = ReferringSitesPageAutomationIds.CloseButton;
 
-			this.Font(family: FontFamilyConstants.RobotoRegular);
-			this.End().CenterVertical().Margins(right: 10).Height(titleRowHeight * 3.0f / 5.0f).Padding(5, 0);
+            CornerRadius = 4;
 
-			this.DynamicResources((TextColorProperty, nameof(BaseTheme.CloseButtonTextColor)),
-				(BackgroundColorProperty, nameof(BaseTheme.CloseButtonBackgroundColor)));
-		}
-	}
+            this.Font(family: FontFamilyConstants.RobotoRegular);
+            this.End().CenterVertical().Margins(right: 10).Height(titleRowHeight * 3.0f / 5.0f).Padding(5, 0);
+
+            this.DynamicResources((TextColorProperty, nameof(BaseTheme.CloseButtonTextColor)),
+                (BackgroundColorProperty, nameof(BaseTheme.CloseButtonBackgroundColor)));
+        }
+    }
 }
