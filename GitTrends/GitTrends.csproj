@@ -95,7 +95,7 @@
     <PackageReference Include="Sharpnado.MaterialFrame.Maui" Version="2.0.0" />
     <PackageReference Include="Shiny.Jobs" Version="3.3.3" />
     <PackageReference Include="Shiny.Notifications" Version="3.3.3" />
-    <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.9" />
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.116.1" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
     <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.10" />
     <PackageReference Include="Syncfusion.Maui.Charts" Version="27.1.56" />
