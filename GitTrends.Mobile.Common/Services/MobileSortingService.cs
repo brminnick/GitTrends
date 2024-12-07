@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using GitTrends.Common;
 using GitTrends.Mobile.Common.Constants;
+using Microsoft.Maui.Storage;
 
 namespace GitTrends.Mobile.Common;
 
@@ -33,7 +34,7 @@ public class MobileSortingService(IPreferences preferences)
 		get => GetCurrentOption();
 		set
 		{
-			if (!Enum.IsDefined(typeof(SortingOption), value))
+			if (!Enum.IsDefined(value))
 				throw new InvalidEnumArgumentException();
 
 			_preferences.Set(nameof(CurrentOption), (int)value);
@@ -89,7 +90,7 @@ public class MobileSortingService(IPreferences preferences)
 	{
 		var currentOption = getCurrentSortingOption();
 
-		if (Enum.IsDefined(typeof(SortingOption), currentOption))
+		if (Enum.IsDefined(currentOption))
 		{
 			return currentOption;
 		}

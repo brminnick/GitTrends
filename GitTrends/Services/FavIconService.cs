@@ -24,20 +24,20 @@ public class FavIconService(IAnalyticsService analyticsService, HttpClient clien
 
 			var (getAppleTouchIconTask, getShortcutIconTask, getIconTask, getFavIconTask) = await GetFavIcons(baseUrl, cancellationToken).ConfigureAwait(false);
 
-			var appleTouchIconRespnse = await getAppleTouchIconTask.ConfigureAwait(false);
-			if (appleTouchIconRespnse != null)
-				return appleTouchIconRespnse.Url;
+			var appleTouchIconResponse = await getAppleTouchIconTask.ConfigureAwait(false);
+			if (appleTouchIconResponse != null)
+				return appleTouchIconResponse.Url;
 
 			var shortcutIconResponse = await getShortcutIconTask.ConfigureAwait(false);
-			if (shortcutIconResponse != null)
+			if (shortcutIconResponse is not null)
 				return shortcutIconResponse.Url;
 
 			var iconUrlResponse = await getIconTask.ConfigureAwait(false);
-			if (iconUrlResponse != null)
+			if (iconUrlResponse is not null)
 				return iconUrlResponse.Url;
 
 			var favIconUrlResponse = await getFavIconTask.ConfigureAwait(false);
-			if (favIconUrlResponse != null)
+			if (favIconUrlResponse is not null)
 				return favIconUrlResponse.Url;
 
 			return DefaultFavIcon;
@@ -97,7 +97,7 @@ public class FavIconService(IAnalyticsService analyticsService, HttpClient clien
 			var gitHubCacheFavIconUrl = $"https://favicons.githubusercontent.com/{uri.Host}";
 			var (isUrlValid, size) = await GetUrlData(gitHubCacheFavIconUrl, cancellationToken).ConfigureAwait(false);
 
-			//The default cahced favicon on GitHub is 874, e.g. https://favicons.githubusercontent.com/google
+			//The default cached favicon on GitHub is 874, e.g. https://favicons.githubusercontent.com/google
 			if (isUrlValid && size != 874)
 			{
 				Debug.WriteLine($"{nameof(GetFavIconFromGitHubCache)}: {gitHubCacheFavIconUrl}, {size}");
@@ -255,12 +255,9 @@ public class FavIconService(IAnalyticsService analyticsService, HttpClient clien
 		return (appleTouchIconTask, shortcutIconTask, iconTask, favIconTask);
 	}
 
-	class FavIconResponseModel
+	class FavIconResponseModel(string url, long? contentSize)
 	{
-		public FavIconResponseModel(string url, long? contentSize) =>
-			(Url, ContentSize) = (url, contentSize);
-
-		public string Url { get; }
-		public long? ContentSize { get; }
+		public string Url { get; } = url;
+		public long? ContentSize { get; } = contentSize;
 	}
 }
