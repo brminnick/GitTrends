@@ -4,16 +4,19 @@
         <TargetFramework>$(NetVersion)</TargetFramework>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <OutputType>exe</OutputType>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.collector" />
-        <PackageReference Include="NUnit" />
-        <PackageReference Include="NUnit3TestAdapter" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="GitHubApiStatus.Extensions" />
-        <PackageReference Include="NUnit.Analyzers" />
-        <PackageReference Include="RichardSzalay.MockHttp" />
+        <PackageReference Include="coverlet.collector"/>
+        <PackageReference Include="NUnit"/>
+        <PackageReference Include="NUnit3TestAdapter"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+        <PackageReference Include="GitHubApiStatus.Extensions"/>
+        <PackageReference Include="NUnit.Analyzers"/>
+        <PackageReference Include="RichardSzalay.MockHttp"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -21,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\GitTrends\GitTrends.csproj" />
+        <ProjectReference Include="..\GitTrends\GitTrends.csproj"/>
     </ItemGroup>
 
 </Project>

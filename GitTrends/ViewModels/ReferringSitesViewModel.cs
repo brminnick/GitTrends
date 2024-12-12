@@ -23,16 +23,7 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 	readonly GitHubAuthenticationService _gitHubAuthenticationService;
 	readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
-	[ObservableProperty]
-	IReadOnlyList<MobileReferringSiteModel> _mobileReferringSitesList = [];
-
-	[ObservableProperty]
-	string _emptyDataViewTitle = string.Empty, _emptyDataViewDescription = string.Empty;
-
-	[ObservableProperty]
-	bool _isRefreshing, _isEmptyDataViewEnabled;
-
-	public ReferringSitesViewModel(IDispatcher mainThread,
+    public ReferringSitesViewModel(IDispatcher mainThread,
 									IAnalyticsService analyticsService,
 									GitHubUserService gitHubUserService,
 									ReferringSitesDatabase referringSitesDatabase,
@@ -50,6 +41,21 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 
 		RefreshState = RefreshState.Uninitialized;
 	}
+    
+	[ObservableProperty]
+	public partial bool IsRefreshing { get; set; }
+    
+	[ObservableProperty]
+	public partial IReadOnlyList<MobileReferringSiteModel> MobileReferringSitesList { get; private set; } = [];
+
+	[ObservableProperty]
+	public partial string EmptyDataViewTitle { get; private set; } = string.Empty;
+
+	[ObservableProperty]
+	public partial string EmptyDataViewDescription { get; private set; } = string.Empty;
+
+	[ObservableProperty]
+	public partial bool IsEmptyDataViewEnabled { get; private set; }
 
 	protected Repository? Repository { get; set; }
 

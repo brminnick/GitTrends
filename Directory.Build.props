@@ -18,6 +18,9 @@
     <!-- Prevent NuGet Package Vulnerabilities -->
     <NuGetAudit>enable</NuGetAudit>
     <NuGetAuditMode>all</NuGetAuditMode>
+    
+    <!-- Unit Test Specific -->
+    <EnableNUnitRunner>true</EnableNUnitRunner>
 
     <!-- MAUI Specific -->
     <MauiStrictXamlCompilation>true</MauiStrictXamlCompilation>
@@ -90,6 +93,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="CommunityToolkit.Maui.Markup.UnitTests" />
+    <InternalsVisibleTo Include="GitTrends.UnitTests" />
   </ItemGroup>
 </Project>

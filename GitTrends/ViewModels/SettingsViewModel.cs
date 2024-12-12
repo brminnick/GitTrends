@@ -24,28 +24,7 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 	readonly GitTrendsStatisticsService _gitTrendsStatisticsService;
 	readonly TrendsChartSettingsService _trendsChartSettingsService;
 
-	[ObservableProperty]
-	IReadOnlyList<string> _themePickerItemsSource = [], _preferredChartsItemsSource = [];
-
-	[ObservableProperty]
-	string _titleText = string.Empty, _aboutLabelText = string.Empty, _themeLabelText = string.Empty,
-		_languageLabelText = string.Empty, _tryDemoButtonText = string.Empty, _copyrightLabelText = string.Empty,
-		_gitHubAvatarImageSource = string.Empty, _gitHubAliasLabelText = string.Empty, _preferredChartsLabelText = string.Empty,
-		_registerForNotificationsLabelText = string.Empty, _shouldIncludeOrganizationsLabelText = string.Empty, _gitHubNameLabelText = string.Empty;
-
-	[ObservableProperty, NotifyPropertyChangedFor(nameof(IsDemoButtonVisible)), NotifyPropertyChangedFor(nameof(IsAliasLabelVisible))]
-	string _loginLabelText = string.Empty;
-
-	[ObservableProperty]
-	bool _isRegisterForNotificationsSwitchToggled, _isRegisterForNotificationsSwitchEnabled = true;
-
-	[ObservableProperty, NotifyPropertyChangedFor(nameof(IsShouldIncludeOrganizationsSwitchToggled))]
-	bool _isShouldIncludeOrganizationsSwitchEnabled;
-
-	[ObservableProperty]
-	int _themePickerSelectedIndex, _preferredChartsSelectedIndex, _languagePickerSelectedIndex;
-
-	public SettingsViewModel(IDispatcher dispatcher,
+    public SettingsViewModel(IDispatcher dispatcher,
 		ThemeService themeService,
 		LanguageService languageService,
 		IVersionTracking versionTracking,
@@ -99,11 +78,74 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 		remove => _organizationsCarouselViewVisibilityChangedEventManager.RemoveEventHandler(value);
 	}
 
-	public IReadOnlyList<string> LanguagePickerItemsSource { get; } = [.. CultureConstants.CulturePickerOptions.Values];
+	public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginLabelText == GitHubLoginButtonConstants.ConnectToGitHub;
 
 	public bool IsAliasLabelVisible => !IsAuthenticating && LoginLabelText == GitHubLoginButtonConstants.Disconnect;
 
-	public override bool IsDemoButtonVisible => base.IsDemoButtonVisible && LoginLabelText == GitHubLoginButtonConstants.ConnectToGitHub;
+	public IReadOnlyList<string> LanguagePickerItemsSource { get; } = [.. CultureConstants.CulturePickerOptions.Values];
+	
+	[ObservableProperty]
+	public partial bool IsRegisterForNotificationsSwitchToggled { get; internal set; }
+	
+	[ObservableProperty]
+	public partial int PreferredChartsSelectedIndex { get; internal set; }
+	
+	[ObservableProperty]
+	public partial int ThemePickerSelectedIndex { get; internal set; }
+	
+	[ObservableProperty]
+	public partial IReadOnlyList<string> ThemePickerItemsSource { get; private set; } = [];
+
+	[ObservableProperty]
+	public partial IReadOnlyList<string> PreferredChartsItemsSource { get; private set; } = [];
+	
+	[ObservableProperty]
+    public partial string TitleText { get; private set; } = string.Empty;
+    
+    [ObservableProperty]
+    public partial string AboutLabelText { get; private set; } = string.Empty;
+    
+    [ObservableProperty]
+    public partial string ThemeLabelText { get; private set; } = string.Empty;
+    
+    [ObservableProperty]
+    public partial string LanguageLabelText { get; private set; } = string.Empty;
+    
+    [ObservableProperty]
+    public partial string TryDemoButtonText { get; private set; } = string.Empty;
+    
+    [ObservableProperty]
+    public partial string CopyrightLabelText { get; private set; } = string.Empty;
+    
+    [ObservableProperty]
+    public partial string GitHubAvatarImageSource { get; private set; } = string.Empty;
+    
+    [ObservableProperty]
+    public partial string GitHubAliasLabelText { get; private set; } = string.Empty;
+    
+    [ObservableProperty]
+    public partial string PreferredChartsLabelText { get; private set; } = string.Empty;
+    
+    [ObservableProperty]
+    public partial string RegisterForNotificationsLabelText { get; private set; } = string.Empty;
+    
+    [ObservableProperty]
+    public partial string ShouldIncludeOrganizationsLabelText { get; private set; } = string.Empty;
+    
+    [ObservableProperty]
+    public partial string GitHubNameLabelText { get; private set; } = string.Empty;
+    
+    [ObservableProperty, NotifyPropertyChangedFor(nameof(IsDemoButtonVisible)), NotifyPropertyChangedFor(nameof(IsAliasLabelVisible))]
+    public partial string LoginLabelText { get; private set; } = string.Empty;
+    
+    [ObservableProperty]
+    public partial bool IsRegisterForNotificationsSwitchEnabled { get; private set; } = true;
+    
+    [ObservableProperty, NotifyPropertyChangedFor(nameof(IsShouldIncludeOrganizationsSwitchToggled))]
+    public partial bool IsShouldIncludeOrganizationsSwitchEnabled { get; private set; }
+    
+    [ObservableProperty]
+    public partial int LanguagePickerSelectedIndex { get; private set; }
 
 	public bool ShouldShowClonesByDefaultSwitchValue
 	{

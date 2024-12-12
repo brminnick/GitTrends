@@ -28,18 +28,7 @@ public partial class RepositoryViewModel : BaseViewModel
 	IReadOnlyList<Repository> _repositoryList = [];
 	RefreshState _refreshState;
 
-	[ObservableProperty]
-	bool _isRefreshing;
-
-	[ObservableProperty]
-	string _titleText = string.Empty, _totalButtonText = string.Empty, _emptyDataViewTitle = string.Empty, _emptyDataViewDescription = string.Empty;
-
-	string _searchBarText = string.Empty;
-
-	[ObservableProperty]
-	IReadOnlyList<Repository> _visibleRepositoryList = [];
-
-	public RepositoryViewModel(
+    public RepositoryViewModel(
 		IDispatcher dispatcher,
 		IAnalyticsService analyticsService,
 		GitHubUserService gitHubUserService,
@@ -93,6 +82,27 @@ public partial class RepositoryViewModel : BaseViewModel
 		add => _pullToRefreshFailedEventManager.AddEventHandler(value);
 		remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
 	}
+	
+	[ObservableProperty]
+	public partial bool IsRefreshing { get; private set; }
+
+	[ObservableProperty]
+	public partial string TitleText { get; private set; } = string.Empty;
+
+	[ObservableProperty]
+	public partial string TotalButtonText { get; private set; } = string.Empty;
+
+	[ObservableProperty]
+	public partial string EmptyDataViewTitle { get; private set; } = string.Empty;
+
+	[ObservableProperty]
+	public partial string EmptyDataViewDescription { get; private set; } = string.Empty;
+
+	[ObservableProperty]
+	public partial string SearchBarText { get; private set; } = string.Empty;
+
+	[ObservableProperty]
+	public partial IReadOnlyList<Repository> VisibleRepositoryList { get; private set; } = [];
 
 	RefreshState RefreshState
 	{
@@ -152,13 +162,13 @@ public partial class RepositoryViewModel : BaseViewModel
 				{
 					//Only display the first update to avoid unncessary work on the UIThread
 					var shouldUpdateVisibleRepositoryList = !VisibleRepositoryList.Any() || repositoryList.Count >= minimumBatchCount;
-					AddRepositoriesToCollection(repositoryList, _searchBarText, shouldUpdateVisibleRepositoryList);
+					AddRepositoriesToCollection(repositoryList, SearchBarText, shouldUpdateVisibleRepositoryList);
 					repositoryList.Clear();
 				}
 			}
 
 			//Add Remaining Repositories to _repositoryList
-			AddRepositoriesToCollection(repositoryList, _searchBarText);
+			AddRepositoriesToCollection(repositoryList, SearchBarText);
 
 			repositoriesFromDatabase = await repositoriesFromDatabaseTask.ConfigureAwait(false);
 
@@ -166,7 +176,7 @@ public partial class RepositoryViewModel : BaseViewModel
 				&& x.DataDownloadedAt >= DateTimeOffset.Now.Subtract(CachedDataConstants.ViewsClonesCacheLifeSpan) // Cached repositories that have been updated in the past 12 hours				
 				&& _repositoryList.Any(y => y.Url == x.Url)); // Ensure was retrieved from GitHub)
 
-			AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
+			AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, SearchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
 
 			var viewsClonesRepositoriesList = new List<Repository>();
 			await foreach (var retrievedRepositoryWithViewsAndClonesData in _gitHubApiRepositoriesService.UpdateRepositoriesWithViewsAndClonesData(_repositoryList.Where(static x => !x.ContainsViewsClonesData), cancellationTokenSource.Token).ConfigureAwait(false))
@@ -178,14 +188,14 @@ public partial class RepositoryViewModel : BaseViewModel
 					//Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
 					if (viewsClonesRepositoriesList.Count > minimumBatchCount)
 					{
-						AddRepositoriesToCollection(viewsClonesRepositoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
+						AddRepositoriesToCollection(viewsClonesRepositoriesList, SearchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
 						viewsClonesRepositoriesList.Clear();
 					}
 				}
 			}
 
 			//Add Remaining Repositories to VisibleRepositoryList
-			AddRepositoriesToCollection(viewsClonesRepositoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
+			AddRepositoriesToCollection(viewsClonesRepositoriesList, SearchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
 
 			#endregion
 
@@ -199,7 +209,7 @@ public partial class RepositoryViewModel : BaseViewModel
 				&& x.DataDownloadedAt >= DateTimeOffset.Now.Subtract(CachedDataConstants.StarsDataCacheLifeSpan) // Cached repositories that have been updated in the past 12 hours				
 				&& _repositoryList.Any(y => y.Url == x.Url)); // Ensure was retrieved from GitHub)
 
-			AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
+			AddRepositoriesToCollection(repositoriesFromDatabaseThatDontRequireUpdating, SearchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
 
 
 			var repositoriesWithoutStarsDataAndOver1000Stars = _repositoryList.Where(static x => x is { ContainsStarsData: false, StarCount: > 1000 });
@@ -224,13 +234,13 @@ public partial class RepositoryViewModel : BaseViewModel
 					//Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
 					if (starredRepositoriesList.Count > minimumBatchCount)
 					{
-						AddRepositoriesToCollection(starredRepositoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
+						AddRepositoriesToCollection(starredRepositoriesList, SearchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
 						starredRepositoriesList.Clear();
 					}
 				}
 			}
 
-			AddRepositoriesToCollection(starredRepositoriesList, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
+			AddRepositoriesToCollection(starredRepositoriesList, SearchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesStarsData);
 
 			#endregion
 
@@ -243,7 +253,7 @@ public partial class RepositoryViewModel : BaseViewModel
 					false => getDistinctRepositories(_repositoryList, repositoriesFromDatabase, x => x.ContainsViewsClonesStarsData && x.OwnerLogin == _gitHubUserService.Alias)
 				};
 
-				AddRepositoriesToCollection(missingRepositories, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
+				AddRepositoriesToCollection(missingRepositories, SearchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
 
 				//Call EnsureSuccessStatusCode to confirm the above API calls executed successfully
 				finalResponse = await _gitHubApiV3Service.GetGitHubApiResponse(cancellationTokenSource.Token).ConfigureAwait(false);
@@ -260,7 +270,7 @@ public partial class RepositoryViewModel : BaseViewModel
 			await _gitHubAuthenticationService.LogOut(token).ConfigureAwait(false);
 			await _repositoryDatabase.DeleteAllData(token).ConfigureAwait(false);
 
-			SetRepositoriesCollection([], _searchBarText);
+			SetRepositoriesCollection([], SearchBarText);
 		}
 		catch (Exception e) when (_gitHubApiStatusService.IsAbuseRateLimit(e, out var retryTimeSpan)
 			|| (e is HttpRequestException && finalResponse is not null && _gitHubApiStatusService.IsAbuseRateLimit(finalResponse.Headers, out retryTimeSpan)))
@@ -274,7 +284,7 @@ public partial class RepositoryViewModel : BaseViewModel
 				false => getDistinctRepositories(_repositoryList, repositoriesFromDatabase, x => x.OwnerLogin == _gitHubUserService.Alias)
 			};
 
-			AddRepositoriesToCollection(missingRepositories, _searchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
+			AddRepositoriesToCollection(missingRepositories, SearchBarText, duplicateRepositoryPriorityFilter: x => x.ContainsViewsClonesData);
 
 			foreach (var repositoryToUpdate in _repositoryList.Where(static x => !x.ContainsViewsClonesStarsData // Ensure the repository contains data for Views + Clones
 				&& x.DataDownloadedAt < DateTimeOffset.Now.Subtract(TimeSpan.FromHours(12)))) // Cached repositories that have been updated in the past 12 hours
@@ -299,7 +309,7 @@ public partial class RepositoryViewModel : BaseViewModel
 			var maximumApiRequestsReachedEventArgs = new MaximumApiRequestsReachedEventArgs(_gitHubApiStatusService.GetRateLimitResetDateTime(responseHeaders));
 			OnPullToRefreshFailed(maximumApiRequestsReachedEventArgs);
 
-			SetRepositoriesCollection([], _searchBarText);
+			SetRepositoriesCollection([], SearchBarText);
 		}
 		catch (Exception e)
 		{
@@ -307,7 +317,7 @@ public partial class RepositoryViewModel : BaseViewModel
 
 			repositoriesFromDatabase ??= await repositoriesFromDatabaseTask.ConfigureAwait(false);
 
-			SetRepositoriesCollection(repositoriesFromDatabase, _searchBarText);
+			SetRepositoriesCollection(repositoriesFromDatabase, SearchBarText);
 
 			if (repositoriesFromDatabase.Any())
 			{
@@ -357,7 +367,7 @@ public partial class RepositoryViewModel : BaseViewModel
 		updatedRepositoryList.Remove(repository);
 		updatedRepositoryList.Add(updatedRepository);
 
-		SetRepositoriesCollection(updatedRepositoryList, _searchBarText);
+		SetRepositoriesCollection(updatedRepositoryList, SearchBarText);
 
 		if (!_gitHubUserService.IsDemoUser)
 			await _repositoryDatabase.SaveRepository(updatedRepository, token).ConfigureAwait(false);
@@ -392,7 +402,7 @@ public partial class RepositoryViewModel : BaseViewModel
 			}
 		});
 
-		UpdateVisibleRepositoryList(_searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
+		UpdateVisibleRepositoryList(SearchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
 	}
 
 	void SetRepositoriesCollection(in IReadOnlyList<Repository> repositories, in string searchBarText)
@@ -449,13 +459,12 @@ public partial class RepositoryViewModel : BaseViewModel
 	[RelayCommand]
 	void SetSearchBarText(string text)
 	{
-		if (EqualityComparer<string>.Default.Equals(_searchBarText, text))
+		if (EqualityComparer<string>.Default.Equals(SearchBarText, text))
 			return;
-
-		_searchBarText = text;
+        SearchBarText = text;
 
 		if (_repositoryList.Any())
-			UpdateVisibleRepositoryList(_searchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
+			UpdateVisibleRepositoryList(SearchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);
 	}
 
 	void HandlePreferredLanguageChanged(object? sender, string? e) => UpdateText();
@@ -479,7 +488,7 @@ public partial class RepositoryViewModel : BaseViewModel
 	void HandleRepositoryUriNotFound(object? sender, Uri e)
 	{
 		var repositoriesToRemove = _repositoryList.Where(x => x.Url == e.ToString());
-		RemoveRepositoriesFromCollection(repositoriesToRemove, _searchBarText);
+		RemoveRepositoriesFromCollection(repositoriesToRemove, SearchBarText);
 	}
 
 	void HandleDemoUserActivated(object? sender, EventArgs e) => IsRefreshing = true;
@@ -504,7 +513,7 @@ public partial class RepositoryViewModel : BaseViewModel
 
 	void HandleSearchBarTextChanged(object? sender, string searchBarText) => SetSearchBarText(searchBarText);
 
-	void HandleScheduleRetryUpdatedRepositoriesStarsCompleted(object? sender, Repository e) => AddRepositoriesToCollection([e], _searchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
-	void HandleTrendsViewModelRepositorySavedToDatabase(object? sender, Repository e) => AddRepositoriesToCollection([e], _searchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
-	void HandleJobCompleted(object? sender, Repository e) => AddRepositoriesToCollection([e], _searchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
+	void HandleScheduleRetryUpdatedRepositoriesStarsCompleted(object? sender, Repository e) => AddRepositoriesToCollection([e], SearchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
+	void HandleTrendsViewModelRepositorySavedToDatabase(object? sender, Repository e) => AddRepositoriesToCollection([e], SearchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
+	void HandleJobCompleted(object? sender, Repository e) => AddRepositoriesToCollection([e], SearchBarText, RefreshState is RefreshState.Succeeded or RefreshState.Uninitialized, x => x.ContainsViewsClonesStarsData);
 }
