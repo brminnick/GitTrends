@@ -20,9 +20,6 @@
     <NuGetAuditMode>all</NuGetAuditMode>
 
     <!-- MAUI Specific -->
-    <MauiPackageVersion>9.0.10</MauiPackageVersion>
-    <NextMauiPackageVersion>10.0.0</NextMauiPackageVersion>
-    <MauiCommunityToolkitPackageVersion>9.1.1</MauiCommunityToolkitPackageVersion>
     <MauiStrictXamlCompilation>true</MauiStrictXamlCompilation>
     <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
     <MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
@@ -95,8 +92,4 @@
   <ItemGroup>
     <InternalsVisibleTo Include="CommunityToolkit.Maui.Markup.UnitTests" />
   </ItemGroup>
-
-  <PropertyGroup Condition="'$(TF_BUILD)' == 'true' and $([MSBuild]::IsOSPlatform('windows')) == 'true'">
-    <IncludeTizenTargetFrameworks>true</IncludeTizenTargetFrameworks>
-  </PropertyGroup>
 </Project>

@@ -88,6 +88,8 @@
     <PackageReference Include="GitHubApiStatus" />
     <PackageReference Include="HtmlAgilityPack" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
+    <PackageReference Include="Microsoft.Maui.Controls" />
+    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" />
     <PackageReference Include="Plugin.StoreReview" />
     <PackageReference Include="Sentry.Maui" />
     <PackageReference Include="Sharpnado.MaterialFrame.Maui" />

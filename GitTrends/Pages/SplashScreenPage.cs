@@ -110,7 +110,7 @@ public sealed class SplashScreenPage : BaseContentPage, IDisposable
 		while (!pulseCancellationToken.IsCancellationRequested)
 		{
 			var pulseImageTask = PulseImage();
-			await Task.Delay(TimeSpan.FromMilliseconds(400), pulseCancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+			await Task.Delay(TimeSpan.FromMilliseconds(400), pulseCancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
 
 			//Label leaves the screen
 			await _loadingLabel.TranslateTo(10, 0, 100, Easing.CubicInOut);
@@ -132,7 +132,7 @@ public sealed class SplashScreenPage : BaseContentPage, IDisposable
 			await _loadingLabel.TranslateTo(0, 0, 250, Easing.CubicOut);
 
 			await pulseImageTask;
-			await Task.Delay(TimeSpan.FromMilliseconds(250), pulseCancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+			await Task.Delay(TimeSpan.FromMilliseconds(250), pulseCancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
 		}
 	});
 
