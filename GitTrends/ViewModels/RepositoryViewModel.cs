@@ -84,7 +84,10 @@ public partial class RepositoryViewModel : BaseViewModel
 	}
 	
 	[ObservableProperty]
-	public partial bool IsRefreshing { get; private set; }
+	public partial bool IsRefreshing { get; internal set; }
+	
+	[ObservableProperty]
+	public partial string SearchBarText { get; private set; } = string.Empty;
 
 	[ObservableProperty]
 	public partial string TitleText { get; private set; } = string.Empty;
@@ -97,9 +100,6 @@ public partial class RepositoryViewModel : BaseViewModel
 
 	[ObservableProperty]
 	public partial string EmptyDataViewDescription { get; private set; } = string.Empty;
-
-	[ObservableProperty]
-	public partial string SearchBarText { get; private set; } = string.Empty;
 
 	[ObservableProperty]
 	public partial IReadOnlyList<Repository> VisibleRepositoryList { get; private set; } = [];
@@ -160,7 +160,7 @@ public partial class RepositoryViewModel : BaseViewModel
 				//Batch the VisibleRepositoryList Updates to avoid overworking the UI Thread
 				if (!_gitHubUserService.IsDemoUser && repositoryList.Count > minimumBatchCount)
 				{
-					//Only display the first update to avoid unncessary work on the UIThread
+					//Only display the first update to avoid unnecessary work on the UIThread
 					var shouldUpdateVisibleRepositoryList = !VisibleRepositoryList.Any() || repositoryList.Count >= minimumBatchCount;
 					AddRepositoriesToCollection(repositoryList, SearchBarText, shouldUpdateVisibleRepositoryList);
 					repositoryList.Clear();

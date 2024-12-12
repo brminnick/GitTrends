@@ -20,8 +20,12 @@ public class CircleImage : CircleBorder
 	public CircleImage()
 	{
 		Content = new Image()
-			.Bind(Image.AspectProperty, nameof(Aspect), source: this)
-			.Bind(Image.SourceProperty, nameof(ImageSource), source: this)
+			.Bind(Image.AspectProperty, 
+				getter: static image => image.Aspect, 
+				source: this)
+			.Bind(Image.SourceProperty, 
+				getter: static image => image.ImageSource, 
+				source: this)
 			.Invoke(image => image.PropertyChanged += HandleCircleImagePropertyChanged);
 	}
 

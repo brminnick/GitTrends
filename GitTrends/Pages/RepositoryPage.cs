@@ -115,18 +115,23 @@ public partial class RepositoryPage : BaseContentPage<RepositoryViewModel>, ISea
                                     : null,
                                 EmptyView = new EmptyDataView("EmptyRepositoriesList",
                                         RepositoryPageAutomationIds.EmptyDataView)
-                                    .Bind<EmptyDataView, bool, bool>(IsVisibleProperty,
-                                        nameof(RepositoryViewModel.IsRefreshing),
+                                    .Bind(IsVisibleProperty,
+                                        getter: static (RepositoryViewModel vm) => vm.IsRefreshing,
                                         convert: static isRefreshing => !isRefreshing)
-                                    .Bind(EmptyDataView.TitleProperty, nameof(RepositoryViewModel.EmptyDataViewTitle))
+                                    .Bind(EmptyDataView.TitleProperty, 
+                                        getter: static (RepositoryViewModel vm) => vm.EmptyDataViewTitle)
                                     .Bind(EmptyDataView.DescriptionProperty,
-                                        nameof(RepositoryViewModel.EmptyDataViewDescription))
+                                        getter: static (RepositoryViewModel vm) => vm.EmptyDataViewDescription)
                             }.Bind(CollectionView.ItemsSourceProperty,
-                                nameof(RepositoryViewModel.VisibleRepositoryList))
+                                getter: static (RepositoryViewModel vm) => vm.VisibleRepositoryList)
                             .Invoke(collectionView => collectionView.SelectionChanged += HandleSelectionChanged)
                     }.RowSpan(All<Row>()).ColumnSpan(All<Column>()).Assign(out _refreshView)
-                    .Bind(RefreshView.IsRefreshingProperty, nameof(RepositoryViewModel.IsRefreshing))
-                    .Bind(RefreshView.CommandProperty, nameof(RepositoryViewModel.ExecuteRefreshCommand))
+                    .Bind(RefreshView.IsRefreshingProperty, 
+                        getter: static (RepositoryViewModel vm) => vm.IsRefreshing,
+                        setter: static (vm, isRefreshing) => vm.IsRefreshing = isRefreshing)
+                    .Bind(RefreshView.CommandProperty, 
+                        getter: static (RepositoryViewModel vm) => vm.ExecuteRefreshCommand,
+                        mode: BindingMode.OneTime)
                     .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor)),
 
                 new InformationButton(mobileSortingService, analyticsService).Row(Row.Information)

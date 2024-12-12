@@ -346,14 +346,18 @@ class LibraryDataTemplate() : DataTemplate(CreateLibraryDataTemplate)
 					Padding = 12
 				}.Fill()
 				.Row(Row.Avatar).Column(Column.Image)
-				.Bind(CircleImage.ImageSourceProperty, nameof(NuGetPackageModel.IconUri), BindingMode.OneTime),
+				.Bind(CircleImage.ImageSourceProperty, 
+					getter: static (NuGetPackageModel vm) => vm.IconUri, 
+					mode: BindingMode.OneTime),
 
 			new Label
 				{
 					LineBreakMode = LineBreakMode.TailTruncation
 				}.FillHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, IsSmallScreen ? 10 : 12)
 				.Row(Row.Login).Column(Column.LeftText).ColumnSpan(3)
-				.Bind(Label.TextProperty, nameof(NuGetPackageModel.PackageName), BindingMode.OneTime)
+				.Bind(Label.TextProperty, 
+					getter: static (NuGetPackageModel vm) => vm.PackageName, 
+					mode: BindingMode.OneTime)
 				.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
 		}
 	}.DynamicResource(VisualElement.BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));

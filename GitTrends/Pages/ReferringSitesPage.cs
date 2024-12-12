@@ -50,9 +50,9 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
 
         var collectionView = new ReferringSitesCollectionView(deviceInfo)
             .Bind(IsVisibleProperty,
-                getter: (ReferringSitesViewModel vm) => vm.IsEmptyDataViewEnabled)
+                getter: static (ReferringSitesViewModel vm) => vm.IsEmptyDataViewEnabled)
             .Bind(CollectionView.ItemsSourceProperty,
-                getter: (ReferringSitesViewModel vm) => vm.MobileReferringSitesList)
+                getter: static (ReferringSitesViewModel vm) => vm.MobileReferringSitesList)
             .Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged);
 
         Content = new Grid
@@ -74,11 +74,11 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
                     .Row(Row.TitleShadow).RowSpan(3).ColumnSpan(All<Column>())
                     .DynamicResource(RefreshView.RefreshColorProperty, nameof(BaseTheme.PullToRefreshColor))
                     .Bind(RefreshView.CommandProperty,
-                        getter: (ReferringSitesViewModel vm) => vm.ExecuteRefreshCommand,
+                        getter: static (ReferringSitesViewModel vm) => vm.ExecuteRefreshCommand,
                         mode: BindingMode.OneTime)
                     .Bind(RefreshView.IsRefreshingProperty,
-                        getter: (ReferringSitesViewModel vm) => vm.IsRefreshing,
-                        setter: (ReferringSitesViewModel vm, bool isRefreshing) => vm.IsRefreshing = isRefreshing)
+                        getter: static (ReferringSitesViewModel vm) => vm.IsRefreshing,
+                        setter: static (vm, isRefreshing) => vm.IsRefreshing = isRefreshing)
             }
         };
 
@@ -240,8 +240,10 @@ sealed class ReferringSitesPage : BaseContentPage<ReferringSitesViewModel>, IDis
                 };
 
             EmptyView = new EmptyDataView("EmptyReferringSitesList", ReferringSitesPageAutomationIds.EmptyDataView)
-                .Bind(EmptyDataView.TitleProperty, nameof(ReferringSitesViewModel.EmptyDataViewTitle))
-                .Bind(EmptyDataView.DescriptionProperty, nameof(ReferringSitesViewModel.EmptyDataViewDescription));
+                .Bind(EmptyDataView.TitleProperty, 
+                    getter: static (ReferringSitesViewModel vm) => vm.EmptyDataViewTitle)
+                .Bind(EmptyDataView.DescriptionProperty, 
+                    getter: static (ReferringSitesViewModel vm) => vm.EmptyDataViewDescription);
         }
     }
 

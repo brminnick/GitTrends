@@ -88,8 +88,8 @@ class ReferringSitesDataTemplate() : DataTemplate(() => new CardView())
 				Children.Add(new DescriptionLabel()
 					.Row(Row.Description).Column(Column.Site)
 					.Bind(Label.TextProperty,
-						nameof(MobileReferringSiteModel.Referrer),
-						BindingMode.OneTime));
+						getter: static (MobileReferringSiteModel vm) => vm.Referrer,
+						mode: BindingMode.OneTime));
 
 				Children.Add(new TitleLabel(ReferringSitesPageConstants.Referrals, TextAlignment.End, LayoutOptions.End).Assign(out TitleLabel referralsTitleLabel)
 					.Row(Row.Title).Column(Column.Referrals));
@@ -97,8 +97,8 @@ class ReferringSitesDataTemplate() : DataTemplate(() => new CardView())
 				Children.Add(new StatisticsLabel(referralsTitleLabel)
 					.Row(Row.Description).Column(Column.Referrals)
 					.Bind(Label.TextProperty,
-						nameof(MobileReferringSiteModel.TotalCount),
-						BindingMode.OneTime,
+						getter: static (MobileReferringSiteModel vm) => vm.TotalCount,
+						mode: BindingMode.OneTime,
 						convert: static (long count) => count.ToAbbreviatedText()));
 
 				Children.Add(new Separator()
@@ -110,8 +110,8 @@ class ReferringSitesDataTemplate() : DataTemplate(() => new CardView())
 				Children.Add(new StatisticsLabel(uniqueTitleLabel)
 					.Row(Row.Description).Column(Column.Uniques)
 					.Bind(Label.TextProperty,
-						nameof(MobileReferringSiteModel.TotalUniqueCount),
-						BindingMode.OneTime,
+						getter: static (MobileReferringSiteModel vm) => vm.TotalUniqueCount,
+						mode: BindingMode.OneTime,
 						convert: static (long count) => count.ToAbbreviatedText()));
 			}
 
@@ -154,7 +154,9 @@ class ReferringSitesDataTemplate() : DataTemplate(() => new CardView())
 					VerticalTextAlignment = TextAlignment.End;
 
 					this.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
-					this.Bind(WidthRequestProperty, nameof(Width), source: titleLabel);
+					this.Bind(WidthRequestProperty, 
+						getter: label => label.Width, 
+						source: titleLabel);
 				}
 			}
 
@@ -203,7 +205,9 @@ class ReferringSitesDataTemplate() : DataTemplate(() => new CardView())
 						GetBorderColor = () => Colors.Transparent,
 						ErrorPlaceholder = FavIconService.DefaultFavIcon,
 						LoadingPlaceholder = FavIconService.DefaultFavIcon
-					}.Bind(CircleImage.ImageSourceProperty, nameof(MobileReferringSiteModel.FavIcon), BindingMode.OneWay);
+					}.Bind(CircleImage.ImageSourceProperty, 
+						getter: static (MobileReferringSiteModel vm) => vm.FavIcon, 
+						mode: BindingMode.OneWay);
 				}
 			}
 		}

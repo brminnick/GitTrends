@@ -335,6 +335,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 					HidesNavigationBarDuringPresentation = false,
 					HidesBottomBarWhenPushed = true
 				};
+				searchController.SearchBar.BarStyle = UIBarStyle.Black;
 				searchController.SearchBar.Placeholder = string.Empty;
 				searchController.SearchBar.TextChanged += HandleTextChanged;
 

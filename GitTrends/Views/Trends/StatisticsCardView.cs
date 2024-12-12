@@ -80,8 +80,8 @@ class StatisticsCard : MaterialFrame
 
 			Children.Add(new RepositoryStatSVGImage(svgImage, svgColorTheme, deviceInfo).Assign(out _svgImage)
 				.Row(Row.Title).Column(Column.Icon).RowSpan(2)
-				.Bind<SvgImage, bool, Func<Color>>(SvgImage.GetSvgColorProperty,
-					nameof(IsSeriesVisible),
+				.Bind(SvgImage.GetSvgColorProperty,
+					getter: static vm => vm.IsSeriesVisible,
 					convert: convertIsSeriesVisible,
 					source: statisticsCard));
 

@@ -53,14 +53,14 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 							.Margins(right: sidePadding)
 							.Font(size: 32).Center()
 							.Bind(Label.TextProperty,
-								nameof(Repository.IsFavorite),
-								BindingMode.OneTime,
+								getter: static (Repository repository) => repository.IsFavorite,
+								mode: BindingMode.OneTime,
 								convert: static (bool? isFavorite) => isFavorite is true
 									? FontAwesomeConstants.StarFilled
 									: FontAwesomeConstants.StarOutline)
 							.Bind(Label.FontFamilyProperty,
-								nameof(Repository.IsFavorite),
-								BindingMode.OneTime,
+								getter: static(Repository repository) => repository.IsFavorite,
+								mode: BindingMode.OneTime,
 								convert: static (bool? isFavorite) => isFavorite is true
 									? FontFamilyConstants.FontAwesomeSolid
 									: FontFamilyConstants.FontAwesome)
@@ -163,18 +163,23 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 
 					Children.Add(new AvatarImage(_circleImageHeight)
 						.Row(Row.Title).Column(Column.Avatar).RowSpan(2)
-						.Bind(AvatarImage.ImageSourceProperty, nameof(Repository.OwnerAvatarUrl), BindingMode.OneTime)
+						.Bind(AvatarImage.ImageSourceProperty, 
+							getter: static (Repository repository) => repository.OwnerAvatarUrl, 
+							mode: BindingMode.OneTime)
 						.DynamicResources(
 							(CircleImage.ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
 							(CircleImage.LoadingPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource))));
 
 					Children.Add(new NameLabel()
 						.Row(Row.Title).Column(Column.Trending).ColumnSpan(7)
-						.Bind(Label.TextProperty, nameof(Repository.Name), BindingMode.OneTime));
+						.Bind(Label.TextProperty, 
+							getter: static (Repository repository) => repository.Name, 
+							mode: BindingMode.OneTime));
 
 					Children.Add(new DescriptionLabel()
 						.Row(Row.Description).Column(Column.Trending).ColumnSpan(7)
-						.Bind(Label.TextProperty, nameof(Repository.Description)));
+						.Bind(Label.TextProperty, 
+							getter: static (Repository repository) => repository.Description));
 
 					Children.Add(new Separator()
 						.Row(Row.Separator).Column(Column.Trending).ColumnSpan(7));
@@ -254,12 +259,12 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 						VerticalOptions = LayoutOptions.End;
 
 						this.Bind(SourceProperty,
-							getter: (Repository repository) => repository.IsTrending,
+							getter: static (Repository repository) => repository.IsTrending,
 							mode: BindingMode.OneTime,
 							convert: static isTrending => isTrending ? "trending_tag.svg" : "favorite_tag.svg");
 
 						this.Bind(GetSvgColorProperty,
-							getter: (Repository repository) => repository.IsFavorite,
+							getter: static (Repository repository) => repository.IsFavorite,
 							mode: BindingMode.OneTime,
 							convert: static isFavorite => isFavorite is true
 								? (Func<Color>)(() => AppResources.GetResource<Color>(nameof(BaseTheme.CardStarsStatsIconColor)))

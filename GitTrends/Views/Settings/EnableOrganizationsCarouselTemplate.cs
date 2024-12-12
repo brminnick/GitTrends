@@ -23,17 +23,17 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 				.Row(EnableOrganizationsGrid.Row.Image)
 				.Margin(24, 12).Aspect(Aspect.AspectFit)
 				.Bind(Image.IsVisibleProperty,
-					nameof(IncludeOrganizationsCarouselModel.ImageSource),
-					convert: (ImageSource? source) => source is not null,
+					getter: static (IncludeOrganizationsCarouselModel vm) => vm.ImageSource,
+					convert: source => source is not null,
 					mode: BindingMode.OneTime)
 				.Bind(Image.SourceProperty,
-					nameof(IncludeOrganizationsCarouselModel.ImageSource),
+					getter: static (IncludeOrganizationsCarouselModel vm) => vm.ImageSource,
 					mode: BindingMode.OneTime),
 
 			new TitleLabel()
 				.Row(EnableOrganizationsGrid.Row.Title)
 				.Bind(Label.TextProperty,
-					nameof(IncludeOrganizationsCarouselModel.Title),
+					getter: static (IncludeOrganizationsCarouselModel vm) => vm.Title,
 					mode: BindingMode.OneTime),
 
 			IsSmallScreen
@@ -43,13 +43,13 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 					Padding = 0,
 					Content = new DescriptionLabel()
 						.Bind(Label.TextProperty,
-							nameof(IncludeOrganizationsCarouselModel.Text),
+							getter: static (IncludeOrganizationsCarouselModel vm) => vm.Text,
 							mode: BindingMode.OneTime)
 				}.Row(EnableOrganizationsGrid.Row.Description)
 				: new DescriptionLabel()
 					.Row(EnableOrganizationsGrid.Row.Description)
 					.Bind(Label.TextProperty,
-						nameof(IncludeOrganizationsCarouselModel.Text),
+						getter: static (IncludeOrganizationsCarouselModel vm) => vm.Text,
 						mode: BindingMode.OneTime),
 
 			new GitHubButton(deviceInfo, SettingsPageAutomationIds.GitHubButton, SettingsPageConstants.ManageOrganizations)
@@ -116,11 +116,11 @@ class EnableOrganizationsCarouselTemplate(IDeviceInfo deviceInfo, CarouselView o
 				WidthRequest = 250 // Assign any value to MediaElement.WidthRequest; workaround to ensure MediaElement is inflated on iOS
 			}.Center()
 				.Bind(MediaElement.SourceProperty,
-					nameof(IncludeOrganizationsCarouselModel.VideoSource),
-					convert: (string? videoSource) => MediaSource.FromResource(videoSource))
+					getter: static (IncludeOrganizationsCarouselModel vm) => vm.VideoSource,
+					convert: videoSource => MediaSource.FromResource(videoSource))
 				.Bind(IsVisibleProperty,
-					nameof(IncludeOrganizationsCarouselModel.VideoSource),
-					convert: (string? source) => source is not null);
+					getter: static (IncludeOrganizationsCarouselModel vm) => vm.VideoSource,
+					convert: source => source is not null);
 
 			PropertyChanged += HandlePropertyChanged;
 		}

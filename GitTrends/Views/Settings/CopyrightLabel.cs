@@ -22,7 +22,9 @@ class CopyrightLabel : Label
 
 		AutomationId = SettingsPageAutomationIds.CopyrightLabel;
 
-		this.Bind(nameof(SettingsViewModel.CopyrightLabelText))
+		this.Bind(TextProperty,
+				getter: static (SettingsViewModel vm) => vm.CopyrightLabelText,
+				mode: BindingMode.OneTime)
 			.BindTapGesture(nameof(SettingsViewModel.CopyrightLabelTappedCommand))
 			.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
 	}

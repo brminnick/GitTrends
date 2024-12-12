@@ -94,6 +94,9 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
 	public partial int ThemePickerSelectedIndex { get; internal set; }
 	
 	[ObservableProperty]
+	public partial int LanguagePickerSelectedIndex { get; internal set; }
+	
+	[ObservableProperty]
 	public partial IReadOnlyList<string> ThemePickerItemsSource { get; private set; } = [];
 
 	[ObservableProperty]
@@ -143,9 +146,6 @@ public partial class SettingsViewModel : GitHubAuthenticationViewModel
     
     [ObservableProperty, NotifyPropertyChangedFor(nameof(IsShouldIncludeOrganizationsSwitchToggled))]
     public partial bool IsShouldIncludeOrganizationsSwitchEnabled { get; private set; }
-    
-    [ObservableProperty]
-    public partial int LanguagePickerSelectedIndex { get; private set; }
 
 	public bool ShouldShowClonesByDefaultSwitchValue
 	{

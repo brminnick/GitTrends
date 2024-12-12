@@ -17,11 +17,11 @@ public class CircleBorder : Border
 		this.Bind(StrokeProperty,
 			nameof(GetBorderColor),
 			source: this,
-			convert: static (Func<Color>? getColorFunc) => getColorFunc?.Invoke() ?? default);
+			convert: static (Func<Color>? getColorFunc) => getColorFunc?.Invoke() ?? null);
 
 		StrokeShape = new RoundRectangle()
 			.Bind(RoundRectangle.CornerRadiusProperty,
-				getter: circleBorder => circleBorder.Width,
+				getter: static circleBorder => circleBorder.Width,
 				convert: ConvertWidthToCornerRadius,
 				source: this);
 
