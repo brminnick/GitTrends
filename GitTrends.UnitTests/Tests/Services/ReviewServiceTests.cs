@@ -38,7 +38,7 @@ class ReviewServiceTests : BaseTest
 			Assert.That(didReviewRequestedFire_StoreReview);
 			Assert.That(storeReviewResult);
 			Assert.That(preferences.Get("MostRecentRequestDate", default(DateTime)), Is.Not.EqualTo(default(DateTime)));
-			Assert.That(preferences.Get("MostRecentReviewedBuildString", default(string)), Is.Not.EqualTo(default));
+			Assert.That(preferences.Get("MostRecentReviewedBuildString", default(string)), Is.Not.EqualTo(null));
 		});
 
 		void HandleReviewRequested_ReviewService(object? sender, EventArgs e)
