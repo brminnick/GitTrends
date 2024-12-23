@@ -160,7 +160,7 @@ jobs:
     displayName: Run Unit Tests
     dependsOn: [Build_UnitTests, Build_MAUI_App]
     pool:
-      vmImage: macos-14
+      vmImage: macos-15
 
     steps:
       - script: |
