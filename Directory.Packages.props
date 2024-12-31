@@ -9,7 +9,7 @@
     <PackageVersion Include="CommunityToolkit.Maui.Markup" Version="5.1.0" />
     <PackageVersion Include="CommunityToolkit.Maui.MediaElement" Version="4.1.2" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.2">
+    <PackageVersion Include="coverlet.collector" Version="6.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
