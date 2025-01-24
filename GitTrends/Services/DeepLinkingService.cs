@@ -21,7 +21,7 @@ public class DeepLinkingService(
 	{
 		if (Application.Current?.Windows.FirstOrDefault() is { Page: Page currentPage })
 			return _dispatcher.DispatchAsync(() => currentPage.DisplayAlert(title, message, cancel)).WaitAsync(token);
-		
+
 		return Task.CompletedTask;
 	}
 

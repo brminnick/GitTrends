@@ -9,7 +9,7 @@ public abstract partial class GitHubAuthenticationViewModel : BaseViewModel
 {
 	readonly DeepLinkingService _deepLinkingService;
 
-    protected GitHubAuthenticationViewModel(IDispatcher dispatcher,
+	protected GitHubAuthenticationViewModel(IDispatcher dispatcher,
 												IAnalyticsService analyticsService,
 												GitHubUserService gitHubUserService,
 												DeepLinkingService deepLinkingService,
@@ -27,7 +27,7 @@ public abstract partial class GitHubAuthenticationViewModel : BaseViewModel
 	public bool IsNotAuthenticating => !IsAuthenticating;
 
 	public virtual bool IsDemoButtonVisible => !IsAuthenticating && GitHubUserService.Alias != DemoUserConstants.Alias;
-	
+
 	[ObservableProperty]
 	[NotifyCanExecuteChangedFor(nameof(HandleConnectToGitHubButtonCommand))]
 	[NotifyPropertyChangedFor(nameof(IsNotAuthenticating), nameof(IsDemoButtonVisible))]

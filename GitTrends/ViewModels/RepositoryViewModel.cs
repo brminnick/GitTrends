@@ -28,7 +28,7 @@ public partial class RepositoryViewModel : BaseViewModel
 	IReadOnlyList<Repository> _repositoryList = [];
 	RefreshState _refreshState;
 
-    public RepositoryViewModel(
+	public RepositoryViewModel(
 		IDispatcher dispatcher,
 		IAnalyticsService analyticsService,
 		GitHubUserService gitHubUserService,
@@ -82,10 +82,10 @@ public partial class RepositoryViewModel : BaseViewModel
 		add => _pullToRefreshFailedEventManager.AddEventHandler(value);
 		remove => _pullToRefreshFailedEventManager.RemoveEventHandler(value);
 	}
-	
+
 	[ObservableProperty]
 	public partial bool IsRefreshing { get; internal set; }
-	
+
 	[ObservableProperty]
 	public partial string SearchBarText { get; private set; } = string.Empty;
 
@@ -461,7 +461,7 @@ public partial class RepositoryViewModel : BaseViewModel
 	{
 		if (EqualityComparer<string>.Default.Equals(SearchBarText, text))
 			return;
-        SearchBarText = text;
+		SearchBarText = text;
 
 		if (_repositoryList.Any())
 			UpdateVisibleRepositoryList(SearchBarText, _mobileSortingService.CurrentOption, _mobileSortingService.IsReversed);

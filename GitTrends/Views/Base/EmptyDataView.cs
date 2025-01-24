@@ -32,18 +32,18 @@ class EmptyDataView : Grid
 
 		Children.Add(new TextLabel
 		(
-			new Span().Bind(Span.TextProperty, 
-				getter: static dataView => dataView.Title, 
+			new Span().Bind(Span.TextProperty,
+				getter: static dataView => dataView.Title,
 				source: this),
-			new Span().Bind(Span.TextProperty, 
-				getter: static dataView => dataView.Description, 
+			new Span().Bind(Span.TextProperty,
+				getter: static dataView => dataView.Description,
 				source: this)
 		).Row(Row.Text));
 
 		Children.Add(new EmptyStateImage(ImageSource)
 			.Row(Row.Image).Top()
-			.Bind(Image.SourceProperty, 
-				getter: static dataView => dataView.ImageSource, 
+			.Bind(Image.SourceProperty,
+				getter: static dataView => dataView.ImageSource,
 				source: this));
 	}
 

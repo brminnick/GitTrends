@@ -335,15 +335,15 @@ class ContributorDataTemplate : DataTemplate
 		{
 			new AvatarImage(_circleDiameter).Fill()
 				.Row(Row.Avatar).Column(Column.Image)
-				.Bind(CircleImage.ImageSourceProperty, 
-					getter: static (Contributor vm) => vm.AvatarUrl, 
+				.Bind(CircleImage.ImageSourceProperty,
+					getter: static (Contributor vm) => vm.AvatarUrl,
 					mode: BindingMode.OneTime),
 
 			new Label { LineBreakMode = LineBreakMode.TailTruncation }.FillHorizontal().TextTop().TextCenterHorizontal().Font(FontFamilyConstants.RobotoRegular, IsSmallScreen ? 10 : 12)
 				.Row(Row.Login).Column(Column.LeftText).ColumnSpan(3)
-				.Bind(Label.TextProperty, 
-					getter: static (Contributor vm) => vm.Login, 
-					mode: BindingMode.OneTime, 
+				.Bind(Label.TextProperty,
+					getter: static (Contributor vm) => vm.Login,
+					mode: BindingMode.OneTime,
 					convert: static  login => $"@{login}")
 				.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor))
 		}

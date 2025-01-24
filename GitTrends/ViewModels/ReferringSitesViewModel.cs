@@ -23,7 +23,7 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 	readonly GitHubAuthenticationService _gitHubAuthenticationService;
 	readonly GitHubApiRepositoriesService _gitHubApiRepositoriesService;
 
-    public ReferringSitesViewModel(IDispatcher mainThread,
+	public ReferringSitesViewModel(IDispatcher mainThread,
 									IAnalyticsService analyticsService,
 									GitHubUserService gitHubUserService,
 									ReferringSitesDatabase referringSitesDatabase,
@@ -41,10 +41,10 @@ public partial class ReferringSitesViewModel : BaseViewModel, IQueryAttributable
 
 		RefreshState = RefreshState.Uninitialized;
 	}
-    
+
 	[ObservableProperty]
 	public partial bool IsRefreshing { get; set; }
-    
+
 	[ObservableProperty]
 	public partial IReadOnlyList<MobileReferringSiteModel> MobileReferringSitesList { get; private set; } = [];
 
