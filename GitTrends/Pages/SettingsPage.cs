@@ -105,7 +105,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 								.Row(SettingsRow.Organizations).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.IncludeOrganizationsSwitch)
 								.Row(SettingsRow.Organizations).Column(SettingsColumn.Title)
-								.Bind(Label.TextProperty, 
+								.Bind(Label.TextProperty,
 									getter: static (SettingsViewModel vm) => vm.ShouldIncludeOrganizationsLabelText,
 									mode: BindingMode.OneTime),
 							new IncludeOrganizationsSwitch(deviceInfo)
@@ -116,7 +116,7 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 								.Row(SettingsRow.Notifications).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.RegisterForNotificationsTitleLabel)
 								.Row(SettingsRow.Notifications).Column(SettingsColumn.Title)
-								.Bind(Label.TextProperty, 
+								.Bind(Label.TextProperty,
 									getter: static (SettingsViewModel vm) => vm.RegisterForNotificationsLabelText,
 									mode: BindingMode.OneTime),
 							new EnableNotificationsSwitch(deviceInfo)
@@ -127,15 +127,15 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 								.Row(SettingsRow.Theme).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.ThemeTitleLabel)
 								.Row(SettingsRow.Theme).Column(SettingsColumn.Title)
-								.Bind(Label.TextProperty, 
+								.Bind(Label.TextProperty,
 									getter: static (SettingsViewModel vm) => vm.ThemeLabelText,
 									mode: BindingMode.OneTime),
 							new SettingsPicker(SettingsPageAutomationIds.ThemePicker, 70)
 								.Row(SettingsRow.Theme).Column(SettingsColumn.Button)
-								.Bind(Picker.ItemsSourceProperty, 
+								.Bind(Picker.ItemsSourceProperty,
 									getter: static (SettingsViewModel vm) => vm.ThemePickerItemsSource,
 									mode: BindingMode.OneTime)
-								.Bind(Picker.SelectedIndexProperty, 
+								.Bind(Picker.SelectedIndexProperty,
 									getter: static (SettingsViewModel vm) => vm.ThemePickerSelectedIndex,
 									setter: static (vm, index) => vm.ThemePickerSelectedIndex = index),
 
@@ -149,28 +149,28 @@ public sealed class SettingsPage : BaseContentPage<SettingsViewModel>, IDisposab
 								.Bind(Label.TextProperty, nameof(SettingsViewModel.LanguageLabelText)),
 							new SettingsPicker(SettingsPageAutomationIds.LanguagePicker, 100)
 								.Row(SettingsRow.Language).Column(SettingsColumn.Button)
-								.Bind(Picker.ItemsSourceProperty, 
+								.Bind(Picker.ItemsSourceProperty,
 									getter: static (SettingsViewModel vm) => vm.LanguagePickerItemsSource,
 									mode: BindingMode.OneTime)
-								.Bind(Picker.SelectedIndexProperty, 
+								.Bind(Picker.SelectedIndexProperty,
 									getter: static (SettingsViewModel vm) => vm.LanguagePickerSelectedIndex,
 									setter: static (vm, index) => vm.LanguagePickerSelectedIndex = index),
-							
+
 							new Separator()
 								.Row(SettingsRow.LanguageSeparator).ColumnSpan(All<SettingsColumn>()),
-							
+
 							new SvgImage(deviceInfo, "chart.svg", () => AppResources.GetResource<Color>(nameof(BaseTheme.IconColor)))
 								.Row(SettingsRow.PreferredCharts).Column(SettingsColumn.Icon),
 							new SettingsTitleLabel(SettingsPageAutomationIds.PreferredChartTitleLabel)
 								.Row(SettingsRow.PreferredCharts).Column(SettingsColumn.Title)
-								.Bind(Label.TextProperty, 
+								.Bind(Label.TextProperty,
 									getter: static (SettingsViewModel vm) => vm.PreferredChartsLabelText),
 							new SettingsPicker(SettingsPageAutomationIds.PreferredChartsPicker, 100)
 								.Row(SettingsRow.PreferredCharts).Column(SettingsColumn.Button)
-								.Bind(Picker.ItemsSourceProperty, 
+								.Bind(Picker.ItemsSourceProperty,
 									getter: static (SettingsViewModel vm) => vm.PreferredChartsItemsSource,
 									mode: BindingMode.OneTime)
-								.Bind(Picker.SelectedIndexProperty, 
+								.Bind(Picker.SelectedIndexProperty,
 									getter: static (SettingsViewModel vm) => vm.PreferredChartsSelectedIndex,
 									setter: static (vm, index) => vm.PreferredChartsSelectedIndex = index),
 							new Separator()

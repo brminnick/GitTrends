@@ -163,8 +163,8 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 
 					Children.Add(new AvatarImage(_circleImageHeight)
 						.Row(Row.Title).Column(Column.Avatar).RowSpan(2)
-						.Bind(AvatarImage.ImageSourceProperty, 
-							getter: static (Repository repository) => repository.OwnerAvatarUrl, 
+						.Bind(AvatarImage.ImageSourceProperty,
+							getter: static (Repository repository) => repository.OwnerAvatarUrl,
 							mode: BindingMode.OneTime)
 						.DynamicResources(
 							(CircleImage.ErrorPlaceholderProperty, nameof(BaseTheme.DefaultProfileImageSource)),
@@ -172,13 +172,13 @@ abstract class BaseRepositoryDataTemplate : DataTemplate
 
 					Children.Add(new NameLabel()
 						.Row(Row.Title).Column(Column.Trending).ColumnSpan(7)
-						.Bind(Label.TextProperty, 
-							getter: static (Repository repository) => repository.Name, 
+						.Bind(Label.TextProperty,
+							getter: static (Repository repository) => repository.Name,
 							mode: BindingMode.OneTime));
 
 					Children.Add(new DescriptionLabel()
 						.Row(Row.Description).Column(Column.Trending).ColumnSpan(7)
-						.Bind(Label.TextProperty, 
+						.Bind(Label.TextProperty,
 							getter: static (Repository repository) => repository.Description));
 
 					Children.Add(new Separator()

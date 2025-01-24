@@ -26,25 +26,25 @@ class InformationButton : Grid
 		ColumnDefinitions = Columns.Define(Diameter);
 
 		Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic1, FloatingActionButtonSize.Mini).Center().Assign(out _statistic1FloatingActionButton)
-			.Bind(FloatingActionTextButton.TextProperty, 
-				getter: static (RepositoryViewModel vm) => vm.VisibleRepositoryList, 
-				mode: BindingMode.OneWay, 
+			.Bind(FloatingActionTextButton.TextProperty,
+				getter: static (RepositoryViewModel vm) => vm.VisibleRepositoryList,
+				mode: BindingMode.OneWay,
 				convert: repositories => repositories is null ? string.Empty : StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic1)));
 
 		Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic2, FloatingActionButtonSize.Mini).Center().Assign(out _statistic2FloatingActionButton)
-			.Bind(FloatingActionTextButton.TextProperty, 
-				getter: static (RepositoryViewModel vm) => vm.VisibleRepositoryList, 
-				mode: BindingMode.OneWay, 
+			.Bind(FloatingActionTextButton.TextProperty,
+				getter: static (RepositoryViewModel vm) => vm.VisibleRepositoryList,
+				mode: BindingMode.OneWay,
 				convert: repositories => repositories is null ? string.Empty : StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic2)));
 
 		Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Statistic3, FloatingActionButtonSize.Mini).Center().Assign(out _statistic3FloatingActionButton)
-			.Bind(FloatingActionTextButton.TextProperty, 
-				getter: static (RepositoryViewModel vm) => vm.VisibleRepositoryList, 
-				mode: BindingMode.OneWay, 
+			.Bind(FloatingActionTextButton.TextProperty,
+				getter: static (RepositoryViewModel vm) => vm.VisibleRepositoryList,
+				mode: BindingMode.OneWay,
 				convert: repositories => repositories is null ? string.Empty : StatisticsService.GetFloatingActionTextButtonText(mobileSortingService, repositories, FloatingActionButtonType.Statistic3)));
 
 		Children.Add(new FloatingActionTextButton(mobileSortingService, FloatingActionButtonType.Information, FloatingActionButtonSize.Normal, new AsyncRelayCommand(ExecuteFloatingActionButtonCommand)) { FontFamily = FontFamilyConstants.RobotoMedium }.Center().Assign(out _totalButton)
-			.Bind(FloatingActionTextButton.TextProperty, 
+			.Bind(FloatingActionTextButton.TextProperty,
 				getter: static (RepositoryViewModel vm) => vm.TotalButtonText));
 
 		SetBinding(IsVisibleProperty, new MultiBinding
@@ -129,20 +129,20 @@ class InformationButton : Grid
 			Command = command;
 
 			Content = new TextLabel(floatingActionButtonType).Center().TextCenter()
-				.Bind(Label.TextProperty, 
-					getter: static label => label.Text, 
+				.Bind(Label.TextProperty,
+					getter: static label => label.Text,
 					source: this)
-				.Bind(Label.FontFamilyProperty, 
-					getter: static label => label.FontFamily, 
+				.Bind(Label.FontFamilyProperty,
+					getter: static label => label.FontFamily,
 					source: this)
-				.Bind(Label.FontSizeProperty, 
-					getter: static label => label.Text, 
-					source: this, 
+				.Bind(Label.FontSizeProperty,
+					getter: static label => label.Text,
+					source: this,
 					convert: text => convertFontSize(text, floatingActionButtonType));
 
 
-			this.Bind(FloatingActionButtonBackgroundColorProperty, 
-				getter: static (RepositoryViewModel vm) => vm.VisibleRepositoryList, 
+			this.Bind(FloatingActionButtonBackgroundColorProperty,
+				getter: static (RepositoryViewModel vm) => vm.VisibleRepositoryList,
 				convert: _ => GetBackgroundColor());
 
 			static double convertFontSize(in string? text, in FloatingActionButtonType floatingActionButtonType) => (floatingActionButtonType, text?.Length) switch

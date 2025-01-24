@@ -525,7 +525,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 			set
 			{
 				if (!(OperatingSystem.IsIOSVersionAtLeast(11) || OperatingSystem.IsTvOSVersionAtLeast(11) || OperatingSystem.IsMacCatalystVersionAtLeast(11))
-				    && Superview is not null)
+					&& Superview is not null)
 				{
 					value.Y = Superview.Bounds.Y;
 					value.Height = Superview.Bounds.Height;
@@ -542,7 +542,7 @@ sealed class ShellWithLargeTitlesHandler : ShellRenderer
 		public override void LayoutSubviews()
 		{
 			if (Height is null or 0
-			    && Superview is not null)
+				&& Superview is not null)
 			{
 				UpdateFrame(Superview);
 			}

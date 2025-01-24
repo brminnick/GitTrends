@@ -24,14 +24,14 @@ public partial class OnboardingViewModel(
 	readonly IAnalyticsService _analyticsService = analyticsService;
 	readonly NotificationService _notificationService = notificationService;
 
-    public static event EventHandler SkipButtonTapped
+	public static event EventHandler SkipButtonTapped
 	{
 		add => _skipButtonTappedEventManager.AddEventHandler(value);
 		remove => _skipButtonTappedEventManager.RemoveEventHandler(value);
 	}
 
 	public override bool IsDemoButtonVisible => IsNotAuthenticating;
-	
+
 	[ObservableProperty]
 	public partial string NotificationStatusSvgImageSource { get; set; } = BellSvgSourceName;
 

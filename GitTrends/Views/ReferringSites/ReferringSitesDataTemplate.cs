@@ -154,8 +154,8 @@ class ReferringSitesDataTemplate() : DataTemplate(() => new CardView())
 					VerticalTextAlignment = TextAlignment.End;
 
 					this.DynamicResource(TextColorProperty, nameof(BaseTheme.PrimaryTextColor));
-					this.Bind(WidthRequestProperty, 
-						getter: label => label.Width, 
+					this.Bind(WidthRequestProperty,
+						getter: label => label.Width,
 						source: titleLabel);
 				}
 			}
@@ -205,8 +205,8 @@ class ReferringSitesDataTemplate() : DataTemplate(() => new CardView())
 						GetBorderColor = () => Colors.Transparent,
 						ErrorPlaceholder = FavIconService.DefaultFavIcon,
 						LoadingPlaceholder = FavIconService.DefaultFavIcon
-					}.Bind(CircleImage.ImageSourceProperty, 
-						getter: static (MobileReferringSiteModel vm) => vm.FavIcon, 
+					}.Bind(CircleImage.ImageSourceProperty,
+						getter: static (MobileReferringSiteModel vm) => vm.FavIcon,
 						mode: BindingMode.OneWay);
 				}
 			}

@@ -63,7 +63,7 @@ public sealed class WelcomePage : BaseContentPage<WelcomeViewModel>, IDisposable
 
 				new GitHubButton(deviceInfo, WelcomePageAutomationIds.ConnectToGitHubButton, GitHubLoginButtonConstants.ConnectToGitHub).CenterHorizontal().Bottom()
 					.Row(Row.GitHubButton)
-					.Bind(GitHubButton.CommandProperty, 
+					.Bind(GitHubButton.CommandProperty,
 						getter: static (WelcomeViewModel vm) => vm.HandleConnectToGitHubButtonCommand,
 						mode: BindingMode.OneTime)
 					.Invoke(button => button.CommandParameter = (_connectToGitHubCancellationTokenSource.Token, browserLaunchOptions)),
@@ -123,9 +123,9 @@ public sealed class WelcomePage : BaseContentPage<WelcomeViewModel>, IDisposable
 
 			HeightRequest = WidthRequest = _demoLabelFontSize;
 
-			this.Bind(IsVisibleProperty, 
+			this.Bind(IsVisibleProperty,
 				getter: static (WelcomeViewModel vm) => vm.IsAuthenticating);
-			this.Bind(IsRunningProperty, 
+			this.Bind(IsRunningProperty,
 				getter: static (WelcomeViewModel vm) => vm.IsAuthenticating);
 		}
 	}
